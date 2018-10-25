@@ -1,11 +1,17 @@
 #dhis2-app-skeleton
 
+## Tests
+
+```
+$ yarn test
+```
+
 ## Build
 
 Creates `PACKAGE_NAME.zip`:
 
 ```
-$ yarn webapp
+$ yarn build-webapp
 ```
 
 ## i18n

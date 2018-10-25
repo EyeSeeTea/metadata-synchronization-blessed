@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import Paper from '@material-ui/core/Paper'
 import HeaderBar from '@dhis2/d2-ui-header-bar'
 import i18n from '@dhis2/d2-i18n'
 import { MuiThemeProvider } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
 import JssProvider from 'react-jss/lib/JssProvider'
 import { createGenerateClassName } from '@material-ui/core/styles'
 
@@ -16,18 +16,8 @@ const generateClassName = createGenerateClassName({
 })
 
 class App extends Component {
-    static childContextTypes = {
-        d2: PropTypes.object,
-    }
-
     static propTypes = {
         d2: PropTypes.object.isRequired,
-    }
-
-    getChildContext() {
-        return {
-            d2: this.props.d2,
-        }
     }
 
     render() {
