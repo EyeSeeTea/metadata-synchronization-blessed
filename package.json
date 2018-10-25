@@ -11,21 +11,25 @@
     "@dhis2/d2-ui-header-bar": "^1.1.10",
     "@material-ui/core": "^3.3.1",
     "d2": "^30.0.2",
+    "d2-manifest": "^1.0.0",
     "husky": "^1.1.2",
     "postcss-rtl": "^1.3.2",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-scripts": "2.0.5"
   },
+  "homepage": "./",
   "scripts": {
     "prestart": "yarn localize",
     "start": "BROWSER=false PORT=8081 react-scripts start",
-    "build": "yarn localize && react-scripts build",
+    "build": "react-scripts build && yarn run manifest && cp -r i18n icon.png build",
+    "build-webapp": "yarn build && cd build && zip -r ../$npm_package_name.zip *",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "extract-pot": "d2-i18n-extract -p src/ -o i18n/",
     "localize": "yarn extract-pot && d2-i18n-generate -n dhis2-app-skeleton -p ./i18n/ -o ./src/locales/",
     "update-po": "for pofile in i18n/*.po; do msgmerge --backup=off -U $pofile i18n/en.pot; done",
+    "manifest": "d2-manifest package.json build/manifest.webapp",
     "format": "code-style"
   },
   "husky": {
@@ -34,13 +38,23 @@
       "pre-commit": "yarn format && yarn extract-pot && CI=true yarn test && git add ./i18n/"
     }
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
   "devDependencies": {
     "@dhis2/code-style": "^1.4.0"
+  },
+  "manifest.webapp": {
+    "name": "dhis2-app-skeleton",
+    "description": "DHIS2 Skeleton App",
+    "icons": {
+      "48": "icon.png"
+    },
+    "developer": {
+      "url": "https://www.eyeseetea.com/",
+      "name": "EyeSeeTea team"
+    },
+    "activities": {
+      "dhis": {
+        "href": ".."
+      }
+    }
   }
 }

@@ -1,5 +1,13 @@
 #dhis2-app-skeleton
 
+## Build
+
+Creates `PACKAGE_NAME.zip`:
+
+```
+$ yarn webapp
+```
+
 ## i18n
 
 ### Update existing language
