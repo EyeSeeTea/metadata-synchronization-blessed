@@ -1,28 +1,35 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import PropTypes from 'prop-types';
+import HeaderBar from '@dhis2/d2-ui-header-bar';
+import i18n from '@dhis2/d2-i18n';
+
 import './App.css';
 
 class App extends Component {
+  getChildContext() {
+      return {
+          d2: this.props.d2,
+      };
+  }
+
   render() {
+    const { d2 } = this.props;
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div className="main">
+        <HeaderBar d2={d2} />
+        <div className="welcome">{i18n.t("Hello there")}</div>
       </div>
     );
   }
 }
+
+App.childContextTypes = {
+    d2: PropTypes.object,
+};
+
+App.propTypes = {
+    d2: PropTypes.object.isRequired,
+};
 
 export default App;
