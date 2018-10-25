@@ -1,4 +1,4 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme } from '@material-ui/core/styles'
 
 // Color palette from https://projects.invisionapp.com/share/A7LT4TJYETS#/screens/302550228_Color
 export const colors = {
@@ -24,7 +24,7 @@ export const colors = {
     warning: '#F19C02',
     positive: '#3D9305',
     info: '#EAF4FF',
-};
+}
 export const palette = {
     common: {
         white: colors.white,
@@ -72,7 +72,7 @@ export const palette = {
     },
     divider: colors.greyLight,
     shadow: colors.grey,
-};
+}
 
 export const muiTheme = createMuiTheme({
     colors,
@@ -88,4 +88,4 @@ export const muiTheme = createMuiTheme({
             },
         },
     },
-});
+})

@@ -25,20 +25,22 @@
     "eject": "react-scripts eject",
     "extract-pot": "d2-i18n-extract -p src/ -o i18n/",
     "localize": "yarn extract-pot && d2-i18n-generate -n dhis2-app-skeleton -p ./i18n/ -o ./src/locales/",
-    "update-po": "for pofile in i18n/*.po; do msgmerge --backup=off -U $pofile i18n/en.pot; done"
+    "update-po": "for pofile in i18n/*.po; do msgmerge --backup=off -U $pofile i18n/en.pot; done",
+    "format": "code-style"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn extract-pot && CI=true yarn test && git add ./i18n/"
+      "commit-msg": "commit-style",
+      "pre-commit": "yarn format && yarn extract-pot && CI=true yarn test && git add ./i18n/"
     }
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "@dhis2/code-style": "^1.4.0"
+  }
 }
