@@ -1,15 +1,22 @@
 {
   "name": "dhis2-app-skeleton",
-  "version": "0.1.0",
-  "private": true,
+  "description": "DHIS2 App Skeleton",
+  "version": "0.0.1",
+  "license": "GPL-3.0",
+  "author": "EyeSeeTea team",
+  "homepage": "./",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eyeseetea/dhis2-app-skeleton.git"
+  },
   "dependencies": {
     "@dhis2/d2-i18n": "^1.0.4",
     "@dhis2/d2-i18n-extract": "^1.0.7",
     "@dhis2/d2-i18n-generate": "^1.0.19",
-    "@dhis2/d2-ui-app": "^1.0.11",
     "@dhis2/d2-ui-core": "^1.3.5",
     "@dhis2/d2-ui-header-bar": "^1.1.10",
     "@material-ui/core": "^3.3.1",
+    "@material-ui/icons": "^3.0.1",
     "d2": "^30.0.2",
     "d2-manifest": "^1.0.0",
     "enzyme": "^3.7.0",
@@ -17,29 +24,31 @@
     "enzyme-to-json": "^3.3.4",
     "husky": "^1.1.2",
     "jest": "^23.6.0",
+    "lodash": "^4.17.11",
     "postcss-rtl": "^1.3.2",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-scripts": "2.0.5"
   },
-  "homepage": "./",
   "scripts": {
-    "prestart": "yarn localize",
-    "start": "BROWSER=false PORT=8081 react-scripts start",
-    "build": "react-scripts build && yarn run manifest && cp -r i18n icon.png build",
-    "build-webapp": "yarn build && cd build && zip -r ../$npm_package_name.zip *",
+    "prestart": "yarn localize && d2-manifest package.json manifest.webapp",
+    "start": "BROWSER=false PORT=${PORT:-8001} react-scripts start",
+    "prebuild": "yarn test",
+    "build": "rm -rf build/ && react-scripts build && yarn run manifest && cp -r i18n icon.png build",
+    "build-webapp": "yarn build && rm -f $npm_package_name.zip && cd build && zip -r ../$npm_package_name.zip *",
     "test": "jest",
+    "lint": "eslint ./src",
     "eject": "react-scripts eject",
+    "prettify": "prettier \"src/**/*.{js,jsx,json,css}\" --write",
     "extract-pot": "d2-i18n-extract -p src/ -o i18n/",
     "localize": "yarn extract-pot && d2-i18n-generate -n dhis2-app-skeleton -p ./i18n/ -o ./src/locales/",
-    "update-po": "for pofile in i18n/*.po; do msgmerge --backup=off -U $pofile i18n/en.pot; done",
+    "update-po": "yarn extract-pot && for pofile in i18n/*.po; do msgmerge --backup=off -U $pofile i18n/en.pot; done",
     "manifest": "d2-manifest package.json build/manifest.webapp",
     "format": "code-style"
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commit-style",
-      "pre-commit": "yarn format && yarn extract-pot && CI=true yarn test && git add ./i18n/"
+      "_pre-commit": "yarn format && yarn extract-pot && CI=true yarn test"
     }
   },
   "devDependencies": {

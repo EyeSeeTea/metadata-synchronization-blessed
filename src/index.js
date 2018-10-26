@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { init, config, getUserSettings } from 'd2/lib/d2'
 
-import D2UIApp from '@dhis2/d2-ui-app'
 import App from './App'
 import './index.css'
 import i18n from './locales'
@@ -32,21 +31,18 @@ function configI18n(userSettings) {
     i18n.changeLanguage(uiLocale)
 }
 
-const envVariable = 'DHIS2_URL'
+const envVariable = 'REACT_APP_DHIS2_URL'
 const defaultServer = 'http://localhost:8080'
-const baseUrl = process.env[envVariable] || defaultServer
+const baseUrl =
+    (process.env[envVariable] || defaultServer).replace(/\/*$/, '') + '/api'
 
-console.info(`DHIS2 instance: ${baseUrl}`)
+if (process.env.NODE_ENV === 'development')
+    console.info(`DHIS2 instance: ${baseUrl}`)
 
-init({ baseUrl: baseUrl + '/api' })
+init({ baseUrl })
     .then(async d2 => {
         window.d2 = d2 // Make d2 available in the console
         await getUserSettings().then(configI18n)
-        ReactDOM.render(
-            <D2UIApp initConfig={config}>
-                <App d2={d2} />
-            </D2UIApp>,
-            document.getElementById('root')
-        )
+        ReactDOM.render(<App d2={d2} />, document.getElementById('root'))
     })
     .catch(err => console.error(err))
