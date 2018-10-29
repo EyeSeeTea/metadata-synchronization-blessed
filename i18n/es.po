@@ -9,4 +9,4 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 msgid "Hello there"
-msgstr "Hola"
+msgstr "Hola qué tal estás"
