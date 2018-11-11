@@ -1,6 +1,6 @@
 {
-    "short_name": "React App",
-    "name": "Create React App Sample",
+    "short_name": "App Skeleton",
+    "name": "DHIS2 EyeSeeTea App Skeleton",
     "icons": [
         {
             "src": "favicon.ico",
