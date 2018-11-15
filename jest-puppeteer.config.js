@@ -15,6 +15,10 @@ module.exports = {
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
     },
     browserContext: 'default',
-    server: !startServer ? undefined : { command: serverCommand, port: port },
+    server: !startServer ? undefined : {
+        command: serverCommand,
+        port: port,
+        launchTimeout: 30 * 1000,
+    },
     config: { dhis2Url, appUrl },
 }
