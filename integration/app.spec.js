@@ -30,7 +30,7 @@ describe('Dhis App Skeleton App', () => {
 
         it('opens feedback with a welcome text', async () => {
             await expect(app.page).toMatch('Hello there')
-            // To stop the browser and see what's going: await jestPuppeteer.debug()
+            // To stop the browser and see what's going on
         })
     })
 })

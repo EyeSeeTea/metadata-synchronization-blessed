@@ -5,8 +5,11 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2018-10-25T09:43:33.778Z\n"
-"PO-Revision-Date: 2018-10-25T09:43:33.778Z\n"
+"POT-Creation-Date: 2018-11-15T11:18:10.896Z\n"
+"PO-Revision-Date: 2018-11-15T11:18:10.896Z\n"
 
 msgid "Hello there"
+msgstr ""
+
+msgid "Click to show feedback"
 msgstr ""

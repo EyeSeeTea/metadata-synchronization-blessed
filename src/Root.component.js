@@ -15,12 +15,16 @@ class Root extends React.Component {
     }
 
     render() {
+        const { d2 } = this.props
+
         return (
             <React.Fragment>
+                <p>Current user: {d2.currentUser.displayName}</p>
+                
                 <p>Add your App components here</p>
 
                 <button onClick={this.showFeedback}>
-                    Click to show feedback
+                    {i18n.t("Click to show feedback")}
                 </button>
             </React.Fragment>
         )

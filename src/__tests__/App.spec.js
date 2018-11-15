@@ -5,8 +5,14 @@ import HeaderBar from '@dhis2/d2-ui-header-bar'
 import { getD2Stub } from '../utils/testing'
 import App from '../App.component'
 
+const appConfig = {
+    "appearance": {
+        "showShareButton": true
+    },
+}
+
 function render({ props } = {}) {
-    const fullProps = { d2: getD2Stub(), ...props }
+    const fullProps = { d2: getD2Stub(), appConfig, ...props }
     return shallow(<App {...fullProps} />)
 }
 

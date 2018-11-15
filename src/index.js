@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { init, config, getUserSettings, getManifest } from 'd2/lib/d2'
+import 'font-awesome/css/font-awesome.min.css'
 import _ from 'lodash'
 
 import App from './App.component'
@@ -64,7 +65,13 @@ async function main() {
         await loadHeaderBarTranslations(d2)
         const userSettings = await getUserSettings()
         configI18n(userSettings)
-        ReactDOM.render(<App d2={d2} />, document.getElementById('root'))
+        const appConfig = await fetch('app-config.json', {
+            credentials: 'same-origin',
+        }).then(res => res.json())
+        ReactDOM.render(
+            <App d2={d2} appConfig={appConfig} />,
+            document.getElementById('root')
+        )
     } catch (err) {
         console.error(err)
         const message = err.toString().match('Unable to get schemas') ? (
