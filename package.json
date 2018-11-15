@@ -37,6 +37,8 @@
     "build": "rm -rf build/ && react-scripts build && yarn run manifest && cp -r i18n icon.png build",
     "build-webapp": "yarn build && rm -f $npm_package_name.zip && cd build && zip -r ../$npm_package_name.zip *",
     "test": "jest",
+    "test:integration": "jest -c integration/jest.config.js",
+    "test:all": "yarn test && yarn test:integration",
     "lint": "eslint ./src",
     "eject": "react-scripts eject",
     "prettify": "prettier \"src/**/*.{js,jsx,json,css}\" --write",
@@ -54,7 +56,10 @@
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
     "@dhis2/code-style": "^1.4.0",
-    "babel-core": "7.0.0-bridge.0"
+    "babel-core": "7.0.0-bridge.0",
+    "jest-puppeteer": "^3.5.1",
+    "puppeteer": "^1.10.0",
+    "sinon": "^7.1.1"
   },
   "manifest.webapp": {
     "name": "dhis2-app-skeleton",

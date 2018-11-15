@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import Paper from '@material-ui/core/Paper'
 import HeaderBar from '@dhis2/d2-ui-header-bar'
-import i18n from '@dhis2/d2-i18n'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import JssProvider from 'react-jss/lib/JssProvider'
 import { createGenerateClassName } from '@material-ui/core/styles'
+import OldMuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import { muiTheme } from './config/dhis2.theme'
+import { muiTheme } from './dhis2.theme'
 import './App.css'
+import SnackbarProvider from './components/feedback/SnackbarProvider.component'
+import Root from './Root.component'
 
 const generateClassName = createGenerateClassName({
     dangerouslyUseGlobalCSS: false,
@@ -27,11 +28,17 @@ class App extends Component {
             <React.Fragment>
                 <JssProvider generateClassName={generateClassName}>
                     <MuiThemeProvider theme={muiTheme}>
-                        <HeaderBar d2={d2} />
+                        <OldMuiThemeProvider>
+                            <React.Fragment>
+                                <HeaderBar d2={d2} />
 
-                        <Paper className="welcome">
-                            {i18n.t('Hello there')}
-                        </Paper>
+                                <div className="content">
+                                    <SnackbarProvider>
+                                        <Root d2={d2} />
+                                    </SnackbarProvider>
+                                </div>
+                            </React.Fragment>
+                        </OldMuiThemeProvider>
                     </MuiThemeProvider>
                 </JssProvider>
             </React.Fragment>
