@@ -14,6 +14,11 @@ cache:
   directories:
     - '.eslintcache'
     - 'node_modules'
+env:
+  - HEADLESS=true
+  - REACT_APP_DHIS2_URL_TEST=https://play.dhis2.org/2.30
+  - REACT_APP_URL_TEST=http://localhost:9000
+  - START_SERVER=true
 
 script:
-- yarn run test
+- yarn run test:all

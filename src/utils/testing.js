@@ -143,7 +143,6 @@ export async function getTestUser(d2, { auth, userAttributes }) {
                 ? { ...objValue, ...srcValue }
                 : srcValue
         returnUser = _.mergeWith(existingTestUser, userAttributes, customizer)
-        debugger
         response = await api.update(`/users/${existingTestUser.id}`, returnUser)
     } else {
         returnUser = user
