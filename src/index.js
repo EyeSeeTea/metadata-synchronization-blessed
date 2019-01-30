@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { init, config, getUserSettings, getManifest } from 'd2/lib/d2'
+import { init, config, getUserSettings, getManifest } from 'd2'
 import 'font-awesome/css/font-awesome.min.css'
 import _ from 'lodash'
 

@@ -31,7 +31,7 @@ $ yarn test
 Integration tests:
 
 ```
-$ CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8082 yarn cy:e2e:open
+$ CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:open
 ```
 
 ## Build
