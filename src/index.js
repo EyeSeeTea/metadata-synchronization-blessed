@@ -4,8 +4,7 @@ import { init, config, getUserSettings, getManifest } from 'd2'
 import 'font-awesome/css/font-awesome.min.css'
 import _ from 'lodash'
 
-import App from './App.component'
-import './index.css'
+import App from './components/app/App'
 import i18n from './locales'
 
 function isLangRTL(code) {

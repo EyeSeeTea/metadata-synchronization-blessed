@@ -7,11 +7,11 @@ import { createGenerateClassName } from '@material-ui/core/styles'
 import OldMuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import _ from 'lodash'
 
-import { muiTheme } from './dhis2.theme'
+import { muiTheme } from '../../dhis2.theme'
 import './App.css'
-import SnackbarProvider from './components/feedback/SnackbarProvider.component'
-import Root from './Root.component'
-import Share from './components/share/Share.component'
+import SnackbarProvider from '../feedback/SnackbarProvider'
+import Root from './Root'
+import Share from '../share/Share'
 
 const generateClassName = createGenerateClassName({
     dangerouslyUseGlobalCSS: false,

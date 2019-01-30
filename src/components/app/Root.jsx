@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import i18n from '@dhis2/d2-i18n'
 
-import { withFeedback, levels } from './components/feedback'
+import { withFeedback, levels } from '../feedback'
 
 class Root extends React.Component {
     static propTypes = {

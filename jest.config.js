@@ -2,7 +2,7 @@ module.exports = {
     setupTestFrameworkScriptFile: '<rootDir>/config/testSetup.js',
     collectCoverageFrom: ['src/**/*.js'],
     testPathIgnorePatterns: ['/node_modules/', '/cypress'],
-    transformIgnorePatterns: ['/node_modules/(?!@dhis2/d2-ui-header-bar)'],
+    transformIgnorePatterns: ['/node_modules/(?!@dhis2)'],
     modulePaths: ['src'],
     moduleNameMapper: {
         '\\.(css|scss)$': '<rootDir>/config/styleMock.js',

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import snackbarContext from './context'
-import SnackbarConsumer from './SnackbarConsumer.component'
+import SnackbarConsumer from './SnackbarConsumer'
 
 export default class SnackbarProvider extends Component {
     constructor(props) {
