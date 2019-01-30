@@ -33,21 +33,28 @@
   },
   "scripts": {
     "prestart": "yarn localize && d2-manifest package.json manifest.webapp",
-    "start": "BROWSER=false PORT=${PORT:-8001} react-scripts start",
+    "start": "BROWSER=false PORT=${PORT:-8081} react-scripts start",
     "prebuild": "yarn test",
-    "build": "rm -rf build/ && react-scripts build && yarn run manifest && cp -r i18n icon.png build",
+    "build": "rm -rf build/ && yarn localize && react-scripts build && yarn run manifest && cp -r i18n icon.png build",
     "build-webapp": "yarn build && rm -f $npm_package_name.zip && cd build && zip -r ../$npm_package_name.zip *",
     "test": "jest",
     "test:integration": "jest -c integration/jest.config.js",
     "test:all": "yarn test && yarn test:integration",
     "lint": "eslint ./src",
     "eject": "react-scripts eject",
-    "prettify": "prettier \"src/**/*.{js,jsx,json,css}\" --write",
+    "prettify": "prettier \"{src,config,cypress}/**/*.{js,jsx,json,css}\" --write",
     "extract-pot": "d2-i18n-extract -p src/ -o i18n/",
     "localize": "yarn extract-pot && d2-i18n-generate -n dhis2-app-skeleton -p ./i18n/ -o ./src/locales/",
     "update-po": "yarn extract-pot && for pofile in i18n/*.po; do msgmerge --backup=off -U $pofile i18n/en.pot; done",
     "manifest": "d2-manifest package.json build/manifest.webapp",
-    "format": "code-style"
+    "format": "code-style",
+    "cy:verify": "cypress verify",
+    "cy:stub:run": "cypress run",
+    "cy:stub:open": "cypress open",
+    "cy:e2e:open": "CYPRESS_E2E=true cypress open",
+    "cy:e2e:run": "CYPRESS_E2E=true cypress run",
+    "cy:e2e:update": "CYPRESS_GEN_FIXTURES=true cypress run --config video=false",
+    "cy:e2e:open:update": "CYPRESS_GEN_FIXTURES=true cypress open"
   },
   "husky": {
     "hooks": {
@@ -58,8 +65,7 @@
     "@babel/core": "^7.0.0-0",
     "@dhis2/code-style": "^1.4.0",
     "babel-core": "7.0.0-bridge.0",
-    "jest-puppeteer": "^3.5.1",
-    "puppeteer": "^1.10.0",
+    "cypress": "^3.1.4",
     "sinon": "^7.1.1"
   },
   "manifest.webapp": {

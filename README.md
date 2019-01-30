@@ -22,8 +22,16 @@ $ PORT=8082 REACT_APP_DHIS2_URL="https://play.dhis2.org/dev" yarn start
 
 ## Tests
 
+Unit tests:
+
 ```
 $ yarn test
+```
+
+Integration tests:
+
+```
+$ CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8082 yarn cy:e2e:open
 ```
 
 ## Build

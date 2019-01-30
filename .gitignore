@@ -18,9 +18,14 @@ manifest.webapp
 .env.production.local
 *.sublime-project
 *.sublime-workspace
+*.code-workspace
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
 src/locales/
+
+# cypress
+cypress/screenshots/
+cypress/videos/

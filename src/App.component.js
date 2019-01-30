@@ -50,7 +50,7 @@ class App extends Component {
                             <React.Fragment>
                                 <HeaderBar d2={d2} />
 
-                                <div className="content">
+                                <div id="app" className="content">
                                     <SnackbarProvider>
                                         <Root d2={d2} />
                                     </SnackbarProvider>
