@@ -1,46 +1,45 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import HeaderBar from '@dhis2/d2-ui-header-bar'
-import { MuiThemeProvider } from '@material-ui/core/styles'
-import JssProvider from 'react-jss/lib/JssProvider'
-import { createGenerateClassName } from '@material-ui/core/styles'
-import OldMuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import _ from 'lodash'
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import HeaderBar from "@dhis2/d2-ui-header-bar";
+import { MuiThemeProvider } from "@material-ui/core/styles";
+import JssProvider from "react-jss/lib/JssProvider";
+import { createGenerateClassName } from "@material-ui/core/styles";
+import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import _ from "lodash";
 
-import { muiTheme } from '../../dhis2.theme'
-import './App.css'
-import SnackbarProvider from '../feedback/SnackbarProvider'
-import Root from './Root'
-import Share from '../share/Share'
+import { muiTheme } from "../../dhis2.theme";
+import "./App.css";
+import SnackbarProvider from "../feedback/SnackbarProvider";
+import Root from "./Root";
+import Share from "../share/Share";
 
 const generateClassName = createGenerateClassName({
     dangerouslyUseGlobalCSS: false,
-    productionPrefix: 'c',
-})
+    productionPrefix: "c",
+});
 
 class App extends Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         appConfig: PropTypes.object.isRequired,
-    }
+    };
 
     componentDidMount() {
-        const { d2, appConfig } = this.props
-        const appKey = _(this.props.appConfig).get('appKey')
+        const { d2, appConfig } = this.props;
+        const appKey = _(this.props.appConfig).get("appKey");
 
         if (appConfig && appConfig.feedback) {
             const feedbackOptions = {
                 ...appConfig.feedback,
-                i18nPath: 'feedback-tool/i18n',
-            }
-            window.$.feedbackDhis2(d2, appKey, feedbackOptions)
+                i18nPath: "feedback-tool/i18n",
+            };
+            window.$.feedbackDhis2(d2, appKey, feedbackOptions);
         }
     }
 
     render() {
-        const { d2, appConfig } = this.props
-        const showShareButton =
-            _(appConfig).get('appearance.showShareButton') || false
+        const { d2, appConfig } = this.props;
+        const showShareButton = _(appConfig).get("appearance.showShareButton") || false;
 
         return (
             <React.Fragment>
@@ -62,8 +61,8 @@ class App extends Component {
                     </MuiThemeProvider>
                 </JssProvider>
             </React.Fragment>
-        )
+        );
     }
 }
 
-export default App
+export default App;

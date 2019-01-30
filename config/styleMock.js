@@ -1,3 +1,3 @@
 // Turns style imports into empty objects
 
-module.exports = {}
+module.exports = {};

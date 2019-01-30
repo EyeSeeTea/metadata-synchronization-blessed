@@ -4,5 +4,5 @@ export function getD2Stub() {
             systemInfo: {},
         },
         currentUser: {},
-    }
+    };
 }

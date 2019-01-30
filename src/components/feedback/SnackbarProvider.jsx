@@ -1,16 +1,16 @@
-import React, { Component } from 'react'
-import snackbarContext from './context'
-import SnackbarConsumer from './SnackbarConsumer'
+import React, { Component } from "react";
+import snackbarContext from "./context";
+import SnackbarConsumer from "./SnackbarConsumer";
 
 export default class SnackbarProvider extends Component {
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             isOpen: false,
-            message: '',
-            variant: 'success',
-        }
+            message: "",
+            variant: "success",
+        };
     }
 
     // level : "success" | "info" | "warning" | "error"
@@ -19,18 +19,18 @@ export default class SnackbarProvider extends Component {
             message,
             isOpen: true,
             variant: level,
-        })
-    }
+        });
+    };
 
     closeSnackbar = () => {
         this.setState({
-            message: '',
+            message: "",
             isOpen: false,
-        })
-    }
+        });
+    };
 
     render() {
-        const { children } = this.props
+        const { children } = this.props;
 
         const value = {
             openSnackbar: this.openSnackbar,
@@ -38,13 +38,13 @@ export default class SnackbarProvider extends Component {
             snackbarIsOpen: this.state.isOpen,
             message: this.state.message,
             variant: this.state.variant,
-        }
+        };
 
         return (
             <snackbarContext.Provider value={value}>
                 <SnackbarConsumer />
                 {children}
             </snackbarContext.Provider>
-        )
+        );
     }
 }

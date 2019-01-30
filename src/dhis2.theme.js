@@ -1,30 +1,30 @@
-import { createMuiTheme } from '@material-ui/core/styles'
+import { createMuiTheme } from "@material-ui/core/styles";
 
 // Color palette from https://projects.invisionapp.com/share/A7LT4TJYETS#/screens/302550228_Color
 export const colors = {
-    accentPrimary: '#1976d2',
-    accentPrimaryDark: '#004BA0',
-    accentPrimaryLight: '#63A4FF',
-    accentPrimaryLightest: '#EAF4FF',
+    accentPrimary: "#1976d2",
+    accentPrimaryDark: "#004BA0",
+    accentPrimaryLight: "#63A4FF",
+    accentPrimaryLightest: "#EAF4FF",
 
-    accentSecondary: '#00796B',
-    accentSecondaryDark: '#004C40',
-    accentSecondaryLight: '#48A999',
-    accentSecondaryLightest: '#B2DFDB',
+    accentSecondary: "#00796B",
+    accentSecondaryDark: "#004C40",
+    accentSecondaryLight: "#48A999",
+    accentSecondaryLightest: "#B2DFDB",
 
-    black: '#000000',
-    greyBlack: '#494949',
-    grey: '#9E9E9E',
-    greyLight: '#E0E0E0',
-    blueGrey: '#ECEFF1',
-    snow: '#F4F6F8',
-    white: '#FFFFFF', // Not included in palette!
+    black: "#000000",
+    greyBlack: "#494949",
+    grey: "#9E9E9E",
+    greyLight: "#E0E0E0",
+    blueGrey: "#ECEFF1",
+    snow: "#F4F6F8",
+    white: "#FFFFFF", // Not included in palette!
 
-    negative: '#E53935',
-    warning: '#F19C02',
-    positive: '#3D9305',
-    info: '#EAF4FF',
-}
+    negative: "#E53935",
+    warning: "#F19C02",
+    positive: "#3D9305",
+    info: "#EAF4FF",
+};
 export const palette = {
     common: {
         white: colors.white,
@@ -67,18 +67,18 @@ export const palette = {
     background: {
         paper: colors.white,
         default: colors.snow,
-        grey: '#FCFCFC',
+        grey: "#FCFCFC",
         hover: colors.greyLight,
     },
     divider: colors.greyLight,
     shadow: colors.grey,
-}
+};
 
 export const muiTheme = createMuiTheme({
     colors,
     palette,
     typography: {
-        fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+        fontFamily: "Roboto, Helvetica, Arial, sans-serif",
         useNextVariants: true,
     },
     overrides: {
@@ -88,4 +88,4 @@ export const muiTheme = createMuiTheme({
             },
         },
     },
-})
+});
