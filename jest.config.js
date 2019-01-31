@@ -8,6 +8,12 @@ module.exports = {
         '\\.(css|scss)$': '<rootDir>/config/styleMock.js',
         '\\.(jpg|jpeg|png|svg)$': '<rootDir>/config/fileMock.js',
     },
+    transform: {
+        "^.+\\.jsx?$": "babel-jest",
+        "^.+\\.tsx?$": "ts-jest",
+    },
+    testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
     testEnvironment: 'jsdom',
     globals: {
         window: true,
