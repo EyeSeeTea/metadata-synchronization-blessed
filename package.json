@@ -1,13 +1,13 @@
 {
-  "name": "dhis2-app-skeleton",
-  "description": "DHIS2 App Skeleton",
+  "name": "metadata-synchronization",
+  "description": "Metadata Synchronization",
   "version": "0.0.1",
   "license": "GPL-3.0",
   "author": "EyeSeeTea team",
   "homepage": "./",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eyeseetea/dhis2-app-skeleton.git"
+    "url": "git+https://github.com/eyeseetea/metadata-synchronization.git"
   },
   "dependencies": {
     "@dhis2/d2-i18n": "^1.0.4",
@@ -46,7 +46,7 @@
     "eject": "react-scripts eject",
     "prettify": "prettier \"{src,config,cypress}/**/*.{js,jsx,json,css}\" --write",
     "extract-pot": "d2-i18n-extract -p src/ -o i18n/",
-    "localize": "yarn extract-pot && d2-i18n-generate -n dhis2-app-skeleton -p ./i18n/ -o ./src/locales/",
+    "localize": "yarn extract-pot && d2-i18n-generate -n metadata-synchronization -p ./i18n/ -o ./src/locales/",
     "update-po": "yarn extract-pot && for pofile in i18n/*.po; do msgmerge --backup=off -U $pofile i18n/en.pot; done",
     "manifest": "d2-manifest package.json build/manifest.webapp",
     "cy:verify": "cypress verify",
@@ -83,8 +83,8 @@
     "wait-on": "^3.2.0"
   },
   "manifest.webapp": {
-    "name": "dhis2-app-skeleton",
-    "description": "DHIS2 Skeleton App",
+    "name": "metadata-synchronization",
+    "description": "Metadata Synchronization",
     "icons": {
       "48": "icon.png"
     },
