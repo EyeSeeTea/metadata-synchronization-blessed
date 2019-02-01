@@ -59,7 +59,7 @@
   },
   "husky": {
     "hooks": {
-      "_pre-commit": "yarn format && yarn extract-pot && CI=true yarn test"
+      "pre-push": "yarn extract-pot && yarn jest"
     }
   },
   "devDependencies": {
