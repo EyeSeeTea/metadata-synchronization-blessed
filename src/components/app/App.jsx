@@ -9,10 +9,11 @@ import { SnackbarProvider, LoadingProvider } from "d2-ui-components";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 
-import { muiTheme } from "../../dhis2.theme";
 import "./App.css";
 import Root from "./Root";
 import Share from "../share/Share";
+import {muiTheme} from "../../themes/dhis2.theme";
+import muiThemeLegacy from "../../themes/dhis2-legacy.theme";
 
 const generateClassName = createGenerateClassName({
     dangerouslyUseGlobalCSS: false,
@@ -47,7 +48,7 @@ class App extends Component {
             <React.Fragment>
                 <JssProvider generateClassName={generateClassName}>
                     <MuiThemeProvider theme={muiTheme}>
-                        <OldMuiThemeProvider>
+                        <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                             <LoadingProvider>
                                 {showHeader && (
                                     <HeaderBar appName={i18n.t("Metadata Synchronization")} />
