@@ -74,7 +74,7 @@ const genFixturesOnRequest = async xhr => {
 
     const req = xhrRequestMap[dedupKey];
     req.count += 1;
-    if (req.count == 2) {
+    if (req.count === 2) {
         xhrManager.duplicates += 1;
     }
 

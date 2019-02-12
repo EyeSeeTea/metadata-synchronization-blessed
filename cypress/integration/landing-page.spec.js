@@ -2,7 +2,7 @@
 
 context("Landing page", () => {
     before(() => {
-        cy.login("admin", "district");
+        cy.login("admin");
         cy.loadPage();
     });
 

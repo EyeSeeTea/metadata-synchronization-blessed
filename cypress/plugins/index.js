@@ -1,5 +1,3 @@
-var fs = require("fs");
-
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
 //
