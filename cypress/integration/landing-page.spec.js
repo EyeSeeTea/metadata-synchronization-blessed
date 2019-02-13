@@ -7,7 +7,7 @@ context("Landing page", () => {
     });
 
     it("has page title", () => {
-        cy.title().should("equal", "React App");
+        cy.title().should("equal", "Metadata Synchronization");
     });
 
     it("shows feedback when button clicked", () => {
