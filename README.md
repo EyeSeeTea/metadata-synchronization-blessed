@@ -1,10 +1,10 @@
-## Development
-
-Setup:
+## Setup
 
 ```
 $ yarn install
 ```
+
+## Development
 
 Start development server:
 
@@ -14,7 +14,7 @@ $ yarn start
 
 This will open the development server at port 8081 and will connect to DHIS 2 instance http://localhost:8080.
 
-Use custom values passing environment variables. An example:
+Use custom values passing environment variables:
 
 ```
 $ PORT=8082 REACT_APP_DHIS2_URL="https://play.dhis2.org/dev" yarn start
@@ -22,17 +22,24 @@ $ PORT=8082 REACT_APP_DHIS2_URL="https://play.dhis2.org/dev" yarn start
 
 ## Tests
 
-Unit tests:
+Run unit tests:
 
 ```
 $ yarn test
 ```
 
-Integration tests:
+Run integration tests locally:
 
 ```
-$ CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:open
+$ export CYPRESS_DHIS2_AUTH='admin:district'
+$ export CYPRESS_EXTERNAL_API="http://localhost:8080"
+$ export CYPRESS_ROOT_URL=http://localhost:8081
+
+$ yarn cy:e2e:run # non-interactive
+$ yarn cy:e2e:open # interactive UI
 ```
+
+For this to work in Travis CI, you will have to create an environment variable CYPRESS_DHIS2_AUTH (Settings -> Environment Variables) with the password used in your testing DHIS2 instance.
 
 ## Build
 

@@ -2,8 +2,21 @@
 /* global Promise, Cypress, cy */
 
 import { stubFetch, externalUrl, generateFixtures, stubBackend } from "./network-fixtures";
+import _ from "lodash";
 
-Cypress.Commands.add("login", (username, password) => {
+const dhis2AuthEnvValue = Cypress.env("DHIS2_AUTH");
+if (!dhis2AuthEnvValue) {
+    throw new Error("CYPRESS_DHIS2_AUTH=user1:pass1[,user2:pass2,...] not set");
+}
+
+const dhis2Auth = _(dhis2AuthEnvValue)
+    .split(",")
+    .map(auth => auth.split(":"))
+    .fromPairs()
+    .value();
+
+Cypress.Commands.add("login", (username, _password = null) => {
+    const password = _password || dhis2Auth[username];
     if (stubBackend) {
         cy.log(
             "Stubbing all backend network requests - unmatched requests will automatically fail"
@@ -35,10 +48,10 @@ Cypress.Commands.add("persistLogin", () => {
 
 Cypress.Commands.add("loadPage", (path = "/") => {
     cy.visit(path, { onBeforeLoad: stubFetch });
-    cy.get("#app", { log: false, timeout: 10000 }); // Waits for the page to fully load
+    cy.get("#app", { log: false, timeout: 20000 }); // Waits for the page to fully load
     if (generateFixtures) {
         //Make sure all the delayed network requests get captured
-        cy.wait(1000);
+        //cy.wait(1000);
     }
 });
 
