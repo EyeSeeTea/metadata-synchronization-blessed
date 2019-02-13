@@ -29,3 +29,6 @@ src/locales/
 # cypress
 cypress/screenshots/
 cypress/videos/
+
+# IntelliJ
+.idea/*
