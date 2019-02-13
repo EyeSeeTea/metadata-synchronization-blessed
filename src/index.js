@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { init, config, getUserSettings, getManifest } from "d2";
 import "font-awesome/css/font-awesome.min.css";
 import _ from "lodash";
+import { HashRouter } from "react-router-dom";
 
 import App from "./components/app/App";
 import i18n from "./locales";
@@ -57,7 +58,12 @@ async function main() {
         const appConfig = await fetch("app-config.json", {
             credentials: "same-origin",
         }).then(res => res.json());
-        ReactDOM.render(<App d2={d2} appConfig={appConfig} />, document.getElementById("root"));
+        ReactDOM.render(
+            <HashRouter>
+                <App d2={d2} appConfig={appConfig} />
+            </HashRouter>,
+            document.getElementById("root")
+        );
     } catch (err) {
         console.error(err);
         const message = err.toString().match("Unable to get schemas") ? (
