@@ -30,6 +30,7 @@
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-jss": "^8.6.1",
+    "react-router-dom": "^4.3.1",
     "react-scripts": "2.0.6-next.c662dfb0",
     "ts-jest": "^23.10.5"
   },
@@ -74,6 +75,7 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.0",
     "eslint-plugin-react": "^7.12.4",
+    "prop-types": "^15.7.1",
     "sinon": "^7.1.1",
     "typescript": "^3.2.4",
     "wait-on": "^3.2.0"
