@@ -5,11 +5,11 @@ import { MuiThemeProvider } from "@material-ui/core/styles";
 import JssProvider from "react-jss/lib/JssProvider";
 import { createGenerateClassName } from "@material-ui/core/styles";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import { SnackbarProvider } from "d2-ui-components";
 import _ from "lodash";
 
 import { muiTheme } from "../../dhis2.theme";
 import "./App.css";
-import SnackbarProvider from "../feedback/SnackbarProvider";
 import Root from "./Root";
 import Share from "../share/Share";
 
