@@ -4,13 +4,19 @@ module.exports = {
     extends: [
         'react-app',
         'prettier',
-        "plugin:cypress/recommended"
+        "eslint:recommended",
+        "plugin:cypress/recommended",
+        "plugin:@typescript-eslint/recommended"
     ],
     rules: {
         'no-console': 'off',
+        "@typescript-eslint/camelcase": "off",
+        "@typescript-eslint/no-parameter-properties": "off",
+        "@typescript-eslint/explicit-member-accessibility": "off"
     },
     plugins: [
-        "cypress"
+        "cypress",
+        "@typescript-eslint"
     ],
     env: {'cypress/globals': true},
     settings: {
