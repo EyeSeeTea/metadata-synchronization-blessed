@@ -947,6 +947,20 @@
     lodash "^4.17.10"
     material-ui "^0.20.0"
 
+"@dhis2/d2-ui-forms@^5.1.3":
+  version "5.1.3"
+  resolved "https://registry.yarnpkg.com/@dhis2/d2-ui-forms/-/d2-ui-forms-5.1.3.tgz#73884a0a038b87e9e5e85fa703fc225ea0b51fa4"
+  integrity sha512-1b4kRb2ebxRhyrjuKtnOVbLyzLc1X9CQ2Rvjb2zyRYlHJNHK+wGO9RCF6ZNTkDWg6mqmiBkgyWflBMNtSacGDA==
+  dependencies:
+    "@dhis2/d2-ui-core" "5.1.3"
+    babel-runtime "^6.26.0"
+    classnames "^2.2.5"
+    d2 "~31.1"
+    lodash "^4.17.10"
+    loglevel "^1.6.1"
+    material-ui "^0.20.0"
+    rxjs "^5.5.7"
+
 "@dhis2/d2-ui-group-editor@^5.1.1":
   version "5.1.3"
   resolved "https://registry.yarnpkg.com/@dhis2/d2-ui-group-editor/-/d2-ui-group-editor-5.1.3.tgz#7b25f1d5cc4d1c037917b2fbbcb4d5d6cf005196"
@@ -7896,7 +7910,7 @@ log-update@^1.0.2:
     ansi-escapes "^1.0.0"
     cli-cursor "^1.0.2"
 
-loglevel@^1.4.0, loglevel@^1.4.1:
+loglevel@^1.4.0, loglevel@^1.4.1, loglevel@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.6.1.tgz#e0fc95133b6ef276cdc8887cdaf24aa6f156f8fa"
   integrity sha1-4PyVEztu8nbNyIh82vJKpvFW+Po=
