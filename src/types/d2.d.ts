@@ -1,4 +1,4 @@
-interface DataStoreNamespace {
+export interface DataStoreNamespace {
     delete(key: string): Promise<>;
     get(key: string): Promise<string>;
     getKeys(): Promise<string[]>;
@@ -14,12 +14,4 @@ export interface D2 {
         create(namespace: string): Promise<DataStoreNamespace>;
         delete(namespace: string): Promise<>;
     };
-}
-
-export default class D2DataStore {
-    d2: D2;
-
-    constructor(d2: D2) {
-        this.d2 = d2;
-    }
 }
