@@ -29,7 +29,7 @@ function configI18n(userSettings) {
 
 async function getBaseUrl() {
     if (process.env.NODE_ENV === "development") {
-        const envVariable = "REACT_APP_DHIS2_URL";
+        const envVariable = "REACT_APP_DHIS2_BASE_URL";
         const defaultServer = "http://localhost:8080";
         const baseUrl = process.env[envVariable] || defaultServer;
         console.info(`[DEV] DHIS2 instance: ${baseUrl}`);
