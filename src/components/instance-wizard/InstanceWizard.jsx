@@ -5,30 +5,9 @@ import { withRouter } from "react-router-dom";
 
 import Instance from "../../models/instance";
 
-import Wizard from "../wizard/Wizard";
 import FormHeading from "./FormHeading";
-import SaveStep from "./save/SaveStep";
-import GeneralInfoStep from "./general-info/GeneralInfoStep";
+import GeneralInfoStep from "./GeneralInfoForm";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
-
-import { getValidationMessages } from "../../utils/validations";
-
-const stepsBaseInfo = [
-    {
-        key: "general-info",
-        label: i18n.t("General info"),
-        component: GeneralInfoStep,
-        validationKeys: ["name", "url", "username", "password"],
-        help: i18n.t("Insert the details required to configure a new instance"),
-    },
-    {
-        key: "save",
-        label: i18n.t("Save"),
-        component: SaveStep,
-        validationKeys: [],
-        help: i18n.t("Press the button to create the instance"),
-    },
-];
 
 class InstanceWizard extends React.Component {
     static propTypes = {
@@ -61,27 +40,9 @@ class InstanceWizard extends React.Component {
         this.setState({ instance });
     };
 
-    onStepChangeRequest = currentStep => {
-        return getValidationMessages(this.state.instance, currentStep.validationKeys);
-    };
-
     render() {
-        const { d2, location } = this.props;
-        const { instance, dialogOpen } = this.state;
-
-        const steps = stepsBaseInfo.map(step => ({
-            ...step,
-            props: {
-                d2,
-                instance,
-                onChange: this.onChange,
-            },
-        }));
-
-        const urlHash = location.hash.slice(1);
-        const stepExists = steps.find(step => step.key === urlHash);
-        const firstStepKey = steps.map(step => step.key)[0];
-        const initialStepKey = stepExists ? urlHash : firstStepKey;
+        const { dialogOpen } = this.state;
+        const { d2 } = this.props;
 
         return (
             <React.Fragment>
@@ -94,13 +55,16 @@ class InstanceWizard extends React.Component {
                         "You are about to exit the instance creation wizard. All your changes will be lost. Are you sure?"
                     )}
                 />
-                <FormHeading title={i18n.t("New Instance")} onBackClick={this.cancelSave} />
 
-                <Wizard
-                    steps={steps}
-                    initialStepKey={initialStepKey}
-                    useSnackFeedback={true}
-                    onStepChangeRequest={this.onStepChangeRequest}
+                <FormHeading
+                    title={i18n.t("New Instance")}
+                    onBackClick={this.cancelSave}
+                />
+
+                <GeneralInfoStep
+                    d2={d2}
+                    instance={this.state.instance}
+                    onChange={this.onChange}
                 />
             </React.Fragment>
         );

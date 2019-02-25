@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-02-25T09:08:29.785Z\n"
-"PO-Revision-Date: 2019-02-25T09:08:29.785Z\n"
+"POT-Creation-Date: 2019-02-25T23:36:36.644Z\n"
+"PO-Revision-Date: 2019-02-25T23:36:36.644Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Server"
 msgstr ""
 
-msgid "Endpoint"
+msgid "Url endpoint"
 msgstr ""
 
 msgid "Username"
@@ -65,16 +65,25 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-msgid "General info"
+msgid "Name (*)"
 msgstr ""
 
-msgid "Insert the details required to configure a new instance"
+msgid "Field cannot be blank"
 msgstr ""
 
-msgid "Save"
+msgid "Url endpoint (*)"
 msgstr ""
 
-msgid "Press the button to create the instance"
+msgid "Field should be an url"
+msgstr ""
+
+msgid "Username (*)"
+msgstr ""
+
+msgid "Password (*)"
+msgstr ""
+
+msgid "Please fix the issues before saving"
 msgstr ""
 
 msgid "Cancel Instance Creation?"
@@ -83,29 +92,8 @@ msgstr ""
 msgid "New Instance"
 msgstr ""
 
-msgid "Field cannot be blank"
+msgid "Saving..."
 msgstr ""
 
-msgid "Password"
-msgstr ""
-
-msgid "Error saving instance"
-msgstr ""
-
-msgid "Setup is finished. Press the button Save to save the data"
-msgstr ""
-
-msgid "Help"
-msgstr ""
-
-msgid "Previous"
-msgstr ""
-
-msgid "Next"
-msgstr ""
-
-msgid "Field {{field}} cannot be blank"
-msgstr ""
-
-msgid "Field {{field}} cannot be blank if field {{other}} is set"
+msgid "Save"
 msgstr ""

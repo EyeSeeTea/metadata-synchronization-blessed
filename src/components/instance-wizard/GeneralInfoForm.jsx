@@ -1,16 +1,30 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
+import {withRouter} from "react-router-dom";
 
 import { TextField } from "@dhis2/d2-ui-core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import { Validators } from "@dhis2/d2-ui-forms";
 import { Card, CardContent } from "@material-ui/core";
+import { withSnackbar } from "d2-ui-components";
 
-class GeneralInfoStep extends React.Component {
+import SaveButton from "./SaveButton";
+import isFormValid from "./FieldValidator";
+
+class GeneralInfoForm extends React.Component {
+    state = {
+        isSaving: false,
+    };
+
     static propTypes = {
         d2: PropTypes.object.isRequired,
         instance: PropTypes.object.isRequired,
+        snackbar: PropTypes.object.isRequired,
+    };
+
+    setFormReference = (formReference) => {
+        this.formReference = formReference;
     };
 
     onUpdateField = (fieldName, newValue) => {
@@ -48,9 +62,9 @@ class GeneralInfoStep extends React.Component {
                 value: instance.name,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Name"),
+                    floatingLabelText: i18n.t("Name (*)"),
                     style: { width: "33%" },
-                    changeEvent: "onBlur",
+                    changeEvent: "onChange",
                     "data-field": "name",
                 },
                 validators: [
@@ -67,7 +81,7 @@ class GeneralInfoStep extends React.Component {
                 value: instance.url,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Endpoint"),
+                    floatingLabelText: i18n.t("Url endpoint (*)"),
                     style: { width: "33%" },
                     changeEvent: "onBlur",
                     "data-field": "url",
@@ -79,6 +93,12 @@ class GeneralInfoStep extends React.Component {
                             return Validators.isRequired(value);
                         },
                     },
+                    {
+                        message: i18n.t("Field should be an url"),
+                        validator(value) {
+                            return Validators.isUrl(value);
+                        },
+                    },
                 ],
             },
             {
@@ -86,7 +106,7 @@ class GeneralInfoStep extends React.Component {
                 value: instance.username,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Username"),
+                    floatingLabelText: i18n.t("Username (*)"),
                     style: { width: "33%" },
                     changeEvent: "onBlur",
                     "data-field": "username",
@@ -105,11 +125,11 @@ class GeneralInfoStep extends React.Component {
                 value: instance.password,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Password"),
+                    floatingLabelText: i18n.t("Password (*)"),
                     style: { width: "33%" },
                     changeEvent: "onBlur",
                     type: "password",
-                    autocomplete: "new-password",
+                    autoComplete: "new-password",
                     "data-field": "password",
                 },
                 validators: [
@@ -135,14 +155,37 @@ class GeneralInfoStep extends React.Component {
             },
         ];
 
+        const saveAction = () => {
+            const formErrors = isFormValid(fields, this.formReference);
+            if (formErrors.length > 0) {
+                this.props.snackbar.error(i18n.t("Please fix the issues before saving"));
+                return;
+            }
+
+            this.setState({ isSaving: true });
+
+            this.props.instance.save(this.props.d2).then(() => {
+                this.setState({ isSaving: false });
+                this.props.history.push("/instance-configurator");
+            });
+        };
+
         return (
             <Card>
                 <CardContent>
-                    <FormBuilder fields={fields} onUpdateField={this.onUpdateField} />
+                    <FormBuilder
+                        fields={fields}
+                        onUpdateField={this.onUpdateField}
+                        ref={this.setFormReference}
+                    />
+                    <SaveButton
+                        onClick={saveAction}
+                        isSaving={this.state.isSaving}
+                    />
                 </CardContent>
             </Card>
         );
     }
 }
 
-export default GeneralInfoStep;
+export default withSnackbar(withRouter(GeneralInfoForm));
