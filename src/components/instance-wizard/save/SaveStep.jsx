@@ -4,7 +4,7 @@ import i18n from "@dhis2/d2-i18n";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
-import { withFeedback, levels } from "../../feedback";
+import { withSnackbar } from "d2-ui-components";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 
 const styles = theme => ({
@@ -28,6 +28,7 @@ class SaveStep extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         instance: PropTypes.object.isRequired,
+        snackbar: PropTypes.object.isRequired,
     };
 
     save = async () => {
@@ -37,14 +38,13 @@ class SaveStep extends React.Component {
         this.setState({ isSaving: false });
 
         if (saveResponse.status) {
-            this.props.feedback(
-                levels.SUCCESS,
+            this.props.snackbar.success(
                 i18n.t("Instance created: {{name}}", { name: instance.name })
             );
             this.props.history.push("/instance-configurator");
         } else {
             this.setState({ errorMessage: saveResponse.error });
-            this.props.feedback(levels.ERROR, i18n.t("Error saving instance"));
+            this.props.snackbar.error(i18n.t("Error saving instance"));
         }
     };
 
@@ -111,4 +111,4 @@ class SaveStep extends React.Component {
     }
 }
 
-export default withFeedback(withRouter(withStyles(styles)(SaveStep)));
+export default withSnackbar(withRouter(withStyles(styles)(SaveStep)));
