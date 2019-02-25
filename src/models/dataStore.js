@@ -29,17 +29,20 @@ async function saveDataStore(d2, dataStoreKey, newValue) {
 export async function listInstances(d2, filters, pagination) {
     const instanceArray = await getDataStore(d2, instancesKey);
 
-    const field = pagination.sorting.field;
-    const direction = pagination.sorting.direction;
-    const newSortingDirection = _.some(['iasc', 'idesc'],
-        dir => dir === direction) ? direction.substr(1) : direction;
-    const sortedInstances = _.sortBy(instanceArray,
-        [instance => instance[field].toLowerCase(), [newSortingDirection]]);
+    const { searchValue = "" } = filters || {};
+    const filteredInstances = _.filter(instanceArray,
+        o => _(o).keys().some(k => o[k].toLowerCase().includes(searchValue.toLowerCase())));
 
-    const filteredInstances = _.filter(sortedInstances,
-        o => _(o).keys().some(k => o[k].toLowerCase().includes(filters.search.toLowerCase())));
+    const { sorting } = pagination || {};
+    const [field, direction] = sorting || [];
+    const sortedInstances = _.sortBy(filteredInstances,
+        [instance => instance[field].toLowerCase(), [direction]]);
 
-    return {objects: filteredInstances, pager: {total: 0}};
+    const { page = 1, pageSize = 20 } = pagination || {};
+    const currentPosition = (page - 1) * pageSize;
+    const paginatedInstances = _.slice(sortedInstances, currentPosition, currentPosition + pageSize);
+
+    return {objects: paginatedInstances, pager: {total: 0}};
 }
 
 export async function saveNewInstance(d2, instance) {
