@@ -49,7 +49,9 @@ class App extends Component {
                     <MuiThemeProvider theme={muiTheme}>
                         <OldMuiThemeProvider>
                             <React.Fragment>
-                                { showHeader && <HeaderBar appName={i18n.t("Metadata Synchronization")} /> }
+                                {showHeader && (
+                                    <HeaderBar appName={i18n.t("Metadata Synchronization")} />
+                                )}
 
                                 <div id="app" className="content">
                                     <SnackbarProvider>

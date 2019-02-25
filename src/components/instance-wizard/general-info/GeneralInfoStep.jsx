@@ -60,7 +60,7 @@ class GeneralInfoStep extends React.Component {
                             return Validators.isRequired(value);
                         },
                     },
-                ]
+                ],
             },
             {
                 name: "url",
@@ -79,7 +79,7 @@ class GeneralInfoStep extends React.Component {
                             return Validators.isRequired(value);
                         },
                     },
-                ]
+                ],
             },
             {
                 name: "username",
@@ -98,7 +98,7 @@ class GeneralInfoStep extends React.Component {
                             return Validators.isRequired(value);
                         },
                     },
-                ]
+                ],
             },
             {
                 name: "password",
@@ -119,7 +119,7 @@ class GeneralInfoStep extends React.Component {
                             return Validators.isRequired(value);
                         },
                     },
-                ]
+                ],
             },
             {
                 name: "description",
@@ -130,8 +130,8 @@ class GeneralInfoStep extends React.Component {
                     style: { width: "33%" },
                     changeEvent: "onBlur",
                     "data-field": "description",
-                }
-            }
+                },
+            },
         ];
 
         return (

@@ -18,15 +18,15 @@ const stepsBaseInfo = [
         label: i18n.t("General info"),
         component: GeneralInfoStep,
         validationKeys: ["name", "url", "username", "password"],
-        help: i18n.t('Insert the details required to configure a new instance'),
+        help: i18n.t("Insert the details required to configure a new instance"),
     },
     {
         key: "save",
         label: i18n.t("Save"),
         component: SaveStep,
         validationKeys: [],
-        help: i18n.t('Press the button to create the instance'),
-    }
+        help: i18n.t("Press the button to create the instance"),
+    },
 ];
 
 class InstanceWizard extends React.Component {
@@ -95,10 +95,7 @@ class InstanceWizard extends React.Component {
                         "You are about to exit the instance creation wizard. All your changes will be lost. Are you sure?"
                     )}
                 />
-                <FormHeading
-                    title={i18n.t("New Instance")}
-                    onBackClick={this.cancelSave}
-                />
+                <FormHeading title={i18n.t("New Instance")} onBackClick={this.cancelSave} />
 
                 <Wizard
                     steps={steps}

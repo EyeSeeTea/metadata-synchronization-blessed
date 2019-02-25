@@ -11,19 +11,19 @@ class InstanceConfigurator extends React.Component {
     };
 
     columns = [
-        {name: "name", text: i18n.t("Server"), sortable: true},
-        {name: "url", text: i18n.t("Endpoint"), sortable: true},
-        {name: "username", text: i18n.t("Username"), sortable: true}
+        { name: "name", text: i18n.t("Server"), sortable: true },
+        { name: "url", text: i18n.t("Endpoint"), sortable: true },
+        { name: "username", text: i18n.t("Username"), sortable: true },
     ];
 
     // TODO: Make initialSorting optional, and default to first column, asc on d2-ui-components
     initialSorting = ["name", "asc"];
 
     detailsFields = [
-        {name: "name", text: i18n.t("Name")},
-        {name: "url", text: i18n.t("Endpoint")},
-        {name: "username", text: i18n.t("Username")},
-        {name: "description", text: i18n.t("Description")},
+        { name: "name", text: i18n.t("Name") },
+        { name: "url", text: i18n.t("Endpoint") },
+        { name: "username", text: i18n.t("Username") },
+        { name: "description", text: i18n.t("Description") },
     ];
 
     actions = [
@@ -43,7 +43,7 @@ class InstanceConfigurator extends React.Component {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: true,
-        }
+        },
     ];
 
     onCreate = () => {
@@ -51,7 +51,7 @@ class InstanceConfigurator extends React.Component {
     };
 
     render() {
-        const {d2} = this.props;
+        const { d2 } = this.props;
 
         return (
             <div>

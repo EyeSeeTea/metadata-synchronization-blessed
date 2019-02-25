@@ -11,7 +11,7 @@ import StepButton from "@material-ui/core/StepButton";
 import Button from "@material-ui/core/Button";
 import { IconButton } from "@material-ui/core";
 import Icon from "@material-ui/core/Icon";
-import {DialogHandler, withSnackbar} from "d2-ui-components";
+import { DialogHandler, withSnackbar } from "d2-ui-components";
 
 const styles = theme => ({
     root: {

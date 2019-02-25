@@ -30,19 +30,28 @@ export async function listInstances(d2, filters, pagination) {
     const instanceArray = await getDataStore(d2, instancesKey);
 
     const { searchValue = "" } = filters || {};
-    const filteredInstances = _.filter(instanceArray,
-        o => _(o).keys().some(k => o[k].toLowerCase().includes(searchValue.toLowerCase())));
+    const filteredInstances = _.filter(instanceArray, o =>
+        _(o)
+            .keys()
+            .some(k => o[k].toLowerCase().includes(searchValue.toLowerCase()))
+    );
 
     const { sorting } = pagination || {};
     const [field, direction] = sorting || [];
-    const sortedInstances = _.sortBy(filteredInstances,
-        [instance => instance[field].toLowerCase(), [direction]]);
+    const sortedInstances = _.sortBy(filteredInstances, [
+        instance => instance[field].toLowerCase(),
+        [direction],
+    ]);
 
     const { page = 1, pageSize = 20 } = pagination || {};
     const currentPosition = (page - 1) * pageSize;
-    const paginatedInstances = _.slice(sortedInstances, currentPosition, currentPosition + pageSize);
+    const paginatedInstances = _.slice(
+        sortedInstances,
+        currentPosition,
+        currentPosition + pageSize
+    );
 
-    return {objects: paginatedInstances, pager: {total: 0}};
+    return { objects: paginatedInstances, pager: { total: 0 } };
 }
 
 export async function saveNewInstance(d2, instance) {
@@ -50,11 +59,11 @@ export async function saveNewInstance(d2, instance) {
         const instanceArray = await getDataStore(d2, instancesKey);
         const newInstanceArray = [...instanceArray, instance];
         await saveDataStore(d2, instancesKey, newInstanceArray);
-        return { status: true }
+        return { status: true };
     } catch (e) {
         return {
             status: false,
-            error: e.toString()
-        }
+            error: e.toString(),
+        };
     }
 }

@@ -4,7 +4,7 @@ import i18n from "@dhis2/d2-i18n";
 const translations = {
     cannot_be_blank: namespace => i18n.t("Field {{field}} cannot be blank", namespace),
     cannot_be_blank_if_other_set: namespace =>
-        i18n.t("Field {{field}} cannot be blank if field {{other}} is set", namespace)
+        i18n.t("Field {{field}} cannot be blank if field {{other}} is set", namespace),
 };
 
 export function getValidationMessages(instance, validationKeys) {
