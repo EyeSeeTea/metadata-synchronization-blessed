@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { ObjectsTable } from "d2-ui-components";
+import { ObjectsTable, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 
 import Instance from "../../models/instance";
@@ -9,7 +9,22 @@ import Instance from "../../models/instance";
 class InstanceConfigurator extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
+        snackbar: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
+    };
+
+    onCreate = () => {
+        this.props.history.push("/instance-configurator/new");
+    };
+
+    onEdit = instance => {
+        console.log("TODO:Edit", instance);
+        this.props.snackbar.info("TODO: Edit " + instance.name);
+    };
+
+    onDelete = instance => {
+        console.log("TODO:Delete", instance);
+        this.props.snackbar.info("TODO: Delete " + instance.name);
     };
 
     columns = [
@@ -38,18 +53,15 @@ class InstanceConfigurator extends React.Component {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            onClick: dataSet => console.log("TODO:edit", dataSet),
+            onClick: this.onEdit,
         },
         {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: true,
+            onClick: this.onDelete,
         },
     ];
-
-    onCreate = () => {
-        this.props.history.push("/instance-configurator/new");
-    };
 
     render() {
         const { d2 } = this.props;
@@ -72,4 +84,4 @@ class InstanceConfigurator extends React.Component {
     }
 }
 
-export default withRouter(InstanceConfigurator);
+export default withSnackbar(withRouter(InstanceConfigurator));
