@@ -54,7 +54,7 @@ export async function saveNewInstance(d2, instance) {
     } catch (e) {
         return {
             status: false,
-            error: e
+            error: e.toString()
         }
     }
 }
