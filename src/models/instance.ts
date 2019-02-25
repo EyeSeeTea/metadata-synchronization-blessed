@@ -2,7 +2,6 @@ import {D2} from "../types/d2";
 import {TableFilters, TableList, TablePagination} from "../types/d2-ui-components";
 import {Response} from "../types/d2";
 import {listInstances, saveNewInstance} from "./dataStore";
-import _ from "lodash";
 
 export interface Data {
     name: string;
@@ -33,33 +32,6 @@ export default class Instance {
 
     public async save(d2: D2): Promise<Response> {
         return saveNewInstance(d2, this.data);
-    }
-
-    public validate() {
-        const { name, url, username, password } = this.data;
-
-        return _.pickBy({
-            name: !name.trim() ? {
-                key: "cannot_be_blank",
-                namespace: {field: "name"}
-            } : null,
-
-            url: !url.trim() ? {
-                key: "cannot_be_blank",
-                namespace: {field: "url"}
-            } : null,
-
-            username: !username.trim() ? {
-                key: "cannot_be_blank",
-                namespace: {field: "username"}
-            } : null,
-
-            password: !password.trim() ? {
-                key: "cannot_be_blank",
-                namespace: {field: "password"}
-            } : null,
-
-        });
     }
 
     public setName(name: string): Instance {
