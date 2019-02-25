@@ -37,7 +37,7 @@ class GeneralInfoStep extends React.Component {
                 console.error(`Field not implemented: ${fieldName}`);
                 newInstance = null;
         }
-        if (newInstance) onChange(newInstance);
+        if (newInstance !== null) onChange(newInstance);
     };
 
     render() {
@@ -131,6 +131,7 @@ class GeneralInfoStep extends React.Component {
                     changeEvent: "onBlur",
                     "data-field": "description",
                 },
+                validators: [],
             },
         ];
 

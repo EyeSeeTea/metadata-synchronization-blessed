@@ -90,6 +90,10 @@ export default class Instance {
         return new Instance({...this.data, password});
     }
 
+    public get password(): string {
+        return this.data.password;
+    }
+
     public setDescription(description: string): Instance {
         return new Instance({...this.data, description});
     }
