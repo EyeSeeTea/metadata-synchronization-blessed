@@ -41,6 +41,7 @@ class App extends Component {
     render() {
         const { d2, appConfig } = this.props;
         const showShareButton = _(appConfig).get("appearance.showShareButton") || false;
+        const showHeader = !process.env.REACT_APP_CYPRESS;
 
         return (
             <React.Fragment>
@@ -48,7 +49,7 @@ class App extends Component {
                     <MuiThemeProvider theme={muiTheme}>
                         <OldMuiThemeProvider>
                             <React.Fragment>
-                                <HeaderBar appName={i18n.t("Metadata Synchronization")} />
+                                { showHeader && <HeaderBar appName={i18n.t("Metadata Synchronization")} /> }
 
                                 <div id="app" className="content">
                                     <SnackbarProvider>
