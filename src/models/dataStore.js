@@ -7,12 +7,11 @@ async function getDataStore(d2, dataStoreKey, defaultValue = []) {
     const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
     if (!existsNamespace) {
         const dataStore = await d2.dataStore.create(dataStoreNamespace);
-        await dataStore.set(dataStoreKey, JSON.stringify(defaultValue));
+        await dataStore.set(dataStoreKey, defaultValue);
         return defaultValue;
     } else {
         const dataStore = await d2.dataStore.get(dataStoreNamespace);
-        const instanceJson = await dataStore.get(dataStoreKey);
-        return JSON.parse(instanceJson);
+        return await dataStore.get(dataStoreKey);
     }
 }
 
@@ -20,7 +19,7 @@ async function saveDataStore(d2, dataStoreKey, newValue) {
     const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
     if (!existsNamespace) {
         const dataStore = await d2.dataStore.create(dataStoreNamespace);
-        await dataStore.set(dataStoreKey, JSON.stringify(newValue));
+        await dataStore.set(dataStoreKey, newValue);
     } else {
         const dataStore = await d2.dataStore.get(dataStoreNamespace);
         await dataStore.set(dataStoreKey, newValue);
