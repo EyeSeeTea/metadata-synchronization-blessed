@@ -1,15 +1,15 @@
-export interface ObjectsTableList<T> {
+export interface TableList<T> {
     objects: T[];
     pager: {
         total: number;
     };
 }
 
-export interface ObjectsTableFilters {
+export interface TableFilters {
     search: string;
 }
 
-export interface ObjectsTablePagination {
+export interface TablePagination {
     page: number;
     pageSize: number;
     sorting: {

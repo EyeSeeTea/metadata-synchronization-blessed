@@ -15,3 +15,8 @@ export interface D2 {
         delete(namespace: string): Promise<>;
     };
 }
+
+export interface Response {
+    status: boolean;
+    error?: Error;
+}

@@ -7,8 +7,8 @@ const translations = {
         i18n.t("Field {{field}} cannot be blank if field {{other}} is set", namespace)
 };
 
-export function getValidationMessages(campaign, validationKeys) {
-    const validationObj = campaign.validate();
+export function getValidationMessages(instance, validationKeys) {
+    const validationObj = instance.validate();
 
     return _(validationObj)
         .at(validationKeys)
