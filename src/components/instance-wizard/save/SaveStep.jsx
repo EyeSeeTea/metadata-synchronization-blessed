@@ -29,6 +29,7 @@ class SaveStep extends React.Component {
         d2: PropTypes.object.isRequired,
         instance: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
+        history: PropTypes.object.isRequired,
     };
 
     save = async () => {

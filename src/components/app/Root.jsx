@@ -16,13 +16,13 @@ class Root extends React.Component {
         return (
             <Switch>
                 <Route
-                    path="/instance-configurator/new"
-                    render={props => <InstanceWizard d2={d2} {...props} />}
+                    path="/instance-configurator"
+                    render={props => <InstanceConfigurator d2={d2} {...props} />}
                 />
 
                 <Route
-                    path="/instance-configurator"
-                    render={props => <InstanceConfigurator d2={d2} {...props} />}
+                    path="/instance-configurator/new"
+                    render={props => <InstanceWizard d2={d2} {...props} />}
                 />
 
                 <Route render={() => <LandingPage d2={d2} />} />

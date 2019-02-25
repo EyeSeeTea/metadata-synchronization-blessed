@@ -2,12 +2,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { ObjectsTable } from "d2-ui-components";
+import { withRouter } from "react-router-dom";
 
 import Instance from "../../models/instance";
 
 class InstanceConfigurator extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
+        history: PropTypes.object.isRequired,
     };
 
     columns = [
@@ -16,7 +18,6 @@ class InstanceConfigurator extends React.Component {
         { name: "username", text: i18n.t("Username"), sortable: true },
     ];
 
-    // TODO: Make initialSorting optional, and default to first column, asc on d2-ui-components
     initialSorting = ["name", "asc"];
 
     detailsFields = [
@@ -71,4 +72,4 @@ class InstanceConfigurator extends React.Component {
     }
 }
 
-export default InstanceConfigurator;
+export default withRouter(InstanceConfigurator);

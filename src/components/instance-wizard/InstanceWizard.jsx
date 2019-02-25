@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { withRouter } from "react-router";
+import { withRouter } from "react-router-dom";
 
 import Instance from "../../models/instance";
 
@@ -9,8 +9,9 @@ import Wizard from "../wizard/Wizard";
 import FormHeading from "./FormHeading";
 import SaveStep from "./save/SaveStep";
 import GeneralInfoStep from "./general-info/GeneralInfoStep";
-import { getValidationMessages } from "../../utils/validations";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
+
+import { getValidationMessages } from "../../utils/validations";
 
 const stepsBaseInfo = [
     {
@@ -67,8 +68,6 @@ class InstanceWizard extends React.Component {
     render() {
         const { d2, location } = this.props;
         const { instance, dialogOpen } = this.state;
-        // TODO: Why are we making the campaign global in vaccination?
-        window.instance = instance;
 
         const steps = stepsBaseInfo.map(step => ({
             ...step,
