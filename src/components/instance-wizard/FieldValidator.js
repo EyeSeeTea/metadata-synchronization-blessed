@@ -19,7 +19,8 @@ const validateField = (field, formRef, formRefStateClone) => {
  * Lastly it will fetch the first field with a failing validator.
  */
 const getAllInvalidFields = (fieldConfigs, formRef, formRefStateClone) =>
-    fieldConfigs.map(fieldConfig => validateField(fieldConfig, formRef, formRefStateClone))
+    fieldConfigs
+        .map(fieldConfig => validateField(fieldConfig, formRef, formRefStateClone))
         .filter(field => field.invalid);
 
 /**

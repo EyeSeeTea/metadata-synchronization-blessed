@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import {withRouter} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 import { TextField } from "@dhis2/d2-ui-core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
@@ -25,7 +25,7 @@ class GeneralInfoForm extends React.Component {
         snackbar: PropTypes.object.isRequired,
     };
 
-    setFormReference = (formReference) => {
+    setFormReference = formReference => {
         this.formReference = formReference;
     };
 
@@ -182,10 +182,7 @@ class GeneralInfoForm extends React.Component {
                         onUpdateField={this.onUpdateField}
                         ref={this.setFormReference}
                     />
-                    <SaveButton
-                        onClick={saveAction}
-                        isSaving={this.state.isSaving}
-                    />
+                    <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
                 </CardContent>
             </Card>
         );

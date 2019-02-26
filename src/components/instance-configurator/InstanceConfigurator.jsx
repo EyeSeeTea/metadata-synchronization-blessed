@@ -24,13 +24,13 @@ class InstanceConfigurator extends React.Component {
     onEdit = instance => {
         this.props.history.push({
             pathname: "/instance-configurator/new",
-            instance
+            instance,
         });
     };
 
     onDelete = async instanceData => {
         const instance = new Instance(instanceData);
-        await instance.remove(this.props.d2).then((response) => {
+        await instance.remove(this.props.d2).then(response => {
             if (response.status) {
                 this.props.snackbar.success("Deleted " + instanceData.id);
 

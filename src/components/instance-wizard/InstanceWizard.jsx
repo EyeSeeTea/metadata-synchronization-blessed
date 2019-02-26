@@ -52,7 +52,9 @@ class InstanceWizard extends React.Component {
         const { dialogOpen } = this.state;
         const { d2 } = this.props;
 
-        const title = !this.state.isEdit ? i18n.t("Cancel Instance Creation") : i18n.t("Cancel Instance Editing");
+        const title = !this.state.isEdit
+            ? i18n.t("Cancel Instance Creation")
+            : i18n.t("Cancel Instance Editing");
 
         return (
             <React.Fragment>
@@ -64,10 +66,7 @@ class InstanceWizard extends React.Component {
                     contents={i18n.t("All your changes will be lost. Are you sure?")}
                 />
 
-                <FormHeading
-                    title={i18n.t("New Instance")}
-                    onBackClick={this.cancelSave}
-                />
+                <FormHeading title={i18n.t("New Instance")} onBackClick={this.cancelSave} />
 
                 <GeneralInfoStep
                     d2={d2}
