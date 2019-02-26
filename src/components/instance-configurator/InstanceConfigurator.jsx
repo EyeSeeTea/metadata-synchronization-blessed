@@ -45,7 +45,7 @@ class InstanceConfigurator extends React.Component {
 
     columns = [
         { name: "id", text: i18n.t("Server name"), sortable: true },
-        { name: "url", text: i18n.t("Url endpoint"), sortable: true },
+        { name: "url", text: i18n.t("URL endpoint"), sortable: true },
         { name: "username", text: i18n.t("Username"), sortable: true },
     ];
 
@@ -53,7 +53,7 @@ class InstanceConfigurator extends React.Component {
 
     detailsFields = [
         { name: "id", text: i18n.t("Server name") },
-        { name: "url", text: i18n.t("Url endpoint") },
+        { name: "url", text: i18n.t("URL endpoint") },
         { name: "username", text: i18n.t("Username") },
         { name: "description", text: i18n.t("Description") },
     ];

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-02-26T13:09:15.986Z\n"
-"PO-Revision-Date: 2019-02-26T13:09:15.986Z\n"
+"POT-Creation-Date: 2019-02-26T14:49:30.814Z\n"
+"PO-Revision-Date: 2019-02-26T14:49:30.814Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Server name"
 msgstr ""
 
-msgid "Url endpoint"
+msgid "URL endpoint"
 msgstr ""
 
 msgid "Username"
@@ -68,7 +68,7 @@ msgstr ""
 msgid "Field cannot be blank"
 msgstr ""
 
-msgid "Url endpoint (*)"
+msgid "URL endpoint (*)"
 msgstr ""
 
 msgid "Field should be an url"

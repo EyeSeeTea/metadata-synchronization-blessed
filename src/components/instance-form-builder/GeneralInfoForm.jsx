@@ -85,7 +85,7 @@ class GeneralInfoForm extends React.Component {
                 value: instance.url,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Url endpoint (*)"),
+                    floatingLabelText: i18n.t("URL endpoint (*)"),
                     style: { width: "33%" },
                     changeEvent: "onBlur",
                     "data-field": "url",
