@@ -34,8 +34,8 @@ class GeneralInfoForm extends React.Component {
         let newInstance;
 
         switch (fieldName) {
-            case "name":
-                newInstance = instance.setName(newValue);
+            case "id":
+                newInstance = instance.setId(newValue);
                 break;
             case "url":
                 newInstance = instance.setUrl(newValue);
@@ -60,14 +60,14 @@ class GeneralInfoForm extends React.Component {
         const { instance } = this.props;
         const fields = [
             {
-                name: "name",
-                value: instance.name,
+                name: "id",
+                value: instance.id,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Name (*)"),
+                    floatingLabelText: i18n.t("Server name (*)"),
                     style: { width: "33%" },
                     changeEvent: "onBlur",
-                    "data-field": "name",
+                    "data-field": "id",
                 },
                 validators: [
                     {

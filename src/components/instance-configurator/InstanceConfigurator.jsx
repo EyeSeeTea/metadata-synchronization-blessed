@@ -32,27 +32,27 @@ class InstanceConfigurator extends React.Component {
         const instance = new Instance(instanceData);
         await instance.remove(this.props.d2).then((response) => {
             if (response.status) {
-                this.props.snackbar.success("Deleted " + instanceData.name);
+                this.props.snackbar.success("Deleted " + instanceData.id);
 
                 // TODO: Add a way to force render of ObjectsTable on-demand
                 // This is a work-around
                 this.setState({ tableKey: Math.random() });
             } else {
-                this.props.snackbar.error("Failed to delete " + instanceData.name);
+                this.props.snackbar.error("Failed to delete " + instanceData.id);
             }
         });
     };
 
     columns = [
-        { name: "name", text: i18n.t("Server"), sortable: true },
+        { name: "id", text: i18n.t("Server name"), sortable: true },
         { name: "url", text: i18n.t("Url endpoint"), sortable: true },
         { name: "username", text: i18n.t("Username"), sortable: true },
     ];
 
-    initialSorting = ["name", "asc"];
+    initialSorting = ["id", "asc"];
 
     detailsFields = [
-        { name: "name", text: i18n.t("Name") },
+        { name: "id", text: i18n.t("Server name") },
         { name: "url", text: i18n.t("Url endpoint") },
         { name: "username", text: i18n.t("Username") },
         { name: "description", text: i18n.t("Description") },
@@ -90,7 +90,7 @@ class InstanceConfigurator extends React.Component {
                     model={d2.models.dataSet}
                     columns={this.columns}
                     detailsFields={this.detailsFields}
-                    pageSize={20}
+                    pageSize={10}
                     initialSorting={this.initialSorting}
                     actions={this.actions}
                     onCreate={this.onCreate}

@@ -38,20 +38,21 @@ export async function listInstances(d2, filters, pagination) {
 
     const { sorting } = pagination || {};
     const [field, direction] = sorting || [];
-    const sortedInstances = _.sortBy(filteredInstances, [
+    const sortedInstances = _.orderBy(filteredInstances, [
         instance => instance[field].toLowerCase(),
-        [direction],
-    ]);
+    ], [direction]);
 
     const { page = 1, pageSize = 20 } = pagination || {};
-    const currentPosition = (page - 1) * pageSize;
+    const currentlyShown = (page - 1) * pageSize;
+    const pageCount = Math.ceil(sortedInstances.length / pageSize);
+    const total = sortedInstances.length;
     const paginatedInstances = _.slice(
         sortedInstances,
-        currentPosition,
-        currentPosition + pageSize
+        currentlyShown,
+        currentlyShown + pageSize
     );
 
-    return { objects: paginatedInstances, pager: { total: 0 } };
+    return { objects: paginatedInstances, pager: { page, pageCount, total, pageSize } };
 }
 
 export async function saveNewInstance(d2, instance) {

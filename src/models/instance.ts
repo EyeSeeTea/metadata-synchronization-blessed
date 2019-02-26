@@ -5,7 +5,7 @@ import {Response} from "../types/d2";
 import {deleteInstance, listInstances, saveNewInstance} from "./dataStore";
 
 export interface Data {
-    name: string;
+    id: string;
     url: string;
     username: string;
     password: string;
@@ -16,12 +16,12 @@ export default class Instance {
     private readonly data: Data;
 
     constructor(data: Data) {
-        this.data = _.pick(data, ['name', 'url', 'username', 'password', 'description']);
+        this.data = _.pick(data, ['id', 'url', 'username', 'password', 'description']);
     }
 
     public static create(): Instance {
         const initialData = {
-            name: "",
+            id: "",
             url: "",
             username: "",
             password: ""
@@ -41,12 +41,12 @@ export default class Instance {
         return deleteInstance(d2, this.data);
     }
 
-    public setName(name: string): Instance {
-        return new Instance({...this.data, name});
+    public setId(id: string): Instance {
+        return new Instance({...this.data, id});
     }
 
-    public get name(): string {
-        return this.data.name;
+    public get id(): string {
+        return this.data.id;
     }
 
     public setUrl(url: string): Instance {
