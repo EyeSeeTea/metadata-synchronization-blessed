@@ -7,6 +7,10 @@ import { withRouter } from "react-router-dom";
 import Instance from "../../models/instance";
 
 class InstanceConfigurator extends React.Component {
+    state = {
+        tableKey: Math.random(),
+    };
+
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -18,13 +22,25 @@ class InstanceConfigurator extends React.Component {
     };
 
     onEdit = instance => {
-        console.log("TODO:Edit", instance);
-        this.props.snackbar.info("TODO: Edit " + instance.name);
+        this.props.history.push({
+            pathname: "/instance-configurator/new",
+            instance
+        });
     };
 
-    onDelete = instance => {
-        console.log("TODO:Delete", instance);
-        this.props.snackbar.info("TODO: Delete " + instance.name);
+    onDelete = async instanceData => {
+        const instance = new Instance(instanceData);
+        await instance.remove(this.props.d2).then((response) => {
+            if (response.status) {
+                this.props.snackbar.success("Deleted " + instanceData.name);
+
+                // TODO: Add a way to force render of ObjectsTable on-demand
+                // This is a work-around
+                this.setState({ tableKey: Math.random() });
+            } else {
+                this.props.snackbar.error("Failed to delete " + instanceData.name);
+            }
+        });
     };
 
     columns = [
@@ -58,7 +74,7 @@ class InstanceConfigurator extends React.Component {
         {
             name: "delete",
             text: i18n.t("Delete"),
-            multiple: true,
+            multiple: false,
             onClick: this.onDelete,
         },
     ];
@@ -69,6 +85,7 @@ class InstanceConfigurator extends React.Component {
         return (
             <div>
                 <ObjectsTable
+                    key={this.state.tableKey}
                     d2={d2}
                     model={d2.models.dataSet}
                     columns={this.columns}

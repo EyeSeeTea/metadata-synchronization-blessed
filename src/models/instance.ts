@@ -1,7 +1,8 @@
+import _ from "lodash";
 import {D2} from "../types/d2";
 import {TableFilters, TableList, TablePagination} from "../types/d2-ui-components";
 import {Response} from "../types/d2";
-import {listInstances, saveNewInstance} from "./dataStore";
+import {deleteInstance, listInstances, saveNewInstance} from "./dataStore";
 
 export interface Data {
     name: string;
@@ -12,8 +13,10 @@ export interface Data {
 }
 
 export default class Instance {
-    constructor(private data: Data) {
-        // TODO: We should encrypt password
+    private readonly data: Data;
+
+    constructor(data: Data) {
+        this.data = _.pick(data, ['name', 'url', 'username', 'password', 'description']);
     }
 
     public static create(): Instance {
@@ -32,6 +35,10 @@ export default class Instance {
 
     public async save(d2: D2): Promise<Response> {
         return saveNewInstance(d2, this.data);
+    }
+
+    public async remove(d2: D2): Promise<Response> {
+        return deleteInstance(d2, this.data);
     }
 
     public setName(name: string): Instance {

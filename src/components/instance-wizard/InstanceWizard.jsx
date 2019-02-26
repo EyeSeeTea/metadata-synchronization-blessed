@@ -13,12 +13,20 @@ class InstanceWizard extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
+        location: PropTypes.object.isRequired,
     };
 
     constructor(props) {
         super(props);
+
+        const isEdit = props.location.instance !== undefined;
+        const instance = isEdit ? new Instance(props.location.instance) : Instance.create();
+        const originalInstance = isEdit ? new Instance(props.location.instance) : Instance.create();
+
         this.state = {
-            instance: Instance.create(),
+            instance,
+            isEdit,
+            originalInstance,
             dialogOpen: false,
         };
     }
@@ -44,16 +52,16 @@ class InstanceWizard extends React.Component {
         const { dialogOpen } = this.state;
         const { d2 } = this.props;
 
+        const title = !this.state.isEdit ? i18n.t("Cancel Instance Creation") : i18n.t("Cancel Instance Editing");
+
         return (
             <React.Fragment>
                 <ConfirmationDialog
                     dialogOpen={dialogOpen}
                     handleConfirm={this.handleConfirm}
                     handleCancel={this.handleDialogCancel}
-                    title={i18n.t("Cancel Instance Creation?")}
-                    contents={i18n.t(
-                        "You are about to exit the instance creation wizard. All your changes will be lost. Are you sure?"
-                    )}
+                    title={title}
+                    contents={i18n.t("All your changes will be lost. Are you sure?")}
                 />
 
                 <FormHeading
@@ -64,6 +72,8 @@ class InstanceWizard extends React.Component {
                 <GeneralInfoStep
                     d2={d2}
                     instance={this.state.instance}
+                    isEdit={this.state.isEdit}
+                    originalInstance={this.state.originalInstance}
                     onChange={this.onChange}
                 />
             </React.Fragment>

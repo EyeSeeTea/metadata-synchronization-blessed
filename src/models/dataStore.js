@@ -67,3 +67,17 @@ export async function saveNewInstance(d2, instance) {
         };
     }
 }
+
+export async function deleteInstance(d2, instance) {
+    try {
+        const instanceArray = await getDataStore(d2, instancesKey);
+        const newInstanceArray = _.differenceWith(instanceArray, [instance], _.isEqual);
+        await saveDataStore(d2, instancesKey, newInstanceArray);
+        return { status: true };
+    } catch (e) {
+        return {
+            status: false,
+            error: e.toString(),
+        };
+    }
+}

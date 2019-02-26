@@ -20,6 +20,8 @@ class GeneralInfoForm extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         instance: PropTypes.object.isRequired,
+        isEdit: PropTypes.bool,
+        originalInstance: PropTypes.object,
         snackbar: PropTypes.object.isRequired,
     };
 
@@ -64,7 +66,7 @@ class GeneralInfoForm extends React.Component {
                 props: {
                     floatingLabelText: i18n.t("Name (*)"),
                     style: { width: "33%" },
-                    changeEvent: "onChange",
+                    changeEvent: "onBlur",
                     "data-field": "name",
                 },
                 validators: [
@@ -164,9 +166,11 @@ class GeneralInfoForm extends React.Component {
 
             this.setState({ isSaving: true });
 
-            this.props.instance.save(this.props.d2).then(() => {
-                this.setState({ isSaving: false });
-                this.props.history.push("/instance-configurator");
+            this.props.originalInstance.remove(this.props.d2).then(() => {
+                this.props.instance.save(this.props.d2, this.props.isEdit).then(() => {
+                    this.setState({ isSaving: false });
+                    this.props.history.push("/instance-configurator");
+                });
             });
         };
 
