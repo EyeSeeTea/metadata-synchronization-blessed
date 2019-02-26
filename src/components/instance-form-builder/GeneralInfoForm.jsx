@@ -81,6 +81,18 @@ class GeneralInfoForm extends React.Component {
                 ],
             },
             {
+                name: "description",
+                value: instance.description,
+                component: TextField,
+                props: {
+                    floatingLabelText: i18n.t("Description"),
+                    style: { width: "33%" },
+                    changeEvent: "onBlur",
+                    "data-field": "description",
+                },
+                validators: [],
+            },
+            {
                 name: "url",
                 value: instance.url,
                 component: TextField,
@@ -144,18 +156,6 @@ class GeneralInfoForm extends React.Component {
                         },
                     },
                 ],
-            },
-            {
-                name: "description",
-                value: instance.description,
-                component: TextField,
-                props: {
-                    floatingLabelText: i18n.t("Description"),
-                    style: { width: "33%" },
-                    changeEvent: "onBlur",
-                    "data-field": "description",
-                },
-                validators: [],
             },
         ];
 
