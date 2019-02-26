@@ -16,7 +16,7 @@ class Root extends React.Component {
         return (
             <Switch>
                 <Route
-                    path={["/instance-configurator/new", "/instance-configurator/edit"]}
+                    path={"/instance-configurator/(new|edit)"}
                     render={props => <InstanceWizard d2={d2} {...props} />}
                 />
 
