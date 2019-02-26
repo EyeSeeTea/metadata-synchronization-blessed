@@ -52,9 +52,7 @@ class InstanceFormBuilder extends React.Component {
         const { dialogOpen } = this.state;
         const { d2 } = this.props;
 
-        const title = !this.state.isEdit
-            ? i18n.t("New Instance")
-            : i18n.t("Edit Instance");
+        const title = !this.state.isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
 
         const cancel = !this.state.isEdit
             ? i18n.t("Cancel Instance Creation")
@@ -78,6 +76,7 @@ class InstanceFormBuilder extends React.Component {
                     isEdit={this.state.isEdit}
                     originalInstance={this.state.originalInstance}
                     onChange={this.onChange}
+                    cancelAction={this.cancelSave}
                 />
             </React.Fragment>
         );

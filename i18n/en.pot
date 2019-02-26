@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-02-26T07:17:40.577Z\n"
-"PO-Revision-Date: 2019-02-26T07:17:40.577Z\n"
+"POT-Creation-Date: 2019-02-26T13:09:15.986Z\n"
+"PO-Revision-Date: 2019-02-26T13:09:15.986Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -83,6 +83,12 @@ msgstr ""
 msgid "Please fix the issues before saving"
 msgstr ""
 
+msgid "New Instance"
+msgstr ""
+
+msgid "Edit Instance"
+msgstr ""
+
 msgid "Cancel Instance Creation"
 msgstr ""
 
@@ -90,9 +96,6 @@ msgid "Cancel Instance Editing"
 msgstr ""
 
 msgid "All your changes will be lost. Are you sure?"
-msgstr ""
-
-msgid "New Instance"
 msgstr ""
 
 msgid "Saving..."

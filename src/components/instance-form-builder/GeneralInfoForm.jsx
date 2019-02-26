@@ -7,6 +7,7 @@ import { TextField } from "@dhis2/d2-ui-core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import { Validators } from "@dhis2/d2-ui-forms";
 import { Card, CardContent } from "@material-ui/core";
+import RaisedButton from "material-ui/RaisedButton/RaisedButton";
 import { withSnackbar } from "d2-ui-components";
 
 import SaveButton from "./SaveButton";
@@ -23,6 +24,7 @@ class GeneralInfoForm extends React.Component {
         isEdit: PropTypes.bool,
         originalInstance: PropTypes.object,
         snackbar: PropTypes.object.isRequired,
+        cancelAction: PropTypes.func.isRequired,
     };
 
     setFormReference = formReference => {
@@ -183,6 +185,7 @@ class GeneralInfoForm extends React.Component {
                         ref={this.setFormReference}
                     />
                     <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
+                    <RaisedButton label={i18n.t("Cancel")} onClick={this.props.cancelAction} />
                 </CardContent>
             </Card>
         );

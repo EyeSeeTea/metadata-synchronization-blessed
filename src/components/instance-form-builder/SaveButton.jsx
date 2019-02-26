@@ -17,6 +17,7 @@ class SaveButton extends React.Component {
             <RaisedButton
                 {...rest}
                 primary
+                variant="contained"
                 onClick={onClick}
                 label={buttonText}
                 disabled={isSaving}
