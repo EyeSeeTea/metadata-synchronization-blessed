@@ -3,27 +3,27 @@ import _ from "lodash";
 const dataStoreNamespace = "metatada-synchronization";
 const instancesKey = "instances";
 
-async function getDataStore(d2, dataStoreKey, defaultValue = []) {
+async function getOrCreateNamespace(d2) {
     const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
     if (!existsNamespace) {
-        const dataStore = await d2.dataStore.create(dataStoreNamespace);
-        await dataStore.set(dataStoreKey, defaultValue);
-        return defaultValue;
+        return await d2.dataStore.create(dataStoreNamespace);
     } else {
-        const dataStore = await d2.dataStore.get(dataStoreNamespace);
-        return await dataStore.get(dataStoreKey);
+        return await d2.dataStore.get(dataStoreNamespace);
     }
 }
 
-async function saveDataStore(d2, dataStoreKey, newValue) {
+async function getDataStore(d2, dataStoreKey, defaultValue = []) {
     const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
+    const dataStore = await getOrCreateNamespace(d2);
     if (!existsNamespace) {
-        const dataStore = await d2.dataStore.create(dataStoreNamespace);
-        await dataStore.set(dataStoreKey, newValue);
-    } else {
-        const dataStore = await d2.dataStore.get(dataStoreNamespace);
-        await dataStore.set(dataStoreKey, newValue);
+        await dataStore.set(dataStoreKey, defaultValue);
     }
+    return await dataStore.get(dataStoreKey);
+}
+
+async function saveDataStore(d2, dataStoreKey, newValue) {
+    const dataStore = await getOrCreateNamespace(d2);
+    await dataStore.set(dataStoreKey, newValue);
 }
 
 export async function listInstances(d2, filters, pagination) {
