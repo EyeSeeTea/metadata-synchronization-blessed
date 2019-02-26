@@ -53,6 +53,10 @@ class InstanceWizard extends React.Component {
         const { d2 } = this.props;
 
         const title = !this.state.isEdit
+            ? i18n.t("New Instance")
+            : i18n.t("Edit Instance");
+
+        const cancel = !this.state.isEdit
             ? i18n.t("Cancel Instance Creation")
             : i18n.t("Cancel Instance Editing");
 
@@ -62,11 +66,11 @@ class InstanceWizard extends React.Component {
                     dialogOpen={dialogOpen}
                     handleConfirm={this.handleConfirm}
                     handleCancel={this.handleDialogCancel}
-                    title={title}
+                    title={cancel}
                     contents={i18n.t("All your changes will be lost. Are you sure?")}
                 />
 
-                <FormHeading title={i18n.t("New Instance")} onBackClick={this.cancelSave} />
+                <FormHeading title={title} onBackClick={this.cancelSave} />
 
                 <GeneralInfoStep
                     d2={d2}

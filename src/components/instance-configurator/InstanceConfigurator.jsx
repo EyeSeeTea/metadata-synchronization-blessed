@@ -23,7 +23,7 @@ class InstanceConfigurator extends React.Component {
 
     onEdit = instance => {
         this.props.history.push({
-            pathname: "/instance-configurator/new",
+            pathname: "/instance-configurator/edit",
             instance,
         });
     };
