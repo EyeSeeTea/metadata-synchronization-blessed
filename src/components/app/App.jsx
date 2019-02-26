@@ -1,15 +1,16 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import HeaderBar from "@dhis2/d2-ui-header-bar";
+import HeaderBar from "@dhis2/ui/widgets/HeaderBar";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import JssProvider from "react-jss/lib/JssProvider";
 import { createGenerateClassName } from "@material-ui/core/styles";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import { SnackbarProvider } from "d2-ui-components";
 import _ from "lodash";
+import i18n from "@dhis2/d2-i18n";
 
 import { muiTheme } from "../../dhis2.theme";
 import "./App.css";
-import SnackbarProvider from "../feedback/SnackbarProvider";
 import Root from "./Root";
 import Share from "../share/Share";
 
@@ -40,6 +41,7 @@ class App extends Component {
     render() {
         const { d2, appConfig } = this.props;
         const showShareButton = _(appConfig).get("appearance.showShareButton") || false;
+        const showHeader = !process.env.REACT_APP_CYPRESS;
 
         return (
             <React.Fragment>
@@ -47,7 +49,9 @@ class App extends Component {
                     <MuiThemeProvider theme={muiTheme}>
                         <OldMuiThemeProvider>
                             <React.Fragment>
-                                <HeaderBar d2={d2} />
+                                {showHeader && (
+                                    <HeaderBar appName={i18n.t("Metadata Synchronization")} />
+                                )}
 
                                 <div id="app" className="content">
                                     <SnackbarProvider>

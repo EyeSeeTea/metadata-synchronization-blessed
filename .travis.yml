@@ -9,9 +9,9 @@ install:
 - yarn cy:verify
 - yarn build
 script:
-    - PORT=8081 REACT_APP_DHIS2_URL=http://dev2.eyeseetea.com:8082 yarn start &
+    - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://dev2.eyeseetea.com:8083 yarn start &
     - yarn run wait-on http://localhost:8081 && sleep 10s
-    - REACT_APP_CYPRESS=true CYPRESS_EXTERNAL_API=http://dev2.eyeseetea.com:8082 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:run
+    - REACT_APP_CYPRESS=true CYPRESS_EXTERNAL_API=http://dev2.eyeseetea.com:8083 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:run
     - kill $(jobs -p) || true
 notifications:
   slack:

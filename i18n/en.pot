@@ -5,8 +5,11 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2018-11-15T11:18:10.896Z\n"
-"PO-Revision-Date: 2018-11-15T11:18:10.896Z\n"
+"POT-Creation-Date: 2019-02-26T14:49:30.814Z\n"
+"PO-Revision-Date: 2019-02-26T14:49:30.814Z\n"
+
+msgid "Metadata Synchronization"
+msgstr ""
 
 msgid "Instance Configurator"
 msgstr ""
@@ -27,4 +30,76 @@ msgid "Synchronization Rules"
 msgstr ""
 
 msgid "Notifications"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Server name"
+msgstr ""
+
+msgid "URL endpoint"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Server name (*)"
+msgstr ""
+
+msgid "Field cannot be blank"
+msgstr ""
+
+msgid "URL endpoint (*)"
+msgstr ""
+
+msgid "Field should be an url"
+msgstr ""
+
+msgid "Username (*)"
+msgstr ""
+
+msgid "Password (*)"
+msgstr ""
+
+msgid "Please fix the issues before saving"
+msgstr ""
+
+msgid "New Instance"
+msgstr ""
+
+msgid "Edit Instance"
+msgstr ""
+
+msgid "Cancel Instance Creation"
+msgstr ""
+
+msgid "Cancel Instance Editing"
+msgstr ""
+
+msgid "All your changes will be lost. Are you sure?"
+msgstr ""
+
+msgid "Saving..."
+msgstr ""
+
+msgid "Save"
 msgstr ""
