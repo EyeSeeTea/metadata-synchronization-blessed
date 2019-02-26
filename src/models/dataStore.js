@@ -29,11 +29,11 @@ async function saveDataStore(d2, dataStoreKey, newValue) {
 export async function listInstances(d2, filters, pagination) {
     const instanceArray = await getDataStore(d2, instancesKey);
 
-    const { searchValue = "" } = filters || {};
+    const { search } = filters || {};
     const filteredInstances = _.filter(instanceArray, o =>
         _(o)
             .keys()
-            .some(k => o[k].toLowerCase().includes(searchValue.toLowerCase()))
+            .some(k => o[k].toLowerCase().includes(search ? search.toLowerCase() : ""))
     );
 
     const { sorting } = pagination || {};
