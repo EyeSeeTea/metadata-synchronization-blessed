@@ -9,7 +9,7 @@ import FormHeading from "./FormHeading";
 import GeneralInfoStep from "./GeneralInfoForm";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 
-class InstanceWizard extends React.Component {
+class InstanceFormBuilder extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
@@ -84,4 +84,4 @@ class InstanceWizard extends React.Component {
     }
 }
 
-export default withRouter(InstanceWizard);
+export default withRouter(InstanceFormBuilder);

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Switch, Route } from "react-router-dom";
 import LandingPage from "./LandingPage";
 import InstanceConfigurator from "../instance-configurator/InstanceConfigurator";
-import InstanceWizard from "../instance-wizard/InstanceWizard";
+import InstanceFormBuilder from "../instance-form-builder/InstanceFormBuilder";
 
 class Root extends React.Component {
     static propTypes = {
@@ -17,7 +17,7 @@ class Root extends React.Component {
             <Switch>
                 <Route
                     path={"/instance-configurator/(new|edit)"}
-                    render={props => <InstanceWizard d2={d2} {...props} />}
+                    render={props => <InstanceFormBuilder d2={d2} {...props} />}
                 />
 
                 <Route
