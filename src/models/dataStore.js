@@ -50,7 +50,7 @@ export async function listInstances(d2, filters, pagination) {
     const total = sortedInstances.length;
     const paginatedInstances = _.slice(sortedInstances, currentlyShown, currentlyShown + pageSize);
 
-    return { objects: paginatedInstances, pager: { page, pageCount, total, pageSize } };
+    return { objects: paginatedInstances, pager: { page, pageCount, total } };
 }
 
 export async function saveNewInstance(d2, instance) {
