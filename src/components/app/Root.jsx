@@ -4,6 +4,7 @@ import { Switch, Route } from "react-router-dom";
 import LandingPage from "./LandingPage";
 import InstanceConfigurator from "../instance-configurator/InstanceConfigurator";
 import InstanceFormBuilder from "../instance-form-builder/InstanceFormBuilder";
+import OrganisationUnitSync from "../sync-configurator/OrganisationUnitSync";
 
 class Root extends React.Component {
     static propTypes = {
@@ -23,6 +24,11 @@ class Root extends React.Component {
                 <Route
                     path="/instance-configurator"
                     render={props => <InstanceConfigurator d2={d2} {...props} />}
+                />
+
+                <Route
+                    path="/sync/organisationUnits"
+                    render={props => <OrganisationUnitSync d2={d2} {...props} />}
                 />
 
                 <Route render={() => <LandingPage d2={d2} />} />
