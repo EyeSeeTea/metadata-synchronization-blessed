@@ -49,3 +49,15 @@ abstract class D2Model {
 export class OrganisationUnitModel extends D2Model {
     protected static metadataType = 'organisationUnit';
 }
+
+export class DataElementModel extends D2Model {
+    protected static metadataType = 'dataElement';
+}
+
+export class IndicatorModel extends D2Model {
+    protected static metadataType = 'indicator';
+}
+
+export class ValidationRuleModel extends D2Model {
+    protected static metadataType = 'validationRule';
+}
