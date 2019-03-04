@@ -29,7 +29,7 @@ export default class Instance {
         return new Instance(initialData);
     }
 
-    public static async list(d2: D2, filters: TableFilters, pagination: TablePagination): Promise<TableList<Instance>> {
+    public static async list(d2: D2, filters: TableFilters, pagination: TablePagination): Promise<TableList> {
         return listInstances(d2, filters, pagination);
     }
 

@@ -1,9 +1,11 @@
 import _ from "lodash";
+import {D2, Response} from "../types/d2";
+import {TableFilters, TableList, TablePagination} from "../types/d2-ui-components";
 
 const dataStoreNamespace = "metatada-synchronization";
 const instancesKey = "instances";
 
-async function getOrCreateNamespace(d2) {
+async function getOrCreateNamespace(d2: D2): Promise<any> {
     const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
     if (!existsNamespace) {
         return await d2.dataStore.create(dataStoreNamespace);
@@ -12,7 +14,7 @@ async function getOrCreateNamespace(d2) {
     }
 }
 
-async function getDataStore(d2, dataStoreKey, defaultValue = []) {
+async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any = []): Promise<any> {
     const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
     const dataStore = await getOrCreateNamespace(d2);
     if (!existsNamespace) {
@@ -21,23 +23,23 @@ async function getDataStore(d2, dataStoreKey, defaultValue = []) {
     return await dataStore.get(dataStoreKey);
 }
 
-async function saveDataStore(d2, dataStoreKey, newValue) {
+async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promise<void> {
     const dataStore = await getOrCreateNamespace(d2);
     await dataStore.set(dataStoreKey, newValue);
 }
 
-export async function listInstances(d2, filters, pagination) {
+export async function listInstances(d2: D2, filters: TableFilters, pagination: TablePagination): Promise<TableList> {
     const instanceArray = await getDataStore(d2, instancesKey);
 
-    const { search } = filters || {};
+    const { search = null } = filters || {};
     const filteredInstances = _.filter(instanceArray, o =>
         _(o)
             .keys()
-            .some(k => o[k].toLowerCase().includes(search ? search.toLowerCase() : ""))
+            .some(k => o[k].toLowerCase().includes(search ? search.toLowerCase() : ''))
     );
 
-    const { sorting } = pagination || {};
-    const [field, direction] = sorting || [];
+    const { sorting = ['id', 'asc'] } = pagination || {};
+    const [field, direction] = sorting;
     const sortedInstances = _.orderBy(
         filteredInstances,
         [instance => instance[field].toLowerCase()],
@@ -53,7 +55,7 @@ export async function listInstances(d2, filters, pagination) {
     return { objects: paginatedInstances, pager: { page, pageCount, total } };
 }
 
-export async function saveNewInstance(d2, instance) {
+export async function saveNewInstance(d2: D2, instance: any): Promise<Response> {
     try {
         const instanceArray = await getDataStore(d2, instancesKey);
         const newInstanceArray = [...instanceArray, instance];
@@ -67,7 +69,7 @@ export async function saveNewInstance(d2, instance) {
     }
 }
 
-export async function deleteInstance(d2, instance) {
+export async function deleteInstance(d2: D2, instance: any): Promise<Response> {
     try {
         const instanceArray = await getDataStore(d2, instancesKey);
         const newInstanceArray = _.differenceWith(instanceArray, [instance], _.isEqual);

@@ -12,7 +12,8 @@ module.exports = {
         'no-console': 'off',
         "@typescript-eslint/camelcase": "off",
         "@typescript-eslint/no-parameter-properties": "off",
-        "@typescript-eslint/explicit-member-accessibility": "off"
+        "@typescript-eslint/explicit-member-accessibility": "off",
+        "@typescript-eslint/no-explicit-any": "off",
     },
     plugins: [
         "cypress",

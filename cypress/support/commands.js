@@ -1,5 +1,5 @@
 // <reference types="Cypress" />
-/* global Promise, Cypress, cy */
+/* global Cypress, cy */
 
 import { stubFetch, externalUrl, generateFixtures, stubBackend } from "./network-fixtures";
 import _ from "lodash";
@@ -57,6 +57,6 @@ Cypress.Commands.add("loadPage", (path = "/") => {
 
 Cypress.on("uncaught:exception", (err, runnable) => {
     // returning false here prevents Cypress from failing the test
-    //console.log("uncaught:exception", {err, runnable});
+    console.log("uncaught:exception", {err, runnable});
     return false;
 });

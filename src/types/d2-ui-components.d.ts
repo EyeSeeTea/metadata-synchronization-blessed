@@ -1,7 +1,9 @@
-export interface TableList<T> {
-    objects: T[];
+export interface TableList {
+    objects: any[];
     pager: {
         total: number;
+        page: number;
+        pageCount?: number;
     };
 }
 
@@ -12,8 +14,10 @@ export interface TableFilters {
 export interface TablePagination {
     page: number;
     pageSize: number;
-    sorting: {
-        field: string;
-        direction: string;
-    };
+    sorting: string[];
+}
+
+export interface TableLabel {
+    name: string;
+    text: string;
 }
