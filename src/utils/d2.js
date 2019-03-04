@@ -2,8 +2,8 @@ import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 
 export const d2BaseModelColumns = [
-    { name: "displayName", text: i18n.t("Name") },
-    { name: "lastUpdated", text: i18n.t("Last update") },
+    { name: "displayName", text: i18n.t("Name"), sortable: true },
+    { name: "lastUpdated", text: i18n.t("Last update"), sortable: true },
 ];
 
 export const d2BaseModelDetails = [

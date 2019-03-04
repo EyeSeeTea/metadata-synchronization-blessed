@@ -57,7 +57,7 @@ export interface ModelDefinition {
     modelValidations: any;
     name: string;
     plural: string;
-    translatable: boolean
+    translatable: boolean;
 }
 
 export interface D2 {
@@ -73,7 +73,7 @@ export interface D2 {
     };
     models: {
         [metadataType: string]: ModelDefinition;
-    }
+    };
 }
 
 export interface Response {
