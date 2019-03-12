@@ -27,7 +27,7 @@ async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promi
     await dataStore.set(dataStoreKey, newValue);
 }
 
-export async function getData(d2: D2, dataStoreKey: string) {
+export async function getData(d2: D2, dataStoreKey: string): Promise<any> {
     return await getDataStore(d2, dataStoreKey);
 }
 
@@ -47,7 +47,11 @@ export async function getPaginatedData(
 
     const { sorting = ["id", "asc"] } = pagination || {};
     const [field, direction] = sorting;
-    const sortedData = _.orderBy(filteredData, [data => data[field].toLowerCase()], [direction]);
+    const sortedData = _.orderBy(
+        filteredData,
+        [data => (data[field] ? data[field].toLowerCase() : "")],
+        [direction]
+    );
 
     const { page = 1, pageSize = 20 } = pagination || {};
     const currentlyShown = (page - 1) * pageSize;
