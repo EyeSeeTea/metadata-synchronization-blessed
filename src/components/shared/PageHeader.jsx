@@ -6,9 +6,9 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 
-const iconStyle = { marginBottom: 7 };
+const iconStyle = { paddingTop: 10, marginBottom: 5 };
 
-function FormHeading({ variant, title, onBackClick }) {
+function PageHeader({ variant, title, onBackClick }) {
     return (
         <div>
             <IconButton
@@ -20,21 +20,25 @@ function FormHeading({ variant, title, onBackClick }) {
                 <Icon color="primary">arrow_back</Icon>
             </IconButton>
 
-            <Typography variant={variant} gutterBottom style={{ display: "inline-block" }}>
+            <Typography
+                variant={variant}
+                gutterBottom
+                style={{ display: "inline-block", fontWeight: 300 }}
+            >
                 {title}
             </Typography>
         </div>
     );
 }
 
-FormHeading.propTypes = {
+PageHeader.propTypes = {
     variant: PropTypes.string,
     title: PropTypes.string.isRequired,
     onBackClick: PropTypes.func.isRequired,
 };
 
-FormHeading.defaultProps = {
+PageHeader.defaultProps = {
     variant: "h5",
 };
 
-export default FormHeading;
+export default PageHeader;

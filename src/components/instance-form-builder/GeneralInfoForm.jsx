@@ -184,7 +184,7 @@ class GeneralInfoForm extends React.Component {
                         onUpdateField={this.onUpdateField}
                         ref={this.setFormReference}
                     />
-                    <div style={{ flexDirection: 'row', paddingTop: 30 }}>
+                    <div style={{ flexDirection: "row", paddingTop: 30 }}>
                         <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
                         <RaisedButton label={i18n.t("Cancel")} onClick={this.props.cancelAction} />
                     </div>

@@ -25,7 +25,13 @@ class SaveButton extends React.Component {
         const { isSaving, onClick, ...rest } = this.props;
         const buttonText = isSaving ? i18n.t("Saving...") : i18n.t("Save");
         return (
-            <Button onClick={onClick} variant="contained" disabled={isSaving} style={styles} {...rest}>
+            <Button
+                onClick={onClick}
+                variant="contained"
+                disabled={isSaving}
+                style={styles}
+                {...rest}
+            >
                 {buttonText}
             </Button>
         );

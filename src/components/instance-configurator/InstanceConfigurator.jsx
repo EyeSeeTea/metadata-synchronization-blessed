@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { ObjectsTable, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
+import PageHeader from "../shared/PageHeader";
 
 import Instance from "../../models/instance";
 
@@ -79,24 +80,31 @@ class InstanceConfigurator extends React.Component {
         },
     ];
 
+    backHome = () => {
+        this.props.history.push("/");
+    };
+
     render() {
         const { d2 } = this.props;
 
         return (
-            <div>
-                <ObjectsTable
-                    key={this.state.tableKey}
-                    d2={d2}
-                    model={d2.models.dataSet}
-                    columns={this.columns}
-                    detailsFields={this.detailsFields}
-                    pageSize={10}
-                    initialSorting={this.initialSorting}
-                    actions={this.actions}
-                    onCreate={this.onCreate}
-                    list={Instance.list}
-                />
-            </div>
+            <React.Fragment>
+                <PageHeader title={i18n.t("Instances")} onBackClick={this.backHome} />
+                <div style={{ marginTop: -10 }}>
+                    <ObjectsTable
+                        key={this.state.tableKey}
+                        d2={d2}
+                        model={d2.models.dataSet}
+                        columns={this.columns}
+                        detailsFields={this.detailsFields}
+                        pageSize={10}
+                        initialSorting={this.initialSorting}
+                        actions={this.actions}
+                        onCreate={this.onCreate}
+                        list={Instance.list}
+                    />
+                </div>
+            </React.Fragment>
         );
     }
 }
