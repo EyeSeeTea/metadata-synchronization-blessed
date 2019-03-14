@@ -7,11 +7,15 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 
-const iconStyle = { paddingTop: 10, marginBottom: 5 };
+const styles = {
+    backArrow: { paddingTop: 10, marginBottom: 5 },
+    help: { marginBottom: 8 },
+    text: { display: "inline-block", fontWeight: 300 },
+};
 
 const renderHelpButton = helpText => {
     const Button = ({ onClick }) => (
-        <IconButton tooltip={i18n.t("Help")} onClick={onClick} style={{ marginBottom: 8 }}>
+        <IconButton tooltip={i18n.t("Help")} onClick={onClick} style={styles.help}>
             <Icon color="primary">help</Icon>
         </IconButton>
     );
@@ -26,7 +30,7 @@ function PageHeader({ variant, title, onBackClick, helpText }) {
                 onClick={onBackClick}
                 color="secondary"
                 aria-label={i18n.t("Back")}
-                style={iconStyle}
+                style={styles.backArrow}
             >
                 <Icon color="primary">arrow_back</Icon>
             </IconButton>
@@ -34,7 +38,7 @@ function PageHeader({ variant, title, onBackClick, helpText }) {
             <Typography
                 variant={variant}
                 gutterBottom
-                style={{ display: "inline-block", fontWeight: 300 }}
+                style={styles.text}
             >
                 {title}
             </Typography>
