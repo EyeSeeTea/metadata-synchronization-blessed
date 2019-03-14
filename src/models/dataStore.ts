@@ -29,16 +29,20 @@ async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promi
     await dataStore.set(dataStoreKey, newValue);
 }
 
-export async function listInstances(d2: D2, filters: TableFilters, pagination: TablePagination): Promise<TableList> {
+export async function listInstances(
+    d2: D2,
+    filters: TableFilters,
+    pagination: TablePagination
+): Promise<TableList> {
     const instanceArray = await getDataStore(d2, instancesKey);
     const { search = null } = filters || {};
     const filteredInstances = _.filter(instanceArray, o =>
         _(o)
             .keys()
-            .some(k => o[k].toLowerCase().includes(search ? search.toLowerCase() : ''))
+            .some(k => o[k].toLowerCase().includes(search ? search.toLowerCase() : ""))
     );
 
-    const { sorting = ['id', 'asc'] } = pagination || {};
+    const { sorting = ["id", "asc"] } = pagination || {};
     const [field, direction] = sorting;
     const sortedInstances = _.orderBy(
         filteredInstances,

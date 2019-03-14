@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { withRouter } from "react-router-dom";
+import _ from "lodash";
 
 import { TextField } from "@dhis2/d2-ui-core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
@@ -166,12 +167,21 @@ class GeneralInfoForm extends React.Component {
                 return;
             }
 
-            this.setState({ isSaving: true });
+            this.props.instance.validateInstanceName(this.props.d2).then(isValid => {
+                if (!isValid.status) {
+                    this.props.snackbar.error(
+                        i18n.t("This URL and Username combination already exists")
+                    );
+                    return;
+                }
 
-            this.props.originalInstance.remove(this.props.d2).then(() => {
-                this.props.instance.save(this.props.d2, this.props.isEdit).then(() => {
-                    this.setState({ isSaving: false });
-                    this.props.history.push("/instance-configurator");
+                this.setState({ isSaving: true });
+
+                this.props.originalInstance.remove(this.props.d2).then(() => {
+                    this.props.instance.save(this.props.d2, this.props.isEdit).then(() => {
+                        this.setState({ isSaving: false });
+                        this.props.history.push("/instance-configurator");
+                    });
                 });
             });
         };
