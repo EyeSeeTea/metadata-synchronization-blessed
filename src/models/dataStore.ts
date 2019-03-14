@@ -1,6 +1,7 @@
 import _ from "lodash";
-import {D2, Response} from "../types/d2";
-import {TableFilters, TableList, TablePagination} from "../types/d2-ui-components";
+import { D2, Response } from "../types/d2";
+import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { Data as InstanceData } from "./instance";
 
 const dataStoreNamespace = "metatada-synchronization";
 const instancesKey = "instances";
@@ -30,7 +31,6 @@ async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promi
 
 export async function listInstances(d2: D2, filters: TableFilters, pagination: TablePagination): Promise<TableList> {
     const instanceArray = await getDataStore(d2, instancesKey);
-
     const { search = null } = filters || {};
     const filteredInstances = _.filter(instanceArray, o =>
         _(o)
@@ -75,6 +75,28 @@ export async function deleteInstance(d2: D2, instance: any): Promise<Response> {
         const newInstanceArray = _.differenceWith(instanceArray, [instance], _.isEqual);
         await saveDataStore(d2, instancesKey, newInstanceArray);
         return { status: true };
+    } catch (e) {
+        return {
+            status: false,
+            error: e.toString(),
+        };
+    }
+}
+
+export async function validateInstanceName(
+    d2: D2,
+    url: string,
+    username: string
+): Promise<Response> {
+    try {
+        const instanceArray = await getDataStore(d2, instancesKey);
+        const namePairs = _(instanceArray)
+            .map((inst: InstanceData) => [inst.url, inst.username].join("-"))
+            .value();
+        const validCombination = !_(namePairs)
+            .includes([url, username].join("-"))
+            .valueOf();
+        return { status: validCombination };
     } catch (e) {
         return {
             status: false,

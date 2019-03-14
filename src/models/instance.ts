@@ -1,8 +1,8 @@
 import _ from "lodash";
-import {D2} from "../types/d2";
-import {TableFilters, TableList, TablePagination} from "../types/d2-ui-components";
-import {Response} from "../types/d2";
-import {deleteInstance, listInstances, saveNewInstance} from "./dataStore";
+import { D2 } from "../types/d2";
+import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { Response } from "../types/d2";
+import { deleteInstance, listInstances, saveNewInstance, validateInstanceName } from "./dataStore";
 
 export interface Data {
     id: string;
@@ -79,5 +79,9 @@ export default class Instance {
 
     public get description(): string {
         return this.data.description ? this.data.description : "";
+    }
+
+    public async validateInstanceName(d2: D2, url: string, username: string): Promise<Response> {
+        return validateInstanceName(d2, url, username);
     }
 }
