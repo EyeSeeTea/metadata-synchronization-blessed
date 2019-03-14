@@ -8,7 +8,7 @@ export default class ValidationRuleSync extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
     };
-    
+
     render() {
         const { d2 } = this.props;
         const title = i18n.t("Validation Rules Synchronization");

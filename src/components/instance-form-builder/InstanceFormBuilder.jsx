@@ -68,7 +68,11 @@ class InstanceFormBuilder extends React.Component {
                     contents={i18n.t("All your changes will be lost. Are you sure?")}
                 />
 
-                <PageHeader title={title} onBackClick={this.cancelSave} />
+                <PageHeader
+                    title={title}
+                    onBackClick={this.cancelSave}
+                    helpText={i18n.t("Help text")}
+                />
 
                 <GeneralInfoStep
                     d2={d2}

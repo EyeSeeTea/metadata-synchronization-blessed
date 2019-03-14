@@ -3,8 +3,7 @@ import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import i18n from "@dhis2/d2-i18n";
 import { ObjectsTable } from "d2-ui-components";
-import PageHeader from '../shared/PageHeader';
-
+import PageHeader from "../shared/PageHeader";
 
 class BaseSyncConfigurator extends React.Component {
     state = {
@@ -29,7 +28,7 @@ class BaseSyncConfigurator extends React.Component {
 
     backHome = () => {
         this.props.history.push("/");
-    }
+    };
 
     render() {
         const { d2, model, title } = this.props;
@@ -53,7 +52,6 @@ class BaseSyncConfigurator extends React.Component {
                         list={list}
                     />
                 </div>
-
             </React.Fragment>
         );
     }
