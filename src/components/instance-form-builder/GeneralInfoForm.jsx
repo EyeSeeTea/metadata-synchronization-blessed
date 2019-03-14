@@ -178,14 +178,16 @@ class GeneralInfoForm extends React.Component {
 
         return (
             <Card>
-                <CardContent style={{ paddingRight: 70, paddingLeft: 70 }}>
+                <CardContent style={{ paddingRight: 70, paddingLeft: 70, paddingBottom: 30 }}>
                     <FormBuilder
                         fields={fields}
                         onUpdateField={this.onUpdateField}
                         ref={this.setFormReference}
                     />
-                    <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
-                    <RaisedButton label={i18n.t("Cancel")} onClick={this.props.cancelAction} />
+                    <div style={{ flexDirection: 'row', paddingTop: 30 }}>
+                        <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
+                        <RaisedButton label={i18n.t("Cancel")} onClick={this.props.cancelAction} />
+                    </div>
                 </CardContent>
             </Card>
         );
