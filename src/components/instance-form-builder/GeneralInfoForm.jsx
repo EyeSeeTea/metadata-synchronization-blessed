@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { withRouter } from "react-router-dom";
-import _ from "lodash";
 
 import { TextField } from "@dhis2/d2-ui-core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";

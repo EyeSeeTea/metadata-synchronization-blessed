@@ -2,6 +2,7 @@ import _ from "lodash";
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { Data as InstanceData } from "./instance";
+import { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } from "constants";
 
 const dataStoreNamespace = "metatada-synchronization";
 const instancesKey = "instances";
@@ -94,12 +95,14 @@ export async function validateInstanceName(
 ): Promise<Response> {
     try {
         const instanceArray = await getDataStore(d2, instancesKey);
-        const namePairs = _(instanceArray)
-            .map((inst: InstanceData) => [inst.url, inst.username].join("-"))
-            .value();
-        const validCombination = !_(namePairs)
-            .includes([url, username].join("-"))
+        const currentInstanceName = [url, username].join("-");
+        const validCombination = _(instanceArray)
+            .filter(
+                (inst: InstanceData) => [inst.url, inst.username].join("-") === currentInstanceName
+            )
+            .isEmpty()
             .valueOf();
+
         return { status: validCombination };
     } catch (e) {
         return {

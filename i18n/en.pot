@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-03-02T23:15:28.302Z\n"
-"PO-Revision-Date: 2019-03-02T23:15:28.302Z\n"
+"POT-Creation-Date: 2019-03-14T19:42:34.355Z\n"
+"PO-Revision-Date: 2019-03-14T19:42:34.355Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -81,6 +81,9 @@ msgid "Password (*)"
 msgstr ""
 
 msgid "Please fix the issues before saving"
+msgstr ""
+
+msgid "This URL and Username combination already exists"
 msgstr ""
 
 msgid "New Instance"
