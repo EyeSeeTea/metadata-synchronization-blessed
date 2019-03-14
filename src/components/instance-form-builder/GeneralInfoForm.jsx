@@ -67,7 +67,7 @@ class GeneralInfoForm extends React.Component {
                 component: TextField,
                 props: {
                     floatingLabelText: i18n.t("Server name (*)"),
-                    style: { width: "33%" },
+                    style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-field": "id",
                 },
@@ -86,7 +86,7 @@ class GeneralInfoForm extends React.Component {
                 component: TextField,
                 props: {
                     floatingLabelText: i18n.t("Description"),
-                    style: { width: "33%" },
+                    style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-field": "description",
                 },
@@ -98,7 +98,7 @@ class GeneralInfoForm extends React.Component {
                 component: TextField,
                 props: {
                     floatingLabelText: i18n.t("URL endpoint (*)"),
-                    style: { width: "33%" },
+                    style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-field": "url",
                 },
@@ -123,7 +123,7 @@ class GeneralInfoForm extends React.Component {
                 component: TextField,
                 props: {
                     floatingLabelText: i18n.t("Username (*)"),
-                    style: { width: "33%" },
+                    style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-field": "username",
                 },
@@ -142,7 +142,7 @@ class GeneralInfoForm extends React.Component {
                 component: TextField,
                 props: {
                     floatingLabelText: i18n.t("Password (*)"),
-                    style: { width: "33%" },
+                    style: { width: "100%" },
                     changeEvent: "onBlur",
                     type: "password",
                     autoComplete: "new-password",
@@ -178,7 +178,7 @@ class GeneralInfoForm extends React.Component {
 
         return (
             <Card>
-                <CardContent>
+                <CardContent style={{ paddingRight: 70, paddingLeft: 70 }}>
                     <FormBuilder
                         fields={fields}
                         onUpdateField={this.onUpdateField}
