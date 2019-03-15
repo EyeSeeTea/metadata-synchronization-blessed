@@ -7,11 +7,24 @@ import { TextField } from "@dhis2/d2-ui-core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import { Validators } from "@dhis2/d2-ui-forms";
 import { Card, CardContent } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
 import RaisedButton from "material-ui/RaisedButton/RaisedButton";
 import { withSnackbar } from "d2-ui-components";
 
 import SaveButton from "./SaveButton";
 import isFormValid from "./FieldValidator";
+
+const styles = () => ({
+    formContainer: {
+        paddingRight: 70,
+        paddingLeft: 70,
+        paddingBottom: 30,
+    },
+    buttonContainer: {
+        flexDirection: "row",
+        paddingTop: 30,
+    },
+});
 
 class GeneralInfoForm extends React.Component {
     state = {
@@ -59,7 +72,7 @@ class GeneralInfoForm extends React.Component {
     };
 
     render() {
-        const { instance } = this.props;
+        const { instance, classes } = this.props;
         const fields = [
             {
                 name: "id",
@@ -178,13 +191,13 @@ class GeneralInfoForm extends React.Component {
 
         return (
             <Card>
-                <CardContent style={{ paddingRight: 70, paddingLeft: 70, paddingBottom: 30 }}>
+                <CardContent className={classes.formContainer}>
                     <FormBuilder
                         fields={fields}
                         onUpdateField={this.onUpdateField}
                         ref={this.setFormReference}
                     />
-                    <div style={{ flexDirection: "row", paddingTop: 30 }}>
+                    <div className={classes.buttonContainer}>
                         <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
                         <RaisedButton label={i18n.t("Cancel")} onClick={this.props.cancelAction} />
                     </div>
@@ -194,4 +207,4 @@ class GeneralInfoForm extends React.Component {
     }
 }
 
-export default withSnackbar(withRouter(GeneralInfoForm));
+export default withSnackbar(withRouter(withStyles(styles)(GeneralInfoForm)));
