@@ -3,9 +3,14 @@ import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { ObjectsTable, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
+import { withStyles } from "@material-ui/core/styles";
 import PageHeader from "../shared/PageHeader";
 
 import Instance from "../../models/instance";
+
+const styles = () => ({
+    tableContainer: { marginTop: -10 },
+});
 
 class InstanceConfigurator extends React.Component {
     state = {
@@ -85,12 +90,12 @@ class InstanceConfigurator extends React.Component {
     };
 
     render() {
-        const { d2 } = this.props;
+        const { d2, classes } = this.props;
 
         return (
             <React.Fragment>
                 <PageHeader title={i18n.t("Instances")} onBackClick={this.backHome} />
-                <div style={{ marginTop: -10 }}>
+                <div className={classes.tableContainer}>
                     <ObjectsTable
                         key={this.state.tableKey}
                         d2={d2}
@@ -109,4 +114,4 @@ class InstanceConfigurator extends React.Component {
     }
 }
 
-export default withSnackbar(withRouter(InstanceConfigurator));
+export default withSnackbar(withRouter(withStyles(styles)(InstanceConfigurator)));
