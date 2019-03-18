@@ -35,11 +35,7 @@ function PageHeader({ variant, title, onBackClick, helpText }) {
                 <Icon color="primary">arrow_back</Icon>
             </IconButton>
 
-            <Typography
-                variant={variant}
-                gutterBottom
-                style={styles.text}
-            >
+            <Typography variant={variant} gutterBottom style={styles.text}>
                 {title}
             </Typography>
             {helpText && renderHelpButton(helpText)}
