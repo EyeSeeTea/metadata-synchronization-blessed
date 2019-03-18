@@ -88,18 +88,12 @@ export async function deleteInstance(d2: D2, instance: any): Promise<Response> {
     }
 }
 
-export async function validateInstanceName(
-    d2: D2,
-    url: string,
-    username: string
-): Promise<Response> {
+export async function validateInstanceId(d2: D2, id: string): Promise<Response> {
     try {
+        console.log(id);
         const instanceArray = await getDataStore(d2, instancesKey);
-        const currentInstanceName = [url, username].join("-");
         const validCombination = _(instanceArray)
-            .filter(
-                (inst: InstanceData) => [inst.url, inst.username].join("-") === currentInstanceName
-            )
+            .filter((inst: InstanceData) => inst.id === id)
             .isEmpty()
             .valueOf();
 

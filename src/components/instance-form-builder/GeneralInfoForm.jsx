@@ -36,8 +36,8 @@ class GeneralInfoForm extends React.Component {
         let newInstance;
 
         switch (fieldName) {
-            case "id":
-                newInstance = instance.setId(newValue);
+            case "name":
+                newInstance = instance.setName(newValue);
                 break;
             case "url":
                 newInstance = instance.setUrl(newValue);
@@ -62,14 +62,14 @@ class GeneralInfoForm extends React.Component {
         const { instance } = this.props;
         const fields = [
             {
-                name: "id",
-                value: instance.id,
+                name: "name",
+                value: instance.name,
                 component: TextField,
                 props: {
                     floatingLabelText: i18n.t("Server name (*)"),
                     style: { width: "33%" },
                     changeEvent: "onBlur",
-                    "data-field": "id",
+                    "data-field": "name",
                 },
                 validators: [
                     {
@@ -166,7 +166,10 @@ class GeneralInfoForm extends React.Component {
                 return;
             }
 
-            this.props.instance.validateInstanceName(this.props.d2).then(isValid => {
+            const { url, username } = this.props.instance;
+            const instanceToSave = this.props.instance.setId([url, username].join("-"));
+
+            instanceToSave.validateInstanceId(this.props.d2).then(isValid => {
                 if (!isValid.status) {
                     this.props.snackbar.error(
                         i18n.t("This URL and Username combination already exists")
@@ -177,7 +180,7 @@ class GeneralInfoForm extends React.Component {
                 this.setState({ isSaving: true });
 
                 this.props.originalInstance.remove(this.props.d2).then(() => {
-                    this.props.instance.save(this.props.d2, this.props.isEdit).then(() => {
+                    instanceToSave.save(this.props.d2, this.props.isEdit).then(() => {
                         this.setState({ isSaving: false });
                         this.props.history.push("/instance-configurator");
                     });

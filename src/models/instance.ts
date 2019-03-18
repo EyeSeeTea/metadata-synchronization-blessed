@@ -2,10 +2,11 @@ import _ from "lodash";
 import { D2 } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { Response } from "../types/d2";
-import { deleteInstance, listInstances, saveNewInstance, validateInstanceName } from "./dataStore";
+import { deleteInstance, listInstances, saveNewInstance, validateInstanceId } from "./dataStore";
 
 export interface Data {
     id: string;
+    name: string;
     url: string;
     username: string;
     password: string;
@@ -16,12 +17,13 @@ export default class Instance {
     private readonly data: Data;
 
     constructor(data: Data) {
-        this.data = _.pick(data, ["id", "url", "username", "password", "description"]);
+        this.data = _.pick(data, ["id", "name", "url", "username", "password", "description"]);
     }
 
     public static create(): Instance {
         const initialData = {
             id: "",
+            name: "",
             url: "",
             username: "",
             password: "",
@@ -51,6 +53,14 @@ export default class Instance {
 
     public get id(): string {
         return this.data.id;
+    }
+
+    public setName(name: string): Instance {
+        return new Instance({ ...this.data, name });
+    }
+
+    public get name(): string {
+        return this.data.name;
     }
 
     public setUrl(url: string): Instance {
@@ -85,8 +95,8 @@ export default class Instance {
         return this.data.description ? this.data.description : "";
     }
 
-    public async validateInstanceName(d2: D2): Promise<Response> {
-        const { url, username } = this.data;
-        return validateInstanceName(d2, url, username);
+    public async validateInstanceId(d2: D2): Promise<Response> {
+        const { id } = this.data;
+        return validateInstanceId(d2, id);
     }
 }
