@@ -1,8 +1,8 @@
 import _ from "lodash";
-import {D2} from "../types/d2";
-import {TableFilters, TableList, TablePagination} from "../types/d2-ui-components";
-import {Response} from "../types/d2";
-import {deleteInstance, listInstances, saveNewInstance} from "./dataStore";
+import { D2 } from "../types/d2";
+import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { Response } from "../types/d2";
+import { deleteInstance, listInstances, saveNewInstance } from "./dataStore";
 
 export interface Data {
     id: string;
@@ -16,7 +16,7 @@ export default class Instance {
     private readonly data: Data;
 
     constructor(data: Data) {
-        this.data = _.pick(data, ['id', 'url', 'username', 'password', 'description']);
+        this.data = _.pick(data, ["id", "url", "username", "password", "description"]);
     }
 
     public static create(): Instance {
@@ -24,12 +24,16 @@ export default class Instance {
             id: "",
             url: "",
             username: "",
-            password: ""
+            password: "",
         };
         return new Instance(initialData);
     }
 
-    public static async list(d2: D2, filters: TableFilters, pagination: TablePagination): Promise<TableList> {
+    public static async list(
+        d2: D2,
+        filters: TableFilters,
+        pagination: TablePagination
+    ): Promise<TableList> {
         return listInstances(d2, filters, pagination);
     }
 
@@ -42,7 +46,7 @@ export default class Instance {
     }
 
     public setId(id: string): Instance {
-        return new Instance({...this.data, id});
+        return new Instance({ ...this.data, id });
     }
 
     public get id(): string {
@@ -50,7 +54,7 @@ export default class Instance {
     }
 
     public setUrl(url: string): Instance {
-        return new Instance({...this.data, url});
+        return new Instance({ ...this.data, url });
     }
 
     public get url(): string {
@@ -58,7 +62,7 @@ export default class Instance {
     }
 
     public setUsername(username: string): Instance {
-        return new Instance({...this.data, username});
+        return new Instance({ ...this.data, username });
     }
 
     public get username(): string {
@@ -66,7 +70,7 @@ export default class Instance {
     }
 
     public setPassword(password: string): Instance {
-        return new Instance({...this.data, password});
+        return new Instance({ ...this.data, password });
     }
 
     public get password(): string {
@@ -74,7 +78,7 @@ export default class Instance {
     }
 
     public setDescription(description: string): Instance {
-        return new Instance({...this.data, description});
+        return new Instance({ ...this.data, description });
     }
 
     public get description(): string {

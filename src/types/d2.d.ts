@@ -1,4 +1,4 @@
-import {Dictionary} from "lodash";
+import { Dictionary } from "lodash";
 
 export interface DataStoreNamespace {
     delete(key: string): Promise<>;

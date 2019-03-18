@@ -3,8 +3,14 @@ import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { ObjectsTable, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
+import { withStyles } from "@material-ui/core/styles";
+import PageHeader from "../shared/PageHeader";
 
 import Instance from "../../models/instance";
+
+const styles = () => ({
+    tableContainer: { marginTop: -10 },
+});
 
 class InstanceConfigurator extends React.Component {
     state = {
@@ -79,26 +85,33 @@ class InstanceConfigurator extends React.Component {
         },
     ];
 
+    backHome = () => {
+        this.props.history.push("/");
+    };
+
     render() {
-        const { d2 } = this.props;
+        const { d2, classes } = this.props;
 
         return (
-            <div>
-                <ObjectsTable
-                    key={this.state.tableKey}
-                    d2={d2}
-                    model={d2.models.dataSet}
-                    columns={this.columns}
-                    detailsFields={this.detailsFields}
-                    pageSize={10}
-                    initialSorting={this.initialSorting}
-                    actions={this.actions}
-                    onCreate={this.onCreate}
-                    list={Instance.list}
-                />
-            </div>
+            <React.Fragment>
+                <PageHeader title={i18n.t("Instances")} onBackClick={this.backHome} />
+                <div className={classes.tableContainer}>
+                    <ObjectsTable
+                        key={this.state.tableKey}
+                        d2={d2}
+                        model={d2.models.dataSet}
+                        columns={this.columns}
+                        detailsFields={this.detailsFields}
+                        pageSize={10}
+                        initialSorting={this.initialSorting}
+                        actions={this.actions}
+                        onCreate={this.onCreate}
+                        list={Instance.list}
+                    />
+                </div>
+            </React.Fragment>
         );
     }
 }
 
-export default withSnackbar(withRouter(InstanceConfigurator));
+export default withSnackbar(withRouter(withStyles(styles)(InstanceConfigurator)));

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-03-02T23:15:28.302Z\n"
-"PO-Revision-Date: 2019-03-02T23:15:28.302Z\n"
+"POT-Creation-Date: 2019-03-14T17:48:06.139Z\n"
+"PO-Revision-Date: 2019-03-14T17:48:06.139Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -59,7 +59,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-msgid "Back"
+msgid "Instances"
 msgstr ""
 
 msgid "Server name (*)"
@@ -98,10 +98,31 @@ msgstr ""
 msgid "All your changes will be lost. Are you sure?"
 msgstr ""
 
+msgid "Help text"
+msgstr ""
+
 msgid "Saving..."
 msgstr ""
 
 msgid "Save"
+msgstr ""
+
+msgid "Help"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Data Elements Synchronization"
+msgstr ""
+
+msgid "Indicators Synchronization"
+msgstr ""
+
+msgid "Organisation Units Synchronization"
+msgstr ""
+
+msgid "Validation Rules Synchronization"
 msgstr ""
 
 msgid "Name"

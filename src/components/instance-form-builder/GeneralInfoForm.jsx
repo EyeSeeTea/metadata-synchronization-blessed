@@ -7,11 +7,24 @@ import { TextField } from "@dhis2/d2-ui-core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import { Validators } from "@dhis2/d2-ui-forms";
 import { Card, CardContent } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
 import RaisedButton from "material-ui/RaisedButton/RaisedButton";
 import { withSnackbar } from "d2-ui-components";
 
 import SaveButton from "./SaveButton";
 import isFormValid from "./FieldValidator";
+
+const styles = () => ({
+    formContainer: {
+        paddingRight: 70,
+        paddingLeft: 70,
+        paddingBottom: 30,
+    },
+    buttonContainer: {
+        flexDirection: "row",
+        paddingTop: 30,
+    },
+});
 
 class GeneralInfoForm extends React.Component {
     state = {
@@ -59,7 +72,7 @@ class GeneralInfoForm extends React.Component {
     };
 
     render() {
-        const { instance } = this.props;
+        const { instance, classes } = this.props;
         const fields = [
             {
                 name: "id",
@@ -67,7 +80,7 @@ class GeneralInfoForm extends React.Component {
                 component: TextField,
                 props: {
                     floatingLabelText: i18n.t("Server name (*)"),
-                    style: { width: "33%" },
+                    style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-field": "id",
                 },
@@ -86,7 +99,7 @@ class GeneralInfoForm extends React.Component {
                 component: TextField,
                 props: {
                     floatingLabelText: i18n.t("Description"),
-                    style: { width: "33%" },
+                    style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-field": "description",
                 },
@@ -98,7 +111,7 @@ class GeneralInfoForm extends React.Component {
                 component: TextField,
                 props: {
                     floatingLabelText: i18n.t("URL endpoint (*)"),
-                    style: { width: "33%" },
+                    style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-field": "url",
                 },
@@ -123,7 +136,7 @@ class GeneralInfoForm extends React.Component {
                 component: TextField,
                 props: {
                     floatingLabelText: i18n.t("Username (*)"),
-                    style: { width: "33%" },
+                    style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-field": "username",
                 },
@@ -142,7 +155,7 @@ class GeneralInfoForm extends React.Component {
                 component: TextField,
                 props: {
                     floatingLabelText: i18n.t("Password (*)"),
-                    style: { width: "33%" },
+                    style: { width: "100%" },
                     changeEvent: "onBlur",
                     type: "password",
                     autoComplete: "new-password",
@@ -178,18 +191,20 @@ class GeneralInfoForm extends React.Component {
 
         return (
             <Card>
-                <CardContent>
+                <CardContent className={classes.formContainer}>
                     <FormBuilder
                         fields={fields}
                         onUpdateField={this.onUpdateField}
                         ref={this.setFormReference}
                     />
-                    <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
-                    <RaisedButton label={i18n.t("Cancel")} onClick={this.props.cancelAction} />
+                    <div className={classes.buttonContainer}>
+                        <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
+                        <RaisedButton label={i18n.t("Cancel")} onClick={this.props.cancelAction} />
+                    </div>
                 </CardContent>
             </Card>
         );
     }
 }
 
-export default withSnackbar(withRouter(GeneralInfoForm));
+export default withSnackbar(withRouter(withStyles(styles)(GeneralInfoForm)));
