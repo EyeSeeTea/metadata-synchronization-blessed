@@ -1,7 +1,8 @@
+///<reference path="../types/d2.d.ts" />
 import _ from "lodash";
-import { D2 } from "../types/d2";
+import { D2 } from "../types/d2-types";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { Response } from "../types/d2";
+import { Response } from "../types/d2-types";
 import { deleteInstance, listInstances, saveNewInstance, validateInstanceId } from "./dataStore";
 import { generateUid } from "d2/uid";
 

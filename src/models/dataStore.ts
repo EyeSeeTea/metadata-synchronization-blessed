@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { D2, Response } from "../types/d2";
+import { D2, Response } from "../types/d2-types";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { Data as InstanceData } from "./instance";
 
