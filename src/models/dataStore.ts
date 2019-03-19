@@ -56,7 +56,7 @@ export async function listInstances(
     const pageCount = Math.ceil(sortedInstances.length / pageSize);
     const total = sortedInstances.length;
     const paginatedInstances = _.slice(sortedInstances, currentlyShown, currentlyShown + pageSize);
-
+    console.log(paginatedInstances);
     return { objects: paginatedInstances, pager: { page, pageCount, total } };
 }
 
@@ -77,7 +77,11 @@ export async function saveNewInstance(d2: D2, instance: any): Promise<Response> 
 export async function deleteInstance(d2: D2, instance: any): Promise<Response> {
     try {
         const instanceArray = await getDataStore(d2, instancesKey);
-        const newInstanceArray = _.differenceWith(instanceArray, [instance], _.isEqual);
+        const newInstanceArray = _.differenceWith(
+            instanceArray,
+            [instance],
+            (inst: InstanceData) => inst.id === instance.id
+        );
         await saveDataStore(d2, instancesKey, newInstanceArray);
         return { status: true };
     } catch (e) {

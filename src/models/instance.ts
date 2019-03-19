@@ -1,8 +1,11 @@
+///<reference path="../types/d2.d.ts" />
+
 import _ from "lodash";
 import { D2 } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { Response } from "../types/d2";
 import { deleteInstance, listInstances, saveNewInstance, validateInstanceId } from "./dataStore";
+import { generateUid } from "d2/uid";
 
 export interface Data {
     id: string;
@@ -40,11 +43,17 @@ export default class Instance {
     }
 
     public async save(d2: D2): Promise<Response> {
-        return saveNewInstance(d2, this.data);
+        const instance = { ...this.data, id: generateUid() };
+        return saveNewInstance(d2, instance);
     }
 
     public async remove(d2: D2): Promise<Response> {
         return deleteInstance(d2, this.data);
+    }
+
+    public async update(d2: D2): Promise<Response> {
+        await this.remove(d2);
+        return saveNewInstance(d2, this.data);
     }
 
     public setId(id: string): Instance {

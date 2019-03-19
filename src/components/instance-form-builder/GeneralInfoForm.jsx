@@ -22,7 +22,6 @@ class GeneralInfoForm extends React.Component {
         d2: PropTypes.object.isRequired,
         instance: PropTypes.object.isRequired,
         isEdit: PropTypes.bool,
-        originalInstance: PropTypes.object,
         snackbar: PropTypes.object.isRequired,
         cancelAction: PropTypes.func.isRequired,
     };
@@ -159,33 +158,22 @@ class GeneralInfoForm extends React.Component {
             },
         ];
 
-        const saveAction = () => {
+        const saveAction = async () => {
             const formErrors = isFormValid(fields, this.formReference);
+            const { isEdit, d2 } = this.props;
             if (formErrors.length > 0) {
                 this.props.snackbar.error(i18n.t("Please fix the issues before saving"));
                 return;
             }
+            this.setState({ isSaving: true });
 
-            const { url, username } = this.props.instance;
-            const instanceToSave = this.props.instance.setId([url, username].join("-"));
-
-            instanceToSave.validateInstanceId(this.props.d2).then(isValid => {
-                if (!isValid.status) {
-                    this.props.snackbar.error(
-                        i18n.t("This URL and Username combination already exists")
-                    );
-                    return;
-                }
-
-                this.setState({ isSaving: true });
-
-                this.props.originalInstance.remove(this.props.d2).then(() => {
-                    instanceToSave.save(this.props.d2, this.props.isEdit).then(() => {
-                        this.setState({ isSaving: false });
-                        this.props.history.push("/instance-configurator");
-                    });
-                });
-            });
+            if (isEdit) {
+                await this.props.instance.update(d2);
+            } else {
+                await this.props.instance.save(d2);
+            }
+            this.setState({ isSaving: false });
+            this.props.history.push("/instance-configurator");
         };
 
         return (
