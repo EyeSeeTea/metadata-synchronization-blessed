@@ -21,7 +21,6 @@ class GeneralInfoForm extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         instance: PropTypes.object.isRequired,
-        isEdit: PropTypes.bool,
         snackbar: PropTypes.object.isRequired,
         cancelAction: PropTypes.func.isRequired,
     };
@@ -160,18 +159,15 @@ class GeneralInfoForm extends React.Component {
 
         const saveAction = async () => {
             const formErrors = isFormValid(fields, this.formReference);
-            const { isEdit, d2 } = this.props;
+            const { d2 } = this.props;
             if (formErrors.length > 0) {
                 this.props.snackbar.error(i18n.t("Please fix the issues before saving"));
                 return;
             }
             this.setState({ isSaving: true });
 
-            if (isEdit) {
-                await this.props.instance.update(d2);
-            } else {
-                await this.props.instance.save(d2);
-            }
+            await this.props.instance.save(d2);
+
             this.setState({ isSaving: false });
             this.props.history.push("/instance-configurator");
         };

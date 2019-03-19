@@ -71,7 +71,6 @@ class InstanceFormBuilder extends React.Component {
                 <GeneralInfoStep
                     d2={d2}
                     instance={this.state.instance}
-                    isEdit={this.state.isEdit}
                     onChange={this.onChange}
                     cancelAction={this.cancelSave}
                 />

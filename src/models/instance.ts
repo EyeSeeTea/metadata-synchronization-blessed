@@ -1,5 +1,3 @@
-///<reference path="../types/d2.d.ts" />
-
 import _ from "lodash";
 import { D2 } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
@@ -43,17 +41,20 @@ export default class Instance {
     }
 
     public async save(d2: D2): Promise<Response> {
-        const instance = { ...this.data, id: generateUid() };
+        let instance;
+
+        if (!!this.data.id) {
+            instance = this.data;
+            await this.remove(d2);
+        } else {
+            instance = { ...this.data, id: generateUid() };
+        }
+
         return saveNewInstance(d2, instance);
     }
 
     public async remove(d2: D2): Promise<Response> {
         return deleteInstance(d2, this.data);
-    }
-
-    public async update(d2: D2): Promise<Response> {
-        await this.remove(d2);
-        return saveNewInstance(d2, this.data);
     }
 
     public setId(id: string): Instance {
@@ -102,10 +103,5 @@ export default class Instance {
 
     public get description(): string {
         return this.data.description ? this.data.description : "";
-    }
-
-    public async validateInstanceId(d2: D2): Promise<Response> {
-        const { id } = this.data;
-        return validateInstanceId(d2, id);
     }
 }
