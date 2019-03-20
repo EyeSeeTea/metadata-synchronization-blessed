@@ -1,4 +1,3 @@
-///<reference path="../types/modules.d.ts" />
 import _ from "lodash";
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
