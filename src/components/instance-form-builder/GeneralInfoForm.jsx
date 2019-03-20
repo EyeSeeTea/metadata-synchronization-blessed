@@ -172,7 +172,6 @@ class GeneralInfoForm extends React.Component {
                 this.props.snackbar.error(errorMessages.join("\n"), {
                     autoHideDuration: null,
                 });
-                return;
             } else {
                 this.setState({ isSaving: true });
                 await instance.save(d2);

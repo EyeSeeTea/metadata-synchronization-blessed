@@ -59,7 +59,6 @@ export async function listInstances(
     const pageCount = Math.ceil(sortedInstances.length / pageSize);
     const total = sortedInstances.length;
     const paginatedInstances = _.slice(sortedInstances, currentlyShown, currentlyShown + pageSize);
-    console.log(paginatedInstances);
     return { objects: paginatedInstances, pager: { page, pageCount, total } };
 }
 

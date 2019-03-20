@@ -148,7 +148,6 @@ export default class Instance {
                       }
                     : null,
             ]),
-
             password: !password
                 ? {
                       key: "cannot_be_blank",

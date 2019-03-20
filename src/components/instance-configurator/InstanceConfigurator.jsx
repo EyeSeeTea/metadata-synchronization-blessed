@@ -32,7 +32,7 @@ class InstanceConfigurator extends React.Component {
         const instance = new Instance(instanceData);
         await instance.remove(this.props.d2).then(response => {
             if (response.status) {
-                this.props.snackbar.success("Deleted " + instanceData.id);
+                this.props.snackbar.success("Deleted " + instanceData.name);
 
                 // TODO: Add a way to force render of ObjectsTable on-demand
                 // This is a work-around

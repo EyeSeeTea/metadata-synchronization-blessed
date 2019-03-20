@@ -35,7 +35,7 @@ const getAllInvalidFields = (fieldConfigs, formRef, formRefStateClone) =>
  * The name and step/group of the invalid field.
  * If no invalid fields, it will return an empty string.
  */
-export default async function isFormValid(fieldConfigs, formRef) {
+export default function isFormValid(fieldConfigs, formRef) {
     const formRefStateClone = formRef.getStateClone();
 
     const invalidFields = getAllInvalidFields(fieldConfigs, formRef, formRefStateClone);
