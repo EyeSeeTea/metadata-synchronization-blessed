@@ -17,8 +17,7 @@ const styles = () => ({
 class InstanceConfigurator extends React.Component {
     state = {
         tableKey: Math.random(),
-        dialogOpen: false,
-        toDelete: {},
+        toDelete: null,
     };
 
     static propTypes = {
@@ -39,17 +38,17 @@ class InstanceConfigurator extends React.Component {
     };
 
     onDelete = instanceData => {
-        this.setState({ dialogOpen: true, toDelete: instanceData });
+        this.setState({ toDelete: instanceData });
     };
 
     handleDialogCancel = () => {
-        this.setState({ dialogOpen: false, toDelete: {} });
+        this.setState({ toDelete: null });
     };
 
     handleDialogConfirm = async () => {
         const { toDelete } = this.state;
         const instance = new Instance(toDelete);
-        this.setState({ dialogOpen: false });
+        this.setState({ toDelete: null });
         await instance.remove(this.props.d2).then(response => {
             if (response.status) {
                 this.props.snackbar.success("Deleted " + toDelete.name);
@@ -105,11 +104,11 @@ class InstanceConfigurator extends React.Component {
 
     render() {
         const { d2, classes } = this.props;
-        const { dialogOpen } = this.state;
+        const { toDelete } = this.state;
         return (
             <React.Fragment>
                 <ConfirmationDialog
-                    dialogOpen={dialogOpen}
+                    dialogOpen={!!toDelete}
                     handleConfirm={this.handleDialogConfirm}
                     handleCancel={this.handleDialogCancel}
                     title={i18n.t("Delete Instance?")}
