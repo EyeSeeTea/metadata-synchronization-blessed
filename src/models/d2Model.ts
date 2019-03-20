@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { cleanOptions, d2BaseModelColumns, d2BaseModelDetails } from "../utils/d2";
 import { TableFilters, TableLabel, TableList, TablePagination } from "../types/d2-ui-components";
-import { D2, ModelDefinition } from "../types/d2-types";
+import { D2, ModelDefinition } from "../types/d2";
 
 abstract class D2Model {
     // Metadata Type should be defined on subclasses
