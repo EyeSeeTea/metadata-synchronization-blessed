@@ -4,7 +4,9 @@ import i18n from "@dhis2/d2-i18n";
 import { ObjectsTable, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
+
 import PageHeader from "../shared/PageHeader";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 
 import Instance from "../../models/instance";
 
@@ -15,6 +17,8 @@ const styles = () => ({
 class InstanceConfigurator extends React.Component {
     state = {
         tableKey: Math.random(),
+        dialogOpen: false,
+        toDelete: {},
     };
 
     static propTypes = {
@@ -34,17 +38,27 @@ class InstanceConfigurator extends React.Component {
         });
     };
 
-    onDelete = async instanceData => {
-        const instance = new Instance(instanceData);
+    onDelete = instanceData => {
+        this.setState({ dialogOpen: true, toDelete: instanceData });
+    };
+
+    handleDialogCancel = () => {
+        this.setState({ dialogOpen: false, toDelete: {} });
+    };
+
+    handleDialogConfirm = async () => {
+        const { toDelete } = this.state;
+        const instance = new Instance(toDelete);
+        this.setState({ dialogOpen: false });
         await instance.remove(this.props.d2).then(response => {
             if (response.status) {
-                this.props.snackbar.success("Deleted " + instanceData.name);
+                this.props.snackbar.success("Deleted " + toDelete.name);
 
                 // TODO: Add a way to force render of ObjectsTable on-demand
                 // This is a work-around
                 this.setState({ tableKey: Math.random() });
             } else {
-                this.props.snackbar.error("Failed to delete " + instanceData.id);
+                this.props.snackbar.error("Failed to delete " + toDelete.name);
             }
         });
     };
@@ -91,9 +105,16 @@ class InstanceConfigurator extends React.Component {
 
     render() {
         const { d2, classes } = this.props;
-
+        const { dialogOpen } = this.state;
         return (
             <React.Fragment>
+                <ConfirmationDialog
+                    dialogOpen={dialogOpen}
+                    handleConfirm={this.handleDialogConfirm}
+                    handleCancel={this.handleDialogCancel}
+                    title={i18n.t("Delete Instance?")}
+                    contents={i18n.t("All your changes will be lost. Are you sure?")}
+                />
                 <PageHeader title={i18n.t("Instances")} onBackClick={this.backHome} />
                 <div className={classes.tableContainer}>
                     <ObjectsTable
