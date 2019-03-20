@@ -113,7 +113,7 @@ class InstanceConfigurator extends React.Component {
                     handleConfirm={this.handleDialogConfirm}
                     handleCancel={this.handleDialogCancel}
                     title={i18n.t("Delete Instance?")}
-                    contents={i18n.t("All your changes will be lost. Are you sure?")}
+                    contents={i18n.t("Are you sure you want to delete this instance?")}
                 />
                 <PageHeader title={i18n.t("Instances")} onBackClick={this.backHome} />
                 <div className={classes.tableContainer}>
