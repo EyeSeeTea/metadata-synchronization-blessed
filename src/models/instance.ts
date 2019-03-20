@@ -1,10 +1,12 @@
 ///<reference path="../types/d2.d.ts" />
 import _ from "lodash";
-import { D2 } from "../types/d2-types";
+import { D2, Response } from "../types/d2-types";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { Response } from "../types/d2-types";
-import { deleteInstance, listInstances, saveNewInstance, validateInstanceId } from "./dataStore";
+import { deleteInstance, listInstances, saveNewInstance, getDataStoreData } from "./dataStore";
 import { generateUid } from "d2/uid";
+import { invalid } from "moment";
+
+const instancesDataStoreKey = "instances";
 
 export interface Data {
     id: string;
@@ -104,5 +106,55 @@ export default class Instance {
 
     public get description(): string {
         return this.data.description ? this.data.description : "";
+    }
+
+    public async validateUrlUsernameCombo(d2: D2) {
+        const { url, username } = this.data;
+        const combination = [url, username].join("-");
+        const instanceArray = await getDataStoreData(d2, instancesDataStoreKey);
+        const invalidCombination = instanceArray.some(
+            (inst: Data) => [inst.url, inst.username].join("-") === combination
+        );
+        return invalidCombination;
+    }
+
+    public async validate(d2: D2) {
+        const { name, url, username, password } = this.data;
+        return _.pickBy({
+            name: !name.trim()
+                ? {
+                      key: "cannot_be_blank",
+                      namespace: { field: "name" },
+                  }
+                : null,
+
+            url: !url
+                ? {
+                      key: "cannot_be_blank",
+                      namespace: { field: "url" },
+                  }
+                : null,
+            username: _.compact([
+                !username
+                    ? {
+                          key: "cannot_be_blank",
+                          namespace: { field: "username" },
+                      }
+                    : null,
+                (await this.validateUrlUsernameCombo(d2))
+                    ? {
+                          key: "url_username_combo_already_exists",
+                          namespace: { field: "username", other: "url" },
+                      }
+                    : null,
+            ]),
+
+            password: !password
+                ? {
+                      key: "cannot_be_blank",
+                      namespace: { field: "password" },
+                  }
+                : null,
+        });
     }
 }

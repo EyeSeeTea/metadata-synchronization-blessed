@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-03-14T19:42:34.355Z\n"
-"PO-Revision-Date: 2019-03-14T19:42:34.355Z\n"
+"POT-Creation-Date: 2019-03-20T11:27:39.284Z\n"
+"PO-Revision-Date: 2019-03-20T11:27:39.284Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -83,9 +83,6 @@ msgstr ""
 msgid "Please fix the issues before saving"
 msgstr ""
 
-msgid "This URL and Username combination already exists"
-msgstr ""
-
 msgid "New Instance"
 msgstr ""
 
@@ -126,4 +123,10 @@ msgid "ID"
 msgstr ""
 
 msgid "API link"
+msgstr ""
+
+msgid "Field {{field}} cannot be blank"
+msgstr ""
+
+msgid "This URL and username combination already exists"
 msgstr ""

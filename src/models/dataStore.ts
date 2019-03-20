@@ -29,6 +29,10 @@ async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promi
     await dataStore.set(dataStoreKey, newValue);
 }
 
+export async function getDataStoreData(d2: D2, dataStoreKey: string) {
+    return await getDataStore(d2, dataStoreKey);
+}
+
 export async function listInstances(
     d2: D2,
     filters: TableFilters,
@@ -83,24 +87,6 @@ export async function deleteInstance(d2: D2, instance: any): Promise<Response> {
         );
         await saveDataStore(d2, instancesKey, newInstanceArray);
         return { status: true };
-    } catch (e) {
-        return {
-            status: false,
-            error: e.toString(),
-        };
-    }
-}
-
-export async function validateInstanceId(d2: D2, id: string): Promise<Response> {
-    try {
-        console.log(id);
-        const instanceArray = await getDataStore(d2, instancesKey);
-        const validCombination = _(instanceArray)
-            .filter((inst: InstanceData) => inst.id === id)
-            .isEmpty()
-            .valueOf();
-
-        return { status: validCombination };
     } catch (e) {
         return {
             status: false,

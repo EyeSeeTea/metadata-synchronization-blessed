@@ -2,13 +2,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { withRouter } from "react-router-dom";
-
+import _ from "lodash";
 import { TextField } from "@dhis2/d2-ui-core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import { Validators } from "@dhis2/d2-ui-forms";
 import { Card, CardContent } from "@material-ui/core";
 import RaisedButton from "material-ui/RaisedButton/RaisedButton";
 import { withSnackbar } from "d2-ui-components";
+import { getValidationMessages } from "../../utils/validations";
 
 import SaveButton from "./SaveButton";
 import isFormValid from "./FieldValidator";
@@ -159,17 +160,25 @@ class GeneralInfoForm extends React.Component {
 
         const saveAction = async () => {
             const formErrors = isFormValid(fields, this.formReference);
-            const { d2 } = this.props;
+            const { d2, instance } = this.props;
             if (formErrors.length > 0) {
                 this.props.snackbar.error(i18n.t("Please fix the issues before saving"));
                 return;
             }
-            this.setState({ isSaving: true });
+            const fieldKeys = fields.map(field => field.name);
+            const errorMessages = await getValidationMessages(d2, instance, fieldKeys);
 
-            await this.props.instance.save(d2);
-
-            this.setState({ isSaving: false });
-            this.props.history.push("/instance-configurator");
+            if (!_(errorMessages).isEmpty()) {
+                this.props.snackbar.error(errorMessages.join("\n"), {
+                    autoHideDuration: null,
+                });
+                return;
+            } else {
+                this.setState({ isSaving: true });
+                await instance.save(d2);
+                this.setState({ isSaving: false });
+                this.props.history.push("/instance-configurator");
+            }
         };
 
         return (
