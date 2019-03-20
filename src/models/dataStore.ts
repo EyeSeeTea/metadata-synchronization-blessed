@@ -1,10 +1,8 @@
 import _ from "lodash";
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { Data as InstanceData } from "./instance";
 
 const dataStoreNamespace = "metatada-synchronization";
-const instancesKey = "instances";
 
 async function getOrCreateNamespace(d2: D2): Promise<any> {
     const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
@@ -29,18 +27,19 @@ async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promi
     await dataStore.set(dataStoreKey, newValue);
 }
 
-export async function getDataStoreData(d2: D2, dataStoreKey: string) {
+export async function getData(d2: D2, dataStoreKey: string) {
     return await getDataStore(d2, dataStoreKey);
 }
 
-export async function listInstances(
+export async function getPaginatedData(
     d2: D2,
+    dataStoreKey: string,
     filters: TableFilters,
     pagination: TablePagination
 ): Promise<TableList> {
-    const instanceArray = await getDataStore(d2, instancesKey);
+    const rawData = await getDataStore(d2, dataStoreKey);
     const { search = null } = filters || {};
-    const filteredInstances = _.filter(instanceArray, o =>
+    const filteredData = _.filter(rawData, o =>
         _(o)
             .keys()
             .some(k => o[k].toLowerCase().includes(search ? search.toLowerCase() : ""))
@@ -48,25 +47,21 @@ export async function listInstances(
 
     const { sorting = ["id", "asc"] } = pagination || {};
     const [field, direction] = sorting;
-    const sortedInstances = _.orderBy(
-        filteredInstances,
-        [instance => instance[field].toLowerCase()],
-        [direction]
-    );
+    const sortedData = _.orderBy(filteredData, [data => data[field].toLowerCase()], [direction]);
 
     const { page = 1, pageSize = 20 } = pagination || {};
     const currentlyShown = (page - 1) * pageSize;
-    const pageCount = Math.ceil(sortedInstances.length / pageSize);
-    const total = sortedInstances.length;
-    const paginatedInstances = _.slice(sortedInstances, currentlyShown, currentlyShown + pageSize);
-    return { objects: paginatedInstances, pager: { page, pageCount, total } };
+    const pageCount = Math.ceil(sortedData.length / pageSize);
+    const total = sortedData.length;
+    const paginatedData = _.slice(sortedData, currentlyShown, currentlyShown + pageSize);
+    return { objects: paginatedData, pager: { page, pageCount, total } };
 }
 
-export async function saveNewInstance(d2: D2, instance: any): Promise<Response> {
+export async function saveData(d2: D2, dataStoreKey: string, data: any): Promise<Response> {
     try {
-        const instanceArray = await getDataStore(d2, instancesKey);
-        const newInstanceArray = [...instanceArray, instance];
-        await saveDataStore(d2, instancesKey, newInstanceArray);
+        const dataArray = await getDataStore(d2, dataStoreKey);
+        const newDataArray = [...dataArray, data];
+        await saveDataStore(d2, dataStoreKey, newDataArray);
         return { status: true };
     } catch (e) {
         return {
@@ -76,15 +71,15 @@ export async function saveNewInstance(d2: D2, instance: any): Promise<Response> 
     }
 }
 
-export async function deleteInstance(d2: D2, instance: any): Promise<Response> {
+export async function deleteData(d2: D2, dataStoreKey: string, data: any): Promise<Response> {
     try {
-        const instanceArray = await getDataStore(d2, instancesKey);
-        const newInstanceArray = _.differenceWith(
-            instanceArray,
-            [instance],
-            (inst: InstanceData) => inst.id === instance.id
+        const dataArray = await getDataStore(d2, dataStoreKey);
+        const newDataArray = _.differenceWith(
+            dataArray,
+            [data],
+            (o: { id: string }) => o.id === data.id
         );
-        await saveDataStore(d2, instancesKey, newInstanceArray);
+        await saveDataStore(d2, dataStoreKey, newDataArray);
         return { status: true };
     } catch (e) {
         return {
