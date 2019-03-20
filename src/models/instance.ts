@@ -155,4 +155,39 @@ export default class Instance {
                 : null,
         });
     }
+
+    public async check(): Promise<Response> {
+        const { url, username, password } = this.data;
+        const headers = new Headers({
+            Authorization: "Basic " + btoa(username + ":" + password),
+        });
+
+        try {
+            const res = await fetch(url + "/api/system/info", { method: "GET", headers });
+            if (res.status === 401) {
+                return { status: false, error: new Error("Wrong username/password") };
+            } else if (!res.ok) {
+                return { status: false, error: new Error(`Error: ${res.status}`) };
+            } else {
+                const json = await res.json();
+                if (!json.version) {
+                    return { status: false, error: new Error("Not a DHIS2 instance") };
+                } else {
+                    return { status: true };
+                }
+            }
+        } catch (err) {
+            console.log({ err });
+            if (err.message && err.message === "Failed to fetch") {
+                return {
+                    status: false,
+                    error: new Error(
+                        `Network error (${err.toString()}), probably wrong server host or CORS not enabled in DHIS2 instance`
+                    ),
+                };
+            } else {
+                return { status: false, error: err };
+            }
+        }
+    }
 }
