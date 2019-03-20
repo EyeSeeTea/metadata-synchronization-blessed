@@ -5,7 +5,7 @@ import { withRouter } from "react-router-dom";
 
 import Instance from "../../models/instance";
 
-import FormHeading from "./FormHeading";
+import PageHeader from "../shared/PageHeader";
 import GeneralInfoStep from "./GeneralInfoForm";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 
@@ -66,7 +66,11 @@ class InstanceFormBuilder extends React.Component {
                     contents={i18n.t("All your changes will be lost. Are you sure?")}
                 />
 
-                <FormHeading title={title} onBackClick={this.cancelSave} />
+                <PageHeader
+                    title={title}
+                    onBackClick={this.cancelSave}
+                    helpText={i18n.t("Help text")}
+                />
 
                 <GeneralInfoStep
                     d2={d2}

@@ -8,7 +8,7 @@ import MenuList from "@material-ui/core/MenuList";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
-const styles = theme => ({
+const styles = () => ({
     root: {
         display: "flex",
     },

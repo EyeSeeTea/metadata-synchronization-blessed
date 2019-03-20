@@ -59,7 +59,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-msgid "Back"
+msgid "Instances"
 msgstr ""
 
 msgid "Server name (*)"
@@ -98,10 +98,31 @@ msgstr ""
 msgid "All your changes will be lost. Are you sure?"
 msgstr ""
 
+msgid "Help text"
+msgstr ""
+
 msgid "Saving..."
 msgstr ""
 
 msgid "Save"
+msgstr ""
+
+msgid "Help"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Data Elements Synchronization"
+msgstr ""
+
+msgid "Indicators Synchronization"
+msgstr ""
+
+msgid "Organisation Units Synchronization"
+msgstr ""
+
+msgid "Validation Rules Synchronization"
 msgstr ""
 
 msgid "Name"
