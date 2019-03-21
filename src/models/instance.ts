@@ -107,13 +107,20 @@ export default class Instance {
     }
 
     public async validateUrlUsernameCombo(d2: D2) {
-        const { url, username } = this.data;
+        const { url, username, id } = this.data;
         const combination = [url, username].join("-");
         const instanceArray = await getData(d2, instancesDataStoreKey);
-        const invalidCombination = instanceArray.some(
+        const invalidCombinations = instanceArray.filter(
             (inst: Data) => [inst.url, inst.username].join("-") === combination
         );
-        return invalidCombination;
+        let invalid;
+        if (!!id) {
+            invalid = invalidCombinations.some((inst: Data) => inst.id !== id);
+        } else {
+            invalid = !_.isEmpty(invalidCombinations);
+        }
+
+        return invalid;
     }
 
     public async validate(d2: D2) {
