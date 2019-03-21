@@ -37,7 +37,6 @@ class GeneralInfoForm extends React.Component {
         instance: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
         cancelAction: PropTypes.func.isRequired,
-        isEdit: PropTypes.bool.isRequired,
     };
 
     setFormReference = formReference => {
@@ -174,13 +173,13 @@ class GeneralInfoForm extends React.Component {
 
         const saveAction = async () => {
             const formErrors = isFormValid(fields, this.formReference);
-            const { d2, instance, isEdit } = this.props;
+            const { d2, instance } = this.props;
             if (formErrors.length > 0) {
                 this.props.snackbar.error(i18n.t("Please fix the issues before saving"));
                 return;
             }
             const fieldKeys = fields.map(field => field.name);
-            const errorMessages = await getValidationMessages(d2, instance, fieldKeys, isEdit);
+            const errorMessages = await getValidationMessages(d2, instance, fieldKeys);
 
             if (!_(errorMessages).isEmpty()) {
                 this.props.snackbar.error(errorMessages.join("\n"), {

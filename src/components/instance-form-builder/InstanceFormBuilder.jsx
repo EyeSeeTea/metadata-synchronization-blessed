@@ -77,7 +77,6 @@ class InstanceFormBuilder extends React.Component {
                     instance={this.state.instance}
                     onChange={this.onChange}
                     cancelAction={this.cancelSave}
-                    isEdit={isEdit}
                 />
             </React.Fragment>
         );
