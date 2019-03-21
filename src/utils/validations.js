@@ -7,8 +7,8 @@ const translations = {
         i18n.t("This URL and username combination already exists"),
 };
 
-export async function getValidationMessages(d2, instance, validationKeys) {
-    const validationObj = await instance.validate(d2);
+export async function getValidationMessages(d2, instance, validationKeys, isEdit) {
+    const validationObj = await instance.validate(d2, isEdit);
 
     return _(validationObj)
         .at(validationKeys)

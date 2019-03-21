@@ -117,7 +117,7 @@ export default class Instance {
         return invalidCombination;
     }
 
-    public async validate(d2: D2) {
+    public async validate(d2: D2, isEdit: boolean) {
         const { name, url, username, password } = this.data;
         return _.pickBy({
             name: !name.trim()
@@ -140,7 +140,7 @@ export default class Instance {
                           namespace: { field: "username" },
                       }
                     : null,
-                (await this.validateUrlUsernameCombo(d2))
+                !isEdit && (await this.validateUrlUsernameCombo(d2))
                     ? {
                           key: "url_username_combo_already_exists",
                           namespace: { field: "username", other: "url" },
