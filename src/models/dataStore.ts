@@ -74,11 +74,7 @@ export async function saveData(d2: D2, dataStoreKey: string, data: any): Promise
 export async function deleteData(d2: D2, dataStoreKey: string, data: any): Promise<Response> {
     try {
         const dataArray = await getDataStore(d2, dataStoreKey);
-        const newDataArray = _.differenceWith(
-            dataArray,
-            [data],
-            (o: { id: string }) => o.id === data.id
-        );
+        const newDataArray = dataArray.filter((dataEl: { id: string }) => dataEl.id !== data.id);
         await saveDataStore(d2, dataStoreKey, newDataArray);
         return { status: true };
     } catch (e) {
