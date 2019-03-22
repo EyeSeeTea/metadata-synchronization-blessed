@@ -43,7 +43,7 @@ export async function getMetadata(d2: D2, elements: string[]): Promise<Synchroni
 }
 
 export async function postMetadata(instance: Instance, metadata: any): Promise<any> {
-    return await axios.post(instance.url + "/metadata", metadata, {
+    return await axios.post(instance.url + "/api/metadata", metadata, {
         auth: {
             username: instance.username,
             password: instance.password,

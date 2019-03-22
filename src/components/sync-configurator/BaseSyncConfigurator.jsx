@@ -62,8 +62,9 @@ class BaseSyncConfigurator extends React.Component {
         const instance = instances.objects[0];
         // END OF DEBUG SECTION
 
-        const metadata = {};
-        metadata[this.props.model.getMetadataType()] = this.state.selection;
+        const metadata = {
+            [this.props.model.getMetadataType()]: this.state.selection,
+        };
 
         // DEBUG: Force metadata sync with selected items to a hard-coded instance
         console.log("[DEBUG] Selected Metadata", metadata);

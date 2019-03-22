@@ -35,23 +35,22 @@ async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<Synchroni
     // Parallel requests could be done but we need to implement a Promise queue (cwait)
     // Attempting to perform all the requests without a queue blocks the server and affects performance
     for (const element of elements) {
+        // Store metadata object in result
         const object = cleanObject(element, excludeRules);
-
-        // Store Organisation Unit in result object
         result[model.plural] = result[model.plural] || [];
         result[model.plural].push(object);
 
         // Get all the referenced metadata
         const references: SynchronizationResult = getAllReferences(d2, object, model.name);
         const referenceTypes = _.intersection(_.keys(references), includeRules);
-        const promises = _.map(referenceTypes, type => {
-            return {
+        const promises = referenceTypes
+            .map(type => ({
                 type,
                 ids: references[type],
                 excludeRules: nestedExcludeRules[type],
                 includeRules: nestedIncludeRules[type],
-            };
-        }).map(newBuilder => exportMetadata(d2, newBuilder));
+            }))
+            .map(newBuilder => exportMetadata(d2, newBuilder));
         const promisesResult: SynchronizationResult[] = await Promise.all(promises);
         _.deepMerge(result, ...promisesResult);
     }
