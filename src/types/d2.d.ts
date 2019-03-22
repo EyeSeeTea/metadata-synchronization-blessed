@@ -1,11 +1,11 @@
 import { Dictionary } from "lodash";
 
 export interface DataStoreNamespace {
-    delete(key: string): Promise<>;
+    delete(key: string): Promise<any>;
     get(key: string): Promise<any>;
     getKeys(): Promise<string[]>;
-    set(key: string, value: any, overrideUpdate?: boolean, encrypt?: boolean): Promise<>;
-    update(key: string, value: any): Promise<>;
+    set(key: string, value: any, overrideUpdate?: boolean, encrypt?: boolean): Promise<any>;
+    update(key: string, value: any): Promise<any>;
 }
 
 export interface Params {
@@ -69,7 +69,7 @@ export interface D2 {
         getAll(): Promise<DataStoreNamespace[]>;
         has(namespace: string): Promise<boolean>;
         create(namespace: string): Promise<DataStoreNamespace>;
-        delete(namespace: string): Promise<>;
+        delete(namespace: string): Promise<any>;
     };
     models: {
         [metadataType: string]: ModelDefinition;

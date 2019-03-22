@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { Data as InstanceData } from "./instance";
 
 const dataStoreNamespace = "metatada-synchronization";
 const instancesKey = "instances";
@@ -28,13 +29,16 @@ async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promi
     await dataStore.set(dataStoreKey, newValue);
 }
 
+export async function getDataStoreData(d2: D2, dataStoreKey: string) {
+    return await getDataStore(d2, dataStoreKey);
+}
+
 export async function listInstances(
     d2: D2,
     filters: TableFilters,
     pagination: TablePagination
 ): Promise<TableList> {
     const instanceArray = await getDataStore(d2, instancesKey);
-
     const { search = null } = filters || {};
     const filteredInstances = _.filter(instanceArray, o =>
         _(o)
@@ -55,7 +59,6 @@ export async function listInstances(
     const pageCount = Math.ceil(sortedInstances.length / pageSize);
     const total = sortedInstances.length;
     const paginatedInstances = _.slice(sortedInstances, currentlyShown, currentlyShown + pageSize);
-
     return { objects: paginatedInstances, pager: { page, pageCount, total } };
 }
 
@@ -76,7 +79,11 @@ export async function saveNewInstance(d2: D2, instance: any): Promise<Response> 
 export async function deleteInstance(d2: D2, instance: any): Promise<Response> {
     try {
         const instanceArray = await getDataStore(d2, instancesKey);
-        const newInstanceArray = _.differenceWith(instanceArray, [instance], _.isEqual);
+        const newInstanceArray = _.differenceWith(
+            instanceArray,
+            [instance],
+            (inst: InstanceData) => inst.id === instance.id
+        );
         await saveDataStore(d2, instancesKey, newInstanceArray);
         return { status: true };
     } catch (e) {

@@ -21,12 +21,10 @@ class InstanceFormBuilder extends React.Component {
 
         const isEdit = props.location.instance !== undefined;
         const instance = isEdit ? new Instance(props.location.instance) : Instance.create();
-        const originalInstance = isEdit ? new Instance(props.location.instance) : Instance.create();
 
         this.state = {
             instance,
             isEdit,
-            originalInstance,
             dialogOpen: false,
         };
     }
@@ -49,12 +47,12 @@ class InstanceFormBuilder extends React.Component {
     };
 
     render() {
-        const { dialogOpen } = this.state;
+        const { dialogOpen, isEdit } = this.state;
         const { d2 } = this.props;
 
-        const title = !this.state.isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
+        const title = !isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
 
-        const cancel = !this.state.isEdit
+        const cancel = !isEdit
             ? i18n.t("Cancel Instance Creation")
             : i18n.t("Cancel Instance Editing");
 
@@ -77,8 +75,6 @@ class InstanceFormBuilder extends React.Component {
                 <GeneralInfoStep
                     d2={d2}
                     instance={this.state.instance}
-                    isEdit={this.state.isEdit}
-                    originalInstance={this.state.originalInstance}
                     onChange={this.onChange}
                     cancelAction={this.cancelSave}
                 />

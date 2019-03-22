@@ -24,16 +24,16 @@ const getAllInvalidFields = (fieldConfigs, formRef, formRefStateClone) =>
         .filter(field => field.invalid);
 
 /**
- * Validate checks all the fields that are required or has a invalid value in the form.
+ * Validate checks all the fields that are required or have an invalid value in the form.
  * The validation will set the fields as invalid in the formbuilder and set
  * the new state of the form.
  *
- * If any the fields are not valid, it will create a message string
+ * If any of the fields are invalid, it will create a message string
  * of the first invalid field.
  *
  * @returns {string}
  * The name and step/group of the invalid field.
- * If no invalid field, it will return an empty string.
+ * If no invalid fields, it will return an empty string.
  */
 export default function isFormValid(fieldConfigs, formRef) {
     const formRefStateClone = formRef.getStateClone();

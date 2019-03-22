@@ -38,7 +38,7 @@ class InstanceConfigurator extends React.Component {
         const instance = new Instance(instanceData);
         await instance.remove(this.props.d2).then(response => {
             if (response.status) {
-                this.props.snackbar.success("Deleted " + instanceData.id);
+                this.props.snackbar.success("Deleted " + instanceData.name);
 
                 // TODO: Add a way to force render of ObjectsTable on-demand
                 // This is a work-around
@@ -50,7 +50,7 @@ class InstanceConfigurator extends React.Component {
     };
 
     columns = [
-        { name: "id", text: i18n.t("Server name"), sortable: true },
+        { name: "name", text: i18n.t("Server name"), sortable: true },
         { name: "url", text: i18n.t("URL endpoint"), sortable: true },
         { name: "username", text: i18n.t("Username"), sortable: true },
     ];
@@ -58,7 +58,7 @@ class InstanceConfigurator extends React.Component {
     initialSorting = ["id", "asc"];
 
     detailsFields = [
-        { name: "id", text: i18n.t("Server name") },
+        { name: "name", text: i18n.t("Server name") },
         { name: "url", text: i18n.t("URL endpoint") },
         { name: "username", text: i18n.t("Username") },
         { name: "description", text: i18n.t("Description") },

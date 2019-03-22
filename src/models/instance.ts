@@ -1,11 +1,15 @@
 import _ from "lodash";
-import { D2 } from "../types/d2";
+import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { Response } from "../types/d2";
-import { deleteInstance, listInstances, saveNewInstance } from "./dataStore";
+import { deleteInstance, listInstances, saveNewInstance, getDataStoreData } from "./dataStore";
+import { generateUid } from "d2/uid";
+import { invalid } from "moment";
+
+const instancesDataStoreKey = "instances";
 
 export interface Data {
     id: string;
+    name: string;
     url: string;
     username: string;
     password: string;
@@ -16,12 +20,13 @@ export default class Instance {
     private readonly data: Data;
 
     constructor(data: Data) {
-        this.data = _.pick(data, ["id", "url", "username", "password", "description"]);
+        this.data = _.pick(data, ["id", "name", "url", "username", "password", "description"]);
     }
 
     public static create(): Instance {
         const initialData = {
             id: "",
+            name: "",
             url: "",
             username: "",
             password: "",
@@ -38,7 +43,16 @@ export default class Instance {
     }
 
     public async save(d2: D2): Promise<Response> {
-        return saveNewInstance(d2, this.data);
+        let instance;
+
+        if (!!this.data.id) {
+            instance = this.data;
+            await this.remove(d2);
+        } else {
+            instance = { ...this.data, id: generateUid() };
+        }
+
+        return saveNewInstance(d2, instance);
     }
 
     public async remove(d2: D2): Promise<Response> {
@@ -51,6 +65,14 @@ export default class Instance {
 
     public get id(): string {
         return this.data.id;
+    }
+
+    public setName(name: string): Instance {
+        return new Instance({ ...this.data, name });
+    }
+
+    public get name(): string {
+        return this.data.name;
     }
 
     public setUrl(url: string): Instance {
@@ -83,5 +105,61 @@ export default class Instance {
 
     public get description(): string {
         return this.data.description ? this.data.description : "";
+    }
+
+    public async validateUrlUsernameCombo(d2: D2) {
+        const { url, username, id } = this.data;
+        const combination = [url, username].join("-");
+        const instanceArray = await getDataStoreData(d2, instancesDataStoreKey);
+        const invalidCombinations = instanceArray.filter(
+            (inst: Data) => [inst.url, inst.username].join("-") === combination
+        );
+        let invalid;
+        if (!!id) {
+            invalid = invalidCombinations.some((inst: Data) => inst.id !== id);
+        } else {
+            invalid = !_.isEmpty(invalidCombinations);
+        }
+
+        return invalid;
+    }
+
+    public async validate(d2: D2) {
+        const { name, url, username, password } = this.data;
+        return _.pickBy({
+            name: !name.trim()
+                ? {
+                      key: "cannot_be_blank",
+                      namespace: { field: "name" },
+                  }
+                : null,
+
+            url: !url
+                ? {
+                      key: "cannot_be_blank",
+                      namespace: { field: "url" },
+                  }
+                : null,
+            username: _.compact([
+                !username
+                    ? {
+                          key: "cannot_be_blank",
+                          namespace: { field: "username" },
+                      }
+                    : null,
+                (await this.validateUrlUsernameCombo(d2))
+                    ? {
+                          key: "url_username_combo_already_exists",
+                          namespace: { field: "username", other: "url" },
+                      }
+                    : null,
+            ]),
+            password: !password
+                ? {
+                      key: "cannot_be_blank",
+                      namespace: { field: "password" },
+                  }
+                : null,
+        });
     }
 }
