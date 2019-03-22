@@ -1,9 +1,8 @@
 import _ from "lodash";
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { deleteInstance, listInstances, saveNewInstance, getDataStoreData } from "./dataStore";
+import { deleteData, getPaginatedData, saveData, getData } from "./dataStore";
 import { generateUid } from "d2/uid";
-import { invalid } from "moment";
 
 const instancesDataStoreKey = "instances";
 
@@ -39,7 +38,7 @@ export default class Instance {
         filters: TableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        return listInstances(d2, filters, pagination);
+        return getPaginatedData(d2, instancesDataStoreKey, filters, pagination);
     }
 
     public async save(d2: D2): Promise<Response> {
@@ -52,11 +51,11 @@ export default class Instance {
             instance = { ...this.data, id: generateUid() };
         }
 
-        return saveNewInstance(d2, instance);
+        return saveData(d2, instancesDataStoreKey, instance);
     }
 
     public async remove(d2: D2): Promise<Response> {
-        return deleteInstance(d2, this.data);
+        return deleteData(d2, instancesDataStoreKey, this.data);
     }
 
     public setId(id: string): Instance {
@@ -110,7 +109,7 @@ export default class Instance {
     public async validateUrlUsernameCombo(d2: D2) {
         const { url, username, id } = this.data;
         const combination = [url, username].join("-");
-        const instanceArray = await getDataStoreData(d2, instancesDataStoreKey);
+        const instanceArray = await getData(d2, instancesDataStoreKey);
         const invalidCombinations = instanceArray.filter(
             (inst: Data) => [inst.url, inst.username].join("-") === combination
         );
