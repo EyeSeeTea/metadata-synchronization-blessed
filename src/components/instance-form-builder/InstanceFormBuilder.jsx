@@ -47,12 +47,12 @@ class InstanceFormBuilder extends React.Component {
     };
 
     render() {
-        const { dialogOpen } = this.state;
+        const { dialogOpen, isEdit } = this.state;
         const { d2 } = this.props;
 
-        const title = !this.state.isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
+        const title = !isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
 
-        const cancel = !this.state.isEdit
+        const cancel = !isEdit
             ? i18n.t("Cancel Instance Creation")
             : i18n.t("Cancel Instance Editing");
 
