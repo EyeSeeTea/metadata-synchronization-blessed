@@ -180,9 +180,13 @@ class GeneralInfoForm extends React.Component {
             }
             const fieldKeys = fields.map(field => field.name);
             const errorMessages = await getValidationMessages(d2, instance, fieldKeys);
+            const connectionErrors = await instance.check();
 
-            if (!_(errorMessages).isEmpty()) {
-                this.props.snackbar.error(errorMessages.join("\n"), {
+            const allErrors = connectionErrors.status
+                ? errorMessages
+                : [...errorMessages, connectionErrors.error];
+            if (!_(allErrors).isEmpty()) {
+                this.props.snackbar.error(allErrors.join("\n"), {
                     autoHideDuration: null,
                 });
             } else {

@@ -3,6 +3,7 @@ import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { deleteData, getPaginatedData, saveData, getData } from "./dataStore";
 import { generateUid } from "d2/uid";
+import i18n from "@dhis2/d2-i18n";
 
 const instancesDataStoreKey = "instances";
 
@@ -160,5 +161,46 @@ export default class Instance {
                   }
                 : null,
         });
+    }
+
+    public async check(): Promise<Response> {
+        const { url, username, password } = this.data;
+        const headers = new Headers({
+            Authorization: "Basic " + btoa(username + ":" + password),
+        });
+
+        try {
+            const res = await fetch(url + "/api/system/info", { method: "GET", headers });
+            if (res.status === 401) {
+                return { status: false, error: new Error(i18n.t("Wrong username/password")) };
+            } else if (!res.ok) {
+                return {
+                    status: false,
+                    error: new Error(i18n.t("Error: {{status}}", { status: res.status })),
+                };
+            } else {
+                const json = await res.json();
+                if (!json.version) {
+                    return { status: false, error: new Error(i18n.t("Not a DHIS2 instance")) };
+                } else {
+                    return { status: true };
+                }
+            }
+        } catch (err) {
+            console.log({ err });
+            if (err.message && err.message === "Failed to fetch") {
+                return {
+                    status: false,
+                    error: new Error(
+                        i18n.t(
+                            "Network error {{error}}, probably wrong server host or CORS not enabled in DHIS2 instance",
+                            { error: err.toString() }
+                        )
+                    ),
+                };
+            } else {
+                return { status: false, error: err };
+            }
+        }
     }
 }
