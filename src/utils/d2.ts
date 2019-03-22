@@ -1,9 +1,7 @@
 import _ from "lodash";
-import i18n from "@dhis2/d2-i18n";
-import { isValidUid } from "d2/uid";
-import { D2, Params } from "../types/d2";
-import { SynchronizationResult } from "../types/synchronization";
 import "../utils/lodash-mixins";
+import i18n from "@dhis2/d2-i18n";
+import { D2, Params } from "../types/d2";
 
 export const d2BaseModelColumns = [
     { name: "displayName", text: i18n.t("Name"), sortable: true },
@@ -36,29 +34,4 @@ export function cleanObject(element: any, excludeRules: string[]): any {
 
 export function isD2Model(d2: D2, modelName: string): boolean {
     return !!d2.models[modelName];
-}
-
-export function getAllReferences(
-    d2: D2,
-    obj: any,
-    type: string,
-    parents: string[] = []
-): SynchronizationResult {
-    let result: SynchronizationResult = {};
-    _.forEach(obj, (value, key) => {
-        if (_.isObject(value) || _.isArray(value)) {
-            const recursive = getAllReferences(d2, value, type, [...parents, key]);
-            result = _.deepMerge(result, recursive);
-        } else if (isValidUid(value)) {
-            const metadataType = _(parents)
-                .map(k => cleanModelName(k, type))
-                .filter(k => isD2Model(d2, k))
-                .first();
-            if (metadataType) {
-                result[metadataType] = result[metadataType] || [];
-                result[metadataType].push(value);
-            }
-        }
-    });
-    return result;
 }

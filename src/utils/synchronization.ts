@@ -1,9 +1,12 @@
-import _ from "lodash";
 import axios from "axios";
+import _ from "lodash";
+import "../utils/lodash-mixins";
 
 import Instance from "../models/instance";
 import { D2 } from "../types/d2";
 import { NestedRules, SynchronizationResult } from "../types/synchronization";
+import { cleanModelName, isD2Model } from "./d2";
+import { isValidUid } from "d2/uid";
 
 export function buildNestedRules(rules: string[]): NestedRules {
     return _.transform(
@@ -54,4 +57,29 @@ export async function postMetadata(instance: Instance, metadata: any): Promise<a
             atomicMode: "NONE",
         },
     });
+}
+
+export function getAllReferences(
+    d2: D2,
+    obj: any,
+    type: string,
+    parents: string[] = []
+): SynchronizationResult {
+    let result: SynchronizationResult = {};
+    _.forEach(obj, (value, key) => {
+        if (_.isObject(value) || _.isArray(value)) {
+            const recursive = getAllReferences(d2, value, type, [...parents, key]);
+            result = _.deepMerge(result, recursive);
+        } else if (isValidUid(value)) {
+            const metadataType = _(parents)
+                .map(k => cleanModelName(k, type))
+                .filter(k => isD2Model(d2, k))
+                .first();
+            if (metadataType) {
+                result[metadataType] = result[metadataType] || [];
+                result[metadataType].push(value);
+            }
+        }
+    });
+    return result;
 }

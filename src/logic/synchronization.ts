@@ -10,8 +10,13 @@ import {
     SynchronizationBuilder,
     SynchronizationResult,
 } from "../types/synchronization";
-import { cleanObject, getAllReferences } from "../utils/d2";
-import { buildNestedRules, getMetadata, postMetadata } from "../utils/synchronization";
+import { cleanObject } from "../utils/d2";
+import {
+    buildNestedRules,
+    getAllReferences,
+    getMetadata,
+    postMetadata,
+} from "../utils/synchronization";
 
 async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<SynchronizationResult> {
     const { type, ids, excludeRules, includeRules } = builder;
