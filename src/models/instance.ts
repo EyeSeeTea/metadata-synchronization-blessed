@@ -3,6 +3,8 @@ import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { deleteInstance, listInstances, saveNewInstance, getDataStoreData } from "./dataStore";
 import { generateUid } from "d2/uid";
+import i18n from "@dhis2/d2-i18n";
+
 import { invalid } from "moment";
 
 const instancesDataStoreKey = "instances";
@@ -165,13 +167,16 @@ export default class Instance {
         try {
             const res = await fetch(url + "/api/system/info", { method: "GET", headers });
             if (res.status === 401) {
-                return { status: false, error: new Error("Wrong username/password") };
+                return { status: false, error: new Error(i18n.t("Wrong username/password")) };
             } else if (!res.ok) {
-                return { status: false, error: new Error(`Error: ${res.status}`) };
+                return {
+                    status: false,
+                    error: new Error(i18n.t("Error: {{status}}", { status: res.status })),
+                };
             } else {
                 const json = await res.json();
                 if (!json.version) {
-                    return { status: false, error: new Error("Not a DHIS2 instance") };
+                    return { status: false, error: new Error(i18n.t("Not a DHIS2 instance")) };
                 } else {
                     return { status: true };
                 }
@@ -182,7 +187,10 @@ export default class Instance {
                 return {
                     status: false,
                     error: new Error(
-                        `Network error (${err.toString()}), probably wrong server host or CORS not enabled in DHIS2 instance`
+                        i18n.t(
+                            "Network error {{error}}, probably wrong server host or CORS not enabled in DHIS2 instance",
+                            { error: err.toString() }
+                        )
                     ),
                 };
             } else {
