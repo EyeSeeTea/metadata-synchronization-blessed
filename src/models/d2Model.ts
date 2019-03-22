@@ -66,6 +66,8 @@ export class OrganisationUnitModel extends D2Model {
     protected static metadataType = "organisationUnit";
     protected static excludeRules = [
         "legendSets",
+        "dataSets",
+        "programs",
         "user",
         "users",
         "userAccesses",

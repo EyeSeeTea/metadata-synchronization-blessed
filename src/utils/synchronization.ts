@@ -49,12 +49,12 @@ export async function postMetadata(instance: Instance, metadata: any): Promise<a
             password: instance.password,
         },
         params: {
-            importMode: "VALIDATE",
+            importMode: "COMMIT",
             identifier: "AUTO",
             importReportMode: "FULL",
             importStrategy: "CREATE_AND_UPDATE",
             mergeMode: "REPLACE",
-            atomicMode: "NONE",
+            atomicMode: "ALL",
         },
     });
 }
