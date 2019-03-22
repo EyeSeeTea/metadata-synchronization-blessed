@@ -51,13 +51,15 @@ class InstanceConfigurator extends React.Component {
         this.setState({ toDelete: null });
         await instance.remove(this.props.d2).then(response => {
             if (response.status) {
-                this.props.snackbar.success([i18n.t("Deleted"), toDelete.name].join(" "));
+                this.props.snackbar.success(i18n.t("Deleted {{name}}", { name: toDelete.name }));
 
                 // TODO: Add a way to force render of ObjectsTable on-demand
                 // This is a work-around
                 this.setState({ tableKey: Math.random() });
             } else {
-                this.props.snackbar.error([i18n.t("Failed to delete"), toDelete.name].join(" "));
+                this.props.snackbar.error(
+                    i18n.t("Failed to delete {{name}}", { name: toDelete.name })
+                );
             }
         });
     };
