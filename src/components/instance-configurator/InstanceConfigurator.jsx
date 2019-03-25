@@ -91,7 +91,6 @@ class InstanceConfigurator extends React.Component {
 
     render() {
         const { d2, classes } = this.props;
-
         return (
             <React.Fragment>
                 <PageHeader title={i18n.t("Instances")} onBackClick={this.backHome} />

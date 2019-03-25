@@ -1,4 +1,6 @@
+///<reference path="../types/modules.d.ts" />
 import _ from "lodash";
+import Cryptr from "cryptr";
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { deleteData, getPaginatedData, saveData, getData } from "./dataStore";
@@ -48,7 +50,8 @@ export default class Instance {
             instance = this.data;
             await this.remove(d2);
         } else {
-            instance = { ...this.data, id: generateUid() };
+            const password = await this.encryptPassword();
+            instance = { ...this.data, id: generateUid(), password };
         }
 
         return saveData(d2, instancesDataStoreKey, instance);
@@ -100,6 +103,15 @@ export default class Instance {
 
     public setDescription(description: string): Instance {
         return new Instance({ ...this.data, description });
+    }
+
+    async encryptPassword() {
+        const { secretKey } = await fetch("app-config.json", {
+            credentials: "same-origin",
+        }).then(res => res.json());
+        const cryptr = new Cryptr(secretKey);
+        const password = this.data.password;
+        return cryptr.encrypt(password);
     }
 
     public get description(): string {
