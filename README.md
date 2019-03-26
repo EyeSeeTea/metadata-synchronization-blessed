@@ -4,6 +4,8 @@
 $ yarn install
 ```
 
+File public/app-config.json must be created by duplicating public/app-config.template.json and filling in the encryptionKey.
+
 ## Development
 
 Start development server:

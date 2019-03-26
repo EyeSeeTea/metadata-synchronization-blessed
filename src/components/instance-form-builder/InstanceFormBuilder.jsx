@@ -24,7 +24,7 @@ class InstanceFormBuilder extends React.Component {
         let instance;
         if (isEdit) {
             const cryptedInstance = new Instance(props.location.instance);
-            instance = cryptedInstance.decryptPassword(props.appConfig.secretKey);
+            instance = cryptedInstance.decryptPassword(props.appConfig.encryptionKey);
         } else {
             instance = Instance.create();
         }

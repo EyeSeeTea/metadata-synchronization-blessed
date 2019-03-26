@@ -1,4 +1,3 @@
-///<reference path="../types/modules.d.ts" />
 import _ from "lodash";
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
@@ -46,13 +45,12 @@ export default class Instance {
     public async save(d2: D2, encryptionKey: string): Promise<Response> {
         const instance = this.encryptPassword(encryptionKey);
         let toSave;
-        if (!!instance.id) {
+        if (!!instance.data.id) {
             toSave = instance.data;
             await instance.remove(d2);
         } else {
             toSave = { ...instance.data, id: generateUid() };
         }
-        console.log(toSave);
         return saveData(d2, instancesDataStoreKey, toSave);
     }
 
@@ -107,7 +105,6 @@ export default class Instance {
     public encryptPassword(encryptionKey: string) {
         const cryptr = new Cryptr(encryptionKey);
         const encrypted = cryptr.encrypt(this.data.password);
-        console.log([this.data.password, encrypted]);
         return new Instance({ ...this.data, password: encrypted });
     }
 

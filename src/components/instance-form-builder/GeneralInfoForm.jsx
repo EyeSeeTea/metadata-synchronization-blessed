@@ -187,7 +187,7 @@ class GeneralInfoForm extends React.Component {
                     autoHideDuration: null,
                 });
             } else {
-                const encryptionKey = _(appConfig).get("secretKey");
+                const encryptionKey = _(appConfig).get("encryptionKey");
                 this.setState({ isSaving: true });
                 await instance.save(d2, encryptionKey);
                 this.setState({ isSaving: false });
