@@ -8,6 +8,12 @@ export const d2BaseModelColumns = [
     { name: "lastUpdated", text: i18n.t("Last update"), sortable: true },
 ];
 
+export const organisationUnitsColumns = [
+    { name: "displayName", text: i18n.t("Name"), sortable: true },
+    { name: "level", text: i18n.t("Level"), sortable: true },
+    { name: "lastUpdated", text: i18n.t("Last update"), sortable: true },
+];
+
 export const d2BaseModelDetails = [
     { name: "displayName", text: i18n.t("Name") },
     { name: "shortName", text: i18n.t("Short name") },
@@ -17,6 +23,11 @@ export const d2BaseModelDetails = [
     { name: "lastUpdated", text: i18n.t("Last update") },
     { name: "id", text: i18n.t("ID") },
     { name: "href", text: i18n.t("API link") },
+];
+
+export const organisationUnitsDetails = [
+    { name: "level", text: i18n.t("Level"), sortable: true },
+    ...d2BaseModelDetails,
 ];
 
 export function cleanParams(options: Params): Params {

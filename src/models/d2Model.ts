@@ -1,5 +1,11 @@
 import _ from "lodash";
-import { cleanParams, d2BaseModelColumns, d2BaseModelDetails } from "../utils/d2";
+import {
+    cleanParams,
+    d2BaseModelColumns,
+    d2BaseModelDetails,
+    organisationUnitsColumns,
+    organisationUnitsDetails,
+} from "../utils/d2";
 import { TableFilters, TableLabel, TableList, TablePagination } from "../types/d2-ui-components";
 import { D2, ModelDefinition } from "../types/d2";
 
@@ -86,6 +92,8 @@ export class OrganisationUnitModel extends D2Model {
         "organisationUnitGroups.groupSets",
         "organisationUnitGroups.groupSets.attribute",
     ];
+    protected static columns = organisationUnitsColumns;
+    protected static details = organisationUnitsDetails;
 }
 
 export class DataElementModel extends D2Model {
