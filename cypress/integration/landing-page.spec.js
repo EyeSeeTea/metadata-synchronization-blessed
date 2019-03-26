@@ -2,6 +2,8 @@
 
 context("Landing page", () => {
     before(() => {
+        cy.server();
+        cy.fixture("app-config.json").then(json => cy.route("GET", "app-config.json", json));
         cy.login("admin");
         cy.loadPage();
     });
