@@ -24,6 +24,7 @@ class InstanceConfigurator extends React.Component {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
+        appConfig: PropTypes.object.isRequired,
     };
 
     onCreate = () => {
@@ -35,6 +36,19 @@ class InstanceConfigurator extends React.Component {
             pathname: "/instance-configurator/edit",
             instance,
         });
+    };
+
+    onTestConnection = async instanceData => {
+        const { encryptionKey } = this.props.appConfig;
+        const instance = Instance.getOrCreate(instanceData, encryptionKey);
+        const connectionErrors = await instance.check();
+        if (!connectionErrors.status) {
+            this.props.snackbar.error(connectionErrors.error.message, {
+                autoHideDuration: null,
+            });
+        } else {
+            this.props.snackbar.success(i18n.t("Connected sucessfully to instance"));
+        }
     };
 
     onDelete = instanceData => {
@@ -97,6 +111,12 @@ class InstanceConfigurator extends React.Component {
             text: i18n.t("Delete"),
             multiple: false,
             onClick: this.onDelete,
+        },
+        {
+            name: "testConnection",
+            text: i18n.t("Test connection"),
+            multiple: false,
+            onClick: this.onTestConnection,
         },
     ];
 

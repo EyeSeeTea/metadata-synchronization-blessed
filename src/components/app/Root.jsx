@@ -29,7 +29,9 @@ class Root extends React.Component {
 
                 <Route
                     path="/instance-configurator"
-                    render={props => <InstanceConfigurator d2={d2} {...props} />}
+                    render={props => (
+                        <InstanceConfigurator d2={d2} appConfig={appConfig} {...props} />
+                    )}
                 />
 
                 <Route

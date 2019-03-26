@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-03-22T11:28:52.570Z\n"
-"PO-Revision-Date: 2019-03-22T11:28:52.570Z\n"
+"POT-Creation-Date: 2019-03-26T16:05:15.265Z\n"
+"PO-Revision-Date: 2019-03-26T16:05:15.265Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -38,6 +38,9 @@ msgstr ""
 msgid "Ok"
 msgstr ""
 
+msgid "Connected sucessfully to instance"
+msgstr ""
+
 msgid "Deleted {{name}}"
 msgstr ""
 
@@ -63,6 +66,9 @@ msgid "Edit"
 msgstr ""
 
 msgid "Delete"
+msgstr ""
+
+msgid "Test connection"
 msgstr ""
 
 msgid "Delete Instance?"
@@ -93,6 +99,12 @@ msgid "Password (*)"
 msgstr ""
 
 msgid "Please fix the issues before saving"
+msgstr ""
+
+msgid "Please fix the issues before testing the connection"
+msgstr ""
+
+msgid "Test Connection"
 msgstr ""
 
 msgid "New Instance"
