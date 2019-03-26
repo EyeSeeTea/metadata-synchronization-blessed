@@ -26,8 +26,15 @@ export const d2BaseModelDetails = [
 ];
 
 export const organisationUnitsDetails = [
-    { name: "level", text: i18n.t("Level"), sortable: true },
-    ...d2BaseModelDetails,
+    { name: "displayName", text: i18n.t("Name") },
+    { name: "shortName", text: i18n.t("Short name") },
+    { name: "code", text: i18n.t("Code") },
+    { name: "level", text: i18n.t("Level") },
+    { name: "displayDescription", text: i18n.t("Description") },
+    { name: "created", text: i18n.t("Created") },
+    { name: "lastUpdated", text: i18n.t("Last update") },
+    { name: "id", text: i18n.t("ID") },
+    { name: "href", text: i18n.t("API link") },
 ];
 
 export function cleanParams(options: Params): Params {
