@@ -37,6 +37,7 @@ class GeneralInfoForm extends React.Component {
         instance: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
         cancelAction: PropTypes.func.isRequired,
+        appConfig: PropTypes.object.isRequired,
     };
 
     setFormReference = formReference => {
@@ -173,7 +174,7 @@ class GeneralInfoForm extends React.Component {
 
         const saveAction = async () => {
             const formErrors = isFormValid(fields, this.formReference);
-            const { d2, instance } = this.props;
+            const { d2, instance, appConfig } = this.props;
             if (formErrors.length > 0) {
                 this.props.snackbar.error(i18n.t("Please fix the issues before saving"));
                 return;
@@ -186,8 +187,9 @@ class GeneralInfoForm extends React.Component {
                     autoHideDuration: null,
                 });
             } else {
+                const encryptionKey = _(appConfig).get("secretKey");
                 this.setState({ isSaving: true });
-                await instance.save(d2);
+                await instance.save(d2, encryptionKey);
                 this.setState({ isSaving: false });
                 this.props.history.push("/instance-configurator");
             }

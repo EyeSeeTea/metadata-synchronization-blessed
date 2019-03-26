@@ -6,7 +6,7 @@ import { withRouter } from "react-router-dom";
 import Instance from "../../models/instance";
 
 import PageHeader from "../shared/PageHeader";
-import GeneralInfoStep from "./GeneralInfoForm";
+import GeneralInfoForm from "./GeneralInfoForm";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 
 class InstanceFormBuilder extends React.Component {
@@ -14,13 +14,20 @@ class InstanceFormBuilder extends React.Component {
         d2: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
         location: PropTypes.object.isRequired,
+        appConfig: PropTypes.object.isRequired,
     };
 
     constructor(props) {
         super(props);
 
         const isEdit = props.location.instance !== undefined;
-        const instance = isEdit ? new Instance(props.location.instance) : Instance.create();
+        let instance;
+        if (isEdit) {
+            const cryptedInstance = new Instance(props.location.instance);
+            instance = cryptedInstance.decryptPassword(props.appConfig.secretKey);
+        } else {
+            instance = Instance.create();
+        }
 
         this.state = {
             instance,
@@ -48,7 +55,7 @@ class InstanceFormBuilder extends React.Component {
 
     render() {
         const { dialogOpen, isEdit } = this.state;
-        const { d2 } = this.props;
+        const { d2, appConfig } = this.props;
 
         const title = !isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
 
@@ -72,8 +79,9 @@ class InstanceFormBuilder extends React.Component {
                     helpText={i18n.t("Help text")}
                 />
 
-                <GeneralInfoStep
+                <GeneralInfoForm
                     d2={d2}
+                    appConfig={appConfig}
                     instance={this.state.instance}
                     onChange={this.onChange}
                     cancelAction={this.cancelSave}
