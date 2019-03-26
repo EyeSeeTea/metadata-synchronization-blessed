@@ -28,7 +28,10 @@ export abstract class D2Model {
     ): Promise<TableList> {
         const { search = null } = filters || {};
         const { page = 1, pageSize = 20, sorting = this.initialSorting } = pagination || {};
-        const fields = this.details.map(e => e.name);
+
+        const details = this.details.map(e => e.name);
+        const columns = this.columns.map(e => e.name);
+        const fields = _.union(details, columns);
 
         const [field, direction] = sorting;
         const order = `${field}:i${direction}`;
