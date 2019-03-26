@@ -12,16 +12,19 @@ import ValidationRuleSync from "../sync-configurator/ValidationRuleSync";
 class Root extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
+        appConfig: PropTypes.object.isRequired,
     };
 
     render() {
-        const { d2 } = this.props;
+        const { d2, appConfig } = this.props;
 
         return (
             <Switch>
                 <Route
                     path={"/instance-configurator/(new|edit)"}
-                    render={props => <InstanceFormBuilder d2={d2} {...props} />}
+                    render={props => (
+                        <InstanceFormBuilder d2={d2} appConfig={appConfig} {...props} />
+                    )}
                 />
 
                 <Route
