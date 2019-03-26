@@ -165,6 +165,7 @@ export default class Instance {
 
     public async check(): Promise<Response> {
         const { url, username, password } = this.data;
+        console.log({ url, username, password });
         const headers = new Headers({
             Authorization: "Basic " + btoa(username + ":" + password),
         });

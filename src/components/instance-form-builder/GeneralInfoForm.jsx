@@ -22,8 +22,12 @@ const styles = () => ({
         paddingBottom: 30,
     },
     buttonContainer: {
-        flexDirection: "row",
+        display: "flex",
+        justifyContent: "space-between",
         paddingTop: 30,
+    },
+    testButton: {
+        marginTop: 10,
     },
 });
 
@@ -180,13 +184,9 @@ class GeneralInfoForm extends React.Component {
             }
             const fieldKeys = fields.map(field => field.name);
             const errorMessages = await getValidationMessages(d2, instance, fieldKeys);
-            const connectionErrors = await instance.check();
 
-            const allErrors = connectionErrors.status
-                ? errorMessages
-                : [...errorMessages, connectionErrors.error];
-            if (!_(allErrors).isEmpty()) {
-                this.props.snackbar.error(allErrors.join("\n"), {
+            if (!_(errorMessages).isEmpty()) {
+                this.props.snackbar.error(errorMessages.join("\n"), {
                     autoHideDuration: null,
                 });
             } else {
@@ -194,6 +194,25 @@ class GeneralInfoForm extends React.Component {
                 await instance.save(d2);
                 this.setState({ isSaving: false });
                 this.props.history.push("/instance-configurator");
+            }
+        };
+
+        const testConnection = async () => {
+            const formErrors = isFormValid(fields, this.formReference);
+            if (formErrors.length > 0) {
+                this.props.snackbar.error(
+                    i18n.t("Please fix the issues before testing the connection")
+                );
+                return;
+            }
+            const { instance } = this.props;
+            const connectionErrors = await instance.check();
+            if (!connectionErrors.status) {
+                this.props.snackbar.error(connectionErrors.error.message, {
+                    autoHideDuration: null,
+                });
+            } else {
+                this.props.snackbar.success(i18n.t("Connected sucessfully to instance"));
             }
         };
 
@@ -206,8 +225,19 @@ class GeneralInfoForm extends React.Component {
                         ref={this.setFormReference}
                     />
                     <div className={classes.buttonContainer}>
-                        <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
-                        <RaisedButton label={i18n.t("Cancel")} onClick={this.props.cancelAction} />
+                        <div>
+                            <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
+                            <RaisedButton
+                                label={i18n.t("Cancel")}
+                                onClick={this.props.cancelAction}
+                            />
+                        </div>
+                        <div className={classes.testButton}>
+                            <RaisedButton
+                                label={i18n.t("Test Connection")}
+                                onClick={testConnection}
+                            />
+                        </div>
                     </div>
                 </CardContent>
             </Card>
