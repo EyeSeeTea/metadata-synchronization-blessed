@@ -19,6 +19,7 @@
     "@dhis2/ui": "https://github.com/d2-ci/ui",
     "@material-ui/core": "^3.3.1",
     "@material-ui/icons": "^3.0.1",
+    "@types/cryptr": "^4.0.0",
     "cryptr": "^4.0.2",
     "d2": "^31.1.1",
     "d2-manifest": "^1.0.0",

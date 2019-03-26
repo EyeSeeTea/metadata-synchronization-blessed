@@ -18,5 +18,5 @@
         },
         "feedbackOptions": {}
     },
-    "encryptionKey": ""
+    "encryptionKey": "anykey"
 }

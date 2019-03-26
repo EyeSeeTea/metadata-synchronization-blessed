@@ -20,14 +20,13 @@ class InstanceFormBuilder extends React.Component {
     constructor(props) {
         super(props);
 
-        const isEdit = props.location.instance !== undefined;
-        let instance;
-        if (isEdit) {
-            const cryptedInstance = new Instance(props.location.instance);
-            instance = cryptedInstance.decryptPassword(props.appConfig.encryptionKey);
-        } else {
-            instance = Instance.create();
-        }
+        const {
+            location,
+            appConfig: { encryptionKey },
+        } = props;
+
+        const isEdit = location.instance !== undefined;
+        const instance = Instance.getOrCreate(location.instance, encryptionKey);
 
         this.state = {
             instance,
