@@ -117,6 +117,7 @@ class InstanceConfigurator extends React.Component {
             text: i18n.t("Test connection"),
             multiple: false,
             onClick: this.onTestConnection,
+            icon: "settings_input_antenna",
         },
     ];
 
