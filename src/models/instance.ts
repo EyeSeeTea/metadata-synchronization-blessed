@@ -35,9 +35,9 @@ export default class Instance {
         return new Instance(initialData);
     }
 
-    public static getOrCreate(data: Data, encryptionKey: string): Instance {
+    public static getOrCreate(data: Data | undefined, encryptionKey: string): Instance {
         let instance;
-        if (!!data) {
+        if (data) {
             const cryptedInstace = new Instance(data);
             instance = cryptedInstace.decryptPassword(encryptionKey);
         } else {
