@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-03-26T16:31:58.101Z\n"
-"PO-Revision-Date: 2019-03-26T16:31:58.101Z\n"
+"POT-Creation-Date: 2019-03-27T10:26:43.130Z\n"
+"PO-Revision-Date: 2019-03-27T10:26:43.130Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -98,10 +98,13 @@ msgstr ""
 msgid "Password (*)"
 msgstr ""
 
-msgid "Please fix the issues before saving"
+msgid "Please fix the issues before testing the connection"
 msgstr ""
 
-msgid "Please fix the issues before testing the connection"
+msgid "Connected successfully to instance"
+msgstr ""
+
+msgid "Please fix the issues before saving"
 msgstr ""
 
 msgid "New Instance"
