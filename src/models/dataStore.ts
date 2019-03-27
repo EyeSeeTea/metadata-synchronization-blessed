@@ -50,7 +50,7 @@ export async function getPaginatedData(
     const sortedData = _.orderBy(
         filteredData,
         [data => (data[field] ? data[field].toLowerCase() : "")],
-        [direction]
+        [direction as "asc" | "desc"]
     );
 
     const { page = 1, pageSize = 20 } = pagination || {};
