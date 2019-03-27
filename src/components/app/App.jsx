@@ -5,7 +5,7 @@ import { MuiThemeProvider } from "@material-ui/core/styles";
 import JssProvider from "react-jss/lib/JssProvider";
 import { createGenerateClassName } from "@material-ui/core/styles";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import { SnackbarProvider } from "d2-ui-components";
+import { SnackbarProvider, LoadingProvider } from "d2-ui-components";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 
@@ -49,17 +49,19 @@ class App extends Component {
                     <MuiThemeProvider theme={muiTheme}>
                         <OldMuiThemeProvider>
                             <React.Fragment>
-                                {showHeader && (
-                                    <HeaderBar appName={i18n.t("Metadata Synchronization")} />
-                                )}
+                                <LoadingProvider>
+                                    {showHeader && (
+                                        <HeaderBar appName={i18n.t("Metadata Synchronization")} />
+                                    )}
 
-                                <div id="app" className="content">
-                                    <SnackbarProvider>
-                                        <Root d2={d2} appConfig={appConfig} />
-                                    </SnackbarProvider>
-                                </div>
+                                    <div id="app" className="content">
+                                        <SnackbarProvider>
+                                            <Root d2={d2} appConfig={appConfig} />
+                                        </SnackbarProvider>
+                                    </div>
 
-                                <Share visible={showShareButton} />
+                                    <Share visible={showShareButton} />
+                                </LoadingProvider>
                             </React.Fragment>
                         </OldMuiThemeProvider>
                     </MuiThemeProvider>

@@ -31,6 +31,11 @@ export async function getData(d2: D2, dataStoreKey: string): Promise<any> {
     return await getDataStore(d2, dataStoreKey);
 }
 
+export async function getDataById(d2: D2, dataStoreKey: string, id: string): Promise<any> {
+    const rawData = await getDataStore(d2, dataStoreKey);
+    return _.find(rawData, instance => instance.id === id);
+}
+
 export async function getPaginatedData(
     d2: D2,
     dataStoreKey: string,

@@ -62,13 +62,16 @@ async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<Synchroni
 
 async function importMetadata(
     d2: D2,
-    instance: Instance,
+    instanceId: string,
     metadataPackage: SynchronizationResult
 ): Promise<void> {
     // TODO: Obtain import results and add warnings/errors to the logger
+    const instance = await Instance.get(d2, instanceId);
     const importResult = await postMetadata(instance, metadataPackage);
 
     // DEBUG: Print response from import
+    console.log("[DEBUG] Destination instance", instance);
+    console.log("[DEBUG] Metadata package", metadataPackage);
     console.log("[DEBUG] HTTP Status", importResult.status);
     console.log("[DEBUG] Import Stats", importResult.data.status, importResult.data.stats);
     // END OF DEBUG SECTION
@@ -92,13 +95,9 @@ export async function startSynchronization(d2: D2, builder: SynchronizationBuild
     const exportResults: SynchronizationResult[] = await Promise.all(exportPromises);
     const metadataPackage = _.deepMerge({}, ...exportResults);
 
-    // DEBUG: Print metadata package for now to console.log
-    console.log("[DEBUG] Metadata package", metadataPackage);
-    // END OF DEBUG SECTION
-
     // Phase 2: Import metadata into destination instances
-    const importPromises = builder.targetInstances.map(instance =>
-        importMetadata(d2, instance, metadataPackage)
+    const importPromises = builder.targetInstances.map(instanceId =>
+        importMetadata(d2, instanceId, metadataPackage)
     );
     const importResults: any[] = await Promise.all(importPromises);
     return await _.deepMerge({}, ...importResults);
