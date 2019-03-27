@@ -75,9 +75,9 @@ class GeneralInfoForm extends React.Component {
         if (newInstance !== null) onChange(newInstance);
     };
 
-    render() {
-        const { instance, classes } = this.props;
-        const fields = [
+    generateFields = () => {
+        const { instance } = this.props;
+        return [
             {
                 name: "name",
                 value: instance.name,
@@ -175,48 +175,55 @@ class GeneralInfoForm extends React.Component {
                 ],
             },
         ];
+    };
 
-        const saveAction = async () => {
-            const formErrors = isFormValid(fields, this.formReference);
-            const { d2, instance, appConfig } = this.props;
-            if (formErrors.length > 0) {
-                this.props.snackbar.error(i18n.t("Please fix the issues before saving"));
-                return;
-            }
-            const fieldKeys = fields.map(field => field.name);
-            const errorMessages = await getValidationMessages(d2, instance, fieldKeys);
+    testConnection = async () => {
+        const { instance } = this.props;
+        const fields = this.generateFields();
+        const formErrors = isFormValid(fields, this.formReference);
+        if (formErrors.length > 0) {
+            this.props.snackbar.error(
+                i18n.t("Please fix the issues before testing the connection")
+            );
+            return;
+        }
+        const connectionErrors = await instance.check();
+        if (!connectionErrors.status) {
+            this.props.snackbar.error(connectionErrors.error.message, {
+                autoHideDuration: null,
+            });
+        } else {
+            this.props.snackbar.success(i18n.t("Connected successfully to instance"));
+        }
+    };
 
-            if (!_(errorMessages).isEmpty()) {
-                this.props.snackbar.error(errorMessages.join("\n"), {
-                    autoHideDuration: null,
-                });
-            } else {
-                const encryptionKey = _(appConfig).get("encryptionKey");
-                this.setState({ isSaving: true });
-                await instance.save(d2, encryptionKey);
-                this.setState({ isSaving: false });
-                this.props.history.push("/instance-configurator");
-            }
-        };
+    saveAction = async () => {
+        const { d2, instance, appConfig } = this.props;
+        const fields = this.generateFields();
+        const formErrors = isFormValid(fields, this.formReference);
+        if (formErrors.length > 0) {
+            this.props.snackbar.error(i18n.t("Please fix the issues before saving"));
+            return;
+        }
+        const fieldKeys = fields.map(field => field.name);
+        const errorMessages = await getValidationMessages(d2, instance, fieldKeys);
 
-        const testConnection = async () => {
-            const formErrors = isFormValid(fields, this.formReference);
-            if (formErrors.length > 0) {
-                this.props.snackbar.error(
-                    i18n.t("Please fix the issues before testing the connection")
-                );
-                return;
-            }
-            const { instance } = this.props;
-            const connectionErrors = await instance.check();
-            if (!connectionErrors.status) {
-                this.props.snackbar.error(connectionErrors.error.message, {
-                    autoHideDuration: null,
-                });
-            } else {
-                this.props.snackbar.success(i18n.t("Connected sucessfully to instance"));
-            }
-        };
+        if (!_(errorMessages).isEmpty()) {
+            this.props.snackbar.error(errorMessages.join("\n"), {
+                autoHideDuration: null,
+            });
+        } else {
+            const encryptionKey = _(appConfig).get("encryptionKey");
+            this.setState({ isSaving: true });
+            await instance.save(d2, encryptionKey);
+            this.setState({ isSaving: false });
+            this.props.history.push("/instance-configurator");
+        }
+    };
+
+    render() {
+        const { classes } = this.props;
+        const fields = this.generateFields();
 
         return (
             <Card>
@@ -228,7 +235,7 @@ class GeneralInfoForm extends React.Component {
                     />
                     <div className={classes.buttonContainer}>
                         <div>
-                            <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
+                            <SaveButton onClick={this.saveAction} isSaving={this.state.isSaving} />
                             <RaisedButton
                                 label={i18n.t("Cancel")}
                                 onClick={this.props.cancelAction}
@@ -237,7 +244,7 @@ class GeneralInfoForm extends React.Component {
                         <div className={classes.testButton}>
                             <RaisedButton
                                 label={i18n.t("Test Connection")}
-                                onClick={testConnection}
+                                onClick={this.testConnection}
                             />
                         </div>
                     </div>
