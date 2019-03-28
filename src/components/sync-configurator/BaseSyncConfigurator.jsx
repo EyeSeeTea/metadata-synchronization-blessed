@@ -2,12 +2,15 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import i18n from "@dhis2/d2-i18n";
-import { ObjectsTable } from "d2-ui-components";
+import { ObjectsTable, DatePicker } from "d2-ui-components";
 import PageHeader from "../shared/PageHeader";
 
 class BaseSyncConfigurator extends React.Component {
     state = {
         tableKey: Math.random(),
+        filters: {
+            date: null,
+        },
     };
 
     static propTypes = {
@@ -30,6 +33,22 @@ class BaseSyncConfigurator extends React.Component {
         this.props.history.push("/");
     };
 
+    onDateChange = value => {
+        this.setState({ filters: { date: value } });
+    };
+
+    renderCustomFilters = () => {
+        const { date } = this.state.filters;
+        return (
+            <DatePicker
+                placeholder={"Enter date"}
+                value={date}
+                onChange={this.onDateChange}
+                isFilter
+            />
+        );
+    };
+
     render() {
         const { d2, model, title } = this.props;
 
@@ -50,6 +69,8 @@ class BaseSyncConfigurator extends React.Component {
                         initialSorting={model.getInitialSorting()}
                         actions={this.actions}
                         list={list}
+                        customFiltersComponent={this.renderCustomFilters}
+                        customFilters={this.state.filters}
                     />
                 </div>
             </React.Fragment>

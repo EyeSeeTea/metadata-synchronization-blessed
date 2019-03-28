@@ -1,3 +1,5 @@
+import { Moment } from "moment";
+
 export interface TableList {
     objects: any[];
     pager: {
@@ -9,6 +11,7 @@ export interface TableList {
 
 export interface TableFilters {
     search: string;
+    date?: Moment;
 }
 
 export interface TablePagination {

@@ -18,13 +18,16 @@ abstract class D2Model {
         filters: TableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { search = null } = filters || {};
+        const { search = null, date = null } = filters || {};
         const { page = 1, pageSize = 20, sorting = this.initialSorting } = pagination || {};
         const fields = this.details.map(e => e.name);
 
         const [field, direction] = sorting;
         const order = `${field}:i${direction}`;
-        const filter = _.compact([search ? `displayName:ilike:${search}` : null]);
+        const filter = _.compact([
+            search ? `displayName:ilike:${search}` : null,
+            date ? `lastUpdated:gt:${date.toISOString()}` : null,
+        ]);
 
         const listOptions = cleanOptions({ fields, filter, page, pageSize, order });
         const collection = await d2.models[this.metadataType].list(listOptions);
