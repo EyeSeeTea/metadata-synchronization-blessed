@@ -26,11 +26,11 @@ class SyncDialog extends React.Component {
         const instances = await Instance.list(
             this.props.d2,
             { search: "" },
-            { page: 1, pageSize: 1, sorting: [] }
+            { page: 1, pageSize: 100, sorting: [] }
         );
         const instanceOptions = instances.objects.map(instance => ({
             value: instance.id,
-            text: `${instance.name} (${instance.url}) [${instance.username}]`,
+            text: `${instance.name} (${instance.url} with user ${instance.username})`,
         }));
         this.setState({ instanceOptions });
     }
