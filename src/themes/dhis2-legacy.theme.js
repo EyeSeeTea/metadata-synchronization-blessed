@@ -1,11 +1,21 @@
-import { cyan500, cyan700, cyan100, orange500, grey100, darkBlack, white, grey500, grey400 } from 'material-ui/styles/colors';
-import { fade } from 'material-ui/utils/colorManipulator';
-import Spacing from 'material-ui/styles/spacing';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import {
+    cyan500,
+    cyan700,
+    cyan100,
+    orange500,
+    grey100,
+    darkBlack,
+    white,
+    grey500,
+    grey400,
+} from "material-ui/styles/colors";
+import { fade } from "material-ui/utils/colorManipulator";
+import Spacing from "material-ui/styles/spacing";
+import getMuiTheme from "material-ui/styles/getMuiTheme";
 
 const theme = {
     spacing: Spacing,
-    fontFamily: 'Roboto, sans-serif',
+    fontFamily: "Roboto, sans-serif",
     palette: {
         primary1Color: cyan500,
         primary2Color: cyan700,
@@ -24,12 +34,12 @@ const theme = {
 function createAppTheme(style) {
     return {
         sideBar: {
-            backgroundColor: '#F3F3F3',
-            backgroundColorItem: 'transparent',
+            backgroundColor: "#F3F3F3",
+            backgroundColorItem: "transparent",
             backgroundColorItemActive: style.palette.accent2Color,
             textColor: style.palette.textColor,
-            textColorActive: '#276696',
-            borderStyle: '1px solid #e1e1e1',
+            textColorActive: "#276696",
+            borderStyle: "1px solid #e1e1e1",
         },
         forms: {
             minWidth: 350,
@@ -39,9 +49,9 @@ function createAppTheme(style) {
             secondaryColor: style.palette.accent4Color,
         },
         tabs: {
-            backgroundColor: '#E4E4E4',
+            backgroundColor: "#E4E4E4",
             inkBarColor: style.palette.accent1Color,
-            textColor: '#666666',
+            textColor: "#666666",
         },
     };
 }

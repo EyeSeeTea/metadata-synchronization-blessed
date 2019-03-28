@@ -12,7 +12,7 @@ import i18n from "@dhis2/d2-i18n";
 import "./App.css";
 import Root from "./Root";
 import Share from "../share/Share";
-import {muiTheme} from "../../themes/dhis2.theme";
+import { muiTheme } from "../../themes/dhis2.theme";
 import muiThemeLegacy from "../../themes/dhis2-legacy.theme";
 
 const generateClassName = createGenerateClassName({

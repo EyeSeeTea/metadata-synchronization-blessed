@@ -1,4 +1,4 @@
-import { createMuiTheme } from "@material-ui/core/styles/index";
+import { createMuiTheme } from "@material-ui/core/styles";
 
 // Color palette from https://projects.invisionapp.com/share/A7LT4TJYETS#/screens/302550228_Color
 export const colors = {
