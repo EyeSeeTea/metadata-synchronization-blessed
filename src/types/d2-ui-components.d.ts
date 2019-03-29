@@ -12,6 +12,7 @@ export interface TableList {
 export interface TableFilters {
     search: string;
     date?: Moment;
+    orgUnitGroup?: string;
 }
 
 export interface TablePagination {

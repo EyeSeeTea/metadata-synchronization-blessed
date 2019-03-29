@@ -8,12 +8,10 @@ import PageHeader from "../shared/PageHeader";
 class BaseSyncConfigurator extends React.Component {
     constructor(props) {
         super(props);
-        const extraFilters = props.extraFiltersState;
         this.state = {
             tableKey: Math.random(),
             filters: {
                 date: null,
-                ...extraFilters,
             },
         };
     }
@@ -24,7 +22,7 @@ class BaseSyncConfigurator extends React.Component {
         history: PropTypes.object.isRequired,
         title: PropTypes.string.isRequired,
         renderExtraFilters: PropTypes.func,
-        extraFiltersState: PropTypes.string,
+        extraFiltersState: PropTypes.object,
     };
 
     static defaultProps = {
@@ -66,11 +64,10 @@ class BaseSyncConfigurator extends React.Component {
     };
 
     render() {
-        const { d2, model, title } = this.props;
-
+        const { d2, model, title, extraFiltersState } = this.props;
         // Wrapper method to preserve static context
         const list = (...params) => model.listMethod(...params);
-
+        const filters = { ...this.state.filters, ...extraFiltersState };
         return (
             <React.Fragment>
                 <PageHeader onBackClick={this.backHome} title={title} />
@@ -86,7 +83,7 @@ class BaseSyncConfigurator extends React.Component {
                         actions={this.actions}
                         list={list}
                         customFiltersComponent={this.renderCustomFilters}
-                        customFilters={this.state.filters}
+                        customFilters={filters}
                     />
                 </div>
             </React.Fragment>

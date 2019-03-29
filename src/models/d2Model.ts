@@ -59,6 +59,28 @@ export class OrganisationUnitModel extends D2Model {
         const groups = await d2.models.organisationUnitGroup.list({ fields });
         return _.map(groups.toArray(), g => ({ id: g.id, name: g.displayName }));
     }
+
+    public static async listMethod(
+        d2: D2,
+        filters: TableFilters,
+        pagination: TablePagination
+    ): Promise<TableList> {
+        const { search = null, date = null, orgUnitGroup = null } = filters || {};
+        const { page = 1, pageSize = 20, sorting = this.initialSorting } = pagination || {};
+        const fields = this.details.map(e => e.name);
+
+        const [field, direction] = sorting;
+        const order = `${field}:i${direction}`;
+        const filter = _.compact([
+            search ? `displayName:ilike:${search}` : null,
+            date ? `lastUpdated:gt:${date.toISOString()}` : null,
+            orgUnitGroup ? `organisationUnitGroups.id:eq:${orgUnitGroup}` : null,
+        ]);
+
+        const listOptions = cleanOptions({ fields, filter, page, pageSize, order });
+        const collection = await d2.models[this.metadataType].list(listOptions);
+        return { pager: collection.pager, objects: collection.toArray() };
+    }
 }
 
 export class DataElementModel extends D2Model {

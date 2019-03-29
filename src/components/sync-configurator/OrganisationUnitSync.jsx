@@ -27,7 +27,7 @@ export default class OrganisationUnitSync extends React.Component {
         this.setState({ dropdown: { value, items: orgUnitGroups } });
     };
 
-    handleChange = event => {
+    handleFilterChange = event => {
         const { items } = this.state.dropdown;
         this.setState({ dropdown: { value: event.target.value, items } });
     };
@@ -37,7 +37,7 @@ export default class OrganisationUnitSync extends React.Component {
         return (
             <Dropdown
                 items={items}
-                onChange={this.handleChange}
+                onChange={this.handleFilterChange}
                 value={value}
                 placeholder={i18n.t("Organisation Unit Group")}
             />
@@ -47,14 +47,13 @@ export default class OrganisationUnitSync extends React.Component {
     render() {
         const { d2 } = this.props;
         const title = i18n.t("Organisation Units Synchronization");
-
         return (
             <BaseSyncConfigurator
                 d2={d2}
                 model={OrganisationUnitModel}
                 title={title}
                 renderExtraFilters={this.renderExtraFilters}
-                customFiltersState={this.state.value}
+                extraFiltersState={{ orgUnitGroup: this.state.dropdown.value }}
             />
         );
     }
