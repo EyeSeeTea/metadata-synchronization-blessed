@@ -6,18 +6,30 @@ import { ObjectsTable, DatePicker } from "d2-ui-components";
 import PageHeader from "../shared/PageHeader";
 
 class BaseSyncConfigurator extends React.Component {
-    state = {
-        tableKey: Math.random(),
-        filters: {
-            date: null,
-        },
-    };
+    constructor(props) {
+        super(props);
+        const extraFilters = props.extraFiltersState;
+        this.state = {
+            tableKey: Math.random(),
+            filters: {
+                date: null,
+                ...extraFilters,
+            },
+        };
+    }
 
     static propTypes = {
         d2: PropTypes.object.isRequired,
         model: PropTypes.func.isRequired,
         history: PropTypes.object.isRequired,
         title: PropTypes.string.isRequired,
+        renderExtraFilters: PropTypes.func,
+        extraFiltersState: PropTypes.string,
+    };
+
+    static defaultProps = {
+        renderExtraFilters: null,
+        extraFiltersState: null,
     };
 
     actions = [
@@ -38,14 +50,18 @@ class BaseSyncConfigurator extends React.Component {
     };
 
     renderCustomFilters = () => {
+        const { renderExtraFilters } = this.props;
         const { date } = this.state.filters;
         return (
-            <DatePicker
-                placeholder={"Enter date"}
-                value={date}
-                onChange={this.onDateChange}
-                isFilter
-            />
+            <React.Fragment>
+                <DatePicker
+                    placeholder={"Enter date"}
+                    value={date}
+                    onChange={this.onDateChange}
+                    isFilter
+                />
+                {renderExtraFilters && renderExtraFilters()}
+            </React.Fragment>
         );
     };
 

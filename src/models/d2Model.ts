@@ -53,6 +53,12 @@ abstract class D2Model {
 
 export class OrganisationUnitModel extends D2Model {
     protected static metadataType = "organisationUnit";
+
+    public static async getOrgUnitGroups(d2: D2) {
+        const fields = ["id", "displayName"];
+        const groups = await d2.models.organisationUnitGroup.list({ fields });
+        return _.map(groups.toArray(), g => ({ id: g.id, name: g.displayName }));
+    }
 }
 
 export class DataElementModel extends D2Model {
