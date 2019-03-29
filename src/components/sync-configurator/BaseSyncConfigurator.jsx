@@ -6,15 +6,12 @@ import { ObjectsTable, DatePicker } from "d2-ui-components";
 import PageHeader from "../shared/PageHeader";
 
 class BaseSyncConfigurator extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            tableKey: Math.random(),
-            filters: {
-                date: null,
-            },
-        };
-    }
+    state = {
+        tableKey: Math.random(),
+        filters: {
+            date: null,
+        },
+    };
 
     static propTypes = {
         d2: PropTypes.object.isRequired,
