@@ -1,5 +1,7 @@
 import _ from "lodash";
+import "../utils/lodash-mixins";
 import i18n from "@dhis2/d2-i18n";
+import { D2, Params } from "../types/d2";
 
 export const d2BaseModelColumns = [
     { name: "displayName", text: i18n.t("Name"), sortable: true },
@@ -17,6 +19,19 @@ export const d2BaseModelDetails = [
     { name: "href", text: i18n.t("API link") },
 ];
 
-export function cleanOptions(options) {
+export function cleanParams(options: Params): Params {
     return _.omitBy(options, value => _.isArray(value) && _.isEmpty(value));
+}
+
+export function cleanModelName(id: string, caller: string): string {
+    const alias = ["parent", "children", "ancestors"];
+    return alias.includes(id) ? caller : id;
+}
+
+export function cleanObject(element: any, excludeRules: string[]): any {
+    return _.pick(element, _.difference(_.keys(element), excludeRules));
+}
+
+export function isD2Model(d2: D2, modelName: string): boolean {
+    return !!d2.models[modelName];
 }
