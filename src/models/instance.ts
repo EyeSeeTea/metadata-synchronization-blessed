@@ -3,6 +3,7 @@ import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { deleteData, getPaginatedData, saveData, getData } from "./dataStore";
 import { generateUid } from "d2/uid";
+import Cryptr from "cryptr";
 import i18n from "@dhis2/d2-i18n";
 
 const instancesDataStoreKey = "instances";
@@ -34,6 +35,17 @@ export default class Instance {
         return new Instance(initialData);
     }
 
+    public static getOrCreate(data: Data | undefined, encryptionKey: string): Instance {
+        let instance;
+        if (data) {
+            const cryptedInstace = new Instance(data);
+            instance = cryptedInstace.decryptPassword(encryptionKey);
+        } else {
+            instance = this.create();
+        }
+        return instance;
+    }
+
     public static async list(
         d2: D2,
         filters: TableFilters,
@@ -42,17 +54,16 @@ export default class Instance {
         return getPaginatedData(d2, instancesDataStoreKey, filters, pagination);
     }
 
-    public async save(d2: D2): Promise<Response> {
-        let instance;
-
-        if (!!this.data.id) {
-            instance = this.data;
-            await this.remove(d2);
+    public async save(d2: D2, encryptionKey: string): Promise<Response> {
+        const instance = this.encryptPassword(encryptionKey);
+        let toSave;
+        if (!!instance.data.id) {
+            toSave = instance.data;
+            await instance.remove(d2);
         } else {
-            instance = { ...this.data, id: generateUid() };
+            toSave = { ...instance.data, id: generateUid() };
         }
-
-        return saveData(d2, instancesDataStoreKey, instance);
+        return saveData(d2, instancesDataStoreKey, toSave);
     }
 
     public async remove(d2: D2): Promise<Response> {
@@ -101,6 +112,18 @@ export default class Instance {
 
     public setDescription(description: string): Instance {
         return new Instance({ ...this.data, description });
+    }
+
+    public encryptPassword(encryptionKey: string) {
+        const cryptr = new Cryptr(encryptionKey);
+        const encrypted = cryptr.encrypt(this.data.password);
+        return new Instance({ ...this.data, password: encrypted });
+    }
+
+    public decryptPassword(encryptionKey: string) {
+        const cryptr = new Cryptr(encryptionKey);
+        const decrypted = cryptr.decrypt(this.data.password);
+        return new Instance({ ...this.data, password: decrypted });
     }
 
     public get description(): string {

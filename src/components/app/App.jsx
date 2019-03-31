@@ -55,7 +55,7 @@ class App extends Component {
 
                                 <div id="app" className="content">
                                     <SnackbarProvider>
-                                        <Root d2={d2} />
+                                        <Root d2={d2} appConfig={appConfig} />
                                     </SnackbarProvider>
                                 </div>
 
