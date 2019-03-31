@@ -8,10 +8,28 @@ export const d2BaseModelColumns = [
     { name: "lastUpdated", text: i18n.t("Last update"), sortable: true },
 ];
 
+export const organisationUnitsColumns = [
+    { name: "displayName", text: i18n.t("Name"), sortable: true },
+    { name: "level", text: i18n.t("Level"), sortable: true },
+    { name: "lastUpdated", text: i18n.t("Last update"), sortable: true },
+];
+
 export const d2BaseModelDetails = [
     { name: "displayName", text: i18n.t("Name") },
     { name: "shortName", text: i18n.t("Short name") },
     { name: "code", text: i18n.t("Code") },
+    { name: "displayDescription", text: i18n.t("Description") },
+    { name: "created", text: i18n.t("Created") },
+    { name: "lastUpdated", text: i18n.t("Last update") },
+    { name: "id", text: i18n.t("ID") },
+    { name: "href", text: i18n.t("API link") },
+];
+
+export const organisationUnitsDetails = [
+    { name: "displayName", text: i18n.t("Name") },
+    { name: "shortName", text: i18n.t("Short name") },
+    { name: "code", text: i18n.t("Code") },
+    { name: "level", text: i18n.t("Level") },
     { name: "displayDescription", text: i18n.t("Description") },
     { name: "created", text: i18n.t("Created") },
     { name: "lastUpdated", text: i18n.t("Last update") },

@@ -1,5 +1,11 @@
 import _ from "lodash";
-import { cleanParams, d2BaseModelColumns, d2BaseModelDetails } from "../utils/d2";
+import {
+    cleanParams,
+    d2BaseModelColumns,
+    d2BaseModelDetails,
+    organisationUnitsColumns,
+    organisationUnitsDetails,
+} from "../utils/d2";
 import { TableFilters, TableLabel, TableList, TablePagination } from "../types/d2-ui-components";
 import { D2, ModelDefinition } from "../types/d2";
 
@@ -22,7 +28,10 @@ export abstract class D2Model {
     ): Promise<TableList> {
         const { search = null } = filters || {};
         const { page = 1, pageSize = 20, sorting = this.initialSorting } = pagination || {};
-        const fields = this.details.map(e => e.name);
+
+        const details = this.details.map(e => e.name);
+        const columns = this.columns.map(e => e.name);
+        const fields = _.union(details, columns);
 
         const [field, direction] = sorting;
         const order = `${field}:i${direction}`;
@@ -86,6 +95,8 @@ export class OrganisationUnitModel extends D2Model {
         "organisationUnitGroups.groupSets",
         "organisationUnitGroups.groupSets.attribute",
     ];
+    protected static columns = organisationUnitsColumns;
+    protected static details = organisationUnitsDetails;
 }
 
 export class DataElementModel extends D2Model {

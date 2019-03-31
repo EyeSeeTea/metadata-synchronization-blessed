@@ -149,6 +149,9 @@ msgstr ""
 msgid "Validation Rules Synchronization"
 msgstr ""
 
+msgid "Level"
+msgstr ""
+
 msgid "Name"
 msgstr ""
 
