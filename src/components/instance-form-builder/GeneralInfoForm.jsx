@@ -22,8 +22,12 @@ const styles = () => ({
         paddingBottom: 30,
     },
     buttonContainer: {
-        flexDirection: "row",
+        display: "flex",
+        justifyContent: "space-between",
         paddingTop: 30,
+    },
+    testButton: {
+        marginTop: 10,
     },
 });
 
@@ -71,9 +75,9 @@ class GeneralInfoForm extends React.Component {
         if (newInstance !== null) onChange(newInstance);
     };
 
-    render() {
-        const { instance, classes } = this.props;
-        const fields = [
+    generateFields = () => {
+        const { instance } = this.props;
+        return [
             {
                 name: "name",
                 value: instance.name,
@@ -171,33 +175,55 @@ class GeneralInfoForm extends React.Component {
                 ],
             },
         ];
+    };
 
-        const saveAction = async () => {
-            const formErrors = isFormValid(fields, this.formReference);
-            const { d2, instance, appConfig } = this.props;
-            if (formErrors.length > 0) {
-                this.props.snackbar.error(i18n.t("Please fix the issues before saving"));
-                return;
-            }
-            const fieldKeys = fields.map(field => field.name);
-            const errorMessages = await getValidationMessages(d2, instance, fieldKeys);
-            const connectionErrors = await instance.check();
+    testConnection = async () => {
+        const { instance } = this.props;
+        const fields = this.generateFields();
+        const formErrors = isFormValid(fields, this.formReference);
+        if (formErrors.length > 0) {
+            this.props.snackbar.error(
+                i18n.t("Please fix the issues before testing the connection")
+            );
+            return;
+        }
+        const connectionErrors = await instance.check();
+        if (!connectionErrors.status) {
+            this.props.snackbar.error(connectionErrors.error.message, {
+                autoHideDuration: null,
+            });
+        } else {
+            this.props.snackbar.success(i18n.t("Connected successfully to instance"));
+        }
+    };
 
-            const allErrors = connectionErrors.status
-                ? errorMessages
-                : [...errorMessages, connectionErrors.error];
-            if (!_(allErrors).isEmpty()) {
-                this.props.snackbar.error(allErrors.join("\n"), {
-                    autoHideDuration: null,
-                });
-            } else {
-                const encryptionKey = _(appConfig).get("encryptionKey");
-                this.setState({ isSaving: true });
-                await instance.save(d2, encryptionKey);
-                this.setState({ isSaving: false });
-                this.props.history.push("/instance-configurator");
-            }
-        };
+    saveAction = async () => {
+        const { d2, instance, appConfig } = this.props;
+        const fields = this.generateFields();
+        const formErrors = isFormValid(fields, this.formReference);
+        if (formErrors.length > 0) {
+            this.props.snackbar.error(i18n.t("Please fix the issues before saving"));
+            return;
+        }
+        const fieldKeys = fields.map(field => field.name);
+        const errorMessages = await getValidationMessages(d2, instance, fieldKeys);
+
+        if (!_(errorMessages).isEmpty()) {
+            this.props.snackbar.error(errorMessages.join("\n"), {
+                autoHideDuration: null,
+            });
+        } else {
+            const encryptionKey = _(appConfig).get("encryptionKey");
+            this.setState({ isSaving: true });
+            await instance.save(d2, encryptionKey);
+            this.setState({ isSaving: false });
+            this.props.history.push("/instance-configurator");
+        }
+    };
+
+    render() {
+        const { classes } = this.props;
+        const fields = this.generateFields();
 
         return (
             <Card>
@@ -208,8 +234,19 @@ class GeneralInfoForm extends React.Component {
                         ref={this.setFormReference}
                     />
                     <div className={classes.buttonContainer}>
-                        <SaveButton onClick={saveAction} isSaving={this.state.isSaving} />
-                        <RaisedButton label={i18n.t("Cancel")} onClick={this.props.cancelAction} />
+                        <div>
+                            <SaveButton onClick={this.saveAction} isSaving={this.state.isSaving} />
+                            <RaisedButton
+                                label={i18n.t("Cancel")}
+                                onClick={this.props.cancelAction}
+                            />
+                        </div>
+                        <div className={classes.testButton}>
+                            <RaisedButton
+                                label={i18n.t("Test Connection")}
+                                onClick={this.testConnection}
+                            />
+                        </div>
                     </div>
                 </CardContent>
             </Card>
