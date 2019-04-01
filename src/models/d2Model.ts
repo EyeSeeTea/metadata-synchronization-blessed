@@ -26,7 +26,7 @@ export abstract class D2Model {
         filters: TableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { search = null, date = null, d2Filters = [] } = filters || {};
+        const { search = null, lastUpdatedDate = null, d2Filters = [] } = filters || {};
         const { page = 1, pageSize = 20, sorting = this.initialSorting } = pagination || {};
 
         const details = this.details.map(e => e.name);
@@ -37,7 +37,7 @@ export abstract class D2Model {
         const order = `${field}:i${direction}`;
         const filter = _.compact([
             search ? `displayName:ilike:${search}` : null,
-            date ? `lastUpdated:gt:${date.toISOString()}` : null,
+            lastUpdatedDate ? `lastUpdated:ge:${lastUpdatedDate.toISOString()}` : null,
             ...d2Filters,
         ]);
 

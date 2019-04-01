@@ -24,7 +24,7 @@ class BaseSyncConfigurator extends React.Component {
     state = {
         tableKey: Math.random(),
         filters: {
-            date: null,
+            lastUpdatedDate: null,
         },
         metadata: {},
         syncDialogOpen: false,
@@ -66,8 +66,8 @@ class BaseSyncConfigurator extends React.Component {
     };
 
     onDateChange = value => {
-        const { filters } = this.props;
-        this.setState({ filters: { ...filters, date: value } });
+        const { filters } = this.state;
+        this.setState({ filters: { ...filters, lastUpdatedDate: value } });
     };
 
     selectionChange = metadataSelection => {
@@ -93,12 +93,12 @@ class BaseSyncConfigurator extends React.Component {
 
     renderCustomFilters = () => {
         const { renderExtraFilters } = this.props;
-        const { date } = this.state.filters;
+        const { lastUpdatedDate } = this.state.filters;
         return (
             <React.Fragment>
                 <DatePicker
-                    placeholder={"Enter date"}
-                    value={date}
+                    placeholder={i18n.t("Last update date")}
+                    value={lastUpdatedDate}
                     onChange={this.onDateChange}
                     isFilter
                 />

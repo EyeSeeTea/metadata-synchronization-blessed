@@ -11,7 +11,7 @@ export interface TableList {
 
 export interface TableFilters {
     search: string;
-    date?: Moment;
+    lastUpdatedDate?: Moment;
     orgUnitGroup?: string;
     d2Filters: (string | null)[];
 }

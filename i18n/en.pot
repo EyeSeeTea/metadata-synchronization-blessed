@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-04-01T09:36:00.602Z\n"
-"PO-Revision-Date: 2019-04-01T09:36:00.602Z\n"
+"POT-Creation-Date: 2019-04-01T15:55:24.304Z\n"
+"PO-Revision-Date: 2019-04-01T15:55:24.304Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -135,6 +135,9 @@ msgid "Help"
 msgstr ""
 
 msgid "Back"
+msgstr ""
+
+msgid "Last update date"
 msgstr ""
 
 msgid "Data Elements Synchronization"

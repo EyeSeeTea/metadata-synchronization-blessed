@@ -11,7 +11,7 @@ export default class OrganisationUnitSync extends React.Component {
     };
 
     state = {
-        dropdown: {
+        orgUnitGroupFilter: {
             value: "",
             items: [],
         },
@@ -23,17 +23,17 @@ export default class OrganisationUnitSync extends React.Component {
 
     getDropdownData = async () => {
         const orgUnitGroups = await OrganisationUnitModel.getOrgUnitGroups(this.props.d2);
-        const { value } = this.state.dropdown;
-        this.setState({ dropdown: { value, items: orgUnitGroups } });
+        const { value } = this.state.orgUnitGroupFilter;
+        this.setState({ orgUnitGroupFilter: { value, items: orgUnitGroups } });
     };
 
     handleFilterChange = event => {
-        const { items } = this.state.dropdown;
-        this.setState({ dropdown: { value: event.target.value, items } });
+        const { items } = this.state.orgUnitGroupFilter;
+        this.setState({ orgUnitGroupFilter: { value: event.target.value, items } });
     };
 
     renderExtraFilters = () => {
-        const { items, value } = this.state.dropdown;
+        const { items, value } = this.state.orgUnitGroupFilter;
         return (
             <Dropdown
                 items={items}
@@ -53,7 +53,7 @@ export default class OrganisationUnitSync extends React.Component {
                 model={OrganisationUnitModel}
                 title={title}
                 renderExtraFilters={this.renderExtraFilters}
-                extraFiltersState={{ orgUnitGroup: this.state.dropdown.value }}
+                extraFiltersState={{ orgUnitGroup: this.state.orgUnitGroupFilter.value }}
             />
         );
     }

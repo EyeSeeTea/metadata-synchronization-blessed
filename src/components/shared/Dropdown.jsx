@@ -28,7 +28,7 @@ const getMaterialTheme = textColor =>
                 },
                 underline: {
                     "&&&&:hover:before": {
-                        borderBottom: `1px solid #e0e0e0`,
+                        borderBottom: `1px solid #bdbdbd`,
                     },
                     "&:hover:not($disabled):before": {
                         borderBottom: `1px solid #aaaaaa`,
@@ -37,7 +37,7 @@ const getMaterialTheme = textColor =>
                         borderBottom: `2px solid ${cyan["500"]}`,
                     },
                     "&:before": {
-                        borderBottom: `1px solid #e0e0e0`,
+                        borderBottom: `1px solid #bdbdbd`,
                     },
                 },
             },
@@ -50,8 +50,8 @@ export default function Dropdown({ items, value, onChange, placeholder }) {
     return (
         <MuiThemeProvider theme={materialTheme}>
             <Select value={value} onChange={onChange} displayEmpty>
-                <MenuItem value={""} disabled>
-                    {placeholder}
+                <MenuItem value={""}>
+                    <em>{placeholder}</em>
                 </MenuItem>
                 {items.map(i => (
                     <MenuItem key={i.id} value={i.id}>
