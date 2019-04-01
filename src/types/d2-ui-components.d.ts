@@ -13,6 +13,7 @@ export interface TableFilters {
     search: string;
     date?: Moment;
     orgUnitGroup?: string;
+    d2Filters: (string | null)[];
 }
 
 export interface TablePagination {

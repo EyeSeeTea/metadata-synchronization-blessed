@@ -18,7 +18,7 @@ abstract class D2Model {
         filters: TableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { search = null, date = null } = filters || {};
+        const { search = null, date = null, d2Filters = [] } = filters || {};
         const { page = 1, pageSize = 20, sorting = this.initialSorting } = pagination || {};
         const fields = this.details.map(e => e.name);
 
@@ -27,6 +27,7 @@ abstract class D2Model {
         const filter = _.compact([
             search ? `displayName:ilike:${search}` : null,
             date ? `lastUpdated:gt:${date.toISOString()}` : null,
+            ...d2Filters,
         ]);
 
         const listOptions = cleanOptions({ fields, filter, page, pageSize, order });
@@ -65,21 +66,12 @@ export class OrganisationUnitModel extends D2Model {
         filters: TableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { search = null, date = null, orgUnitGroup = null } = filters || {};
-        const { page = 1, pageSize = 20, sorting = this.initialSorting } = pagination || {};
-        const fields = this.details.map(e => e.name);
-
-        const [field, direction] = sorting;
-        const order = `${field}:i${direction}`;
-        const filter = _.compact([
-            search ? `displayName:ilike:${search}` : null,
-            date ? `lastUpdated:gt:${date.toISOString()}` : null,
-            orgUnitGroup ? `organisationUnitGroups.id:eq:${orgUnitGroup}` : null,
-        ]);
-
-        const listOptions = cleanOptions({ fields, filter, page, pageSize, order });
-        const collection = await d2.models[this.metadataType].list(listOptions);
-        return { pager: collection.pager, objects: collection.toArray() };
+        const { orgUnitGroup = null } = filters || {};
+        const newFilters = {
+            ...filters,
+            d2Filters: [orgUnitGroup ? `organisationUnitGroups.id:eq:${orgUnitGroup}` : null],
+        };
+        return await super.listMethod(d2, newFilters, pagination);
     }
 }
 
