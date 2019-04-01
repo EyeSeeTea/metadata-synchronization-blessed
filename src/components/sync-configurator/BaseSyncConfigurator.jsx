@@ -54,12 +54,20 @@ class BaseSyncConfigurator extends React.Component {
         },
     ];
 
+    componentDidUpdate = prevProps => {
+        const { extraFiltersState } = this.props;
+        if (extraFiltersState !== prevProps.extraFiltersState) {
+            this.setState({ filters: { ...this.state.filters, ...extraFiltersState } });
+        }
+    };
+
     backHome = () => {
         this.props.history.push("/");
     };
 
     onDateChange = value => {
-        this.setState({ filters: { date: value } });
+        const { filters } = this.props;
+        this.setState({ filters: { ...filters, date: value } });
     };
 
     selectionChange = metadataSelection => {
@@ -100,11 +108,10 @@ class BaseSyncConfigurator extends React.Component {
     };
 
     render() {
-        const { d2, model, title, extraFiltersState, classes } = this.props;
+        const { d2, model, title, classes } = this.props;
         const { tableKey, syncDialogOpen, metadata, filters } = this.state;
         // Wrapper method to preserve static context
         const list = (...params) => model.listMethod(...params);
-        const allFilters = { ...filters, ...extraFiltersState };
         return (
             <React.Fragment>
                 <SyncDialog
@@ -126,7 +133,7 @@ class BaseSyncConfigurator extends React.Component {
                         actions={this.actions}
                         list={list}
                         customFiltersComponent={this.renderCustomFilters}
-                        customFilters={allFilters}
+                        customFilters={filters}
                         onSelectionChange={this.selectionChange}
                     />
                     <Fab
