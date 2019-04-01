@@ -2,13 +2,13 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import i18n from "@dhis2/d2-i18n";
-import { ObjectsTable } from "d2-ui-components";
+import { ObjectsTable, withSnackbar } from "d2-ui-components";
 import Fab from "@material-ui/core/Fab";
 import { withStyles } from "@material-ui/core/styles";
 import SyncIcon from "@material-ui/icons/Sync";
+
 import PageHeader from "../shared/PageHeader";
-import { startSynchronization } from "../../logic/synchronization";
-import Instance from "../../models/instance";
+import SyncDialog from "../sync-dialog/SyncDialog";
 
 const styles = theme => ({
     fab: {
@@ -23,7 +23,8 @@ const styles = theme => ({
 class BaseSyncConfigurator extends React.Component {
     state = {
         tableKey: Math.random(),
-        selection: [],
+        metadata: {},
+        syncDialogOpen: false,
     };
 
     static propTypes = {
@@ -31,6 +32,7 @@ class BaseSyncConfigurator extends React.Component {
         model: PropTypes.func.isRequired,
         history: PropTypes.object.isRequired,
         title: PropTypes.string.isRequired,
+        snackbar: PropTypes.object.isRequired,
     };
 
     actions = [
@@ -46,48 +48,46 @@ class BaseSyncConfigurator extends React.Component {
         this.props.history.push("/");
     };
 
-    selectionChange = selection => {
-        this.setState({ selection });
-    };
-
-    onSynchronize = async () => {
-        // TODO: Render new dialog to show summary and select destination instances
-
-        // DEBUG: Use a hardcoded instance for now
-        const instances = await Instance.list(
-            this.props.d2,
-            { search: "" },
-            { page: 1, pageSize: 1, sorting: [] }
-        );
-        const instance = instances.objects[0];
-        // END OF DEBUG SECTION
-
+    selectionChange = metadataSelection => {
         const metadata = {
-            [this.props.model.getMetadataType()]: this.state.selection,
+            [this.props.model.getMetadataType()]: metadataSelection,
         };
 
-        // DEBUG: Force metadata sync with selected items to a hard-coded instance
-        console.log("[DEBUG] Selected Metadata", metadata);
-        const result = await startSynchronization(this.props.d2, {
-            metadata,
-            targetInstances: [instance],
-        });
-        console.log("[DEBUG] Synchronization Result", result);
-        // END OF DEBUG SECTION
+        this.setState({ metadata });
+    };
+
+    onSynchronize = () => {
+        this.setState({ syncDialogOpen: true });
+    };
+
+    handleDialogClose = success => {
+        this.setState({ syncDialogOpen: false });
+        if (success) {
+            this.props.snackbar.success("Successfully synchronized metadata");
+        } else {
+            this.props.snackbar.error("Failed to synchronize metadata");
+        }
     };
 
     render() {
         const { d2, model, title, classes } = this.props;
+        const { tableKey, syncDialogOpen, metadata } = this.state;
 
         // Wrapper method to preserve static context
         const list = (...params) => model.listMethod(...params);
 
         return (
             <React.Fragment>
+                <SyncDialog
+                    d2={d2}
+                    metadata={metadata}
+                    isOpen={syncDialogOpen}
+                    handleClose={this.handleDialogClose}
+                />
                 <PageHeader onBackClick={this.backHome} title={title} />
                 <div className={classes.tableContainer}>
                     <ObjectsTable
-                        key={this.state.tableKey}
+                        key={tableKey}
                         d2={d2}
                         model={model.getD2Model(d2)}
                         columns={model.getColumns()}
@@ -114,4 +114,4 @@ class BaseSyncConfigurator extends React.Component {
     }
 }
 
-export default withRouter(withStyles(styles)(BaseSyncConfigurator));
+export default withRouter(withSnackbar(withStyles(styles)(BaseSyncConfigurator)));

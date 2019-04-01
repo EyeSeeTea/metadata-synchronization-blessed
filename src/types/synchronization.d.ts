@@ -1,7 +1,5 @@
-import Instance from "../models/instance";
-
 export interface SynchronizationBuilder {
-    targetInstances: Instance[];
+    targetInstances: string[];
     metadata: {
         [metadataType: string]: string[];
     };
