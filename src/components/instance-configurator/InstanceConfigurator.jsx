@@ -1,12 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { ObjectsTable, withSnackbar } from "d2-ui-components";
+import { ObjectsTable, withSnackbar, ConfirmationDialog } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../shared/PageHeader";
-import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 
 import Instance from "../../models/instance";
 
@@ -131,11 +130,12 @@ class InstanceConfigurator extends React.Component {
         return (
             <React.Fragment>
                 <ConfirmationDialog
-                    dialogOpen={!!toDelete}
-                    handleConfirm={this.handleDialogConfirm}
-                    handleCancel={this.handleDialogCancel}
+                    isOpen={!!toDelete}
+                    onSave={this.handleDialogConfirm}
+                    onCancel={this.handleDialogCancel}
                     title={i18n.t("Delete Instance?")}
-                    contents={i18n.t("Are you sure you want to delete this instance?")}
+                    description={i18n.t("Are you sure you want to delete this instance?")}
+                    saveText={i18n.t("Ok")}
                 />
                 <PageHeader title={i18n.t("Instances")} onBackClick={this.backHome} />
                 <div className={classes.tableContainer}>

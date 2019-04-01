@@ -2,12 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { withRouter } from "react-router-dom";
+import { ConfirmationDialog } from "d2-ui-components";
 
 import Instance from "../../models/instance";
 
 import PageHeader from "../shared/PageHeader";
 import GeneralInfoForm from "./GeneralInfoForm";
-import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 
 class InstanceFormBuilder extends React.Component {
     static propTypes = {
@@ -65,11 +65,12 @@ class InstanceFormBuilder extends React.Component {
         return (
             <React.Fragment>
                 <ConfirmationDialog
-                    dialogOpen={dialogOpen}
-                    handleConfirm={this.handleConfirm}
-                    handleCancel={this.handleDialogCancel}
+                    isOpen={dialogOpen}
+                    onSave={this.handleConfirm}
+                    onCancel={this.handleDialogCancel}
                     title={cancel}
-                    contents={i18n.t("All your changes will be lost. Are you sure?")}
+                    description={i18n.t("All your changes will be lost. Are you sure?")}
+                    saveText={i18n.t("Ok")}
                 />
 
                 <PageHeader

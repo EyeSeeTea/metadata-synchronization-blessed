@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { deleteData, getPaginatedData, saveData, getData } from "./dataStore";
+import { deleteData, getPaginatedData, saveData, getData, getDataById } from "./dataStore";
 import { generateUid } from "d2/uid";
 import Cryptr from "cryptr";
 import i18n from "@dhis2/d2-i18n";
@@ -35,9 +35,9 @@ export default class Instance {
         return new Instance(initialData);
     }
 
-    public static getOrCreate(data: Data, encryptionKey: string): Instance {
+    public static getOrCreate(data: Data | undefined, encryptionKey: string): Instance {
         let instance;
-        if (!!data) {
+        if (data) {
             const cryptedInstace = new Instance(data);
             instance = cryptedInstace.decryptPassword(encryptionKey);
         } else {
@@ -54,10 +54,14 @@ export default class Instance {
         return getPaginatedData(d2, instancesDataStoreKey, filters, pagination);
     }
 
+    public static async get(d2: D2, id: string): Promise<Instance> {
+        return (await getDataById(d2, instancesDataStoreKey, id)) as Instance;
+    }
+
     public async save(d2: D2, encryptionKey: string): Promise<Response> {
         const instance = this.encryptPassword(encryptionKey);
         let toSave;
-        if (!!instance.data.id) {
+        if (instance.data.id) {
             toSave = instance.data;
             await instance.remove(d2);
         } else {
@@ -138,7 +142,7 @@ export default class Instance {
             (inst: Data) => [inst.url, inst.username].join("-") === combination
         );
         let invalid;
-        if (!!id) {
+        if (id) {
             invalid = invalidCombinations.some((inst: Data) => inst.id !== id);
         } else {
             invalid = !_.isEmpty(invalidCombinations);

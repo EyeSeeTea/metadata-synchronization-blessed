@@ -10,6 +10,7 @@ export interface DataStoreNamespace {
 
 export interface Params {
     paging?: boolean;
+    page?: number;
     pageSize?: number;
     filter?: string[];
     fields?: string[];
@@ -19,6 +20,7 @@ export interface Params {
 export interface D2Api {
     get(url: string, data: Params): Dictionary<any>;
     post(url: string, data: Dictionary<any>): Dictionary<any>;
+    baseUrl: string;
 }
 
 export interface Pager {
@@ -46,6 +48,7 @@ export interface ModelCollection {
 
 export interface ModelDefinition {
     list(params?: Params): ModelCollection;
+    get(id: string, params?: Params): Promise<Model>;
     apiEndpoint: string;
     attributeProperties: any;
     displayName: string;

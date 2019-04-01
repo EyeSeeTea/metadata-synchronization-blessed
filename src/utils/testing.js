@@ -1,14 +1,15 @@
 import React from "react";
 import { mount as enzymeMount } from "enzyme";
 import fetch from "node-fetch";
-import _ from "./lodash";
+import _ from "lodash";
 import sinon from "sinon";
 import { generateUid } from "d2/uid";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { SnackbarProvider } from "d2-ui-components";
 
-import { muiTheme } from "../dhis2.theme";
+import { muiTheme } from "../themes/dhis2.theme";
+import muiThemeLegacy from "../themes/dhis2-legacy.theme";
 
 // DHIS2 expects a browser environment, add some required keys to the global node namespace
 Object.assign(global, {
@@ -19,7 +20,7 @@ Object.assign(global, {
 export function mount(component) {
     const wrappedComponent = enzymeMount(
         <MuiThemeProvider theme={muiTheme}>
-            <OldMuiThemeProvider>
+            <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                 <SnackbarProvider>{component}</SnackbarProvider>
             </OldMuiThemeProvider>
         </MuiThemeProvider>

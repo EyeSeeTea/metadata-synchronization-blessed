@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-03-29T16:10:37.402Z\n"
-"PO-Revision-Date: 2019-03-29T16:10:37.402Z\n"
+"POT-Creation-Date: 2019-03-27T18:46:10.807Z\n"
+"PO-Revision-Date: 2019-03-27T18:46:10.807Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -32,10 +32,10 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-msgid "Cancel"
+msgid "Save"
 msgstr ""
 
-msgid "Ok"
+msgid "Cancel"
 msgstr ""
 
 msgid "Connected sucessfully to instance"
@@ -122,13 +122,13 @@ msgstr ""
 msgid "All your changes will be lost. Are you sure?"
 msgstr ""
 
+msgid "Ok"
+msgstr ""
+
 msgid "Help text"
 msgstr ""
 
 msgid "Saving..."
-msgstr ""
-
-msgid "Save"
 msgstr ""
 
 msgid "Help"
@@ -152,6 +152,9 @@ msgstr ""
 msgid "Validation Rules Synchronization"
 msgstr ""
 
+msgid "Level"
+msgstr ""
+
 msgid "Name"
 msgstr ""
 
@@ -171,6 +174,15 @@ msgid "ID"
 msgstr ""
 
 msgid "API link"
+msgstr ""
+
+msgid "Synchronizing metadata"
+msgstr ""
+
+msgid "Synchronize Organisation Units"
+msgstr ""
+
+msgid "Synchronize"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"

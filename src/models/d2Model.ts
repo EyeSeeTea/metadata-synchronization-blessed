@@ -1,11 +1,19 @@
 import _ from "lodash";
-import { cleanOptions, d2BaseModelColumns, d2BaseModelDetails } from "../utils/d2";
+import {
+    cleanParams,
+    d2BaseModelColumns,
+    d2BaseModelDetails,
+    organisationUnitsColumns,
+    organisationUnitsDetails,
+} from "../utils/d2";
 import { TableFilters, TableLabel, TableList, TablePagination } from "../types/d2-ui-components";
 import { D2, ModelDefinition } from "../types/d2";
 
-abstract class D2Model {
+export abstract class D2Model {
     // Metadata Type should be defined on subclasses
     protected static metadataType: string;
+    protected static excludeRules: string[] = [];
+    protected static includeRules: string[] = [];
 
     // Other static properties can be optionally overridden on subclasses
     protected static columns = d2BaseModelColumns;
@@ -20,7 +28,10 @@ abstract class D2Model {
     ): Promise<TableList> {
         const { search = null, date = null, d2Filters = [] } = filters || {};
         const { page = 1, pageSize = 20, sorting = this.initialSorting } = pagination || {};
-        const fields = this.details.map(e => e.name);
+
+        const details = this.details.map(e => e.name);
+        const columns = this.columns.map(e => e.name);
+        const fields = _.union(details, columns);
 
         const [field, direction] = sorting;
         const order = `${field}:i${direction}`;
@@ -30,13 +41,25 @@ abstract class D2Model {
             ...d2Filters,
         ]);
 
-        const listOptions = cleanOptions({ fields, filter, page, pageSize, order });
-        const collection = await d2.models[this.metadataType].list(listOptions);
+        const listParams = cleanParams({ fields, filter, page, pageSize, order });
+        const collection = await this.getD2Model(d2).list(listParams);
         return { pager: collection.pager, objects: collection.toArray() };
     }
 
     public static getD2Model(d2: D2): ModelDefinition {
         return d2.models[this.metadataType];
+    }
+
+    public static getMetadataType(): string {
+        return this.metadataType;
+    }
+
+    public static getExcludeRules(): string[] {
+        return this.excludeRules;
+    }
+
+    public static getIncludeRules(): string[] {
+        return this.includeRules;
     }
 
     public static getColumns(): TableLabel[] {
@@ -54,6 +77,30 @@ abstract class D2Model {
 
 export class OrganisationUnitModel extends D2Model {
     protected static metadataType = "organisationUnit";
+    protected static excludeRules = [
+        "legendSets",
+        "dataSets",
+        "programs",
+        "user",
+        "users",
+        "userAccesses",
+        "userGroupAccesses",
+        "organisationUnitGroups.user",
+        "organisationUnitGroups.userAccesses",
+        "organisationUnitGroups.userGroupAccesses",
+        "organisationUnitGroups.groupSets.user",
+        "organisationUnitGroups.groupSets.userAccesses",
+        "organisationUnitGroups.groupSets.userGroupAccesses",
+    ];
+    protected static includeRules = [
+        "attribute",
+        "organisationUnitGroups",
+        "organisationUnitGroups.attribute",
+        "organisationUnitGroups.groupSets",
+        "organisationUnitGroups.groupSets.attribute",
+    ];
+    protected static columns = organisationUnitsColumns;
+    protected static details = organisationUnitsDetails;
 
     public static async getOrgUnitGroups(d2: D2) {
         const fields = ["id", "displayName"];
@@ -85,4 +132,10 @@ export class IndicatorModel extends D2Model {
 
 export class ValidationRuleModel extends D2Model {
     protected static metadataType = "validationRule";
+}
+
+export function defaultModel(pascalCaseModelName: string): any {
+    return class DefaultModel extends D2Model {
+        protected static metadataType = pascalCaseModelName;
+    };
 }
