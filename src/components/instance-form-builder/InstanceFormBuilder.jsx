@@ -21,11 +21,12 @@ class InstanceFormBuilder extends React.Component {
         super(props);
 
         const {
+            match,
             location,
             appConfig: { encryptionKey },
         } = props;
 
-        const isEdit = location.instance !== undefined;
+        const isEdit = match.params.formFor === "edit";
         const instance = Instance.getOrCreate(location.instance, encryptionKey);
 
         this.state = {
@@ -34,6 +35,20 @@ class InstanceFormBuilder extends React.Component {
             dialogOpen: false,
         };
     }
+
+    componentDidMount = async () => {
+        const {
+            match: { params },
+            appConfig: { encryptionKey },
+            d2,
+        } = this.props;
+        const { instance, isEdit } = this.state;
+        if (isEdit && !instance.data.id) {
+            const encryptedInstance = await Instance.get(d2, params.id);
+            const instanceToEdit = encryptedInstance.decryptPassword(encryptionKey);
+            this.setState({ instance: instanceToEdit });
+        }
+    };
 
     cancelSave = () => {
         this.setState({ dialogOpen: true });

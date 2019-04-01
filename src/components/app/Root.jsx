@@ -21,7 +21,7 @@ class Root extends React.Component {
         return (
             <Switch>
                 <Route
-                    path={"/instance-configurator/(new|edit)"}
+                    path={"/instance-configurator/:formFor(new|edit)/:id?"}
                     render={props => (
                         <InstanceFormBuilder d2={d2} appConfig={appConfig} {...props} />
                     )}
