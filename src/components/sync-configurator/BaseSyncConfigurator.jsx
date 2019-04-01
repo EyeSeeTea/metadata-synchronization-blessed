@@ -104,7 +104,7 @@ class BaseSyncConfigurator extends React.Component {
         const { tableKey, syncDialogOpen, metadata, filters } = this.state;
         // Wrapper method to preserve static context
         const list = (...params) => model.listMethod(...params);
-        const allFilters = { ...this.state.filters, ...extraFiltersState };
+        const allFilters = { ...filters, ...extraFiltersState };
         return (
             <React.Fragment>
                 <SyncDialog
