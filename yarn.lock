@@ -929,7 +929,7 @@
   dependencies:
     i18next "^10.3"
 
-"@dhis2/d2-ui-core@5.2.11":
+"@dhis2/d2-ui-core@5.2.11", "@dhis2/d2-ui-core@^5.2.11":
   version "5.2.11"
   resolved "https://registry.yarnpkg.com/@dhis2/d2-ui-core/-/d2-ui-core-5.2.11.tgz#b5c6033f3460a0260f65cdcf98d52a2b639c0dcc"
   integrity sha512-1Vb/Ap7ZcD+aCdZkYZAKwtDFmN6ilONv7MNM/9Frujtw1SkX3cMytezxZ4mEG3j6pcEH2FsackYHFfYr8Ef8ZA==
@@ -3568,19 +3568,20 @@ d2-manifest@^1.0.0:
     minimist "^1.1.0"
     readline-sync "^1.4.1"
 
-d2-ui-components@^0.0.12:
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-0.0.12.tgz#6354469c94c2400a55400acbf6fd7042804d5e8f"
-  integrity sha512-Q4UQvIrJ7PGfXVV5eaXYJtLf7TSUPm/pC1b721/ZiEY1WJynYNiPSFA1cmllb2KfqsOr6P/WzuVPMvmas4/wMQ==
+d2-ui-components@^0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-0.0.13.tgz#8c5cccea87e3b2d235f91cf6ea6dd4ace9a5001e"
+  integrity sha512-mUPTJiS8Fe6V+VmuTmxV76NAwjaV8H7P5+2llFJpUNSyvvPru7tmQR6vH3SEyQpt8rjnKstIVwfalzsqeKWRag==
   dependencies:
     "@date-io/moment" "^1.0.2"
     "@dhis2/d2-i18n" "^1.0.3"
-    "@dhis2/d2-ui-core" "^1.3.5"
+    "@dhis2/d2-ui-core" "^5.2.11"
     "@dhis2/d2-ui-group-editor" "^5.1.1"
     "@dhis2/d2-ui-org-unit-select" "^5.1.0"
     "@dhis2/d2-ui-org-unit-tree" "^5.1.1"
     "@material-ui/core" "^3.9.1"
     "@material-ui/icons" "^3.0.1"
+    classnames "^2.2.6"
     lodash "^4.17.11"
     material-ui-pickers "^2.1.2"
     moment "^2.22.2"

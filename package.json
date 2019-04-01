@@ -22,7 +22,7 @@
     "cryptr": "^4.0.2",
     "d2": "^31.1.1",
     "d2-manifest": "^1.0.0",
-    "d2-ui-components": "^0.0.12",
+    "d2-ui-components": "^0.0.13",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.6.0",
     "enzyme-to-json": "^3.3.4",
