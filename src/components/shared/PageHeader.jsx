@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { DialogHandler } from "d2-ui-components";
+import { DialogButton } from "d2-ui-components";
 
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
@@ -20,7 +20,7 @@ const renderHelpButton = helpText => {
         </IconButton>
     );
 
-    return <DialogHandler buttonComponent={Button} title={i18n.t("Help")} contents={helpText} />;
+    return <DialogButton buttonComponent={Button} title={i18n.t("Help")} contents={helpText} />;
 };
 
 function PageHeader({ variant, title, onBackClick, helpText }) {
