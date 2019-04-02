@@ -26,7 +26,7 @@ export abstract class D2Model {
         filters: TableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { search = null } = filters || {};
+        const { search = null, lastUpdatedDate = null, d2Filters = [] } = filters || {};
         const { page = 1, pageSize = 20, sorting = this.initialSorting } = pagination || {};
 
         const details = this.details.map(e => e.name);
@@ -35,7 +35,11 @@ export abstract class D2Model {
 
         const [field, direction] = sorting;
         const order = `${field}:i${direction}`;
-        const filter = _.compact([search ? `displayName:ilike:${search}` : null]);
+        const filter = _.compact([
+            search ? `displayName:ilike:${search}` : null,
+            lastUpdatedDate ? `lastUpdated:ge:${lastUpdatedDate.toISOString()}` : null,
+            ...d2Filters,
+        ]);
 
         const listParams = cleanParams({ fields, filter, page, pageSize, order });
         const collection = await this.getD2Model(d2).list(listParams);
@@ -97,6 +101,25 @@ export class OrganisationUnitModel extends D2Model {
     ];
     protected static columns = organisationUnitsColumns;
     protected static details = organisationUnitsDetails;
+
+    public static async getOrgUnitGroups(d2: D2) {
+        const fields = ["id", "displayName"];
+        const groups = await d2.models.organisationUnitGroup.list({ fields });
+        return _.map(groups.toArray(), g => ({ id: g.id, name: g.displayName }));
+    }
+
+    public static async listMethod(
+        d2: D2,
+        filters: TableFilters,
+        pagination: TablePagination
+    ): Promise<TableList> {
+        const { orgUnitGroup = null } = filters || {};
+        const newFilters = {
+            ...filters,
+            d2Filters: [orgUnitGroup ? `organisationUnitGroups.id:eq:${orgUnitGroup}` : null],
+        };
+        return await super.listMethod(d2, newFilters, pagination);
+    }
 }
 
 export class DataElementModel extends D2Model {

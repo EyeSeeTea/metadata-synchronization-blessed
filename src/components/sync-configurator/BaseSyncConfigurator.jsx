@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import i18n from "@dhis2/d2-i18n";
-import { ObjectsTable, withSnackbar } from "d2-ui-components";
+import { ObjectsTable, withSnackbar, DatePicker } from "d2-ui-components";
 import Fab from "@material-ui/core/Fab";
 import { withStyles } from "@material-ui/core/styles";
 import SyncIcon from "@material-ui/icons/Sync";
@@ -23,6 +23,9 @@ const styles = theme => ({
 class BaseSyncConfigurator extends React.Component {
     state = {
         tableKey: Math.random(),
+        filters: {
+            lastUpdatedDate: null,
+        },
         metadata: {},
         syncDialogOpen: false,
     };
@@ -33,6 +36,13 @@ class BaseSyncConfigurator extends React.Component {
         history: PropTypes.object.isRequired,
         title: PropTypes.string.isRequired,
         snackbar: PropTypes.object.isRequired,
+        renderExtraFilters: PropTypes.func,
+        extraFiltersState: PropTypes.object,
+    };
+
+    static defaultProps = {
+        renderExtraFilters: null,
+        extraFiltersState: null,
     };
 
     actions = [
@@ -44,8 +54,20 @@ class BaseSyncConfigurator extends React.Component {
         },
     ];
 
+    componentDidUpdate = prevProps => {
+        const { extraFiltersState } = this.props;
+        if (extraFiltersState !== prevProps.extraFiltersState) {
+            this.setState({ filters: { ...this.state.filters, ...extraFiltersState } });
+        }
+    };
+
     backHome = () => {
         this.props.history.push("/");
+    };
+
+    onDateChange = value => {
+        const { filters } = this.state;
+        this.setState({ filters: { ...filters, lastUpdatedDate: value } });
     };
 
     selectionChange = metadataSelection => {
@@ -69,13 +91,27 @@ class BaseSyncConfigurator extends React.Component {
         }
     };
 
+    renderCustomFilters = () => {
+        const { renderExtraFilters } = this.props;
+        const { lastUpdatedDate } = this.state.filters;
+        return (
+            <React.Fragment>
+                <DatePicker
+                    placeholder={i18n.t("Last update date")}
+                    value={lastUpdatedDate}
+                    onChange={this.onDateChange}
+                    isFilter
+                />
+                {renderExtraFilters && renderExtraFilters()}
+            </React.Fragment>
+        );
+    };
+
     render() {
         const { d2, model, title, classes } = this.props;
-        const { tableKey, syncDialogOpen, metadata } = this.state;
-
+        const { tableKey, syncDialogOpen, metadata, filters } = this.state;
         // Wrapper method to preserve static context
         const list = (...params) => model.listMethod(...params);
-
         return (
             <React.Fragment>
                 <SyncDialog
@@ -96,6 +132,8 @@ class BaseSyncConfigurator extends React.Component {
                         initialSorting={model.getInitialSorting()}
                         actions={this.actions}
                         list={list}
+                        customFiltersComponent={this.renderCustomFilters}
+                        customFilters={filters}
                         onSelectionChange={this.selectionChange}
                     />
                     <Fab
