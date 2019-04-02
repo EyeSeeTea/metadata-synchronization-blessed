@@ -61,11 +61,11 @@ export async function postMetadata(instance: Instance, metadata: any): Promise<a
             params,
         });
     } catch (error) {
-        // Catch response error but rethrow unknown issues
         if (error.response) {
             return error.response;
+        } else {
+            throw error;
         }
-        throw error;
     }
 }
 

@@ -116,8 +116,15 @@ class BaseSyncConfigurator extends React.Component {
 
     render() {
         const { d2, model, title, classes } = this.props;
-        const { tableKey, syncDialogOpen, syncSummaryOpen, metadata, filters, importResponse } = this.state;
-      
+        const {
+            tableKey,
+            syncDialogOpen,
+            syncSummaryOpen,
+            metadata,
+            filters,
+            importResponse,
+        } = this.state;
+
         // Wrapper method to preserve static context
         const list = (...params) => model.listMethod(...params);
         return (

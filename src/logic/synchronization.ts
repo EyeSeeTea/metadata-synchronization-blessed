@@ -73,11 +73,7 @@ async function importMetadata(
 
     return {
         ...importResult.data,
-        instance: {
-            id: instance.id,
-            name: instance.name,
-            url: instance.url,
-        },
+        instance: _.pick(instance, ["id", "name", "url"]),
     };
 }
 
@@ -105,5 +101,5 @@ export async function startSynchronization(
         importMetadata(d2, instanceId, metadataPackage)
     );
 
-    return await Promise.all(importPromises);
+    return Promise.all(importPromises);
 }
