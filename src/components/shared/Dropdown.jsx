@@ -18,6 +18,7 @@ const getMaterialTheme = () =>
                         color: "#aaaaaa",
                     },
                     top: "-10px !important",
+                    marginLeft: 10,
                 },
             },
             MuiInput: {
@@ -57,7 +58,7 @@ export default function Dropdown({ items, value, onChange, label }) {
                 <InputLabel>{label}</InputLabel>
                 <Select value={value} onChange={onChange}>
                     <MenuItem value={""}>
-                        <em>{i18n.t("None")}</em>
+                        <em>{i18n.t("<no value>")}</em>
                     </MenuItem>
                     {items.map(i => (
                         <MenuItem key={i.id} value={i.id}>
