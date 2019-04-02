@@ -55,7 +55,8 @@ export default class Instance {
     }
 
     public static async get(d2: D2, id: string): Promise<Instance> {
-        return (await getDataById(d2, instancesDataStoreKey, id)) as Instance;
+        const instance = await getDataById(d2, instancesDataStoreKey, id);
+        return new Instance(instance);
     }
 
     public async save(d2: D2, encryptionKey: string): Promise<Response> {
