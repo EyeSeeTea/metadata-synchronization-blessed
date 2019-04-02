@@ -39,7 +39,7 @@ export default class OrganisationUnitSync extends React.Component {
                 items={items}
                 onChange={this.handleFilterChange}
                 value={value}
-                placeholder={i18n.t("Organisation Unit Group")}
+                label={i18n.t("Organisation Unit Group")}
             />
         );
     };

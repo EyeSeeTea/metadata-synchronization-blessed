@@ -1,10 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Select, MenuItem } from "@material-ui/core";
+import i18n from "@dhis2/d2-i18n";
+import { Select, MenuItem, FormControl, InputLabel } from "@material-ui/core";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core";
 import cyan from "@material-ui/core/colors/cyan";
 
-const getMaterialTheme = textColor =>
+const getMaterialTheme = () =>
     createMuiTheme({
         typography: {
             useNextVariants: true,
@@ -14,17 +15,21 @@ const getMaterialTheme = textColor =>
                 root: {
                     color: "#aaaaaa",
                     "&$focused": {
-                        color: cyan["500"],
+                        color: "#aaaaaa",
                     },
+                    top: "-10px !important",
                 },
             },
             MuiInput: {
                 root: {
-                    marginTop: 8,
                     marginLeft: 10,
                 },
+                formControl: {
+                    minWidth: 200,
+                    marginTop: "8px !important",
+                },
                 input: {
-                    color: textColor,
+                    color: "#565656",
                 },
                 underline: {
                     "&&&&:hover:before": {
@@ -44,21 +49,23 @@ const getMaterialTheme = textColor =>
         },
     });
 
-export default function Dropdown({ items, value, onChange, placeholder }) {
-    const textColor = value ? "#565656" : "#aaaaaa";
-    const materialTheme = getMaterialTheme(textColor);
+export default function Dropdown({ items, value, onChange, label }) {
+    const materialTheme = getMaterialTheme();
     return (
         <MuiThemeProvider theme={materialTheme}>
-            <Select value={value} onChange={onChange} displayEmpty>
-                <MenuItem value={""}>
-                    <em>{placeholder}</em>
-                </MenuItem>
-                {items.map(i => (
-                    <MenuItem key={i.id} value={i.id}>
-                        {i.name}
+            <FormControl>
+                <InputLabel>{label}</InputLabel>
+                <Select value={value} onChange={onChange}>
+                    <MenuItem value={""}>
+                        <em>{i18n.t("None")}</em>
                     </MenuItem>
-                ))}
-            </Select>
+                    {items.map(i => (
+                        <MenuItem key={i.id} value={i.id}>
+                            {i.name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
         </MuiThemeProvider>
     );
 }
