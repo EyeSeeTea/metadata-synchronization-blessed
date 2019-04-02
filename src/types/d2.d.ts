@@ -83,3 +83,31 @@ export interface Response {
     status: boolean;
     error?: Error;
 }
+
+export interface MetadataImportParams {
+    atomicMode?: "ALL" | "NONE";
+    flushMode?: "AUTO" | "OBJECT";
+    identifier?: "UID" | "CODE" | "AUTO";
+    importMode?: "COMMIT" | "VALIDATE";
+    importStrategy?: "CREATE_AND_UPDATE" | "CREATE" | "UPDATE" | "DELETE";
+    importReportMode?: "ERRORS" | "FULL" | "DEBUG";
+    mergeMode?: "MERGE" | "REPLACE";
+    preheatMode?: "REFERENCE" | "ALL" | "NONE";
+    skipSharing?: boolean;
+    skipValidation?: boolean;
+    userOverrideMode?: "NONE" | "CURRENT" | "SELECTED";
+    username?: string;
+}
+
+export interface MetadataImportResponse {
+    status: string;
+    importParams: MetadataImportParams;
+    typeReports: any[];
+    stats: {
+        created: number;
+        deleted: number;
+        ignored: number;
+        total: number;
+        updated: number;
+    };
+}

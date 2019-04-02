@@ -3,8 +3,8 @@ import _ from "lodash";
 import "../utils/lodash-mixins";
 
 import Instance from "../models/instance";
-import { D2 } from "../types/d2";
-import { NestedRules, SynchronizationResult } from "../types/synchronization";
+import { D2, MetadataImportParams } from "../types/d2";
+import { NestedRules, MetadataPackage } from "../types/synchronization";
 import { cleanModelName, isD2Model } from "./d2";
 import { isValidUid } from "d2/uid";
 
@@ -22,7 +22,7 @@ export function buildNestedRules(rules: string[]): NestedRules {
     );
 }
 
-export async function getMetadata(d2: D2, elements: string[]): Promise<SynchronizationResult> {
+export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataPackage> {
     const promises = [];
     for (let i = 0; i < elements.length; i += 100) {
         const requestUrl = d2.Api.getApi().baseUrl + "/metadata.json";
@@ -43,19 +43,21 @@ export async function getMetadata(d2: D2, elements: string[]): Promise<Synchroni
 }
 
 export async function postMetadata(instance: Instance, metadata: any): Promise<any> {
+    const params: MetadataImportParams = {
+        importMode: "COMMIT",
+        identifier: "AUTO",
+        importReportMode: "FULL",
+        importStrategy: "CREATE_AND_UPDATE",
+        mergeMode: "REPLACE",
+        atomicMode: "ALL",
+    };
+
     return await axios.post(instance.url + "/api/metadata", metadata, {
         auth: {
             username: instance.username,
             password: instance.password,
         },
-        params: {
-            importMode: "COMMIT",
-            identifier: "AUTO",
-            importReportMode: "FULL",
-            importStrategy: "CREATE_AND_UPDATE",
-            mergeMode: "REPLACE",
-            atomicMode: "ALL",
-        },
+        params,
     });
 }
 
@@ -64,8 +66,8 @@ export function getAllReferences(
     obj: any,
     type: string,
     parents: string[] = []
-): SynchronizationResult {
-    let result: SynchronizationResult = {};
+): MetadataPackage {
+    let result: MetadataPackage = {};
     _.forEach(obj, (value, key) => {
         if (_.isObject(value) || _.isArray(value)) {
             const recursive = getAllReferences(d2, value, type, [...parents, key]);

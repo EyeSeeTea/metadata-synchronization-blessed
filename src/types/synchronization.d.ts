@@ -1,3 +1,5 @@
+import { MetadataImportResponse } from "./d2";
+
 export interface SynchronizationBuilder {
     targetInstances: string[];
     metadata: {
@@ -12,8 +14,17 @@ export interface ExportBuilder {
     includeRules: string[];
 }
 
-export interface SynchronizationResult {
+export interface MetadataPackage {
     [metadataType: string]: any[];
+}
+
+export interface SynchronizationResult extends MetadataImportResponse {
+    httpStatus: number;
+    instance: {
+        id: string;
+        name: string;
+        url: string;
+    };
 }
 
 export interface NestedRules {
