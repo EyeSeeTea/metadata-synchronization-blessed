@@ -41,16 +41,17 @@ class SyncDialog extends React.Component {
 
     handleSynchronization = async () => {
         this.props.loading.show(true, i18n.t("Synchronizing metadata"));
-        // TODO: Obtain import results and add warnings/errors to the logger
+
         try {
             const metadataPackage = await startSynchronization(this.props.d2, {
                 metadata: this.props.metadata,
                 targetInstances: this.state.targetInstances,
             });
-            this.props.handleClose(true, metadataPackage);
+            this.props.handleClose(metadataPackage);
         } catch (e) {
             this.props.handleClose();
         }
+
         this.props.loading.reset();
     };
 

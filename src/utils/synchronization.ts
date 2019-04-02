@@ -52,13 +52,21 @@ export async function postMetadata(instance: Instance, metadata: any): Promise<a
         atomicMode: "ALL",
     };
 
-    return await axios.post(instance.url + "/api/metadata", metadata, {
-        auth: {
-            username: instance.username,
-            password: instance.password,
-        },
-        params,
-    });
+    try {
+        return await axios.post(instance.url + "/api/metadata", metadata, {
+            auth: {
+                username: instance.username,
+                password: instance.password,
+            },
+            params,
+        });
+    } catch (error) {
+        // Catch response error but rethrow unknown issues
+        if (error.response) {
+            return error.response;
+        }
+        throw error;
+    }
 }
 
 export function getAllReferences(

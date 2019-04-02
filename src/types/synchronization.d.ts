@@ -19,7 +19,6 @@ export interface MetadataPackage {
 }
 
 export interface SynchronizationResult extends MetadataImportResponse {
-    httpStatus: number;
     instance: {
         id: string;
         name: string;

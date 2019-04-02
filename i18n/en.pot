@@ -182,6 +182,9 @@ msgstr ""
 msgid "Synchronize"
 msgstr ""
 
+msgid "Synchronization Results"
+msgstr ""
+
 msgid "Field {{field}} cannot be blank"
 msgstr ""
 

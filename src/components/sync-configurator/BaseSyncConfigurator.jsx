@@ -9,6 +9,7 @@ import SyncIcon from "@material-ui/icons/Sync";
 
 import PageHeader from "../shared/PageHeader";
 import SyncDialog from "../sync-dialog/SyncDialog";
+import SyncSummary from "../sync-summary/SyncSummary";
 
 const styles = theme => ({
     fab: {
@@ -24,7 +25,9 @@ class BaseSyncConfigurator extends React.Component {
     state = {
         tableKey: Math.random(),
         metadata: {},
+        importResponse: [],
         syncDialogOpen: false,
+        syncSummaryOpen: false,
     };
 
     static propTypes = {
@@ -60,30 +63,28 @@ class BaseSyncConfigurator extends React.Component {
         this.setState({ syncDialogOpen: true });
     };
 
-    handleDialogClose = success => {
-        this.setState({ syncDialogOpen: false });
-        if (success) {
-            this.props.snackbar.success("Successfully synchronized metadata");
+    handleDialogClose = importResponse => {
+        if (importResponse) {
+            this.setState({ syncDialogOpen: false, syncSummaryOpen: true, importResponse });
         } else {
-            this.props.snackbar.error("Failed to synchronize metadata");
+            this.props.snackbar.error("Unknown error with the request");
+            this.setState({ syncDialogOpen: false });
         }
+    };
+
+    handleSummaryClose = () => {
+        this.setState({ syncSummaryOpen: false });
     };
 
     render() {
         const { d2, model, title, classes } = this.props;
-        const { tableKey, syncDialogOpen, metadata } = this.state;
+        const { tableKey, syncDialogOpen, syncSummaryOpen, metadata, importResponse } = this.state;
 
         // Wrapper method to preserve static context
         const list = (...params) => model.listMethod(...params);
 
         return (
             <React.Fragment>
-                <SyncDialog
-                    d2={d2}
-                    metadata={metadata}
-                    isOpen={syncDialogOpen}
-                    handleClose={this.handleDialogClose}
-                />
                 <PageHeader onBackClick={this.backHome} title={title} />
                 <div className={classes.tableContainer}>
                     <ObjectsTable
@@ -109,6 +110,17 @@ class BaseSyncConfigurator extends React.Component {
                         <SyncIcon />
                     </Fab>
                 </div>
+                <SyncDialog
+                    d2={d2}
+                    metadata={metadata}
+                    isOpen={syncDialogOpen}
+                    handleClose={this.handleDialogClose}
+                />
+                <SyncSummary
+                    response={importResponse}
+                    isOpen={syncSummaryOpen}
+                    handleClose={this.handleSummaryClose}
+                />
             </React.Fragment>
         );
     }

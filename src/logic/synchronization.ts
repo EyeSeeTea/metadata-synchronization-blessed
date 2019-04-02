@@ -66,20 +66,13 @@ async function importMetadata(
     instanceId: string,
     metadataPackage: MetadataPackage
 ): Promise<SynchronizationResult> {
-    // TODO: Obtain import results and add warnings/errors to the logger
     const instance = await Instance.get(d2, instanceId);
     const importResult = await postMetadata(instance, metadataPackage);
 
-    // DEBUG: Print response from import
-    console.log("[DEBUG] Destination instance", instance);
-    console.log("[DEBUG] Metadata package", metadataPackage);
-    console.log("[DEBUG] HTTP Status", importResult.status);
-    console.log("[DEBUG] Import Stats", importResult.data.status, importResult.data.stats);
-    // END OF DEBUG SECTION
+    // TODO: Update the logger
 
     return {
         ...importResult.data,
-        httpStatus: importResult.status,
         instance: {
             id: instance.id,
             name: instance.name,
