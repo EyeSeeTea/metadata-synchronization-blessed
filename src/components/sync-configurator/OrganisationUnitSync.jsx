@@ -45,15 +45,14 @@ export default class OrganisationUnitSync extends React.Component {
     };
 
     render() {
-        const { d2 } = this.props;
         const title = i18n.t("Organisation Units Synchronization");
         return (
             <BaseSyncConfigurator
-                d2={d2}
                 model={OrganisationUnitModel}
                 title={title}
                 renderExtraFilters={this.renderExtraFilters}
                 extraFiltersState={{ orgUnitGroup: this.state.orgUnitGroupFilter.value }}
+                {...this.props}
             />
         );
     }

@@ -10,9 +10,8 @@ export default class ValidationRuleSync extends React.Component {
     };
 
     render() {
-        const { d2 } = this.props;
         const title = i18n.t("Validation Rules Synchronization");
 
-        return <BaseSyncConfigurator d2={d2} model={ValidationRuleModel} title={title} />;
+        return <BaseSyncConfigurator model={ValidationRuleModel} title={title} {...this.props} />;
     }
 }
