@@ -8,6 +8,7 @@ import {
     ExportBuilder,
     NestedRules,
     SynchronizationBuilder,
+    MetadataPackage,
     SynchronizationResult,
 } from "../types/synchronization";
 import { cleanObject } from "../utils/d2";
@@ -18,10 +19,10 @@ import {
     postMetadata,
 } from "../utils/synchronization";
 
-async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<SynchronizationResult> {
+async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<MetadataPackage> {
     const { type, ids, excludeRules, includeRules } = builder;
     const model = d2ModelFactory(d2, type).getD2Model(d2);
-    const result: SynchronizationResult = {};
+    const result: MetadataPackage = {};
 
     // Each level of recursion traverse the exclude/include rules with nested values
     const nestedExcludeRules: NestedRules = buildNestedRules(excludeRules);
@@ -41,7 +42,7 @@ async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<Synchroni
         result[model.plural].push(object);
 
         // Get all the referenced metadata
-        const references: SynchronizationResult = getAllReferences(d2, object, model.name);
+        const references: MetadataPackage = getAllReferences(d2, object, model.name);
         const referenceTypes = _.intersection(_.keys(references), includeRules);
         const promises = referenceTypes
             .map(type => ({
@@ -51,7 +52,7 @@ async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<Synchroni
                 includeRules: nestedIncludeRules[type],
             }))
             .map(newBuilder => exportMetadata(d2, newBuilder));
-        const promisesResult: SynchronizationResult[] = await Promise.all(promises);
+        const promisesResult: MetadataPackage[] = await Promise.all(promises);
         _.deepMerge(result, ...promisesResult);
     }
 
@@ -63,23 +64,26 @@ async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<Synchroni
 async function importMetadata(
     d2: D2,
     instanceId: string,
-    metadataPackage: SynchronizationResult
-): Promise<void> {
-    // TODO: Obtain import results and add warnings/errors to the logger
+    metadataPackage: MetadataPackage,
+    encryptionKey: string,
+): Promise<SynchronizationResult> {
     const instance = await Instance.get(d2, instanceId);
-    const importResult = await postMetadata(instance, metadataPackage);
+    const decryptedInstance = instance.decryptPassword(encryptionKey);
+    const importResult = await postMetadata(decryptedInstance, metadataPackage);
 
-    // DEBUG: Print response from import
-    console.log("[DEBUG] Destination instance", instance);
-    console.log("[DEBUG] Metadata package", metadataPackage);
-    console.log("[DEBUG] HTTP Status", importResult.status);
-    console.log("[DEBUG] Import Stats", importResult.data.status, importResult.data.stats);
-    // END OF DEBUG SECTION
+    // TODO: Update the logger
 
-    return importResult;
+    return {
+        ...importResult.data,
+        instance: _.pick(instance, ["id", "name", "url"]),
+    };
 }
 
-export async function startSynchronization(d2: D2, builder: SynchronizationBuilder): Promise<any> {
+export async function startSynchronization(
+    d2: D2,
+    builder: SynchronizationBuilder,
+    encryptionKey: string,
+): Promise<SynchronizationResult[]> {
     // Phase 1: Export and package metadata from origin instance
     const exportPromises = _.keys(builder.metadata)
         .map(type => {
@@ -92,13 +96,13 @@ export async function startSynchronization(d2: D2, builder: SynchronizationBuild
             };
         })
         .map(newBuilder => exportMetadata(d2, newBuilder));
-    const exportResults: SynchronizationResult[] = await Promise.all(exportPromises);
+    const exportResults: MetadataPackage[] = await Promise.all(exportPromises);
     const metadataPackage = _.deepMerge({}, ...exportResults);
 
     // Phase 2: Import metadata into destination instances
     const importPromises = builder.targetInstances.map(instanceId =>
-        importMetadata(d2, instanceId, metadataPackage)
+        importMetadata(d2, instanceId, metadataPackage, encryptionKey)
     );
-    const importResults: any[] = await Promise.all(importPromises);
-    return await _.deepMerge({}, ...importResults);
+
+    return Promise.all(importPromises);
 }

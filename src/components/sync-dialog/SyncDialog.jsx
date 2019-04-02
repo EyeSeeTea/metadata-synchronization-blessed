@@ -41,16 +41,17 @@ class SyncDialog extends React.Component {
 
     handleSynchronization = async () => {
         this.props.loading.show(true, i18n.t("Synchronizing metadata"));
-        // TODO: Obtain import results and add warnings/errors to the logger
+
         try {
-            await startSynchronization(this.props.d2, {
+            const metadataPackage = await startSynchronization(this.props.d2, {
                 metadata: this.props.metadata,
                 targetInstances: this.state.targetInstances,
-            });
-            this.props.handleClose(true);
+            }, this.props.encryptionKey);
+            this.props.handleClose(metadataPackage);
         } catch (e) {
             this.props.handleClose();
         }
+
         this.props.loading.reset();
     };
 
@@ -65,7 +66,7 @@ class SyncDialog extends React.Component {
             <React.Fragment>
                 <ConfirmationDialog
                     isOpen={isOpen}
-                    title={i18n.t("Synchronize Organisation Units")}
+                    title={i18n.t("Synchronize Metadata")}
                     onSave={this.handleSynchronization}
                     onCancel={this.handleCancel}
                     saveText={i18n.t("Synchronize")}

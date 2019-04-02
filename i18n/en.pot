@@ -161,10 +161,13 @@ msgstr ""
 msgid "Synchronizing metadata"
 msgstr ""
 
-msgid "Synchronize Organisation Units"
+msgid "Synchronize Metadata"
 msgstr ""
 
 msgid "Synchronize"
+msgstr ""
+
+msgid "Synchronization Results"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"

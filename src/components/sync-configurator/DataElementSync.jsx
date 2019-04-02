@@ -10,8 +10,7 @@ export default class DataElementSync extends React.Component {
     };
 
     render() {
-        const { d2 } = this.props;
         const title = i18n.t("Data Elements Synchronization");
-        return <BaseSyncConfigurator d2={d2} model={DataElementModel} title={title} />;
+        return <BaseSyncConfigurator model={DataElementModel} title={title} {...this.props} />;
     }
 }
