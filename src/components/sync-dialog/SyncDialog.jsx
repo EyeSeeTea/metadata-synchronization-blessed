@@ -46,7 +46,7 @@ class SyncDialog extends React.Component {
             const metadataPackage = await startSynchronization(this.props.d2, {
                 metadata: this.props.metadata,
                 targetInstances: this.state.targetInstances,
-            });
+            }, this.props.encryptionKey);
             this.props.handleClose(metadataPackage);
         } catch (e) {
             this.props.handleClose();

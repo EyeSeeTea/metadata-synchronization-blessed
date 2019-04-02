@@ -161,6 +161,7 @@ class BaseSyncConfigurator extends React.Component {
                     metadata={metadata}
                     isOpen={syncDialogOpen}
                     handleClose={this.handleDialogClose}
+                    encryptionKey={this.props.appConfig.encryptionKey}
                 />
                 <SyncSummary
                     response={importResponse}
