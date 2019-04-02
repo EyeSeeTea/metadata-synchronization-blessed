@@ -65,7 +65,7 @@ class SyncDialog extends React.Component {
             <React.Fragment>
                 <ConfirmationDialog
                     isOpen={isOpen}
-                    title={i18n.t("Synchronize Organisation Units")}
+                    title={i18n.t("Synchronize Metadata")}
                     onSave={this.handleSynchronization}
                     onCancel={this.handleCancel}
                     saveText={i18n.t("Synchronize")}
