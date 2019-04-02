@@ -17,6 +17,8 @@ class InstanceFormBuilder extends React.Component {
         appConfig: PropTypes.object.isRequired,
     };
 
+    isEdit = this.props.match.params.formFor === "edit";
+
     constructor(props) {
         super(props);
 
@@ -25,15 +27,27 @@ class InstanceFormBuilder extends React.Component {
             appConfig: { encryptionKey },
         } = props;
 
-        const isEdit = location.instance !== undefined;
         const instance = Instance.getOrCreate(location.instance, encryptionKey);
 
         this.state = {
             instance,
-            isEdit,
             dialogOpen: false,
         };
     }
+
+    componentDidMount = async () => {
+        const {
+            match: { params },
+            appConfig: { encryptionKey },
+            d2,
+        } = this.props;
+        const { instance } = this.state;
+        if (this.isEdit && !instance.data.id) {
+            const encryptedInstance = await Instance.get(d2, params.id);
+            const instanceToEdit = encryptedInstance.decryptPassword(encryptionKey);
+            this.setState({ instance: instanceToEdit });
+        }
+    };
 
     cancelSave = () => {
         this.setState({ dialogOpen: true });
@@ -53,12 +67,12 @@ class InstanceFormBuilder extends React.Component {
     };
 
     render() {
-        const { dialogOpen, isEdit } = this.state;
+        const { dialogOpen } = this.state;
         const { d2, appConfig } = this.props;
 
-        const title = !isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
+        const title = !this.isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
 
-        const cancel = !isEdit
+        const cancel = !this.isEdit
             ? i18n.t("Cancel Instance Creation")
             : i18n.t("Cancel Instance Editing");
 
