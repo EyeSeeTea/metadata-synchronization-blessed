@@ -1,3 +1,5 @@
+import { Moment } from "moment";
+
 export interface TableList {
     objects: any[];
     pager: {
@@ -9,6 +11,9 @@ export interface TableList {
 
 export interface TableFilters {
     search: string;
+    lastUpdatedDate?: Moment;
+    orgUnitGroup?: string;
+    d2Filters: (string | null)[];
 }
 
 export interface TablePagination {
