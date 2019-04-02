@@ -17,7 +17,7 @@ const getMaterialTheme = () =>
                     "&$focused": {
                         color: "#aaaaaa",
                     },
-                    top: "-10px !important",
+                    top: "-9px !important",
                     marginLeft: 10,
                 },
             },
@@ -26,7 +26,7 @@ const getMaterialTheme = () =>
                     marginLeft: 10,
                 },
                 formControl: {
-                    minWidth: 200,
+                    minWidth: 250,
                     marginTop: "8px !important",
                 },
                 input: {
@@ -57,9 +57,7 @@ export default function Dropdown({ items, value, onChange, label }) {
             <FormControl>
                 <InputLabel>{label}</InputLabel>
                 <Select value={value} onChange={onChange}>
-                    <MenuItem value={""}>
-                        <em>{i18n.t("<no value>")}</em>
-                    </MenuItem>
+                    <MenuItem value={""}>{i18n.t("<No value>")}</MenuItem>
                     {items.map(i => (
                         <MenuItem key={i.id} value={i.id}>
                             {i.name}
