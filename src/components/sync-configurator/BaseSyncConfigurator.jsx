@@ -6,6 +6,7 @@ import { ObjectsTable, withSnackbar, DatePicker } from "d2-ui-components";
 import Fab from "@material-ui/core/Fab";
 import { withStyles } from "@material-ui/core/styles";
 import SyncIcon from "@material-ui/icons/Sync";
+import _ from "lodash";
 
 import PageHeader from "../shared/PageHeader";
 import SyncDialog from "../sync-dialog/SyncDialog";
@@ -124,7 +125,7 @@ class BaseSyncConfigurator extends React.Component {
             filters,
             importResponse,
         } = this.state;
-
+        const disabled = metadata.organisationUnit && _.isEmpty(metadata.organisationUnit);
         // Wrapper method to preserve static context
         const list = (...params) => model.listMethod(...params);
         return (
@@ -152,6 +153,7 @@ class BaseSyncConfigurator extends React.Component {
                         size="large"
                         onClick={this.onSynchronize}
                         data-test="list-action-bar"
+                        disabled={disabled}
                     >
                         <SyncIcon />
                     </Fab>
