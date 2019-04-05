@@ -68,6 +68,7 @@ export default class OrganisationUnitSync extends React.Component {
         const { orgUnitGroupFilter, orgUnitLevelFilter } = this.state;
         return [
             <Dropdown
+                key={"group-filter"}
                 items={orgUnitGroupFilter.items}
                 onChange={this.handleGroupFilterChange}
                 value={orgUnitGroupFilter.value}
@@ -75,6 +76,7 @@ export default class OrganisationUnitSync extends React.Component {
             />,
 
             <Dropdown
+                key={"level-filter"}
                 items={orgUnitLevelFilter.items}
                 onChange={this.handleLevelFilterChange}
                 value={orgUnitLevelFilter.value}
