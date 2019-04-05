@@ -161,7 +161,7 @@ class SyncSummary extends React.Component {
                             </ExpansionPanel>
                         ))}
 
-                        <ExpansionPanel defaultExpanded={response.length === 0}>
+                        <ExpansionPanel>
                             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography className={classes.expansionPanelHeading1}>
                                     JSON Response
