@@ -72,7 +72,7 @@ export async function postMetadata(instance: Instance, metadata: any): Promise<a
         if (error.response) {
             return error.response;
         } else if (error.request) {
-            return { data: { status: "NETWORK ERROR" }};
+            return { data: { status: "NETWORK ERROR" } };
         } else {
             throw error;
         }

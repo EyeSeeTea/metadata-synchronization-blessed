@@ -19,7 +19,7 @@ import {
     getMetadata,
     postMetadata,
 } from "../utils/synchronization";
-import {getClassName} from "../utils/d2";
+import { getClassName } from "../utils/d2";
 
 async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<MetadataPackage> {
     const { type, ids, excludeRules, includeRules } = builder;
@@ -78,7 +78,7 @@ async function importMetadata(
 
     if (importResult.data.typeReports) {
         importResult.data.typeReports.forEach((report: any) => {
-            const {klass, stats, objectReports = []} = report;
+            const { klass, stats, objectReports = [] } = report;
 
             typeStats.push({
                 ...stats,
@@ -86,14 +86,16 @@ async function importMetadata(
             });
 
             objectReports.forEach((detail: any) => {
-                const {uid, errorReports = []} = detail;
+                const { uid, errorReports = [] } = detail;
 
-                messages.push(...errorReports.map((error: any) => ({
-                    uid,
-                    type: getClassName(error.mainKlass),
-                    property: error.errorProperty,
-                    message: error.message,
-                })));
+                messages.push(
+                    ...errorReports.map((error: any) => ({
+                        uid,
+                        type: getClassName(error.mainKlass),
+                        property: error.errorProperty,
+                        message: error.message,
+                    }))
+                );
             });
         });
     }
@@ -101,7 +103,7 @@ async function importMetadata(
     return {
         ...importResult.data,
         instance: _.pick(instance, ["id", "name", "url"]),
-        report: { typeStats, messages }
+        report: { typeStats, messages },
     };
 }
 
