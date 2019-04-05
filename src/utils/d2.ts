@@ -59,6 +59,8 @@ export function cleanModelName(d2: D2, id: string, caller: string): string | nul
     }
 }
 
-export function getClassName(className: string): string {
-    return className.substr(className.lastIndexOf(".") + 1);
+export function getClassName(className: string): string | undefined {
+    return _(className)
+        .split(".")
+        .last();
 }

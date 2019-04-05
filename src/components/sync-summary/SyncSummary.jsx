@@ -4,17 +4,19 @@ import PropTypes from "prop-types";
 import { ConfirmationDialog } from "d2-ui-components";
 import ReactJson from "react-json-view";
 
-import { withStyles } from "@material-ui/core";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
-import DialogContent from "@material-ui/core/DialogContent";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import Typography from "@material-ui/core/Typography";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import {
+    withStyles,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    DialogContent,
+    ExpansionPanel,
+    ExpansionPanelSummary,
+    ExpansionPanelDetails,
+    Typography,
+} from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 const styles = theme => ({
@@ -127,18 +129,18 @@ class SyncSummary extends React.Component {
                                         })`}
                                     </Typography>
                                     <Typography className={classes.expansionPanelHeading2}>
-                                        {`Status: ${responseElement.status}`}
+                                        {`${i18n.t("Status")}: ${responseElement.status}`}
                                     </Typography>
                                 </ExpansionPanelSummary>
 
                                 <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                                    <Typography variant={"overline"}>Summary</Typography>
+                                    <Typography variant="overline">{i18n.t("Summary")}</Typography>
                                 </ExpansionPanelDetails>
 
                                 <ExpansionPanelDetails className={classes.expansionPanelDetails}>
                                     {SyncSummary.buildSummaryTable([
                                         ...responseElement.report.typeStats,
-                                        { type: "Total", ...responseElement.stats },
+                                        { type: i18n.t("Total"), ...responseElement.stats },
                                     ])}
                                 </ExpansionPanelDetails>
 
@@ -147,7 +149,9 @@ class SyncSummary extends React.Component {
                                         <ExpansionPanelDetails
                                             className={classes.expansionPanelDetails}
                                         >
-                                            <Typography variant={"overline"}>Messages</Typography>
+                                            <Typography variant="overline">
+                                                {i18n.t("Messages")}
+                                            </Typography>
                                         </ExpansionPanelDetails>
                                         <ExpansionPanelDetails
                                             className={classes.expansionPanelDetails}
@@ -164,7 +168,7 @@ class SyncSummary extends React.Component {
                         <ExpansionPanel>
                             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography className={classes.expansionPanelHeading1}>
-                                    JSON Response
+                                    {i18n.t("JSON Response")}
                                 </Typography>
                             </ExpansionPanelSummary>
 
