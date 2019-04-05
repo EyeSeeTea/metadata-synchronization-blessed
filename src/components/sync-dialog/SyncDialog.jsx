@@ -1,6 +1,7 @@
 import React from "react";
 import i18n from "@dhis2/d2-i18n";
 import PropTypes from "prop-types";
+import _ from "lodash";
 import { ConfirmationDialog, MultiSelector } from "d2-ui-components";
 import DialogContent from "@material-ui/core/DialogContent";
 import { withLoading } from "d2-ui-components";
@@ -43,10 +44,14 @@ class SyncDialog extends React.Component {
         this.props.loading.show(true, i18n.t("Synchronizing metadata"));
 
         try {
-            const metadataPackage = await startSynchronization(this.props.d2, {
-                metadata: this.props.metadata,
-                targetInstances: this.state.targetInstances,
-            }, this.props.encryptionKey);
+            const metadataPackage = await startSynchronization(
+                this.props.d2,
+                {
+                    metadata: this.props.metadata,
+                    targetInstances: this.state.targetInstances,
+                },
+                this.props.encryptionKey
+            );
             this.props.handleClose(metadataPackage);
         } catch (e) {
             this.props.handleClose();
@@ -61,7 +66,8 @@ class SyncDialog extends React.Component {
 
     render() {
         const { d2, isOpen } = this.props;
-
+        const { targetInstances } = this.state;
+        const disableSync = targetInstances && _.isEmpty(targetInstances);
         return (
             <React.Fragment>
                 <ConfirmationDialog
@@ -72,6 +78,7 @@ class SyncDialog extends React.Component {
                     saveText={i18n.t("Synchronize")}
                     maxWidth={"lg"}
                     fullWidth={true}
+                    disableSave={disableSync}
                 >
                     <DialogContent>
                         <MultiSelector
