@@ -11,15 +11,18 @@ import { isValidUid } from "d2/uid";
 export function buildNestedRules(rules: string[][] = []): NestedRules {
     return _(rules)
         .filter(path => path.length > 1)
-        .groupBy(_.head)
-        .tap(object => {
-            _.forOwn(object, (array, key) => (object[key] = array.map(rule => rule.slice(1))));
-        })
+        .groupBy(_.first)
+        .mapValues(path => path.map(_.tail))
         .value();
 }
 
 export function cleanObject(element: any, excludeRules: string[][] = []): any {
-    const leafRules = excludeRules.filter(array => array.length === 1).map(array => array[0]);
+    const leafRules = _(excludeRules)
+        .filter(path => path.length === 1)
+        .map(_.first)
+        .compact()
+        .value();
+
     return _.pick(element, _.difference(_.keys(element), leafRules));
 }
 
@@ -27,7 +30,12 @@ export function cleanReferences(
     references: MetadataPackage,
     includeRules: string[][] = []
 ): string[] {
-    return _.intersection(_.keys(references), includeRules.map(array => array[0]));
+    const rules = _(includeRules)
+        .map(_.first)
+        .compact()
+        .value();
+
+    return _.intersection(_.keys(references), rules);
 }
 
 export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataPackage> {
