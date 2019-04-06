@@ -125,9 +125,12 @@ class BaseSyncConfigurator extends React.Component {
             filters,
             importResponse,
         } = this.state;
-        const disabled = metadata.organisationUnit && _.isEmpty(metadata.organisationUnit);
+        const disabled = _(metadata)
+            .values()
+            .some(_.isEmpty);
         // Wrapper method to preserve static context
         const list = (...params) => model.listMethod(...params);
+
         return (
             <React.Fragment>
                 <PageHeader onBackClick={this.backHome} title={title} />

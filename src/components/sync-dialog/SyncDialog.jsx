@@ -67,7 +67,8 @@ class SyncDialog extends React.Component {
     render() {
         const { d2, isOpen } = this.props;
         const { targetInstances } = this.state;
-        const disableSync = targetInstances && _.isEmpty(targetInstances);
+        const disableSync = _.isEmpty(targetInstances);
+
         return (
             <React.Fragment>
                 <ConfirmationDialog
