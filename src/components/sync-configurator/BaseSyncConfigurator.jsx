@@ -17,7 +17,7 @@ const styles = theme => ({
         margin: theme.spacing.unit,
         position: "fixed",
         bottom: theme.spacing.unit * 5,
-        right: theme.spacing.unit * 5,
+        right: theme.spacing.unit * 9,
     },
     tableContainer: { marginTop: -10 },
 });
