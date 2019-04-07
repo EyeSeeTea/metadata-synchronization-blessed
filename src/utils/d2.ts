@@ -41,15 +41,20 @@ export function cleanParams(options: Params): Params {
     return _.omitBy(options, value => _.isArray(value) && _.isEmpty(value));
 }
 
-export function cleanModelName(id: string, caller: string): string {
-    const alias = ["parent", "children", "ancestors"];
-    return alias.includes(id) ? caller : id;
-}
-
-export function cleanObject(element: any, excludeRules: string[]): any {
-    return _.pick(element, _.difference(_.keys(element), excludeRules));
-}
-
 export function isD2Model(d2: D2, modelName: string): boolean {
     return !!d2.models[modelName];
+}
+
+export function cleanModelName(d2: D2, id: string, caller: string): string | null {
+    if (isD2Model(d2, id)) {
+        return d2.models[id].plural;
+    } else if (id === "attributeValues") {
+        return "attributes";
+    } else if (id === "groupSets" && caller === "organisationUnitGroup") {
+        return "organisationUnitGroupSets";
+    } else if (_.includes(["parent", "children", "ancestors"], id)) {
+        return caller;
+    } else {
+        return null;
+    }
 }

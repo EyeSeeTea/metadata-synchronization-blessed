@@ -5,21 +5,37 @@ import "../utils/lodash-mixins";
 import Instance from "../models/instance";
 import { D2, MetadataImportParams } from "../types/d2";
 import { NestedRules, MetadataPackage } from "../types/synchronization";
-import { cleanModelName, isD2Model } from "./d2";
+import { cleanModelName } from "./d2";
 import { isValidUid } from "d2/uid";
 
-export function buildNestedRules(rules: string[]): NestedRules {
-    return _.transform(
-        rules,
-        (result, value) => {
-            const [parentType, childType] = value.split(".");
-            result[parentType] = result[parentType] || [];
-            if (childType && !result[parentType].includes(childType)) {
-                result[parentType].push(childType);
-            }
-        },
-        {}
-    );
+export function buildNestedRules(rules: string[][] = []): NestedRules {
+    return _(rules)
+        .filter(path => path.length > 1)
+        .groupBy(_.first)
+        .mapValues(path => path.map(_.tail))
+        .value();
+}
+
+export function cleanObject(element: any, excludeRules: string[][] = []): any {
+    const leafRules = _(excludeRules)
+        .filter(path => path.length === 1)
+        .map(_.first)
+        .compact()
+        .value();
+
+    return _.pick(element, _.difference(_.keys(element), leafRules));
+}
+
+export function cleanReferences(
+    references: MetadataPackage,
+    includeRules: string[][] = []
+): string[] {
+    const rules = _(includeRules)
+        .map(_.first)
+        .compact()
+        .value();
+
+    return _.intersection(_.keys(references), rules);
 }
 
 export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataPackage> {
@@ -82,8 +98,8 @@ export function getAllReferences(
             result = _.deepMerge(result, recursive);
         } else if (isValidUid(value)) {
             const metadataType = _(parents)
-                .map(k => cleanModelName(k, type))
-                .filter(k => isD2Model(d2, k))
+                .map(k => cleanModelName(d2, k, type))
+                .compact()
                 .first();
             if (metadataType) {
                 result[metadataType] = result[metadataType] || [];

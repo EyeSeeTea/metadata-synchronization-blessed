@@ -54,12 +54,12 @@ export abstract class D2Model {
         return this.metadataType;
     }
 
-    public static getExcludeRules(): string[] {
-        return this.excludeRules;
+    public static getExcludeRules(): string[][] {
+        return this.excludeRules.map(_.toPath);
     }
 
-    public static getIncludeRules(): string[] {
-        return this.includeRules;
+    public static getIncludeRules(): string[][] {
+        return this.includeRules.map(_.toPath);
     }
 
     public static getColumns(): TableLabel[] {
@@ -88,16 +88,16 @@ export class OrganisationUnitModel extends D2Model {
         "organisationUnitGroups.user",
         "organisationUnitGroups.userAccesses",
         "organisationUnitGroups.userGroupAccesses",
-        "organisationUnitGroups.groupSets.user",
-        "organisationUnitGroups.groupSets.userAccesses",
-        "organisationUnitGroups.groupSets.userGroupAccesses",
+        "organisationUnitGroups.organisationUnitGroupSets.user",
+        "organisationUnitGroups.organisationUnitGroupSets.userAccesses",
+        "organisationUnitGroups.organisationUnitGroupSets.userGroupAccesses",
     ];
     protected static includeRules = [
         "attribute",
         "organisationUnitGroups",
-        "organisationUnitGroups.attribute",
-        "organisationUnitGroups.groupSets",
-        "organisationUnitGroups.groupSets.attribute",
+        "organisationUnitGroups.attributes",
+        "organisationUnitGroups.organisationUnitGroupSets",
+        "organisationUnitGroups.organisationUnitGroupSets.attributes",
     ];
     protected static columns = organisationUnitsColumns;
     protected static details = organisationUnitsDetails;
