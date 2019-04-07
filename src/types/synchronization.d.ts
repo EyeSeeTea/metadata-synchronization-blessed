@@ -10,8 +10,8 @@ export interface SynchronizationBuilder {
 export interface ExportBuilder {
     type: string;
     ids: string[];
-    excludeRules: string[];
-    includeRules: string[];
+    excludeRules: string[][];
+    includeRules: string[][];
 }
 
 export interface MetadataPackage {
@@ -24,8 +24,12 @@ export interface SynchronizationResult extends MetadataImportResponse {
         name: string;
         url: string;
     };
+    report: {
+        typeStats: any[];
+        messages: any[];
+    };
 }
 
 export interface NestedRules {
-    [metadataType: string]: string[];
+    [metadataType: string]: string[][];
 }

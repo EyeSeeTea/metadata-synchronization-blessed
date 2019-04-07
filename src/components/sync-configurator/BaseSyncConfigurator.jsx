@@ -178,4 +178,4 @@ class BaseSyncConfigurator extends React.Component {
     }
 }
 
-export default withRouter(withSnackbar(withStyles(styles)(BaseSyncConfigurator)));
+export default withSnackbar(withRouter(withStyles(styles)(BaseSyncConfigurator)));

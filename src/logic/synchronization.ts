@@ -6,18 +6,20 @@ import { d2ModelFactory } from "../models/d2ModelFactory";
 import { D2 } from "../types/d2";
 import {
     ExportBuilder,
+    MetadataPackage,
     NestedRules,
     SynchronizationBuilder,
-    MetadataPackage,
     SynchronizationResult,
 } from "../types/synchronization";
-import { cleanObject } from "../utils/d2";
 import {
     buildNestedRules,
+    cleanObject,
+    cleanReferences,
     getAllReferences,
     getMetadata,
     postMetadata,
 } from "../utils/synchronization";
+import { getClassName } from "../utils/d2";
 
 async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<MetadataPackage> {
     const { type, ids, excludeRules, includeRules } = builder;
@@ -43,8 +45,8 @@ async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<MetadataP
 
         // Get all the referenced metadata
         const references: MetadataPackage = getAllReferences(d2, object, model.name);
-        const referenceTypes = _.intersection(_.keys(references), includeRules);
-        const promises = referenceTypes
+        const includedReferences = cleanReferences(references, includeRules);
+        const promises = includedReferences
             .map(type => ({
                 type,
                 ids: references[type],
@@ -65,24 +67,50 @@ async function importMetadata(
     d2: D2,
     instanceId: string,
     metadataPackage: MetadataPackage,
-    encryptionKey: string,
+    encryptionKey: string
 ): Promise<SynchronizationResult> {
     const instance = await Instance.get(d2, instanceId);
     const decryptedInstance = instance.decryptPassword(encryptionKey);
     const importResult = await postMetadata(decryptedInstance, metadataPackage);
 
-    // TODO: Update the logger
+    const typeStats: any[] = [];
+    const messages: any[] = [];
+
+    if (importResult.data.typeReports) {
+        importResult.data.typeReports.forEach((report: any) => {
+            const { klass, stats, objectReports = [] } = report;
+
+            typeStats.push({
+                ...stats,
+                type: getClassName(klass),
+            });
+
+            objectReports.forEach((detail: any) => {
+                const { uid, errorReports = [] } = detail;
+
+                messages.push(
+                    ...errorReports.map((error: any) => ({
+                        uid,
+                        type: getClassName(error.mainKlass),
+                        property: error.errorProperty,
+                        message: error.message,
+                    }))
+                );
+            });
+        });
+    }
 
     return {
         ...importResult.data,
         instance: _.pick(instance, ["id", "name", "url"]),
+        report: { typeStats, messages },
     };
 }
 
 export async function startSynchronization(
     d2: D2,
     builder: SynchronizationBuilder,
-    encryptionKey: string,
+    encryptionKey: string
 ): Promise<SynchronizationResult[]> {
     // Phase 1: Export and package metadata from origin instance
     const exportPromises = _.keys(builder.metadata)
