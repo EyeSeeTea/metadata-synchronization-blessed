@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-04-02T10:50:26.607Z\n"
-"PO-Revision-Date: 2019-04-02T10:50:26.607Z\n"
+"POT-Creation-Date: 2019-04-05T13:42:14.932Z\n"
+"PO-Revision-Date: 2019-04-05T13:42:14.932Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -167,7 +167,46 @@ msgstr ""
 msgid "Synchronize"
 msgstr ""
 
+msgid "Type"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Deleted"
+msgstr ""
+
+msgid "Ignored"
+msgstr ""
+
+msgid "Updated"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Identifier"
+msgstr ""
+
+msgid "Property"
+msgstr ""
+
+msgid "Message"
+msgstr ""
+
 msgid "Synchronization Results"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Messages"
+msgstr ""
+
+msgid "JSON Response"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"

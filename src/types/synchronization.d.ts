@@ -24,6 +24,10 @@ export interface SynchronizationResult extends MetadataImportResponse {
         name: string;
         url: string;
     };
+    report: {
+        typeStats: any[];
+        messages: any[];
+    };
 }
 
 export interface NestedRules {

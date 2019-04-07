@@ -58,3 +58,9 @@ export function cleanModelName(d2: D2, id: string, caller: string): string | nul
         return null;
     }
 }
+
+export function getClassName(className: string): string | undefined {
+    return _(className)
+        .split(".")
+        .last();
+}
