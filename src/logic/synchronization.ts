@@ -19,6 +19,7 @@ import {
     getMetadata,
     postMetadata,
 } from "../utils/synchronization";
+import { getClassName } from "../utils/d2";
 
 async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<MetadataPackage> {
     const { type, ids, excludeRules, includeRules } = builder;
@@ -72,11 +73,37 @@ async function importMetadata(
     const decryptedInstance = instance.decryptPassword(encryptionKey);
     const importResult = await postMetadata(decryptedInstance, metadataPackage);
 
-    // TODO: Update the logger
+    const typeStats: any[] = [];
+    const messages: any[] = [];
+
+    if (importResult.data.typeReports) {
+        importResult.data.typeReports.forEach((report: any) => {
+            const { klass, stats, objectReports = [] } = report;
+
+            typeStats.push({
+                ...stats,
+                type: getClassName(klass),
+            });
+
+            objectReports.forEach((detail: any) => {
+                const { uid, errorReports = [] } = detail;
+
+                messages.push(
+                    ...errorReports.map((error: any) => ({
+                        uid,
+                        type: getClassName(error.mainKlass),
+                        property: error.errorProperty,
+                        message: error.message,
+                    }))
+                );
+            });
+        });
+    }
 
     return {
         ...importResult.data,
         instance: _.pick(instance, ["id", "name", "url"]),
+        report: { typeStats, messages },
     };
 }
 
