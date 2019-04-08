@@ -88,7 +88,7 @@ class BaseSyncConfigurator extends React.Component {
             .some(_.isEmpty);
         if (disabled) {
             this.props.snackbar.error(
-                i18n.t("Please select at least one element from the table to continue")
+                i18n.t("Please select at least one element from the table to synchronize")
             );
         } else {
             this.setState({ syncDialogOpen: true });
