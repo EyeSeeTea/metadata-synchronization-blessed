@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-04-02T10:50:26.607Z\n"
-"PO-Revision-Date: 2019-04-02T10:50:26.607Z\n"
+"POT-Creation-Date: 2019-04-08T10:05:26.171Z\n"
+"PO-Revision-Date: 2019-04-08T10:05:26.171Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -138,6 +138,12 @@ msgid "Help"
 msgstr ""
 
 msgid "Back"
+msgstr ""
+
+msgid "Please select at least one element from the table to continue"
+msgstr ""
+
+msgid "Unknown error with the request"
 msgstr ""
 
 msgid "Last update date"

@@ -83,14 +83,23 @@ class BaseSyncConfigurator extends React.Component {
     };
 
     onSynchronize = () => {
-        this.setState({ syncDialogOpen: true });
+        const disabled = _(this.state.metadata)
+            .values()
+            .some(_.isEmpty);
+        if (disabled) {
+            this.props.snackbar.error(
+                i18n.t("Please select at least one element from the table to continue")
+            );
+        } else {
+            this.setState({ syncDialogOpen: true });
+        }
     };
 
     handleDialogClose = importResponse => {
         if (importResponse) {
             this.setState({ syncDialogOpen: false, syncSummaryOpen: true, importResponse });
         } else {
-            this.props.snackbar.error("Unknown error with the request");
+            this.props.snackbar.error(i18n.t("Unknown error with the request"));
             this.setState({ syncDialogOpen: false });
         }
     };
@@ -125,9 +134,6 @@ class BaseSyncConfigurator extends React.Component {
             filters,
             importResponse,
         } = this.state;
-        const disabled = _(metadata)
-            .values()
-            .some(_.isEmpty);
         // Wrapper method to preserve static context
         const list = (...params) => model.listMethod(...params);
 
@@ -156,7 +162,6 @@ class BaseSyncConfigurator extends React.Component {
                         size="large"
                         onClick={this.onSynchronize}
                         data-test="list-action-bar"
-                        disabled={disabled}
                     >
                         <SyncIcon />
                     </Fab>
