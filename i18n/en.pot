@@ -1,0 +1,225 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"POT-Creation-Date: 2019-04-08T10:16:41.397Z\n"
+"PO-Revision-Date: 2019-04-08T10:16:41.397Z\n"
+
+msgid "Metadata Synchronization"
+msgstr ""
+
+msgid "Instance Configurator"
+msgstr ""
+
+msgid "Organisation Units Sync"
+msgstr ""
+
+msgid "Data Elements Sync"
+msgstr ""
+
+msgid "Indicators Sync"
+msgstr ""
+
+msgid "Validation Rules Sync"
+msgstr ""
+
+msgid "Synchronization Rules"
+msgstr ""
+
+msgid "Notifications"
+msgstr ""
+
+msgid "Connected sucessfully to instance"
+msgstr ""
+
+msgid "Deleted {{name}}"
+msgstr ""
+
+msgid "Failed to delete {{name}}"
+msgstr ""
+
+msgid "Server name"
+msgstr ""
+
+msgid "URL endpoint"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Test Connection"
+msgstr ""
+
+msgid "Delete Instance?"
+msgstr ""
+
+msgid "Are you sure you want to delete this instance?"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Instances"
+msgstr ""
+
+msgid "Server name (*)"
+msgstr ""
+
+msgid "Field cannot be blank"
+msgstr ""
+
+msgid "URL endpoint (*)"
+msgstr ""
+
+msgid "Field should be an url"
+msgstr ""
+
+msgid "Username (*)"
+msgstr ""
+
+msgid "Password (*)"
+msgstr ""
+
+msgid "Please fix the issues before testing the connection"
+msgstr ""
+
+msgid "Connected successfully to instance"
+msgstr ""
+
+msgid "Please fix the issues before saving"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "New Instance"
+msgstr ""
+
+msgid "Edit Instance"
+msgstr ""
+
+msgid "Cancel Instance Creation"
+msgstr ""
+
+msgid "Cancel Instance Editing"
+msgstr ""
+
+msgid "All your changes will be lost. Are you sure?"
+msgstr ""
+
+msgid "Help text"
+msgstr ""
+
+msgid "Saving..."
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "<No value>"
+msgstr ""
+
+msgid "Help"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Please select at least one element from the table to synchronize"
+msgstr ""
+
+msgid "Unknown error with the request"
+msgstr ""
+
+msgid "Last update date"
+msgstr ""
+
+msgid "Data Elements Synchronization"
+msgstr ""
+
+msgid "Indicators Synchronization"
+msgstr ""
+
+msgid "Organisation Group"
+msgstr ""
+
+msgid "Organisation Level"
+msgstr ""
+
+msgid "Organisation Units Synchronization"
+msgstr ""
+
+msgid "Validation Rules Synchronization"
+msgstr ""
+
+msgid "Synchronizing metadata"
+msgstr ""
+
+msgid "Synchronize Metadata"
+msgstr ""
+
+msgid "Synchronize"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Deleted"
+msgstr ""
+
+msgid "Ignored"
+msgstr ""
+
+msgid "Updated"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Identifier"
+msgstr ""
+
+msgid "Property"
+msgstr ""
+
+msgid "Message"
+msgstr ""
+
+msgid "Synchronization Results"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Messages"
+msgstr ""
+
+msgid "JSON Response"
+msgstr ""
+
+msgid "Field {{field}} cannot be blank"
+msgstr ""
+
+msgid "This URL and username combination already exists"
+msgstr ""
