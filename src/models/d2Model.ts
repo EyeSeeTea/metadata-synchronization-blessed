@@ -118,10 +118,10 @@ export class OrganisationUnitModel extends D2Model {
         const { orgUnitGroup = null, orgUnitLevel = null } = filters || {};
         const newFilters = {
             ...filters,
-            customFilters: [
+            customFilters: _.compact([
                 orgUnitGroup ? `organisationUnitGroups.id:eq:${orgUnitGroup}` : null,
                 orgUnitLevel ? `level:eq:${orgUnitLevel}` : null,
-            ],
+            ]),
         };
         return await super.listMethod(d2, newFilters, pagination);
     }

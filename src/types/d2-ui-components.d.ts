@@ -12,7 +12,7 @@ export interface TableList {
 export interface TableFilters {
     search?: string;
     lastUpdatedDate?: Moment;
-    customFilters?: (string | null)[];
+    customFilters?: string[];
     customFields?: string[];
 }
 
