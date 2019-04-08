@@ -71,7 +71,10 @@ export default function Dropdown({ items, value, onChange, label }) {
 
 Dropdown.propTypes = {
     items: PropTypes.array.isRequired,
-    value: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     label: PropTypes.string.isRequired,
+    value:  PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+    ]).isRequired,
 };
