@@ -53,7 +53,8 @@ class SyncDialog extends React.Component {
                 this.props.encryptionKey
             );
             this.props.handleClose(metadataPackage);
-        } catch (e) {
+        } catch (error) {
+            console.error(error);
             this.props.handleClose();
         }
 

@@ -173,7 +173,46 @@ msgstr ""
 msgid "Synchronize"
 msgstr ""
 
+msgid "Type"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Deleted"
+msgstr ""
+
+msgid "Ignored"
+msgstr ""
+
+msgid "Updated"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Identifier"
+msgstr ""
+
+msgid "Property"
+msgstr ""
+
+msgid "Message"
+msgstr ""
+
 msgid "Synchronization Results"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Messages"
+msgstr ""
+
+msgid "JSON Response"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"
