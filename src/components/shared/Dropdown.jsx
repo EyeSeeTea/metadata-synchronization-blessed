@@ -73,8 +73,5 @@ Dropdown.propTypes = {
     items: PropTypes.array.isRequired,
     onChange: PropTypes.func.isRequired,
     label: PropTypes.string.isRequired,
-    value:  PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number
-    ]).isRequired,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
