@@ -155,7 +155,10 @@ msgstr ""
 msgid "Indicators Synchronization"
 msgstr ""
 
-msgid "Organisation Unit Group"
+msgid "Organisation Group"
+msgstr ""
+
+msgid "Organisation Level"
 msgstr ""
 
 msgid "Organisation Units Synchronization"
