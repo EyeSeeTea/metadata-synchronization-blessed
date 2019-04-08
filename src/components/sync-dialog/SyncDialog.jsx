@@ -1,6 +1,7 @@
 import React from "react";
 import i18n from "@dhis2/d2-i18n";
 import PropTypes from "prop-types";
+import _ from "lodash";
 import { ConfirmationDialog, MultiSelector } from "d2-ui-components";
 import DialogContent from "@material-ui/core/DialogContent";
 import { withLoading } from "d2-ui-components";
@@ -56,7 +57,7 @@ class SyncDialog extends React.Component {
             console.error(error);
             this.props.handleClose();
         }
-
+        this.setState({ targetInstances: [] });
         this.props.loading.reset();
     };
 
@@ -66,6 +67,8 @@ class SyncDialog extends React.Component {
 
     render() {
         const { d2, isOpen } = this.props;
+        const { targetInstances } = this.state;
+        const disableSync = _.isEmpty(targetInstances);
 
         return (
             <React.Fragment>
@@ -77,6 +80,7 @@ class SyncDialog extends React.Component {
                     saveText={i18n.t("Synchronize")}
                     maxWidth={"lg"}
                     fullWidth={true}
+                    disableSave={disableSync}
                 >
                     <DialogContent>
                         <MultiSelector

@@ -6,6 +6,7 @@ import { ObjectsTable, withSnackbar, DatePicker } from "d2-ui-components";
 import Fab from "@material-ui/core/Fab";
 import { withStyles } from "@material-ui/core/styles";
 import SyncIcon from "@material-ui/icons/Sync";
+import _ from "lodash";
 
 import PageHeader from "../shared/PageHeader";
 import SyncDialog from "../sync-dialog/SyncDialog";
@@ -16,7 +17,7 @@ const styles = theme => ({
         margin: theme.spacing.unit,
         position: "fixed",
         bottom: theme.spacing.unit * 5,
-        right: theme.spacing.unit * 5,
+        right: theme.spacing.unit * 9,
     },
     tableContainer: { marginTop: -10 },
 });
@@ -82,14 +83,23 @@ class BaseSyncConfigurator extends React.Component {
     };
 
     onSynchronize = () => {
-        this.setState({ syncDialogOpen: true });
+        const disabled = _(this.state.metadata)
+            .values()
+            .some(_.isEmpty);
+        if (disabled) {
+            this.props.snackbar.error(
+                i18n.t("Please select at least one element from the table to synchronize")
+            );
+        } else {
+            this.setState({ syncDialogOpen: true });
+        }
     };
 
     handleDialogClose = importResponse => {
         if (importResponse) {
             this.setState({ syncDialogOpen: false, syncSummaryOpen: true, importResponse });
         } else {
-            this.props.snackbar.error("Unknown error with the request");
+            this.props.snackbar.error(i18n.t("Unknown error with the request"));
             this.setState({ syncDialogOpen: false });
         }
     };
@@ -124,9 +134,9 @@ class BaseSyncConfigurator extends React.Component {
             filters,
             importResponse,
         } = this.state;
-
         // Wrapper method to preserve static context
         const list = (...params) => model.listMethod(...params);
+
         return (
             <React.Fragment>
                 <PageHeader onBackClick={this.backHome} title={title} />
