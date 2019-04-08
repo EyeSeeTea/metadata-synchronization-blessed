@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
+import memoize from "nano-memoize";
 
 import Dropdown from "../shared/Dropdown";
 import BaseSyncConfigurator from "./BaseSyncConfigurator";
@@ -22,6 +23,11 @@ export default class OrganisationUnitSync extends React.Component {
             items: [],
         },
     };
+
+    getExtraFilterState = memoize((orgUnitGroupFilterValue, orgUnitLevelFilterValue) => ({
+        orgUnitGroup: orgUnitGroupFilterValue,
+        orgUnitLevel: orgUnitLevelFilterValue,
+    }));
 
     componentDidMount() {
         this.getDropdownData();
@@ -88,16 +94,17 @@ export default class OrganisationUnitSync extends React.Component {
     render() {
         const { orgUnitGroupFilter, orgUnitLevelFilter } = this.state;
         const title = i18n.t("Organisation Units Synchronization");
+        const extraFiltersState = this.getExtraFilterState(
+            orgUnitGroupFilter.value,
+            orgUnitLevelFilter.value
+        );
 
         return (
             <BaseSyncConfigurator
                 model={OrganisationUnitModel}
                 title={title}
                 renderExtraFilters={this.renderExtraFilters}
-                extraFiltersState={{
-                    orgUnitGroup: orgUnitGroupFilter.value,
-                    orgUnitLevel: orgUnitLevelFilter.value,
-                }}
+                extraFiltersState={extraFiltersState}
                 {...this.props}
             />
         );
