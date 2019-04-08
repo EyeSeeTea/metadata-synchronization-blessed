@@ -57,7 +57,7 @@ class SyncDialog extends React.Component {
             console.error(error);
             this.props.handleClose();
         }
-        this.setState({ targetInstances: [], instanceOptions: [] });
+        this.setState({ targetInstances: [] });
         this.props.loading.reset();
     };
 
