@@ -136,6 +136,25 @@ export class DataElementModel extends D2Model {
 
 export class IndicatorModel extends D2Model {
     protected static metadataType = "indicator";
+    protected static excludeRules = [
+        "legendSets",
+        "dataSets",
+        "programs",
+        "user",
+        "users",
+        "userAccesses",
+        "userGroupAccesses",
+        "indicatorGroups.user",
+        "indicatorGroups.users",
+        "indicatorGroups.userAccesses",
+        "indicatorGroups.userGroupAccesses",
+        "indicatorGroups.indicators",
+    ];
+    protected static includeRules = [
+        "legendSet",
+        "indicatorType",
+        "indicatorGroups"
+    ];
 }
 
 export class ValidationRuleModel extends D2Model {

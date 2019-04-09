@@ -47,7 +47,7 @@ export function isD2Model(d2: D2, modelName: string): boolean {
 
 export function cleanModelName(d2: D2, id: string, caller: string): string | null {
     if (isD2Model(d2, id)) {
-        return d2.models[id].plural;
+        return id;
     } else if (id === "attributeValues") {
         return "attributes";
     } else if (id === "groupSets" && caller === "organisationUnitGroup") {
