@@ -140,6 +140,21 @@ export class IndicatorModel extends D2Model {
 
 export class ValidationRuleModel extends D2Model {
     protected static metadataType = "validationRule";
+    protected static excludeRules = [
+        "legendSets",
+        "user",
+        "userAccesses",
+        "userGroupAccesses",
+        "validationRuleGroups.user",
+        "validationRuleGroups.userAccesses",
+        "validationRuleGroups.userGroupAccesses",
+        "validationRuleGroups.validationRules",
+    ];
+    protected static includeRules = [
+        "attributes",
+        "validationRuleGroups",
+        "validationRuleGroups.attributes",
+    ];
 }
 
 export function defaultModel(pascalCaseModelName: string): any {
