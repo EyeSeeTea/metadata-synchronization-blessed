@@ -1,4 +1,6 @@
 import _ from "lodash";
+import { isValidUid } from "d2/uid";
+
 import {
     cleanParams,
     d2BaseModelColumns,
@@ -44,7 +46,8 @@ export abstract class D2Model {
         const [field, direction] = sorting;
         const order = `${field}:i${direction}`;
         const filter = _.compact([
-            search ? `displayName:ilike:${search}` : null,
+            search && isValidUid(search) ? `id:eq:${search}` : null,
+            search && !isValidUid(search) ? `displayName:ilike:${search}` : null,
             lastUpdatedDate ? `lastUpdated:ge:${lastUpdatedDate.toISOString()}` : null,
             ...customFilters,
         ]);
