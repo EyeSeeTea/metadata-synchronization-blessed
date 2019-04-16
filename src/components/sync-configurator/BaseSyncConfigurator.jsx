@@ -68,12 +68,15 @@ class BaseSyncConfigurator extends React.Component {
         },
     ];
 
-    componentDidMount() {
+    componentDidMount = async () => {
         const { groupFilterName, levelFilterName } = this.props;
+        const { filters } = this.state;
 
-        if (groupFilterName) this.renderGroupFilterData();
-        if (levelFilterName) this.renderLevelFilterData();
-    }
+        const groupFilterData = groupFilterName ? await this.getGroupFilterData() : null;
+        const levelFilterData = levelFilterName ? await this.getLevelFilterData() : null;
+
+        this.setState({ filters: { ...filters, groupFilterData, levelFilterData } });
+    };
 
     componentDidUpdate = prevProps => {
         const { extraFiltersState } = this.props;
@@ -135,9 +138,8 @@ class BaseSyncConfigurator extends React.Component {
         }
     };
 
-    renderGroupFilterData = async () => {
+    getGroupFilterData = async () => {
         const { d2, groupFilterName } = this.props;
-        const { filters } = this.state;
 
         const groupClass = d2ModelFactory(d2, groupFilterName);
         const groupList = await groupClass.listMethod(
@@ -145,14 +147,12 @@ class BaseSyncConfigurator extends React.Component {
             { customFields: ["id", "name"] },
             { paging: false }
         );
-        const groupFilterData = groupList.objects;
 
-        this.setState({ filters: { ...filters, groupFilterData } });
+        return groupList.objects;
     };
 
-    renderLevelFilterData = async () => {
+    getLevelFilterData = async () => {
         const { d2, levelFilterName } = this.props;
-        const { filters } = this.state;
 
         const levelClass = d2ModelFactory(d2, levelFilterName);
         const levelList = await levelClass.listMethod(
@@ -160,12 +160,11 @@ class BaseSyncConfigurator extends React.Component {
             { customFields: ["level", "name"] },
             { paging: false, sorting: ["level", "asc"] }
         );
-        const levelFilterData = levelList.objects.map(e => ({
+
+        return levelList.objects.map(e => ({
             id: e.level,
             name: `${e.level}. ${e.name}`,
         }));
-
-        this.setState({ filters: { ...filters, levelFilterData } });
     };
 
     renderCustomFilters = () => {
