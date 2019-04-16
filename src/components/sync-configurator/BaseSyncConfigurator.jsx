@@ -29,14 +29,10 @@ class BaseSyncConfigurator extends React.Component {
         tableKey: Math.random(),
         filters: {
             lastUpdatedDate: null,
-            groupFilter: {
-                value: "",
-                items: [],
-            },
-            levelFilter: {
-                value: "",
-                items: [],
-            },
+            groupFilter: null,
+            groupFilterData: [],
+            levelFilter: null,
+            levelFilterData: [],
         },
         metadata: {},
         importResponse: [],
@@ -105,18 +101,12 @@ class BaseSyncConfigurator extends React.Component {
 
     onGroupChange = event => {
         const { filters } = this.state;
-        const items = filters.groupFilter.items;
-        this.setState({
-            filters: { ...filters, groupFilter: { value: event.target.value, items } },
-        });
+        this.setState({ filters: { ...filters, groupFilter: event.target.value } });
     };
 
     onLevelChange = event => {
         const { filters } = this.state;
-        const items = filters.levelFilter.items;
-        this.setState({
-            filters: { ...filters, levelFilter: { value: event.target.value, items } },
-        });
+        this.setState({ filters: { ...filters, levelFilter: event.target.value } });
     };
 
     onDialogClose = importResponse => {
@@ -145,9 +135,48 @@ class BaseSyncConfigurator extends React.Component {
         }
     };
 
+    renderGroupFilterData = async () => {
+        const { d2, groupFilterName } = this.props;
+        const { filters } = this.state;
+
+        const groupClass = d2ModelFactory(d2, groupFilterName);
+        const groupList = await groupClass.listMethod(
+            d2,
+            { customFields: ["id", "name"] },
+            { paging: false }
+        );
+        const groupFilterData = groupList.objects;
+
+        this.setState({ filters: { ...filters, groupFilterData } });
+    };
+
+    renderLevelFilterData = async () => {
+        const { d2, levelFilterName } = this.props;
+        const { filters } = this.state;
+
+        const levelClass = d2ModelFactory(d2, levelFilterName);
+        const levelList = await levelClass.listMethod(
+            d2,
+            { customFields: ["level", "name"] },
+            { paging: false, sorting: ["level", "asc"] }
+        );
+        const levelFilterData = levelList.objects.map(e => ({
+            id: e.level,
+            name: `${e.level}. ${e.name}`,
+        }));
+
+        this.setState({ filters: { ...filters, levelFilterData } });
+    };
+
     renderCustomFilters = () => {
         const { d2, renderExtraFilters, model, groupFilterName, levelFilterName } = this.props;
-        const { lastUpdatedDate, groupFilter, levelFilter } = this.state.filters;
+        const {
+            lastUpdatedDate,
+            groupFilter,
+            groupFilterData,
+            levelFilter,
+            levelFilterData,
+        } = this.state.filters;
         const modelName = model.getD2Model(d2).displayName;
 
         return (
@@ -162,9 +191,9 @@ class BaseSyncConfigurator extends React.Component {
                 {groupFilterName && (
                     <Dropdown
                         key={"group-filter"}
-                        items={groupFilter.items}
+                        items={groupFilterData}
                         onChange={this.onGroupChange}
-                        value={groupFilter.value}
+                        value={groupFilter ? groupFilter : ""}
                         label={i18n.t("{{type}} Group", { type: modelName })}
                     />
                 )}
@@ -172,9 +201,9 @@ class BaseSyncConfigurator extends React.Component {
                 {levelFilterName && (
                     <Dropdown
                         key={"level-filter"}
-                        items={levelFilter.items}
+                        items={levelFilterData}
                         onChange={this.onLevelChange}
-                        value={levelFilter.value}
+                        value={levelFilter ? levelFilter : ""}
                         label={i18n.t("{{type}} Level", { type: modelName })}
                     />
                 )}
@@ -182,41 +211,6 @@ class BaseSyncConfigurator extends React.Component {
                 {renderExtraFilters && renderExtraFilters()}
             </React.Fragment>
         );
-    };
-
-    renderGroupFilterData = async () => {
-        const { d2, groupFilterName } = this.props;
-        const { filters } = this.state;
-
-        const groupClass = d2ModelFactory(d2, groupFilterName);
-        const groupList = await groupClass.listMethod(
-            d2,
-            { customFields: ["id", "name"] },
-            { paging: false }
-        );
-        const modelGroups = groupList.objects;
-        const groupFilter = { ...filters.groupFilter, items: modelGroups };
-
-        this.setState({ filters: { ...filters, groupFilter } });
-    };
-
-    renderLevelFilterData = async () => {
-        const { d2, levelFilterName } = this.props;
-        const { filters } = this.state;
-
-        const levelClass = d2ModelFactory(d2, levelFilterName);
-        const levelList = await levelClass.listMethod(
-            d2,
-            { customFields: ["level", "name"] },
-            { paging: false, sorting: ["level", "asc"] }
-        );
-        const modelLevels = levelList.objects.map(e => ({
-            id: e.level,
-            name: `${e.level}. ${e.name}`,
-        }));
-        const levelFilter = { ...filters.levelFilter, items: modelLevels };
-
-        this.setState({ filters: { ...filters, levelFilter } });
     };
 
     render() {

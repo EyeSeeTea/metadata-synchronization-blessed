@@ -8,18 +8,14 @@ import {
     organisationUnitsColumns,
     organisationUnitsDetails,
 } from "../utils/d2";
-import {
-    OrganisationUnitTableFilters,
-    TableFilters,
-    TableLabel,
-    TableList,
-    TablePagination,
-} from "../types/d2-ui-components";
+import { TableFilters, TableLabel, TableList, TablePagination } from "../types/d2-ui-components";
 import { D2, ModelDefinition } from "../types/d2";
 
 export abstract class D2Model {
     // Metadata Type should be defined on subclasses
     protected static metadataType: string;
+    protected static groupFilterName: string;
+    protected static levelFilterName: string;
     protected static excludeRules: string[] = [];
     protected static includeRules: string[] = [];
 
@@ -34,8 +30,14 @@ export abstract class D2Model {
         filters: TableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { search = null, lastUpdatedDate = null, customFilters = [], customFields = [] } =
-            filters || {};
+        const {
+            search = null,
+            lastUpdatedDate = null,
+            groupFilter = null,
+            levelFilter = null,
+            customFilters = [],
+            customFields = [],
+        } = filters || {};
         const { page = 1, pageSize = 20, sorting = this.initialSorting, paging = true } =
             pagination || {};
 
@@ -49,6 +51,8 @@ export abstract class D2Model {
             search && isValidUid(search) ? `id:eq:${search}` : null,
             search && !isValidUid(search) ? `displayName:ilike:${search}` : null,
             lastUpdatedDate ? `lastUpdated:ge:${lastUpdatedDate.toISOString()}` : null,
+            groupFilter ? `${this.groupFilterName}.id:eq:${groupFilter}` : null,
+            levelFilter ? `${this.levelFilterName}:eq:${levelFilter}` : null,
             ...customFilters,
         ]);
 
@@ -88,6 +92,9 @@ export abstract class D2Model {
 
 export class OrganisationUnitModel extends D2Model {
     protected static metadataType = "organisationUnit";
+    protected static groupFilterName = "organisationUnitGroups";
+    protected static levelFilterName = "level";
+
     protected static excludeRules = [
         "legendSets",
         "dataSets",
@@ -112,22 +119,6 @@ export class OrganisationUnitModel extends D2Model {
     ];
     protected static columns = organisationUnitsColumns;
     protected static details = organisationUnitsDetails;
-
-    public static async listMethod(
-        d2: D2,
-        filters: OrganisationUnitTableFilters,
-        pagination: TablePagination
-    ): Promise<TableList> {
-        const { orgUnitGroup = null, orgUnitLevel = null } = filters || {};
-        const newFilters = {
-            ...filters,
-            customFilters: _.compact([
-                orgUnitGroup ? `organisationUnitGroups.id:eq:${orgUnitGroup}` : null,
-                orgUnitLevel ? `level:eq:${orgUnitLevel}` : null,
-            ]),
-        };
-        return await super.listMethod(d2, newFilters, pagination);
-    }
 }
 
 export class DataElementModel extends D2Model {
@@ -136,10 +127,12 @@ export class DataElementModel extends D2Model {
 
 export class IndicatorModel extends D2Model {
     protected static metadataType = "indicator";
+    protected static groupFilterName = "indicatorGroups";
 }
 
 export class ValidationRuleModel extends D2Model {
     protected static metadataType = "validationRule";
+    protected static groupFilterName = "validationRuleGroups";
 }
 
 export function defaultModel(pascalCaseModelName: string): any {
