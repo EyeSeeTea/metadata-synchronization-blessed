@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-04-08T10:16:41.397Z\n"
-"PO-Revision-Date: 2019-04-08T10:16:41.397Z\n"
+"POT-Creation-Date: 2019-04-16T10:15:46.686Z\n"
+"PO-Revision-Date: 2019-04-16T10:15:46.686Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -140,25 +140,25 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-msgid "Please select at least one element from the table to synchronize"
-msgstr ""
-
 msgid "Unknown error with the request"
 msgstr ""
 
-msgid "Last update date"
+msgid "Please select at least one element from the table to synchronize"
+msgstr ""
+
+msgid "Last updated date"
+msgstr ""
+
+msgid "{{type}} Group"
+msgstr ""
+
+msgid "{{type}} Level"
 msgstr ""
 
 msgid "Data Elements Synchronization"
 msgstr ""
 
 msgid "Indicators Synchronization"
-msgstr ""
-
-msgid "Organisation Group"
-msgstr ""
-
-msgid "Organisation Level"
 msgstr ""
 
 msgid "Organisation Units Synchronization"
