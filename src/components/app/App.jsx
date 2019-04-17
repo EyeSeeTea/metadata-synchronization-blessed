@@ -49,9 +49,9 @@ class App extends Component {
                     <MuiThemeProvider theme={muiTheme}>
                         <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                             <LoadingProvider>
-                                {showHeader && <HeaderBar d2={d2} />}
-
                                 <div id="app" className="content">
+                                    {showHeader && <HeaderBar d2={d2} />}
+
                                     <SnackbarProvider>
                                         <Root d2={d2} appConfig={appConfig} />
                                     </SnackbarProvider>
