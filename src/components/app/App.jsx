@@ -49,15 +49,17 @@ class App extends Component {
                     <MuiThemeProvider theme={muiTheme}>
                         <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                             <LoadingProvider>
-                                <div id="app" className="content">
+                                <React.Fragment>
                                     {showHeader && <HeaderBar d2={d2} />}
 
-                                    <SnackbarProvider>
-                                        <Root d2={d2} appConfig={appConfig} />
-                                    </SnackbarProvider>
-                                </div>
+                                    <div id="app" className="content">
+                                        <SnackbarProvider>
+                                            <Root d2={d2} appConfig={appConfig} />
+                                        </SnackbarProvider>
+                                    </div>
 
-                                <Share visible={showShareButton} />
+                                    <Share visible={showShareButton} />
+                                </React.Fragment>
                             </LoadingProvider>
                         </OldMuiThemeProvider>
                     </MuiThemeProvider>
