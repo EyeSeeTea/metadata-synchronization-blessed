@@ -31,8 +31,6 @@ class BaseSyncConfigurator extends React.Component {
             lastUpdatedDate: null,
             groupFilter: null,
             groupFilterData: [],
-            levelFilter: null,
-            levelFilterData: [],
         },
         metadata: {},
         importResponse: [],
@@ -49,14 +47,12 @@ class BaseSyncConfigurator extends React.Component {
         renderExtraFilters: PropTypes.func,
         extraFiltersState: PropTypes.object,
         groupFilterName: PropTypes.string,
-        levelFilterName: PropTypes.string,
     };
 
     static defaultProps = {
         renderExtraFilters: null,
         extraFiltersState: null,
         groupFilterName: null,
-        levelFilterName: null,
     };
 
     actions = [
@@ -69,13 +65,11 @@ class BaseSyncConfigurator extends React.Component {
     ];
 
     componentDidMount = async () => {
-        const { groupFilterName, levelFilterName } = this.props;
         const { filters } = this.state;
 
-        const groupFilterData = groupFilterName ? await this.getGroupFilterData() : null;
-        const levelFilterData = levelFilterName ? await this.getLevelFilterData() : null;
+        const groupFilterData = await this.getGroupFilterData();
 
-        this.setState({ filters: { ...filters, groupFilterData, levelFilterData } });
+        this.setState({ filters: { ...filters, groupFilterData } });
     };
 
     componentDidUpdate = prevProps => {
@@ -85,11 +79,11 @@ class BaseSyncConfigurator extends React.Component {
         }
     };
 
-    onBackHome = () => {
+    goHome = () => {
         this.props.history.push("/");
     };
 
-    onSelectionChange = metadataSelection => {
+    changeSelection = metadataSelection => {
         const metadata = {
             [this.props.model.getMetadataType()]: metadataSelection,
         };
@@ -97,22 +91,17 @@ class BaseSyncConfigurator extends React.Component {
         this.setState({ metadata });
     };
 
-    onDateChange = value => {
+    changeDateFilter = value => {
         const { filters } = this.state;
         this.setState({ filters: { ...filters, lastUpdatedDate: value } });
     };
 
-    onGroupChange = event => {
+    changeGroupFilter = event => {
         const { filters } = this.state;
         this.setState({ filters: { ...filters, groupFilter: event.target.value } });
     };
 
-    onLevelChange = event => {
-        const { filters } = this.state;
-        this.setState({ filters: { ...filters, levelFilter: event.target.value } });
-    };
-
-    onDialogClose = importResponse => {
+    closeDialog = importResponse => {
         if (importResponse) {
             this.setState({ syncDialogOpen: false, syncSummaryOpen: true, importResponse });
         } else {
@@ -121,11 +110,11 @@ class BaseSyncConfigurator extends React.Component {
         }
     };
 
-    onSummaryClose = () => {
+    closeSummary = () => {
         this.setState({ syncSummaryOpen: false });
     };
 
-    onSynchronize = () => {
+    startSynchronization = () => {
         const disabled = _(this.state.metadata)
             .values()
             .some(_.isEmpty);
@@ -140,6 +129,7 @@ class BaseSyncConfigurator extends React.Component {
 
     getGroupFilterData = async () => {
         const { d2, groupFilterName } = this.props;
+        if (!groupFilterName) return null;
 
         const groupClass = d2ModelFactory(d2, groupFilterName);
         const groupList = await groupClass.listMethod(
@@ -151,31 +141,9 @@ class BaseSyncConfigurator extends React.Component {
         return groupList.objects;
     };
 
-    getLevelFilterData = async () => {
-        const { d2, levelFilterName } = this.props;
-
-        const levelClass = d2ModelFactory(d2, levelFilterName);
-        const levelList = await levelClass.listMethod(
-            d2,
-            { customFields: ["level", "name"] },
-            { paging: false, sorting: ["level", "asc"] }
-        );
-
-        return levelList.objects.map(e => ({
-            id: e.level,
-            name: `${e.level}. ${e.name}`,
-        }));
-    };
-
     renderCustomFilters = () => {
-        const { d2, renderExtraFilters, model, groupFilterName, levelFilterName } = this.props;
-        const {
-            lastUpdatedDate,
-            groupFilter,
-            groupFilterData,
-            levelFilter,
-            levelFilterData,
-        } = this.state.filters;
+        const { d2, renderExtraFilters, model, groupFilterName } = this.props;
+        const { lastUpdatedDate, groupFilter, groupFilterData } = this.state.filters;
         const modelName = model.getD2Model(d2).displayName;
 
         return (
@@ -183,7 +151,7 @@ class BaseSyncConfigurator extends React.Component {
                 <DatePicker
                     placeholder={i18n.t("Last updated date")}
                     value={lastUpdatedDate}
-                    onChange={this.onDateChange}
+                    onChange={this.changeDateFilter}
                     isFilter
                 />
 
@@ -191,19 +159,9 @@ class BaseSyncConfigurator extends React.Component {
                     <Dropdown
                         key={"group-filter"}
                         items={groupFilterData}
-                        onChange={this.onGroupChange}
+                        onChange={this.changeGroupFilter}
                         value={groupFilter ? groupFilter : ""}
                         label={i18n.t("{{type}} Group", { type: modelName })}
-                    />
-                )}
-
-                {levelFilterName && (
-                    <Dropdown
-                        key={"level-filter"}
-                        items={levelFilterData}
-                        onChange={this.onLevelChange}
-                        value={levelFilter ? levelFilter : ""}
-                        label={i18n.t("{{type}} Level", { type: modelName })}
                     />
                 )}
 
@@ -228,7 +186,7 @@ class BaseSyncConfigurator extends React.Component {
 
         return (
             <React.Fragment>
-                <PageHeader onBackClick={this.onBackHome} title={title} />
+                <PageHeader onBackClick={this.goHome} title={title} />
                 <div className={classes.tableContainer}>
                     <ObjectsTable
                         key={tableKey}
@@ -242,14 +200,14 @@ class BaseSyncConfigurator extends React.Component {
                         list={list}
                         customFiltersComponent={this.renderCustomFilters}
                         customFilters={filters}
-                        onSelectionChange={this.onSelectionChange}
+                        onSelectionChange={this.changeSelection}
                     />
                     <Fab
                         color="primary"
                         aria-label="Add"
                         className={classes.fab}
                         size="large"
-                        onClick={this.onSynchronize}
+                        onClick={this.startSynchronization}
                         data-test="list-action-bar"
                     >
                         <SyncIcon />
@@ -259,13 +217,13 @@ class BaseSyncConfigurator extends React.Component {
                     d2={d2}
                     metadata={metadata}
                     isOpen={syncDialogOpen}
-                    handleClose={this.onDialogClose}
+                    handleClose={this.closeDialog}
                     encryptionKey={this.props.appConfig.encryptionKey}
                 />
                 <SyncSummary
                     response={importResponse}
                     isOpen={syncSummaryOpen}
-                    handleClose={this.onSummaryClose}
+                    handleClose={this.closeSummary}
                 />
             </React.Fragment>
         );
