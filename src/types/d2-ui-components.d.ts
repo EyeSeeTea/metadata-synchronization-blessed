@@ -11,6 +11,7 @@ export interface TableList {
 
 export interface TableFilters {
     search?: string;
+    fields?: string[];
     lastUpdatedDate?: Moment;
     groupFilter?: string;
     customFilters?: string[];
