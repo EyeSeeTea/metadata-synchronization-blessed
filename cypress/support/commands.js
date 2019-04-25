@@ -1,7 +1,7 @@
 // <reference types="Cypress" />
 /* global Cypress, cy */
 
-import { stubFetch, externalUrl, generateFixtures, stubBackend } from "./network-fixtures";
+import { externalUrl, generateFixtures, stubBackend } from "./network-fixtures";
 import _ from "lodash";
 
 const dhis2AuthEnvValue = Cypress.env("DHIS2_AUTH");
@@ -30,29 +30,19 @@ Cypress.Commands.add("login", (username, _password = null) => {
     if (!stubBackend) {
         cy.log("Login", { username, password });
         cy.request({
-            method: "POST",
-            url: `${externalUrl}/dhis-web-commons-security/login.action`,
-            body: {
-                j_username: username,
-                j_password: password,
+            method: "GET",
+            url: `${externalUrl}/api/me`,
+            auth: {
+                user: username,
+                pass: password,
             },
-            form: true,
             log: true,
         });
     }
 });
 
-Cypress.Commands.add("persistLogin", () => {
-    Cypress.Cookies.preserveOnce("JSESSIONID");
-});
-
-Cypress.Commands.add("loadPage", (path = "/") => {
-    cy.visit(path, { onBeforeLoad: stubFetch });
-    cy.get("#app", { log: false, timeout: 20000 }); // Waits for the page to fully load
-    if (generateFixtures) {
-        //Make sure all the delayed network requests get captured
-        //cy.wait(1000);
-    }
+Cypress.on("window:before:load", win => {
+    win.fetch = null;
 });
 
 Cypress.on("uncaught:exception", (err, runnable) => {

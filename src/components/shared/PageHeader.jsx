@@ -31,11 +31,17 @@ function PageHeader({ variant, title, onBackClick, helpText }) {
                 color="secondary"
                 aria-label={i18n.t("Back")}
                 style={styles.backArrow}
+                data-test={"page-header-back"}
             >
                 <Icon color="primary">arrow_back</Icon>
             </IconButton>
 
-            <Typography variant={variant} gutterBottom style={styles.text}>
+            <Typography
+                variant={variant}
+                gutterBottom
+                style={styles.text}
+                data-test={"page-header-title"}
+            >
                 {title}
             </Typography>
             {helpText && renderHelpButton(helpText)}
