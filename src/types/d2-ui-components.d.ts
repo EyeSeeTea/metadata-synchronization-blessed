@@ -12,12 +12,12 @@ export interface TableList {
 export interface TableFilters {
     search?: string;
     lastUpdatedDate?: Moment;
+    groupFilter?: string;
     customFilters?: string[];
     customFields?: string[];
 }
 
 export interface OrganisationUnitTableFilters extends TableFilters {
-    orgUnitGroup?: string;
     orgUnitLevel?: string;
 }
 

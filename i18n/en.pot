@@ -137,22 +137,22 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-msgid "Please select at least one element from the table to synchronize"
-msgstr ""
-
 msgid "Unknown error with the request"
 msgstr ""
 
-msgid "Last update date"
+msgid "Please select at least one element from the table to synchronize"
+msgstr ""
+
+msgid "Last updated date"
+msgstr ""
+
+msgid "{{type}} Group"
 msgstr ""
 
 msgid "Data Elements Synchronization"
 msgstr ""
 
 msgid "Indicators Synchronization"
-msgstr ""
-
-msgid "Organisation Group"
 msgstr ""
 
 msgid "Organisation Level"
