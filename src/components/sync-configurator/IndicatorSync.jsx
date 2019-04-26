@@ -11,6 +11,14 @@ export default class IndicatorSync extends React.Component {
 
     render() {
         const title = i18n.t("Indicators Synchronization");
-        return <BaseSyncConfigurator model={IndicatorModel} title={title} {...this.props} />;
+
+        return (
+            <BaseSyncConfigurator
+                model={IndicatorModel}
+                title={title}
+                groupFilterName={"indicatorGroups"}
+                {...this.props}
+            />
+        );
     }
 }
