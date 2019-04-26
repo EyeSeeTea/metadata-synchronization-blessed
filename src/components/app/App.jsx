@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import HeaderBar from "@dhis2/ui/widgets/HeaderBar";
+import HeaderBar from "@dhis2/d2-ui-header-bar";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import JssProvider from "react-jss/lib/JssProvider";
 import { createGenerateClassName } from "@material-ui/core/styles";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { SnackbarProvider, LoadingProvider } from "d2-ui-components";
 import _ from "lodash";
-import i18n from "@dhis2/d2-i18n";
 
 import "./App.css";
 import Root from "./Root";
@@ -50,17 +49,17 @@ class App extends Component {
                     <MuiThemeProvider theme={muiTheme}>
                         <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                             <LoadingProvider>
-                                {showHeader && (
-                                    <HeaderBar appName={i18n.t("Metadata Synchronization")} />
-                                )}
+                                <React.Fragment>
+                                    {showHeader && <HeaderBar d2={d2} />}
 
-                                <div id="app" className="content">
-                                    <SnackbarProvider>
-                                        <Root d2={d2} appConfig={appConfig} />
-                                    </SnackbarProvider>
-                                </div>
+                                    <div id="app" className="content">
+                                        <SnackbarProvider>
+                                            <Root d2={d2} appConfig={appConfig} />
+                                        </SnackbarProvider>
+                                    </div>
 
-                                <Share visible={showShareButton} />
+                                    <Share visible={showShareButton} />
+                                </React.Fragment>
                             </LoadingProvider>
                         </OldMuiThemeProvider>
                     </MuiThemeProvider>

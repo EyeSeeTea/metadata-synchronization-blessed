@@ -5,11 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-04-23T10:14:55.511Z\n"
-"PO-Revision-Date: 2019-04-23T10:14:55.512Z\n"
-
-msgid "Metadata Synchronization"
-msgstr ""
+"POT-Creation-Date: 2019-04-26T09:34:00.788Z\n"
+"PO-Revision-Date: 2019-04-26T09:34:00.788Z\n"
 
 msgid "Instance Configurator"
 msgstr ""
