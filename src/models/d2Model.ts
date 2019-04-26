@@ -37,6 +37,7 @@ export abstract class D2Model {
     ): Promise<TableList> {
         const {
             search = null,
+            fields: overriddenFields = null,
             lastUpdatedDate = null,
             groupFilter = null,
             customFilters = [],
@@ -47,7 +48,7 @@ export abstract class D2Model {
 
         const details = this.details.map(e => e.name);
         const columns = this.columns.map(e => e.name);
-        const fields = _.union(details, columns, customFields);
+        const fields = overriddenFields ? overriddenFields : _.union(details, columns, customFields);
 
         const [field, direction] = sorting;
         const order = `${field}:i${direction}`;
