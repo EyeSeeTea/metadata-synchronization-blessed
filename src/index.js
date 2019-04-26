@@ -41,7 +41,17 @@ async function getBaseUrl() {
 }
 
 function loadHeaderBarTranslations(d2) {
-    const keys = _(["app_search_placeholder", "manage_my_apps", "no_results_found"]);
+    const keys = _([
+        "app_search_placeholder",
+        "manage_my_apps",
+        "no_results_found",
+        "settings",
+        "profile",
+        "account",
+        "help",
+        "log_out",
+        "about_dhis2",
+    ]);
     keys.each(s => d2.i18n.strings.add(s));
     d2.i18n.load();
 }
@@ -52,7 +62,7 @@ async function main() {
     try {
         const d2 = await init({ baseUrl: apiUrl });
         window.d2 = d2; // Make d2 available in the console
-        await loadHeaderBarTranslations(d2);
+        loadHeaderBarTranslations(d2);
         const userSettings = await getUserSettings();
         configI18n(userSettings);
         const appConfig = await fetch("app-config.json", {

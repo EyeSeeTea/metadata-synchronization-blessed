@@ -5,11 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-04-08T10:16:41.397Z\n"
-"PO-Revision-Date: 2019-04-08T10:16:41.397Z\n"
-
-msgid "Metadata Synchronization"
-msgstr ""
+"POT-Creation-Date: 2019-04-26T09:34:00.788Z\n"
+"PO-Revision-Date: 2019-04-26T09:34:00.788Z\n"
 
 msgid "Instance Configurator"
 msgstr ""
@@ -140,22 +137,22 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-msgid "Please select at least one element from the table to synchronize"
-msgstr ""
-
 msgid "Unknown error with the request"
 msgstr ""
 
-msgid "Last update date"
+msgid "Please select at least one element from the table to synchronize"
+msgstr ""
+
+msgid "Last updated date"
+msgstr ""
+
+msgid "{{type}} Group"
 msgstr ""
 
 msgid "Data Elements Synchronization"
 msgstr ""
 
 msgid "Indicators Synchronization"
-msgstr ""
-
-msgid "Organisation Group"
 msgstr ""
 
 msgid "Organisation Level"
