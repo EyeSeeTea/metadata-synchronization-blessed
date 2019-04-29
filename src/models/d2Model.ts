@@ -148,19 +148,11 @@ export class IndicatorModel extends D2Model {
     protected static excludeRules = [
         "dataSets",
         "programs",
-        "user",
-        "users",
-        "userAccesses",
-        "userGroupAccesses",
-        "indicatorGroups.user",
-        "indicatorGroups.users",
-        "indicatorGroups.userAccesses",
-        "indicatorGroups.userGroupAccesses",
         "indicatorGroups.indicators",
+        "indicatorGroups.indicatorGroupSet.indicatorGroups",
     ];
     protected static includeRules = [
         "attributes",
-        "legendSet",
         "legendSets",
         "indicatorType",
         "indicatorGroups",
