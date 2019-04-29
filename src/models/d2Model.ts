@@ -151,12 +151,6 @@ export class ValidationRuleModel extends D2Model {
     protected static groupFilterName = "validationRuleGroups";
     protected static excludeRules = [
         "legendSets",
-        "user",
-        "userAccesses",
-        "userGroupAccesses",
-        "validationRuleGroups.user",
-        "validationRuleGroups.userAccesses",
-        "validationRuleGroups.userGroupAccesses",
         "validationRuleGroups.validationRules",
     ];
     protected static includeRules = [
