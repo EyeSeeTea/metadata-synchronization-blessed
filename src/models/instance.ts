@@ -201,33 +201,38 @@ export default class Instance {
                 auth: { username, password },
             });
 
-            if (response.status === 200 && response.data.version) {
-                return { status: true };
-            } else if (response.status === 200) {
-                return { status: false, error: new Error(i18n.t("Not a valid DHIS2 instance")) };
-            } else if (response.status === 401) {
-                return { status: false, error: new Error(i18n.t("Wrong username/password")) };
-            } else {
-                return {
-                    status: false,
-                    error: new Error(i18n.t("Error: {{status}}", { status: response.status })),
-                };
-            }
-        } catch (err) {
-            console.log({ err });
-            if (err.message && err.message === "Failed to fetch") {
+            return response.data.version
+                ? { status: true }
+                : {
+                      status: false,
+                      error: new Error(i18n.t("Not a valid DHIS2 instance")),
+                  };
+        } catch (error) {
+            if (error.response) {
+                if (error.response.status === 401) {
+                    return { status: false, error: new Error(i18n.t("Wrong username/password")) };
+                } else if (error.response.status) {
+                    return {
+                        status: false,
+                        error: new Error(
+                            i18n.t("Error: {{status}}", { status: error.response.status })
+                        ),
+                    };
+                }
+            } else if (error.request) {
                 return {
                     status: false,
                     error: new Error(
                         i18n.t(
                             "Network error {{error}}, check if server is up and CORS is enabled",
-                            { error: err.toString() }
+                            { error: error.toString() }
                         )
                     ),
                 };
-            } else {
-                return { status: false, error: err };
             }
+
+            console.log({ error });
+            return { status: false, error };
         }
     }
 }
