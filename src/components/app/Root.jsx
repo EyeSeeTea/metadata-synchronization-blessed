@@ -36,26 +36,22 @@ class Root extends React.Component {
 
                 <Route
                     path="/sync/organisationUnits"
-                    render={props => (
-                        <OrganisationUnitSync d2={d2} appConfig={appConfig} {...props} />
-                    )}
+                    render={props => <OrganisationUnitSync d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/sync/dataElements"
-                    render={props => <DataElementSync d2={d2} appConfig={appConfig} {...props} />}
+                    render={props => <DataElementSync d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/sync/indicators"
-                    render={props => <IndicatorSync d2={d2} appConfig={appConfig} {...props} />}
+                    render={props => <IndicatorSync d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/sync/validationRules"
-                    render={props => (
-                        <ValidationRuleSync d2={d2} appConfig={appConfig} {...props} />
-                    )}
+                    render={props => <ValidationRuleSync d2={d2} {...props} />}
                 />
 
                 <Route render={() => <LandingPage d2={d2} />} />
