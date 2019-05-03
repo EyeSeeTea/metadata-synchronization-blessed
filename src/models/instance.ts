@@ -4,7 +4,7 @@ import Cryptr from "cryptr";
 import i18n from "@dhis2/d2-i18n";
 import { generateUid } from "d2/uid";
 
-import { deleteData, getPaginatedData, saveData, getData, getDataById } from "./dataStore";
+import { deleteData, getData, getDataById, getPaginatedData, saveData } from "./dataStore";
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 
@@ -122,20 +122,20 @@ export default class Instance {
 
     public async encryptPassword(): Promise<Instance> {
         const encryptionKey = await Instance.getEncryptionKey();
-        const encrypted =
+        const password =
             this.data.password.length > 0
                 ? new Cryptr(encryptionKey).encrypt(this.data.password)
                 : "";
-        return new Instance({ ...this.data, password: encrypted });
+        return new Instance({ ...this.data, password });
     }
 
     public async decryptPassword(): Promise<Instance> {
         const encryptionKey = await Instance.getEncryptionKey();
-        const decrypted =
+        const password =
             this.data.password.length > 0
                 ? new Cryptr(encryptionKey).decrypt(this.data.password)
                 : "";
-        return new Instance({ ...this.data, password: decrypted });
+        return new Instance({ ...this.data, password });
     }
 
     public get description(): string {
