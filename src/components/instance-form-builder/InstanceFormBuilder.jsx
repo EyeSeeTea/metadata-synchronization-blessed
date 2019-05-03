@@ -17,7 +17,7 @@ class InstanceFormBuilder extends React.Component {
 
     state = {
         dialogOpen: false,
-        instance: Instance.parse(),
+        instance: Instance.create(),
     };
 
     id = this.props.match.params.id;
