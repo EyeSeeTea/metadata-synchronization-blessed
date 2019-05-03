@@ -1,10 +1,12 @@
 import _ from "lodash";
-import { D2, Response } from "../types/d2";
-import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { deleteData, getPaginatedData, saveData, getData, getDataById } from "./dataStore";
-import { generateUid } from "d2/uid";
+import axios from "axios";
 import Cryptr from "cryptr";
 import i18n from "@dhis2/d2-i18n";
+import { generateUid } from "d2/uid";
+
+import { deleteData, getPaginatedData, saveData, getData, getDataById } from "./dataStore";
+import { D2, Response } from "../types/d2";
+import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 
 const instancesDataStoreKey = "instances";
 
@@ -35,15 +37,14 @@ export default class Instance {
         return new Instance(initialData);
     }
 
-    public static getOrCreate(data: Data | undefined, encryptionKey: string): Instance {
-        let instance;
-        if (data) {
-            const cryptedInstace = new Instance(data);
-            instance = cryptedInstace.decryptPassword(encryptionKey);
-        } else {
-            instance = this.create();
-        }
-        return instance;
+    public static async parse(data: Data | undefined): Promise<Instance> {
+        const instance = data ? new Instance(data) : this.create();
+        return await instance.decryptPassword();
+    }
+
+    public static async get(d2: D2, id: string): Promise<Instance> {
+        const data = await getDataById(d2, instancesDataStoreKey, id);
+        return this.parse(data);
     }
 
     public static async list(
@@ -54,13 +55,13 @@ export default class Instance {
         return getPaginatedData(d2, instancesDataStoreKey, filters, pagination);
     }
 
-    public static async get(d2: D2, id: string): Promise<Instance> {
-        const instance = await getDataById(d2, instancesDataStoreKey, id);
-        return new Instance(instance);
+    private static async getEncryptionKey(): Promise<any> {
+        const appConfig = await axios.get("app-config.json");
+        return appConfig.data.encryptionKey;
     }
 
-    public async save(d2: D2, encryptionKey: string): Promise<Response> {
-        const instance = this.encryptPassword(encryptionKey);
+    public async save(d2: D2): Promise<Response> {
+        const instance = await this.encryptPassword();
         let toSave;
         if (instance.data.id) {
             toSave = instance.data;
@@ -119,15 +120,15 @@ export default class Instance {
         return new Instance({ ...this.data, description });
     }
 
-    public encryptPassword(encryptionKey: string) {
-        const cryptr = new Cryptr(encryptionKey);
-        const encrypted = cryptr.encrypt(this.data.password);
+    public async encryptPassword(): Promise<Instance> {
+        const encryptionKey = await Instance.getEncryptionKey();
+        const encrypted = new Cryptr(encryptionKey).encrypt(this.data.password);
         return new Instance({ ...this.data, password: encrypted });
     }
 
-    public decryptPassword(encryptionKey: string) {
-        const cryptr = new Cryptr(encryptionKey);
-        const decrypted = cryptr.decrypt(this.data.password);
+    public async decryptPassword(): Promise<Instance> {
+        const encryptionKey = await Instance.getEncryptionKey();
+        const decrypted = new Cryptr(encryptionKey).decrypt(this.data.password);
         return new Instance({ ...this.data, password: decrypted });
     }
 
@@ -135,24 +136,20 @@ export default class Instance {
         return this.data.description ? this.data.description : "";
     }
 
-    public async validateUrlUsernameCombo(d2: D2) {
+    public async validateUrlUsernameCombo(d2: D2): Promise<boolean> {
         const { url, username, id } = this.data;
         const combination = [url, username].join("-");
         const instanceArray = await getData(d2, instancesDataStoreKey);
         const invalidCombinations = instanceArray.filter(
             (inst: Data) => [inst.url, inst.username].join("-") === combination
         );
-        let invalid;
-        if (id) {
-            invalid = invalidCombinations.some((inst: Data) => inst.id !== id);
-        } else {
-            invalid = !_.isEmpty(invalidCombinations);
-        }
 
-        return invalid;
+        return id
+            ? invalidCombinations.some((inst: Data) => inst.id !== id)
+            : !_.isEmpty(invalidCombinations);
     }
 
-    public async validate(d2: D2) {
+    public async validate(d2: D2): Promise<any> {
         const { name, url, username, password } = this.data;
         return _.pickBy({
             name: !name.trim()
@@ -161,7 +158,6 @@ export default class Instance {
                       namespace: { field: "name" },
                   }
                 : null,
-
             url: !url
                 ? {
                       key: "cannot_be_blank",
@@ -193,26 +189,23 @@ export default class Instance {
 
     public async check(): Promise<Response> {
         const { url, username, password } = this.data;
-        const headers = new Headers({
-            Authorization: "Basic " + btoa(username + ":" + password),
-        });
 
         try {
-            const res = await fetch(url + "/api/system/info", { method: "GET", headers });
-            if (res.status === 401) {
+            const response = await axios.get(url + "/api/system/info", {
+                auth: { username, password },
+            });
+
+            if (response.status === 200 && response.data.version) {
+                return { status: true };
+            } else if (response.status === 200) {
+                return { status: false, error: new Error(i18n.t("Not a valid DHIS2 instance")) };
+            } else if (response.status === 401) {
                 return { status: false, error: new Error(i18n.t("Wrong username/password")) };
-            } else if (!res.ok) {
+            } else {
                 return {
                     status: false,
-                    error: new Error(i18n.t("Error: {{status}}", { status: res.status })),
+                    error: new Error(i18n.t("Error: {{status}}", { status: response.status })),
                 };
-            } else {
-                const json = await res.json();
-                if (!json.version) {
-                    return { status: false, error: new Error(i18n.t("Not a DHIS2 instance")) };
-                } else {
-                    return { status: true };
-                }
             }
         } catch (err) {
             console.log({ err });
@@ -221,7 +214,7 @@ export default class Instance {
                     status: false,
                     error: new Error(
                         i18n.t(
-                            "Network error {{error}}, probably wrong server host or CORS not enabled in DHIS2 instance",
+                            "Network error {{error}}, check if server is up and CORS is enabled",
                             { error: err.toString() }
                         )
                     ),

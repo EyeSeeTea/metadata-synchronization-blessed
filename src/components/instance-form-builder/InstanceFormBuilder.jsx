@@ -14,7 +14,6 @@ class InstanceFormBuilder extends React.Component {
         d2: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
         location: PropTypes.object.isRequired,
-        appConfig: PropTypes.object.isRequired,
     };
 
     isEdit = this.props.match.params.formFor === "edit";
@@ -22,12 +21,9 @@ class InstanceFormBuilder extends React.Component {
     constructor(props) {
         super(props);
 
-        const {
-            location,
-            appConfig: { encryptionKey },
-        } = props;
+        const { location } = props;
 
-        const instance = Instance.getOrCreate(location.instance, encryptionKey);
+        const instance = Instance.parse(location.instance);
 
         this.state = {
             instance,
@@ -38,14 +34,12 @@ class InstanceFormBuilder extends React.Component {
     componentDidMount = async () => {
         const {
             match: { params },
-            appConfig: { encryptionKey },
             d2,
         } = this.props;
         const { instance } = this.state;
         if (this.isEdit && !instance.data.id) {
-            const encryptedInstance = await Instance.get(d2, params.id);
-            const instanceToEdit = encryptedInstance.decryptPassword(encryptionKey);
-            this.setState({ instance: instanceToEdit });
+            const instance = await Instance.get(d2, params.id);
+            this.setState({ instance });
         }
     };
 
@@ -68,7 +62,7 @@ class InstanceFormBuilder extends React.Component {
 
     render() {
         const { dialogOpen } = this.state;
-        const { d2, appConfig } = this.props;
+        const { d2 } = this.props;
 
         const title = !this.isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
 
@@ -95,7 +89,6 @@ class InstanceFormBuilder extends React.Component {
 
                 <GeneralInfoForm
                     d2={d2}
-                    appConfig={appConfig}
                     instance={this.state.instance}
                     onChange={this.onChange}
                     cancelAction={this.cancelSave}
