@@ -13,32 +13,21 @@ class InstanceFormBuilder extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
-        location: PropTypes.object.isRequired,
     };
 
-    isEdit = this.props.match.params.formFor === "edit";
+    state = {
+        dialogOpen: false,
+        instance: Instance.parse(),
+    };
 
-    constructor(props) {
-        super(props);
-
-        const { location } = props;
-
-        const instance = Instance.parse(location.instance);
-
-        this.state = {
-            instance,
-            dialogOpen: false,
-        };
-    }
+    id = this.props.match.params.id;
+    isEdit = this.props.match.params.action === "edit" && this.id;
 
     componentDidMount = async () => {
-        const {
-            match: { params },
-            d2,
-        } = this.props;
-        const { instance } = this.state;
-        if (this.isEdit && !instance.data.id) {
-            const instance = await Instance.get(d2, params.id);
+        const { d2 } = this.props;
+
+        if (this.isEdit) {
+            const instance = await Instance.get(d2, this.id);
             this.setState({ instance });
         }
     };
@@ -61,7 +50,7 @@ class InstanceFormBuilder extends React.Component {
     };
 
     render() {
-        const { dialogOpen } = this.state;
+        const { dialogOpen, instance } = this.state;
         const { d2 } = this.props;
 
         const title = !this.isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
@@ -89,7 +78,7 @@ class InstanceFormBuilder extends React.Component {
 
                 <GeneralInfoForm
                     d2={d2}
-                    instance={this.state.instance}
+                    instance={instance}
                     onChange={this.onChange}
                     cancelAction={this.cancelSave}
                 />

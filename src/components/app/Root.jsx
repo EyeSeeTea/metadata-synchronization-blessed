@@ -20,7 +20,7 @@ class Root extends React.Component {
         return (
             <Switch>
                 <Route
-                    path={"/instance-configurator/:formFor(new|edit)/:id?"}
+                    path={"/instance-configurator/:action(new|edit)/:id?"}
                     render={props => <InstanceFormBuilder d2={d2} {...props} />}
                 />
 

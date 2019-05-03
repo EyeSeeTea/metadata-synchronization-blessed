@@ -122,13 +122,19 @@ export default class Instance {
 
     public async encryptPassword(): Promise<Instance> {
         const encryptionKey = await Instance.getEncryptionKey();
-        const encrypted = new Cryptr(encryptionKey).encrypt(this.data.password);
+        const encrypted =
+            this.data.password.length > 0
+                ? new Cryptr(encryptionKey).encrypt(this.data.password)
+                : "";
         return new Instance({ ...this.data, password: encrypted });
     }
 
     public async decryptPassword(): Promise<Instance> {
         const encryptionKey = await Instance.getEncryptionKey();
-        const decrypted = new Cryptr(encryptionKey).decrypt(this.data.password);
+        const decrypted =
+            this.data.password.length > 0
+                ? new Cryptr(encryptionKey).decrypt(this.data.password)
+                : "";
         return new Instance({ ...this.data, password: decrypted });
     }
 
