@@ -24,10 +24,8 @@ class InstanceFormBuilder extends React.Component {
     isEdit = this.props.match.params.action === "edit" && this.id;
 
     componentDidMount = async () => {
-        const { d2 } = this.props;
-
         if (this.isEdit) {
-            const instance = await Instance.get(d2, this.id);
+            const instance = await Instance.get(this.props.d2, this.id);
             this.setState({ instance });
         }
     };
