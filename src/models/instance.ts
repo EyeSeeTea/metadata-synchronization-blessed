@@ -6,6 +6,7 @@ import { generateUid } from "d2/uid";
 
 import { deleteData, getData, getDataById, getPaginatedData, saveData } from "./dataStore";
 import { D2, Response } from "../types/d2";
+import { Validation } from "../types/instance";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 
 const instancesDataStoreKey = "instances";
@@ -154,21 +155,26 @@ export default class Instance {
             : !_.isEmpty(invalidCombinations);
     }
 
-    public async validate(d2: D2): Promise<any> {
+    public async validate(d2: D2): Promise<Validation> {
         const { name, url, username, password } = this.data;
+
         return _.pickBy({
-            name: !name.trim()
-                ? {
-                      key: "cannot_be_blank",
-                      namespace: { field: "name" },
-                  }
-                : null,
-            url: !url
-                ? {
-                      key: "cannot_be_blank",
-                      namespace: { field: "url" },
-                  }
-                : null,
+            name: _.compact([
+                !name.trim()
+                    ? {
+                          key: "cannot_be_blank",
+                          namespace: { field: "name" },
+                      }
+                    : null,
+            ]),
+            url: _.compact([
+                !url
+                    ? {
+                          key: "cannot_be_blank",
+                          namespace: { field: "url" },
+                      }
+                    : null,
+            ]),
             username: _.compact([
                 !username
                     ? {
@@ -183,12 +189,14 @@ export default class Instance {
                       }
                     : null,
             ]),
-            password: !password
-                ? {
-                      key: "cannot_be_blank",
-                      namespace: { field: "password" },
-                  }
-                : null,
+            password: _.compact([
+                !password
+                    ? {
+                          key: "cannot_be_blank",
+                          namespace: { field: "password" },
+                      }
+                    : null,
+            ]),
         });
     }
 
