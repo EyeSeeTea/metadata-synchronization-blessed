@@ -13,6 +13,7 @@ import Root from "./Root";
 import Share from "../share/Share";
 import { muiTheme } from "../../themes/dhis2.theme";
 import muiThemeLegacy from "../../themes/dhis2-legacy.theme";
+import Instance from "../../models/instance";
 
 const generateClassName = createGenerateClassName({
     dangerouslyUseGlobalCSS: false,
@@ -35,6 +36,10 @@ class App extends Component {
                 i18nPath: "feedback-tool/i18n",
             };
             window.$.feedbackDhis2(d2, appKey, feedbackOptions);
+        }
+
+        if (appConfig && appConfig.encryptionKey) {
+            Instance.setEncryptionKey(appConfig.encryptionKey);
         }
     }
 

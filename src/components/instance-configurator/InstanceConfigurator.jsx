@@ -34,7 +34,7 @@ class InstanceConfigurator extends React.Component {
     };
 
     onTestConnection = async instanceData => {
-        const instance = await Instance.parse(instanceData);
+        const instance = await Instance.build(instanceData);
         const connectionErrors = await instance.check();
         if (!connectionErrors.status) {
             this.props.snackbar.error(connectionErrors.error.message, {

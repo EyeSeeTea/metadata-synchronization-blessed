@@ -20,10 +20,16 @@ export interface Data {
 }
 
 export default class Instance {
+    private static encryptionKey: string;
+
     private readonly data: Data;
 
     constructor(data: Data) {
         this.data = _.pick(data, ["id", "name", "url", "username", "password", "description"]);
+    }
+
+    public static setEncryptionKey(encryptionKey: string): void {
+        this.encryptionKey = encryptionKey;
     }
 
     public static create(): Instance {
@@ -37,14 +43,14 @@ export default class Instance {
         return new Instance(initialData);
     }
 
-    public static async parse(data: Data | undefined): Promise<Instance> {
+    public static async build(data: Data | undefined): Promise<Instance> {
         const instance = data ? new Instance(data) : this.create();
         return await instance.decryptPassword();
     }
 
     public static async get(d2: D2, id: string): Promise<Instance> {
         const data = await getDataById(d2, instancesDataStoreKey, id);
-        return this.parse(data);
+        return this.build(data);
     }
 
     public static async list(
@@ -53,11 +59,6 @@ export default class Instance {
         pagination: TablePagination
     ): Promise<TableList> {
         return getPaginatedData(d2, instancesDataStoreKey, filters, pagination);
-    }
-
-    private static async getEncryptionKey(): Promise<any> {
-        const appConfig = await axios.get("app-config.json");
-        return appConfig.data.encryptionKey;
     }
 
     public async save(d2: D2): Promise<Response> {
@@ -120,20 +121,18 @@ export default class Instance {
         return new Instance({ ...this.data, description });
     }
 
-    public async encryptPassword(): Promise<Instance> {
-        const encryptionKey = await Instance.getEncryptionKey();
+    public encryptPassword(): Instance {
         const password =
             this.data.password.length > 0
-                ? new Cryptr(encryptionKey).encrypt(this.data.password)
+                ? new Cryptr(Instance.encryptionKey).encrypt(this.data.password)
                 : "";
         return new Instance({ ...this.data, password });
     }
 
-    public async decryptPassword(): Promise<Instance> {
-        const encryptionKey = await Instance.getEncryptionKey();
+    public decryptPassword(): Instance {
         const password =
             this.data.password.length > 0
-                ? new Cryptr(encryptionKey).decrypt(this.data.password)
+                ? new Cryptr(Instance.encryptionKey).decrypt(this.data.password)
                 : "";
         return new Instance({ ...this.data, password });
     }
