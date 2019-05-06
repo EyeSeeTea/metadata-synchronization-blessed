@@ -6,7 +6,7 @@ import { generateUid } from "d2/uid";
 
 import { deleteData, getData, getDataById, getPaginatedData, saveData } from "./dataStore";
 import { D2, Response } from "../types/d2";
-import { Validation } from "../types/instance";
+import { Validation } from "../types/validations";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 
 const instancesDataStoreKey = "instances";
