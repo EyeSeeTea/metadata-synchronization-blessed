@@ -69,7 +69,7 @@ export async function postMetadata(instance: Instance, metadata: any): Promise<a
     };
 
     try {
-        return await axios.post(instance.url + "/api/metadata", metadata, {
+        return axios.post(instance.url + "/api/metadata", metadata, {
             auth: {
                 username: instance.username,
                 password: instance.password,

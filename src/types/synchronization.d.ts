@@ -1,4 +1,4 @@
-import { MetadataImportResponse } from "./d2";
+import { MetadataImportResponse, MetadataImportStats } from "./d2";
 
 export interface SynchronizationBuilder {
     targetInstances: string[];
@@ -25,9 +25,17 @@ export interface SynchronizationResult extends MetadataImportResponse {
         url: string;
     };
     report: {
-        typeStats: any[];
+        typeStats: MetadataImportStats[];
         messages: any[];
     };
+}
+
+export interface SynchronizationResults {
+    results: SynchronizationResult[];
+    timestamp: Date;
+    user: string;
+    status: "READY" | "RUNNING" | "FAILURE" | "DONE";
+    metadata: MetadataPackage;
 }
 
 export interface NestedRules {

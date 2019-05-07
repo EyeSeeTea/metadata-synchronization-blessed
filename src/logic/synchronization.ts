@@ -10,6 +10,7 @@ import {
     NestedRules,
     SynchronizationBuilder,
     SynchronizationResult,
+    SynchronizationResults,
 } from "../types/synchronization";
 import {
     buildNestedRules,
@@ -100,7 +101,7 @@ async function importMetadata(
 
     return {
         ...importResult.data,
-        instance: _.pick(instance, ["id", "name", "url"]),
+        instance: _.pick(instance, ["id", "name", "url", "user"]),
         report: { typeStats, messages },
     };
 }
@@ -108,7 +109,7 @@ async function importMetadata(
 export async function startSynchronization(
     d2: D2,
     builder: SynchronizationBuilder
-): Promise<SynchronizationResult[]> {
+): Promise<SynchronizationResults> {
     // Phase 1: Export and package metadata from origin instance
     const exportPromises = _.keys(builder.metadata)
         .map(type => {
@@ -124,10 +125,23 @@ export async function startSynchronization(
     const exportResults: MetadataPackage[] = await Promise.all(exportPromises);
     const metadataPackage = _.deepMerge({}, ...exportResults);
 
-    // Phase 2: Import metadata into destination instances
-    const importPromises = builder.targetInstances.map(instanceId =>
-        importMetadata(d2, instanceId, metadataPackage)
-    );
+    // TODO: Workflow (0) Insert task as READY [We skip this state for now]
 
-    return Promise.all(importPromises);
+    // TODO: Workflow (1) Update task as RUNNING and initialize results as PENDING
+    // TODO: We will obtain a uid of the task created so that we can update it
+
+    // Phase 2: Import metadata into destination instances
+    const importPromises = builder.targetInstances.map(instanceId => {
+        // TODO: Workflow (2) Attach to every promise the update of the results in the current task
+        return importMetadata(d2, instanceId, metadataPackage);
+    });
+
+    // TODO: Workflow (3) Set the task as DONE or FAILURE depending the results
+    return {
+        results: await Promise.all(importPromises),
+        timestamp: new Date(),
+        user: d2.currentUser.username,
+        status: "DONE",
+        metadata: builder.metadata
+    };
 }
