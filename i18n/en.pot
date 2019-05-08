@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-04-26T09:34:00.788Z\n"
-"PO-Revision-Date: 2019-04-26T09:34:00.788Z\n"
+"POT-Creation-Date: 2019-05-03T09:54:18.970Z\n"
+"PO-Revision-Date: 2019-05-03T09:54:18.970Z\n"
 
 msgid "Instance Configurator"
 msgstr ""
@@ -29,7 +29,7 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-msgid "Connected sucessfully to instance"
+msgid "Connected successfully to instance"
 msgstr ""
 
 msgid "Deleted {{name}}"
@@ -93,9 +93,6 @@ msgid "Password (*)"
 msgstr ""
 
 msgid "Please fix the issues before testing the connection"
-msgstr ""
-
-msgid "Connected successfully to instance"
 msgstr ""
 
 msgid "Please fix the issues before saving"

@@ -66,12 +66,10 @@ async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<MetadataP
 async function importMetadata(
     d2: D2,
     instanceId: string,
-    metadataPackage: MetadataPackage,
-    encryptionKey: string
+    metadataPackage: MetadataPackage
 ): Promise<SynchronizationResult> {
     const instance = await Instance.get(d2, instanceId);
-    const decryptedInstance = instance.decryptPassword(encryptionKey);
-    const importResult = await postMetadata(decryptedInstance, metadataPackage);
+    const importResult = await postMetadata(instance, metadataPackage);
 
     const typeStats: any[] = [];
     const messages: any[] = [];
@@ -109,8 +107,7 @@ async function importMetadata(
 
 export async function startSynchronization(
     d2: D2,
-    builder: SynchronizationBuilder,
-    encryptionKey: string
+    builder: SynchronizationBuilder
 ): Promise<SynchronizationResult[]> {
     // Phase 1: Export and package metadata from origin instance
     const exportPromises = _.keys(builder.metadata)
@@ -129,7 +126,7 @@ export async function startSynchronization(
 
     // Phase 2: Import metadata into destination instances
     const importPromises = builder.targetInstances.map(instanceId =>
-        importMetadata(d2, instanceId, metadataPackage, encryptionKey)
+        importMetadata(d2, instanceId, metadataPackage)
     );
 
     return Promise.all(importPromises);

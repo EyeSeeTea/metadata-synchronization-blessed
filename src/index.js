@@ -1,9 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { init, config, getUserSettings, getManifest } from "d2";
-import "font-awesome/css/font-awesome.min.css";
 import _ from "lodash";
+import axios from "axios";
+import { init, config, getUserSettings, getManifest } from "d2";
 import { HashRouter } from "react-router-dom";
+import "font-awesome/css/font-awesome.min.css";
 
 import App from "./components/app/App";
 import i18n from "./locales";
@@ -65,9 +66,7 @@ async function main() {
         loadHeaderBarTranslations(d2);
         const userSettings = await getUserSettings();
         configI18n(userSettings);
-        const appConfig = await fetch("app-config.json", {
-            credentials: "same-origin",
-        }).then(res => res.json());
+        const appConfig = await axios.get("app-config.json").then(res => res.data);
         ReactDOM.render(
             <HashRouter>
                 <App d2={d2} appConfig={appConfig} />
