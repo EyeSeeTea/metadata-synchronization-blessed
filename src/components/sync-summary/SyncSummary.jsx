@@ -40,12 +40,8 @@ const styles = theme => ({
 class SyncSummary extends React.Component {
     static propTypes = {
         isOpen: PropTypes.bool.isRequired,
-        response: PropTypes.array.isRequired,
+        response: PropTypes.object.isRequired,
         handleClose: PropTypes.func.isRequired,
-    };
-
-    handleClose = () => {
-        this.props.handleClose();
     };
 
     static buildSummaryTable(stats) {
@@ -103,22 +99,23 @@ class SyncSummary extends React.Component {
     }
 
     render() {
-        const { isOpen, response, classes } = this.props;
+        const { isOpen, response, classes, handleClose } = this.props;
+        const { results } = response.syncReport;
 
         return (
             <React.Fragment>
                 <ConfirmationDialog
                     isOpen={isOpen}
                     title={i18n.t("Synchronization Results")}
-                    onSave={this.handleClose}
+                    onSave={handleClose}
                     saveText={i18n.t("Ok")}
                     maxWidth={"lg"}
                     fullWidth={true}
                 >
                     <DialogContent>
-                        {response.map((responseElement, i) => (
+                        {results.map((responseElement, i) => (
                             <ExpansionPanel
-                                defaultExpanded={response.length === 1}
+                                defaultExpanded={results.length === 1}
                                 className={classes.expansionPanel}
                                 key={`row-${i}`}
                             >

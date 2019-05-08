@@ -64,14 +64,12 @@ export default class Instance {
 
     public async save(d2: D2): Promise<Response> {
         const instance = await this.encryptPassword();
-        let toSave;
-        if (instance.data.id) {
-            toSave = instance.data;
-            await instance.remove(d2);
-        } else {
-            toSave = { ...instance.data, id: generateUid() };
-        }
-        return saveData(d2, instancesDataStoreKey, toSave);
+        const exists = instance.data.id;
+        const element = exists ? instance.data : { ...instance.data, id: generateUid() };
+
+        if (exists) await instance.remove(d2);
+
+        return saveData(d2, instancesDataStoreKey, element);
     }
 
     public async remove(d2: D2): Promise<Response> {

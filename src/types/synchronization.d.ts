@@ -21,20 +21,23 @@ export interface MetadataPackage {
 export interface SynchronizationResult extends MetadataImportResponse {
     instance: {
         id: string;
-        name: string;
-        url: string;
+        name?: string;
+        url?: string;
     };
-    report: {
+    report?: {
         typeStats: MetadataImportStats[];
         messages: any[];
     };
 }
 
-export interface SynchronizationResults {
-    results: SynchronizationResult[];
-    timestamp: Date;
+export type SynchronizationReportStatus = "READY" | "RUNNING" | "FAILURE" | "DONE";
+
+export interface SynchronizationReport {
+    id?: string;
+    timestamp?: Date;
     user: string;
-    status: "READY" | "RUNNING" | "FAILURE" | "DONE";
+    status: SynchronizationReportStatus;
+    results: SynchronizationResult[];
     metadata: MetadataPackage;
 }
 

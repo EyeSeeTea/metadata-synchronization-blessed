@@ -2,15 +2,16 @@ import _ from "lodash";
 import "../utils/lodash-mixins";
 
 import Instance from "../models/instance";
+import SyncReport from "../models/syncReport";
 import { d2ModelFactory } from "../models/d2ModelFactory";
-import { D2 } from "../types/d2";
+import { D2, MetadataImportStatus } from "../types/d2";
 import {
     ExportBuilder,
     MetadataPackage,
     NestedRules,
     SynchronizationBuilder,
+    SynchronizationReportStatus,
     SynchronizationResult,
-    SynchronizationResults,
 } from "../types/synchronization";
 import {
     buildNestedRules,
@@ -101,7 +102,7 @@ async function importMetadata(
 
     return {
         ...importResult.data,
-        instance: _.pick(instance, ["id", "name", "url", "user"]),
+        instance: _.pick(instance, ["id", "name", "url", "username"]),
         report: { typeStats, messages },
     };
 }
@@ -109,14 +110,20 @@ async function importMetadata(
 export async function startSynchronization(
     d2: D2,
     builder: SynchronizationBuilder
-): Promise<SynchronizationResults> {
+): Promise<SyncReport> {
+    const { targetInstances, metadata } = builder;
+    const initialResults = targetInstances.map(instanceId => ({
+        instance: { id: instanceId },
+        status: "PENDING" as MetadataImportStatus,
+    }));
+
     // Phase 1: Export and package metadata from origin instance
-    const exportPromises = _.keys(builder.metadata)
+    const exportPromises = _.keys(metadata)
         .map(type => {
             const myClass = d2ModelFactory(d2, type);
             return {
                 type,
-                ids: builder.metadata[type],
+                ids: metadata[type],
                 excludeRules: myClass.getExcludeRules(),
                 includeRules: myClass.getIncludeRules(),
             };
@@ -125,23 +132,25 @@ export async function startSynchronization(
     const exportResults: MetadataPackage[] = await Promise.all(exportPromises);
     const metadataPackage = _.deepMerge({}, ...exportResults);
 
-    // TODO: Workflow (0) Insert task as READY [We skip this state for now]
-
-    // TODO: Workflow (1) Update task as RUNNING and initialize results as PENDING
-    // TODO: We will obtain a uid of the task created so that we can update it
-
-    // Phase 2: Import metadata into destination instances
-    const importPromises = builder.targetInstances.map(instanceId => {
-        // TODO: Workflow (2) Attach to every promise the update of the results in the current task
-        return importMetadata(d2, instanceId, metadataPackage);
-    });
-
-    // TODO: Workflow (3) Set the task as DONE or FAILURE depending the results
-    return {
-        results: await Promise.all(importPromises),
-        timestamp: new Date(),
+    // Phase 2: Create parent synchronization task
+    const syncReport = SyncReport.build({
         user: d2.currentUser.username,
-        status: "DONE",
-        metadata: builder.metadata
-    };
+        metadata: metadataPackage,
+        status: "RUNNING" as SynchronizationReportStatus,
+        results: initialResults,
+    });
+    await syncReport.save(d2);
+
+    // Phase 3: Import metadata into destination instances
+    for (const instanceId of targetInstances) {
+        const result = await importMetadata(d2, instanceId, metadataPackage);
+        syncReport.addSyncResult(result);
+        await syncReport.save(d2);
+    }
+
+    // Phase 4: Update parent task status
+    syncReport.setStatus(syncReport.hasErrors() ? "FAILURE" : "DONE");
+    await syncReport.save(d2);
+
+    return syncReport;
 }

@@ -105,11 +105,13 @@ export interface MetadataImportParams {
     username?: string;
 }
 
+export type MetadataImportStatus = "PENDING" | "OK" | "WARNING" | "ERROR" | "NETWORK ERROR";
+
 export interface MetadataImportResponse {
-    status: "PENDING" | "OK" | "WARNING" | "ERROR" | "NETWORK ERROR";
-    importParams: MetadataImportParams;
-    typeReports: any[];
-    stats: MetadataImportStats;
+    status: MetadataImportStatus;
+    importParams?: MetadataImportParams;
+    typeReports?: any[];
+    stats?: MetadataImportStats;
 }
 
 export interface MetadataImportStats {
