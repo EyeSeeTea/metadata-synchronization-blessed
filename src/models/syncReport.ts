@@ -18,6 +18,7 @@ export default class SyncReport {
     constructor(syncReport: SynchronizationReport) {
         this.syncReport = {
             id: generateUid(),
+            timestamp: new Date(),
             ...syncReport,
         };
     }
@@ -25,7 +26,6 @@ export default class SyncReport {
     public static create(): SyncReport {
         return new SyncReport({
             id: "",
-            timestamp: new Date(),
             user: "",
             status: "READY" as SynchronizationReportStatus,
             results: [],
@@ -52,9 +52,7 @@ export default class SyncReport {
 
     public async save(d2: D2): Promise<Response> {
         const exists = this.syncReport.id;
-        const element = exists
-            ? { ...this.syncReport, timestamp: new Date() }
-            : { ...this.syncReport, timestamp: new Date(), id: generateUid() };
+        const element = exists ? this.syncReport : { ...this.syncReport, id: generateUid() };
 
         if (exists) await this.remove(d2);
 
