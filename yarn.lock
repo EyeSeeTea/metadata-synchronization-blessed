@@ -919,6 +919,14 @@
     i18next-conv "^6.0.0"
     i18next-scanner "^2.4.4"
 
+"@dhis2/d2-i18n-extract@https://github.com/EyeSeeTea/d2-i18n-extract#add-typescript-extensions":
+  version "1.0.7"
+  resolved "https://github.com/EyeSeeTea/d2-i18n-extract#ce40d9f4497d8f31e9d359ce27b00a9bc7c39186"
+  dependencies:
+    argparse "^1.0.10"
+    i18next-conv "^6.0.0"
+    i18next-scanner "^2.4.4"
+
 "@dhis2/d2-i18n-generate@^1.0.19":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@dhis2/d2-i18n-generate/-/d2-i18n-generate-1.1.0.tgz#d31ef228d0ffc234e5f38a48db817fa3f1769153"
