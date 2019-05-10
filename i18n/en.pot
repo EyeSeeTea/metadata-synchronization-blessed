@@ -29,7 +29,7 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-msgid "Connected sucessfully to instance"
+msgid "Connected successfully to instance"
 msgstr ""
 
 msgid "Deleted {{name}}"
@@ -93,9 +93,6 @@ msgid "Password (*)"
 msgstr ""
 
 msgid "Please fix the issues before testing the connection"
-msgstr ""
-
-msgid "Connected successfully to instance"
 msgstr ""
 
 msgid "Please fix the issues before saving"

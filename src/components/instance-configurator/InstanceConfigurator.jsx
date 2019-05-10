@@ -23,7 +23,6 @@ class InstanceConfigurator extends React.Component {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
-        appConfig: PropTypes.object.isRequired,
     };
 
     onCreate = () => {
@@ -31,22 +30,18 @@ class InstanceConfigurator extends React.Component {
     };
 
     onEdit = instance => {
-        this.props.history.push({
-            pathname: `/instance-configurator/edit/${instance.id}`,
-            instance,
-        });
+        this.props.history.push(`/instance-configurator/edit/${instance.id}`);
     };
 
     onTestConnection = async instanceData => {
-        const { encryptionKey } = this.props.appConfig;
-        const instance = Instance.getOrCreate(instanceData, encryptionKey);
+        const instance = await Instance.build(instanceData);
         const connectionErrors = await instance.check();
         if (!connectionErrors.status) {
             this.props.snackbar.error(connectionErrors.error.message, {
                 autoHideDuration: null,
             });
         } else {
-            this.props.snackbar.success(i18n.t("Connected sucessfully to instance"));
+            this.props.snackbar.success(i18n.t("Connected successfully to instance"));
         }
     };
 
