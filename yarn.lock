@@ -910,15 +910,6 @@
   dependencies:
     "@date-io/core" "^1.1.0"
 
-"@dhis2/d2-i18n-extract@^1.0.7":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@dhis2/d2-i18n-extract/-/d2-i18n-extract-1.0.7.tgz#805c92c75f5d3678a047374a551bda5f7571d7f3"
-  integrity sha512-i78pbGGA8q73dEShzvYkEP0gzmkytMdUgcPf8qEFIWS1H5ftiu3ErN2aRC2VgB6Jv+Kioc7oJ6nWVLmy67Dtsg==
-  dependencies:
-    argparse "^1.0.10"
-    i18next-conv "^6.0.0"
-    i18next-scanner "^2.4.4"
-
 "@dhis2/d2-i18n-extract@https://github.com/EyeSeeTea/d2-i18n-extract#add-typescript-extensions":
   version "1.0.7"
   resolved "https://github.com/EyeSeeTea/d2-i18n-extract#ce40d9f4497d8f31e9d359ce27b00a9bc7c39186"
@@ -3788,10 +3779,10 @@ d2-manifest@^1.0.0:
     minimist "^1.1.0"
     readline-sync "^1.4.1"
 
-d2-ui-components@^0.0.15:
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-0.0.15.tgz#947603d1b3034d56a13e17e6d4a3c8c3fb3e0205"
-  integrity sha512-Xn28DchNZYcRovBM0diWW+Tq9fumlK8eEvCyfT4YV3mdY0DZKQWw8CSRiFhpkxUuGYyhjfBvb/PVUsOTgQeFZw==
+d2-ui-components@^0.0.17:
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-0.0.17.tgz#7f71e3fe276ff034fed58d3b18f75b14e82d111f"
+  integrity sha512-tEDW4BJhBtlpv5sAMbNn1QblLO79KmTOFb1I+zCn55fA7cRwUT6VopPkzrGDO9qsY+P5Qpd1X9obsuXAxqb//w==
   dependencies:
     "@date-io/moment" "^1.0.2"
     "@dhis2/d2-i18n" "^1.0.3"
