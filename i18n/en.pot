@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-05-10T11:16:09.342Z\n"
-"PO-Revision-Date: 2019-05-10T11:16:09.342Z\n"
+"POT-Creation-Date: 2019-05-13T12:30:33.933Z\n"
+"PO-Revision-Date: 2019-05-13T12:30:33.933Z\n"
 
 msgid "Instance Configurator"
 msgstr ""
@@ -212,15 +212,13 @@ msgstr ""
 msgid "JSON Response"
 msgstr ""
 
+msgid "Not a valid DHIS2 instance"
+msgstr ""
+
 msgid "Wrong username/password"
 msgstr ""
 
-msgid "Not a DHIS2 instance"
-msgstr ""
-
-msgid ""
-"Network error {{error}}, probably wrong server host or CORS not enabled in "
-"DHIS2 instance"
+msgid "Network error {{error}}, check if server is up and CORS is enabled"
 msgstr ""
 
 msgid "Name"
