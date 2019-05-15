@@ -134,6 +134,7 @@ export async function startSynchronization(
 
     const syncReport = SyncReport.build({
         user: d2.currentUser.username,
+        selectedTypes: _.keys(metadata),
         metadata: metadataPackage,
         status: "RUNNING" as SynchronizationReportStatus,
         results: targetInstances.map(instance => ({

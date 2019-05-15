@@ -30,6 +30,7 @@ export default class SyncReport {
             status: "READY" as SynchronizationReportStatus,
             results: [],
             metadata: {},
+            selectedTypes: [],
         });
     }
 

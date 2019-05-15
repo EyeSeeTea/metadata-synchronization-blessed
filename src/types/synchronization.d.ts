@@ -39,6 +39,7 @@ export interface SynchronizationReport {
     status: SynchronizationReportStatus;
     results: SynchronizationResult[];
     metadata: MetadataPackage;
+    selectedTypes: string[];
 }
 
 export interface NestedRules {

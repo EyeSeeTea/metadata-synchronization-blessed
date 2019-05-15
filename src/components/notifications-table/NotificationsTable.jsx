@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 import { ObjectsTable, withSnackbar, withLoading, ConfirmationDialog } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
@@ -9,6 +10,7 @@ import PageHeader from "../shared/PageHeader";
 
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
+import { createMetadataExportUrl } from "../../utils/synchronization";
 
 const styles = () => ({
     tableContainer: { marginTop: -10 },
@@ -27,6 +29,14 @@ class NotificationsTable extends React.Component {
         snackbar: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
         loading: PropTypes.object.isRequired,
+    };
+
+    static model = {
+        modelValidations: {
+            href: { type: "URL" },
+            timestamp: { type: "DATE" },
+            metadata: { type: "COLLECTION" },
+        },
     };
 
     backHome = () => {
@@ -72,6 +82,49 @@ class NotificationsTable extends React.Component {
         this.setState({ summaryOpen: false });
     };
 
+    // TODO: We should fix d2-ui-components instead
+    getValueForCollection = values => {
+        const namesToDisplay = _(values)
+            .map(value => value.displayName || value.name || value.id)
+            .compact()
+            .value();
+
+        return (
+            <ul>
+                {namesToDisplay.map(name => (
+                    <li key={name}>{name}</li>
+                ))}
+            </ul>
+        );
+    };
+
+    // TODO: We should fix d2-ui-components instead
+    getValueForUrl = value => {
+        return (
+            <a
+                rel="noopener noreferrer"
+                style={{ wordBreak: "break-all" }}
+                href={value}
+                target="_blank"
+            >
+                {value}
+            </a>
+        );
+    };
+
+    getMetadataTypes = notification => {
+        return this.getValueForCollection(notification.selectedTypes.map(type => ({ name: type })));
+    };
+
+    getAPILink = notification => {
+        const ids = _(notification.metadata)
+            .values()
+            .flatten()
+            .map(e => e.id)
+            .value();
+        return this.getValueForUrl(createMetadataExportUrl(this.props.d2, ids));
+    };
+
     columns = [
         { name: "user", text: i18n.t("User"), sortable: true },
         { name: "timestamp", text: i18n.t("Timestamp"), sortable: true },
@@ -84,8 +137,16 @@ class NotificationsTable extends React.Component {
         { name: "user", text: i18n.t("User") },
         { name: "timestamp", text: i18n.t("Timestamp") },
         { name: "status", text: i18n.t("Status") },
-        // Metadata Package
-        // Url to API
+        {
+            name: "metadata",
+            text: i18n.t("Metadata Types"),
+            getValue: notification => this.getMetadataTypes(notification),
+        },
+        {
+            name: "href",
+            text: i18n.t("API Link"),
+            getValue: notification => this.getAPILink(notification),
+        },
     ];
 
     actions = [
@@ -129,7 +190,7 @@ class NotificationsTable extends React.Component {
                     <ObjectsTable
                         key={tableKey}
                         d2={d2}
-                        model={d2.models.dataSet}
+                        model={NotificationsTable.model}
                         columns={this.columns}
                         detailsFields={this.detailsFields}
                         pageSize={10}
