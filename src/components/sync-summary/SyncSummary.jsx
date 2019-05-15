@@ -135,13 +135,13 @@ class SyncSummary extends React.Component {
                                 </ExpansionPanelDetails>
 
                                 <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                                    {SyncSummary.buildSummaryTable([
+                                    {responseElement.report && SyncSummary.buildSummaryTable([
                                         ...responseElement.report.typeStats,
                                         { type: i18n.t("Total"), ...responseElement.stats },
                                     ])}
                                 </ExpansionPanelDetails>
 
-                                {responseElement.report.messages.length > 0 && (
+                                {responseElement.report && responseElement.report.messages.length > 0 && (
                                     <div>
                                         <ExpansionPanelDetails
                                             className={classes.expansionPanelDetails}

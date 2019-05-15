@@ -8,6 +8,7 @@ import { withStyles } from "@material-ui/core/styles";
 import PageHeader from "../shared/PageHeader";
 
 import SyncReport from "../../models/syncReport";
+import SyncSummary from "../sync-summary/SyncSummary";
 
 const styles = () => ({
     tableContainer: { marginTop: -10 },
@@ -17,6 +18,8 @@ class NotificationsTable extends React.Component {
     state = {
         tableKey: Math.random(),
         toDelete: null,
+        summaryOpen: false,
+        syncReport: SyncReport.create(),
     };
 
     static propTypes = {
@@ -61,6 +64,14 @@ class NotificationsTable extends React.Component {
         });
     };
 
+    openSummary = data => {
+        this.setState({ summaryOpen: true, syncReport: new SyncReport(data) });
+    };
+
+    closeSummary = () => {
+        this.setState({ summaryOpen: false });
+    };
+
     columns = [
         { name: "user", text: i18n.t("User"), sortable: true },
         { name: "timestamp", text: i18n.t("Timestamp"), sortable: true },
@@ -90,11 +101,17 @@ class NotificationsTable extends React.Component {
             multiple: false,
             onClick: this.deleteNotification,
         },
-        // View Summary
+        {
+            name: "summary",
+            text: i18n.t("View summary"),
+            icon: "description",
+            multiple: false,
+            onClick: this.openSummary,
+        },
     ];
 
     render() {
-        const { tableKey, toDelete } = this.state;
+        const { tableKey, toDelete, syncReport, summaryOpen } = this.state;
         const { d2, classes } = this.props;
 
         return (
@@ -121,6 +138,11 @@ class NotificationsTable extends React.Component {
                         list={SyncReport.list}
                     />
                 </div>
+                <SyncSummary
+                    response={syncReport}
+                    isOpen={summaryOpen}
+                    handleClose={this.closeSummary}
+                />
             </React.Fragment>
         );
     }
