@@ -25,15 +25,15 @@ class InstanceConfigurator extends React.Component {
         history: PropTypes.object.isRequired,
     };
 
-    onCreate = () => {
+    createInstance = () => {
         this.props.history.push("/instance-configurator/new");
     };
 
-    onEdit = instance => {
+    editInstance = instance => {
         this.props.history.push(`/instance-configurator/edit/${instance.id}`);
     };
 
-    onTestConnection = async instanceData => {
+    testConnection = async instanceData => {
         const instance = await Instance.build(instanceData);
         const connectionErrors = await instance.check();
         if (!connectionErrors.status) {
@@ -45,15 +45,15 @@ class InstanceConfigurator extends React.Component {
         }
     };
 
-    onDelete = instanceData => {
+    deleteInstance = instanceData => {
         this.setState({ toDelete: instanceData });
     };
 
-    handleDialogCancel = () => {
+    cancelDelete = () => {
         this.setState({ toDelete: null });
     };
 
-    handleDialogConfirm = async () => {
+    confirmDelete = async () => {
         const { toDelete } = this.state;
         const instance = new Instance(toDelete);
         this.setState({ toDelete: null });
@@ -98,19 +98,19 @@ class InstanceConfigurator extends React.Component {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            onClick: this.onEdit,
+            onClick: this.editInstance,
         },
         {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: false,
-            onClick: this.onDelete,
+            onClick: this.deleteInstance,
         },
         {
             name: "testConnection",
             text: i18n.t("Test Connection"),
             multiple: false,
-            onClick: this.onTestConnection,
+            onClick: this.testConnection,
             icon: "settings_input_antenna",
         },
     ];
@@ -126,8 +126,8 @@ class InstanceConfigurator extends React.Component {
             <React.Fragment>
                 <ConfirmationDialog
                     isOpen={!!toDelete}
-                    onSave={this.handleDialogConfirm}
-                    onCancel={this.handleDialogCancel}
+                    onSave={this.confirmDelete}
+                    onCancel={this.cancelDelete}
                     title={i18n.t("Delete Instance?")}
                     description={i18n.t("Are you sure you want to delete this instance?")}
                     saveText={i18n.t("Ok")}
@@ -143,7 +143,7 @@ class InstanceConfigurator extends React.Component {
                         pageSize={10}
                         initialSorting={this.initialSorting}
                         actions={this.actions}
-                        onCreate={this.onCreate}
+                        onCreate={this.createInstance}
                         list={Instance.list}
                     />
                 </div>
