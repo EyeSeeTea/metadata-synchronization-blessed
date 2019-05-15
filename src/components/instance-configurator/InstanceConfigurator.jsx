@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { ObjectsTable, withSnackbar, ConfirmationDialog } from "d2-ui-components";
+import { ObjectsTable, withSnackbar, withLoading, ConfirmationDialog } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -23,6 +23,7 @@ class InstanceConfigurator extends React.Component {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
+        loading: PropTypes.object.isRequired,
     };
 
     createInstance = () => {
@@ -55,14 +56,18 @@ class InstanceConfigurator extends React.Component {
 
     confirmDelete = async () => {
         const { toDelete } = this.state;
+
         const instance = new Instance(toDelete);
         this.setState({ toDelete: null });
+        this.props.loading.show(true, i18n.t("Deleting Instance"));
+
         await instance.remove(this.props.d2).then(response => {
+            this.props.loading.reset();
+
             if (response.status) {
                 this.props.snackbar.success(i18n.t("Deleted {{name}}", { name: toDelete.name }));
 
-                // TODO: Add a way to force render of ObjectsTable on-demand
-                // This is a work-around
+                // TODO: Workaround, add a way to force render of ObjectsTable on-demand
                 this.setState({ tableKey: Math.random() });
             } else {
                 this.props.snackbar.error(
@@ -120,8 +125,9 @@ class InstanceConfigurator extends React.Component {
     };
 
     render() {
+        const { tableKey, toDelete } = this.state;
         const { d2, classes } = this.props;
-        const { toDelete } = this.state;
+
         return (
             <React.Fragment>
                 <ConfirmationDialog
@@ -135,7 +141,7 @@ class InstanceConfigurator extends React.Component {
                 <PageHeader title={i18n.t("Instances")} onBackClick={this.backHome} />
                 <div className={classes.tableContainer}>
                     <ObjectsTable
-                        key={this.state.tableKey}
+                        key={tableKey}
                         d2={d2}
                         model={d2.models.dataSet}
                         columns={this.columns}
@@ -152,4 +158,4 @@ class InstanceConfigurator extends React.Component {
     }
 }
 
-export default withSnackbar(withRouter(withStyles(styles)(InstanceConfigurator)));
+export default withLoading(withSnackbar(withRouter(withStyles(styles)(InstanceConfigurator))));
