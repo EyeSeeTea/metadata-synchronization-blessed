@@ -59,17 +59,18 @@ export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataP
 }
 
 export async function postMetadata(instance: Instance, metadata: any): Promise<any> {
-    const params: MetadataImportParams = {
-        importMode: "COMMIT",
-        identifier: "AUTO",
-        importReportMode: "FULL",
-        importStrategy: "CREATE_AND_UPDATE",
-        mergeMode: "REPLACE",
-        atomicMode: "ALL",
-    };
-
     try {
-        return axios.post(instance.url + "/api/metadata", metadata, {
+        const params: MetadataImportParams = {
+            importMode: "COMMIT",
+            identifier: "AUTO",
+            importReportMode: "FULL",
+            importStrategy: "CREATE_AND_UPDATE",
+            mergeMode: "REPLACE",
+            atomicMode: "ALL",
+        };
+
+        // Note to self, we return await a promise to preserve the try/catch scope
+        return await axios.post(instance.url + "/api/metadata", metadata, {
             auth: {
                 username: instance.username,
                 password: instance.password,
@@ -79,10 +80,9 @@ export async function postMetadata(instance: Instance, metadata: any): Promise<a
     } catch (error) {
         if (error.response) {
             return error.response;
-        } else if (error.request) {
-            return { data: { status: "NETWORK ERROR" } };
         } else {
-            throw error;
+            console.error(error);
+            return { data: { status: "NETWORK ERROR" } };
         }
     }
 }
