@@ -135,30 +135,32 @@ class SyncSummary extends React.Component {
                                 </ExpansionPanelDetails>
 
                                 <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                                    {responseElement.report && SyncSummary.buildSummaryTable([
-                                        ...responseElement.report.typeStats,
-                                        { type: i18n.t("Total"), ...responseElement.stats },
-                                    ])}
+                                    {responseElement.report &&
+                                        SyncSummary.buildSummaryTable([
+                                            ...responseElement.report.typeStats,
+                                            { type: i18n.t("Total"), ...responseElement.stats },
+                                        ])}
                                 </ExpansionPanelDetails>
 
-                                {responseElement.report && responseElement.report.messages.length > 0 && (
-                                    <div>
-                                        <ExpansionPanelDetails
-                                            className={classes.expansionPanelDetails}
-                                        >
-                                            <Typography variant="overline">
-                                                {i18n.t("Messages")}
-                                            </Typography>
-                                        </ExpansionPanelDetails>
-                                        <ExpansionPanelDetails
-                                            className={classes.expansionPanelDetails}
-                                        >
-                                            {SyncSummary.buildMessageTable(
-                                                responseElement.report.messages
-                                            )}
-                                        </ExpansionPanelDetails>
-                                    </div>
-                                )}
+                                {responseElement.report &&
+                                    responseElement.report.messages.length > 0 && (
+                                        <div>
+                                            <ExpansionPanelDetails
+                                                className={classes.expansionPanelDetails}
+                                            >
+                                                <Typography variant="overline">
+                                                    {i18n.t("Messages")}
+                                                </Typography>
+                                            </ExpansionPanelDetails>
+                                            <ExpansionPanelDetails
+                                                className={classes.expansionPanelDetails}
+                                            >
+                                                {SyncSummary.buildMessageTable(
+                                                    responseElement.report.messages
+                                                )}
+                                            </ExpansionPanelDetails>
+                                        </div>
+                                    )}
                             </ExpansionPanel>
                         ))}
 

@@ -67,10 +67,9 @@ async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<MetadataP
 
 async function importMetadata(
     d2: D2,
-    instanceId: string,
+    instance: Instance,
     metadataPackage: MetadataPackage
 ): Promise<SynchronizationResult> {
-    const instance = await Instance.get(d2, instanceId);
     const importResult = await postMetadata(instance, metadataPackage);
 
     const typeStats: any[] = [];
@@ -111,11 +110,7 @@ export async function startSynchronization(
     d2: D2,
     builder: SynchronizationBuilder
 ): Promise<SyncReport> {
-    const { targetInstances, metadata } = builder;
-    const initialResults = targetInstances.map(instanceId => ({
-        instance: { id: instanceId },
-        status: "PENDING" as MetadataImportStatus,
-    }));
+    const { targetInstances: targetInstanceIds, metadata } = builder;
 
     // Phase 1: Export and package metadata from origin instance
     const exportPromises = _.keys(metadata)
@@ -133,11 +128,18 @@ export async function startSynchronization(
     const metadataPackage = _.deepMerge({}, ...exportResults);
 
     // Phase 2: Create parent synchronization task
+    const targetInstances: Instance[] = await Promise.all(
+        targetInstanceIds.map(id => Instance.get(d2, id))
+    );
+
     const syncReport = SyncReport.build({
         user: d2.currentUser.username,
         metadata: metadataPackage,
         status: "RUNNING" as SynchronizationReportStatus,
-        results: initialResults,
+        results: targetInstances.map(instance => ({
+            instance: instance.toObject(),
+            status: "PENDING" as MetadataImportStatus,
+        })),
     });
     await syncReport.save(d2);
 

@@ -76,6 +76,10 @@ export default class Instance {
         return deleteData(d2, instancesDataStoreKey, this.data);
     }
 
+    public toObject(): Data {
+        return _.clone(this.data);
+    }
+
     public setId(id: string): Instance {
         return new Instance({ ...this.data, id });
     }
