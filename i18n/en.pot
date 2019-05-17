@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-05-03T09:54:18.970Z\n"
-"PO-Revision-Date: 2019-05-03T09:54:18.970Z\n"
+"POT-Creation-Date: 2019-05-13T12:30:33.933Z\n"
+"PO-Revision-Date: 2019-05-13T12:30:33.933Z\n"
 
 msgid "Instance Configurator"
 msgstr ""
@@ -210,6 +210,36 @@ msgid "Messages"
 msgstr ""
 
 msgid "JSON Response"
+msgstr ""
+
+msgid "Not a valid DHIS2 instance"
+msgstr ""
+
+msgid "Wrong username/password"
+msgstr ""
+
+msgid "Network error {{error}}, check if server is up and CORS is enabled"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Level"
+msgstr ""
+
+msgid "Short name"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "ID"
+msgstr ""
+
+msgid "API link"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"
