@@ -201,10 +201,11 @@ export default class Instance {
     }
 
     public async check(): Promise<Response> {
-        const { url, username, password } = this.data;
-
         try {
-            const response = await axios.get(url + "/api/system/info", {
+            const { url, username, password } = this.data;
+            const cleanUrl = url.replace(/\/$/, "");
+
+            const response = await axios.get(cleanUrl + "/api/system/info", {
                 auth: { username, password },
             });
 
@@ -216,15 +217,21 @@ export default class Instance {
                   };
         } catch (error) {
             if (error.response) {
-                if (error.response.status === 401) {
-                    return { status: false, error: new Error(i18n.t("Wrong username/password")) };
-                } else if (error.response.status) {
-                    return {
-                        status: false,
-                        error: new Error(
-                            i18n.t("Error: {{status}}", { status: error.response.status })
-                        ),
-                    };
+                switch (error.response.status) {
+                    case 401:
+                        return {
+                            status: false,
+                            error: new Error(i18n.t("Wrong username/password")),
+                        };
+                    case 404:
+                        return { status: false, error: new Error(i18n.t("Wrong URL endpoint")) };
+                    default:
+                        return {
+                            status: false,
+                            error: new Error(
+                                i18n.t("Error {{status}}", { status: error.response.status })
+                            ),
+                        };
                 }
             } else if (error.request) {
                 return {
@@ -236,10 +243,10 @@ export default class Instance {
                         )
                     ),
                 };
+            } else {
+                console.log({ error });
+                return { status: false, error };
             }
-
-            console.log({ error });
-            return { status: false, error };
         }
     }
 }

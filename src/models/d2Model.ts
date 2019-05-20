@@ -146,7 +146,7 @@ export class DataElementModel extends D2Model {
 export class IndicatorModel extends D2Model {
     protected static metadataType = "indicator";
     protected static groupFilterName = "indicatorGroups";
-    
+
     protected static excludeRules = [
         "dataSets",
         "programs",
@@ -166,10 +166,7 @@ export class IndicatorModel extends D2Model {
 export class ValidationRuleModel extends D2Model {
     protected static metadataType = "validationRule";
     protected static groupFilterName = "validationRuleGroups";
-    protected static excludeRules = [
-        "legendSets",
-        "validationRuleGroups.validationRules",
-    ];
+    protected static excludeRules = ["legendSets", "validationRuleGroups.validationRules"];
     protected static includeRules = [
         "attributes",
         "validationRuleGroups",
