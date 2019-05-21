@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import _ from "lodash";
 import "../utils/lodash-mixins";
 
@@ -63,7 +63,7 @@ export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataP
     return _.deepMerge({}, ...result.map(result => result.data));
 }
 
-export async function postMetadata(instance: Instance, metadata: any): Promise<any> {
+export async function postMetadata(instance: Instance, metadata: any): Promise<AxiosResponse> {
     try {
         const params: MetadataImportParams = {
             importMode: "COMMIT",
@@ -87,7 +87,7 @@ export async function postMetadata(instance: Instance, metadata: any): Promise<a
             return error.response;
         } else {
             console.error(error);
-            return { data: { status: "NETWORK ERROR" } };
+            return { data: { status: "NETWORK ERROR" } } as any;
         }
     }
 }

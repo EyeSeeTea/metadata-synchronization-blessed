@@ -74,6 +74,6 @@ export default class SyncReport {
     }
 
     public hasErrors(): boolean {
-        return _.every(this.syncReport.results, result => result.status === "OK");
+        return _.some(this.syncReport.results, result => result.status !== "OK");
     }
 }

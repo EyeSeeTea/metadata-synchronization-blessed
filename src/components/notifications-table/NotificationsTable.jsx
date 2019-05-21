@@ -177,14 +177,6 @@ class NotificationsTable extends React.Component {
 
         return (
             <React.Fragment>
-                <ConfirmationDialog
-                    isOpen={!!toDelete}
-                    onSave={this.confirmDelete}
-                    onCancel={this.cancelDelete}
-                    title={i18n.t("Delete Instance?")}
-                    description={i18n.t("Are you sure you want to delete this instance?")}
-                    saveText={i18n.t("Ok")}
-                />
                 <PageHeader title={i18n.t("Notifications")} onBackClick={this.backHome} />
                 <div className={classes.tableContainer}>
                     <ObjectsTable
@@ -199,10 +191,20 @@ class NotificationsTable extends React.Component {
                         list={SyncReport.list}
                     />
                 </div>
+
                 <SyncSummary
                     response={syncReport}
                     isOpen={summaryOpen}
                     handleClose={this.closeSummary}
+                />
+
+                <ConfirmationDialog
+                    isOpen={!!toDelete}
+                    onSave={this.confirmDelete}
+                    onCancel={this.cancelDelete}
+                    title={i18n.t("Delete Instance?")}
+                    description={i18n.t("Are you sure you want to delete this instance?")}
+                    saveText={i18n.t("Ok")}
                 />
             </React.Fragment>
         );

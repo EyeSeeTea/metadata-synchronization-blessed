@@ -66,7 +66,6 @@ async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<MetadataP
 }
 
 async function importMetadata(
-    d2: D2,
     instance: Instance,
     metadataPackage: MetadataPackage
 ): Promise<SynchronizationResult> {
@@ -146,7 +145,7 @@ export async function startSynchronization(
 
     // Phase 3: Import metadata into destination instances
     for (const instanceId of targetInstances) {
-        const result = await importMetadata(d2, instanceId, metadataPackage);
+        const result = await importMetadata(instanceId, metadataPackage);
         syncReport.addSyncResult(result);
         await syncReport.save(d2);
     }
