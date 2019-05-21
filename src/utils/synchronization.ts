@@ -1,9 +1,9 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import _ from "lodash";
 import "../utils/lodash-mixins";
 
 import Instance from "../models/instance";
-import { D2, MetadataImportParams } from "../types/d2";
+import { D2, MetadataImportParams, MetadataImportResponse } from "../types/d2";
 import { NestedRules, MetadataPackage } from "../types/synchronization";
 import { cleanModelName } from "./d2";
 import { isValidUid } from "d2/uid";
@@ -63,7 +63,10 @@ export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataP
     return _.deepMerge({}, ...result.map(result => result.data));
 }
 
-export async function postMetadata(instance: Instance, metadata: any): Promise<AxiosResponse> {
+export async function postMetadata(
+    instance: Instance,
+    metadata: any
+): Promise<MetadataImportResponse> {
     try {
         const params: MetadataImportParams = {
             importMode: "COMMIT",
@@ -74,20 +77,21 @@ export async function postMetadata(instance: Instance, metadata: any): Promise<A
             atomicMode: "ALL",
         };
 
-        // Note to self, we return await a promise to preserve the try/catch scope
-        return await axios.post(instance.url + "/api/metadata", metadata, {
+        const response = await axios.post(instance.url + "/api/metadata", metadata, {
             auth: {
                 username: instance.username,
                 password: instance.password,
             },
             params,
         });
+
+        return response.data;
     } catch (error) {
         if (error.response) {
             return error.response;
         } else {
             console.error(error);
-            return { data: { status: "NETWORK ERROR" } } as any;
+            return { status: "NETWORK ERROR" };
         }
     }
 }

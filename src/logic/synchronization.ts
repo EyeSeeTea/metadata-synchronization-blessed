@@ -74,8 +74,8 @@ async function importMetadata(
     const typeStats: any[] = [];
     const messages: any[] = [];
 
-    if (importResult.data.typeReports) {
-        importResult.data.typeReports.forEach((report: any) => {
+    if (importResult.typeReports) {
+        importResult.typeReports.forEach((report: any) => {
             const { klass, stats, objectReports = [] } = report;
 
             typeStats.push({
@@ -99,7 +99,7 @@ async function importMetadata(
     }
 
     return {
-        ...importResult.data,
+        ...importResult,
         instance: _.pick(instance, ["id", "name", "url", "username"]),
         report: { typeStats, messages },
     };
