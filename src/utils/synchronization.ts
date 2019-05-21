@@ -74,7 +74,7 @@ export async function postMetadata(
             importReportMode: "FULL",
             importStrategy: "CREATE_AND_UPDATE",
             mergeMode: "REPLACE",
-            atomicMode: "ALL",
+            atomicMode: "NONE",
         };
 
         const response = await axios.post(instance.url + "/api/metadata", metadata, {

@@ -150,8 +150,18 @@ export class IndicatorModel extends D2Model {
     protected static excludeRules = [
         "dataSets",
         "programs",
-        "indicatorGroups.indicators",
-        "indicatorGroups.indicatorGroupSet.indicatorGroups",
+        "user",
+        "userAccesses",
+        "userGroupAccesses",
+        "indicatorType.user",
+        "indicatorType.userAccesses",
+        "indicatorType.userGroupAccesses",
+        "indicatorGroups.user",
+        "indicatorGroups.userAccesses",
+        "indicatorGroups.userGroupAccesses",
+        "indicatorGroups.indicatorGroupSet.user",
+        "indicatorGroups.indicatorGroupSet.userAccesses",
+        "indicatorGroups.indicatorGroupSet.userGroupAccesses",
     ];
     protected static includeRules = [
         "attributes",
@@ -166,7 +176,16 @@ export class IndicatorModel extends D2Model {
 export class ValidationRuleModel extends D2Model {
     protected static metadataType = "validationRule";
     protected static groupFilterName = "validationRuleGroups";
-    protected static excludeRules = ["legendSets", "validationRuleGroups.validationRules"];
+
+    protected static excludeRules = [
+        "legendSets",
+        "user",
+        "userAccesses",
+        "userGroupAccesses",
+        "validationRuleGroups.user",
+        "validationRuleGroups.userAccesses",
+        "validationRuleGroups.userGroupAccesses",
+    ];
     protected static includeRules = [
         "attributes",
         "validationRuleGroups",
