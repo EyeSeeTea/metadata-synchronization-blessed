@@ -5,21 +5,25 @@ import { TableFilters, TableList, TablePagination } from "../types/d2-ui-compone
 const dataStoreNamespace = "metatada-synchronization";
 
 async function getOrCreateNamespace(d2: D2): Promise<any> {
-    const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
-    if (!existsNamespace) {
-        return await d2.dataStore.create(dataStoreNamespace);
-    } else {
+    try {
         return await d2.dataStore.get(dataStoreNamespace);
+    } catch (e) {
+        if (e.httpStatusCode === 404) return await d2.dataStore.create(dataStoreNamespace);
+        throw new Error(`Unhandled error with dataStore namespace ${dataStoreNamespace}`);
     }
 }
 
 async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any = []): Promise<any> {
-    const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
     const dataStore = await getOrCreateNamespace(d2);
-    if (!existsNamespace) {
-        await dataStore.set(dataStoreKey, defaultValue);
+    try {
+        return await dataStore.get(dataStoreKey);
+    } catch (e) {
+        if (e.httpStatusCode === 404) {
+            await dataStore.set(dataStoreKey, defaultValue);
+            return defaultValue;
+        }
+        throw new Error(`Unhandled error with dataStore ${dataStoreKey}`);
     }
-    return await dataStore.get(dataStoreKey);
 }
 
 async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promise<void> {
