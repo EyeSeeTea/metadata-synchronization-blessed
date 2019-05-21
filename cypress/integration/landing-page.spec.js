@@ -1,14 +1,9 @@
 import { dataTest } from "../support/utils";
 
 context("Landing page", () => {
-    before(() => {
-        cy.server();
-        cy.fixture("app-config.json").then(json => cy.route("GET", "app-config.json", json));
-    });
-
     beforeEach(() => {
         cy.login("admin");
-        cy.visit("/");
+        cy.visit("/#/");
     });
 
     it("renders a table with all pages of the application", () => {

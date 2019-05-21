@@ -15,7 +15,15 @@ const dhis2Auth = _(dhis2AuthEnvValue)
     .fromPairs()
     .value();
 
+Cypress.Cookies.defaults({
+    whitelist: 'JSESSIONID'
+});
+
 Cypress.Commands.add("login", (username, _password = null) => {
+    // Start server and create fixture for the encryption key
+    cy.server();
+    cy.fixture("app-config.json").then(json => cy.route("GET", "app-config.json", json));
+
     const password = _password || dhis2Auth[username];
     if (stubBackend) {
         cy.log(
@@ -28,7 +36,7 @@ Cypress.Commands.add("login", (username, _password = null) => {
         }
     }
     if (!stubBackend) {
-        cy.log("Login", { username, password });
+        cy.log("Login", { username });
         cy.request({
             method: "GET",
             url: `${externalUrl}/api/me`,
