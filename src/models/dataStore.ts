@@ -8,8 +8,11 @@ async function getOrCreateNamespace(d2: D2): Promise<any> {
     try {
         return await d2.dataStore.get(dataStoreNamespace);
     } catch (e) {
-        if (e.httpStatusCode === 404) return await d2.dataStore.create(dataStoreNamespace);
-        throw new Error(`Unhandled error with dataStore namespace ${dataStoreNamespace}`);
+        if (e.httpStatusCode === 404) {
+            return await d2.dataStore.create(dataStoreNamespace);
+        } else {
+            throw e;
+        }
     }
 }
 
@@ -21,8 +24,9 @@ async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any = []
         if (e.httpStatusCode === 404) {
             await dataStore.set(dataStoreKey, defaultValue);
             return defaultValue;
+        } else {
+            throw e;
         }
-        throw new Error(`Unhandled error with dataStore ${dataStoreKey}`);
     }
 }
 
