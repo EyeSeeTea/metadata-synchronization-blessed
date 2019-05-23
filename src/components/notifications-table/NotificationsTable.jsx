@@ -10,7 +10,6 @@ import PageHeader from "../shared/PageHeader";
 
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
-import { createMetadataExportUrl } from "../../utils/synchronization";
 
 const styles = () => ({
     tableContainer: { marginTop: -10 },

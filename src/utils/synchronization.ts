@@ -38,11 +38,6 @@ export function cleanReferences(
     return _.intersection(_.keys(references), rules);
 }
 
-export function createMetadataExportUrl(d2: D2, elements: string[]): string {
-    const requestUrl = d2.Api.getApi().baseUrl + "/metadata.json";
-    return requestUrl + `?fields=:all&defaults=EXCLUDE&filter=id:in:[${elements.join(",")}]`;
-}
-
 export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataPackage> {
     const promises = [];
     for (let i = 0; i < elements.length; i += 100) {
