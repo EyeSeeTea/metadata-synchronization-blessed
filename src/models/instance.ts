@@ -246,7 +246,7 @@ export default class Instance {
                     ),
                 };
             } else {
-                console.log({ error });
+                console.debug({ error });
                 return { status: false, error };
             }
         }

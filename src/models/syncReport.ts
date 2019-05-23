@@ -29,7 +29,6 @@ export default class SyncReport {
             user: "",
             status: "READY" as SynchronizationReportStatus,
             results: [],
-            metadata: {},
             selectedTypes: [],
         });
     }

@@ -38,7 +38,6 @@ export interface SynchronizationReport {
     user: string;
     status: SynchronizationReportStatus;
     results: SynchronizationResult[];
-    metadata: MetadataPackage;
     selectedTypes: string[];
 }
 

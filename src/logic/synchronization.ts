@@ -99,7 +99,7 @@ async function importMetadata(
     }
 
     return {
-        ...importResult,
+        ..._.pick(importResult, ["status", "stats"]),
         instance: _.pick(instance, ["id", "name", "url", "username"]),
         report: { typeStats, messages },
     };
@@ -112,6 +112,7 @@ export async function startSynchronization(
     const { targetInstances: targetInstanceIds, metadata } = builder;
 
     // Phase 1: Export and package metadata from origin instance
+    console.debug("Begin Export and package metadata from origin instance");
     const exportPromises = _.keys(metadata)
         .map(type => {
             const myClass = d2ModelFactory(d2, type);
@@ -125,6 +126,7 @@ export async function startSynchronization(
         .map(newBuilder => exportMetadata(d2, newBuilder));
     const exportResults: MetadataPackage[] = await Promise.all(exportPromises);
     const metadataPackage = _.deepMerge({}, ...exportResults);
+    console.debug("Metadata package from origin instance done");
 
     // Phase 2: Create parent synchronization task
     const targetInstances: Instance[] = await Promise.all(
@@ -134,7 +136,6 @@ export async function startSynchronization(
     const syncReport = SyncReport.build({
         user: d2.currentUser.username,
         selectedTypes: _.keys(metadata),
-        metadata: metadataPackage,
         status: "RUNNING" as SynchronizationReportStatus,
         results: targetInstances.map(instance => ({
             instance: instance.toObject(),
@@ -145,8 +146,10 @@ export async function startSynchronization(
 
     // Phase 3: Import metadata into destination instances
     for (const instanceId of targetInstances) {
+        console.debug("Start import on destination instance", instanceId);
         const result = await importMetadata(instanceId, metadataPackage);
         syncReport.addSyncResult(result);
+        console.debug("Start import on destination instance done", instanceId);
         await syncReport.save(d2);
     }
 
