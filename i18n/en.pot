@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-05-15T22:07:45.948Z\n"
-"PO-Revision-Date: 2019-05-15T22:07:45.948Z\n"
+"POT-Creation-Date: 2019-05-23T15:30:23.997Z\n"
+"PO-Revision-Date: 2019-05-23T15:30:23.997Z\n"
 
 msgid "Instance Configurator"
 msgstr ""
@@ -141,9 +141,6 @@ msgid "Status"
 msgstr ""
 
 msgid "Metadata Types"
-msgstr ""
-
-msgid "API Link"
 msgstr ""
 
 msgid "View summary"

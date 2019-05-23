@@ -51,12 +51,15 @@ export default class SyncReport {
     }
 
     public async save(d2: D2): Promise<Response> {
+        console.debug("Start saving SyncReport to dataStore");
         const exists = this.syncReport.id;
         const element = exists ? this.syncReport : { ...this.syncReport, id: generateUid() };
 
         if (exists) await this.remove(d2);
 
-        return saveData(d2, notificationsDataStoreKey, element);
+        const result = await saveData(d2, notificationsDataStoreKey, element);
+        console.debug("Finish saving SyncReport to dataStore", element);
+        return result;
     }
 
     public async remove(d2: D2): Promise<Response> {

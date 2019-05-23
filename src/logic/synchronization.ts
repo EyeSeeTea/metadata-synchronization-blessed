@@ -126,7 +126,7 @@ export async function startSynchronization(
         .map(newBuilder => exportMetadata(d2, newBuilder));
     const exportResults: MetadataPackage[] = await Promise.all(exportPromises);
     const metadataPackage = _.deepMerge({}, ...exportResults);
-    console.debug("Metadata package from origin instance done");
+    console.debug("Metadata package from origin instance done", metadataPackage);
 
     // Phase 2: Create parent synchronization task
     const targetInstances: Instance[] = await Promise.all(
