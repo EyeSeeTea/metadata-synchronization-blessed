@@ -33,7 +33,6 @@ class NotificationsTable extends React.Component {
 
     static model = {
         modelValidations: {
-            href: { type: "URL" },
             timestamp: { type: "DATE" },
             metadata: { type: "COLLECTION" },
         },
@@ -98,31 +97,8 @@ class NotificationsTable extends React.Component {
         );
     };
 
-    // TODO: We should fix d2-ui-components instead
-    getValueForUrl = value => {
-        return (
-            <a
-                rel="noopener noreferrer"
-                style={{ wordBreak: "break-all" }}
-                href={value}
-                target="_blank"
-            >
-                {value}
-            </a>
-        );
-    };
-
     getMetadataTypes = notification => {
         return this.getValueForCollection(notification.selectedTypes.map(type => ({ name: type })));
-    };
-
-    getAPILink = notification => {
-        const ids = _(notification.metadata)
-            .values()
-            .flatten()
-            .map(e => e.id)
-            .value();
-        return this.getValueForUrl(createMetadataExportUrl(this.props.d2, ids));
     };
 
     columns = [
@@ -141,11 +117,6 @@ class NotificationsTable extends React.Component {
             name: "metadata",
             text: i18n.t("Metadata Types"),
             getValue: notification => this.getMetadataTypes(notification),
-        },
-        {
-            name: "href",
-            text: i18n.t("API Link"),
-            getValue: notification => this.getAPILink(notification),
         },
     ];
 
