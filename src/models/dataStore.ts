@@ -16,11 +16,7 @@ async function getOrCreateNamespace(d2: D2): Promise<any> {
     }
 }
 
-async function getDataStore(
-    d2: D2,
-    dataStoreKey: string,
-    defaultValue: any = undefined
-): Promise<any> {
+async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Promise<any> {
     const dataStore = await getOrCreateNamespace(d2);
     try {
         return await dataStore.get(dataStoreKey);
