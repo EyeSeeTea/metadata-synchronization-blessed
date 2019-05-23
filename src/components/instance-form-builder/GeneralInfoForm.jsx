@@ -85,7 +85,7 @@ class GeneralInfoForm extends React.Component {
                     floatingLabelText: i18n.t("Server name (*)"),
                     style: { width: "100%" },
                     changeEvent: "onBlur",
-                    "data-field": "name",
+                    "data-test": "name",
                 },
                 validators: [
                     {
@@ -104,7 +104,7 @@ class GeneralInfoForm extends React.Component {
                     floatingLabelText: i18n.t("Description"),
                     style: { width: "100%" },
                     changeEvent: "onBlur",
-                    "data-field": "description",
+                    "data-test": "description",
                 },
                 validators: [],
             },
@@ -116,7 +116,7 @@ class GeneralInfoForm extends React.Component {
                     floatingLabelText: i18n.t("URL endpoint (*)"),
                     style: { width: "100%" },
                     changeEvent: "onBlur",
-                    "data-field": "url",
+                    "data-test": "url",
                 },
                 validators: [
                     {
@@ -141,7 +141,7 @@ class GeneralInfoForm extends React.Component {
                     floatingLabelText: i18n.t("Username (*)"),
                     style: { width: "100%" },
                     changeEvent: "onBlur",
-                    "data-field": "username",
+                    "data-test": "username",
                 },
                 validators: [
                     {
@@ -162,7 +162,7 @@ class GeneralInfoForm extends React.Component {
                     changeEvent: "onBlur",
                     type: "password",
                     autoComplete: "new-password",
-                    "data-field": "password",
+                    "data-test": "password",
                 },
                 validators: [
                     {
@@ -233,16 +233,22 @@ class GeneralInfoForm extends React.Component {
                     />
                     <div className={classes.buttonContainer}>
                         <div>
-                            <SaveButton onClick={this.saveAction} isSaving={this.state.isSaving} />
+                            <SaveButton
+                                onClick={this.saveAction}
+                                isSaving={this.state.isSaving}
+                                data-test={"save-button"}
+                            />
                             <RaisedButton
                                 label={i18n.t("Cancel")}
                                 onClick={this.props.cancelAction}
+                                data-test={"cancel-button"}
                             />
                         </div>
                         <div className={classes.testButton}>
                             <RaisedButton
                                 label={i18n.t("Test Connection")}
                                 onClick={this.testConnection}
+                                data-test={"test-connection-button"}
                             />
                         </div>
                     </div>

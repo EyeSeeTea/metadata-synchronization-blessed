@@ -4,15 +4,16 @@ import _ from "lodash";
 import axios from "axios";
 import { init, config, getUserSettings, getManifest } from "d2";
 import { HashRouter } from "react-router-dom";
+import i18n from "@dhis2/d2-i18n";
 import "font-awesome/css/font-awesome.min.css";
 
 import App from "./components/app/App";
-import i18n from "./locales";
+import "./locales";
 
 function isLangRTL(code) {
     const langs = ["ar", "fa", "ur"];
     const prefixed = langs.map(c => `${c}-`);
-    return langs.includes(code) || prefixed.filter(c => code.startsWith(c)).length > 0;
+    return langs.includes(code) || prefixed.filter(c => code && code.startsWith(c)).length > 0;
 }
 
 function configI18n(userSettings) {
