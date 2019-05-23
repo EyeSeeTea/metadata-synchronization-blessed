@@ -1,4 +1,5 @@
 import React from "react";
+import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 import PropTypes from "prop-types";
 import { ConfirmationDialog } from "d2-ui-components";
@@ -62,7 +63,7 @@ class SyncSummary extends React.Component {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {stats.map(({ type, created, deleted, ignored, updated, total }, i) => (
+                    {_.take(stats, 10).map(({ type, created, deleted, ignored, updated, total }, i) => (
                         <TableRow key={`row-${i}`}>
                             <TableCell>{type}</TableCell>
                             <TableCell>{created}</TableCell>
