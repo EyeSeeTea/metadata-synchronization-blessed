@@ -1,4 +1,5 @@
 import { MetadataImportResponse, MetadataImportStats } from "./d2";
+import SyncReport from "../models/syncReport";
 
 export interface SynchronizationBuilder {
     targetInstances: string[];
@@ -43,4 +44,10 @@ export interface SynchronizationReport {
 
 export interface NestedRules {
     [metadataType: string]: string[][];
+}
+
+export interface SynchronizationState {
+    message?: string;
+    syncReport?: SyncReport;
+    done?: boolean;
 }

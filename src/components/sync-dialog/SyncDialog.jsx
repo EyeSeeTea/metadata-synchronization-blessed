@@ -2,9 +2,8 @@ import React from "react";
 import i18n from "@dhis2/d2-i18n";
 import PropTypes from "prop-types";
 import _ from "lodash";
-import { ConfirmationDialog, MultiSelector } from "d2-ui-components";
+import { ConfirmationDialog, MultiSelector, withLoading } from "d2-ui-components";
 import DialogContent from "@material-ui/core/DialogContent";
-import { withLoading } from "d2-ui-components";
 
 import Instance from "../../models/instance";
 import { startSynchronization } from "../../logic/synchronization";
@@ -41,20 +40,25 @@ class SyncDialog extends React.Component {
     };
 
     handleSynchronization = async () => {
-        this.props.loading.show(true, i18n.t("Synchronizing metadata"));
+        const { handleClose, loading, metadata, d2 } = this.props;
+        loading.show(true, i18n.t("Synchronizing metadata"));
 
         try {
-            const syncReport = await startSynchronization(this.props.d2, {
-                metadata: this.props.metadata,
+            const builder = {
+                metadata: metadata,
                 targetInstances: this.state.targetInstances,
-            });
-            this.props.handleClose(syncReport);
+            };
+            for await (const { message, syncReport, done } of startSynchronization(d2, builder)) {
+                if (message) loading.show(true, message);
+                if (syncReport) await syncReport.save();
+                if (done) handleClose(syncReport);
+            }
         } catch (error) {
             console.error(error);
-            this.props.handleClose();
+            handleClose();
         }
         this.setState({ targetInstances: [] });
-        this.props.loading.reset();
+        loading.reset();
     };
 
     handleCancel = () => {

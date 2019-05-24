@@ -1,5 +1,6 @@
 import _ from "lodash";
 import "../utils/lodash-mixins";
+import i18n from "@dhis2/d2-i18n";
 
 import Instance from "../models/instance";
 import SyncReport from "../models/syncReport";
@@ -12,6 +13,7 @@ import {
     SynchronizationBuilder,
     SynchronizationReportStatus,
     SynchronizationResult,
+    SynchronizationState,
 } from "../types/synchronization";
 import {
     buildNestedRules,
@@ -87,7 +89,7 @@ async function importMetadata(
                 const { uid, errorReports = [] } = detail;
 
                 messages.push(
-                    ...errorReports.map((error: any) => ({
+                    ..._.take(errorReports, 2).map((error: any) => ({
                         uid,
                         type: getClassName(error.mainKlass),
                         property: error.errorProperty,
@@ -105,57 +107,69 @@ async function importMetadata(
     };
 }
 
-export async function startSynchronization(
+export async function* startSynchronization(
     d2: D2,
     builder: SynchronizationBuilder
-): Promise<SyncReport> {
+): AsyncIterableIterator<SynchronizationState> {
     const { targetInstances: targetInstanceIds, metadata } = builder;
 
     // Phase 1: Export and package metadata from origin instance
-    console.debug("Begin Export and package metadata from origin instance");
+    yield { message: i18n.t("Fetching metadata from origin instance") };
     const exportPromises = _.keys(metadata)
-        .map(type => {
-            const myClass = d2ModelFactory(d2, type);
-            return {
-                type,
-                ids: metadata[type],
-                excludeRules: myClass.getExcludeRules(),
-                includeRules: myClass.getIncludeRules(),
-            };
-        })
-        .map(newBuilder => exportMetadata(d2, newBuilder));
+        .map(
+            (type: string): ExportBuilder => {
+                const myClass = d2ModelFactory(d2, type);
+                return {
+                    type,
+                    ids: metadata[type],
+                    excludeRules: myClass.getExcludeRules(),
+                    includeRules: myClass.getIncludeRules(),
+                };
+            }
+        )
+        .map(
+            (newBuilder: ExportBuilder): Promise<MetadataPackage> => exportMetadata(d2, newBuilder)
+        );
     const exportResults: MetadataPackage[] = await Promise.all(exportPromises);
     const metadataPackage = _.deepMerge({}, ...exportResults);
     console.debug("Metadata package from origin instance done", metadataPackage);
 
     // Phase 2: Create parent synchronization task
+    yield { message: i18n.t("Retrieving information from remote instances") };
     const targetInstances: Instance[] = await Promise.all(
-        targetInstanceIds.map(id => Instance.get(d2, id))
+        targetInstanceIds.map((id: string): Promise<Instance> => Instance.get(d2, id))
     );
 
     const syncReport = SyncReport.build({
         user: d2.currentUser.username,
         selectedTypes: _.keys(metadata),
         status: "RUNNING" as SynchronizationReportStatus,
-        results: targetInstances.map(instance => ({
-            instance: instance.toObject(),
-            status: "PENDING" as MetadataImportStatus,
-        })),
+        results: targetInstances.map(
+            (instance: Instance): SynchronizationResult => ({
+                instance: instance.toObject(),
+                status: "PENDING" as MetadataImportStatus,
+            })
+        ),
     });
-    await syncReport.save(d2);
+    yield { syncReport };
 
     // Phase 3: Import metadata into destination instances
-    for (const instanceId of targetInstances) {
-        console.debug("Start import on destination instance", instanceId);
-        const result = await importMetadata(instanceId, metadataPackage);
+    for (const instance of targetInstances) {
+        yield {
+            message: i18n.t("Importing data in instance: {{instance}}", {
+                instance: instance.name,
+            }),
+        };
+        console.debug("Start import on destination instance", instance);
+        const result = await importMetadata(instance, metadataPackage);
         syncReport.addSyncResult(result);
-        console.debug("Start import on destination instance done", instanceId);
-        await syncReport.save(d2);
+        console.debug("Finished importing data on instance", instance);
+        yield { syncReport };
     }
 
     // Phase 4: Update parent task status
     syncReport.setStatus(syncReport.hasErrors() ? "FAILURE" : "DONE");
-    await syncReport.save(d2);
+    yield { syncReport, done: true };
 
     return syncReport;
 }
