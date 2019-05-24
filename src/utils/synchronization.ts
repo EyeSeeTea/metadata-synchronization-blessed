@@ -65,7 +65,7 @@ export async function postMetadata(instance: Instance, metadata: any): Promise<a
         importReportMode: "FULL",
         importStrategy: "CREATE_AND_UPDATE",
         mergeMode: "REPLACE",
-        atomicMode: "ALL",
+        atomicMode: "NONE",
     };
 
     try {
