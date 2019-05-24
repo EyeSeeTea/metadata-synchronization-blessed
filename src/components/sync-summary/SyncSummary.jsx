@@ -63,18 +63,16 @@ class SyncSummary extends React.Component {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {stats.map(
-                        ({ type, created, deleted, ignored, updated, total }, i) => (
-                            <TableRow key={`row-${i}`}>
-                                <TableCell>{type}</TableCell>
-                                <TableCell>{created}</TableCell>
-                                <TableCell>{deleted}</TableCell>
-                                <TableCell>{ignored}</TableCell>
-                                <TableCell>{updated}</TableCell>
-                                <TableCell>{total}</TableCell>
-                            </TableRow>
-                        )
-                    )}
+                    {stats.map(({ type, created, deleted, ignored, updated, total }, i) => (
+                        <TableRow key={`row-${i}`}>
+                            <TableCell>{type}</TableCell>
+                            <TableCell>{created}</TableCell>
+                            <TableCell>{deleted}</TableCell>
+                            <TableCell>{ignored}</TableCell>
+                            <TableCell>{updated}</TableCell>
+                            <TableCell>{total}</TableCell>
+                        </TableRow>
+                    ))}
                 </TableBody>
             </Table>
         );
@@ -129,7 +127,7 @@ class SyncSummary extends React.Component {
                                     <Typography className={classes.expansionPanelHeading1}>
                                         {`${responseElement.instance.name} (${
                                             responseElement.instance.url
-                                            })`}
+                                        })`}
                                     </Typography>
                                     <Typography className={classes.expansionPanelHeading2}>
                                         {`${i18n.t("Status")}: ${responseElement.status}`}
