@@ -89,7 +89,7 @@ async function importMetadata(
                 const { uid, errorReports = [] } = detail;
 
                 messages.push(
-                    ..._.take(errorReports, 2).map((error: any) => ({
+                    ..._.take(errorReports, 1).map((error: any) => ({
                         uid,
                         type: getClassName(error.mainKlass),
                         property: error.errorProperty,

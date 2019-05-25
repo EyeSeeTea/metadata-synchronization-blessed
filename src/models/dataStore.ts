@@ -33,7 +33,7 @@ export async function getData(d2: D2, dataStoreKey: string): Promise<any> {
 
 export async function getDataById(d2: D2, dataStoreKey: string, id: string): Promise<any> {
     const rawData = await getDataStore(d2, dataStoreKey);
-    return _.find(rawData, instance => instance.id === id);
+    return _.find(rawData, (element: any): boolean => element.id === id);
 }
 
 export async function getPaginatedData(
@@ -83,7 +83,9 @@ export async function saveData(d2: D2, dataStoreKey: string, data: any): Promise
 export async function deleteData(d2: D2, dataStoreKey: string, data: any): Promise<Response> {
     try {
         const dataArray = await getDataStore(d2, dataStoreKey);
-        const newDataArray = dataArray.filter((dataEl: { id: string }) => dataEl.id !== data.id);
+        const newDataArray = dataArray.filter(
+            (dataEl: { id: string }): boolean => dataEl.id !== data.id
+        );
         await saveDataStore(d2, dataStoreKey, newDataArray);
         return { status: true };
     } catch (e) {
