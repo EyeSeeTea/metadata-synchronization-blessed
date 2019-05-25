@@ -25,46 +25,63 @@ import {
 } from "../utils/synchronization";
 import { getClassName } from "../utils/d2";
 
-async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<MetadataPackage> {
-    const { type, ids, excludeRules, includeRules } = builder;
-    const model = d2ModelFactory(d2, type).getD2Model(d2);
-    const result: MetadataPackage = {};
+async function exportMetadata(d2: D2, originalBuilder: ExportBuilder): Promise<MetadataPackage> {
+    const visitedIds: Set<string> = new Set();
+    const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
+        const { type, ids, excludeRules, includeRules } = builder;
+        const model = d2ModelFactory(d2, type).getD2Model(d2);
+        const result: MetadataPackage = {};
 
-    // Each level of recursion traverse the exclude/include rules with nested values
-    const nestedExcludeRules: NestedRules = buildNestedRules(excludeRules);
-    const nestedIncludeRules: NestedRules = buildNestedRules(includeRules);
+        // Each level of recursion traverse the exclude/include rules with nested values
+        const nestedExcludeRules: NestedRules = buildNestedRules(excludeRules);
+        const nestedIncludeRules: NestedRules = buildNestedRules(includeRules);
 
-    // Get all the required metadata
-    const syncMetadata = await getMetadata(d2, ids);
-    const elements = syncMetadata[model.plural] || [];
+        // Get all the required metadata
+        const syncMetadata = await getMetadata(d2, ids);
+        const elements = syncMetadata[model.plural] || [];
 
-    // TODO: We are now doing a sequential synchronization
-    // Parallel requests could be done but we need to implement a Promise queue (cwait)
-    // Attempting to perform all the requests without a queue blocks the server and affects performance
-    for (const element of elements) {
-        // Store metadata object in result
-        const object = cleanObject(element, excludeRules);
-        result[model.plural] = result[model.plural] || [];
-        result[model.plural].push(object);
+        for (const element of elements) {
+            // Store metadata object in result
+            const object = cleanObject(element, excludeRules);
+            result[model.plural] = result[model.plural] || [];
+            result[model.plural].push(object);
 
-        // Get all the referenced metadata
-        const references: MetadataPackage = getAllReferences(d2, object, model.name);
-        const includedReferences = cleanReferences(references, includeRules);
-        const promises = includedReferences
-            .map(type => ({
-                type,
-                ids: references[type],
-                excludeRules: nestedExcludeRules[type],
-                includeRules: nestedIncludeRules[type],
-            }))
-            .map(newBuilder => exportMetadata(d2, newBuilder));
-        const promisesResult: MetadataPackage[] = await Promise.all(promises);
-        _.deepMerge(result, ...promisesResult);
-    }
+            // Get all the referenced metadata
+            const references: MetadataPackage = getAllReferences(d2, object, model.name);
+            const includedReferences = cleanReferences(references, includeRules);
+            const promises = includedReferences
+                .map(
+                    (type: string): ExportBuilder => ({
+                        type,
+                        ids: references[type].filter((id: string): boolean => !visitedIds.has(id)),
+                        excludeRules: nestedExcludeRules[type],
+                        includeRules: nestedIncludeRules[type],
+                    })
+                )
+                .map(
+                    (newBuilder: ExportBuilder): Promise<MetadataPackage> => {
+                        newBuilder.ids.forEach(
+                            (id: string): void => {
+                                visitedIds.add(id);
+                            }
+                        );
+                        return recursiveExport(newBuilder);
+                    }
+                );
+            const promisesResult: MetadataPackage[] = await Promise.all(promises);
+            _.deepMerge(result, ...promisesResult);
+        }
 
-    // Clean up result from duplicated elements
-    _.forOwn(result, (value, metadataType) => (result[metadataType] = _.uniqBy(value, "id")));
-    return result;
+        // Clean up result from duplicated elements
+        _.forOwn(
+            result,
+            (value, metadataType): void => {
+                result[metadataType] = _.uniqBy(value, "id");
+            }
+        );
+        return result;
+    };
+    return recursiveExport(originalBuilder);
 }
 
 async function importMetadata(
@@ -114,6 +131,7 @@ export async function* startSynchronization(
     const { targetInstances: targetInstanceIds, metadata } = builder;
 
     // Phase 1: Export and package metadata from origin instance
+    console.debug("Start synchronization process");
     yield { message: i18n.t("Fetching metadata from origin instance") };
     const exportPromises = _.keys(metadata)
         .map(

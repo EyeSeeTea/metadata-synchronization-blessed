@@ -116,7 +116,7 @@ export class OrganisationUnitModel extends D2Model {
         "organisationUnitGroups.organisationUnitGroupSets.userGroupAccesses",
     ];
     protected static includeRules = [
-        "attribute",
+        "attributes",
         "organisationUnitGroups",
         "organisationUnitGroups.attributes",
         "organisationUnitGroups.organisationUnitGroupSets",
