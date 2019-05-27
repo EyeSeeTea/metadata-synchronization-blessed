@@ -1,4 +1,5 @@
 import React from "react";
+import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 import PropTypes from "prop-types";
 import { ConfirmationDialog } from "d2-ui-components";
@@ -156,7 +157,7 @@ class SyncSummary extends React.Component {
                                                 className={classes.expansionPanelDetails}
                                             >
                                                 {SyncSummary.buildMessageTable(
-                                                    responseElement.report.messages
+                                                    _.take(responseElement.report.messages, 10)
                                                 )}
                                             </ExpansionPanelDetails>
                                         </div>
