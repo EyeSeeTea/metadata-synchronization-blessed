@@ -5,21 +5,29 @@ import { TableFilters, TableList, TablePagination } from "../types/d2-ui-compone
 const dataStoreNamespace = "metatada-synchronization";
 
 async function getOrCreateNamespace(d2: D2): Promise<any> {
-    const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
-    if (!existsNamespace) {
-        return await d2.dataStore.create(dataStoreNamespace);
-    } else {
+    try {
         return await d2.dataStore.get(dataStoreNamespace);
+    } catch (e) {
+        if (e.httpStatusCode === 404) {
+            return await d2.dataStore.create(dataStoreNamespace);
+        } else {
+            throw e;
+        }
     }
 }
 
-async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any = []): Promise<any> {
-    const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
+async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Promise<any> {
     const dataStore = await getOrCreateNamespace(d2);
-    if (!existsNamespace) {
-        await dataStore.set(dataStoreKey, defaultValue);
+    try {
+        return await dataStore.get(dataStoreKey);
+    } catch (e) {
+        if (e.httpStatusCode === 404) {
+            await dataStore.set(dataStoreKey, defaultValue);
+            return defaultValue;
+        } else {
+            throw e;
+        }
     }
-    return await dataStore.get(dataStoreKey);
 }
 
 async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promise<void> {
@@ -28,11 +36,11 @@ async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promi
 }
 
 export async function getData(d2: D2, dataStoreKey: string): Promise<any> {
-    return await getDataStore(d2, dataStoreKey);
+    return await getDataStore(d2, dataStoreKey, []);
 }
 
 export async function getDataById(d2: D2, dataStoreKey: string, id: string): Promise<any> {
-    const rawData = await getDataStore(d2, dataStoreKey);
+    const rawData = await getDataStore(d2, dataStoreKey, []);
     return _.find(rawData, instance => instance.id === id);
 }
 
@@ -42,7 +50,7 @@ export async function getPaginatedData(
     filters: TableFilters,
     pagination: TablePagination
 ): Promise<TableList> {
-    const rawData = await getDataStore(d2, dataStoreKey);
+    const rawData = await getDataStore(d2, dataStoreKey, []);
     const { search = null } = filters || {};
     const filteredData = _.filter(rawData, o =>
         _(o)
@@ -68,7 +76,7 @@ export async function getPaginatedData(
 
 export async function saveData(d2: D2, dataStoreKey: string, data: any): Promise<Response> {
     try {
-        const dataArray = await getDataStore(d2, dataStoreKey);
+        const dataArray = await getDataStore(d2, dataStoreKey, []);
         const newDataArray = [...dataArray, data];
         await saveDataStore(d2, dataStoreKey, newDataArray);
         return { status: true };
@@ -82,7 +90,7 @@ export async function saveData(d2: D2, dataStoreKey: string, data: any): Promise
 
 export async function deleteData(d2: D2, dataStoreKey: string, data: any): Promise<Response> {
     try {
-        const dataArray = await getDataStore(d2, dataStoreKey);
+        const dataArray = await getDataStore(d2, dataStoreKey, []);
         const newDataArray = dataArray.filter((dataEl: { id: string }) => dataEl.id !== data.id);
         await saveDataStore(d2, dataStoreKey, newDataArray);
         return { status: true };
