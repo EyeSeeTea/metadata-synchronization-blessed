@@ -50,36 +50,24 @@ async function exportMetadata(d2: D2, originalBuilder: ExportBuilder): Promise<M
             const references: MetadataPackage = getAllReferences(d2, object, model.name);
             const includedReferences = cleanReferences(references, includeRules);
             const promises = includedReferences
-                .map(
-                    (type: string): ExportBuilder => ({
-                        type,
-                        ids: references[type].filter((id: string): boolean => !visitedIds.has(id)),
-                        excludeRules: nestedExcludeRules[type],
-                        includeRules: nestedIncludeRules[type],
-                    })
-                )
-                .map(
-                    (newBuilder: ExportBuilder): Promise<MetadataPackage> => {
-                        newBuilder.ids.forEach(
-                            (id: string): void => {
-                                visitedIds.add(id);
-                            }
-                        );
-                        return recursiveExport(newBuilder);
-                    }
-                );
+                .map(type => ({
+                    type,
+                    ids: references[type].filter(id => !visitedIds.has(id)),
+                    excludeRules: nestedExcludeRules[type],
+                    includeRules: nestedIncludeRules[type],
+                }))
+                .map(newBuilder => {
+                    newBuilder.ids.forEach(id => {
+                        visitedIds.add(id);
+                    });
+                    return recursiveExport(newBuilder);
+                });
             const promisesResult: MetadataPackage[] = await Promise.all(promises);
             _.deepMerge(result, ...promisesResult);
         }
 
         // Clean up result from duplicated elements
-        _.forOwn(
-            result,
-            (value, metadataType): void => {
-                result[metadataType] = _.uniqBy(value, "id");
-            }
-        );
-        return result;
+        return _.mapValues(result, objects => _.uniqBy(objects, "id"));
     };
     return recursiveExport(originalBuilder);
 }
@@ -94,7 +82,7 @@ async function importMetadata(
     const messages: any[] = [];
 
     if (importResult.typeReports) {
-        importResult.typeReports.forEach((report: any) => {
+        importResult.typeReports.forEach(report => {
             const { klass, stats, objectReports = [] } = report;
 
             typeStats.push({
@@ -134,20 +122,16 @@ export async function* startSynchronization(
     console.debug("Start synchronization process");
     yield { message: i18n.t("Fetching metadata from origin instance") };
     const exportPromises = _.keys(metadata)
-        .map(
-            (type: string): ExportBuilder => {
-                const myClass = d2ModelFactory(d2, type);
-                return {
-                    type,
-                    ids: metadata[type],
-                    excludeRules: myClass.getExcludeRules(),
-                    includeRules: myClass.getIncludeRules(),
-                };
-            }
-        )
-        .map(
-            (newBuilder: ExportBuilder): Promise<MetadataPackage> => exportMetadata(d2, newBuilder)
-        );
+        .map(type => {
+            const myClass = d2ModelFactory(d2, type);
+            return {
+                type,
+                ids: metadata[type],
+                excludeRules: myClass.getExcludeRules(),
+                includeRules: myClass.getIncludeRules(),
+            };
+        })
+        .map(newBuilder => exportMetadata(d2, newBuilder));
     const exportResults: MetadataPackage[] = await Promise.all(exportPromises);
     const metadataPackage = _.deepMerge({}, ...exportResults);
     console.debug("Metadata package from origin instance done", metadataPackage);
@@ -155,19 +139,17 @@ export async function* startSynchronization(
     // Phase 2: Create parent synchronization task
     yield { message: i18n.t("Retrieving information from remote instances") };
     const targetInstances: Instance[] = await Promise.all(
-        targetInstanceIds.map((id: string): Promise<Instance> => Instance.get(d2, id))
+        targetInstanceIds.map(id => Instance.get(d2, id))
     );
 
     const syncReport = SyncReport.build({
         user: d2.currentUser.username,
         selectedTypes: _.keys(metadata),
         status: "RUNNING" as SynchronizationReportStatus,
-        results: targetInstances.map(
-            (instance: Instance): SynchronizationResult => ({
-                instance: instance.toObject(),
-                status: "PENDING" as MetadataImportStatus,
-            })
-        ),
+        results: targetInstances.map(instance => ({
+            instance: instance.toObject(),
+            status: "PENDING" as MetadataImportStatus,
+        })),
     });
     yield { syncReport };
 

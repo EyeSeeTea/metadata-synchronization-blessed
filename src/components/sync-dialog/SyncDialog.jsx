@@ -41,12 +41,13 @@ class SyncDialog extends React.Component {
 
     handleSynchronization = async () => {
         const { handleClose, loading, metadata, d2 } = this.props;
+        const { targetInstances } = this.state;
         loading.show(true, i18n.t("Synchronizing metadata"));
 
         try {
             const builder = {
                 metadata: metadata,
-                targetInstances: this.state.targetInstances,
+                targetInstances: targetInstances,
             };
             for await (const { message, syncReport, done } of startSynchronization(d2, builder)) {
                 if (message) loading.show(true, message);
