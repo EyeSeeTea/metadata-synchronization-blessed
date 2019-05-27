@@ -8,6 +8,7 @@ import OrganisationUnitSync from "../sync-configurator/OrganisationUnitSync";
 import DataElementSync from "../sync-configurator/DataElementSync";
 import IndicatorSync from "../sync-configurator/IndicatorSync";
 import ValidationRuleSync from "../sync-configurator/ValidationRuleSync";
+import NotificationsTable from "../notifications-table/NotificationsTable";
 
 class Root extends React.Component {
     static propTypes = {
@@ -47,6 +48,11 @@ class Root extends React.Component {
                 <Route
                     path="/sync/validationRules"
                     render={props => <ValidationRuleSync d2={d2} {...props} />}
+                />
+
+                <Route
+                    path="/notifications"
+                    render={props => <NotificationsTable d2={d2} {...props} />}
                 />
 
                 <Route render={() => <LandingPage d2={d2} />} />

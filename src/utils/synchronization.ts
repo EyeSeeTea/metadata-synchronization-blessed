@@ -3,7 +3,7 @@ import _ from "lodash";
 import "../utils/lodash-mixins";
 
 import Instance from "../models/instance";
-import { D2, MetadataImportParams } from "../types/d2";
+import { D2, MetadataImportParams, MetadataImportResponse } from "../types/d2";
 import { NestedRules, MetadataPackage } from "../types/synchronization";
 import { cleanModelName } from "./d2";
 import { isValidUid } from "d2/uid";
@@ -58,31 +58,35 @@ export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataP
     return _.deepMerge({}, ...result.map(result => result.data));
 }
 
-export async function postMetadata(instance: Instance, metadata: any): Promise<any> {
-    const params: MetadataImportParams = {
-        importMode: "COMMIT",
-        identifier: "AUTO",
-        importReportMode: "FULL",
-        importStrategy: "CREATE_AND_UPDATE",
-        mergeMode: "REPLACE",
-        atomicMode: "ALL",
-    };
-
+export async function postMetadata(
+    instance: Instance,
+    metadata: any
+): Promise<MetadataImportResponse> {
     try {
-        return await axios.post(instance.url + "/api/metadata", metadata, {
+        const params: MetadataImportParams = {
+            importMode: "COMMIT",
+            identifier: "AUTO",
+            importReportMode: "FULL",
+            importStrategy: "CREATE_AND_UPDATE",
+            mergeMode: "REPLACE",
+            atomicMode: "ALL",
+        };
+
+        const response = await axios.post(instance.url + "/api/metadata", metadata, {
             auth: {
                 username: instance.username,
                 password: instance.password,
             },
             params,
         });
+
+        return response.data;
     } catch (error) {
         if (error.response) {
             return error.response;
-        } else if (error.request) {
-            return { data: { status: "NETWORK ERROR" } };
         } else {
-            throw error;
+            console.error(error);
+            return { status: "NETWORK ERROR" };
         }
     }
 }

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-05-19T19:09:54.388Z\n"
-"PO-Revision-Date: 2019-05-19T19:09:54.388Z\n"
+"POT-Creation-Date: 2019-05-23T15:30:23.997Z\n"
+"PO-Revision-Date: 2019-05-23T15:30:23.997Z\n"
 
 msgid "Instance Configurator"
 msgstr ""
@@ -30,6 +30,9 @@ msgid "Notifications"
 msgstr ""
 
 msgid "Connected successfully to instance"
+msgstr ""
+
+msgid "Deleting Instance"
 msgstr ""
 
 msgid "Deleted {{name}}"
@@ -125,6 +128,24 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+msgid "Deleting notification"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Timestamp"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Metadata Types"
+msgstr ""
+
+msgid "View summary"
+msgstr ""
+
 msgid "<No value>"
 msgstr ""
 
@@ -198,9 +219,6 @@ msgid "Message"
 msgstr ""
 
 msgid "Synchronization Results"
-msgstr ""
-
-msgid "Status"
 msgstr ""
 
 msgid "Summary"

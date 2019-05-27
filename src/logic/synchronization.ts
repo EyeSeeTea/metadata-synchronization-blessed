@@ -2,13 +2,15 @@ import _ from "lodash";
 import "../utils/lodash-mixins";
 
 import Instance from "../models/instance";
+import SyncReport from "../models/syncReport";
 import { d2ModelFactory } from "../models/d2ModelFactory";
-import { D2 } from "../types/d2";
+import { D2, MetadataImportStatus } from "../types/d2";
 import {
     ExportBuilder,
     MetadataPackage,
     NestedRules,
     SynchronizationBuilder,
+    SynchronizationReportStatus,
     SynchronizationResult,
 } from "../types/synchronization";
 import {
@@ -64,18 +66,16 @@ async function exportMetadata(d2: D2, builder: ExportBuilder): Promise<MetadataP
 }
 
 async function importMetadata(
-    d2: D2,
-    instanceId: string,
+    instance: Instance,
     metadataPackage: MetadataPackage
 ): Promise<SynchronizationResult> {
-    const instance = await Instance.get(d2, instanceId);
     const importResult = await postMetadata(instance, metadataPackage);
 
     const typeStats: any[] = [];
     const messages: any[] = [];
 
-    if (importResult.data.typeReports) {
-        importResult.data.typeReports.forEach((report: any) => {
+    if (importResult.typeReports) {
+        importResult.typeReports.forEach((report: any) => {
             const { klass, stats, objectReports = [] } = report;
 
             typeStats.push({
@@ -99,8 +99,8 @@ async function importMetadata(
     }
 
     return {
-        ...importResult.data,
-        instance: _.pick(instance, ["id", "name", "url"]),
+        ..._.pick(importResult, ["status", "stats"]),
+        instance: _.pick(instance, ["id", "name", "url", "username"]),
         report: { typeStats, messages },
     };
 }
@@ -108,14 +108,17 @@ async function importMetadata(
 export async function startSynchronization(
     d2: D2,
     builder: SynchronizationBuilder
-): Promise<SynchronizationResult[]> {
+): Promise<SyncReport> {
+    const { targetInstances: targetInstanceIds, metadata } = builder;
+
     // Phase 1: Export and package metadata from origin instance
-    const exportPromises = _.keys(builder.metadata)
+    console.debug("Begin Export and package metadata from origin instance");
+    const exportPromises = _.keys(metadata)
         .map(type => {
             const myClass = d2ModelFactory(d2, type);
             return {
                 type,
-                ids: builder.metadata[type],
+                ids: metadata[type],
                 excludeRules: myClass.getExcludeRules(),
                 includeRules: myClass.getIncludeRules(),
             };
@@ -123,11 +126,36 @@ export async function startSynchronization(
         .map(newBuilder => exportMetadata(d2, newBuilder));
     const exportResults: MetadataPackage[] = await Promise.all(exportPromises);
     const metadataPackage = _.deepMerge({}, ...exportResults);
+    console.debug("Metadata package from origin instance done", metadataPackage);
 
-    // Phase 2: Import metadata into destination instances
-    const importPromises = builder.targetInstances.map(instanceId =>
-        importMetadata(d2, instanceId, metadataPackage)
+    // Phase 2: Create parent synchronization task
+    const targetInstances: Instance[] = await Promise.all(
+        targetInstanceIds.map(id => Instance.get(d2, id))
     );
 
-    return Promise.all(importPromises);
+    const syncReport = SyncReport.build({
+        user: d2.currentUser.username,
+        selectedTypes: _.keys(metadata),
+        status: "RUNNING" as SynchronizationReportStatus,
+        results: targetInstances.map(instance => ({
+            instance: instance.toObject(),
+            status: "PENDING" as MetadataImportStatus,
+        })),
+    });
+    await syncReport.save(d2);
+
+    // Phase 3: Import metadata into destination instances
+    for (const instanceId of targetInstances) {
+        console.debug("Start import on destination instance", instanceId);
+        const result = await importMetadata(instanceId, metadataPackage);
+        syncReport.addSyncResult(result);
+        console.debug("Start import on destination instance done", instanceId);
+        await syncReport.save(d2);
+    }
+
+    // Phase 4: Update parent task status
+    syncReport.setStatus(syncReport.hasErrors() ? "FAILURE" : "DONE");
+    await syncReport.save(d2);
+
+    return syncReport;
 }

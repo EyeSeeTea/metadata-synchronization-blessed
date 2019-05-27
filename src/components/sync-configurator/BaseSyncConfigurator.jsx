@@ -8,11 +8,12 @@ import { withStyles } from "@material-ui/core/styles";
 import SyncIcon from "@material-ui/icons/Sync";
 import _ from "lodash";
 
+import SyncReport from "../../models/syncReport";
+import { d2ModelFactory } from "../../models/d2ModelFactory";
 import PageHeader from "../shared/PageHeader";
 import SyncDialog from "../sync-dialog/SyncDialog";
 import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../shared/Dropdown";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
 
 const styles = theme => ({
     fab: {
@@ -33,7 +34,7 @@ class BaseSyncConfigurator extends React.Component {
             groupFilterData: [],
         },
         metadata: {},
-        importResponse: [],
+        importResponse: SyncReport.create(),
         syncDialogOpen: false,
         syncSummaryOpen: false,
     };

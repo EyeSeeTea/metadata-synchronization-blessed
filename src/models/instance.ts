@@ -64,18 +64,20 @@ export default class Instance {
 
     public async save(d2: D2): Promise<Response> {
         const instance = await this.encryptPassword();
-        let toSave;
-        if (instance.data.id) {
-            toSave = instance.data;
-            await instance.remove(d2);
-        } else {
-            toSave = { ...instance.data, id: generateUid() };
-        }
-        return saveData(d2, instancesDataStoreKey, toSave);
+        const exists = instance.data.id;
+        const element = exists ? instance.data : { ...instance.data, id: generateUid() };
+
+        if (exists) await instance.remove(d2);
+
+        return saveData(d2, instancesDataStoreKey, element);
     }
 
     public async remove(d2: D2): Promise<Response> {
         return deleteData(d2, instancesDataStoreKey, this.data);
+    }
+
+    public toObject(): Data {
+        return _.clone(this.data);
     }
 
     public setId(id: string): Instance {
@@ -244,7 +246,7 @@ export default class Instance {
                     ),
                 };
             } else {
-                console.log({ error });
+                console.debug({ error });
                 return { status: false, error };
             }
         }
