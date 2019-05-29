@@ -51,7 +51,7 @@ class SyncDialog extends React.Component {
             };
             for await (const { message, syncReport, done } of startSynchronization(d2, builder)) {
                 if (message) loading.show(true, message);
-                if (syncReport) await syncReport.save();
+                if (syncReport) await syncReport.save(d2);
                 if (done) handleClose(syncReport);
             }
         } catch (error) {

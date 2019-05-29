@@ -9,14 +9,16 @@ const dataStoreNamespace = "metadata-synchronization";
 async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Promise<any> {
     try {
         const response = await axios.get(
-            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`
+            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+            { withCredentials: true }
         );
         return response.data;
     } catch (error) {
         if (error.response && error.response.status === 404) {
             await axios.post(
                 d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
-                defaultValue
+                defaultValue,
+                { withCredentials: true }
             );
             return defaultValue;
         } else {
@@ -29,13 +31,15 @@ async function saveDataStore(d2: D2, dataStoreKey: string, value: any): Promise<
     try {
         await axios.put(
             d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
-            value
+            value,
+            { withCredentials: true }
         );
     } catch (error) {
         if (error.response && error.response.status === 404) {
             await axios.post(
                 d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
-                value
+                value,
+                { withCredentials: true }
             );
         } else {
             throw error;
@@ -89,6 +93,7 @@ export async function saveData(d2: D2, dataStoreKey: string, data: any): Promise
         await saveDataStore(d2, dataStoreKey, newDataArray);
         return { status: true };
     } catch (e) {
+        console.error(e);
         return {
             status: false,
             error: e.toString(),
@@ -105,6 +110,7 @@ export async function deleteData(d2: D2, dataStoreKey: string, data: any): Promi
         await saveDataStore(d2, dataStoreKey, newDataArray);
         return { status: true };
     } catch (e) {
+        console.error(e);
         return {
             status: false,
             error: e.toString(),
