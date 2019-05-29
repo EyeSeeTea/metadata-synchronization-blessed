@@ -149,7 +149,7 @@ class InstanceConfigurator extends React.Component {
                         pageSize={10}
                         initialSorting={this.initialSorting}
                         actions={this.actions}
-                        onCreate={this.createInstance}
+                        onButtonClick={this.createInstance}
                         list={Instance.list}
                     />
                 </div>
