@@ -22,6 +22,10 @@ export interface OrganisationUnitTableFilters extends TableFilters {
     orgUnitLevel?: string;
 }
 
+export interface SyncReportTableFilters extends TableFilters {
+    statusFilter?: string;
+}
+
 export interface TablePagination {
     page?: number;
     pageSize?: number;

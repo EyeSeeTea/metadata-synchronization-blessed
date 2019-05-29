@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-05-27T11:31:49.068Z\n"
-"PO-Revision-Date: 2019-05-27T11:31:49.068Z\n"
+"POT-Creation-Date: 2019-05-29T13:33:50.871Z\n"
+"PO-Revision-Date: 2019-05-29T13:33:50.871Z\n"
 
 msgid "Instance Configurator"
 msgstr ""
@@ -144,6 +144,21 @@ msgid "Metadata Types"
 msgstr ""
 
 msgid "View summary"
+msgstr ""
+
+msgid "Ready"
+msgstr ""
+
+msgid "Running"
+msgstr ""
+
+msgid "Failure"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "Synchronization Status"
 msgstr ""
 
 msgid "<No value>"

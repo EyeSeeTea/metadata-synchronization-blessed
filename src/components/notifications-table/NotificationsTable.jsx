@@ -2,12 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
-import { ObjectsTable, withSnackbar, withLoading, ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../shared/PageHeader";
-
+import Dropdown from "../shared/Dropdown";
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 
@@ -21,6 +21,10 @@ class NotificationsTable extends React.Component {
         toDelete: null,
         summaryOpen: false,
         syncReport: SyncReport.create(),
+        statusFilter: {
+            value: "",
+            items: [],
+        },
     };
 
     static propTypes = {
@@ -141,8 +145,50 @@ class NotificationsTable extends React.Component {
         },
     ];
 
+    componentDidMount = () => {
+        const { value } = this.state.statusFilter;
+        const items = [
+            {
+                id: "READY",
+                name: i18n.t("Ready"),
+            },
+            {
+                id: "RUNNING",
+                name: i18n.t("Running"),
+            },
+            {
+                id: "FAILURE",
+                name: i18n.t("Failure"),
+            },
+            {
+                id: "DONE",
+                name: i18n.t("Done"),
+            },
+        ];
+        this.setState({ statusFilter: { value, items } });
+    };
+
+    changeStatusFilter = event => {
+        const { items } = this.state.statusFilter;
+        this.setState({ statusFilter: { value: event.target.value, items } });
+    };
+
+    renderCustomFilters = () => {
+        const { items, value } = this.state.statusFilter;
+
+        return (
+            <Dropdown
+                key={"level-filter"}
+                items={items}
+                onChange={this.changeStatusFilter}
+                value={value}
+                label={i18n.t("Synchronization Status")}
+            />
+        );
+    };
+
     render() {
-        const { tableKey, toDelete, syncReport, summaryOpen } = this.state;
+        const { tableKey, toDelete, syncReport, summaryOpen, statusFilter } = this.state;
         const { d2, classes } = this.props;
 
         return (
@@ -160,6 +206,8 @@ class NotificationsTable extends React.Component {
                         actions={this.actions}
                         list={SyncReport.list}
                         hideSearchBox={true}
+                        customFiltersComponent={this.renderCustomFilters}
+                        customFilters={{ statusFilter: statusFilter.value }}
                     />
                 </div>
 
