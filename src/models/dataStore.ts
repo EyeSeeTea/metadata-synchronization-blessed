@@ -1,38 +1,46 @@
 import _ from "lodash";
+import axios from "axios";
+
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 
-const dataStoreNamespace = "metatada-synchronization";
-
-async function getOrCreateNamespace(d2: D2): Promise<any> {
-    try {
-        return await d2.dataStore.get(dataStoreNamespace);
-    } catch (e) {
-        if (e.httpStatusCode === 404) {
-            return await d2.dataStore.create(dataStoreNamespace);
-        } else {
-            throw e;
-        }
-    }
-}
+const dataStoreNamespace = "metadata-synchronization";
 
 async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Promise<any> {
-    const dataStore = await getOrCreateNamespace(d2);
     try {
-        return await dataStore.get(dataStoreKey);
-    } catch (e) {
-        if (e.httpStatusCode === 404) {
-            await dataStore.set(dataStoreKey, defaultValue);
+        const response = await axios.get(
+            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`
+        );
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            await axios.post(
+                d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+                defaultValue
+            );
             return defaultValue;
         } else {
-            throw e;
+            throw error;
         }
     }
 }
 
-async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promise<void> {
-    const dataStore = await getOrCreateNamespace(d2);
-    await dataStore.set(dataStoreKey, newValue);
+async function saveDataStore(d2: D2, dataStoreKey: string, value: any): Promise<void> {
+    try {
+        await axios.put(
+            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+            value
+        );
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            await axios.post(
+                d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+                value
+            );
+        } else {
+            throw error;
+        }
+    }
 }
 
 export async function getData(d2: D2, dataStoreKey: string): Promise<any> {
