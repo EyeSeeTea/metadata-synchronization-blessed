@@ -195,7 +195,7 @@ class BaseSyncConfigurator extends React.Component {
                         customFiltersComponent={this.renderCustomFilters}
                         customFilters={filters}
                         onSelectionChange={this.changeSelection}
-                        onCreate={this.startSynchronization}
+                        onButtonClick={this.startSynchronization}
                         buttonLabel={<SyncIcon />}
                     />
                 </div>
