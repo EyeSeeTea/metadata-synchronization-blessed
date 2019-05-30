@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import i18n from "@dhis2/d2-i18n";
 import { DatePicker, ObjectsTable, withSnackbar } from "d2-ui-components";
-import Fab from "@material-ui/core/Fab";
 import { withStyles } from "@material-ui/core/styles";
 import SyncIcon from "@material-ui/icons/Sync";
 import _ from "lodash";
@@ -15,13 +14,7 @@ import SyncDialog from "../sync-dialog/SyncDialog";
 import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../shared/Dropdown";
 
-const styles = theme => ({
-    fab: {
-        margin: theme.spacing.unit,
-        position: "fixed",
-        bottom: theme.spacing.unit * 5,
-        right: theme.spacing.unit * 9,
-    },
+const styles = () => ({
     tableContainer: { marginTop: -10 },
 });
 
@@ -202,17 +195,9 @@ class BaseSyncConfigurator extends React.Component {
                         customFiltersComponent={this.renderCustomFilters}
                         customFilters={filters}
                         onSelectionChange={this.changeSelection}
+                        onButtonClick={this.startSynchronization}
+                        buttonLabel={<SyncIcon />}
                     />
-                    <Fab
-                        color="primary"
-                        aria-label="Add"
-                        className={classes.fab}
-                        size="large"
-                        onClick={this.startSynchronization}
-                        data-test="list-action-bar"
-                    >
-                        <SyncIcon />
-                    </Fab>
                 </div>
                 <SyncDialog
                     d2={d2}
