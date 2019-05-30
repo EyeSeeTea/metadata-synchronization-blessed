@@ -159,6 +159,7 @@ class NotificationsTable extends React.Component {
                         initialSorting={this.initialSorting}
                         actions={this.actions}
                         list={SyncReport.list}
+                        hideSearchBox={true}
                     />
                 </div>
 
