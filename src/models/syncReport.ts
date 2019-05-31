@@ -18,7 +18,7 @@ export default class SyncReport {
     constructor(syncReport: SynchronizationReport) {
         this.syncReport = {
             id: generateUid(),
-            timestamp: new Date(),
+            date: new Date(),
             ...syncReport,
         };
     }
@@ -29,7 +29,7 @@ export default class SyncReport {
             user: "",
             status: "READY" as SynchronizationReportStatus,
             results: [],
-            selectedTypes: [],
+            types: [],
         });
     }
 

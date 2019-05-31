@@ -35,11 +35,11 @@ export type SynchronizationReportStatus = "READY" | "RUNNING" | "FAILURE" | "DON
 
 export interface SynchronizationReport {
     id?: string;
-    timestamp?: Date;
+    date?: Date;
     user: string;
     status: SynchronizationReportStatus;
     results: SynchronizationResult[];
-    selectedTypes: string[];
+    types: string[];
 }
 
 export interface NestedRules {

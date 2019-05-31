@@ -144,7 +144,7 @@ export async function* startSynchronization(
 
     const syncReport = SyncReport.build({
         user: d2.currentUser.username,
-        selectedTypes: _.keys(metadata),
+        types: _.keys(metadata),
         status: "RUNNING" as SynchronizationReportStatus,
         results: targetInstances.map(instance => ({
             instance: instance.toObject(),
