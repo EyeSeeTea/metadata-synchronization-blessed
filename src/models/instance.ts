@@ -77,7 +77,7 @@ export default class Instance {
     }
 
     public toObject(): Pick<Data, "id" | "name" | "url" | "username"> {
-        return _.omit(this.data, ['password']);
+        return _.omit(this.data, ["password"]);
     }
 
     public setId(id: string): Instance {
