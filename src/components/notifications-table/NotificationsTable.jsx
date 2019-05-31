@@ -12,7 +12,7 @@ import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 
 const styles = () => ({
-    tableContainer: { marginTop: -10 },
+    tableContainer: { marginTop: 10 },
 });
 
 class NotificationsTable extends React.Component {
@@ -104,7 +104,12 @@ class NotificationsTable extends React.Component {
     columns = [
         { name: "user", text: i18n.t("User"), sortable: true },
         { name: "timestamp", text: i18n.t("Timestamp"), sortable: true },
-        { name: "status", text: i18n.t("Status"), sortable: true },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            sortable: true,
+            getValue: notification => _.startCase(_.toLower(notification.status)),
+        },
     ];
 
     initialSorting = ["id", "asc"];
@@ -112,7 +117,11 @@ class NotificationsTable extends React.Component {
     detailsFields = [
         { name: "user", text: i18n.t("User") },
         { name: "timestamp", text: i18n.t("Timestamp") },
-        { name: "status", text: i18n.t("Status") },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            getValue: notification => _.startCase(_.toLower(notification.status)),
+        },
         {
             name: "metadata",
             text: i18n.t("Metadata Types"),
@@ -174,7 +183,7 @@ class NotificationsTable extends React.Component {
                 items={this.dropdownItems}
                 onChange={this.changeStatusFilter}
                 value={statusFilter}
-                label={i18n.t("Synchronization Status")}
+                label={i18n.t("Synchronization status")}
             />
         );
     };
