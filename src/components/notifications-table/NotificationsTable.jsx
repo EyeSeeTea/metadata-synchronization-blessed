@@ -21,10 +21,7 @@ class NotificationsTable extends React.Component {
         toDelete: null,
         summaryOpen: false,
         syncReport: SyncReport.create(),
-        statusFilter: {
-            value: "",
-            items: [],
-        },
+        statusFilter: "",
     };
 
     static propTypes = {
@@ -145,43 +142,38 @@ class NotificationsTable extends React.Component {
         },
     ];
 
-    componentDidMount = () => {
-        const { value } = this.state.statusFilter;
-        const items = [
-            {
-                id: "READY",
-                name: i18n.t("Ready"),
-            },
-            {
-                id: "RUNNING",
-                name: i18n.t("Running"),
-            },
-            {
-                id: "FAILURE",
-                name: i18n.t("Failure"),
-            },
-            {
-                id: "DONE",
-                name: i18n.t("Done"),
-            },
-        ];
-        this.setState({ statusFilter: { value, items } });
-    };
+    dropdownItems = [
+        {
+            id: "READY",
+            name: i18n.t("Ready"),
+        },
+        {
+            id: "RUNNING",
+            name: i18n.t("Running"),
+        },
+        {
+            id: "FAILURE",
+            name: i18n.t("Failure"),
+        },
+        {
+            id: "DONE",
+            name: i18n.t("Done"),
+        },
+    ];
 
     changeStatusFilter = event => {
-        const { items } = this.state.statusFilter;
-        this.setState({ statusFilter: { value: event.target.value, items } });
+        this.setState({ statusFilter: event.target.value });
     };
 
     renderCustomFilters = () => {
-        const { items, value } = this.state.statusFilter;
+        const { statusFilter } = this.state;
 
         return (
             <Dropdown
                 key={"level-filter"}
-                items={items}
+                items={this.dropdownItems}
                 onChange={this.changeStatusFilter}
-                value={value}
+                value={statusFilter}
                 label={i18n.t("Synchronization Status")}
             />
         );
@@ -207,7 +199,7 @@ class NotificationsTable extends React.Component {
                         list={SyncReport.list}
                         hideSearchBox={true}
                         customFiltersComponent={this.renderCustomFilters}
-                        customFilters={{ statusFilter: statusFilter.value }}
+                        customFilters={{ statusFilter }}
                     />
                 </div>
 
