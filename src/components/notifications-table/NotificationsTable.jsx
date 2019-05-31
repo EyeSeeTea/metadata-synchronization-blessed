@@ -65,7 +65,7 @@ class NotificationsTable extends React.Component {
             this.props.snackbar.error(i18n.t("Failed to delete some notifications"));
         } else {
             this.props.snackbar.success(
-                i18n.t("Successfully deleted {{count}} notification", { count: toDelete.length })
+                i18n.t("Successfully deleted {{count}} notifications", { count: toDelete.length })
             );
         }
 
@@ -177,7 +177,7 @@ class NotificationsTable extends React.Component {
                     title={i18n.t("Delete Notifications?")}
                     description={
                         toDelete
-                            ? i18n.t("Are you sure you want to delete {{count}} notification?", {
+                            ? i18n.t("Are you sure you want to delete {{count}} notifications?", {
                                   count: toDelete.length,
                               })
                             : ""

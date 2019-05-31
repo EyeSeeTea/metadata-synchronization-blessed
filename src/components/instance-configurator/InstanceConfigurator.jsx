@@ -71,7 +71,7 @@ class InstanceConfigurator extends React.Component {
             this.props.snackbar.error(i18n.t("Failed to delete some instances"));
         } else {
             this.props.snackbar.success(
-                i18n.t("Successfully deleted {{count}} instance", { count: toDelete.length })
+                i18n.t("Successfully deleted {{count}} instances", { count: toDelete.length })
             );
         }
 
@@ -139,7 +139,7 @@ class InstanceConfigurator extends React.Component {
                     title={i18n.t("Delete Instances?")}
                     description={
                         toDelete
-                            ? i18n.t("Are you sure you want to delete {{count}} instance?", {
+                            ? i18n.t("Are you sure you want to delete {{count}} instances?", {
                                   count: toDelete.length,
                               })
                             : ""
