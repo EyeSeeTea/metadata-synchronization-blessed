@@ -60,12 +60,15 @@ class InstanceConfigurator extends React.Component {
         const { toDelete } = this.state;
 
         loading.show(true, i18n.t("Deleting Instances"));
+        const instances = toDelete.map(instanceData => new Instance(instanceData));
 
-        const promises = toDelete
-            .map(instanceData => new Instance(instanceData))
-            .map(instance => instance.remove(d2));
+        const results = [];
+        for (const instance of instances) {
+            results.push(await instance.remove(d2));
+        }
 
-        const results = await Promise.all(promises);
+        loading.reset();
+        this.setState({ tableKey: Math.random(), toDelete: null });
 
         if (_.some(results, ["status", false])) {
             this.props.snackbar.error(i18n.t("Failed to delete some instances"));
@@ -74,9 +77,6 @@ class InstanceConfigurator extends React.Component {
                 i18n.t("Successfully deleted {{count}} instances", { count: toDelete.length })
             );
         }
-
-        loading.reset();
-        this.setState({ tableKey: Math.random(), toDelete: null });
     };
 
     columns = [

@@ -54,12 +54,15 @@ class NotificationsTable extends React.Component {
         const { toDelete } = this.state;
 
         loading.show(true, i18n.t("Deleting Notifications"));
+        const notifications = toDelete.map(data => new SyncReport(data));
 
-        const promises = toDelete
-            .map(reportData => new SyncReport(reportData))
-            .map(report => report.remove(d2));
+        const results = [];
+        for (const notification of notifications) {
+            results.push(await notification.remove(d2));
+        }
 
-        const results = await Promise.all(promises);
+        loading.reset();
+        this.setState({ tableKey: Math.random(), toDelete: null });
 
         if (_.some(results, ["status", false])) {
             this.props.snackbar.error(i18n.t("Failed to delete some notifications"));
@@ -68,9 +71,6 @@ class NotificationsTable extends React.Component {
                 i18n.t("Successfully deleted {{count}} notifications", { count: toDelete.length })
             );
         }
-
-        loading.reset();
-        this.setState({ tableKey: Math.random(), toDelete: null });
     };
 
     openSummary = data => {
