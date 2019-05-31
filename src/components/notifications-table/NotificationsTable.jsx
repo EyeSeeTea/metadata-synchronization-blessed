@@ -12,7 +12,7 @@ import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 
 const styles = () => ({
-    tableContainer: { marginTop: -10 },
+    tableContainer: { marginTop: 10 },
 });
 
 class NotificationsTable extends React.Component {
@@ -21,10 +21,7 @@ class NotificationsTable extends React.Component {
         toDelete: null,
         summaryOpen: false,
         syncReport: SyncReport.create(),
-        statusFilter: {
-            value: "",
-            items: [],
-        },
+        statusFilter: "",
     };
 
     static propTypes = {
@@ -107,7 +104,12 @@ class NotificationsTable extends React.Component {
     columns = [
         { name: "user", text: i18n.t("User"), sortable: true },
         { name: "date", text: i18n.t("Timestamp"), sortable: true },
-        { name: "status", text: i18n.t("Status"), sortable: true },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            sortable: true,
+            getValue: notification => _.startCase(_.toLower(notification.status)),
+        },
     ];
 
     initialSorting = ["id", "asc"];
@@ -115,7 +117,11 @@ class NotificationsTable extends React.Component {
     detailsFields = [
         { name: "user", text: i18n.t("User") },
         { name: "date", text: i18n.t("Timestamp") },
-        { name: "status", text: i18n.t("Status") },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            getValue: notification => _.startCase(_.toLower(notification.status)),
+        },
         {
             name: "metadata",
             text: i18n.t("Metadata Types"),
@@ -145,44 +151,39 @@ class NotificationsTable extends React.Component {
         },
     ];
 
-    componentDidMount = () => {
-        const { value } = this.state.statusFilter;
-        const items = [
-            {
-                id: "READY",
-                name: i18n.t("Ready"),
-            },
-            {
-                id: "RUNNING",
-                name: i18n.t("Running"),
-            },
-            {
-                id: "FAILURE",
-                name: i18n.t("Failure"),
-            },
-            {
-                id: "DONE",
-                name: i18n.t("Done"),
-            },
-        ];
-        this.setState({ statusFilter: { value, items } });
-    };
+    dropdownItems = [
+        {
+            id: "READY",
+            name: i18n.t("Ready"),
+        },
+        {
+            id: "RUNNING",
+            name: i18n.t("Running"),
+        },
+        {
+            id: "FAILURE",
+            name: i18n.t("Failure"),
+        },
+        {
+            id: "DONE",
+            name: i18n.t("Done"),
+        },
+    ];
 
     changeStatusFilter = event => {
-        const { items } = this.state.statusFilter;
-        this.setState({ statusFilter: { value: event.target.value, items } });
+        this.setState({ statusFilter: event.target.value });
     };
 
     renderCustomFilters = () => {
-        const { items, value } = this.state.statusFilter;
+        const { statusFilter } = this.state;
 
         return (
             <Dropdown
                 key={"level-filter"}
-                items={items}
+                items={this.dropdownItems}
                 onChange={this.changeStatusFilter}
-                value={value}
-                label={i18n.t("Synchronization Status")}
+                value={statusFilter}
+                label={i18n.t("Synchronization status")}
             />
         );
     };
@@ -207,7 +208,7 @@ class NotificationsTable extends React.Component {
                         list={SyncReport.list}
                         hideSearchBox={true}
                         customFiltersComponent={this.renderCustomFilters}
-                        customFilters={{ statusFilter: statusFilter.value }}
+                        customFilters={{ statusFilter }}
                     />
                 </div>
 

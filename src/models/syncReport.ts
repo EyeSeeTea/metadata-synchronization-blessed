@@ -80,6 +80,8 @@ export default class SyncReport {
     }
 
     public hasErrors(): boolean {
-        return _.some(this.syncReport.results, result => result.status !== "OK");
+        return _.some(this.syncReport.results, result =>
+            ["ERROR", "NETWORK ERROR"].includes(result.status)
+        );
     }
 }
