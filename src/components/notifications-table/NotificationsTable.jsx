@@ -213,6 +213,7 @@ class NotificationsTable extends React.Component {
                 </div>
 
                 <SyncSummary
+                    d2={d2}
                     response={syncReport}
                     isOpen={summaryOpen}
                     handleClose={this.closeSummary}

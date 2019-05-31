@@ -76,8 +76,8 @@ export default class Instance {
         return deleteData(d2, instancesDataStoreKey, this.data);
     }
 
-    public toObject(): Data {
-        return _.clone(this.data);
+    public toObject(): Pick<Data, "id" | "name" | "url" | "username"> {
+        return _.omit(this.data, ['password']);
     }
 
     public setId(id: string): Instance {

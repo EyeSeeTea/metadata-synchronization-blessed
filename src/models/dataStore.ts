@@ -6,7 +6,7 @@ import { TableFilters, TableList, TablePagination } from "../types/d2-ui-compone
 
 const dataStoreNamespace = "metadata-synchronization";
 
-async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Promise<any> {
+export async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Promise<any> {
     try {
         const response = await axios.get(
             d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
@@ -27,7 +27,7 @@ async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Pr
     }
 }
 
-async function saveDataStore(d2: D2, dataStoreKey: string, value: any): Promise<void> {
+export async function saveDataStore(d2: D2, dataStoreKey: string, value: any): Promise<void> {
     try {
         await axios.put(
             d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
@@ -42,6 +42,19 @@ async function saveDataStore(d2: D2, dataStoreKey: string, value: any): Promise<
                 { withCredentials: true }
             );
         } else {
+            throw error;
+        }
+    }
+}
+
+export async function deleteDataStore(d2: D2, dataStoreKey: string): Promise<void> {
+    try {
+        await axios.delete(
+            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+            { withCredentials: true }
+        );
+    } catch (error) {
+        if (!error.response || error.response.status !== 404) {
             throw error;
         }
     }

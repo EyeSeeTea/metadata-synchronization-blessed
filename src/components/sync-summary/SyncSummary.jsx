@@ -2,21 +2,21 @@ import React from "react";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 import PropTypes from "prop-types";
-import { ConfirmationDialog } from "d2-ui-components";
+import {ConfirmationDialog} from "d2-ui-components";
 import ReactJson from "react-json-view";
 
 import {
-    withStyles,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
     DialogContent,
     ExpansionPanel,
-    ExpansionPanelSummary,
     ExpansionPanelDetails,
+    ExpansionPanelSummary,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
     Typography,
+    withStyles,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
@@ -43,6 +43,10 @@ class SyncSummary extends React.Component {
         isOpen: PropTypes.bool.isRequired,
         response: PropTypes.object.isRequired,
         handleClose: PropTypes.func.isRequired,
+    };
+
+    state = {
+        results: [],
     };
 
     static buildSummaryTable(stats) {
@@ -99,9 +103,17 @@ class SyncSummary extends React.Component {
         );
     }
 
+    componentDidUpdate = async prevProps => {
+        const { response, d2 } = this.props;
+        if (response !== prevProps.response) {
+            await response.loadSyncResults(d2);
+            this.setState({ results: response.results });
+        }
+    };
+
     render() {
         const { isOpen, response, classes, handleClose } = this.props;
-        const { results } = response.syncReport;
+        const { results } = this.state;
 
         return (
             <React.Fragment>
@@ -173,7 +185,14 @@ class SyncSummary extends React.Component {
                             </ExpansionPanelSummary>
 
                             <ExpansionPanelDetails>
-                                <ReactJson src={response} collapsed={2} enableClipboard={false} />
+                                <ReactJson
+                                    src={{
+                                        results: response.results,
+                                        syncReport: response.syncReport,
+                                    }}
+                                    collapsed={2}
+                                    enableClipboard={false}
+                                />
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                     </DialogContent>
