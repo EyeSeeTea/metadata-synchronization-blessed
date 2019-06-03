@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-05-31T07:41:49.436Z\n"
-"PO-Revision-Date: 2019-05-31T07:41:49.436Z\n"
+"POT-Creation-Date: 2019-06-03T10:58:22.290Z\n"
+"PO-Revision-Date: 2019-06-03T10:58:22.290Z\n"
 
 msgid "Instance Configurator"
 msgstr ""
@@ -254,6 +254,9 @@ msgid "Fetching metadata from origin instance"
 msgstr ""
 
 msgid "Retrieving information from remote instances"
+msgstr ""
+
+msgid "Importing data in instance {{instance}}"
 msgstr ""
 
 msgid "Not a valid DHIS2 instance"
