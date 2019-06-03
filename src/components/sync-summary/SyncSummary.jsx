@@ -19,6 +19,7 @@ import {
     withStyles,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import SyncReport from "../../models/syncReport";
 
 const styles = theme => ({
     expansionPanelHeading1: {
@@ -41,7 +42,7 @@ const styles = theme => ({
 class SyncSummary extends React.Component {
     static propTypes = {
         isOpen: PropTypes.bool.isRequired,
-        response: PropTypes.object.isRequired,
+        response: PropTypes.instanceOf(SyncReport).isRequired,
         handleClose: PropTypes.func.isRequired,
     };
 
@@ -185,14 +186,7 @@ class SyncSummary extends React.Component {
                             </ExpansionPanelSummary>
 
                             <ExpansionPanelDetails>
-                                <ReactJson
-                                    src={{
-                                        results: response.results,
-                                        syncReport: response.syncReport,
-                                    }}
-                                    collapsed={2}
-                                    enableClipboard={false}
-                                />
+                                <ReactJson src={response} collapsed={2} enableClipboard={false} />
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                     </DialogContent>
