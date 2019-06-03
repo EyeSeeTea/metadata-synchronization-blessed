@@ -187,7 +187,7 @@ class SyncSummary extends React.Component {
 
                             <ExpansionPanelDetails>
                                 <ReactJson
-                                    src={_.pick(response, ["results", "syncReport"])}
+                                    src={{ ...response, results }}
                                     collapsed={2}
                                     enableClipboard={false}
                                 />

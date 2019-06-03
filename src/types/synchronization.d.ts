@@ -29,7 +29,7 @@ export interface SynchronizationResult extends MetadataImportResponse {
         typeStats: MetadataImportStats[];
         messages: any[];
     };
-    date: number;
+    date: Date;
 }
 
 export type SynchronizationReportStatus = "READY" | "RUNNING" | "FAILURE" | "DONE";

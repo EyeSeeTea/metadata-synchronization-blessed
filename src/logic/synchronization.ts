@@ -109,7 +109,7 @@ async function importMetadata(
         ..._.pick(importResult, ["status", "stats"]),
         instance: _.pick(instance, ["id", "name", "url", "username"]),
         report: { typeStats, messages },
-        date: Date.now(),
+        date: new Date(),
     };
 }
 
@@ -152,7 +152,7 @@ export async function* startSynchronization(
         ...targetInstances.map(instance => ({
             instance: instance.toObject(),
             status: "PENDING" as MetadataImportStatus,
-            date: Date.now(),
+            date: new Date(),
         }))
     );
     yield { syncReport };
