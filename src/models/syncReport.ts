@@ -96,6 +96,8 @@ export default class SyncReport {
     }
 
     public hasErrors(): boolean {
-        return _.some(this.results, result => ["ERROR", "NETWORK ERROR"].includes(result.status));
+        return _.some(this.results, result =>
+            _(["ERROR", "NETWORK ERROR"]).includes(result.status)
+        );
     }
 }
