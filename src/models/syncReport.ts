@@ -3,7 +3,7 @@ import { generateUid } from "d2/uid";
 
 import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
 import { D2, Response } from "../types/d2";
-import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { SyncReportTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import {
     SynchronizationReport,
     SynchronizationReportStatus,
@@ -44,10 +44,14 @@ export default class SyncReport {
 
     public static async list(
         d2: D2,
-        filters: TableFilters,
+        filters: SyncReportTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        return getPaginatedData(d2, notificationsDataStoreKey, filters, pagination);
+        const { statusFilter } = filters;
+        const data = await getPaginatedData(d2, notificationsDataStoreKey, filters, pagination);
+        return statusFilter
+            ? { ...data, objects: _.filter(data.objects, e => e.status === statusFilter) }
+            : data;
     }
 
     public async save(d2: D2): Promise<Response> {
@@ -76,6 +80,8 @@ export default class SyncReport {
     }
 
     public hasErrors(): boolean {
-        return _.some(this.syncReport.results, result => result.status !== "OK");
+        return _.some(this.syncReport.results, result =>
+            ["ERROR", "NETWORK ERROR"].includes(result.status)
+        );
     }
 }

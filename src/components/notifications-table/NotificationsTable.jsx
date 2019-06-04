@@ -2,17 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
-import { ObjectsTable, withSnackbar, withLoading, ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../shared/PageHeader";
-
+import Dropdown from "../shared/Dropdown";
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 
 const styles = () => ({
-    tableContainer: { marginTop: -10 },
+    tableContainer: { marginTop: 10 },
 });
 
 class NotificationsTable extends React.Component {
@@ -21,6 +21,7 @@ class NotificationsTable extends React.Component {
         toDelete: null,
         summaryOpen: false,
         syncReport: SyncReport.create(),
+        statusFilter: "",
     };
 
     static propTypes = {
@@ -103,7 +104,12 @@ class NotificationsTable extends React.Component {
     columns = [
         { name: "user", text: i18n.t("User"), sortable: true },
         { name: "timestamp", text: i18n.t("Timestamp"), sortable: true },
-        { name: "status", text: i18n.t("Status"), sortable: true },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            sortable: true,
+            getValue: notification => _.startCase(_.toLower(notification.status)),
+        },
     ];
 
     initialSorting = ["id", "asc"];
@@ -111,7 +117,11 @@ class NotificationsTable extends React.Component {
     detailsFields = [
         { name: "user", text: i18n.t("User") },
         { name: "timestamp", text: i18n.t("Timestamp") },
-        { name: "status", text: i18n.t("Status") },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            getValue: notification => _.startCase(_.toLower(notification.status)),
+        },
         {
             name: "metadata",
             text: i18n.t("Metadata Types"),
@@ -141,8 +151,45 @@ class NotificationsTable extends React.Component {
         },
     ];
 
+    dropdownItems = [
+        {
+            id: "READY",
+            name: i18n.t("Ready"),
+        },
+        {
+            id: "RUNNING",
+            name: i18n.t("Running"),
+        },
+        {
+            id: "FAILURE",
+            name: i18n.t("Failure"),
+        },
+        {
+            id: "DONE",
+            name: i18n.t("Done"),
+        },
+    ];
+
+    changeStatusFilter = event => {
+        this.setState({ statusFilter: event.target.value });
+    };
+
+    renderCustomFilters = () => {
+        const { statusFilter } = this.state;
+
+        return (
+            <Dropdown
+                key={"level-filter"}
+                items={this.dropdownItems}
+                onChange={this.changeStatusFilter}
+                value={statusFilter}
+                label={i18n.t("Synchronization status")}
+            />
+        );
+    };
+
     render() {
-        const { tableKey, toDelete, syncReport, summaryOpen } = this.state;
+        const { tableKey, toDelete, syncReport, summaryOpen, statusFilter } = this.state;
         const { d2, classes } = this.props;
 
         return (
@@ -160,6 +207,8 @@ class NotificationsTable extends React.Component {
                         actions={this.actions}
                         list={SyncReport.list}
                         hideSearchBox={true}
+                        customFiltersComponent={this.renderCustomFilters}
+                        customFilters={{ statusFilter }}
                     />
                 </div>
 
