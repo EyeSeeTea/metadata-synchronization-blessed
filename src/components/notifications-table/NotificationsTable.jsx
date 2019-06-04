@@ -113,7 +113,7 @@ class NotificationsTable extends React.Component {
         },
     ];
 
-    initialSorting = ["id", "asc"];
+    initialSorting = ["date", "desc"];
 
     detailsFields = [
         { name: "user", text: i18n.t("User") },
