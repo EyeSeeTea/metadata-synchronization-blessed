@@ -1,6 +1,6 @@
 {
   "name": "metadata-synchronization",
-  "description": "Metadata Synchronization",
+  "description": "Advanced metadata synchronization utility",
   "version": "0.2.0",
   "license": "GPL-3.0",
   "author": "EyeSeeTea team",
@@ -92,8 +92,8 @@
     "wait-on": "^3.2.0"
   },
   "manifest.webapp": {
-    "name": "metadata-synchronization",
-    "description": "Metadata Synchronization",
+    "name": "Metadata Synchronization",
+    "description": "Advanced metadata synchronization utility",
     "icons": {
       "48": "icon.png"
     },

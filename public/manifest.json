@@ -1,6 +1,6 @@
 {
-    "short_name": "App Skeleton",
-    "name": "DHIS2 EyeSeeTea App Skeleton",
+    "short_name": "Metadata Sync",
+    "name": "Metadata Synchronization",
     "icons": [
         {
             "src": "favicon.ico",
