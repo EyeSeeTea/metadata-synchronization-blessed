@@ -13,7 +13,7 @@ import "./locales";
 function isLangRTL(code) {
     const langs = ["ar", "fa", "ur"];
     const prefixed = langs.map(c => `${c}-`);
-    return langs.includes(code) || prefixed.filter(c => code && code.startsWith(c)).length > 0;
+    return _(langs).includes(code) || prefixed.filter(c => code && code.startsWith(c)).length > 0;
 }
 
 function configI18n(userSettings) {

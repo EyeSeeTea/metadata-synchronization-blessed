@@ -33,7 +33,7 @@ class NotificationsTable extends React.Component {
 
     static model = {
         modelValidations: {
-            timestamp: { type: "DATE" },
+            date: { type: "DATE" },
             metadata: { type: "COLLECTION" },
         },
     };
@@ -98,12 +98,12 @@ class NotificationsTable extends React.Component {
     };
 
     getMetadataTypes = notification => {
-        return this.getValueForCollection(notification.selectedTypes.map(type => ({ name: type })));
+        return this.getValueForCollection(notification.types.map(type => ({ name: type })));
     };
 
     columns = [
         { name: "user", text: i18n.t("User"), sortable: true },
-        { name: "timestamp", text: i18n.t("Timestamp"), sortable: true },
+        { name: "date", text: i18n.t("Timestamp"), sortable: true },
         {
             name: "status",
             text: i18n.t("Status"),
@@ -116,7 +116,7 @@ class NotificationsTable extends React.Component {
 
     detailsFields = [
         { name: "user", text: i18n.t("User") },
-        { name: "timestamp", text: i18n.t("Timestamp") },
+        { name: "date", text: i18n.t("Timestamp") },
         {
             name: "status",
             text: i18n.t("Status"),
@@ -213,6 +213,7 @@ class NotificationsTable extends React.Component {
                 </div>
 
                 <SyncSummary
+                    d2={d2}
                     response={syncReport}
                     isOpen={summaryOpen}
                     handleClose={this.closeSummary}
