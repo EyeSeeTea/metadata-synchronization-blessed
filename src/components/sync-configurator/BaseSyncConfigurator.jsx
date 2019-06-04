@@ -206,6 +206,7 @@ class BaseSyncConfigurator extends React.Component {
                     handleClose={this.closeDialog}
                 />
                 <SyncSummary
+                    d2={d2}
                     response={importResponse}
                     isOpen={syncSummaryOpen}
                     handleClose={this.closeSummary}

@@ -1,25 +1,35 @@
 import _ from "lodash";
 import { generateUid } from "d2/uid";
 
-import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
-import { D2, Response } from "../types/d2";
-import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import {
+    deleteData,
+    deleteDataStore,
+    getDataById,
+    getDataStore,
+    getPaginatedData,
+    saveData,
+    saveDataStore,
+} from "./dataStore";
+import { D2 } from "../types/d2";
+import { SyncReportTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import {
     SynchronizationReport,
     SynchronizationReportStatus,
     SynchronizationResult,
 } from "../types/synchronization";
 
-const notificationsDataStoreKey = "notifications";
+const dataStoreKey = "notifications";
 
 export default class SyncReport {
-    private syncReport: SynchronizationReport;
+    private results: SynchronizationResult[] | null;
+    private readonly syncReport: SynchronizationReport;
 
     constructor(syncReport: SynchronizationReport) {
+        this.results = null;
         this.syncReport = {
             id: generateUid(),
-            timestamp: new Date(),
-            ...syncReport,
+            date: new Date(),
+            ..._.pick(syncReport, ["id", "date", "user", "status", "types"]),
         };
     }
 
@@ -28,8 +38,7 @@ export default class SyncReport {
             id: "",
             user: "",
             status: "READY" as SynchronizationReportStatus,
-            results: [],
-            selectedTypes: [],
+            types: [],
         });
     }
 
@@ -38,44 +47,57 @@ export default class SyncReport {
     }
 
     public static async get(d2: D2, id: string): Promise<SyncReport> {
-        const data = await getDataById(d2, notificationsDataStoreKey, id);
+        const data = await getDataById(d2, dataStoreKey, id);
         return this.build(data);
     }
 
     public static async list(
         d2: D2,
-        filters: TableFilters,
+        filters: SyncReportTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        return getPaginatedData(d2, notificationsDataStoreKey, filters, pagination);
+        const { statusFilter } = filters;
+        const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
+        return statusFilter
+            ? { ...data, objects: _.filter(data.objects, e => e.status === statusFilter) }
+            : data;
     }
 
-    public async save(d2: D2): Promise<Response> {
+    public async save(d2: D2): Promise<void> {
         console.debug("Start saving SyncReport to dataStore");
         const exists = this.syncReport.id;
         const element = exists ? this.syncReport : { ...this.syncReport, id: generateUid() };
 
         if (exists) await this.remove(d2);
+        await saveDataStore(d2, `${dataStoreKey}-${element.id}`, this.results);
+        await saveData(d2, dataStoreKey, element);
 
-        const result = await saveData(d2, notificationsDataStoreKey, element);
         console.debug("Finish saving SyncReport to dataStore", element);
-        return result;
     }
 
-    public async remove(d2: D2): Promise<Response> {
-        return deleteData(d2, notificationsDataStoreKey, this.syncReport);
-    }
-
-    public addSyncResult(result: SynchronizationResult): void {
-        const results = _.unionBy([result], this.syncReport.results, "instance.id");
-        this.syncReport = { ...this.syncReport, results };
+    public async remove(d2: D2): Promise<void> {
+        await deleteDataStore(d2, `${dataStoreKey}-${this.syncReport.id}`);
+        await deleteData(d2, dataStoreKey, this.syncReport);
     }
 
     public setStatus(status: SynchronizationReportStatus): void {
         this.syncReport.status = status;
     }
 
+    public addSyncResult(...result: SynchronizationResult[]): void {
+        this.results = _.unionBy([...result], this.results, "instance.id");
+    }
+
+    public async loadSyncResults(d2: D2): Promise<void> {
+        const { id } = this.syncReport;
+        if (id && !this.results) {
+            this.results = await getDataStore(d2, `${dataStoreKey}-${id}`, []);
+        }
+    }
+
     public hasErrors(): boolean {
-        return _.some(this.syncReport.results, result => result.status !== "OK");
+        return _.some(this.results, result =>
+            _(["ERROR", "NETWORK ERROR"]).includes(result.status)
+        );
     }
 }

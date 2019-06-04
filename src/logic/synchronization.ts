@@ -109,6 +109,7 @@ async function importMetadata(
         ..._.pick(importResult, ["status", "stats"]),
         instance: _.pick(instance, ["id", "name", "url", "username"]),
         report: { typeStats, messages },
+        date: new Date(),
     };
 }
 
@@ -144,13 +145,16 @@ export async function* startSynchronization(
 
     const syncReport = SyncReport.build({
         user: d2.currentUser.username,
-        selectedTypes: _.keys(metadata),
+        types: _.keys(metadata),
         status: "RUNNING" as SynchronizationReportStatus,
-        results: targetInstances.map(instance => ({
+    });
+    syncReport.addSyncResult(
+        ...targetInstances.map(instance => ({
             instance: instance.toObject(),
             status: "PENDING" as MetadataImportStatus,
-        })),
-    });
+            date: new Date(),
+        }))
+    );
     yield { syncReport };
 
     // Phase 3: Import metadata into destination instances

@@ -166,6 +166,21 @@ msgid_plural "Are you sure you want to delete {{count}} notifications?"
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Ready"
+msgstr ""
+
+msgid "Running"
+msgstr ""
+
+msgid "Failure"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "Synchronization status"
+msgstr ""
+
 msgid "<No value>"
 msgstr ""
 

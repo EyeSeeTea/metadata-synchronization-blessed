@@ -11,6 +11,8 @@ import { TableFilters, TableList, TablePagination } from "../types/d2-ui-compone
 
 const instancesDataStoreKey = "instances";
 
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
 export interface Data {
     id: string;
     name: string;
@@ -76,8 +78,8 @@ export default class Instance {
         return deleteData(d2, instancesDataStoreKey, this.data);
     }
 
-    public toObject(): Data {
-        return _.clone(this.data);
+    public toObject(): Omit<Data, "password"> {
+        return _.omit(this.data, ["password"]);
     }
 
     public setId(id: string): Instance {

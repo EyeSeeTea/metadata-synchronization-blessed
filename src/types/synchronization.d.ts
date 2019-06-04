@@ -29,17 +29,17 @@ export interface SynchronizationResult extends MetadataImportResponse {
         typeStats: MetadataImportStats[];
         messages: any[];
     };
+    date: Date;
 }
 
 export type SynchronizationReportStatus = "READY" | "RUNNING" | "FAILURE" | "DONE";
 
 export interface SynchronizationReport {
     id?: string;
-    timestamp?: Date;
+    date?: Date;
     user: string;
     status: SynchronizationReportStatus;
-    results: SynchronizationResult[];
-    selectedTypes: string[];
+    types: string[];
 }
 
 export interface NestedRules {
