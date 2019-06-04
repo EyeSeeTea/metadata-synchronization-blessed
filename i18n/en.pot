@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-03T10:58:22.290Z\n"
-"PO-Revision-Date: 2019-06-03T10:58:22.290Z\n"
+"POT-Creation-Date: 2019-06-04T14:36:02.608Z\n"
+"PO-Revision-Date: 2019-06-04T14:36:02.608Z\n"
 
 msgid "Instance Configurator"
 msgstr ""
@@ -158,14 +158,6 @@ msgstr ""
 msgid "View summary"
 msgstr ""
 
-msgid "Delete Notifications?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{count}} notifications?"
-msgid_plural "Are you sure you want to delete {{count}} notifications?"
-msgstr[0] ""
-msgstr[1] ""
-
 msgid "Ready"
 msgstr ""
 
@@ -180,6 +172,14 @@ msgstr ""
 
 msgid "Synchronization status"
 msgstr ""
+
+msgid "Delete Notifications?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} notifications?"
+msgid_plural "Are you sure you want to delete {{count}} notifications?"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "<No value>"
 msgstr ""
