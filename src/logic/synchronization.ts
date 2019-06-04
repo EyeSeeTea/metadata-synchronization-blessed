@@ -160,7 +160,7 @@ export async function* startSynchronization(
     // Phase 3: Import metadata into destination instances
     for (const instance of targetInstances) {
         yield {
-            message: i18n.t("Importing data in instance: {{instance}}", {
+            message: i18n.t("Importing data in instance {{instance}}", {
                 instance: instance.name,
             }),
         };

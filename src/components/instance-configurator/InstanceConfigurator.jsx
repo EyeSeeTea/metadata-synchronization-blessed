@@ -1,7 +1,8 @@
 import React from "react";
+import _ from "lodash";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { ObjectsTable, withSnackbar, withLoading, ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -46,8 +47,8 @@ class InstanceConfigurator extends React.Component {
         }
     };
 
-    deleteInstance = instanceData => {
-        this.setState({ toDelete: instanceData });
+    deleteInstance = instances => {
+        this.setState({ toDelete: instances });
     };
 
     cancelDelete = () => {
@@ -55,26 +56,27 @@ class InstanceConfigurator extends React.Component {
     };
 
     confirmDelete = async () => {
+        const { loading, d2 } = this.props;
         const { toDelete } = this.state;
 
-        const instance = new Instance(toDelete);
-        this.setState({ toDelete: null });
-        this.props.loading.show(true, i18n.t("Deleting Instance"));
+        loading.show(true, i18n.t("Deleting Instances"));
+        const instances = toDelete.map(instanceData => new Instance(instanceData));
 
-        await instance.remove(this.props.d2).then(response => {
-            this.props.loading.reset();
+        const results = [];
+        for (const instance of instances) {
+            results.push(await instance.remove(d2));
+        }
 
-            if (response.status) {
-                this.props.snackbar.success(i18n.t("Deleted {{name}}", { name: toDelete.name }));
+        loading.reset();
+        this.setState({ tableKey: Math.random(), toDelete: null });
 
-                // TODO: Workaround, add a way to force render of ObjectsTable on-demand
-                this.setState({ tableKey: Math.random() });
-            } else {
-                this.props.snackbar.error(
-                    i18n.t("Failed to delete {{name}}", { name: toDelete.name })
-                );
-            }
-        });
+        if (_.some(results, ["status", false])) {
+            this.props.snackbar.error(i18n.t("Failed to delete some instances"));
+        } else {
+            this.props.snackbar.success(
+                i18n.t("Successfully deleted {{count}} instances", { count: toDelete.length })
+            );
+        }
     };
 
     columns = [
@@ -108,7 +110,7 @@ class InstanceConfigurator extends React.Component {
         {
             name: "delete",
             text: i18n.t("Delete"),
-            multiple: false,
+            multiple: true,
             onClick: this.deleteInstance,
         },
         {
@@ -134,8 +136,14 @@ class InstanceConfigurator extends React.Component {
                     isOpen={!!toDelete}
                     onSave={this.confirmDelete}
                     onCancel={this.cancelDelete}
-                    title={i18n.t("Delete Instance?")}
-                    description={i18n.t("Are you sure you want to delete this instance?")}
+                    title={i18n.t("Delete Instances?")}
+                    description={
+                        toDelete
+                            ? i18n.t("Are you sure you want to delete {{count}} instances?", {
+                                  count: toDelete.length,
+                              })
+                            : ""
+                    }
                     saveText={i18n.t("Ok")}
                 />
                 <PageHeader title={i18n.t("Instances")} onBackClick={this.backHome} />

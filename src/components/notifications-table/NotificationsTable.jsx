@@ -42,8 +42,8 @@ class NotificationsTable extends React.Component {
         this.props.history.push("/");
     };
 
-    deleteNotification = notification => {
-        this.setState({ toDelete: notification });
+    deleteNotification = notifications => {
+        this.setState({ toDelete: notifications });
     };
 
     cancelDelete = () => {
@@ -51,26 +51,27 @@ class NotificationsTable extends React.Component {
     };
 
     confirmDelete = async () => {
+        const { loading, d2 } = this.props;
         const { toDelete } = this.state;
 
-        const syncReport = new SyncReport(toDelete);
-        this.setState({ toDelete: null });
-        this.props.loading.show(true, i18n.t("Deleting notification"));
+        loading.show(true, i18n.t("Deleting Notifications"));
+        const notifications = toDelete.map(data => new SyncReport(data));
 
-        await syncReport.remove(this.props.d2).then(response => {
-            this.props.loading.reset();
+        const results = [];
+        for (const notification of notifications) {
+            results.push(await notification.remove(d2));
+        }
 
-            if (response.status) {
-                this.props.snackbar.success(i18n.t("Deleted {{name}}", { name: toDelete.name }));
+        loading.reset();
+        this.setState({ tableKey: Math.random(), toDelete: null });
 
-                // TODO: Workaround, add a way to force render of ObjectsTable on-demand
-                this.setState({ tableKey: Math.random() });
-            } else {
-                this.props.snackbar.error(
-                    i18n.t("Failed to delete {{name}}", { name: toDelete.name })
-                );
-            }
-        });
+        if (_.some(results, ["status", false])) {
+            this.props.snackbar.error(i18n.t("Failed to delete some notifications"));
+        } else {
+            this.props.snackbar.success(
+                i18n.t("Successfully deleted {{count}} notifications", { count: toDelete.length })
+            );
+        }
     };
 
     openSummary = data => {
@@ -139,7 +140,7 @@ class NotificationsTable extends React.Component {
         {
             name: "delete",
             text: i18n.t("Delete"),
-            multiple: false,
+            multiple: true,
             onClick: this.deleteNotification,
         },
         {
@@ -223,8 +224,14 @@ class NotificationsTable extends React.Component {
                     isOpen={!!toDelete}
                     onSave={this.confirmDelete}
                     onCancel={this.cancelDelete}
-                    title={i18n.t("Delete Instance?")}
-                    description={i18n.t("Are you sure you want to delete this instance?")}
+                    title={i18n.t("Delete Notifications?")}
+                    description={
+                        toDelete
+                            ? i18n.t("Are you sure you want to delete {{count}} notifications?", {
+                                  count: toDelete.length,
+                              })
+                            : ""
+                    }
                     saveText={i18n.t("Ok")}
                 />
             </React.Fragment>
