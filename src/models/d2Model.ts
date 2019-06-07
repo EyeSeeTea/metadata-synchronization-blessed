@@ -156,6 +156,7 @@ export class DataElementModel extends D2Model {
     ];
     protected static includeRules = [
         "attributes",
+        "dataSets",
         "legendSets",
         "optionSets",
         "categoryCombos",
