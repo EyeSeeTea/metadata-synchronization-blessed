@@ -135,12 +135,40 @@ export class OrganisationUnitModel extends D2Model {
             ...filters,
             customFilters: _.compact([orgUnitLevel ? `level:eq:${orgUnitLevel}` : null]),
         };
-        return await super.listMethod(d2, newFilters, pagination);
+        return super.listMethod(d2, newFilters, pagination);
     }
 }
 
 export class DataElementModel extends D2Model {
     protected static metadataType = "dataElement";
+    protected static groupFilterName = "dataElementGroups";
+
+    protected static excludeRules = [
+        "user",
+        "userAccesses",
+        "userGroupAccesses",
+        "dataElementGroups.user",
+        "dataElementGroups.userAccesses",
+        "dataElementGroups.userGroupAccesses",
+        "dataElementGroups.groupSets.user",
+        "dataElementGroups.groupSets.userAccesses",
+        "dataElementGroups.groupSets.userGroupAccesses",
+    ];
+    protected static includeRules = [
+        "attributes",
+        "dataSets",
+        "legendSets",
+        "optionSets",
+        "categoryCombos",
+        "categoryCombos.attributes",
+        "categoryCombos.categoryOptionCombos",
+        "categoryCombos.categoryOptionCombos.categoryOptions",
+        "categoryCombos.categories",
+        "dataElementGroups",
+        "dataElementGroups.attributes",
+        "dataElementGroups.dataElementGroupSets",
+        "dataElementGroups.dataElementGroupSets.attributes",
+    ];
 }
 
 export class IndicatorModel extends D2Model {
