@@ -1,17 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { init, config, getUserSettings, getManifest } from "d2";
-import "font-awesome/css/font-awesome.min.css";
 import _ from "lodash";
+import axios from "axios";
+import { init, config, getUserSettings, getManifest } from "d2";
 import { HashRouter } from "react-router-dom";
+import i18n from "@dhis2/d2-i18n";
+import "font-awesome/css/font-awesome.min.css";
 
 import App from "./components/app/App";
-import i18n from "./locales";
+import "./locales";
 
 function isLangRTL(code) {
     const langs = ["ar", "fa", "ur"];
     const prefixed = langs.map(c => `${c}-`);
-    return langs.includes(code) || prefixed.filter(c => code.startsWith(c)).length > 0;
+    return _(langs).includes(code) || prefixed.filter(c => code && code.startsWith(c)).length > 0;
 }
 
 function configI18n(userSettings) {
@@ -41,7 +43,17 @@ async function getBaseUrl() {
 }
 
 function loadHeaderBarTranslations(d2) {
-    const keys = _(["app_search_placeholder", "manage_my_apps", "no_results_found"]);
+    const keys = _([
+        "app_search_placeholder",
+        "manage_my_apps",
+        "no_results_found",
+        "settings",
+        "profile",
+        "account",
+        "help",
+        "log_out",
+        "about_dhis2",
+    ]);
     keys.each(s => d2.i18n.strings.add(s));
     d2.i18n.load();
 }
@@ -52,12 +64,10 @@ async function main() {
     try {
         const d2 = await init({ baseUrl: apiUrl });
         window.d2 = d2; // Make d2 available in the console
-        await loadHeaderBarTranslations(d2);
+        loadHeaderBarTranslations(d2);
         const userSettings = await getUserSettings();
         configI18n(userSettings);
-        const appConfig = await fetch("app-config.json", {
-            credentials: "same-origin",
-        }).then(res => res.json());
+        const appConfig = await axios.get("app-config.json").then(res => res.data);
         ReactDOM.render(
             <HashRouter>
                 <App d2={d2} appConfig={appConfig} />

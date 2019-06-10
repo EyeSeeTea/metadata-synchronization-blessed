@@ -1,11 +1,10 @@
 import React from "react";
+import BaseSyncConfigurator from "./BaseSyncConfigurator";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import memoize from "nano-memoize";
-
-import Dropdown from "../shared/Dropdown";
-import BaseSyncConfigurator from "./BaseSyncConfigurator";
 import { OrganisationUnitModel } from "../../models/d2Model";
+import Dropdown from "../shared/Dropdown";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 
 export default class OrganisationUnitSync extends React.Component {
@@ -14,18 +13,13 @@ export default class OrganisationUnitSync extends React.Component {
     };
 
     state = {
-        orgUnitGroupFilter: {
-            value: "",
-            items: [],
-        },
         orgUnitLevelFilter: {
             value: "",
             items: [],
         },
     };
 
-    getExtraFilterState = memoize((orgUnitGroupFilterValue, orgUnitLevelFilterValue) => ({
-        orgUnitGroup: orgUnitGroupFilterValue,
+    getExtraFilterState = memoize(orgUnitLevelFilterValue => ({
         orgUnitLevel: orgUnitLevelFilterValue,
     }));
 
@@ -35,15 +29,6 @@ export default class OrganisationUnitSync extends React.Component {
 
     getDropdownData = async () => {
         const { d2 } = this.props;
-
-        const orgUnitGroupsClass = d2ModelFactory(d2, "organisationUnitGroups");
-        const orgUnitGroupList = await orgUnitGroupsClass.listMethod(
-            d2,
-            { customFields: ["id", "name"] },
-            { paging: false }
-        );
-        const orgUnitGroups = orgUnitGroupList.objects;
-        const orgUnitGroupFilter = { ...this.state.orgUnitGroupFilter, items: orgUnitGroups };
 
         const orgUnitLevelsClass = d2ModelFactory(d2, "organisationUnitLevels");
         const orgUnitLevelsList = await orgUnitLevelsClass.listMethod(
@@ -55,36 +40,23 @@ export default class OrganisationUnitSync extends React.Component {
             id: e.level,
             name: `${e.level}. ${e.name}`,
         }));
-        const orgUnitLevelFilter = { ...this.state.orgUnitGroupFilter, items: orgUnitLevels };
+        const orgUnitLevelFilter = { ...this.state.orgUnitLevelFilter, items: orgUnitLevels };
 
-        this.setState({ orgUnitGroupFilter, orgUnitLevelFilter });
+        this.setState({ orgUnitLevelFilter });
     };
 
-    handleGroupFilterChange = event => {
-        const { items } = this.state.orgUnitGroupFilter;
-        this.setState({ orgUnitGroupFilter: { value: event.target.value, items } });
-    };
-
-    handleLevelFilterChange = event => {
+    changeLevelFilter = event => {
         const { items } = this.state.orgUnitLevelFilter;
         this.setState({ orgUnitLevelFilter: { value: event.target.value, items } });
     };
 
     renderExtraFilters = () => {
-        const { orgUnitGroupFilter, orgUnitLevelFilter } = this.state;
+        const { orgUnitLevelFilter } = this.state;
         return [
-            <Dropdown
-                key={"group-filter"}
-                items={orgUnitGroupFilter.items}
-                onChange={this.handleGroupFilterChange}
-                value={orgUnitGroupFilter.value}
-                label={i18n.t("Organisation Group")}
-            />,
-
             <Dropdown
                 key={"level-filter"}
                 items={orgUnitLevelFilter.items}
-                onChange={this.handleLevelFilterChange}
+                onChange={this.changeLevelFilter}
                 value={orgUnitLevelFilter.value}
                 label={i18n.t("Organisation Level")}
             />,
@@ -92,17 +64,16 @@ export default class OrganisationUnitSync extends React.Component {
     };
 
     render() {
-        const { orgUnitGroupFilter, orgUnitLevelFilter } = this.state;
+        const { orgUnitLevelFilter } = this.state;
+
         const title = i18n.t("Organisation Units Synchronization");
-        const extraFiltersState = this.getExtraFilterState(
-            orgUnitGroupFilter.value,
-            orgUnitLevelFilter.value
-        );
+        const extraFiltersState = this.getExtraFilterState(orgUnitLevelFilter.value);
 
         return (
             <BaseSyncConfigurator
                 model={OrganisationUnitModel}
                 title={title}
+                groupFilterName={"organisationUnitGroups"}
                 renderExtraFilters={this.renderExtraFilters}
                 extraFiltersState={extraFiltersState}
                 {...this.props}

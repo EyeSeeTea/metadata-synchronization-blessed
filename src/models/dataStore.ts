@@ -1,39 +1,72 @@
 import _ from "lodash";
+import axios from "axios";
+
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 
-const dataStoreNamespace = "metatada-synchronization";
+const dataStoreNamespace = "metadata-synchronization";
 
-async function getOrCreateNamespace(d2: D2): Promise<any> {
-    const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
-    if (!existsNamespace) {
-        return await d2.dataStore.create(dataStoreNamespace);
-    } else {
-        return await d2.dataStore.get(dataStoreNamespace);
+export async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Promise<any> {
+    try {
+        const response = await axios.get(
+            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            await axios.post(
+                d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+                defaultValue,
+                { withCredentials: true }
+            );
+            return defaultValue;
+        } else {
+            throw error;
+        }
     }
 }
 
-async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any = []): Promise<any> {
-    const existsNamespace = await d2.dataStore.has(dataStoreNamespace);
-    const dataStore = await getOrCreateNamespace(d2);
-    if (!existsNamespace) {
-        await dataStore.set(dataStoreKey, defaultValue);
+export async function saveDataStore(d2: D2, dataStoreKey: string, value: any): Promise<void> {
+    try {
+        await axios.put(
+            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+            value,
+            { withCredentials: true }
+        );
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            await axios.post(
+                d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+                value,
+                { withCredentials: true }
+            );
+        } else {
+            throw error;
+        }
     }
-    return await dataStore.get(dataStoreKey);
 }
 
-async function saveDataStore(d2: D2, dataStoreKey: string, newValue: any): Promise<void> {
-    const dataStore = await getOrCreateNamespace(d2);
-    await dataStore.set(dataStoreKey, newValue);
+export async function deleteDataStore(d2: D2, dataStoreKey: string): Promise<void> {
+    try {
+        await axios.delete(
+            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+            { withCredentials: true }
+        );
+    } catch (error) {
+        if (!error.response || error.response.status !== 404) {
+            throw error;
+        }
+    }
 }
 
 export async function getData(d2: D2, dataStoreKey: string): Promise<any> {
-    return await getDataStore(d2, dataStoreKey);
+    return await getDataStore(d2, dataStoreKey, []);
 }
 
 export async function getDataById(d2: D2, dataStoreKey: string, id: string): Promise<any> {
-    const rawData = await getDataStore(d2, dataStoreKey);
-    return _.find(rawData, instance => instance.id === id);
+    const rawData = await getDataStore(d2, dataStoreKey, []);
+    return _.find(rawData, element => element.id === id);
 }
 
 export async function getPaginatedData(
@@ -42,7 +75,7 @@ export async function getPaginatedData(
     filters: TableFilters,
     pagination: TablePagination
 ): Promise<TableList> {
-    const rawData = await getDataStore(d2, dataStoreKey);
+    const rawData = await getDataStore(d2, dataStoreKey, []);
     const { search = null } = filters || {};
     const filteredData = _.filter(rawData, o =>
         _(o)
@@ -68,11 +101,12 @@ export async function getPaginatedData(
 
 export async function saveData(d2: D2, dataStoreKey: string, data: any): Promise<Response> {
     try {
-        const dataArray = await getDataStore(d2, dataStoreKey);
+        const dataArray = await getDataStore(d2, dataStoreKey, []);
         const newDataArray = [...dataArray, data];
         await saveDataStore(d2, dataStoreKey, newDataArray);
         return { status: true };
     } catch (e) {
+        console.error(e);
         return {
             status: false,
             error: e.toString(),
@@ -82,11 +116,14 @@ export async function saveData(d2: D2, dataStoreKey: string, data: any): Promise
 
 export async function deleteData(d2: D2, dataStoreKey: string, data: any): Promise<Response> {
     try {
-        const dataArray = await getDataStore(d2, dataStoreKey);
-        const newDataArray = dataArray.filter((dataEl: { id: string }) => dataEl.id !== data.id);
+        const dataArray = await getDataStore(d2, dataStoreKey, []);
+        const newDataArray = dataArray.filter(
+            (dataEl: { id: string }): boolean => dataEl.id !== data.id
+        );
         await saveDataStore(d2, dataStoreKey, newDataArray);
         return { status: true };
     } catch (e) {
+        console.error(e);
         return {
             status: false,
             error: e.toString(),

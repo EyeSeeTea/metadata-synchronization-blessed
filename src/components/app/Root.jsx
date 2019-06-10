@@ -8,54 +8,51 @@ import OrganisationUnitSync from "../sync-configurator/OrganisationUnitSync";
 import DataElementSync from "../sync-configurator/DataElementSync";
 import IndicatorSync from "../sync-configurator/IndicatorSync";
 import ValidationRuleSync from "../sync-configurator/ValidationRuleSync";
+import NotificationsTable from "../notifications-table/NotificationsTable";
 
 class Root extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
-        appConfig: PropTypes.object.isRequired,
     };
 
     render() {
-        const { d2, appConfig } = this.props;
+        const { d2 } = this.props;
 
         return (
             <Switch>
                 <Route
-                    path={"/instance-configurator/:formFor(new|edit)/:id?"}
-                    render={props => (
-                        <InstanceFormBuilder d2={d2} appConfig={appConfig} {...props} />
-                    )}
+                    path={"/instance-configurator/:action(new|edit)/:id?"}
+                    render={props => <InstanceFormBuilder d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/instance-configurator"
-                    render={props => (
-                        <InstanceConfigurator d2={d2} appConfig={appConfig} {...props} />
-                    )}
+                    render={props => <InstanceConfigurator d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/sync/organisationUnits"
-                    render={props => (
-                        <OrganisationUnitSync d2={d2} appConfig={appConfig} {...props} />
-                    )}
+                    render={props => <OrganisationUnitSync d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/sync/dataElements"
-                    render={props => <DataElementSync d2={d2} appConfig={appConfig} {...props} />}
+                    render={props => <DataElementSync d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/sync/indicators"
-                    render={props => <IndicatorSync d2={d2} appConfig={appConfig} {...props} />}
+                    render={props => <IndicatorSync d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/sync/validationRules"
-                    render={props => (
-                        <ValidationRuleSync d2={d2} appConfig={appConfig} {...props} />
-                    )}
+                    render={props => <ValidationRuleSync d2={d2} {...props} />}
+                />
+
+                <Route
+                    path="/notifications"
+                    render={props => <NotificationsTable d2={d2} {...props} />}
                 />
 
                 <Route render={() => <LandingPage d2={d2} />} />

@@ -5,11 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-04-08T10:16:41.397Z\n"
-"PO-Revision-Date: 2019-04-08T10:16:41.397Z\n"
-
-msgid "Metadata Synchronization"
-msgstr ""
+"POT-Creation-Date: 2019-06-04T14:36:02.608Z\n"
+"PO-Revision-Date: 2019-06-04T14:36:02.608Z\n"
 
 msgid "Instance Configurator"
 msgstr ""
@@ -32,14 +29,19 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-msgid "Connected sucessfully to instance"
+msgid "Connected successfully to instance"
 msgstr ""
 
-msgid "Deleted {{name}}"
+msgid "Deleting Instances"
 msgstr ""
 
-msgid "Failed to delete {{name}}"
+msgid "Failed to delete some instances"
 msgstr ""
+
+msgid "Successfully deleted {{count}} instances"
+msgid_plural "Successfully deleted {{count}} instances"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Server name"
 msgstr ""
@@ -65,11 +67,13 @@ msgstr ""
 msgid "Test Connection"
 msgstr ""
 
-msgid "Delete Instance?"
+msgid "Delete Instances?"
 msgstr ""
 
-msgid "Are you sure you want to delete this instance?"
-msgstr ""
+msgid "Are you sure you want to delete {{count}} instances?"
+msgid_plural "Are you sure you want to delete {{count}} instances?"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Ok"
 msgstr ""
@@ -96,9 +100,6 @@ msgid "Password (*)"
 msgstr ""
 
 msgid "Please fix the issues before testing the connection"
-msgstr ""
-
-msgid "Connected successfully to instance"
 msgstr ""
 
 msgid "Please fix the issues before saving"
@@ -131,6 +132,55 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+msgid "Deleting Notifications"
+msgstr ""
+
+msgid "Failed to delete some notifications"
+msgstr ""
+
+msgid "Successfully deleted {{count}} notifications"
+msgid_plural "Successfully deleted {{count}} notifications"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "User"
+msgstr ""
+
+msgid "Timestamp"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Metadata Types"
+msgstr ""
+
+msgid "View summary"
+msgstr ""
+
+msgid "Ready"
+msgstr ""
+
+msgid "Running"
+msgstr ""
+
+msgid "Failure"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "Synchronization status"
+msgstr ""
+
+msgid "Delete Notifications?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} notifications?"
+msgid_plural "Are you sure you want to delete {{count}} notifications?"
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "<No value>"
 msgstr ""
 
@@ -140,22 +190,22 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-msgid "Please select at least one element from the table to synchronize"
-msgstr ""
-
 msgid "Unknown error with the request"
 msgstr ""
 
-msgid "Last update date"
+msgid "Please select at least one element from the table to synchronize"
+msgstr ""
+
+msgid "Last updated date"
+msgstr ""
+
+msgid "{{type}} Group"
 msgstr ""
 
 msgid "Data Elements Synchronization"
 msgstr ""
 
 msgid "Indicators Synchronization"
-msgstr ""
-
-msgid "Organisation Group"
 msgstr ""
 
 msgid "Organisation Level"
@@ -206,9 +256,6 @@ msgstr ""
 msgid "Synchronization Results"
 msgstr ""
 
-msgid "Status"
-msgstr ""
-
 msgid "Summary"
 msgstr ""
 
@@ -216,6 +263,51 @@ msgid "Messages"
 msgstr ""
 
 msgid "JSON Response"
+msgstr ""
+
+msgid "Fetching metadata from origin instance"
+msgstr ""
+
+msgid "Retrieving information from remote instances"
+msgstr ""
+
+msgid "Importing data in instance {{instance}}"
+msgstr ""
+
+msgid "Not a valid DHIS2 instance"
+msgstr ""
+
+msgid "Wrong username/password"
+msgstr ""
+
+msgid "Wrong URL endpoint"
+msgstr ""
+
+msgid "Error {{status}}"
+msgstr ""
+
+msgid "Network error {{error}}, check if server is up and CORS is enabled"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Level"
+msgstr ""
+
+msgid "Short name"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "ID"
+msgstr ""
+
+msgid "API link"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"

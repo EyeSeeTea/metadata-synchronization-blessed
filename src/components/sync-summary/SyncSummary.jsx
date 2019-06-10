@@ -6,19 +6,20 @@ import { ConfirmationDialog } from "d2-ui-components";
 import ReactJson from "react-json-view";
 
 import {
-    withStyles,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
     DialogContent,
     ExpansionPanel,
-    ExpansionPanelSummary,
     ExpansionPanelDetails,
+    ExpansionPanelSummary,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
     Typography,
+    withStyles,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import SyncReport from "../../models/syncReport";
 
 const styles = theme => ({
     expansionPanelHeading1: {
@@ -41,12 +42,12 @@ const styles = theme => ({
 class SyncSummary extends React.Component {
     static propTypes = {
         isOpen: PropTypes.bool.isRequired,
-        response: PropTypes.array.isRequired,
+        response: PropTypes.instanceOf(SyncReport).isRequired,
         handleClose: PropTypes.func.isRequired,
     };
 
-    handleClose = () => {
-        this.props.handleClose();
+    state = {
+        results: [],
     };
 
     static buildSummaryTable(stats) {
@@ -103,23 +104,32 @@ class SyncSummary extends React.Component {
         );
     }
 
+    componentDidUpdate = async prevProps => {
+        const { response, d2 } = this.props;
+        if (response !== prevProps.response) {
+            await response.loadSyncResults(d2);
+            this.setState({ results: response.results });
+        }
+    };
+
     render() {
-        const { isOpen, response, classes } = this.props;
+        const { isOpen, response, classes, handleClose } = this.props;
+        const { results } = this.state;
 
         return (
             <React.Fragment>
                 <ConfirmationDialog
                     isOpen={isOpen}
                     title={i18n.t("Synchronization Results")}
-                    onSave={this.handleClose}
+                    onSave={handleClose}
                     saveText={i18n.t("Ok")}
                     maxWidth={"lg"}
                     fullWidth={true}
                 >
                     <DialogContent>
-                        {response.map((responseElement, i) => (
+                        {results.map((responseElement, i) => (
                             <ExpansionPanel
-                                defaultExpanded={response.length === 1}
+                                defaultExpanded={results.length === 1}
                                 className={classes.expansionPanel}
                                 key={`row-${i}`}
                             >
@@ -139,30 +149,32 @@ class SyncSummary extends React.Component {
                                 </ExpansionPanelDetails>
 
                                 <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                                    {SyncSummary.buildSummaryTable([
-                                        ...responseElement.report.typeStats,
-                                        { type: i18n.t("Total"), ...responseElement.stats },
-                                    ])}
+                                    {responseElement.report &&
+                                        SyncSummary.buildSummaryTable([
+                                            ...responseElement.report.typeStats,
+                                            { type: i18n.t("Total"), ...responseElement.stats },
+                                        ])}
                                 </ExpansionPanelDetails>
 
-                                {responseElement.report.messages.length > 0 && (
-                                    <div>
-                                        <ExpansionPanelDetails
-                                            className={classes.expansionPanelDetails}
-                                        >
-                                            <Typography variant="overline">
-                                                {i18n.t("Messages")}
-                                            </Typography>
-                                        </ExpansionPanelDetails>
-                                        <ExpansionPanelDetails
-                                            className={classes.expansionPanelDetails}
-                                        >
-                                            {SyncSummary.buildMessageTable(
-                                                _.take(responseElement.report.messages, 10)
-                                            )}
-                                        </ExpansionPanelDetails>
-                                    </div>
-                                )}
+                                {responseElement.report &&
+                                    responseElement.report.messages.length > 0 && (
+                                        <div>
+                                            <ExpansionPanelDetails
+                                                className={classes.expansionPanelDetails}
+                                            >
+                                                <Typography variant="overline">
+                                                    {i18n.t("Messages")}
+                                                </Typography>
+                                            </ExpansionPanelDetails>
+                                            <ExpansionPanelDetails
+                                                className={classes.expansionPanelDetails}
+                                            >
+                                                {SyncSummary.buildMessageTable(
+                                                    _.take(responseElement.report.messages, 10)
+                                                )}
+                                            </ExpansionPanelDetails>
+                                        </div>
+                                    )}
                             </ExpansionPanel>
                         ))}
 
@@ -174,7 +186,11 @@ class SyncSummary extends React.Component {
                             </ExpansionPanelSummary>
 
                             <ExpansionPanelDetails>
-                                <ReactJson src={response} collapsed={2} enableClipboard={false} />
+                                <ReactJson
+                                    src={{ ...response, results }}
+                                    collapsed={2}
+                                    enableClipboard={false}
+                                />
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                     </DialogContent>

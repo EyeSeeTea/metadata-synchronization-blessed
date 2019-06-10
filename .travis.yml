@@ -1,18 +1,18 @@
 language: node_js
 node_js:
-- 8.10.0
+  - 8.15.0
 cache:
   directories:
-  - "$HOME/.cache"
+    - "$HOME/.cache"
 install:
-- yarn install --frozen-lockfile
-- yarn cy:verify
-- yarn build
+  - yarn install --frozen-lockfile
+  - yarn cy:verify
+  - yarn build
 script:
-    - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://dev2.eyeseetea.com:8083 yarn start &
-    - yarn run wait-on http://localhost:8081 && sleep 10s
-    - REACT_APP_CYPRESS=true CYPRESS_EXTERNAL_API=http://dev2.eyeseetea.com:8083 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:run
-    - kill $(jobs -p) || true
+  - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://dev2.eyeseetea.com:8083 REACT_APP_CYPRESS=true yarn start &
+  - yarn wait-on http-get://localhost:8081
+  - CYPRESS_EXTERNAL_API=http://dev2.eyeseetea.com:8083 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:run --key $CYPRESS_KEY
+  - kill $(jobs -p) || true
 notifications:
   slack:
     secure: R/tguoSgiUOK5qYmRoSv4qVkgGaF26PVnjqefXGc8oMc4scbssjbhQt+qVC2RuhB3ErXmez+BfaKcLLR6cEFY4cm+puBD+mU6fP2rDCiQRnmfaZmvdT/MY1KTSKlT2JzQ/YU9IQfdUetr/7lUbdyTcJQ8r+QOMwQu/drSGUEOt+eTHO5HQFVfhHnmoYWJ4oWxAWUyJx7DbXgRy9K5JlYlv2Vesol5vpSzjdXNlcXV3EPOD009ODO2+EboKujZHvLJakAjy/sCgtqB0ys22WXPv5dOj8FCJRjFSKpe9s5pZYjvjJfjD7GnIcP6/AAe+m3OC9/fDxdFtXeppJ95FNEQKyWCVAS9QNY50G4W0sHlR6VZ3OUhLnIQLKeNncTWG5QaUc4+/vYmbeEYFahOATMUX8I4uUVuT+5jDS883kHQ6Z8XxUWy3PztuM3kOz/cv3zppd2icpPtqDTkIql5CdA4ZHmBElD3GiIJgEfUOaUqn4isivALv024UnQhwrHCK55ymcphotzjdnhRQSlY2MeywA+TqaAtcYwoqKOBbvHQ2c8QMfanbT9UvmAE7+X0VruF5hgvaKA5DgT51RZl8YQVuLBbrfcT8+XrTypl2fwpJ4/23wltR/Ex9K7wJtjQeM1oz37mzFUW7zfvlHsXgWy2WtTkM/icAlxLM7ZN5YGMxI=

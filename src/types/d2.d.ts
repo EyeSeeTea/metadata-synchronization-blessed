@@ -77,6 +77,12 @@ export interface D2 {
     models: {
         [metadataType: string]: ModelDefinition;
     };
+    currentUser: {
+        id: string;
+        username: string;
+        name: string;
+        email: string;
+    };
 }
 
 export interface Response {
@@ -99,15 +105,19 @@ export interface MetadataImportParams {
     username?: string;
 }
 
+export type MetadataImportStatus = "PENDING" | "OK" | "WARNING" | "ERROR" | "NETWORK ERROR";
+
 export interface MetadataImportResponse {
-    status: string;
-    importParams: MetadataImportParams;
-    typeReports: any[];
-    stats: {
-        created: number;
-        deleted: number;
-        ignored: number;
-        total: number;
-        updated: number;
-    };
+    status: MetadataImportStatus;
+    importParams?: MetadataImportParams;
+    typeReports?: any[];
+    stats?: MetadataImportStats;
+}
+
+export interface MetadataImportStats {
+    created: number;
+    deleted: number;
+    ignored: number;
+    updated: number;
+    total: number;
 }
