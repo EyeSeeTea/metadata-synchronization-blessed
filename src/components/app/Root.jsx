@@ -1,14 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Switch, Route } from "react-router-dom";
-import LandingPage from "./LandingPage";
-import InstanceConfigurator from "../instance-configurator/InstanceConfigurator";
-import InstanceFormBuilder from "../instance-form-builder/InstanceFormBuilder";
-import OrganisationUnitSync from "../sync-configurator/OrganisationUnitSync";
-import DataElementSync from "../sync-configurator/DataElementSync";
-import IndicatorSync from "../sync-configurator/IndicatorSync";
-import ValidationRuleSync from "../sync-configurator/ValidationRuleSync";
-import NotificationsTable from "../notifications-table/NotificationsTable";
+import { Route, Switch } from "react-router-dom";
+
+import LandingPage from "../landing-page/LandingPage";
+import InstanceConfigurator from "../instance-list-page/InstancesPage";
+import InstanceFormBuilder from "../instance-creation-page/InstanceCreationPage";
+import OrganisationUnitPage from "../synchronization-page/OrganisationUnitPage";
+import DataElementPage from "../synchronization-page/DataElementPage";
+import IndicatorPage from "../synchronization-page/IndicatorPage";
+import ValidationRulePage from "../synchronization-page/ValidationRulePage";
+import NotificationsPage from "../notification-list-page/NotificationsPage";
 
 class Root extends React.Component {
     static propTypes = {
@@ -32,27 +33,27 @@ class Root extends React.Component {
 
                 <Route
                     path="/sync/organisationUnits"
-                    render={props => <OrganisationUnitSync d2={d2} {...props} />}
+                    render={props => <OrganisationUnitPage d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/sync/dataElements"
-                    render={props => <DataElementSync d2={d2} {...props} />}
+                    render={props => <DataElementPage d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/sync/indicators"
-                    render={props => <IndicatorSync d2={d2} {...props} />}
+                    render={props => <IndicatorPage d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/sync/validationRules"
-                    render={props => <ValidationRuleSync d2={d2} {...props} />}
+                    render={props => <ValidationRulePage d2={d2} {...props} />}
                 />
 
                 <Route
                     path="/notifications"
-                    render={props => <NotificationsTable d2={d2} {...props} />}
+                    render={props => <NotificationsPage d2={d2} {...props} />}
                 />
 
                 <Route render={() => <LandingPage d2={d2} />} />

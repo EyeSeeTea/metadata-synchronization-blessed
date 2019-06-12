@@ -1,5 +1,6 @@
 declare module "d2/uid" {
     export function generateUid(): string;
+
     export function isValidUid(uid: string): boolean;
 }
 

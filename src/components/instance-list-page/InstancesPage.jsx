@@ -6,7 +6,7 @@ import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
-import PageHeader from "../shared/PageHeader";
+import PageHeader from "../page-header/PageHeader";
 
 import Instance from "../../models/instance";
 
@@ -14,18 +14,33 @@ const styles = () => ({
     tableContainer: { marginTop: -10 },
 });
 
-class InstanceConfigurator extends React.Component {
-    state = {
-        tableKey: Math.random(),
-        toDelete: null,
-    };
-
+class InstancesPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
         loading: PropTypes.object.isRequired,
     };
+
+    state = {
+        tableKey: Math.random(),
+        toDelete: null,
+    };
+
+    columns = [
+        { name: "name", text: i18n.t("Server name"), sortable: true },
+        { name: "url", text: i18n.t("URL endpoint"), sortable: true },
+        { name: "username", text: i18n.t("Username"), sortable: true },
+    ];
+
+    initialSorting = ["id", "asc"];
+
+    detailsFields = [
+        { name: "name", text: i18n.t("Server name") },
+        { name: "url", text: i18n.t("URL endpoint") },
+        { name: "username", text: i18n.t("Username") },
+        { name: "description", text: i18n.t("Description") },
+    ];
 
     createInstance = () => {
         this.props.history.push("/instance-configurator/new");
@@ -50,49 +65,6 @@ class InstanceConfigurator extends React.Component {
     deleteInstance = instances => {
         this.setState({ toDelete: instances });
     };
-
-    cancelDelete = () => {
-        this.setState({ toDelete: null });
-    };
-
-    confirmDelete = async () => {
-        const { loading, d2 } = this.props;
-        const { toDelete } = this.state;
-
-        loading.show(true, i18n.t("Deleting Instances"));
-        const instances = toDelete.map(instanceData => new Instance(instanceData));
-
-        const results = [];
-        for (const instance of instances) {
-            results.push(await instance.remove(d2));
-        }
-
-        loading.reset();
-        this.setState({ tableKey: Math.random(), toDelete: null });
-
-        if (_.some(results, ["status", false])) {
-            this.props.snackbar.error(i18n.t("Failed to delete some instances"));
-        } else {
-            this.props.snackbar.success(
-                i18n.t("Successfully deleted {{count}} instances", { count: toDelete.length })
-            );
-        }
-    };
-
-    columns = [
-        { name: "name", text: i18n.t("Server name"), sortable: true },
-        { name: "url", text: i18n.t("URL endpoint"), sortable: true },
-        { name: "username", text: i18n.t("Username"), sortable: true },
-    ];
-
-    initialSorting = ["id", "asc"];
-
-    detailsFields = [
-        { name: "name", text: i18n.t("Server name") },
-        { name: "url", text: i18n.t("URL endpoint") },
-        { name: "username", text: i18n.t("Username") },
-        { name: "description", text: i18n.t("Description") },
-    ];
 
     actions = [
         {
@@ -121,6 +93,34 @@ class InstanceConfigurator extends React.Component {
             icon: "settings_input_antenna",
         },
     ];
+
+    cancelDelete = () => {
+        this.setState({ toDelete: null });
+    };
+
+    confirmDelete = async () => {
+        const { loading, d2 } = this.props;
+        const { toDelete } = this.state;
+
+        loading.show(true, i18n.t("Deleting Instances"));
+        const instances = toDelete.map(instanceData => new Instance(instanceData));
+
+        const results = [];
+        for (const instance of instances) {
+            results.push(await instance.remove(d2));
+        }
+
+        loading.reset();
+        this.setState({ tableKey: Math.random(), toDelete: null });
+
+        if (_.some(results, ["status", false])) {
+            this.props.snackbar.error(i18n.t("Failed to delete some instances"));
+        } else {
+            this.props.snackbar.success(
+                i18n.t("Successfully deleted {{count}} instances", { count: toDelete.length })
+            );
+        }
+    };
 
     backHome = () => {
         this.props.history.push("/");
@@ -166,4 +166,4 @@ class InstanceConfigurator extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(InstanceConfigurator))));
+export default withLoading(withSnackbar(withRouter(withStyles(styles)(InstancesPage))));
