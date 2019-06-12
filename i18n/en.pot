@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-13T06:24:14.176Z\n"
-"PO-Revision-Date: 2019-06-13T06:24:14.176Z\n"
+"POT-Creation-Date: 2019-06-13T06:37:16.186Z\n"
+"PO-Revision-Date: 2019-06-13T06:37:16.186Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -190,6 +190,46 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
+msgid "General info"
+msgstr ""
+
+msgid "New Sync Rule"
+msgstr ""
+
+msgid "Edit Sync Rule"
+msgstr ""
+
+msgid "Cancel Sync Rule Creation"
+msgstr ""
+
+msgid "Cancel Sync Rule Editing"
+msgstr ""
+
+msgid "Deleting Sync Rules"
+msgstr ""
+
+msgid "Failed to delete some rules"
+msgstr ""
+
+msgid "Successfully deleted {{count}} rules"
+msgid_plural "Successfully deleted {{count}} rules"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Execute"
+msgstr ""
+
+msgid "Delete Rules?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} rules?"
+msgid_plural "Are you sure you want to delete {{count}} rules?"
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "Synchronizing metadata"
 msgstr ""
 
@@ -287,9 +327,6 @@ msgid "Error {{status}}"
 msgstr ""
 
 msgid "Network error {{error}}, check if server is up and CORS is enabled"
-msgstr ""
-
-msgid "Name"
 msgstr ""
 
 msgid "Last update"

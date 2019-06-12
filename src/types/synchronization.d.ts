@@ -1,5 +1,6 @@
 import { MetadataImportResponse, MetadataImportStats } from "./d2";
 import SyncReport from "../models/syncReport";
+import Instance from "../models/instance";
 
 export interface SynchronizationBuilder {
     targetInstances: string[];
@@ -50,4 +51,12 @@ export interface SynchronizationState {
     message?: string;
     syncReport?: SyncReport;
     done?: boolean;
+}
+
+export interface SynchronizationRule {
+    id?: string;
+    name: string;
+    description?: string;
+    originInstance: Instance;
+    builder: SynchronizationBuilder;
 }
