@@ -15,7 +15,14 @@ export default class SyncRule {
     constructor(syncRule: SynchronizationRule) {
         this.syncRule = {
             id: generateUid(),
-            ..._.pick(syncRule, ["id", "name", "description", "originInstance", "builder"]),
+            ..._.pick(syncRule, [
+                "id",
+                "name",
+                "description",
+                "originInstance",
+                "builder",
+                "selectedIds",
+            ]),
         };
     }
 
@@ -23,11 +30,13 @@ export default class SyncRule {
         return new SyncRule({
             id: "",
             name: "",
+            description: "",
             originInstance: Instance.create(),
             builder: {
                 targetInstances: [],
                 metadata: {},
             },
+            selectedIds: [],
         });
     }
 
@@ -46,6 +55,38 @@ export default class SyncRule {
         pagination: TablePagination
     ): Promise<TableList> {
         return getPaginatedData(d2, dataStoreKey, filters, pagination);
+    }
+
+    public set targetInstances(instances: string[]) {
+        this.syncRule.builder.targetInstances = instances;
+    }
+
+    public get targetInstances(): string[] {
+        return this.syncRule.builder.targetInstances;
+    }
+
+    public set selectedIds(selectedIds: string[]) {
+        this.syncRule.selectedIds = selectedIds;
+    }
+
+    public get selectedIds(): string[] {
+        return this.syncRule.selectedIds;
+    }
+
+    public set name(name: string) {
+        this.syncRule.name = name;
+    }
+
+    public get name(): string {
+        return this.syncRule.name;
+    }
+
+    public get description(): string {
+        return this.syncRule.description || "";
+    }
+
+    public set description(description: string) {
+        this.syncRule.description = description;
     }
 
     public async save(_d2: D2): Promise<void> {

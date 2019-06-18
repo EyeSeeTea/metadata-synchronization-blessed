@@ -59,4 +59,5 @@ export interface SynchronizationRule {
     description?: string;
     originInstance: Instance;
     builder: SynchronizationBuilder;
+    selectedIds: string[];
 }

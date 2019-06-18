@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-13T06:37:16.186Z\n"
-"PO-Revision-Date: 2019-06-13T06:37:16.186Z\n"
+"POT-Creation-Date: 2019-06-18T09:02:36.522Z\n"
+"PO-Revision-Date: 2019-06-18T09:02:36.522Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -193,16 +193,52 @@ msgstr ""
 msgid "General info"
 msgstr ""
 
-msgid "New Sync Rule"
+msgid "Metadata"
 msgstr ""
 
-msgid "Edit Sync Rule"
+msgid "Instance Selection"
 msgstr ""
 
-msgid "Cancel Sync Rule Creation"
+msgid "Summary"
 msgstr ""
 
-msgid "Cancel Sync Rule Editing"
+msgid "New synchronization rule"
+msgstr ""
+
+msgid "Edit synchronization rule"
+msgstr ""
+
+msgid "Cancel synchronization rule creation"
+msgstr ""
+
+msgid "Cancel synchronization rule editing"
+msgstr ""
+
+msgid "Name (*)"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Metadata Type"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Selected elements"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Last updated date"
+msgstr ""
+
+msgid "{{displayName}} Group"
+msgstr ""
+
+msgid "{{displayName}} Level"
 msgstr ""
 
 msgid "Deleting Sync Rules"
@@ -215,9 +251,6 @@ msgid "Successfully deleted {{count}} rules"
 msgid_plural "Successfully deleted {{count}} rules"
 msgstr[0] ""
 msgstr[1] ""
-
-msgid "Name"
-msgstr ""
 
 msgid "Execute"
 msgstr ""
@@ -269,9 +302,6 @@ msgstr ""
 msgid "Synchronization Results"
 msgstr ""
 
-msgid "Summary"
-msgstr ""
-
 msgid "Messages"
 msgstr ""
 
@@ -282,9 +312,6 @@ msgid "Unknown error with the request"
 msgstr ""
 
 msgid "Please select at least one element from the table to synchronize"
-msgstr ""
-
-msgid "Last updated date"
 msgstr ""
 
 msgid "{{type}} Group"
@@ -327,9 +354,6 @@ msgid "Error {{status}}"
 msgstr ""
 
 msgid "Network error {{error}}, check if server is up and CORS is enabled"
-msgstr ""
-
-msgid "Last update"
 msgstr ""
 
 msgid "Level"

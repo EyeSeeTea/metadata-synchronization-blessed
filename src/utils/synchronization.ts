@@ -38,7 +38,11 @@ export function cleanReferences(
     return _.intersection(_.keys(references), rules);
 }
 
-export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataPackage> {
+export async function getMetadata(
+    d2: D2,
+    elements: string[],
+    fields: string = ":all"
+): Promise<MetadataPackage> {
     const promises = [];
     for (let i = 0; i < elements.length; i += 100) {
         const requestUrl = d2.Api.getApi().baseUrl + "/metadata.json";
@@ -47,7 +51,7 @@ export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataP
             axios.get(requestUrl, {
                 withCredentials: true,
                 params: {
-                    fields: ":all",
+                    fields: fields,
                     filter: "id:in:[" + requestElements + "]",
                     defaults: "EXCLUDE",
                 },

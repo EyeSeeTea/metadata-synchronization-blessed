@@ -4,9 +4,12 @@ import i18n from "@dhis2/d2-i18n";
 import { withRouter } from "react-router-dom";
 import { ConfirmationDialog, Wizard } from "d2-ui-components";
 
-import Instance from "../../models/instance";
-
 import PageHeader from "../page-header/PageHeader";
+import GeneralInfoStep from "./steps/GeneralInfoStep";
+import SyncRule from "../../models/syncRule";
+import MetadataStep from "./steps/MetadataStep";
+import InstanceSelectionStep from "./steps/InstanceSelectionStep";
+import SaveStep from "./steps/SaveStep";
 
 class SyncRulesWizard extends React.Component {
     static propTypes = {
@@ -16,7 +19,7 @@ class SyncRulesWizard extends React.Component {
 
     state = {
         dialogOpen: false,
-        instance: Instance.create(),
+        syncRule: SyncRule.create(),
     };
 
     id = this.props.match.params.id;
@@ -27,17 +30,41 @@ class SyncRulesWizard extends React.Component {
             {
                 key: "general-info",
                 label: i18n.t("General info"),
-                component: () => <p>Test</p>,
+                component: GeneralInfoStep,
+                validationKeys: ["name"],
+                description: undefined,
+                help: undefined,
+            },
+            {
+                key: "metadata",
+                label: i18n.t("Metadata"),
+                component: MetadataStep,
+                validationKeys: ["selectedIds"],
+                description: undefined,
+                help: undefined,
+            },
+            {
+                key: "instance-selection",
+                label: i18n.t("Instance Selection"),
+                component: InstanceSelectionStep,
+                validationKeys: ["targetInstances"],
+                description: undefined,
+                help: undefined,
+            },
+            {
+                key: "summary",
+                label: i18n.t("Summary"),
+                component: SaveStep,
                 validationKeys: [],
-                description: i18n.t(`Description`),
-                help: i18n.t(`Help`),
+                description: undefined,
+                help: undefined,
             },
         ];
     }
 
     componentDidMount = async () => {
         if (this.isEdit) {
-            const instance = await Instance.get(this.props.d2, this.id);
+            const instance = await SyncRule.get(this.props.d2, this.id);
             this.setState({ instance });
         }
     };
@@ -62,20 +89,22 @@ class SyncRulesWizard extends React.Component {
     switchStep = () => {};
 
     render() {
-        const { dialogOpen, instance } = this.state;
+        const { dialogOpen, syncRule } = this.state;
         const { d2 } = this.props;
 
-        const title = !this.isEdit ? i18n.t("New Sync Rule") : i18n.t("Edit Sync Rule");
+        const title = !this.isEdit
+            ? i18n.t("New synchronization rule")
+            : i18n.t("Edit synchronization rule");
 
         const cancel = !this.isEdit
-            ? i18n.t("Cancel Sync Rule Creation")
-            : i18n.t("Cancel Sync Rule Editing");
+            ? i18n.t("Cancel synchronization rule creation")
+            : i18n.t("Cancel synchronization rule editing");
 
         const steps = SyncRulesWizard.getStepsBaseInfo().map(step => ({
             ...step,
             props: {
                 d2,
-                instance,
+                syncRule,
                 //onChange: this.onChange(step),
                 onCancel: this.handleConfirm,
             },
@@ -92,11 +121,7 @@ class SyncRulesWizard extends React.Component {
                     saveText={i18n.t("Ok")}
                 />
 
-                <PageHeader
-                    title={title}
-                    onBackClick={this.cancelSave}
-                    helpText={i18n.t("Help text")}
-                />
+                <PageHeader title={title} onBackClick={this.cancelSave} />
 
                 <Wizard
                     onStepChangeRequest={this.switchStep}

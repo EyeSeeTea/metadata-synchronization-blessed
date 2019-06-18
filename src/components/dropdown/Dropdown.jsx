@@ -56,14 +56,14 @@ const getMaterialTheme = () =>
         },
     });
 
-export default function Dropdown({ items, value, onChange, label }) {
+export default function Dropdown({ items, value, onChange, label, hideEmpty }) {
     const materialTheme = getMaterialTheme();
     return (
         <MuiThemeProvider theme={materialTheme}>
             <FormControl>
                 <InputLabel>{label}</InputLabel>
                 <Select value={value} onChange={onChange}>
-                    <MenuItem value={""}>{i18n.t("<No value>")}</MenuItem>
+                    {!hideEmpty && <MenuItem value={""}>{i18n.t("<No value>")}</MenuItem>}
                     {items.map(i => (
                         <MenuItem key={i.id} value={i.id}>
                             {i.name}
@@ -80,4 +80,9 @@ Dropdown.propTypes = {
     onChange: PropTypes.func.isRequired,
     label: PropTypes.string.isRequired,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    hideEmpty: PropTypes.bool,
+};
+
+Dropdown.defaultProps = {
+    displayEmpty: true,
 };
