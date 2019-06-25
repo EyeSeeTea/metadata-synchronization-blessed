@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-25T09:11:14.872Z\n"
-"PO-Revision-Date: 2019-06-25T09:11:14.872Z\n"
+"POT-Creation-Date: 2019-06-25T09:20:27.053Z\n"
+"PO-Revision-Date: 2019-06-25T09:20:27.053Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -224,6 +224,12 @@ msgid "Metadata Type"
 msgstr ""
 
 msgid "Last update"
+msgstr ""
+
+msgid "Selected {{difference}} elements"
+msgstr ""
+
+msgid "Removed {{difference}} elements"
 msgstr ""
 
 msgid "Metadata type"

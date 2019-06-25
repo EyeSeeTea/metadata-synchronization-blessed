@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import memoize from "nano-memoize";
-import { DatePicker, ObjectsTable } from "d2-ui-components";
+import { DatePicker, ObjectsTable, withSnackbar } from "d2-ui-components";
 import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
 
 import Dropdown from "../../dropdown/Dropdown";
@@ -21,6 +21,7 @@ class MetadataStep extends React.Component {
         d2: PropTypes.object.isRequired,
         syncRule: PropTypes.object.isRequired,
         classes: PropTypes.object.isRequired,
+        snackbar: PropTypes.object.isRequired,
     };
 
     defaultModel = {
@@ -137,7 +138,19 @@ class MetadataStep extends React.Component {
     };
 
     changeSelection = selectedIds => {
-        this.props.syncRule.selectedIds = selectedIds;
+        const { selectedIds: oldSelection } = this.state;
+        const { snackbar, syncRule } = this.props;
+
+        const difference = selectedIds.length - oldSelection.length;
+        if (difference > 0) {
+            snackbar.info(i18n.t("Selected {{difference}} elements", { difference }));
+        } else if (difference < 0) {
+            snackbar.info(
+                i18n.t("Removed {{difference}} elements", { difference: Math.abs(difference) })
+            );
+        }
+
+        syncRule.selectedIds = selectedIds;
         this.setState({ selectedIds });
     };
 
@@ -267,4 +280,4 @@ class MetadataStep extends React.Component {
     }
 }
 
-export default withStyles(styles)(MetadataStep);
+export default withSnackbar(withStyles(styles)(MetadataStep));
