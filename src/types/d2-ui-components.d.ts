@@ -16,6 +16,7 @@ export interface TableFilters {
     groupFilter?: string;
     customFilters?: string[];
     customFields?: string[];
+    metadataType?: string;
 }
 
 export interface OrganisationUnitTableFilters extends TableFilters {

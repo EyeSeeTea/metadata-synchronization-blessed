@@ -3,16 +3,24 @@ import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import memoize from "nano-memoize";
 import { DatePicker, ObjectsTable } from "d2-ui-components";
+import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
 
 import Dropdown from "../../dropdown/Dropdown";
 import { d2ModelFactory } from "../../../models/d2ModelFactory";
 import { listByIds } from "../../../logic/metadata";
 import { d2BaseModelDetails } from "../../../utils/d2";
 
+const styles = {
+    checkbox: {
+        paddingLeft: 30,
+    },
+};
+
 class MetadataStep extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         syncRule: PropTypes.object.isRequired,
+        classes: PropTypes.object.isRequired,
     };
 
     defaultModel = {
@@ -33,7 +41,7 @@ class MetadataStep extends React.Component {
         getDetails: () => d2BaseModelDetails,
         getGroupFilterName: () => null,
         getLevelFilterName: () => null,
-        getMetadataType: () => "selected",
+        getMetadataType: () => "",
         getD2Model: () => ({
             displayName: "Selected elements",
             modelValidations: {
@@ -48,6 +56,8 @@ class MetadataStep extends React.Component {
             lastUpdatedDate: null,
             groupFilter: null,
             levelFilter: null,
+            showOnlySelectedItems: this.props.syncRule.selectedIds.length > 0,
+            metadataType: "",
         },
         groupFilterData: [],
         levelFilterData: [],
@@ -55,10 +65,6 @@ class MetadataStep extends React.Component {
     };
 
     models = [
-        {
-            name: i18n.t("Selected elements"),
-            id: this.defaultModel.getMetadataType(),
-        },
         {
             name: this.props.d2.models["organisationUnit"].displayName,
             id: this.props.d2.models["organisationUnit"].name,
@@ -137,11 +143,13 @@ class MetadataStep extends React.Component {
 
     changeModelName = event => {
         const { d2 } = this.props;
+        const { filters } = this.state;
         this.setState({
-            model:
-                event.target.value !== "selected"
-                    ? d2ModelFactory(d2, event.target.value)
-                    : this.defaultModel,
+            model: event.target.value ? d2ModelFactory(d2, event.target.value) : this.defaultModel,
+            filters: {
+                ...filters,
+                metadataType: event.target.value,
+            },
         });
     };
 
@@ -160,10 +168,15 @@ class MetadataStep extends React.Component {
         this.setState({ filters: { ...filters, levelFilter: event.target.value } });
     };
 
+    showSelectedItems = event => {
+        const { filters } = this.state;
+        this.setState({ filters: { ...filters, showOnlySelectedItems: event.target.checked } });
+    };
+
     renderCustomFilters = () => {
-        const { d2 } = this.props;
+        const { d2, classes } = this.props;
         const { model, groupFilterData, levelFilterData, filters } = this.state;
-        const { lastUpdatedDate, groupFilter, levelFilter } = filters;
+        const { lastUpdatedDate, groupFilter, levelFilter, showOnlySelectedItems } = filters;
         const displayName = model.getD2Model(d2).displayName;
 
         return (
@@ -174,10 +187,9 @@ class MetadataStep extends React.Component {
                     onChange={this.changeModelName}
                     value={model.getMetadataType()}
                     label={i18n.t("Metadata type")}
-                    hideEmpty
                 />
 
-                {model !== this.defaultModel && (
+                {!showOnlySelectedItems && (
                     <DatePicker
                         key={"date-filter"}
                         placeholder={i18n.t("Last updated date")}
@@ -187,7 +199,7 @@ class MetadataStep extends React.Component {
                     />
                 )}
 
-                {model && model.getGroupFilterName() && (
+                {!showOnlySelectedItems && model && model.getGroupFilterName() && (
                     <Dropdown
                         key={"group-filter"}
                         items={groupFilterData || []}
@@ -197,7 +209,7 @@ class MetadataStep extends React.Component {
                     />
                 )}
 
-                {model && model.getLevelFilterName() && (
+                {!showOnlySelectedItems && model && model.getLevelFilterName() && (
                     <Dropdown
                         key={"level-filter"}
                         items={levelFilterData || []}
@@ -206,16 +218,29 @@ class MetadataStep extends React.Component {
                         label={i18n.t("{{displayName}} Level", { displayName })}
                     />
                 )}
+
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            className={classes.checkbox}
+                            checked={showOnlySelectedItems}
+                            data-test="show-only-selected-items"
+                            onChange={this.showSelectedItems}
+                        />
+                    }
+                    label={i18n.t("Only selected items")}
+                />
             </React.Fragment>
         );
     };
 
     list = (...params) => {
-        const { model, selectedIds } = this.state;
-        if (model.listMethod) {
-            return model.listMethod(...params);
-        } else {
+        const { model, selectedIds, filters } = this.state;
+        const { showOnlySelectedItems } = filters;
+        if (!model.listMethod || showOnlySelectedItems) {
             return listByIds(...params, selectedIds);
+        } else {
+            return model.listMethod(...params);
         }
     };
 
@@ -229,7 +254,7 @@ class MetadataStep extends React.Component {
                 model={model.getD2Model(d2)}
                 columns={model.getColumns()}
                 detailsFields={model.getDetails()}
-                pageSize={10}
+                pageSize={20}
                 initialSorting={model.getInitialSorting()}
                 actions={this.actions}
                 list={this.list}
@@ -242,4 +267,4 @@ class MetadataStep extends React.Component {
     }
 }
 
-export default MetadataStep;
+export default withStyles(styles)(MetadataStep);

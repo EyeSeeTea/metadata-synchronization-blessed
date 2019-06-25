@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-18T09:02:36.522Z\n"
-"PO-Revision-Date: 2019-06-18T09:02:36.522Z\n"
+"POT-Creation-Date: 2019-06-25T09:11:14.872Z\n"
+"PO-Revision-Date: 2019-06-25T09:11:14.872Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -226,9 +226,6 @@ msgstr ""
 msgid "Last update"
 msgstr ""
 
-msgid "Selected elements"
-msgstr ""
-
 msgid "Metadata type"
 msgstr ""
 
@@ -239,6 +236,9 @@ msgid "{{displayName}} Group"
 msgstr ""
 
 msgid "{{displayName}} Level"
+msgstr ""
+
+msgid "Only selected items"
 msgstr ""
 
 msgid "Deleting Sync Rules"

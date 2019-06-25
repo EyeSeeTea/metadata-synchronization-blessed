@@ -24,8 +24,8 @@ const styles = () => ({
 
 const SaveStep = props => {
     const { syncRule, classes } = props;
-    const [isSaving, setSaving] = useState(false);
-    const [errorMessage, setErrorMessage] = useState();
+    const [isSaving] = useState(false);
+    const [errorMessage] = useState();
 
     const cancel = () => {};
     const save = () => {};
