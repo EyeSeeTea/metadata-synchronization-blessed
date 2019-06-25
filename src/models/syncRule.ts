@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { generateUid } from "d2/uid";
 
-import { deleteData, getDataById, getPaginatedData } from "./dataStore";
+import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
 import { D2 } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { MetadataPackage, SynchronizationRule } from "../types/synchronization";
@@ -97,8 +97,15 @@ export default class SyncRule {
         this.syncRule.builder.metadata = metadata;
     }
 
-    public async save(_d2: D2): Promise<void> {
-        // TODO
+    public async save(d2: D2): Promise<void> {
+        console.debug("Start saving SyncReport to dataStore");
+        const exists = this.syncRule.id;
+        const element = exists ? this.syncRule : { ...this.syncRule, id: generateUid() };
+
+        if (exists) await this.remove(d2);
+        await saveData(d2, dataStoreKey, element);
+
+        console.debug("Finish saving SyncReport to dataStore", element);
     }
 
     public async remove(d2: D2): Promise<void> {
