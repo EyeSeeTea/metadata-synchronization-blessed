@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import _ from "lodash";
 import PropTypes from "prop-types";
 import { Button, LinearProgress, withStyles } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 import i18n from "@dhis2/d2-i18n";
 
+import { getInstances } from "./InstanceSelectionStep";
 import { getMetadata } from "../../../utils/synchronization";
 
 const LiEntry = ({ label, value, children }) => {
@@ -29,8 +31,15 @@ const styles = () => ({
 const SaveStep = props => {
     const { d2, syncRule, classes, history } = props;
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
-    const [isSaving] = useState(false);
-    const [errorMessage] = useState();
+    const [isSaving, setIsSaving] = useState(false);
+    const [metadata, updateMetadata] = useState({});
+    const [instanceOptions, setInstanceOptions] = useState([]);
+
+    const parseMetadata = async () => {
+        const metadata = await getMetadata(d2, syncRule.selectedIds, "id,name");
+        updateMetadata(metadata);
+        return metadata;
+    };
 
     const openCancelDialog = () => setCancelDialogOpen(true);
 
@@ -39,10 +48,24 @@ const SaveStep = props => {
     const cancel = () => history.push("/synchronization-rules");
 
     const save = async () => {
-        syncRule.metadata = await getMetadata(d2, syncRule.selectedIds, "id");
+        setIsSaving(true);
+
+        syncRule.metadata = metadata || (await parseMetadata());
         await syncRule.save(d2);
+
+        setIsSaving(false);
         cancel();
     };
+
+    const parseInstances = async () => {
+        const instances = await getInstances(d2);
+        setInstanceOptions(instances);
+    };
+
+    useEffect(() => {
+        parseMetadata();
+        parseInstances();
+    }, [syncRule]);
 
     return (
         <React.Fragment>
@@ -61,6 +84,28 @@ const SaveStep = props => {
                 <LiEntry label={i18n.t("Name")} value={syncRule.name} />
 
                 <LiEntry label={i18n.t("Description")} value={syncRule.description} />
+
+                {_.keys(metadata).map(metadataType => (
+                    <LiEntry key={metadataType} label={metadataType}>
+                        [{metadata[metadataType].length}]
+                        <ul>
+                            {metadata[metadataType].map(({ id, name }) => (
+                                <LiEntry key={id} label={`${name} (${id})`} />
+                            ))}
+                        </ul>
+                    </LiEntry>
+                ))}
+
+                <LiEntry label={i18n.t("Target instances [{{total}}]", { total: syncRule.targetInstances.length})}>
+                    <ul>
+                        {syncRule.targetInstances.map(id => {
+                            const instance = instanceOptions.find(e => e.value === id);
+                            return instance ? (
+                                <LiEntry key={instance.value} label={instance.text} />
+                            ) : null;
+                        })}
+                    </ul>
+                </LiEntry>
             </ul>
 
             <Button onClick={openCancelDialog} variant="contained">
@@ -71,8 +116,6 @@ const SaveStep = props => {
             </Button>
 
             {isSaving && <LinearProgress />}
-
-            <pre>{errorMessage}</pre>
         </React.Fragment>
     );
 };

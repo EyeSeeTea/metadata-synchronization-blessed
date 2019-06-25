@@ -8,6 +8,10 @@ body {
     margin: 0;
 }
 
+li {
+    line-height: 1.75;
+}
+
 .content {
     margin: 4rem 15px 15px;
 }

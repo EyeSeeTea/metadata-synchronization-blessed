@@ -4,7 +4,7 @@ import memoize from "nano-memoize";
 import { MultiSelector } from "d2-ui-components";
 import Instance from "../../../models/instance";
 
-const getInstances = memoize(async d2 => {
+export const getInstances = memoize(async d2 => {
     const instances = await Instance.list(
         d2,
         { search: "" },
@@ -26,8 +26,13 @@ const InstanceSelectionStep = props => {
         syncRule.targetInstances = instances;
     };
 
+    const parseInstances = async () => {
+        const instances = await getInstances(d2);
+        setInstanceOptions(instances);
+    };
+
     useEffect(() => {
-        (async () => setInstanceOptions(await getInstances(d2)))();
+        parseInstances();
     }, [d2]);
 
     return (
