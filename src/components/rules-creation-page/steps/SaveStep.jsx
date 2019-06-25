@@ -86,8 +86,10 @@ const SaveStep = props => {
                 <LiEntry label={i18n.t("Description")} value={syncRule.description} />
 
                 {_.keys(metadata).map(metadataType => (
-                    <LiEntry key={metadataType} label={metadataType}>
-                        [{metadata[metadataType].length}]
+                    <LiEntry
+                        key={metadataType}
+                        label={`${metadataType} [${metadata[metadataType].length}]`}
+                    >
                         <ul>
                             {metadata[metadataType].map(({ id, name }) => (
                                 <LiEntry key={id} label={`${name} (${id})`} />
@@ -96,7 +98,11 @@ const SaveStep = props => {
                     </LiEntry>
                 ))}
 
-                <LiEntry label={i18n.t("Target instances [{{total}}]", { total: syncRule.targetInstances.length})}>
+                <LiEntry
+                    label={i18n.t("Target instances [{{total}}]", {
+                        total: syncRule.targetInstances.length,
+                    })}
+                >
                     <ul>
                         {syncRule.targetInstances.map(id => {
                             const instance = instanceOptions.find(e => e.value === id);

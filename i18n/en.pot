@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-25T09:54:15.635Z\n"
-"PO-Revision-Date: 2019-06-25T09:54:15.635Z\n"
+"POT-Creation-Date: 2019-06-25T13:40:41.166Z\n"
+"PO-Revision-Date: 2019-06-25T13:40:41.166Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -256,6 +256,9 @@ msgid ""
 msgstr ""
 
 msgid "Yes"
+msgstr ""
+
+msgid "Target instances [{{total}}]"
 msgstr ""
 
 msgid "Deleting Sync Rules"
