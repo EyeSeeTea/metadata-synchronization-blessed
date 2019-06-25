@@ -4,7 +4,7 @@ import { generateUid } from "d2/uid";
 import { deleteData, getDataById, getPaginatedData } from "./dataStore";
 import { D2 } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { SynchronizationRule } from "../types/synchronization";
+import { MetadataPackage, SynchronizationRule } from "../types/synchronization";
 import Instance from "./instance";
 
 const dataStoreKey = "rules";
@@ -87,6 +87,14 @@ export default class SyncRule {
 
     public set description(description: string) {
         this.syncRule.description = description;
+    }
+
+    public get metadata(): MetadataPackage {
+        return this.syncRule.builder.metadata || {};
+    }
+
+    public set metadata(metadata: MetadataPackage) {
+        this.syncRule.builder.metadata = metadata;
     }
 
     public async save(_d2: D2): Promise<void> {

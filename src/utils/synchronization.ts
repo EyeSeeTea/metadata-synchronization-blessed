@@ -58,8 +58,10 @@ export async function getMetadata(
             })
         );
     }
-    const result = await Promise.all(promises);
-    return _.deepMerge({}, ...result.map(result => result.data));
+    const response = await Promise.all(promises);
+    const results = _.deepMerge({}, ...response.map(result => result.data));
+    if (results.system) delete results.system;
+    return results;
 }
 
 export async function postMetadata(

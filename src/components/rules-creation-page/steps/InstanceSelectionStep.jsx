@@ -18,7 +18,7 @@ const getInstances = memoize(async d2 => {
 
 const InstanceSelectionStep = props => {
     const { d2, syncRule } = props;
-    const [instanceOptions, setInstanceOptions] = useState();
+    const [instanceOptions, setInstanceOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState(syncRule.targetInstances);
 
     const changeInstances = instances => {

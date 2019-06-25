@@ -16,7 +16,7 @@ const styles = {
     },
 };
 
-class MetadataStep extends React.Component {
+class MetadataSelectionStep extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         syncRule: PropTypes.object.isRequired,
@@ -280,4 +280,4 @@ class MetadataStep extends React.Component {
     }
 }
 
-export default withSnackbar(withStyles(styles)(MetadataStep));
+export default withSnackbar(withStyles(styles)(MetadataSelectionStep));

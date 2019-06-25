@@ -7,7 +7,7 @@ import { ConfirmationDialog, Wizard } from "d2-ui-components";
 import PageHeader from "../page-header/PageHeader";
 import GeneralInfoStep from "./steps/GeneralInfoStep";
 import SyncRule from "../../models/syncRule";
-import MetadataStep from "./steps/MetadataStep";
+import MetadataStep from "./steps/MetadataSelectionStep";
 import InstanceSelectionStep from "./steps/InstanceSelectionStep";
 import SaveStep from "./steps/SaveStep";
 

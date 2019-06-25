@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-25T09:20:27.053Z\n"
-"PO-Revision-Date: 2019-06-25T09:20:27.053Z\n"
+"POT-Creation-Date: 2019-06-25T09:40:48.702Z\n"
+"PO-Revision-Date: 2019-06-25T09:40:48.702Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -245,6 +245,17 @@ msgid "{{displayName}} Level"
 msgstr ""
 
 msgid "Only selected items"
+msgstr ""
+
+msgid "Cancel Sync Rule Creation?"
+msgstr ""
+
+msgid ""
+"You are about to exit the Sync Rule Creation Wizard. All your changes will "
+"be lost. Are you sure you want to proceed?"
+msgstr ""
+
+msgid "Yes"
 msgstr ""
 
 msgid "Deleting Sync Rules"

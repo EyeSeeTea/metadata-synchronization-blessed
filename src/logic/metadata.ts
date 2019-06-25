@@ -21,7 +21,6 @@ export async function listByIds(
         fields ? fields.join(",") : d2BaseModelDetails.map(e => e.name).join(",")
     );
 
-    if (metadata.system) delete metadata.system;
     const objects = _(metadata)
         .mapValues((obj, key) => obj.map((el: any) => ({ ...el, metadataType: key })))
         .values()
