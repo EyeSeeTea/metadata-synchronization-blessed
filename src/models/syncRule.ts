@@ -98,14 +98,11 @@ export default class SyncRule {
     }
 
     public async save(d2: D2): Promise<void> {
-        console.debug("Start saving SyncReport to dataStore");
         const exists = this.syncRule.id;
         const element = exists ? this.syncRule : { ...this.syncRule, id: generateUid() };
 
         if (exists) await this.remove(d2);
         await saveData(d2, dataStoreKey, element);
-
-        console.debug("Finish saving SyncReport to dataStore", element);
     }
 
     public async remove(d2: D2): Promise<void> {

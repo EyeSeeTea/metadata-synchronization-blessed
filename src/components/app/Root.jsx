@@ -11,7 +11,7 @@ import IndicatorPage from "../synchronization-page/IndicatorPage";
 import ValidationRulePage from "../synchronization-page/ValidationRulePage";
 import NotificationsPage from "../notification-list-page/NotificationsPage";
 import SyncRulesWizard from "../rules-creation-page/SyncRulesWizard";
-import SyncRulesConfigurator from "../rules-list-page/SyncRulesConfigurator";
+import SyncRulesConfigurator from "../rules-list-page/SyncRulesPage";
 
 class Root extends React.Component {
     static propTypes = {

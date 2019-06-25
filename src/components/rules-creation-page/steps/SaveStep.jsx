@@ -50,7 +50,7 @@ const SaveStep = props => {
                 isOpen={cancelDialogOpen}
                 onSave={cancel}
                 onCancel={closeCancelDialog}
-                title={i18n.t("Cancel Sync Rule Creation?")}
+                title={i18n.t("Cancel synchronization rule wizard")}
                 description={i18n.t(
                     "You are about to exit the Sync Rule Creation Wizard. All your changes will be lost. Are you sure you want to proceed?"
                 )}

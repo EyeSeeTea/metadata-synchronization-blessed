@@ -13,7 +13,7 @@ const styles = () => ({
     tableContainer: { marginTop: -10 },
 });
 
-class SyncRulesConfigurator extends React.Component {
+class SyncRulesPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -97,7 +97,7 @@ class SyncRulesConfigurator extends React.Component {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            onClick: this.editInstance,
+            onClick: this.editRule,
         },
         {
             name: "details",
@@ -131,7 +131,7 @@ class SyncRulesConfigurator extends React.Component {
                     <ObjectsTable
                         key={tableKey}
                         d2={d2}
-                        model={SyncRulesConfigurator.model}
+                        model={SyncRulesPage.model}
                         columns={this.columns}
                         detailsFields={this.detailsFields}
                         pageSize={10}
@@ -162,4 +162,4 @@ class SyncRulesConfigurator extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(SyncRulesConfigurator))));
+export default withLoading(withSnackbar(withRouter(withStyles(styles)(SyncRulesPage))));

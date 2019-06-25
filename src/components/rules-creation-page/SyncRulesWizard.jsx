@@ -64,8 +64,8 @@ class SyncRulesWizard extends React.Component {
 
     componentDidMount = async () => {
         if (this.isEdit) {
-            const instance = await SyncRule.get(this.props.d2, this.id);
-            this.setState({ instance });
+            const syncRule = await SyncRule.get(this.props.d2, this.id);
+            this.setState({ syncRule });
         }
     };
 
