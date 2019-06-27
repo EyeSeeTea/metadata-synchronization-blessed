@@ -10,55 +10,53 @@ import { Validation } from "../types/validations";
 const dataStoreKey = "rules";
 
 export default class SyncRule {
-    private readonly _syncRule: SynchronizationRule;
-    private _selectedIds: string[];
+    private readonly syncRule: SynchronizationRule;
 
     constructor(syncRule: SynchronizationRule) {
-        this._selectedIds = [];
-        this._syncRule = {
+        this.syncRule = {
             id: generateUid(),
-            ..._.pick(syncRule, ["id", "name", "description", "originInstance", "builder"]),
+            ..._.pick(syncRule, ["id", "name", "description", "originInstance", "builder", "selectedIds"]),
         };
     }
 
     public get selectedIds(): string[] {
-        return this._selectedIds;
+        return this.syncRule.selectedIds;
     }
 
     public set selectedIds(value: string[]) {
-        this._selectedIds = value;
+        this.syncRule.selectedIds = value;
     }
 
     public get targetInstances(): string[] {
-        return this._syncRule.builder.targetInstances;
+        return this.syncRule.builder.targetInstances;
     }
 
     public set targetInstances(instances: string[]) {
-        this._syncRule.builder.targetInstances = instances;
+        this.syncRule.builder.targetInstances = instances;
     }
 
     public get name(): string {
-        return this._syncRule.name;
+        return this.syncRule.name;
     }
 
     public set name(name: string) {
-        this._syncRule.name = name;
+        this.syncRule.name = name;
     }
 
     public get description(): string {
-        return this._syncRule.description || "";
+        return this.syncRule.description || "";
     }
 
     public set description(description: string) {
-        this._syncRule.description = description;
+        this.syncRule.description = description;
     }
 
     public get metadata(): MetadataPackage {
-        return this._syncRule.builder.metadata || {};
+        return this.syncRule.builder.metadata || {};
     }
 
     public set metadata(metadata: MetadataPackage) {
-        this._syncRule.builder.metadata = metadata;
+        this.syncRule.builder.metadata = metadata;
     }
 
     public static create(): SyncRule {
@@ -71,6 +69,7 @@ export default class SyncRule {
                 targetInstances: [],
                 metadata: {},
             },
+            selectedIds: []
         });
     }
 
@@ -101,15 +100,15 @@ export default class SyncRule {
     }
 
     public async save(d2: D2): Promise<void> {
-        const exists = this._syncRule.id;
-        const element = exists ? this._syncRule : { ...this._syncRule, id: generateUid() };
+        const exists = this.syncRule.id;
+        const element = exists ? this.syncRule : { ...this.syncRule, id: generateUid() };
 
         if (exists) await this.remove(d2);
         await saveData(d2, dataStoreKey, element);
     }
 
     public async remove(d2: D2): Promise<void> {
-        await deleteData(d2, dataStoreKey, this._syncRule);
+        await deleteData(d2, dataStoreKey, this.syncRule);
     }
 
     public async validate(): Promise<Validation> {
@@ -123,7 +122,7 @@ export default class SyncRule {
                     : null,
             ]),
             selectedIds: _.compact([
-                this._selectedIds.length === 0
+                this.selectedIds.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: {},
