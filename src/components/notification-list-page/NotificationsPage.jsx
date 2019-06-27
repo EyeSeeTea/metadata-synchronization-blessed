@@ -6,8 +6,8 @@ import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
-import PageHeader from "../shared/PageHeader";
-import Dropdown from "../shared/Dropdown";
+import PageHeader from "../page-header/PageHeader";
+import Dropdown from "../dropdown/Dropdown";
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 
@@ -15,15 +15,7 @@ const styles = () => ({
     tableContainer: { marginTop: 10 },
 });
 
-class NotificationsTable extends React.Component {
-    state = {
-        tableKey: Math.random(),
-        toDelete: null,
-        summaryOpen: false,
-        syncReport: SyncReport.create(),
-        statusFilter: "",
-    };
-
+class NotificationsPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -37,6 +29,46 @@ class NotificationsTable extends React.Component {
             metadata: { type: "COLLECTION" },
         },
     };
+
+    state = {
+        tableKey: Math.random(),
+        toDelete: null,
+        summaryOpen: false,
+        syncReport: SyncReport.create(),
+        statusFilter: "",
+    };
+
+    columns = [
+        { name: "user", text: i18n.t("User"), sortable: true },
+        { name: "date", text: i18n.t("Timestamp"), sortable: true },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            sortable: true,
+            getValue: notification => _.startCase(_.toLower(notification.status)),
+        },
+    ];
+
+    initialSorting = ["date", "desc"];
+
+    dropdownItems = [
+        {
+            id: "READY",
+            name: i18n.t("Ready"),
+        },
+        {
+            id: "RUNNING",
+            name: i18n.t("Running"),
+        },
+        {
+            id: "FAILURE",
+            name: i18n.t("Failure"),
+        },
+        {
+            id: "DONE",
+            name: i18n.t("Done"),
+        },
+    ];
 
     backHome = () => {
         this.props.history.push("/");
@@ -78,6 +110,28 @@ class NotificationsTable extends React.Component {
         this.setState({ summaryOpen: true, syncReport: new SyncReport(data) });
     };
 
+    actions = [
+        {
+            name: "details",
+            text: i18n.t("Details"),
+            multiple: false,
+            type: "details",
+        },
+        {
+            name: "delete",
+            text: i18n.t("Delete"),
+            multiple: true,
+            onClick: this.deleteNotification,
+        },
+        {
+            name: "summary",
+            text: i18n.t("View summary"),
+            icon: "description",
+            multiple: false,
+            onClick: this.openSummary,
+        },
+    ];
+
     closeSummary = () => {
         this.setState({ summaryOpen: false });
     };
@@ -102,19 +156,6 @@ class NotificationsTable extends React.Component {
         return this.getValueForCollection(notification.types.map(type => ({ name: type })));
     };
 
-    columns = [
-        { name: "user", text: i18n.t("User"), sortable: true },
-        { name: "date", text: i18n.t("Timestamp"), sortable: true },
-        {
-            name: "status",
-            text: i18n.t("Status"),
-            sortable: true,
-            getValue: notification => _.startCase(_.toLower(notification.status)),
-        },
-    ];
-
-    initialSorting = ["date", "desc"];
-
     detailsFields = [
         { name: "user", text: i18n.t("User") },
         { name: "date", text: i18n.t("Timestamp") },
@@ -127,47 +168,6 @@ class NotificationsTable extends React.Component {
             name: "metadata",
             text: i18n.t("Metadata Types"),
             getValue: notification => this.getMetadataTypes(notification),
-        },
-    ];
-
-    actions = [
-        {
-            name: "details",
-            text: i18n.t("Details"),
-            multiple: false,
-            type: "details",
-        },
-        {
-            name: "delete",
-            text: i18n.t("Delete"),
-            multiple: true,
-            onClick: this.deleteNotification,
-        },
-        {
-            name: "summary",
-            text: i18n.t("View summary"),
-            icon: "description",
-            multiple: false,
-            onClick: this.openSummary,
-        },
-    ];
-
-    dropdownItems = [
-        {
-            id: "READY",
-            name: i18n.t("Ready"),
-        },
-        {
-            id: "RUNNING",
-            name: i18n.t("Running"),
-        },
-        {
-            id: "FAILURE",
-            name: i18n.t("Failure"),
-        },
-        {
-            id: "DONE",
-            name: i18n.t("Done"),
         },
     ];
 
@@ -200,7 +200,7 @@ class NotificationsTable extends React.Component {
                     <ObjectsTable
                         key={tableKey}
                         d2={d2}
-                        model={NotificationsTable.model}
+                        model={NotificationsPage.model}
                         columns={this.columns}
                         detailsFields={this.detailsFields}
                         pageSize={10}
@@ -239,4 +239,4 @@ class NotificationsTable extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(NotificationsTable))));
+export default withLoading(withSnackbar(withRouter(withStyles(styles)(NotificationsPage))));

@@ -9,29 +9,16 @@ import _ from "lodash";
 
 import SyncReport from "../../models/syncReport";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
-import PageHeader from "../shared/PageHeader";
+import PageHeader from "../page-header/PageHeader";
 import SyncDialog from "../sync-dialog/SyncDialog";
 import SyncSummary from "../sync-summary/SyncSummary";
-import Dropdown from "../shared/Dropdown";
+import Dropdown from "../dropdown/Dropdown";
 
 const styles = () => ({
     tableContainer: { marginTop: -10 },
 });
 
-class BaseSyncConfigurator extends React.Component {
-    state = {
-        tableKey: Math.random(),
-        filters: {
-            lastUpdatedDate: null,
-            groupFilter: null,
-            groupFilterData: [],
-        },
-        metadata: {},
-        importResponse: SyncReport.create(),
-        syncDialogOpen: false,
-        syncSummaryOpen: false,
-    };
-
+class BaseSynchronizationPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         model: PropTypes.func.isRequired,
@@ -47,6 +34,19 @@ class BaseSyncConfigurator extends React.Component {
         renderExtraFilters: null,
         extraFiltersState: null,
         groupFilterName: null,
+    };
+
+    state = {
+        tableKey: Math.random(),
+        filters: {
+            lastUpdatedDate: null,
+            groupFilter: null,
+            groupFilterData: [],
+        },
+        metadata: {},
+        importResponse: SyncReport.create(),
+        syncDialogOpen: false,
+        syncSummaryOpen: false,
     };
 
     actions = [
@@ -216,4 +216,4 @@ class BaseSyncConfigurator extends React.Component {
     }
 }
 
-export default withSnackbar(withRouter(withStyles(styles)(BaseSyncConfigurator)));
+export default withSnackbar(withRouter(withStyles(styles)(BaseSynchronizationPage)));

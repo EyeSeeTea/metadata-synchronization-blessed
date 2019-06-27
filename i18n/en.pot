@@ -5,8 +5,114 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-04T14:36:02.608Z\n"
-"PO-Revision-Date: 2019-06-04T14:36:02.608Z\n"
+"POT-Creation-Date: 2019-06-13T06:24:14.176Z\n"
+"PO-Revision-Date: 2019-06-13T06:24:14.176Z\n"
+
+msgid "<No value>"
+msgstr ""
+
+msgid "Server name (*)"
+msgstr ""
+
+msgid "Field cannot be blank"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "URL endpoint (*)"
+msgstr ""
+
+msgid "Field should be an url"
+msgstr ""
+
+msgid "Username (*)"
+msgstr ""
+
+msgid "Password (*)"
+msgstr ""
+
+msgid "Please fix the issues before testing the connection"
+msgstr ""
+
+msgid "Connected successfully to instance"
+msgstr ""
+
+msgid "Please fix the issues before saving"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Test Connection"
+msgstr ""
+
+msgid "New Instance"
+msgstr ""
+
+msgid "Edit Instance"
+msgstr ""
+
+msgid "Cancel Instance Creation"
+msgstr ""
+
+msgid "Cancel Instance Editing"
+msgstr ""
+
+msgid "All your changes will be lost. Are you sure?"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Help text"
+msgstr ""
+
+msgid "Saving..."
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Server name"
+msgstr ""
+
+msgid "URL endpoint"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Deleting Instances"
+msgstr ""
+
+msgid "Failed to delete some instances"
+msgstr ""
+
+msgid "Successfully deleted {{count}} instances"
+msgid_plural "Successfully deleted {{count}} instances"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Delete Instances?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} instances?"
+msgid_plural "Are you sure you want to delete {{count}} instances?"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Instances"
+msgstr ""
 
 msgid "Instance Configurator"
 msgstr ""
@@ -29,120 +135,6 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-msgid "Connected successfully to instance"
-msgstr ""
-
-msgid "Deleting Instances"
-msgstr ""
-
-msgid "Failed to delete some instances"
-msgstr ""
-
-msgid "Successfully deleted {{count}} instances"
-msgid_plural "Successfully deleted {{count}} instances"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Server name"
-msgstr ""
-
-msgid "URL endpoint"
-msgstr ""
-
-msgid "Username"
-msgstr ""
-
-msgid "Description"
-msgstr ""
-
-msgid "Details"
-msgstr ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "Test Connection"
-msgstr ""
-
-msgid "Delete Instances?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{count}} instances?"
-msgid_plural "Are you sure you want to delete {{count}} instances?"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Ok"
-msgstr ""
-
-msgid "Instances"
-msgstr ""
-
-msgid "Server name (*)"
-msgstr ""
-
-msgid "Field cannot be blank"
-msgstr ""
-
-msgid "URL endpoint (*)"
-msgstr ""
-
-msgid "Field should be an url"
-msgstr ""
-
-msgid "Username (*)"
-msgstr ""
-
-msgid "Password (*)"
-msgstr ""
-
-msgid "Please fix the issues before testing the connection"
-msgstr ""
-
-msgid "Please fix the issues before saving"
-msgstr ""
-
-msgid "Cancel"
-msgstr ""
-
-msgid "New Instance"
-msgstr ""
-
-msgid "Edit Instance"
-msgstr ""
-
-msgid "Cancel Instance Creation"
-msgstr ""
-
-msgid "Cancel Instance Editing"
-msgstr ""
-
-msgid "All your changes will be lost. Are you sure?"
-msgstr ""
-
-msgid "Help text"
-msgstr ""
-
-msgid "Saving..."
-msgstr ""
-
-msgid "Save"
-msgstr ""
-
-msgid "Deleting Notifications"
-msgstr ""
-
-msgid "Failed to delete some notifications"
-msgstr ""
-
-msgid "Successfully deleted {{count}} notifications"
-msgid_plural "Successfully deleted {{count}} notifications"
-msgstr[0] ""
-msgstr[1] ""
-
 msgid "User"
 msgstr ""
 
@@ -150,12 +142,6 @@ msgid "Timestamp"
 msgstr ""
 
 msgid "Status"
-msgstr ""
-
-msgid "Metadata Types"
-msgstr ""
-
-msgid "View summary"
 msgstr ""
 
 msgid "Ready"
@@ -170,6 +156,23 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
+msgid "Deleting Notifications"
+msgstr ""
+
+msgid "Failed to delete some notifications"
+msgstr ""
+
+msgid "Successfully deleted {{count}} notifications"
+msgid_plural "Successfully deleted {{count}} notifications"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "View summary"
+msgstr ""
+
+msgid "Metadata Types"
+msgstr ""
+
 msgid "Synchronization status"
 msgstr ""
 
@@ -181,40 +184,10 @@ msgid_plural "Are you sure you want to delete {{count}} notifications?"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "<No value>"
-msgstr ""
-
 msgid "Help"
 msgstr ""
 
 msgid "Back"
-msgstr ""
-
-msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Please select at least one element from the table to synchronize"
-msgstr ""
-
-msgid "Last updated date"
-msgstr ""
-
-msgid "{{type}} Group"
-msgstr ""
-
-msgid "Data Elements Synchronization"
-msgstr ""
-
-msgid "Indicators Synchronization"
-msgstr ""
-
-msgid "Organisation Level"
-msgstr ""
-
-msgid "Organisation Units Synchronization"
-msgstr ""
-
-msgid "Validation Rules Synchronization"
 msgstr ""
 
 msgid "Synchronizing metadata"
@@ -263,6 +236,33 @@ msgid "Messages"
 msgstr ""
 
 msgid "JSON Response"
+msgstr ""
+
+msgid "Unknown error with the request"
+msgstr ""
+
+msgid "Please select at least one element from the table to synchronize"
+msgstr ""
+
+msgid "Last updated date"
+msgstr ""
+
+msgid "{{type}} Group"
+msgstr ""
+
+msgid "Data Elements Synchronization"
+msgstr ""
+
+msgid "Indicators Synchronization"
+msgstr ""
+
+msgid "Organisation Level"
+msgstr ""
+
+msgid "Organisation Units Synchronization"
+msgstr ""
+
+msgid "Validation Rules Synchronization"
 msgstr ""
 
 msgid "Fetching metadata from origin instance"

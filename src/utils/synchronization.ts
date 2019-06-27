@@ -4,7 +4,7 @@ import "../utils/lodash-mixins";
 
 import Instance from "../models/instance";
 import { D2, MetadataImportParams, MetadataImportResponse } from "../types/d2";
-import { NestedRules, MetadataPackage } from "../types/synchronization";
+import { MetadataPackage, NestedRules } from "../types/synchronization";
 import { cleanModelName } from "./d2";
 import { isValidUid } from "d2/uid";
 

@@ -1,10 +1,10 @@
 import React from "react";
-import BaseSyncConfigurator from "./BaseSyncConfigurator";
+import BaseSyncConfigurator from "./BaseSynchronizationPage";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { IndicatorModel } from "../../models/d2Model";
 
-export default class IndicatorSync extends React.Component {
+export default class IndicatorPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
     };

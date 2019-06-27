@@ -1,13 +1,13 @@
 import React from "react";
-import BaseSyncConfigurator from "./BaseSyncConfigurator";
+import BaseSyncConfigurator from "./BaseSynchronizationPage";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import memoize from "nano-memoize";
 import { OrganisationUnitModel } from "../../models/d2Model";
-import Dropdown from "../shared/Dropdown";
+import Dropdown from "../dropdown/Dropdown";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 
-export default class OrganisationUnitSync extends React.Component {
+export default class OrganisationUnitPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
     };

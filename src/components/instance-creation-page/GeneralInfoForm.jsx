@@ -4,8 +4,7 @@ import i18n from "@dhis2/d2-i18n";
 import { withRouter } from "react-router-dom";
 import _ from "lodash";
 import { TextField } from "@dhis2/d2-ui-core";
-import { FormBuilder } from "@dhis2/d2-ui-forms";
-import { Validators } from "@dhis2/d2-ui-forms";
+import { FormBuilder, Validators } from "@dhis2/d2-ui-forms";
 import { Card, CardContent } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import RaisedButton from "material-ui/RaisedButton/RaisedButton";
@@ -32,15 +31,15 @@ const styles = () => ({
 });
 
 class GeneralInfoForm extends React.Component {
-    state = {
-        isSaving: false,
-    };
-
     static propTypes = {
         d2: PropTypes.object.isRequired,
         instance: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
         cancelAction: PropTypes.func.isRequired,
+    };
+
+    state = {
+        isSaving: false,
     };
 
     setFormReference = formReference => {

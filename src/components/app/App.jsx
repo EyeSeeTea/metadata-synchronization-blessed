@@ -1,19 +1,18 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import HeaderBar from "@dhis2/d2-ui-header-bar";
-import { MuiThemeProvider } from "@material-ui/core/styles";
+import { createGenerateClassName, MuiThemeProvider } from "@material-ui/core/styles";
 import JssProvider from "react-jss/lib/JssProvider";
-import { createGenerateClassName } from "@material-ui/core/styles";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import { SnackbarProvider, LoadingProvider } from "d2-ui-components";
+import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
 import _ from "lodash";
 
-import "./App.css";
 import Root from "./Root";
 import Share from "../share/Share";
-import { muiTheme } from "../../themes/dhis2.theme";
-import muiThemeLegacy from "../../themes/dhis2-legacy.theme";
 import Instance from "../../models/instance";
+import { muiTheme } from "./themes/dhis2.theme";
+import muiThemeLegacy from "./themes/dhis2-legacy.theme";
+import "./App.css";
 
 const generateClassName = createGenerateClassName({
     dangerouslyUseGlobalCSS: false,
