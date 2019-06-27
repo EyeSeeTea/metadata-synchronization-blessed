@@ -9,17 +9,17 @@ import Instance from "../../models/instance";
 import { startSynchronization } from "../../logic/synchronization";
 
 class SyncDialog extends React.Component {
-    state = {
-        instanceOptions: [],
-        targetInstances: [],
-    };
-
     static propTypes = {
         d2: PropTypes.object.isRequired,
         isOpen: PropTypes.bool.isRequired,
         metadata: PropTypes.object.isRequired,
         handleClose: PropTypes.func.isRequired,
         loading: PropTypes.object.isRequired,
+    };
+
+    state = {
+        instanceOptions: [],
+        targetInstances: [],
     };
 
     async componentDidMount() {

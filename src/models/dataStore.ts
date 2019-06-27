@@ -61,7 +61,7 @@ export async function deleteDataStore(d2: D2, dataStoreKey: string): Promise<voi
 }
 
 export async function getData(d2: D2, dataStoreKey: string): Promise<any> {
-    return await getDataStore(d2, dataStoreKey, []);
+    return getDataStore(d2, dataStoreKey, []);
 }
 
 export async function getDataById(d2: D2, dataStoreKey: string, id: string): Promise<any> {
