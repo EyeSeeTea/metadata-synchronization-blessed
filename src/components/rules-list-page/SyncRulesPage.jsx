@@ -27,7 +27,9 @@ class SyncRulesPage extends React.Component {
     };
     static model = {
         modelValidations: {
-            // TODO: Update model validations
+            name: { type: "TEXT" },
+            description: { type: "TEXT" },
+            targetInstances: { type: "COLLECTION" },
         },
     };
 
@@ -188,7 +190,6 @@ class SyncRulesPage extends React.Component {
                         initialSorting={this.initialSorting}
                         actions={this.actions}
                         list={SyncRule.list}
-                        hideSearchBox={true}
                         onButtonClick={this.createRule}
                     />
                 </div>
