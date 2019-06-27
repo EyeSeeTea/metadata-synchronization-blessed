@@ -3,7 +3,7 @@ import { generateUid } from "d2/uid";
 
 import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
 import { D2 } from "../types/d2";
-import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { MetadataPackage, SynchronizationRule } from "../types/synchronization";
 
 const dataStoreKey = "rules";
@@ -18,6 +18,46 @@ export default class SyncRule {
             id: generateUid(),
             ..._.pick(syncRule, ["id", "name", "description", "originInstance", "builder"]),
         };
+    }
+
+    public get selectedIds(): string[] {
+        return this._selectedIds;
+    }
+
+    public set selectedIds(value: string[]) {
+        this._selectedIds = value;
+    }
+
+    public get targetInstances(): string[] {
+        return this._syncRule.builder.targetInstances;
+    }
+
+    public set targetInstances(instances: string[]) {
+        this._syncRule.builder.targetInstances = instances;
+    }
+
+    public get name(): string {
+        return this._syncRule.name;
+    }
+
+    public set name(name: string) {
+        this._syncRule.name = name;
+    }
+
+    public get description(): string {
+        return this._syncRule.description || "";
+    }
+
+    public set description(description: string) {
+        this._syncRule.description = description;
+    }
+
+    public get metadata(): MetadataPackage {
+        return this._syncRule.builder.metadata || {};
+    }
+
+    public set metadata(metadata: MetadataPackage) {
+        this._syncRule.builder.metadata = metadata;
     }
 
     public static create(): SyncRule {
@@ -44,50 +84,19 @@ export default class SyncRule {
 
     public static async list(
         d2: D2,
-        filters: TableFilters,
+        filters: SyncRuleTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        return getPaginatedData(d2, dataStoreKey, filters, pagination);
-    }
-
-    public set targetInstances(instances: string[]) {
-        this._syncRule.builder.targetInstances = instances;
-    }
-
-    public get targetInstances(): string[] {
-        return this._syncRule.builder.targetInstances;
-    }
-
-    public set name(name: string) {
-        this._syncRule.name = name;
-    }
-
-    public get name(): string {
-        return this._syncRule.name;
-    }
-
-    public get description(): string {
-        return this._syncRule.description || "";
-    }
-
-    public set description(description: string) {
-        this._syncRule.description = description;
-    }
-
-    public get metadata(): MetadataPackage {
-        return this._syncRule.builder.metadata || {};
-    }
-
-    public set metadata(metadata: MetadataPackage) {
-        this._syncRule.builder.metadata = metadata;
-    }
-
-    public get selectedIds(): string[] {
-        return this._selectedIds;
-    }
-
-    public set selectedIds(value: string[]) {
-        this._selectedIds = value;
+        const { targetInstanceFilter } = filters;
+        const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
+        return targetInstanceFilter
+            ? {
+                  ...data,
+                  objects: _.filter(data.objects, e =>
+                      e.builder.targetInstances.includes(targetInstanceFilter)
+                  ),
+              }
+            : data;
     }
 
     public async save(d2: D2): Promise<void> {

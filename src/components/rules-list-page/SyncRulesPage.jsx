@@ -13,6 +13,7 @@ import { getValueForCollection } from "../../utils/d2-ui-components";
 import { startSynchronization } from "../../logic/synchronization";
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
+import Dropdown from "../dropdown/Dropdown";
 
 const styles = () => ({
     tableContainer: { marginTop: -10 },
@@ -37,9 +38,11 @@ class SyncRulesPage extends React.Component {
         tableKey: Math.random(),
         toDelete: null,
         allInstances: [],
+        targetInstanceFilter: "",
         syncReport: SyncReport.create(),
         syncSummaryOpen: false,
     };
+    initialSorting = ["name", "asc"];
 
     getValueForTargetInstances = ruleData => {
         const { allInstances } = this.state;
@@ -60,9 +63,6 @@ class SyncRulesPage extends React.Component {
             getValue: this.getValueForTargetInstances,
         },
     ];
-
-    initialSorting = ["name", "asc"];
-
     detailsFields = [
         { name: "name", text: i18n.t("Name") },
         { name: "description", text: i18n.t("Description") },
@@ -142,8 +142,6 @@ class SyncRulesPage extends React.Component {
         loading.reset();
     };
 
-    closeSummary = () => this.setState({ syncSummaryOpen: false });
-
     actions = [
         {
             name: "edit",
@@ -172,8 +170,36 @@ class SyncRulesPage extends React.Component {
         },
     ];
 
+    closeSummary = () => this.setState({ syncSummaryOpen: false });
+
+    changeInstanceFilter = event => this.setState({ targetInstanceFilter: event.target.value });
+
+    renderCustomFilters = () => {
+        const { allInstances, targetInstanceFilter } = this.state;
+
+        console.log(targetInstanceFilter);
+
+        return (
+            <React.Fragment>
+                <Dropdown
+                    key={"target-instance-filter"}
+                    items={allInstances}
+                    onChange={this.changeInstanceFilter}
+                    value={targetInstanceFilter}
+                    label={i18n.t("Destination Instance")}
+                />
+            </React.Fragment>
+        );
+    };
+
     render() {
-        const { tableKey, toDelete, syncSummaryOpen, syncReport } = this.state;
+        const {
+            tableKey,
+            toDelete,
+            syncSummaryOpen,
+            syncReport,
+            targetInstanceFilter,
+        } = this.state;
         const { d2, classes } = this.props;
 
         return (
@@ -191,6 +217,8 @@ class SyncRulesPage extends React.Component {
                         actions={this.actions}
                         list={SyncRule.list}
                         onButtonClick={this.createRule}
+                        customFiltersComponent={this.renderCustomFilters}
+                        customFilters={{ targetInstanceFilter }}
                     />
                 </div>
 

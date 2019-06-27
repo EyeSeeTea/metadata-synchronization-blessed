@@ -1,6 +1,5 @@
 import { MetadataImportResponse, MetadataImportStats } from "./d2";
 import SyncReport from "../models/syncReport";
-import Instance from "../models/instance";
 
 export interface SynchronizationBuilder {
     targetInstances: string[];

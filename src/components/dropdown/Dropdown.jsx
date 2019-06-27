@@ -62,7 +62,17 @@ export default function Dropdown({ items, value, onChange, label, hideEmpty }) {
         <MuiThemeProvider theme={materialTheme}>
             <FormControl>
                 <InputLabel>{label}</InputLabel>
-                <Select value={value} onChange={onChange}>
+                <Select
+                    value={value}
+                    onChange={onChange}
+                    MenuProps={{
+                        getContentAnchorEl: null,
+                        anchorOrigin: {
+                            vertical: "bottom",
+                            horizontal: "left",
+                        },
+                    }}
+                >
                     {!hideEmpty && <MenuItem value={""}>{i18n.t("<No value>")}</MenuItem>}
                     {items.map(i => (
                         <MenuItem key={i.id} value={i.id}>

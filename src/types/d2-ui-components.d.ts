@@ -27,6 +27,10 @@ export interface SyncReportTableFilters extends TableFilters {
     statusFilter?: string;
 }
 
+export interface SyncRuleTableFilters extends TableFilters {
+    targetInstanceFilter?: string;
+}
+
 export interface TablePagination {
     page?: number;
     pageSize?: number;
