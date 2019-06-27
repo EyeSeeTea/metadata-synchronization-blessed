@@ -5,24 +5,18 @@ import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore
 import { D2 } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { MetadataPackage, SynchronizationRule } from "../types/synchronization";
-import Instance from "./instance";
 
 const dataStoreKey = "rules";
 
 export default class SyncRule {
-    private readonly syncRule: SynchronizationRule;
+    private readonly _syncRule: SynchronizationRule;
+    private _selectedIds: string[];
 
     constructor(syncRule: SynchronizationRule) {
-        this.syncRule = {
+        this._selectedIds = [];
+        this._syncRule = {
             id: generateUid(),
-            ..._.pick(syncRule, [
-                "id",
-                "name",
-                "description",
-                "originInstance",
-                "builder",
-                "selectedIds",
-            ]),
+            ..._.pick(syncRule, ["id", "name", "description", "originInstance", "builder"]),
         };
     }
 
@@ -31,12 +25,11 @@ export default class SyncRule {
             id: "",
             name: "",
             description: "",
-            originInstance: Instance.create(),
+            originInstance: "",
             builder: {
                 targetInstances: [],
                 metadata: {},
             },
-            selectedIds: [],
         });
     }
 
@@ -58,54 +51,54 @@ export default class SyncRule {
     }
 
     public set targetInstances(instances: string[]) {
-        this.syncRule.builder.targetInstances = instances;
+        this._syncRule.builder.targetInstances = instances;
     }
 
     public get targetInstances(): string[] {
-        return this.syncRule.builder.targetInstances;
-    }
-
-    public set selectedIds(selectedIds: string[]) {
-        this.syncRule.selectedIds = selectedIds;
-    }
-
-    public get selectedIds(): string[] {
-        return this.syncRule.selectedIds;
+        return this._syncRule.builder.targetInstances;
     }
 
     public set name(name: string) {
-        this.syncRule.name = name;
+        this._syncRule.name = name;
     }
 
     public get name(): string {
-        return this.syncRule.name;
+        return this._syncRule.name;
     }
 
     public get description(): string {
-        return this.syncRule.description || "";
+        return this._syncRule.description || "";
     }
 
     public set description(description: string) {
-        this.syncRule.description = description;
+        this._syncRule.description = description;
     }
 
     public get metadata(): MetadataPackage {
-        return this.syncRule.builder.metadata || {};
+        return this._syncRule.builder.metadata || {};
     }
 
     public set metadata(metadata: MetadataPackage) {
-        this.syncRule.builder.metadata = metadata;
+        this._syncRule.builder.metadata = metadata;
+    }
+
+    public get selectedIds(): string[] {
+        return this._selectedIds;
+    }
+
+    public set selectedIds(value: string[]) {
+        this._selectedIds = value;
     }
 
     public async save(d2: D2): Promise<void> {
-        const exists = this.syncRule.id;
-        const element = exists ? this.syncRule : { ...this.syncRule, id: generateUid() };
+        const exists = this._syncRule.id;
+        const element = exists ? this._syncRule : { ...this._syncRule, id: generateUid() };
 
         if (exists) await this.remove(d2);
         await saveData(d2, dataStoreKey, element);
     }
 
     public async remove(d2: D2): Promise<void> {
-        await deleteData(d2, dataStoreKey, this.syncRule);
+        await deleteData(d2, dataStoreKey, this._syncRule);
     }
 }

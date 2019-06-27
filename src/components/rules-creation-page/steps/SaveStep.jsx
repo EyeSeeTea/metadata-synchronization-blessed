@@ -88,7 +88,9 @@ const SaveStep = props => {
                 {_.keys(metadata).map(metadataType => (
                     <LiEntry
                         key={metadataType}
-                        label={`${metadataType} [${metadata[metadataType].length}]`}
+                        label={`${d2.models[metadataType].displayName} [${
+                            metadata[metadataType].length
+                        }]`}
                     >
                         <ul>
                             {metadata[metadataType].map(({ id, name }) => (

@@ -8,6 +8,11 @@ import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../page-header/PageHeader";
 import SyncRule from "../../models/syncRule";
+import Instance from "../../models/instance";
+import { getValueForCollection } from "../../utils/d2-ui-components";
+import { startSynchronization } from "../../logic/synchronization";
+import SyncReport from "../../models/syncReport";
+import SyncSummary from "../sync-summary/SyncSummary";
 
 const styles = () => ({
     tableContainer: { marginTop: -10 },
@@ -29,11 +34,29 @@ class SyncRulesPage extends React.Component {
     state = {
         tableKey: Math.random(),
         toDelete: null,
+        allInstances: [],
+        syncReport: SyncReport.create(),
+        syncSummaryOpen: false,
+    };
+
+    getValueForTargetInstances = ruleData => {
+        const { allInstances } = this.state;
+        const rule = SyncRule.build(ruleData);
+        return getValueForCollection(
+            rule.targetInstances
+                .map(id => allInstances.find(instance => instance.id === id))
+                .map(({ name }) => ({ name }))
+        );
     };
 
     columns = [
         { name: "name", text: i18n.t("Name"), sortable: true },
-        // TODO: Add description, origin and destination
+        {
+            name: "targetInstances",
+            text: i18n.t("Destination instances"),
+            sortable: false,
+            getValue: this.getValueForTargetInstances,
+        },
     ];
 
     initialSorting = ["name", "asc"];
@@ -41,8 +64,19 @@ class SyncRulesPage extends React.Component {
     detailsFields = [
         { name: "name", text: i18n.t("Name") },
         { name: "description", text: i18n.t("Description") },
-        // TODO: Add origin, destination
+        {
+            name: "targetInstances",
+            text: i18n.t("Destination instances"),
+            sortable: true,
+            getValue: this.getValueForTargetInstances,
+        },
     ];
+
+    async componentDidMount() {
+        const { d2 } = this.props;
+        const { objects: allInstances } = await Instance.list(d2, null, null);
+        this.setState({ allInstances });
+    }
 
     backHome = () => {
         this.props.history.push("/");
@@ -88,9 +122,25 @@ class SyncRulesPage extends React.Component {
         this.props.history.push(`/synchronization-rules/edit/${rule.id}`);
     };
 
-    executeRule = _rule => {
-        // TODO
+    executeRule = async ({ builder, name }) => {
+        const { d2, loading } = this.props;
+        loading.show(true, i18n.t("Synchronizing metadata"));
+        try {
+            for await (const { message, syncReport, done } of startSynchronization(d2, builder)) {
+                if (message) loading.show(true, message);
+                if (syncReport) await syncReport.save(d2);
+                if (done && syncReport) {
+                    this.setState({ syncSummaryOpen: true, syncReport });
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            this.props.snackbar.error(i18n.t("Failed to execute rule {{name}}", { name }));
+        }
+        loading.reset();
     };
+
+    closeSummary = () => this.setState({ syncSummaryOpen: false });
 
     actions = [
         {
@@ -121,7 +171,7 @@ class SyncRulesPage extends React.Component {
     ];
 
     render() {
-        const { tableKey, toDelete } = this.state;
+        const { tableKey, toDelete, syncSummaryOpen, syncReport } = this.state;
         const { d2, classes } = this.props;
 
         return (
@@ -156,6 +206,13 @@ class SyncRulesPage extends React.Component {
                             : ""
                     }
                     saveText={i18n.t("Ok")}
+                />
+
+                <SyncSummary
+                    d2={d2}
+                    response={syncReport}
+                    isOpen={syncSummaryOpen}
+                    handleClose={this.closeSummary}
                 />
             </React.Fragment>
         );

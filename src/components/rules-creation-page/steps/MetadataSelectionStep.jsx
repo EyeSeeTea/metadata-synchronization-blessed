@@ -143,10 +143,13 @@ class MetadataSelectionStep extends React.Component {
 
         const difference = selectedIds.length - oldSelection.length;
         if (difference > 0) {
-            snackbar.info(i18n.t("Selected {{difference}} elements", { difference }));
+            snackbar.info(i18n.t("Selected {{difference}} elements", { difference }), {
+                autoHideDuration: 1000,
+            });
         } else if (difference < 0) {
             snackbar.info(
-                i18n.t("Removed {{difference}} elements", { difference: Math.abs(difference) })
+                i18n.t("Removed {{difference}} elements", { difference: Math.abs(difference) }),
+                { autoHideDuration: 1000 }
             );
         }
 
