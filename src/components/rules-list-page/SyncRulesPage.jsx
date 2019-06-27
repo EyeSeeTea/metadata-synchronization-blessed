@@ -177,8 +177,6 @@ class SyncRulesPage extends React.Component {
     renderCustomFilters = () => {
         const { allInstances, targetInstanceFilter } = this.state;
 
-        console.log(targetInstanceFilter);
-
         return (
             <React.Fragment>
                 <Dropdown
