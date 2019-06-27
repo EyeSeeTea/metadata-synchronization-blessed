@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { FormBuilder, Validators } from "@dhis2/d2-ui-forms";
 import { TextField } from "@dhis2/d2-ui-core";
@@ -6,7 +6,6 @@ import i18n from "@dhis2/d2-i18n";
 
 const GeneralInfoStep = props => {
     const { syncRule } = props;
-    const [, setFormReference] = useState(); // TODO: Form reference will be used for validations
 
     const fields = [
         {
@@ -46,7 +45,7 @@ const GeneralInfoStep = props => {
         props.syncRule[field] = value;
     };
 
-    return <FormBuilder fields={fields} onUpdateField={updateFields} ref={setFormReference} />;
+    return <FormBuilder fields={fields} onUpdateField={updateFields} />;
 };
 
 GeneralInfoStep.propTypes = {

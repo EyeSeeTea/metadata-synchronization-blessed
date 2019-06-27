@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-27T08:35:21.448Z\n"
-"PO-Revision-Date: 2019-06-27T08:35:21.448Z\n"
+"POT-Creation-Date: 2019-06-27T09:09:40.635Z\n"
+"PO-Revision-Date: 2019-06-27T09:09:40.635Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -404,4 +404,7 @@ msgid "Field {{field}} cannot be blank"
 msgstr ""
 
 msgid "This URL and username combination already exists"
+msgstr ""
+
+msgid "You need to select at least one element"
 msgstr ""

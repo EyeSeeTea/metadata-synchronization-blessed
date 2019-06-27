@@ -5,6 +5,7 @@ import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore
 import { D2 } from "../types/d2";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { MetadataPackage, SynchronizationRule } from "../types/synchronization";
+import { Validation } from "../types/validations";
 
 const dataStoreKey = "rules";
 
@@ -109,5 +110,34 @@ export default class SyncRule {
 
     public async remove(d2: D2): Promise<void> {
         await deleteData(d2, dataStoreKey, this._syncRule);
+    }
+
+    public async validate(): Promise<Validation> {
+        return _.pickBy({
+            name: _.compact([
+                !this.name.trim()
+                    ? {
+                          key: "cannot_be_blank",
+                          namespace: { field: "name" },
+                      }
+                    : null,
+            ]),
+            selectedIds: _.compact([
+                this._selectedIds.length === 0
+                    ? {
+                          key: "cannot_be_empty",
+                          namespace: {},
+                      }
+                    : null,
+            ]),
+            targetInstances: _.compact([
+                this.targetInstances.length === 0
+                    ? {
+                          key: "cannot_be_empty",
+                          namespace: {},
+                      }
+                    : null,
+            ]),
+        });
     }
 }

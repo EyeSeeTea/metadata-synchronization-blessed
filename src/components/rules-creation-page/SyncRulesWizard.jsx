@@ -10,6 +10,7 @@ import SyncRule from "../../models/syncRule";
 import MetadataStep from "./steps/MetadataSelectionStep";
 import InstanceSelectionStep from "./steps/InstanceSelectionStep";
 import SaveStep from "./steps/SaveStep";
+import { getValidationMessages } from "../../utils/validations";
 
 class SyncRulesWizard extends React.Component {
     static propTypes = {
@@ -86,7 +87,13 @@ class SyncRulesWizard extends React.Component {
         this.setState({ instance });
     };
 
-    switchStep = () => {};
+    onStepChangeRequest = async currentStep => {
+        return getValidationMessages(
+            this.props.d2,
+            this.state.syncRule,
+            currentStep.validationKeys
+        );
+    };
 
     render() {
         const { dialogOpen, syncRule } = this.state;
@@ -105,7 +112,6 @@ class SyncRulesWizard extends React.Component {
             props: {
                 d2,
                 syncRule,
-                //onChange: this.onChange(step),
                 onCancel: this.handleConfirm,
             },
         }));
@@ -124,7 +130,8 @@ class SyncRulesWizard extends React.Component {
                 <PageHeader title={title} onBackClick={this.cancelSave} />
 
                 <Wizard
-                    onStepChangeRequest={this.switchStep}
+                    useSnackFeedback={true}
+                    onStepChangeRequest={this.onStepChangeRequest}
                     initialStepKey={steps[0].key}
                     steps={steps}
                 />
