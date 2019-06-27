@@ -97,7 +97,7 @@ class SyncRulesWizard extends React.Component {
 
     render() {
         const { dialogOpen, syncRule } = this.state;
-        const { d2 } = this.props;
+        const { d2, location } = this.props;
 
         const title = !this.isEdit
             ? i18n.t("New synchronization rule")
@@ -116,6 +116,12 @@ class SyncRulesWizard extends React.Component {
             },
         }));
 
+        const urlHash = location.hash.slice(1);
+        const stepExists = steps.find(step => step.key === urlHash);
+        const firstStepKey = steps.map(step => step.key)[0];
+        const initialStepKey = stepExists ? urlHash : firstStepKey;
+        const lastClickableStepIndex = this.isEdit ? steps.length - 1 : 0;
+
         return (
             <React.Fragment>
                 <ConfirmationDialog
@@ -132,7 +138,8 @@ class SyncRulesWizard extends React.Component {
                 <Wizard
                     useSnackFeedback={true}
                     onStepChangeRequest={this.onStepChangeRequest}
-                    initialStepKey={steps[0].key}
+                    initialStepKey={initialStepKey}
+                    lastClickableStepIndex={lastClickableStepIndex}
                     steps={steps}
                 />
             </React.Fragment>
