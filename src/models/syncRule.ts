@@ -15,31 +15,8 @@ export default class SyncRule {
     constructor(syncRule: SynchronizationRule) {
         this.syncRule = {
             id: generateUid(),
-            ..._.pick(syncRule, [
-                "id",
-                "name",
-                "description",
-                "originInstance",
-                "builder",
-                "selectedIds",
-            ]),
+            ..._.pick(syncRule, ["id", "name", "description", "originInstance", "builder"]),
         };
-    }
-
-    public get selectedIds(): string[] {
-        return this.syncRule.selectedIds;
-    }
-
-    public set selectedIds(value: string[]) {
-        this.syncRule.selectedIds = value;
-    }
-
-    public get targetInstances(): string[] {
-        return this.syncRule.builder.targetInstances;
-    }
-
-    public set targetInstances(instances: string[]) {
-        this.syncRule.builder.targetInstances = instances;
     }
 
     public get name(): string {
@@ -58,12 +35,36 @@ export default class SyncRule {
         this.syncRule.description = description;
     }
 
+    public addMetadataIds(type: string, ids: string[]): void {
+        const original = this.syncRule.builder.metadata[type];
+        this.syncRule.builder.metadata[type] = original ? [...original, ...ids] : [...ids];
+    }
+
+    public removeMetadataIds(ids: string[]): void {
+        for (const type in this.syncRule.builder.metadata) {
+            _.pullAll(this.syncRule.builder.metadata[type], ids);
+        }
+    }
+
     public get metadata(): MetadataPackage {
         return this.syncRule.builder.metadata || {};
     }
 
-    public set metadata(metadata: MetadataPackage) {
-        this.syncRule.builder.metadata = metadata;
+    public get selectedIds(): string[] {
+        return (
+            _(this.syncRule.builder.metadata)
+                .values()
+                .flatten()
+                .value() || []
+        );
+    }
+
+    public updateTargetInstances(instances: string[]): void {
+        this.syncRule.builder.targetInstances = instances;
+    }
+
+    public get targetInstances(): string[] {
+        return this.syncRule.builder.targetInstances;
     }
 
     public static create(): SyncRule {
@@ -76,7 +77,6 @@ export default class SyncRule {
                 targetInstances: [],
                 metadata: {},
             },
-            selectedIds: [],
         });
     }
 
@@ -107,7 +107,7 @@ export default class SyncRule {
     }
 
     public async save(d2: D2): Promise<void> {
-        const exists = this.syncRule.id;
+        const exists = !!this.syncRule.id;
         const element = exists ? this.syncRule : { ...this.syncRule, id: generateUid() };
 
         if (exists) await this.remove(d2);

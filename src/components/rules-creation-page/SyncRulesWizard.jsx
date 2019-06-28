@@ -26,42 +26,40 @@ class SyncRulesWizard extends React.Component {
     id = this.props.match.params.id;
     isEdit = this.props.match.params.action === "edit" && this.id;
 
-    static getStepsBaseInfo() {
-        return [
-            {
-                key: "general-info",
-                label: i18n.t("General info"),
-                component: GeneralInfoStep,
-                validationKeys: ["name"],
-                description: undefined,
-                help: undefined,
-            },
-            {
-                key: "metadata",
-                label: i18n.t("Metadata"),
-                component: MetadataStep,
-                validationKeys: ["selectedIds"],
-                description: undefined,
-                help: undefined,
-            },
-            {
-                key: "instance-selection",
-                label: i18n.t("Instance Selection"),
-                component: InstanceSelectionStep,
-                validationKeys: ["targetInstances"],
-                description: undefined,
-                help: undefined,
-            },
-            {
-                key: "summary",
-                label: i18n.t("Summary"),
-                component: SaveStep,
-                validationKeys: [],
-                description: undefined,
-                help: undefined,
-            },
-        ];
-    }
+    static getStepsBaseInfo = [
+        {
+            key: "general-info",
+            label: i18n.t("General info"),
+            component: GeneralInfoStep,
+            validationKeys: ["name"],
+            description: undefined,
+            help: undefined,
+        },
+        {
+            key: "metadata",
+            label: i18n.t("Metadata"),
+            component: MetadataStep,
+            validationKeys: ["selectedIds"],
+            description: undefined,
+            help: undefined,
+        },
+        {
+            key: "instance-selection",
+            label: i18n.t("Instance Selection"),
+            component: InstanceSelectionStep,
+            validationKeys: ["targetInstances"],
+            description: undefined,
+            help: undefined,
+        },
+        {
+            key: "summary",
+            label: i18n.t("Summary"),
+            component: SaveStep,
+            validationKeys: [],
+            description: undefined,
+            help: undefined,
+        },
+    ];
 
     componentDidMount = async () => {
         if (this.isEdit) {
@@ -107,7 +105,7 @@ class SyncRulesWizard extends React.Component {
             ? i18n.t("Cancel synchronization rule creation")
             : i18n.t("Cancel synchronization rule editing");
 
-        const steps = SyncRulesWizard.getStepsBaseInfo().map(step => ({
+        const steps = SyncRulesWizard.getStepsBaseInfo.map(step => ({
             ...step,
             props: {
                 d2,

@@ -20,7 +20,7 @@ export interface TableFilters {
 }
 
 export interface OrganisationUnitTableFilters extends TableFilters {
-    orgUnitLevel?: string;
+    levelFilter?: string;
 }
 
 export interface SyncReportTableFilters extends TableFilters {

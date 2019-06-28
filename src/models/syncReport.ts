@@ -64,7 +64,7 @@ export default class SyncReport {
     }
 
     public async save(d2: D2): Promise<void> {
-        const exists = this.syncReport.id;
+        const exists = !!this.syncReport.id;
         const element = exists ? this.syncReport : { ...this.syncReport, id: generateUid() };
 
         if (exists) await this.remove(d2);

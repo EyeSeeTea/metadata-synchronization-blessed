@@ -3,7 +3,6 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import { Button, LinearProgress, withStyles } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
-import { withRouter } from "react-router-dom";
 import i18n from "@dhis2/d2-i18n";
 
 import { getInstances } from "./InstanceSelectionStep";
@@ -29,7 +28,7 @@ const styles = () => ({
 });
 
 const SaveStep = props => {
-    const { d2, syncRule, classes, history } = props;
+    const { d2, syncRule, classes, onCancel } = props;
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [metadata, updateMetadata] = useState({});
@@ -45,16 +44,11 @@ const SaveStep = props => {
 
     const closeCancelDialog = () => setCancelDialogOpen(false);
 
-    const cancel = () => history.push("/synchronization-rules");
-
     const save = async () => {
         setIsSaving(true);
-
-        syncRule.metadata = metadata || (await parseMetadata());
         await syncRule.save(d2);
-
         setIsSaving(false);
-        cancel();
+        onCancel();
     };
 
     const parseInstances = async () => {
@@ -71,7 +65,7 @@ const SaveStep = props => {
         <React.Fragment>
             <ConfirmationDialog
                 isOpen={cancelDialogOpen}
-                onSave={cancel}
+                onSave={onCancel}
                 onCancel={closeCancelDialog}
                 title={i18n.t("Cancel synchronization rule wizard")}
                 description={i18n.t(
@@ -131,9 +125,9 @@ const SaveStep = props => {
 SaveStep.propTypes = {
     syncRule: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
+    onCancel: PropTypes.func.isRequired,
 };
 
 SaveStep.defaultProps = {};
 
-export default withRouter(withStyles(styles)(SaveStep));
+export default withStyles(styles)(SaveStep);
