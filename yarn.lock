@@ -9267,10 +9267,10 @@ nan@^2.12.1, nan@^2.13.2, nan@^2.9.2:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
 
-nano-memoize@^1.0.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/nano-memoize/-/nano-memoize-1.1.3.tgz#3ce885f76898384ac78d39fe185b6419f71f8e12"
-  integrity sha512-+0yGTtwV70h7GourgGsy/AlxrQxqIvJdJjMCuBln+v9lc+u+STuEAscPc4YLgT7uVc+Su/osREG1Do9C/L5OVA==
+nano-memoize@1.1.4, nano-memoize@^1.0.3:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/nano-memoize/-/nano-memoize-1.1.4.tgz#3b3898e1796894e1f6c1e1ceb53c15c31e59ac3b"
+  integrity sha512-UxbdOzIrAvFJbUp9MKYGG0mmHBHBVoSn7BFNkwVL3cE6F351exdbwcG6gTxN5JSQ0heGMQm+QLkqcyI8oqQp3w==
 
 nanomatch@^1.2.9:
   version "1.2.13"
