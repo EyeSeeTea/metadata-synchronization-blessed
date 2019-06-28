@@ -58,18 +58,18 @@ class LandingPage extends React.Component {
     render() {
         const { classes } = this.props;
         const items = [
-            ["instance-configurator", i18n.t("Instance Configurator"), "edit", GRID_ITEM_BIG],
-            ["sync/organisationUnits", i18n.t("Organisation Units Sync"), "sync", GRID_ITEM_SMALL],
-            ["sync/dataElements", i18n.t("Data Elements Sync"), "sync", GRID_ITEM_SMALL],
-            ["sync/indicators", i18n.t("Indicators Sync"), "sync", GRID_ITEM_SMALL],
-            ["sync/validationRules", i18n.t("Validation Rules Sync"), "sync", GRID_ITEM_SMALL],
+            ["instance-configurator", i18n.t("Instance Configuration"), "edit", GRID_ITEM_BIG],
+            ["sync/organisationUnits", i18n.t("Organisation Units"), "sync", GRID_ITEM_SMALL],
+            ["sync/dataElements", i18n.t("Data Elements"), "sync", GRID_ITEM_SMALL],
+            ["sync/indicators", i18n.t("Indicators"), "sync", GRID_ITEM_SMALL],
+            ["sync/validationRules", i18n.t("Validation Rules"), "sync", GRID_ITEM_SMALL],
             [
                 "synchronization-rules",
                 i18n.t("Synchronization Rules"),
                 "playlist_add_check",
                 GRID_ITEM_MEDIUM,
             ],
-            ["notifications", i18n.t("Notifications"), "settings", GRID_ITEM_MEDIUM],
+            ["notifications", i18n.t("Synchronization History"), "history", GRID_ITEM_MEDIUM],
         ];
         const menuItems = items.map(([key, title, icon, xs]) => (
             <Grid item xs={xs} className={classes.item} key={key}>
