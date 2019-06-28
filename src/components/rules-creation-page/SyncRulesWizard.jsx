@@ -26,42 +26,40 @@ class SyncRulesWizard extends React.Component {
     id = this.props.match.params.id;
     isEdit = this.props.match.params.action === "edit" && this.id;
 
-    static getStepsBaseInfo() {
-        return [
-            {
-                key: "general-info",
-                label: i18n.t("General info"),
-                component: GeneralInfoStep,
-                validationKeys: ["name"],
-                description: undefined,
-                help: undefined,
-            },
-            {
-                key: "metadata",
-                label: i18n.t("Metadata"),
-                component: MetadataStep,
-                validationKeys: ["selectedIds"],
-                description: undefined,
-                help: undefined,
-            },
-            {
-                key: "instance-selection",
-                label: i18n.t("Instance Selection"),
-                component: InstanceSelectionStep,
-                validationKeys: ["targetInstances"],
-                description: undefined,
-                help: undefined,
-            },
-            {
-                key: "summary",
-                label: i18n.t("Summary"),
-                component: SaveStep,
-                validationKeys: [],
-                description: undefined,
-                help: undefined,
-            },
-        ];
-    }
+    static getStepsBaseInfo = [
+        {
+            key: "general-info",
+            label: i18n.t("General info"),
+            component: GeneralInfoStep,
+            validationKeys: ["name"],
+            description: undefined,
+            help: undefined,
+        },
+        {
+            key: "metadata",
+            label: i18n.t("Metadata"),
+            component: MetadataStep,
+            validationKeys: ["selectedIds"],
+            description: undefined,
+            help: undefined,
+        },
+        {
+            key: "instance-selection",
+            label: i18n.t("Instance Selection"),
+            component: InstanceSelectionStep,
+            validationKeys: ["targetInstances"],
+            description: undefined,
+            help: undefined,
+        },
+        {
+            key: "summary",
+            label: i18n.t("Summary"),
+            component: SaveStep,
+            validationKeys: [],
+            description: undefined,
+            help: undefined,
+        },
+    ];
 
     componentDidMount = async () => {
         if (this.isEdit) {
@@ -97,7 +95,7 @@ class SyncRulesWizard extends React.Component {
 
     render() {
         const { dialogOpen, syncRule } = this.state;
-        const { d2 } = this.props;
+        const { d2, location } = this.props;
 
         const title = !this.isEdit
             ? i18n.t("New synchronization rule")
@@ -107,7 +105,7 @@ class SyncRulesWizard extends React.Component {
             ? i18n.t("Cancel synchronization rule creation")
             : i18n.t("Cancel synchronization rule editing");
 
-        const steps = SyncRulesWizard.getStepsBaseInfo().map(step => ({
+        const steps = SyncRulesWizard.getStepsBaseInfo.map(step => ({
             ...step,
             props: {
                 d2,
@@ -115,6 +113,12 @@ class SyncRulesWizard extends React.Component {
                 onCancel: this.handleConfirm,
             },
         }));
+
+        const urlHash = location.hash.slice(1);
+        const stepExists = steps.find(step => step.key === urlHash);
+        const firstStepKey = steps.map(step => step.key)[0];
+        const initialStepKey = stepExists ? urlHash : firstStepKey;
+        const lastClickableStepIndex = this.isEdit ? steps.length - 1 : 0;
 
         return (
             <React.Fragment>
@@ -132,7 +136,8 @@ class SyncRulesWizard extends React.Component {
                 <Wizard
                     useSnackFeedback={true}
                     onStepChangeRequest={this.onStepChangeRequest}
-                    initialStepKey={steps[0].key}
+                    initialStepKey={initialStepKey}
+                    lastClickableStepIndex={lastClickableStepIndex}
                     steps={steps}
                 />
             </React.Fragment>

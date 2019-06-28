@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import memoize from "nano-memoize";
 import { MultiSelector } from "d2-ui-components";
 import Instance from "../../../models/instance";
 
-export const getInstances = memoize(async d2 => {
+export const getInstances = async d2 => {
     const instances = await Instance.list(
         d2,
         { search: "" },
@@ -14,7 +13,7 @@ export const getInstances = memoize(async d2 => {
         value: instance.id,
         text: `${instance.name} (${instance.url} with user ${instance.username})`,
     }));
-});
+};
 
 const InstanceSelectionStep = props => {
     const { d2, syncRule } = props;
@@ -23,7 +22,7 @@ const InstanceSelectionStep = props => {
 
     const changeInstances = instances => {
         setSelectedOptions(instances);
-        syncRule.targetInstances = instances;
+        syncRule.updateTargetInstances(instances);
     };
 
     const parseInstances = async () => {

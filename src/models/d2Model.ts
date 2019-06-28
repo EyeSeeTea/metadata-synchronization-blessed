@@ -141,10 +141,10 @@ export class OrganisationUnitModel extends D2Model {
         filters: OrganisationUnitTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { orgUnitLevel = null } = filters || {};
+        const { levelFilter = null } = filters || {};
         const newFilters = {
             ...filters,
-            customFilters: _.compact([orgUnitLevel ? `level:eq:${orgUnitLevel}` : null]),
+            customFilters: _.compact([levelFilter ? `level:eq:${levelFilter}` : null]),
         };
         return super.listMethod(d2, newFilters, pagination);
     }

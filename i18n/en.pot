@@ -65,9 +65,6 @@ msgstr ""
 msgid "Ok"
 msgstr ""
 
-msgid "Help text"
-msgstr ""
-
 msgid "Saving..."
 msgstr ""
 

@@ -9268,9 +9268,14 @@ nan@^2.12.1, nan@^2.13.2, nan@^2.9.2:
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
 
 nano-memoize@^1.0.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/nano-memoize/-/nano-memoize-1.1.3.tgz#3ce885f76898384ac78d39fe185b6419f71f8e12"
-  integrity sha512-+0yGTtwV70h7GourgGsy/AlxrQxqIvJdJjMCuBln+v9lc+u+STuEAscPc4YLgT7uVc+Su/osREG1Do9C/L5OVA==
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/nano-memoize/-/nano-memoize-1.1.4.tgz#3b3898e1796894e1f6c1e1ceb53c15c31e59ac3b"
+  integrity sha512-UxbdOzIrAvFJbUp9MKYGG0mmHBHBVoSn7BFNkwVL3cE6F351exdbwcG6gTxN5JSQ0heGMQm+QLkqcyI8oqQp3w==
+
+nano-memoize@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/nano-memoize/-/nano-memoize-1.1.5.tgz#70de03b987a0435d5bd7be9425cce8c74ac440bc"
+  integrity sha512-AV4GIsQBJU8jpYWMClIm9cxSWRXZtgbkkaSXz9mSpTrJFLkMN3eXkTJDeO4SykHomjckiYE4Ba7UELto7KRMpA==
 
 nanomatch@^1.2.9:
   version "1.2.13"

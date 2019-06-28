@@ -20,7 +20,7 @@ export default class OrganisationUnitPage extends React.Component {
     };
 
     getExtraFilterState = memoize(orgUnitLevelFilterValue => ({
-        orgUnitLevel: orgUnitLevelFilterValue,
+        levelFilter: orgUnitLevelFilterValue,
     }));
 
     componentDidMount() {

@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import memoize from "nano-memoize";
+import _ from "lodash";
 import { DatePicker, ObjectsTable, withSnackbar } from "d2-ui-components";
 import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
 
@@ -57,12 +58,13 @@ class MetadataSelectionStep extends React.Component {
             lastUpdatedDate: null,
             groupFilter: null,
             levelFilter: null,
-            showOnlySelectedItems: this.props.syncRule.selectedIds.length > 0,
             metadataType: "",
         },
         groupFilterData: [],
         levelFilterData: [],
-        selectedIds: this.props.syncRule.selectedIds,
+        selectedIds: [],
+        showOnlySelectedItems: false,
+        tableKey: Math.random(),
     };
 
     models = [
@@ -92,6 +94,7 @@ class MetadataSelectionStep extends React.Component {
             type: "details",
         },
     ];
+
     updateFilterData = memoize(async model => {
         const { d2 } = this.props;
         const newState = {};
@@ -122,6 +125,11 @@ class MetadataSelectionStep extends React.Component {
         return newState;
     });
 
+    componentDidMount() {
+        const { selectedIds } = this.props.syncRule;
+        this.setState({ selectedIds, showOnlySelectedItems: selectedIds.length > 0 });
+    }
+
     componentDidUpdate = async (prevProps, prevState) => {
         const { model, filters } = this.state;
 
@@ -138,22 +146,32 @@ class MetadataSelectionStep extends React.Component {
     };
 
     changeSelection = selectedIds => {
-        const { selectedIds: oldSelection } = this.state;
-        const { snackbar, syncRule } = this.props;
+        const { selectedIds: oldSelection, model } = this.state;
+        const { d2, snackbar, syncRule } = this.props;
+        const type = model.getD2Model(d2).plural;
 
-        const difference = selectedIds.length - oldSelection.length;
-        if (difference > 0) {
-            snackbar.info(i18n.t("Selected {{difference}} elements", { difference }), {
-                autoHideDuration: 1000,
-            });
-        } else if (difference < 0) {
+        const additions = _.difference(selectedIds, oldSelection);
+        if (additions.length > 0) {
+            syncRule.addMetadataIds(type, additions);
             snackbar.info(
-                i18n.t("Removed {{difference}} elements", { difference: Math.abs(difference) }),
+                i18n.t("Selected {{difference}} elements", { difference: additions.length }),
+                {
+                    autoHideDuration: 1000,
+                }
+            );
+        }
+
+        const removals = _.difference(oldSelection, selectedIds);
+        if (removals.length > 0) {
+            syncRule.removeMetadataIds(removals);
+            snackbar.info(
+                i18n.t("Removed {{difference}} elements", {
+                    difference: Math.abs(removals.length),
+                }),
                 { autoHideDuration: 1000 }
             );
         }
 
-        syncRule.selectedIds = selectedIds;
         this.setState({ selectedIds });
     };
 
@@ -185,14 +203,19 @@ class MetadataSelectionStep extends React.Component {
     };
 
     showSelectedItems = event => {
-        const { filters } = this.state;
-        this.setState({ filters: { ...filters, showOnlySelectedItems: event.target.checked } });
+        this.setState({ showOnlySelectedItems: event.target.checked, tableKey: Math.random() });
     };
 
     renderCustomFilters = () => {
         const { d2, classes } = this.props;
-        const { model, groupFilterData, levelFilterData, filters } = this.state;
-        const { lastUpdatedDate, groupFilter, levelFilter, showOnlySelectedItems } = filters;
+        const {
+            model,
+            groupFilterData,
+            levelFilterData,
+            filters,
+            showOnlySelectedItems,
+        } = this.state;
+        const { lastUpdatedDate, groupFilter, levelFilter } = filters;
         const displayName = model.getD2Model(d2).displayName;
 
         return (
@@ -251,10 +274,10 @@ class MetadataSelectionStep extends React.Component {
     };
 
     list = (...params) => {
-        const { model, selectedIds, filters } = this.state;
-        const { showOnlySelectedItems } = filters;
+        const { syncRule } = this.props;
+        const { model, showOnlySelectedItems } = this.state;
         if (!model.listMethod || showOnlySelectedItems) {
-            return listByIds(...params, selectedIds);
+            return listByIds(...params, syncRule.selectedIds);
         } else {
             return model.listMethod(...params);
         }
@@ -262,10 +285,11 @@ class MetadataSelectionStep extends React.Component {
 
     render() {
         const { d2, syncRule } = this.props;
-        const { model, filters } = this.state;
+        const { model, filters, tableKey } = this.state;
 
         return (
             <ObjectsTable
+                key={tableKey}
                 d2={d2}
                 model={model.getD2Model(d2)}
                 columns={model.getColumns()}
