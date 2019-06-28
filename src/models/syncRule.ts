@@ -15,7 +15,14 @@ export default class SyncRule {
     constructor(syncRule: SynchronizationRule) {
         this.syncRule = {
             id: generateUid(),
-            ..._.pick(syncRule, ["id", "name", "description", "originInstance", "builder", "selectedIds"]),
+            ..._.pick(syncRule, [
+                "id",
+                "name",
+                "description",
+                "originInstance",
+                "builder",
+                "selectedIds",
+            ]),
         };
     }
 
@@ -69,7 +76,7 @@ export default class SyncRule {
                 targetInstances: [],
                 metadata: {},
             },
-            selectedIds: []
+            selectedIds: [],
         });
     }
 
