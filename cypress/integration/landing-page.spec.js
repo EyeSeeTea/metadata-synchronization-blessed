@@ -11,13 +11,13 @@ context("Landing page", () => {
             .should("have.length", 1)
             .should("be.visible");
 
-        cy.contains("Instance Configurator");
-        cy.contains("Organisation Units Sync");
-        cy.contains("Data Elements Sync");
-        cy.contains("Indicators Sync");
-        cy.contains("Validation Rules Sync");
+        cy.contains("Instance Configuration");
+        cy.contains("Organisation Units");
+        cy.contains("Data Elements");
+        cy.contains("Indicators");
+        cy.contains("Validation Rules");
         cy.contains("Synchronization Rules");
-        cy.contains("Notifications");
+        cy.contains("Synchronization History");
     });
 
     it("enters the Instance Configurator page", function() {
