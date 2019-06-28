@@ -16,13 +16,13 @@ export const getInstances = async d2 => {
 };
 
 const InstanceSelectionStep = props => {
-    const { d2, syncRule } = props;
+    const { d2, syncRule, onChange } = props;
     const [instanceOptions, setInstanceOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState(syncRule.targetInstances);
 
     const changeInstances = instances => {
         setSelectedOptions(instances);
-        syncRule.updateTargetInstances(instances);
+        onChange(syncRule.updateTargetInstances(instances));
     };
 
     const parseInstances = async () => {
@@ -47,6 +47,7 @@ const InstanceSelectionStep = props => {
 
 InstanceSelectionStep.propTypes = {
     syncRule: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired,
 };
 
 InstanceSelectionStep.defaultProps = {};
