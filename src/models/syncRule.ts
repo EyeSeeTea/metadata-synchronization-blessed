@@ -35,33 +35,6 @@ export default class SyncRule {
         this.syncRule.description = description;
     }
 
-    public addMetadataIds(type: string, ids: string[]): SyncRule {
-        const original = this.syncRule.builder.metadata[type];
-        const updated = original ? [...original, ...ids] : [...ids];
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                metadata: {
-                    ...this.syncRule.builder.metadata,
-                    [type]: updated,
-                },
-            },
-        });
-    }
-
-    public removeMetadataIds(ids: string[]): SyncRule {
-        const metadata = _.clone(this.syncRule.builder.metadata);
-        for (const type in metadata) _.pullAll(metadata[type], ids);
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                metadata,
-            },
-        });
-    }
-
     public get metadata(): MetadataPackage {
         return this.syncRule.builder.metadata || {};
     }
@@ -73,16 +46,6 @@ export default class SyncRule {
                 .flatten()
                 .value() || []
         );
-    }
-
-    public updateTargetInstances(targetInstances: string[]): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                targetInstances,
-            },
-        });
     }
 
     public get targetInstances(): string[] {
@@ -126,6 +89,43 @@ export default class SyncRule {
                   ),
               }
             : data;
+    }
+
+    public addMetadataIds(type: string, ids: string[]): SyncRule {
+        const original = this.syncRule.builder.metadata[type];
+        const updated = original ? [...original, ...ids] : [...ids];
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                metadata: {
+                    ...this.syncRule.builder.metadata,
+                    [type]: updated,
+                },
+            },
+        });
+    }
+
+    public removeMetadataIds(ids: string[]): SyncRule {
+        const metadata = _.clone(this.syncRule.builder.metadata);
+        for (const type in metadata) _.pullAll(metadata[type], ids);
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                metadata,
+            },
+        });
+    }
+
+    public updateTargetInstances(targetInstances: string[]): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                targetInstances,
+            },
+        });
     }
 
     public async save(d2: D2): Promise<void> {

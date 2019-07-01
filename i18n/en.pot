@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-28T18:17:05.033Z\n"
-"PO-Revision-Date: 2019-06-28T18:17:05.033Z\n"
+"POT-Creation-Date: 2019-07-01T22:13:33.431Z\n"
+"PO-Revision-Date: 2019-07-01T22:13:33.431Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -132,6 +132,30 @@ msgstr ""
 msgid "Synchronization History"
 msgstr ""
 
+msgid "Name"
+msgstr ""
+
+msgid "Metadata Type"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Last updated date"
+msgstr ""
+
+msgid "{{displayName}} Group"
+msgstr ""
+
+msgid "{{displayName}} Level"
+msgstr ""
+
+msgid "Only selected items"
+msgstr ""
+
 msgid "User"
 msgstr ""
 
@@ -217,34 +241,10 @@ msgstr ""
 msgid "Name (*)"
 msgstr ""
 
-msgid "Name"
-msgstr ""
-
-msgid "Metadata Type"
-msgstr ""
-
-msgid "Last update"
-msgstr ""
-
 msgid "Selected {{difference}} elements"
 msgstr ""
 
 msgid "Removed {{difference}} elements"
-msgstr ""
-
-msgid "Metadata type"
-msgstr ""
-
-msgid "Last updated date"
-msgstr ""
-
-msgid "{{displayName}} Group"
-msgstr ""
-
-msgid "{{displayName}} Level"
-msgstr ""
-
-msgid "Only selected items"
 msgstr ""
 
 msgid "Cancel synchronization rule wizard"
@@ -337,22 +337,16 @@ msgstr ""
 msgid "JSON Response"
 msgstr ""
 
-msgid "Unknown error with the request"
+msgid "Data Elements Synchronization"
 msgstr ""
 
 msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
-msgid "{{type}} Group"
-msgstr ""
-
-msgid "Data Elements Synchronization"
+msgid "Unknown error with the request"
 msgstr ""
 
 msgid "Indicators Synchronization"
-msgstr ""
-
-msgid "Organisation Level"
 msgstr ""
 
 msgid "Organisation Units Synchronization"
