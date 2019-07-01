@@ -45,10 +45,7 @@ class SyncDialog extends React.Component {
         loading.show(true, i18n.t("Synchronizing metadata"));
 
         try {
-            const builder = {
-                metadata: metadata,
-                targetInstances: targetInstances,
-            };
+            const builder = { metadata, targetInstances };
             for await (const { message, syncReport, done } of startSynchronization(d2, builder)) {
                 if (message) loading.show(true, message);
                 if (syncReport) await syncReport.save(d2);

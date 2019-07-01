@@ -68,11 +68,7 @@ class InstanceCreationPage extends React.Component {
                     saveText={i18n.t("Ok")}
                 />
 
-                <PageHeader
-                    title={title}
-                    onBackClick={this.cancelSave}
-                    helpText={i18n.t("Help text")}
-                />
+                <PageHeader title={title} onBackClick={this.cancelSave} helpText={undefined} />
 
                 <GeneralInfoForm
                     d2={d2}

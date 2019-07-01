@@ -21,6 +21,8 @@ export abstract class D2Model {
     // Metadata Type should be defined on subclasses
     protected static metadataType: string;
     protected static groupFilterName: string;
+    protected static levelFilterName: string;
+
     protected static excludeRules: string[] = [];
     protected static includeRules: string[] = [];
 
@@ -94,11 +96,20 @@ export abstract class D2Model {
     public static getInitialSorting(): string[] {
         return this.initialSorting;
     }
+
+    public static getGroupFilterName(): string {
+        return this.groupFilterName;
+    }
+
+    public static getLevelFilterName(): string {
+        return this.levelFilterName;
+    }
 }
 
 export class OrganisationUnitModel extends D2Model {
     protected static metadataType = "organisationUnit";
     protected static groupFilterName = "organisationUnitGroups";
+    protected static levelFilterName = "organisationUnitLevels";
 
     protected static excludeRules = [
         "legendSets",
@@ -130,10 +141,10 @@ export class OrganisationUnitModel extends D2Model {
         filters: OrganisationUnitTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { orgUnitLevel = null } = filters || {};
+        const { levelFilter = null } = filters || {};
         const newFilters = {
             ...filters,
-            customFilters: _.compact([orgUnitLevel ? `level:eq:${orgUnitLevel}` : null]),
+            customFilters: _.compact([levelFilter ? `level:eq:${levelFilter}` : null]),
         };
         return super.listMethod(d2, newFilters, pagination);
     }

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-13T06:24:14.176Z\n"
-"PO-Revision-Date: 2019-06-13T06:24:14.176Z\n"
+"POT-Creation-Date: 2019-06-28T16:11:03.901Z\n"
+"PO-Revision-Date: 2019-06-28T16:11:03.901Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -63,9 +63,6 @@ msgid "All your changes will be lost. Are you sure?"
 msgstr ""
 
 msgid "Ok"
-msgstr ""
-
-msgid "Help text"
 msgstr ""
 
 msgid "Saving..."
@@ -190,8 +187,110 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
+msgid "General info"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Instance Selection"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "New synchronization rule"
+msgstr ""
+
+msgid "Edit synchronization rule"
+msgstr ""
+
+msgid "Cancel synchronization rule creation"
+msgstr ""
+
+msgid "Cancel synchronization rule editing"
+msgstr ""
+
+msgid "Name (*)"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Metadata Type"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Selected {{difference}} elements"
+msgstr ""
+
+msgid "Removed {{difference}} elements"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Last updated date"
+msgstr ""
+
+msgid "{{displayName}} Group"
+msgstr ""
+
+msgid "{{displayName}} Level"
+msgstr ""
+
+msgid "Only selected items"
+msgstr ""
+
+msgid "Cancel synchronization rule wizard"
+msgstr ""
+
+msgid ""
+"You are about to exit the Sync Rule Creation Wizard. All your changes will "
+"be lost. Are you sure you want to proceed?"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "Target instances [{{total}}]"
+msgstr ""
+
+msgid "Destination instances"
+msgstr ""
+
+msgid "Deleting Sync Rules"
+msgstr ""
+
+msgid "Failed to delete some rules"
+msgstr ""
+
+msgid "Successfully deleted {{count}} rules"
+msgid_plural "Successfully deleted {{count}} rules"
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "Synchronizing metadata"
 msgstr ""
+
+msgid "Failed to execute rule {{name}}"
+msgstr ""
+
+msgid "Execute"
+msgstr ""
+
+msgid "Destination Instance"
+msgstr ""
+
+msgid "Delete Rules?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} rules?"
+msgid_plural "Are you sure you want to delete {{count}} rules?"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Synchronize Metadata"
 msgstr ""
@@ -229,9 +328,6 @@ msgstr ""
 msgid "Synchronization Results"
 msgstr ""
 
-msgid "Summary"
-msgstr ""
-
 msgid "Messages"
 msgstr ""
 
@@ -242,9 +338,6 @@ msgid "Unknown error with the request"
 msgstr ""
 
 msgid "Please select at least one element from the table to synchronize"
-msgstr ""
-
-msgid "Last updated date"
 msgstr ""
 
 msgid "{{type}} Group"
@@ -289,12 +382,6 @@ msgstr ""
 msgid "Network error {{error}}, check if server is up and CORS is enabled"
 msgstr ""
 
-msgid "Name"
-msgstr ""
-
-msgid "Last update"
-msgstr ""
-
 msgid "Level"
 msgstr ""
 
@@ -314,4 +401,7 @@ msgid "Field {{field}} cannot be blank"
 msgstr ""
 
 msgid "This URL and username combination already exists"
+msgstr ""
+
+msgid "You need to select at least one element"
 msgstr ""

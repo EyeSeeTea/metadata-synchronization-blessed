@@ -51,3 +51,11 @@ export interface SynchronizationState {
     syncReport?: SyncReport;
     done?: boolean;
 }
+
+export interface SynchronizationRule {
+    id?: string;
+    name: string;
+    description?: string;
+    originInstance: string;
+    builder: SynchronizationBuilder;
+}

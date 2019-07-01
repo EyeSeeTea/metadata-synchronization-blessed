@@ -10,6 +10,7 @@ import PageHeader from "../page-header/PageHeader";
 import Dropdown from "../dropdown/Dropdown";
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
+import { getValueForCollection } from "../../utils/d2-ui-components";
 
 const styles = () => ({
     tableContainer: { marginTop: 10 },
@@ -136,24 +137,8 @@ class NotificationsPage extends React.Component {
         this.setState({ summaryOpen: false });
     };
 
-    // TODO: We should fix d2-ui-components instead
-    getValueForCollection = values => {
-        const namesToDisplay = _(values)
-            .map(value => value.displayName || value.name || value.id)
-            .compact()
-            .value();
-
-        return (
-            <ul>
-                {namesToDisplay.map(name => (
-                    <li key={name}>{name}</li>
-                ))}
-            </ul>
-        );
-    };
-
     getMetadataTypes = notification => {
-        return this.getValueForCollection(notification.types.map(type => ({ name: type })));
+        return getValueForCollection(notification.types.map(type => ({ name: type })));
     };
 
     detailsFields = [

@@ -80,6 +80,7 @@ export async function getPaginatedData(
     const filteredData = _.filter(rawData, o =>
         _(o)
             .keys()
+            .filter(k => typeof o[k] === "string")
             .some(k => o[k].toLowerCase().includes(search ? search.toLowerCase() : ""))
     );
 

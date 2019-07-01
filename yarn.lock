@@ -3953,10 +3953,10 @@ d2-manifest@^1.0.0:
     minimist "^1.1.0"
     readline-sync "^1.4.1"
 
-d2-ui-components@^0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-0.0.18.tgz#81d985ca0c914d965021bc3913dcc91584f2d6a3"
-  integrity sha512-KE7J6t4XIz+bU0x4nH9AwsWUK2Laqc6ckZwdRVsrdTRaSe/zE3YLOoMJixfwE+TuHaZU8AGrRuQSlt80xdmvNA==
+d2-ui-components@^0.0.19:
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-0.0.19.tgz#80f8613811934433d24b0afb990f6029e3ff6640"
+  integrity sha512-zOnxhrdjR8IjnJcxpsmN7uT3mVNMkdk6Lr7oB1hGoMD6Bh1/BzuMEIFl0bGyPbSRFGvOWSj3ZNpAkUp2lZZMow==
   dependencies:
     "@date-io/moment" "^1.0.2"
     "@dhis2/d2-i18n" "^1.0.3"
@@ -3970,7 +3970,7 @@ d2-ui-components@^0.0.18:
     lodash "^4.17.11"
     material-ui-pickers "^2.1.2"
     moment "^2.22.2"
-    nano-memoize "^1.0.3"
+    nano-memoize "^1.1.5"
     node-sass "^4.11.0"
     throttle-debounce "^2.1.0"
 
@@ -9280,10 +9280,10 @@ nan@^2.12.1, nan@^2.13.2, nan@^2.9.2:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
 
-nano-memoize@^1.0.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/nano-memoize/-/nano-memoize-1.1.3.tgz#3ce885f76898384ac78d39fe185b6419f71f8e12"
-  integrity sha512-+0yGTtwV70h7GourgGsy/AlxrQxqIvJdJjMCuBln+v9lc+u+STuEAscPc4YLgT7uVc+Su/osREG1Do9C/L5OVA==
+nano-memoize@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/nano-memoize/-/nano-memoize-1.1.5.tgz#70de03b987a0435d5bd7be9425cce8c74ac440bc"
+  integrity sha512-AV4GIsQBJU8jpYWMClIm9cxSWRXZtgbkkaSXz9mSpTrJFLkMN3eXkTJDeO4SykHomjckiYE4Ba7UELto7KRMpA==
 
 nanomatch@^1.2.9:
   version "1.2.13"

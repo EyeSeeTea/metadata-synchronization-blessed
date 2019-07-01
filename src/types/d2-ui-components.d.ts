@@ -16,14 +16,19 @@ export interface TableFilters {
     groupFilter?: string;
     customFilters?: string[];
     customFields?: string[];
+    metadataType?: string;
 }
 
 export interface OrganisationUnitTableFilters extends TableFilters {
-    orgUnitLevel?: string;
+    levelFilter?: string;
 }
 
 export interface SyncReportTableFilters extends TableFilters {
     statusFilter?: string;
+}
+
+export interface SyncRuleTableFilters extends TableFilters {
+    targetInstanceFilter?: string;
 }
 
 export interface TablePagination {

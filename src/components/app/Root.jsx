@@ -10,6 +10,8 @@ import DataElementPage from "../synchronization-page/DataElementPage";
 import IndicatorPage from "../synchronization-page/IndicatorPage";
 import ValidationRulePage from "../synchronization-page/ValidationRulePage";
 import NotificationsPage from "../notification-list-page/NotificationsPage";
+import SyncRulesWizard from "../rules-creation-page/SyncRulesWizard";
+import SyncRulesConfigurator from "../rules-list-page/SyncRulesPage";
 
 class Root extends React.Component {
     static propTypes = {
@@ -54,6 +56,16 @@ class Root extends React.Component {
                 <Route
                     path="/notifications"
                     render={props => <NotificationsPage d2={d2} {...props} />}
+                />
+
+                <Route
+                    path={"/synchronization-rules/:action(new|edit)/:id?"}
+                    render={props => <SyncRulesWizard d2={d2} {...props} />}
+                />
+
+                <Route
+                    path="/synchronization-rules"
+                    render={props => <SyncRulesConfigurator d2={d2} {...props} />}
                 />
 
                 <Route render={() => <LandingPage d2={d2} />} />
