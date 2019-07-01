@@ -81,8 +81,8 @@ class SyncRulesWizard extends React.Component {
         this.setState({ dialogOpen: false });
     };
 
-    onChange = instance => {
-        this.setState({ instance });
+    onChange = syncRule => {
+        this.setState({ syncRule });
     };
 
     onStepChangeRequest = async currentStep => {
@@ -111,6 +111,7 @@ class SyncRulesWizard extends React.Component {
                 d2,
                 syncRule,
                 onCancel: this.handleConfirm,
+                onChange: this.onChange,
             },
         }));
 

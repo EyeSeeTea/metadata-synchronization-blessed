@@ -23,6 +23,7 @@ class MetadataSelectionStep extends React.Component {
         syncRule: PropTypes.object.isRequired,
         classes: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
+        onChange: PropTypes.func.isRequired,
     };
 
     defaultModel = {
@@ -147,12 +148,12 @@ class MetadataSelectionStep extends React.Component {
 
     changeSelection = selectedIds => {
         const { selectedIds: oldSelection, model } = this.state;
-        const { d2, snackbar, syncRule } = this.props;
+        const { d2, snackbar, syncRule, onChange } = this.props;
         const type = model.getD2Model(d2).plural;
 
         const additions = _.difference(selectedIds, oldSelection);
         if (additions.length > 0) {
-            syncRule.addMetadataIds(type, additions);
+            onChange(syncRule.addMetadataIds(type, additions));
             snackbar.info(
                 i18n.t("Selected {{difference}} elements", { difference: additions.length }),
                 {
@@ -163,7 +164,7 @@ class MetadataSelectionStep extends React.Component {
 
         const removals = _.difference(oldSelection, selectedIds);
         if (removals.length > 0) {
-            syncRule.removeMetadataIds(removals);
+            onChange(syncRule.removeMetadataIds(removals));
             snackbar.info(
                 i18n.t("Removed {{difference}} elements", {
                     difference: Math.abs(removals.length),
