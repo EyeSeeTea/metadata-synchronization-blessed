@@ -4,12 +4,14 @@ import {
     defaultModel,
     IndicatorModel,
     OrganisationUnitModel,
+    OrganisationUnitGroupModel,
     ValidationRuleModel,
 } from "./d2Model";
 import { D2 } from "../types/d2";
 
 const classes: { [modelName: string]: typeof D2Model } = {
     OrganisationUnitModel,
+    OrganisationUnitGroupModel,
     DataElementModel,
     IndicatorModel,
     ValidationRuleModel,

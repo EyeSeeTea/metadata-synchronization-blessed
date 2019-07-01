@@ -150,6 +150,28 @@ export class OrganisationUnitModel extends D2Model {
     }
 }
 
+export class OrganisationUnitGroupModel extends D2Model {
+    protected static metadataType = "organisationUnitGroup";
+
+    protected static excludeRules = [
+        "legendSets",
+        "user",
+        "userAccesses",
+        "userGroupAccesses",
+        "organisationUnitGroupSets.user",
+        "organisationUnitGroupSets.userAccesses",
+        "organisationUnitGroupSets.userGroupAccesses",
+        "organisationUnits.organisationUnitGroups",
+    ];
+    protected static includeRules = [
+        "attributes",
+        "organisationUnits",
+        "organisationUnits.attributes",
+        "organisationUnitGroupSets",
+        "organisationUnitGroupSets.attributes",
+    ];
+}
+
 export class DataElementModel extends D2Model {
     protected static metadataType = "dataElement";
     protected static groupFilterName = "dataElementGroups";
