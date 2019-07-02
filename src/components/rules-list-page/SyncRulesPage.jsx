@@ -44,25 +44,22 @@ class SyncRulesPage extends React.Component {
     };
     initialSorting = ["name", "asc"];
 
-    getValueForTargetInstances = ruleData => {
-        const { allInstances } = this.state;
-        const rule = SyncRule.build(ruleData);
-        return getValueForCollection(
-            rule.targetInstances
-                .map(id => allInstances.find(instance => instance.id === id))
-                .map(({ name }) => ({ name }))
-        );
-    };
-
     columns = [
         { name: "name", text: i18n.t("Name"), sortable: true },
         {
             name: "targetInstances",
             text: i18n.t("Destination instances"),
             sortable: false,
-            getValue: this.getValueForTargetInstances,
+            getValue: ruleData => {
+                const { allInstances } = this.state;
+                const rule = SyncRule.build(ruleData);
+                return rule.targetInstances
+                    .map(id => allInstances.find(instance => instance.id === id).name)
+                    .join(", ");
+            },
         },
     ];
+
     detailsFields = [
         { name: "name", text: i18n.t("Name") },
         { name: "description", text: i18n.t("Description") },
@@ -70,7 +67,15 @@ class SyncRulesPage extends React.Component {
             name: "targetInstances",
             text: i18n.t("Destination instances"),
             sortable: true,
-            getValue: this.getValueForTargetInstances,
+            getValue: ruleData => {
+                const { allInstances } = this.state;
+                const rule = SyncRule.build(ruleData);
+                return getValueForCollection(
+                    rule.targetInstances
+                        .map(id => allInstances.find(instance => instance.id === id))
+                        .map(({ name }) => ({ name }))
+                );
+            },
         },
     ];
 
