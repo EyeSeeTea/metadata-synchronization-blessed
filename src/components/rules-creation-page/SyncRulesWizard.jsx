@@ -18,14 +18,6 @@ class SyncRulesWizard extends React.Component {
         history: PropTypes.object.isRequired,
     };
 
-    state = {
-        dialogOpen: false,
-        syncRule: SyncRule.create(),
-    };
-
-    id = this.props.match.params.id;
-    isEdit = this.props.match.params.action === "edit" && this.id;
-
     static getStepsBaseInfo = [
         {
             key: "general-info",
@@ -60,6 +52,14 @@ class SyncRulesWizard extends React.Component {
             help: undefined,
         },
     ];
+
+    state = {
+        dialogOpen: false,
+        syncRule: SyncRule.create(),
+    };
+
+    id = this.props.match.params.id;
+    isEdit = this.props.match.params.action === "edit" && this.id;
 
     componentDidMount = async () => {
         if (this.isEdit) {
