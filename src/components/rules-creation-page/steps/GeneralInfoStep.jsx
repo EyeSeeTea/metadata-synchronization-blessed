@@ -13,7 +13,7 @@ const GeneralInfoStep = props => {
             value: syncRule.name,
             component: TextField,
             props: {
-                floatingLabelText: i18n.t("Name (*)"),
+                floatingLabelText: `${i18n.t("Name")} (*)`,
                 style: { width: "100%" },
                 changeEvent: "onBlur",
                 "data-test": "name",
