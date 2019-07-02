@@ -61,7 +61,10 @@ class SyncRulesPage extends React.Component {
             name: "targetInstances",
             text: i18n.t("Destination instances"),
             sortable: false,
-            getValue: ruleData => this.getTargetInstances(ruleData).join(", "),
+            getValue: ruleData =>
+                this.getTargetInstances(ruleData)
+                    .map(e => e.name)
+                    .join(", "),
         },
     ];
 
