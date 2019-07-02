@@ -1,7 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { OrganisationUnitModel } from "../../models/d2Model";
+import {
+    OrganisationUnitModel,
+    OrganisationUnitGroupModel,
+    OrganisationUnitGroupSetModel,
+} from "../../models/d2Model";
 import GenericSynchronizationPage from "./GenericSynchronizationPage";
 
 export default class OrganisationUnitPage extends React.Component {
@@ -15,7 +19,15 @@ export default class OrganisationUnitPage extends React.Component {
         const title = i18n.t("Organisation Units Synchronization");
 
         return (
-            <GenericSynchronizationPage d2={d2} models={[OrganisationUnitModel]} title={title} />
+            <GenericSynchronizationPage
+                d2={d2}
+                models={[
+                    OrganisationUnitModel,
+                    OrganisationUnitGroupModel,
+                    OrganisationUnitGroupSetModel,
+                ]}
+                title={title}
+            />
         );
     }
 }

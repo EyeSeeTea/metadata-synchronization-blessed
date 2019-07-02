@@ -8,6 +8,7 @@ import MetadataTable from "../../metadata-table/MetadataTable";
 import {
     DataElementModel,
     IndicatorModel,
+    OrganisationUnitGroupModel,
     OrganisationUnitModel,
     ValidationRuleModel,
 } from "../../../models/d2Model";
@@ -24,7 +25,13 @@ class MetadataSelectionStep extends React.Component {
         selectedIds: [],
     };
 
-    models = [DataElementModel, IndicatorModel, OrganisationUnitModel, ValidationRuleModel];
+    models = [
+        DataElementModel,
+        IndicatorModel,
+        OrganisationUnitModel,
+        OrganisationUnitGroupModel,
+        ValidationRuleModel,
+    ];
 
     componentDidMount() {
         const { selectedIds } = this.props.syncRule;
