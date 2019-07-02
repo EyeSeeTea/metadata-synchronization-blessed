@@ -5,13 +5,13 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-28T18:17:05.033Z\n"
-"PO-Revision-Date: 2019-06-28T18:17:05.033Z\n"
+"POT-Creation-Date: 2019-07-02T06:39:42.423Z\n"
+"PO-Revision-Date: 2019-07-02T06:39:42.423Z\n"
 
 msgid "<No value>"
 msgstr ""
 
-msgid "Server name (*)"
+msgid "Server name"
 msgstr ""
 
 msgid "Field cannot be blank"
@@ -20,16 +20,16 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-msgid "URL endpoint (*)"
+msgid "URL endpoint"
 msgstr ""
 
 msgid "Field should be an url"
 msgstr ""
 
-msgid "Username (*)"
+msgid "Username"
 msgstr ""
 
-msgid "Password (*)"
+msgid "Password"
 msgstr ""
 
 msgid "Please fix the issues before testing the connection"
@@ -69,15 +69,6 @@ msgid "Saving..."
 msgstr ""
 
 msgid "Save"
-msgstr ""
-
-msgid "Server name"
-msgstr ""
-
-msgid "URL endpoint"
-msgstr ""
-
-msgid "Username"
 msgstr ""
 
 msgid "Details"
@@ -130,6 +121,30 @@ msgid "Synchronization Rules"
 msgstr ""
 
 msgid "Synchronization History"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Metadata Type"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Last updated date"
+msgstr ""
+
+msgid "{{displayName}} Group"
+msgstr ""
+
+msgid "{{displayName}} Level"
+msgstr ""
+
+msgid "Only selected items"
 msgstr ""
 
 msgid "User"
@@ -214,37 +229,10 @@ msgstr ""
 msgid "Cancel synchronization rule editing"
 msgstr ""
 
-msgid "Name (*)"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-msgid "Metadata Type"
-msgstr ""
-
-msgid "Last update"
-msgstr ""
-
 msgid "Selected {{difference}} elements"
 msgstr ""
 
 msgid "Removed {{difference}} elements"
-msgstr ""
-
-msgid "Metadata type"
-msgstr ""
-
-msgid "Last updated date"
-msgstr ""
-
-msgid "{{displayName}} Group"
-msgstr ""
-
-msgid "{{displayName}} Level"
-msgstr ""
-
-msgid "Only selected items"
 msgstr ""
 
 msgid "Cancel synchronization rule wizard"
@@ -337,22 +325,16 @@ msgstr ""
 msgid "JSON Response"
 msgstr ""
 
-msgid "Unknown error with the request"
+msgid "Data Elements Synchronization"
 msgstr ""
 
 msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
-msgid "{{type}} Group"
-msgstr ""
-
-msgid "Data Elements Synchronization"
+msgid "Unknown error with the request"
 msgstr ""
 
 msgid "Indicators Synchronization"
-msgstr ""
-
-msgid "Organisation Level"
 msgstr ""
 
 msgid "Organisation Units Synchronization"

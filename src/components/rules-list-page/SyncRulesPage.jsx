@@ -26,6 +26,7 @@ class SyncRulesPage extends React.Component {
         history: PropTypes.object.isRequired,
         loading: PropTypes.object.isRequired,
     };
+
     static model = {
         modelValidations: {
             name: { type: "TEXT" },
@@ -42,16 +43,16 @@ class SyncRulesPage extends React.Component {
         syncReport: SyncReport.create(),
         syncSummaryOpen: false,
     };
+
     initialSorting = ["name", "asc"];
 
-    getValueForTargetInstances = ruleData => {
+    getTargetInstances = ruleData => {
         const { allInstances } = this.state;
         const rule = SyncRule.build(ruleData);
-        return getValueForCollection(
-            rule.targetInstances
-                .map(id => allInstances.find(instance => instance.id === id))
-                .map(({ name }) => ({ name }))
-        );
+        return _(rule.targetInstances)
+            .map(id => allInstances.find(instance => instance.id === id))
+            .compact()
+            .map(({ name }) => ({ name }));
     };
 
     columns = [
@@ -60,9 +61,13 @@ class SyncRulesPage extends React.Component {
             name: "targetInstances",
             text: i18n.t("Destination instances"),
             sortable: false,
-            getValue: this.getValueForTargetInstances,
+            getValue: ruleData =>
+                this.getTargetInstances(ruleData)
+                    .map(e => e.name)
+                    .join(", "),
         },
     ];
+
     detailsFields = [
         { name: "name", text: i18n.t("Name") },
         { name: "description", text: i18n.t("Description") },
@@ -70,7 +75,7 @@ class SyncRulesPage extends React.Component {
             name: "targetInstances",
             text: i18n.t("Destination instances"),
             sortable: true,
-            getValue: this.getValueForTargetInstances,
+            getValue: ruleData => getValueForCollection(this.getTargetInstances(ruleData)),
         },
     ];
 
@@ -144,16 +149,16 @@ class SyncRulesPage extends React.Component {
 
     actions = [
         {
-            name: "edit",
-            text: i18n.t("Edit"),
-            multiple: false,
-            onClick: this.editRule,
-        },
-        {
             name: "details",
             text: i18n.t("Details"),
             multiple: false,
             type: "details",
+        },
+        {
+            name: "edit",
+            text: i18n.t("Edit"),
+            multiple: false,
+            onClick: this.editRule,
         },
         {
             name: "delete",

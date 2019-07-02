@@ -1,8 +1,8 @@
 import React from "react";
-import BaseSyncConfigurator from "./BaseSynchronizationPage";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { ValidationRuleModel } from "../../models/d2Model";
+import GenericSynchronizationPage from "./GenericSynchronizationPage";
 
 export default class ValidationRulePage extends React.Component {
     static propTypes = {
@@ -10,15 +10,10 @@ export default class ValidationRulePage extends React.Component {
     };
 
     render() {
+        const { d2 } = this.props;
+
         const title = i18n.t("Validation Rules Synchronization");
 
-        return (
-            <BaseSyncConfigurator
-                model={ValidationRuleModel}
-                title={title}
-                groupFilterName={"validationRuleGroups"}
-                {...this.props}
-            />
-        );
+        return <GenericSynchronizationPage d2={d2} models={[ValidationRuleModel]} title={title} />;
     }
 }
