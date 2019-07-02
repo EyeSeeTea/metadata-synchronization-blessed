@@ -8,6 +8,8 @@ import { MetadataPackage, NestedRules } from "../types/synchronization";
 import { cleanModelName } from "./d2";
 import { isValidUid } from "d2/uid";
 
+const blacklistedProperties = ["user", "userAccesses", "userGroupAccesses"];
+
 export function buildNestedRules(rules: string[][] = []): NestedRules {
     return _(rules)
         .filter(path => path.length > 1)
@@ -23,7 +25,7 @@ export function cleanObject(element: any, excludeRules: string[][] = []): any {
         .compact()
         .value();
 
-    return _.pick(element, _.difference(_.keys(element), leafRules));
+    return _.pick(element, _.difference(_.keys(element), leafRules, blacklistedProperties));
 }
 
 export function cleanReferences(
