@@ -26,6 +26,7 @@ class SyncRulesPage extends React.Component {
         history: PropTypes.object.isRequired,
         loading: PropTypes.object.isRequired,
     };
+
     static model = {
         modelValidations: {
             name: { type: "TEXT" },
@@ -42,6 +43,7 @@ class SyncRulesPage extends React.Component {
         syncReport: SyncReport.create(),
         syncSummaryOpen: false,
     };
+
     initialSorting = ["name", "asc"];
 
     columns = [
@@ -149,16 +151,16 @@ class SyncRulesPage extends React.Component {
 
     actions = [
         {
-            name: "edit",
-            text: i18n.t("Edit"),
-            multiple: false,
-            onClick: this.editRule,
-        },
-        {
             name: "details",
             text: i18n.t("Details"),
             multiple: false,
             type: "details",
+        },
+        {
+            name: "edit",
+            text: i18n.t("Edit"),
+            multiple: false,
+            onClick: this.editRule,
         },
         {
             name: "delete",
