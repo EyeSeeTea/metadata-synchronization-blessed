@@ -92,23 +92,23 @@ export default class SyncRule {
     }
 
     public addMetadataIds(type: string, ids: string[]): SyncRule {
-        const original = this.syncRule.builder.metadata[type];
-        const updated = original ? [...original, ...ids] : [...ids];
+        const original = this.syncRule.builder.metadata[type] || [];
         return SyncRule.build({
             ...this.syncRule,
             builder: {
                 ...this.syncRule.builder,
                 metadata: {
                     ...this.syncRule.builder.metadata,
-                    [type]: updated,
+                    [type]: [...original, ...ids],
                 },
             },
         });
     }
 
     public removeMetadataIds(ids: string[]): SyncRule {
-        const metadata = _.clone(this.syncRule.builder.metadata);
-        for (const type in metadata) _.pullAll(metadata[type], ids);
+        const metadata = _(this.syncRule.builder.metadata)
+            .mapValues(idsForType => _.difference(idsForType, ids))
+            .value();
         return SyncRule.build({
             ...this.syncRule,
             builder: {
