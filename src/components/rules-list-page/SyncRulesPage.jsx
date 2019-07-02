@@ -55,8 +55,10 @@ class SyncRulesPage extends React.Component {
             getValue: ruleData => {
                 const { allInstances } = this.state;
                 const rule = SyncRule.build(ruleData);
-                return rule.targetInstances
-                    .map(id => allInstances.find(instance => instance.id === id).name)
+                return _(rule.targetInstances)
+                    .map(id => allInstances.find(instance => instance.id === id))
+                    .compact()
+                    .map(({ name }) => name)
                     .join(", ");
             },
         },
@@ -73,8 +75,9 @@ class SyncRulesPage extends React.Component {
                 const { allInstances } = this.state;
                 const rule = SyncRule.build(ruleData);
                 return getValueForCollection(
-                    rule.targetInstances
+                    _(rule.targetInstances)
                         .map(id => allInstances.find(instance => instance.id === id))
+                        .compact()
                         .map(({ name }) => ({ name }))
                 );
             },
