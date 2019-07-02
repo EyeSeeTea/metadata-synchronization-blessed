@@ -81,7 +81,7 @@ class GeneralInfoForm extends React.Component {
                 value: instance.name,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Server name (*)"),
+                    floatingLabelText: `${i18n.t("Server name")} (*)`,
                     style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-test": "name",
@@ -112,7 +112,7 @@ class GeneralInfoForm extends React.Component {
                 value: instance.url,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("URL endpoint (*)"),
+                    floatingLabelText: `${i18n.t("URL endpoint")} (*)`,
                     style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-test": "url",
@@ -137,7 +137,7 @@ class GeneralInfoForm extends React.Component {
                 value: instance.username,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Username (*)"),
+                    floatingLabelText: `${i18n.t("Username")} (*)`,
                     style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-test": "username",
@@ -156,7 +156,7 @@ class GeneralInfoForm extends React.Component {
                 value: instance.password,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Password (*)"),
+                    floatingLabelText: `${i18n.t("Password")} (*)`,
                     style: { width: "100%" },
                     changeEvent: "onBlur",
                     type: "password",
