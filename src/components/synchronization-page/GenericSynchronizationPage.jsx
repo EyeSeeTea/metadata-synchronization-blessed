@@ -108,4 +108,4 @@ class GenericSynchronizationPage extends React.Component {
     }
 }
 
-export default withRouter(withSnackbar(GenericSynchronizationPage));
+export default withSnackbar(withRouter(GenericSynchronizationPage));
