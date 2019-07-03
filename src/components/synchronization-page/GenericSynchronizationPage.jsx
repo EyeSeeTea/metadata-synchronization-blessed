@@ -29,9 +29,17 @@ class GenericSynchronizationPage extends React.Component {
     };
 
     changeSelection = (model, selectedIds) => {
-        const metadata = {
-            [model.getMetadataType()]: selectedIds,
+        const { selectedIds: oldSelection, metadata: oldMetadata } = this.state;
+        const additions = _.difference(selectedIds, oldSelection);
+        const metadataWithAdditions = {
+            ...oldMetadata,
+            [model.getMetadataType()]: _.union(oldMetadata[model.getMetadataType()], additions),
         };
+
+        const removals = _.difference(oldSelection, selectedIds);
+        const metadata = _(metadataWithAdditions)
+            .mapValues(idsForType => _.difference(idsForType, removals))
+            .value();
 
         this.setState({ metadata, selectedIds });
     };
