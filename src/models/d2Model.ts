@@ -139,16 +139,7 @@ export class OrganisationUnitModel extends D2Model {
 export class OrganisationUnitGroupModel extends D2Model {
     protected static metadataType = "organisationUnitGroup";
 
-    protected static excludeRules = [
-        "legendSets",
-        "user",
-        "userAccesses",
-        "userGroupAccesses",
-        "organisationUnitGroupSets.user",
-        "organisationUnitGroupSets.userAccesses",
-        "organisationUnitGroupSets.userGroupAccesses",
-        "organisationUnits.organisationUnitGroups",
-    ];
+    protected static excludeRules = ["legendSets", "organisationUnits.organisationUnitGroups"];
     protected static includeRules = [
         "attributes",
         "organisationUnits",
@@ -162,9 +153,6 @@ export class OrganisationUnitGroupSetModel extends D2Model {
     protected static metadataType = "organisationUnitGroupSet";
 
     protected static excludeRules = [
-        "user",
-        "userAccesses",
-        "userGroupAccesses",
         "organisationUnitGroups.organisationUnitGroupSets",
         "organisationUnitGroups.organisationUnits.organisationUnitGroups",
     ];
