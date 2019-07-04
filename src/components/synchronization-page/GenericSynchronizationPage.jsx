@@ -47,7 +47,7 @@ class GenericSynchronizationPage extends React.Component {
     startSynchronization = () => {
         const disabled = _(this.state.metadata)
             .values()
-            .some(_.isEmpty);
+            .every(_.isEmpty);
         if (disabled) {
             this.props.snackbar.error(
                 i18n.t("Please select at least one element from the table to synchronize")
