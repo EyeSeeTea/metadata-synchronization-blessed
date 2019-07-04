@@ -185,6 +185,34 @@ export class DataElementModel extends D2Model {
     ];
 }
 
+export class DataElementGroupModel extends D2Model {
+    protected static metadataType = "dataElementGroup";
+
+    protected static excludeRules = ["legendSets", "dataElements.dataElementGroups"];
+    protected static includeRules = [
+        "attributes",
+        "dataElements",
+        "dataElements.attributes",
+        "dataElementGroupSets",
+        "dataElementGroupSets.attributes",
+    ];
+}
+
+export class DataElementGroupSetModel extends D2Model {
+    protected static metadataType = "dataElementGroupSet";
+
+    protected static excludeRules = [
+        "dataElementGroups.dataElementGroupSets",
+        "dataElementGroups.dataElements.dataElementGroups",
+    ];
+    protected static includeRules = [
+        "attributes",
+        "dataElementGroups",
+        "dataElementGroups.dataElements",
+        "dataElementGroups.dataElements.attributes",
+    ];
+}
+
 export class IndicatorModel extends D2Model {
     protected static metadataType = "indicator";
     protected static groupFilterName = "indicatorGroups";
@@ -200,6 +228,34 @@ export class IndicatorModel extends D2Model {
     ];
 }
 
+export class IndicatorGroupModel extends D2Model {
+    protected static metadataType = "indicatorGroup";
+
+    protected static excludeRules = ["legendSets", "indicators.indicatorGroups"];
+    protected static includeRules = [
+        "attributes",
+        "indicators",
+        "indicators.attributes",
+        "indicatorGroupSets",
+        "indicatorGroupSets.attributes",
+    ];
+}
+
+export class IndicatorGroupSetModel extends D2Model {
+    protected static metadataType = "indicatorGroupSet";
+
+    protected static excludeRules = [
+        "indicatorGroups.indicatorGroupSets",
+        "indicatorGroups.indicators.indicatorGroups",
+    ];
+    protected static includeRules = [
+        "attributes",
+        "indicatorGroups",
+        "indicatorGroups.indicators",
+        "indicatorGroups.indicators.attributes",
+    ];
+}
+
 export class ValidationRuleModel extends D2Model {
     protected static metadataType = "validationRule";
     protected static groupFilterName = "validationRuleGroups";
@@ -210,6 +266,13 @@ export class ValidationRuleModel extends D2Model {
         "validationRuleGroups",
         "validationRuleGroups.attributes",
     ];
+}
+
+export class ValidationRuleGroupModel extends D2Model {
+    protected static metadataType = "validationRuleGroup";
+
+    protected static excludeRules = ["legendSets", "validationRules.validationRuleGroups"];
+    protected static includeRules = ["attributes", "validationRules", "validationRules.attributes"];
 }
 
 export function defaultModel(pascalCaseModelName: string): any {

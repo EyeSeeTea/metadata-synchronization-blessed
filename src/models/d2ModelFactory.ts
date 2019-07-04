@@ -1,21 +1,31 @@
 import {
     D2Model,
+    DataElementGroupModel,
+    DataElementGroupSetModel,
     DataElementModel,
     defaultModel,
+    IndicatorGroupModel,
+    IndicatorGroupSetModel,
     IndicatorModel,
-    OrganisationUnitModel,
     OrganisationUnitGroupModel,
     OrganisationUnitGroupSetModel,
+    OrganisationUnitModel,
+    ValidationRuleGroupModel,
     ValidationRuleModel,
 } from "./d2Model";
 import { D2 } from "../types/d2";
 
 const classes: { [modelName: string]: typeof D2Model } = {
-    OrganisationUnitModel,
+    DataElementGroupModel,
+    DataElementGroupSetModel,
+    DataElementModel,
+    IndicatorGroupModel,
+    IndicatorGroupSetModel,
+    IndicatorModel,
     OrganisationUnitGroupModel,
     OrganisationUnitGroupSetModel,
-    DataElementModel,
-    IndicatorModel,
+    OrganisationUnitModel,
+    ValidationRuleGroupModel,
     ValidationRuleModel,
 };
 
