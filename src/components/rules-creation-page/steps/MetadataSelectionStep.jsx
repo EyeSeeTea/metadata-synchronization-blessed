@@ -6,10 +6,16 @@ import { withSnackbar } from "d2-ui-components";
 
 import MetadataTable from "../../metadata-table/MetadataTable";
 import {
+    DataElementGroupModel,
+    DataElementGroupSetModel,
     DataElementModel,
+    IndicatorGroupModel,
+    IndicatorGroupSetModel,
     IndicatorModel,
     OrganisationUnitGroupModel,
+    OrganisationUnitGroupSetModel,
     OrganisationUnitModel,
+    ValidationRuleGroupModel,
     ValidationRuleModel,
 } from "../../../models/d2Model";
 
@@ -27,10 +33,16 @@ class MetadataSelectionStep extends React.Component {
 
     models = [
         DataElementModel,
+        DataElementGroupModel,
+        DataElementGroupSetModel,
         IndicatorModel,
+        IndicatorGroupModel,
+        IndicatorGroupSetModel,
         OrganisationUnitModel,
         OrganisationUnitGroupModel,
+        OrganisationUnitGroupSetModel,
         ValidationRuleModel,
+        ValidationRuleGroupModel,
     ];
 
     componentDidMount() {
