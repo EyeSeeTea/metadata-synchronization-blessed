@@ -3,9 +3,7 @@ import SyncReport from "../models/syncReport";
 
 export interface SynchronizationBuilder {
     targetInstances: string[];
-    metadata: {
-        [metadataType: string]: string[];
-    };
+    metadataIds: string[];
 }
 
 export interface ExportBuilder {
@@ -50,4 +48,12 @@ export interface SynchronizationState {
     message?: string;
     syncReport?: SyncReport;
     done?: boolean;
+}
+
+export interface SynchronizationRule {
+    id?: string;
+    name: string;
+    description?: string;
+    originInstance: string;
+    builder: SynchronizationBuilder;
 }

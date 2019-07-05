@@ -6,10 +6,10 @@ import { ConfirmationDialog } from "d2-ui-components";
 
 import Instance from "../../models/instance";
 
-import PageHeader from "../shared/PageHeader";
+import PageHeader from "../page-header/PageHeader";
 import GeneralInfoForm from "./GeneralInfoForm";
 
-class InstanceFormBuilder extends React.Component {
+class InstanceCreationPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
@@ -68,11 +68,7 @@ class InstanceFormBuilder extends React.Component {
                     saveText={i18n.t("Ok")}
                 />
 
-                <PageHeader
-                    title={title}
-                    onBackClick={this.cancelSave}
-                    helpText={i18n.t("Help text")}
-                />
+                <PageHeader title={title} onBackClick={this.cancelSave} helpText={undefined} />
 
                 <GeneralInfoForm
                     d2={d2}
@@ -85,4 +81,4 @@ class InstanceFormBuilder extends React.Component {
     }
 }
 
-export default withRouter(InstanceFormBuilder);
+export default withRouter(InstanceCreationPage);

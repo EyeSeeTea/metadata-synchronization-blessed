@@ -6,24 +6,17 @@ import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
-import PageHeader from "../shared/PageHeader";
-import Dropdown from "../shared/Dropdown";
+import PageHeader from "../page-header/PageHeader";
+import Dropdown from "../dropdown/Dropdown";
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
+import { getValueForCollection } from "../../utils/d2-ui-components";
 
 const styles = () => ({
     tableContainer: { marginTop: 10 },
 });
 
-class NotificationsTable extends React.Component {
-    state = {
-        tableKey: Math.random(),
-        toDelete: null,
-        summaryOpen: false,
-        syncReport: SyncReport.create(),
-        statusFilter: "",
-    };
-
+class NotificationsPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -37,6 +30,46 @@ class NotificationsTable extends React.Component {
             metadata: { type: "COLLECTION" },
         },
     };
+
+    state = {
+        tableKey: Math.random(),
+        toDelete: null,
+        summaryOpen: false,
+        syncReport: SyncReport.create(),
+        statusFilter: "",
+    };
+
+    columns = [
+        { name: "user", text: i18n.t("User"), sortable: true },
+        { name: "date", text: i18n.t("Timestamp"), sortable: true },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            sortable: true,
+            getValue: notification => _.startCase(_.toLower(notification.status)),
+        },
+    ];
+
+    initialSorting = ["date", "desc"];
+
+    dropdownItems = [
+        {
+            id: "READY",
+            name: i18n.t("Ready"),
+        },
+        {
+            id: "RUNNING",
+            name: i18n.t("Running"),
+        },
+        {
+            id: "FAILURE",
+            name: i18n.t("Failure"),
+        },
+        {
+            id: "DONE",
+            name: i18n.t("Done"),
+        },
+    ];
 
     backHome = () => {
         this.props.history.push("/");
@@ -78,58 +111,6 @@ class NotificationsTable extends React.Component {
         this.setState({ summaryOpen: true, syncReport: new SyncReport(data) });
     };
 
-    closeSummary = () => {
-        this.setState({ summaryOpen: false });
-    };
-
-    // TODO: We should fix d2-ui-components instead
-    getValueForCollection = values => {
-        const namesToDisplay = _(values)
-            .map(value => value.displayName || value.name || value.id)
-            .compact()
-            .value();
-
-        return (
-            <ul>
-                {namesToDisplay.map(name => (
-                    <li key={name}>{name}</li>
-                ))}
-            </ul>
-        );
-    };
-
-    getMetadataTypes = notification => {
-        return this.getValueForCollection(notification.types.map(type => ({ name: type })));
-    };
-
-    columns = [
-        { name: "user", text: i18n.t("User"), sortable: true },
-        { name: "date", text: i18n.t("Timestamp"), sortable: true },
-        {
-            name: "status",
-            text: i18n.t("Status"),
-            sortable: true,
-            getValue: notification => _.startCase(_.toLower(notification.status)),
-        },
-    ];
-
-    initialSorting = ["date", "desc"];
-
-    detailsFields = [
-        { name: "user", text: i18n.t("User") },
-        { name: "date", text: i18n.t("Timestamp") },
-        {
-            name: "status",
-            text: i18n.t("Status"),
-            getValue: notification => _.startCase(_.toLower(notification.status)),
-        },
-        {
-            name: "metadata",
-            text: i18n.t("Metadata Types"),
-            getValue: notification => this.getMetadataTypes(notification),
-        },
-    ];
-
     actions = [
         {
             name: "details",
@@ -152,22 +133,26 @@ class NotificationsTable extends React.Component {
         },
     ];
 
-    dropdownItems = [
+    closeSummary = () => {
+        this.setState({ summaryOpen: false });
+    };
+
+    getMetadataTypes = notification => {
+        return getValueForCollection(notification.types.map(type => ({ name: type })));
+    };
+
+    detailsFields = [
+        { name: "user", text: i18n.t("User") },
+        { name: "date", text: i18n.t("Timestamp") },
         {
-            id: "READY",
-            name: i18n.t("Ready"),
+            name: "status",
+            text: i18n.t("Status"),
+            getValue: notification => _.startCase(_.toLower(notification.status)),
         },
         {
-            id: "RUNNING",
-            name: i18n.t("Running"),
-        },
-        {
-            id: "FAILURE",
-            name: i18n.t("Failure"),
-        },
-        {
-            id: "DONE",
-            name: i18n.t("Done"),
+            name: "metadata",
+            text: i18n.t("Metadata Types"),
+            getValue: notification => this.getMetadataTypes(notification),
         },
     ];
 
@@ -200,7 +185,7 @@ class NotificationsTable extends React.Component {
                     <ObjectsTable
                         key={tableKey}
                         d2={d2}
-                        model={NotificationsTable.model}
+                        model={NotificationsPage.model}
                         columns={this.columns}
                         detailsFields={this.detailsFields}
                         pageSize={10}
@@ -239,4 +224,4 @@ class NotificationsTable extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(NotificationsTable))));
+export default withLoading(withSnackbar(withRouter(withStyles(styles)(NotificationsPage))));

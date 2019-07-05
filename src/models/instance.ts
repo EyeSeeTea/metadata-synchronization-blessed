@@ -31,6 +31,30 @@ export default class Instance {
         this.data = _.pick(data, ["id", "name", "url", "username", "password", "description"]);
     }
 
+    public get id(): string {
+        return this.data.id;
+    }
+
+    public get name(): string {
+        return this.data.name;
+    }
+
+    public get url(): string {
+        return this.data.url;
+    }
+
+    public get username(): string {
+        return this.data.username;
+    }
+
+    public get password(): string {
+        return this.data.password;
+    }
+
+    public get description(): string {
+        return this.data.description ? this.data.description : "";
+    }
+
     public static setEncryptionKey(encryptionKey: string): void {
         this.encryptionKey = encryptionKey;
     }
@@ -48,7 +72,7 @@ export default class Instance {
 
     public static async build(data: Data | undefined): Promise<Instance> {
         const instance = data ? new Instance(data) : this.create();
-        return await instance.decryptPassword();
+        return instance.decryptPassword();
     }
 
     public static async get(d2: D2, id: string): Promise<Instance> {
@@ -66,7 +90,7 @@ export default class Instance {
 
     public async save(d2: D2): Promise<Response> {
         const instance = await this.encryptPassword();
-        const exists = instance.data.id;
+        const exists = !!instance.data.id;
         const element = exists ? instance.data : { ...instance.data, id: generateUid() };
 
         if (exists) await instance.remove(d2);
@@ -86,40 +110,20 @@ export default class Instance {
         return new Instance({ ...this.data, id });
     }
 
-    public get id(): string {
-        return this.data.id;
-    }
-
     public setName(name: string): Instance {
         return new Instance({ ...this.data, name });
-    }
-
-    public get name(): string {
-        return this.data.name;
     }
 
     public setUrl(url: string): Instance {
         return new Instance({ ...this.data, url });
     }
 
-    public get url(): string {
-        return this.data.url;
-    }
-
     public setUsername(username: string): Instance {
         return new Instance({ ...this.data, username });
     }
 
-    public get username(): string {
-        return this.data.username;
-    }
-
     public setPassword(password: string): Instance {
         return new Instance({ ...this.data, password });
-    }
-
-    public get password(): string {
-        return this.data.password;
     }
 
     public setDescription(description: string): Instance {
@@ -140,10 +144,6 @@ export default class Instance {
                 ? new Cryptr(Instance.encryptionKey).decrypt(this.data.password)
                 : "";
         return new Instance({ ...this.data, password });
-    }
-
-    public get description(): string {
-        return this.data.description ? this.data.description : "";
     }
 
     public async validateUrlUsernameCombo(d2: D2): Promise<boolean> {

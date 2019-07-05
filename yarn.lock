@@ -927,15 +927,16 @@
   resolved "https://registry.yarnpkg.com/@date-io/moment/-/moment-1.3.5.tgz#e5bf3837cbd3f5f5f5d7f49d8549e4118ea75f8d"
   integrity sha512-b0JQb10Lie07iW2/9uKCQSrXif262d6zfYBstCLLJUk0JVA+7o/yLDg5p2+GkjgJbmodjHozIXs4Bi34RRhL8Q==
 
-"@dhis2/d2-i18n-extract@https://github.com/EyeSeeTea/d2-i18n-extract#add-typescript-extensions":
-  version "1.0.7"
-  resolved "https://github.com/EyeSeeTea/d2-i18n-extract#ce40d9f4497d8f31e9d359ce27b00a9bc7c39186"
+"@dhis2/d2-i18n-extract@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@dhis2/d2-i18n-extract/-/d2-i18n-extract-1.0.8.tgz#9d98690d522a51895c8ef3fe7136f026b0f8dacd"
+  integrity sha512-wjQ5J0v8Td12+KcQYSuuZ1tQLReXJ1gBSqkyImf2aNtLwJKERaTOjZ71da+GXdHtd6ph/DP1ezQvFDFKhBHa/A==
   dependencies:
     argparse "^1.0.10"
     i18next-conv "^6.0.0"
     i18next-scanner "^2.4.4"
 
-"@dhis2/d2-i18n-generate@^1.0.19":
+"@dhis2/d2-i18n-generate@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@dhis2/d2-i18n-generate/-/d2-i18n-generate-1.1.1.tgz#e800fa39e85a71c23040b6378de1c9439f69fef7"
   integrity sha512-akKFdEot0d38Yq51WlnflKYuQYMAYvHxDnQuOy3GVUDpmavnQec3wxQNdXbwy6FH9UUHO3kAJhlYL+slxEI+LQ==
@@ -2090,13 +2091,13 @@ aws4@^1.6.0, aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.8.0.tgz#f0e003d9ca9e7f59c7a508945d7b2ef9a04a542f"
   integrity sha512-ReZxvNHIOv88FlT7rxcXIIC0fPt4KZqZbOlivyWtXLt8ESx84zd3kMC6iK5jVeS2qt+g7ftS7ye4fi06X5rtRQ==
 
-axios@^0.18.0:
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.18.0.tgz#32d53e4851efdc0a11993b6cd000789d70c05102"
-  integrity sha1-MtU+SFHv3AoRmTts0AB4nXDAUQI=
+axios@^0.19.0:
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.0.tgz#8e09bff3d9122e133f7b8101c8fbdd00ed3d2ab8"
+  integrity sha512-1uvKqKQta3KBxIz14F2v06AEHZ/dIoeKfbTRkK1E5oqjDnuEerLmYTgJB5AiQZHJcljpg1TuRzdjDR06qNk0DQ==
   dependencies:
-    follow-redirects "^1.3.0"
-    is-buffer "^1.1.5"
+    follow-redirects "1.5.10"
+    is-buffer "^2.0.2"
 
 axobject-query@^2.0.1, axobject-query@^2.0.2:
   version "2.0.2"
@@ -3952,10 +3953,10 @@ d2-manifest@^1.0.0:
     minimist "^1.1.0"
     readline-sync "^1.4.1"
 
-d2-ui-components@^0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-0.0.18.tgz#81d985ca0c914d965021bc3913dcc91584f2d6a3"
-  integrity sha512-KE7J6t4XIz+bU0x4nH9AwsWUK2Laqc6ckZwdRVsrdTRaSe/zE3YLOoMJixfwE+TuHaZU8AGrRuQSlt80xdmvNA==
+d2-ui-components@^0.0.19:
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-0.0.19.tgz#80f8613811934433d24b0afb990f6029e3ff6640"
+  integrity sha512-zOnxhrdjR8IjnJcxpsmN7uT3mVNMkdk6Lr7oB1hGoMD6Bh1/BzuMEIFl0bGyPbSRFGvOWSj3ZNpAkUp2lZZMow==
   dependencies:
     "@date-io/moment" "^1.0.2"
     "@dhis2/d2-i18n" "^1.0.3"
@@ -3969,7 +3970,7 @@ d2-ui-components@^0.0.18:
     lodash "^4.17.11"
     material-ui-pickers "^2.1.2"
     moment "^2.22.2"
-    nano-memoize "^1.0.3"
+    nano-memoize "^1.1.5"
     node-sass "^4.11.0"
     throttle-debounce "^2.1.0"
 
@@ -4053,7 +4054,7 @@ debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.6, debug@^2.6.
   dependencies:
     ms "2.0.0"
 
-debug@3.1.0:
+debug@3.1.0, debug@=3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
   integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
@@ -5540,7 +5541,14 @@ flux@^3.1.3:
     fbemitter "^2.0.0"
     fbjs "^0.8.0"
 
-follow-redirects@^1.0.0, follow-redirects@^1.3.0:
+follow-redirects@1.5.10:
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
+  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
+  dependencies:
+    debug "=3.1.0"
+
+follow-redirects@^1.0.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.7.0.tgz#489ebc198dc0e7f64167bd23b03c4c19b5784c76"
   integrity sha512-m/pZQy4Gj287eNy94nivy5wchN3Kp+Q5WgUPNy5lJSZ3sgkVKSYV/ZChMAQVIgx1SqfZ2zBZtPA2YlXIWxxJOQ==
@@ -6883,6 +6891,11 @@ is-buffer@^1.0.2, is-buffer@^1.1.5:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
+
+is-buffer@^2.0.2:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.3.tgz#4ecf3fcf749cbd1e472689e109ac66261a25e725"
+  integrity sha512-U15Q7MXTuZlrbymiz95PJpZxu8IlipAp4dtS3wOdgPXx3mqBnslrWU14kxfHB+Py/+2PVKSr37dMAgM2A4uArw==
 
 is-callable@^1.1.3, is-callable@^1.1.4:
   version "1.1.4"
@@ -9267,10 +9280,10 @@ nan@^2.12.1, nan@^2.13.2, nan@^2.9.2:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
 
-nano-memoize@^1.0.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/nano-memoize/-/nano-memoize-1.1.3.tgz#3ce885f76898384ac78d39fe185b6419f71f8e12"
-  integrity sha512-+0yGTtwV70h7GourgGsy/AlxrQxqIvJdJjMCuBln+v9lc+u+STuEAscPc4YLgT7uVc+Su/osREG1Do9C/L5OVA==
+nano-memoize@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/nano-memoize/-/nano-memoize-1.1.5.tgz#70de03b987a0435d5bd7be9425cce8c74ac440bc"
+  integrity sha512-AV4GIsQBJU8jpYWMClIm9cxSWRXZtgbkkaSXz9mSpTrJFLkMN3eXkTJDeO4SykHomjckiYE4Ba7UELto7KRMpA==
 
 nanomatch@^1.2.9:
   version "1.2.13"

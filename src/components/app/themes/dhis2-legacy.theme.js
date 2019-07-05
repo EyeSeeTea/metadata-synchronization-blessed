@@ -1,13 +1,13 @@
 import {
+    cyan100,
     cyan500,
     cyan700,
-    cyan100,
-    orange500,
-    grey100,
     darkBlack,
-    white,
-    grey500,
+    grey100,
     grey400,
+    grey500,
+    orange500,
+    white,
 } from "material-ui/styles/colors";
 import { fade } from "material-ui/utils/colorManipulator";
 import Spacing from "material-ui/styles/spacing";

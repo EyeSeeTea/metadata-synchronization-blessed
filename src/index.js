@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import _ from "lodash";
 import axios from "axios";
-import { init, config, getUserSettings, getManifest } from "d2";
+import { config, getManifest, getUserSettings, init } from "d2";
 import { HashRouter } from "react-router-dom";
 import i18n from "@dhis2/d2-i18n";
 import "font-awesome/css/font-awesome.min.css";

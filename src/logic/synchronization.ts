@@ -117,17 +117,18 @@ export async function* startSynchronization(
     d2: D2,
     builder: SynchronizationBuilder
 ): AsyncIterableIterator<SynchronizationState> {
-    const { targetInstances: targetInstanceIds, metadata } = builder;
+    const { targetInstances: targetInstanceIds, metadataIds } = builder;
 
     // Phase 1: Export and package metadata from origin instance
     console.debug("Start synchronization process");
     yield { message: i18n.t("Fetching metadata from origin instance") };
+    const metadata = await getMetadata(d2, metadataIds, "id");
     const exportPromises = _.keys(metadata)
         .map(type => {
             const myClass = d2ModelFactory(d2, type);
             return {
                 type,
-                ids: metadata[type],
+                ids: metadata[type].map(e => e.id),
                 excludeRules: myClass.getExcludeRules(),
                 includeRules: myClass.getIncludeRules(),
             };

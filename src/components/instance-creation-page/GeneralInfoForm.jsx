@@ -4,8 +4,7 @@ import i18n from "@dhis2/d2-i18n";
 import { withRouter } from "react-router-dom";
 import _ from "lodash";
 import { TextField } from "@dhis2/d2-ui-core";
-import { FormBuilder } from "@dhis2/d2-ui-forms";
-import { Validators } from "@dhis2/d2-ui-forms";
+import { FormBuilder, Validators } from "@dhis2/d2-ui-forms";
 import { Card, CardContent } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import RaisedButton from "material-ui/RaisedButton/RaisedButton";
@@ -32,15 +31,15 @@ const styles = () => ({
 });
 
 class GeneralInfoForm extends React.Component {
-    state = {
-        isSaving: false,
-    };
-
     static propTypes = {
         d2: PropTypes.object.isRequired,
         instance: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
         cancelAction: PropTypes.func.isRequired,
+    };
+
+    state = {
+        isSaving: false,
     };
 
     setFormReference = formReference => {
@@ -82,7 +81,7 @@ class GeneralInfoForm extends React.Component {
                 value: instance.name,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Server name (*)"),
+                    floatingLabelText: `${i18n.t("Server name")} (*)`,
                     style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-test": "name",
@@ -113,7 +112,7 @@ class GeneralInfoForm extends React.Component {
                 value: instance.url,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("URL endpoint (*)"),
+                    floatingLabelText: `${i18n.t("URL endpoint")} (*)`,
                     style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-test": "url",
@@ -138,7 +137,7 @@ class GeneralInfoForm extends React.Component {
                 value: instance.username,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Username (*)"),
+                    floatingLabelText: `${i18n.t("Username")} (*)`,
                     style: { width: "100%" },
                     changeEvent: "onBlur",
                     "data-test": "username",
@@ -157,7 +156,7 @@ class GeneralInfoForm extends React.Component {
                 value: instance.password,
                 component: TextField,
                 props: {
-                    floatingLabelText: i18n.t("Password (*)"),
+                    floatingLabelText: `${i18n.t("Password")} (*)`,
                     style: { width: "100%" },
                     changeEvent: "onBlur",
                     type: "password",

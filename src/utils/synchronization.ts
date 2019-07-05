@@ -4,9 +4,11 @@ import "../utils/lodash-mixins";
 
 import Instance from "../models/instance";
 import { D2, MetadataImportParams, MetadataImportResponse } from "../types/d2";
-import { NestedRules, MetadataPackage } from "../types/synchronization";
+import { MetadataPackage, NestedRules } from "../types/synchronization";
 import { cleanModelName } from "./d2";
 import { isValidUid } from "d2/uid";
+
+const blacklistedProperties = ["user", "userAccesses", "userGroupAccesses"];
 
 export function buildNestedRules(rules: string[][] = []): NestedRules {
     return _(rules)
@@ -23,7 +25,7 @@ export function cleanObject(element: any, excludeRules: string[][] = []): any {
         .compact()
         .value();
 
-    return _.pick(element, _.difference(_.keys(element), leafRules));
+    return _.pick(element, _.difference(_.keys(element), leafRules, blacklistedProperties));
 }
 
 export function cleanReferences(
@@ -38,7 +40,11 @@ export function cleanReferences(
     return _.intersection(_.keys(references), rules);
 }
 
-export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataPackage> {
+export async function getMetadata(
+    d2: D2,
+    elements: string[],
+    fields: string = ":all"
+): Promise<MetadataPackage> {
     const promises = [];
     for (let i = 0; i < elements.length; i += 100) {
         const requestUrl = d2.Api.getApi().baseUrl + "/metadata.json";
@@ -47,15 +53,17 @@ export async function getMetadata(d2: D2, elements: string[]): Promise<MetadataP
             axios.get(requestUrl, {
                 withCredentials: true,
                 params: {
-                    fields: ":all",
+                    fields: fields,
                     filter: "id:in:[" + requestElements + "]",
                     defaults: "EXCLUDE",
                 },
             })
         );
     }
-    const result = await Promise.all(promises);
-    return _.deepMerge({}, ...result.map(result => result.data));
+    const response = await Promise.all(promises);
+    const results = _.deepMerge({}, ...response.map(result => result.data));
+    if (results.system) delete results.system;
+    return results;
 }
 
 export async function postMetadata(
