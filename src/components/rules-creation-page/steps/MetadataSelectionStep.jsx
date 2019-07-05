@@ -6,10 +6,16 @@ import { withSnackbar } from "d2-ui-components";
 
 import MetadataTable from "../../metadata-table/MetadataTable";
 import {
+    DataElementGroupModel,
+    DataElementGroupSetModel,
     DataElementModel,
+    IndicatorGroupModel,
+    IndicatorGroupSetModel,
     IndicatorModel,
     OrganisationUnitGroupModel,
+    OrganisationUnitGroupSetModel,
     OrganisationUnitModel,
+    ValidationRuleGroupModel,
     ValidationRuleModel,
 } from "../../../models/d2Model";
 
@@ -22,30 +28,34 @@ class MetadataSelectionStep extends React.Component {
     };
 
     state = {
-        selectedIds: [],
+        metadataIds: [],
     };
 
     models = [
         DataElementModel,
+        DataElementGroupModel,
+        DataElementGroupSetModel,
         IndicatorModel,
+        IndicatorGroupModel,
+        IndicatorGroupSetModel,
         OrganisationUnitModel,
         OrganisationUnitGroupModel,
+        OrganisationUnitGroupSetModel,
         ValidationRuleModel,
+        ValidationRuleGroupModel,
     ];
 
     componentDidMount() {
-        const { selectedIds } = this.props.syncRule;
-        this.setState({ selectedIds });
+        const { metadataIds } = this.props.syncRule;
+        this.setState({ metadataIds });
     }
 
-    changeSelection = (model, selectedIds) => {
-        const { selectedIds: oldSelection } = this.state;
-        const { d2, snackbar, syncRule, onChange } = this.props;
-        const type = model.getD2Model(d2).plural;
+    changeSelection = metadataIds => {
+        const { metadataIds: oldSelection } = this.state;
+        const { snackbar, syncRule, onChange } = this.props;
 
-        const additions = _.difference(selectedIds, oldSelection);
+        const additions = _.difference(metadataIds, oldSelection);
         if (additions.length > 0) {
-            onChange(syncRule.addMetadataIds(type, additions));
             snackbar.info(
                 i18n.t("Selected {{difference}} elements", { difference: additions.length }),
                 {
@@ -54,9 +64,8 @@ class MetadataSelectionStep extends React.Component {
             );
         }
 
-        const removals = _.difference(oldSelection, selectedIds);
+        const removals = _.difference(oldSelection, metadataIds);
         if (removals.length > 0) {
-            onChange(syncRule.removeMetadataIds(removals));
             snackbar.info(
                 i18n.t("Removed {{difference}} elements", {
                     difference: Math.abs(removals.length),
@@ -65,7 +74,8 @@ class MetadataSelectionStep extends React.Component {
             );
         }
 
-        this.setState({ selectedIds });
+        onChange(syncRule.updateMetadataIds(metadataIds));
+        this.setState({ metadataIds });
     };
 
     render() {
@@ -75,7 +85,7 @@ class MetadataSelectionStep extends React.Component {
             <MetadataTable
                 d2={d2}
                 notifyNewSelection={this.changeSelection}
-                initialSelection={syncRule.selectedIds}
+                initialSelection={syncRule.metadataIds}
                 models={this.models}
                 {...rest}
             />

@@ -12,7 +12,7 @@ class SyncDialog extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         isOpen: PropTypes.bool.isRequired,
-        metadata: PropTypes.object.isRequired,
+        metadataIds: PropTypes.array.isRequired,
         handleClose: PropTypes.func.isRequired,
         loading: PropTypes.object.isRequired,
     };
@@ -40,12 +40,12 @@ class SyncDialog extends React.Component {
     };
 
     handleSynchronization = async () => {
-        const { handleClose, loading, metadata, d2 } = this.props;
+        const { handleClose, loading, metadataIds, d2 } = this.props;
         const { targetInstances } = this.state;
         loading.show(true, i18n.t("Synchronizing metadata"));
 
         try {
-            const builder = { metadata, targetInstances };
+            const builder = { metadataIds, targetInstances };
             for await (const { message, syncReport, done } of startSynchronization(d2, builder)) {
                 if (message) loading.show(true, message);
                 if (syncReport) await syncReport.save(d2);

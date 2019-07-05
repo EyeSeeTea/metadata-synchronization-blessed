@@ -35,7 +35,7 @@ const SaveStep = props => {
     const [instanceOptions, setInstanceOptions] = useState([]);
 
     const parseMetadata = async () => {
-        const metadata = await getMetadata(d2, syncRule.selectedIds, "id,name");
+        const metadata = await getMetadata(d2, syncRule.metadataIds, "id,name");
         updateMetadata(metadata);
         return metadata;
     };

@@ -31,7 +31,7 @@ class SyncRulesWizard extends React.Component {
             key: "metadata",
             label: i18n.t("Metadata"),
             component: MetadataStep,
-            validationKeys: ["selectedIds"],
+            validationKeys: ["metadataIds"],
             description: undefined,
             help: undefined,
         },

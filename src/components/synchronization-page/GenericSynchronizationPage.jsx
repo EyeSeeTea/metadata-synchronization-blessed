@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import _ from "lodash";
 import { withSnackbar } from "d2-ui-components";
 import SyncIcon from "@material-ui/icons/Sync";
 import { withRouter } from "react-router-dom";
@@ -21,31 +20,23 @@ class GenericSynchronizationPage extends React.Component {
     };
 
     state = {
-        selectedIds: [],
-        metadata: {},
+        metadataIds: [],
         importResponse: SyncReport.create(),
         syncDialogOpen: false,
         syncSummaryOpen: false,
     };
 
-    changeSelection = (model, selectedIds) => {
-        const metadata = {
-            [model.getMetadataType()]: selectedIds,
-        };
-
-        this.setState({ metadata, selectedIds });
+    changeSelection = metadataIds => {
+        this.setState({ metadataIds });
     };
 
     startSynchronization = () => {
-        const disabled = _(this.state.metadata)
-            .values()
-            .some(_.isEmpty);
-        if (disabled) {
+        if (this.state.metadataIds.length > 0) {
+            this.setState({ syncDialogOpen: true });
+        } else {
             this.props.snackbar.error(
                 i18n.t("Please select at least one element from the table to synchronize")
             );
-        } else {
-            this.setState({ syncDialogOpen: true });
         }
     };
 
@@ -68,13 +59,7 @@ class GenericSynchronizationPage extends React.Component {
 
     render() {
         const { d2, title, models } = this.props;
-        const {
-            syncDialogOpen,
-            syncSummaryOpen,
-            metadata,
-            importResponse,
-            selectedIds,
-        } = this.state;
+        const { syncDialogOpen, syncSummaryOpen, importResponse, metadataIds } = this.state;
 
         return (
             <React.Fragment>
@@ -84,7 +69,7 @@ class GenericSynchronizationPage extends React.Component {
                     d2={d2}
                     models={models}
                     initialModel={models[0]}
-                    initialSelection={selectedIds}
+                    initialSelection={metadataIds}
                     notifyNewSelection={this.changeSelection}
                     onButtonClick={this.startSynchronization}
                     buttonLabel={<SyncIcon />}
@@ -92,7 +77,7 @@ class GenericSynchronizationPage extends React.Component {
 
                 <SyncDialog
                     d2={d2}
-                    metadata={metadata}
+                    metadataIds={metadataIds}
                     isOpen={syncDialogOpen}
                     handleClose={this.closeDialog}
                 />
@@ -108,4 +93,4 @@ class GenericSynchronizationPage extends React.Component {
     }
 }
 
-export default withRouter(withSnackbar(GenericSynchronizationPage));
+export default withSnackbar(withRouter(GenericSynchronizationPage));
