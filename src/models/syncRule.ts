@@ -35,7 +35,7 @@ export default class SyncRule {
         this.syncRule.description = description;
     }
 
-    public get selectedIds(): string[] {
+    public get metadataIds(): string[] {
         return this.syncRule.builder.metadataIds;
     }
 
@@ -124,8 +124,8 @@ export default class SyncRule {
                       }
                     : null,
             ]),
-            selectedIds: _.compact([
-                this.selectedIds.length === 0
+            metadataIds: _.compact([
+                this.metadataIds.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: {},

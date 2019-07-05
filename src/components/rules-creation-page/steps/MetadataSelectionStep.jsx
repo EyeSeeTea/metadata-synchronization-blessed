@@ -28,7 +28,7 @@ class MetadataSelectionStep extends React.Component {
     };
 
     state = {
-        selectedIds: [],
+        metadataIds: [],
     };
 
     models = [
@@ -46,15 +46,15 @@ class MetadataSelectionStep extends React.Component {
     ];
 
     componentDidMount() {
-        const { selectedIds } = this.props.syncRule;
-        this.setState({ selectedIds });
+        const { metadataIds } = this.props.syncRule;
+        this.setState({ metadataIds });
     }
 
-    changeSelection = selectedIds => {
-        const { selectedIds: oldSelection } = this.state;
+    changeSelection = metadataIds => {
+        const { metadataIds: oldSelection } = this.state;
         const { snackbar, syncRule, onChange } = this.props;
 
-        const additions = _.difference(selectedIds, oldSelection);
+        const additions = _.difference(metadataIds, oldSelection);
         if (additions.length > 0) {
             snackbar.info(
                 i18n.t("Selected {{difference}} elements", { difference: additions.length }),
@@ -64,7 +64,7 @@ class MetadataSelectionStep extends React.Component {
             );
         }
 
-        const removals = _.difference(oldSelection, selectedIds);
+        const removals = _.difference(oldSelection, metadataIds);
         if (removals.length > 0) {
             snackbar.info(
                 i18n.t("Removed {{difference}} elements", {
@@ -74,8 +74,8 @@ class MetadataSelectionStep extends React.Component {
             );
         }
 
-        onChange(syncRule.updateMetadataIds(selectedIds));
-        this.setState({ selectedIds });
+        onChange(syncRule.updateMetadataIds(metadataIds));
+        this.setState({ metadataIds });
     };
 
     render() {
@@ -85,7 +85,7 @@ class MetadataSelectionStep extends React.Component {
             <MetadataTable
                 d2={d2}
                 notifyNewSelection={this.changeSelection}
-                initialSelection={syncRule.selectedIds}
+                initialSelection={syncRule.metadataIds}
                 models={this.models}
                 {...rest}
             />

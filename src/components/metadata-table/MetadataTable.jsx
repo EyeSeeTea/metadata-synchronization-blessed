@@ -60,7 +60,7 @@ class MetadataTable extends React.Component {
         },
         groupFilterData: [],
         levelFilterData: [],
-        selectedIds: [],
+        metadataIds: [],
         showOnlySelectedItems: false,
         tableKey: Math.random(),
     };
@@ -117,13 +117,13 @@ class MetadataTable extends React.Component {
     componentDidMount() {
         const {
             initialModel: model = this.defaultModel,
-            initialSelection: selectedIds = [],
+            initialSelection: metadataIds = [],
         } = this.props;
 
         this.setState({
             model,
-            selectedIds,
-            showOnlySelectedItems: selectedIds.length > 0,
+            metadataIds,
+            showOnlySelectedItems: metadataIds.length > 0,
             tableKey: Math.random(),
         });
     }
@@ -243,16 +243,16 @@ class MetadataTable extends React.Component {
         );
     };
 
-    onSelectionChange = selectedIds => {
+    onSelectionChange = metadataIds => {
         const { notifyNewSelection } = this.props;
-        notifyNewSelection(selectedIds);
-        this.setState({ selectedIds });
+        notifyNewSelection(metadataIds);
+        this.setState({ metadataIds });
     };
 
     list = (...params) => {
-        const { model, showOnlySelectedItems, selectedIds } = this.state;
+        const { model, showOnlySelectedItems, metadataIds } = this.state;
         if (!model.listMethod || showOnlySelectedItems) {
-            return listByIds(...params, selectedIds);
+            return listByIds(...params, metadataIds);
         } else {
             return model.listMethod(...params);
         }

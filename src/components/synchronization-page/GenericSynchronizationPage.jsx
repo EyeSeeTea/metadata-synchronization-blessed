@@ -20,18 +20,18 @@ class GenericSynchronizationPage extends React.Component {
     };
 
     state = {
-        selectedIds: [],
+        metadataIds: [],
         importResponse: SyncReport.create(),
         syncDialogOpen: false,
         syncSummaryOpen: false,
     };
 
-    changeSelection = selectedIds => {
-        this.setState({ selectedIds });
+    changeSelection = metadataIds => {
+        this.setState({ metadataIds });
     };
 
     startSynchronization = () => {
-        if (this.state.selectedIds.length > 0) {
+        if (this.state.metadataIds.length > 0) {
             this.setState({ syncDialogOpen: true });
         } else {
             this.props.snackbar.error(
@@ -59,7 +59,7 @@ class GenericSynchronizationPage extends React.Component {
 
     render() {
         const { d2, title, models } = this.props;
-        const { syncDialogOpen, syncSummaryOpen, importResponse, selectedIds } = this.state;
+        const { syncDialogOpen, syncSummaryOpen, importResponse, metadataIds } = this.state;
 
         return (
             <React.Fragment>
@@ -69,7 +69,7 @@ class GenericSynchronizationPage extends React.Component {
                     d2={d2}
                     models={models}
                     initialModel={models[0]}
-                    initialSelection={selectedIds}
+                    initialSelection={metadataIds}
                     notifyNewSelection={this.changeSelection}
                     onButtonClick={this.startSynchronization}
                     buttonLabel={<SyncIcon />}
@@ -77,7 +77,7 @@ class GenericSynchronizationPage extends React.Component {
 
                 <SyncDialog
                     d2={d2}
-                    metadataIds={selectedIds}
+                    metadataIds={metadataIds}
                     isOpen={syncDialogOpen}
                     handleClose={this.closeDialog}
                 />
