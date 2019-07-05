@@ -4,7 +4,7 @@ import { generateUid } from "d2/uid";
 import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
 import { D2 } from "../types/d2";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { MetadataPackage, SynchronizationRule } from "../types/synchronization";
+import { SynchronizationRule } from "../types/synchronization";
 import { Validation } from "../types/validations";
 
 const dataStoreKey = "rules";
@@ -35,17 +35,8 @@ export default class SyncRule {
         this.syncRule.description = description;
     }
 
-    public get metadata(): MetadataPackage {
-        return this.syncRule.builder.metadata || {};
-    }
-
     public get selectedIds(): string[] {
-        return (
-            _(this.syncRule.builder.metadata)
-                .values()
-                .flatten()
-                .value() || []
-        );
+        return this.syncRule.builder.metadataIds;
     }
 
     public get targetInstances(): string[] {
@@ -60,7 +51,7 @@ export default class SyncRule {
             originInstance: "",
             builder: {
                 targetInstances: [],
-                metadata: {},
+                metadataIds: [],
             },
         });
     }
@@ -91,29 +82,12 @@ export default class SyncRule {
             : data;
     }
 
-    public addMetadataIds(type: string, ids: string[]): SyncRule {
-        const original = this.syncRule.builder.metadata[type] || [];
+    public updateMetadataIds(metadataIds: string[]): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             builder: {
                 ...this.syncRule.builder,
-                metadata: {
-                    ...this.syncRule.builder.metadata,
-                    [type]: [...original, ...ids],
-                },
-            },
-        });
-    }
-
-    public removeMetadataIds(ids: string[]): SyncRule {
-        const metadata = _(this.syncRule.builder.metadata)
-            .mapValues(idsForType => _.difference(idsForType, ids))
-            .value();
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                metadata,
+                metadataIds,
             },
         });
     }

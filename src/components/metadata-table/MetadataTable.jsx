@@ -245,9 +245,7 @@ class MetadataTable extends React.Component {
 
     onSelectionChange = selectedIds => {
         const { notifyNewSelection } = this.props;
-        const { model } = this.state;
-
-        notifyNewSelection(model, selectedIds);
+        notifyNewSelection(selectedIds);
         this.setState({ selectedIds });
     };
 

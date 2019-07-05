@@ -50,14 +50,12 @@ class MetadataSelectionStep extends React.Component {
         this.setState({ selectedIds });
     }
 
-    changeSelection = (model, selectedIds) => {
+    changeSelection = selectedIds => {
         const { selectedIds: oldSelection } = this.state;
-        const { d2, snackbar, syncRule, onChange } = this.props;
-        const type = model.getD2Model(d2).plural;
+        const { snackbar, syncRule, onChange } = this.props;
 
         const additions = _.difference(selectedIds, oldSelection);
         if (additions.length > 0) {
-            onChange(syncRule.addMetadataIds(type, additions));
             snackbar.info(
                 i18n.t("Selected {{difference}} elements", { difference: additions.length }),
                 {
@@ -68,7 +66,6 @@ class MetadataSelectionStep extends React.Component {
 
         const removals = _.difference(oldSelection, selectedIds);
         if (removals.length > 0) {
-            onChange(syncRule.removeMetadataIds(removals));
             snackbar.info(
                 i18n.t("Removed {{difference}} elements", {
                     difference: Math.abs(removals.length),
@@ -77,6 +74,7 @@ class MetadataSelectionStep extends React.Component {
             );
         }
 
+        onChange(syncRule.updateMetadataIds(selectedIds));
         this.setState({ selectedIds });
     };
 

@@ -3,9 +3,7 @@ import SyncReport from "../models/syncReport";
 
 export interface SynchronizationBuilder {
     targetInstances: string[];
-    metadata: {
-        [metadataType: string]: string[];
-    };
+    metadataIds: string[];
 }
 
 export interface ExportBuilder {
