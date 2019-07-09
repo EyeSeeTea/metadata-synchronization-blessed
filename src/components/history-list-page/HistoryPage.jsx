@@ -102,7 +102,9 @@ class HistoryPage extends React.Component {
             this.props.snackbar.error(i18n.t("Failed to delete some history notifications"));
         } else {
             this.props.snackbar.success(
-                i18n.t("Successfully deleted {{count}} history notifications", { count: toDelete.length })
+                i18n.t("Successfully deleted {{count}} history notifications", {
+                    count: toDelete.length,
+                })
             );
         }
     };
@@ -212,9 +214,12 @@ class HistoryPage extends React.Component {
                     title={i18n.t("Delete History Notifications?")}
                     description={
                         toDelete
-                            ? i18n.t("Are you sure you want to delete {{count}} history notifications?", {
-                                  count: toDelete.length,
-                              })
+                            ? i18n.t(
+                                  "Are you sure you want to delete {{count}} history notifications?",
+                                  {
+                                      count: toDelete.length,
+                                  }
+                              )
                             : ""
                     }
                     saveText={i18n.t("Ok")}

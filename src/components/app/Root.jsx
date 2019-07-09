@@ -53,10 +53,7 @@ class Root extends React.Component {
                     render={props => <ValidationRulePage d2={d2} {...props} />}
                 />
 
-                <Route
-                    path="/history"
-                    render={props => <HistoryPage d2={d2} {...props} />}
-                />
+                <Route path="/history" render={props => <HistoryPage d2={d2} {...props} />} />
 
                 <Route
                     path={"/synchronization-rules/:action(new|edit)/:id?"}
