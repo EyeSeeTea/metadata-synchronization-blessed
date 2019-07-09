@@ -51,10 +51,6 @@ class LandingPage extends React.Component {
         d2: PropTypes.object.isRequired,
     };
 
-    onClick = key => {
-        console.log("TODO", "clicked", key);
-    };
-
     render() {
         const { classes } = this.props;
         const items = [
@@ -76,7 +72,6 @@ class LandingPage extends React.Component {
                 <Paper className={classes.paper}>
                     <ListItem
                         data-test={`page-${key}`}
-                        onClick={this.onClick.bind(this, key)}
                         component={Link}
                         to={`/${key}`}
                         className={classes.listItem}
