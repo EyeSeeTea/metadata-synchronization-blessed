@@ -18,7 +18,7 @@ import {
     SynchronizationResult,
 } from "../types/synchronization";
 
-const dataStoreKey = "history";
+const dataStoreKey = "notifications";
 
 export default class SyncReport {
     private results: SynchronizationResult[] | null;
