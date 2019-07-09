@@ -7,7 +7,7 @@ context("Instance Configurator", function() {
     });
 
     it("has the correct title", function() {
-        cy.get(dataTest("page-header-title")).contains("Instances");
+        cy.get(dataTest("page-header-title")).contains("Instance Configuration");
     });
 
     it("opens a new instance page", function() {
