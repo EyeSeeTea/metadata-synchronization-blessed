@@ -117,7 +117,7 @@ export async function* startSynchronization(
     d2: D2,
     builder: SynchronizationBuilder
 ): AsyncIterableIterator<SynchronizationState> {
-    const { targetInstances: targetInstanceIds, metadataIds } = builder;
+    const { targetInstances: targetInstanceIds, metadataIds, syncRule } = builder;
 
     // Phase 1: Export and package metadata from origin instance
     console.debug("Start synchronization process");
@@ -148,6 +148,7 @@ export async function* startSynchronization(
         user: d2.currentUser.username,
         types: _.keys(metadata),
         status: "RUNNING" as SynchronizationReportStatus,
+        syncRule,
     });
     syncReport.addSyncResult(
         ...targetInstances.map(instance => ({

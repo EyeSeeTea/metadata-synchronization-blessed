@@ -3,12 +3,13 @@ import PropTypes from "prop-types";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
-import { withRouter } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../page-header/PageHeader";
 import Dropdown from "../dropdown/Dropdown";
 import SyncReport from "../../models/syncReport";
+import SyncRule from "../../models/syncRule";
 import SyncSummary from "../sync-summary/SyncSummary";
 import { getValueForCollection } from "../../utils/d2-ui-components";
 
@@ -37,18 +38,8 @@ class HistoryPage extends React.Component {
         summaryOpen: false,
         syncReport: SyncReport.create(),
         statusFilter: "",
+        syncRules: [],
     };
-
-    columns = [
-        { name: "user", text: i18n.t("User"), sortable: true },
-        { name: "date", text: i18n.t("Timestamp"), sortable: true },
-        {
-            name: "status",
-            text: i18n.t("Status"),
-            sortable: true,
-            getValue: notification => _.startCase(_.toLower(notification.status)),
-        },
-    ];
 
     initialSorting = ["date", "desc"];
 
@@ -143,6 +134,17 @@ class HistoryPage extends React.Component {
         return getValueForCollection(notification.types.map(type => ({ name: type })));
     };
 
+    getSyncRuleEditLink = id => {
+        const { syncRules } = this.state;
+        const syncRule = syncRules.find(e => e.id === id);
+
+        return syncRule ? (
+            <Link to={`/synchronization-rules/edit/${syncRule.id}`}>Edit {syncRule.name}</Link>
+        ) : (
+            ""
+        );
+    };
+
     detailsFields = [
         { name: "user", text: i18n.t("User") },
         { name: "date", text: i18n.t("Timestamp") },
@@ -155,6 +157,34 @@ class HistoryPage extends React.Component {
             name: "metadata",
             text: i18n.t("Metadata Types"),
             getValue: notification => this.getMetadataTypes(notification),
+        },
+        {
+            name: "syncRule",
+            text: i18n.t("Sync Rule"),
+            getValue: ({ syncRule }) => this.getSyncRuleEditLink(syncRule),
+        },
+    ];
+
+    getSyncRuleName = id => {
+        const { syncRules } = this.state;
+        const syncRule = syncRules.find(e => e.id === id) || {};
+        return syncRule.name;
+    };
+
+    columns = [
+        { name: "user", text: i18n.t("User"), sortable: true },
+        { name: "date", text: i18n.t("Timestamp"), sortable: true },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            sortable: true,
+            getValue: notification => _.startCase(_.toLower(notification.status)),
+        },
+        {
+            name: "syncRule",
+            text: i18n.t("Sync Rule"),
+            sortable: true,
+            getValue: ({ syncRule }) => this.getSyncRuleName(syncRule),
         },
     ];
 
@@ -175,6 +205,12 @@ class HistoryPage extends React.Component {
             />
         );
     };
+
+    async componentDidMount() {
+        const { d2 } = this.props;
+        const { objects: syncRules } = await SyncRule.list(d2, null, { paging: false });
+        this.setState({ syncRules });
+    }
 
     render() {
         const { tableKey, toDelete, syncReport, summaryOpen, statusFilter } = this.state;

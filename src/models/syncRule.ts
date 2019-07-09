@@ -70,7 +70,7 @@ export default class SyncRule {
         filters: SyncRuleTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { targetInstanceFilter } = filters;
+        const { targetInstanceFilter = null } = filters || {};
         const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
         return targetInstanceFilter
             ? {
