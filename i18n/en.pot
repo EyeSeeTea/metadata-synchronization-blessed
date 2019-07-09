@@ -5,10 +5,71 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-07-02T06:39:42.423Z\n"
-"PO-Revision-Date: 2019-07-02T06:39:42.423Z\n"
+"POT-Creation-Date: 2019-07-09T09:30:56.410Z\n"
+"PO-Revision-Date: 2019-07-09T09:30:56.410Z\n"
 
 msgid "<No value>"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Timestamp"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Ready"
+msgstr ""
+
+msgid "Running"
+msgstr ""
+
+msgid "Failure"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "Deleting History Notifications"
+msgstr ""
+
+msgid "Failed to delete some history notifications"
+msgstr ""
+
+msgid "Successfully deleted {{count}} history notifications"
+msgid_plural "Successfully deleted {{count}} history notifications"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "View summary"
+msgstr ""
+
+msgid "Metadata Types"
+msgstr ""
+
+msgid "Synchronization status"
+msgstr ""
+
+msgid "Synchronization History"
+msgstr ""
+
+msgid "Delete History Notifications?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} history notifications?"
+msgid_plural "Are you sure you want to delete {{count}} history notifications?"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Ok"
 msgstr ""
 
 msgid "Server name"
@@ -62,22 +123,13 @@ msgstr ""
 msgid "All your changes will be lost. Are you sure?"
 msgstr ""
 
-msgid "Ok"
-msgstr ""
-
 msgid "Saving..."
 msgstr ""
 
 msgid "Save"
 msgstr ""
 
-msgid "Details"
-msgstr ""
-
 msgid "Edit"
-msgstr ""
-
-msgid "Delete"
 msgstr ""
 
 msgid "Deleting Instances"
@@ -120,9 +172,6 @@ msgstr ""
 msgid "Synchronization Rules"
 msgstr ""
 
-msgid "Synchronization History"
-msgstr ""
-
 msgid "Name"
 msgstr ""
 
@@ -146,58 +195,6 @@ msgstr ""
 
 msgid "Only selected items"
 msgstr ""
-
-msgid "User"
-msgstr ""
-
-msgid "Timestamp"
-msgstr ""
-
-msgid "Status"
-msgstr ""
-
-msgid "Ready"
-msgstr ""
-
-msgid "Running"
-msgstr ""
-
-msgid "Failure"
-msgstr ""
-
-msgid "Done"
-msgstr ""
-
-msgid "Deleting Notifications"
-msgstr ""
-
-msgid "Failed to delete some notifications"
-msgstr ""
-
-msgid "Successfully deleted {{count}} notifications"
-msgid_plural "Successfully deleted {{count}} notifications"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "View summary"
-msgstr ""
-
-msgid "Metadata Types"
-msgstr ""
-
-msgid "Synchronization status"
-msgstr ""
-
-msgid "Notifications"
-msgstr ""
-
-msgid "Delete Notifications?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{count}} notifications?"
-msgid_plural "Are you sure you want to delete {{count}} notifications?"
-msgstr[0] ""
-msgstr[1] ""
 
 msgid "Help"
 msgstr ""

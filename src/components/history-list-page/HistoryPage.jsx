@@ -16,7 +16,7 @@ const styles = () => ({
     tableContainer: { marginTop: 10 },
 });
 
-class NotificationsPage extends React.Component {
+class HistoryPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -87,7 +87,7 @@ class NotificationsPage extends React.Component {
         const { loading, d2 } = this.props;
         const { toDelete } = this.state;
 
-        loading.show(true, i18n.t("Deleting Notifications"));
+        loading.show(true, i18n.t("Deleting History Notifications"));
         const notifications = toDelete.map(data => new SyncReport(data));
 
         const results = [];
@@ -99,10 +99,10 @@ class NotificationsPage extends React.Component {
         this.setState({ tableKey: Math.random(), toDelete: null });
 
         if (_.some(results, ["status", false])) {
-            this.props.snackbar.error(i18n.t("Failed to delete some notifications"));
+            this.props.snackbar.error(i18n.t("Failed to delete some history notifications"));
         } else {
             this.props.snackbar.success(
-                i18n.t("Successfully deleted {{count}} notifications", { count: toDelete.length })
+                i18n.t("Successfully deleted {{count}} history notifications", { count: toDelete.length })
             );
         }
     };
@@ -180,12 +180,12 @@ class NotificationsPage extends React.Component {
 
         return (
             <React.Fragment>
-                <PageHeader title={i18n.t("Notifications")} onBackClick={this.backHome} />
+                <PageHeader title={i18n.t("Synchronization History")} onBackClick={this.backHome} />
                 <div className={classes.tableContainer}>
                     <ObjectsTable
                         key={tableKey}
                         d2={d2}
-                        model={NotificationsPage.model}
+                        model={HistoryPage.model}
                         columns={this.columns}
                         detailsFields={this.detailsFields}
                         pageSize={10}
@@ -209,10 +209,10 @@ class NotificationsPage extends React.Component {
                     isOpen={!!toDelete}
                     onSave={this.confirmDelete}
                     onCancel={this.cancelDelete}
-                    title={i18n.t("Delete Notifications?")}
+                    title={i18n.t("Delete History Notifications?")}
                     description={
                         toDelete
-                            ? i18n.t("Are you sure you want to delete {{count}} notifications?", {
+                            ? i18n.t("Are you sure you want to delete {{count}} history notifications?", {
                                   count: toDelete.length,
                               })
                             : ""
@@ -224,4 +224,4 @@ class NotificationsPage extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(NotificationsPage))));
+export default withLoading(withSnackbar(withRouter(withStyles(styles)(HistoryPage))));
