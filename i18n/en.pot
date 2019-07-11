@@ -5,19 +5,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-07-09T09:31:55.299Z\n"
-"PO-Revision-Date: 2019-07-09T09:31:55.299Z\n"
+"POT-Creation-Date: 2019-07-11T10:37:31.244Z\n"
+"PO-Revision-Date: 2019-07-11T10:37:31.244Z\n"
 
 msgid "<No value>"
-msgstr ""
-
-msgid "User"
-msgstr ""
-
-msgid "Timestamp"
-msgstr ""
-
-msgid "Status"
 msgstr ""
 
 msgid "Ready"
@@ -52,7 +43,19 @@ msgstr ""
 msgid "View summary"
 msgstr ""
 
+msgid "User"
+msgstr ""
+
+msgid "Timestamp"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
 msgid "Metadata Types"
+msgstr ""
+
+msgid "Sync Rule"
 msgstr ""
 
 msgid "Synchronization status"
