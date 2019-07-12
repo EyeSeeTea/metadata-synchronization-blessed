@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import HeaderBar from "@dhis2/d2-ui-header-bar";
-import { MuiThemeProvider, createGenerateClassName } from "@material-ui/core/styles";
+import { createGenerateClassName, MuiThemeProvider } from "@material-ui/core/styles";
 import JssProvider from "react-jss/lib/JssProvider";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
