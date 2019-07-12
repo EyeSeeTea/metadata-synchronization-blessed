@@ -135,9 +135,7 @@ class SyncSummary extends React.Component {
                             >
                                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                     <Typography className={classes.expansionPanelHeading1}>
-                                        {`${responseElement.instance.name} (${
-                                            responseElement.instance.url
-                                        })`}
+                                        {`${responseElement.instance.name} (${responseElement.instance.url})`}
                                     </Typography>
                                     <Typography className={classes.expansionPanelHeading2}>
                                         {`${i18n.t("Status")}: ${responseElement.status}`}
