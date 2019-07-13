@@ -20,7 +20,6 @@ export default class SyncRule {
                 "id",
                 "name",
                 "description",
-                "originInstance",
                 "builder",
                 "enabled",
                 "frequency",
@@ -58,7 +57,6 @@ export default class SyncRule {
             id: "",
             name: "",
             description: "",
-            originInstance: "",
             builder: {
                 targetInstances: [],
                 metadataIds: [],
