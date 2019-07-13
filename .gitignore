@@ -9,6 +9,7 @@
 # production
 manifest.webapp
 /build
+*.zip
 
 # misc
 .DS_Store
