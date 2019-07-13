@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import { Button, LinearProgress, withStyles } from "@material-ui/core";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
 import i18n from "@dhis2/d2-i18n";
 
 import { getInstances } from "./InstanceSelectionStep";
 import { getMetadata } from "../../../utils/synchronization";
+import { getValidationMessages } from "../../../utils/validations";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -27,8 +28,7 @@ const styles = () => ({
     },
 });
 
-const SaveStep = props => {
-    const { d2, syncRule, classes, onCancel } = props;
+const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [metadata, updateMetadata] = useState({});
@@ -40,9 +40,18 @@ const SaveStep = props => {
 
     const save = async () => {
         setIsSaving(true);
-        await syncRule.save(d2);
+
+        const errors = await getValidationMessages(d2, syncRule);
+        if (errors.length > 0) {
+            snackbar.error(errors.join("\n"), {
+                autoHideDuration: null,
+            });
+        } else {
+            await syncRule.save(d2);
+            onCancel();
+        }
+
         setIsSaving(false);
-        onCancel();
     };
 
     useEffect(() => {
@@ -95,6 +104,10 @@ const SaveStep = props => {
                         })}
                     </ul>
                 </LiEntry>
+
+                <LiEntry label={i18n.t("Scheduling enabled")} value={syncRule.enabled.toString()} />
+
+                <LiEntry label={i18n.t("Frequency")} value={syncRule.frequency} />
             </ul>
 
             <Button onClick={openCancelDialog} variant="contained">
@@ -113,8 +126,9 @@ SaveStep.propTypes = {
     syncRule: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
     onCancel: PropTypes.func.isRequired,
+    snackbar: PropTypes.object.isRequired,
 };
 
 SaveStep.defaultProps = {};
 
-export default withStyles(styles)(SaveStep);
+export default withSnackbar(withStyles(styles)(SaveStep));

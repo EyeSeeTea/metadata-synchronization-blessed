@@ -14,6 +14,7 @@ import { startSynchronization } from "../../logic/synchronization";
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../dropdown/Dropdown";
+import { getValidationMessages } from "../../utils/validations";
 
 const styles = () => ({
     tableContainer: { marginTop: -10 },
@@ -66,11 +67,16 @@ class SyncRulesPage extends React.Component {
                     .map(e => e.name)
                     .join(", "),
         },
+        { name: "frequency", text: i18n.t("Frequency"), sortable: true },
+        { name: "enabled", text: i18n.t("Scheduled"), sortable: true },
     ];
 
     detailsFields = [
         { name: "name", text: i18n.t("Name") },
         { name: "description", text: i18n.t("Description") },
+        { name: "frequency", text: i18n.t("Frequency"), sortable: true },
+        { name: "enabled", text: i18n.t("Scheduled"), sortable: true },
+        { name: "lastExecuted", text: i18n.t("Last executed"), sortable: true },
         {
             name: "targetInstances",
             text: i18n.t("Destination instances"),
@@ -150,6 +156,22 @@ class SyncRulesPage extends React.Component {
         loading.reset();
     };
 
+    toggleEnable = async data => {
+        const { d2, snackbar } = this.props;
+        const oldSyncRule = SyncRule.build(data);
+        const syncRule = oldSyncRule.updateEnabled(!oldSyncRule.enabled);
+
+        const errors = await getValidationMessages(d2, syncRule);
+        if (errors.length > 0) {
+            snackbar.error(errors.join("\n"), {
+                autoHideDuration: null,
+            });
+        } else {
+            await syncRule.save(d2);
+            snackbar.success(i18n.t("Successfully updated sync rule"));
+        }
+    };
+
     actions = [
         {
             name: "details",
@@ -175,6 +197,13 @@ class SyncRulesPage extends React.Component {
             multiple: false,
             onClick: this.executeRule,
             icon: "settings_input_antenna",
+        },
+        {
+            name: "toggleEnable",
+            text: i18n.t("Toggle scheduling"),
+            multiple: false,
+            onClick: this.toggleEnable,
+            icon: "timer",
         },
     ];
 
