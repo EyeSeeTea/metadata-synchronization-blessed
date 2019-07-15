@@ -15,7 +15,6 @@ import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../dropdown/Dropdown";
 import { getValidationMessages } from "../../utils/validations";
-import { Tooltip } from "@material-ui/core";
 import cronstrue from "cronstrue";
 import isValidCronExpression from "../../utils/validCronExpression";
 
