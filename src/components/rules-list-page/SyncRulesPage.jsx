@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
+import cronstrue from "cronstrue";
 import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
@@ -15,7 +16,6 @@ import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../dropdown/Dropdown";
 import { getValidationMessages } from "../../utils/validations";
-import cronstrue from "cronstrue";
 import isValidCronExpression from "../../utils/validCronExpression";
 
 const styles = () => ({

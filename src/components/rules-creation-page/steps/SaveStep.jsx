@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import _ from "lodash";
 import PropTypes from "prop-types";
-import { Button, LinearProgress, withStyles } from "@material-ui/core";
-import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
 import i18n from "@dhis2/d2-i18n";
 import cronstrue from "cronstrue";
+import { Button, LinearProgress, withStyles } from "@material-ui/core";
+import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
 
 import { getInstances } from "./InstanceSelectionStep";
 import { getMetadata } from "../../../utils/synchronization";

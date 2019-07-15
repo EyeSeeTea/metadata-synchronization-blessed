@@ -2,10 +2,10 @@ import React from "react";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
+import cronstrue from "cronstrue";
 import { FormControlLabel, Switch } from "@material-ui/core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
-import { TextField, DropDown } from "@dhis2/d2-ui-core";
-import cronstrue from "cronstrue";
+import { DropDown, TextField } from "@dhis2/d2-ui-core";
 import isValidCronExpression from "../../../utils/validCronExpression";
 
 const defaultExpression = "CUSTOM";
