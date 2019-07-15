@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { Button, LinearProgress, withStyles } from "@material-ui/core";
 import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
 import i18n from "@dhis2/d2-i18n";
+import cronstrue from "cronstrue";
 
 import { getInstances } from "./InstanceSelectionStep";
 import { getMetadata } from "../../../utils/synchronization";
@@ -107,7 +108,10 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
 
                 <LiEntry label={i18n.t("Scheduling enabled")} value={syncRule.enabled.toString()} />
 
-                <LiEntry label={i18n.t("Frequency")} value={syncRule.frequency} />
+                <LiEntry
+                    label={i18n.t("Frequency")}
+                    value={`${cronstrue.toString(syncRule.frequency)} (${syncRule.frequency})`}
+                />
             </ul>
 
             <Button onClick={openCancelDialog} variant="contained">

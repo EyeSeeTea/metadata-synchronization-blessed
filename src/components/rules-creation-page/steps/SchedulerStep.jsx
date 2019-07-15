@@ -5,6 +5,7 @@ import i18n from "@dhis2/d2-i18n";
 import { FormControlLabel, Switch } from "@material-ui/core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import { TextField, DropDown } from "@dhis2/d2-ui-core";
+import cronstrue from "cronstrue";
 import isValidCronExpression from "../../../utils/validCronExpression";
 
 const defaultExpression = "CUSTOM";
@@ -56,7 +57,11 @@ const SchedulerStep = ({ syncRule, onChange }) => {
             value: selectedCron.value || "",
             component: DropDown,
             props: {
-                hintText: i18n.t("Select frequency"),
+                hintText: i18n.t(
+                    isValidCronExpression(syncRule.frequency)
+                        ? cronstrue.toString(syncRule.frequency)
+                        : "Select frequency"
+                ),
                 menuItems: cronExpressions.map(({ text, value: id }) => ({
                     id,
                     displayName: i18n.t(text),
