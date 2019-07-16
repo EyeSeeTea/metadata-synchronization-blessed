@@ -139,7 +139,13 @@ class HistoryPage extends React.Component {
         const syncRule = syncRules.find(e => e.id === id);
 
         return syncRule ? (
-            <Link to={`/synchronization-rules/edit/${syncRule.id}`}>Edit {syncRule.name}</Link>
+            <a
+                href={`/#/synchronization-rules/edit/${syncRule.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Edit {syncRule.name}
+            </a>
         ) : (
             ""
         );

@@ -107,7 +107,10 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
                     </ul>
                 </LiEntry>
 
-                <LiEntry label={i18n.t("Scheduling enabled")} value={syncRule.enabled.toString()} />
+                <LiEntry
+                    label={i18n.t("Scheduling")}
+                    value={syncRule.enabled === "true" ? i18n.t("Enabled") : i18n.t("Disabled")}
+                />
 
                 {isValidCronExpression(syncRule.frequency) && (
                     <LiEntry
