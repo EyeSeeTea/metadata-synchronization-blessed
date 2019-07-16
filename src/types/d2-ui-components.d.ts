@@ -30,6 +30,7 @@ export interface SyncReportTableFilters extends TableFilters {
 export interface SyncRuleTableFilters extends TableFilters {
     targetInstanceFilter?: string;
     enabledFilter?: boolean;
+    lastExecutedFilter?: Moment;
 }
 
 export interface TablePagination {

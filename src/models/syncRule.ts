@@ -1,4 +1,5 @@
 import _ from "lodash";
+import moment from "moment";
 import { generateUid } from "d2/uid";
 
 import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
@@ -83,7 +84,8 @@ export default class SyncRule {
         filters: SyncRuleTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { targetInstanceFilter = null, enabledFilter = null } = filters || {};
+        const { targetInstanceFilter = null, enabledFilter = null, lastExecutedFilter = null } =
+            filters || {};
         const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
         return {
             ...data,
@@ -94,6 +96,11 @@ export default class SyncRule {
                         : true
                 )
                 .filter(rule => (enabledFilter ? rule.enabled === enabledFilter : true))
+                .filter(rule =>
+                    lastExecutedFilter
+                        ? moment(lastExecutedFilter).isSameOrBefore(rule.lastExecuted)
+                        : true
+                )
                 .value(),
         };
     }

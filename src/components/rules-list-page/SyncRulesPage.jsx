@@ -3,7 +3,13 @@ import PropTypes from "prop-types";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 import cronstrue from "cronstrue";
-import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
+import {
+    ConfirmationDialog,
+    DatePicker,
+    ObjectsTable,
+    withLoading,
+    withSnackbar,
+} from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -45,6 +51,7 @@ class SyncRulesPage extends React.Component {
         allInstances: [],
         targetInstanceFilter: "",
         enabledFilter: "",
+        lastExecutedFilter: null,
         syncReport: SyncReport.create(),
         syncSummaryOpen: false,
     };
@@ -242,8 +249,15 @@ class SyncRulesPage extends React.Component {
 
     changeEnabledFilter = event => this.setState({ enabledFilter: event.target.value });
 
+    changeLastExecutedFilter = moment => this.setState({ lastExecutedFilter: moment });
+
     renderCustomFilters = () => {
-        const { allInstances, targetInstanceFilter, enabledFilter } = this.state;
+        const {
+            allInstances,
+            targetInstanceFilter,
+            enabledFilter,
+            lastExecutedFilter,
+        } = this.state;
         const enabledFilterData = [
             { id: "true", name: i18n.t("Enabled") },
             { id: "false", name: i18n.t("Disabled") },
@@ -251,6 +265,13 @@ class SyncRulesPage extends React.Component {
 
         return (
             <React.Fragment>
+                <DatePicker
+                    key={"date-filter"}
+                    placeholder={i18n.t("Last executed date")}
+                    value={lastExecutedFilter}
+                    onChange={this.changeLastExecutedFilter}
+                    isFilter
+                />
                 <Dropdown
                     key={"target-instance-filter"}
                     items={allInstances}
@@ -277,6 +298,7 @@ class SyncRulesPage extends React.Component {
             syncReport,
             targetInstanceFilter,
             enabledFilter,
+            lastExecutedFilter,
         } = this.state;
         const { d2, classes } = this.props;
 
@@ -296,7 +318,7 @@ class SyncRulesPage extends React.Component {
                         list={SyncRule.list}
                         onButtonClick={this.createRule}
                         customFiltersComponent={this.renderCustomFilters}
-                        customFilters={{ targetInstanceFilter, enabledFilter }}
+                        customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
                     />
                 </div>
 
