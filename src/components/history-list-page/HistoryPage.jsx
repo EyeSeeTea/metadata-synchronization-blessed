@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../page-header/PageHeader";
