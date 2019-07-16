@@ -9,6 +9,7 @@ import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
 import { getInstances } from "./InstanceSelectionStep";
 import { getMetadata } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
+import isValidCronExpression from "../../../utils/validCronExpression";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -108,10 +109,12 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
 
                 <LiEntry label={i18n.t("Scheduling enabled")} value={syncRule.enabled.toString()} />
 
-                <LiEntry
-                    label={i18n.t("Frequency")}
-                    value={`${cronstrue.toString(syncRule.frequency)} (${syncRule.frequency})`}
-                />
+                {isValidCronExpression(syncRule.frequency) && (
+                    <LiEntry
+                        label={i18n.t("Frequency")}
+                        value={`${cronstrue.toString(syncRule.frequency)} (${syncRule.frequency})`}
+                    />
+                )}
             </ul>
 
             <Button onClick={openCancelDialog} variant="contained">
