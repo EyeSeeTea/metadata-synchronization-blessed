@@ -44,6 +44,7 @@ class SyncRulesPage extends React.Component {
         toDelete: null,
         allInstances: [],
         targetInstanceFilter: "",
+        enabledFilter: "",
         syncReport: SyncReport.create(),
         syncSummaryOpen: false,
     };
@@ -79,7 +80,13 @@ class SyncRulesPage extends React.Component {
                     ? `${cronstrue.toString(frequency)} (${frequency})`
                     : "",
         },
-        { name: "enabled", text: i18n.t("Scheduled"), sortable: true },
+        {
+            name: "enabled",
+            text: i18n.t("Scheduling"),
+            sortable: true,
+            getValue: ({ enabled }) =>
+                enabled === "true" ? i18n.t("Enabled") : i18n.t("Disabled"),
+        },
     ];
 
     detailsFields = [
@@ -93,7 +100,12 @@ class SyncRulesPage extends React.Component {
                     ? `${cronstrue.toString(frequency)} (${frequency})`
                     : "",
         },
-        { name: "enabled", text: i18n.t("Scheduled") },
+        {
+            name: "enabled",
+            text: i18n.t("Scheduling"),
+            getValue: ({ enabled }) =>
+                enabled === "true" ? i18n.t("Enabled") : i18n.t("Disabled"),
+        },
         { name: "lastExecuted", text: i18n.t("Last executed") },
         {
             name: "targetInstances",
@@ -228,8 +240,14 @@ class SyncRulesPage extends React.Component {
 
     changeInstanceFilter = event => this.setState({ targetInstanceFilter: event.target.value });
 
+    changeEnabledFilter = event => this.setState({ enabledFilter: event.target.value });
+
     renderCustomFilters = () => {
-        const { allInstances, targetInstanceFilter } = this.state;
+        const { allInstances, targetInstanceFilter, enabledFilter } = this.state;
+        const enabledFilterData = [
+            { id: "true", name: i18n.t("Enabled") },
+            { id: "false", name: i18n.t("Disabled") },
+        ];
 
         return (
             <React.Fragment>
@@ -239,6 +257,13 @@ class SyncRulesPage extends React.Component {
                     onChange={this.changeInstanceFilter}
                     value={targetInstanceFilter}
                     label={i18n.t("Destination Instance")}
+                />
+                <Dropdown
+                    key={"enabled-filter"}
+                    items={enabledFilterData}
+                    onChange={this.changeEnabledFilter}
+                    value={enabledFilter}
+                    label={i18n.t("Scheduling")}
                 />
             </React.Fragment>
         );
@@ -251,6 +276,7 @@ class SyncRulesPage extends React.Component {
             syncSummaryOpen,
             syncReport,
             targetInstanceFilter,
+            enabledFilter,
         } = this.state;
         const { d2, classes } = this.props;
 
@@ -270,7 +296,7 @@ class SyncRulesPage extends React.Component {
                         list={SyncRule.list}
                         onButtonClick={this.createRule}
                         customFiltersComponent={this.renderCustomFilters}
-                        customFilters={{ targetInstanceFilter }}
+                        customFilters={{ targetInstanceFilter, enabledFilter }}
                     />
                 </div>
 

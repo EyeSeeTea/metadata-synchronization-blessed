@@ -83,16 +83,19 @@ export default class SyncRule {
         filters: SyncRuleTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { targetInstanceFilter = null } = filters || {};
+        const { targetInstanceFilter = null, enabledFilter = null } = filters || {};
         const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
-        return targetInstanceFilter
-            ? {
-                  ...data,
-                  objects: _.filter(data.objects, e =>
-                      e.builder.targetInstances.includes(targetInstanceFilter)
-                  ),
-              }
-            : data;
+        return {
+            ...data,
+            objects: _(data.objects)
+                .filter(rule =>
+                    targetInstanceFilter
+                        ? rule.builder.targetInstances.includes(targetInstanceFilter)
+                        : true
+                )
+                .filter(rule => (enabledFilter ? rule.enabled === enabledFilter : true))
+                .value(),
+        };
     }
 
     public updateName(name: string): SyncRule {
