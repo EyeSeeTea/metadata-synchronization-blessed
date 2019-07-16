@@ -32,8 +32,8 @@ export default class SyncRule {
         return this.syncRule.name;
     }
 
-    public get description(): string {
-        return this.syncRule.description || "";
+    public get description(): string | undefined {
+        return this.syncRule.description;
     }
 
     public get metadataIds(): string[] {
@@ -44,12 +44,16 @@ export default class SyncRule {
         return this.syncRule.builder.targetInstances;
     }
 
+    public get enabled(): boolean {
+        return this.syncRule.enabled === "true";
+    }
+
     public get frequency(): string | undefined {
         return this.syncRule.frequency;
     }
 
-    public get enabled(): boolean {
-        return this.syncRule.enabled === "true";
+    public get lastExecuted(): Date | undefined {
+        return this.syncRule.lastExecuted ? new Date(this.syncRule.lastExecuted) : undefined;
     }
 
     public static create(): SyncRule {
@@ -136,6 +140,13 @@ export default class SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             frequency,
+        });
+    }
+
+    public updateLastExecuted(lastExecuted: Date): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            lastExecuted,
         });
     }
 

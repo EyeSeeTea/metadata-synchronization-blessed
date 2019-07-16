@@ -24,6 +24,7 @@ import {
     postMetadata,
 } from "../utils/synchronization";
 import { getClassName } from "../utils/d2";
+import SyncRule from "../models/syncRule";
 
 async function exportMetadata(d2: D2, originalBuilder: ExportBuilder): Promise<MetadataPackage> {
     const visitedIds: Set<string> = new Set();
@@ -173,7 +174,14 @@ export async function* startSynchronization(
         yield { syncReport };
     }
 
-    // Phase 4: Update parent task status
+    // Phase 4: Update sync rule last executed date
+    if (syncRule) {
+        const oldRule = await SyncRule.get(d2, syncRule);
+        const updatedRule = oldRule.updateLastExecuted(new Date());
+        await updatedRule.save(d2);
+    }
+
+    // Phase 5: Update parent task status
     syncReport.setStatus(syncReport.hasErrors() ? "FAILURE" : "DONE");
     yield { syncReport, done: true };
 

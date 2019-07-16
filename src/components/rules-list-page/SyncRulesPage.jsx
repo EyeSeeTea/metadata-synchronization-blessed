@@ -35,6 +35,7 @@ class SyncRulesPage extends React.Component {
             name: { type: "TEXT" },
             description: { type: "TEXT" },
             targetInstances: { type: "COLLECTION" },
+            lastExecuted: { type: "DATE" },
         },
     };
 
