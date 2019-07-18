@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-07-16T16:28:43.106Z\n"
-"PO-Revision-Date: 2019-07-16T16:28:43.106Z\n"
+"POT-Creation-Date: 2019-07-18T20:18:16.329Z\n"
+"PO-Revision-Date: 2019-07-18T20:18:16.329Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -205,6 +205,62 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
+msgid "Selected {{difference}} elements"
+msgstr ""
+
+msgid "Removed {{difference}} elements"
+msgstr ""
+
+msgid "Cancel synchronization rule wizard"
+msgstr ""
+
+msgid ""
+"You are about to exit the Sync Rule Creation Wizard. All your changes will "
+"be lost. Are you sure you want to proceed?"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "Target instances [{{total}}]"
+msgstr ""
+
+msgid "Scheduling"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Frequency"
+msgstr ""
+
+msgid "Every hour"
+msgstr ""
+
+msgid "Every day at midnight"
+msgstr ""
+
+msgid "Every day at 3 AM"
+msgstr ""
+
+msgid "Every day at noon"
+msgstr ""
+
+msgid "Every week"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "Cron expression"
+msgstr ""
+
+msgid "Cron expression must be valid"
+msgstr ""
+
 msgid "General info"
 msgstr ""
 
@@ -212,9 +268,6 @@ msgid "Metadata"
 msgstr ""
 
 msgid "Instance Selection"
-msgstr ""
-
-msgid "Scheduling"
 msgstr ""
 
 msgid "Configure the scheduling frequency for the synchronization rule"
@@ -255,41 +308,6 @@ msgid "Cancel synchronization rule creation"
 msgstr ""
 
 msgid "Cancel synchronization rule editing"
-msgstr ""
-
-msgid "Selected {{difference}} elements"
-msgstr ""
-
-msgid "Removed {{difference}} elements"
-msgstr ""
-
-msgid "Cancel synchronization rule wizard"
-msgstr ""
-
-msgid ""
-"You are about to exit the Sync Rule Creation Wizard. All your changes will "
-"be lost. Are you sure you want to proceed?"
-msgstr ""
-
-msgid "Yes"
-msgstr ""
-
-msgid "Target instances [{{total}}]"
-msgstr ""
-
-msgid "Enabled"
-msgstr ""
-
-msgid "Disabled"
-msgstr ""
-
-msgid "Frequency"
-msgstr ""
-
-msgid "Cron expression"
-msgstr ""
-
-msgid "Cron expression must be valid"
 msgstr ""
 
 msgid "Destination instances"

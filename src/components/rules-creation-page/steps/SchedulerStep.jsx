@@ -1,5 +1,4 @@
 import React from "react";
-import _ from "lodash";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import cronstrue from "cronstrue";
@@ -12,7 +11,7 @@ const Toggle = ({ label, onChange, value }) => (
     <FormControlLabel
         control={
             <Switch
-                onChange={e => onChange({target: {value: e.target.checked}})}
+                onChange={e => onChange({ target: { value: e.target.checked } })}
                 checked={value}
                 color="primary"
             />
