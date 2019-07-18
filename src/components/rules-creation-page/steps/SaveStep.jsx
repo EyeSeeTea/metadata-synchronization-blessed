@@ -45,9 +45,7 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
 
         const errors = await getValidationMessages(d2, syncRule);
         if (errors.length > 0) {
-            snackbar.error(errors.join("\n"), {
-                autoHideDuration: null,
-            });
+            snackbar.error(errors.join("\n"));
         } else {
             await syncRule.save(d2);
             onCancel();
