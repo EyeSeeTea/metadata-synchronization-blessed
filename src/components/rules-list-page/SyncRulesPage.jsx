@@ -91,8 +91,7 @@ class SyncRulesPage extends React.Component {
             name: "enabled",
             text: i18n.t("Scheduling"),
             sortable: true,
-            getValue: ({ enabled }) =>
-                enabled === "true" ? i18n.t("Enabled") : i18n.t("Disabled"),
+            getValue: ({ enabled }) => (enabled ? i18n.t("Enabled") : i18n.t("Disabled")),
         },
     ];
 
@@ -107,8 +106,7 @@ class SyncRulesPage extends React.Component {
         {
             name: "enabled",
             text: i18n.t("Scheduling"),
-            getValue: ({ enabled }) =>
-                enabled === "true" ? i18n.t("Enabled") : i18n.t("Disabled"),
+            getValue: ({ enabled }) => (enabled ? i18n.t("Enabled") : i18n.t("Disabled")),
         },
         { name: "lastExecuted", text: i18n.t("Last executed") },
         {
@@ -256,8 +254,8 @@ class SyncRulesPage extends React.Component {
             lastExecutedFilter,
         } = this.state;
         const enabledFilterData = [
-            { id: "true", name: i18n.t("Enabled") },
-            { id: "false", name: i18n.t("Disabled") },
+            { id: true, name: i18n.t("Enabled") },
+            { id: false, name: i18n.t("Disabled") },
         ];
 
         return (

@@ -54,7 +54,7 @@ const SchedulerStep = ({ syncRule, onChange }) => {
             value: selectedCron.value || "",
             component: DropDown,
             props: {
-                hintText: (syncRule.readableFrequency || i18n.t("Select frequency")),
+                hintText: syncRule.readableFrequency || i18n.t("Select frequency"),
                 menuItems: cronExpressions.map(({ text, value: id }) => ({
                     id,
                     displayName: i18n.t(text),

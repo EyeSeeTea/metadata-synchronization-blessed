@@ -47,7 +47,7 @@ export default class SyncRule {
     }
 
     public get enabled(): boolean {
-        return this.syncRule.enabled === "true";
+        return this.syncRule.enabled;
     }
 
     public get frequency(): string | undefined {
@@ -81,7 +81,7 @@ export default class SyncRule {
                 targetInstances: [],
                 metadataIds: [],
             },
-            enabled: "false",
+            enabled: false,
         });
     }
 
@@ -157,7 +157,7 @@ export default class SyncRule {
     public updateEnabled(enabled: boolean): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
-            enabled: enabled.toString(),
+            enabled,
         });
     }
 

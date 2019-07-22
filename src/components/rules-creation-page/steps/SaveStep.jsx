@@ -105,7 +105,7 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
 
                 <LiEntry
                     label={i18n.t("Scheduling")}
-                    value={syncRule.enabled === "true" ? i18n.t("Enabled") : i18n.t("Disabled")}
+                    value={syncRule.enabled ? i18n.t("Enabled") : i18n.t("Disabled")}
                 />
 
                 {syncRule.longFrequency && (
