@@ -43,6 +43,9 @@ msgstr ""
 msgid "View summary"
 msgstr ""
 
+msgid "Edit {{name}}"
+msgstr ""
+
 msgid "User"
 msgstr ""
 
