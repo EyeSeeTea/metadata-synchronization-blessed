@@ -112,7 +112,7 @@ export default class SyncRule {
                 )
                 .filter(rule => (enabledFilter ? rule.enabled === enabledFilter : true))
                 .filter(rule =>
-                    lastExecutedFilter
+                    lastExecutedFilter && rule.lastExecuted
                         ? moment(lastExecutedFilter).isSameOrBefore(rule.lastExecuted)
                         : true
                 )
