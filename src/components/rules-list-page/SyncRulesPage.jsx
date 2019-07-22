@@ -254,8 +254,8 @@ class SyncRulesPage extends React.Component {
             lastExecutedFilter,
         } = this.state;
         const enabledFilterData = [
-            { id: true, name: i18n.t("Enabled") },
-            { id: false, name: i18n.t("Disabled") },
+            { id: "enabled", name: i18n.t("Enabled") },
+            { id: "disabled", name: i18n.t("Disabled") },
         ];
 
         return (

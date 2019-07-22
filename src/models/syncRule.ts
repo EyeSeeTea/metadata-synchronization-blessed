@@ -102,22 +102,20 @@ export default class SyncRule {
         const { targetInstanceFilter = null, enabledFilter = null, lastExecutedFilter = null } =
             filters || {};
         const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
-        return {
-            ...data,
-            objects: _(data.objects)
-                .filter(rule =>
-                    targetInstanceFilter
-                        ? rule.builder.targetInstances.includes(targetInstanceFilter)
-                        : true
-                )
-                .filter(rule => (enabledFilter ? rule.enabled === enabledFilter : true))
-                .filter(rule =>
-                    lastExecutedFilter && rule.lastExecuted
-                        ? moment(lastExecutedFilter).isSameOrBefore(rule.lastExecuted)
-                        : true
-                )
-                .value(),
-        };
+        const objects = _(data.objects)
+            .filter(rule =>
+                targetInstanceFilter
+                    ? rule.builder.targetInstances.includes(targetInstanceFilter)
+                    : true
+            )
+            .filter(rule => (enabledFilter ? rule.enabled && enabledFilter === "enabled" : true))
+            .filter(rule =>
+                lastExecutedFilter && rule.lastExecuted
+                    ? moment(lastExecutedFilter).isSameOrBefore(rule.lastExecuted)
+                    : true
+            )
+            .value();
+        return { ...data, objects };
     }
 
     public updateName(name: string): SyncRule {
