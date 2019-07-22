@@ -129,11 +129,14 @@ class SyncRulesPage extends React.Component {
         this.props.history.push(`/synchronization-rules/edit/${rule.id}`);
     };
 
-    executeRule = async ({ builder, name }) => {
+    executeRule = async ({ builder, name, id }) => {
         const { d2, loading } = this.props;
         loading.show(true, i18n.t("Synchronizing metadata"));
         try {
-            for await (const { message, syncReport, done } of startSynchronization(d2, builder)) {
+            for await (const { message, syncReport, done } of startSynchronization(d2, {
+                ...builder,
+                syncRule: id,
+            })) {
                 if (message) loading.show(true, message);
                 if (syncReport) await syncReport.save(d2);
                 if (done && syncReport) {

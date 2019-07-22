@@ -4,12 +4,8 @@ import { MultiSelector } from "d2-ui-components";
 import Instance from "../../../models/instance";
 
 export const getInstances = async d2 => {
-    const instances = await Instance.list(
-        d2,
-        { search: "" },
-        { page: 1, pageSize: 100, sorting: [] }
-    );
-    return instances.objects.map(instance => ({
+    const { objects } = await Instance.list(d2, {}, { paging: false });
+    return objects.map(instance => ({
         value: instance.id,
         text: `${instance.name} (${instance.url} with user ${instance.username})`,
     }));

@@ -75,16 +75,20 @@ export async function getPaginatedData(
     filters: TableFilters,
     pagination: TablePagination
 ): Promise<TableList> {
-    const rawData = await getDataStore(d2, dataStoreKey, []);
     const { search = null } = filters || {};
-    const filteredData = _.filter(rawData, o =>
-        _(o)
-            .keys()
-            .filter(k => typeof o[k] === "string")
-            .some(k => o[k].toLowerCase().includes(search ? search.toLowerCase() : ""))
-    );
+    const { page = 1, pageSize = 20, paging = true, sorting = ["id", "asc"] } = pagination || {};
 
-    const { sorting = ["id", "asc"] } = pagination || {};
+    const rawData = await getDataStore(d2, dataStoreKey, []);
+
+    const filteredData = search
+        ? _.filter(rawData, o =>
+              _(o)
+                  .keys()
+                  .filter(k => typeof o[k] === "string")
+                  .some(k => o[k].toLowerCase().includes(search.toLowerCase()))
+          )
+        : rawData;
+
     const [field, direction] = sorting;
     const sortedData = _.orderBy(
         filteredData,
@@ -92,11 +96,12 @@ export async function getPaginatedData(
         [direction as "asc" | "desc"]
     );
 
-    const { page = 1, pageSize = 20 } = pagination || {};
-    const currentlyShown = (page - 1) * pageSize;
-    const pageCount = Math.ceil(sortedData.length / pageSize);
     const total = sortedData.length;
-    const paginatedData = _.slice(sortedData, currentlyShown, currentlyShown + pageSize);
+    const pageCount = paging ? Math.ceil(sortedData.length / pageSize) : 1;
+    const firstItem = paging ? (page - 1) * pageSize : 0;
+    const lastItem = paging ? firstItem + pageSize : sortedData.length;
+    const paginatedData = _.slice(sortedData, firstItem, lastItem);
+
     return { objects: paginatedData, pager: { page, pageCount, total } };
 }
 
