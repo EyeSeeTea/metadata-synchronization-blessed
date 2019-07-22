@@ -2,14 +2,14 @@
 
 module.exports = {
     extends: [
-        'react-app',
-        'prettier',
+        "react-app",
+        "prettier",
         "eslint:recommended",
         "plugin:cypress/recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
     ],
     rules: {
-        'no-console': 'off',
+        "no-console": "off",
         "@typescript-eslint/camelcase": "off",
         "@typescript-eslint/no-parameter-properties": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",
@@ -18,17 +18,16 @@ module.exports = {
         "@typescript-eslint/member-delimiter-style": "off",
         "@typescript-eslint/type-annotation-spacing": "off",
         "no-extra-semi": "off",
-        "no-mixed-spaces-and-tabs": "off"
+        "no-mixed-spaces-and-tabs": "off",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
     },
-    plugins: [
-        "cypress",
-        "@typescript-eslint"
-    ],
-    env: {'cypress/globals': true},
+    plugins: ["cypress", "@typescript-eslint", "react-hooks"],
+    env: { "cypress/globals": true },
     settings: {
-        "react": {
-            "pragma": "React",
-            "version": "16.6.0"
+        react: {
+            pragma: "React",
+            version: "16.6.0",
         },
     },
 };

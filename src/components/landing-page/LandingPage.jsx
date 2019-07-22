@@ -35,6 +35,7 @@ const styles = () => ({
     },
     title: {
         marginLeft: 10,
+        color: "#000000",
     },
     icons: {
         fontSize: "70px !important",

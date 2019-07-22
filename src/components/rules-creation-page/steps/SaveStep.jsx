@@ -34,12 +34,6 @@ const SaveStep = props => {
     const [metadata, updateMetadata] = useState({});
     const [instanceOptions, setInstanceOptions] = useState([]);
 
-    const parseMetadata = async () => {
-        const metadata = await getMetadata(d2, syncRule.metadataIds, "id,name");
-        updateMetadata(metadata);
-        return metadata;
-    };
-
     const openCancelDialog = () => setCancelDialogOpen(true);
 
     const closeCancelDialog = () => setCancelDialogOpen(false);
@@ -51,15 +45,10 @@ const SaveStep = props => {
         onCancel();
     };
 
-    const parseInstances = async () => {
-        const instances = await getInstances(d2);
-        setInstanceOptions(instances);
-    };
-
     useEffect(() => {
-        parseMetadata();
-        parseInstances();
-    }, [syncRule]);
+        getMetadata(d2, syncRule.metadataIds, "id,name").then(updateMetadata);
+        getInstances(d2).then(setInstanceOptions);
+    }, [d2, syncRule]);
 
     return (
         <React.Fragment>
@@ -82,9 +71,7 @@ const SaveStep = props => {
                 {_.keys(metadata).map(metadataType => (
                     <LiEntry
                         key={metadataType}
-                        label={`${d2.models[metadataType].displayName} [${
-                            metadata[metadataType].length
-                        }]`}
+                        label={`${d2.models[metadataType].displayName} [${metadata[metadataType].length}]`}
                     >
                         <ul>
                             {metadata[metadataType].map(({ id, name }) => (

@@ -21,13 +21,8 @@ const InstanceSelectionStep = props => {
         onChange(syncRule.updateTargetInstances(instances));
     };
 
-    const parseInstances = async () => {
-        const instances = await getInstances(d2);
-        setInstanceOptions(instances);
-    };
-
     useEffect(() => {
-        parseInstances();
+        getInstances(d2).then(setInstanceOptions);
     }, [d2]);
 
     return (
