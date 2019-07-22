@@ -10,12 +10,13 @@
     "url": "git+https://github.com/eyeseetea/metadata-synchronization.git"
   },
   "dependencies": {
+    "@dhis2/app-runtime": "^1.3.0",
     "@dhis2/d2-i18n": "^1.0.5",
     "@dhis2/d2-i18n-extract": "^1.0.8",
     "@dhis2/d2-i18n-generate": "^1.1.1",
     "@dhis2/d2-ui-core": "^6.1.1",
     "@dhis2/d2-ui-forms": "^6.1.1",
-    "@dhis2/d2-ui-header-bar": "^2.0.0",
+    "@dhis2/ui-widgets": "^1.0.8",
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^4.2.1",
     "@material-ui/styles": "^4.2.0",

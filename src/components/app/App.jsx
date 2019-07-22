@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import HeaderBar from "@dhis2/d2-ui-header-bar";
+import { HeaderBar } from "@dhis2/ui-widgets";
 import { createGenerateClassName, MuiThemeProvider } from "@material-ui/core/styles";
 import JssProvider from "react-jss/lib/JssProvider";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
+import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
 
 import Root from "./Root";
@@ -54,7 +55,9 @@ class App extends Component {
                         <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                             <LoadingProvider>
                                 <React.Fragment>
-                                    {showHeader && <HeaderBar d2={d2} />}
+                                    {showHeader && (
+                                        <HeaderBar appName={i18n.t("Metadata Synchronization")} />
+                                    )}
 
                                     <div id="app" className="content">
                                         <SnackbarProvider>
