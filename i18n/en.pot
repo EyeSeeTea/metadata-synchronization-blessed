@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-07-22T07:54:23.524Z\n"
-"PO-Revision-Date: 2019-07-22T07:54:23.524Z\n"
+"POT-Creation-Date: 2019-07-22T08:09:38.434Z\n"
+"PO-Revision-Date: 2019-07-22T08:09:38.434Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -299,6 +299,9 @@ msgid "Every day at noon"
 msgstr ""
 
 msgid "Every week"
+msgstr ""
+
+msgid "Select frequency"
 msgstr ""
 
 msgid "Custom"
