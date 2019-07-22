@@ -22,6 +22,12 @@ class InstancesPage extends React.Component {
         loading: PropTypes.object.isRequired,
     };
 
+    static model = {
+        modelValidations: {
+            url: { type: "URL" },
+        },
+    };
+
     state = {
         tableKey: Math.random(),
         toDelete: null,
@@ -146,12 +152,12 @@ class InstancesPage extends React.Component {
                     }
                     saveText={i18n.t("Ok")}
                 />
-                <PageHeader title={i18n.t("Instances")} onBackClick={this.backHome} />
+                <PageHeader title={i18n.t("Instance Configuration")} onBackClick={this.backHome} />
                 <div className={classes.tableContainer}>
                     <ObjectsTable
                         key={tableKey}
                         d2={d2}
-                        model={d2.models.dataSet}
+                        model={InstancesPage.model}
                         columns={this.columns}
                         detailsFields={this.detailsFields}
                         pageSize={10}

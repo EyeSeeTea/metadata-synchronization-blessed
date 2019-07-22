@@ -51,10 +51,6 @@ class LandingPage extends React.Component {
         d2: PropTypes.object.isRequired,
     };
 
-    onClick = key => {
-        console.log("TODO", "clicked", key);
-    };
-
     render() {
         const { classes } = this.props;
         const items = [
@@ -69,14 +65,13 @@ class LandingPage extends React.Component {
                 "playlist_add_check",
                 GRID_ITEM_MEDIUM,
             ],
-            ["notifications", i18n.t("Synchronization History"), "history", GRID_ITEM_MEDIUM],
+            ["history", i18n.t("Synchronization History"), "history", GRID_ITEM_MEDIUM],
         ];
         const menuItems = items.map(([key, title, icon, xs]) => (
             <Grid item xs={xs} className={classes.item} key={key}>
                 <Paper className={classes.paper}>
                     <ListItem
                         data-test={`page-${key}`}
-                        onClick={this.onClick.bind(this, key)}
                         component={Link}
                         to={`/${key}`}
                         className={classes.listItem}
