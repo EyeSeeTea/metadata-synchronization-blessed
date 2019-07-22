@@ -56,6 +56,8 @@ export interface SynchronizationRule {
     id?: string;
     name: string;
     description?: string;
-    originInstance: string;
     builder: SynchronizationBuilder;
+    enabled: string;
+    lastExecuted?: Date;
+    frequency?: string;
 }

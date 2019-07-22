@@ -5,7 +5,15 @@ import { TextField } from "@dhis2/d2-ui-core";
 import i18n from "@dhis2/d2-i18n";
 
 const GeneralInfoStep = props => {
-    const { syncRule } = props;
+    const { syncRule, onChange } = props;
+
+    const updateFields = (field, value) => {
+        if (field === "name") {
+            onChange(syncRule.updateName(value));
+        } else if (field === "description") {
+            onChange(syncRule.updateDescription(value));
+        }
+    };
 
     const fields = [
         {
@@ -41,15 +49,12 @@ const GeneralInfoStep = props => {
         },
     ];
 
-    const updateFields = (field, value) => {
-        props.syncRule[field] = value;
-    };
-
     return <FormBuilder fields={fields} onUpdateField={updateFields} />;
 };
 
 GeneralInfoStep.propTypes = {
     syncRule: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired,
 };
 
 GeneralInfoStep.defaultProps = {};

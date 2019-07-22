@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-07-12T18:04:47.457Z\n"
-"PO-Revision-Date: 2019-07-12T18:04:47.457Z\n"
+"POT-Creation-Date: 2019-07-13T16:48:14.885Z\n"
+"PO-Revision-Date: 2019-07-13T16:48:14.885Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -214,6 +214,12 @@ msgstr ""
 msgid "Instance Selection"
 msgstr ""
 
+msgid "Scheduling"
+msgstr ""
+
+msgid "Configure the scheduling frequency for the synchronization rule"
+msgstr ""
+
 msgid "Summary"
 msgstr ""
 
@@ -249,7 +255,31 @@ msgstr ""
 msgid "Target instances [{{total}}]"
 msgstr ""
 
+msgid "Scheduling enabled"
+msgstr ""
+
+msgid "Frequency"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Select frequency"
+msgstr ""
+
+msgid "Cron expression"
+msgstr ""
+
+msgid "Cron expression must be valid"
+msgstr ""
+
 msgid "Destination instances"
+msgstr ""
+
+msgid "Scheduled"
+msgstr ""
+
+msgid "Last executed"
 msgstr ""
 
 msgid "Deleting Sync Rules"
@@ -269,7 +299,13 @@ msgstr ""
 msgid "Failed to execute rule {{name}}"
 msgstr ""
 
+msgid "Successfully updated sync rule"
+msgstr ""
+
 msgid "Execute"
+msgstr ""
+
+msgid "Toggle scheduling"
 msgstr ""
 
 msgid "Destination Instance"
@@ -388,5 +424,11 @@ msgstr ""
 msgid "This URL and username combination already exists"
 msgstr ""
 
-msgid "You need to select at least one element"
+msgid "You need to select at least one {{element}}"
+msgstr ""
+
+msgid "Cron expression {{expression}} must be valid"
+msgstr ""
+
+msgid "To enable a rule you need to enter a valid {{expression}}"
 msgstr ""

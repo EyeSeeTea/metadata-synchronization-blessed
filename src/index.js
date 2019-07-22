@@ -8,6 +8,7 @@ import i18n from "@dhis2/d2-i18n";
 import "font-awesome/css/font-awesome.min.css";
 
 import App from "./components/app/App";
+import apiTranslations from "./utils/apiTranslations";
 import "./locales";
 
 function isLangRTL(code) {
@@ -27,6 +28,9 @@ function configI18n(userSettings) {
     document.documentElement.setAttribute("dir", isLangRTL(uiLocale) ? "rtl" : "ltr");
 
     i18n.changeLanguage(uiLocale);
+
+    const translations = apiTranslations[uiLocale] || apiTranslations.en;
+    i18n.addResources(uiLocale, "metadata-synchronization", translations);
 }
 
 async function getBaseUrl() {

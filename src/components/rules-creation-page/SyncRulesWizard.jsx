@@ -9,6 +9,7 @@ import GeneralInfoStep from "./steps/GeneralInfoStep";
 import SyncRule from "../../models/syncRule";
 import MetadataStep from "./steps/MetadataSelectionStep";
 import InstanceSelectionStep from "./steps/InstanceSelectionStep";
+import SchedulerStep from "./steps/SchedulerStep";
 import SaveStep from "./steps/SaveStep";
 import { getValidationMessages } from "../../utils/validations";
 
@@ -41,6 +42,14 @@ class SyncRulesWizard extends React.Component {
             component: InstanceSelectionStep,
             validationKeys: ["targetInstances"],
             description: undefined,
+            help: undefined,
+        },
+        {
+            key: "scheduler",
+            label: i18n.t("Scheduling"),
+            component: SchedulerStep,
+            validationKeys: ["frequency", "enabled"],
+            description: i18n.t("Configure the scheduling frequency for the synchronization rule"),
             help: undefined,
         },
         {
