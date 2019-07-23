@@ -21,6 +21,7 @@
     "@material-ui/icons": "^4.2.1",
     "@material-ui/styles": "^4.2.0",
     "axios": "^0.19.0",
+    "cronstrue": "^1.81.0",
     "cryptr": "^4.0.2",
     "d2": "^31.1.1",
     "d2-manifest": "^1.0.0",

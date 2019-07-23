@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
+import cronstrue from "cronstrue";
 import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
@@ -15,6 +16,7 @@ import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../dropdown/Dropdown";
 import { getValidationMessages } from "../../utils/validations";
+import isValidCronExpression from "../../utils/validCronExpression";
 
 const styles = () => ({
     tableContainer: { marginTop: -10 },
@@ -67,20 +69,34 @@ class SyncRulesPage extends React.Component {
                     .map(e => e.name)
                     .join(", "),
         },
-        { name: "frequency", text: i18n.t("Frequency"), sortable: true },
+        {
+            name: "frequency",
+            text: i18n.t("Frequency"),
+            sortable: true,
+            getValue: ({ frequency }) =>
+                isValidCronExpression(frequency)
+                    ? `${cronstrue.toString(frequency)} (${frequency})`
+                    : "",
+        },
         { name: "enabled", text: i18n.t("Scheduled"), sortable: true },
     ];
 
     detailsFields = [
         { name: "name", text: i18n.t("Name") },
         { name: "description", text: i18n.t("Description") },
-        { name: "frequency", text: i18n.t("Frequency"), sortable: true },
-        { name: "enabled", text: i18n.t("Scheduled"), sortable: true },
-        { name: "lastExecuted", text: i18n.t("Last executed"), sortable: true },
+        {
+            name: "frequency",
+            text: i18n.t("Frequency"),
+            getValue: ({ frequency }) =>
+                isValidCronExpression(frequency)
+                    ? `${cronstrue.toString(frequency)} (${frequency})`
+                    : "",
+        },
+        { name: "enabled", text: i18n.t("Scheduled") },
+        { name: "lastExecuted", text: i18n.t("Last executed") },
         {
             name: "targetInstances",
             text: i18n.t("Destination instances"),
-            sortable: true,
             getValue: ruleData => getValueForCollection(this.getTargetInstances(ruleData)),
         },
     ];
