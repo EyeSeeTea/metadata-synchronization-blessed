@@ -93,6 +93,7 @@ class SyncRulesPage extends React.Component {
             sortable: true,
             getValue: ({ enabled }) => (enabled ? i18n.t("Enabled") : i18n.t("Disabled")),
         },
+        { name: "lastExecuted", text: i18n.t("Last executed") },
     ];
 
     detailsFields = [
