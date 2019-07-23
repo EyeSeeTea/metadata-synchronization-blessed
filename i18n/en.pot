@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-07-16T12:49:27.351Z\n"
-"PO-Revision-Date: 2019-07-16T12:49:27.351Z\n"
+"POT-Creation-Date: 2019-07-16T15:14:24.210Z\n"
+"PO-Revision-Date: 2019-07-16T15:14:24.210Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -276,7 +276,7 @@ msgstr ""
 msgid "Destination instances"
 msgstr ""
 
-msgid "Scheduled"
+msgid "Disabled"
 msgstr ""
 
 msgid "Last executed"
@@ -306,6 +306,9 @@ msgid "Execute"
 msgstr ""
 
 msgid "Toggle scheduling"
+msgstr ""
+
+msgid "Last executed date"
 msgstr ""
 
 msgid "Destination Instance"

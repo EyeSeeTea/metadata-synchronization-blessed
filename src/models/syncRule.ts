@@ -1,4 +1,5 @@
 import _ from "lodash";
+import moment from "moment";
 import { generateUid } from "d2/uid";
 
 import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
@@ -32,8 +33,8 @@ export default class SyncRule {
         return this.syncRule.name;
     }
 
-    public get description(): string {
-        return this.syncRule.description || "";
+    public get description(): string | undefined {
+        return this.syncRule.description;
     }
 
     public get metadataIds(): string[] {
@@ -44,12 +45,16 @@ export default class SyncRule {
         return this.syncRule.builder.targetInstances;
     }
 
+    public get enabled(): boolean {
+        return this.syncRule.enabled === "true";
+    }
+
     public get frequency(): string | undefined {
         return this.syncRule.frequency;
     }
 
-    public get enabled(): boolean {
-        return this.syncRule.enabled === "true";
+    public get lastExecuted(): Date | undefined {
+        return this.syncRule.lastExecuted ? new Date(this.syncRule.lastExecuted) : undefined;
     }
 
     public static create(): SyncRule {
@@ -79,16 +84,25 @@ export default class SyncRule {
         filters: SyncRuleTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { targetInstanceFilter = null } = filters || {};
+        const { targetInstanceFilter = null, enabledFilter = null, lastExecutedFilter = null } =
+            filters || {};
         const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
-        return targetInstanceFilter
-            ? {
-                  ...data,
-                  objects: _.filter(data.objects, e =>
-                      e.builder.targetInstances.includes(targetInstanceFilter)
-                  ),
-              }
-            : data;
+        return {
+            ...data,
+            objects: _(data.objects)
+                .filter(rule =>
+                    targetInstanceFilter
+                        ? rule.builder.targetInstances.includes(targetInstanceFilter)
+                        : true
+                )
+                .filter(rule => (enabledFilter ? rule.enabled === enabledFilter : true))
+                .filter(rule =>
+                    lastExecutedFilter
+                        ? moment(lastExecutedFilter).isSameOrBefore(rule.lastExecuted)
+                        : true
+                )
+                .value(),
+        };
     }
 
     public updateName(name: string): SyncRule {
@@ -136,6 +150,13 @@ export default class SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             frequency,
+        });
+    }
+
+    public updateLastExecuted(lastExecuted: Date): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            lastExecuted,
         });
     }
 
