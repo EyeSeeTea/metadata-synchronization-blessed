@@ -137,8 +137,9 @@ class HistoryPage extends React.Component {
     getSyncRuleEditLink = id => {
         const { syncRules } = this.state;
         const syncRule = syncRules.find(e => e.id === id);
+        if (!syncRule) return null;
 
-        return syncRule ? (
+        return (
             <a
                 href={`/#/synchronization-rules/edit/${syncRule.id}`}
                 target="_blank"
@@ -146,8 +147,6 @@ class HistoryPage extends React.Component {
             >
                 Edit {syncRule.name}
             </a>
-        ) : (
-            ""
         );
     };
 
@@ -173,7 +172,7 @@ class HistoryPage extends React.Component {
 
     getSyncRuleName = id => {
         const { syncRules } = this.state;
-        const syncRule = syncRules.find(e => e.id === id) || {};
+        const syncRule = syncRules.find(rule => rule.id === id) || {};
         return syncRule.name;
     };
 
