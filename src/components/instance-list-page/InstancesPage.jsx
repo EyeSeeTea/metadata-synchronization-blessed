@@ -154,7 +154,6 @@ class InstancesPage extends React.Component {
                 <ObjectsTable
                     key={tableKey}
                     d2={d2}
-                    model={InstancesPage.model}
                     columns={this.columns}
                     detailsFields={this.detailsFields}
                     pageSize={10}
