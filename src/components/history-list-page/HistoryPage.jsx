@@ -13,9 +13,7 @@ import SyncRule from "../../models/syncRule";
 import SyncSummary from "../sync-summary/SyncSummary";
 import { getValueForCollection } from "../../utils/d2-ui-components";
 
-const styles = () => ({
-    tableContainer: { marginTop: 10 },
-});
+const styles = () => ({});
 
 class HistoryPage extends React.Component {
     static propTypes = {
@@ -215,27 +213,25 @@ class HistoryPage extends React.Component {
 
     render() {
         const { tableKey, toDelete, syncReport, summaryOpen, statusFilter } = this.state;
-        const { d2, classes } = this.props;
+        const { d2 } = this.props;
 
         return (
             <React.Fragment>
                 <PageHeader title={i18n.t("Synchronization History")} onBackClick={this.backHome} />
-                <div className={classes.tableContainer}>
-                    <ObjectsTable
-                        key={tableKey}
-                        d2={d2}
-                        model={HistoryPage.model}
-                        columns={this.columns}
-                        detailsFields={this.detailsFields}
-                        pageSize={10}
-                        initialSorting={this.initialSorting}
-                        actions={this.actions}
-                        list={SyncReport.list}
-                        hideSearchBox={true}
-                        customFiltersComponent={this.renderCustomFilters}
-                        customFilters={{ statusFilter }}
-                    />
-                </div>
+                <ObjectsTable
+                    key={tableKey}
+                    d2={d2}
+                    model={HistoryPage.model}
+                    columns={this.columns}
+                    detailsFields={this.detailsFields}
+                    pageSize={10}
+                    initialSorting={this.initialSorting}
+                    actions={this.actions}
+                    list={SyncReport.list}
+                    hideSearchBox={true}
+                    customFiltersComponent={this.renderCustomFilters}
+                    customFilters={{ statusFilter }}
+                />
 
                 <SyncSummary
                     d2={d2}

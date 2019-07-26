@@ -10,9 +10,7 @@ import PageHeader from "../page-header/PageHeader";
 
 import Instance from "../../models/instance";
 
-const styles = () => ({
-    tableContainer: { marginTop: -10 },
-});
+const styles = () => ({});
 
 class InstancesPage extends React.Component {
     static propTypes = {
@@ -134,7 +132,7 @@ class InstancesPage extends React.Component {
 
     render() {
         const { tableKey, toDelete } = this.state;
-        const { d2, classes } = this.props;
+        const { d2 } = this.props;
 
         return (
             <React.Fragment>
@@ -153,20 +151,18 @@ class InstancesPage extends React.Component {
                     saveText={i18n.t("Ok")}
                 />
                 <PageHeader title={i18n.t("Instance Configuration")} onBackClick={this.backHome} />
-                <div className={classes.tableContainer}>
-                    <ObjectsTable
-                        key={tableKey}
-                        d2={d2}
-                        model={InstancesPage.model}
-                        columns={this.columns}
-                        detailsFields={this.detailsFields}
-                        pageSize={10}
-                        initialSorting={this.initialSorting}
-                        actions={this.actions}
-                        onButtonClick={this.createInstance}
-                        list={Instance.list}
-                    />
-                </div>
+                <ObjectsTable
+                    key={tableKey}
+                    d2={d2}
+                    model={InstancesPage.model}
+                    columns={this.columns}
+                    detailsFields={this.detailsFields}
+                    pageSize={10}
+                    initialSorting={this.initialSorting}
+                    actions={this.actions}
+                    onButtonClick={this.createInstance}
+                    list={Instance.list}
+                />
             </React.Fragment>
         );
     }

@@ -24,9 +24,7 @@ import Dropdown from "../dropdown/Dropdown";
 import { getValidationMessages } from "../../utils/validations";
 import isValidCronExpression from "../../utils/validCronExpression";
 
-const styles = () => ({
-    tableContainer: { marginTop: -10 },
-});
+const styles = () => ({});
 
 class SyncRulesPage extends React.Component {
     static propTypes = {
@@ -300,27 +298,25 @@ class SyncRulesPage extends React.Component {
             enabledFilter,
             lastExecutedFilter,
         } = this.state;
-        const { d2, classes } = this.props;
+        const { d2 } = this.props;
 
         return (
             <React.Fragment>
                 <PageHeader title={i18n.t("Synchronization Rules")} onBackClick={this.backHome} />
-                <div className={classes.tableContainer}>
-                    <ObjectsTable
-                        key={tableKey}
-                        d2={d2}
-                        model={SyncRulesPage.model}
-                        columns={this.columns}
-                        detailsFields={this.detailsFields}
-                        pageSize={10}
-                        initialSorting={this.initialSorting}
-                        actions={this.actions}
-                        list={SyncRule.list}
-                        onButtonClick={this.createRule}
-                        customFiltersComponent={this.renderCustomFilters}
-                        customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
-                    />
-                </div>
+                <ObjectsTable
+                    key={tableKey}
+                    d2={d2}
+                    model={SyncRulesPage.model}
+                    columns={this.columns}
+                    detailsFields={this.detailsFields}
+                    pageSize={10}
+                    initialSorting={this.initialSorting}
+                    actions={this.actions}
+                    list={SyncRule.list}
+                    onButtonClick={this.createRule}
+                    customFiltersComponent={this.renderCustomFilters}
+                    customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
+                />
 
                 <ConfirmationDialog
                     isOpen={!!toDelete}
