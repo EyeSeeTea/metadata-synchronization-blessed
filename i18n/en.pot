@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-07-16T15:14:24.210Z\n"
-"PO-Revision-Date: 2019-07-16T15:14:24.210Z\n"
+"POT-Creation-Date: 2019-07-23T10:59:57.868Z\n"
+"PO-Revision-Date: 2019-07-23T10:59:57.868Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -44,9 +44,6 @@ msgid "Delete"
 msgstr ""
 
 msgid "View summary"
-msgstr ""
-
-msgid "Edit {{name}}"
 msgstr ""
 
 msgid "User"
@@ -223,6 +220,28 @@ msgstr ""
 msgid "Configure the scheduling frequency for the synchronization rule"
 msgstr ""
 
+msgid ""
+"This step allows to schedule background metadata synchronization jobs in a "
+"remote server.\n"
+"                 You can either select a pre-defined frequency from the "
+"drop-down menu or you enter a custom cron expression.\n"
+"\n"
+"                 A cron expression is a string comprising six fields "
+"separated by white space that represents a routine.\n"
+"\n"
+"                 Second (0 - 59)\n"
+"\n"
+"                 Minute (0 - 59)\n"
+"\n"
+"                 Hour (0 - 23)\n"
+"\n"
+"                 Day of the month (1 - 31)\n"
+"\n"
+"                 Month (1 - 12)\n"
+"\n"
+"                 Day of the week (1 - 7) (Monday to Sunday)\n"
+msgstr ""
+
 msgid "Summary"
 msgstr ""
 
@@ -258,13 +277,34 @@ msgstr ""
 msgid "Target instances [{{total}}]"
 msgstr ""
 
-msgid "Scheduling enabled"
+msgid "Enabled"
+msgstr ""
+
+msgid "Disabled"
 msgstr ""
 
 msgid "Frequency"
 msgstr ""
 
-msgid "Enabled"
+msgid "Every hour"
+msgstr ""
+
+msgid "Every day at midnight"
+msgstr ""
+
+msgid "Every day at 3 AM"
+msgstr ""
+
+msgid "Every day at noon"
+msgstr ""
+
+msgid "Every week"
+msgstr ""
+
+msgid "Select frequency"
+msgstr ""
+
+msgid "Custom"
 msgstr ""
 
 msgid "Cron expression"
@@ -274,9 +314,6 @@ msgid "Cron expression must be valid"
 msgstr ""
 
 msgid "Destination instances"
-msgstr ""
-
-msgid "Disabled"
 msgstr ""
 
 msgid "Last executed"

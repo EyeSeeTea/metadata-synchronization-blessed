@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import cronstrue from "cronstrue";
 import { Button, LinearProgress, withStyles } from "@material-ui/core";
 import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
 
 import { getInstances } from "./InstanceSelectionStep";
 import { getMetadata } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
-import isValidCronExpression from "../../../utils/validCronExpression";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -45,9 +43,7 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
 
         const errors = await getValidationMessages(d2, syncRule);
         if (errors.length > 0) {
-            snackbar.error(errors.join("\n"), {
-                autoHideDuration: null,
-            });
+            snackbar.error(errors.join("\n"));
         } else {
             await syncRule.save(d2);
             onCancel();
@@ -107,13 +103,13 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
                     </ul>
                 </LiEntry>
 
-                <LiEntry label={i18n.t("Scheduling enabled")} value={syncRule.enabled.toString()} />
+                <LiEntry
+                    label={i18n.t("Scheduling")}
+                    value={syncRule.enabled ? i18n.t("Enabled") : i18n.t("Disabled")}
+                />
 
-                {isValidCronExpression(syncRule.frequency) && (
-                    <LiEntry
-                        label={i18n.t("Frequency")}
-                        value={`${cronstrue.toString(syncRule.frequency)} (${syncRule.frequency})`}
-                    />
+                {syncRule.longFrequency && (
+                    <LiEntry label={i18n.t("Frequency")} value={syncRule.longFrequency} />
                 )}
             </ul>
 
