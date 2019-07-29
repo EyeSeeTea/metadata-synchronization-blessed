@@ -4,7 +4,6 @@ import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { Link, withRouter } from "react-router-dom";
-import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../page-header/PageHeader";
 import Dropdown from "../dropdown/Dropdown";
@@ -12,8 +11,6 @@ import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import SyncSummary from "../sync-summary/SyncSummary";
 import { getValueForCollection } from "../../utils/d2-ui-components";
-
-const styles = () => ({});
 
 class HistoryPage extends React.Component {
     static propTypes = {
@@ -262,4 +259,4 @@ class HistoryPage extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(HistoryPage))));
+export default withLoading(withSnackbar(withRouter(HistoryPage)));

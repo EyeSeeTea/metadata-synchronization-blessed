@@ -4,13 +4,10 @@ import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
-import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../page-header/PageHeader";
 
 import Instance from "../../models/instance";
-
-const styles = () => ({});
 
 class InstancesPage extends React.Component {
     static propTypes = {
@@ -167,4 +164,4 @@ class InstancesPage extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(InstancesPage))));
+export default withLoading(withSnackbar(withRouter(InstancesPage)));

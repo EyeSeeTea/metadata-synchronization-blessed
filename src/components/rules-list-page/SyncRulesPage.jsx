@@ -11,7 +11,6 @@ import {
     withSnackbar,
 } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
-import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../page-header/PageHeader";
 import SyncRule from "../../models/syncRule";
@@ -23,8 +22,6 @@ import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../dropdown/Dropdown";
 import { getValidationMessages } from "../../utils/validations";
 import isValidCronExpression from "../../utils/validCronExpression";
-
-const styles = () => ({});
 
 class SyncRulesPage extends React.Component {
     static propTypes = {
@@ -344,4 +341,4 @@ class SyncRulesPage extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(SyncRulesPage))));
+export default withLoading(withSnackbar(withRouter(SyncRulesPage)));
