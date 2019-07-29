@@ -34,8 +34,6 @@ class InstancesPage extends React.Component {
         { name: "username", text: i18n.t("Username"), sortable: true },
     ];
 
-    initialSorting = ["id", "asc"];
-
     detailsFields = [
         { name: "name", text: i18n.t("Server name") },
         { name: "url", text: i18n.t("URL endpoint") },
@@ -154,7 +152,6 @@ class InstancesPage extends React.Component {
                     columns={this.columns}
                     detailsFields={this.detailsFields}
                     pageSize={10}
-                    initialSorting={this.initialSorting}
                     actions={this.actions}
                     onButtonClick={this.createInstance}
                     list={Instance.list}

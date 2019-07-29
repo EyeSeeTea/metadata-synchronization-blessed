@@ -51,8 +51,6 @@ class SyncRulesPage extends React.Component {
         syncSummaryOpen: false,
     };
 
-    initialSorting = ["name", "asc"];
-
     getTargetInstances = ruleData => {
         const { allInstances } = this.state;
         const rule = SyncRule.build(ruleData);
@@ -307,7 +305,6 @@ class SyncRulesPage extends React.Component {
                     columns={this.columns}
                     detailsFields={this.detailsFields}
                     pageSize={10}
-                    initialSorting={this.initialSorting}
                     actions={this.actions}
                     list={SyncRule.list}
                     onButtonClick={this.createRule}

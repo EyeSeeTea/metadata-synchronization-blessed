@@ -43,9 +43,8 @@ export async function listByIds(
     );
 
     const currentlyShown = (page - 1) * pageSize;
-    const pageCount = Math.ceil(sortedData.length / pageSize);
     const total = sortedData.length;
     const paginatedData = _.slice(sortedData, currentlyShown, currentlyShown + pageSize);
 
-    return { objects: paginatedData, pager: { page, pageCount, total } };
+    return { objects: paginatedData, pager: { page, total } };
 }
