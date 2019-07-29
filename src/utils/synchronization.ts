@@ -1,11 +1,11 @@
-import axios from "axios";
+import axios, { AxiosBasicCredentials } from "axios";
 import _ from "lodash";
 import "../utils/lodash-mixins";
 
 import Instance from "../models/instance";
 import { D2, MetadataImportParams, MetadataImportResponse } from "../types/d2";
-import { MetadataPackage, NestedRules } from "../types/synchronization";
-import { cleanModelName } from "./d2";
+import { MetadataPackage, NestedRules, SynchronizationResult } from "../types/synchronization";
+import { cleanModelName, getClassName } from "./d2";
 import { isValidUid } from "d2/uid";
 
 const blacklistedProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -41,16 +41,18 @@ export function cleanReferences(
 }
 
 export async function getMetadata(
-    d2: D2,
+    baseUrl: string,
     elements: string[],
-    fields: string = ":all"
+    fields: string = ":all",
+    auth: AxiosBasicCredentials | undefined = undefined
 ): Promise<MetadataPackage> {
     const promises = [];
     for (let i = 0; i < elements.length; i += 100) {
-        const requestUrl = d2.Api.getApi().baseUrl + "/metadata.json";
+        const requestUrl = baseUrl + "/metadata.json";
         const requestElements = elements.slice(i, i + 100).toString();
         promises.push(
             axios.get(requestUrl, {
+                auth,
                 withCredentials: true,
                 params: {
                     fields: fields,
@@ -68,7 +70,8 @@ export async function getMetadata(
 
 export async function postMetadata(
     instance: Instance,
-    metadata: any
+    metadata: any,
+    additionalParams?: MetadataImportParams
 ): Promise<MetadataImportResponse> {
     try {
         const params: MetadataImportParams = {
@@ -78,6 +81,7 @@ export async function postMetadata(
             importStrategy: "CREATE_AND_UPDATE",
             mergeMode: "REPLACE",
             atomicMode: "NONE",
+            ...additionalParams,
         };
 
         const response = await axios.post(instance.url + "/api/metadata", metadata, {
@@ -122,4 +126,43 @@ export function getAllReferences(
         }
     });
     return result;
+}
+
+export function cleanImportResponse(
+    importResult: MetadataImportResponse,
+    instance: Instance
+): SynchronizationResult {
+    const typeStats: any[] = [];
+    const messages: any[] = [];
+
+    if (importResult.typeReports) {
+        importResult.typeReports.forEach(report => {
+            const { klass, stats, objectReports = [] } = report;
+
+            typeStats.push({
+                ...stats,
+                type: getClassName(klass),
+            });
+
+            objectReports.forEach((detail: any) => {
+                const { uid, errorReports = [] } = detail;
+
+                messages.push(
+                    ..._.take(errorReports, 1).map((error: any) => ({
+                        uid,
+                        type: getClassName(error.mainKlass),
+                        property: error.errorProperty,
+                        message: error.message,
+                    }))
+                );
+            });
+        });
+    }
+
+    return {
+        ..._.pick(importResult, ["status", "stats"]),
+        instance: _.pick(instance, ["id", "name", "url", "username"]),
+        report: { typeStats, messages },
+        date: new Date(),
+    };
 }

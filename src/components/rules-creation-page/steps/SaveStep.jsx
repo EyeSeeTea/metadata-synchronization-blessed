@@ -53,7 +53,7 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
     };
 
     useEffect(() => {
-        getMetadata(d2, syncRule.metadataIds, "id,name").then(updateMetadata);
+        getMetadata(d2.Api.getApi().baseUrl, syncRule.metadataIds, "id,name").then(updateMetadata);
         getInstances(d2).then(setInstanceOptions);
     }, [d2, syncRule]);
 

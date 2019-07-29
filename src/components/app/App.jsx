@@ -54,19 +54,21 @@ class App extends Component {
                     <MuiThemeProvider theme={muiTheme}>
                         <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                             <LoadingProvider>
-                                <React.Fragment>
-                                    {showHeader && (
-                                        <HeaderBar appName={i18n.t("Metadata Synchronization")} />
-                                    )}
+                                <SnackbarProvider>
+                                    <React.Fragment>
+                                        {showHeader && (
+                                            <HeaderBar
+                                                appName={i18n.t("Metadata Synchronization")}
+                                            />
+                                        )}
 
-                                    <div id="app" className="content">
-                                        <SnackbarProvider>
+                                        <div id="app" className="content">
                                             <Root d2={d2} />
-                                        </SnackbarProvider>
-                                    </div>
+                                        </div>
 
-                                    <Share visible={showShareButton} />
-                                </React.Fragment>
+                                        <Share visible={showShareButton} />
+                                    </React.Fragment>
+                                </SnackbarProvider>
                             </LoadingProvider>
                         </OldMuiThemeProvider>
                     </MuiThemeProvider>

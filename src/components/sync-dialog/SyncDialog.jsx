@@ -2,11 +2,10 @@ import React from "react";
 import i18n from "@dhis2/d2-i18n";
 import PropTypes from "prop-types";
 import _ from "lodash";
-import { ConfirmationDialog, MultiSelector, withLoading } from "d2-ui-components";
+import { ConfirmationDialog, MultiSelector } from "d2-ui-components";
 import DialogContent from "@material-ui/core/DialogContent";
 
 import Instance from "../../models/instance";
-import { startSynchronization } from "../../logic/synchronization";
 
 class SyncDialog extends React.Component {
     static propTypes = {
@@ -14,7 +13,7 @@ class SyncDialog extends React.Component {
         isOpen: PropTypes.bool.isRequired,
         metadataIds: PropTypes.array.isRequired,
         handleClose: PropTypes.func.isRequired,
-        loading: PropTypes.object.isRequired,
+        task: PropTypes.func.isRequired,
     };
 
     state = {
@@ -39,24 +38,12 @@ class SyncDialog extends React.Component {
         this.setState({ targetInstances });
     };
 
-    handleSynchronization = async () => {
-        const { handleClose, loading, metadataIds, d2 } = this.props;
+    handleExecute = async () => {
+        const { task, metadataIds } = this.props;
         const { targetInstances } = this.state;
-        loading.show(true, i18n.t("Synchronizing metadata"));
 
-        try {
-            const builder = { metadataIds, targetInstances };
-            for await (const { message, syncReport, done } of startSynchronization(d2, builder)) {
-                if (message) loading.show(true, message);
-                if (syncReport) await syncReport.save(d2);
-                if (done) handleClose(syncReport);
-            }
-        } catch (error) {
-            console.error(error);
-            handleClose();
-        }
+        await task(targetInstances, metadataIds);
         this.setState({ targetInstances: [] });
-        loading.reset();
     };
 
     handleCancel = () => {
@@ -73,7 +60,7 @@ class SyncDialog extends React.Component {
                 <ConfirmationDialog
                     isOpen={isOpen}
                     title={i18n.t("Synchronize Metadata")}
-                    onSave={this.handleSynchronization}
+                    onSave={this.handleExecute}
                     onCancel={this.handleCancel}
                     saveText={i18n.t("Synchronize")}
                     maxWidth={"lg"}
@@ -94,4 +81,4 @@ class SyncDialog extends React.Component {
     }
 }
 
-export default withLoading(SyncDialog);
+export default SyncDialog;
