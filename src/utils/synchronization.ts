@@ -70,7 +70,7 @@ export async function getMetadata(
 
 export async function postMetadata(
     instance: Instance,
-    metadata: any,
+    metadata: object,
     additionalParams?: MetadataImportParams
 ): Promise<MetadataImportResponse> {
     try {

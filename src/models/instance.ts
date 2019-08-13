@@ -123,7 +123,7 @@ export default class Instance {
     }
 
     public setUrl(url: string): Instance {
-        return new Instance({ ...this.data, url });
+        return new Instance({ ...this.data, url: url.replace(/\/+$/, "") });
     }
 
     public setUsername(username: string): Instance {

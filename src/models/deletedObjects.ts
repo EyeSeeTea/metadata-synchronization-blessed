@@ -3,6 +3,7 @@ import axios from "axios";
 
 import { D2 } from "../types/d2";
 import { TableList, TablePagination, TableFilters } from "../types/d2-ui-components";
+import { getBaseUrl } from "../utils/d2";
 
 type DeletedObjectData = {
     uid: string;
@@ -35,7 +36,7 @@ export default class DeletedObject {
         return this.data.deletedBy;
     }
 
-    public static build(data: any | undefined): DeletedObject {
+    public static build(data: DeletedObjectData | undefined): DeletedObject {
         return new DeletedObject(
             data || {
                 uid: "",
@@ -56,16 +57,13 @@ export default class DeletedObject {
         const { page = 1, pageSize = 20, paging = true, sorting = ["id", "asc"] } =
             pagination || {};
 
-        const { deletedObjects: rawData } = (await axios.get(
-            d2.Api.getApi().baseUrl + "/deletedObjects",
-            {
-                withCredentials: true,
-                params: {
-                    fields: ":all,uid~rename(id)",
-                    paging: false,
-                },
-            }
-        )).data;
+        const { deletedObjects: rawData } = (await axios.get(getBaseUrl(d2) + "/deletedObjects", {
+            withCredentials: true,
+            params: {
+                fields: ":all,uid~rename(id)",
+                paging: false,
+            },
+        })).data;
 
         const filteredData = search
             ? _.filter(rawData, o =>
