@@ -20,6 +20,8 @@ class DeletedObjectsPage extends React.Component {
         },
     };
 
+    buttonLabel = <DeleteIcon />;
+
     models = [
         {
             getInitialSorting: () => ["deletedAt", "desc"],
@@ -53,7 +55,6 @@ class DeletedObjectsPage extends React.Component {
         const { d2 } = this.props;
 
         const title = i18n.t("Deleted Objects Synchronization");
-        const buttonLabel = <DeleteIcon />;
 
         return (
             <GenericSynchronizationPage
@@ -62,7 +63,7 @@ class DeletedObjectsPage extends React.Component {
                 models={this.models}
                 list={DeletedObject.list}
                 isDelete={true}
-                buttonLabel={buttonLabel}
+                buttonLabel={this.buttonLabel}
             />
         );
     }
