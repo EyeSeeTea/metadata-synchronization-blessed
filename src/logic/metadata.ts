@@ -4,7 +4,7 @@ import axios from "axios";
 import { D2, ModelCollection, Params } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { getMetadata } from "../utils/synchronization";
-import { d2BaseModelDetails, getBaseUrl } from "../utils/d2";
+import { d2BaseModelDetails, organisationUnitsDetails, getBaseUrl } from "../utils/d2";
 
 export async function listByIds(
     d2: D2,
@@ -19,7 +19,9 @@ export async function listByIds(
     const metadata = await getMetadata(
         getBaseUrl(d2),
         ids,
-        fields ? fields.join(",") : d2BaseModelDetails.map(e => e.name).join(",")
+        fields
+            ? fields.join(",")
+            : [...d2BaseModelDetails, ...organisationUnitsDetails].map(e => e.name).join(",")
     );
 
     const objects = _(metadata)
