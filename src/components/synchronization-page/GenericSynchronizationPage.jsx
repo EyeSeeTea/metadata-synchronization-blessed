@@ -39,6 +39,8 @@ class GenericSynchronizationPage extends React.Component {
     };
 
     changeSelection = metadataIds => {
+        const { clearSelection } = this.props;
+        if (metadataIds.length === 0) clearSelection();
         this.setState({ metadataIds });
     };
 

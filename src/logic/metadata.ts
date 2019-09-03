@@ -39,7 +39,7 @@ export async function listByIds(
 
     const sortedData = _.orderBy(
         filteredData,
-        [(data: any) => (data[field] ? data[field].toLowerCase() : "")],
+        [(data: any) => (data[field] ? String(data[field]).toLowerCase() : "")],
         [direction as "asc" | "desc"]
     );
 
@@ -47,7 +47,10 @@ export async function listByIds(
     const total = sortedData.length;
     const paginatedData = _.slice(sortedData, currentlyShown, currentlyShown + pageSize);
 
-    return { objects: paginatedData, pager: { page, total } };
+    return {
+        objects: paginatedData,
+        pager: { page, total, pageCount: Math.ceil(total / pageSize) },
+    };
 }
 
 export async function getDeletedObjects(
@@ -64,4 +67,20 @@ export async function getDeletedObjects(
     })).data;
 
     return { toArray: () => deletedObjects, pager };
+}
+
+// BEWARE: This is a very dangerous operation (includeDescendants in old DHIS2 versions crashed the whole server)
+export async function getOrgUnitSubtree(d2: D2, orgUnitId: string): Promise<string[]> {
+    const { organisationUnits } = (await axios.get(
+        getBaseUrl(d2) + "/organisationUnits/" + orgUnitId,
+        {
+            withCredentials: true,
+            params: {
+                fields: "id",
+                includeDescendants: true,
+            },
+        }
+    )).data as { organisationUnits: { id: string }[] };
+
+    return organisationUnits.map(ou => ou.id);
 }
