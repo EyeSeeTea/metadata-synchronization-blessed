@@ -50,7 +50,17 @@ class SyncRulesWizard extends React.Component {
             component: SchedulerStep,
             validationKeys: ["frequency", "enabled"],
             description: i18n.t("Configure the scheduling frequency for the synchronization rule"),
-            help: undefined,
+            help: i18n.t(
+                `This step allows to schedule background metadata synchronization jobs in a remote server.
+                 You can either select a pre-defined frequency from the drop-down menu or you enter a custom cron expression.\n
+                 A cron expression is a string comprising six fields separated by white space that represents a routine.\n
+                 Second (0 - 59)\n
+                 Minute (0 - 59)\n
+                 Hour (0 - 23)\n
+                 Day of the month (1 - 31)\n
+                 Month (1 - 12)\n
+                 Day of the week (1 - 7) (Monday to Sunday)\n`
+            ),
         },
         {
             key: "summary",

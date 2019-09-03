@@ -30,22 +30,9 @@ export interface D2Api {
 }
 
 export interface Pager {
-    nextPage: string;
-    prevPage: string;
     page: number;
     pageCount: number;
     total: number;
-    query: Params;
-
-    getNextPage(): Promise<ModelCollection>;
-
-    getPreviousPage(): Promise<ModelCollection>;
-
-    goToPage(): Promise<ModelCollection>;
-
-    hasNextPage(): boolean;
-
-    hasPreviousPage(): boolean;
 }
 
 export interface ModelCollection {

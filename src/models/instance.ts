@@ -1,5 +1,5 @@
 import _ from "lodash";
-import axios from "axios";
+import axios, { AxiosBasicCredentials } from "axios";
 import Cryptr from "cryptr";
 import i18n from "@dhis2/d2-i18n";
 import { generateUid } from "d2/uid";
@@ -43,6 +43,10 @@ export default class Instance {
         return this.data.url;
     }
 
+    public get apiUrl(): string {
+        return this.data.url + "/api";
+    }
+
     public get username(): string {
         return this.data.username;
     }
@@ -53,6 +57,10 @@ export default class Instance {
 
     public get description(): string {
         return this.data.description ? this.data.description : "";
+    }
+
+    public get auth(): AxiosBasicCredentials {
+        return { username: this.data.username, password: this.data.password };
     }
 
     public static setEncryptionKey(encryptionKey: string): void {
@@ -115,7 +123,7 @@ export default class Instance {
     }
 
     public setUrl(url: string): Instance {
-        return new Instance({ ...this.data, url });
+        return new Instance({ ...this.data, url: url.replace(/\/+$/, "") });
     }
 
     public setUsername(username: string): Instance {

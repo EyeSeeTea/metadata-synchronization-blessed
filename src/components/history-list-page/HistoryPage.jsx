@@ -3,8 +3,7 @@ import PropTypes from "prop-types";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
-import { Link, withRouter } from "react-router-dom";
-import { withStyles } from "@material-ui/core/styles";
+import { withRouter } from "react-router-dom";
 
 import PageHeader from "../page-header/PageHeader";
 import Dropdown from "../dropdown/Dropdown";
@@ -12,10 +11,6 @@ import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import SyncSummary from "../sync-summary/SyncSummary";
 import { getValueForCollection } from "../../utils/d2-ui-components";
-
-const styles = () => ({
-    tableContainer: { marginTop: 10 },
-});
 
 class HistoryPage extends React.Component {
     static propTypes = {
@@ -140,9 +135,13 @@ class HistoryPage extends React.Component {
         if (!syncRule) return null;
 
         return (
-            <Link to={`/synchronization-rules/edit/${syncRule.id}`}>
-                {i18n.t("Edit {{name}}", { name: syncRule.name })}
-            </Link>
+            <a
+                href={`/#/synchronization-rules/edit/${syncRule.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Edit {syncRule.name}
+            </a>
         );
     };
 
@@ -215,27 +214,25 @@ class HistoryPage extends React.Component {
 
     render() {
         const { tableKey, toDelete, syncReport, summaryOpen, statusFilter } = this.state;
-        const { d2, classes } = this.props;
+        const { d2 } = this.props;
 
         return (
             <React.Fragment>
                 <PageHeader title={i18n.t("Synchronization History")} onBackClick={this.backHome} />
-                <div className={classes.tableContainer}>
-                    <ObjectsTable
-                        key={tableKey}
-                        d2={d2}
-                        model={HistoryPage.model}
-                        columns={this.columns}
-                        detailsFields={this.detailsFields}
-                        pageSize={10}
-                        initialSorting={this.initialSorting}
-                        actions={this.actions}
-                        list={SyncReport.list}
-                        hideSearchBox={true}
-                        customFiltersComponent={this.renderCustomFilters}
-                        customFilters={{ statusFilter }}
-                    />
-                </div>
+                <ObjectsTable
+                    key={tableKey}
+                    d2={d2}
+                    model={HistoryPage.model}
+                    columns={this.columns}
+                    detailsFields={this.detailsFields}
+                    pageSize={10}
+                    initialSorting={this.initialSorting}
+                    actions={this.actions}
+                    list={SyncReport.list}
+                    hideSearchBox={true}
+                    customFiltersComponent={this.renderCustomFilters}
+                    customFilters={{ statusFilter }}
+                />
 
                 <SyncSummary
                     d2={d2}
@@ -266,4 +263,4 @@ class HistoryPage extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(HistoryPage))));
+export default withLoading(withSnackbar(withRouter(HistoryPage)));

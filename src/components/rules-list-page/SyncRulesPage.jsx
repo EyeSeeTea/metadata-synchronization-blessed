@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
-import cronstrue from "cronstrue";
 import {
     ConfirmationDialog,
     DatePicker,
@@ -11,7 +10,6 @@ import {
     withSnackbar,
 } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
-import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../page-header/PageHeader";
 import SyncRule from "../../models/syncRule";
@@ -22,11 +20,6 @@ import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../dropdown/Dropdown";
 import { getValidationMessages } from "../../utils/validations";
-import isValidCronExpression from "../../utils/validCronExpression";
-
-const styles = () => ({
-    tableContainer: { marginTop: -10 },
-});
 
 class SyncRulesPage extends React.Component {
     static propTypes = {
@@ -56,8 +49,6 @@ class SyncRulesPage extends React.Component {
         syncSummaryOpen: false,
     };
 
-    initialSorting = ["name", "asc"];
-
     getTargetInstances = ruleData => {
         const { allInstances } = this.state;
         const rule = SyncRule.build(ruleData);
@@ -65,6 +56,11 @@ class SyncRulesPage extends React.Component {
             .map(id => allInstances.find(instance => instance.id === id))
             .compact()
             .map(({ name }) => ({ name }));
+    };
+
+    getReadableFrequency = ruleData => {
+        const syncRule = SyncRule.build(ruleData);
+        return syncRule.longFrequency || "";
     };
 
     columns = [
@@ -82,18 +78,15 @@ class SyncRulesPage extends React.Component {
             name: "frequency",
             text: i18n.t("Frequency"),
             sortable: true,
-            getValue: ({ frequency }) =>
-                isValidCronExpression(frequency)
-                    ? `${cronstrue.toString(frequency)} (${frequency})`
-                    : "",
+            getValue: this.getReadableFrequency,
         },
         {
             name: "enabled",
             text: i18n.t("Scheduling"),
             sortable: true,
-            getValue: ({ enabled }) =>
-                enabled === "true" ? i18n.t("Enabled") : i18n.t("Disabled"),
+            getValue: ({ enabled }) => (enabled ? i18n.t("Enabled") : i18n.t("Disabled")),
         },
+        { name: "lastExecuted", text: i18n.t("Last executed") },
     ];
 
     detailsFields = [
@@ -102,16 +95,12 @@ class SyncRulesPage extends React.Component {
         {
             name: "frequency",
             text: i18n.t("Frequency"),
-            getValue: ({ frequency }) =>
-                isValidCronExpression(frequency)
-                    ? `${cronstrue.toString(frequency)} (${frequency})`
-                    : "",
+            getValue: this.getReadableFrequency,
         },
         {
             name: "enabled",
             text: i18n.t("Scheduling"),
-            getValue: ({ enabled }) =>
-                enabled === "true" ? i18n.t("Enabled") : i18n.t("Disabled"),
+            getValue: ({ enabled }) => (enabled ? i18n.t("Enabled") : i18n.t("Disabled")),
         },
         { name: "lastExecuted", text: i18n.t("Last executed") },
         {
@@ -259,8 +248,8 @@ class SyncRulesPage extends React.Component {
             lastExecutedFilter,
         } = this.state;
         const enabledFilterData = [
-            { id: "true", name: i18n.t("Enabled") },
-            { id: "false", name: i18n.t("Disabled") },
+            { id: "enabled", name: i18n.t("Enabled") },
+            { id: "disabled", name: i18n.t("Disabled") },
         ];
 
         return (
@@ -300,27 +289,24 @@ class SyncRulesPage extends React.Component {
             enabledFilter,
             lastExecutedFilter,
         } = this.state;
-        const { d2, classes } = this.props;
+        const { d2 } = this.props;
 
         return (
             <React.Fragment>
                 <PageHeader title={i18n.t("Synchronization Rules")} onBackClick={this.backHome} />
-                <div className={classes.tableContainer}>
-                    <ObjectsTable
-                        key={tableKey}
-                        d2={d2}
-                        model={SyncRulesPage.model}
-                        columns={this.columns}
-                        detailsFields={this.detailsFields}
-                        pageSize={10}
-                        initialSorting={this.initialSorting}
-                        actions={this.actions}
-                        list={SyncRule.list}
-                        onButtonClick={this.createRule}
-                        customFiltersComponent={this.renderCustomFilters}
-                        customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
-                    />
-                </div>
+                <ObjectsTable
+                    key={tableKey}
+                    d2={d2}
+                    model={SyncRulesPage.model}
+                    columns={this.columns}
+                    detailsFields={this.detailsFields}
+                    pageSize={10}
+                    actions={this.actions}
+                    list={SyncRule.list}
+                    onButtonClick={this.createRule}
+                    customFiltersComponent={this.renderCustomFilters}
+                    customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
+                />
 
                 <ConfirmationDialog
                     isOpen={!!toDelete}
@@ -348,4 +334,4 @@ class SyncRulesPage extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(SyncRulesPage))));
+export default withLoading(withSnackbar(withRouter(SyncRulesPage)));

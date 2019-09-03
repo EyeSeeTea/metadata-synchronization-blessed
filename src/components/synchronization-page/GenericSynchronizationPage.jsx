@@ -1,10 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { withSnackbar } from "d2-ui-components";
+import { withSnackbar, withLoading } from "d2-ui-components";
 import SyncIcon from "@material-ui/icons/Sync";
 import { withRouter } from "react-router-dom";
 
+import { startSynchronization } from "../../logic/synchronization";
+import { startDelete } from "../../logic/delete";
 import MetadataTable from "../metadata-table/MetadataTable";
 import SyncDialog from "../sync-dialog/SyncDialog";
 import SyncSummary from "../sync-summary/SyncSummary";
@@ -15,8 +17,10 @@ class GenericSynchronizationPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
+        loading: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
         title: PropTypes.string.isRequired,
+        isDelete: PropTypes.bool,
     };
 
     state = {
@@ -24,6 +28,14 @@ class GenericSynchronizationPage extends React.Component {
         importResponse: SyncReport.create(),
         syncDialogOpen: false,
         syncSummaryOpen: false,
+    };
+
+    goHome = () => {
+        this.props.history.push("/");
+    };
+
+    closeSummary = () => {
+        this.setState({ syncSummaryOpen: false });
     };
 
     changeSelection = metadataIds => {
@@ -40,7 +52,7 @@ class GenericSynchronizationPage extends React.Component {
         }
     };
 
-    closeDialog = importResponse => {
+    finishSynchronization = importResponse => {
         if (importResponse) {
             this.setState({ syncDialogOpen: false, syncSummaryOpen: true, importResponse });
         } else {
@@ -49,16 +61,31 @@ class GenericSynchronizationPage extends React.Component {
         }
     };
 
-    closeSummary = () => {
-        this.setState({ syncSummaryOpen: false });
-    };
+    handleSynchronization = async (targetInstances, metadataIds) => {
+        const { isDelete, loading, d2 } = this.props;
+        const action = isDelete ? startDelete : startSynchronization;
+        loading.show(true, i18n.t("Synchronizing metadata"));
 
-    goHome = () => {
-        this.props.history.push("/");
+        try {
+            const builder = { metadataIds, targetInstances };
+            for await (const { message, syncReport, done } of action(d2, builder)) {
+                if (message) loading.show(true, message);
+                if (syncReport) await syncReport.save(d2);
+                if (done) {
+                    loading.reset();
+                    this.finishSynchronization(syncReport);
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
+        loading.reset();
     };
 
     render() {
-        const { d2, title, models } = this.props;
+        const { d2, title, models, ...rest } = this.props;
         const { syncDialogOpen, syncSummaryOpen, importResponse, metadataIds } = this.state;
 
         return (
@@ -73,13 +100,15 @@ class GenericSynchronizationPage extends React.Component {
                     notifyNewSelection={this.changeSelection}
                     onButtonClick={this.startSynchronization}
                     buttonLabel={<SyncIcon />}
+                    {...rest}
                 />
 
                 <SyncDialog
                     d2={d2}
                     metadataIds={metadataIds}
                     isOpen={syncDialogOpen}
-                    handleClose={this.closeDialog}
+                    handleClose={this.finishSynchronization}
+                    task={this.handleSynchronization}
                 />
 
                 <SyncSummary
@@ -93,4 +122,4 @@ class GenericSynchronizationPage extends React.Component {
     }
 }
 
-export default withSnackbar(withRouter(GenericSynchronizationPage));
+export default withLoading(withSnackbar(withRouter(GenericSynchronizationPage)));
