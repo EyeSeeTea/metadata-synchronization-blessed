@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import _ from "lodash";
 
 import {
     OrganisationUnitGroupModel,
@@ -23,13 +22,17 @@ export default class OrganisationUnitPage extends React.Component {
 
     models = [OrganisationUnitModel, OrganisationUnitGroupModel, OrganisationUnitGroupSetModel];
 
-    clearChildren = () => this.setState({ children: [] });
+    onSelectionChange = metadataIds => {
+        if (metadataIds.length === 0) this.setState({ children: [] });
+    };
 
     selectChildren = async selectedOUs => {
         const { d2 } = this.props;
-        const children = _.flatten(
-            await Promise.all(selectedOUs.map(selectedOU => getOrgUnitSubtree(d2, selectedOU.id)))
-        );
+        const children = [];
+        for (const selectedOU of selectedOUs) {
+            const subtree = await getOrgUnitSubtree(d2, selectedOU.id);
+            children.push(...subtree);
+        }
         this.setState({ children, metadataTableKey: Math.random() });
     };
 
@@ -42,7 +45,7 @@ export default class OrganisationUnitPage extends React.Component {
         },
         {
             name: "select-children",
-            text: i18n.t("Select children subtree"),
+            text: i18n.t("Select with children subtree"),
             multiple: true,
             onClick: this.selectChildren,
             icon: "done_all",
@@ -63,7 +66,7 @@ export default class OrganisationUnitPage extends React.Component {
                 title={title}
                 actions={this.actions}
                 initialSelection={children}
-                clearSelection={this.clearChildren}
+                onSelectionChange={this.onSelectionChange}
             />
         );
     }
