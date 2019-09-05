@@ -21,6 +21,7 @@ class GenericSynchronizationPage extends React.Component {
         history: PropTypes.object.isRequired,
         title: PropTypes.string.isRequired,
         isDelete: PropTypes.bool,
+        onSelectionChange: PropTypes.func,
     };
 
     state = {
