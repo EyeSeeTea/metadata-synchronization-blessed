@@ -22,18 +22,18 @@ export default class OrganisationUnitPage extends React.Component {
 
     models = [OrganisationUnitModel, OrganisationUnitGroupModel, OrganisationUnitGroupSetModel];
 
-    onSelectionChange = metadataIds => {
-        if (metadataIds.length === 0) this.setState({ children: [] });
-    };
+    onSelectionChange = children => this.setState({ children });
 
     selectChildren = async selectedOUs => {
         const { d2 } = this.props;
-        const children = [];
+        const { children } = this.state;
+
+        const ids = new Set(children);
         for (const selectedOU of selectedOUs) {
             const subtree = await getOrgUnitSubtree(d2, selectedOU.id);
-            children.push(...subtree);
+            subtree.forEach(id => ids.add(id));
         }
-        this.setState({ children, metadataTableKey: Math.random() });
+        this.setState({ children: Array.from(ids), metadataTableKey: Math.random() });
     };
 
     actions = [
