@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
-import cronstrue from "cronstrue";
 import {
     ConfirmationDialog,
     DatePicker,
@@ -22,7 +21,6 @@ import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../dropdown/Dropdown";
 import { getValidationMessages } from "../../utils/validations";
-import isValidCronExpression from "../../utils/validCronExpression";
 
 const styles = () => ({
     tableContainer: { marginTop: -10 },
@@ -67,6 +65,11 @@ class SyncRulesPage extends React.Component {
             .map(({ name }) => ({ name }));
     };
 
+    getReadableFrequency = ruleData => {
+        const syncRule = SyncRule.build(ruleData);
+        return syncRule.longFrequency || "";
+    };
+
     columns = [
         { name: "name", text: i18n.t("Name"), sortable: true },
         {
@@ -82,18 +85,15 @@ class SyncRulesPage extends React.Component {
             name: "frequency",
             text: i18n.t("Frequency"),
             sortable: true,
-            getValue: ({ frequency }) =>
-                isValidCronExpression(frequency)
-                    ? `${cronstrue.toString(frequency)} (${frequency})`
-                    : "",
+            getValue: this.getReadableFrequency,
         },
         {
             name: "enabled",
             text: i18n.t("Scheduling"),
             sortable: true,
-            getValue: ({ enabled }) =>
-                enabled === "true" ? i18n.t("Enabled") : i18n.t("Disabled"),
+            getValue: ({ enabled }) => (enabled ? i18n.t("Enabled") : i18n.t("Disabled")),
         },
+        { name: "lastExecuted", text: i18n.t("Last executed") },
     ];
 
     detailsFields = [
@@ -102,16 +102,12 @@ class SyncRulesPage extends React.Component {
         {
             name: "frequency",
             text: i18n.t("Frequency"),
-            getValue: ({ frequency }) =>
-                isValidCronExpression(frequency)
-                    ? `${cronstrue.toString(frequency)} (${frequency})`
-                    : "",
+            getValue: this.getReadableFrequency,
         },
         {
             name: "enabled",
             text: i18n.t("Scheduling"),
-            getValue: ({ enabled }) =>
-                enabled === "true" ? i18n.t("Enabled") : i18n.t("Disabled"),
+            getValue: ({ enabled }) => (enabled ? i18n.t("Enabled") : i18n.t("Disabled")),
         },
         { name: "lastExecuted", text: i18n.t("Last executed") },
         {
@@ -259,8 +255,8 @@ class SyncRulesPage extends React.Component {
             lastExecutedFilter,
         } = this.state;
         const enabledFilterData = [
-            { id: "true", name: i18n.t("Enabled") },
-            { id: "false", name: i18n.t("Disabled") },
+            { id: "enabled", name: i18n.t("Enabled") },
+            { id: "disabled", name: i18n.t("Disabled") },
         ];
 
         return (

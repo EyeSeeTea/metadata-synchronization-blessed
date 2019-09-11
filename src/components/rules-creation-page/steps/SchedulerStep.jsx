@@ -1,27 +1,16 @@
 import React from "react";
-import _ from "lodash";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import cronstrue from "cronstrue";
 import { FormControlLabel, Switch } from "@material-ui/core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import { DropDown, TextField } from "@dhis2/d2-ui-core";
 import isValidCronExpression from "../../../utils/validCronExpression";
 
-const defaultExpression = "CUSTOM";
-const cronExpressions = [
-    { text: "EVERY_HOUR", value: "0 0 * ? * *" },
-    { text: "EVERY_DAY_MIDNIGHT", value: "0 0 1 ? * *" },
-    { text: "EVERY_DAY_THREE_AM", value: "0 0 3 ? * *" },
-    { text: "EVERY_WEEKDAY_NOON", value: "0 0 12 ? * MON-FRI" },
-    { text: "EVERY_WEEK", value: "0 0 3 ? * MON" },
-];
-
 const Toggle = ({ label, onChange, value }) => (
     <FormControlLabel
         control={
             <Switch
-                onChange={e => onChange(_.set(_.clone(e), "target.value", e.target.checked))}
+                onChange={e => onChange({ target: { value: e.target.checked } })}
                 checked={value}
                 color="primary"
             />
@@ -31,6 +20,14 @@ const Toggle = ({ label, onChange, value }) => (
 );
 
 const SchedulerStep = ({ syncRule, onChange }) => {
+    const cronExpressions = [
+        { text: i18n.t("Every hour"), value: "0 0 * ? * *" },
+        { text: i18n.t("Every day at midnight"), value: "0 0 1 ? * *" },
+        { text: i18n.t("Every day at 3 AM"), value: "0 0 3 ? * *" },
+        { text: i18n.t("Every day at noon"), value: "0 0 12 ? * MON-FRI" },
+        { text: i18n.t("Every week"), value: "0 0 3 ? * MON" },
+    ];
+
     const selectedCron = cronExpressions.find(cron => cron.value === syncRule.frequency) || {};
 
     const updateFields = (field, value) => {
@@ -57,17 +54,13 @@ const SchedulerStep = ({ syncRule, onChange }) => {
             value: selectedCron.value || "",
             component: DropDown,
             props: {
-                hintText: i18n.t(
-                    isValidCronExpression(syncRule.frequency)
-                        ? cronstrue.toString(syncRule.frequency)
-                        : "Select frequency"
-                ),
+                hintText: syncRule.readableFrequency || i18n.t("Select frequency"),
                 menuItems: cronExpressions.map(({ text, value: id }) => ({
                     id,
                     displayName: i18n.t(text),
                 })),
                 includeEmpty: true,
-                emptyLabel: i18n.t(defaultExpression),
+                emptyLabel: i18n.t("Custom"),
                 style: { width: "100%" },
             },
             validators: [],
