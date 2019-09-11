@@ -10,7 +10,6 @@ import {
     withSnackbar,
 } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
-import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../page-header/PageHeader";
 import SyncRule from "../../models/syncRule";
@@ -21,10 +20,6 @@ import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../dropdown/Dropdown";
 import { getValidationMessages } from "../../utils/validations";
-
-const styles = () => ({
-    tableContainer: { marginTop: -10 },
-});
 
 class SyncRulesPage extends React.Component {
     static propTypes = {
@@ -53,8 +48,6 @@ class SyncRulesPage extends React.Component {
         syncReport: SyncReport.create(),
         syncSummaryOpen: false,
     };
-
-    initialSorting = ["name", "asc"];
 
     getTargetInstances = ruleData => {
         const { allInstances } = this.state;
@@ -296,27 +289,24 @@ class SyncRulesPage extends React.Component {
             enabledFilter,
             lastExecutedFilter,
         } = this.state;
-        const { d2, classes } = this.props;
+        const { d2 } = this.props;
 
         return (
             <React.Fragment>
                 <PageHeader title={i18n.t("Synchronization Rules")} onBackClick={this.backHome} />
-                <div className={classes.tableContainer}>
-                    <ObjectsTable
-                        key={tableKey}
-                        d2={d2}
-                        model={SyncRulesPage.model}
-                        columns={this.columns}
-                        detailsFields={this.detailsFields}
-                        pageSize={10}
-                        initialSorting={this.initialSorting}
-                        actions={this.actions}
-                        list={SyncRule.list}
-                        onButtonClick={this.createRule}
-                        customFiltersComponent={this.renderCustomFilters}
-                        customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
-                    />
-                </div>
+                <ObjectsTable
+                    key={tableKey}
+                    d2={d2}
+                    model={SyncRulesPage.model}
+                    columns={this.columns}
+                    detailsFields={this.detailsFields}
+                    pageSize={10}
+                    actions={this.actions}
+                    list={SyncRule.list}
+                    onButtonClick={this.createRule}
+                    customFiltersComponent={this.renderCustomFilters}
+                    customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
+                />
 
                 <ConfirmationDialog
                     isOpen={!!toDelete}
@@ -344,4 +334,4 @@ class SyncRulesPage extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(SyncRulesPage))));
+export default withLoading(withSnackbar(withRouter(SyncRulesPage)));
