@@ -207,9 +207,14 @@ class HistoryPage extends React.Component {
     };
 
     async componentDidMount() {
-        const { d2 } = this.props;
+        const { d2, match } = this.props;
+        const id = match.params.id;
+        const summaryOpen = !!id;
+
         const { objects: syncRules } = await SyncRule.list(d2, null, { paging: false });
-        this.setState({ syncRules });
+        const syncReport = summaryOpen ? await SyncReport.get(d2, id) : SyncReport.create();
+
+        this.setState({ syncRules, syncReport, summaryOpen });
     }
 
     render() {
