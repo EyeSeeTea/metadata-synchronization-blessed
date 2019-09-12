@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-07-23T10:59:57.868Z\n"
-"PO-Revision-Date: 2019-07-23T10:59:57.868Z\n"
+"POT-Creation-Date: 2019-08-05T07:57:08.531Z\n"
+"PO-Revision-Date: 2019-08-05T07:57:08.531Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -173,6 +173,9 @@ msgid "Validation Rules"
 msgstr ""
 
 msgid "Synchronization Rules"
+msgstr ""
+
+msgid "Deleted objects"
 msgstr ""
 
 msgid "Name"
@@ -404,6 +407,18 @@ msgstr ""
 msgid "Data Elements Synchronization"
 msgstr ""
 
+msgid "Code"
+msgstr ""
+
+msgid "Deleted date"
+msgstr ""
+
+msgid "Deleted by"
+msgstr ""
+
+msgid "Deleted Objects Synchronization"
+msgstr ""
+
 msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
@@ -419,10 +434,13 @@ msgstr ""
 msgid "Validation Rules Synchronization"
 msgstr ""
 
-msgid "Fetching metadata from origin instance"
+msgid "Retrieving information from remote instances"
 msgstr ""
 
-msgid "Retrieving information from remote instances"
+msgid "Deleting objects in instance {{instance}}"
+msgstr ""
+
+msgid "Fetching metadata from origin instance"
 msgstr ""
 
 msgid "Importing data in instance {{instance}}"
@@ -447,9 +465,6 @@ msgid "Level"
 msgstr ""
 
 msgid "Short name"
-msgstr ""
-
-msgid "Code"
 msgstr ""
 
 msgid "ID"

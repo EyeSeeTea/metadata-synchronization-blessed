@@ -277,6 +277,7 @@ class MetadataTable extends React.Component {
                 customFiltersComponent={this.renderCustomFilters}
                 customFilters={filters}
                 initialSelection={initialSelection}
+                forceSelectionColumn={true}
                 {...rest}
             />
         );

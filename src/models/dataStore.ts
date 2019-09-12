@@ -3,20 +3,23 @@ import axios from "axios";
 
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { getBaseUrl } from "../utils/d2";
 
 const dataStoreNamespace = "metadata-synchronization";
 
 export async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Promise<any> {
+    const baseUrl = getBaseUrl(d2);
+
     try {
         const response = await axios.get(
-            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+            baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
             { withCredentials: true }
         );
         return response.data;
     } catch (error) {
         if (error.response && error.response.status === 404) {
             await axios.post(
-                d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+                baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
                 defaultValue,
                 { withCredentials: true }
             );
@@ -28,19 +31,16 @@ export async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: a
 }
 
 export async function saveDataStore(d2: D2, dataStoreKey: string, value: any): Promise<void> {
+    const baseUrl = getBaseUrl(d2);
     try {
-        await axios.put(
-            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
-            value,
-            { withCredentials: true }
-        );
+        await axios.put(baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`, value, {
+            withCredentials: true,
+        });
     } catch (error) {
         if (error.response && error.response.status === 404) {
-            await axios.post(
-                d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
-                value,
-                { withCredentials: true }
-            );
+            await axios.post(baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`, value, {
+                withCredentials: true,
+            });
         } else {
             throw error;
         }
@@ -49,10 +49,9 @@ export async function saveDataStore(d2: D2, dataStoreKey: string, value: any): P
 
 export async function deleteDataStore(d2: D2, dataStoreKey: string): Promise<void> {
     try {
-        await axios.delete(
-            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
-            { withCredentials: true }
-        );
+        await axios.delete(getBaseUrl(d2) + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`, {
+            withCredentials: true,
+        });
     } catch (error) {
         if (!error.response || error.response.status !== 404) {
             throw error;

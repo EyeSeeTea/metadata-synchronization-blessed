@@ -6,6 +6,7 @@ import { Button, LinearProgress, withStyles } from "@material-ui/core";
 import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
 
 import { getInstances } from "./InstanceSelectionStep";
+import { getBaseUrl } from "../../../utils/d2";
 import { getMetadata } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
 
@@ -53,7 +54,7 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
     };
 
     useEffect(() => {
-        getMetadata(d2, syncRule.metadataIds, "id,name").then(updateMetadata);
+        getMetadata(getBaseUrl(d2), syncRule.metadataIds, "id,name").then(updateMetadata);
         getInstances(d2).then(setInstanceOptions);
     }, [d2, syncRule]);
 

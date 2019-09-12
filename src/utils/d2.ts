@@ -66,3 +66,5 @@ export function getClassName(className: string): string | undefined {
         .split(".")
         .last();
 }
+
+export const getBaseUrl = (d2: D2): string => d2.Api.getApi().baseUrl;

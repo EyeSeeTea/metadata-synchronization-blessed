@@ -43,9 +43,9 @@ const styles = () => ({
     },
 });
 
-const GRID_ITEM_BIG = 12;
-const GRID_ITEM_MEDIUM = 6;
-const GRID_ITEM_SMALL = 3;
+const GRID_ROW_1 = 12;
+const GRID_ROW_3 = 3;
+const GRID_ROW_4 = 4;
 
 class LandingPage extends React.Component {
     static propTypes = {
@@ -55,18 +55,19 @@ class LandingPage extends React.Component {
     render() {
         const { classes } = this.props;
         const items = [
-            ["instance-configurator", i18n.t("Instance Configuration"), "edit", GRID_ITEM_BIG],
-            ["sync/organisationUnits", i18n.t("Organisation Units"), "sync", GRID_ITEM_SMALL],
-            ["sync/dataElements", i18n.t("Data Elements"), "sync", GRID_ITEM_SMALL],
-            ["sync/indicators", i18n.t("Indicators"), "sync", GRID_ITEM_SMALL],
-            ["sync/validationRules", i18n.t("Validation Rules"), "sync", GRID_ITEM_SMALL],
+            ["instance-configurator", i18n.t("Instance Configuration"), "edit", GRID_ROW_1],
+            ["sync/organisationUnits", i18n.t("Organisation Units"), "sync", GRID_ROW_3],
+            ["sync/dataElements", i18n.t("Data Elements"), "sync", GRID_ROW_3],
+            ["sync/indicators", i18n.t("Indicators"), "sync", GRID_ROW_3],
+            ["sync/validationRules", i18n.t("Validation Rules"), "sync", GRID_ROW_3],
             [
                 "synchronization-rules",
                 i18n.t("Synchronization Rules"),
                 "playlist_add_check",
-                GRID_ITEM_MEDIUM,
+                GRID_ROW_4,
             ],
-            ["history", i18n.t("Synchronization History"), "history", GRID_ITEM_MEDIUM],
+            ["sync/deleted", i18n.t("Deleted objects"), "delete", GRID_ROW_4],
+            ["history", i18n.t("Synchronization History"), "history", GRID_ROW_4],
         ];
         const menuItems = items.map(([key, title, icon, xs]) => (
             <Grid item xs={xs} className={classes.item} key={key}>
