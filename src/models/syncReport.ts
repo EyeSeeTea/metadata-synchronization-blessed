@@ -46,9 +46,9 @@ export default class SyncReport {
         return syncReport ? new SyncReport(syncReport) : this.create();
     }
 
-    public static async get(d2: D2, id: string): Promise<SyncReport> {
+    public static async get(d2: D2, id: string): Promise<SyncReport | null> {
         const data = await getDataById(d2, dataStoreKey, id);
-        return this.build(data);
+        return !!data ? this.build(data) : null;
     }
 
     public static async list(
