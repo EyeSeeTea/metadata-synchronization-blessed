@@ -50,6 +50,9 @@ class SyncRulesWizard extends React.Component {
             component: SchedulerStep,
             validationKeys: ["frequency", "enabled"],
             description: i18n.t("Configure the scheduling frequency for the synchronization rule"),
+            warning: i18n.t(
+                "This step is optional and requires an external server with the metadata synchronization script properly configured"
+            ),
             help: [
                 i18n.t(
                     "This step allows to schedule background metadata synchronization jobs in a remote server."
