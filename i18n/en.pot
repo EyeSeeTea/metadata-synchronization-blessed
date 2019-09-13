@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-09-12T05:03:54.934Z\n"
-"PO-Revision-Date: 2019-09-12T05:03:54.934Z\n"
+"POT-Creation-Date: 2019-09-13T17:17:43.512Z\n"
+"PO-Revision-Date: 2019-09-13T17:17:43.512Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -224,6 +224,11 @@ msgid "Scheduling"
 msgstr ""
 
 msgid "Configure the scheduling frequency for the synchronization rule"
+msgstr ""
+
+msgid ""
+"This step is optional and requires an external server with the metadata "
+"synchronization script properly configured"
 msgstr ""
 
 msgid ""
