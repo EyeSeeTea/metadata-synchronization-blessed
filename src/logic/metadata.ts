@@ -36,7 +36,7 @@ export async function listByIds(
     const filteredData = _.filter(objects, (o: any) =>
         _(o)
             .keys()
-            .some(k => o[k].toLowerCase().includes(search ? search.toLowerCase() : ""))
+            .some(k => String(o[k]).toLowerCase().includes(search ? search.toLowerCase() : ""))
     );
 
     const sortedData = _.orderBy(
