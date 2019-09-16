@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import DeleteIcon from "@material-ui/icons/Delete";
 import { withLoading } from "d2-ui-components";
 
 import GenericSynchronizationPage from "./GenericSynchronizationPage";
@@ -19,8 +18,6 @@ class DeletedObjectsPage extends React.Component {
             metadataTypeFilter: null,
         },
     };
-
-    buttonLabel = <DeleteIcon />;
 
     models = [
         {
@@ -45,7 +42,7 @@ class DeletedObjectsPage extends React.Component {
             getD2Model: () => ({
                 displayName: "Deleted Objects",
                 modelValidations: {
-                    updatedAt: { type: "DATE" },
+                    deletedAt: { type: "DATE" },
                 },
             }),
         },
@@ -63,7 +60,6 @@ class DeletedObjectsPage extends React.Component {
                 models={this.models}
                 list={DeletedObject.list}
                 isDelete={true}
-                buttonLabel={this.buttonLabel}
             />
         );
     }

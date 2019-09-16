@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-09-05T06:41:50.929Z\n"
-"PO-Revision-Date: 2019-09-05T06:41:50.930Z\n"
+"POT-Creation-Date: 2019-09-13T17:17:43.512Z\n"
+"PO-Revision-Date: 2019-09-13T17:17:43.512Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -190,6 +190,9 @@ msgstr ""
 msgid "Metadata type"
 msgstr ""
 
+msgid "Deleted date"
+msgstr ""
+
 msgid "Last updated date"
 msgstr ""
 
@@ -224,25 +227,49 @@ msgid "Configure the scheduling frequency for the synchronization rule"
 msgstr ""
 
 msgid ""
+"This step is optional and requires an external server with the metadata "
+"synchronization script properly configured"
+msgstr ""
+
+msgid ""
 "This step allows to schedule background metadata synchronization jobs in a "
-"remote server.\n"
-"                 You can either select a pre-defined frequency from the "
-"drop-down menu or you enter a custom cron expression.\n"
-"\n"
-"                 A cron expression is a string comprising six fields "
-"separated by white space that represents a routine.\n"
-"\n"
-"                 Second (0 - 59)\n"
-"\n"
-"                 Minute (0 - 59)\n"
-"\n"
-"                 Hour (0 - 23)\n"
-"\n"
-"                 Day of the month (1 - 31)\n"
-"\n"
-"                 Month (1 - 12)\n"
-"\n"
-"                 Day of the week (1 - 7) (Monday to Sunday)\n"
+"remote server."
+msgstr ""
+
+msgid ""
+"You can either select a pre-defined frequency from the drop-down menu or "
+"you enter a custom cron expression."
+msgstr ""
+
+msgid "Second (0 - 59)"
+msgstr ""
+
+msgid "Minute (0 - 59)"
+msgstr ""
+
+msgid "Hour (0 - 23)"
+msgstr ""
+
+msgid "Day of the month (1 - 31)"
+msgstr ""
+
+msgid "Month (1 - 12)"
+msgstr ""
+
+msgid "Day of the week (1 - 7) (Monday to Sunday)"
+msgstr ""
+
+msgid ""
+"An asterisk (*) matches all possibilities. For instance, if we want to run "
+"a rule every day we would use asterisks for day of the month, day of the "
+"week, and month of the year to match all values."
+msgstr ""
+
+msgid ""
+"A wildcard (?) means no specific value and only works for day of the month "
+"or day of the week. For example, if you want to execute a rule on a "
+"particular day (10th) but you don't care about what day of the week that "
+"is, you would use ? in the day of the week field."
 msgstr ""
 
 msgid "Summary"
@@ -408,9 +435,6 @@ msgid "Data Elements Synchronization"
 msgstr ""
 
 msgid "Code"
-msgstr ""
-
-msgid "Deleted date"
 msgstr ""
 
 msgid "Deleted by"
