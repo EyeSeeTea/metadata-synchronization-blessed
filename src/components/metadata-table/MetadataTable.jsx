@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
+import _ from "lodash";
 import memoize from "nano-memoize";
 import { DatePicker, ObjectsTable, withSnackbar } from "d2-ui-components";
 import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
@@ -255,9 +256,10 @@ class MetadataTable extends React.Component {
     };
 
     list = (...params) => {
+        const { initialSelection } = this.props;
         const { model, showOnlySelectedItems, metadataIds } = this.state;
         if (!model.listMethod || showOnlySelectedItems) {
-            return listByIds(...params, metadataIds);
+            return listByIds(...params, _.union(initialSelection, metadataIds));
         } else {
             return model.listMethod(...params);
         }
