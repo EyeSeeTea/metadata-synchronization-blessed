@@ -39,10 +39,10 @@ class SyncDialog extends React.Component {
     };
 
     handleExecute = async () => {
-        const { task, metadataIds } = this.props;
+        const { task } = this.props;
         const { targetInstances } = this.state;
 
-        await task(targetInstances, metadataIds);
+        await task(targetInstances);
         this.setState({ targetInstances: [] });
     };
 

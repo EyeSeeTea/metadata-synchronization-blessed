@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
+import _ from "lodash";
 import memoize from "nano-memoize";
 import { DatePicker, ObjectsTable, withSnackbar } from "d2-ui-components";
 import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
@@ -118,12 +119,13 @@ class MetadataTable extends React.Component {
         const {
             initialModel: model = this.defaultModel,
             initialSelection: metadataIds = [],
+            isDelete = false,
         } = this.props;
 
         this.setState({
             model,
             metadataIds,
-            showOnlySelectedItems: metadataIds.length > 0,
+            showOnlySelectedItems: !isDelete && metadataIds.length > 0,
             tableKey: Math.random(),
         });
     }
@@ -175,7 +177,7 @@ class MetadataTable extends React.Component {
     };
 
     renderCustomFilters = () => {
-        const { d2, classes, models } = this.props;
+        const { d2, classes, models, isDelete } = this.props;
         const {
             model,
             groupFilterData,
@@ -201,7 +203,9 @@ class MetadataTable extends React.Component {
                 {!showOnlySelectedItems && (
                     <DatePicker
                         key={"date-filter"}
-                        placeholder={i18n.t("Last updated date")}
+                        placeholder={
+                            isDelete ? i18n.t("Deleted date") : i18n.t("Last updated date")
+                        }
                         value={lastUpdatedDate}
                         onChange={this.changeDateFilter}
                         isFilter
@@ -228,17 +232,19 @@ class MetadataTable extends React.Component {
                     />
                 )}
 
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            className={classes.checkbox}
-                            checked={showOnlySelectedItems}
-                            data-test="show-only-selected-items"
-                            onChange={this.showSelectedItems}
-                        />
-                    }
-                    label={i18n.t("Only selected items")}
-                />
+                {!isDelete && (
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                className={classes.checkbox}
+                                checked={showOnlySelectedItems}
+                                data-test="show-only-selected-items"
+                                onChange={this.showSelectedItems}
+                            />
+                        }
+                        label={i18n.t("Only selected items")}
+                    />
+                )}
             </React.Fragment>
         );
     };
@@ -250,9 +256,10 @@ class MetadataTable extends React.Component {
     };
 
     list = (...params) => {
+        const { initialSelection } = this.props;
         const { model, showOnlySelectedItems, metadataIds } = this.state;
         if (!model.listMethod || showOnlySelectedItems) {
-            return listByIds(...params, metadataIds);
+            return listByIds(...params, _.union(initialSelection, metadataIds));
         } else {
             return model.listMethod(...params);
         }

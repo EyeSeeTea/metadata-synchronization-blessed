@@ -59,7 +59,7 @@ class Root extends React.Component {
                     render={props => <DeletedObjectsPage d2={d2} {...props} />}
                 />
 
-                <Route path="/history" render={props => <HistoryPage d2={d2} {...props} />} />
+                <Route path="/history/:id?" render={props => <HistoryPage d2={d2} {...props} />} />
 
                 <Route
                     path={"/synchronization-rules/:action(new|edit)/:id?"}
