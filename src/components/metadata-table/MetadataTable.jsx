@@ -9,7 +9,7 @@ import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
 import Dropdown from "../dropdown/Dropdown";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import { d2BaseModelDetails } from "../../utils/d2";
-import { listByIds } from "../../logic/metadata";
+import { listByIds, getOrgUnitSubtree } from "../../logic/metadata";
 
 const styles = {
     checkbox: {
@@ -62,8 +62,21 @@ class MetadataTable extends React.Component {
         groupFilterData: [],
         levelFilterData: [],
         metadataIds: [],
+        orgUnitChildren: [],
         showOnlySelectedItems: false,
         tableKey: Math.random(),
+    };
+
+    selectChildren = async selectedOUs => {
+        const { d2 } = this.props;
+
+        const ids = new Set();
+        for (const selectedOU of selectedOUs) {
+            const subtree = await getOrgUnitSubtree(d2, selectedOU.id);
+            subtree.forEach(id => ids.add(id));
+        }
+
+        this.setState({ orgUnitChildren: Array.from(ids), tableKey: Math.random() });
     };
 
     actions = [
@@ -72,6 +85,17 @@ class MetadataTable extends React.Component {
             text: i18n.t("Details"),
             multiple: false,
             type: "details",
+        },
+        {
+            name: "select-children",
+            text: i18n.t("Select with children subtree"),
+            multiple: true,
+            onClick: this.selectChildren,
+            icon: "done_all",
+            isActive: () => {
+                const { model } = this.state;
+                return model.getMetadataType() === "organisationUnit";
+            },
         },
     ];
 
@@ -256,10 +280,9 @@ class MetadataTable extends React.Component {
     };
 
     list = (...params) => {
-        const { initialSelection } = this.props;
         const { model, showOnlySelectedItems, metadataIds } = this.state;
         if (!model.listMethod || showOnlySelectedItems) {
-            return listByIds(...params, _.union(initialSelection, metadataIds));
+            return listByIds(...params, metadataIds);
         } else {
             return model.listMethod(...params);
         }
@@ -267,7 +290,9 @@ class MetadataTable extends React.Component {
 
     render() {
         const { d2, initialSelection, ...rest } = this.props;
-        const { model, filters, tableKey } = this.state;
+        const { model, filters, tableKey, orgUnitChildren } = this.state;
+
+        const selection = _.union(initialSelection, orgUnitChildren);
 
         return (
             <ObjectsTable
@@ -278,12 +303,12 @@ class MetadataTable extends React.Component {
                 detailsFields={model.getDetails()}
                 pageSize={20}
                 initialSorting={model.getInitialSorting()}
+                initialSelection={selection}
                 actions={this.actions}
                 list={this.list}
                 onSelectionChange={this.onSelectionChange}
                 customFiltersComponent={this.renderCustomFilters}
                 customFilters={filters}
-                initialSelection={initialSelection}
                 forceSelectionColumn={true}
                 {...rest}
             />

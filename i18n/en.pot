@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-09-13T17:17:43.512Z\n"
-"PO-Revision-Date: 2019-09-13T17:17:43.512Z\n"
+"POT-Creation-Date: 2019-09-17T10:45:09.309Z\n"
+"PO-Revision-Date: 2019-09-17T10:45:09.309Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -185,6 +185,9 @@ msgid "Metadata Type"
 msgstr ""
 
 msgid "Last update"
+msgstr ""
+
+msgid "Select with children subtree"
 msgstr ""
 
 msgid "Metadata type"
@@ -450,9 +453,6 @@ msgid "Unknown error with the request"
 msgstr ""
 
 msgid "Indicators Synchronization"
-msgstr ""
-
-msgid "Select with children subtree"
 msgstr ""
 
 msgid "Organisation Units Synchronization"

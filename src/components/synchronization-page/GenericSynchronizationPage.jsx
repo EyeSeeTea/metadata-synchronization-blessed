@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import _ from "lodash";
 import { withSnackbar, withLoading } from "d2-ui-components";
 import SyncIcon from "@material-ui/icons/Sync";
 import { withRouter } from "react-router-dom";
@@ -22,7 +21,6 @@ class GenericSynchronizationPage extends React.Component {
         history: PropTypes.object.isRequired,
         title: PropTypes.string.isRequired,
         isDelete: PropTypes.bool,
-        onSelectionChange: PropTypes.func,
     };
 
     state = {
@@ -41,16 +39,13 @@ class GenericSynchronizationPage extends React.Component {
     };
 
     changeSelection = metadataIds => {
-        const { onSelectionChange } = this.props;
-        if (onSelectionChange) onSelectionChange(metadataIds);
         this.setState({ metadataIds });
     };
 
     startSynchronization = () => {
-        const { initialSelection } = this.props;
         const { metadataIds } = this.state;
 
-        if (_.union(initialSelection, metadataIds).length > 0) {
+        if (metadataIds.length > 0) {
             this.setState({ syncDialogOpen: true });
         } else {
             this.props.snackbar.error(
@@ -69,10 +64,9 @@ class GenericSynchronizationPage extends React.Component {
     };
 
     handleSynchronization = async targetInstances => {
-        const { isDelete, loading, d2, initialSelection } = this.props;
-        const { metadataIds: stateMetadata } = this.state;
+        const { isDelete, loading, d2 } = this.props;
+        const { metadataIds } = this.state;
 
-        const metadataIds = _.union(initialSelection, stateMetadata);
         const action = isDelete ? startDelete : startSynchronization;
         loading.show(true, i18n.t("Synchronizing metadata"));
 
