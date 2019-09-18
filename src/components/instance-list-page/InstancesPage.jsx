@@ -4,15 +4,10 @@ import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
-import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../page-header/PageHeader";
 
 import Instance from "../../models/instance";
-
-const styles = () => ({
-    tableContainer: { marginTop: -10 },
-});
 
 class InstancesPage extends React.Component {
     static propTypes = {
@@ -20,6 +15,12 @@ class InstancesPage extends React.Component {
         snackbar: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
         loading: PropTypes.object.isRequired,
+    };
+
+    static model = {
+        modelValidations: {
+            url: { type: "URL" },
+        },
     };
 
     state = {
@@ -32,8 +33,6 @@ class InstancesPage extends React.Component {
         { name: "url", text: i18n.t("URL endpoint"), sortable: true },
         { name: "username", text: i18n.t("Username"), sortable: true },
     ];
-
-    initialSorting = ["id", "asc"];
 
     detailsFields = [
         { name: "name", text: i18n.t("Server name") },
@@ -128,7 +127,7 @@ class InstancesPage extends React.Component {
 
     render() {
         const { tableKey, toDelete } = this.state;
-        const { d2, classes } = this.props;
+        const { d2 } = this.props;
 
         return (
             <React.Fragment>
@@ -146,24 +145,20 @@ class InstancesPage extends React.Component {
                     }
                     saveText={i18n.t("Ok")}
                 />
-                <PageHeader title={i18n.t("Instances")} onBackClick={this.backHome} />
-                <div className={classes.tableContainer}>
-                    <ObjectsTable
-                        key={tableKey}
-                        d2={d2}
-                        model={d2.models.dataSet}
-                        columns={this.columns}
-                        detailsFields={this.detailsFields}
-                        pageSize={10}
-                        initialSorting={this.initialSorting}
-                        actions={this.actions}
-                        onButtonClick={this.createInstance}
-                        list={Instance.list}
-                    />
-                </div>
+                <PageHeader title={i18n.t("Instance Configuration")} onBackClick={this.backHome} />
+                <ObjectsTable
+                    key={tableKey}
+                    d2={d2}
+                    columns={this.columns}
+                    detailsFields={this.detailsFields}
+                    pageSize={10}
+                    actions={this.actions}
+                    onButtonClick={this.createInstance}
+                    list={Instance.list}
+                />
             </React.Fragment>
         );
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(InstancesPage))));
+export default withLoading(withSnackbar(withRouter(InstancesPage)));

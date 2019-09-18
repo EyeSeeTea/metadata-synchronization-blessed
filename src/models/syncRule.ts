@@ -1,7 +1,10 @@
 import _ from "lodash";
+import moment from "moment";
+import cronstrue from "cronstrue";
 import { generateUid } from "d2/uid";
 
 import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
+import isValidCronExpression from "../utils/validCronExpression";
 import { D2 } from "../types/d2";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { SynchronizationRule } from "../types/synchronization";
@@ -15,7 +18,15 @@ export default class SyncRule {
     constructor(syncRule: SynchronizationRule) {
         this.syncRule = {
             id: generateUid(),
-            ..._.pick(syncRule, ["id", "name", "description", "originInstance", "builder"]),
+            ..._.pick(syncRule, [
+                "id",
+                "name",
+                "description",
+                "builder",
+                "enabled",
+                "frequency",
+                "lastExecuted",
+            ]),
         };
     }
 
@@ -23,16 +34,8 @@ export default class SyncRule {
         return this.syncRule.name;
     }
 
-    public set name(name: string) {
-        this.syncRule.name = name;
-    }
-
-    public get description(): string {
-        return this.syncRule.description || "";
-    }
-
-    public set description(description: string) {
-        this.syncRule.description = description;
+    public get description(): string | undefined {
+        return this.syncRule.description;
     }
 
     public get metadataIds(): string[] {
@@ -43,16 +46,42 @@ export default class SyncRule {
         return this.syncRule.builder.targetInstances;
     }
 
+    public get enabled(): boolean {
+        return this.syncRule.enabled;
+    }
+
+    public get frequency(): string | undefined {
+        return this.syncRule.frequency;
+    }
+
+    public get lastExecuted(): Date | undefined {
+        return this.syncRule.lastExecuted ? new Date(this.syncRule.lastExecuted) : undefined;
+    }
+
+    public get readableFrequency(): string | undefined {
+        const { frequency } = this.syncRule;
+        return frequency && isValidCronExpression(frequency)
+            ? cronstrue.toString(frequency)
+            : undefined;
+    }
+
+    public get longFrequency(): string | undefined {
+        const { frequency } = this.syncRule;
+        return frequency && isValidCronExpression(frequency)
+            ? `${cronstrue.toString(frequency)} (${frequency})`
+            : undefined;
+    }
+
     public static create(): SyncRule {
         return new SyncRule({
             id: "",
             name: "",
             description: "",
-            originInstance: "",
             builder: {
                 targetInstances: [],
                 metadataIds: [],
             },
+            enabled: false,
         });
     }
 
@@ -70,16 +99,37 @@ export default class SyncRule {
         filters: SyncRuleTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { targetInstanceFilter } = filters;
+        const { targetInstanceFilter = null, enabledFilter = null, lastExecutedFilter = null } =
+            filters || {};
         const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
-        return targetInstanceFilter
-            ? {
-                  ...data,
-                  objects: _.filter(data.objects, e =>
-                      e.builder.targetInstances.includes(targetInstanceFilter)
-                  ),
-              }
-            : data;
+        const objects = _(data.objects)
+            .filter(rule =>
+                targetInstanceFilter
+                    ? rule.builder.targetInstances.includes(targetInstanceFilter)
+                    : true
+            )
+            .filter(rule => (enabledFilter ? rule.enabled && enabledFilter === "enabled" : true))
+            .filter(rule =>
+                lastExecutedFilter && rule.lastExecuted
+                    ? moment(lastExecutedFilter).isSameOrBefore(rule.lastExecuted)
+                    : true
+            )
+            .value();
+        return { ...data, objects };
+    }
+
+    public updateName(name: string): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            name,
+        });
+    }
+
+    public updateDescription(description: string): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            description,
+        });
     }
 
     public updateMetadataIds(metadataIds: string[]): SyncRule {
@@ -99,6 +149,27 @@ export default class SyncRule {
                 ...this.syncRule.builder,
                 targetInstances,
             },
+        });
+    }
+
+    public updateEnabled(enabled: boolean): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            enabled,
+        });
+    }
+
+    public updateFrequency(frequency: string): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            frequency,
+        });
+    }
+
+    public updateLastExecuted(lastExecuted: Date): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            lastExecuted,
         });
     }
 
@@ -128,7 +199,7 @@ export default class SyncRule {
                 this.metadataIds.length === 0
                     ? {
                           key: "cannot_be_empty",
-                          namespace: {},
+                          namespace: { element: "metadata element" },
                       }
                     : null,
             ]),
@@ -136,7 +207,23 @@ export default class SyncRule {
                 this.targetInstances.length === 0
                     ? {
                           key: "cannot_be_empty",
-                          namespace: {},
+                          namespace: { element: "instance" },
+                      }
+                    : null,
+            ]),
+            frequency: _.compact([
+                this.frequency && !isValidCronExpression(this.frequency)
+                    ? {
+                          key: "cron_expression_must_be_valid",
+                          namespace: { expression: "frequency" },
+                      }
+                    : null,
+            ]),
+            enabled: _.compact([
+                this.enabled && !isValidCronExpression(this.frequency)
+                    ? {
+                          key: "cannot_enable_without_valid",
+                          namespace: { expression: "frequency" },
                       }
                     : null,
             ]),

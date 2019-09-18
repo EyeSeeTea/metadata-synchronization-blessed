@@ -4,6 +4,7 @@ import SyncReport from "../models/syncReport";
 export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
+    syncRule?: string;
 }
 
 export interface ExportBuilder {
@@ -38,6 +39,7 @@ export interface SynchronizationReport {
     user: string;
     status: SynchronizationReportStatus;
     types: string[];
+    syncRule?: string;
 }
 
 export interface NestedRules {
@@ -54,6 +56,8 @@ export interface SynchronizationRule {
     id?: string;
     name: string;
     description?: string;
-    originInstance: string;
     builder: SynchronizationBuilder;
+    enabled: boolean;
+    lastExecuted?: Date;
+    frequency?: string;
 }

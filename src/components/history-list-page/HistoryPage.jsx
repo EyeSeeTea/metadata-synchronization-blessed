@@ -4,19 +4,15 @@ import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
 import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
-import { withStyles } from "@material-ui/core/styles";
 
 import PageHeader from "../page-header/PageHeader";
 import Dropdown from "../dropdown/Dropdown";
 import SyncReport from "../../models/syncReport";
+import SyncRule from "../../models/syncRule";
 import SyncSummary from "../sync-summary/SyncSummary";
 import { getValueForCollection } from "../../utils/d2-ui-components";
 
-const styles = () => ({
-    tableContainer: { marginTop: 10 },
-});
-
-class NotificationsPage extends React.Component {
+class HistoryPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -37,18 +33,8 @@ class NotificationsPage extends React.Component {
         summaryOpen: false,
         syncReport: SyncReport.create(),
         statusFilter: "",
+        syncRules: [],
     };
-
-    columns = [
-        { name: "user", text: i18n.t("User"), sortable: true },
-        { name: "date", text: i18n.t("Timestamp"), sortable: true },
-        {
-            name: "status",
-            text: i18n.t("Status"),
-            sortable: true,
-            getValue: notification => _.startCase(_.toLower(notification.status)),
-        },
-    ];
 
     initialSorting = ["date", "desc"];
 
@@ -87,7 +73,7 @@ class NotificationsPage extends React.Component {
         const { loading, d2 } = this.props;
         const { toDelete } = this.state;
 
-        loading.show(true, i18n.t("Deleting Notifications"));
+        loading.show(true, i18n.t("Deleting History Notifications"));
         const notifications = toDelete.map(data => new SyncReport(data));
 
         const results = [];
@@ -99,10 +85,12 @@ class NotificationsPage extends React.Component {
         this.setState({ tableKey: Math.random(), toDelete: null });
 
         if (_.some(results, ["status", false])) {
-            this.props.snackbar.error(i18n.t("Failed to delete some notifications"));
+            this.props.snackbar.error(i18n.t("Failed to delete some history notifications"));
         } else {
             this.props.snackbar.success(
-                i18n.t("Successfully deleted {{count}} notifications", { count: toDelete.length })
+                i18n.t("Successfully deleted {{count}} history notifications", {
+                    count: toDelete.length,
+                })
             );
         }
     };
@@ -141,6 +129,22 @@ class NotificationsPage extends React.Component {
         return getValueForCollection(notification.types.map(type => ({ name: type })));
     };
 
+    getSyncRuleEditLink = id => {
+        const { syncRules } = this.state;
+        const syncRule = syncRules.find(e => e.id === id);
+        if (!syncRule) return null;
+
+        return (
+            <a
+                href={`/#/synchronization-rules/edit/${syncRule.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Edit {syncRule.name}
+            </a>
+        );
+    };
+
     detailsFields = [
         { name: "user", text: i18n.t("User") },
         { name: "date", text: i18n.t("Timestamp") },
@@ -153,6 +157,34 @@ class NotificationsPage extends React.Component {
             name: "metadata",
             text: i18n.t("Metadata Types"),
             getValue: notification => this.getMetadataTypes(notification),
+        },
+        {
+            name: "syncRule",
+            text: i18n.t("Sync Rule"),
+            getValue: ({ syncRule }) => this.getSyncRuleEditLink(syncRule),
+        },
+    ];
+
+    getSyncRuleName = id => {
+        const { syncRules } = this.state;
+        const syncRule = syncRules.find(rule => rule.id === id) || {};
+        return syncRule.name;
+    };
+
+    columns = [
+        { name: "user", text: i18n.t("User"), sortable: true },
+        { name: "date", text: i18n.t("Timestamp"), sortable: true },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            sortable: true,
+            getValue: notification => _.startCase(_.toLower(notification.status)),
+        },
+        {
+            name: "syncRule",
+            text: i18n.t("Sync Rule"),
+            sortable: true,
+            getValue: ({ syncRule }) => this.getSyncRuleName(syncRule),
         },
     ];
 
@@ -174,29 +206,41 @@ class NotificationsPage extends React.Component {
         );
     };
 
+    async componentDidMount() {
+        const { d2, match } = this.props;
+        const id = match.params.id;
+
+        const { objects: syncRules } = await SyncRule.list(d2, null, { paging: false });
+        const syncReport = !!id ? await SyncReport.get(d2, id) : null;
+
+        this.setState({
+            syncRules,
+            syncReport: syncReport || SyncReport.create(),
+            summaryOpen: !!syncReport,
+        });
+    }
+
     render() {
         const { tableKey, toDelete, syncReport, summaryOpen, statusFilter } = this.state;
-        const { d2, classes } = this.props;
+        const { d2 } = this.props;
 
         return (
             <React.Fragment>
-                <PageHeader title={i18n.t("Notifications")} onBackClick={this.backHome} />
-                <div className={classes.tableContainer}>
-                    <ObjectsTable
-                        key={tableKey}
-                        d2={d2}
-                        model={NotificationsPage.model}
-                        columns={this.columns}
-                        detailsFields={this.detailsFields}
-                        pageSize={10}
-                        initialSorting={this.initialSorting}
-                        actions={this.actions}
-                        list={SyncReport.list}
-                        hideSearchBox={true}
-                        customFiltersComponent={this.renderCustomFilters}
-                        customFilters={{ statusFilter }}
-                    />
-                </div>
+                <PageHeader title={i18n.t("Synchronization History")} onBackClick={this.backHome} />
+                <ObjectsTable
+                    key={tableKey}
+                    d2={d2}
+                    model={HistoryPage.model}
+                    columns={this.columns}
+                    detailsFields={this.detailsFields}
+                    pageSize={10}
+                    initialSorting={this.initialSorting}
+                    actions={this.actions}
+                    list={SyncReport.list}
+                    hideSearchBox={true}
+                    customFiltersComponent={this.renderCustomFilters}
+                    customFilters={{ statusFilter }}
+                />
 
                 <SyncSummary
                     d2={d2}
@@ -209,12 +253,15 @@ class NotificationsPage extends React.Component {
                     isOpen={!!toDelete}
                     onSave={this.confirmDelete}
                     onCancel={this.cancelDelete}
-                    title={i18n.t("Delete Notifications?")}
+                    title={i18n.t("Delete History Notifications?")}
                     description={
                         toDelete
-                            ? i18n.t("Are you sure you want to delete {{count}} notifications?", {
-                                  count: toDelete.length,
-                              })
+                            ? i18n.t(
+                                  "Are you sure you want to delete {{count}} history notifications?",
+                                  {
+                                      count: toDelete.length,
+                                  }
+                              )
                             : ""
                     }
                     saveText={i18n.t("Ok")}
@@ -224,4 +271,4 @@ class NotificationsPage extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(withStyles(styles)(NotificationsPage))));
+export default withLoading(withSnackbar(withRouter(HistoryPage)));

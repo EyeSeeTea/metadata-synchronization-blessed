@@ -22,7 +22,7 @@ context("Landing page", () => {
 
     it("enters the Instance Configurator page", function() {
         cy.get(dataTest("page-instance-configurator")).click();
-        cy.get(dataTest("page-header-title")).contains("Instances");
+        cy.get(dataTest("page-header-title")).contains("Instance Configuration");
     });
 
     it("enters the Organisation Units Synchronization page", function() {
@@ -43,5 +43,15 @@ context("Landing page", () => {
     it("enter the Validation Rules Synchronization page", function() {
         cy.get(dataTest("page-sync/validationRules")).click();
         cy.get(dataTest("page-header-title")).contains("Validation Rules Synchronization");
+    });
+
+    it("enter the Synchronization Rules page", function() {
+        cy.get(dataTest("page-synchronization-rules")).click();
+        cy.get(dataTest("page-header-title")).contains("Synchronization Rules");
+    });
+
+    it("enter the Synchronization History page", function() {
+        cy.get(dataTest("page-history")).click();
+        cy.get(dataTest("page-header-title")).contains("Synchronization History");
     });
 });

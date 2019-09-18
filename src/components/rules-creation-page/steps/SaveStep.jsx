@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import _ from "lodash";
 import PropTypes from "prop-types";
-import { Button, LinearProgress, withStyles } from "@material-ui/core";
-import { ConfirmationDialog } from "d2-ui-components";
 import i18n from "@dhis2/d2-i18n";
+import { Button, LinearProgress, withStyles } from "@material-ui/core";
+import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
 
 import { getInstances } from "./InstanceSelectionStep";
+import { getBaseUrl } from "../../../utils/d2";
 import { getMetadata } from "../../../utils/synchronization";
+import { getValidationMessages } from "../../../utils/validations";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -27,18 +29,11 @@ const styles = () => ({
     },
 });
 
-const SaveStep = props => {
-    const { d2, syncRule, classes, onCancel } = props;
+const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [metadata, updateMetadata] = useState({});
     const [instanceOptions, setInstanceOptions] = useState([]);
-
-    const parseMetadata = async () => {
-        const metadata = await getMetadata(d2, syncRule.metadataIds, "id,name");
-        updateMetadata(metadata);
-        return metadata;
-    };
 
     const openCancelDialog = () => setCancelDialogOpen(true);
 
@@ -46,20 +41,22 @@ const SaveStep = props => {
 
     const save = async () => {
         setIsSaving(true);
-        await syncRule.save(d2);
-        setIsSaving(false);
-        onCancel();
-    };
 
-    const parseInstances = async () => {
-        const instances = await getInstances(d2);
-        setInstanceOptions(instances);
+        const errors = await getValidationMessages(d2, syncRule);
+        if (errors.length > 0) {
+            snackbar.error(errors.join("\n"));
+        } else {
+            await syncRule.save(d2);
+            onCancel();
+        }
+
+        setIsSaving(false);
     };
 
     useEffect(() => {
-        parseMetadata();
-        parseInstances();
-    }, [syncRule]);
+        getMetadata(getBaseUrl(d2), syncRule.metadataIds, "id,name").then(updateMetadata);
+        getInstances(d2).then(setInstanceOptions);
+    }, [d2, syncRule]);
 
     return (
         <React.Fragment>
@@ -82,9 +79,7 @@ const SaveStep = props => {
                 {_.keys(metadata).map(metadataType => (
                     <LiEntry
                         key={metadataType}
-                        label={`${d2.models[metadataType].displayName} [${
-                            metadata[metadataType].length
-                        }]`}
+                        label={`${d2.models[metadataType].displayName} [${metadata[metadataType].length}]`}
                     >
                         <ul>
                             {metadata[metadataType].map(({ id, name }) => (
@@ -108,6 +103,15 @@ const SaveStep = props => {
                         })}
                     </ul>
                 </LiEntry>
+
+                <LiEntry
+                    label={i18n.t("Scheduling")}
+                    value={syncRule.enabled ? i18n.t("Enabled") : i18n.t("Disabled")}
+                />
+
+                {syncRule.longFrequency && (
+                    <LiEntry label={i18n.t("Frequency")} value={syncRule.longFrequency} />
+                )}
             </ul>
 
             <Button onClick={openCancelDialog} variant="contained">
@@ -126,8 +130,9 @@ SaveStep.propTypes = {
     syncRule: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
     onCancel: PropTypes.func.isRequired,
+    snackbar: PropTypes.object.isRequired,
 };
 
 SaveStep.defaultProps = {};
 
-export default withStyles(styles)(SaveStep);
+export default withSnackbar(withStyles(styles)(SaveStep));

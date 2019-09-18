@@ -9,7 +9,8 @@ import OrganisationUnitPage from "../synchronization-page/OrganisationUnitPage";
 import DataElementPage from "../synchronization-page/DataElementPage";
 import IndicatorPage from "../synchronization-page/IndicatorPage";
 import ValidationRulePage from "../synchronization-page/ValidationRulePage";
-import NotificationsPage from "../notification-list-page/NotificationsPage";
+import DeletedObjectsPage from "../synchronization-page/DeletedObjectsPage";
+import HistoryPage from "../history-list-page/HistoryPage";
 import SyncRulesWizard from "../rules-creation-page/SyncRulesWizard";
 import SyncRulesConfigurator from "../rules-list-page/SyncRulesPage";
 
@@ -54,9 +55,11 @@ class Root extends React.Component {
                 />
 
                 <Route
-                    path="/notifications"
-                    render={props => <NotificationsPage d2={d2} {...props} />}
+                    path="/sync/deleted"
+                    render={props => <DeletedObjectsPage d2={d2} {...props} />}
                 />
+
+                <Route path="/history/:id?" render={props => <HistoryPage d2={d2} {...props} />} />
 
                 <Route
                     path={"/synchronization-rules/:action(new|edit)/:id?"}

@@ -9,6 +9,7 @@
 # production
 manifest.webapp
 /build
+*.zip
 
 # misc
 .DS_Store
@@ -19,10 +20,12 @@ manifest.webapp
 *.sublime-project
 *.sublime-workspace
 *.code-workspace
+src/react-app*.d.ts
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
 
 src/locales/
 
@@ -30,8 +33,9 @@ src/locales/
 cypress/screenshots/
 cypress/videos/
 
-# IntelliJ
-.idea/*
+# IDE Configuration
+/.idea/
+.vscode/
 
-# App config
-/public/app-config.json
+# Configuration
+/**/app-config.json

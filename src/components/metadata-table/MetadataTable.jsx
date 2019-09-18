@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
+import _ from "lodash";
 import memoize from "nano-memoize";
 import { DatePicker, ObjectsTable, withSnackbar } from "d2-ui-components";
 import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
@@ -8,7 +9,7 @@ import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
 import Dropdown from "../dropdown/Dropdown";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import { d2BaseModelDetails } from "../../utils/d2";
-import { listByIds } from "../../logic/metadata";
+import { listByIds, getOrgUnitSubtree } from "../../logic/metadata";
 
 const styles = {
     checkbox: {
@@ -61,8 +62,21 @@ class MetadataTable extends React.Component {
         groupFilterData: [],
         levelFilterData: [],
         metadataIds: [],
+        orgUnitChildren: [],
         showOnlySelectedItems: false,
         tableKey: Math.random(),
+    };
+
+    selectChildren = async selectedOUs => {
+        const { d2 } = this.props;
+
+        const ids = new Set();
+        for (const selectedOU of selectedOUs) {
+            const subtree = await getOrgUnitSubtree(d2, selectedOU.id);
+            subtree.forEach(id => ids.add(id));
+        }
+
+        this.setState({ orgUnitChildren: Array.from(ids), tableKey: Math.random() });
     };
 
     actions = [
@@ -71,6 +85,17 @@ class MetadataTable extends React.Component {
             text: i18n.t("Details"),
             multiple: false,
             type: "details",
+        },
+        {
+            name: "select-children",
+            text: i18n.t("Select with children subtree"),
+            multiple: true,
+            onClick: this.selectChildren,
+            icon: "done_all",
+            isActive: () => {
+                const { model } = this.state;
+                return model.getMetadataType() === "organisationUnit";
+            },
         },
     ];
 
@@ -118,12 +143,13 @@ class MetadataTable extends React.Component {
         const {
             initialModel: model = this.defaultModel,
             initialSelection: metadataIds = [],
+            isDelete = false,
         } = this.props;
 
         this.setState({
             model,
             metadataIds,
-            showOnlySelectedItems: metadataIds.length > 0,
+            showOnlySelectedItems: !isDelete && metadataIds.length > 0,
             tableKey: Math.random(),
         });
     }
@@ -175,7 +201,7 @@ class MetadataTable extends React.Component {
     };
 
     renderCustomFilters = () => {
-        const { d2, classes, models } = this.props;
+        const { d2, classes, models, isDelete } = this.props;
         const {
             model,
             groupFilterData,
@@ -201,7 +227,9 @@ class MetadataTable extends React.Component {
                 {!showOnlySelectedItems && (
                     <DatePicker
                         key={"date-filter"}
-                        placeholder={i18n.t("Last updated date")}
+                        placeholder={
+                            isDelete ? i18n.t("Deleted date") : i18n.t("Last updated date")
+                        }
                         value={lastUpdatedDate}
                         onChange={this.changeDateFilter}
                         isFilter
@@ -228,17 +256,19 @@ class MetadataTable extends React.Component {
                     />
                 )}
 
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            className={classes.checkbox}
-                            checked={showOnlySelectedItems}
-                            data-test="show-only-selected-items"
-                            onChange={this.showSelectedItems}
-                        />
-                    }
-                    label={i18n.t("Only selected items")}
-                />
+                {!isDelete && (
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                className={classes.checkbox}
+                                checked={showOnlySelectedItems}
+                                data-test="show-only-selected-items"
+                                onChange={this.showSelectedItems}
+                            />
+                        }
+                        label={i18n.t("Only selected items")}
+                    />
+                )}
             </React.Fragment>
         );
     };
@@ -260,7 +290,9 @@ class MetadataTable extends React.Component {
 
     render() {
         const { d2, initialSelection, ...rest } = this.props;
-        const { model, filters, tableKey } = this.state;
+        const { model, filters, tableKey, orgUnitChildren } = this.state;
+
+        const selection = _.union(initialSelection, orgUnitChildren);
 
         return (
             <ObjectsTable
@@ -271,12 +303,13 @@ class MetadataTable extends React.Component {
                 detailsFields={model.getDetails()}
                 pageSize={20}
                 initialSorting={model.getInitialSorting()}
+                initialSelection={selection}
                 actions={this.actions}
                 list={this.list}
                 onSelectionChange={this.onSelectionChange}
                 customFiltersComponent={this.renderCustomFilters}
                 customFilters={filters}
-                initialSelection={initialSelection}
+                forceSelectionColumn={true}
                 {...rest}
             />
         );

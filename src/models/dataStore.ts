@@ -3,20 +3,23 @@ import axios from "axios";
 
 import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { getBaseUrl } from "../utils/d2";
 
 const dataStoreNamespace = "metadata-synchronization";
 
 export async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Promise<any> {
+    const baseUrl = getBaseUrl(d2);
+
     try {
         const response = await axios.get(
-            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+            baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
             { withCredentials: true }
         );
         return response.data;
     } catch (error) {
         if (error.response && error.response.status === 404) {
             await axios.post(
-                d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
+                baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
                 defaultValue,
                 { withCredentials: true }
             );
@@ -28,19 +31,16 @@ export async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: a
 }
 
 export async function saveDataStore(d2: D2, dataStoreKey: string, value: any): Promise<void> {
+    const baseUrl = getBaseUrl(d2);
     try {
-        await axios.put(
-            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
-            value,
-            { withCredentials: true }
-        );
+        await axios.put(baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`, value, {
+            withCredentials: true,
+        });
     } catch (error) {
         if (error.response && error.response.status === 404) {
-            await axios.post(
-                d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
-                value,
-                { withCredentials: true }
-            );
+            await axios.post(baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`, value, {
+                withCredentials: true,
+            });
         } else {
             throw error;
         }
@@ -49,10 +49,9 @@ export async function saveDataStore(d2: D2, dataStoreKey: string, value: any): P
 
 export async function deleteDataStore(d2: D2, dataStoreKey: string): Promise<void> {
     try {
-        await axios.delete(
-            d2.Api.getApi().baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
-            { withCredentials: true }
-        );
+        await axios.delete(getBaseUrl(d2) + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`, {
+            withCredentials: true,
+        });
     } catch (error) {
         if (!error.response || error.response.status !== 404) {
             throw error;
@@ -75,16 +74,20 @@ export async function getPaginatedData(
     filters: TableFilters,
     pagination: TablePagination
 ): Promise<TableList> {
-    const rawData = await getDataStore(d2, dataStoreKey, []);
     const { search = null } = filters || {};
-    const filteredData = _.filter(rawData, o =>
-        _(o)
-            .keys()
-            .filter(k => typeof o[k] === "string")
-            .some(k => o[k].toLowerCase().includes(search ? search.toLowerCase() : ""))
-    );
+    const { page = 1, pageSize = 20, paging = true, sorting = ["id", "asc"] } = pagination || {};
 
-    const { sorting = ["id", "asc"] } = pagination || {};
+    const rawData = await getDataStore(d2, dataStoreKey, []);
+
+    const filteredData = search
+        ? _.filter(rawData, o =>
+              _(o)
+                  .keys()
+                  .filter(k => typeof o[k] === "string")
+                  .some(k => o[k].toLowerCase().includes(search.toLowerCase()))
+          )
+        : rawData;
+
     const [field, direction] = sorting;
     const sortedData = _.orderBy(
         filteredData,
@@ -92,11 +95,12 @@ export async function getPaginatedData(
         [direction as "asc" | "desc"]
     );
 
-    const { page = 1, pageSize = 20 } = pagination || {};
-    const currentlyShown = (page - 1) * pageSize;
-    const pageCount = Math.ceil(sortedData.length / pageSize);
     const total = sortedData.length;
-    const paginatedData = _.slice(sortedData, currentlyShown, currentlyShown + pageSize);
+    const pageCount = paging ? Math.ceil(sortedData.length / pageSize) : 1;
+    const firstItem = paging ? (page - 1) * pageSize : 0;
+    const lastItem = paging ? firstItem + pageSize : sortedData.length;
+    const paginatedData = _.slice(sortedData, firstItem, lastItem);
+
     return { objects: paginatedData, pager: { page, pageCount, total } };
 }
 

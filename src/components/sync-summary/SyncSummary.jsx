@@ -127,56 +127,61 @@ class SyncSummary extends React.Component {
                     fullWidth={true}
                 >
                     <DialogContent>
-                        {results.map((responseElement, i) => (
-                            <ExpansionPanel
-                                defaultExpanded={results.length === 1}
-                                className={classes.expansionPanel}
-                                key={`row-${i}`}
-                            >
-                                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography className={classes.expansionPanelHeading1}>
-                                        {`${responseElement.instance.name} (${
-                                            responseElement.instance.url
-                                        })`}
-                                    </Typography>
-                                    <Typography className={classes.expansionPanelHeading2}>
-                                        {`${i18n.t("Status")}: ${responseElement.status}`}
-                                    </Typography>
-                                </ExpansionPanelSummary>
+                        {results &&
+                            results.map((responseElement, i) => (
+                                <ExpansionPanel
+                                    defaultExpanded={results.length === 1}
+                                    className={classes.expansionPanel}
+                                    key={`row-${i}`}
+                                >
+                                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                        <Typography className={classes.expansionPanelHeading1}>
+                                            {`${responseElement.instance.name} (${responseElement.instance.url})`}
+                                        </Typography>
+                                        <Typography className={classes.expansionPanelHeading2}>
+                                            {`${i18n.t("Status")}: ${responseElement.status}`}
+                                        </Typography>
+                                    </ExpansionPanelSummary>
 
-                                <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                                    <Typography variant="overline">{i18n.t("Summary")}</Typography>
-                                </ExpansionPanelDetails>
+                                    <ExpansionPanelDetails
+                                        className={classes.expansionPanelDetails}
+                                    >
+                                        <Typography variant="overline">
+                                            {i18n.t("Summary")}
+                                        </Typography>
+                                    </ExpansionPanelDetails>
 
-                                <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+                                    <ExpansionPanelDetails
+                                        className={classes.expansionPanelDetails}
+                                    >
+                                        {responseElement.report &&
+                                            SyncSummary.buildSummaryTable([
+                                                ...responseElement.report.typeStats,
+                                                { type: i18n.t("Total"), ...responseElement.stats },
+                                            ])}
+                                    </ExpansionPanelDetails>
+
                                     {responseElement.report &&
-                                        SyncSummary.buildSummaryTable([
-                                            ...responseElement.report.typeStats,
-                                            { type: i18n.t("Total"), ...responseElement.stats },
-                                        ])}
-                                </ExpansionPanelDetails>
-
-                                {responseElement.report &&
-                                    responseElement.report.messages.length > 0 && (
-                                        <div>
-                                            <ExpansionPanelDetails
-                                                className={classes.expansionPanelDetails}
-                                            >
-                                                <Typography variant="overline">
-                                                    {i18n.t("Messages")}
-                                                </Typography>
-                                            </ExpansionPanelDetails>
-                                            <ExpansionPanelDetails
-                                                className={classes.expansionPanelDetails}
-                                            >
-                                                {SyncSummary.buildMessageTable(
-                                                    _.take(responseElement.report.messages, 10)
-                                                )}
-                                            </ExpansionPanelDetails>
-                                        </div>
-                                    )}
-                            </ExpansionPanel>
-                        ))}
+                                        responseElement.report.messages.length > 0 && (
+                                            <div>
+                                                <ExpansionPanelDetails
+                                                    className={classes.expansionPanelDetails}
+                                                >
+                                                    <Typography variant="overline">
+                                                        {i18n.t("Messages")}
+                                                    </Typography>
+                                                </ExpansionPanelDetails>
+                                                <ExpansionPanelDetails
+                                                    className={classes.expansionPanelDetails}
+                                                >
+                                                    {SyncSummary.buildMessageTable(
+                                                        _.take(responseElement.report.messages, 10)
+                                                    )}
+                                                </ExpansionPanelDetails>
+                                            </div>
+                                        )}
+                                </ExpansionPanel>
+                            ))}
 
                         <ExpansionPanel>
                             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>

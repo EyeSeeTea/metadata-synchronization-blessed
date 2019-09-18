@@ -12,7 +12,6 @@ import {
     NestedRules,
     SynchronizationBuilder,
     SynchronizationReportStatus,
-    SynchronizationResult,
     SynchronizationState,
 } from "../types/synchronization";
 import {
@@ -22,8 +21,9 @@ import {
     getAllReferences,
     getMetadata,
     postMetadata,
+    cleanImportResponse,
 } from "../utils/synchronization";
-import { getClassName } from "../utils/d2";
+import SyncRule from "../models/syncRule";
 
 async function exportMetadata(d2: D2, originalBuilder: ExportBuilder): Promise<MetadataPackage> {
     const visitedIds: Set<string> = new Set();
@@ -37,7 +37,8 @@ async function exportMetadata(d2: D2, originalBuilder: ExportBuilder): Promise<M
         const nestedIncludeRules: NestedRules = buildNestedRules(includeRules);
 
         // Get all the required metadata
-        const syncMetadata = await getMetadata(d2, ids);
+        const { baseUrl } = d2.Api.getApi();
+        const syncMetadata = await getMetadata(baseUrl, ids);
         const elements = syncMetadata[model.plural] || [];
 
         for (const element of elements) {
@@ -72,57 +73,17 @@ async function exportMetadata(d2: D2, originalBuilder: ExportBuilder): Promise<M
     return recursiveExport(originalBuilder);
 }
 
-async function importMetadata(
-    instance: Instance,
-    metadataPackage: MetadataPackage
-): Promise<SynchronizationResult> {
-    const importResult = await postMetadata(instance, metadataPackage);
-
-    const typeStats: any[] = [];
-    const messages: any[] = [];
-
-    if (importResult.typeReports) {
-        importResult.typeReports.forEach(report => {
-            const { klass, stats, objectReports = [] } = report;
-
-            typeStats.push({
-                ...stats,
-                type: getClassName(klass),
-            });
-
-            objectReports.forEach((detail: any) => {
-                const { uid, errorReports = [] } = detail;
-
-                messages.push(
-                    ..._.take(errorReports, 1).map((error: any) => ({
-                        uid,
-                        type: getClassName(error.mainKlass),
-                        property: error.errorProperty,
-                        message: error.message,
-                    }))
-                );
-            });
-        });
-    }
-
-    return {
-        ..._.pick(importResult, ["status", "stats"]),
-        instance: _.pick(instance, ["id", "name", "url", "username"]),
-        report: { typeStats, messages },
-        date: new Date(),
-    };
-}
-
 export async function* startSynchronization(
     d2: D2,
     builder: SynchronizationBuilder
 ): AsyncIterableIterator<SynchronizationState> {
-    const { targetInstances: targetInstanceIds, metadataIds } = builder;
+    const { targetInstances: targetInstanceIds, metadataIds, syncRule } = builder;
+    const { baseUrl } = d2.Api.getApi();
 
     // Phase 1: Export and package metadata from origin instance
     console.debug("Start synchronization process");
     yield { message: i18n.t("Fetching metadata from origin instance") };
-    const metadata = await getMetadata(d2, metadataIds, "id");
+    const metadata = await getMetadata(baseUrl, metadataIds, "id");
     const exportPromises = _.keys(metadata)
         .map(type => {
             const myClass = d2ModelFactory(d2, type);
@@ -148,6 +109,7 @@ export async function* startSynchronization(
         user: d2.currentUser.username,
         types: _.keys(metadata),
         status: "RUNNING" as SynchronizationReportStatus,
+        syncRule,
     });
     syncReport.addSyncResult(
         ...targetInstances.map(instance => ({
@@ -166,13 +128,21 @@ export async function* startSynchronization(
             }),
         };
         console.debug("Start import on destination instance", instance);
-        const result = await importMetadata(instance, metadataPackage);
-        syncReport.addSyncResult(result);
+        const response = await postMetadata(instance, metadataPackage);
+
+        syncReport.addSyncResult(cleanImportResponse(response, instance));
         console.debug("Finished importing data on instance", instance);
         yield { syncReport };
     }
 
-    // Phase 4: Update parent task status
+    // Phase 4: Update sync rule last executed date
+    if (syncRule) {
+        const oldRule = await SyncRule.get(d2, syncRule);
+        const updatedRule = oldRule.updateLastExecuted(new Date());
+        await updatedRule.save(d2);
+    }
+
+    // Phase 5: Update parent task status
     syncReport.setStatus(syncReport.hasErrors() ? "FAILURE" : "DONE");
     yield { syncReport, done: true };
 

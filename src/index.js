@@ -5,6 +5,7 @@ import axios from "axios";
 import { config, getManifest, getUserSettings, init } from "d2";
 import { HashRouter } from "react-router-dom";
 import i18n from "@dhis2/d2-i18n";
+import { DataProvider } from "@dhis2/app-runtime";
 import "font-awesome/css/font-awesome.min.css";
 
 import App from "./components/app/App";
@@ -42,35 +43,20 @@ async function getBaseUrl() {
     }
 }
 
-function loadHeaderBarTranslations(d2) {
-    const keys = _([
-        "app_search_placeholder",
-        "manage_my_apps",
-        "no_results_found",
-        "settings",
-        "profile",
-        "account",
-        "help",
-        "log_out",
-        "about_dhis2",
-    ]);
-    keys.each(s => d2.i18n.strings.add(s));
-    d2.i18n.load();
-}
-
 async function main() {
     const baseUrl = await getBaseUrl();
     const apiUrl = baseUrl.replace(/\/*$/, "") + "/api";
     try {
         const d2 = await init({ baseUrl: apiUrl });
         window.d2 = d2; // Make d2 available in the console
-        loadHeaderBarTranslations(d2);
         const userSettings = await getUserSettings();
         configI18n(userSettings);
         const appConfig = await axios.get("app-config.json").then(res => res.data);
         ReactDOM.render(
             <HashRouter>
-                <App d2={d2} appConfig={appConfig} />
+                <DataProvider baseUrl={baseUrl} apiVersion={d2.system.version.minor}>
+                    <App d2={d2} appConfig={appConfig} />
+                </DataProvider>
             </HashRouter>,
             document.getElementById("root")
         );
