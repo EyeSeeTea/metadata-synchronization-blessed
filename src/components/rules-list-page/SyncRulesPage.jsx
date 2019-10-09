@@ -19,6 +19,7 @@ import { startSynchronization } from "../../logic/synchronization";
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../dropdown/Dropdown";
+import SharingDialog from "../sharing-dialog/SharingDialog";
 import { getValidationMessages } from "../../utils/validations";
 
 class SyncRulesPage extends React.Component {
@@ -201,6 +202,19 @@ class SyncRulesPage extends React.Component {
         }
     };
 
+    openSharingSettings = object => {
+        this.setState({
+            sharingSettingsObject: {
+                object,
+                meta: { allowPublicAccess: true, allowExternalAccess: false },
+            },
+        });
+    };
+
+    closeSharingSettings = () => {
+        this.setState({ sharingSettingsObject: null });
+    };
+
     actions = [
         {
             name: "details",
@@ -234,6 +248,13 @@ class SyncRulesPage extends React.Component {
             onClick: this.toggleEnable,
             icon: "timer",
         },
+        {
+            name: "sharingSettings",
+            text: i18n.t("Sharing settings"),
+            multiple: false,
+            onClick: this.openSharingSettings,
+            icon: "share",
+        },
     ];
 
     closeSummary = () => this.setState({ syncSummaryOpen: false });
@@ -243,6 +264,27 @@ class SyncRulesPage extends React.Component {
     changeEnabledFilter = event => this.setState({ enabledFilter: event.target.value });
 
     changeLastExecutedFilter = moment => this.setState({ lastExecutedFilter: moment });
+
+    onSearchRequest = key =>
+        this.props.d2.Api.getApi()
+            .get("sharing/search", { key })
+            .then(searchResult => searchResult);
+
+    onSharingChanged = async (updatedAttributes, onSuccess) => {
+        const sharingSettingsObject = {
+            meta: this.state.sharingSettingsObject.meta,
+            object: {
+                ...this.state.sharingSettingsObject.object,
+                ...updatedAttributes,
+            },
+        };
+
+        const syncRule = SyncRule.build(sharingSettingsObject.object);
+        await syncRule.save(this.props.d2);
+
+        this.setState({ sharingSettingsObject });
+        if (onSuccess) onSuccess();
+    };
 
     renderCustomFilters = () => {
         const {
@@ -292,6 +334,7 @@ class SyncRulesPage extends React.Component {
             targetInstanceFilter,
             enabledFilter,
             lastExecutedFilter,
+            sharingSettingsObject,
         } = this.state;
         const { d2 } = this.props;
 
@@ -332,6 +375,15 @@ class SyncRulesPage extends React.Component {
                     response={syncReport}
                     isOpen={syncSummaryOpen}
                     handleClose={this.closeSummary}
+                />
+
+                <SharingDialog
+                    isOpen={!!sharingSettingsObject}
+                    isDataShareable={true}
+                    sharedObject={sharingSettingsObject}
+                    onCancel={this.closeSharingSettings}
+                    onSharingChanged={this.onSharingChanged}
+                    onSearchRequest={this.onSearchRequest}
                 />
             </React.Fragment>
         );

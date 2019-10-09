@@ -26,6 +26,9 @@ export default class SyncRule {
                 "enabled",
                 "frequency",
                 "lastExecuted",
+                "publicAccess",
+                "userAccesses",
+                "userGroupAccesses",
             ]),
         };
     }
@@ -82,6 +85,9 @@ export default class SyncRule {
                 metadataIds: [],
             },
             enabled: false,
+            publicAccess: "rw----",
+            userAccesses: [],
+            userGroupAccesses: [],
         });
     }
 

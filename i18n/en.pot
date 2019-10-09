@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-09-17T10:45:09.309Z\n"
-"PO-Revision-Date: 2019-09-17T10:45:09.309Z\n"
+"POT-Creation-Date: 2019-10-08T15:37:48.096Z\n"
+"PO-Revision-Date: 2019-10-08T15:37:48.096Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -378,6 +378,9 @@ msgstr ""
 msgid "Toggle scheduling"
 msgstr ""
 
+msgid "Sharing settings"
+msgstr ""
+
 msgid "Last executed date"
 msgstr ""
 
@@ -391,6 +394,48 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "External access"
+msgstr ""
+
+msgid "Anyone can view without login"
+msgstr ""
+
+msgid "No access"
+msgstr ""
+
+msgid "Public access"
+msgstr ""
+
+msgid "METADATA"
+msgstr ""
+
+msgid "Can edit and view"
+msgstr ""
+
+msgid "Can view only"
+msgstr ""
+
+msgid "DATA"
+msgstr ""
+
+msgid "Can capture and view"
+msgstr ""
+
+msgid "Created by"
+msgstr ""
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Who has access"
+msgstr ""
+
+msgid "Add users and user groups"
+msgstr ""
+
+msgid "Enter names"
+msgstr ""
 
 msgid "Synchronize Metadata"
 msgstr ""
