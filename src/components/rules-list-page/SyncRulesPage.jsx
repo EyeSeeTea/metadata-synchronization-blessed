@@ -379,7 +379,7 @@ class SyncRulesPage extends React.Component {
 
                 <SharingDialog
                     isOpen={!!sharingSettingsObject}
-                    isDataShareable={true}
+                    isDataShareable={false}
                     sharedObject={sharingSettingsObject}
                     onCancel={this.closeSharingSettings}
                     onSharingChanged={this.onSharingChanged}
