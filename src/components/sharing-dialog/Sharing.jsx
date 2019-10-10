@@ -9,6 +9,13 @@ import UserSearch from "./UserSearch";
 import { PublicAccess, ExternalAccess, GroupAccess } from "./Access";
 
 const styles = {
+    title: {
+        fontSize: "24px",
+        fontWeight: 300,
+        color: "rgba(0, 0, 0, 0.87)",
+        padding: "16px 0px 5px",
+        margin: "0px",
+    },
     createdBy: {
         color: "#818181",
     },
@@ -113,7 +120,7 @@ class Sharing extends React.Component {
 
         return (
             <div>
-                <Typography variant="h5">{displayName || name}</Typography>
+                <h2 className={classes.title}>{displayName || name}</h2>
                 {user && (
                     <div className={classes.createdBy}>
                         {`${i18n.t("Created by")}: ${user.name}`}

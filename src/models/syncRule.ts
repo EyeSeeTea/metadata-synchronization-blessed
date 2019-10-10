@@ -85,7 +85,7 @@ export default class SyncRule {
                 metadataIds: [],
             },
             enabled: false,
-            publicAccess: "rw----",
+            publicAccess: "rw------",
             userAccesses: [],
             userGroupAccesses: [],
         });
