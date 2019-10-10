@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-10-08T15:37:48.096Z\n"
-"PO-Revision-Date: 2019-10-08T15:37:48.096Z\n"
+"POT-Creation-Date: 2019-10-10T16:55:48.806Z\n"
+"PO-Revision-Date: 2019-10-10T16:55:48.806Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -425,10 +425,10 @@ msgstr ""
 msgid "Created by"
 msgstr ""
 
-msgid "Unknown"
+msgid "Who has access"
 msgstr ""
 
-msgid "Who has access"
+msgid "Close"
 msgstr ""
 
 msgid "Add users and user groups"

@@ -7,6 +7,7 @@ import Popover from "@material-ui/core/Popover";
 import NotInterestedIcon from "@material-ui/icons/NotInterested";
 import CreateIcon from "@material-ui/icons/Create";
 import VisibilityIcon from "@material-ui/icons/Visibility";
+import { withStyles } from "@material-ui/core/styles";
 import i18n from "@dhis2/d2-i18n";
 
 import PermissionOption from "./PermissionOption";
@@ -155,7 +156,9 @@ PermissionPicker.defaultProps = {
     disabled: false,
 };
 
-const OptionHeader = ({ text }) => <div style={styles.optionHeader}>{text.toUpperCase()}</div>;
+const OptionHeader = withStyles(styles)(({ text, classes }) => (
+    <div className={classes.optionHeader}>{text.toUpperCase()}</div>
+));
 
 OptionHeader.propTypes = {
     text: PropTypes.string.isRequired,

@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
+import { withStyles } from "@material-ui/core/styles";
 import i18n from "@dhis2/d2-i18n";
 
 import UserSearch from "./UserSearch";
@@ -104,6 +105,7 @@ class Sharing extends React.Component {
             externalAccess,
         } = this.props.sharedObject.object;
         const { allowPublicAccess, allowExternalAccess } = this.props.sharedObject.meta;
+        const { classes } = this.props;
 
         const accessIds = (userAccesses || [])
             .map(access => access.id)
@@ -112,13 +114,15 @@ class Sharing extends React.Component {
         return (
             <div>
                 <h2>{displayName || name}</h2>
-                {user && <div style={styles.createdBy}>
-                    {`${i18n.t("Created by")}: ${user.name}`}
-                </div>}
-                <div style={styles.titleBodySpace} />
+                {user && (
+                    <div className={classes.createdBy}>
+                        {`${i18n.t("Created by")}: ${user.name}`}
+                    </div>
+                )}
+                <div className={classes.titleBodySpace} />
                 <Typography variant="subtitle1">{i18n.t("Who has access")}</Typography>
                 <Divider />
-                <div style={styles.rules} ref={this.setAccessListRef}>
+                <div className={classes.rules} ref={this.setAccessListRef}>
                     <PublicAccess
                         access={publicAccess}
                         disabled={!allowPublicAccess}
@@ -196,4 +200,4 @@ Sharing.propTypes = {
     onSearch: PropTypes.func.isRequired,
 };
 
-export default Sharing;
+export default withStyles(styles)(Sharing);

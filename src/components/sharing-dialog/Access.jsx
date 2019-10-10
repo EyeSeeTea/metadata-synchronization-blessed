@@ -6,6 +6,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import GroupIcon from "@material-ui/icons/Group";
 import PublicIcon from "@material-ui/icons/Public";
 import BusinessIcon from "@material-ui/icons/Business";
+import { withStyles } from "@material-ui/core/styles";
 import i18n from "@dhis2/d2-i18n";
 
 import PermissionPicker from "./PermissionPicker";
@@ -51,32 +52,35 @@ const useAccessObjectFormat = props => ({
     onChange: newAccess => props.onChange(accessObjectToString(newAccess)),
 });
 
-export const Access = ({
-    access,
-    accessType,
-    accessOptions,
-    primaryText,
-    secondaryText,
-    onChange,
-    onRemove,
-    disabled,
-}) => (
-    <div style={styles.accessView}>
-        <SvgIcon userType={accessType} />
-        <div style={styles.accessDescription}>
-            <div>{primaryText}</div>
-            <div style={{ color: "#818181", paddingTop: 4 }}>{secondaryText || " "}</div>
+export const Access = withStyles(styles)(
+    ({
+        access,
+        accessType,
+        accessOptions,
+        primaryText,
+        secondaryText,
+        onChange,
+        onRemove,
+        disabled,
+        classes,
+    }) => (
+        <div className={classes.accessView}>
+            <SvgIcon userType={accessType} />
+            <div className={classes.accessDescription}>
+                <div>{primaryText}</div>
+                <div style={{ color: "#818181", paddingTop: 4 }}>{secondaryText || " "}</div>
+            </div>
+            <PermissionPicker
+                access={access}
+                accessOptions={accessOptions}
+                onChange={onChange}
+                disabled={disabled}
+            />
+            <IconButton disabled={!onRemove} onClick={onRemove || (() => {})}>
+                <ClearIcon color={!onRemove ? "disabled" : "action"} />
+            </IconButton>
         </div>
-        <PermissionPicker
-            access={access}
-            accessOptions={accessOptions}
-            onChange={onChange}
-            disabled={disabled}
-        />
-        <IconButton disabled={!onRemove} onClick={onRemove || (() => {})}>
-            <ClearIcon color={!onRemove ? "disabled" : "action"} />
-        </IconButton>
-    </div>
+    )
 );
 
 Access.propTypes = {

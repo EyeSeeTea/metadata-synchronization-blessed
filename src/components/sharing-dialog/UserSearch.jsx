@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Subject } from "rxjs/Subject";
 import { timer } from "rxjs/observable/timer";
 import { debounce } from "rxjs/operators";
+import { withStyles } from "@material-ui/core/styles";
 import i18n from "@dhis2/d2-i18n";
 
 import { accessObjectToString } from "./utils";
@@ -118,10 +119,11 @@ class UserSearch extends Component {
     };
 
     render() {
+        const { classes } = this.props;
         return (
-            <div style={styles.container}>
-                <div style={styles.title}>{i18n.t("Add users and user groups")}</div>
-                <div style={styles.innerContainer}>
+            <div className={classes.container}>
+                <div className={classes.title}>{i18n.t("Add users and user groups")}</div>
+                <div className={classes.innerContainer}>
                     <AutoComplete
                         suggestions={this.state.searchResult}
                         placeholderText={i18n.t("Enter names")}
@@ -160,4 +162,4 @@ UserSearch.propTypes = {
     currentAccessIds: PropTypes.array.isRequired,
 };
 
-export default UserSearch;
+export default withStyles(styles)(UserSearch);
