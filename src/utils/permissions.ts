@@ -6,9 +6,30 @@ export enum AppRoles {
     METADATA_SYNC_ADMINISTRATOR,
 }
 
-export const hasUserRole = async (d2: D2, userRole: AppRoles) => {
+export const getUserInfo = async (
+    d2: D2
+): Promise<{
+    userGroups: any[];
+    userRoles: any[];
+    id: string;
+    name: string;
+    username: string;
+    isAdmin: boolean;
+}> => {
+    const userGroups = await d2.currentUser.getUserGroups();
     const userRoles = await d2.currentUser.getUserRoles();
-    return userRoles.toArray().find((role: any) => role.name === AppRoles[userRole]);
+    const isAdmin = userRoles
+        .toArray()
+        .find((role: any) => role.name === AppRoles[AppRoles.METADATA_SYNC_ADMINISTRATOR]);
+
+    return {
+        userGroups: userGroups.toArray(),
+        userRoles: userRoles.toArray(),
+        id: d2.currentUser.id,
+        name: d2.currentUser.name,
+        username: d2.currentUser.username,
+        isAdmin,
+    };
 };
 
 export const initializeAppRoles = async (baseUrl: string) => {

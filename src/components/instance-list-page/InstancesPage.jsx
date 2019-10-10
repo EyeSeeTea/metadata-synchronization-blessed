@@ -7,7 +7,7 @@ import { withRouter } from "react-router-dom";
 
 import PageHeader from "../page-header/PageHeader";
 import Instance from "../../models/instance";
-import { hasUserRole, AppRoles } from "../../utils/permissions";
+import { getUserInfo } from "../../utils/permissions";
 
 class InstancesPage extends React.Component {
     static propTypes = {
@@ -26,14 +26,14 @@ class InstancesPage extends React.Component {
     state = {
         tableKey: Math.random(),
         toDelete: null,
-        isUserAdmin: false,
+        isAdmin: false,
     };
 
     async componentDidMount() {
         const { d2 } = this.props;
-        const isUserAdmin = await hasUserRole(d2, AppRoles.METADATA_SYNC_ADMINISTRATOR);
+        const { isAdmin } = await getUserInfo(d2);
 
-        this.setState({ isUserAdmin });
+        this.setState({ isAdmin });
     }
 
     columns = [
@@ -84,14 +84,14 @@ class InstancesPage extends React.Component {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            isActive: () => this.state.isUserAdmin,
+            isActive: () => this.state.isAdmin,
             onClick: this.editInstance,
         },
         {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: true,
-            isActive: () => this.state.isUserAdmin,
+            isActive: () => this.state.isAdmin,
             onClick: this.deleteInstance,
         },
         {
@@ -136,7 +136,7 @@ class InstancesPage extends React.Component {
     };
 
     render() {
-        const { tableKey, toDelete, isUserAdmin } = this.state;
+        const { tableKey, toDelete, isAdmin } = this.state;
         const { d2 } = this.props;
 
         return (
@@ -163,7 +163,7 @@ class InstancesPage extends React.Component {
                     detailsFields={this.detailsFields}
                     pageSize={10}
                     actions={this.actions}
-                    onButtonClick={isUserAdmin ? this.createInstance : null}
+                    onButtonClick={isAdmin ? this.createInstance : null}
                     list={Instance.list}
                 />
             </React.Fragment>

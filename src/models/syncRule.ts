@@ -5,6 +5,7 @@ import { generateUid } from "d2/uid";
 
 import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
 import isValidCronExpression from "../utils/validCronExpression";
+import { getUserInfo } from "../utils/permissions";
 import { D2 } from "../types/d2";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { SynchronizationRule } from "../types/synchronization";
@@ -107,8 +108,21 @@ export default class SyncRule {
     ): Promise<TableList> {
         const { targetInstanceFilter = null, enabledFilter = null, lastExecutedFilter = null } =
             filters || {};
+        const userInfo = await getUserInfo(d2);
         const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
         const objects = _(data.objects)
+            .filter(
+                rule =>
+                    userInfo.isAdmin ||
+                    rule.publicAccess.substring(0, 2).includes("r") ||
+                    _(rule.userAccesses)
+                        .filter(({ access }) => access.substring(0, 2).includes("r"))
+                        .find(({ id }: { id: string }) => id === userInfo.id) ||
+                    _(rule.userGroupAccesses)
+                        .filter(({ access }) => access.substring(0, 2).includes("r"))
+                        .intersectionBy(userInfo.userGroups, "id")
+                        .value().length > 0
+            )
             .filter(rule =>
                 targetInstanceFilter
                     ? rule.builder.targetInstances.includes(targetInstanceFilter)
