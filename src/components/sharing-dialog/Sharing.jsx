@@ -113,7 +113,7 @@ class Sharing extends React.Component {
 
         return (
             <div>
-                <h2>{displayName || name}</h2>
+                <Typography variant="h5">{displayName || name}</Typography>
                 {user && (
                     <div className={classes.createdBy}>
                         {`${i18n.t("Created by")}: ${user.name}`}
