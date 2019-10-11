@@ -1,39 +1,40 @@
 import axios from "axios";
+import memoize from "nano-memoize";
 
 import { D2 } from "../types/d2";
 
 export enum AppRoles {
-    METADATA_SYNC_ADMINISTRATOR,
+    METADATA_SYNC_ADMINISTRATOR = "METADATA_SYNC_ADMINISTRATOR",
 }
 
-export const getUserInfo = async (
+export const isUserAdmin = memoize(async (d2: D2) => {
+    const userRoles = await d2.currentUser.getUserRoles();
+    return userRoles
+        .toArray()
+        .find((role: any) => role.name === AppRoles.METADATA_SYNC_ADMINISTRATOR);
+});
+
+export const getUserInfo = memoize(async (
     d2: D2
 ): Promise<{
     userGroups: any[];
-    userRoles: any[];
     id: string;
     name: string;
     username: string;
-    isAdmin: boolean;
 }> => {
     const userGroups = await d2.currentUser.getUserGroups();
-    const userRoles = await d2.currentUser.getUserRoles();
-    const isAdmin = userRoles
-        .toArray()
-        .find((role: any) => role.name === AppRoles[AppRoles.METADATA_SYNC_ADMINISTRATOR]);
 
     return {
         userGroups: userGroups.toArray(),
-        userRoles: userRoles.toArray(),
         id: d2.currentUser.id,
         name: d2.currentUser.name,
         username: d2.currentUser.username,
-        isAdmin,
     };
-};
+});
 
 export const initializeAppRoles = async (baseUrl: string) => {
     for (const role in AppRoles) {
+        console.log(role, AppRoles);
         const { userRoles } = (await axios.get(baseUrl + "/metadata", {
             withCredentials: true,
             params: {
@@ -50,6 +51,8 @@ export const initializeAppRoles = async (baseUrl: string) => {
                     userRoles: [
                         {
                             name: role,
+                            description:
+                                "APP - This role gives administrative access to the Metadata Sync app",
                             publicAccess: "--------",
                         },
                     ],

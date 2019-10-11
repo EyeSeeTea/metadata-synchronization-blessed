@@ -49,9 +49,7 @@ class SyncRulesPage extends React.Component {
         lastExecutedFilter: null,
         syncReport: SyncReport.create(),
         syncSummaryOpen: false,
-        userInfo: {
-            isAdmin: false,
-        },
+        userInfo: {},
     };
 
     getTargetInstances = ruleData => {
@@ -222,7 +220,8 @@ class SyncRulesPage extends React.Component {
     };
 
     verifyUserHasPermissions = (d2, rule) => {
-        const { id: userId, userGroups, isAdmin } = this.state.userInfo;
+        const { isAdmin } =this.props;
+        const { id: userId, userGroups } = this.state.userInfo;
         const { publicAccess = "--------", userAccesses = [], userGroupAccesses = [] } = rule;
 
         return (
@@ -362,9 +361,8 @@ class SyncRulesPage extends React.Component {
             enabledFilter,
             lastExecutedFilter,
             sharingSettingsObject,
-            userInfo,
         } = this.state;
-        const { d2 } = this.props;
+        const { d2, isAdmin } = this.props;
 
         return (
             <React.Fragment>
@@ -378,7 +376,7 @@ class SyncRulesPage extends React.Component {
                     pageSize={10}
                     actions={this.actions}
                     list={SyncRule.list}
-                    onButtonClick={userInfo.isAdmin ? this.createRule : null}
+                    onButtonClick={isAdmin ? this.createRule : null}
                     customFiltersComponent={this.renderCustomFilters}
                     customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
                 />

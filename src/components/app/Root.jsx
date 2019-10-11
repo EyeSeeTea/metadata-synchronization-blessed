@@ -13,82 +13,69 @@ import DeletedObjectsPage from "../synchronization-page/DeletedObjectsPage";
 import HistoryPage from "../history-list-page/HistoryPage";
 import SyncRulesWizard from "../rules-creation-page/SyncRulesWizard";
 import SyncRulesConfigurator from "../rules-list-page/SyncRulesPage";
-import { getUserInfo } from "../../utils/permissions";
 
 class Root extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
     };
 
-    state = {
-        isAdmin: false,
-    };
-
-    componentDidMount = async () => {
-        const { d2 } = this.props;
-        const { isAdmin } = await getUserInfo(d2);
-
-        this.setState({ isAdmin });
-    };
-
     render() {
-        const { d2 } = this.props;
-        const { isAdmin } = this.state;
+        const { isAdmin } = this.props;
 
         return (
             <Switch>
                 {isAdmin && (
                     <Route
                         path={"/instance-configurator/:action(new|edit)/:id?"}
-                        render={props => <InstanceFormBuilder d2={d2} {...props} />}
+                        render={props => <InstanceFormBuilder {...this.props} {...props} />}
                     />
                 )}
 
                 <Route
                     path="/instance-configurator"
-                    render={props => <InstanceConfigurator d2={d2} {...props} />}
+                    render={props => <InstanceConfigurator {...this.props} {...props} />}
                 />
 
                 <Route
                     path="/sync/organisationUnits"
-                    render={props => <OrganisationUnitPage d2={d2} {...props} />}
+                    render={props => <OrganisationUnitPage {...this.props} {...props} />}
                 />
 
                 <Route
                     path="/sync/dataElements"
-                    render={props => <DataElementPage d2={d2} {...props} />}
+                    render={props => <DataElementPage {...this.props} {...props} />}
                 />
 
                 <Route
                     path="/sync/indicators"
-                    render={props => <IndicatorPage d2={d2} {...props} />}
+                    render={props => <IndicatorPage {...this.props} {...props} />}
                 />
 
                 <Route
                     path="/sync/validationRules"
-                    render={props => <ValidationRulePage d2={d2} {...props} />}
+                    render={props => <ValidationRulePage {...this.props} {...props} />}
                 />
 
                 <Route
                     path="/sync/deleted"
-                    render={props => <DeletedObjectsPage d2={d2} {...props} />}
+                    render={props => <DeletedObjectsPage {...this.props} {...props} />}
                 />
 
-                <Route path="/history/:id?" render={props => <HistoryPage d2={d2} {...props} />} />
+                <Route path="/history/:id?" render={props => <HistoryPage {...this.props} {...props} />} />
 
                 {isAdmin && (
                     <Route
                         path={"/synchronization-rules/:action(new|edit)/:id?"}
-                        render={props => <SyncRulesWizard d2={d2} {...props} />}
+                        render={props => <SyncRulesWizard {...this.props} {...props} />}
                     />
                 )}
 
                 <Route
                     path="/synchronization-rules"
-                    render={props => <SyncRulesConfigurator d2={d2} {...props} />}
+                    render={props => <SyncRulesConfigurator {...this.props} {...props} />}
                 />
 
-                <Route render={() => <LandingPage d2={d2} />} />
+                <Route render={() => <LandingPage {...this.props} />} />
             </Switch>
         );
     }

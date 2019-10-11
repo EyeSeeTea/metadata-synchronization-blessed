@@ -7,7 +7,6 @@ import { withRouter } from "react-router-dom";
 
 import PageHeader from "../page-header/PageHeader";
 import Instance from "../../models/instance";
-import { getUserInfo } from "../../utils/permissions";
 
 class InstancesPage extends React.Component {
     static propTypes = {
@@ -26,15 +25,7 @@ class InstancesPage extends React.Component {
     state = {
         tableKey: Math.random(),
         toDelete: null,
-        isAdmin: false,
     };
-
-    async componentDidMount() {
-        const { d2 } = this.props;
-        const { isAdmin } = await getUserInfo(d2);
-
-        this.setState({ isAdmin });
-    }
 
     columns = [
         { name: "name", text: i18n.t("Server name"), sortable: true },
@@ -84,14 +75,14 @@ class InstancesPage extends React.Component {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            isActive: () => this.state.isAdmin,
+            isActive: () => this.props.isAdmin,
             onClick: this.editInstance,
         },
         {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: true,
-            isActive: () => this.state.isAdmin,
+            isActive: () => this.props.isAdmin,
             onClick: this.deleteInstance,
         },
         {
@@ -136,8 +127,8 @@ class InstancesPage extends React.Component {
     };
 
     render() {
-        const { tableKey, toDelete, isAdmin } = this.state;
-        const { d2 } = this.props;
+        const { tableKey, toDelete } = this.state;
+        const { d2, isAdmin } = this.props;
 
         return (
             <React.Fragment>
