@@ -13,21 +13,36 @@ import DeletedObjectsPage from "../synchronization-page/DeletedObjectsPage";
 import HistoryPage from "../history-list-page/HistoryPage";
 import SyncRulesWizard from "../rules-creation-page/SyncRulesWizard";
 import SyncRulesConfigurator from "../rules-list-page/SyncRulesPage";
+import { getUserInfo } from "../../utils/permissions";
 
 class Root extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
     };
 
+    state = {
+        isAdmin: false,
+    };
+
+    componentDidMount = async () => {
+        const { d2 } = this.props;
+        const { isAdmin } = await getUserInfo(d2);
+
+        this.setState({ isAdmin });
+    };
+
     render() {
         const { d2 } = this.props;
+        const { isAdmin } = this.state;
 
         return (
             <Switch>
-                <Route
-                    path={"/instance-configurator/:action(new|edit)/:id?"}
-                    render={props => <InstanceFormBuilder d2={d2} {...props} />}
-                />
+                {isAdmin && (
+                    <Route
+                        path={"/instance-configurator/:action(new|edit)/:id?"}
+                        render={props => <InstanceFormBuilder d2={d2} {...props} />}
+                    />
+                )}
 
                 <Route
                     path="/instance-configurator"
@@ -61,10 +76,12 @@ class Root extends React.Component {
 
                 <Route path="/history/:id?" render={props => <HistoryPage d2={d2} {...props} />} />
 
-                <Route
-                    path={"/synchronization-rules/:action(new|edit)/:id?"}
-                    render={props => <SyncRulesWizard d2={d2} {...props} />}
-                />
+                {isAdmin && (
+                    <Route
+                        path={"/synchronization-rules/:action(new|edit)/:id?"}
+                        render={props => <SyncRulesWizard d2={d2} {...props} />}
+                    />
+                )}
 
                 <Route
                     path="/synchronization-rules"
