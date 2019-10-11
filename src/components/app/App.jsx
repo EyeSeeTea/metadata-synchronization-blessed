@@ -28,8 +28,8 @@ class App extends Component {
     };
 
     state = {
-        isUserAdmin: false
-    }
+        isUserAdmin: false,
+    };
 
     async componentDidMount() {
         const { d2, appConfig } = this.props;
@@ -50,7 +50,7 @@ class App extends Component {
         initializeAppRoles(d2.Api.getApi().baseUrl);
 
         const isAdmin = await isUserAdmin(d2);
-        this.setState({ isAdmin})
+        this.setState({ isAdmin });
     }
 
     render() {

@@ -14,23 +14,25 @@ export const isUserAdmin = memoize(async (d2: D2) => {
         .find((role: any) => role.name === AppRoles.METADATA_SYNC_ADMINISTRATOR);
 });
 
-export const getUserInfo = memoize(async (
-    d2: D2
-): Promise<{
-    userGroups: any[];
-    id: string;
-    name: string;
-    username: string;
-}> => {
-    const userGroups = await d2.currentUser.getUserGroups();
+export const getUserInfo = memoize(
+    async (
+        d2: D2
+    ): Promise<{
+        userGroups: any[];
+        id: string;
+        name: string;
+        username: string;
+    }> => {
+        const userGroups = await d2.currentUser.getUserGroups();
 
-    return {
-        userGroups: userGroups.toArray(),
-        id: d2.currentUser.id,
-        name: d2.currentUser.name,
-        username: d2.currentUser.username,
-    };
-});
+        return {
+            userGroups: userGroups.toArray(),
+            id: d2.currentUser.id,
+            name: d2.currentUser.name,
+            username: d2.currentUser.username,
+        };
+    }
+);
 
 export const initializeAppRoles = async (baseUrl: string) => {
     for (const role in AppRoles) {

@@ -90,12 +90,7 @@ class GenericSynchronizationPage extends React.Component {
 
     render() {
         const { d2, isAdmin, title, models, ...rest } = this.props;
-        const {
-            syncDialogOpen,
-            syncSummaryOpen,
-            importResponse,
-            metadataIds,
-        } = this.state;
+        const { syncDialogOpen, syncSummaryOpen, importResponse, metadataIds } = this.state;
 
         return (
             <React.Fragment>

@@ -61,7 +61,10 @@ class Root extends React.Component {
                     render={props => <DeletedObjectsPage {...this.props} {...props} />}
                 />
 
-                <Route path="/history/:id?" render={props => <HistoryPage {...this.props} {...props} />} />
+                <Route
+                    path="/history/:id?"
+                    render={props => <HistoryPage {...this.props} {...props} />}
+                />
 
                 {isAdmin && (
                     <Route

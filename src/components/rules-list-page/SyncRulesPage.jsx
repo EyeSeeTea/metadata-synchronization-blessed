@@ -220,7 +220,7 @@ class SyncRulesPage extends React.Component {
     };
 
     verifyUserHasPermissions = (d2, rule) => {
-        const { isAdmin } =this.props;
+        const { isAdmin } = this.props;
         const { id: userId, userGroups } = this.state.userInfo;
         const { publicAccess = "--------", userAccesses = [], userGroupAccesses = [] } = rule;
 
