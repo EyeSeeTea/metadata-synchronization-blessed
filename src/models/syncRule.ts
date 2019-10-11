@@ -207,6 +207,9 @@ export default class SyncRule {
     }
 
     public async save(d2: D2): Promise<void> {
+        const userInfo = await getUserInfo(d2);
+        if (!this.isVisibleToUser(userInfo, "WRITE")) return;
+
         const exists = !!this.syncRule.id;
         const element = exists ? this.syncRule : { ...this.syncRule, id: generateUid() };
 

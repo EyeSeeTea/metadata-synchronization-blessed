@@ -8,6 +8,7 @@ import { deleteData, getData, getDataById, getPaginatedData, saveData } from "./
 import { D2, Response } from "../types/d2";
 import { Validation } from "../types/validations";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { isAppAdmin } from "../utils/permissions";
 
 const instancesDataStoreKey = "instances";
 
@@ -97,6 +98,13 @@ export default class Instance {
     }
 
     public async save(d2: D2): Promise<Response> {
+        const appAdmin = await isAppAdmin(d2);
+        if (!appAdmin)
+            return {
+                status: false,
+                error: new Error("You do not have permissions to save Instance"),
+            };
+
         const instance = await this.encryptPassword();
         const exists = !!instance.data.id;
         const element = exists ? instance.data : { ...instance.data, id: generateUid() };
