@@ -5,7 +5,7 @@ import { generateUid } from "d2/uid";
 
 import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
 import isValidCronExpression from "../utils/validCronExpression";
-import { getUserInfo, isUserAdmin } from "../utils/permissions";
+import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
 import { D2 } from "../types/d2";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { SynchronizationRule } from "../types/synchronization";
@@ -109,23 +109,12 @@ export default class SyncRule {
         const { targetInstanceFilter = null, enabledFilter = null, lastExecutedFilter = null } =
             filters || {};
 
+        const globalAdmin = isGlobalAdmin(d2);
         const userInfo = await getUserInfo(d2);
-        const isAdmin = await isUserAdmin(d2);
 
         const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
         const objects = _(data.objects)
-            .filter(
-                rule =>
-                    isAdmin ||
-                    rule.publicAccess.substring(0, 2).includes("r") ||
-                    _(rule.userAccesses)
-                        .filter(({ access }) => access.substring(0, 2).includes("r"))
-                        .find(({ id }: { id: string }) => id === userInfo.id) ||
-                    _(rule.userGroupAccesses)
-                        .filter(({ access }) => access.substring(0, 2).includes("r"))
-                        .intersectionBy(userInfo.userGroups, "id")
-                        .value().length > 0
-            )
+            .filter(rule => globalAdmin || rule.isVisibleToUser(userInfo))
             .filter(rule =>
                 targetInstanceFilter
                     ? rule.builder.targetInstances.includes(targetInstanceFilter)
@@ -194,6 +183,27 @@ export default class SyncRule {
             ...this.syncRule,
             lastExecuted,
         });
+    }
+
+    public isVisibleToUser(userInfo: UserInfo, permission: "READ" | "WRITE" = "READ") {
+        const { id: userId, userGroups } = userInfo;
+        const token = permission === "READ" ? "r" : "w";
+        const {
+            publicAccess = "--------",
+            userAccesses = [],
+            userGroupAccesses = [],
+        } = this.syncRule;
+
+        return (
+            publicAccess.substring(0, 2).includes(token) ||
+            _(userAccesses)
+                .filter(({ access }) => access.substring(0, 2).includes(token))
+                .find(({ id }) => id === userId) ||
+            _(userGroupAccesses)
+                .filter(({ access }) => access.substring(0, 2).includes(token))
+                .intersectionBy(userGroups, "id")
+                .value().length > 0
+        );
     }
 
     public async save(d2: D2): Promise<void> {

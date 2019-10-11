@@ -5,24 +5,49 @@ import { D2 } from "../types/d2";
 
 export enum AppRoles {
     METADATA_SYNC_ADMINISTRATOR = "METADATA_SYNC_ADMINISTRATOR",
+    METADATA_SYNC_EXECUTOR = "METADATA_SYNC_EXECUTOR",
 }
 
-export const isUserAdmin = memoize(async (d2: D2) => {
-    const userRoles = await d2.currentUser.getUserRoles();
-    return userRoles
-        .toArray()
-        .find((role: any) => role.name === AppRoles.METADATA_SYNC_ADMINISTRATOR);
+export interface UserInfo {
+    userGroups: any[];
+    id: string;
+    name: string;
+    username: string;
+}
+
+const getUserRoles = memoize(async (d2: D2) => {
+    return d2.currentUser.getUserRoles();
 });
 
+export const isGlobalAdmin = async (d2: D2) => {
+    const userRoles = await getUserRoles(d2);
+    return !!userRoles
+        .toArray()
+        .find((role: any) => role.authorities.find((authority: string) => authority === "ALL"));
+};
+
+export const isAppAdmin = async (d2: D2) => {
+    const userRoles = await getUserRoles(d2);
+    const globalAdmin = await isGlobalAdmin(d2);
+    return (
+        globalAdmin ||
+        !!userRoles
+            .toArray()
+            .find((role: any) => role.name === AppRoles.METADATA_SYNC_ADMINISTRATOR)
+    );
+};
+
+export const isAppExecutor = async (d2: D2) => {
+    const userRoles = await getUserRoles(d2);
+    const appAdmin = await isAppAdmin(d2);
+    return (
+        appAdmin ||
+        !!userRoles.toArray().find((role: any) => role.name === AppRoles.METADATA_SYNC_EXECUTOR)
+    );
+};
+
 export const getUserInfo = memoize(
-    async (
-        d2: D2
-    ): Promise<{
-        userGroups: any[];
-        id: string;
-        name: string;
-        username: string;
-    }> => {
+    async (d2: D2): Promise<UserInfo> => {
         const userGroups = await d2.currentUser.getUserGroups();
 
         return {

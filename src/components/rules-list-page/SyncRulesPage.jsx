@@ -21,7 +21,7 @@ import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../dropdown/Dropdown";
 import SharingDialog from "../sharing-dialog/SharingDialog";
 import { getValidationMessages } from "../../utils/validations";
-import { getUserInfo } from "../../utils/permissions";
+import { getUserInfo, isGlobalAdmin, isAppAdmin, isAppExecutor } from "../../utils/permissions";
 
 class SyncRulesPage extends React.Component {
     static propTypes = {
@@ -50,6 +50,9 @@ class SyncRulesPage extends React.Component {
         syncReport: SyncReport.create(),
         syncSummaryOpen: false,
         userInfo: {},
+        globalAdmin: false,
+        appAdmin: false,
+        appExecutor: false,
     };
 
     getTargetInstances = ruleData => {
@@ -121,8 +124,11 @@ class SyncRulesPage extends React.Component {
         const { d2 } = this.props;
         const { objects: allInstances } = await Instance.list(d2, null, null);
         const userInfo = await getUserInfo(d2);
+        const globalAdmin = await isGlobalAdmin(d2);
+        const appAdmin = await isAppAdmin(d2);
+        const appExecutor = await isAppExecutor(d2);
 
-        this.setState({ allInstances, userInfo });
+        this.setState({ allInstances, userInfo, globalAdmin, appAdmin, appExecutor });
     }
 
     backHome = () => {
@@ -219,22 +225,17 @@ class SyncRulesPage extends React.Component {
         this.setState({ sharingSettingsObject: null });
     };
 
-    verifyUserHasPermissions = (d2, rule) => {
-        const { isAdmin } = this.props;
-        const { id: userId, userGroups } = this.state.userInfo;
-        const { publicAccess = "--------", userAccesses = [], userGroupAccesses = [] } = rule;
+    verifyUserCanEdit = (d2, data) => {
+        const { userInfo, globalAdmin } = this.state;
+        const rule = SyncRule.build(data);
 
-        return (
-            isAdmin ||
-            publicAccess.substring(0, 2).includes("w") ||
-            _(userAccesses)
-                .filter(({ access }) => access.substring(0, 2).includes("w"))
-                .find(({ id }) => id === userId) ||
-            _(userGroupAccesses)
-                .filter(({ access }) => access.substring(0, 2).includes("w"))
-                .intersectionBy(userGroups, "id")
-                .value().length > 0
-        );
+        return globalAdmin || rule.isVisibleToUser(userInfo, "WRITE");
+    };
+
+    verifyUserCanExecute = (d2, rule) => {
+        const { appExecutor } = this.state;
+
+        return appExecutor;
     };
 
     actions = [
@@ -248,20 +249,21 @@ class SyncRulesPage extends React.Component {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            isActive: this.verifyUserHasPermissions,
+            isActive: this.verifyUserCanEdit,
             onClick: this.editRule,
         },
         {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: true,
-            isActive: this.verifyUserHasPermissions,
+            isActive: this.verifyUserCanEdit,
             onClick: this.deleteSyncRules,
         },
         {
             name: "execute",
             text: i18n.t("Execute"),
             multiple: false,
+            isActive: this.verifyUserCanExecute,
             onClick: this.executeRule,
             icon: "settings_input_antenna",
         },
@@ -269,7 +271,7 @@ class SyncRulesPage extends React.Component {
             name: "toggleEnable",
             text: i18n.t("Toggle scheduling"),
             multiple: false,
-            isActive: this.verifyUserHasPermissions,
+            isActive: this.verifyUserCanEdit,
             onClick: this.toggleEnable,
             icon: "timer",
         },
@@ -277,7 +279,7 @@ class SyncRulesPage extends React.Component {
             name: "sharingSettings",
             text: i18n.t("Sharing settings"),
             multiple: false,
-            isActive: this.verifyUserHasPermissions,
+            isActive: this.verifyUserCanEdit,
             onClick: this.openSharingSettings,
             icon: "share",
         },
@@ -361,8 +363,9 @@ class SyncRulesPage extends React.Component {
             enabledFilter,
             lastExecutedFilter,
             sharingSettingsObject,
+            appAdmin,
         } = this.state;
-        const { d2, isAdmin } = this.props;
+        const { d2 } = this.props;
 
         return (
             <React.Fragment>
@@ -376,7 +379,7 @@ class SyncRulesPage extends React.Component {
                     pageSize={10}
                     actions={this.actions}
                     list={SyncRule.list}
-                    onButtonClick={isAdmin ? this.createRule : null}
+                    onButtonClick={appAdmin ? this.createRule : null}
                     customFiltersComponent={this.renderCustomFilters}
                     customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
                 />

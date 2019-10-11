@@ -12,6 +12,7 @@ import SyncDialog from "../sync-dialog/SyncDialog";
 import SyncSummary from "../sync-summary/SyncSummary";
 import PageHeader from "../page-header/PageHeader";
 import SyncReport from "../../models/syncReport";
+import { isAppAdmin } from "../../utils/permissions";
 
 class GenericSynchronizationPage extends React.Component {
     static propTypes = {
@@ -28,7 +29,15 @@ class GenericSynchronizationPage extends React.Component {
         importResponse: SyncReport.create(),
         syncDialogOpen: false,
         syncSummaryOpen: false,
+        appAdmin: false,
     };
+
+    async componentDidMount() {
+        const { d2 } = this.props;
+        const appAdmin = await isAppAdmin(d2);
+
+        this.setState({ appAdmin });
+    }
 
     goHome = () => {
         this.props.history.push("/");
@@ -89,8 +98,14 @@ class GenericSynchronizationPage extends React.Component {
     };
 
     render() {
-        const { d2, isAdmin, title, models, ...rest } = this.props;
-        const { syncDialogOpen, syncSummaryOpen, importResponse, metadataIds } = this.state;
+        const { d2, title, models, ...rest } = this.props;
+        const {
+            syncDialogOpen,
+            syncSummaryOpen,
+            importResponse,
+            metadataIds,
+            appAdmin,
+        } = this.state;
 
         return (
             <React.Fragment>
@@ -102,7 +117,7 @@ class GenericSynchronizationPage extends React.Component {
                     initialModel={models[0]}
                     initialSelection={metadataIds}
                     notifyNewSelection={this.changeSelection}
-                    onButtonClick={isAdmin ? this.startSynchronization : null}
+                    onButtonClick={appAdmin ? this.startSynchronization : null}
                     buttonLabel={<SyncIcon />}
                     {...rest}
                 />

@@ -13,18 +13,30 @@ import DeletedObjectsPage from "../synchronization-page/DeletedObjectsPage";
 import HistoryPage from "../history-list-page/HistoryPage";
 import SyncRulesWizard from "../rules-creation-page/SyncRulesWizard";
 import SyncRulesConfigurator from "../rules-list-page/SyncRulesPage";
+import { isAppAdmin } from "../../utils/permissions";
 
 class Root extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
     };
 
+    state = {
+        appAdmin: false,
+    };
+
+    async componentDidMount() {
+        const { d2 } = this.props;
+        const appAdmin = await isAppAdmin(d2);
+
+        this.setState({ appAdmin });
+    }
+
     render() {
-        const { isAdmin } = this.props;
+        const { appAdmin } = this.state;
 
         return (
             <Switch>
-                {isAdmin && (
+                {appAdmin && (
                     <Route
                         path={"/instance-configurator/:action(new|edit)/:id?"}
                         render={props => <InstanceFormBuilder {...this.props} {...props} />}
@@ -66,7 +78,7 @@ class Root extends React.Component {
                     render={props => <HistoryPage {...this.props} {...props} />}
                 />
 
-                {isAdmin && (
+                {appAdmin && (
                     <Route
                         path={"/synchronization-rules/:action(new|edit)/:id?"}
                         render={props => <SyncRulesWizard {...this.props} {...props} />}

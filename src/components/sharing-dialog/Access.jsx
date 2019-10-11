@@ -76,7 +76,7 @@ export const Access = withStyles(styles)(
                 onChange={onChange}
                 disabled={disabled}
             />
-            <IconButton disabled={!onRemove} onClick={onRemove || (() => {})}>
+            <IconButton disabled={!onRemove} onClick={onRemove}>
                 <ClearIcon color={!onRemove ? "disabled" : "action"} />
             </IconButton>
         </div>
@@ -95,8 +95,8 @@ Access.propTypes = {
 };
 
 Access.defaultProps = {
-    secondaryText: undefined,
-    onRemove: undefined,
+    secondaryText: null,
+    onRemove: null,
     disabled: false,
 };
 

@@ -13,7 +13,7 @@ import Share from "../share/Share";
 import Instance from "../../models/instance";
 import { muiTheme } from "./themes/dhis2.theme";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
-import { initializeAppRoles, isUserAdmin } from "../../utils/permissions";
+import { initializeAppRoles } from "../../utils/permissions";
 import "./App.css";
 
 const generateClassName = createGenerateClassName({
@@ -25,10 +25,6 @@ class App extends Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         appConfig: PropTypes.object.isRequired,
-    };
-
-    state = {
-        isUserAdmin: false,
     };
 
     async componentDidMount() {
@@ -47,15 +43,11 @@ class App extends Component {
             Instance.setEncryptionKey(appConfig.encryptionKey);
         }
 
-        initializeAppRoles(d2.Api.getApi().baseUrl);
-
-        const isAdmin = await isUserAdmin(d2);
-        this.setState({ isAdmin });
+        await initializeAppRoles(d2.Api.getApi().baseUrl);
     }
 
     render() {
         const { d2, appConfig } = this.props;
-        const { isAdmin } = this.state;
         const showShareButton = _(appConfig).get("appearance.showShareButton") || false;
         const showHeader = !process.env.REACT_APP_CYPRESS;
 
@@ -71,7 +63,7 @@ class App extends Component {
                                     )}
 
                                     <div id="app" className="content">
-                                        <Root d2={d2} isAdmin={isAdmin} />
+                                        <Root d2={d2} />
                                     </div>
 
                                     <Share visible={showShareButton} />
