@@ -227,15 +227,20 @@ class SyncRulesPage extends React.Component {
 
     verifyUserCanEdit = (d2, data) => {
         const { userInfo, globalAdmin } = this.state;
-        const rule = SyncRule.build(data);
+        if (globalAdmin) return true;
 
-        return globalAdmin || rule.isVisibleToUser(userInfo, "WRITE");
+        const rules = Array.isArray(data) ? data : [data];
+        for (const ruleData of rules) {
+            const rule = SyncRule.build(ruleData);
+
+            if (!rule.isVisibleToUser(userInfo, "WRITE")) return false;
+        }
+        
+        return true;
     };
 
     verifyUserCanExecute = (d2, rule) => {
-        const { appExecutor } = this.state;
-
-        return appExecutor;
+        return this.state.appExecutor;
     };
 
     actions = [

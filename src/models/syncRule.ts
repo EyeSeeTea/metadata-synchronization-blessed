@@ -8,7 +8,7 @@ import isValidCronExpression from "../utils/validCronExpression";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
 import { D2 } from "../types/d2";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { SynchronizationRule } from "../types/synchronization";
+import { SynchronizationRule, SharingSetting } from "../types/synchronization";
 import { Validation } from "../types/validations";
 
 const dataStoreKey = "rules";
@@ -76,6 +76,18 @@ export default class SyncRule {
             : undefined;
     }
 
+    public get publicAccess(): string {
+        return this.syncRule.publicAccess;
+    }
+
+    public get userAccesses(): SharingSetting[] {
+        return this.syncRule.userAccesses;
+    }
+
+    public get userGroupAccesses(): SharingSetting[] {
+        return this.syncRule.userGroupAccesses;
+    }
+
     public static create(): SyncRule {
         return new SyncRule({
             id: "",
@@ -108,6 +120,7 @@ export default class SyncRule {
     ): Promise<TableList> {
         const { targetInstanceFilter = null, enabledFilter = null, lastExecutedFilter = null } =
             filters || {};
+        const { page = 1, pageSize = 20, paging = true } = pagination || {};
 
         const globalAdmin = await isGlobalAdmin(d2);
         const userInfo = await getUserInfo(d2);
@@ -131,7 +144,11 @@ export default class SyncRule {
                     : true
             )
             .value();
-        return { ...data, objects };
+
+        const total = objects.length;
+        const pageCount = paging ? Math.ceil(objects.length / pageSize) : 1;
+
+        return { objects, pager: { page, pageCount, total } };
     }
 
     public updateName(name: string): SyncRule {
@@ -200,7 +217,7 @@ export default class SyncRule {
 
         return (
             publicAccess.substring(0, 2).includes(token) ||
-            _(userAccesses)
+            !!_(userAccesses)
                 .filter(({ access }) => access.substring(0, 2).includes(token))
                 .find(({ id }) => id === userId) ||
             _(userGroupAccesses)

@@ -16,13 +16,19 @@ export interface UserInfo {
 }
 
 const getUserRoles = memoize(async (d2: D2) => {
-    return d2.currentUser.getUserRoles();
+    const baseUrl = d2.Api.getApi().baseUrl;
+    const { userCredentials } = (await axios.get(baseUrl + "/me", {
+        withCredentials: true,
+        params: {
+            fields: "userCredentials[userRoles[:all]]",
+        },
+    })).data;
+    return userCredentials.userRoles;
 });
 
 export const isGlobalAdmin = async (d2: D2) => {
     const userRoles = await getUserRoles(d2);
     return !!userRoles
-        .toArray()
         .find((role: any) => role.authorities.find((authority: string) => authority === "ALL"));
 };
 
@@ -32,7 +38,6 @@ export const isAppAdmin = async (d2: D2) => {
     return (
         globalAdmin ||
         !!userRoles
-            .toArray()
             .find((role: any) => role.name === AppRoles.METADATA_SYNC_ADMINISTRATOR)
     );
 };
@@ -42,7 +47,7 @@ export const isAppExecutor = async (d2: D2) => {
     const appAdmin = await isAppAdmin(d2);
     return (
         appAdmin ||
-        !!userRoles.toArray().find((role: any) => role.name === AppRoles.METADATA_SYNC_EXECUTOR)
+        !!userRoles.find((role: any) => role.name === AppRoles.METADATA_SYNC_EXECUTOR)
     );
 };
 
