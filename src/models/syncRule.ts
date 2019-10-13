@@ -109,12 +109,16 @@ export default class SyncRule {
         const { targetInstanceFilter = null, enabledFilter = null, lastExecutedFilter = null } =
             filters || {};
 
-        const globalAdmin = isGlobalAdmin(d2);
+        const globalAdmin = await isGlobalAdmin(d2);
         const userInfo = await getUserInfo(d2);
+        
 
         const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
         const objects = _(data.objects)
-            .filter(rule => globalAdmin || rule.isVisibleToUser(userInfo))
+            .filter(data => {
+                const rule = SyncRule.build(data);
+                return globalAdmin || rule.isVisibleToUser(userInfo)
+            })
             .filter(rule =>
                 targetInstanceFilter
                     ? rule.builder.targetInstances.includes(targetInstanceFilter)

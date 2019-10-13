@@ -61,7 +61,6 @@ export const getUserInfo = memoize(
 
 export const initializeAppRoles = async (baseUrl: string) => {
     for (const role in AppRoles) {
-        console.log(role, AppRoles);
         const { userRoles } = (await axios.get(baseUrl + "/metadata", {
             withCredentials: true,
             params: {
