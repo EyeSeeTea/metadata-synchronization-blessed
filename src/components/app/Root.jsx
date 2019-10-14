@@ -5,10 +5,7 @@ import { Route, Switch } from "react-router-dom";
 import LandingPage from "../landing-page/LandingPage";
 import InstanceConfigurator from "../instance-list-page/InstancesPage";
 import InstanceFormBuilder from "../instance-creation-page/InstanceCreationPage";
-import OrganisationUnitPage from "../synchronization-page/OrganisationUnitPage";
-import DataElementPage from "../synchronization-page/DataElementPage";
-import IndicatorPage from "../synchronization-page/IndicatorPage";
-import ValidationRulePage from "../synchronization-page/ValidationRulePage";
+import MetadataPage from "../synchronization-page/MetadataPage";
 import DeletedObjectsPage from "../synchronization-page/DeletedObjectsPage";
 import HistoryPage from "../history-list-page/HistoryPage";
 import SyncRulesWizard from "../rules-creation-page/SyncRulesWizard";
@@ -35,23 +32,8 @@ class Root extends React.Component {
                 />
 
                 <Route
-                    path="/sync/organisationUnits"
-                    render={props => <OrganisationUnitPage d2={d2} {...props} />}
-                />
-
-                <Route
-                    path="/sync/dataElements"
-                    render={props => <DataElementPage d2={d2} {...props} />}
-                />
-
-                <Route
-                    path="/sync/indicators"
-                    render={props => <IndicatorPage d2={d2} {...props} />}
-                />
-
-                <Route
-                    path="/sync/validationRules"
-                    render={props => <ValidationRulePage d2={d2} {...props} />}
+                    path="/sync/metadata"
+                    render={props => <MetadataPage d2={d2} {...props} />}
                 />
 
                 <Route
