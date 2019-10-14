@@ -7,7 +7,7 @@ import { withRouter } from "react-router-dom";
 
 import PageHeader from "../page-header/PageHeader";
 import Instance from "../../models/instance";
-import { isAppAdmin } from "../../utils/permissions";
+import { isAppConfigurator } from "../../utils/permissions";
 
 class InstancesPage extends React.Component {
     static propTypes = {
@@ -26,14 +26,14 @@ class InstancesPage extends React.Component {
     state = {
         tableKey: Math.random(),
         toDelete: null,
-        appAdmin: false,
+        appConfigurator: false,
     };
 
     async componentDidMount() {
         const { d2 } = this.props;
-        const appAdmin = await isAppAdmin(d2);
+        const appConfigurator = await isAppConfigurator(d2);
 
-        this.setState({ appAdmin });
+        this.setState({ appConfigurator });
     }
 
     columns = [
@@ -84,14 +84,14 @@ class InstancesPage extends React.Component {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            isActive: () => this.state.appAdmin,
+            isActive: () => this.state.appConfigurator,
             onClick: this.editInstance,
         },
         {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: true,
-            isActive: () => this.state.appAdmin,
+            isActive: () => this.state.appConfigurator,
             onClick: this.deleteInstance,
         },
         {
@@ -136,7 +136,7 @@ class InstancesPage extends React.Component {
     };
 
     render() {
-        const { tableKey, toDelete, appAdmin } = this.state;
+        const { tableKey, toDelete, appConfigurator } = this.state;
         const { d2 } = this.props;
 
         return (
@@ -163,7 +163,7 @@ class InstancesPage extends React.Component {
                     detailsFields={this.detailsFields}
                     pageSize={10}
                     actions={this.actions}
-                    onButtonClick={appAdmin ? this.createInstance : null}
+                    onButtonClick={appConfigurator ? this.createInstance : null}
                     list={Instance.list}
                 />
             </React.Fragment>

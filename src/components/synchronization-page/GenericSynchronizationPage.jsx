@@ -12,7 +12,7 @@ import SyncDialog from "../sync-dialog/SyncDialog";
 import SyncSummary from "../sync-summary/SyncSummary";
 import PageHeader from "../page-header/PageHeader";
 import SyncReport from "../../models/syncReport";
-import { isAppAdmin } from "../../utils/permissions";
+import { isAppConfigurator } from "../../utils/permissions";
 
 class GenericSynchronizationPage extends React.Component {
     static propTypes = {
@@ -29,14 +29,14 @@ class GenericSynchronizationPage extends React.Component {
         importResponse: SyncReport.create(),
         syncDialogOpen: false,
         syncSummaryOpen: false,
-        appAdmin: false,
+        appConfigurator: false,
     };
 
     async componentDidMount() {
         const { d2 } = this.props;
-        const appAdmin = await isAppAdmin(d2);
+        const appConfigurator = await isAppConfigurator(d2);
 
-        this.setState({ appAdmin });
+        this.setState({ appConfigurator });
     }
 
     goHome = () => {
@@ -104,7 +104,7 @@ class GenericSynchronizationPage extends React.Component {
             syncSummaryOpen,
             importResponse,
             metadataIds,
-            appAdmin,
+            appConfigurator,
         } = this.state;
 
         return (
@@ -117,7 +117,7 @@ class GenericSynchronizationPage extends React.Component {
                     initialModel={models[0]}
                     initialSelection={metadataIds}
                     notifyNewSelection={this.changeSelection}
-                    onButtonClick={appAdmin ? this.startSynchronization : null}
+                    onButtonClick={appConfigurator ? this.startSynchronization : null}
                     buttonLabel={<SyncIcon />}
                     {...rest}
                 />

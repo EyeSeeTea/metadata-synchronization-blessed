@@ -3,10 +3,23 @@ import memoize from "nano-memoize";
 
 import { D2 } from "../types/d2";
 
-export enum AppRoles {
-    METADATA_SYNC_ADMINISTRATOR = "METADATA_SYNC_ADMINISTRATOR",
-    METADATA_SYNC_EXECUTOR = "METADATA_SYNC_EXECUTOR",
-}
+const AppRoles: {
+    [key: string]: {
+        name: string;
+        description: string;
+    };
+} = {
+    CONFIGURATION_ACCESS: {
+        name: "METADATA_SYNC_CONFIGURATOR",
+        description:
+            "APP - This role allows to create new instances and synchronization rules in the Metadata Sync app",
+    },
+    SYNC_RULE_EXECUTION_ACCESS: {
+        name: "METADATA_SYNC_EXECUTOR",
+        description:
+            "APP - This role allows to execute synchronization rules in the Metadata Sync app",
+    },
+};
 
 export interface UserInfo {
     userGroups: any[];
@@ -28,27 +41,25 @@ const getUserRoles = memoize(async (d2: D2) => {
 
 export const isGlobalAdmin = async (d2: D2) => {
     const userRoles = await getUserRoles(d2);
-    return !!userRoles
-        .find((role: any) => role.authorities.find((authority: string) => authority === "ALL"));
+    return !!userRoles.find((role: any) =>
+        role.authorities.find((authority: string) => authority === "ALL")
+    );
 };
 
-export const isAppAdmin = async (d2: D2) => {
+export const isAppConfigurator = async (d2: D2) => {
     const userRoles = await getUserRoles(d2);
     const globalAdmin = await isGlobalAdmin(d2);
-    return (
-        globalAdmin ||
-        !!userRoles
-            .find((role: any) => role.name === AppRoles.METADATA_SYNC_ADMINISTRATOR)
-    );
+    const { name } = AppRoles.CONFIGURATION_ACCESS;
+
+    return globalAdmin || !!userRoles.find((role: any) => role.name === name);
 };
 
 export const isAppExecutor = async (d2: D2) => {
     const userRoles = await getUserRoles(d2);
-    const appAdmin = await isAppAdmin(d2);
-    return (
-        appAdmin ||
-        !!userRoles.find((role: any) => role.name === AppRoles.METADATA_SYNC_EXECUTOR)
-    );
+    const globalAdmin = await isGlobalAdmin(d2);
+    const { name } = AppRoles.SYNC_RULE_EXECUTION_ACCESS;
+
+    return globalAdmin || !!userRoles.find((role: any) => role.name === name);
 };
 
 export const getUserInfo = memoize(
@@ -66,11 +77,12 @@ export const getUserInfo = memoize(
 
 export const initializeAppRoles = async (baseUrl: string) => {
     for (const role in AppRoles) {
+        const { name, description } = AppRoles[role];
         const { userRoles } = (await axios.get(baseUrl + "/metadata", {
             withCredentials: true,
             params: {
                 userRoles: true,
-                filter: `name:eq:${role}`,
+                filter: `name:eq:${name}`,
                 fields: "id",
             },
         })).data as { userRoles?: { id: string }[] };
@@ -81,9 +93,8 @@ export const initializeAppRoles = async (baseUrl: string) => {
                 {
                     userRoles: [
                         {
-                            name: role,
-                            description:
-                                "APP - This role gives administrative access to the Metadata Sync app",
+                            name,
+                            description,
                             publicAccess: "--------",
                         },
                     ],
