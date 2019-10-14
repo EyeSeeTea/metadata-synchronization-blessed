@@ -230,7 +230,7 @@ class SyncRulesPage extends React.Component {
         this.setState({ sharingSettingsObject: null });
     };
 
-    verifyUserHasAccess = (d2, data, role) => {
+    verifyUserHasAccess = (d2, data, condition) => {
         const { userInfo, globalAdmin } = this.state;
         if (globalAdmin) return true;
 
@@ -240,7 +240,7 @@ class SyncRulesPage extends React.Component {
             if (!rule.isVisibleToUser(userInfo, "WRITE")) return false;
         }
 
-        return role;
+        return condition || true;
     };
 
     verifyUserCanEdit = (d2, data) => {
