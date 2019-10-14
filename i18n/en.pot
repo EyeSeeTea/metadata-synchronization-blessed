@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-09-17T10:45:09.309Z\n"
-"PO-Revision-Date: 2019-09-17T10:45:09.309Z\n"
+"POT-Creation-Date: 2019-10-14T11:20:15.444Z\n"
+"PO-Revision-Date: 2019-10-14T11:20:15.444Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -160,19 +160,10 @@ msgstr[1] ""
 msgid "Instance Configuration"
 msgstr ""
 
-msgid "Organisation Units"
+msgid "Metadata"
 msgstr ""
 
-msgid "Data Elements"
-msgstr ""
-
-msgid "Indicators"
-msgstr ""
-
-msgid "Validation Rules"
-msgstr ""
-
-msgid "Synchronization Rules"
+msgid "Metadata Synchronization Rules"
 msgstr ""
 
 msgid "Deleted objects"
@@ -215,9 +206,6 @@ msgid "Back"
 msgstr ""
 
 msgid "General info"
-msgstr ""
-
-msgid "Metadata"
 msgstr ""
 
 msgid "Instance Selection"
@@ -384,6 +372,9 @@ msgstr ""
 msgid "Destination Instance"
 msgstr ""
 
+msgid "Synchronization Rules"
+msgstr ""
+
 msgid "Delete Rules?"
 msgstr ""
 
@@ -434,9 +425,6 @@ msgstr ""
 msgid "JSON Response"
 msgstr ""
 
-msgid "Data Elements Synchronization"
-msgstr ""
-
 msgid "Code"
 msgstr ""
 
@@ -450,15 +438,6 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Indicators Synchronization"
-msgstr ""
-
-msgid "Organisation Units Synchronization"
-msgstr ""
-
-msgid "Validation Rules Synchronization"
 msgstr ""
 
 msgid "Retrieving information from remote instances"
