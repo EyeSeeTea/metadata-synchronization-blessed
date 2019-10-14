@@ -44,7 +44,6 @@ const styles = () => ({
 });
 
 const GRID_ROW_1 = 12;
-const GRID_ROW_3 = 3;
 const GRID_ROW_4 = 4;
 
 class LandingPage extends React.Component {
@@ -56,10 +55,7 @@ class LandingPage extends React.Component {
         const { classes } = this.props;
         const items = [
             ["instance-configurator", i18n.t("Instance Configuration"), "edit", GRID_ROW_1],
-            ["sync/organisationUnits", i18n.t("Organisation Units"), "sync", GRID_ROW_3],
-            ["sync/dataElements", i18n.t("Data Elements"), "sync", GRID_ROW_3],
-            ["sync/indicators", i18n.t("Indicators"), "sync", GRID_ROW_3],
-            ["sync/validationRules", i18n.t("Validation Rules"), "sync", GRID_ROW_3],
+            ["sync/metadata", i18n.t("Metadata"), "sync", GRID_ROW_1],
             [
                 "synchronization-rules",
                 i18n.t("Synchronization Rules"),
