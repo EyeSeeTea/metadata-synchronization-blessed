@@ -12,6 +12,10 @@ import {
     OrganisationUnitModel,
     ValidationRuleGroupModel,
     ValidationRuleModel,
+    ProgramIndicatorModel,
+    ProgramIndicatorGroupModel,
+    ProgramRuleModel,
+    ProgramRuleVariableModel,
 } from "./d2Model";
 import { D2 } from "../types/d2";
 
@@ -27,6 +31,10 @@ const classes: { [modelName: string]: typeof D2Model } = {
     OrganisationUnitModel,
     ValidationRuleGroupModel,
     ValidationRuleModel,
+    ProgramIndicatorModel,
+    ProgramIndicatorGroupModel,
+    ProgramRuleModel,
+    ProgramRuleVariableModel,
 };
 
 /**
