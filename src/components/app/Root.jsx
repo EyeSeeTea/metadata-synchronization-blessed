@@ -17,43 +17,44 @@ class Root extends React.Component {
     };
 
     render() {
-        const { d2 } = this.props;
-
         return (
             <Switch>
                 <Route
                     path={"/instance-configurator/:action(new|edit)/:id?"}
-                    render={props => <InstanceFormBuilder d2={d2} {...props} />}
+                    render={props => <InstanceFormBuilder {...this.props} {...props} />}
                 />
 
                 <Route
                     path="/instance-configurator"
-                    render={props => <InstanceConfigurator d2={d2} {...props} />}
+                    render={props => <InstanceConfigurator {...this.props} {...props} />}
                 />
 
                 <Route
                     path="/sync/metadata"
-                    render={props => <MetadataPage d2={d2} {...props} />}
+                    render={props => <MetadataPage {...this.props} {...props} />}
                 />
 
                 <Route
                     path="/sync/deleted"
-                    render={props => <DeletedObjectsPage d2={d2} {...props} />}
+                    render={props => <DeletedObjectsPage {...this.props} {...props} />}
                 />
 
-                <Route path="/history/:id?" render={props => <HistoryPage d2={d2} {...props} />} />
+                <Route
+                    path="/history/:id?"
+                    render={props => <HistoryPage {...this.props} {...props} />}
+                />
 
                 <Route
                     path={"/synchronization-rules/:action(new|edit)/:id?"}
-                    render={props => <SyncRulesWizard d2={d2} {...props} />}
+                    render={props => <SyncRulesWizard {...this.props} {...props} />}
                 />
 
                 <Route
                     path="/synchronization-rules"
-                    render={props => <SyncRulesConfigurator d2={d2} {...props} />}
+                    render={props => <SyncRulesConfigurator {...this.props} {...props} />}
                 />
 
-                <Route render={() => <LandingPage d2={d2} />} />
+                <Route render={() => <LandingPage {...this.props} />} />
             </Switch>
         );
     }

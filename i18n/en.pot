@@ -366,6 +366,9 @@ msgstr ""
 msgid "Toggle scheduling"
 msgstr ""
 
+msgid "Sharing settings"
+msgstr ""
+
 msgid "Last executed date"
 msgstr ""
 
@@ -382,6 +385,48 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "External access"
+msgstr ""
+
+msgid "Anyone can view without login"
+msgstr ""
+
+msgid "No access"
+msgstr ""
+
+msgid "Public access"
+msgstr ""
+
+msgid "METADATA"
+msgstr ""
+
+msgid "Can edit and view"
+msgstr ""
+
+msgid "Can view only"
+msgstr ""
+
+msgid "DATA"
+msgstr ""
+
+msgid "Can capture and view"
+msgstr ""
+
+msgid "Created by"
+msgstr ""
+
+msgid "Who has access"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Add users and user groups"
+msgstr ""
+
+msgid "Enter names"
+msgstr ""
 
 msgid "Synchronize Metadata"
 msgstr ""

@@ -60,4 +60,14 @@ export interface SynchronizationRule {
     enabled: boolean;
     lastExecuted?: Date;
     frequency?: string;
+    publicAccess: string;
+    userAccesses: SharingSetting[];
+    userGroupAccesses: SharingSetting[];
+}
+
+export interface SharingSetting {
+    access: string;
+    displayName: string;
+    id: string;
+    name: string;
 }

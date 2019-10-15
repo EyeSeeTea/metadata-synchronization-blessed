@@ -13,6 +13,7 @@ import Share from "../share/Share";
 import Instance from "../../models/instance";
 import { muiTheme } from "./themes/dhis2.theme";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
+import { initializeAppRoles } from "../../utils/permissions";
 import "./App.css";
 
 const generateClassName = createGenerateClassName({
@@ -26,7 +27,7 @@ class App extends Component {
         appConfig: PropTypes.object.isRequired,
     };
 
-    componentDidMount() {
+    async componentDidMount() {
         const { d2, appConfig } = this.props;
         const appKey = _(this.props.appConfig).get("appKey");
 
@@ -41,6 +42,8 @@ class App extends Component {
         if (appConfig && appConfig.encryptionKey) {
             Instance.setEncryptionKey(appConfig.encryptionKey);
         }
+
+        await initializeAppRoles(d2.Api.getApi().baseUrl);
     }
 
     render() {
