@@ -5,6 +5,7 @@ export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
     syncRule?: string;
+    includeUserInfo: boolean;
 }
 
 export interface ExportBuilder {
@@ -12,6 +13,7 @@ export interface ExportBuilder {
     ids: string[];
     excludeRules: string[][];
     includeRules: string[][];
+    includeUserInfo: boolean;
 }
 
 export interface MetadataPackage {

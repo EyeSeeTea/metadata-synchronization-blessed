@@ -88,6 +88,10 @@ export default class SyncRule {
         return this.syncRule.userGroupAccesses;
     }
 
+    public get includeUserInfo(): boolean {
+        return !!this.syncRule.builder.includeUserInfo;
+    }
+
     public static create(): SyncRule {
         return new SyncRule({
             id: "",
@@ -96,6 +100,7 @@ export default class SyncRule {
             builder: {
                 targetInstances: [],
                 metadataIds: [],
+                includeUserInfo: false,
             },
             enabled: false,
             publicAccess: "rw------",
@@ -180,6 +185,16 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 targetInstances,
+            },
+        });
+    }
+
+    public updateIncludeUserInfo(includeUserInfo: boolean): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                includeUserInfo,
             },
         });
     }

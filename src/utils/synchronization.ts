@@ -8,7 +8,8 @@ import { MetadataPackage, NestedRules, SynchronizationResult } from "../types/sy
 import { cleanModelName, getClassName } from "./d2";
 import { isValidUid } from "d2/uid";
 
-const blacklistedProperties = ["user", "userAccesses", "userGroupAccesses"];
+const blacklistedProperties = ["access"];
+const userProperties = ["user", "userAccesses", "userGroupAccesses"];
 
 export function buildNestedRules(rules: string[][] = []): NestedRules {
     return _(rules)
@@ -18,14 +19,23 @@ export function buildNestedRules(rules: string[][] = []): NestedRules {
         .value();
 }
 
-export function cleanObject(element: any, excludeRules: string[][] = []): any {
+export function cleanObject(
+    element: any,
+    excludeRules: string[][] = [],
+    includeUserInfo: boolean
+): any {
     const leafRules = _(excludeRules)
         .filter(path => path.length === 1)
         .map(_.first)
         .compact()
         .value();
 
-    return _.pick(element, _.difference(_.keys(element), leafRules, blacklistedProperties));
+    const propsToRemove = includeUserInfo ? [] : userProperties;
+
+    return _.pick(
+        element,
+        _.difference(_.keys(element), leafRules, blacklistedProperties, propsToRemove)
+    );
 }
 
 export function cleanReferences(

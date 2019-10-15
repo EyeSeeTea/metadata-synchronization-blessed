@@ -3,9 +3,16 @@ import i18n from "@dhis2/d2-i18n";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import { ConfirmationDialog, MultiSelector } from "d2-ui-components";
-import DialogContent from "@material-ui/core/DialogContent";
+import { DialogContent, Typography, withStyles } from "@material-ui/core";
 
 import Instance from "../../models/instance";
+import { Toggle } from "../toggle/Toggle";
+
+const styles = () => ({
+    advancedOptionsTitle: {
+        marginTop: "40px",
+    },
+});
 
 class SyncDialog extends React.Component {
     static propTypes = {
@@ -19,6 +26,7 @@ class SyncDialog extends React.Component {
     state = {
         instanceOptions: [],
         targetInstances: [],
+        includeUserInfo: false,
     };
 
     async componentDidMount() {
@@ -40,19 +48,23 @@ class SyncDialog extends React.Component {
 
     handleExecute = async () => {
         const { task } = this.props;
-        const { targetInstances } = this.state;
+        const { targetInstances, includeUserInfo } = this.state;
 
-        await task(targetInstances);
-        this.setState({ targetInstances: [] });
+        await task({ targetInstances, includeUserInfo });
+        this.setState({ targetInstances: [], includeUserInfo: false });
     };
 
     handleCancel = () => {
         this.props.handleClose();
     };
 
+    changeUserInfo = event => {
+        this.setState({ includeUserInfo: event.target.value });
+    };
+
     render() {
-        const { d2, isOpen } = this.props;
-        const { targetInstances } = this.state;
+        const { d2, classes, isOpen } = this.props;
+        const { targetInstances, includeUserInfo } = this.state;
         const disableSync = _.isEmpty(targetInstances);
 
         return (
@@ -74,6 +86,18 @@ class SyncDialog extends React.Component {
                             onChange={this.onChangeInstances}
                             options={this.state.instanceOptions}
                         />
+                        <Typography
+                            className={classes.advancedOptionsTitle}
+                            variant={"h7"}
+                            gutterBottom
+                        >
+                            {i18n.t("Advanced options")}
+                        </Typography>
+                        <Toggle
+                            label={i18n.t("Include user information and sharing settings")}
+                            onChange={this.changeUserInfo}
+                            value={includeUserInfo}
+                        />
                     </DialogContent>
                 </ConfirmationDialog>
             </React.Fragment>
@@ -81,4 +105,4 @@ class SyncDialog extends React.Component {
     }
 }
 
-export default SyncDialog;
+export default withStyles(styles)(SyncDialog);

@@ -105,6 +105,11 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
                 </LiEntry>
 
                 <LiEntry
+                    label={i18n.t("Include user information and sharing settings")}
+                    value={syncRule.includeUserInfo ? i18n.t("Yes") : i18n.t("No")}
+                />
+
+                <LiEntry
                     label={i18n.t("Scheduling")}
                     value={syncRule.enabled ? i18n.t("Enabled") : i18n.t("Disabled")}
                 />

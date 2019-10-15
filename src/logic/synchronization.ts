@@ -28,7 +28,7 @@ import SyncRule from "../models/syncRule";
 async function exportMetadata(d2: D2, originalBuilder: ExportBuilder): Promise<MetadataPackage> {
     const visitedIds: Set<string> = new Set();
     const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
-        const { type, ids, excludeRules, includeRules } = builder;
+        const { type, ids, excludeRules, includeRules, includeUserInfo } = builder;
         const model = d2ModelFactory(d2, type).getD2Model(d2);
         const result: MetadataPackage = {};
 
@@ -43,7 +43,7 @@ async function exportMetadata(d2: D2, originalBuilder: ExportBuilder): Promise<M
 
         for (const element of elements) {
             // Store metadata object in result
-            const object = cleanObject(element, excludeRules);
+            const object = cleanObject(element, excludeRules, includeUserInfo);
             result[model.plural] = result[model.plural] || [];
             result[model.plural].push(object);
 
@@ -56,6 +56,7 @@ async function exportMetadata(d2: D2, originalBuilder: ExportBuilder): Promise<M
                     ids: references[type].filter(id => !visitedIds.has(id)),
                     excludeRules: nestedExcludeRules[type],
                     includeRules: nestedIncludeRules[type],
+                    includeUserInfo,
                 }))
                 .map(newBuilder => {
                     newBuilder.ids.forEach(id => {
@@ -77,7 +78,7 @@ export async function* startSynchronization(
     d2: D2,
     builder: SynchronizationBuilder
 ): AsyncIterableIterator<SynchronizationState> {
-    const { targetInstances: targetInstanceIds, metadataIds, syncRule } = builder;
+    const { targetInstances: targetInstanceIds, metadataIds, syncRule, includeUserInfo } = builder;
     const { baseUrl } = d2.Api.getApi();
 
     // Phase 1: Export and package metadata from origin instance
@@ -92,6 +93,7 @@ export async function* startSynchronization(
                 ids: metadata[type].map(e => e.id),
                 excludeRules: myClass.getExcludeRules(),
                 includeRules: myClass.getIncludeRules(),
+                includeUserInfo,
             };
         })
         .map(newBuilder => exportMetadata(d2, newBuilder));
