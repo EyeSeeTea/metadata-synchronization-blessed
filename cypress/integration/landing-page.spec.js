@@ -12,8 +12,8 @@ context("Landing page", () => {
             .should("be.visible");
 
         cy.contains("Instance Configuration");
-        cy.contains("Metadata");
-        cy.contains("Data");
+        cy.contains("Metadata Synchronization");
+        cy.contains("Data Synchronization");
         cy.contains("Metadata Synchronization Rules");
         cy.contains("Data Synchronization Rules");
         cy.contains("Synchronization History");
