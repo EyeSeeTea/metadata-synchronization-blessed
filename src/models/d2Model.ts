@@ -256,6 +256,44 @@ export class IndicatorGroupSetModel extends D2Model {
     ];
 }
 
+export class ProgramIndicatorModel extends D2Model {
+    protected static metadataType = "programIndicator";
+    protected static groupFilterName = "programIndicatorGroups";
+
+    protected static excludeRules = ["programs"];
+    protected static includeRules = [
+        "attributes",
+        "legendSets",
+        "programIndicatorGroups",
+        "programIndicatorGroups.attributes",
+    ];
+}
+
+export class ProgramIndicatorGroupModel extends D2Model {
+    protected static metadataType = "programIndicatorGroup";
+
+    protected static excludeRules = ["legendSets", "programIndicators.programIndicatorGroups"];
+    protected static includeRules = [
+        "attributes",
+        "programIndicators",
+        "programIndicators.attributes",
+    ];
+}
+
+export class ProgramRuleModel extends D2Model {
+    protected static metadataType = "programRule";
+
+    protected static excludeRules = [];
+    protected static includeRules = ["attributes", "programRuleActions"];
+}
+
+export class ProgramRuleVariableModel extends D2Model {
+    protected static metadataType = "programRuleVariable";
+
+    protected static excludeRules = [];
+    protected static includeRules = ["attributes"];
+}
+
 export class ValidationRuleModel extends D2Model {
     protected static metadataType = "validationRule";
     protected static groupFilterName = "validationRuleGroups";
@@ -293,4 +331,8 @@ export const metadataModels = [
     OrganisationUnitGroupSetModel,
     ValidationRuleModel,
     ValidationRuleGroupModel,
+    ProgramIndicatorModel,
+    ProgramIndicatorGroupModel,
+    ProgramRuleModel,
+    ProgramRuleVariableModel,
 ];
