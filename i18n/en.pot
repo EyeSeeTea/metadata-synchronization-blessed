@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-10-15T16:38:25.323Z\n"
-"PO-Revision-Date: 2019-10-15T16:38:25.323Z\n"
+"POT-Creation-Date: 2019-10-15T16:53:19.769Z\n"
+"PO-Revision-Date: 2019-10-15T16:53:19.769Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -160,19 +160,16 @@ msgstr[1] ""
 msgid "Instance Configuration"
 msgstr ""
 
-msgid "Metadata"
-msgstr ""
-
-msgid "Data"
-msgstr ""
-
-msgid "Deleted objects"
+msgid "Data Synchronization"
 msgstr ""
 
 msgid "Metadata Synchronization Rules"
 msgstr ""
 
 msgid "Data Synchronization Rules"
+msgstr ""
+
+msgid "Deleted objects"
 msgstr ""
 
 msgid "Name"
@@ -212,6 +209,9 @@ msgid "Back"
 msgstr ""
 
 msgid "General info"
+msgstr ""
+
+msgid "Metadata"
 msgstr ""
 
 msgid "Instance Selection"
@@ -471,9 +471,6 @@ msgid "Messages"
 msgstr ""
 
 msgid "JSON Response"
-msgstr ""
-
-msgid "Data Synchronization"
 msgstr ""
 
 msgid "Code"
