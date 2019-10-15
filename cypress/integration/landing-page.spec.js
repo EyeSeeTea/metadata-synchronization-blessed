@@ -13,7 +13,9 @@ context("Landing page", () => {
 
         cy.contains("Instance Configuration");
         cy.contains("Metadata");
+        cy.contains("Data");
         cy.contains("Metadata Synchronization Rules");
+        cy.contains("Data Synchronization Rules");
         cy.contains("Synchronization History");
     });
 
@@ -27,9 +29,19 @@ context("Landing page", () => {
         cy.get(dataTest("page-header-title")).contains("Metadata Synchronization");
     });
 
-    it("enter the Synchronization Rules page", function() {
+    it("enters the Data Synchronization page", function() {
+        cy.get(dataTest("page-sync/data")).click();
+        cy.get(dataTest("page-header-title")).contains("Data Synchronization");
+    });
+
+    it("enter the MetadataSynchronization Rules page", function() {
         cy.get(dataTest("page-metadata-synchronization-rules")).click();
-        cy.get(dataTest("page-header-title")).contains("Synchronization Rules");
+        cy.get(dataTest("page-header-title")).contains("Metadata Synchronization Rules");
+    });
+
+    it("enter the DataSynchronization Rules page", function() {
+        cy.get(dataTest("page-data-synchronization-rules")).click();
+        cy.get(dataTest("page-header-title")).contains("Data Synchronization Rules");
     });
 
     it("enter the Synchronization History page", function() {
