@@ -388,7 +388,10 @@ class DataSyncRulesPage extends React.Component {
 
         return (
             <React.Fragment>
-                <PageHeader title={i18n.t("Data Synchronization Rules")} onBackClick={this.backHome} />
+                <PageHeader
+                    title={i18n.t("Data Synchronization Rules")}
+                    onBackClick={this.backHome}
+                />
                 <ObjectsTable
                     key={tableKey}
                     d2={d2}

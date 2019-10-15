@@ -74,7 +74,7 @@ class LandingPage extends React.Component {
                 "playlist_add_check",
                 GRID_ROW_3,
             ],
-            
+
             ["history", i18n.t("Synchronization History"), "history", GRID_ROW_3],
         ];
         const menuItems = items.map(([key, title, icon, xs]) => (

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-10-15T11:26:57.463Z\n"
-"PO-Revision-Date: 2019-10-15T11:26:57.463Z\n"
+"POT-Creation-Date: 2019-10-15T12:28:18.418Z\n"
+"PO-Revision-Date: 2019-10-15T12:28:18.418Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -166,10 +166,13 @@ msgstr ""
 msgid "Data"
 msgstr ""
 
+msgid "Deleted objects"
+msgstr ""
+
 msgid "Metadata Synchronization Rules"
 msgstr ""
 
-msgid "Deleted objects"
+msgid "Data Synchronization Rules"
 msgstr ""
 
 msgid "Name"
@@ -376,9 +379,6 @@ msgid "Last executed date"
 msgstr ""
 
 msgid "Destination Instance"
-msgstr ""
-
-msgid "Synchronization Rules"
 msgstr ""
 
 msgid "Delete Rules?"

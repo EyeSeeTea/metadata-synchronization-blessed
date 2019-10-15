@@ -388,7 +388,10 @@ class MetadataSyncRulesPage extends React.Component {
 
         return (
             <React.Fragment>
-                <PageHeader title={i18n.t("Metadata Synchronization Rules")} onBackClick={this.backHome} />
+                <PageHeader
+                    title={i18n.t("Metadata Synchronization Rules")}
+                    onBackClick={this.backHome}
+                />
                 <ObjectsTable
                     key={tableKey}
                     d2={d2}
