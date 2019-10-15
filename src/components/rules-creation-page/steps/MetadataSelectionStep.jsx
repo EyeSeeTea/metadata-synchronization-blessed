@@ -17,6 +17,10 @@ import {
     OrganisationUnitModel,
     ValidationRuleGroupModel,
     ValidationRuleModel,
+    ProgramIndicatorModel,
+    ProgramIndicatorGroupModel,
+    ProgramRuleModel,
+    ProgramRuleVariableModel,
 } from "../../../models/d2Model";
 
 class MetadataSelectionStep extends React.Component {
@@ -43,6 +47,10 @@ class MetadataSelectionStep extends React.Component {
         OrganisationUnitGroupSetModel,
         ValidationRuleModel,
         ValidationRuleGroupModel,
+        ProgramIndicatorModel,
+        ProgramIndicatorGroupModel,
+        ProgramRuleModel,
+        ProgramRuleVariableModel,
     ];
 
     componentDidMount() {
