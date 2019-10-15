@@ -44,12 +44,12 @@ class Root extends React.Component {
                 <Route path="/history/:id?" render={props => <HistoryPage d2={d2} {...props} />} />
 
                 <Route
-                    path={"/synchronization-rules/:action(new|edit)/:id?"}
+                    path={"/metadata-synchronization-rules/:action(new|edit)/:id?"}
                     render={props => <SyncRulesWizard d2={d2} {...props} />}
                 />
 
                 <Route
-                    path="/synchronization-rules"
+                    path="/metadata-synchronization-rules"
                     render={props => <SyncRulesConfigurator d2={d2} {...props} />}
                 />
 

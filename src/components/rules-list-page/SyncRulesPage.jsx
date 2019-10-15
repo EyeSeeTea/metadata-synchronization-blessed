@@ -157,11 +157,11 @@ class SyncRulesPage extends React.Component {
     };
 
     createRule = () => {
-        this.props.history.push("/synchronization-rules/new");
+        this.props.history.push("/metadata-synchronization-rules/new");
     };
 
     editRule = rule => {
-        this.props.history.push(`/synchronization-rules/edit/${rule.id}`);
+        this.props.history.push(`/metadata-synchronization-rules/edit/${rule.id}`);
     };
 
     executeRule = async ({ builder, name, id }) => {

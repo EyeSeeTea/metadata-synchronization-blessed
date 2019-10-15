@@ -28,7 +28,7 @@ context("Landing page", () => {
     });
 
     it("enter the Synchronization Rules page", function() {
-        cy.get(dataTest("page-synchronization-rules")).click();
+        cy.get(dataTest("page-metadata-synchronization-rules")).click();
         cy.get(dataTest("page-header-title")).contains("Synchronization Rules");
     });
 

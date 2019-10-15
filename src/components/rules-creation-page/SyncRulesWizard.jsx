@@ -106,7 +106,7 @@ class SyncRulesWizard extends React.Component {
 
     handleConfirm = () => {
         this.setState({ dialogOpen: false });
-        this.props.history.push("/synchronization-rules");
+        this.props.history.push("/metadata-synchronization-rules");
     };
 
     handleDialogCancel = () => {

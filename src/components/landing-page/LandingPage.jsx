@@ -57,7 +57,7 @@ class LandingPage extends React.Component {
             ["instance-configurator", i18n.t("Instance Configuration"), "edit", GRID_ROW_1],
             ["sync/metadata", i18n.t("Metadata"), "sync", GRID_ROW_2],
             [
-                "synchronization-rules",
+                "metadata-synchronization-rules",
                 i18n.t("Metadata Synchronization Rules"),
                 "playlist_add_check",
                 GRID_ROW_2,
