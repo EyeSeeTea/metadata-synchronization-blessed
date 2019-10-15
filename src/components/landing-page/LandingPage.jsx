@@ -55,7 +55,7 @@ class LandingPage extends React.Component {
         const { classes } = this.props;
         const items = [
             ["instance-configurator", i18n.t("Instance Configuration"), "edit", GRID_ROW_1],
-            ["sync/metadata", i18n.t("Metadata"), "sync", GRID_ROW_2],
+            ["sync/metadata", i18n.t("Metadata Synchronization"), "sync", GRID_ROW_2],
             [
                 "synchronization-rules",
                 i18n.t("Metadata Synchronization Rules"),
