@@ -1,41 +1,13 @@
 import {
     D2Model,
-    DataElementGroupModel,
-    DataElementGroupSetModel,
-    DataElementModel,
     defaultModel,
-    IndicatorGroupModel,
-    IndicatorGroupSetModel,
-    IndicatorModel,
-    OrganisationUnitGroupModel,
-    OrganisationUnitGroupSetModel,
-    OrganisationUnitModel,
-    ValidationRuleGroupModel,
-    ValidationRuleModel,
-    ProgramIndicatorModel,
-    ProgramIndicatorGroupModel,
-    ProgramRuleModel,
-    ProgramRuleVariableModel,
+    metadataModels
 } from "./d2Model";
 import { D2 } from "../types/d2";
+import _ from "lodash";
 
-const classes: { [modelName: string]: typeof D2Model } = {
-    DataElementGroupModel,
-    DataElementGroupSetModel,
-    DataElementModel,
-    IndicatorGroupModel,
-    IndicatorGroupSetModel,
-    IndicatorModel,
-    OrganisationUnitGroupModel,
-    OrganisationUnitGroupSetModel,
-    OrganisationUnitModel,
-    ValidationRuleGroupModel,
-    ValidationRuleModel,
-    ProgramIndicatorModel,
-    ProgramIndicatorGroupModel,
-    ProgramRuleModel,
-    ProgramRuleVariableModel,
-};
+const classes: { [modelName: string]: typeof D2Model } =
+    _.keyBy(metadataModels, o => o.name);
 
 /**
  * D2ModelProxy allows to create on-demand d2Model classes
