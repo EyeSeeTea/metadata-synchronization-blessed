@@ -45,7 +45,6 @@ const styles = () => ({
     paper: {
         height: "100%",
     },
-
 });
 
 const GRID_ROW_1 = 12;
