@@ -24,7 +24,8 @@ const styles = () => ({
             backgroundColor: "#f9f9f9",
         },
         cursor: "pointer",
-        padding: 50,
+        padding: 45,
+        height: "100%",
     },
     container: {
         width: "90%",
@@ -41,10 +42,15 @@ const styles = () => ({
         fontSize: "70px !important",
         marginRight: 10,
     },
+    paper: {
+        height: "100%",
+    },
+
 });
 
 const GRID_ROW_1 = 12;
 const GRID_ROW_2 = 6;
+const GRID_ROW_3 = 4;
 
 class LandingPage extends React.Component {
     static propTypes = {
@@ -55,12 +61,13 @@ class LandingPage extends React.Component {
         const { classes } = this.props;
         const items = [
             ["instance-configurator", i18n.t("Instance Configuration"), "edit", GRID_ROW_1],
-            ["sync/metadata", i18n.t("Metadata"), "sync", GRID_ROW_2],
+            ["sync/metadata", i18n.t("Metadata"), "sync", GRID_ROW_3],
+            ["sync/data", i18n.t("Data"), "sync", GRID_ROW_3],
             [
                 "metadata-synchronization-rules",
                 i18n.t("Metadata Synchronization Rules"),
                 "playlist_add_check",
-                GRID_ROW_2,
+                GRID_ROW_3,
             ],
             ["sync/deleted", i18n.t("Deleted objects"), "delete", GRID_ROW_2],
             ["history", i18n.t("Synchronization History"), "history", GRID_ROW_2],

@@ -6,6 +6,7 @@ import LandingPage from "../landing-page/LandingPage";
 import InstanceConfigurator from "../instance-list-page/InstancesPage";
 import InstanceFormBuilder from "../instance-creation-page/InstanceCreationPage";
 import MetadataPage from "../synchronization-page/MetadataPage";
+import DataPage from "../synchronization-page/DataPage";
 import DeletedObjectsPage from "../synchronization-page/DeletedObjectsPage";
 import HistoryPage from "../history-list-page/HistoryPage";
 import SyncRulesWizard from "../rules-creation-page/SyncRulesWizard";
@@ -34,6 +35,11 @@ class Root extends React.Component {
                 <Route
                     path="/sync/metadata"
                     render={props => <MetadataPage d2={d2} {...props} />}
+                />
+
+                <Route
+                    path="/sync/data"
+                    render={props => <DataPage d2={d2} {...props} />}
                 />
 
                 <Route
