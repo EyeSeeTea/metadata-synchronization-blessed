@@ -1,13 +1,8 @@
-import {
-    D2Model,
-    defaultModel,
-    metadataModels
-} from "./d2Model";
+import { D2Model, defaultModel, metadataModels } from "./d2Model";
 import { D2 } from "../types/d2";
 import _ from "lodash";
 
-const classes: { [modelName: string]: typeof D2Model } =
-    _.keyBy(metadataModels, o => o.name);
+const classes: { [modelName: string]: typeof D2Model } = _.keyBy(metadataModels, o => o.name);
 
 /**
  * D2ModelProxy allows to create on-demand d2Model classes
