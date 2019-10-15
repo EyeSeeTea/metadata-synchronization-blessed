@@ -12,11 +12,10 @@ context("Landing page", () => {
             .should("be.visible");
 
         cy.contains("Instance Configuration");
-        cy.contains("Organisation Units");
-        cy.contains("Data Elements");
-        cy.contains("Indicators");
-        cy.contains("Validation Rules");
-        cy.contains("Synchronization Rules");
+        cy.contains("Metadata Synchronization");
+        cy.contains("Data Synchronization");
+        cy.contains("Metadata Synchronization Rules");
+        cy.contains("Data Synchronization Rules");
         cy.contains("Synchronization History");
     });
 
@@ -25,29 +24,24 @@ context("Landing page", () => {
         cy.get(dataTest("page-header-title")).contains("Instance Configuration");
     });
 
-    it("enters the Organisation Units Synchronization page", function() {
-        cy.get(dataTest("page-sync/organisationUnits")).click();
-        cy.get(dataTest("page-header-title")).contains("Organisation Units Synchronization");
+    it("enters the Metadata Synchronization page", function() {
+        cy.get(dataTest("page-sync/metadata")).click();
+        cy.get(dataTest("page-header-title")).contains("Metadata Synchronization");
     });
 
-    it("enter the Data Elements Synchronization page", function() {
-        cy.get(dataTest("page-sync/dataElements")).click();
-        cy.get(dataTest("page-header-title")).contains("Data Elements Synchronization");
+    it("enters the Data Synchronization page", function() {
+        cy.get(dataTest("page-sync/data")).click();
+        cy.get(dataTest("page-header-title")).contains("Data Synchronization");
     });
 
-    it("enter the Indicators Synchronization page", function() {
-        cy.get(dataTest("page-sync/indicators")).click();
-        cy.get(dataTest("page-header-title")).contains("Indicators Synchronization");
+    it("enter the MetadataSynchronization Rules page", function() {
+        cy.get(dataTest("page-metadata-synchronization-rules")).click();
+        cy.get(dataTest("page-header-title")).contains("Metadata Synchronization Rules");
     });
 
-    it("enter the Validation Rules Synchronization page", function() {
-        cy.get(dataTest("page-sync/validationRules")).click();
-        cy.get(dataTest("page-header-title")).contains("Validation Rules Synchronization");
-    });
-
-    it("enter the Synchronization Rules page", function() {
-        cy.get(dataTest("page-synchronization-rules")).click();
-        cy.get(dataTest("page-header-title")).contains("Synchronization Rules");
+    it("enter the DataSynchronization Rules page", function() {
+        cy.get(dataTest("page-data-synchronization-rules")).click();
+        cy.get(dataTest("page-header-title")).contains("Data Synchronization Rules");
     });
 
     it("enter the Synchronization History page", function() {

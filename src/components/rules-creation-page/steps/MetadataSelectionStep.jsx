@@ -5,19 +5,7 @@ import _ from "lodash";
 import { withSnackbar } from "d2-ui-components";
 
 import MetadataTable from "../../metadata-table/MetadataTable";
-import {
-    DataElementGroupModel,
-    DataElementGroupSetModel,
-    DataElementModel,
-    IndicatorGroupModel,
-    IndicatorGroupSetModel,
-    IndicatorModel,
-    OrganisationUnitGroupModel,
-    OrganisationUnitGroupSetModel,
-    OrganisationUnitModel,
-    ValidationRuleGroupModel,
-    ValidationRuleModel,
-} from "../../../models/d2Model";
+import { metadataModels } from "../../../models/d2Model";
 
 class MetadataSelectionStep extends React.Component {
     static propTypes = {
@@ -30,20 +18,6 @@ class MetadataSelectionStep extends React.Component {
     state = {
         metadataIds: [],
     };
-
-    models = [
-        DataElementModel,
-        DataElementGroupModel,
-        DataElementGroupSetModel,
-        IndicatorModel,
-        IndicatorGroupModel,
-        IndicatorGroupSetModel,
-        OrganisationUnitModel,
-        OrganisationUnitGroupModel,
-        OrganisationUnitGroupSetModel,
-        ValidationRuleModel,
-        ValidationRuleGroupModel,
-    ];
 
     componentDidMount() {
         const { metadataIds } = this.props.syncRule;
@@ -86,7 +60,7 @@ class MetadataSelectionStep extends React.Component {
                 d2={d2}
                 notifyNewSelection={this.changeSelection}
                 initialSelection={syncRule.metadataIds}
-                models={this.models}
+                models={metadataModels}
                 {...rest}
             />
         );

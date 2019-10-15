@@ -19,9 +19,16 @@ import { startSynchronization } from "../../logic/synchronization";
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../sync-summary/SyncSummary";
 import Dropdown from "../dropdown/Dropdown";
+import SharingDialog from "../sharing-dialog/SharingDialog";
 import { getValidationMessages } from "../../utils/validations";
+import {
+    getUserInfo,
+    isGlobalAdmin,
+    isAppConfigurator,
+    isAppExecutor,
+} from "../../utils/permissions";
 
-class SyncRulesPage extends React.Component {
+class DataSyncRulesPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -47,6 +54,10 @@ class SyncRulesPage extends React.Component {
         lastExecutedFilter: null,
         syncReport: SyncReport.create(),
         syncSummaryOpen: false,
+        userInfo: {},
+        globalAdmin: false,
+        appConfigurator: false,
+        appExecutor: false,
     };
 
     getTargetInstances = ruleData => {
@@ -117,7 +128,12 @@ class SyncRulesPage extends React.Component {
     async componentDidMount() {
         const { d2 } = this.props;
         const { objects: allInstances } = await Instance.list(d2, null, null);
-        this.setState({ allInstances });
+        const userInfo = await getUserInfo(d2);
+        const globalAdmin = await isGlobalAdmin(d2);
+        const appConfigurator = await isAppConfigurator(d2);
+        const appExecutor = await isAppExecutor(d2);
+
+        this.setState({ allInstances, userInfo, globalAdmin, appConfigurator, appExecutor });
     }
 
     backHome = () => {
@@ -157,11 +173,11 @@ class SyncRulesPage extends React.Component {
     };
 
     createRule = () => {
-        this.props.history.push("/synchronization-rules/new");
+        this.props.history.push("/metadata-synchronization-rules/new");
     };
 
     editRule = rule => {
-        this.props.history.push(`/synchronization-rules/edit/${rule.id}`);
+        this.props.history.push(`/metadata-synchronization-rules/edit/${rule.id}`);
     };
 
     executeRule = async ({ builder, name, id }) => {
@@ -201,6 +217,46 @@ class SyncRulesPage extends React.Component {
         }
     };
 
+    openSharingSettings = object => {
+        this.setState({
+            sharingSettingsObject: {
+                object,
+                meta: { allowPublicAccess: true, allowExternalAccess: false },
+            },
+        });
+    };
+
+    closeSharingSettings = () => {
+        this.setState({ sharingSettingsObject: null });
+    };
+
+    verifyUserHasAccess = (d2, data, condition = false) => {
+        const { userInfo, globalAdmin } = this.state;
+        if (globalAdmin) return true;
+
+        const rules = Array.isArray(data) ? data : [data];
+        for (const ruleData of rules) {
+            const rule = SyncRule.build(ruleData);
+            if (!rule.isVisibleToUser(userInfo, "WRITE")) return false;
+        }
+
+        return condition;
+    };
+
+    verifyUserCanEdit = (d2, data) => {
+        const { appConfigurator } = this.state;
+        return this.verifyUserHasAccess(d2, data, appConfigurator);
+    };
+
+    verifyUserCanEditSharingSettings = (d2, data) => {
+        const { appConfigurator, appExecutor } = this.state;
+        return this.verifyUserHasAccess(d2, data, appConfigurator || appExecutor);
+    };
+
+    verifyUserCanExecute = (d2, data) => {
+        return this.state.appExecutor;
+    };
+
     actions = [
         {
             name: "details",
@@ -212,18 +268,21 @@ class SyncRulesPage extends React.Component {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
+            isActive: this.verifyUserCanEdit,
             onClick: this.editRule,
         },
         {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: true,
+            isActive: this.verifyUserCanEdit,
             onClick: this.deleteSyncRules,
         },
         {
             name: "execute",
             text: i18n.t("Execute"),
             multiple: false,
+            isActive: this.verifyUserCanExecute,
             onClick: this.executeRule,
             icon: "settings_input_antenna",
         },
@@ -231,8 +290,17 @@ class SyncRulesPage extends React.Component {
             name: "toggleEnable",
             text: i18n.t("Toggle scheduling"),
             multiple: false,
+            isActive: this.verifyUserCanEdit,
             onClick: this.toggleEnable,
             icon: "timer",
+        },
+        {
+            name: "sharingSettings",
+            text: i18n.t("Sharing settings"),
+            multiple: false,
+            isActive: this.verifyUserCanEditSharingSettings,
+            onClick: this.openSharingSettings,
+            icon: "share",
         },
     ];
 
@@ -243,6 +311,27 @@ class SyncRulesPage extends React.Component {
     changeEnabledFilter = event => this.setState({ enabledFilter: event.target.value });
 
     changeLastExecutedFilter = moment => this.setState({ lastExecutedFilter: moment });
+
+    onSearchRequest = key =>
+        this.props.d2.Api.getApi()
+            .get("sharing/search", { key })
+            .then(searchResult => searchResult);
+
+    onSharingChanged = async (updatedAttributes, onSuccess) => {
+        const sharingSettingsObject = {
+            meta: this.state.sharingSettingsObject.meta,
+            object: {
+                ...this.state.sharingSettingsObject.object,
+                ...updatedAttributes,
+            },
+        };
+
+        const syncRule = SyncRule.build(sharingSettingsObject.object);
+        await syncRule.save(this.props.d2);
+
+        this.setState({ sharingSettingsObject });
+        if (onSuccess) onSuccess();
+    };
 
     renderCustomFilters = () => {
         const {
@@ -292,22 +381,27 @@ class SyncRulesPage extends React.Component {
             targetInstanceFilter,
             enabledFilter,
             lastExecutedFilter,
+            sharingSettingsObject,
+            appConfigurator,
         } = this.state;
         const { d2 } = this.props;
 
         return (
             <React.Fragment>
-                <PageHeader title={i18n.t("Synchronization Rules")} onBackClick={this.backHome} />
+                <PageHeader
+                    title={i18n.t("Data Synchronization Rules")}
+                    onBackClick={this.backHome}
+                />
                 <ObjectsTable
                     key={tableKey}
                     d2={d2}
-                    model={SyncRulesPage.model}
+                    model={DataSyncRulesPage.model}
                     columns={this.columns}
                     detailsFields={this.detailsFields}
                     pageSize={10}
                     actions={this.actions}
                     list={SyncRule.list}
-                    onButtonClick={this.createRule}
+                    onButtonClick={appConfigurator ? this.createRule : null}
                     customFiltersComponent={this.renderCustomFilters}
                     customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
                 />
@@ -333,9 +427,18 @@ class SyncRulesPage extends React.Component {
                     isOpen={syncSummaryOpen}
                     handleClose={this.closeSummary}
                 />
+
+                <SharingDialog
+                    isOpen={!!sharingSettingsObject}
+                    isDataShareable={false}
+                    sharedObject={sharingSettingsObject}
+                    onCancel={this.closeSharingSettings}
+                    onSharingChanged={this.onSharingChanged}
+                    onSearchRequest={this.onSearchRequest}
+                />
             </React.Fragment>
         );
     }
 }
 
-export default withLoading(withSnackbar(withRouter(SyncRulesPage)));
+export default withLoading(withSnackbar(withRouter(DataSyncRulesPage)));

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-09-17T10:45:09.309Z\n"
-"PO-Revision-Date: 2019-09-17T10:45:09.309Z\n"
+"POT-Creation-Date: 2019-10-15T16:53:19.769Z\n"
+"PO-Revision-Date: 2019-10-15T16:53:19.769Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -160,19 +160,13 @@ msgstr[1] ""
 msgid "Instance Configuration"
 msgstr ""
 
-msgid "Organisation Units"
+msgid "Data Synchronization"
 msgstr ""
 
-msgid "Data Elements"
+msgid "Metadata Synchronization Rules"
 msgstr ""
 
-msgid "Indicators"
-msgstr ""
-
-msgid "Validation Rules"
-msgstr ""
-
-msgid "Synchronization Rules"
+msgid "Data Synchronization Rules"
 msgstr ""
 
 msgid "Deleted objects"
@@ -378,6 +372,9 @@ msgstr ""
 msgid "Toggle scheduling"
 msgstr ""
 
+msgid "Sharing settings"
+msgstr ""
+
 msgid "Last executed date"
 msgstr ""
 
@@ -391,6 +388,48 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "External access"
+msgstr ""
+
+msgid "Anyone can view without login"
+msgstr ""
+
+msgid "No access"
+msgstr ""
+
+msgid "Public access"
+msgstr ""
+
+msgid "METADATA"
+msgstr ""
+
+msgid "Can edit and view"
+msgstr ""
+
+msgid "Can view only"
+msgstr ""
+
+msgid "DATA"
+msgstr ""
+
+msgid "Can capture and view"
+msgstr ""
+
+msgid "Created by"
+msgstr ""
+
+msgid "Who has access"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Add users and user groups"
+msgstr ""
+
+msgid "Enter names"
+msgstr ""
 
 msgid "Synchronize Metadata"
 msgstr ""
@@ -434,9 +473,6 @@ msgstr ""
 msgid "JSON Response"
 msgstr ""
 
-msgid "Data Elements Synchronization"
-msgstr ""
-
 msgid "Code"
 msgstr ""
 
@@ -450,15 +486,6 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Indicators Synchronization"
-msgstr ""
-
-msgid "Organisation Units Synchronization"
-msgstr ""
-
-msgid "Validation Rules Synchronization"
 msgstr ""
 
 msgid "Retrieving information from remote instances"

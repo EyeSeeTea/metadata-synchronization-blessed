@@ -136,7 +136,7 @@ class HistoryPage extends React.Component {
 
         return (
             <a
-                href={`/#/synchronization-rules/edit/${syncRule.id}`}
+                href={`/#/metadata-synchronization-rules/edit/${syncRule.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
             >

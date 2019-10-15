@@ -24,7 +24,8 @@ const styles = () => ({
             backgroundColor: "#f9f9f9",
         },
         cursor: "pointer",
-        padding: 50,
+        padding: 45,
+        height: "100%",
     },
     container: {
         width: "90%",
@@ -41,11 +42,13 @@ const styles = () => ({
         fontSize: "70px !important",
         marginRight: 10,
     },
+    paper: {
+        height: "100%",
+    },
 });
 
 const GRID_ROW_1 = 12;
-const GRID_ROW_3 = 3;
-const GRID_ROW_4 = 4;
+const GRID_ROW_2 = 6;
 
 class LandingPage extends React.Component {
     static propTypes = {
@@ -56,18 +59,22 @@ class LandingPage extends React.Component {
         const { classes } = this.props;
         const items = [
             ["instance-configurator", i18n.t("Instance Configuration"), "edit", GRID_ROW_1],
-            ["sync/organisationUnits", i18n.t("Organisation Units"), "sync", GRID_ROW_3],
-            ["sync/dataElements", i18n.t("Data Elements"), "sync", GRID_ROW_3],
-            ["sync/indicators", i18n.t("Indicators"), "sync", GRID_ROW_3],
-            ["sync/validationRules", i18n.t("Validation Rules"), "sync", GRID_ROW_3],
+            ["sync/metadata", i18n.t("Metadata Synchronization"), "sync", GRID_ROW_2],
+            ["sync/data", i18n.t("Data Synchronization"), "sync", GRID_ROW_2],
             [
-                "synchronization-rules",
-                i18n.t("Synchronization Rules"),
+                "metadata-synchronization-rules",
+                i18n.t("Metadata Synchronization Rules"),
                 "playlist_add_check",
-                GRID_ROW_4,
+                GRID_ROW_2,
             ],
-            ["sync/deleted", i18n.t("Deleted objects"), "delete", GRID_ROW_4],
-            ["history", i18n.t("Synchronization History"), "history", GRID_ROW_4],
+            [
+                "data-synchronization-rules",
+                i18n.t("Data Synchronization Rules"),
+                "playlist_add_check",
+                GRID_ROW_2,
+            ],
+            ["sync/deleted", i18n.t("Deleted objects"), "delete", GRID_ROW_2],
+            ["history", i18n.t("Synchronization History"), "history", GRID_ROW_2],
         ];
         const menuItems = items.map(([key, title, icon, xs]) => (
             <Grid item xs={xs} className={classes.item} key={key}>
