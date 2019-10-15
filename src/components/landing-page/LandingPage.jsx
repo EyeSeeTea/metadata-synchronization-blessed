@@ -48,7 +48,6 @@ const styles = () => ({
 });
 
 const GRID_ROW_1 = 12;
-const GRID_ROW_2 = 6;
 const GRID_ROW_3 = 4;
 
 class LandingPage extends React.Component {
@@ -62,14 +61,21 @@ class LandingPage extends React.Component {
             ["instance-configurator", i18n.t("Instance Configuration"), "edit", GRID_ROW_1],
             ["sync/metadata", i18n.t("Metadata"), "sync", GRID_ROW_3],
             ["sync/data", i18n.t("Data"), "sync", GRID_ROW_3],
+            ["sync/deleted", i18n.t("Deleted objects"), "delete", GRID_ROW_3],
             [
                 "metadata-synchronization-rules",
                 i18n.t("Metadata Synchronization Rules"),
                 "playlist_add_check",
                 GRID_ROW_3,
             ],
-            ["sync/deleted", i18n.t("Deleted objects"), "delete", GRID_ROW_2],
-            ["history", i18n.t("Synchronization History"), "history", GRID_ROW_2],
+            [
+                "data-synchronization-rules",
+                i18n.t("Data Synchronization Rules"),
+                "playlist_add_check",
+                GRID_ROW_3,
+            ],
+            
+            ["history", i18n.t("Synchronization History"), "history", GRID_ROW_3],
         ];
         const menuItems = items.map(([key, title, icon, xs]) => (
             <Grid item xs={xs} className={classes.item} key={key}>

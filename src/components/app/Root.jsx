@@ -10,7 +10,8 @@ import DataPage from "../synchronization-page/DataPage";
 import DeletedObjectsPage from "../synchronization-page/DeletedObjectsPage";
 import HistoryPage from "../history-list-page/HistoryPage";
 import SyncRulesWizard from "../rules-creation-page/SyncRulesWizard";
-import SyncRulesConfigurator from "../rules-list-page/SyncRulesPage";
+import MetadataSyncRulesPage from "../rules-list-page/MetadataSyncRulesPage";
+import DataSyncRulesPage from "../rules-list-page/DataSyncRulesPage";
 
 class Root extends React.Component {
     static propTypes = {
@@ -57,7 +58,12 @@ class Root extends React.Component {
 
                 <Route
                     path="/metadata-synchronization-rules"
-                    render={props => <SyncRulesConfigurator {...this.props} {...props} />}
+                    render={props => <MetadataSyncRulesPage {...this.props} {...props} />}
+                />
+
+                <Route
+                    path="/data-synchronization-rules"
+                    render={props => <DataSyncRulesPage {...this.props} {...props} />}
                 />
 
                 <Route render={() => <LandingPage {...this.props} />} />

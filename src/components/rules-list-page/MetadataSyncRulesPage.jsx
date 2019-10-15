@@ -28,7 +28,7 @@ import {
     isAppExecutor,
 } from "../../utils/permissions";
 
-class SyncRulesPage extends React.Component {
+class MetadataSyncRulesPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -388,11 +388,11 @@ class SyncRulesPage extends React.Component {
 
         return (
             <React.Fragment>
-                <PageHeader title={i18n.t("Synchronization Rules")} onBackClick={this.backHome} />
+                <PageHeader title={i18n.t("Metadata Synchronization Rules")} onBackClick={this.backHome} />
                 <ObjectsTable
                     key={tableKey}
                     d2={d2}
-                    model={SyncRulesPage.model}
+                    model={MetadataSyncRulesPage.model}
                     columns={this.columns}
                     detailsFields={this.detailsFields}
                     pageSize={10}
@@ -438,4 +438,4 @@ class SyncRulesPage extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(SyncRulesPage)));
+export default withLoading(withSnackbar(withRouter(MetadataSyncRulesPage)));
