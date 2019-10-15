@@ -318,3 +318,21 @@ export function defaultModel(pascalCaseModelName: string): any {
         protected static metadataType = pascalCaseModelName;
     };
 }
+
+export const metadataModels = [
+    DataElementModel,
+    DataElementGroupModel,
+    DataElementGroupSetModel,
+    IndicatorModel,
+    IndicatorGroupModel,
+    IndicatorGroupSetModel,
+    OrganisationUnitModel,
+    OrganisationUnitGroupModel,
+    OrganisationUnitGroupSetModel,
+    ValidationRuleModel,
+    ValidationRuleGroupModel,
+    ProgramIndicatorModel,
+    ProgramIndicatorGroupModel,
+    ProgramRuleModel,
+    ProgramRuleVariableModel,
+];
