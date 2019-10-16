@@ -8,7 +8,11 @@ import isValidCronExpression from "../utils/validCronExpression";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
 import { D2 } from "../types/d2";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { SynchronizationRule, SharingSetting } from "../types/synchronization";
+import {
+    SynchronizationRule,
+    SharingSetting,
+    SynchronizationParams,
+} from "../types/synchronization";
 import { Validation } from "../types/validations";
 
 const dataStoreKey = "rules";
@@ -88,8 +92,8 @@ export default class SyncRule {
         return this.syncRule.userGroupAccesses;
     }
 
-    public get includeUserInfo(): boolean {
-        return !!this.syncRule.builder.includeUserInfo;
+    public get syncParams(): SynchronizationParams {
+        return this.syncRule.builder.syncParams || {};
     }
 
     public static create(): SyncRule {
@@ -100,7 +104,11 @@ export default class SyncRule {
             builder: {
                 targetInstances: [],
                 metadataIds: [],
-                includeUserInfo: false,
+                syncParams: {
+                    includeSharingSettings: true,
+                    atomicMode: "ALL",
+                    mergeMode: "MERGE",
+                },
             },
             enabled: false,
             publicAccess: "rw------",
@@ -189,12 +197,12 @@ export default class SyncRule {
         });
     }
 
-    public updateIncludeUserInfo(includeUserInfo: boolean): SyncRule {
+    public updateSyncParams(syncParams: SynchronizationParams): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             builder: {
                 ...this.syncRule.builder,
-                includeUserInfo,
+                syncParams,
             },
         });
     }

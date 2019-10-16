@@ -72,7 +72,7 @@ class GenericSynchronizationPage extends React.Component {
         }
     };
 
-    handleSynchronization = async ({ targetInstances, includeUserInfo }) => {
+    handleSynchronization = async ({ targetInstances, syncParams }) => {
         const { isDelete, loading, d2 } = this.props;
         const { metadataIds } = this.state;
 
@@ -80,7 +80,7 @@ class GenericSynchronizationPage extends React.Component {
         loading.show(true, i18n.t("Synchronizing metadata"));
 
         try {
-            const builder = { metadataIds, targetInstances, includeUserInfo };
+            const builder = { metadataIds, targetInstances, syncParams };
             for await (const { message, syncReport, done } of action(d2, builder)) {
                 if (message) loading.show(true, message);
                 if (syncReport) await syncReport.save(d2);

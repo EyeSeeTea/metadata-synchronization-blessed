@@ -22,7 +22,7 @@ export function buildNestedRules(rules: string[][] = []): NestedRules {
 export function cleanObject(
     element: any,
     excludeRules: string[][] = [],
-    includeUserInfo: boolean
+    includeSharingSettings: boolean
 ): any {
     const leafRules = _(excludeRules)
         .filter(path => path.length === 1)
@@ -30,7 +30,7 @@ export function cleanObject(
         .compact()
         .value();
 
-    const propsToRemove = includeUserInfo ? [] : userProperties;
+    const propsToRemove = includeSharingSettings ? [] : userProperties;
 
     return _.pick(
         element,
@@ -86,7 +86,7 @@ export async function postMetadata(
     try {
         const params: MetadataImportParams = {
             importMode: "COMMIT",
-            identifier: "AUTO",
+            identifier: "UID",
             importReportMode: "FULL",
             importStrategy: "CREATE_AND_UPDATE",
             mergeMode: "REPLACE",

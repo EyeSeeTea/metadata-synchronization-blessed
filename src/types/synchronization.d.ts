@@ -1,11 +1,15 @@
-import { MetadataImportResponse, MetadataImportStats } from "./d2";
+import { MetadataImportResponse, MetadataImportStats, MetadataImportParams } from "./d2";
 import SyncReport from "../models/syncReport";
 
 export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
     syncRule?: string;
-    includeUserInfo: boolean;
+    syncParams: SynchronizationParams;
+}
+
+export interface SynchronizationParams extends MetadataImportParams {
+    includeSharingSettings?: boolean;
 }
 
 export interface ExportBuilder {
@@ -13,7 +17,7 @@ export interface ExportBuilder {
     ids: string[];
     excludeRules: string[][];
     includeRules: string[][];
-    includeUserInfo: boolean;
+    includeSharingSettings: boolean;
 }
 
 export interface MetadataPackage {
