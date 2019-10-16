@@ -173,11 +173,11 @@ class DataSyncRulesPage extends React.Component {
     };
 
     createRule = () => {
-        this.props.history.push("/metadata-synchronization-rules/new");
+        this.props.history.push("/data-synchronization-rules/new");
     };
 
     editRule = rule => {
-        this.props.history.push(`/metadata-synchronization-rules/edit/${rule.id}`);
+        this.props.history.push(`/data-synchronization-rules/edit/${rule.id}`);
     };
 
     executeRule = async ({ builder, name, id }) => {
@@ -372,6 +372,11 @@ class DataSyncRulesPage extends React.Component {
         );
     };
 
+    //TODO: for the moment show empty data sync rules
+    emptyDataSyncRules =( d2, filters,pagination) => new Promise((resolve, reject) => {
+        resolve({ objects:[], pager: { page:1, pageCount:1, total:0 } });
+    });
+
     render() {
         const {
             tableKey,
@@ -400,7 +405,8 @@ class DataSyncRulesPage extends React.Component {
                     detailsFields={this.detailsFields}
                     pageSize={10}
                     actions={this.actions}
-                    list={SyncRule.list}
+                    //list={SyncRule.list}
+                    list={this.emptyDataSyncRules}
                     onButtonClick={appConfigurator ? this.createRule : null}
                     customFiltersComponent={this.renderCustomFilters}
                     customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}

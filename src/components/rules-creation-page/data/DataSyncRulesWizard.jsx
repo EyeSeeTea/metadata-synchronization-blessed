@@ -7,7 +7,6 @@ import { ConfirmationDialog, Wizard } from "d2-ui-components";
 import PageHeader from "../../page-header/PageHeader";
 import GeneralInfoStep from "../common/steps/GeneralInfoStep";
 import SyncRule from "../../../models/syncRule";
-import MetadataStep from "./steps/MetadataSelectionStep";
 import InstanceSelectionStep from "../common/steps/InstanceSelectionStep";
 import SchedulerStep from "../common/steps/SchedulerStep";
 import SaveStep from "../common/steps/SaveStep";
@@ -134,7 +133,7 @@ class DataSyncRulesWizard extends React.Component {
 
     handleConfirm = () => {
         this.setState({ dialogOpen: false });
-        this.props.history.push("/metadata-synchronization-rules");
+        this.props.history.push("/data-synchronization-rules");
     };
 
     handleDialogCancel = () => {

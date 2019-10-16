@@ -12,6 +12,7 @@ import HistoryPage from "../history-list-page/HistoryPage";
 import MetadadaSyncRulesWizard from "../rules-creation-page/metadata/MetadataSyncRulesWizard";
 import MetadataSyncRulesPage from "../rules-list-page/MetadataSyncRulesPage";
 import DataSyncRulesPage from "../rules-list-page/DataSyncRulesPage";
+import DataSyncRulesWizard from "../rules-creation-page/data/DataSyncRulesWizard";
 
 class Root extends React.Component {
     static propTypes = {
@@ -54,6 +55,11 @@ class Root extends React.Component {
                 <Route
                     path={"/metadata-synchronization-rules/:action(new|edit)/:id?"}
                     render={props => <MetadadaSyncRulesWizard {...this.props} {...props} />}
+                />
+
+                <Route
+                    path={"/data-synchronization-rules/:action(new|edit)/:id?"}
+                    render={props => <DataSyncRulesWizard {...this.props} {...props} />}
                 />
 
                 <Route
