@@ -4,8 +4,8 @@ import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
 import { withSnackbar } from "d2-ui-components";
 
-import MetadataTable from "../../metadata-table/MetadataTable";
-import { metadataModels } from "../../../models/d2Model";
+import MetadataTable from "../../../metadata-table/MetadataTable";
+import { metadataModels } from "../../../../models/d2Model";
 
 class MetadataSelectionStep extends React.Component {
     static propTypes = {

@@ -4,7 +4,7 @@ import i18n from "@dhis2/d2-i18n";
 import { FormControlLabel, Switch } from "@material-ui/core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import { DropDown, TextField } from "@dhis2/d2-ui-core";
-import isValidCronExpression from "../../../utils/validCronExpression";
+import isValidCronExpression from "../../../../utils/validCronExpression";
 
 const Toggle = ({ label, onChange, value }) => (
     <FormControlLabel

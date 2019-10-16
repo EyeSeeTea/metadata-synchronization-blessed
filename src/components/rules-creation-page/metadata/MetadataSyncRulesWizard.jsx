@@ -4,16 +4,16 @@ import i18n from "@dhis2/d2-i18n";
 import { withRouter } from "react-router-dom";
 import { ConfirmationDialog, Wizard } from "d2-ui-components";
 
-import PageHeader from "../page-header/PageHeader";
+import PageHeader from "../../page-header/PageHeader";
 import GeneralInfoStep from "./steps/GeneralInfoStep";
-import SyncRule from "../../models/syncRule";
+import SyncRule from "../../../models/syncRule";
 import MetadataStep from "./steps/MetadataSelectionStep";
 import InstanceSelectionStep from "./steps/InstanceSelectionStep";
 import SchedulerStep from "./steps/SchedulerStep";
 import SaveStep from "./steps/SaveStep";
-import { getValidationMessages } from "../../utils/validations";
+import { getValidationMessages } from "../../../utils/validations";
 
-class SyncRulesWizard extends React.Component {
+class MetadadaSyncRulesWizard extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
@@ -137,7 +137,7 @@ class SyncRulesWizard extends React.Component {
             ? i18n.t("Cancel synchronization rule creation")
             : i18n.t("Cancel synchronization rule editing");
 
-        const steps = SyncRulesWizard.getStepsBaseInfo.map(step => ({
+        const steps = MetadadaSyncRulesWizard.getStepsBaseInfo.map(step => ({
             ...step,
             props: {
                 d2,
@@ -178,4 +178,4 @@ class SyncRulesWizard extends React.Component {
     }
 }
 
-export default withRouter(SyncRulesWizard);
+export default withRouter(MetadadaSyncRulesWizard);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { MultiSelector } from "d2-ui-components";
-import Instance from "../../../models/instance";
+import Instance from "../../../../models/instance";
 
 export const getInstances = async d2 => {
     const { objects } = await Instance.list(d2, {}, { paging: false });
