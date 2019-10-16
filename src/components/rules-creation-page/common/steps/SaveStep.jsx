@@ -5,7 +5,7 @@ import i18n from "@dhis2/d2-i18n";
 import { Button, LinearProgress, withStyles } from "@material-ui/core";
 import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
 
-import { getInstances } from "../../common/steps/InstanceSelectionStep";
+import { getInstances } from "./InstanceSelectionStep";
 import { getBaseUrl } from "../../../../utils/d2";
 import { getMetadata } from "../../../../utils/synchronization";
 import { getValidationMessages } from "../../../../utils/validations";
