@@ -3,7 +3,7 @@ import i18n from "@dhis2/d2-i18n";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import { ConfirmationDialog, MultiSelector } from "d2-ui-components";
-import { DialogContent } from "@material-ui/core";
+import DialogContent from "@material-ui/core/DialogContent";
 
 import Instance from "../../models/instance";
 import SyncParamsSelector from "../sync-params-selector/SyncParamsSelector";

@@ -89,8 +89,8 @@ export async function postMetadata(
             identifier: "UID",
             importReportMode: "FULL",
             importStrategy: "CREATE_AND_UPDATE",
-            mergeMode: "REPLACE",
-            atomicMode: "NONE",
+            mergeMode: "MERGE",
+            atomicMode: "ALL",
             ...additionalParams,
         };
 
