@@ -78,7 +78,7 @@ export async function* startSynchronization(
     d2: D2,
     builder: SynchronizationBuilder
 ): AsyncIterableIterator<SynchronizationState> {
-    const { targetInstances: targetInstanceIds, metadataIds, syncRule, syncParams } = builder;
+    const { targetInstances: targetInstanceIds, metadataIds, syncRule, syncParams = {} } = builder;
     const { baseUrl } = d2.Api.getApi();
 
     // Phase 1: Export and package metadata from origin instance
