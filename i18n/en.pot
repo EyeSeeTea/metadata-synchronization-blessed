@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-10-15T16:38:25.323Z\n"
-"PO-Revision-Date: 2019-10-15T16:38:25.323Z\n"
+"POT-Creation-Date: 2019-10-16T09:02:16.076Z\n"
+"PO-Revision-Date: 2019-10-16T09:02:16.076Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -296,6 +296,21 @@ msgid "Yes"
 msgstr ""
 
 msgid "Target instances [{{total}}]"
+msgstr ""
+
+msgid "Advanced options"
+msgstr ""
+
+msgid "Include user information and sharing settings"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Disable atomic verification"
+msgstr ""
+
+msgid "Replace objects in destination instance"
 msgstr ""
 
 msgid "Enabled"

@@ -20,6 +20,7 @@ interface PseudoEvent {
 const styles = () => ({
     advancedOptionsTitle: {
         marginTop: "40px",
+        fontWeight: 500,
     },
 });
 
