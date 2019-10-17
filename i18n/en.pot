@@ -283,6 +283,21 @@ msgstr ""
 msgid "Target instances [{{total}}]"
 msgstr ""
 
+msgid "Advanced options"
+msgstr ""
+
+msgid "Include user information and sharing settings"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Disable atomic verification"
+msgstr ""
+
+msgid "Replace objects in destination instance"
+msgstr ""
+
 msgid "Enabled"
 msgstr ""
 

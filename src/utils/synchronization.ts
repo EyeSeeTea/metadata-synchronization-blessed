@@ -8,7 +8,8 @@ import { MetadataPackage, NestedRules, SynchronizationResult } from "../types/sy
 import { cleanModelName, getClassName } from "./d2";
 import { isValidUid } from "d2/uid";
 
-const blacklistedProperties = ["user", "userAccesses", "userGroupAccesses"];
+const blacklistedProperties = ["access"];
+const userProperties = ["user", "userAccesses", "userGroupAccesses"];
 
 export function buildNestedRules(rules: string[][] = []): NestedRules {
     return _(rules)
@@ -18,14 +19,23 @@ export function buildNestedRules(rules: string[][] = []): NestedRules {
         .value();
 }
 
-export function cleanObject(element: any, excludeRules: string[][] = []): any {
+export function cleanObject(
+    element: any,
+    excludeRules: string[][] = [],
+    includeSharingSettings: boolean
+): any {
     const leafRules = _(excludeRules)
         .filter(path => path.length === 1)
         .map(_.first)
         .compact()
         .value();
 
-    return _.pick(element, _.difference(_.keys(element), leafRules, blacklistedProperties));
+    const propsToRemove = includeSharingSettings ? [] : userProperties;
+
+    return _.pick(
+        element,
+        _.difference(_.keys(element), leafRules, blacklistedProperties, propsToRemove)
+    );
 }
 
 export function cleanReferences(
@@ -76,11 +86,11 @@ export async function postMetadata(
     try {
         const params: MetadataImportParams = {
             importMode: "COMMIT",
-            identifier: "AUTO",
+            identifier: "UID",
             importReportMode: "FULL",
             importStrategy: "CREATE_AND_UPDATE",
-            mergeMode: "REPLACE",
-            atomicMode: "NONE",
+            mergeMode: "MERGE",
+            atomicMode: "ALL",
             ...additionalParams,
         };
 

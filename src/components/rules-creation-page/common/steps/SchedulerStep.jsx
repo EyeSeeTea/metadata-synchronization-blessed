@@ -1,23 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { FormControlLabel, Switch } from "@material-ui/core";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import { DropDown, TextField } from "@dhis2/d2-ui-core";
-import isValidCronExpression from "../../../../utils/validCronExpression";
 
-const Toggle = ({ label, onChange, value }) => (
-    <FormControlLabel
-        control={
-            <Switch
-                onChange={e => onChange({ target: { value: e.target.checked } })}
-                checked={value}
-                color="primary"
-            />
-        }
-        label={label}
-    />
-);
+import { Toggle } from "../../../toggle/Toggle";
+import isValidCronExpression from "../../../../utils/validCronExpression";
 
 const SchedulerStep = ({ syncRule, onChange }) => {
     const cronExpressions = [
