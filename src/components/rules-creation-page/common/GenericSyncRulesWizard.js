@@ -5,7 +5,6 @@ import { withRouter } from "react-router-dom";
 import { ConfirmationDialog, Wizard } from "d2-ui-components";
 
 import PageHeader from "../../page-header/PageHeader";
-import GeneralInfoStep from "../common/steps/GeneralInfoStep";
 import SyncRule from "../../../models/syncRule";
 import { getValidationMessages } from "../../../utils/validations";
 
