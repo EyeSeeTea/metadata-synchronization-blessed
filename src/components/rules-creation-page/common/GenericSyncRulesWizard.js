@@ -61,9 +61,7 @@ class GenericSyncRulesWizard extends React.Component {
         const { dialogOpen, syncRule } = this.state;
         const { d2, location, stepsBaseInfo, syncTitle } = this.props;
 
-        const title = !this.isEdit
-            ? i18n.t(`New ${syncTitle}`)
-            : i18n.t(`Edit ${syncTitle}`);
+        const title = !this.isEdit ? i18n.t(`New ${syncTitle}`) : i18n.t(`Edit ${syncTitle}`);
 
         const cancel = !this.isEdit
             ? i18n.t(`Cancel ${syncTitle} creation`)

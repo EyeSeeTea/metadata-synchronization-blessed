@@ -63,7 +63,9 @@ class DataSyncRulesWizard extends React.Component {
         const { d2 } = this.props;
         const title = i18n.t("data synchronization rule");
 
-        return( <GenericSyncRulesWizard syncTitle={title} stepsBaseInfo={this.stepsBaseInfo} d2={d2}/>);
+        return (
+            <GenericSyncRulesWizard syncTitle={title} stepsBaseInfo={this.stepsBaseInfo} d2={d2} />
+        );
     }
 }
 
