@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-10-16T08:00:16.075Z\n"
-"PO-Revision-Date: 2019-10-16T08:00:16.075Z\n"
+"POT-Creation-Date: 2019-10-17T05:14:30.935Z\n"
+"PO-Revision-Date: 2019-10-17T05:14:30.935Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -208,75 +208,13 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-msgid "Cancel synchronization rule wizard"
-msgstr ""
-
-msgid ""
-"You are about to exit the Sync Rule Creation Wizard. All your changes will "
-"be lost. Are you sure you want to proceed?"
-msgstr ""
-
-msgid "Yes"
-msgstr ""
-
-msgid "Target instances [{{total}}]"
-msgstr ""
-
-msgid "Scheduling"
-msgstr ""
-
-msgid "Enabled"
-msgstr ""
-
-msgid "Disabled"
-msgstr ""
-
-msgid "Frequency"
-msgstr ""
-
-msgid "Every hour"
-msgstr ""
-
-msgid "Every day at midnight"
-msgstr ""
-
-msgid "Every day at 3 AM"
-msgstr ""
-
-msgid "Every day at noon"
-msgstr ""
-
-msgid "Every week"
-msgstr ""
-
-msgid "Select frequency"
-msgstr ""
-
-msgid "Custom"
-msgstr ""
-
-msgid "Cron expression"
-msgstr ""
-
-msgid "Cron expression must be valid"
-msgstr ""
-
 msgid "General info"
 msgstr ""
 
-msgid "Data elements"
-msgstr ""
-
-msgid "Organisation units"
-msgstr ""
-
-msgid "Period"
-msgstr ""
-
-msgid "Category options"
-msgstr ""
-
 msgid "Instance Selection"
+msgstr ""
+
+msgid "Scheduling"
 msgstr ""
 
 msgid "Configure the scheduling frequency for the synchronization rule"
@@ -331,19 +269,75 @@ msgstr ""
 msgid "Summary"
 msgstr ""
 
-msgid "New synchronization rule"
+msgid "Cancel synchronization rule wizard"
 msgstr ""
 
-msgid "Edit synchronization rule"
+msgid ""
+"You are about to exit the Sync Rule Creation Wizard. All your changes will "
+"be lost. Are you sure you want to proceed?"
 msgstr ""
 
-msgid "Cancel synchronization rule creation"
+msgid "Yes"
 msgstr ""
 
-msgid "Cancel synchronization rule editing"
+msgid "Target instances [{{total}}]"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Frequency"
+msgstr ""
+
+msgid "Every hour"
+msgstr ""
+
+msgid "Every day at midnight"
+msgstr ""
+
+msgid "Every day at 3 AM"
+msgstr ""
+
+msgid "Every day at noon"
+msgstr ""
+
+msgid "Every week"
+msgstr ""
+
+msgid "Select frequency"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "Cron expression"
+msgstr ""
+
+msgid "Cron expression must be valid"
+msgstr ""
+
+msgid "Data elements"
+msgstr ""
+
+msgid "Organisation units"
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+msgid "Category options"
+msgstr ""
+
+msgid "data synchronization rule"
 msgstr ""
 
 msgid "Metadata"
+msgstr ""
+
+msgid "metadata synchronization rule"
 msgstr ""
 
 msgid "Selected {{difference}} elements"

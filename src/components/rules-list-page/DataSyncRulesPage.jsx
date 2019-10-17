@@ -373,9 +373,10 @@ class DataSyncRulesPage extends React.Component {
     };
 
     //TODO: for the moment show empty data sync rules
-    emptyDataSyncRules =( d2, filters,pagination) => new Promise((resolve, reject) => {
-        resolve({ objects:[], pager: { page:1, pageCount:1, total:0 } });
-    });
+    emptyDataSyncRules = (d2, filters, pagination) =>
+        new Promise((resolve, reject) => {
+            resolve({ objects: [], pager: { page: 1, pageCount: 1, total: 0 } });
+        });
 
     render() {
         const {
