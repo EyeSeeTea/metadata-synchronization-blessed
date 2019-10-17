@@ -6,6 +6,13 @@ import { ConfirmationDialog, MultiSelector } from "d2-ui-components";
 import DialogContent from "@material-ui/core/DialogContent";
 
 import Instance from "../../models/instance";
+import SyncParamsSelector from "../sync-params-selector/SyncParamsSelector";
+
+const defaultSyncParams = {
+    includeSharingSettings: true,
+    atomicMode: "ALL",
+    mergeMode: "MERGE",
+};
 
 class SyncDialog extends React.Component {
     static propTypes = {
@@ -19,6 +26,7 @@ class SyncDialog extends React.Component {
     state = {
         instanceOptions: [],
         targetInstances: [],
+        syncParams: defaultSyncParams,
     };
 
     async componentDidMount() {
@@ -40,19 +48,23 @@ class SyncDialog extends React.Component {
 
     handleExecute = async () => {
         const { task } = this.props;
-        const { targetInstances } = this.state;
+        const { targetInstances, syncParams } = this.state;
 
-        await task(targetInstances);
-        this.setState({ targetInstances: [] });
+        await task({ targetInstances, syncParams });
+        this.setState({ targetInstances: [], syncParams: defaultSyncParams });
     };
 
     handleCancel = () => {
         this.props.handleClose();
     };
 
+    changeSyncParams = syncParams => {
+        this.setState({ syncParams });
+    };
+
     render() {
         const { d2, isOpen } = this.props;
-        const { targetInstances } = this.state;
+        const { targetInstances, syncParams } = this.state;
         const disableSync = _.isEmpty(targetInstances);
 
         return (
@@ -73,6 +85,10 @@ class SyncDialog extends React.Component {
                             height={300}
                             onChange={this.onChangeInstances}
                             options={this.state.instanceOptions}
+                        />
+                        <SyncParamsSelector
+                            defaultParams={syncParams}
+                            onChange={this.changeSyncParams}
                         />
                     </DialogContent>
                 </ConfirmationDialog>
