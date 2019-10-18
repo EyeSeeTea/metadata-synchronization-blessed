@@ -48,13 +48,8 @@ export const metadataModels = Object.values(classes);
 export function d2ModelFactory(d2: D2, d2ModelName: string): typeof D2Model {
     const modelName = d2.models[d2ModelName].name;
     const className = modelName.charAt(0).toUpperCase() + modelName.slice(1) + "Model";
-
-    let model = classes[className];
-
-    if (!model) {
+    if (!classes[className]){
         console.log(`d2ModelFactory for modelName ${d2ModelName} return defaultModel`);
-        model = defaultModel(modelName);
     }
-
-    return model;
+    return classes[className] || defaultModel(modelName);
 }
