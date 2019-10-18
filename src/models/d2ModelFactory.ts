@@ -1,8 +1,43 @@
-import { D2Model, defaultModel, metadataModels } from "./d2Model";
+import {
+    D2Model, defaultModel, DataElementModel,
+    DataElementGroupModel,
+    DataElementGroupSetModel,
+    IndicatorModel,
+    IndicatorGroupModel,
+    IndicatorGroupSetModel,
+    OrganisationUnitModel,
+    OrganisationUnitGroupModel,
+    OrganisationUnitGroupSetModel,
+    ValidationRuleModel,
+    ValidationRuleGroupModel,
+    ProgramIndicatorModel,
+    ProgramIndicatorGroupModel,
+    ProgramRuleModel,
+    ProgramRuleVariableModel
+} from "./d2Model";
+
 import { D2 } from "../types/d2";
 import _ from "lodash";
 
-const classes: { [modelName: string]: typeof D2Model } = _.keyBy(metadataModels, o => o.name);
+const classes: { [modelName: string]: typeof D2Model } = {
+    DataElementModel,
+    DataElementGroupModel,
+    DataElementGroupSetModel,
+    IndicatorModel,
+    IndicatorGroupModel,
+    IndicatorGroupSetModel,
+    OrganisationUnitModel,
+    OrganisationUnitGroupModel,
+    OrganisationUnitGroupSetModel,
+    ValidationRuleModel,
+    ValidationRuleGroupModel,
+    ProgramIndicatorModel,
+    ProgramIndicatorGroupModel,
+    ProgramRuleModel,
+    ProgramRuleVariableModel
+};
+
+export const metadataModels = Object.values(classes);
 
 /**
  * D2ModelProxy allows to create on-demand d2Model classes
@@ -12,5 +47,13 @@ const classes: { [modelName: string]: typeof D2Model } = _.keyBy(metadataModels,
 export function d2ModelFactory(d2: D2, d2ModelName: string): typeof D2Model {
     const modelName = d2.models[d2ModelName].name;
     const className = modelName.charAt(0).toUpperCase() + modelName.slice(1) + "Model";
-    return classes[className] || defaultModel(modelName);
+
+    let model = classes[className];
+
+    if (!model) {
+        console.log(`d2ModelFactory for modelName ${d2ModelName} return defaultModel`)
+        model = defaultModel(modelName);
+    }
+
+    return model;
 }
