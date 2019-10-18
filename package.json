@@ -1,7 +1,7 @@
 {
   "name": "metadata-synchronization",
   "description": "Advanced metadata synchronization utility",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "license": "GPL-3.0",
   "author": "EyeSeeTea team",
   "homepage": ".",
@@ -26,6 +26,7 @@
     "d2": "^31.1.1",
     "d2-manifest": "^1.0.0",
     "d2-ui-components": "^0.0.25",
+    "downshift": "^3.3.4",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "enzyme-to-json": "^3.4.0",
