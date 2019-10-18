@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { metadataModels } from "../../models/d2Model";
+import { metadataModels } from "../../models/d2ModelFactory";
 import GenericSynchronizationPage from "./GenericSynchronizationPage";
 
 export default class DataPage extends React.Component {
