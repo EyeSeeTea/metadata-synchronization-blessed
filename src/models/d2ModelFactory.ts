@@ -19,7 +19,6 @@ import {
 } from "./d2Model";
 
 import { D2 } from "../types/d2";
-import _ from "lodash";
 
 const classes: { [modelName: string]: typeof D2Model } = {
     DataElementModel,
