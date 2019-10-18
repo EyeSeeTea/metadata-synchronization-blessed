@@ -1,5 +1,7 @@
 import {
-    D2Model, defaultModel, DataElementModel,
+    D2Model,
+    defaultModel,
+    DataElementModel,
     DataElementGroupModel,
     DataElementGroupSetModel,
     IndicatorModel,
@@ -13,7 +15,7 @@ import {
     ProgramIndicatorModel,
     ProgramIndicatorGroupModel,
     ProgramRuleModel,
-    ProgramRuleVariableModel
+    ProgramRuleVariableModel,
 } from "./d2Model";
 
 import { D2 } from "../types/d2";
@@ -34,7 +36,7 @@ const classes: { [modelName: string]: typeof D2Model } = {
     ProgramIndicatorModel,
     ProgramIndicatorGroupModel,
     ProgramRuleModel,
-    ProgramRuleVariableModel
+    ProgramRuleVariableModel,
 };
 
 export const metadataModels = Object.values(classes);
@@ -51,7 +53,7 @@ export function d2ModelFactory(d2: D2, d2ModelName: string): typeof D2Model {
     let model = classes[className];
 
     if (!model) {
-        console.log(`d2ModelFactory for modelName ${d2ModelName} return defaultModel`)
+        console.log(`d2ModelFactory for modelName ${d2ModelName} return defaultModel`);
         model = defaultModel(modelName);
     }
 

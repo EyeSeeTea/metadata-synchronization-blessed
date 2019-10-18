@@ -1,5 +1,5 @@
-import {d2ModelFactory} from "../d2ModelFactory";
-import {DataElementGroupModel} from "../d2Model"
+import { d2ModelFactory } from "../d2ModelFactory";
+import { DataElementGroupModel } from "../d2Model";
 
 describe("d2ModelFactory", () => {
     describe("d2ModelFactory should return specific model", () => {
