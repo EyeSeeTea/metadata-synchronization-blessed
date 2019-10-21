@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-10-16T09:02:16.076Z\n"
-"PO-Revision-Date: 2019-10-16T09:02:16.076Z\n"
+"POT-Creation-Date: 2019-10-21T05:02:46.088Z\n"
+"PO-Revision-Date: 2019-10-21T05:02:46.088Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -208,160 +208,19 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-msgid "General info"
+msgid "Destination instances"
 msgstr ""
 
-msgid "Instance Selection"
+msgid "Frequency"
 msgstr ""
 
 msgid "Scheduling"
-msgstr ""
-
-msgid "Configure the scheduling frequency for the synchronization rule"
-msgstr ""
-
-msgid ""
-"This step is optional and requires an external server with the metadata "
-"synchronization script properly configured"
-msgstr ""
-
-msgid ""
-"This step allows to schedule background metadata synchronization jobs in a "
-"remote server."
-msgstr ""
-
-msgid ""
-"You can either select a pre-defined frequency from the drop-down menu or "
-"you enter a custom cron expression."
-msgstr ""
-
-msgid "Second (0 - 59)"
-msgstr ""
-
-msgid "Minute (0 - 59)"
-msgstr ""
-
-msgid "Hour (0 - 23)"
-msgstr ""
-
-msgid "Day of the month (1 - 31)"
-msgstr ""
-
-msgid "Month (1 - 12)"
-msgstr ""
-
-msgid "Day of the week (1 - 7) (Monday to Sunday)"
-msgstr ""
-
-msgid ""
-"An asterisk (*) matches all possibilities. For instance, if we want to run "
-"a rule every day we would use asterisks for day of the month, day of the "
-"week, and month of the year to match all values."
-msgstr ""
-
-msgid ""
-"A wildcard (?) means no specific value and only works for day of the month "
-"or day of the week. For example, if you want to execute a rule on a "
-"particular day (10th) but you don't care about what day of the week that "
-"is, you would use ? in the day of the week field."
-msgstr ""
-
-msgid "Summary"
-msgstr ""
-
-msgid "Cancel synchronization rule wizard"
-msgstr ""
-
-msgid ""
-"You are about to exit the Sync Rule Creation Wizard. All your changes will "
-"be lost. Are you sure you want to proceed?"
-msgstr ""
-
-msgid "Yes"
-msgstr ""
-
-msgid "Target instances [{{total}}]"
-msgstr ""
-
-msgid "Advanced options"
-msgstr ""
-
-msgid "Include user information and sharing settings"
-msgstr ""
-
-msgid "No"
-msgstr ""
-
-msgid "Disable atomic verification"
-msgstr ""
-
-msgid "Replace objects in destination instance"
 msgstr ""
 
 msgid "Enabled"
 msgstr ""
 
 msgid "Disabled"
-msgstr ""
-
-msgid "Frequency"
-msgstr ""
-
-msgid "Every hour"
-msgstr ""
-
-msgid "Every day at midnight"
-msgstr ""
-
-msgid "Every day at 3 AM"
-msgstr ""
-
-msgid "Every day at noon"
-msgstr ""
-
-msgid "Every week"
-msgstr ""
-
-msgid "Select frequency"
-msgstr ""
-
-msgid "Custom"
-msgstr ""
-
-msgid "Cron expression"
-msgstr ""
-
-msgid "Cron expression must be valid"
-msgstr ""
-
-msgid "Data elements"
-msgstr ""
-
-msgid "Organisation units"
-msgstr ""
-
-msgid "Period"
-msgstr ""
-
-msgid "Category options"
-msgstr ""
-
-msgid "data synchronization rule"
-msgstr ""
-
-msgid "Metadata"
-msgstr ""
-
-msgid "metadata synchronization rule"
-msgstr ""
-
-msgid "Selected {{difference}} elements"
-msgstr ""
-
-msgid "Removed {{difference}} elements"
-msgstr ""
-
-msgid "Destination instances"
 msgstr ""
 
 msgid "Last executed"
@@ -458,6 +317,18 @@ msgstr ""
 msgid "Synchronize"
 msgstr ""
 
+msgid "Advanced options"
+msgstr ""
+
+msgid "Include user information and sharing settings"
+msgstr ""
+
+msgid "Disable atomic verification"
+msgstr ""
+
+msgid "Replace objects in destination instance"
+msgstr ""
+
 msgid "Type"
 msgstr ""
 
@@ -488,6 +359,9 @@ msgstr ""
 msgid "Synchronization Results"
 msgstr ""
 
+msgid "Summary"
+msgstr ""
+
 msgid "Messages"
 msgstr ""
 
@@ -507,6 +381,132 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
+msgstr ""
+
+msgid "General info"
+msgstr ""
+
+msgid "Instance Selection"
+msgstr ""
+
+msgid "Configure the scheduling frequency for the synchronization rule"
+msgstr ""
+
+msgid ""
+"This step is optional and requires an external server with the metadata "
+"synchronization script properly configured"
+msgstr ""
+
+msgid ""
+"This step allows to schedule background metadata synchronization jobs in a "
+"remote server."
+msgstr ""
+
+msgid ""
+"You can either select a pre-defined frequency from the drop-down menu or "
+"you enter a custom cron expression."
+msgstr ""
+
+msgid "Second (0 - 59)"
+msgstr ""
+
+msgid "Minute (0 - 59)"
+msgstr ""
+
+msgid "Hour (0 - 23)"
+msgstr ""
+
+msgid "Day of the month (1 - 31)"
+msgstr ""
+
+msgid "Month (1 - 12)"
+msgstr ""
+
+msgid "Day of the week (1 - 7) (Monday to Sunday)"
+msgstr ""
+
+msgid ""
+"An asterisk (*) matches all possibilities. For instance, if we want to run "
+"a rule every day we would use asterisks for day of the month, day of the "
+"week, and month of the year to match all values."
+msgstr ""
+
+msgid ""
+"A wildcard (?) means no specific value and only works for day of the month "
+"or day of the week. For example, if you want to execute a rule on a "
+"particular day (10th) but you don't care about what day of the week that "
+"is, you would use ? in the day of the week field."
+msgstr ""
+
+msgid "Cancel synchronization rule wizard"
+msgstr ""
+
+msgid ""
+"You are about to exit the Sync Rule Creation Wizard. All your changes will "
+"be lost. Are you sure you want to proceed?"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "Target instances [{{total}}]"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Every hour"
+msgstr ""
+
+msgid "Every day at midnight"
+msgstr ""
+
+msgid "Every day at 3 AM"
+msgstr ""
+
+msgid "Every day at noon"
+msgstr ""
+
+msgid "Every week"
+msgstr ""
+
+msgid "Select frequency"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "Cron expression"
+msgstr ""
+
+msgid "Cron expression must be valid"
+msgstr ""
+
+msgid "Data elements"
+msgstr ""
+
+msgid "Organisation units"
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+msgid "Category options"
+msgstr ""
+
+msgid "data synchronization rule"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "metadata synchronization rule"
+msgstr ""
+
+msgid "Selected {{difference}} elements"
+msgstr ""
+
+msgid "Removed {{difference}} elements"
 msgstr ""
 
 msgid "Retrieving information from remote instances"
