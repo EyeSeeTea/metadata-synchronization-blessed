@@ -49,18 +49,18 @@ const GenericSynchronizationWizardPage: React.FC<GenericSynchronizationPageProps
         importResponse: SyncReport.create(),
         syncDialogOpen: false,
         syncSummaryOpen: false,
-        appConfigurator: false,
         enableDialogSync: false,
     });
+    const [appConfigurator, setAppConfigurator] = React.useState(false);
 
     React.useEffect(() => {
         const retrieveIsAppConfigurator = async () => {
             const appConfigurator = await isAppConfigurator(d2);
 
-            setState({ ...state, appConfigurator: appConfigurator });
+            setAppConfigurator(appConfigurator);
         };
         retrieveIsAppConfigurator();
-    }, [d2, state]);
+    }, [d2, appConfigurator]);
 
     const onChange = async (syncRule: SyncRule) => {
         const enableDialogSync: boolean = await syncRule.isValid();
@@ -119,7 +119,7 @@ const GenericSynchronizationWizardPage: React.FC<GenericSynchronizationPageProps
                 initialModel={models[0]}
                 initialSelection={state.syncRule.metadataIds}
                 notifyNewSelection={changeSelection}
-                onButtonClick={state.appConfigurator ? startSynchronization : null}
+                onButtonClick={appConfigurator ? startSynchronization : null}
                 buttonLabel={<SyncIcon />}
                 {...rest}
             />
