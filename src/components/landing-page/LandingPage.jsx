@@ -96,7 +96,7 @@ class LandingPage extends React.Component {
 
         return (
             <div className={classes.root}>
-                <Grid container spacing={16} data-test="pages" className={classes.container}>
+                <Grid container spacing={2} data-test="pages" className={classes.container}>
                     {menuItems}
                 </Grid>
             </div>
