@@ -310,8 +310,8 @@ export default class SyncRule {
         });
     }
 
-    public async isValid(): Promise<Boolean> {
+    public async isValid(): Promise<boolean> {
         const validation = await this.validate();
-        return _.flatten(Object.values(validation)).length == 0;
+        return _.flatten(Object.values(validation)).length === 0;
     }
 }
