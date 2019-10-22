@@ -53,15 +53,14 @@ const GenericSynchronizationWizardPage: React.FC<GenericSynchronizationPageProps
         enableDialogSync: false,
     });
 
-    const retrieveIsAppConfigurator = async () => {
-        const appConfigurator = await isAppConfigurator(d2);
-
-        setState({ ...state, appConfigurator: appConfigurator });
-    };
-
     React.useEffect(() => {
+        const retrieveIsAppConfigurator = async () => {
+            const appConfigurator = await isAppConfigurator(d2);
+
+            setState({ ...state, appConfigurator: appConfigurator });
+        };
         retrieveIsAppConfigurator();
-    }, []);
+    }, [d2, state]);
 
     const onChange = async (syncRule: SyncRule) => {
         const enableDialogSync: boolean = await syncRule.isValid();
