@@ -42,6 +42,7 @@ const styles = theme => ({
 class SyncSummary extends React.Component {
     static propTypes = {
         isOpen: PropTypes.bool.isRequired,
+        d2: PropTypes.object.isRequired,
         response: PropTypes.instanceOf(SyncReport).isRequired,
         handleClose: PropTypes.func.isRequired,
     };
