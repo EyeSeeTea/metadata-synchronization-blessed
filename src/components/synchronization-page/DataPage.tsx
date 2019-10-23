@@ -3,7 +3,7 @@ import i18n from "@dhis2/d2-i18n";
 import { metadataModels } from "../../models/d2Model";
 import GenericSynchronizationWizardPage from "./GenericSynchronizationWizardPage";
 import commonStepsBaseInfo from "../wizard/common/CommonStepsBaseInfo";
-import OrganisationUnitsSelectionStep from "../wizard/data/steps/CategoryOptionsSelectionStep";
+import OrganisationUnitsSelectionStep from "../wizard/data/steps/OrganisationUnitsSelectionStep";
 import PeriodSelectionStep from "../wizard/data/steps/CategoryOptionsSelectionStep";
 import CategoryOptionsSelectionStep from "../wizard/data/steps/CategoryOptionsSelectionStep";
 import { D2 } from "../../types/d2";
