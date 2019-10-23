@@ -87,6 +87,7 @@ export interface D2 {
         email: string;
         getUserRoles(): Promise<any>;
         getUserGroups(): Promise<any>;
+        getOrganisationUnits(): Promise<any>;
     };
 }
 
