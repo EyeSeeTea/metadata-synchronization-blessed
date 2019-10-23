@@ -211,9 +211,6 @@ msgstr ""
 msgid "General info"
 msgstr ""
 
-msgid "Metadata"
-msgstr ""
-
 msgid "Instance Selection"
 msgstr ""
 
@@ -270,24 +267,6 @@ msgid ""
 msgstr ""
 
 msgid "Summary"
-msgstr ""
-
-msgid "New synchronization rule"
-msgstr ""
-
-msgid "Edit synchronization rule"
-msgstr ""
-
-msgid "Cancel synchronization rule creation"
-msgstr ""
-
-msgid "Cancel synchronization rule editing"
-msgstr ""
-
-msgid "Selected {{difference}} elements"
-msgstr ""
-
-msgid "Removed {{difference}} elements"
 msgstr ""
 
 msgid "Cancel synchronization rule wizard"
@@ -353,6 +332,33 @@ msgid "Cron expression"
 msgstr ""
 
 msgid "Cron expression must be valid"
+msgstr ""
+
+msgid "Data elements"
+msgstr ""
+
+msgid "Organisation units"
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+msgid "Category options"
+msgstr ""
+
+msgid "data synchronization rule"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "metadata synchronization rule"
+msgstr ""
+
+msgid "Selected {{difference}} elements"
+msgstr ""
+
+msgid "Removed {{difference}} elements"
 msgstr ""
 
 msgid "Destination instances"

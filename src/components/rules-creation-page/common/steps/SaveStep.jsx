@@ -6,9 +6,9 @@ import { Button, LinearProgress, withStyles } from "@material-ui/core";
 import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
 
 import { getInstances } from "./InstanceSelectionStep";
-import { getBaseUrl } from "../../../utils/d2";
-import { getMetadata } from "../../../utils/synchronization";
-import { getValidationMessages } from "../../../utils/validations";
+import { getBaseUrl } from "../../../../utils/d2";
+import { getMetadata } from "../../../../utils/synchronization";
+import { getValidationMessages } from "../../../../utils/validations";
 
 const LiEntry = ({ label, value, children }) => {
     return (
