@@ -19,7 +19,7 @@ This will open the development server at port 8081 and will connect to DHIS 2 in
 Use custom values passing environment variables:
 
 ```
-$ PORT=8082 REACT_APP_DHIS2_URL="https://play.dhis2.org/dev" yarn start
+$ PORT=8082 REACT_APP_DHIS2_BASE_URL="https://play.dhis2.org/dev" yarn start
 ```
 
 ## Tests
