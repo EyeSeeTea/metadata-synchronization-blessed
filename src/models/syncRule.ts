@@ -26,12 +26,17 @@ export default class SyncRule {
             ..._.pick(syncRule, [
                 "id",
                 "name",
+                "code",
+                "created",
                 "description",
                 "builder",
                 "enabled",
                 "frequency",
                 "lastExecuted",
+                "lastUpdated",
+                "lastUpdatedBy",
                 "publicAccess",
+                "user",
                 "userAccesses",
                 "userGroupAccesses",
             ]),
@@ -100,6 +105,8 @@ export default class SyncRule {
         return new SyncRule({
             id: "",
             name: "",
+            code: "",
+            created: new Date(),
             description: "",
             builder: {
                 targetInstances: [],
@@ -111,7 +118,14 @@ export default class SyncRule {
                 },
             },
             enabled: false,
+            lastUpdated: new Date(),
+            lastUpdatedBy: {
+                id: "",
+            },
             publicAccess: "rw------",
+            user: {
+                id: "",
+            },
             userAccesses: [],
             userGroupAccesses: [],
         });
@@ -237,24 +251,33 @@ export default class SyncRule {
             userGroupAccesses = [],
         } = this.syncRule;
 
-        return (
-            publicAccess.substring(0, 2).includes(token) ||
-            !!_(userAccesses)
-                .filter(({ access }) => access.substring(0, 2).includes(token))
-                .find(({ id }) => id === userId) ||
+        const isUserOwner = this.syncRule.user.id === userId;
+        const isPublic = publicAccess.substring(0, 2).includes(token);
+        const hasUserAccess = !!_(userAccesses)
+            .filter(({ access }) => access.substring(0, 2).includes(token))
+            .find(({ id }) => id === userId);
+        const hasGroupAccess =
             _(userGroupAccesses)
                 .filter(({ access }) => access.substring(0, 2).includes(token))
                 .intersectionBy(userGroups, "id")
-                .value().length > 0
-        );
+                .value().length > 0;
+
+        return isUserOwner || isPublic || hasUserAccess || hasGroupAccess;
     }
 
     public async save(d2: D2): Promise<void> {
+        const { id } = await getUserInfo(d2);
         const exists = !!this.syncRule.id;
-        const element = exists ? this.syncRule : { ...this.syncRule, id: generateUid() };
+        const element = exists
+            ? this.syncRule
+            : { ...this.syncRule, id: generateUid(), created: new Date(), user: { id } };
 
         if (exists) await this.remove(d2);
-        await saveData(d2, dataStoreKey, element);
+        await saveData(d2, dataStoreKey, {
+            ...element,
+            lastUpdated: new Date(),
+            lastUpdatedBy: { id },
+        });
     }
 
     public async remove(d2: D2): Promise<void> {
