@@ -108,7 +108,6 @@ const GenericSynchronizationWizardPage: React.FC<GenericSynchronizationPageProps
         console.log(`syncronization for ${syncRule.name}: not implemented`);
     };
 
-    debugger;
     return (
         <React.Fragment>
             <PageHeader onBackClick={goHome} title={title} />
