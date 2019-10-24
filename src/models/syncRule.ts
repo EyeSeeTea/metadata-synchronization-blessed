@@ -117,6 +117,10 @@ export default class SyncRule {
         });
     }
 
+    public static createOnDemand(): SyncRule {
+        return SyncRule.create().updateName("On-demand");
+    }
+
     public static build(syncRule: SynchronizationRule | undefined): SyncRule {
         return syncRule ? new SyncRule(syncRule) : this.create();
     }
@@ -304,5 +308,10 @@ export default class SyncRule {
                     : null,
             ]),
         });
+    }
+
+    public async isValid(): Promise<boolean> {
+        const validation = await this.validate();
+        return _.flatten(Object.values(validation)).length === 0;
     }
 }

@@ -9,10 +9,10 @@ import MetadataPage from "../synchronization-page/MetadataPage";
 import DataPage from "../synchronization-page/DataPage";
 import DeletedObjectsPage from "../synchronization-page/DeletedObjectsPage";
 import HistoryPage from "../history-list-page/HistoryPage";
-import MetadadaSyncRulesWizard from "../rules-creation-page/metadata/MetadataSyncRulesWizard";
+import MetadadaSyncRulesWizard from "../wizard/metadata/MetadataSyncRulesWizard";
 import MetadataSyncRulesPage from "../rules-list-page/MetadataSyncRulesPage";
 import DataSyncRulesPage from "../rules-list-page/DataSyncRulesPage";
-import DataSyncRulesWizard from "../rules-creation-page/data/DataSyncRulesWizard";
+import DataSyncRulesWizard from "../wizard/data/DataSyncRulesWizard";
 
 class Root extends React.Component {
     static propTypes = {
