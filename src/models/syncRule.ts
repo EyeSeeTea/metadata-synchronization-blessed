@@ -47,6 +47,10 @@ export default class SyncRule {
         return this.syncRule.name;
     }
 
+    public get code(): string | undefined {
+        return this.syncRule.code;
+    }
+
     public get description(): string | undefined {
         return this.syncRule.description;
     }
@@ -121,10 +125,12 @@ export default class SyncRule {
             lastUpdated: new Date(),
             lastUpdatedBy: {
                 id: "",
+                name: "",
             },
             publicAccess: "rw------",
             user: {
                 id: "",
+                name: "",
             },
             userAccesses: [],
             userGroupAccesses: [],
@@ -181,6 +187,13 @@ export default class SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             name,
+        });
+    }
+
+    public updateCode(code: string): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            code,
         });
     }
 
@@ -251,7 +264,7 @@ export default class SyncRule {
             userGroupAccesses = [],
         } = this.syncRule;
 
-        const isUserOwner = this.syncRule.user.id === userId;
+        const isUserOwner = this.syncRule.user ? this.syncRule.user.id === userId : false;
         const isPublic = publicAccess.substring(0, 2).includes(token);
         const hasUserAccess = !!_(userAccesses)
             .filter(({ access }) => access.substring(0, 2).includes(token))
@@ -266,17 +279,18 @@ export default class SyncRule {
     }
 
     public async save(d2: D2): Promise<void> {
-        const { id } = await getUserInfo(d2);
+        const userInfo = await getUserInfo(d2);
+        const user = _.pick(userInfo, ["id", "name"]);
         const exists = !!this.syncRule.id;
         const element = exists
             ? this.syncRule
-            : { ...this.syncRule, id: generateUid(), created: new Date(), user: { id } };
+            : { ...this.syncRule, id: generateUid(), created: new Date(), user };
 
         if (exists) await this.remove(d2);
         await saveData(d2, dataStoreKey, {
             ...element,
             lastUpdated: new Date(),
-            lastUpdatedBy: { id },
+            lastUpdatedBy: user,
         });
     }
 

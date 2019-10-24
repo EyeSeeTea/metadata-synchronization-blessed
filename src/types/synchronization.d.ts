@@ -60,6 +60,10 @@ export interface SynchronizationState {
     done?: boolean;
 }
 
+interface NamedRef extends Ref {
+    name: string;
+}
+
 export interface SynchronizationRule {
     id?: string;
     name: string;
@@ -70,10 +74,10 @@ export interface SynchronizationRule {
     enabled: boolean;
     lastExecuted?: Date;
     lastUpdated: Date;
-    lastUpdatedBy: Ref;
+    lastUpdatedBy: NamedRef;
     frequency?: string;
     publicAccess: string;
-    user: Ref;
+    user: NamedRef;
     userAccesses: SharingSetting[];
     userGroupAccesses: SharingSetting[];
 }
