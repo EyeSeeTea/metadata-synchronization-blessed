@@ -30,9 +30,10 @@ class MetadataSyncRulesWizard extends React.Component {
     render() {
         const { d2 } = this.props;
         const title = i18n.t("metadata synchronization rule");
+        const type = "metadata";
 
         return (
-            <GenericSyncRulesWizard syncTitle={title} stepsBaseInfo={this.stepsBaseInfo} d2={d2} />
+            <GenericSyncRulesWizard syncTitle={title} stepsBaseInfo={this.stepsBaseInfo} d2={d2} type={type}/>
         );
     }
 }
