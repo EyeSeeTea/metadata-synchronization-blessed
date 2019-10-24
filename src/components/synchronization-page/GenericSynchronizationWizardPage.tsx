@@ -32,7 +32,7 @@ interface GenericSynchronizationPageProps extends RouteComponentProps<any> {
     isDelete: boolean;
     dialogStepsBaseInfo: any[];
     models: D2Model[];
-    type: SyncRuleType
+    type: SyncRuleType;
 }
 
 const GenericSynchronizationWizardPage: React.FC<GenericSynchronizationPageProps> = ({

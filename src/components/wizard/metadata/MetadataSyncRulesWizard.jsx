@@ -33,7 +33,12 @@ class MetadataSyncRulesWizard extends React.Component {
         const type = "metadata";
 
         return (
-            <GenericSyncRulesWizard syncTitle={title} stepsBaseInfo={this.stepsBaseInfo} d2={d2} type={type}/>
+            <GenericSyncRulesWizard
+                syncTitle={title}
+                stepsBaseInfo={this.stepsBaseInfo}
+                d2={d2}
+                type={type}
+            />
         );
     }
 }

@@ -74,7 +74,7 @@ export interface SynchronizationRule {
     publicAccess: string;
     userAccesses: SharingSetting[];
     userGroupAccesses: SharingSetting[];
-    type: SyncRuleType
+    type: SyncRuleType;
 }
 
 export type SyncRuleType = "data" | "metadata";

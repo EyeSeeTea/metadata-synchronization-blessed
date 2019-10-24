@@ -15,10 +15,12 @@ interface OrganisationUnitsStepProps {
 const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
     d2,
     syncRule,
-    onChange
+    onChange,
 }) => {
     const [organisationUnitsRootIds, setOrganisationUnitsRootIds] = React.useState<string[]>([]);
-    const [selectedOrganisationUnits, setSelectedOrganisationUnits] = React.useState<string[]>(syncRule.organisationUnits);
+    const [selectedOrganisationUnits, setSelectedOrganisationUnits] = React.useState<string[]>(
+        syncRule.organisationUnits
+    );
 
     React.useEffect(() => {
         const retrieveOrganisationUnitsRootIds = async () => {

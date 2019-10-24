@@ -14,12 +14,12 @@ class GenericSyncRulesWizard extends React.Component {
         stepsBaseInfo: PropTypes.object.isRequired,
         d2: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
-        type: PropTypes.object.isRequired
+        type: PropTypes.object.isRequired,
     };
 
     state = {
         dialogOpen: false,
-        syncRule: SyncRule.create()
+        syncRule: SyncRule.create(),
     };
 
     id = this.props.match.params.id;

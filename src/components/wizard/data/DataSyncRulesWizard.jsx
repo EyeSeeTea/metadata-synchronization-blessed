@@ -21,7 +21,7 @@ class DataSyncRulesWizard extends React.Component {
         {
             key: "data-elements",
             label: i18n.t("Data elements"),
-            component: DataElementsSelectionStep, 
+            component: DataElementsSelectionStep,
             validationKeys: ["dataElementIds"],
             description: undefined,
             help: undefined,
@@ -62,7 +62,12 @@ class DataSyncRulesWizard extends React.Component {
         const type = "data";
 
         return (
-            <GenericSyncRulesWizard syncTitle={title} stepsBaseInfo={this.stepsBaseInfo} d2={d2} type={type}/>
+            <GenericSyncRulesWizard
+                syncTitle={title}
+                stepsBaseInfo={this.stepsBaseInfo}
+                d2={d2}
+                type={type}
+            />
         );
     }
 }
