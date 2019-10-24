@@ -12,6 +12,7 @@ import {
     SynchronizationRule,
     SharingSetting,
     SynchronizationParams,
+    SyncRuleType,
 } from "../types/synchronization";
 import { Validation } from "../types/validations";
 
@@ -34,12 +35,17 @@ export default class SyncRule {
                 "publicAccess",
                 "userAccesses",
                 "userGroupAccesses",
+                "type"
             ]),
         };
     }
 
     public get name(): string {
         return this.syncRule.name;
+    }
+
+    public get type(): string {
+        return this.syncRule.type;
     }
 
     public get description(): string | undefined {
@@ -96,11 +102,12 @@ export default class SyncRule {
         return this.syncRule.builder.syncParams || {};
     }
 
-    public static create(): SyncRule {
+    public static create(type: SyncRuleType = "metadata"): SyncRule {
         return new SyncRule({
             id: "",
             name: "",
             description: "",
+            type: type,
             builder: {
                 targetInstances: [],
                 metadataIds: [],
@@ -117,8 +124,8 @@ export default class SyncRule {
         });
     }
 
-    public static createOnDemand(): SyncRule {
-        return SyncRule.create().updateName("On-demand");
+    public static createOnDemand(type: SyncRuleType = "metadata"): SyncRule {
+        return SyncRule.create(type).updateName("On-demand");
     }
 
     public static build(syncRule: SynchronizationRule | undefined): SyncRule {
@@ -270,41 +277,41 @@ export default class SyncRule {
             name: _.compact([
                 !this.name.trim()
                     ? {
-                          key: "cannot_be_blank",
-                          namespace: { field: "name" },
-                      }
+                        key: "cannot_be_blank",
+                        namespace: { field: "name" },
+                    }
                     : null,
             ]),
             metadataIds: _.compact([
                 this.metadataIds.length === 0
                     ? {
-                          key: "cannot_be_empty",
-                          namespace: { element: "metadata element" },
-                      }
+                        key: "cannot_be_empty",
+                        namespace: { element: "metadata element" },
+                    }
                     : null,
             ]),
             targetInstances: _.compact([
                 this.targetInstances.length === 0
                     ? {
-                          key: "cannot_be_empty",
-                          namespace: { element: "instance" },
-                      }
+                        key: "cannot_be_empty",
+                        namespace: { element: "instance" },
+                    }
                     : null,
             ]),
             frequency: _.compact([
                 this.frequency && !isValidCronExpression(this.frequency)
                     ? {
-                          key: "cron_expression_must_be_valid",
-                          namespace: { expression: "frequency" },
-                      }
+                        key: "cron_expression_must_be_valid",
+                        namespace: { expression: "frequency" },
+                    }
                     : null,
             ]),
             enabled: _.compact([
                 this.enabled && !isValidCronExpression(this.frequency)
                     ? {
-                          key: "cannot_enable_without_valid",
-                          namespace: { expression: "frequency" },
-                      }
+                        key: "cannot_enable_without_valid",
+                        namespace: { expression: "frequency" },
+                    }
                     : null,
             ]),
         });
