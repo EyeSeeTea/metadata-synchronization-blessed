@@ -1,6 +1,6 @@
 import React from "react";
 import i18n from "@dhis2/d2-i18n";
-import { metadataModels } from "../../models/d2Model";
+import { metadataModels }  from "../../models/d2ModelFactory"
 import GenericSynchronizationWizardPage from "./GenericSynchronizationWizardPage";
 import commonStepsBaseInfo from "../wizard/common/CommonStepsBaseInfo";
 import OrganisationUnitsSelectionStep from "../wizard/data/steps/CategoryOptionsSelectionStep";
