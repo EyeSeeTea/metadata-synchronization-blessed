@@ -9,18 +9,16 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 interface OrganisationUnitsStepProps {
     d2: D2;
     syncRule: SyncRule;
-    snackbar: any;
-    onChange: () => void;
+    onChange: (syncRule: SyncRule) => void;
 }
 
 const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
     d2,
-    // syncRule,
-    // snackbar,
-    // onChange
+    syncRule,
+    onChange
 }) => {
     const [organisationUnitsRootIds, setOrganisationUnitsRootIds] = React.useState<string[]>([]);
-    const [selectedOrganisationUnits, setSelectedOrganisationUnits] = React.useState<string[]>([]);
+    const [selectedOrganisationUnits, setSelectedOrganisationUnits] = React.useState<string[]>(syncRule.organisationUnits);
 
     React.useEffect(() => {
         const retrieveOrganisationUnitsRootIds = async () => {
@@ -33,11 +31,8 @@ const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
 
     const changeSelection = (orgUnitsPaths: string[]) => {
         setSelectedOrganisationUnits(orgUnitsPaths);
-        //onChange(syncRule.updateData(orgUnitsPaths));
-        console.log(`change selection ${orgUnitsPaths}`);
+        onChange(syncRule.updateOrganisationUnits(orgUnitsPaths));
     };
-
-    console.log({ organisationUnitsRootIds });
 
     if (_.isEmpty(organisationUnitsRootIds)) {
         return (

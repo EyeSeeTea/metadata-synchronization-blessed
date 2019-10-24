@@ -19,7 +19,7 @@ const DataPage: React.FC<DataPageProps> = ({ d2 }) => {
             key: "organisations-units",
             label: i18n.t("Organisation units"),
             component: OrganisationUnitsSelectionStep,
-            validationKeys: ["organisationUnitIds"],
+            validationKeys: ["organisationUnits"],
             description: undefined,
             help: undefined,
         },
