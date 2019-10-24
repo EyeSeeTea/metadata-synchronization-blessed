@@ -46,9 +46,7 @@ const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
                 d2={d2}
                 onChange={changeSelection}
                 selected={selectedOrganisationUnits}
-                //levels={[1, 2]}
                 rootIds={organisationUnitsRootIds}
-                //listParams={{ maxLevel: 4 }}
             />
         );
     }
