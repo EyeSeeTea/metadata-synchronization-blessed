@@ -4,8 +4,13 @@ import SyncReport from "../models/syncReport";
 export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
+    dataParams: dataParams | undefined;
     syncRule?: string;
     syncParams: SynchronizationParams;
+}
+
+export interface dataParams {
+    organisationUnits: string[];
 }
 
 export interface SynchronizationParams extends MetadataImportParams {

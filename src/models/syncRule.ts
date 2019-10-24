@@ -44,7 +44,7 @@ export default class SyncRule {
         return this.syncRule.name;
     }
 
-    public get type(): string {
+    public get type(): SyncRuleType {
         return this.syncRule.type;
     }
 
@@ -54,6 +54,10 @@ export default class SyncRule {
 
     public get metadataIds(): string[] {
         return this.syncRule.builder.metadataIds;
+    }
+
+    public get organisationUnits(): string[] {
+        return this.syncRule.builder.dataParams ? this.syncRule.builder.dataParams.organisationUnits:[];
     }
 
     public get targetInstances(): string[] {
@@ -111,6 +115,7 @@ export default class SyncRule {
             builder: {
                 targetInstances: [],
                 metadataIds: [],
+                dataParams: undefined,
                 syncParams: {
                     includeSharingSettings: true,
                     atomicMode: "ALL",
@@ -194,6 +199,19 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 metadataIds,
+            },
+        });
+    }
+
+    public updateOrganisationUnits(organisationUnits: string[]): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder.dataParams,
+                    organisationUnits
+                }
             },
         });
     }
@@ -283,10 +301,18 @@ export default class SyncRule {
                     : null,
             ]),
             metadataIds: _.compact([
-                this.metadataIds.length === 0
+                this.type === "metadata" && this.metadataIds.length === 0
                     ? {
                         key: "cannot_be_empty",
                         namespace: { element: "metadata element" },
+                    }
+                    : null,
+            ]),
+            organisationUnits: _.compact([
+                this.type === "data" && this.organisationUnits.length === 0
+                    ? {
+                        key: "cannot_be_empty",
+                        namespace: { element: "organisation unit" },
                     }
                     : null,
             ]),
