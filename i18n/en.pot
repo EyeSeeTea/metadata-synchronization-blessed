@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-10-16T09:02:16.076Z\n"
-"PO-Revision-Date: 2019-10-16T09:02:16.076Z\n"
+"POT-Creation-Date: 2019-10-24T08:39:39.376Z\n"
+"PO-Revision-Date: 2019-10-24T08:39:39.376Z\n"
 
 msgid "Metadata Synchronization"
 msgstr ""
@@ -278,6 +278,9 @@ msgstr ""
 msgid "Cancel synchronization rule editing"
 msgstr ""
 
+msgid "Code"
+msgstr ""
+
 msgid "Selected {{difference}} elements"
 msgstr ""
 
@@ -483,9 +486,6 @@ msgid "Messages"
 msgstr ""
 
 msgid "JSON Response"
-msgstr ""
-
-msgid "Code"
 msgstr ""
 
 msgid "Deleted by"
