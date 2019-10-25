@@ -1,3 +1,5 @@
+import { Ref } from "d2-api";
+
 import { MetadataImportResponse, MetadataImportStats, MetadataImportParams } from "./d2";
 import SyncReport from "../models/syncReport";
 
@@ -63,15 +65,24 @@ export interface SynchronizationState {
     done?: boolean;
 }
 
+interface NamedRef extends Ref {
+    name: string;
+}
+
 export interface SynchronizationRule {
     id?: string;
     name: string;
+    code?: string;
+    created: Date;
     description?: string;
     builder: SynchronizationBuilder;
     enabled: boolean;
     lastExecuted?: Date;
+    lastUpdated: Date;
+    lastUpdatedBy: NamedRef;
     frequency?: string;
     publicAccess: string;
+    user: NamedRef;
     userAccesses: SharingSetting[];
     userGroupAccesses: SharingSetting[];
     type: SyncRuleType;

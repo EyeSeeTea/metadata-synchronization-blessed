@@ -5,7 +5,7 @@ import _ from "lodash";
 import { withSnackbar } from "d2-ui-components";
 
 import MetadataTable from "../../../metadata-table/MetadataTable";
-import { metadataModels } from "../../../../models/d2Model";
+import { metadataModels } from "../../../../models/d2ModelFactory";
 
 class MetadataSelectionStep extends React.Component {
     static propTypes = {

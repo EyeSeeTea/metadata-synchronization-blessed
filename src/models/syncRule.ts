@@ -27,12 +27,17 @@ export default class SyncRule {
             ..._.pick(syncRule, [
                 "id",
                 "name",
+                "code",
+                "created",
                 "description",
                 "builder",
                 "enabled",
                 "frequency",
                 "lastExecuted",
+                "lastUpdated",
+                "lastUpdatedBy",
                 "publicAccess",
+                "user",
                 "userAccesses",
                 "userGroupAccesses",
                 "type",
@@ -46,6 +51,10 @@ export default class SyncRule {
 
     public get type(): SyncRuleType {
         return this.syncRule.type;
+    }
+    
+    public get code(): string | undefined {
+        return this.syncRule.code;
     }
 
     public get description(): string | undefined {
@@ -112,6 +121,8 @@ export default class SyncRule {
         return new SyncRule({
             id: "",
             name: "",
+            code: "",
+            created: new Date(),
             description: "",
             type: type,
             builder: {
@@ -125,7 +136,16 @@ export default class SyncRule {
                 },
             },
             enabled: false,
+            lastUpdated: new Date(),
+            lastUpdatedBy: {
+                id: "",
+                name: "",
+            },
             publicAccess: "rw------",
+            user: {
+                id: "",
+                name: "",
+            },
             userAccesses: [],
             userGroupAccesses: [],
         });
@@ -185,6 +205,13 @@ export default class SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             name,
+        });
+    }
+
+    public updateCode(code: string): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            code,
         });
     }
 
@@ -268,24 +295,34 @@ export default class SyncRule {
             userGroupAccesses = [],
         } = this.syncRule;
 
-        return (
-            publicAccess.substring(0, 2).includes(token) ||
-            !!_(userAccesses)
-                .filter(({ access }) => access.substring(0, 2).includes(token))
-                .find(({ id }) => id === userId) ||
+        const isUserOwner = this.syncRule.user ? this.syncRule.user.id === userId : false;
+        const isPublic = publicAccess.substring(0, 2).includes(token);
+        const hasUserAccess = !!_(userAccesses)
+            .filter(({ access }) => access.substring(0, 2).includes(token))
+            .find(({ id }) => id === userId);
+        const hasGroupAccess =
             _(userGroupAccesses)
                 .filter(({ access }) => access.substring(0, 2).includes(token))
                 .intersectionBy(userGroups, "id")
-                .value().length > 0
-        );
+                .value().length > 0;
+
+        return isUserOwner || isPublic || hasUserAccess || hasGroupAccess;
     }
 
     public async save(d2: D2): Promise<void> {
+        const userInfo = await getUserInfo(d2);
+        const user = _.pick(userInfo, ["id", "name"]);
         const exists = !!this.syncRule.id;
-        const element = exists ? this.syncRule : { ...this.syncRule, id: generateUid() };
+        const element = exists
+            ? this.syncRule
+            : { ...this.syncRule, id: generateUid(), created: new Date(), user };
 
         if (exists) await this.remove(d2);
-        await saveData(d2, dataStoreKey, element);
+        await saveData(d2, dataStoreKey, {
+            ...element,
+            lastUpdated: new Date(),
+            lastUpdatedBy: user,
+        });
     }
 
     public async remove(d2: D2): Promise<void> {
