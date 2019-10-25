@@ -52,7 +52,7 @@ export default class SyncRule {
     public get type(): SyncRuleType {
         return this.syncRule.type;
     }
-    
+
     public get code(): string | undefined {
         return this.syncRule.code;
     }
