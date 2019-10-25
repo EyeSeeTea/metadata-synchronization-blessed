@@ -50,6 +50,7 @@ const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
                     onChange={changeSelection}
                     selected={selectedOrganisationUnits}
                     rootIds={organisationUnitsRootIds}
+                    withElevation={false}
                 />
             </div>
         );
