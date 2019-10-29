@@ -78,7 +78,7 @@ class LandingPage extends React.Component {
         ];
         const menuItems = items.map(([key, title, icon, xs]) => (
             <Grid item xs={xs} className={classes.item} key={key}>
-                <Paper className={classes.paper}>
+                <Paper elevation={2} className={classes.paper}>
                     <ListItem
                         data-test={`page-${key}`}
                         component={Link}

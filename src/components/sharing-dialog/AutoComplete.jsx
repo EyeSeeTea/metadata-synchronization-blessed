@@ -103,6 +103,7 @@ class AutoComplete extends Component {
                                             anchorEl={popperNode}
                                         >
                                             <Paper
+                                                elevation={2}
                                                 square
                                                 style={{
                                                     width: popperNode
