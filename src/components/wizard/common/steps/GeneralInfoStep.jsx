@@ -10,6 +10,8 @@ const GeneralInfoStep = props => {
     const updateFields = (field, value) => {
         if (field === "name") {
             onChange(syncRule.updateName(value));
+        } else if (field === "code") {
+            onChange(syncRule.updateCode(value));
         } else if (field === "description") {
             onChange(syncRule.updateDescription(value));
         }
@@ -34,6 +36,18 @@ const GeneralInfoStep = props => {
                     },
                 },
             ],
+        },
+        {
+            name: "code",
+            value: syncRule.code,
+            component: TextField,
+            props: {
+                floatingLabelText: `${i18n.t("Code")}`,
+                style: { width: "100%" },
+                changeEvent: "onBlur",
+                "data-test": "code",
+            },
+            validators: [],
         },
         {
             name: "description",

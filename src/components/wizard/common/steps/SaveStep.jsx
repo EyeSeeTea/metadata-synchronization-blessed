@@ -74,6 +74,8 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
             <ul>
                 <LiEntry label={i18n.t("Name")} value={syncRule.name} />
 
+                <LiEntry label={i18n.t("Code")} value={syncRule.code} />
+
                 <LiEntry label={i18n.t("Description")} value={syncRule.description} />
 
                 {_.keys(metadata).map(metadataType => (
