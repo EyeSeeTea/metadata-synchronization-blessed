@@ -158,8 +158,8 @@ export default class SyncRule {
         const globalAdmin = await isGlobalAdmin(d2);
         const userInfo = await getUserInfo(d2);
 
-        const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
-        const objects = _(data.objects)
+        const data = await getPaginatedData(d2, dataStoreKey, filters, { paging: false });
+        const filteredObjects = _(data.objects)
             .filter(data => {
                 const rule = SyncRule.build(data);
                 return globalAdmin || rule.isVisibleToUser(userInfo);
@@ -177,8 +177,11 @@ export default class SyncRule {
             )
             .value();
 
-        const total = objects.length;
-        const pageCount = paging ? Math.ceil(objects.length / pageSize) : 1;
+        const total = filteredObjects.length;
+        const pageCount = paging ? Math.ceil(filteredObjects.length / pageSize) : 1;
+        const firstItem = paging ? (page - 1) * pageSize : 0;
+        const lastItem = paging ? firstItem + pageSize : total;
+        const objects = _.slice(filteredObjects, firstItem, lastItem);
 
         return { objects, pager: { page, pageCount, total } };
     }
