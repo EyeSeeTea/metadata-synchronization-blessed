@@ -6,8 +6,13 @@ import SyncReport from "../models/syncReport";
 export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
+    dataParams: dataParams | undefined;
     syncRule?: string;
     syncParams: SynchronizationParams;
+}
+
+export interface dataParams {
+    organisationUnits: string[];
 }
 
 export interface SynchronizationParams extends MetadataImportParams {
@@ -80,7 +85,10 @@ export interface SynchronizationRule {
     user: NamedRef;
     userAccesses: SharingSetting[];
     userGroupAccesses: SharingSetting[];
+    type: SyncRuleType;
 }
+
+export type SyncRuleType = "data" | "metadata";
 
 export interface SharingSetting {
     access: string;

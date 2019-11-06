@@ -68,3 +68,9 @@ export function getClassName(className: string): string | undefined {
 }
 
 export const getBaseUrl = (d2: D2): string => d2.Api.getApi().baseUrl;
+
+export async function getCurrentUserOrganisationUnits(d2: D2): Promise<string[]> {
+    const response: any = await d2.currentUser.getOrganisationUnits();
+    const organisationUnitsIds: string[] = [...response.valuesContainerMap.keys()];
+    return organisationUnitsIds;
+}
