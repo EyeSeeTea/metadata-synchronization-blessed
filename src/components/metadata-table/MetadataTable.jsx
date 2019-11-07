@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { DatePicker, ObjectsTable, withSnackbar } from "d2-ui-components";
+import { DatePicker, OldObjectsTable, withSnackbar } from "d2-ui-components";
 import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
 
 import Dropdown from "../dropdown/Dropdown";
@@ -295,7 +295,7 @@ class MetadataTable extends React.Component {
         const selection = _.union(initialSelection, orgUnitChildren);
 
         return (
-            <ObjectsTable
+            <OldObjectsTable
                 key={tableKey}
                 d2={d2}
                 model={model.getD2Model(d2)}
