@@ -2,13 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { createMuiTheme } from "@material-ui/core/styles";
-import {
-    FormControl,
-    InputLabel,
-    MenuItem,
-    MuiThemeProvider,
-    Select,
-} from "@material-ui/core";
+import { FormControl, InputLabel, MenuItem, MuiThemeProvider, Select } from "@material-ui/core";
 import cyan from "@material-ui/core/colors/cyan";
 
 const getMaterialTheme = () =>
