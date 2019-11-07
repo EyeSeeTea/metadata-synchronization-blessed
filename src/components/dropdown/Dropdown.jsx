@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
+import { createMuiTheme } from "@material-ui/core/styles";
 import {
-    createMuiTheme,
     FormControl,
     InputLabel,
     MenuItem,
