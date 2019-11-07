@@ -14,6 +14,7 @@ class GenericSyncRulesWizard extends React.Component {
         stepsBaseInfo: PropTypes.object.isRequired,
         d2: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
+        type: PropTypes.object.isRequired,
     };
 
     state = {
@@ -27,6 +28,10 @@ class GenericSyncRulesWizard extends React.Component {
     componentDidMount = async () => {
         if (this.isEdit) {
             const syncRule = await SyncRule.get(this.props.d2, this.id);
+            this.setState({ syncRule });
+        } else {
+            const { type } = this.props;
+            const syncRule = SyncRule.create(type);
             this.setState({ syncRule });
         }
     };

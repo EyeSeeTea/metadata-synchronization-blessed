@@ -15,6 +15,7 @@ import { isAppConfigurator } from "../../utils/permissions";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
 import { D2Model } from "../../models/d2Model";
+import { SyncRuleType } from "../../types/synchronization";
 
 /**
  * TODO: This component is new version of GenericSynchronizationPage using sync rule model and SyncWizardDialog
@@ -31,6 +32,7 @@ interface GenericSynchronizationPageProps extends RouteComponentProps<any> {
     isDelete: boolean;
     dialogStepsBaseInfo: any[];
     models: D2Model[];
+    type: SyncRuleType;
 }
 
 const GenericSynchronizationWizardPage: React.FC<GenericSynchronizationPageProps> = ({
@@ -42,10 +44,11 @@ const GenericSynchronizationWizardPage: React.FC<GenericSynchronizationPageProps
     dialogStepsBaseInfo,
     models,
     history,
+    type,
     ...rest
 }) => {
     const [state, setState] = React.useState({
-        syncRule: SyncRule.createOnDemand(),
+        syncRule: SyncRule.createOnDemand(type),
         importResponse: SyncReport.create(),
         syncDialogOpen: false,
         syncSummaryOpen: false,

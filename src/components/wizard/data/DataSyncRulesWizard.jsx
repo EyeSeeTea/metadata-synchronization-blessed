@@ -30,7 +30,7 @@ class DataSyncRulesWizard extends React.Component {
             key: "organisations-units",
             label: i18n.t("Organisation units"),
             component: OrganisationUnitsSelectionStep,
-            validationKeys: ["organisationUnitIds"],
+            validationKeys: ["organisationUnits"],
             description: undefined,
             help: undefined,
         },
@@ -59,8 +59,15 @@ class DataSyncRulesWizard extends React.Component {
         const { d2 } = this.props;
         const title = i18n.t("data synchronization rule");
 
+        const type = "data";
+
         return (
-            <GenericSyncRulesWizard syncTitle={title} stepsBaseInfo={this.stepsBaseInfo} d2={d2} />
+            <GenericSyncRulesWizard
+                syncTitle={title}
+                stepsBaseInfo={this.stepsBaseInfo}
+                d2={d2}
+                type={type}
+            />
         );
     }
 }
