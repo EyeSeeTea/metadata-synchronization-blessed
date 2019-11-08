@@ -7,10 +7,9 @@ export const colors = {
     accentPrimaryLight: "#63A4FF",
     accentPrimaryLightest: "#EAF4FF",
 
-    accentSecondary: "#00796B",
-    accentSecondaryDark: "#004C40",
-    accentSecondaryLight: "#48A999",
-    accentSecondaryLightest: "#B2DFDB",
+    accentSecondary: "#fb8c00",
+    accentSecondaryDark: "#ff9800",
+    accentSecondaryLight: "#f57c00",
 
     black: "#000000",
     greyBlack: "#494949",
@@ -51,8 +50,7 @@ export const palette = {
         main: colors.accentSecondary,
         dark: colors.accentSecondaryDark,
         light: colors.accentSecondaryLight,
-        lightest: colors.accentSecondaryLightest, // Custom extension, not used by default
-        // contrastText: 'white',
+        contrastText: '#fff',
     },
     error: {
         main: colors.negative, // This is automatically expanded to main/light/dark/contrastText, what do we use here?
