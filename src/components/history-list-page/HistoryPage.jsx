@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
-import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
+import { ConfirmationDialog, OldObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 
 import PageHeader from "../page-header/PageHeader";
@@ -227,7 +227,7 @@ class HistoryPage extends React.Component {
         return (
             <React.Fragment>
                 <PageHeader title={i18n.t("Synchronization History")} onBackClick={this.backHome} />
-                <ObjectsTable
+                <OldObjectsTable
                     key={tableKey}
                     d2={d2}
                     model={HistoryPage.model}

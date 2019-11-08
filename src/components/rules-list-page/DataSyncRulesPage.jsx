@@ -5,7 +5,7 @@ import i18n from "@dhis2/d2-i18n";
 import {
     ConfirmationDialog,
     DatePicker,
-    ObjectsTable,
+    OldObjectsTable,
     withLoading,
     withSnackbar,
 } from "d2-ui-components";
@@ -398,7 +398,7 @@ class DataSyncRulesPage extends React.Component {
                     title={i18n.t("Data Synchronization Rules")}
                     onBackClick={this.backHome}
                 />
-                <ObjectsTable
+                <OldObjectsTable
                     key={tableKey}
                     d2={d2}
                     model={DataSyncRulesPage.model}

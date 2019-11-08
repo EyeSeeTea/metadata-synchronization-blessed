@@ -2,7 +2,7 @@ import React from "react";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { ConfirmationDialog, ObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
+import { ConfirmationDialog, OldObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 
 import PageHeader from "../page-header/PageHeader";
@@ -156,7 +156,7 @@ class InstancesPage extends React.Component {
                     saveText={i18n.t("Ok")}
                 />
                 <PageHeader title={i18n.t("Instance Configuration")} onBackClick={this.backHome} />
-                <ObjectsTable
+                <OldObjectsTable
                     key={tableKey}
                     d2={d2}
                     columns={this.columns}

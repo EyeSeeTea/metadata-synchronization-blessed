@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { HeaderBar } from "@dhis2/ui-widgets";
-import { createGenerateClassName, MuiThemeProvider } from "@material-ui/core/styles";
-import JssProvider from "react-jss/lib/JssProvider";
+import { MuiThemeProvider } from "@material-ui/core/styles";
+import { StylesProvider, createGenerateClassName } from "@material-ui/styles";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
 import i18n from "@dhis2/d2-i18n";
@@ -17,7 +17,6 @@ import { initializeAppRoles } from "../../utils/permissions";
 import "./App.css";
 
 const generateClassName = createGenerateClassName({
-    dangerouslyUseGlobalCSS: false,
     productionPrefix: "c",
 });
 
@@ -53,7 +52,7 @@ class App extends Component {
 
         return (
             <React.Fragment>
-                <JssProvider generateClassName={generateClassName}>
+                <StylesProvider generateClassName={generateClassName}>
                     <MuiThemeProvider theme={muiTheme}>
                         <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                             <LoadingProvider>
@@ -71,7 +70,7 @@ class App extends Component {
                             </LoadingProvider>
                         </OldMuiThemeProvider>
                     </MuiThemeProvider>
-                </JssProvider>
+                </StylesProvider>
             </React.Fragment>
         );
     }
