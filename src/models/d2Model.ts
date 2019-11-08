@@ -59,7 +59,7 @@ export abstract class D2Model {
         const filter = _.compact([
             search && isValidUid(search) ? `id:eq:${search}` : null,
             search && !isValidUid(search) ? `displayName:ilike:${search}` : null,
-            lastUpdatedDate ? `lastUpdated:ge:${lastUpdatedDate.toISOString()}` : null,
+            lastUpdatedDate ? `lastUpdated:ge:${lastUpdatedDate.format("YYYY-MM-DD")}` : null,
             groupFilter ? `${this.groupFilterName}.id:eq:${groupFilter}` : null,
             ...customFilters,
         ]);
