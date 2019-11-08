@@ -50,7 +50,7 @@ export const palette = {
         main: colors.accentSecondary,
         dark: colors.accentSecondaryDark,
         light: colors.accentSecondaryLight,
-        contrastText: '#fff',
+        contrastText: "#fff",
     },
     error: {
         main: colors.negative, // This is automatically expanded to main/light/dark/contrastText, what do we use here?
