@@ -91,10 +91,12 @@ export async function getTestUser(d2, { auth, userAttributes }) {
         userAttributes
     );
     const user = getNewUser(partialUser);
-    const existingTestUser = (await api.get("/users", {
-        fields: ":owner",
-        filter: "userCredentials.username:eq:" + auth.username,
-    })).users[0];
+    const existingTestUser = (
+        await api.get("/users", {
+            fields: ":owner",
+            filter: "userCredentials.username:eq:" + auth.username,
+        })
+    ).users[0];
 
     let response, returnUser;
 
