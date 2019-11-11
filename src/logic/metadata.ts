@@ -63,30 +63,31 @@ export async function getDeletedObjects(
     d2: D2,
     originalParams?: Params
 ): Promise<Pick<ModelCollection, "toArray" | "pager">> {
-    const { deletedObjects, pager } = (await axios.get(getBaseUrl(d2) + "/deletedObjects", {
-        withCredentials: true,
-        params: {
-            fields: ":all",
-            ...originalParams,
-            paging: false, // DHIS2 deletedObjects endpoint pager does not work properly
-        },
-    })).data;
+    const { deletedObjects, pager } = (
+        await axios.get(getBaseUrl(d2) + "/deletedObjects", {
+            withCredentials: true,
+            params: {
+                fields: ":all",
+                ...originalParams,
+                paging: false, // DHIS2 deletedObjects endpoint pager does not work properly
+            },
+        })
+    ).data;
 
     return { toArray: () => deletedObjects, pager };
 }
 
 // BEWARE: This is a very dangerous operation (includeDescendants in old DHIS2 versions crashed the whole server)
 export async function getOrgUnitSubtree(d2: D2, orgUnitId: string): Promise<string[]> {
-    const { organisationUnits } = (await axios.get(
-        getBaseUrl(d2) + "/organisationUnits/" + orgUnitId,
-        {
+    const { organisationUnits } = (
+        await axios.get(getBaseUrl(d2) + "/organisationUnits/" + orgUnitId, {
             withCredentials: true,
             params: {
                 fields: "id",
                 includeDescendants: true,
             },
-        }
-    )).data as { organisationUnits: { id: string }[] };
+        })
+    ).data as { organisationUnits: { id: string }[] };
 
     return organisationUnits.map(ou => ou.id);
 }

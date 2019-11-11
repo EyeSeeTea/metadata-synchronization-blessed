@@ -30,12 +30,14 @@ export interface UserInfo {
 
 const getUserRoles = memoize(async (d2: D2) => {
     const baseUrl = d2.Api.getApi().baseUrl;
-    const { userCredentials } = (await axios.get(baseUrl + "/me", {
-        withCredentials: true,
-        params: {
-            fields: "userCredentials[userRoles[:all]]",
-        },
-    })).data;
+    const { userCredentials } = (
+        await axios.get(baseUrl + "/me", {
+            withCredentials: true,
+            params: {
+                fields: "userCredentials[userRoles[:all]]",
+            },
+        })
+    ).data;
     return userCredentials.userRoles;
 });
 
@@ -78,14 +80,16 @@ export const getUserInfo = memoize(
 export const initializeAppRoles = async (baseUrl: string) => {
     for (const role in AppRoles) {
         const { name, description } = AppRoles[role];
-        const { userRoles } = (await axios.get(baseUrl + "/metadata", {
-            withCredentials: true,
-            params: {
-                userRoles: true,
-                filter: `name:eq:${name}`,
-                fields: "id",
-            },
-        })).data as { userRoles?: { id: string }[] };
+        const { userRoles } = (
+            await axios.get(baseUrl + "/metadata", {
+                withCredentials: true,
+                params: {
+                    userRoles: true,
+                    filter: `name:eq:${name}`,
+                    fields: "id",
+                },
+            })
+        ).data as { userRoles?: { id: string }[] };
 
         if (!userRoles || userRoles.length === 0) {
             await axios.post(
