@@ -138,7 +138,7 @@ export default class Instance {
         return new Instance({ ...this.data, description });
     }
 
-    public encryptPassword(): Instance {
+    private encryptPassword(): Instance {
         const password =
             this.data.password.length > 0
                 ? new Cryptr(Instance.encryptionKey).encrypt(this.data.password)
@@ -146,7 +146,7 @@ export default class Instance {
         return new Instance({ ...this.data, password });
     }
 
-    public decryptPassword(): Instance {
+    private decryptPassword(): Instance {
         const password =
             this.data.password.length > 0
                 ? new Cryptr(Instance.encryptionKey).decrypt(this.data.password)
