@@ -97,7 +97,7 @@ export default class Instance {
     }
 
     public async save(d2: D2): Promise<Response> {
-        const instance = await this.encryptPassword();
+        const instance = this.encryptPassword();
         const exists = !!instance.data.id;
         const element = exists ? instance.data : { ...instance.data, id: generateUid() };
 
