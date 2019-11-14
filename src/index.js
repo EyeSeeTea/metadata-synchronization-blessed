@@ -7,6 +7,8 @@ import { HashRouter } from "react-router-dom";
 import i18n from "@dhis2/d2-i18n";
 import { DataProvider } from "@dhis2/app-runtime";
 import "font-awesome/css/font-awesome.min.css";
+import { D2ApiDefault } from "d2-api";
+import { ApiContext } from "./next/context";
 
 import App from "./components/app/App";
 import "./locales";
@@ -52,10 +54,14 @@ async function main() {
         const userSettings = await getUserSettings();
         configI18n(userSettings);
         const appConfig = await axios.get("app-config.json").then(res => res.data);
+        const api = new D2ApiDefault({ baseUrl });
+
         ReactDOM.render(
             <HashRouter>
                 <DataProvider baseUrl={baseUrl} apiVersion={d2.system.version.minor}>
-                    <App d2={d2} appConfig={appConfig} />
+                    <ApiContext.Provider value={{ d2, api }}>
+                        <App d2={d2} appConfig={appConfig} />
+                    </ApiContext.Provider>
                 </DataProvider>
             </HashRouter>,
             document.getElementById("root")

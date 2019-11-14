@@ -1,60 +1,45 @@
 import React from "react";
+import { useD2ApiData } from "../../next/useApiData";
+import { useD2Api } from "../../next/context";
+import { SelectedPick, D2DataSetSchema, D2DataSet } from "d2-api";
+import { ObjectsTable } from "d2-ui-components";
 import i18n from "@dhis2/d2-i18n";
-import { metadataModels } from "../../models/d2ModelFactory";
-import GenericSynchronizationWizardPage from "./GenericSynchronizationWizardPage";
-import commonStepsBaseInfo from "../wizard/common/CommonStepsBaseInfo";
-import OrganisationUnitsSelectionStep from "../wizard/data/steps/OrganisationUnitsSelectionStep";
-import PeriodSelectionStep from "../wizard/data/steps/CategoryOptionsSelectionStep";
-import CategoryOptionsSelectionStep from "../wizard/data/steps/CategoryOptionsSelectionStep";
-import { D2 } from "../../types/d2";
-import { SyncRuleType } from "../../types/synchronization";
 
-interface DataPageProps {
-    d2: D2;
-}
+const include = true as true;
 
-const DataPage: React.FC<DataPageProps> = ({ d2 }) => {
-    const stepsBaseInfo = [
-        {
-            key: "organisations-units",
-            label: i18n.t("Organisation units"),
-            component: OrganisationUnitsSelectionStep,
-            validationKeys: ["organisationUnits"],
-            description: undefined,
-            help: undefined,
-        },
-        {
-            key: "period",
-            label: i18n.t("Period"),
-            component: PeriodSelectionStep,
-            validationKeys: ["period"],
-            description: undefined,
-            help: undefined,
-        },
-        {
-            key: "category-options",
-            label: i18n.t("Category options"),
-            component: CategoryOptionsSelectionStep,
-            validationKeys: ["categoryOptionIds"],
-            description: undefined,
-            help: undefined,
-        },
-        commonStepsBaseInfo.instanceSelection,
+const dataSetFieldsForList = {
+    id: include,
+    displayName: include,
+    lastUpdated: include,
+};
+
+export type DataSetForList = SelectedPick<D2DataSetSchema, typeof dataSetFieldsForList>;
+
+const apiRequest = {
+    paging: false,
+    fields: dataSetFieldsForList,
+} as const;
+
+const DataPage: React.FC<any> = () => {
+    const api = useD2Api();
+    const request = api.models.dataSets.get(apiRequest);
+    const { loading, data, error } = useD2ApiData(request);
+
+    if (loading) return <p>{"Loading..."}</p>;
+    if (error) return <p>{"Error: " + JSON.stringify(error)}</p>;
+
+    //@ts-ignore @tokland Could you take a look into the TS error here?
+    const { objects, pager } = data;
+
+    const columns = [
+        { name: "displayName" as const, text: i18n.t("Name"), sortable: true },
+        { name: "lastUpdated" as const, text: i18n.t("Last update"), sortable: true },
+        { name: "id" as const, text: i18n.t("UID"), sortable: true },
     ];
 
-    const title = i18n.t("Data Synchronization");
+    console.log("Rendering", objects, pager);
 
-    const type: SyncRuleType = "data";
-
-    return (
-        <GenericSynchronizationWizardPage
-            d2={d2}
-            models={metadataModels}
-            title={title}
-            dialogStepsBaseInfo={stepsBaseInfo}
-            type={type}
-        />
-    );
+    return <ObjectsTable<D2DataSet> rows={objects} columns={columns} />;
 };
 
 export default DataPage;

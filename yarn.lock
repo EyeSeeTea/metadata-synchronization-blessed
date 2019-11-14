@@ -2375,6 +2375,13 @@ axios-debug-log@^0.6.2:
     "@types/debug" "^4.0.0"
     debug "^4.0.0"
 
+axios-mock-adapter@^1.17.0:
+  version "1.17.0"
+  resolved "https://registry.yarnpkg.com/axios-mock-adapter/-/axios-mock-adapter-1.17.0.tgz#0dbee43c606d4aaba5a43d88d96d6661a7cc3c04"
+  integrity sha512-q3efmwJUOO4g+wsLNSk9Ps1UlJoF3fQ3FSEe4uEEhkRtu7SoiAVPj8R3Hc/WP55MBTVFzaDP9QkdJhdVhP8A1Q==
+  dependencies:
+    deep-equal "^1.0.1"
+
 axios@^0.19.0:
   version "0.19.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.0.tgz#8e09bff3d9122e133f7b8101c8fbdd00ed3d2ab8"
@@ -4042,10 +4049,10 @@ cypress@^3.4.1:
     url "0.11.0"
     yauzl "2.10.0"
 
-d2-api@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-0.0.1.tgz#efa4c746e612c821ec7ce758043e35cdc6086ed8"
-  integrity sha512-Iufltcnj7JA9Aj7dgSu7nMfTft/FFAgXeRj5MlcHoWAjqDIT05puePbw2L5qEKtEQvOsuK10r2gUzZgK2ThahA==
+d2-api@0.0.2-beta.3:
+  version "0.0.2-beta.3"
+  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-0.0.2-beta.3.tgz#70eb880e8922409e363559b790ed2afcf4d38bbf"
+  integrity sha512-8z1EAGMQ2vZtTfSK11pxGBd0G7Ph5JDiIVD1fU7ExpWO1kiiEFPbtcBt0LQzlw6fWVYUOapnx8wvB9C0+lXE5A==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@dhis2/d2-i18n" "^1.0.5"
