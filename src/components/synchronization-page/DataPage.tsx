@@ -1,54 +1,56 @@
 import React, { useState, useEffect } from "react";
 import { useD2ApiData } from "../../next/useApiData";
 import { useD2Api } from "../../next/context";
-import { SelectedPick, D2DataSetSchema, D2DataSet } from "d2-api";
+import { D2DataSet } from "d2-api";
 import { ObjectsTable, TableState, TableSorting, TablePagination } from "d2-ui-components";
 import i18n from "@dhis2/d2-i18n";
 
 const include = true as true;
 
-const dataSetFieldsForList = {
+const fields = {
     id: include,
     displayName: include,
     lastUpdated: include,
 };
 
-export type DataSetForList = SelectedPick<D2DataSetSchema, typeof dataSetFieldsForList>;
+const initialSorting: TableSorting<D2DataSet> = {
+    field: "displayName",
+    order: "asc" as const,
+};
+
+// TODO: As originally discussed with @tokland we should move this optional to the type definition file
+const initialPagination: Omit<TablePagination, "total"> = {
+    page: 1,
+    pageSize: 10,
+};
+
+const initialQuery = {
+    fields: fields,
+    order: `${initialSorting.field}:i${initialSorting.order}`,
+    pageSize: initialPagination.pageSize,
+};
 
 const DataPage: React.FC<any> = () => {
     const api = useD2Api();
-    const [search, updateSearch] = useState<string | undefined>(undefined);
-    const [sorting, updateSorting] = useState<TableSorting<D2DataSet>>({
-        field: "displayName",
-        order: "asc" as const,
-    });
-    // TODO: As originally discussed with @tokland we should move this optional to the type definition file
-    const [pagination, updatePagination] = useState<Omit<TablePagination, "total">>({
-        page: 1,
-        pageSize: 10,
-    });
-
-    const initialRequest = {
-        paging: true,
-        fields: dataSetFieldsForList,
-        order: `${sorting.field}:i${sorting.order}`,
-        page: pagination.page,
-        pageSize: pagination.pageSize,
-    } as const;
-
-    const { loading, data, error, refetch } = useD2ApiData(api.models.dataSets.get(initialRequest));
+    const [search, updateSearch] = useState<string | undefined>();
+    const [sorting, updateSorting] = useState(initialSorting);
+    const [pagination, updatePagination] = useState(initialPagination);
+    const { loading, data, error, refetch } = useD2ApiData(api.models.dataSets.get(initialQuery));
 
     useEffect(
         () =>
             refetch(
                 api.models.dataSets.get({
-                    ...initialRequest,
+                    fields: fields,
+                    order: `${sorting.field}:i${sorting.order}`,
+                    page: pagination.page,
+                    pageSize: pagination.pageSize,
                     filter: {
                         name: { ilike: search },
                     },
                 })
             ),
-        [search, sorting, pagination]
+        [api.models.dataSets, refetch, sorting, pagination, search]
     );
 
     if (loading) return <p>{"Loading..."}</p>;
