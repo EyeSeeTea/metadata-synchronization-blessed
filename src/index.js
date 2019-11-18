@@ -50,11 +50,11 @@ async function main() {
     const apiUrl = baseUrl.replace(/\/*$/, "") + "/api";
     try {
         const d2 = await init({ baseUrl: apiUrl });
-        window.d2 = d2; // Make d2 available in the console
         const userSettings = await getUserSettings();
         configI18n(userSettings);
         const appConfig = await axios.get("app-config.json").then(res => res.data);
         const api = new D2ApiDefault({ baseUrl });
+        Object.assign(window, { d2, api });
 
         ReactDOM.render(
             <HashRouter>
