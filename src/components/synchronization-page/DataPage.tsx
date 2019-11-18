@@ -1,4 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
+import { makeStyles } from "@material-ui/core";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import {
     D2DataElementGroupSchema,
     D2DataElementGroupSetSchema,
@@ -9,13 +12,13 @@ import {
     useD2Api,
 } from "d2-api";
 import D2ApiModel from "d2-api/api/models";
-import { D2ObjectsTable, DatePicker } from "d2-ui-components";
+import { D2ObjectsTable, DatePicker, TableState } from "d2-ui-components";
 import _ from "lodash";
+import moment from "moment";
 import React, { ChangeEvent, useState } from "react";
 import { useHistory } from "react-router-dom";
 import Dropdown from "../dropdown/Dropdown";
 import PageHeader from "../page-header/PageHeader";
-import moment from "moment";
 
 const include = true as true;
 
@@ -49,6 +52,20 @@ const details = [
 
 const actions = [{ name: "details", text: i18n.t("Details") }];
 
+const initialState = {
+    sorting: {
+        field: "displayName" as const,
+        order: "asc" as const,
+    },
+};
+
+const useStyles = makeStyles({
+    checkbox: {
+        paddingLeft: 10,
+        marginTop: 8,
+    },
+});
+
 type DataElement = SelectedPick<D2DataElementSchema, typeof fields>;
 type DataElementGroup = SelectedPick<D2DataElementGroupSchema, typeof fields>;
 type DataElementGroupSet = SelectedPick<D2DataElementGroupSetSchema, typeof fields>;
@@ -59,9 +76,12 @@ type DataPageType = DataElement | DataElementGroup | DataElementGroupSet | DataS
 
 const DataPage: React.FC<any> = () => {
     const [modelName, changeModelName] = useState<string>("");
+    const [selection, updateSelection] = useState<string[]>([]);
     const [lastUpdatedFilter, changeLastUpdatedFilter] = useState<Date | null>(null);
+    const [onlySelectedFilter, changeOnlySelectedFilter] = useState<boolean>(false);
     const api = useD2Api();
     const history = useHistory();
+    const classes = useStyles({});
 
     const groupTypes: {
         id: string;
@@ -92,6 +112,10 @@ const DataPage: React.FC<any> = () => {
         changeModelName(event.target.value);
     };
 
+    const updateOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
+        changeOnlySelectedFilter(event.target.checked);
+    };
+
     const filterComponents = [
         <Dropdown
             key={"level-filter"}
@@ -107,6 +131,18 @@ const DataPage: React.FC<any> = () => {
             onChange={changeLastUpdatedFilter}
             isFilter
         />,
+        <FormControlLabel
+            key={"only-selected-filter"}
+            className={classes.checkbox}
+            control={
+                <Checkbox
+                    checked={onlySelectedFilter}
+                    data-test="show-only-selected-items"
+                    onChange={updateOnlySelectedFilter}
+                />
+            }
+            label={i18n.t("Only selected items")}
+        />,
     ];
 
     const apiQuery = {
@@ -115,10 +151,17 @@ const DataPage: React.FC<any> = () => {
             lastUpdated: lastUpdatedFilter
                 ? { ge: moment(lastUpdatedFilter).format("YYYY-MM-DD") }
                 : undefined,
+            // TODO: d2-api ignores empty array for "in" filter
+            id: onlySelectedFilter ? { in: [...selection, ""] } : undefined,
         },
     };
 
     const goBack = () => history.goBack();
+
+    const handleTableChange = (tableState: TableState<DataPageType>) => {
+        const { selection } = tableState;
+        updateSelection(selection);
+    };
 
     return (
         <React.Fragment>
@@ -132,6 +175,9 @@ const DataPage: React.FC<any> = () => {
                 forceSelectionColumn={true}
                 details={details}
                 actions={actions}
+                selection={selection}
+                onChange={handleTableChange}
+                initialState={initialState}
             />
         </React.Fragment>
     );
