@@ -8,7 +8,7 @@ import i18n from "@dhis2/d2-i18n";
 import { DataProvider } from "@dhis2/app-runtime";
 import "font-awesome/css/font-awesome.min.css";
 import { D2ApiDefault } from "d2-api";
-import { ApiContext } from "./next/context";
+import { ApiContext } from "d2-api";
 
 import App from "./components/app/App";
 import "./locales";
