@@ -109,7 +109,8 @@ const DataPage: React.FC<any> = () => {
         />,
     ];
 
-    const query = {
+    const apiQuery = {
+        fields,
         filter: {
             lastUpdated: lastUpdatedFilter
                 ? { ge: moment(lastUpdatedFilter).format("YYYY-MM-DD") }
@@ -125,8 +126,7 @@ const DataPage: React.FC<any> = () => {
 
             <D2ObjectsTable<DataPageType>
                 apiMethod={apiMethod}
-                query={query}
-                fields={fields}
+                apiQuery={apiQuery}
                 columns={columns}
                 filterComponents={filterComponents}
                 forceSelectionColumn={true}
