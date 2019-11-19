@@ -5,11 +5,11 @@ import i18n from "@dhis2/d2-i18n";
 import { ConfirmationDialog, OldObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 
-import PageHeader from "../page-header/PageHeader";
-import Dropdown from "../dropdown/Dropdown";
+import PageHeader from "../../components/page-header/PageHeader";
+import Dropdown from "../../components/dropdown/Dropdown";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
-import SyncSummary from "../sync-summary/SyncSummary";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { getValueForCollection } from "../../utils/d2-ui-components";
 
 class HistoryPage extends React.Component {

@@ -6,7 +6,7 @@ import { ConfirmationDialog } from "d2-ui-components";
 
 import Instance from "../../models/instance";
 
-import PageHeader from "../page-header/PageHeader";
+import PageHeader from "../../components/page-header/PageHeader";
 import GeneralInfoForm from "./GeneralInfoForm";
 
 class InstanceCreationPage extends React.Component {

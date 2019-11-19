@@ -1,17 +1,17 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
-import HistoryPage from "../history-list-page/HistoryPage";
-import InstanceFormBuilder from "../instance-creation-page/InstanceCreationPage";
-import InstanceConfigurator from "../instance-list-page/InstancesPage";
-import LandingPage from "../landing-page/LandingPage";
-import DataSyncRulesPage from "../rules-list-page/DataSyncRulesPage";
-import MetadataSyncRulesPage from "../rules-list-page/MetadataSyncRulesPage";
-import DataPage from "../synchronization-page/DataPage";
-import DeletedObjectsPage from "../synchronization-page/DeletedObjectsPage";
-import MetadataPage from "../synchronization-page/MetadataPage";
-import DataSyncRulesWizard from "../wizard/data/DataSyncRulesWizard";
-import MetadadaSyncRulesWizard from "../wizard/metadata/MetadataSyncRulesWizard";
+import DataSyncRulesWizard from "../../components/sync-wizard/data/DataSyncRulesWizard";
+import MetadadaSyncRulesWizard from "../../components/sync-wizard/metadata/MetadataSyncRulesWizard";
+import HistoryPage from "../history/HistoryPage";
+import InstanceCreationPage from "../instance-creation/InstanceCreationPage";
+import InstanceListPage from "../instance-list/InstanceListPage";
+import LandingPage from "../landing/LandingPage";
+import DeletedObjectsPage from "../sync-deleted-objects/DeletedObjectsPage";
+import DataSyncPage from "../sync-on-demand/DataPage";
+import MetadataSyncPage from "../sync-on-demand/MetadataPage";
+import DataSyncRulesPage from "../sync-rules-list/DataSyncRulesPage";
+import MetadataSyncRulesPage from "../sync-rules-list/MetadataSyncRulesPage";
 
 class Root extends React.Component {
     static propTypes = {
@@ -24,22 +24,22 @@ class Root extends React.Component {
                 <Switch>
                     <Route
                         path={"/instance-configurator/:action(new|edit)/:id?"}
-                        render={props => <InstanceFormBuilder {...this.props} {...props} />}
+                        render={props => <InstanceCreationPage {...this.props} {...props} />}
                     />
 
                     <Route
                         path="/instance-configurator"
-                        render={props => <InstanceConfigurator {...this.props} {...props} />}
+                        render={props => <InstanceListPage {...this.props} {...props} />}
                     />
 
                     <Route
                         path="/sync/metadata"
-                        render={props => <MetadataPage {...this.props} {...props} />}
+                        render={props => <MetadataSyncPage {...this.props} {...props} />}
                     />
 
                     <Route
                         path="/sync/data"
-                        render={props => <DataPage {...this.props} {...props} />}
+                        render={props => <DataSyncPage {...this.props} {...props} />}
                     />
 
                     <Route

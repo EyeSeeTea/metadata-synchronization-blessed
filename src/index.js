@@ -3,7 +3,7 @@ import axios from "axios";
 import ReactDOM from "react-dom";
 import { Provider } from "@dhis2/app-runtime";
 
-import App from "./components/app/App";
+import App from "./pages/app/App";
 import "./locales";
 
 async function getBaseUrl() {

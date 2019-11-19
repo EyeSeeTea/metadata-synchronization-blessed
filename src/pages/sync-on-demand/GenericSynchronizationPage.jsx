@@ -7,10 +7,10 @@ import { withRouter } from "react-router-dom";
 
 import { startSynchronization } from "../../logic/synchronization";
 import { startDelete } from "../../logic/delete";
-import MetadataTable from "../metadata-table/MetadataTable";
-import SyncDialog from "../sync-dialog/SyncDialog";
-import SyncSummary from "../sync-summary/SyncSummary";
-import PageHeader from "../page-header/PageHeader";
+import MetadataTable from "../../components/metadata-table/MetadataTable";
+import SyncDialog from "../../components/sync-dialog/SyncDialog";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
+import PageHeader from "../../components/page-header/PageHeader";
 import SyncReport from "../../models/syncReport";
 import { isAppConfigurator } from "../../utils/permissions";
 

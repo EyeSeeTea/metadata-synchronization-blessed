@@ -5,171 +5,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-11-18T12:11:44.100Z\n"
-"PO-Revision-Date: 2019-11-18T12:11:44.100Z\n"
-
-msgid "Metadata Synchronization"
-msgstr ""
+"POT-Creation-Date: 2019-11-19T06:02:15.562Z\n"
+"PO-Revision-Date: 2019-11-19T06:02:15.562Z\n"
 
 msgid "<No value>"
-msgstr ""
-
-msgid "Ready"
-msgstr ""
-
-msgid "Running"
-msgstr ""
-
-msgid "Failure"
-msgstr ""
-
-msgid "Done"
-msgstr ""
-
-msgid "Deleting History Notifications"
-msgstr ""
-
-msgid "Failed to delete some history notifications"
-msgstr ""
-
-msgid "Successfully deleted {{count}} history notifications"
-msgid_plural "Successfully deleted {{count}} history notifications"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Details"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "View summary"
-msgstr ""
-
-msgid "User"
-msgstr ""
-
-msgid "Timestamp"
-msgstr ""
-
-msgid "Status"
-msgstr ""
-
-msgid "Metadata Types"
-msgstr ""
-
-msgid "Sync Rule"
-msgstr ""
-
-msgid "Synchronization status"
-msgstr ""
-
-msgid "Synchronization History"
-msgstr ""
-
-msgid "Delete History Notifications?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{count}} history notifications?"
-msgid_plural "Are you sure you want to delete {{count}} history notifications?"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Ok"
-msgstr ""
-
-msgid "Server name"
-msgstr ""
-
-msgid "Field cannot be blank"
-msgstr ""
-
-msgid "Description"
-msgstr ""
-
-msgid "URL endpoint"
-msgstr ""
-
-msgid "Field should be an url"
-msgstr ""
-
-msgid "Username"
-msgstr ""
-
-msgid "Password"
-msgstr ""
-
-msgid "Please fix the issues before testing the connection"
-msgstr ""
-
-msgid "Connected successfully to instance"
-msgstr ""
-
-msgid "Please fix the issues before saving"
-msgstr ""
-
-msgid "Cancel"
-msgstr ""
-
-msgid "Test Connection"
-msgstr ""
-
-msgid "New Instance"
-msgstr ""
-
-msgid "Edit Instance"
-msgstr ""
-
-msgid "Cancel Instance Creation"
-msgstr ""
-
-msgid "Cancel Instance Editing"
-msgstr ""
-
-msgid "All your changes will be lost. Are you sure?"
-msgstr ""
-
-msgid "Saving..."
-msgstr ""
-
-msgid "Save"
-msgstr ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "Deleting Instances"
-msgstr ""
-
-msgid "Failed to delete some instances"
-msgstr ""
-
-msgid "Successfully deleted {{count}} instances"
-msgid_plural "Successfully deleted {{count}} instances"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Delete Instances?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{count}} instances?"
-msgid_plural "Are you sure you want to delete {{count}} instances?"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Instance Configuration"
-msgstr ""
-
-msgid "Data Synchronization"
-msgstr ""
-
-msgid "Metadata Synchronization Rules"
-msgstr ""
-
-msgid "Data Synchronization Rules"
-msgstr ""
-
-msgid "Deleted objects"
 msgstr ""
 
 msgid "Name"
@@ -179,6 +18,9 @@ msgid "Metadata Type"
 msgstr ""
 
 msgid "Last update"
+msgstr ""
+
+msgid "Details"
 msgstr ""
 
 msgid "Select with children subtree"
@@ -207,67 +49,6 @@ msgstr ""
 
 msgid "Back"
 msgstr ""
-
-msgid "Destination instances"
-msgstr ""
-
-msgid "Frequency"
-msgstr ""
-
-msgid "Scheduling"
-msgstr ""
-
-msgid "Enabled"
-msgstr ""
-
-msgid "Disabled"
-msgstr ""
-
-msgid "Last executed"
-msgstr ""
-
-msgid "Deleting Sync Rules"
-msgstr ""
-
-msgid "Failed to delete some rules"
-msgstr ""
-
-msgid "Successfully deleted {{count}} rules"
-msgid_plural "Successfully deleted {{count}} rules"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Synchronizing metadata"
-msgstr ""
-
-msgid "Failed to execute rule {{name}}"
-msgstr ""
-
-msgid "Successfully updated sync rule"
-msgstr ""
-
-msgid "Execute"
-msgstr ""
-
-msgid "Toggle scheduling"
-msgstr ""
-
-msgid "Sharing settings"
-msgstr ""
-
-msgid "Last executed date"
-msgstr ""
-
-msgid "Destination Instance"
-msgstr ""
-
-msgid "Delete Rules?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{count}} rules?"
-msgid_plural "Are you sure you want to delete {{count}} rules?"
-msgstr[0] ""
-msgstr[1] ""
 
 msgid "External access"
 msgstr ""
@@ -300,6 +81,9 @@ msgid "Created by"
 msgstr ""
 
 msgid "Who has access"
+msgstr ""
+
+msgid "Sharing settings"
 msgstr ""
 
 msgid "Close"
@@ -359,6 +143,12 @@ msgstr ""
 msgid "Synchronization Results"
 msgstr ""
 
+msgid "Ok"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
 msgid "Summary"
 msgstr ""
 
@@ -368,43 +158,13 @@ msgstr ""
 msgid "JSON Response"
 msgstr ""
 
-msgid "UID"
-msgstr ""
-
-msgid "Short name"
-msgstr ""
-
-msgid "Code"
-msgstr ""
-
-msgid "ID"
-msgstr ""
-
-msgid "API link"
-msgstr ""
-
-msgid "Group by metadata type"
-msgstr ""
-
-msgid "Data synchronization"
-msgstr ""
-
-msgid "Deleted by"
-msgstr ""
-
-msgid "Deleted Objects Synchronization"
-msgstr ""
-
-msgid "Please select at least one element from the table to synchronize"
-msgstr ""
-
-msgid "Unknown error with the request"
-msgstr ""
-
 msgid "General info"
 msgstr ""
 
 msgid "Instance Selection"
+msgstr ""
+
+msgid "Scheduling"
 msgstr ""
 
 msgid "Configure the scheduling frequency for the synchronization rule"
@@ -456,6 +216,18 @@ msgid ""
 "is, you would use ? in the day of the week field."
 msgstr ""
 
+msgid "All your changes will be lost. Are you sure?"
+msgstr ""
+
+msgid "Field cannot be blank"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -471,6 +243,21 @@ msgid "Target instances [{{total}}]"
 msgstr ""
 
 msgid "No"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Frequency"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Save"
 msgstr ""
 
 msgid "Every hour"
@@ -553,6 +340,219 @@ msgstr ""
 
 msgid "Network error {{error}}, check if server is up and CORS is enabled"
 msgstr ""
+
+msgid "Metadata Synchronization"
+msgstr ""
+
+msgid "Ready"
+msgstr ""
+
+msgid "Running"
+msgstr ""
+
+msgid "Failure"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "Deleting History Notifications"
+msgstr ""
+
+msgid "Failed to delete some history notifications"
+msgstr ""
+
+msgid "Successfully deleted {{count}} history notifications"
+msgid_plural "Successfully deleted {{count}} history notifications"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "View summary"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Timestamp"
+msgstr ""
+
+msgid "Metadata Types"
+msgstr ""
+
+msgid "Sync Rule"
+msgstr ""
+
+msgid "Synchronization status"
+msgstr ""
+
+msgid "Synchronization History"
+msgstr ""
+
+msgid "Delete History Notifications?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} history notifications?"
+msgid_plural "Are you sure you want to delete {{count}} history notifications?"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Server name"
+msgstr ""
+
+msgid "URL endpoint"
+msgstr ""
+
+msgid "Field should be an url"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Please fix the issues before testing the connection"
+msgstr ""
+
+msgid "Connected successfully to instance"
+msgstr ""
+
+msgid "Please fix the issues before saving"
+msgstr ""
+
+msgid "Test Connection"
+msgstr ""
+
+msgid "New Instance"
+msgstr ""
+
+msgid "Edit Instance"
+msgstr ""
+
+msgid "Cancel Instance Creation"
+msgstr ""
+
+msgid "Cancel Instance Editing"
+msgstr ""
+
+msgid "Saving..."
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Deleting Instances"
+msgstr ""
+
+msgid "Failed to delete some instances"
+msgstr ""
+
+msgid "Successfully deleted {{count}} instances"
+msgid_plural "Successfully deleted {{count}} instances"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Delete Instances?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} instances?"
+msgid_plural "Are you sure you want to delete {{count}} instances?"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Instance Configuration"
+msgstr ""
+
+msgid "Data Synchronization"
+msgstr ""
+
+msgid "Metadata Synchronization Rules"
+msgstr ""
+
+msgid "Data Synchronization Rules"
+msgstr ""
+
+msgid "Deleted objects"
+msgstr ""
+
+msgid "Deleted by"
+msgstr ""
+
+msgid "Deleted Objects Synchronization"
+msgstr ""
+
+msgid "UID"
+msgstr ""
+
+msgid "Short name"
+msgstr ""
+
+msgid "ID"
+msgstr ""
+
+msgid "API link"
+msgstr ""
+
+msgid "Group by metadata type"
+msgstr ""
+
+msgid "Data synchronization"
+msgstr ""
+
+msgid "Please select at least one element from the table to synchronize"
+msgstr ""
+
+msgid "Unknown error with the request"
+msgstr ""
+
+msgid "Synchronizing metadata"
+msgstr ""
+
+msgid "Destination instances"
+msgstr ""
+
+msgid "Last executed"
+msgstr ""
+
+msgid "Deleting Sync Rules"
+msgstr ""
+
+msgid "Failed to delete some rules"
+msgstr ""
+
+msgid "Successfully deleted {{count}} rules"
+msgid_plural "Successfully deleted {{count}} rules"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Failed to execute rule {{name}}"
+msgstr ""
+
+msgid "Successfully updated sync rule"
+msgstr ""
+
+msgid "Execute"
+msgstr ""
+
+msgid "Toggle scheduling"
+msgstr ""
+
+msgid "Last executed date"
+msgstr ""
+
+msgid "Destination Instance"
+msgstr ""
+
+msgid "Delete Rules?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} rules?"
+msgid_plural "Are you sure you want to delete {{count}} rules?"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Level"
 msgstr ""

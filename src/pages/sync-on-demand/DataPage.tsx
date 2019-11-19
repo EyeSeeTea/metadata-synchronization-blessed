@@ -17,8 +17,8 @@ import _ from "lodash";
 import moment from "moment";
 import React, { ChangeEvent, useState } from "react";
 import { useHistory } from "react-router-dom";
-import Dropdown from "../dropdown/Dropdown";
-import PageHeader from "../page-header/PageHeader";
+import Dropdown from "../../components/dropdown/Dropdown";
+import PageHeader from "../../components/page-header/PageHeader";
 
 const include = true as true;
 

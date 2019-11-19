@@ -6,10 +6,10 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 
 //import { startSynchronization } from "../../logic/synchronization";
 //import { startDelete } from "../../logic/delete";
-import MetadataTable from "../metadata-table/MetadataTable";
-import SyncWizardDialog from "../wizard/common/SyncWizardDialog";
-import SyncSummary from "../sync-summary/SyncSummary";
-import PageHeader from "../page-header/PageHeader";
+import MetadataTable from "../../components/metadata-table/MetadataTable";
+import SyncWizardDialog from "../../components/sync-wizard/common/SyncWizardDialog";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
+import PageHeader from "../../components/page-header/PageHeader";
 import SyncReport from "../../models/syncReport";
 import { isAppConfigurator } from "../../utils/permissions";
 import SyncRule from "../../models/syncRule";

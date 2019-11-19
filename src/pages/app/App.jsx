@@ -11,7 +11,7 @@ import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import Instance from "../../models/instance";
 import { initializeAppRoles } from "../../utils/permissions";
-import Share from "../share/Share";
+import Share from "../../components/share/Share";
 import "./App.css";
 import Root from "./Root";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
