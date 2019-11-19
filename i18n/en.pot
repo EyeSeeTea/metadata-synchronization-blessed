@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-11-19T06:02:15.562Z\n"
-"PO-Revision-Date: 2019-11-19T06:02:15.562Z\n"
+"POT-Creation-Date: 2019-11-19T06:43:16.149Z\n"
+"PO-Revision-Date: 2019-11-19T06:43:16.149Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -496,10 +496,10 @@ msgstr ""
 msgid "API link"
 msgstr ""
 
-msgid "Group by metadata type"
+msgid "Data synchronization"
 msgstr ""
 
-msgid "Data synchronization"
+msgid "Group by metadata type"
 msgstr ""
 
 msgid "Please select at least one element from the table to synchronize"

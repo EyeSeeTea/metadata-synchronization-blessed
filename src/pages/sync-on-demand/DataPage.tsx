@@ -2,6 +2,7 @@ import i18n from "@dhis2/d2-i18n";
 import { makeStyles } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import SyncIcon from "@material-ui/icons/Sync";
 import {
     D2DataElementGroupSchema,
     D2DataElementGroupSetSchema,
@@ -9,16 +10,27 @@ import {
     D2DataSetSchema,
     D2ProgramSchema,
     SelectedPick,
+    useD2,
     useD2Api,
 } from "d2-api";
 import D2ApiModel from "d2-api/api/models";
-import { D2ObjectsTable, DatePicker, TableState } from "d2-ui-components";
+import { D2ObjectsTable, DatePicker, TableState, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
+import commonStepsBaseInfo from "../../components/sync-wizard/common/CommonStepsBaseInfo";
+import SyncWizardDialog from "../../components/sync-wizard/common/SyncWizardDialog";
+import CategoryOptionsSelectionStep from "../../components/sync-wizard/data/steps/CategoryOptionsSelectionStep";
+import OrganisationUnitsSelectionStep from "../../components/sync-wizard/data/steps/OrganisationUnitsSelectionStep";
+import PeriodSelectionStep from "../../components/sync-wizard/data/steps/PeriodSelectionStep";
+import SyncReport from "../../models/syncReport";
+import SyncRule from "../../models/syncRule";
+import { D2 } from "../../types/d2";
+import { isAppConfigurator } from "../../utils/permissions";
 
 const include = true as true;
 
@@ -52,6 +64,34 @@ const details = [
 
 const actions = [{ name: "details", text: i18n.t("Details") }];
 
+const stepsBaseInfo = [
+    {
+        key: "organisations-units",
+        label: i18n.t("Organisation units"),
+        component: OrganisationUnitsSelectionStep,
+        validationKeys: ["organisationUnits"],
+        description: undefined,
+        help: undefined,
+    },
+    {
+        key: "period",
+        label: i18n.t("Period"),
+        component: PeriodSelectionStep,
+        validationKeys: ["period"],
+        description: undefined,
+        help: undefined,
+    },
+    {
+        key: "category-options",
+        label: i18n.t("Category options"),
+        component: CategoryOptionsSelectionStep,
+        validationKeys: ["categoryOptionIds"],
+        description: undefined,
+        help: undefined,
+    },
+    commonStepsBaseInfo.instanceSelection,
+];
+
 const initialState = {
     sorting: {
         field: "displayName" as const,
@@ -75,13 +115,34 @@ type Program = SelectedPick<D2ProgramSchema, typeof fields>;
 type DataPageType = DataElement | DataElementGroup | DataElementGroupSet | DataSet | Program;
 
 const DataPage: React.FC<any> = () => {
-    const [modelName, changeModelName] = useState<string>("");
-    const [selection, updateSelection] = useState<string[]>([]);
-    const [lastUpdatedFilter, changeLastUpdatedFilter] = useState<Date | null>(null);
-    const [onlySelectedFilter, changeOnlySelectedFilter] = useState<boolean>(false);
+    const [modelName, updateModelName] = useState<string>("");
+    const [lastUpdatedFilter, updateLastUpdatedFilter] = useState<Date | null>(null);
+    const [onlySelectedFilter, updateOnlySelectedFilter] = useState<boolean>(false);
+    const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand("data"));
+    const [appConfigurator, updateAppConfigurator] = useState(false);
+
+    const [state, setState] = useState({
+        importResponse: SyncReport.create(),
+        syncDialogOpen: false,
+        syncSummaryOpen: false,
+        enableDialogSync: false,
+    });
+
+    const snackbar = useSnackbar();
     const api = useD2Api();
+    const d2 = useD2();
     const history = useHistory();
     const classes = useStyles({});
+    const title = i18n.t("Data synchronization");
+
+    useEffect(() => {
+        const retrieveIsAppConfigurator = async () => {
+            const appConfigurator = await isAppConfigurator(d2 as D2);
+
+            updateAppConfigurator(appConfigurator);
+        };
+        retrieveIsAppConfigurator();
+    }, [d2, appConfigurator]);
 
     const groupTypes: {
         id: string;
@@ -108,19 +169,19 @@ const DataPage: React.FC<any> = () => {
         return groupType ? groupType.model.get(options) : api.models.dataElements.get(options);
     };
 
-    const updateDropdownFilter = (event: ChangeEvent<HTMLInputElement>) => {
-        changeModelName(event.target.value);
+    const changeDropdownFilter = (event: ChangeEvent<HTMLInputElement>) => {
+        updateModelName(event.target.value);
     };
 
-    const updateOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
-        changeOnlySelectedFilter(event.target.checked);
+    const changeOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
+        updateOnlySelectedFilter(event.target.checked);
     };
 
     const filterComponents = [
         <Dropdown
             key={"level-filter"}
             items={groupTypes}
-            onChange={updateDropdownFilter}
+            onChange={changeDropdownFilter}
             value={modelName}
             label={i18n.t("Group by metadata type")}
         />,
@@ -128,7 +189,7 @@ const DataPage: React.FC<any> = () => {
             key={"date-filter"}
             placeholder={i18n.t("Last updated date")}
             value={lastUpdatedFilter}
-            onChange={changeLastUpdatedFilter}
+            onChange={updateLastUpdatedFilter}
             isFilter
         />,
         <FormControlLabel
@@ -138,7 +199,7 @@ const DataPage: React.FC<any> = () => {
                 <Checkbox
                     checked={onlySelectedFilter}
                     data-test="show-only-selected-items"
-                    onChange={updateOnlySelectedFilter}
+                    onChange={changeOnlySelectedFilter}
                 />
             }
             label={i18n.t("Only selected items")}
@@ -152,7 +213,7 @@ const DataPage: React.FC<any> = () => {
                 ? { ge: moment(lastUpdatedFilter).format("YYYY-MM-DD") }
                 : undefined,
             // TODO: d2-api ignores empty array for "in" filter
-            id: onlySelectedFilter ? { in: [...selection, ""] } : undefined,
+            id: onlySelectedFilter ? { in: [...syncRule.metadataIds, ""] } : undefined,
         },
     };
 
@@ -160,12 +221,49 @@ const DataPage: React.FC<any> = () => {
 
     const handleTableChange = (tableState: TableState<DataPageType>) => {
         const { selection } = tableState;
-        updateSelection(selection);
+        updateSyncRule(syncRule.updateMetadataIds(selection));
+    };
+
+    const onChange = async (syncRule: SyncRule) => {
+        const enableDialogSync: boolean = await syncRule.isValid();
+        updateSyncRule(syncRule);
+        setState(state => ({ ...state, enableDialogSync }));
+    };
+
+    const closeSummary = () => {
+        setState(state => ({ ...state, syncSummaryOpen: false }));
+    };
+
+    const startSynchronization = () => {
+        if (syncRule.metadataIds.length > 0) {
+            setState(state => ({ ...state, syncDialogOpen: true }));
+        } else {
+            snackbar.error(
+                i18n.t("Please select at least one element from the table to synchronize")
+            );
+        }
+    };
+
+    const finishSynchronization = (importResponse?: any) => {
+        if (importResponse) {
+            setState(state => ({
+                ...state,
+                syncDialogOpen: false,
+                syncSummaryOpen: true,
+                importResponse,
+            }));
+        } else {
+            setState(state => ({ ...state, syncDialogOpen: false }));
+        }
+    };
+
+    const handleSynchronization = async (syncRule: SyncRule) => {
+        console.log(`syncronization for ${syncRule.name}: not implemented`);
     };
 
     return (
         <React.Fragment>
-            <PageHeader onBackClick={goBack} title={i18n.t("Data synchronization")} />
+            <PageHeader onBackClick={goBack} title={title} />
 
             <D2ObjectsTable<DataPageType>
                 apiMethod={apiMethod}
@@ -175,9 +273,30 @@ const DataPage: React.FC<any> = () => {
                 forceSelectionColumn={true}
                 details={details}
                 actions={actions}
-                selection={selection}
+                selection={syncRule.metadataIds}
                 onChange={handleTableChange}
                 initialState={initialState}
+                onActionButtonClick={appConfigurator ? startSynchronization : undefined}
+                actionButtonLabel={<SyncIcon />}
+            />
+
+            <SyncWizardDialog
+                title={title}
+                d2={d2 as D2}
+                stepsBaseInfo={stepsBaseInfo}
+                syncRule={syncRule}
+                isOpen={state.syncDialogOpen}
+                onChange={onChange}
+                handleClose={finishSynchronization}
+                task={handleSynchronization}
+                enableSync={state.enableDialogSync}
+            />
+
+            <SyncSummary
+                d2={d2}
+                response={state.importResponse}
+                isOpen={state.syncSummaryOpen}
+                handleClose={closeSummary}
             />
         </React.Fragment>
     );
