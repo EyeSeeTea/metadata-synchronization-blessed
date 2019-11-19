@@ -127,11 +127,11 @@ export async function* startSynchronization(
                 instance: instance.name,
             }),
         };
-        console.debug("Start import on destination instance", instance);
+        console.debug("Start import on destination instance", instance.toObject());
         const response = await postMetadata(instance, metadataPackage);
 
         syncReport.addSyncResult(cleanImportResponse(response, instance));
-        console.debug("Finished importing data on instance", instance);
+        console.debug("Finished importing data on instance", instance.toObject());
         yield { syncReport };
     }
 
