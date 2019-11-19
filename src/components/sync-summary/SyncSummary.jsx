@@ -151,6 +151,16 @@ class SyncSummary extends React.Component {
                                         </Typography>
                                     </ExpansionPanelDetails>
 
+                                    {responseElement.message && (
+                                        <ExpansionPanelDetails
+                                            className={classes.expansionPanelDetails}
+                                        >
+                                            <Typography variant="body2">
+                                                {responseElement.message}
+                                            </Typography>
+                                        </ExpansionPanelDetails>
+                                    )}
+
                                     <ExpansionPanelDetails
                                         className={classes.expansionPanelDetails}
                                     >
