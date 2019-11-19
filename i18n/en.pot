@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-11-19T06:43:16.149Z\n"
-"PO-Revision-Date: 2019-11-19T06:43:16.149Z\n"
+"POT-Creation-Date: 2019-11-19T12:39:40.582Z\n"
+"PO-Revision-Date: 2019-11-19T12:39:40.582Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -482,6 +482,9 @@ msgid "Deleted by"
 msgstr ""
 
 msgid "Deleted Objects Synchronization"
+msgstr ""
+
+msgid "Last updated"
 msgstr ""
 
 msgid "UID"

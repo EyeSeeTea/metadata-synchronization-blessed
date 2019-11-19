@@ -35,7 +35,8 @@ function initFeedbackTool(d2, appConfig) {
             ...appConfig.feedback,
             i18nPath: "feedback-tool/i18n",
         };
-        window.$.feedbackDhis2(d2, appKey, feedbackOptions);
+        if (window.$) window.$.feedbackDhis2(d2, appKey, feedbackOptions);
+        else console.error("Could not initialize feedback tool");
     }
 }
 

@@ -8,7 +8,6 @@ import {
     D2DataElementGroupSetSchema,
     D2DataElementSchema,
     D2DataSetSchema,
-    D2ProgramSchema,
     SelectedPick,
     useD2,
     useD2Api,
@@ -39,15 +38,35 @@ const fields = {
     displayName: include,
     shortName: include,
     code: include,
-    displayDescription: include,
+    description: include,
     created: include,
     lastUpdated: include,
     href: include,
 };
 
+const dataElementGroupFields = {
+    ...fields,
+    dataElements: fields,
+};
+
+const dataElementGroupSetFields = {
+    ...fields,
+    dataElementGroups: {
+        ...fields,
+        dataElements: fields,
+    },
+};
+
+const dataSetFields = {
+    ...fields,
+    dataSetElements: {
+        dataElement: fields,
+    },
+};
+
 const columns = [
     { name: "displayName" as const, text: i18n.t("Name"), sortable: true },
-    { name: "lastUpdated" as const, text: i18n.t("Last update"), sortable: true },
+    { name: "lastUpdated" as const, text: i18n.t("Last updated"), sortable: true },
     { name: "id" as const, text: i18n.t("UID"), sortable: true },
 ];
 
@@ -55,9 +74,9 @@ const details = [
     { name: "displayName" as const, text: i18n.t("Name") },
     { name: "shortName" as const, text: i18n.t("Short name") },
     { name: "code" as const, text: i18n.t("Code") },
-    { name: "displayDescription" as const, text: i18n.t("Description") },
+    { name: "description" as const, text: i18n.t("Description") },
     { name: "created" as const, text: i18n.t("Created") },
-    { name: "lastUpdated" as const, text: i18n.t("Last update") },
+    { name: "lastUpdated" as const, text: i18n.t("Last updated") },
     { name: "id" as const, text: i18n.t("ID") },
     { name: "href" as const, text: i18n.t("API link") },
 ];
@@ -107,12 +126,14 @@ const useStyles = makeStyles({
 });
 
 type DataElement = SelectedPick<D2DataElementSchema, typeof fields>;
-type DataElementGroup = SelectedPick<D2DataElementGroupSchema, typeof fields>;
-type DataElementGroupSet = SelectedPick<D2DataElementGroupSetSchema, typeof fields>;
-type DataSet = SelectedPick<D2DataSetSchema, typeof fields>;
-type Program = SelectedPick<D2ProgramSchema, typeof fields>;
+type DataElementGroup = SelectedPick<D2DataElementGroupSchema, typeof dataElementGroupFields>;
+type DataElementGroupSet = SelectedPick<
+    D2DataElementGroupSetSchema,
+    typeof dataElementGroupSetFields
+>;
+type DataSet = SelectedPick<D2DataSetSchema, typeof dataSetFields>;
 
-type DataPageType = DataElement | DataElementGroup | DataElementGroupSet | DataSet | Program;
+type DataPageType = DataElement | DataElementGroup | DataElementGroupSet | DataSet;
 
 const DataPage: React.FC<any> = () => {
     const [modelName, updateModelName] = useState<string>("");
@@ -147,25 +168,33 @@ const DataPage: React.FC<any> = () => {
     const groupTypes: {
         id: string;
         name: string;
-        model: D2ApiModel<"dataElementGroups" | "dataElementGroupSets" | "dataSets" | "programs">;
+        model: D2ApiModel<"dataElementGroups" | "dataElementGroupSets" | "dataSets">;
+        fields: any; // TODO: Not sure how to properly type this
     }[] = [
         {
             name: "Data Element Groups",
             model: api.models.dataElementGroups,
             id: "dataElementGroups",
+            fields: dataElementGroupFields,
         },
         {
             name: "Data Element Group Sets",
             model: api.models.dataElementGroupSets,
             id: "dataElementGroupSets",
+            fields: dataElementGroupSetFields,
         },
-        { name: "Datasets", model: api.models.dataSets, id: "dataSets" },
-        { name: "Programs", model: api.models.programs, id: "programs" },
+        {
+            name: "Datasets",
+            model: api.models.dataSets,
+            id: "dataSets",
+            fields: dataSetFields,
+        },
     ];
+
+    const groupType = _.find(groupTypes, ["id", modelName]);
 
     // @tokland I am not 100% sure how to infer the "Options" here without hardcoding it to one single model
     const apiMethod = (options: Parameters<typeof api.models.dataElements.get>[0]) => {
-        const groupType = _.find(groupTypes, ["id", modelName]);
         return groupType ? groupType.model.get(options) : api.models.dataElements.get(options);
     };
 
@@ -207,7 +236,7 @@ const DataPage: React.FC<any> = () => {
     ];
 
     const apiQuery = {
-        fields,
+        fields: groupType ? groupType.fields : fields,
         filter: {
             lastUpdated: lastUpdatedFilter
                 ? { ge: moment(lastUpdatedFilter).format("YYYY-MM-DD") }
@@ -278,6 +307,7 @@ const DataPage: React.FC<any> = () => {
                 initialState={initialState}
                 onActionButtonClick={appConfigurator ? startSynchronization : undefined}
                 actionButtonLabel={<SyncIcon />}
+                childrenTags={["dataElements", "dataElementGroups", "dataSetElements"]}
             />
 
             <SyncWizardDialog
