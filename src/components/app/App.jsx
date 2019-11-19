@@ -1,79 +1,121 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import { useConfig, useDataQuery } from "@dhis2/app-runtime";
+import i18n from "@dhis2/d2-i18n";
 import { HeaderBar } from "@dhis2/ui-widgets";
 import { MuiThemeProvider } from "@material-ui/core/styles";
-import { StylesProvider, createGenerateClassName } from "@material-ui/styles";
-import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
+import { init } from "d2";
+import { ApiContext, D2ApiDefault } from "d2-api";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
-import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
-
-import Root from "./Root";
-import Share from "../share/Share";
+import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import React, { useEffect, useState } from "react";
 import Instance from "../../models/instance";
-import { muiTheme } from "./themes/dhis2.theme";
-import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { initializeAppRoles } from "../../utils/permissions";
+import Share from "../share/Share";
 import "./App.css";
+import Root from "./Root";
+import muiThemeLegacy from "./themes/dhis2-legacy.theme";
+import { muiTheme } from "./themes/dhis2.theme";
 
 const generateClassName = createGenerateClassName({
     productionPrefix: "c",
 });
 
-class App extends Component {
-    static propTypes = {
-        d2: PropTypes.object.isRequired,
-        appConfig: PropTypes.object.isRequired,
-    };
+const isLangRTL = code => {
+    const langs = ["ar", "fa", "ur"];
+    const prefixed = langs.map(c => `${c}-`);
+    return _(langs).includes(code) || prefixed.filter(c => code && code.startsWith(c)).length > 0;
+};
 
-    async componentDidMount() {
-        const { d2, appConfig } = this.props;
-        const appKey = _(this.props.appConfig).get("appKey");
+function initFeedbackTool(d2, appConfig) {
+    const appKey = _(appConfig).get("appKey");
 
-        if (appConfig && appConfig.feedback) {
-            const feedbackOptions = {
-                ...appConfig.feedback,
-                i18nPath: "feedback-tool/i18n",
-            };
-            window.$.feedbackDhis2(d2, appKey, feedbackOptions);
-        }
-
-        if (appConfig && appConfig.encryptionKey) {
-            Instance.setEncryptionKey(appConfig.encryptionKey);
-        }
-
-        await initializeAppRoles(d2.Api.getApi().baseUrl);
-    }
-
-    render() {
-        const { d2, appConfig } = this.props;
-        const showShareButton = _(appConfig).get("appearance.showShareButton") || false;
-        const showHeader = !process.env.REACT_APP_CYPRESS;
-
-        return (
-            <React.Fragment>
-                <StylesProvider generateClassName={generateClassName}>
-                    <MuiThemeProvider theme={muiTheme}>
-                        <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
-                            <LoadingProvider>
-                                <SnackbarProvider>
-                                    {showHeader && (
-                                        <HeaderBar appName={i18n.t("Metadata Synchronization")} />
-                                    )}
-
-                                    <div id="app" className="content">
-                                        <Root d2={d2} />
-                                    </div>
-
-                                    <Share visible={showShareButton} />
-                                </SnackbarProvider>
-                            </LoadingProvider>
-                        </OldMuiThemeProvider>
-                    </MuiThemeProvider>
-                </StylesProvider>
-            </React.Fragment>
-        );
+    if (appConfig && appConfig.feedback) {
+        const feedbackOptions = {
+            ...appConfig.feedback,
+            i18nPath: "feedback-tool/i18n",
+        };
+        window.$.feedbackDhis2(d2, appKey, feedbackOptions);
     }
 }
+
+const configI18n = ({ keyUiLocale: uiLocale }) => {
+    i18n.changeLanguage(uiLocale);
+    document.documentElement.setAttribute("dir", isLangRTL(uiLocale) ? "rtl" : "ltr");
+};
+
+const App = () => {
+    const { baseUrl } = useConfig();
+    const [d2, setD2] = useState(null);
+    const [api, setApi] = useState(null);
+    const [showShareButton, setShowShareButton] = useState(false);
+    const showHeader = !process.env.REACT_APP_CYPRESS;
+    const { loading, error, data } = useDataQuery({
+        userSettings: { resource: "/userSettings" },
+    });
+
+    useEffect(() => {
+        const run = async () => {
+            const appConfig = await fetch("app-config.json", {
+                credentials: "same-origin",
+            }).then(res => res.json());
+            const d2 = await init({ baseUrl: baseUrl + "/api" });
+            const api = new D2ApiDefault({ baseUrl });
+            Object.assign({ d2, api });
+
+            configI18n(data.userSettings);
+            setD2(d2);
+            setApi(api);
+            Object.assign(window, { d2, api });
+            setShowShareButton(_(appConfig).get("appearance.showShareButton") || false);
+            initFeedbackTool(d2, appConfig);
+
+            if (appConfig && appConfig.encryptionKey) {
+                Instance.setEncryptionKey(appConfig.encryptionKey);
+            }
+
+            await initializeAppRoles(d2.Api.getApi().baseUrl);
+        };
+
+        if (data) run();
+    }, [data, baseUrl]);
+
+    if (error) {
+        return (
+            <h3>
+                <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
+                    Login
+                </a>
+                {` ${baseUrl}`}
+            </h3>
+        );
+    } else if (loading || !d2 || !api) {
+        return <h3>Connecting to {baseUrl}...</h3>;
+    } else {
+        return (
+            <StylesProvider generateClassName={generateClassName}>
+                <MuiThemeProvider theme={muiTheme}>
+                    <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
+                        <LoadingProvider>
+                            <SnackbarProvider>
+                                {showHeader && (
+                                    <HeaderBar appName={i18n.t("Metadata Synchronization")} />
+                                )}
+
+                                <div id="app" className="content">
+                                    <ApiContext.Provider value={{ d2, api }}>
+                                        <Root d2={d2} />
+                                    </ApiContext.Provider>
+                                </div>
+
+                                <Share visible={showShareButton} />
+                            </SnackbarProvider>
+                        </LoadingProvider>
+                    </OldMuiThemeProvider>
+                </MuiThemeProvider>
+            </StylesProvider>
+        );
+    }
+};
 
 export default App;
