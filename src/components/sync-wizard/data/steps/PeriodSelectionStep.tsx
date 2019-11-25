@@ -1,20 +1,40 @@
+import i18n from "@dhis2/d2-i18n";
+import { DatePicker } from "d2-ui-components";
 import React from "react";
-import { withSnackbar } from "d2-ui-components";
-
-import { D2Api } from "../../../../types/d2";
 import SyncRule from "../../../../models/syncRule";
 
 interface PeriodSelectionStepProps {
-    d2: D2Api;
     syncRule: SyncRule;
-    //snackbar: PropTypes.object.isRequired,
-    onChange: () => void;
+    onChange: (syncRule: SyncRule) => void;
 }
 
-export default function PeriodSelectionStep(_props: PeriodSelectionStepProps) {
-    //const { d2, syncRule, ...rest } = props;
+export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
+    const { syncRule, onChange } = props;
 
-    const component = <span>Period</span>;
+    const updateStartDate = (date: Date | null) => {
+        onChange(syncRule.updateDataSyncStartDate(date));
+    };
 
-    return withSnackbar(component);
+    const updateEndDate = (date: Date | null) => {
+        onChange(syncRule.updateDataSyncEndDate(date));
+    };
+
+    return (
+        <React.Fragment>
+            <div>
+                <DatePicker
+                    label={i18n.t("Start date (*)")}
+                    value={syncRule.dataSyncStartDate}
+                    onChange={updateStartDate}
+                />
+            </div>
+            <div>
+                <DatePicker
+                    label={i18n.t("End date (*)")}
+                    value={syncRule.dataSyncEndDate}
+                    onChange={updateEndDate}
+                />
+            </div>
+        </React.Fragment>
+    );
 }

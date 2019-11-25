@@ -81,7 +81,7 @@ const stepsBaseInfo = [
         key: "organisations-units",
         label: i18n.t("Organisation units"),
         component: OrganisationUnitsSelectionStep,
-        validationKeys: ["organisationUnits"],
+        validationKeys: ["dataSyncOrganisationUnits"],
         description: undefined,
         help: undefined,
     },
@@ -89,7 +89,7 @@ const stepsBaseInfo = [
         key: "period",
         label: i18n.t("Period"),
         component: PeriodSelectionStep,
-        validationKeys: ["period"],
+        validationKeys: ["dataSyncStartDate", "dataSyncEndDate"],
         description: undefined,
         help: undefined,
     },
@@ -266,7 +266,7 @@ const DataPage: React.FC<any> = () => {
     };
 
     const handleSynchronization = async (syncRule: SyncRule) => {
-        console.log(`syncronization for ${syncRule.name}: not implemented`);
+        console.log(`syncronization for ${syncRule.name}: not implemented`, syncRule);
     };
 
     return (

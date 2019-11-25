@@ -19,7 +19,7 @@ const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
 }) => {
     const [organisationUnitsRootIds, setOrganisationUnitsRootIds] = React.useState<string[]>([]);
     const [selectedOrganisationUnits, setSelectedOrganisationUnits] = React.useState<string[]>(
-        syncRule.organisationUnits
+        syncRule.dataSyncOrganisationUnits
     );
 
     React.useEffect(() => {
@@ -33,7 +33,7 @@ const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
 
     const changeSelection = (orgUnitsPaths: string[]) => {
         setSelectedOrganisationUnits(orgUnitsPaths);
-        onChange(syncRule.updateOrganisationUnits(orgUnitsPaths));
+        onChange(syncRule.updateDataSyncOrganisationUnits(orgUnitsPaths));
     };
 
     if (_.isEmpty(organisationUnitsRootIds)) {

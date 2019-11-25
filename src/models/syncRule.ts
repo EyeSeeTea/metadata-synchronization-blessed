@@ -50,7 +50,7 @@ export default class SyncRule {
     }
 
     public get type(): SyncRuleType {
-        return this.syncRule.type;
+        return this.syncRule.type || "metadata";
     }
 
     public get code(): string | undefined {
@@ -65,10 +65,22 @@ export default class SyncRule {
         return this.syncRule.builder.metadataIds;
     }
 
-    public get organisationUnits(): string[] {
+    public get dataSyncOrganisationUnits(): string[] {
         return this.syncRule.builder.dataParams
-            ? this.syncRule.builder.dataParams.organisationUnits
+            ? this.syncRule.builder.dataParams.organisationUnits || []
             : [];
+    }
+
+    public get dataSyncStartDate(): Date | null {
+        return this.syncRule.builder.dataParams
+            ? this.syncRule.builder.dataParams.startDate || null
+            : null;
+    }
+
+    public get dataSyncEndDate(): Date | null {
+        return this.syncRule.builder.dataParams
+            ? this.syncRule.builder.dataParams.endDate || null
+            : null;
     }
 
     public get targetInstances(): string[] {
@@ -128,7 +140,11 @@ export default class SyncRule {
             builder: {
                 targetInstances: [],
                 metadataIds: [],
-                dataParams: undefined,
+                dataParams: {
+                    organisationUnits: [],
+                    startDate: null,
+                    endDate: null,
+                },
                 syncParams: {
                     includeSharingSettings: true,
                     atomicMode: "ALL",
@@ -169,8 +185,12 @@ export default class SyncRule {
         filters: SyncRuleTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { targetInstanceFilter = null, enabledFilter = null, lastExecutedFilter = null } =
-            filters || {};
+        const {
+            targetInstanceFilter = null,
+            enabledFilter = null,
+            lastExecutedFilter = null,
+            type = "metadata",
+        } = filters || {};
         const { page = 1, pageSize = 20, paging = true } = pagination || {};
 
         const globalAdmin = await isGlobalAdmin(d2);
@@ -178,6 +198,10 @@ export default class SyncRule {
 
         const data = await getPaginatedData(d2, dataStoreKey, filters, { paging: false });
         const filteredObjects = _(data.objects)
+            .filter(data => {
+                const rule = SyncRule.build(data);
+                return rule.type === type;
+            })
             .filter(data => {
                 const rule = SyncRule.build(data);
                 return globalAdmin || rule.isVisibleToUser(userInfo);
@@ -235,7 +259,7 @@ export default class SyncRule {
         });
     }
 
-    public updateOrganisationUnits(organisationUnits: string[]): SyncRule {
+    public updateDataSyncOrganisationUnits(organisationUnits: string[]): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             builder: {
@@ -243,6 +267,32 @@ export default class SyncRule {
                 dataParams: {
                     ...this.syncRule.builder.dataParams,
                     organisationUnits,
+                },
+            },
+        });
+    }
+
+    public updateDataSyncStartDate(startDate: Date | null): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder.dataParams,
+                    startDate,
+                },
+            },
+        });
+    }
+
+    public updateDataSyncEndDate(endDate: Date | null): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder.dataParams,
+                    endDate,
                 },
             },
         });
@@ -350,11 +400,27 @@ export default class SyncRule {
                       }
                     : null,
             ]),
-            organisationUnits: _.compact([
-                this.type === "data" && this.organisationUnits.length === 0
+            dataSyncOrganisationUnits: _.compact([
+                this.type === "data" && this.dataSyncOrganisationUnits.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "organisation unit" },
+                      }
+                    : null,
+            ]),
+            dataSyncStartDate: _.compact([
+                this.type === "data" && !this.dataSyncStartDate
+                    ? {
+                          key: "cannot_be_empty",
+                          namespace: { element: "start date" },
+                      }
+                    : null,
+            ]),
+            dataSyncEndDate: _.compact([
+                this.type === "data" && !this.dataSyncEndDate
+                    ? {
+                          key: "cannot_be_empty",
+                          namespace: { element: "end date" },
                       }
                     : null,
             ]),

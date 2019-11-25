@@ -40,7 +40,12 @@ const InstanceSelectionStep = props => {
                 options={instanceOptions}
                 selected={selectedOptions}
             />
-            <SyncParamsSelector defaultParams={syncRule.syncParams} onChange={changeSyncParams} />
+            {syncRule.type === "metadata" && (
+                <SyncParamsSelector
+                    defaultParams={syncRule.syncParams}
+                    onChange={changeSyncParams}
+                />
+            )}
         </React.Fragment>
     );
 };

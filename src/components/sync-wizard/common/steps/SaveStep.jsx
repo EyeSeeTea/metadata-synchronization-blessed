@@ -106,38 +106,40 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
                     </ul>
                 </LiEntry>
 
-                <LiEntry label={i18n.t("Advanced options")}>
-                    <ul>
-                        <LiEntry
-                            label={i18n.t("Include user information and sharing settings")}
-                            value={
-                                syncRule.syncParams.includeSharingSettings
-                                    ? i18n.t("Yes")
-                                    : i18n.t("No")
-                            }
-                        />
-                    </ul>
-                    <ul>
-                        <LiEntry
-                            label={i18n.t("Disable atomic verification")}
-                            value={
-                                syncRule.syncParams.atomicMode === "NONE"
-                                    ? i18n.t("Yes")
-                                    : i18n.t("No")
-                            }
-                        />
-                    </ul>
-                    <ul>
-                        <LiEntry
-                            label={i18n.t("Replace objects in destination instance")}
-                            value={
-                                syncRule.syncParams.mergeMode === "REPLACE"
-                                    ? i18n.t("Yes")
-                                    : i18n.t("No")
-                            }
-                        />
-                    </ul>
-                </LiEntry>
+                {syncRule.type === "metadata" && (
+                    <LiEntry label={i18n.t("Advanced options")}>
+                        <ul>
+                            <LiEntry
+                                label={i18n.t("Include user information and sharing settings")}
+                                value={
+                                    syncRule.syncParams.includeSharingSettings
+                                        ? i18n.t("Yes")
+                                        : i18n.t("No")
+                                }
+                            />
+                        </ul>
+                        <ul>
+                            <LiEntry
+                                label={i18n.t("Disable atomic verification")}
+                                value={
+                                    syncRule.syncParams.atomicMode === "NONE"
+                                        ? i18n.t("Yes")
+                                        : i18n.t("No")
+                                }
+                            />
+                        </ul>
+                        <ul>
+                            <LiEntry
+                                label={i18n.t("Replace objects in destination instance")}
+                                value={
+                                    syncRule.syncParams.mergeMode === "REPLACE"
+                                        ? i18n.t("Yes")
+                                        : i18n.t("No")
+                                }
+                            />
+                        </ul>
+                    </LiEntry>
+                )}
 
                 <LiEntry
                     label={i18n.t("Scheduling")}
