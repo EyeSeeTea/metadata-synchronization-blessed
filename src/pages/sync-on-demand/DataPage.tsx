@@ -12,7 +12,7 @@ import {
     useD2Api,
 } from "d2-api";
 import D2ApiModel from "d2-api/api/models";
-import { D2ObjectsTable, DatePicker, TableState, useSnackbar } from "d2-ui-components";
+import { DatePicker, TableState, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
 import React, { ChangeEvent, useEffect, useState } from "react";
@@ -29,6 +29,7 @@ import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
 import { isAppConfigurator } from "../../utils/permissions";
+import { D2ObjectsTable } from "../../components/d2-objects-table/D2ObjectsTable";
 
 const include = true as true;
 
@@ -220,8 +221,7 @@ const DataPage: React.FC<any> = () => {
             lastUpdated: lastUpdatedFilter
                 ? { ge: moment(lastUpdatedFilter).format("YYYY-MM-DD") }
                 : undefined,
-            // TODO: d2-api ignores empty array for "in" filter
-            id: onlySelectedFilter ? { in: [...syncRule.metadataIds, ""] } : undefined,
+            id: onlySelectedFilter ? { in: syncRule.metadataIds } : undefined,
         },
     };
 
@@ -286,7 +286,7 @@ const DataPage: React.FC<any> = () => {
                 initialState={initialState}
                 onActionButtonClick={appConfigurator ? startSynchronization : undefined}
                 actionButtonLabel={<SyncIcon />}
-                childrenTags={["dataElements", "dataElementGroups"]}
+                childrenKeys={["dataElements", "dataElementGroups"]}
             />
 
             <SyncWizardDialog
