@@ -7,7 +7,6 @@ import {
     D2DataElementGroupSchema,
     D2DataElementGroupSetSchema,
     D2DataElementSchema,
-    D2DataSetSchema,
     SelectedPick,
     useD2,
     useD2Api,
@@ -54,13 +53,6 @@ const dataElementGroupSetFields = {
     dataElementGroups: {
         ...fields,
         dataElements: fields,
-    },
-};
-
-const dataSetFields = {
-    ...fields,
-    dataSetElements: {
-        dataElement: fields,
     },
 };
 
@@ -131,9 +123,7 @@ type DataElementGroupSet = SelectedPick<
     D2DataElementGroupSetSchema,
     typeof dataElementGroupSetFields
 >;
-type DataSet = SelectedPick<D2DataSetSchema, typeof dataSetFields>;
-
-type DataPageType = DataElement | DataElementGroup | DataElementGroupSet | DataSet;
+type DataPageType = DataElement | DataElementGroup | DataElementGroupSet;
 
 const DataPage: React.FC<any> = () => {
     const [modelName, updateModelName] = useState<string>("");
@@ -157,18 +147,13 @@ const DataPage: React.FC<any> = () => {
     const title = i18n.t("Data synchronization");
 
     useEffect(() => {
-        const retrieveIsAppConfigurator = async () => {
-            const appConfigurator = await isAppConfigurator(d2 as D2);
-
-            updateAppConfigurator(appConfigurator);
-        };
-        retrieveIsAppConfigurator();
-    }, [d2, appConfigurator]);
+        isAppConfigurator(d2 as D2).then(updateAppConfigurator);
+    }, [d2, updateAppConfigurator]);
 
     const groupTypes: {
         id: string;
         name: string;
-        model: D2ApiModel<"dataElementGroups" | "dataElementGroupSets" | "dataSets">;
+        model: D2ApiModel<"dataElementGroups" | "dataElementGroupSets">;
         fields: any; // TODO: Not sure how to properly type this
     }[] = [
         {
@@ -182,12 +167,6 @@ const DataPage: React.FC<any> = () => {
             model: api.models.dataElementGroupSets,
             id: "dataElementGroupSets",
             fields: dataElementGroupSetFields,
-        },
-        {
-            name: "Datasets",
-            model: api.models.dataSets,
-            id: "dataSets",
-            fields: dataSetFields,
         },
     ];
 
@@ -307,7 +286,7 @@ const DataPage: React.FC<any> = () => {
                 initialState={initialState}
                 onActionButtonClick={appConfigurator ? startSynchronization : undefined}
                 actionButtonLabel={<SyncIcon />}
-                childrenTags={["dataElements", "dataElementGroups", "dataSetElements"]}
+                childrenTags={["dataElements", "dataElementGroups"]}
             />
 
             <SyncWizardDialog
