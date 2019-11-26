@@ -8,13 +8,14 @@ export const colors = {
     accentPrimaryLightest: "#EAF4FF",
 
     accentSecondary: "#fb8c00",
-    accentSecondaryDark: "#ff9800",
     accentSecondaryLight: "#f57c00",
+    accentSecondaryDark: "#ff9800",
 
     black: "#000000",
     greyBlack: "#494949",
     grey: "#9E9E9E",
     greyLight: "#E0E0E0",
+    greyDisabled: "#8E8E8E",
     blueGrey: "#ECEFF1",
     snow: "#F4F6F8",
     white: "#FFFFFF", // Not included in palette!
@@ -24,6 +25,7 @@ export const colors = {
     positive: "#3D9305",
     info: "#EAF4FF",
 };
+
 export const palette = {
     common: {
         white: colors.white,
@@ -31,12 +33,12 @@ export const palette = {
     },
     action: {
         active: colors.greyBlack,
-        disabled: colors.greyLight,
+        disabled: colors.greyDisabled,
     },
     text: {
         primary: colors.black,
         secondary: colors.greyBlack,
-        disabled: colors.grey,
+        disabled: colors.greyDisabled,
         hint: colors.grey,
     },
     primary: {
@@ -48,8 +50,8 @@ export const palette = {
     },
     secondary: {
         main: colors.accentSecondary,
-        dark: colors.accentSecondaryDark,
         light: colors.accentSecondaryLight,
+        dark: colors.accentSecondaryDark,
         contrastText: "#fff",
     },
     error: {

@@ -11,15 +11,15 @@ import {
 } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 
-import PageHeader from "../page-header/PageHeader";
+import PageHeader from "../../components/page-header/PageHeader";
 import SyncRule from "../../models/syncRule";
 import Instance from "../../models/instance";
 import { getValueForCollection } from "../../utils/d2-ui-components";
 import { startSynchronization } from "../../logic/synchronization";
 import SyncReport from "../../models/syncReport";
-import SyncSummary from "../sync-summary/SyncSummary";
-import Dropdown from "../dropdown/Dropdown";
-import SharingDialog from "../sharing-dialog/SharingDialog";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
+import Dropdown from "../../components/dropdown/Dropdown";
+import SharingDialog from "../../components/sharing-dialog/SharingDialog";
 import { getValidationMessages } from "../../utils/validations";
 import {
     getUserInfo,
@@ -28,7 +28,7 @@ import {
     isAppExecutor,
 } from "../../utils/permissions";
 
-class DataSyncRulesPage extends React.Component {
+class MetadataSyncRulesPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -173,11 +173,11 @@ class DataSyncRulesPage extends React.Component {
     };
 
     createRule = () => {
-        this.props.history.push("/data-synchronization-rules/new");
+        this.props.history.push("/metadata-synchronization-rules/new");
     };
 
     editRule = rule => {
-        this.props.history.push(`/data-synchronization-rules/edit/${rule.id}`);
+        this.props.history.push(`/metadata-synchronization-rules/edit/${rule.id}`);
     };
 
     executeRule = async ({ builder, name, id }) => {
@@ -372,12 +372,6 @@ class DataSyncRulesPage extends React.Component {
         );
     };
 
-    //TODO: for the moment show empty data sync rules
-    emptyDataSyncRules = (d2, filters, pagination) =>
-        new Promise((resolve, reject) => {
-            resolve({ objects: [], pager: { page: 1, pageCount: 1, total: 0 } });
-        });
-
     render() {
         const {
             tableKey,
@@ -395,19 +389,18 @@ class DataSyncRulesPage extends React.Component {
         return (
             <React.Fragment>
                 <PageHeader
-                    title={i18n.t("Data Synchronization Rules")}
+                    title={i18n.t("Metadata Synchronization Rules")}
                     onBackClick={this.backHome}
                 />
                 <OldObjectsTable
                     key={tableKey}
                     d2={d2}
-                    model={DataSyncRulesPage.model}
+                    model={MetadataSyncRulesPage.model}
                     columns={this.columns}
                     detailsFields={this.detailsFields}
                     pageSize={10}
                     actions={this.actions}
-                    //list={SyncRule.list}
-                    list={this.emptyDataSyncRules}
+                    list={SyncRule.list}
                     onButtonClick={appConfigurator ? this.createRule : null}
                     customFiltersComponent={this.renderCustomFilters}
                     customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
@@ -448,4 +441,4 @@ class DataSyncRulesPage extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(DataSyncRulesPage)));
+export default withLoading(withSnackbar(withRouter(MetadataSyncRulesPage)));

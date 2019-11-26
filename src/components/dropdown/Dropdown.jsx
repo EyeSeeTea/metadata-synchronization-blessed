@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { FormControl, InputLabel, MenuItem, MuiThemeProvider, Select } from "@material-ui/core";
-import cyan from "@material-ui/core/colors/cyan";
 
 const getMaterialTheme = () =>
     createMuiTheme({
@@ -31,20 +30,6 @@ const getMaterialTheme = () =>
                 },
                 input: {
                     color: "#565656",
-                },
-                underline: {
-                    "&&&&:hover:before": {
-                        borderBottom: `1px solid #bdbdbd`,
-                    },
-                    "&:hover:not($disabled):before": {
-                        borderBottom: `1px solid #aaaaaa`,
-                    },
-                    "&:after": {
-                        borderBottom: `2px solid ${cyan["500"]}`,
-                    },
-                    "&:before": {
-                        borderBottom: `1px solid #bdbdbd`,
-                    },
                 },
             },
         },

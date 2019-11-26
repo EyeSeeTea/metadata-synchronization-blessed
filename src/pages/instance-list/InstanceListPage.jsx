@@ -5,7 +5,7 @@ import i18n from "@dhis2/d2-i18n";
 import { ConfirmationDialog, OldObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
 import { withRouter } from "react-router-dom";
 
-import PageHeader from "../page-header/PageHeader";
+import PageHeader from "../../components/page-header/PageHeader";
 import Instance from "../../models/instance";
 import { isAppConfigurator } from "../../utils/permissions";
 
