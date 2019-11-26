@@ -59,6 +59,7 @@ const DataPage: React.FC<any> = () => {
     };
 
     //@ts-ignore
+    // eslint-disable-next-line
     const finishSynchronization = (importResponse?: any) => {
         if (importResponse) {
             setState(state => ({
