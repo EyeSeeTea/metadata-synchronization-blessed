@@ -44,15 +44,13 @@ const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
         );
     } else {
         return (
-            <div style={{ display: "flex", justifyContent: "center" }}>
-                <OrgUnitsSelector
-                    d2={d2}
-                    onChange={changeSelection}
-                    selected={selectedOrganisationUnits}
-                    rootIds={organisationUnitsRootIds}
-                    withElevation={false}
-                />
-            </div>
+            <OrgUnitsSelector
+                d2={d2}
+                onChange={changeSelection}
+                selected={selectedOrganisationUnits}
+                rootIds={organisationUnitsRootIds}
+                withElevation={false}
+            />
         );
     }
 };
