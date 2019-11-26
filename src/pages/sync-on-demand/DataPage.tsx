@@ -14,13 +14,13 @@ import {
     DataElementModel,
 } from "../../models/d2Model";
 import SyncReport from "../../models/syncReport";
-import SyncRule from "../../models/syncRule"; import { isAppConfigurator } from "../../utils/permissions";
+import SyncRule from "../../models/syncRule";
+import { isAppConfigurator } from "../../utils/permissions";
 import { D2 } from "../../types/d2";
 
-
 const DataPage: React.FC<any> = () => {
-    const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand("data")); const [appConfigurator, updateAppConfigurator] = useState(false);
-
+    const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand("data"));
+    const [appConfigurator, updateAppConfigurator] = useState(false);
 
     const [state, setState] = useState({
         importResponse: SyncReport.create(),
@@ -37,7 +37,7 @@ const DataPage: React.FC<any> = () => {
     useEffect(() => {
         isAppConfigurator(d2 as D2).then(updateAppConfigurator);
     }, [d2, updateAppConfigurator]);
-    
+
     const goBack = () => history.goBack();
 
     const updateSelection = (selection: string[]) => {

@@ -14,7 +14,8 @@ import D2ObjectsTable, { D2ObjectsTableProps } from "../d2-objects-table/D2Objec
 import Dropdown from "../dropdown/Dropdown";
 import { Params } from "d2-api/api/common";
 
-interface MetadataTableProps extends Omit<D2ObjectsTableProps<MetadataType>, "columns" | "apiMethod"> {
+interface MetadataTableProps
+    extends Omit<D2ObjectsTableProps<MetadataType>, "columns" | "apiMethod"> {
     models: typeof D2Model[];
     selection?: string[];
     notifyNewSelection?(selection: string[]): void;

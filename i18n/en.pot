@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-11-26T11:09:53.912Z\n"
-"PO-Revision-Date: 2019-11-26T11:09:53.912Z\n"
+"POT-Creation-Date: 2019-11-26T14:33:08.846Z\n"
+"PO-Revision-Date: 2019-11-26T14:33:08.846Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -14,7 +14,7 @@ msgstr ""
 msgid "<No value>"
 msgstr ""
 
-msgid "Group by metadata type"
+msgid "Metadata type"
 msgstr ""
 
 msgid "Last updated date"
@@ -36,9 +36,6 @@ msgid "Metadata Type"
 msgstr ""
 
 msgid "Last update"
-msgstr ""
-
-msgid "Metadata type"
 msgstr ""
 
 msgid "Deleted date"
@@ -553,6 +550,9 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "UID"
+msgstr ""
 
 msgid "Level"
 msgstr ""
