@@ -12,8 +12,9 @@ import React, { useEffect, useMemo, useState } from "react";
 
 export interface D2ObjectsTableProps<T extends ReferenceObject>
     extends Omit<ObjectsTableProps<T>, "rows"> {
-    apiMethod(options: any): D2ApiDataHookQuery<PaginatedObjects<T> | NonPaginatedObjects<T>>; // TODO inference
-    apiQuery?: any; // TODO inference
+    // TODO inference. Idea, use InstanceType<typeof D2ApiModel>["get"]
+    apiMethod(options: any): D2ApiDataHookQuery<PaginatedObjects<T> | NonPaginatedObjects<T>>;
+    apiQuery?: any;
 }
 
 const defaultState = {
