@@ -54,7 +54,9 @@ describe("SyncRule", () => {
             it("should return true when contains name, instances and organisationUnits", async () => {
                 const syncRule = SyncRule.create("data")
                     .updateName("SyncRule test")
-                    .updateOrganisationUnits(["/JLA7wl59oN3/WeeW3tgF69f"])
+                    .updateDataSyncOrganisationUnits(["/JLA7wl59oN3/WeeW3tgF69f"])
+                    .updateDataSyncStartDate(new Date())
+                    .updateDataSyncEndDate(new Date())
                     .updateTargetInstances(["fP3MMoWv6qp"]);
                 const isValid = await syncRule.isValid();
                 expect(isValid).toEqual(true);

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-11-25T12:23:15.132Z\n"
-"PO-Revision-Date: 2019-11-25T12:23:15.132Z\n"
+"POT-Creation-Date: 2019-11-26T08:12:56.548Z\n"
+"PO-Revision-Date: 2019-11-26T08:12:56.548Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -96,9 +96,6 @@ msgid "Add users and user groups"
 msgstr ""
 
 msgid "Enter names"
-msgstr ""
-
-msgid "Synchronize Metadata"
 msgstr ""
 
 msgid "Synchronize"
@@ -219,7 +216,19 @@ msgid ""
 "is, you would use ? in the day of the week field."
 msgstr ""
 
-msgid "All your changes will be lost. Are you sure?"
+msgid "Metadata"
+msgstr ""
+
+msgid "Data elements"
+msgstr ""
+
+msgid "Organisation units"
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+msgid "Category options"
 msgstr ""
 
 msgid "Field cannot be blank"
@@ -290,25 +299,10 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
-msgid "Data elements"
+msgid "Start date (*)"
 msgstr ""
 
-msgid "Organisation units"
-msgstr ""
-
-msgid "Period"
-msgstr ""
-
-msgid "Category options"
-msgstr ""
-
-msgid "data synchronization rule"
-msgstr ""
-
-msgid "Metadata"
-msgstr ""
-
-msgid "metadata synchronization rule"
+msgid "End date (*)"
 msgstr ""
 
 msgid "Selected {{difference}} elements"
@@ -441,6 +435,9 @@ msgstr ""
 msgid "Cancel Instance Editing"
 msgstr ""
 
+msgid "All your changes will be lost. Are you sure?"
+msgstr ""
+
 msgid "Saving..."
 msgstr ""
 
@@ -517,6 +514,18 @@ msgstr ""
 msgid "Synchronizing metadata"
 msgstr ""
 
+msgid "New synchronization rule"
+msgstr ""
+
+msgid "Edit synchronization rule"
+msgstr ""
+
+msgid "Cancel synchronization rule creation"
+msgstr ""
+
+msgid "Cancel synchronization rule editing"
+msgstr ""
+
 msgid "Destination instances"
 msgstr ""
 
@@ -576,4 +585,7 @@ msgid "Cron expression {{expression}} must be valid"
 msgstr ""
 
 msgid "To enable a rule you need to enter a valid {{expression}}"
+msgstr ""
+
+msgid "Start and end dates are not a valid period"
 msgstr ""

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
+import { useD2 } from "d2-api";
 import { MultiSelector } from "d2-ui-components";
-
-import Instance from "../../../../models/instance";
-import SyncParamsSelector from "../../../sync-params-selector/SyncParamsSelector";
+import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import Instance from "../../../models/instance";
+import SyncParamsSelector from "../../sync-params-selector/SyncParamsSelector";
 
 export const getInstances = async d2 => {
     const { objects } = await Instance.list(d2, {}, { paging: false });
@@ -14,9 +14,10 @@ export const getInstances = async d2 => {
 };
 
 const InstanceSelectionStep = props => {
-    const { d2, syncRule, onChange } = props;
+    const { syncRule, onChange } = props;
     const [instanceOptions, setInstanceOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState(syncRule.targetInstances);
+    const d2 = useD2();
 
     const changeInstances = instances => {
         setSelectedOptions(instances);
@@ -40,7 +41,12 @@ const InstanceSelectionStep = props => {
                 options={instanceOptions}
                 selected={selectedOptions}
             />
-            <SyncParamsSelector defaultParams={syncRule.syncParams} onChange={changeSyncParams} />
+            {syncRule.type === "metadata" && (
+                <SyncParamsSelector
+                    defaultParams={syncRule.syncParams}
+                    onChange={changeSyncParams}
+                />
+            )}
         </React.Fragment>
     );
 };

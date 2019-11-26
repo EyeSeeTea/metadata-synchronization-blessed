@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import _ from "lodash";
-import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { Button, LinearProgress, withStyles } from "@material-ui/core";
+import { useD2 } from "d2-api";
 import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
-
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import { getBaseUrl } from "../../../utils/d2";
+import { getMetadata } from "../../../utils/synchronization";
+import { getValidationMessages } from "../../../utils/validations";
 import { getInstances } from "./InstanceSelectionStep";
-import { getBaseUrl } from "../../../../utils/d2";
-import { getMetadata } from "../../../../utils/synchronization";
-import { getValidationMessages } from "../../../../utils/validations";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -29,11 +29,12 @@ const styles = () => ({
     },
 });
 
-const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
+const SaveStep = ({ syncRule, classes, onCancel, snackbar }) => {
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [metadata, updateMetadata] = useState({});
     const [instanceOptions, setInstanceOptions] = useState([]);
+    const d2 = useD2();
 
     const openCancelDialog = () => setCancelDialogOpen(true);
 
@@ -106,38 +107,40 @@ const SaveStep = ({ d2, syncRule, classes, onCancel, snackbar }) => {
                     </ul>
                 </LiEntry>
 
-                <LiEntry label={i18n.t("Advanced options")}>
-                    <ul>
-                        <LiEntry
-                            label={i18n.t("Include user information and sharing settings")}
-                            value={
-                                syncRule.syncParams.includeSharingSettings
-                                    ? i18n.t("Yes")
-                                    : i18n.t("No")
-                            }
-                        />
-                    </ul>
-                    <ul>
-                        <LiEntry
-                            label={i18n.t("Disable atomic verification")}
-                            value={
-                                syncRule.syncParams.atomicMode === "NONE"
-                                    ? i18n.t("Yes")
-                                    : i18n.t("No")
-                            }
-                        />
-                    </ul>
-                    <ul>
-                        <LiEntry
-                            label={i18n.t("Replace objects in destination instance")}
-                            value={
-                                syncRule.syncParams.mergeMode === "REPLACE"
-                                    ? i18n.t("Yes")
-                                    : i18n.t("No")
-                            }
-                        />
-                    </ul>
-                </LiEntry>
+                {syncRule.type === "metadata" && (
+                    <LiEntry label={i18n.t("Advanced options")}>
+                        <ul>
+                            <LiEntry
+                                label={i18n.t("Include user information and sharing settings")}
+                                value={
+                                    syncRule.syncParams.includeSharingSettings
+                                        ? i18n.t("Yes")
+                                        : i18n.t("No")
+                                }
+                            />
+                        </ul>
+                        <ul>
+                            <LiEntry
+                                label={i18n.t("Disable atomic verification")}
+                                value={
+                                    syncRule.syncParams.atomicMode === "NONE"
+                                        ? i18n.t("Yes")
+                                        : i18n.t("No")
+                                }
+                            />
+                        </ul>
+                        <ul>
+                            <LiEntry
+                                label={i18n.t("Replace objects in destination instance")}
+                                value={
+                                    syncRule.syncParams.mergeMode === "REPLACE"
+                                        ? i18n.t("Yes")
+                                        : i18n.t("No")
+                                }
+                            />
+                        </ul>
+                    </LiEntry>
+                )}
 
                 <LiEntry
                     label={i18n.t("Scheduling")}

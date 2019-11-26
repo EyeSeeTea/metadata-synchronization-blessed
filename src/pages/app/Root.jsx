@@ -1,8 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
-import DataSyncRulesWizard from "../../components/sync-wizard/data/DataSyncRulesWizard";
-import MetadadaSyncRulesWizard from "../../components/sync-wizard/metadata/MetadataSyncRulesWizard";
 import HistoryPage from "../history/HistoryPage";
 import InstanceCreationPage from "../instance-creation/InstanceCreationPage";
 import InstanceListPage from "../instance-list/InstanceListPage";
@@ -10,8 +8,8 @@ import LandingPage from "../landing/LandingPage";
 import DeletedObjectsPage from "../sync-deleted-objects/DeletedObjectsPage";
 import DataSyncPage from "../sync-on-demand/DataPage";
 import MetadataSyncPage from "../sync-on-demand/MetadataPage";
-import DataSyncRulesPage from "../sync-rules-list/DataSyncRulesPage";
-import MetadataSyncRulesPage from "../sync-rules-list/MetadataSyncRulesPage";
+import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
+import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
 
 class Root extends React.Component {
     static propTypes = {
@@ -48,28 +46,18 @@ class Root extends React.Component {
                     />
 
                     <Route
+                        path={"/sync-rules/:type(data|metadata)/:action(new|edit)/:id?"}
+                        render={props => <SyncRulesCreationPage {...this.props} {...props} />}
+                    />
+
+                    <Route
+                        path="/sync-rules/:type(data|metadata)"
+                        render={props => <SyncRulesPage {...this.props} {...props} />}
+                    />
+
+                    <Route
                         path="/history/:id?"
                         render={props => <HistoryPage {...this.props} {...props} />}
-                    />
-
-                    <Route
-                        path={"/metadata-synchronization-rules/:action(new|edit)/:id?"}
-                        render={props => <MetadadaSyncRulesWizard {...this.props} {...props} />}
-                    />
-
-                    <Route
-                        path={"/data-synchronization-rules/:action(new|edit)/:id?"}
-                        render={props => <DataSyncRulesWizard {...this.props} {...props} />}
-                    />
-
-                    <Route
-                        path="/metadata-synchronization-rules"
-                        render={props => <MetadataSyncRulesPage {...this.props} {...props} />}
-                    />
-
-                    <Route
-                        path="/data-synchronization-rules"
-                        render={props => <DataSyncRulesPage {...this.props} {...props} />}
                     />
 
                     <Route render={() => <LandingPage {...this.props} />} />

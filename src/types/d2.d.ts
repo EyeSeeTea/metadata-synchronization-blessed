@@ -111,6 +111,17 @@ export interface MetadataImportParams {
     username?: string;
 }
 
+export interface DataImportParams {
+    idScheme?: "UID" | "CODE";
+    dataElementIdScheme?: "UID" | "CODE" | "NAME";
+    orgUnitIdScheme?: "UID" | "CODE" | "NAME";
+    dryRun?: boolean;
+    preheatCache?: boolean;
+    skipExistingCheck?: boolean;
+    strategy?: "NEW_AND_UPDATES" | "NEW" | "UPDATES" | "DELETES";
+    format?: "json" | "xml" | "csv" | "pdf" | "adx";
+}
+
 export type MetadataImportStatus = "PENDING" | "OK" | "WARNING" | "ERROR" | "NETWORK ERROR";
 
 export interface MetadataImportResponse {

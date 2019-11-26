@@ -31,6 +31,7 @@ export interface SyncRuleTableFilters extends TableFilters {
     targetInstanceFilter?: string;
     enabledFilter?: string;
     lastExecutedFilter?: Moment;
+    type?: "metadata" | "data";
 }
 
 export interface TablePagination {

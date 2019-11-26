@@ -1,22 +1,29 @@
 import { Ref } from "d2-api";
 
-import { MetadataImportResponse, MetadataImportStats, MetadataImportParams } from "./d2";
+import {
+    MetadataImportResponse,
+    MetadataImportStats,
+    MetadataImportParams,
+    DataImportParams,
+} from "./d2";
 import SyncReport from "../models/syncReport";
 
 export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
-    dataParams: dataParams | undefined;
     syncRule?: string;
-    syncParams: SynchronizationParams;
-}
-
-export interface dataParams {
-    organisationUnits: string[];
+    syncParams?: SynchronizationParams;
+    dataParams?: DataSynchronizationParams;
 }
 
 export interface SynchronizationParams extends MetadataImportParams {
     includeSharingSettings?: boolean;
+}
+
+export interface DataSynchronizationParams extends DataImportParams {
+    organisationUnits?: string[];
+    startDate?: Date | null;
+    endDate?: Date | null;
 }
 
 export interface ExportBuilder {

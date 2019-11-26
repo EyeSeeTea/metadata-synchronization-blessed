@@ -28,7 +28,7 @@ import {
     isAppExecutor,
 } from "../../utils/permissions";
 
-class MetadataSyncRulesPage extends React.Component {
+class SyncRulesPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -173,11 +173,13 @@ class MetadataSyncRulesPage extends React.Component {
     };
 
     createRule = () => {
-        this.props.history.push("/metadata-synchronization-rules/new");
+        const { history, match } = this.props;
+        history.push(`/sync-rules/${match.params.type}/new`);
     };
 
     editRule = rule => {
-        this.props.history.push(`/metadata-synchronization-rules/edit/${rule.id}`);
+        const { history, match } = this.props;
+        history.push(`/sync-rules/${match.params.type}/edit/${rule.id}`);
     };
 
     executeRule = async ({ builder, name, id }) => {
@@ -384,18 +386,20 @@ class MetadataSyncRulesPage extends React.Component {
             sharingSettingsObject,
             appConfigurator,
         } = this.state;
-        const { d2 } = this.props;
+        const { d2, match } = this.props;
+        const { type } = match.params;
+        const title =
+            type === "metadata"
+                ? i18n.t("Metadata Synchronization Rules")
+                : i18n.t("Data Synchronization Rules");
 
         return (
             <React.Fragment>
-                <PageHeader
-                    title={i18n.t("Metadata Synchronization Rules")}
-                    onBackClick={this.backHome}
-                />
+                <PageHeader title={title} onBackClick={this.backHome} />
                 <OldObjectsTable
                     key={tableKey}
                     d2={d2}
-                    model={MetadataSyncRulesPage.model}
+                    model={SyncRulesPage.model}
                     columns={this.columns}
                     detailsFields={this.detailsFields}
                     pageSize={10}
@@ -403,7 +407,12 @@ class MetadataSyncRulesPage extends React.Component {
                     list={SyncRule.list}
                     onButtonClick={appConfigurator ? this.createRule : null}
                     customFiltersComponent={this.renderCustomFilters}
-                    customFilters={{ targetInstanceFilter, enabledFilter, lastExecutedFilter }}
+                    customFilters={{
+                        targetInstanceFilter,
+                        enabledFilter,
+                        lastExecutedFilter,
+                        type,
+                    }}
                 />
 
                 <ConfirmationDialog
@@ -441,4 +450,4 @@ class MetadataSyncRulesPage extends React.Component {
     }
 }
 
-export default withLoading(withSnackbar(withRouter(MetadataSyncRulesPage)));
+export default withLoading(withSnackbar(withRouter(SyncRulesPage)));
