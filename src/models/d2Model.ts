@@ -173,6 +173,7 @@ export class DataElementModel extends D2Model {
         "dataSets",
         "legendSets",
         "optionSets",
+        "optionSets.options",
         "categoryCombos",
         "categoryCombos.attributes",
         "categoryCombos.categoryOptionCombos",
