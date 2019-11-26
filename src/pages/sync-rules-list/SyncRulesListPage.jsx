@@ -30,7 +30,6 @@ import {
 
 class SyncRulesPage extends React.Component {
     static propTypes = {
-        type: PropTypes.arrayOf(["data", "metadata"]),
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
@@ -174,11 +173,13 @@ class SyncRulesPage extends React.Component {
     };
 
     createRule = () => {
-        this.props.history.push(`/${this.props.type}-synchronization-rules/new`);
+        const { history, match } = this.props;
+        history.push(`/sync-rules/${match.params.type}/new`);
     };
 
     editRule = rule => {
-        this.props.history.push(`/${this.props.type}-synchronization-rules/edit/${rule.id}`);
+        const { history, match } = this.props;
+        history.push(`/sync-rules/${match.params.type}/edit/${rule.id}`);
     };
 
     executeRule = async ({ builder, name, id }) => {
@@ -385,7 +386,8 @@ class SyncRulesPage extends React.Component {
             sharingSettingsObject,
             appConfigurator,
         } = this.state;
-        const { d2, type } = this.props;
+        const { d2, match } = this.props;
+        const { type } = match.params;
         const title =
             type === "metadata"
                 ? i18n.t("Metadata Synchronization Rules")

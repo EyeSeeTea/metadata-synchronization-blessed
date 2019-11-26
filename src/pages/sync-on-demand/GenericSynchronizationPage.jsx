@@ -13,6 +13,7 @@ import SyncSummary from "../../components/sync-summary/SyncSummary";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncReport from "../../models/syncReport";
 import { isAppConfigurator } from "../../utils/permissions";
+import SyncRule from "../../models/syncRule";
 
 class GenericSynchronizationPage extends React.Component {
     static propTypes = {
@@ -25,7 +26,7 @@ class GenericSynchronizationPage extends React.Component {
     };
 
     state = {
-        metadataIds: [],
+        syncRule: SyncRule.createOnDemand("metadata"),
         importResponse: SyncReport.create(),
         syncDialogOpen: false,
         syncSummaryOpen: false,
@@ -48,11 +49,16 @@ class GenericSynchronizationPage extends React.Component {
     };
 
     changeSelection = metadataIds => {
-        this.setState({ metadataIds });
+        const syncRule = this.state.syncRule.updateMetadataIds(metadataIds);
+        this.setState({ syncRule });
+    };
+
+    updateSyncRule = syncRule => {
+        this.setState({ syncRule });
     };
 
     startSynchronization = () => {
-        const { metadataIds } = this.state;
+        const { metadataIds } = this.state.syncRule;
 
         if (metadataIds.length > 0) {
             this.setState({ syncDialogOpen: true });
@@ -70,6 +76,13 @@ class GenericSynchronizationPage extends React.Component {
             this.props.snackbar.error(i18n.t("Unknown error with the request"));
             this.setState({ syncDialogOpen: false });
         }
+    };
+
+    closeDialogs = () => {
+        this.setState({
+            syncDialogOpen: false,
+            syncSummaryOpen: false,
+        });
     };
 
     handleSynchronization = async ({ targetInstances, syncParams }) => {
@@ -123,10 +136,11 @@ class GenericSynchronizationPage extends React.Component {
                 />
 
                 <SyncDialog
-                    d2={d2}
-                    metadataIds={metadataIds}
+                    title={title}
+                    syncRule={this.state.syncRule}
                     isOpen={syncDialogOpen}
-                    handleClose={this.finishSynchronization}
+                    onChange={this.updateSyncRule}
+                    onClose={this.closeDialogs}
                     task={this.handleSynchronization}
                 />
 

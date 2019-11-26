@@ -17,19 +17,15 @@ import _ from "lodash";
 import moment from "moment";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { D2ObjectsTable } from "../../components/d2-objects-table/D2ObjectsTable";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
+import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
-import commonStepsBaseInfo from "../../components/sync-wizard/common/CommonStepsBaseInfo";
-import SyncWizardDialog from "../../components/sync-wizard/common/SyncWizardDialog";
-import CategoryOptionsSelectionStep from "../../components/sync-wizard/data/steps/CategoryOptionsSelectionStep";
-import OrganisationUnitsSelectionStep from "../../components/sync-wizard/data/steps/OrganisationUnitsSelectionStep";
-import PeriodSelectionStep from "../../components/sync-wizard/data/steps/PeriodSelectionStep";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
 import { isAppConfigurator } from "../../utils/permissions";
-import { D2ObjectsTable } from "../../components/d2-objects-table/D2ObjectsTable";
 
 const include = true as true;
 
@@ -75,34 +71,6 @@ const details = [
 ];
 
 const actions = [{ name: "details", text: i18n.t("Details") }];
-
-const stepsBaseInfo = [
-    {
-        key: "organisations-units",
-        label: i18n.t("Organisation units"),
-        component: OrganisationUnitsSelectionStep,
-        validationKeys: ["dataSyncOrganisationUnits"],
-        description: undefined,
-        help: undefined,
-    },
-    {
-        key: "period",
-        label: i18n.t("Period"),
-        component: PeriodSelectionStep,
-        validationKeys: ["dataSyncStartDate", "dataSyncEndDate"],
-        description: undefined,
-        help: undefined,
-    },
-    {
-        key: "category-options",
-        label: i18n.t("Category options"),
-        component: CategoryOptionsSelectionStep,
-        validationKeys: ["categoryOptionIds"],
-        description: undefined,
-        help: undefined,
-    },
-    commonStepsBaseInfo.instanceSelection,
-];
 
 const initialState = {
     sorting: {
@@ -232,12 +200,6 @@ const DataPage: React.FC<any> = () => {
         updateSyncRule(syncRule.updateMetadataIds(selection));
     };
 
-    const onChange = async (syncRule: SyncRule) => {
-        const enableDialogSync: boolean = await syncRule.isValid();
-        updateSyncRule(syncRule);
-        setState(state => ({ ...state, enableDialogSync }));
-    };
-
     const closeSummary = () => {
         setState(state => ({ ...state, syncSummaryOpen: false }));
     };
@@ -252,7 +214,7 @@ const DataPage: React.FC<any> = () => {
         }
     };
 
-    const finishSynchronization = (importResponse?: any) => {
+    /**const finishSynchronization = (importResponse?: any) => {
         if (importResponse) {
             setState(state => ({
                 ...state,
@@ -263,10 +225,20 @@ const DataPage: React.FC<any> = () => {
         } else {
             setState(state => ({ ...state, syncDialogOpen: false }));
         }
+    };**/
+
+    const closeDialogs = () => {
+        updateSyncRule(SyncRule.createOnDemand("data"));
+        setState(state => ({
+            ...state,
+            syncDialogOpen: false,
+            syncSummaryOpen: false,
+        }));
     };
 
     const handleSynchronization = async (syncRule: SyncRule) => {
         console.log(`syncronization for ${syncRule.name}: not implemented`, syncRule);
+        closeDialogs();
     };
 
     return (
@@ -289,16 +261,13 @@ const DataPage: React.FC<any> = () => {
                 childrenKeys={["dataElements", "dataElementGroups"]}
             />
 
-            <SyncWizardDialog
+            <SyncDialog
                 title={title}
-                d2={d2 as D2}
-                stepsBaseInfo={stepsBaseInfo}
                 syncRule={syncRule}
                 isOpen={state.syncDialogOpen}
-                onChange={onChange}
-                handleClose={finishSynchronization}
+                onChange={updateSyncRule}
+                onClose={closeDialogs}
                 task={handleSynchronization}
-                enableSync={state.enableDialogSync}
             />
 
             <SyncSummary

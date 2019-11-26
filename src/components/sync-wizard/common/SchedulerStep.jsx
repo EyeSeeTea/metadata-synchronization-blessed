@@ -4,8 +4,8 @@ import i18n from "@dhis2/d2-i18n";
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import { DropDown, TextField } from "@dhis2/d2-ui-core";
 
-import { Toggle } from "../../../toggle/Toggle";
-import isValidCronExpression from "../../../../utils/validCronExpression";
+import { Toggle } from "../../toggle/Toggle";
+import isValidCronExpression from "../../../utils/validCronExpression";
 
 const SchedulerStep = ({ syncRule, onChange }) => {
     const cronExpressions = [

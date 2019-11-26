@@ -10,6 +10,7 @@ const translations = {
         i18n.t("Cron expression {{expression}} must be valid", namespace),
     cannot_enable_without_valid: namespace =>
         i18n.t("To enable a rule you need to enter a valid {{expression}}", namespace),
+    invalid_period: () => i18n.t("Start and end dates are not a valid period"),
 };
 
 export async function getValidationMessages(d2, model, validationKeys = null) {

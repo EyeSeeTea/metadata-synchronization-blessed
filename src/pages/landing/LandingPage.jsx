@@ -57,18 +57,19 @@ class LandingPage extends React.Component {
 
     render() {
         const { classes } = this.props;
+
         const items = [
             ["instance-configurator", i18n.t("Instance Configuration"), "edit", GRID_ROW_1],
             ["sync/metadata", i18n.t("Metadata Synchronization"), "sync", GRID_ROW_2],
             ["sync/data", i18n.t("Data Synchronization"), "sync", GRID_ROW_2],
             [
-                "metadata-synchronization-rules",
+                "sync-rules/metadata",
                 i18n.t("Metadata Synchronization Rules"),
                 "playlist_add_check",
                 GRID_ROW_2,
             ],
             [
-                "data-synchronization-rules",
+                "sync-rules/data",
                 i18n.t("Data Synchronization Rules"),
                 "playlist_add_check",
                 GRID_ROW_2,
@@ -76,6 +77,7 @@ class LandingPage extends React.Component {
             ["sync/deleted", i18n.t("Deleted objects"), "delete", GRID_ROW_2],
             ["history", i18n.t("Synchronization History"), "history", GRID_ROW_2],
         ];
+
         const menuItems = items.map(([key, title, icon, xs]) => (
             <Grid item xs={xs} className={classes.item} key={key}>
                 <Paper elevation={2} className={classes.paper}>

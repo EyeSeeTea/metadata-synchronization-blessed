@@ -1,7 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import { DatePicker } from "d2-ui-components";
 import React from "react";
-import SyncRule from "../../../../models/syncRule";
+import SyncRule from "../../../models/syncRule";
 
 interface PeriodSelectionStepProps {
     syncRule: SyncRule;

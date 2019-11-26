@@ -423,6 +423,15 @@ export default class SyncRule {
                           namespace: { element: "end date" },
                       }
                     : null,
+                this.type === "data" &&
+                this.dataSyncEndDate &&
+                this.dataSyncStartDate &&
+                moment(this.dataSyncEndDate).isBefore(this.dataSyncStartDate)
+                    ? {
+                          key: "invalid_period",
+                          namespace: {},
+                      }
+                    : null,
             ]),
             targetInstances: _.compact([
                 this.targetInstances.length === 0

@@ -1,30 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { withSnackbar, OrgUnitsSelector } from "d2-ui-components";
-import SyncRule from "../../../../models/syncRule";
-import { D2 } from "../../../../types/d2";
-import { getCurrentUserOrganisationUnits } from "../../../../utils/d2";
+import SyncRule from "../../../models/syncRule";
+import { D2 } from "../../../types/d2";
+import { getCurrentUserOrganisationUnits } from "../../../utils/d2";
 import _ from "lodash";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { useD2 } from "d2-api";
 
 interface OrganisationUnitsStepProps {
-    d2: D2;
     syncRule: SyncRule;
     onChange: (syncRule: SyncRule) => void;
 }
 
 const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
-    d2,
     syncRule,
     onChange,
 }) => {
-    const [organisationUnitsRootIds, setOrganisationUnitsRootIds] = React.useState<string[]>([]);
-    const [selectedOrganisationUnits, setSelectedOrganisationUnits] = React.useState<string[]>(
+    const d2 = useD2();
+    const [organisationUnitsRootIds, setOrganisationUnitsRootIds] = useState<string[]>([]);
+    const [selectedOrganisationUnits, setSelectedOrganisationUnits] = useState<string[]>(
         syncRule.dataSyncOrganisationUnits
     );
 
-    React.useEffect(() => {
+    useEffect(() => {
         const retrieveOrganisationUnitsRootIds = async () => {
-            const organisationUnitsRootIds = await getCurrentUserOrganisationUnits(d2);
+            const organisationUnitsRootIds = await getCurrentUserOrganisationUnits(d2 as D2);
             setOrganisationUnitsRootIds(organisationUnitsRootIds);
         };
 
