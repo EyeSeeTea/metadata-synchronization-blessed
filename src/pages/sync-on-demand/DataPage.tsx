@@ -155,7 +155,7 @@ const DataPage: React.FC<any> = () => {
         id: string;
         name: string;
         model: D2ApiModel<"dataElementGroups" | "dataElementGroupSets">;
-        fields: any; // TODO: Not sure how to properly type this
+        fields: typeof dataElementGroupFields | typeof dataElementGroupSetFields;
     }[] = [
         {
             name: "Data Element Groups",
