@@ -87,7 +87,7 @@ class GenericSynchronizationPage extends React.Component {
 
     handleSynchronization = async ({ targetInstances, syncParams }) => {
         const { isDelete, loading, d2 } = this.props;
-        const { metadataIds } = this.state;
+        const { metadataIds } = this.state.syncRule;
 
         const action = isDelete ? startDelete : startSynchronization;
         loading.show(true, i18n.t("Synchronizing metadata"));
