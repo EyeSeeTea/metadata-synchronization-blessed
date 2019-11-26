@@ -5,13 +5,28 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-11-26T08:12:56.548Z\n"
-"PO-Revision-Date: 2019-11-26T08:12:56.548Z\n"
+"POT-Creation-Date: 2019-11-26T11:09:53.912Z\n"
+"PO-Revision-Date: 2019-11-26T11:09:53.912Z\n"
 
 msgid "Search by name"
 msgstr ""
 
 msgid "<No value>"
+msgstr ""
+
+msgid "Group by metadata type"
+msgstr ""
+
+msgid "Last updated date"
+msgstr ""
+
+msgid "Only selected items"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Select with children subtree"
 msgstr ""
 
 msgid "Name"
@@ -23,28 +38,16 @@ msgstr ""
 msgid "Last update"
 msgstr ""
 
-msgid "Details"
-msgstr ""
-
-msgid "Select with children subtree"
-msgstr ""
-
 msgid "Metadata type"
 msgstr ""
 
 msgid "Deleted date"
 msgstr ""
 
-msgid "Last updated date"
-msgstr ""
-
 msgid "{{displayName}} Group"
 msgstr ""
 
 msgid "{{displayName}} Level"
-msgstr ""
-
-msgid "Only selected items"
 msgstr ""
 
 msgid "Help"
@@ -484,25 +487,7 @@ msgstr ""
 msgid "Deleted Objects Synchronization"
 msgstr ""
 
-msgid "Last updated"
-msgstr ""
-
-msgid "UID"
-msgstr ""
-
-msgid "Short name"
-msgstr ""
-
-msgid "ID"
-msgstr ""
-
-msgid "API link"
-msgstr ""
-
 msgid "Data synchronization"
-msgstr ""
-
-msgid "Group by metadata type"
 msgstr ""
 
 msgid "Please select at least one element from the table to synchronize"
@@ -570,6 +555,15 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Level"
+msgstr ""
+
+msgid "Short name"
+msgstr ""
+
+msgid "ID"
+msgstr ""
+
+msgid "API link"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"

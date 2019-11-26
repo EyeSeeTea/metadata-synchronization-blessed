@@ -1,32 +1,24 @@
-import { useD2 } from "d2-api";
-import { withSnackbar } from "d2-ui-components";
 import React from "react";
+import { DataElementGroupModel, DataElementGroupSetModel, DataElementModel } from "../../../models/d2Model";
 import SyncRule from "../../../models/syncRule";
 import MetadataTable from "../../metadata-table/MetadataTable";
 
 interface DataElementsStepProps {
     syncRule: SyncRule;
-    //snackbar: PropTypes.object.isRequired,
-    onChange: () => void;
+    onChange: (syncRule: SyncRule) => void;
 }
 
-const changeSelection = (metadataIds: string[]) => {
-    console.log(`change selection ${metadataIds}`);
-};
-
 export default function DataElementsSelectionStep(props: DataElementsStepProps) {
-    const { syncRule, ...rest } = props;
-    const d2 = useD2();
+    const { syncRule, onChange } = props;
 
-    const component = (
-        <MetadataTable
-            d2={d2}
-            notifyNewSelection={changeSelection}
-            initialSelection={[]}
-            models={[]}
-            {...rest}
-        />
-    );
+    const changeSelection = (metadataIds: string[]) => {
+        onChange(syncRule.updateMetadataIds(metadataIds));
+    };
 
-    return withSnackbar(component);
+    return <MetadataTable
+        models={[DataElementModel, DataElementGroupModel, DataElementGroupSetModel]}
+        selection={syncRule.metadataIds}
+        notifyNewSelection={changeSelection}
+        childrenKeys={["dataElements", "dataElementGroups"]}
+    />;
 }

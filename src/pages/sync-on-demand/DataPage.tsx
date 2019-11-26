@@ -1,105 +1,26 @@
 import i18n from "@dhis2/d2-i18n";
-import { makeStyles } from "@material-ui/core";
-import Checkbox from "@material-ui/core/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+import { useD2 } from "d2-api";
+import { useSnackbar } from "d2-ui-components";
+import React, { useState, useEffect } from "react";
 import SyncIcon from "@material-ui/icons/Sync";
-import {
-    D2DataElementGroupSchema,
-    D2DataElementGroupSetSchema,
-    D2DataElementSchema,
-    SelectedPick,
-    useD2,
-    useD2Api,
-} from "d2-api";
-import D2ApiModel from "d2-api/api/models";
-import { DatePicker, TableState, useSnackbar } from "d2-ui-components";
-import _ from "lodash";
-import moment from "moment";
-import React, { ChangeEvent, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { D2ObjectsTable } from "../../components/d2-objects-table/D2ObjectsTable";
-import Dropdown from "../../components/dropdown/Dropdown";
+import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
+import {
+    DataElementGroupModel,
+    DataElementGroupSetModel,
+    DataElementModel,
+} from "../../models/d2Model";
 import SyncReport from "../../models/syncReport";
-import SyncRule from "../../models/syncRule";
+import SyncRule from "../../models/syncRule"; import { isAppConfigurator } from "../../utils/permissions";
 import { D2 } from "../../types/d2";
-import { isAppConfigurator } from "../../utils/permissions";
 
-const include = true as true;
-
-const fields = {
-    id: include,
-    displayName: include,
-    shortName: include,
-    code: include,
-    description: include,
-    created: include,
-    lastUpdated: include,
-    href: include,
-};
-
-const dataElementGroupFields = {
-    ...fields,
-    dataElements: fields,
-};
-
-const dataElementGroupSetFields = {
-    ...fields,
-    dataElementGroups: {
-        ...fields,
-        dataElements: fields,
-    },
-};
-
-const columns = [
-    { name: "displayName" as const, text: i18n.t("Name"), sortable: true },
-    { name: "lastUpdated" as const, text: i18n.t("Last updated"), sortable: true },
-    { name: "id" as const, text: i18n.t("UID"), sortable: true },
-];
-
-const details = [
-    { name: "displayName" as const, text: i18n.t("Name") },
-    { name: "shortName" as const, text: i18n.t("Short name") },
-    { name: "code" as const, text: i18n.t("Code") },
-    { name: "description" as const, text: i18n.t("Description") },
-    { name: "created" as const, text: i18n.t("Created") },
-    { name: "lastUpdated" as const, text: i18n.t("Last updated") },
-    { name: "id" as const, text: i18n.t("ID") },
-    { name: "href" as const, text: i18n.t("API link") },
-];
-
-const actions = [{ name: "details", text: i18n.t("Details") }];
-
-const initialState = {
-    sorting: {
-        field: "displayName" as const,
-        order: "asc" as const,
-    },
-};
-
-const useStyles = makeStyles({
-    checkbox: {
-        paddingLeft: 10,
-        marginTop: 8,
-    },
-});
-
-type DataElement = SelectedPick<D2DataElementSchema, typeof fields>;
-type DataElementGroup = SelectedPick<D2DataElementGroupSchema, typeof dataElementGroupFields>;
-type DataElementGroupSet = SelectedPick<
-    D2DataElementGroupSetSchema,
-    typeof dataElementGroupSetFields
->;
-type DataPageType = DataElement | DataElementGroup | DataElementGroupSet;
 
 const DataPage: React.FC<any> = () => {
-    const [modelName, updateModelName] = useState<string>("");
-    const [lastUpdatedFilter, updateLastUpdatedFilter] = useState<Date | null>(null);
-    const [onlySelectedFilter, updateOnlySelectedFilter] = useState<boolean>(false);
-    const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand("data"));
-    const [appConfigurator, updateAppConfigurator] = useState(false);
+    const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand("data")); const [appConfigurator, updateAppConfigurator] = useState(false);
+
 
     const [state, setState] = useState({
         importResponse: SyncReport.create(),
@@ -109,94 +30,17 @@ const DataPage: React.FC<any> = () => {
     });
 
     const snackbar = useSnackbar();
-    const api = useD2Api();
     const d2 = useD2();
     const history = useHistory();
-    const classes = useStyles({});
     const title = i18n.t("Data synchronization");
 
     useEffect(() => {
         isAppConfigurator(d2 as D2).then(updateAppConfigurator);
     }, [d2, updateAppConfigurator]);
-
-    const groupTypes: {
-        id: string;
-        name: string;
-        model: D2ApiModel<"dataElementGroups" | "dataElementGroupSets">;
-        fields: any; // TODO: Not sure how to properly type this
-    }[] = [
-        {
-            name: "Data Element Groups",
-            model: api.models.dataElementGroups,
-            id: "dataElementGroups",
-            fields: dataElementGroupFields,
-        },
-        {
-            name: "Data Element Group Sets",
-            model: api.models.dataElementGroupSets,
-            id: "dataElementGroupSets",
-            fields: dataElementGroupSetFields,
-        },
-    ];
-
-    const groupType = _.find(groupTypes, ["id", modelName]);
-
-    // @tokland I am not 100% sure how to infer the "Options" here without hardcoding it to one single model
-    const apiMethod = (options: Parameters<typeof api.models.dataElements.get>[0]) => {
-        return groupType ? groupType.model.get(options) : api.models.dataElements.get(options);
-    };
-
-    const changeDropdownFilter = (event: ChangeEvent<HTMLInputElement>) => {
-        updateModelName(event.target.value);
-    };
-
-    const changeOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
-        updateOnlySelectedFilter(event.target.checked);
-    };
-
-    const filterComponents = [
-        <Dropdown
-            key={"level-filter"}
-            items={groupTypes}
-            onChange={changeDropdownFilter}
-            value={modelName}
-            label={i18n.t("Group by metadata type")}
-        />,
-        <DatePicker
-            key={"date-filter"}
-            placeholder={i18n.t("Last updated date")}
-            value={lastUpdatedFilter}
-            onChange={updateLastUpdatedFilter}
-            isFilter
-        />,
-        <FormControlLabel
-            key={"only-selected-filter"}
-            className={classes.checkbox}
-            control={
-                <Checkbox
-                    checked={onlySelectedFilter}
-                    data-test="show-only-selected-items"
-                    onChange={changeOnlySelectedFilter}
-                />
-            }
-            label={i18n.t("Only selected items")}
-        />,
-    ];
-
-    const apiQuery = {
-        fields: groupType ? groupType.fields : fields,
-        filter: {
-            lastUpdated: lastUpdatedFilter
-                ? { ge: moment(lastUpdatedFilter).format("YYYY-MM-DD") }
-                : undefined,
-            id: onlySelectedFilter ? { in: syncRule.metadataIds } : undefined,
-        },
-    };
-
+    
     const goBack = () => history.goBack();
 
-    const handleTableChange = (tableState: TableState<DataPageType>) => {
-        const { selection } = tableState;
+    const updateSelection = (selection: string[]) => {
         updateSyncRule(syncRule.updateMetadataIds(selection));
     };
 
@@ -214,7 +58,8 @@ const DataPage: React.FC<any> = () => {
         }
     };
 
-    /**const finishSynchronization = (importResponse?: any) => {
+    //@ts-ignore
+    const finishSynchronization = (importResponse?: any) => {
         if (importResponse) {
             setState(state => ({
                 ...state,
@@ -225,7 +70,7 @@ const DataPage: React.FC<any> = () => {
         } else {
             setState(state => ({ ...state, syncDialogOpen: false }));
         }
-    };**/
+    };
 
     const closeDialogs = () => {
         updateSyncRule(SyncRule.createOnDemand("data"));
@@ -245,17 +90,10 @@ const DataPage: React.FC<any> = () => {
         <React.Fragment>
             <PageHeader onBackClick={goBack} title={title} />
 
-            <D2ObjectsTable<DataPageType>
-                apiMethod={apiMethod}
-                apiQuery={apiQuery}
-                columns={columns}
-                filterComponents={filterComponents}
-                forceSelectionColumn={true}
-                details={details}
-                actions={actions}
+            <MetadataTable
+                models={[DataElementModel, DataElementGroupModel, DataElementGroupSetModel]}
                 selection={syncRule.metadataIds}
-                onChange={handleTableChange}
-                initialState={initialState}
+                notifyNewSelection={updateSelection}
                 onActionButtonClick={appConfigurator ? startSynchronization : undefined}
                 actionButtonLabel={<SyncIcon />}
                 childrenKeys={["dataElements", "dataElementGroups"]}

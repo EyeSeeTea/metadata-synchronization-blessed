@@ -7,7 +7,7 @@ import { withRouter } from "react-router-dom";
 
 import { startSynchronization } from "../../logic/synchronization";
 import { startDelete } from "../../logic/delete";
-import MetadataTable from "../../components/metadata-table/MetadataTable";
+import MetadataTable from "../../components/old-metadata-table/OldMetadataTable";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import PageHeader from "../../components/page-header/PageHeader";

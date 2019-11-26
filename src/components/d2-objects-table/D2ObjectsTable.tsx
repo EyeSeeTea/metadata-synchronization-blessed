@@ -1,5 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
-import { D2ApiDataHookQuery, NonPaginatedObjects, PaginatedObjects, useD2ApiData } from "d2-api";
+import { useD2ApiData } from "d2-api";
+import D2ApiModel from "d2-api/api/models";
 import {
     ObjectsTable,
     ObjectsTableProps,
@@ -12,8 +13,8 @@ import React, { useEffect, useMemo, useState } from "react";
 
 export interface D2ObjectsTableProps<T extends ReferenceObject>
     extends Omit<ObjectsTableProps<T>, "rows"> {
-    apiMethod(options: any): D2ApiDataHookQuery<PaginatedObjects<T> | NonPaginatedObjects<T>>; // TODO inference
-    apiQuery?: any; // TODO inference
+    apiMethod: InstanceType<typeof D2ApiModel>["get"];
+    apiQuery?: any;
 }
 
 const defaultState = {
@@ -46,6 +47,7 @@ export function D2ObjectsTable<T extends ReferenceObject = TableObject>(
 
     const initialRequest = useMemo(
         () =>
+            //@ts-ignore
             apiMethod({
                 order: `id:iasc`,
                 pageSize: 10,
@@ -58,6 +60,7 @@ export function D2ObjectsTable<T extends ReferenceObject = TableObject>(
 
     useEffect(() => {
         apiMethod({
+            ...apiQuery,
             paging: false,
             fields: {
                 id: true as true,
@@ -65,7 +68,7 @@ export function D2ObjectsTable<T extends ReferenceObject = TableObject>(
         })
             .getData()
             .then(({ objects }) => updateIds(_.map(objects, "id")));
-    }, [apiMethod]);
+    }, [apiMethod, apiQuery]);
 
     useEffect(
         () =>

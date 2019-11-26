@@ -4049,7 +4049,7 @@ cypress@^3.4.1:
     url "0.11.0"
     yauzl "2.10.0"
 
-d2-api@0.0.2-beta.6:
+d2-api@^0.0.2-beta.6:
   version "0.0.2-beta.6"
   resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-0.0.2-beta.6.tgz#97cbb64943c544a2ffe0b336609c4906fbfe4bb8"
   integrity sha512-qN848z6E29beRzuIlBHKq7S07Nj7qDCbXb6xrE+qgTrr3p1LWQFEtBtC9XDwjWXeW6IWa12wucOnzTZ5skgXTQ==

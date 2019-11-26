@@ -4,7 +4,7 @@ import _ from "lodash";
 import React, { useState } from "react";
 import { metadataModels } from "../../../models/d2ModelFactory";
 import SyncRule from "../../../models/syncRule";
-import MetadataTable from "../../metadata-table/MetadataTable";
+import MetadataTable from "../../old-metadata-table/OldMetadataTable";
 import { useSnackbar } from "d2-ui-components";
 
 interface MetadataSelectionStepProps {

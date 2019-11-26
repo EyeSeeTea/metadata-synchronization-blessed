@@ -24,7 +24,7 @@
     "cronstrue": "^1.83.0",
     "cryptr": "^4.0.2",
     "d2": "^31.1.1",
-    "d2-api": "0.0.2-beta.6",
+    "d2-api": "^0.0.2-beta.6",
     "d2-manifest": "^1.0.0",
     "d2-ui-components": "1.0.0-beta.3",
     "downshift": "^3.3.4",
