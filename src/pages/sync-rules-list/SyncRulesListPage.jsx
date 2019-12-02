@@ -15,7 +15,7 @@ import PageHeader from "../../components/page-header/PageHeader";
 import SyncRule from "../../models/syncRule";
 import Instance from "../../models/instance";
 import { getValueForCollection } from "../../utils/d2-ui-components";
-import { startSynchronization } from "../../logic/synchronization";
+import { startMetadataSynchronization } from "../../logic/synchronization";
 import SyncReport from "../../models/syncReport";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import Dropdown from "../../components/dropdown/Dropdown";
@@ -186,7 +186,7 @@ class SyncRulesPage extends React.Component {
         const { d2, loading } = this.props;
         loading.show(true, i18n.t("Synchronizing metadata"));
         try {
-            for await (const { message, syncReport, done } of startSynchronization(d2, {
+            for await (const { message, syncReport, done } of startMetadataSynchronization(d2, {
                 ...builder,
                 syncRule: id,
             })) {

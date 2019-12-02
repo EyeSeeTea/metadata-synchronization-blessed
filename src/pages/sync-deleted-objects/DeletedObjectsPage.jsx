@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
 import { withLoading } from "d2-ui-components";
 
-import GenericSynchronizationPage from "../sync-on-demand/GenericSynchronizationPage";
+import GenericSynchronizationPage from "../sync-on-demand/OldGenericSynchronizationPage";
 import DeletedObject from "../../models/deletedObjects";
 
 class DeletedObjectsPage extends React.Component {

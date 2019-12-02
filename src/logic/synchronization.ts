@@ -74,7 +74,7 @@ async function exportMetadata(d2: D2, originalBuilder: ExportBuilder): Promise<M
     return recursiveExport(originalBuilder);
 }
 
-export async function* startSynchronization(
+export async function* startMetadataSynchronization(
     d2: D2,
     builder: SynchronizationBuilder
 ): AsyncIterableIterator<SynchronizationState> {
@@ -149,4 +149,12 @@ export async function* startSynchronization(
     yield { syncReport, done: true };
 
     return syncReport;
+}
+
+export async function* startDataSynchronization(
+    _d2: D2,
+    _builder: SynchronizationBuilder
+): AsyncIterableIterator<SynchronizationState> {
+    yield { message: i18n.t("Data sync not implemented yet") };
+    yield { done: true };
 }

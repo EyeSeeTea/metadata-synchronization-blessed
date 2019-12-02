@@ -18,6 +18,7 @@ import {
     MetadataType,
     organisationUnitsColumns,
     organisationUnitsDetails,
+    dataSetFields,
 } from "../utils/d2";
 import { D2Api } from "d2-api";
 import D2ApiModel from "d2-api/api/models";
@@ -187,6 +188,11 @@ export class OrganisationUnitGroupSetModel extends D2Model {
     ];
 }
 
+export class OrganisationUnitLevelModel extends D2Model {
+    protected static metadataType = "organisationUnitLevel";
+    protected static collectionName = "organisationUnitLevels";
+}
+
 export class DataElementModel extends D2Model {
     protected static metadataType = "dataElement";
     protected static collectionName = "dataElements";
@@ -208,6 +214,10 @@ export class DataElementModel extends D2Model {
         "dataElementGroups.dataElementGroupSets",
         "dataElementGroups.dataElementGroupSets.attributes",
     ];
+}
+
+export class AggregatedDataElementModel extends DataElementModel {
+    protected static groupFilterName = D2Model.groupFilterName;
 }
 
 export class DataElementGroupModel extends D2Model {
@@ -240,6 +250,12 @@ export class DataElementGroupSetModel extends D2Model {
         "dataElementGroups.dataElements",
         "dataElementGroups.dataElements.attributes",
     ];
+}
+
+export class DataSetModel extends D2Model {
+    protected static metadataType = "dataSet";
+    protected static collectionName = "dataSets";
+    protected static fields = dataSetFields;
 }
 
 export class IndicatorModel extends D2Model {

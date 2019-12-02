@@ -6,9 +6,6 @@ import { FormControl, InputLabel, MenuItem, MuiThemeProvider, Select } from "@ma
 
 const getMaterialTheme = () =>
     createMuiTheme({
-        typography: {
-            useNextVariants: true,
-        },
         overrides: {
             MuiFormLabel: {
                 root: {

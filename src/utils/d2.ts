@@ -70,6 +70,13 @@ export const dataElementGroupSetFields = {
     },
 };
 
+export const dataSetFields = {
+    ...d2BaseModelFields,
+    dataSetElements: {
+        dataElement: d2BaseModelFields,
+    },
+};
+
 export function cleanParams(options: Params): Params {
     return _.omitBy(options, value => _.isArray(value) && _.isEmpty(value));
 }

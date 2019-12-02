@@ -1,5 +1,4 @@
 import i18n from "@dhis2/d2-i18n";
-import { useD2ApiData } from "d2-api";
 import D2ApiModel from "d2-api/api/models";
 import {
     ObjectsTable,
@@ -9,12 +8,14 @@ import {
     TableState,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useEffect, useMemo, useState } from "react";
+import memoize from "nano-memoize";
+import React, { useEffect, useState } from "react";
+import { useD2ApiData } from "./useD2ApiData";
 
 export interface D2ObjectsTableProps<T extends ReferenceObject>
     extends Omit<ObjectsTableProps<T>, "rows"> {
-    apiMethod: InstanceType<typeof D2ApiModel>["get"];
-    apiQuery?: any;
+    apiModel: InstanceType<typeof D2ApiModel>;
+    apiQuery?: Parameters<InstanceType<typeof D2ApiModel>["get"]>[0];
 }
 
 const defaultState = {
@@ -28,12 +29,32 @@ const defaultState = {
     },
 };
 
+const getAllIdentifiers = memoize(
+    async (
+        _cacheKey: string,
+        apiModel: InstanceType<typeof D2ApiModel>,
+        apiQuery: Parameters<InstanceType<typeof D2ApiModel>["get"]>[0]
+    ) => {
+        const { objects } = await apiModel
+            .get({
+                ...apiQuery,
+                paging: false,
+                fields: {
+                    id: true as true,
+                },
+            })
+            .getData();
+        return _.map(objects, "id");
+    },
+    { maxArgs: 1 }
+);
+
 export function D2ObjectsTable<T extends ReferenceObject = TableObject>(
     props: D2ObjectsTableProps<T>
 ) {
     const {
-        apiMethod,
-        apiQuery = {},
+        apiModel,
+        apiQuery = { fields: {} },
         initialState = defaultState,
         onChange = _.noop,
         ...rest
@@ -45,35 +66,16 @@ export function D2ObjectsTable<T extends ReferenceObject = TableObject>(
         initialState.pagination || defaultState.pagination
     );
 
-    const initialRequest = useMemo(
-        () =>
-            //@ts-ignore
-            apiMethod({
-                order: `id:iasc`,
-                pageSize: 10,
-                ...apiQuery,
-            }),
-        [apiMethod, apiQuery]
-    );
-
-    const { loading, data, error, refetch } = useD2ApiData(initialRequest);
+    const { loading, data, error, refetch } = useD2ApiData();
 
     useEffect(() => {
-        apiMethod({
-            ...apiQuery,
-            paging: false,
-            fields: {
-                id: true as true,
-            },
-        })
-            .getData()
-            .then(({ objects }) => updateIds(_.map(objects, "id")));
-    }, [apiMethod, apiQuery]);
+        getAllIdentifiers(apiModel.modelName, apiModel, apiQuery).then(updateIds);
+    }, [apiModel, apiQuery]);
 
     useEffect(
         () =>
             refetch(
-                apiMethod({
+                apiModel.get({
                     order: `${sorting.field}:i${sorting.order}`,
                     page: pagination.page,
                     pageSize: pagination.pageSize,
@@ -84,7 +86,7 @@ export function D2ObjectsTable<T extends ReferenceObject = TableObject>(
                     },
                 })
             ),
-        [apiMethod, apiQuery, refetch, sorting, pagination, search]
+        [apiModel, apiQuery, refetch, sorting, pagination, search]
     );
 
     if (error) return <p>{"Error: " + JSON.stringify(error)}</p>;
@@ -101,7 +103,7 @@ export function D2ObjectsTable<T extends ReferenceObject = TableObject>(
 
     return (
         <ObjectsTable<T>
-            rows={objects}
+            rows={objects as T[]}
             onChangeSearch={updateSearch}
             initialState={initialState}
             searchBoxLabel={i18n.t("Search by name")}

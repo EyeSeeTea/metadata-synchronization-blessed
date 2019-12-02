@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-11-26T14:33:08.846Z\n"
-"PO-Revision-Date: 2019-11-26T14:33:08.846Z\n"
+"POT-Creation-Date: 2019-12-02T05:29:54.683Z\n"
+"PO-Revision-Date: 2019-12-02T05:29:54.683Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -18,6 +18,12 @@ msgid "Metadata type"
 msgstr ""
 
 msgid "Last updated date"
+msgstr ""
+
+msgid "{{displayName}} Group"
+msgstr ""
+
+msgid "{{displayName}} Level"
 msgstr ""
 
 msgid "Only selected items"
@@ -39,12 +45,6 @@ msgid "Last update"
 msgstr ""
 
 msgid "Deleted date"
-msgstr ""
-
-msgid "{{displayName}} Group"
-msgstr ""
-
-msgid "{{displayName}} Level"
 msgstr ""
 
 msgid "Help"
@@ -323,6 +323,9 @@ msgstr ""
 msgid "Importing data in instance {{instance}}"
 msgstr ""
 
+msgid "Data sync not implemented yet"
+msgstr ""
+
 msgid "Not a valid DHIS2 instance"
 msgstr ""
 
@@ -482,9 +485,6 @@ msgid "Deleted by"
 msgstr ""
 
 msgid "Deleted Objects Synchronization"
-msgstr ""
-
-msgid "Data synchronization"
 msgstr ""
 
 msgid "Please select at least one element from the table to synchronize"
