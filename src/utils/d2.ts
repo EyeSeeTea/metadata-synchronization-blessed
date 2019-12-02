@@ -20,30 +20,39 @@ export interface MetadataType {
 }
 
 export const d2BaseModelColumns: TableColumn<MetadataType>[] = [
-    { name: "displayName" as const, text: i18n.t("Name"), sortable: true },
-    { name: "lastUpdated" as const, text: i18n.t("Last update"), sortable: true },
-    { name: "id" as const, text: i18n.t("UID"), sortable: true },
+    { name: "displayName", text: i18n.t("Name"), sortable: true },
+    { name: "lastUpdated", text: i18n.t("Last update"), sortable: true },
+    { name: "id", text: i18n.t("UID"), sortable: true },
 ];
 
 export const organisationUnitsColumns: typeof d2BaseModelColumns = [
-    ...d2BaseModelColumns,
-    { name: "level" as const, text: i18n.t("Level"), sortable: true },
+    { name: "displayName", text: i18n.t("Name"), sortable: true },
+    { name: "level", text: i18n.t("Level"), sortable: true },
+    { name: "lastUpdated", text: i18n.t("Last update"), sortable: true },
+    { name: "id", text: i18n.t("UID"), sortable: true },
 ];
 
 export const d2BaseModelDetails: ObjectsTableDetailField<MetadataType>[] = [
-    { name: "displayName" as const, text: i18n.t("Name") },
-    { name: "shortName" as const, text: i18n.t("Short name") },
-    { name: "code" as const, text: i18n.t("Code") },
-    { name: "description" as const, text: i18n.t("Description") },
-    { name: "created" as const, text: i18n.t("Created") },
-    { name: "lastUpdated" as const, text: i18n.t("Last update") },
-    { name: "id" as const, text: i18n.t("ID") },
-    { name: "href" as const, text: i18n.t("API link") },
+    { name: "displayName", text: i18n.t("Name") },
+    { name: "shortName", text: i18n.t("Short name") },
+    { name: "code", text: i18n.t("Code") },
+    { name: "description", text: i18n.t("Description") },
+    { name: "created", text: i18n.t("Created") },
+    { name: "lastUpdated", text: i18n.t("Last update") },
+    { name: "id", text: i18n.t("ID") },
+    { name: "href", text: i18n.t("API link") },
 ];
 
 export const organisationUnitsDetails: typeof d2BaseModelDetails = [
-    ...d2BaseModelDetails,
-    { name: "level" as const, text: i18n.t("Level") },
+    { name: "displayName", text: i18n.t("Name") },
+    { name: "shortName", text: i18n.t("Short name") },
+    { name: "code", text: i18n.t("Code") },
+    { name: "level", text: i18n.t("Level") },
+    { name: "description", text: i18n.t("Description") },
+    { name: "created", text: i18n.t("Created") },
+    { name: "lastUpdated", text: i18n.t("Last update") },
+    { name: "id", text: i18n.t("ID") },
+    { name: "href", text: i18n.t("API link") },
 ];
 
 export const d2BaseModelFields = {
@@ -80,6 +89,11 @@ export const dataSetFields = {
     dataSetElements: {
         dataElement: d2BaseModelFields,
     },
+};
+
+export const organisationUnitFields = {
+    ...d2BaseModelFields,
+    level: include,
 };
 
 export function cleanParams(options: Params): Params {

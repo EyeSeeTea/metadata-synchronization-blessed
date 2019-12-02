@@ -22,6 +22,7 @@ import {
     MetadataType,
     organisationUnitsColumns,
     organisationUnitsDetails,
+    organisationUnitFields,
 } from "../utils/d2";
 
 export abstract class D2Model {
@@ -154,8 +155,10 @@ export class OrganisationUnitModel extends D2Model {
         "organisationUnitGroups.organisationUnitGroupSets",
         "organisationUnitGroups.organisationUnitGroupSets.attributes",
     ];
+    
     protected static columns = organisationUnitsColumns;
     protected static details = organisationUnitsDetails;
+    protected static fields = organisationUnitFields;
 
     public static async listMethod(
         d2: D2,
