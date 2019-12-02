@@ -15,6 +15,7 @@ import { NamedRef } from "../../types/synchronization";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
 import D2ObjectsTable, { D2ObjectsTableProps } from "../d2-objects-table/D2ObjectsTable";
 import Dropdown from "../dropdown/Dropdown";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
 
 interface MetadataTableProps
     extends Omit<D2ObjectsTableProps<MetadataType>, "columns" | "apiModel"> {
@@ -256,7 +257,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             text: i18n.t("Select with children subtree"),
             multiple: true,
             onClick: selectChildren,
-            icon: "done_all",
+            icon: <DoneAllIcon />,
             isActive: () => {
                 return model.getMetadataType() === "organisationUnit";
             },
