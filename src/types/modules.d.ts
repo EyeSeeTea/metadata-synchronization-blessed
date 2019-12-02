@@ -19,7 +19,7 @@ declare module "@dhis2/d2-i18n" {
 }
 
 declare module "nano-memoize" {
-    export default function memoized<T extends Function>(
+    export default function memoize<T extends Function>(
         func: T,
         options?: {
             /**
