@@ -155,7 +155,7 @@ export class OrganisationUnitModel extends D2Model {
         "organisationUnitGroups.organisationUnitGroupSets",
         "organisationUnitGroups.organisationUnitGroupSets.attributes",
     ];
-    
+
     protected static columns = organisationUnitsColumns;
     protected static details = organisationUnitsDetails;
     protected static fields = organisationUnitFields;
