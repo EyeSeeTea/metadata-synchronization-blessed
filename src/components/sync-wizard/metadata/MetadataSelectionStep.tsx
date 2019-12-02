@@ -1,11 +1,10 @@
-import { useD2 } from "d2-api";
 import i18n from "@dhis2/d2-i18n";
+import { useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
 import { metadataModels } from "../../../models/d2ModelFactory";
 import SyncRule from "../../../models/syncRule";
-import MetadataTable from "../../old-metadata-table/OldMetadataTable";
-import { useSnackbar } from "d2-ui-components";
+import MetadataTable from "../../metadata-table/MetadataTable";
 
 interface MetadataSelectionStepProps {
     syncRule: SyncRule;
@@ -18,7 +17,6 @@ const MetadataSelectionStep: React.FC<MetadataSelectionStepProps> = ({
     ...rest
 }) => {
     const [metadataIds, updateMetadataIds] = useState<string[]>([]);
-    const d2 = useD2();
     const snackbar = useSnackbar();
 
     const changeSelection = (newMetadataIds: string[]) => {
@@ -48,9 +46,8 @@ const MetadataSelectionStep: React.FC<MetadataSelectionStepProps> = ({
 
     return (
         <MetadataTable
-            d2={d2}
             notifyNewSelection={changeSelection}
-            initialSelection={syncRule.metadataIds}
+            selection={syncRule.metadataIds}
             models={metadataModels}
             {...rest}
         />
