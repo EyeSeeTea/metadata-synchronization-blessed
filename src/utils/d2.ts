@@ -57,6 +57,11 @@ export const d2BaseModelFields = {
     href: include,
 };
 
+export const dataElementFields = {
+    ...d2BaseModelFields,
+    domainType: include,
+};
+
 export const dataElementGroupFields = {
     ...d2BaseModelFields,
     dataElements: d2BaseModelFields,

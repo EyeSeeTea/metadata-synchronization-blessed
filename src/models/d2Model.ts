@@ -1,3 +1,5 @@
+import { D2Api, D2DataSetSchema, SelectedPick } from "d2-api";
+import D2ApiModel from "d2-api/api/models";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import { isValidUid } from "d2/uid";
 import _ from "lodash";
@@ -13,15 +15,14 @@ import {
     d2BaseModelColumns,
     d2BaseModelDetails,
     d2BaseModelFields,
+    dataElementFields,
     dataElementGroupFields,
     dataElementGroupSetFields,
+    dataSetFields,
     MetadataType,
     organisationUnitsColumns,
     organisationUnitsDetails,
-    dataSetFields,
 } from "../utils/d2";
-import { D2Api } from "d2-api";
-import D2ApiModel from "d2-api/api/models";
 
 export abstract class D2Model {
     // Metadata Type should be defined on subclasses
@@ -38,6 +39,8 @@ export abstract class D2Model {
     protected static details = d2BaseModelDetails;
     protected static fields = d2BaseModelFields;
     protected static initialSorting = ["name", "asc"];
+    protected static modelTransform: Function | undefined = undefined;
+    protected static modelFilters: any = {};
 
     // List method should be executed by a wrapper to preserve static context binding
     public static async listMethod(
@@ -84,6 +87,16 @@ export abstract class D2Model {
     public static getApiModel(api: D2Api): InstanceType<typeof D2ApiModel> {
         const modelCollection = api.models as { [key: string]: InstanceType<typeof D2ApiModel> };
         return modelCollection[this.collectionName];
+    }
+
+    // TODO: This should be typed (not priority)
+    public static getApiModelTransform(): any {
+        return this.modelTransform;
+    }
+
+    // TODO: This should be typed (not priority)
+    public static getApiModelFilters(): any {
+        return this.modelFilters;
     }
 
     public static getMetadataType(): string {
@@ -218,6 +231,9 @@ export class DataElementModel extends D2Model {
 
 export class AggregatedDataElementModel extends DataElementModel {
     protected static groupFilterName = D2Model.groupFilterName;
+    protected static fields = dataElementFields;
+
+    protected static modelFilters = { domainType: { eq: "AGGREGATE" } };
 }
 
 export class DataElementGroupModel extends D2Model {
@@ -256,6 +272,17 @@ export class DataSetModel extends D2Model {
     protected static metadataType = "dataSet";
     protected static collectionName = "dataSets";
     protected static fields = dataSetFields;
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]
+    ) => {
+        return objects.map(object => ({
+            ...object,
+            dataElements: object.dataSetElements
+                ? object.dataSetElements.map(({ dataElement }) => dataElement)
+                : undefined,
+        }));
+    };
 }
 
 export class IndicatorModel extends D2Model {

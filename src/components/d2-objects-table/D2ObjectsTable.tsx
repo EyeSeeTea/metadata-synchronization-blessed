@@ -16,6 +16,7 @@ export interface D2ObjectsTableProps<T extends ReferenceObject>
     extends Omit<ObjectsTableProps<T>, "rows"> {
     apiModel: InstanceType<typeof D2ApiModel>;
     apiQuery?: Parameters<InstanceType<typeof D2ApiModel>["get"]>[0];
+    transformObjects?(objects: T[]): T[];
 }
 
 const defaultState = {
@@ -55,6 +56,7 @@ export function D2ObjectsTable<T extends ReferenceObject = TableObject>(
     const {
         apiModel,
         apiQuery = { fields: {} },
+        transformObjects = (objects: T[]) => objects,
         initialState = defaultState,
         onChange = _.noop,
         ...rest
@@ -103,7 +105,7 @@ export function D2ObjectsTable<T extends ReferenceObject = TableObject>(
 
     return (
         <ObjectsTable<T>
-            rows={objects as T[]}
+            rows={transformObjects(objects)}
             onChangeSearch={updateSearch}
             initialState={initialState}
             searchBoxLabel={i18n.t("Search by name")}

@@ -170,6 +170,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                     ? { ge: moment(filters.lastUpdated).format("YYYY-MM-DD") }
                     : undefined,
                 id: filters.showOnlySelected ? { in: selection } : undefined,
+                ...model.getApiModelFilters(),
             },
         };
 
@@ -275,6 +276,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         <D2ObjectsTable<MetadataType>
             apiModel={model.getApiModel(api)}
             apiQuery={apiQuery}
+            transformObjects={model.getApiModelTransform()}
             columns={model.getColumns()}
             details={model.getDetails()}
             filterComponents={filterComponents}
