@@ -36,7 +36,7 @@ class Root extends React.Component {
                     />
 
                     <Route
-                        path="/sync/data"
+                        path="/sync/data/:type(aggregated|programs)"
                         render={props => <DataSyncPage {...this.props} {...props} />}
                     />
 

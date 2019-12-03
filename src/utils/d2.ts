@@ -17,6 +17,7 @@ export interface MetadataType {
     lastUpdated: string;
     href: string;
     level?: number;
+    domainType?: "AGGREGATE" | "TRACKER" | "EVENT";
 }
 
 export const d2BaseModelColumns: TableColumn<MetadataType>[] = [

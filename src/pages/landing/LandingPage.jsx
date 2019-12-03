@@ -49,6 +49,7 @@ const styles = () => ({
 
 const GRID_ROW_1 = 12;
 const GRID_ROW_2 = 6;
+const GRID_ROW_3 = 4;
 
 class LandingPage extends React.Component {
     static propTypes = {
@@ -60,8 +61,9 @@ class LandingPage extends React.Component {
 
         const items = [
             ["instance-configurator", i18n.t("Instance Configuration"), "edit", GRID_ROW_1],
-            ["sync/metadata", i18n.t("Metadata Synchronization"), "sync", GRID_ROW_2],
-            ["sync/data", i18n.t("Data Synchronization"), "sync", GRID_ROW_2],
+            ["sync/metadata", i18n.t("Metadata Synchronization"), "sync", GRID_ROW_3],
+            ["sync/data/aggregated", i18n.t("Aggregated Data Synchronization"), "sync", GRID_ROW_3],
+            ["sync/data/programs", i18n.t("Program Data Synchronization"), "sync", GRID_ROW_3],
             [
                 "sync-rules/metadata",
                 i18n.t("Metadata Synchronization Rules"),

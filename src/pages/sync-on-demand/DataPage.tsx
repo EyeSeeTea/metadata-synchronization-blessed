@@ -6,22 +6,27 @@ import {
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,
+    ProgramDataElementModel,
 } from "../../models/d2Model";
+import { useParams } from "react-router-dom";
 
-export default class MetadataPage extends React.Component {
-    render() {
-        const title = i18n.t("Data Synchronization");
+const DataPage: React.FC = () => {
+    const { type } = useParams();
+    const title =
+        type === "aggregated"
+            ? i18n.t("Aggregated Data Synchronization")
+            : i18n.t("Program Data Syncrhonization");
+    const models =
+        type === "aggregated"
+            ? [
+                  AggregatedDataElementModel,
+                  DataElementGroupModel,
+                  DataElementGroupSetModel,
+                  DataSetModel,
+              ]
+            : [ProgramDataElementModel];
 
-        return (
-            <GenericSynchronizationPage
-                models={[
-                    AggregatedDataElementModel,
-                    DataElementGroupModel,
-                    DataElementGroupSetModel,
-                    DataSetModel,
-                ]}
-                title={title}
-            />
-        );
-    }
-}
+    return <GenericSynchronizationPage models={models} title={title} />;
+};
+
+export default DataPage;

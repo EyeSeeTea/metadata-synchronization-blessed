@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-02T05:29:54.683Z\n"
-"PO-Revision-Date: 2019-12-02T05:29:54.683Z\n"
+"POT-Creation-Date: 2019-12-03T15:45:30.525Z\n"
+"PO-Revision-Date: 2019-12-03T15:45:30.525Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -469,7 +469,10 @@ msgstr[1] ""
 msgid "Instance Configuration"
 msgstr ""
 
-msgid "Data Synchronization"
+msgid "Aggregated Data Synchronization"
+msgstr ""
+
+msgid "Program Data Synchronization"
 msgstr ""
 
 msgid "Metadata Synchronization Rules"
@@ -485,6 +488,9 @@ msgid "Deleted by"
 msgstr ""
 
 msgid "Deleted Objects Synchronization"
+msgstr ""
+
+msgid "Program Data Syncrhonization"
 msgstr ""
 
 msgid "Please select at least one element from the table to synchronize"

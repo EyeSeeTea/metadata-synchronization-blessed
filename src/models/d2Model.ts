@@ -20,9 +20,9 @@ import {
     dataElementGroupSetFields,
     dataSetFields,
     MetadataType,
+    organisationUnitFields,
     organisationUnitsColumns,
     organisationUnitsDetails,
-    organisationUnitFields,
 } from "../utils/d2";
 
 export abstract class D2Model {
@@ -237,6 +237,13 @@ export class AggregatedDataElementModel extends DataElementModel {
     protected static fields = dataElementFields;
 
     protected static modelFilters = { domainType: { eq: "AGGREGATE" } };
+}
+
+export class ProgramDataElementModel extends DataElementModel {
+    protected static groupFilterName = D2Model.groupFilterName;
+    protected static fields = dataElementFields;
+
+    protected static modelFilters = { domainType: { neq: "AGGREGATE" } };
 }
 
 export class DataElementGroupModel extends D2Model {
