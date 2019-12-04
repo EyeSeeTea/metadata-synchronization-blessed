@@ -1,6 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import SyncIcon from "@material-ui/icons/Sync";
-import { useD2 } from "d2-api";
+import { useD2, useD2Api } from "d2-api";
 import { useSnackbar, withLoading } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -44,6 +44,7 @@ const DataPage: React.FC<GenericSynchronizatgionPageProps> = ({
 
     const snackbar = useSnackbar();
     const d2 = useD2();
+    const api = useD2Api();
     const history = useHistory();
 
     useEffect(() => {
@@ -94,7 +95,7 @@ const DataPage: React.FC<GenericSynchronizatgionPageProps> = ({
     };
 
     const handleSynchronization = async (syncRule: SyncRule) => {
-        const { metadataIds, targetInstances, syncParams } = syncRule;
+        const { metadataIds, targetInstances, syncParams, dataParams } = syncRule;
 
         const action = isDelete
             ? startDelete
@@ -104,8 +105,8 @@ const DataPage: React.FC<GenericSynchronizatgionPageProps> = ({
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
         try {
-            const builder = { metadataIds, targetInstances, syncParams };
-            for await (const { message, syncReport, done } of action(d2 as D2, builder)) {
+            const builder = { metadataIds, targetInstances, syncParams, dataParams };
+            for await (const { message, syncReport, done } of action(d2 as D2, api, builder)) {
                 if (message) loading.show(true, message);
                 if (syncReport) await syncReport.save(d2 as D2);
                 if (done) {

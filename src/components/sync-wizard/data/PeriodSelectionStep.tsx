@@ -12,11 +12,11 @@ export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
     const { syncRule, onChange } = props;
 
     const updateStartDate = (date: Date | null) => {
-        onChange(syncRule.updateDataSyncStartDate(date));
+        onChange(syncRule.updateDataSyncStartDate(date || undefined));
     };
 
     const updateEndDate = (date: Date | null) => {
-        onChange(syncRule.updateDataSyncEndDate(date));
+        onChange(syncRule.updateDataSyncEndDate(date || undefined));
     };
 
     return (
@@ -24,14 +24,14 @@ export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
             <div>
                 <DatePicker
                     label={i18n.t("Start date (*)")}
-                    value={syncRule.dataSyncStartDate}
+                    value={syncRule.dataSyncStartDate || null}
                     onChange={updateStartDate}
                 />
             </div>
             <div>
                 <DatePicker
                     label={i18n.t("End date (*)")}
-                    value={syncRule.dataSyncEndDate}
+                    value={syncRule.dataSyncEndDate || null}
                     onChange={updateEndDate}
                 />
             </div>

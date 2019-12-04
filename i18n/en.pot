@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-03T15:45:30.525Z\n"
-"PO-Revision-Date: 2019-12-03T15:45:30.525Z\n"
+"POT-Creation-Date: 2019-12-04T10:04:19.016Z\n"
+"PO-Revision-Date: 2019-12-04T10:04:19.016Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -323,7 +323,10 @@ msgstr ""
 msgid "Importing data in instance {{instance}}"
 msgstr ""
 
-msgid "Data sync not implemented yet"
+msgid "Fetching data from data sets and data element groups"
+msgstr ""
+
+msgid "Fetching data from data elements"
 msgstr ""
 
 msgid "Not a valid DHIS2 instance"

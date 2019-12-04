@@ -54,7 +54,7 @@ describe("SyncRule", () => {
             it("should return true when contains name, instances and organisationUnits", async () => {
                 const syncRule = SyncRule.create("data")
                     .updateName("SyncRule test")
-                    .updateDataSyncOrganisationUnits(["/JLA7wl59oN3/WeeW3tgF69f"])
+                    .updateDataSyncOrgUnits(["/JLA7wl59oN3/WeeW3tgF69f"])
                     .updateDataSyncStartDate(new Date())
                     .updateDataSyncEndDate(new Date())
                     .updateTargetInstances(["fP3MMoWv6qp"]);

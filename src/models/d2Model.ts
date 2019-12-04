@@ -290,7 +290,7 @@ export class DataSetModel extends D2Model {
             ...object,
             dataElements: object.dataSetElements
                 ? object.dataSetElements.map(({ dataElement }) => dataElement)
-                : undefined,
+                : [],
         }));
     };
 }

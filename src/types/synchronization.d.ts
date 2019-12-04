@@ -5,6 +5,9 @@ import {
     MetadataImportStats,
     MetadataImportParams,
     DataImportParams,
+    DataImportResponse,
+    MetadataImportStatus,
+    DataImportStatus,
 } from "./d2";
 import SyncReport from "../models/syncReport";
 
@@ -21,9 +24,10 @@ export interface SynchronizationParams extends MetadataImportParams {
 }
 
 export interface DataSynchronizationParams extends DataImportParams {
-    organisationUnits?: string[];
-    startDate?: Date | null;
-    endDate?: Date | null;
+    orgUnits?: string[];
+    includeChildrenOrgUnits?: boolean;
+    startDate?: Moment;
+    endDate?: Moment;
 }
 
 export interface ExportBuilder {
@@ -38,14 +42,16 @@ export interface MetadataPackage {
     [metadataType: string]: any[];
 }
 
-export interface SynchronizationResult extends MetadataImportResponse {
+export interface SynchronizationResult {
+    status: MetadataImportStatus | DataImportStatus;
     instance: {
         id: string;
         name?: string;
         url?: string;
     };
+    stats?: MetadataImportStats | DataImportStats;
     report?: {
-        typeStats: MetadataImportStats[];
+        typeStats?: MetadataImportStats[];
         messages: any[];
     };
     date: Date;

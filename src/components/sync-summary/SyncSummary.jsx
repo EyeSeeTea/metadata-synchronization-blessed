@@ -53,7 +53,7 @@ class SyncSummary extends React.Component {
 
     static buildSummaryTable(stats) {
         return (
-            <Table padding={"dense"}>
+            <Table>
                 <TableHead>
                     <TableRow>
                         <TableCell>{i18n.t("Type")}</TableCell>
@@ -65,16 +65,20 @@ class SyncSummary extends React.Component {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {stats.map(({ type, created, deleted, ignored, updated, total }, i) => (
-                        <TableRow key={`row-${i}`}>
-                            <TableCell>{type}</TableCell>
-                            <TableCell>{created}</TableCell>
-                            <TableCell>{deleted}</TableCell>
-                            <TableCell>{ignored}</TableCell>
-                            <TableCell>{updated}</TableCell>
-                            <TableCell>{total}</TableCell>
-                        </TableRow>
-                    ))}
+                    {stats.map(
+                        ({ type, imported, created, deleted, ignored, updated, total }, i) => (
+                            <TableRow key={`row-${i}`}>
+                                <TableCell>{type}</TableCell>
+                                <TableCell>{created || imported}</TableCell>
+                                <TableCell>{deleted}</TableCell>
+                                <TableCell>{ignored}</TableCell>
+                                <TableCell>{updated}</TableCell>
+                                <TableCell>
+                                    {total || _.sum([created, imported, deleted, ignored, updated])}
+                                </TableCell>
+                            </TableRow>
+                        )
+                    )}
                 </TableBody>
             </Table>
         );
@@ -115,21 +119,21 @@ class SyncSummary extends React.Component {
 
     render() {
         const { isOpen, response, classes, handleClose } = this.props;
-        const { results } = this.state;
+        const { results = [] } = this.state;
 
         return (
-            <React.Fragment>
-                <ConfirmationDialog
-                    isOpen={isOpen}
-                    title={i18n.t("Synchronization Results")}
-                    onSave={handleClose}
-                    saveText={i18n.t("Ok")}
-                    maxWidth={"lg"}
-                    fullWidth={true}
-                >
-                    <DialogContent>
-                        {results &&
-                            results.map((responseElement, i) => (
+            results.length > 0 && (
+                <React.Fragment>
+                    <ConfirmationDialog
+                        isOpen={isOpen}
+                        title={i18n.t("Synchronization Results")}
+                        onSave={handleClose}
+                        saveText={i18n.t("Ok")}
+                        maxWidth={"lg"}
+                        fullWidth={true}
+                    >
+                        <DialogContent>
+                            {results.map(({ instance, status, report, stats }, i) => (
                                 <ExpansionPanel
                                     defaultExpanded={results.length === 1}
                                     className={classes.expansionPanel}
@@ -137,10 +141,10 @@ class SyncSummary extends React.Component {
                                 >
                                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                         <Typography className={classes.expansionPanelHeading1}>
-                                            {`${responseElement.instance.name} (${responseElement.instance.url})`}
+                                            {`${instance.name} (${instance.url})`}
                                         </Typography>
                                         <Typography className={classes.expansionPanelHeading2}>
-                                            {`${i18n.t("Status")}: ${responseElement.status}`}
+                                            {`${i18n.t("Status")}: ${status}`}
                                         </Typography>
                                     </ExpansionPanelSummary>
 
@@ -152,56 +156,57 @@ class SyncSummary extends React.Component {
                                         </Typography>
                                     </ExpansionPanelDetails>
 
-                                    <ExpansionPanelDetails
-                                        className={classes.expansionPanelDetails}
-                                    >
-                                        {responseElement.report &&
-                                            SyncSummary.buildSummaryTable([
-                                                ...responseElement.report.typeStats,
-                                                { type: i18n.t("Total"), ...responseElement.stats },
+                                    {report && (
+                                        <ExpansionPanelDetails
+                                            className={classes.expansionPanelDetails}
+                                        >
+                                            {SyncSummary.buildSummaryTable([
+                                                ...(report.typeStats || []),
+                                                { type: i18n.t("Total"), ...stats },
                                             ])}
-                                    </ExpansionPanelDetails>
+                                        </ExpansionPanelDetails>
+                                    )}
 
-                                    {responseElement.report &&
-                                        responseElement.report.messages.length > 0 && (
-                                            <div>
-                                                <ExpansionPanelDetails
-                                                    className={classes.expansionPanelDetails}
-                                                >
-                                                    <Typography variant="overline">
-                                                        {i18n.t("Messages")}
-                                                    </Typography>
-                                                </ExpansionPanelDetails>
-                                                <ExpansionPanelDetails
-                                                    className={classes.expansionPanelDetails}
-                                                >
-                                                    {SyncSummary.buildMessageTable(
-                                                        _.take(responseElement.report.messages, 10)
-                                                    )}
-                                                </ExpansionPanelDetails>
-                                            </div>
-                                        )}
+                                    {report && report.messages.length > 0 && (
+                                        <div>
+                                            <ExpansionPanelDetails
+                                                className={classes.expansionPanelDetails}
+                                            >
+                                                <Typography variant="overline">
+                                                    {i18n.t("Messages")}
+                                                </Typography>
+                                            </ExpansionPanelDetails>
+                                            <ExpansionPanelDetails
+                                                className={classes.expansionPanelDetails}
+                                            >
+                                                {SyncSummary.buildMessageTable(
+                                                    _.take(report.messages, 10)
+                                                )}
+                                            </ExpansionPanelDetails>
+                                        </div>
+                                    )}
                                 </ExpansionPanel>
                             ))}
 
-                        <ExpansionPanel>
-                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography className={classes.expansionPanelHeading1}>
-                                    {i18n.t("JSON Response")}
-                                </Typography>
-                            </ExpansionPanelSummary>
+                            <ExpansionPanel>
+                                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Typography className={classes.expansionPanelHeading1}>
+                                        {i18n.t("JSON Response")}
+                                    </Typography>
+                                </ExpansionPanelSummary>
 
-                            <ExpansionPanelDetails>
-                                <ReactJson
-                                    src={{ ...response, results }}
-                                    collapsed={2}
-                                    enableClipboard={false}
-                                />
-                            </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                    </DialogContent>
-                </ConfirmationDialog>
-            </React.Fragment>
+                                <ExpansionPanelDetails>
+                                    <ReactJson
+                                        src={{ ...response, results }}
+                                        collapsed={2}
+                                        enableClipboard={false}
+                                    />
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                        </DialogContent>
+                    </ConfirmationDialog>
+                </React.Fragment>
+            )
         );
     }
 }

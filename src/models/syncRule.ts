@@ -13,6 +13,7 @@ import {
     SharingSetting,
     SynchronizationParams,
     SyncRuleType,
+    DataSynchronizationParams,
 } from "../types/synchronization";
 import { Validation } from "../types/validations";
 
@@ -65,9 +66,9 @@ export default class SyncRule {
         return this.syncRule.builder.metadataIds;
     }
 
-    public get dataSyncOrganisationUnits(): string[] {
+    public get dataSyncOrgUnits(): string[] {
         return this.syncRule.builder.dataParams
-            ? this.syncRule.builder.dataParams.organisationUnits || []
+            ? this.syncRule.builder.dataParams.orgUnits || []
             : [];
     }
 
@@ -129,6 +130,10 @@ export default class SyncRule {
         return this.syncRule.builder.syncParams || {};
     }
 
+    public get dataParams(): DataSynchronizationParams {
+        return this.syncRule.builder.dataParams || {};
+    }
+
     public static create(type: SyncRuleType = "metadata"): SyncRule {
         return new SyncRule({
             id: "",
@@ -141,9 +146,9 @@ export default class SyncRule {
                 targetInstances: [],
                 metadataIds: [],
                 dataParams: {
-                    organisationUnits: [],
-                    startDate: null,
-                    endDate: null,
+                    orgUnits: [],
+                    startDate: undefined,
+                    endDate: undefined,
                 },
                 syncParams: {
                     includeSharingSettings: true,
@@ -259,20 +264,20 @@ export default class SyncRule {
         });
     }
 
-    public updateDataSyncOrganisationUnits(organisationUnits: string[]): SyncRule {
+    public updateDataSyncOrgUnits(orgUnits: string[]): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
                     ...this.syncRule.builder.dataParams,
-                    organisationUnits,
+                    orgUnits,
                 },
             },
         });
     }
 
-    public updateDataSyncStartDate(startDate: Date | null): SyncRule {
+    public updateDataSyncStartDate(startDate?: Date): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             builder: {
@@ -285,7 +290,7 @@ export default class SyncRule {
         });
     }
 
-    public updateDataSyncEndDate(endDate: Date | null): SyncRule {
+    public updateDataSyncEndDate(endDate?: Date): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             builder: {
@@ -401,7 +406,7 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncOrganisationUnits: _.compact([
-                this.type === "data" && this.dataSyncOrganisationUnits.length === 0
+                this.type === "data" && this.dataSyncOrgUnits.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "organisation unit" },

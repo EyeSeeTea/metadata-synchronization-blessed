@@ -1,12 +1,23 @@
 import axios, { AxiosBasicCredentials } from "axios";
-import _ from "lodash";
-import "../utils/lodash-mixins";
-
-import Instance from "../models/instance";
-import { D2, MetadataImportParams, MetadataImportResponse } from "../types/d2";
-import { MetadataPackage, NestedRules, SynchronizationResult } from "../types/synchronization";
-import { cleanModelName, getClassName } from "./d2";
+import { D2Api } from "d2-api";
 import { isValidUid } from "d2/uid";
+import _ from "lodash";
+import Instance from "../models/instance";
+import {
+    D2,
+    MetadataImportParams,
+    MetadataImportResponse,
+    DataImportParams,
+    DataImportResponse,
+} from "../types/d2";
+import {
+    DataSynchronizationParams,
+    MetadataPackage,
+    NestedRules,
+    SynchronizationResult,
+} from "../types/synchronization";
+import "../utils/lodash-mixins";
+import { cleanModelName, getClassName } from "./d2";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -138,41 +149,126 @@ export function getAllReferences(
     return result;
 }
 
-export function cleanImportResponse(
+export function cleanMetadataImportResponse(
     importResult: MetadataImportResponse,
     instance: Instance
 ): SynchronizationResult {
+    const { status, stats, typeReports = [] } = importResult;
     const typeStats: any[] = [];
     const messages: any[] = [];
 
-    if (importResult.typeReports) {
-        importResult.typeReports.forEach(report => {
-            const { klass, stats, objectReports = [] } = report;
+    typeReports.forEach(report => {
+        const { klass, stats, objectReports = [] } = report;
 
-            typeStats.push({
-                ...stats,
-                type: getClassName(klass),
-            });
-
-            objectReports.forEach((detail: any) => {
-                const { uid, errorReports = [] } = detail;
-
-                messages.push(
-                    ..._.take(errorReports, 1).map((error: any) => ({
-                        uid,
-                        type: getClassName(error.mainKlass),
-                        property: error.errorProperty,
-                        message: error.message,
-                    }))
-                );
-            });
+        typeStats.push({
+            ...stats,
+            type: getClassName(klass),
         });
-    }
+
+        objectReports.forEach((detail: any) => {
+            const { uid, errorReports = [] } = detail;
+
+            messages.push(
+                ..._.take(errorReports, 1).map((error: any) => ({
+                    uid,
+                    type: getClassName(error.mainKlass),
+                    property: error.errorProperty,
+                    message: error.message,
+                }))
+            );
+        });
+    });
 
     return {
-        ..._.pick(importResult, ["status", "stats"]),
-        instance: _.pick(instance, ["id", "name", "url", "username"]),
+        status,
+        stats,
+        instance: instance.toObject(),
         report: { typeStats, messages },
         date: new Date(),
     };
+}
+
+export function cleanDataImportResponse(
+    importResult: DataImportResponse,
+    instance: Instance
+): SynchronizationResult {
+    const { status, importCount, conflicts = [] } = importResult;
+    const messages = conflicts.map(({ object, value }) => ({ uid: object, message: value }));
+
+    return {
+        status,
+        stats: importCount,
+        instance: instance.toObject(),
+        report: { messages },
+        date: new Date(),
+    };
+}
+
+export async function getData(
+    api: D2Api,
+    params: DataSynchronizationParams,
+    dataSet: string[] = [],
+    dataElementGroup: string[] = []
+) {
+    const {
+        startDate,
+        endDate,
+        orgUnits: orgUnit = [],
+        includeChildrenOrgUnits: children = false,
+    } = params;
+
+    if (dataSet.length === 0 && dataElementGroup.length === 0) return {};
+
+    return api
+        .get("/dataValueSets", {
+            dataElementIdScheme: "UID",
+            orgUnitIdScheme: "UID",
+            categoryOptionComboIdScheme: "UID",
+            includeDeleted: false,
+            startDate: startDate.format("YYYY-MM-DD"),
+            endDate: endDate.format("YYYY-MM-DD"),
+            dataSet,
+            dataElementGroup,
+            orgUnit,
+            children,
+        })
+        .getData();
+}
+
+export async function postData(
+    instance: Instance,
+    data: object,
+    additionalParams?: DataImportParams
+): Promise<any> {
+    try {
+        const response = await instance
+            .getApi()
+            .post(
+                "/dataValueSets",
+                {
+                    idScheme: "UID",
+                    dataElementIdScheme: "UID",
+                    orgUnitIdScheme: "UID",
+                    preheatCache: false,
+                    skipExistingCheck: false,
+                    strategy: "NEW_AND_UPDATES",
+                    format: "json",
+                    async: false,
+                    dryRun: false,
+                    ...additionalParams,
+                },
+                data
+            )
+            .getData();
+
+        return response;
+    } catch (error) {
+        if (error.response) {
+            console.log("DEBUG", error);
+            return error.response;
+        } else {
+            console.error(error);
+            return { status: "NETWORK ERROR" };
+        }
+    }
 }
