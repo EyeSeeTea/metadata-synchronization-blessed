@@ -24,7 +24,7 @@ export interface SynchronizationParams extends MetadataImportParams {
 }
 
 export interface DataSynchronizationParams extends DataImportParams {
-    orgUnits?: string[];
+    orgUnitPaths?: string[];
     includeChildrenOrgUnits?: boolean;
     startDate?: Moment;
     endDate?: Moment;

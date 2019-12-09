@@ -66,10 +66,8 @@ export default class SyncRule {
         return this.syncRule.builder.metadataIds;
     }
 
-    public get dataSyncOrgUnits(): string[] {
-        return this.syncRule.builder.dataParams
-            ? this.syncRule.builder.dataParams.orgUnits || []
-            : [];
+    public get dataSyncOrgUnitPaths(): string[] {
+        return this.syncRule.builder.dataParams?.orgUnitPaths ?? [];
     }
 
     public get dataSyncStartDate(): Date | null {
@@ -146,7 +144,7 @@ export default class SyncRule {
                 targetInstances: [],
                 metadataIds: [],
                 dataParams: {
-                    orgUnits: [],
+                    orgUnitPaths: [],
                     startDate: undefined,
                     endDate: undefined,
                 },
@@ -264,14 +262,14 @@ export default class SyncRule {
         });
     }
 
-    public updateDataSyncOrgUnits(orgUnits: string[]): SyncRule {
+    public updateDataSyncOrgUnitPaths(orgUnitPaths: string[]): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
                     ...this.syncRule.builder.dataParams,
-                    orgUnits,
+                    orgUnitPaths,
                 },
             },
         });
@@ -398,7 +396,7 @@ export default class SyncRule {
                     : null,
             ]),
             metadataIds: _.compact([
-                this.type === "metadata" && this.metadataIds.length === 0
+                this.metadataIds.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "metadata element" },
@@ -406,7 +404,7 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncOrganisationUnits: _.compact([
-                this.type === "data" && this.dataSyncOrgUnits.length === 0
+                this.type !== "metadata" && this.dataSyncOrgUnitPaths.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "organisation unit" },
@@ -414,7 +412,7 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncStartDate: _.compact([
-                this.type === "data" && !this.dataSyncStartDate
+                this.type !== "metadata" && !this.dataSyncStartDate
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "start date" },
@@ -422,13 +420,13 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncEndDate: _.compact([
-                this.type === "data" && !this.dataSyncEndDate
+                this.type !== "metadata" && !this.dataSyncEndDate
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "end date" },
                       }
                     : null,
-                this.type === "data" &&
+                this.type !== "metadata" &&
                 this.dataSyncEndDate &&
                 this.dataSyncStartDate &&
                 moment(this.dataSyncEndDate).isBefore(this.dataSyncStartDate)

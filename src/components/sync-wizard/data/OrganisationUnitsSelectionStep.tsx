@@ -18,23 +18,13 @@ const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
 }) => {
     const d2 = useD2();
     const [organisationUnitsRootIds, setOrganisationUnitsRootIds] = useState<string[]>([]);
-    const [selectedOrganisationUnits, setSelectedOrganisationUnits] = useState<string[]>(
-        syncRule.dataSyncOrgUnits
-    );
 
     useEffect(() => {
-        const retrieveOrganisationUnitsRootIds = async () => {
-            const organisationUnitsRootIds = await getCurrentUserOrganisationUnits(d2 as D2);
-            setOrganisationUnitsRootIds(organisationUnitsRootIds);
-        };
-
-        retrieveOrganisationUnitsRootIds();
+        getCurrentUserOrganisationUnits(d2 as D2).then(setOrganisationUnitsRootIds);
     }, [d2]);
 
     const changeSelection = (orgUnitsPaths: string[]) => {
-        setSelectedOrganisationUnits(orgUnitsPaths);
-        const orgUnits = _.compact(orgUnitsPaths.map(path => _.last(path.split("/"))));
-        onChange(syncRule.updateDataSyncOrgUnits(orgUnits));
+        onChange(syncRule.updateDataSyncOrgUnitPaths(orgUnitsPaths));
     };
 
     if (_.isEmpty(organisationUnitsRootIds)) {
@@ -48,7 +38,7 @@ const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
             <OrgUnitsSelector
                 d2={d2}
                 onChange={changeSelection}
-                selected={selectedOrganisationUnits}
+                selected={syncRule.dataSyncOrgUnitPaths}
                 rootIds={organisationUnitsRootIds}
                 withElevation={false}
             />

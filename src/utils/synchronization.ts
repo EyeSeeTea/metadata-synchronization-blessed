@@ -213,11 +213,13 @@ export async function getData(
     const {
         startDate,
         endDate,
-        orgUnits: orgUnit = [],
+        orgUnitPaths = [],
         includeChildrenOrgUnits: children = false,
     } = params;
 
     if (dataSet.length === 0 && dataElementGroup.length === 0) return {};
+
+    const orgUnit = _.compact(orgUnitPaths.map(path => _.last(path.split("/"))));
 
     return api
         .get("/dataValueSets", {
