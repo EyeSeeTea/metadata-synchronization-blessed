@@ -10,7 +10,7 @@ import {
 import _ from "lodash";
 import memoize from "nano-memoize";
 import React, { useEffect, useState } from "react";
-import { useD2ApiData } from "./useD2ApiData";
+import { useD2ApiData } from "d2-api";
 
 export interface D2ObjectsTableProps<T extends ReferenceObject>
     extends Omit<ObjectsTableProps<T>, "rows"> {
