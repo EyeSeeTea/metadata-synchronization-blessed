@@ -19,6 +19,7 @@ import {
     DataElementGroupSetModel,
     DataSetModel,
     ProgramModel,
+    D2Model,
 } from "../../models/d2Model";
 import { metadataModels } from "../../models/d2ModelFactory";
 import SyncReport from "../../models/syncReport";
@@ -32,10 +33,18 @@ interface GenericSynchronizationPageProps {
     loading: any; // TODO
 }
 
-const config = {
+const config: Record<
+    SyncRuleType,
+    {
+        title: string;
+        models: typeof D2Model[];
+        childrenKeys: string[] | undefined;
+    }
+> = {
     metadata: {
         title: i18n.t("Metadata Synchronization"),
         models: metadataModels,
+        childrenKeys: undefined,
     },
     aggregated: {
         title: i18n.t("Aggregated Synchronization"),
@@ -45,10 +54,12 @@ const config = {
             DataElementGroupSetModel,
             DataSetModel,
         ],
+        childrenKeys: ["dataElements", "dataElementGroups"],
     },
     events: {
         title: i18n.t("Events Synchronization"),
         models: [ProgramModel],
+        childrenKeys: ["programStages"],
     },
 };
 
@@ -156,11 +167,7 @@ const SyncOnDemandPage: React.FC<GenericSynchronizationPageProps> = ({ isDelete,
                 notifyNewSelection={updateSelection}
                 onActionButtonClick={appConfigurator ? openSynchronizationDialog : undefined}
                 actionButtonLabel={<SyncIcon />}
-                childrenKeys={
-                    type !== "metadata"
-                        ? ["dataElements", "dataElementGroups", "programStages"]
-                        : undefined
-                }
+                childrenKeys={config[type].childrenKeys}
             />
 
             <SyncDialog
