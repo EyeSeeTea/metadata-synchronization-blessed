@@ -101,7 +101,7 @@ export interface SynchronizationRule {
     type: SyncRuleType;
 }
 
-export type SyncRuleType = "data" | "metadata";
+export type SyncRuleType = "metadata" | "aggregated" | "events";
 
 export interface SharingSetting {
     access: string;

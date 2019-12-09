@@ -3,36 +3,64 @@ import SyncIcon from "@material-ui/icons/Sync";
 import { useD2, useD2Api } from "d2-api";
 import { useSnackbar, withLoading } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
-import { D2Model } from "../../models/d2Model";
+import { startDelete } from "../../logic/delete";
+import {
+    startDataSynchronization,
+    startMetadataSynchronization,
+} from "../../logic/synchronization";
+import {
+    AggregatedDataElementModel,
+    DataElementGroupModel,
+    DataElementGroupSetModel,
+    DataSetModel,
+    ProgramModel,
+} from "../../models/d2Model";
+import { metadataModels } from "../../models/d2ModelFactory";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
+import { SyncRuleType } from "../../types/synchronization";
 import { isAppConfigurator } from "../../utils/permissions";
-import { startDelete } from "../../logic/delete";
-import {
-    startMetadataSynchronization,
-    startDataSynchronization,
-} from "../../logic/synchronization";
 
-interface GenericSynchronizatgionPageProps {
-    models: typeof D2Model[];
-    title: string;
+interface GenericSynchronizationPageProps {
     isDelete?: boolean;
-    loading: any;
+    loading: any; // TODO
 }
 
-const DataPage: React.FC<GenericSynchronizatgionPageProps> = ({
-    models,
-    title,
-    isDelete,
-    loading,
-}) => {
-    const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand("data"));
+const config = {
+    metadata: {
+        title: i18n.t("Metadata Synchronization"),
+        models: metadataModels,
+    },
+    aggregated: {
+        title: i18n.t("Aggregated Synchronization"),
+        models: [
+            AggregatedDataElementModel,
+            DataElementGroupModel,
+            DataElementGroupSetModel,
+            DataSetModel,
+        ],
+    },
+    events: {
+        title: i18n.t("Events Synchronization"),
+        models: [ProgramModel],
+    },
+};
+
+const SyncOnDemandPage: React.FC<GenericSynchronizationPageProps> = ({ isDelete, loading }) => {
+    const snackbar = useSnackbar();
+    const d2 = useD2();
+    const api = useD2Api();
+    const history = useHistory();
+    const { type } = useParams() as { type: SyncRuleType };
+    const { title, models } = config[type];
+
+    const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand(type));
     const [appConfigurator, updateAppConfigurator] = useState(false);
 
     const [state, setState] = useState({
@@ -41,11 +69,6 @@ const DataPage: React.FC<GenericSynchronizatgionPageProps> = ({
         syncSummaryOpen: false,
         enableDialogSync: false,
     });
-
-    const snackbar = useSnackbar();
-    const d2 = useD2();
-    const api = useD2Api();
-    const history = useHistory();
 
     useEffect(() => {
         isAppConfigurator(d2 as D2).then(updateAppConfigurator);
@@ -86,7 +109,7 @@ const DataPage: React.FC<GenericSynchronizatgionPageProps> = ({
     };
 
     const closeDialogs = () => {
-        updateSyncRule(SyncRule.createOnDemand("data"));
+        updateSyncRule(SyncRule.createOnDemand(type));
         setState(state => ({
             ...state,
             syncDialogOpen: false,
@@ -134,7 +157,9 @@ const DataPage: React.FC<GenericSynchronizatgionPageProps> = ({
                 onActionButtonClick={appConfigurator ? openSynchronizationDialog : undefined}
                 actionButtonLabel={<SyncIcon />}
                 childrenKeys={
-                    syncRule.type === "data" ? ["dataElements", "dataElementGroups"] : undefined
+                    type !== "metadata"
+                        ? ["dataElements", "dataElementGroups", "programStages"]
+                        : undefined
                 }
             />
 
@@ -157,4 +182,4 @@ const DataPage: React.FC<GenericSynchronizatgionPageProps> = ({
     );
 };
 
-export default withLoading(DataPage);
+export default withLoading(SyncOnDemandPage);

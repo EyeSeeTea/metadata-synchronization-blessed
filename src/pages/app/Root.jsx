@@ -6,8 +6,7 @@ import InstanceCreationPage from "../instance-creation/InstanceCreationPage";
 import InstanceListPage from "../instance-list/InstanceListPage";
 import LandingPage from "../landing/LandingPage";
 import DeletedObjectsPage from "../sync-deleted-objects/DeletedObjectsPage";
-import DataSyncPage from "../sync-on-demand/DataPage";
-import MetadataSyncPage from "../sync-on-demand/MetadataPage";
+import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
 
@@ -31,13 +30,8 @@ class Root extends React.Component {
                     />
 
                     <Route
-                        path="/sync/metadata"
-                        render={props => <MetadataSyncPage {...this.props} {...props} />}
-                    />
-
-                    <Route
-                        path="/sync/data/:type(aggregated|programs)"
-                        render={props => <DataSyncPage {...this.props} {...props} />}
+                        path="/sync/:type(metadata|aggregated|events)"
+                        render={props => <SyncOnDemandPage {...this.props} {...props} />}
                     />
 
                     <Route
@@ -46,12 +40,14 @@ class Root extends React.Component {
                     />
 
                     <Route
-                        path={"/sync-rules/:type(data|metadata)/:action(new|edit)/:id?"}
+                        path={
+                            "/sync-rules/:type(metadata|aggregated|events)/:action(new|edit)/:id?"
+                        }
                         render={props => <SyncRulesCreationPage {...this.props} {...props} />}
                     />
 
                     <Route
-                        path="/sync-rules/:type(data|metadata)"
+                        path="/sync-rules/:type(metadata|aggregated|events)"
                         render={props => <SyncRulesPage {...this.props} {...props} />}
                     />
 

@@ -28,6 +28,18 @@ import {
     isAppExecutor,
 } from "../../utils/permissions";
 
+const config = {
+    metadata: {
+        title: i18n.t("Metadata Synchronization Rules"),
+    },
+    aggregated: {
+        title: i18n.t("Aggregated Synchronization Rules"),
+    },
+    events: {
+        title: i18n.t("Events Synchronization Rules"),
+    },
+};
+
 class SyncRulesPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
@@ -388,10 +400,7 @@ class SyncRulesPage extends React.Component {
         } = this.state;
         const { d2, match } = this.props;
         const { type } = match.params;
-        const title =
-            type === "metadata"
-                ? i18n.t("Metadata Synchronization Rules")
-                : i18n.t("Data Synchronization Rules");
+        const { title } = config[type];
 
         return (
             <React.Fragment>

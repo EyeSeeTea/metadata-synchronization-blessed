@@ -7,6 +7,7 @@ import SyncWizard from "../../components/sync-wizard/SyncWizard";
 import i18n from "../../locales";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
+import { SyncRuleType } from "../../types/synchronization";
 
 interface SyncRulesCreationProps {}
 
@@ -15,9 +16,7 @@ const SyncRulesCreation: React.FC<SyncRulesCreationProps> = () => {
     const { id, action, type } = useParams();
     const d2 = useD2();
     const [dialogOpen, updateDialogOpen] = useState(false);
-    const [syncRule, updateSyncRule] = useState(
-        SyncRule.create(type as "data" | "metadata" | undefined)
-    );
+    const [syncRule, updateSyncRule] = useState(SyncRule.create(type as SyncRuleType | undefined));
     const isEdit = action === "edit" && !!id;
 
     const title = !isEdit
