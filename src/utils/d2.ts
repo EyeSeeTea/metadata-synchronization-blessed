@@ -92,6 +92,11 @@ export const dataSetFields = {
     },
 };
 
+export const programFields = {
+    ...d2BaseModelFields,
+    programStages: d2BaseModelFields,
+};
+
 export const organisationUnitFields = {
     ...d2BaseModelFields,
     level: include,

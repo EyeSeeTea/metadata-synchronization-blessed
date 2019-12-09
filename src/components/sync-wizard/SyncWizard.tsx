@@ -5,7 +5,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import SyncRule from "../../models/syncRule";
 import { getValidationMessages } from "../../utils/validations";
-import { dataSteps, metadataSteps } from "./Steps";
+import { aggregatedSteps, eventsSteps, metadataSteps } from "./Steps";
 
 interface SyncWizardProps {
     syncRule: SyncRule;
@@ -14,6 +14,12 @@ interface SyncWizardProps {
     onChange?(syncRule: SyncRule): void;
     onCancel?(): void;
 }
+
+const config = {
+    metadata: metadataSteps,
+    aggregated: aggregatedSteps,
+    events: eventsSteps,
+};
 
 const SyncWizard: React.FC<SyncWizardProps> = ({
     syncRule,
@@ -25,9 +31,7 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
     const location = useLocation();
     const d2 = useD2();
 
-    const stepsBaseInfo = syncRule.type === "metadata" ? metadataSteps : dataSteps;
-
-    const steps = stepsBaseInfo
+    const steps = config[syncRule.type]
         .filter(({ showOnSyncDialog }) => !isDialog || showOnSyncDialog)
         .map(step => ({
             ...step,

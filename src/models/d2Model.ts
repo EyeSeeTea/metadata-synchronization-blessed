@@ -1,4 +1,4 @@
-import { D2Api, D2DataSetSchema, SelectedPick } from "d2-api";
+import { D2Api, D2DataSetSchema, D2ProgramSchema, SelectedPick } from "d2-api";
 import D2ApiModel from "d2-api/api/models";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import { isValidUid } from "d2/uid";
@@ -23,6 +23,7 @@ import {
     organisationUnitFields,
     organisationUnitsColumns,
     organisationUnitsDetails,
+    programFields,
 } from "../utils/d2";
 
 export abstract class D2Model {
@@ -291,6 +292,22 @@ export class DataSetModel extends D2Model {
             dataElements: object.dataSetElements
                 ? object.dataSetElements.map(({ dataElement }) => dataElement)
                 : [],
+        }));
+    };
+}
+
+export class ProgramModel extends D2Model {
+    protected static metadataType = "program";
+    protected static collectionName = "programs";
+    protected static fields = programFields;
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2ProgramSchema, typeof programFields>[]
+    ) => {
+        return objects.map(object => ({
+            ...object,
+            programStages:
+                object.programStages && object.programStages.length > 1 ? object.programStages : [],
         }));
     };
 }

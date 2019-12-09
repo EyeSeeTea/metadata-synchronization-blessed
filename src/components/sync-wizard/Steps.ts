@@ -1,14 +1,14 @@
+import { ReactNode } from "react";
 import i18n from "../../locales";
 import GeneralInfoStep from "./common/GeneralInfoStep";
 import InstanceSelectionStep from "./common/InstanceSelectionStep";
 import SaveStep from "./common/SaveStep";
 import SchedulerStep from "./common/SchedulerStep";
 import CategoryOptionsSelectionStep from "./data/CategoryOptionsSelectionStep";
-import DataElementsSelectionStep from "./data/DataElementsSelectionStep";
+import MetadataSelectionStep from "./common/MetadataSelectionStep";
 import OrganisationUnitsSelectionStep from "./data/OrganisationUnitsSelectionStep";
 import PeriodSelectionStep from "./data/PeriodSelectionStep";
-import MetadataSelectionStep from "./metadata/MetadataSelectionStep";
-import { ReactNode } from "react";
+import EventsSelectionStep from "./data/EventsSelectionStep";
 
 export interface SyncWizardStep {
     key: string;
@@ -89,13 +89,14 @@ export const metadataSteps: SyncWizardStep[] = [
     commonSteps.summary,
 ];
 
-export const dataSteps: SyncWizardStep[] = [
+export const aggregatedSteps: SyncWizardStep[] = [
     commonSteps.generalInfo,
     {
         key: "data-elements",
         label: i18n.t("Data elements"),
-        component: DataElementsSelectionStep,
-        validationKeys: ["dataElementIds"],
+        component: MetadataSelectionStep,
+        validationKeys: ["metadataIds"],
+        showOnSyncDialog: false,
     },
     {
         key: "organisations-units",
@@ -116,6 +117,34 @@ export const dataSteps: SyncWizardStep[] = [
         label: i18n.t("Category options"),
         component: CategoryOptionsSelectionStep,
         validationKeys: ["categoryOptionIds"],
+        showOnSyncDialog: true,
+    },
+    commonSteps.instanceSelection,
+    commonSteps.scheduler,
+    commonSteps.summary,
+];
+
+export const eventsSteps: SyncWizardStep[] = [
+    commonSteps.generalInfo,
+    {
+        key: "organisations-units",
+        label: i18n.t("Organisation units"),
+        component: OrganisationUnitsSelectionStep,
+        validationKeys: ["dataSyncOrganisationUnits"],
+        showOnSyncDialog: true,
+    },
+    {
+        key: "programs",
+        label: i18n.t("Programs"),
+        component: MetadataSelectionStep,
+        validationKeys: ["metadataIds"],
+        showOnSyncDialog: false,
+    },
+    {
+        key: "events",
+        label: i18n.t("Events"),
+        component: EventsSelectionStep,
+        validationKeys: [], // TODO
         showOnSyncDialog: true,
     },
     commonSteps.instanceSelection,

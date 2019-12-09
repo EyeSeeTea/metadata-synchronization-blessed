@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-04T10:04:19.016Z\n"
-"PO-Revision-Date: 2019-12-04T10:04:19.016Z\n"
+"POT-Creation-Date: 2019-12-09T21:59:25.322Z\n"
+"PO-Revision-Date: 2019-12-09T21:59:25.322Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -231,6 +231,12 @@ msgstr ""
 msgid "Category options"
 msgstr ""
 
+msgid "Programs"
+msgstr ""
+
+msgid "Events"
+msgstr ""
+
 msgid "Field cannot be blank"
 msgstr ""
 
@@ -238,6 +244,12 @@ msgid "Code"
 msgstr ""
 
 msgid "Description"
+msgstr ""
+
+msgid "Selected {{difference}} elements"
+msgstr ""
+
+msgid "Removed {{difference}} elements"
 msgstr ""
 
 msgid "Cancel synchronization rule wizard"
@@ -272,19 +284,22 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-msgid "Every hour"
-msgstr ""
-
-msgid "Every day at midnight"
-msgstr ""
-
-msgid "Every day at 3 AM"
-msgstr ""
-
-msgid "Every day at noon"
-msgstr ""
-
 msgid "Every week"
+msgstr ""
+
+msgid "Every two weeks"
+msgstr ""
+
+msgid "Every month"
+msgstr ""
+
+msgid "Every three months"
+msgstr ""
+
+msgid "Every six months"
+msgstr ""
+
+msgid "Every year"
 msgstr ""
 
 msgid "Select frequency"
@@ -299,16 +314,25 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
+msgid "UID"
+msgstr ""
+
+msgid "Organisation unit"
+msgstr ""
+
+msgid "Last updated"
+msgstr ""
+
+msgid "Stored by"
+msgstr ""
+
+msgid "Due date"
+msgstr ""
+
 msgid "Start date (*)"
 msgstr ""
 
 msgid "End date (*)"
-msgstr ""
-
-msgid "Selected {{difference}} elements"
-msgstr ""
-
-msgid "Removed {{difference}} elements"
 msgstr ""
 
 msgid "Retrieving information from remote instances"
@@ -472,16 +496,19 @@ msgstr[1] ""
 msgid "Instance Configuration"
 msgstr ""
 
-msgid "Aggregated Data Synchronization"
+msgid "Aggregated Synchronization"
 msgstr ""
 
-msgid "Program Data Synchronization"
+msgid "Events Synchronization"
 msgstr ""
 
 msgid "Metadata Synchronization Rules"
 msgstr ""
 
-msgid "Data Synchronization Rules"
+msgid "Aggregated Synchronization Rules"
+msgstr ""
+
+msgid "Events Synchronization Rules"
 msgstr ""
 
 msgid "Deleted objects"
@@ -491,9 +518,6 @@ msgid "Deleted by"
 msgstr ""
 
 msgid "Deleted Objects Synchronization"
-msgstr ""
-
-msgid "Program Data Syncrhonization"
 msgstr ""
 
 msgid "Please select at least one element from the table to synchronize"
@@ -559,9 +583,6 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
-
-msgid "UID"
-msgstr ""
 
 msgid "Level"
 msgstr ""
