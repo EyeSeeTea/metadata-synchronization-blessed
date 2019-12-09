@@ -113,13 +113,13 @@ class SyncSummary extends React.Component {
         const { response, d2 } = this.props;
         if (response !== prevProps.response) {
             await response.loadSyncResults(d2);
-            this.setState({ results: response.results });
+            this.setState({ results: response.results || [] });
         }
     };
 
     render() {
         const { isOpen, response, classes, handleClose } = this.props;
-        const { results = [] } = this.state;
+        const { results } = this.state;
 
         return (
             results.length > 0 && (
