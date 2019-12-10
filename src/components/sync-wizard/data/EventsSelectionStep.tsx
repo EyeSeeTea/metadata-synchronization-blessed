@@ -1,11 +1,11 @@
 import i18n from "@dhis2/d2-i18n";
-import { useD2Api, useD2ApiData, useD2 } from "d2-api";
+import { useD2, useD2Api, useD2ApiData } from "d2-api";
 import { ObjectsTable } from "d2-ui-components";
 import _ from "lodash";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import SyncRule from "../../../models/syncRule";
-import { getCurrentUserOrganisationUnits } from "../../../utils/d2";
 import { D2 } from "../../../types/d2";
+import { getCurrentUserOrganisationUnits } from "../../../utils/d2";
 
 interface EventsSelectionStepProps {
     syncRule: SyncRule;
@@ -24,11 +24,6 @@ export default function EventsSelectionStep(props: EventsSelectionStepProps) {
 
     const { loading, data, error, refetch } = useD2ApiData();
 
-    const orgUnit = useMemo(
-        () => _.compact(syncRule.dataSyncOrgUnitPaths.map(path => _.last(path.split("/")))),
-        [syncRule.dataSyncOrgUnitPaths]
-    );
-
     useEffect(() => {
         if (organisationUnitsRootIds.length > 0)
             refetch(
@@ -38,7 +33,7 @@ export default function EventsSelectionStep(props: EventsSelectionStepProps) {
                     ouMode: "CHILDREN",
                 })
             );
-    }, [api, refetch, orgUnit, organisationUnitsRootIds]);
+    }, [api, refetch, organisationUnitsRootIds]);
 
     useEffect(() => {
         getCurrentUserOrganisationUnits(d2 as D2).then(setOrganisationUnitsRootIds);

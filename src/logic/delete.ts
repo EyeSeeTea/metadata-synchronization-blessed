@@ -29,6 +29,7 @@ export async function* startDelete(
         user: d2.currentUser.username,
         types: ["deletedObjects"],
         status: "RUNNING" as SynchronizationReportStatus,
+        type: "metadata",
     });
     syncReport.addSyncResult(
         ...targetInstances.map(instance => ({

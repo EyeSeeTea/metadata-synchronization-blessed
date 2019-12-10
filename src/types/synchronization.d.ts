@@ -66,6 +66,7 @@ export interface SynchronizationReport {
     status: SynchronizationReportStatus;
     types: string[];
     syncRule?: string;
+    type: SyncRuleType;
 }
 
 export interface NestedRules {

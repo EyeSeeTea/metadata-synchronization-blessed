@@ -116,6 +116,7 @@ export async function* startMetadataSynchronization(
         types: _.keys(metadata),
         status: "RUNNING" as SynchronizationReportStatus,
         syncRule,
+        type: "metadata",
     });
     syncReport.addSyncResult(
         ...targetInstances.map(instance => ({
@@ -219,6 +220,7 @@ export async function* startDataSynchronization(
         types: _.keys(metadataPackage),
         status: "RUNNING" as SynchronizationReportStatus,
         syncRule,
+        type: "aggregated",
     });
     syncReport.addSyncResult(
         ...targetInstances.map(instance => ({

@@ -99,15 +99,27 @@ const LandingPage: React.FC = () => {
             },
         ],
         [
+            {
+                key: "history/metadata",
+                title: i18n.t("Metadata Synchronization History"),
+                icon: "history",
+            },
+            {
+                key: "history/aggregated",
+                title: i18n.t("Aggregated Synchronization History"),
+                icon: "history",
+            },
+            {
+                key: "history/events",
+                title: i18n.t("Events Synchronization History"),
+                icon: "history",
+            },
+        ],
+        [
             showDeletedObjects && {
                 key: "sync/deleted",
                 title: i18n.t("Deleted objects"),
                 icon: "delete",
-            },
-            {
-                key: "history",
-                title: i18n.t("Synchronization History"),
-                icon: "history",
             },
         ],
     ];

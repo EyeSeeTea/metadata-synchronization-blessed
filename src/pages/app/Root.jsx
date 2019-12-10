@@ -52,7 +52,7 @@ class Root extends React.Component {
                     />
 
                     <Route
-                        path="/history/:id?"
+                        path="/history/:type(metadata|aggregated|events)/:id?"
                         render={props => <HistoryPage {...this.props} {...props} />}
                     />
 

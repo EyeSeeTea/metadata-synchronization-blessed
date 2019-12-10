@@ -3,9 +3,10 @@ import { useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
 import {
+    AggregatedDataElementModel,
     DataElementGroupModel,
     DataElementGroupSetModel,
-    DataElementModel,
+    DataSetModel,
     ProgramModel,
 } from "../../../models/d2Model";
 import { metadataModels } from "../../../models/d2ModelFactory";
@@ -23,7 +24,12 @@ const config = {
         childrenKeys: undefined,
     },
     aggregated: {
-        models: [DataElementModel, DataElementGroupModel, DataElementGroupSetModel],
+        models: [
+            AggregatedDataElementModel,
+            DataElementGroupModel,
+            DataElementGroupSetModel,
+            DataSetModel,
+        ],
         childrenKeys: ["dataElements", "dataElementGroups"],
     },
     events: {
