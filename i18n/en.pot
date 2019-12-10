@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-09T21:59:25.322Z\n"
-"PO-Revision-Date: 2019-12-09T21:59:25.322Z\n"
+"POT-Creation-Date: 2019-12-10T22:37:31.439Z\n"
+"PO-Revision-Date: 2019-12-10T22:37:31.439Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -371,6 +371,15 @@ msgstr ""
 msgid "Metadata Synchronization"
 msgstr ""
 
+msgid "Metadata Synchronization History"
+msgstr ""
+
+msgid "Aggregated Synchronization History"
+msgstr ""
+
+msgid "Events Synchronization History"
+msgstr ""
+
 msgid "Ready"
 msgstr ""
 
@@ -413,9 +422,6 @@ msgid "Sync Rule"
 msgstr ""
 
 msgid "Synchronization status"
-msgstr ""
-
-msgid "Synchronization History"
 msgstr ""
 
 msgid "Delete History Notifications?"
@@ -529,16 +535,16 @@ msgstr ""
 msgid "Synchronizing metadata"
 msgstr ""
 
-msgid "New synchronization rule"
+msgid "New {{type}} synchronization rule"
 msgstr ""
 
-msgid "Edit synchronization rule"
+msgid "Edit {{type}} synchronization rule"
 msgstr ""
 
-msgid "Cancel synchronization rule creation"
+msgid "Cancel {{type}} synchronization rule creation"
 msgstr ""
 
-msgid "Cancel synchronization rule editing"
+msgid "Cancel {{type}} synchronization rule editing"
 msgstr ""
 
 msgid "Destination instances"
