@@ -1,11 +1,9 @@
 import i18n from "@dhis2/d2-i18n";
-import { useD2, useD2Api, useD2ApiData } from "d2-api";
+import { D2Api, useD2Api } from "d2-api";
 import { ObjectsTable } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import SyncRule from "../../../models/syncRule";
-import { D2 } from "../../../types/d2";
-import { getCurrentUserOrganisationUnits } from "../../../utils/d2";
 
 interface EventsSelectionStepProps {
     syncRule: SyncRule;
@@ -13,60 +11,56 @@ interface EventsSelectionStepProps {
     type: "dataElements" | "programs";
 }
 
-/** Dummy step, this is not final code */
+interface Event {
+    id: string;
+    event: string;
+    orgUnit: string;
+    orgUnitName: string;
+    created: string;
+    lastUpdated: string;
+    status: string;
+    storedBy: string;
+    dueDate: string;
+}
+
+export async function getAllEvents(
+    api: D2Api,
+    programs: string[],
+    orgUnits: string[]
+): Promise<Event[]> {
+    const events = [];
+
+    for (const program of programs) {
+        const { events: response } = (await api
+            .get("/events", {
+                paging: false,
+                program,
+            })
+            .getData()) as { events: Event[] };
+
+        events.push(...response);
+    }
+
+    return events
+        .filter(({ orgUnit }) => orgUnits.includes(orgUnit))
+        .map(event => ({ ...event, id: event.event }));
+}
 
 export default function EventsSelectionStep(props: EventsSelectionStepProps) {
     const { syncRule } = props;
     const api = useD2Api();
-    const d2 = useD2();
-    const [organisationUnitsRootIds, setOrganisationUnitsRootIds] = useState<string[]>([]);
     const [page, setPage] = useState(1);
-
-    const { loading, data, error, refetch } = useD2ApiData();
-
-    useEffect(() => {
-        if (organisationUnitsRootIds.length > 0)
-            refetch(
-                api.get("/events", {
-                    paging: false,
-                    orgUnit: organisationUnitsRootIds[0],
-                    ouMode: "CHILDREN",
-                })
-            );
-    }, [api, refetch, organisationUnitsRootIds]);
+    const [objects, setObjects] = useState<Event[]>([]);
 
     useEffect(() => {
-        getCurrentUserOrganisationUnits(d2 as D2).then(setOrganisationUnitsRootIds);
-    }, [d2]);
-
-    if (error) return error;
-
-    const { events } = data || { events: [] };
-
-    const objects = _(events)
-        .filter(
-            ({ program, programStage }) =>
-                syncRule.metadataIds.includes(program) ||
-                syncRule.metadataIds.includes(programStage)
-        )
-        .filter(({ orgUnit }) =>
-            _.compact(syncRule.dataSyncOrgUnitPaths.map(path => _.last(path.split("/")))).includes(
-                orgUnit
-            )
-        )
-        .map(event => ({ ...event, id: event.event }))
-        .value();
+        const orgUnits = _.compact(
+            syncRule.dataSyncOrgUnitPaths.map(path => _.last(path.split("/")))
+        );
+        getAllEvents(api, syncRule.metadataIds, orgUnits).then(setObjects);
+    }, [api, syncRule]);
 
     return (
-        <ObjectsTable<{
-            id: string;
-            orgUnitName: string;
-            created: string;
-            lastUpdated: string;
-            status: string;
-            storedBy: string;
-            dueDate: string;
-        }>
+        <ObjectsTable<Event>
             rows={objects.slice(10 * (page - 1), 10 * page)}
             columns={[
                 { name: "id", text: i18n.t("UID"), sortable: true },
@@ -85,7 +79,6 @@ export default function EventsSelectionStep(props: EventsSelectionStepProps) {
                 { name: "dueDate", text: i18n.t("Due date") },
             ]}
             forceSelectionColumn={true}
-            loading={loading}
             pagination={{ total: objects.length, page, pageSize: 10, pageSizeOptions: [10] }}
             onChange={({ pagination }) => setPage(pagination.page)}
         />

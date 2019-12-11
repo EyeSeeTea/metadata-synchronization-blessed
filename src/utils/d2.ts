@@ -1,8 +1,8 @@
-import _ from "lodash";
-import "../utils/lodash-mixins";
 import i18n from "@dhis2/d2-i18n";
+import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
+import _ from "lodash";
 import { D2, Params } from "../types/d2";
-import { TableColumn, ObjectsTableDetailField } from "d2-ui-components";
+import "../utils/lodash-mixins";
 
 const include = true as true;
 
