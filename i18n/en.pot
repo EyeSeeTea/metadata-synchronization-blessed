@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-10T22:37:31.439Z\n"
-"PO-Revision-Date: 2019-12-10T22:37:31.439Z\n"
+"POT-Creation-Date: 2019-12-11T11:37:11.046Z\n"
+"PO-Revision-Date: 2019-12-11T11:37:11.046Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -284,12 +284,6 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-msgid "Every week"
-msgstr ""
-
-msgid "Every two weeks"
-msgstr ""
-
 msgid "Every month"
 msgstr ""
 
@@ -329,10 +323,10 @@ msgstr ""
 msgid "Due date"
 msgstr ""
 
-msgid "Start date (*)"
+msgid "Start date"
 msgstr ""
 
-msgid "End date (*)"
+msgid "End date"
 msgstr ""
 
 msgid "Retrieving information from remote instances"

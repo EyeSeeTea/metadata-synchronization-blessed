@@ -287,11 +287,9 @@ export class DataSetModel extends D2Model {
     protected static modelTransform = (
         objects: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]
     ) => {
-        return objects.map(object => ({
-            ...object,
-            dataElements: object.dataSetElements
-                ? object.dataSetElements.map(({ dataElement }) => dataElement)
-                : [],
+        return objects.map(({ dataSetElements = [], ...rest}) => ({
+            ...rest,
+            dataElements: dataSetElements.map(({ dataElement }) => dataElement),
         }));
     };
 }

@@ -8,8 +8,6 @@ import { Toggle } from "../../toggle/Toggle";
 import isValidCronExpression from "../../../utils/validCronExpression";
 
 const cronExpressions = [
-    { text: i18n.t("Every week"), value: "0 0 12 ? * MON" },
-    { text: i18n.t("Every two weeks"), value: "0 0 12 */15 * ?" },
     { text: i18n.t("Every month"), value: "0 0 12 1 1/1 ?" },
     { text: i18n.t("Every three months"), value: "0 0 12 1 1/3 ?" },
     { text: i18n.t("Every six months"), value: "0 0 12 1 1/6 ?" },

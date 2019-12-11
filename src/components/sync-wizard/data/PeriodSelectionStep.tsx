@@ -19,18 +19,20 @@ export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
         onChange(syncRule.updateDataSyncEndDate(date || undefined));
     };
 
+    const mandatory = syncRule.type === "aggregated" ? " (*)" : "";
+
     return (
         <React.Fragment>
             <div>
                 <DatePicker
-                    label={i18n.t("Start date (*)")}
+                    label={i18n.t("Start date") + mandatory}
                     value={syncRule.dataSyncStartDate || null}
                     onChange={updateStartDate}
                 />
             </div>
             <div>
                 <DatePicker
-                    label={i18n.t("End date (*)")}
+                    label={i18n.t("End date") + mandatory}
                     value={syncRule.dataSyncEndDate || null}
                     onChange={updateEndDate}
                 />

@@ -18,6 +18,7 @@ import {
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
 import { cleanModelName, getClassName } from "./d2";
+import moment from "moment";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -227,8 +228,8 @@ export async function getData(
             orgUnitIdScheme: "UID",
             categoryOptionComboIdScheme: "UID",
             includeDeleted: false,
-            startDate: startDate.format("YYYY-MM-DD"),
-            endDate: endDate.format("YYYY-MM-DD"),
+            startDate: moment(startDate).format("YYYY-MM-DD"),
+            endDate: moment(endDate).format("YYYY-MM-DD"),
             dataSet,
             dataElementGroup,
             orgUnit,

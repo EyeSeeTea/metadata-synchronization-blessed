@@ -138,13 +138,20 @@ export const eventsSteps: SyncWizardStep[] = [
         label: i18n.t("Programs"),
         component: MetadataSelectionStep,
         validationKeys: ["metadataIds"],
-        showOnSyncDialog: false,
+        showOnSyncDialog: true,
+    },
+    {
+        key: "period",
+        label: i18n.t("Period"),
+        component: PeriodSelectionStep,
+        validationKeys: [],
+        showOnSyncDialog: true,
     },
     {
         key: "events",
         label: i18n.t("Events"),
         component: EventsSelectionStep,
-        validationKeys: [], // TODO
+        validationKeys: ["dataSyncEvents"],
         showOnSyncDialog: true,
     },
     commonSteps.instanceSelection,

@@ -1,32 +1,21 @@
-import React from "react";
-import PropTypes from "prop-types";
-import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
-import {
-    ConfirmationDialog,
-    DatePicker,
-    OldObjectsTable,
-    withLoading,
-    withSnackbar,
-} from "d2-ui-components";
+import { ApiContext } from "d2-api";
+import { ConfirmationDialog, DatePicker, OldObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 import { withRouter } from "react-router-dom";
-
-import PageHeader from "../../components/page-header/PageHeader";
-import SyncRule from "../../models/syncRule";
-import Instance from "../../models/instance";
-import { getValueForCollection } from "../../utils/d2-ui-components";
-import { startMetadataSynchronization } from "../../logic/synchronization";
-import SyncReport from "../../models/syncReport";
-import SyncSummary from "../../components/sync-summary/SyncSummary";
 import Dropdown from "../../components/dropdown/Dropdown";
+import PageHeader from "../../components/page-header/PageHeader";
 import SharingDialog from "../../components/sharing-dialog/SharingDialog";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
+import { startDataSynchronization, startMetadataSynchronization } from "../../logic/synchronization";
+import Instance from "../../models/instance";
+import SyncReport from "../../models/syncReport";
+import SyncRule from "../../models/syncRule";
+import { getValueForCollection } from "../../utils/d2-ui-components";
+import { getUserInfo, isAppConfigurator, isAppExecutor, isGlobalAdmin } from "../../utils/permissions";
 import { getValidationMessages } from "../../utils/validations";
-import {
-    getUserInfo,
-    isGlobalAdmin,
-    isAppConfigurator,
-    isAppExecutor,
-} from "../../utils/permissions";
 
 const config = {
     metadata: {
@@ -41,6 +30,7 @@ const config = {
 };
 
 class SyncRulesPage extends React.Component {
+    static contextType = ApiContext;
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -194,11 +184,17 @@ class SyncRulesPage extends React.Component {
         history.push(`/sync-rules/${match.params.type}/edit/${rule.id}`);
     };
 
-    executeRule = async ({ builder, name, id }) => {
+    executeRule = async ({ builder, name, id, type }) => {
         const { d2, loading } = this.props;
+        const { api } = this.context;
+
         loading.show(true, i18n.t("Synchronizing metadata"));
+        const action = type === "metadata"
+                ? startMetadataSynchronization
+                : startDataSynchronization;
+
         try {
-            for await (const { message, syncReport, done } of startMetadataSynchronization(d2, {
+            for await (const { message, syncReport, done } of action(d2, api, {
                 ...builder,
                 syncRule: id,
             })) {

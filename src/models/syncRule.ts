@@ -71,15 +71,15 @@ export default class SyncRule {
     }
 
     public get dataSyncStartDate(): Date | null {
-        return this.syncRule.builder.dataParams
-            ? this.syncRule.builder.dataParams.startDate || null
-            : null;
+        return this.syncRule.builder.dataParams?.startDate ?? null;
     }
 
     public get dataSyncEndDate(): Date | null {
-        return this.syncRule.builder.dataParams
-            ? this.syncRule.builder.dataParams.endDate || null
-            : null;
+        return this.syncRule.builder.dataParams?.endDate ?? null;
+    }
+
+    public get dataSyncEvents(): string[] {
+        return this.syncRule.builder.dataParams?.events ?? [];
     }
 
     public get targetInstances(): string[] {
@@ -301,6 +301,19 @@ export default class SyncRule {
         });
     }
 
+    public updateDataSyncEvents(events?: string[]): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder.dataParams,
+                    events,
+                },
+            },
+        });
+    }
+
     public updateTargetInstances(targetInstances: string[]): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
@@ -412,7 +425,7 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncStartDate: _.compact([
-                this.type !== "metadata" && !this.dataSyncStartDate
+                this.type === "aggregated" && !this.dataSyncStartDate
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "start date" },
@@ -420,13 +433,13 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncEndDate: _.compact([
-                this.type !== "metadata" && !this.dataSyncEndDate
+                this.type === "aggregated" && !this.dataSyncEndDate
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "end date" },
                       }
                     : null,
-                this.type !== "metadata" &&
+                this.type === "aggregated" &&
                 this.dataSyncEndDate &&
                 this.dataSyncStartDate &&
                 moment(this.dataSyncEndDate).isBefore(this.dataSyncStartDate)
@@ -434,6 +447,14 @@ export default class SyncRule {
                           key: "invalid_period",
                           namespace: {},
                       }
+                    : null,
+            ]),
+            dataSyncEvents: _.compact([
+                this.type === "events" && this.dataSyncEvents.length === 0
+                    ? {
+                        key: "cannot_be_empty",
+                        namespace: { element: "event" },
+                    }
                     : null,
             ]),
             targetInstances: _.compact([
