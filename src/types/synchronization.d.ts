@@ -15,11 +15,11 @@ export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
     syncRule?: string;
-    syncParams?: SynchronizationParams;
+    syncParams?: MetadataSynchronizationParams;
     dataParams?: DataSynchronizationParams;
 }
 
-export interface SynchronizationParams extends MetadataImportParams {
+export interface MetadataSynchronizationParams extends MetadataImportParams {
     includeSharingSettings?: boolean;
 }
 
@@ -30,6 +30,8 @@ export interface DataSynchronizationParams extends DataImportParams {
     events?: string[];
     allEvents?: boolean;
 }
+
+export type SynchronizationParams = MetadataSynchronizationParams | DataSynchronizationParams;
 
 export interface ExportBuilder {
     type: string;

@@ -119,6 +119,7 @@ export interface DataImportParams {
     preheatCache?: boolean;
     skipExistingCheck?: boolean;
     strategy?: "NEW_AND_UPDATES" | "NEW" | "UPDATES" | "DELETES";
+    importStrategy?: "CREATE_AND_UPDATE" | "CREATE" | "UPDATE" | "DELETE";
     format?: "json" | "xml" | "csv" | "pdf" | "adx";
 }
 

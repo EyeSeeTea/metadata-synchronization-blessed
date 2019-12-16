@@ -1,21 +1,20 @@
-import _ from "lodash";
-import moment from "moment";
 import cronstrue from "cronstrue";
 import { generateUid } from "d2/uid";
-
-import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
-import isValidCronExpression from "../utils/validCronExpression";
-import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
+import _ from "lodash";
+import moment from "moment";
 import { D2 } from "../types/d2";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import {
-    SynchronizationRule,
-    SharingSetting,
-    SynchronizationParams,
-    SyncRuleType,
     DataSynchronizationParams,
+    MetadataSynchronizationParams,
+    SharingSetting,
+    SynchronizationRule,
+    SyncRuleType,
 } from "../types/synchronization";
 import { Validation } from "../types/validations";
+import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
+import isValidCronExpression from "../utils/validCronExpression";
+import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
 
 const dataStoreKey = "rules";
 
@@ -128,7 +127,7 @@ export default class SyncRule {
         return this.syncRule.userGroupAccesses;
     }
 
-    public get syncParams(): SynchronizationParams {
+    public get syncParams(): MetadataSynchronizationParams {
         return this.syncRule.builder.syncParams || {};
     }
 
@@ -341,12 +340,22 @@ export default class SyncRule {
         });
     }
 
-    public updateSyncParams(syncParams: SynchronizationParams): SyncRule {
+    public updateSyncParams(syncParams: MetadataSynchronizationParams): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             builder: {
                 ...this.syncRule.builder,
                 syncParams,
+            },
+        });
+    }
+
+    public updateDataParams(dataParams: DataSynchronizationParams): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams,
             },
         });
     }
