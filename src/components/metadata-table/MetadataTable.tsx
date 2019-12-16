@@ -31,35 +31,26 @@ const useStyles = makeStyles({
     },
 });
 
-const getGroupData = memoize(
-    (modelName: string, d2: D2, api: D2Api) =>
+const getData = memoize(
+    (modelName: string, type: "group" | "level", d2: D2, api: D2Api) =>
         d2ModelFactory(d2, modelName)
             .getApiModel(api)
             .get({
                 paging: false,
-                fields: {
-                    id: true as true,
-                    name: true as true,
-                },
+                fields:
+                    type === "group"
+                        ? {
+                              id: true as true,
+                              name: true as true,
+                          }
+                        : {
+                              name: true as true,
+                              level: true as true,
+                          },
+                order: type === "group" ? undefined : `level:iasc`,
             })
             .getData(),
-    { maxArgs: 1 }
-);
-
-const getLevelData = memoize(
-    (modelName: string, d2: D2, api: D2Api) =>
-        d2ModelFactory(d2, modelName)
-            .getApiModel(api)
-            .get({
-                paging: false,
-                fields: {
-                    name: true as true,
-                    level: true as true,
-                },
-                order: `level:iasc`,
-            })
-            .getData(),
-    { maxArgs: 1 }
+    { maxArgs: 2 }
 );
 
 interface FiltersState {
@@ -99,13 +90,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     useEffect(() => {
         if (model && model.getGroupFilterName()) {
-            getGroupData(model.getGroupFilterName(), d2, api).then(({ objects }) =>
+            getData(model.getGroupFilterName(), "group", d2, api).then(({ objects }) =>
                 updateFilters(state => ({ ...state, groupData: objects }))
             );
         }
 
         if (model && model.getLevelFilterName()) {
-            getLevelData(model.getLevelFilterName(), d2, api).then(({ objects }) => {
+            getData(model.getLevelFilterName(), "level", d2, api).then(({ objects }) => {
                 updateFilters(state => ({
                     ...state,
                     levelData: objects.map(e => ({
