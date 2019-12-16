@@ -22,6 +22,8 @@ const SyncParamsSelector = (props: Props) => {
     const { syncRule, onChange, classes } = props;
     const { syncParams, dataParams } = syncRule;
 
+    if (syncRule.type === "events") return null;
+
     const changeSharingSettings = (includeSharingSettings: boolean) => {
         onChange(
             syncRule.updateSyncParams({
@@ -63,15 +65,6 @@ const SyncParamsSelector = (props: Props) => {
             syncRule.updateDataParams({
                 ...dataParams,
                 strategy: strategy as "NEW_AND_UPDATES" | "NEW" | "UPDATES",
-            })
-        );
-    };
-
-    const changeEventsStrategy = (importStrategy: string) => {
-        onChange(
-            syncRule.updateDataParams({
-                ...dataParams,
-                importStrategy: importStrategy as "CREATE_AND_UPDATE" | "CREATE" | "UPDATE",
             })
         );
     };
@@ -133,18 +126,6 @@ const SyncParamsSelector = (props: Props) => {
                         { id: "UPDATES", name: "Updates" },
                     ]}
                     onValueChange={changeAggregatedStrategy}
-                />
-            )}
-
-            {syncRule.type === "events" && (
-                <RadioButtonGroup
-                    value={dataParams.importStrategy || "CREATE_AND_UPDATE"}
-                    items={[
-                        { id: "CREATE_AND_UPDATE", name: "Create and update" },
-                        { id: "CREATE", name: "Create" },
-                        { id: "UPDATE", name: "Update" },
-                    ]}
-                    onValueChange={changeEventsStrategy}
                 />
             )}
         </React.Fragment>

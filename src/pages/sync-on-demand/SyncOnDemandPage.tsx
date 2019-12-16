@@ -2,6 +2,7 @@ import i18n from "@dhis2/d2-i18n";
 import SyncIcon from "@material-ui/icons/Sync";
 import { useD2, useD2Api } from "d2-api";
 import { useSnackbar, withLoading } from "d2-ui-components";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
@@ -134,13 +135,17 @@ const SyncOnDemandPage: React.FC<GenericSynchronizationPageProps> = ({ isDelete,
     };
 
     const handleSynchronization = async (syncRule: SyncRule) => {
-        const { metadataIds, targetInstances, syncParams, dataParams } = syncRule;
-
         const action = isDelete ? startDelete : config[syncRule.type].action;
+        const builder = _.pick(syncRule, [
+            "metadataIds",
+            "targetInstances",
+            "syncParams",
+            "dataParams",
+        ]);
+
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
         try {
-            const builder = { metadataIds, targetInstances, syncParams, dataParams };
             for await (const { message, syncReport, done } of action(d2 as D2, api, builder)) {
                 if (message) loading.show(true, message);
                 if (syncReport) await syncReport.save(d2 as D2);

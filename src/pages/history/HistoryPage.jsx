@@ -184,7 +184,12 @@ class HistoryPage extends React.Component {
     };
 
     columns = [
-        { name: "user", text: i18n.t("User"), sortable: true },
+        {
+            name: "syncRule",
+            text: i18n.t("Sync Rule"),
+            sortable: true,
+            getValue: ({ syncRule }) => this.getSyncRuleName(syncRule),
+        },
         { name: "date", text: i18n.t("Timestamp"), sortable: true },
         {
             name: "status",
@@ -192,12 +197,7 @@ class HistoryPage extends React.Component {
             sortable: true,
             getValue: notification => _.startCase(_.toLower(notification.status)),
         },
-        {
-            name: "syncRule",
-            text: i18n.t("Sync Rule"),
-            sortable: true,
-            getValue: ({ syncRule }) => this.getSyncRuleName(syncRule),
-        },
+        { name: "user", text: i18n.t("User"), sortable: true },
     ];
 
     changeStatusFilter = event => {

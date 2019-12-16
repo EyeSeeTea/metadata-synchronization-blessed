@@ -205,8 +205,6 @@ class SyncRulesPage extends React.Component {
     executeRule = async ({ builder, name, id, type }) => {
         const { d2, loading } = this.props;
         const { api } = this.context;
-
-        loading.show(true, i18n.t("Synchronizing metadata"));
         const { action } = config[type];
 
         try {

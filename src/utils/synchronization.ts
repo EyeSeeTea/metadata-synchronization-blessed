@@ -309,7 +309,7 @@ export async function postAggregatedData(
     data: object,
     additionalParams?: DataImportParams
 ): Promise<any> {
-    return postData(instance, "/dataValueSets", data, additionalParams);
+    return postData(instance, "/dataValueSets", data, _.pick(additionalParams, ["strategy"]));
 }
 
 export async function postEventsData(
@@ -317,5 +317,5 @@ export async function postEventsData(
     data: object,
     additionalParams?: DataImportParams
 ): Promise<any> {
-    return postData(instance, "/events", data, additionalParams);
+    return postData(instance, "/events", data, _.pick(additionalParams, []));
 }

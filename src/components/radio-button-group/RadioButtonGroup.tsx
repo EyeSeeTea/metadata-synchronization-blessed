@@ -44,8 +44,9 @@ export default function RadioButtonGroup({
                 onChange={handleChange}
                 row={horizontal}
             >
-                {items.map(({ id, name, disabled = false }) => (
+                {items.map(({ id, name, disabled = false }, index) => (
                     <FormControlLabel
+                        key={`radio-option-${index}`}
                         value={id}
                         control={<Radio color="primary" />}
                         label={name}

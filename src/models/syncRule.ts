@@ -148,7 +148,6 @@ export default class SyncRule {
                 metadataIds: [],
                 dataParams: {
                     strategy: "NEW_AND_UPDATES",
-                    importStrategy: "CREATE_AND_UPDATE",
                     orgUnitPaths: [],
                     startDate: undefined,
                     endDate: undefined,

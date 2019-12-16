@@ -240,7 +240,7 @@ export async function* startAggregatedSynchronization(
             }),
         };
         console.debug("Start import on destination instance", instance.toObject());
-        const response = await postAggregatedData(instance, { dataValues });
+        const response = await postAggregatedData(instance, { dataValues }, dataParams);
 
         syncReport.addSyncResult(cleanDataImportResponse(response, instance));
         console.debug("Finished importing data on instance", instance.toObject());
@@ -313,7 +313,7 @@ export async function* startEventsSynchronization(
             }),
         };
         console.debug("Start import on destination instance", instance.toObject());
-        const response = await postEventsData(instance, { events });
+        const response = await postEventsData(instance, { events }, dataParams);
 
         syncReport.addSyncResult(cleanDataImportResponse(response, instance));
         console.debug("Finished importing data on instance", instance.toObject());
