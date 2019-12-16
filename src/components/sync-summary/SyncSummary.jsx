@@ -123,7 +123,6 @@ class SyncSummary extends React.Component {
 
         return (
             results.length > 0 && (
-                <React.Fragment>
                     <ConfirmationDialog
                         isOpen={isOpen}
                         title={i18n.t("Synchronization Results")}
@@ -141,7 +140,7 @@ class SyncSummary extends React.Component {
                                 >
                                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                         <Typography className={classes.expansionPanelHeading1}>
-                                            {`${instance.name} (${instance.url})`}
+                                            {`${i18n.t("Destination instance")}: ${instance.name} (${instance.url})`}
                                         </Typography>
                                         <Typography className={classes.expansionPanelHeading2}>
                                             {`${i18n.t("Status")}: ${status}`}
@@ -205,7 +204,6 @@ class SyncSummary extends React.Component {
                             </ExpansionPanel>
                         </DialogContent>
                     </ConfirmationDialog>
-                </React.Fragment>
             )
         );
     }
