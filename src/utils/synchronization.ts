@@ -194,12 +194,13 @@ export function cleanDataImportResponse(
     importResult: DataImportResponse,
     instance: Instance
 ): SynchronizationResult {
-    const { status, importCount, conflicts = [] } = importResult;
+    const { status, importCount, response, conflicts = [] } = importResult;
     const messages = conflicts.map(({ object, value }) => ({ uid: object, message: value }));
+    const eventsStats = _.pick(response, ["imported", "deleted", "ignored", "updated", "total"]);
 
     return {
         status,
-        stats: importCount,
+        stats: importCount || eventsStats,
         instance: instance.toObject(),
         report: { messages },
         date: new Date(),
@@ -281,6 +282,7 @@ export async function postData(
                     idScheme: "UID",
                     dataElementIdScheme: "UID",
                     orgUnitIdScheme: "UID",
+                    eventIdScheme: "UID",
                     preheatCache: false,
                     skipExistingCheck: false,
                     format: "json",

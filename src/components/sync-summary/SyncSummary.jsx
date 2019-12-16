@@ -123,87 +123,85 @@ class SyncSummary extends React.Component {
 
         return (
             results.length > 0 && (
-                    <ConfirmationDialog
-                        isOpen={isOpen}
-                        title={i18n.t("Synchronization Results")}
-                        onSave={handleClose}
-                        saveText={i18n.t("Ok")}
-                        maxWidth={"lg"}
-                        fullWidth={true}
-                    >
-                        <DialogContent>
-                            {results.map(({ instance, status, report, stats }, i) => (
-                                <ExpansionPanel
-                                    defaultExpanded={results.length === 1}
-                                    className={classes.expansionPanel}
-                                    key={`row-${i}`}
-                                >
-                                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography className={classes.expansionPanelHeading1}>
-                                            {`${i18n.t("Destination instance")}: ${instance.name} (${instance.url})`}
-                                        </Typography>
-                                        <Typography className={classes.expansionPanelHeading2}>
-                                            {`${i18n.t("Status")}: ${status}`}
-                                        </Typography>
-                                    </ExpansionPanelSummary>
-
-                                    <ExpansionPanelDetails
-                                        className={classes.expansionPanelDetails}
-                                    >
-                                        <Typography variant="overline">
-                                            {i18n.t("Summary")}
-                                        </Typography>
-                                    </ExpansionPanelDetails>
-
-                                    {report && (
-                                        <ExpansionPanelDetails
-                                            className={classes.expansionPanelDetails}
-                                        >
-                                            {SyncSummary.buildSummaryTable([
-                                                ...(report.typeStats || []),
-                                                { type: i18n.t("Total"), ...stats },
-                                            ])}
-                                        </ExpansionPanelDetails>
-                                    )}
-
-                                    {report && report.messages.length > 0 && (
-                                        <div>
-                                            <ExpansionPanelDetails
-                                                className={classes.expansionPanelDetails}
-                                            >
-                                                <Typography variant="overline">
-                                                    {i18n.t("Messages")}
-                                                </Typography>
-                                            </ExpansionPanelDetails>
-                                            <ExpansionPanelDetails
-                                                className={classes.expansionPanelDetails}
-                                            >
-                                                {SyncSummary.buildMessageTable(
-                                                    _.take(report.messages, 10)
-                                                )}
-                                            </ExpansionPanelDetails>
-                                        </div>
-                                    )}
-                                </ExpansionPanel>
-                            ))}
-
-                            <ExpansionPanel>
+                <ConfirmationDialog
+                    isOpen={isOpen}
+                    title={i18n.t("Synchronization Results")}
+                    onSave={handleClose}
+                    saveText={i18n.t("Ok")}
+                    maxWidth={"lg"}
+                    fullWidth={true}
+                >
+                    <DialogContent>
+                        {results.map(({ instance, status, report, stats }, i) => (
+                            <ExpansionPanel
+                                defaultExpanded={results.length === 1}
+                                className={classes.expansionPanel}
+                                key={`row-${i}`}
+                            >
                                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                     <Typography className={classes.expansionPanelHeading1}>
-                                        {i18n.t("JSON Response")}
+                                        {`${i18n.t("Destination instance")}: ${instance.name} (${
+                                            instance.url
+                                        })`}
+                                    </Typography>
+                                    <Typography className={classes.expansionPanelHeading2}>
+                                        {`${i18n.t("Status")}: ${status}`}
                                     </Typography>
                                 </ExpansionPanelSummary>
 
-                                <ExpansionPanelDetails>
-                                    <ReactJson
-                                        src={{ ...response, results }}
-                                        collapsed={2}
-                                        enableClipboard={false}
-                                    />
+                                <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+                                    <Typography variant="overline">{i18n.t("Summary")}</Typography>
                                 </ExpansionPanelDetails>
+
+                                {report && (
+                                    <ExpansionPanelDetails
+                                        className={classes.expansionPanelDetails}
+                                    >
+                                        {SyncSummary.buildSummaryTable([
+                                            ...(report.typeStats || []),
+                                            { type: i18n.t("Total"), ...stats },
+                                        ])}
+                                    </ExpansionPanelDetails>
+                                )}
+
+                                {report && report.messages.length > 0 && (
+                                    <div>
+                                        <ExpansionPanelDetails
+                                            className={classes.expansionPanelDetails}
+                                        >
+                                            <Typography variant="overline">
+                                                {i18n.t("Messages")}
+                                            </Typography>
+                                        </ExpansionPanelDetails>
+                                        <ExpansionPanelDetails
+                                            className={classes.expansionPanelDetails}
+                                        >
+                                            {SyncSummary.buildMessageTable(
+                                                _.take(report.messages, 10)
+                                            )}
+                                        </ExpansionPanelDetails>
+                                    </div>
+                                )}
                             </ExpansionPanel>
-                        </DialogContent>
-                    </ConfirmationDialog>
+                        ))}
+
+                        <ExpansionPanel>
+                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography className={classes.expansionPanelHeading1}>
+                                    {i18n.t("JSON Response")}
+                                </Typography>
+                            </ExpansionPanelSummary>
+
+                            <ExpansionPanelDetails>
+                                <ReactJson
+                                    src={{ ...response, results }}
+                                    collapsed={2}
+                                    enableClipboard={false}
+                                />
+                            </ExpansionPanelDetails>
+                        </ExpansionPanel>
+                    </DialogContent>
+                </ConfirmationDialog>
             )
         );
     }

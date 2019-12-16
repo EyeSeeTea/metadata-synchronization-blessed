@@ -143,6 +143,7 @@ export interface DataImportResponse {
         object: string;
         value: string;
     }[];
+    response?: any;
 }
 
 export interface MetadataImportStats {
