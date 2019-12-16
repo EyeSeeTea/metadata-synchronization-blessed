@@ -138,7 +138,7 @@ export const eventsSteps: SyncWizardStep[] = [
         label: i18n.t("Programs"),
         component: MetadataSelectionStep,
         validationKeys: ["metadataIds"],
-        showOnSyncDialog: true,
+        showOnSyncDialog: false,
     },
     {
         key: "period",

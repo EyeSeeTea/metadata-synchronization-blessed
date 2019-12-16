@@ -34,7 +34,7 @@ const config = {
     },
     events: {
         models: [ProgramModel],
-        childrenKeys: ["programStages"],
+        childrenKeys: ["dataElements"],
     },
 };
 

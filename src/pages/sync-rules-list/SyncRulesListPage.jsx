@@ -1,6 +1,12 @@
 import i18n from "@dhis2/d2-i18n";
 import { ApiContext } from "d2-api";
-import { ConfirmationDialog, DatePicker, OldObjectsTable, withLoading, withSnackbar } from "d2-ui-components";
+import {
+    ConfirmationDialog,
+    DatePicker,
+    OldObjectsTable,
+    withLoading,
+    withSnackbar,
+} from "d2-ui-components";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
@@ -9,23 +15,35 @@ import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
 import SharingDialog from "../../components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
-import { startDataSynchronization, startMetadataSynchronization } from "../../logic/synchronization";
+import {
+    startAggregatedSynchronization,
+    startEventsSynchronization,
+    startMetadataSynchronization,
+} from "../../logic/synchronization";
 import Instance from "../../models/instance";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { getValueForCollection } from "../../utils/d2-ui-components";
-import { getUserInfo, isAppConfigurator, isAppExecutor, isGlobalAdmin } from "../../utils/permissions";
+import {
+    getUserInfo,
+    isAppConfigurator,
+    isAppExecutor,
+    isGlobalAdmin,
+} from "../../utils/permissions";
 import { getValidationMessages } from "../../utils/validations";
 
 const config = {
     metadata: {
         title: i18n.t("Metadata Synchronization Rules"),
+        action: startMetadataSynchronization,
     },
     aggregated: {
         title: i18n.t("Aggregated Synchronization Rules"),
+        action: startAggregatedSynchronization,
     },
     events: {
         title: i18n.t("Events Synchronization Rules"),
+        action: startEventsSynchronization,
     },
 };
 
@@ -189,9 +207,7 @@ class SyncRulesPage extends React.Component {
         const { api } = this.context;
 
         loading.show(true, i18n.t("Synchronizing metadata"));
-        const action = type === "metadata"
-                ? startMetadataSynchronization
-                : startDataSynchronization;
+        const { action } = config[type];
 
         try {
             for await (const { message, syncReport, done } of action(d2, api, {
@@ -280,6 +296,7 @@ class SyncRulesPage extends React.Component {
             multiple: false,
             isActive: this.verifyUserCanEdit,
             onClick: this.editRule,
+            isPrimary: true,
         },
         {
             name: "delete",

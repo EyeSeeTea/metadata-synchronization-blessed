@@ -21,10 +21,12 @@ import {
     cleanMetadataImportResponse,
     cleanObject,
     cleanReferences,
+    getAggregatedData,
     getAllReferences,
-    getData,
+    getEventsData,
     getMetadata,
-    postData,
+    postAggregatedData,
+    postEventsData,
     postMetadata,
 } from "../utils/synchronization";
 
@@ -156,7 +158,7 @@ export async function* startMetadataSynchronization(
     return syncReport;
 }
 
-export async function* startDataSynchronization(
+export async function* startAggregatedSynchronization(
     d2: D2,
     api: D2Api,
     builder: SynchronizationBuilder
@@ -165,7 +167,7 @@ export async function* startDataSynchronization(
     const { baseUrl } = d2.Api.getApi();
 
     // Phase 1: Obtain metadata related to builder ids
-    console.debug("Start data synchronization process");
+    console.debug("Start data (aggregated) synchronization process");
     yield { message: i18n.t("Fetching metadata from origin instance") };
     const metadataPackage = await getMetadata(
         baseUrl,
@@ -183,7 +185,7 @@ export async function* startDataSynchronization(
         dataElementGroups.map(({ id }: any) => id)
     );
     //@ts-ignore
-    const { dataValues: directDataValues = [] } = await getData(
+    const { dataValues: directDataValues = [] } = await getAggregatedData(
         api,
         dataParams,
         dataSetIds,
@@ -197,7 +199,7 @@ export async function* startDataSynchronization(
     yield { message: i18n.t("Fetching data from data elements") };
     const { dataElements = [] } = metadataPackage;
     //@ts-ignore
-    const { dataValues: candidateDataValues = [] } = await getData(
+    const { dataValues: candidateDataValues = [] } = await getAggregatedData(
         api,
         dataParams,
         dataElements.map(de => de.dataSetElements.map((dse: any) => dse.dataSet.id)),
@@ -238,7 +240,80 @@ export async function* startDataSynchronization(
             }),
         };
         console.debug("Start import on destination instance", instance.toObject());
-        const response = await postData(instance, { dataValues });
+        const response = await postAggregatedData(instance, { dataValues });
+
+        syncReport.addSyncResult(cleanDataImportResponse(response, instance));
+        console.debug("Finished importing data on instance", instance.toObject());
+        yield { syncReport };
+    }
+
+    // Phase 4: Update sync rule last executed date
+    if (syncRule) {
+        const oldRule = await SyncRule.get(d2, syncRule);
+        const updatedRule = oldRule.updateLastExecuted(new Date());
+        await updatedRule.save(d2);
+    }
+
+    // Phase 5: Update parent task status
+    syncReport.setStatus(syncReport.hasErrors() ? "FAILURE" : "DONE");
+    yield { syncReport, done: true };
+
+    return syncReport;
+}
+
+export async function* startEventsSynchronization(
+    d2: D2,
+    api: D2Api,
+    builder: SynchronizationBuilder
+): AsyncIterableIterator<SynchronizationState> {
+    const { metadataIds, targetInstances: targetInstanceIds, syncRule, dataParams = {} } = builder;
+    const { baseUrl } = d2.Api.getApi();
+
+    // Phase 1: Obtain metadata related to builder ids
+    console.debug("Start data (events) synchronization process");
+    yield { message: i18n.t("Fetching metadata from origin instance") };
+    const metadataPackage = await getMetadata(baseUrl, metadataIds, "id");
+    console.debug("Metadata package from origin instance done", metadataPackage);
+
+    // Phase 2: Retrieve events
+    yield { message: i18n.t("Fetching data from events") };
+    const { programs = [] } = metadataPackage;
+    const events = await getEventsData(
+        api,
+        dataParams,
+        programs.map(({ id }) => id)
+    );
+
+    // Phase 4: Import data into destination instances
+    yield { message: i18n.t("Retrieving information from remote instances") };
+    const targetInstances: Instance[] = await Promise.all(
+        targetInstanceIds.map(id => Instance.get(d2, id))
+    );
+
+    const syncReport = SyncReport.build({
+        user: d2.currentUser.username,
+        types: _.keys(metadataPackage),
+        status: "RUNNING" as SynchronizationReportStatus,
+        syncRule,
+        type: "aggregated",
+    });
+    syncReport.addSyncResult(
+        ...targetInstances.map(instance => ({
+            instance: instance.toObject(),
+            status: "PENDING" as DataImportStatus,
+            date: new Date(),
+        }))
+    );
+    yield { syncReport };
+
+    for (const instance of targetInstances) {
+        yield {
+            message: i18n.t("Importing data in instance {{instance}}", {
+                instance: instance.name,
+            }),
+        };
+        console.debug("Start import on destination instance", instance.toObject());
+        const response = await postEventsData(instance, { events });
 
         syncReport.addSyncResult(cleanDataImportResponse(response, instance));
         console.debug("Finished importing data on instance", instance.toObject());

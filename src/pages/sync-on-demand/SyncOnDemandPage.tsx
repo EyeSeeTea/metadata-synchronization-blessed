@@ -10,16 +10,17 @@ import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { startDelete } from "../../logic/delete";
 import {
-    startDataSynchronization,
+    startAggregatedSynchronization,
+    startEventsSynchronization,
     startMetadataSynchronization,
 } from "../../logic/synchronization";
 import {
     AggregatedDataElementModel,
+    D2Model,
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,
     ProgramModel,
-    D2Model,
 } from "../../models/d2Model";
 import { metadataModels } from "../../models/d2ModelFactory";
 import SyncReport from "../../models/syncReport";
@@ -39,12 +40,14 @@ const config: Record<
         title: string;
         models: typeof D2Model[];
         childrenKeys: string[] | undefined;
+        action: Function;
     }
 > = {
     metadata: {
         title: i18n.t("Metadata Synchronization"),
         models: metadataModels,
         childrenKeys: undefined,
+        action: startMetadataSynchronization,
     },
     aggregated: {
         title: i18n.t("Aggregated Synchronization"),
@@ -55,11 +58,13 @@ const config: Record<
             DataSetModel,
         ],
         childrenKeys: ["dataElements", "dataElementGroups"],
+        action: startAggregatedSynchronization,
     },
     events: {
         title: i18n.t("Events Synchronization"),
         models: [ProgramModel],
-        childrenKeys: ["programStages"],
+        childrenKeys: ["dataElements"],
+        action: startEventsSynchronization,
     },
 };
 
@@ -131,11 +136,7 @@ const SyncOnDemandPage: React.FC<GenericSynchronizationPageProps> = ({ isDelete,
     const handleSynchronization = async (syncRule: SyncRule) => {
         const { metadataIds, targetInstances, syncParams, dataParams } = syncRule;
 
-        const action = isDelete
-            ? startDelete
-            : syncRule.type === "metadata"
-            ? startMetadataSynchronization
-            : startDataSynchronization;
+        const action = isDelete ? startDelete : config[syncRule.type].action;
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
         try {

@@ -15,6 +15,7 @@ import {
     MetadataPackage,
     NestedRules,
     SynchronizationResult,
+    ProgramEvent,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
 import { cleanModelName, getClassName } from "./d2";
@@ -205,18 +206,13 @@ export function cleanDataImportResponse(
     };
 }
 
-export async function getData(
+export async function getAggregatedData(
     api: D2Api,
     params: DataSynchronizationParams,
     dataSet: string[] = [],
     dataElementGroup: string[] = []
 ) {
-    const {
-        startDate,
-        endDate,
-        orgUnitPaths = [],
-        includeChildrenOrgUnits: children = false,
-    } = params;
+    const { startDate, endDate, orgUnitPaths = [] } = params;
 
     if (dataSet.length === 0 && dataElementGroup.length === 0) return {};
 
@@ -233,13 +229,46 @@ export async function getData(
             dataSet,
             dataElementGroup,
             orgUnit,
-            children,
         })
         .getData();
 }
 
+export async function getEventsData(
+    api: D2Api,
+    params: DataSynchronizationParams,
+    programs: string[] = []
+) {
+    const { startDate, endDate, orgUnitPaths = [], events = [], allEvents } = params;
+
+    if (programs.length === 0) return [];
+
+    const orgUnits = _.compact(orgUnitPaths.map(path => _.last(path.split("/"))));
+
+    const result = [];
+
+    for (const program of programs) {
+        const { events: response } = (await api
+            .get("/events", {
+                paging: false,
+                program,
+                startDate: startDate ? moment(startDate).format("YYYY-MM-DD") : undefined,
+                endDate: endDate ? moment(endDate).format("YYYY-MM-DD") : undefined,
+            })
+            .getData()) as { events: (ProgramEvent & { event: string })[] };
+
+        result.push(...response);
+    }
+
+    return _(result)
+        .filter(({ orgUnit }) => orgUnits.includes(orgUnit))
+        .filter(({ event }) => (allEvents ? true : events.includes(event)))
+        .map(object => ({ ...object, id: object.event }))
+        .value();
+}
+
 export async function postData(
     instance: Instance,
+    endpoint: "/events" | "/dataValueSets",
     data: object,
     additionalParams?: DataImportParams
 ): Promise<any> {
@@ -247,14 +276,13 @@ export async function postData(
         const response = await instance
             .getApi()
             .post(
-                "/dataValueSets",
+                endpoint,
                 {
                     idScheme: "UID",
                     dataElementIdScheme: "UID",
                     orgUnitIdScheme: "UID",
                     preheatCache: false,
                     skipExistingCheck: false,
-                    strategy: "NEW_AND_UPDATES",
                     format: "json",
                     async: false,
                     dryRun: false,
@@ -274,4 +302,20 @@ export async function postData(
             return { status: "NETWORK ERROR" };
         }
     }
+}
+
+export async function postAggregatedData(
+    instance: Instance,
+    data: object,
+    additionalParams?: DataImportParams
+): Promise<any> {
+    return postData(instance, "/dataValueSets", data, additionalParams);
+}
+
+export async function postEventsData(
+    instance: Instance,
+    data: object,
+    additionalParams?: DataImportParams
+): Promise<any> {
+    return postData(instance, "/events", data, additionalParams);
 }

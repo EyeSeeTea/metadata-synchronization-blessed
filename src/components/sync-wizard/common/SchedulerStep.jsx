@@ -21,7 +21,7 @@ const SchedulerStep = ({ syncRule, onChange }) => {
         if (field === "enabled") {
             onChange(syncRule.updateEnabled(value));
         } else if (field === "frequency" || field === "frequencyDropdown") {
-            onChange(syncRule.updateFrequency(value || ""));
+            onChange(syncRule.updateFrequency(value || "").updateEnabled(true));
         }
     };
 

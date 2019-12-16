@@ -25,10 +25,10 @@ export interface SynchronizationParams extends MetadataImportParams {
 
 export interface DataSynchronizationParams extends DataImportParams {
     orgUnitPaths?: string[];
-    includeChildrenOrgUnits?: boolean;
     startDate?: Date;
     endDate?: Date;
     events?: string[];
+    allEvents?: boolean;
 }
 
 export interface ExportBuilder {
@@ -110,4 +110,17 @@ export interface SharingSetting {
     displayName: string;
     id: string;
     name: string;
+}
+
+export interface ProgramEvent {
+    id: string;
+    orgUnit: string;
+    orgUnitName: string;
+    program: string;
+    created: string;
+    lastUpdated: string;
+    status: string;
+    storedBy: string;
+    dueDate: string;
+    eventDate: string;
 }

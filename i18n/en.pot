@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-11T11:37:11.046Z\n"
-"PO-Revision-Date: 2019-12-11T11:37:11.046Z\n"
+"POT-Creation-Date: 2019-12-16T07:19:36.767Z\n"
+"PO-Revision-Date: 2019-12-16T07:19:36.767Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -308,6 +308,9 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
+msgid "Sync all events"
+msgstr ""
+
 msgid "UID"
 msgstr ""
 
@@ -345,6 +348,9 @@ msgid "Fetching data from data sets and data element groups"
 msgstr ""
 
 msgid "Fetching data from data elements"
+msgstr ""
+
+msgid "Fetching data from events"
 msgstr ""
 
 msgid "Not a valid DHIS2 instance"

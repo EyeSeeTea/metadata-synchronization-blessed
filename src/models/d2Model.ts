@@ -287,7 +287,7 @@ export class DataSetModel extends D2Model {
     protected static modelTransform = (
         objects: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]
     ) => {
-        return objects.map(({ dataSetElements = [], ...rest}) => ({
+        return objects.map(({ dataSetElements = [], ...rest }) => ({
             ...rest,
             dataElements: dataSetElements.map(({ dataElement }) => dataElement),
         }));
@@ -304,8 +304,17 @@ export class ProgramModel extends D2Model {
     ) => {
         return objects.map(object => ({
             ...object,
-            programStages:
-                object.programStages && object.programStages.length > 1 ? object.programStages : [],
+            dataElements: _.flatten(
+                object.programStages.map(({ displayName, programStageDataElements }) =>
+                    programStageDataElements.map(({ dataElement }) => ({
+                        ...dataElement,
+                        displayName:
+                            object.programStages.length > 1
+                                ? `[${displayName}] ${dataElement.displayName}`
+                                : dataElement.displayName,
+                    }))
+                )
+            ),
         }));
     };
 }

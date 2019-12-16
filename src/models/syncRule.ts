@@ -82,6 +82,10 @@ export default class SyncRule {
         return this.syncRule.builder.dataParams?.events ?? [];
     }
 
+    public get dataSyncAllEvents(): boolean {
+        return this.syncRule.builder.dataParams?.allEvents ?? false;
+    }
+
     public get targetInstances(): string[] {
         return this.syncRule.builder.targetInstances;
     }
@@ -314,6 +318,19 @@ export default class SyncRule {
         });
     }
 
+    public updateDataSyncAllEvents(allEvents?: boolean): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder.dataParams,
+                    allEvents,
+                },
+            },
+        });
+    }
+
     public updateTargetInstances(targetInstances: string[]): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
@@ -450,11 +467,13 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncEvents: _.compact([
-                this.type === "events" && this.dataSyncEvents.length === 0
+                this.type === "events" &&
+                !this.dataSyncAllEvents &&
+                this.dataSyncEvents.length === 0
                     ? {
-                        key: "cannot_be_empty",
-                        namespace: { element: "event" },
-                    }
+                          key: "cannot_be_empty",
+                          namespace: { element: "event" },
+                      }
                     : null,
             ]),
             targetInstances: _.compact([
