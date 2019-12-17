@@ -147,6 +147,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         notifyNewSelection([...selection, ...Array.from(ids)]);
     };
 
+    const addToSelection = (items: NamedRef[]) => {
+        const ids = items.map(({ id }) => id);
+        const oldSelection = _.difference(selection, ids);
+        const newSelection = _.difference(ids, selection);
+
+        notifyNewSelection([...oldSelection, ...newSelection]);
+    };
+
     const groupTypes = models.map(model => ({
         id: model.getMetadataType(),
         name: model.getD2Model(d2).displayName,
@@ -253,6 +261,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             isActive: () => {
                 return model.getMetadataType() === "organisationUnit";
             },
+        },
+        {
+            name: "select",
+            text: i18n.t("Select"),
+            primary: true,
+            multiple: true,
+            onClick: addToSelection,
+            isActive: () => false,
         },
     ];
 
