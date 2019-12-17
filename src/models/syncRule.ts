@@ -199,12 +199,12 @@ export default class SyncRule {
             lastExecutedFilter = null,
             type = "metadata",
         } = filters || {};
-        const { page = 1, pageSize = 20, paging = true } = pagination || {};
+        const { page = 1, pageSize = 20, paging = true, sorting } = pagination || {};
 
         const globalAdmin = await isGlobalAdmin(d2);
         const userInfo = await getUserInfo(d2);
 
-        const data = await getPaginatedData(d2, dataStoreKey, filters, { paging: false });
+        const data = await getPaginatedData(d2, dataStoreKey, filters, { paging: false, sorting });
         const filteredObjects = _(data.objects)
             .filter(data => {
                 const rule = SyncRule.build(data);

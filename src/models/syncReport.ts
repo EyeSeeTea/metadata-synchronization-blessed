@@ -59,14 +59,23 @@ export default class SyncReport {
         pagination: TablePagination
     ): Promise<TableList> {
         const { statusFilter, type } = filters;
-        const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
-        return {
-            ...data,
-            objects: _(data.objects)
-                .filter(e => (statusFilter ? e.status === statusFilter : true))
-                .filter(({ type: elementType = "metadata" }) => elementType === type)
-                .value(),
-        };
+        const { page = 1, pageSize = 20, paging = true, sorting } = pagination || {};
+
+        const data = await getPaginatedData(d2, dataStoreKey, filters, { paging: false, sorting });
+        const filteredObjects = _(data.objects)
+            .filter(e => (statusFilter ? e.status === statusFilter : true))
+            .filter(({ type: elementType = "metadata" }) => elementType === type)
+            .value();
+
+        const total = filteredObjects.length;
+        const pageCount = paging ? Math.ceil(filteredObjects.length / pageSize) : 1;
+        const firstItem = paging ? (page - 1) * pageSize : 0;
+        const lastItem = paging ? firstItem + pageSize : total;
+        const objects = _.slice(filteredObjects, firstItem, lastItem);
+
+        console.log(data.objects, objects);
+
+        return { objects, pager: { page, pageCount, total } };
     }
 
     public async save(d2: D2): Promise<void> {
