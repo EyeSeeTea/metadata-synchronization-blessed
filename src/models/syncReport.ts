@@ -73,8 +73,6 @@ export default class SyncReport {
         const lastItem = paging ? firstItem + pageSize : total;
         const objects = _.slice(filteredObjects, firstItem, lastItem);
 
-        console.log(data.objects, objects);
-
         return { objects, pager: { page, pageCount, total } };
     }
 
