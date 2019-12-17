@@ -202,7 +202,7 @@ class SyncRulesPage extends React.Component {
         history.push(`/sync-rules/${match.params.type}/edit/${rule.id}`);
     };
 
-    executeRule = async ({ builder, name, id, type }) => {
+    executeRule = async ({ builder, name, id, type = "metadata" }) => {
         const { d2, loading } = this.props;
         const { api } = this.context;
         const { action } = config[type];
