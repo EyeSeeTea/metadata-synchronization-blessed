@@ -295,7 +295,7 @@ export async function* startEventsSynchronization(
         types: _.keys(metadataPackage),
         status: "RUNNING" as SynchronizationReportStatus,
         syncRule,
-        type: "aggregated",
+        type: "events",
     });
     syncReport.addSyncResult(
         ...targetInstances.map(instance => ({

@@ -179,8 +179,8 @@ class HistoryPage extends React.Component {
 
     getSyncRuleName = id => {
         const { syncRules } = this.state;
-        const syncRule = syncRules.find(rule => rule.id === id) || {};
-        return syncRule.name;
+        const syncRule = _.find(syncRules, { id });
+        return syncRule?.name;
     };
 
     columns = [
@@ -220,9 +220,9 @@ class HistoryPage extends React.Component {
 
     async componentDidMount() {
         const { d2, match } = this.props;
-        const id = match.params.id;
+        const { id, type } = match.params;
 
-        const { objects: syncRules } = await SyncRule.list(d2, null, { paging: false });
+        const { objects: syncRules } = await SyncRule.list(d2, { type }, { paging: false });
         const syncReport = !!id ? await SyncReport.get(d2, id) : null;
 
         this.setState({
