@@ -53,10 +53,10 @@ const config: Record<
     aggregated: {
         title: i18n.t("Aggregated Synchronization"),
         models: [
+            DataSetModel,
             AggregatedDataElementModel,
             DataElementGroupModel,
             DataElementGroupSetModel,
-            DataSetModel,
         ],
         childrenKeys: ["dataElements", "dataElementGroups"],
         action: startAggregatedSynchronization,

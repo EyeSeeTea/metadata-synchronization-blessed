@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-16T10:58:48.243Z\n"
-"PO-Revision-Date: 2019-12-16T10:58:48.243Z\n"
+"POT-Creation-Date: 2019-12-17T09:55:31.520Z\n"
+"PO-Revision-Date: 2019-12-17T09:55:31.520Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -33,6 +33,9 @@ msgid "Details"
 msgstr ""
 
 msgid "Select with children subtree"
+msgstr ""
+
+msgid "Select"
 msgstr ""
 
 msgid "Name"
@@ -314,9 +317,6 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
-msgid "Sync all events"
-msgstr ""
-
 msgid "UID"
 msgstr ""
 
@@ -330,6 +330,9 @@ msgid "Stored by"
 msgstr ""
 
 msgid "Due date"
+msgstr ""
+
+msgid "Sync all events"
 msgstr ""
 
 msgid "Start date"

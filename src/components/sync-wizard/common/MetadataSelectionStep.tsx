@@ -25,10 +25,10 @@ const config = {
     },
     aggregated: {
         models: [
+            DataSetModel,
             AggregatedDataElementModel,
             DataElementGroupModel,
             DataElementGroupSetModel,
-            DataSetModel,
         ],
         childrenKeys: ["dataElements", "dataElementGroups"],
     },
