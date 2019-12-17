@@ -49,7 +49,9 @@ export default function Dropdown({ items, value, onChange, label, hideEmpty, emp
                         },
                     }}
                 >
-                    {!hideEmpty && <MenuItem value={""}>{emptyLabel || i18n.t("<No value>")}</MenuItem>}
+                    {!hideEmpty && (
+                        <MenuItem value={""}>{emptyLabel || i18n.t("<No value>")}</MenuItem>
+                    )}
                     {items.map((element, index) => (
                         <MenuItem key={`element-${index}`} value={element.id}>
                             {element.name}
