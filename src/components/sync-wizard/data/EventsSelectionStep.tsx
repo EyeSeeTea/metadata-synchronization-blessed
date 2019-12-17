@@ -15,7 +15,6 @@ interface EventsSelectionStepProps {
 
 export default function EventsSelectionStep({ syncRule, onChange }: EventsSelectionStepProps) {
     const api = useD2Api();
-    const [page, setPage] = useState(1);
     const [objects, setObjects] = useState<ProgramEvent[]>([]);
 
     useEffect(() => {
@@ -32,9 +31,8 @@ export default function EventsSelectionStep({ syncRule, onChange }: EventsSelect
     }, [api, syncRule]);
 
     const handleTableChange = (tableState: TableState<ProgramEvent>) => {
-        const { selection, pagination } = tableState;
+        const { selection } = tableState;
         onChange(syncRule.updateDataSyncEvents(selection));
-        setPage(pagination.page);
     };
 
     const updateSyncAll = (value: boolean) => {
@@ -50,7 +48,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: EventsSelect
             />
             {!syncRule.dataSyncAllEvents && (
                 <ObjectsTable<ProgramEvent>
-                    rows={objects.slice(10 * (page - 1), 10 * page)}
+                    rows={objects}
                     columns={[
                         { name: "id", text: i18n.t("UID"), sortable: true },
                         { name: "orgUnitName", text: i18n.t("Organisation unit"), sortable: true },
@@ -68,11 +66,11 @@ export default function EventsSelectionStep({ syncRule, onChange }: EventsSelect
                         { name: "dueDate", text: i18n.t("Due date") },
                     ]}
                     forceSelectionColumn={true}
-                    pagination={{
-                        total: objects.length,
-                        page,
-                        pageSize: 10,
-                        pageSizeOptions: [10],
+                    initialState={{
+                        pagination: {
+                            pageSizeOptions: [10],
+                            pageSize: 10,
+                        },
                     }}
                     onChange={handleTableChange}
                     selection={syncRule.dataSyncEvents ?? []}
