@@ -20,6 +20,7 @@ import {
 import "../utils/lodash-mixins";
 import { cleanModelName, getClassName } from "./d2";
 import moment from "moment";
+import memoize from "nano-memoize";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -234,12 +235,38 @@ export async function getAggregatedData(
         .getData();
 }
 
+export const getDefaultIds = memoize(
+    async (api: D2Api) => {
+        const response = (await api
+            .get("/metadata", {
+                filter: "code:eq:default",
+                fields: "id",
+            })
+            .getData()) as {
+            [key: string]: { id: string }[];
+        };
+
+        return _(response)
+            .omit(["system"])
+            .values()
+            .flatten()
+            .map(({ id }) => id)
+            .value();
+    },
+    { maxArgs: 0 }
+);
+
+export function cleanObjectDefault(object: ProgramEvent, defaults: string[]) {
+    return _.pickBy(object, value => !defaults.includes(value)) as ProgramEvent;
+}
+
 export async function getEventsData(
     api: D2Api,
     params: DataSynchronizationParams,
     programs: string[] = []
 ) {
     const { startDate, endDate, orgUnitPaths = [], events = [], allEvents } = params;
+    const defaults = await getDefaultIds(api);
 
     if (programs.length === 0) return [];
 
@@ -264,6 +291,7 @@ export async function getEventsData(
         .filter(({ orgUnit }) => orgUnits.includes(orgUnit))
         .filter(({ event }) => (allEvents ? true : events.includes(event)))
         .map(object => ({ ...object, id: object.event }))
+        .map(object => cleanObjectDefault(object, defaults))
         .value();
 }
 
