@@ -1,13 +1,13 @@
-import _ from "lodash";
+import i18n from "@dhis2/d2-i18n";
 import axios, { AxiosBasicCredentials } from "axios";
 import Cryptr from "cryptr";
-import i18n from "@dhis2/d2-i18n";
+import { D2Api, D2ApiDefault } from "d2-api";
 import { generateUid } from "d2/uid";
-
-import { deleteData, getData, getDataById, getPaginatedData, saveData } from "./dataStore";
+import _ from "lodash";
 import { D2, Response } from "../types/d2";
-import { Validation } from "../types/validations";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { Validation } from "../types/validations";
+import { deleteData, getData, getDataById, getPaginatedData, saveData } from "./dataStore";
 
 const instancesDataStoreKey = "instances";
 
@@ -26,9 +26,12 @@ export default class Instance {
     private static encryptionKey: string;
 
     private readonly data: Data;
+    private readonly api: D2Api;
 
     constructor(data: Data) {
         this.data = _.pick(data, ["id", "name", "url", "username", "password", "description"]);
+        const { url: baseUrl, username, password } = data;
+        this.api = new D2ApiDefault({ baseUrl, auth: { username, password } });
     }
 
     public get id(): string {
@@ -61,6 +64,10 @@ export default class Instance {
 
     public get auth(): AxiosBasicCredentials {
         return { username: this.data.username, password: this.data.password };
+    }
+
+    public getApi(): D2Api {
+        return this.api;
     }
 
     public static setEncryptionKey(encryptionKey: string): void {

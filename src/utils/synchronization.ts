@@ -1,12 +1,26 @@
 import axios, { AxiosBasicCredentials } from "axios";
-import _ from "lodash";
-import "../utils/lodash-mixins";
-
-import Instance from "../models/instance";
-import { D2, MetadataImportParams, MetadataImportResponse } from "../types/d2";
-import { MetadataPackage, NestedRules, SynchronizationResult } from "../types/synchronization";
-import { cleanModelName, getClassName } from "./d2";
+import { D2Api } from "d2-api";
 import { isValidUid } from "d2/uid";
+import _ from "lodash";
+import Instance from "../models/instance";
+import {
+    D2,
+    MetadataImportParams,
+    MetadataImportResponse,
+    DataImportParams,
+    DataImportResponse,
+} from "../types/d2";
+import {
+    DataSynchronizationParams,
+    MetadataPackage,
+    NestedRules,
+    SynchronizationResult,
+    ProgramEvent,
+} from "../types/synchronization";
+import "../utils/lodash-mixins";
+import { cleanModelName, getClassName } from "./d2";
+import moment from "moment";
+import memoize from "nano-memoize";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -138,41 +152,200 @@ export function getAllReferences(
     return result;
 }
 
-export function cleanImportResponse(
+export function cleanMetadataImportResponse(
     importResult: MetadataImportResponse,
     instance: Instance
 ): SynchronizationResult {
+    const { status, stats, typeReports = [] } = importResult;
     const typeStats: any[] = [];
     const messages: any[] = [];
 
-    if (importResult.typeReports) {
-        importResult.typeReports.forEach(report => {
-            const { klass, stats, objectReports = [] } = report;
+    typeReports.forEach(report => {
+        const { klass, stats, objectReports = [] } = report;
 
-            typeStats.push({
-                ...stats,
-                type: getClassName(klass),
-            });
-
-            objectReports.forEach((detail: any) => {
-                const { uid, errorReports = [] } = detail;
-
-                messages.push(
-                    ..._.take(errorReports, 1).map((error: any) => ({
-                        uid,
-                        type: getClassName(error.mainKlass),
-                        property: error.errorProperty,
-                        message: error.message,
-                    }))
-                );
-            });
+        typeStats.push({
+            ...stats,
+            type: getClassName(klass),
         });
-    }
+
+        objectReports.forEach((detail: any) => {
+            const { uid, errorReports = [] } = detail;
+
+            messages.push(
+                ..._.take(errorReports, 1).map((error: any) => ({
+                    uid,
+                    type: getClassName(error.mainKlass),
+                    property: error.errorProperty,
+                    message: error.message,
+                }))
+            );
+        });
+    });
 
     return {
-        ..._.pick(importResult, ["status", "stats"]),
-        instance: _.pick(instance, ["id", "name", "url", "username"]),
+        status,
+        stats,
+        instance: instance.toObject(),
         report: { typeStats, messages },
         date: new Date(),
     };
+}
+
+export function cleanDataImportResponse(
+    importResult: DataImportResponse,
+    instance: Instance
+): SynchronizationResult {
+    const { status, importCount, response, conflicts = [] } = importResult;
+    const messages = conflicts.map(({ object, value }) => ({ uid: object, message: value }));
+    const eventsStats = _.pick(response, ["imported", "deleted", "ignored", "updated", "total"]);
+
+    return {
+        status,
+        stats: importCount || eventsStats,
+        instance: instance.toObject(),
+        report: { messages },
+        date: new Date(),
+    };
+}
+
+export async function getAggregatedData(
+    api: D2Api,
+    params: DataSynchronizationParams,
+    dataSet: string[] = [],
+    dataElementGroup: string[] = []
+) {
+    const { startDate, endDate, orgUnitPaths = [] } = params;
+
+    if (dataSet.length === 0 && dataElementGroup.length === 0) return {};
+
+    const orgUnit = _.compact(orgUnitPaths.map(path => _.last(path.split("/"))));
+
+    return api
+        .get("/dataValueSets", {
+            dataElementIdScheme: "UID",
+            orgUnitIdScheme: "UID",
+            categoryOptionComboIdScheme: "UID",
+            includeDeleted: false,
+            startDate: moment(startDate).format("YYYY-MM-DD"),
+            endDate: moment(endDate).format("YYYY-MM-DD"),
+            dataSet,
+            dataElementGroup,
+            orgUnit,
+        })
+        .getData();
+}
+
+export const getDefaultIds = memoize(
+    async (api: D2Api) => {
+        const response = (await api
+            .get("/metadata", {
+                filter: "code:eq:default",
+                fields: "id",
+            })
+            .getData()) as {
+            [key: string]: { id: string }[];
+        };
+
+        return _(response)
+            .omit(["system"])
+            .values()
+            .flatten()
+            .map(({ id }) => id)
+            .value();
+    },
+    { maxArgs: 0 }
+);
+
+export function cleanObjectDefault(object: ProgramEvent, defaults: string[]) {
+    return _.pickBy(object, value => !defaults.includes(value)) as ProgramEvent;
+}
+
+export async function getEventsData(
+    api: D2Api,
+    params: DataSynchronizationParams,
+    programs: string[] = []
+) {
+    const { startDate, endDate, orgUnitPaths = [], events = [], allEvents } = params;
+    const defaults = await getDefaultIds(api);
+
+    if (programs.length === 0) return [];
+
+    const orgUnits = _.compact(orgUnitPaths.map(path => _.last(path.split("/"))));
+
+    const result = [];
+
+    for (const program of programs) {
+        const { events: response } = (await api
+            .get("/events", {
+                paging: false,
+                program,
+                startDate: startDate ? moment(startDate).format("YYYY-MM-DD") : undefined,
+                endDate: endDate ? moment(endDate).format("YYYY-MM-DD") : undefined,
+            })
+            .getData()) as { events: (ProgramEvent & { event: string })[] };
+
+        result.push(...response);
+    }
+
+    return _(result)
+        .filter(({ orgUnit }) => orgUnits.includes(orgUnit))
+        .filter(({ event }) => (allEvents ? true : events.includes(event)))
+        .map(object => ({ ...object, id: object.event }))
+        .map(object => cleanObjectDefault(object, defaults))
+        .value();
+}
+
+export async function postData(
+    instance: Instance,
+    endpoint: "/events" | "/dataValueSets",
+    data: object,
+    additionalParams?: DataImportParams
+): Promise<any> {
+    try {
+        const response = await instance
+            .getApi()
+            .post(
+                endpoint,
+                {
+                    idScheme: "UID",
+                    dataElementIdScheme: "UID",
+                    orgUnitIdScheme: "UID",
+                    eventIdScheme: "UID",
+                    preheatCache: false,
+                    skipExistingCheck: false,
+                    format: "json",
+                    async: false,
+                    dryRun: false,
+                    ...additionalParams,
+                },
+                data
+            )
+            .getData();
+
+        return response;
+    } catch (error) {
+        if (error.response) {
+            console.log("DEBUG", error);
+            return error.response;
+        } else {
+            console.error(error);
+            return { status: "NETWORK ERROR" };
+        }
+    }
+}
+
+export async function postAggregatedData(
+    instance: Instance,
+    data: object,
+    additionalParams?: DataImportParams
+): Promise<any> {
+    return postData(instance, "/dataValueSets", data, _.pick(additionalParams, ["strategy"]));
+}
+
+export async function postEventsData(
+    instance: Instance,
+    data: object,
+    additionalParams?: DataImportParams
+): Promise<any> {
+    return postData(instance, "/events", data, _.pick(additionalParams, []));
 }

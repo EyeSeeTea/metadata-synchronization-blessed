@@ -24,10 +24,6 @@ const InstanceSelectionStep = props => {
         onChange(syncRule.updateTargetInstances(instances));
     };
 
-    const changeSyncParams = syncParams => {
-        onChange(syncRule.updateSyncParams(syncParams));
-    };
-
     useEffect(() => {
         getInstances(d2).then(setInstanceOptions);
     }, [d2]);
@@ -41,12 +37,8 @@ const InstanceSelectionStep = props => {
                 options={instanceOptions}
                 selected={selectedOptions}
             />
-            {syncRule.type === "metadata" && (
-                <SyncParamsSelector
-                    defaultParams={syncRule.syncParams}
-                    onChange={changeSyncParams}
-                />
-            )}
+
+            <SyncParamsSelector syncRule={syncRule} onChange={onChange} />
         </React.Fragment>
     );
 };

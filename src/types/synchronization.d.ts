@@ -5,6 +5,9 @@ import {
     MetadataImportStats,
     MetadataImportParams,
     DataImportParams,
+    DataImportResponse,
+    MetadataImportStatus,
+    DataImportStatus,
 } from "./d2";
 import SyncReport from "../models/syncReport";
 
@@ -12,19 +15,23 @@ export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
     syncRule?: string;
-    syncParams?: SynchronizationParams;
+    syncParams?: MetadataSynchronizationParams;
     dataParams?: DataSynchronizationParams;
 }
 
-export interface SynchronizationParams extends MetadataImportParams {
+export interface MetadataSynchronizationParams extends MetadataImportParams {
     includeSharingSettings?: boolean;
 }
 
 export interface DataSynchronizationParams extends DataImportParams {
-    organisationUnits?: string[];
-    startDate?: Date | null;
-    endDate?: Date | null;
+    orgUnitPaths?: string[];
+    startDate?: Date;
+    endDate?: Date;
+    events?: string[];
+    allEvents?: boolean;
 }
+
+export type SynchronizationParams = MetadataSynchronizationParams | DataSynchronizationParams;
 
 export interface ExportBuilder {
     type: string;
@@ -38,14 +45,16 @@ export interface MetadataPackage {
     [metadataType: string]: any[];
 }
 
-export interface SynchronizationResult extends MetadataImportResponse {
+export interface SynchronizationResult {
+    status: MetadataImportStatus | DataImportStatus;
     instance: {
         id: string;
         name?: string;
         url?: string;
     };
+    stats?: MetadataImportStats | DataImportStats;
     report?: {
-        typeStats: MetadataImportStats[];
+        typeStats?: MetadataImportStats[];
         messages: any[];
     };
     date: Date;
@@ -60,6 +69,7 @@ export interface SynchronizationReport {
     status: SynchronizationReportStatus;
     types: string[];
     syncRule?: string;
+    type: SyncRuleType;
 }
 
 export interface NestedRules {
@@ -95,11 +105,24 @@ export interface SynchronizationRule {
     type: SyncRuleType;
 }
 
-export type SyncRuleType = "data" | "metadata";
+export type SyncRuleType = "metadata" | "aggregated" | "events";
 
 export interface SharingSetting {
     access: string;
     displayName: string;
     id: string;
     name: string;
+}
+
+export interface ProgramEvent {
+    id: string;
+    orgUnit: string;
+    orgUnitName: string;
+    program: string;
+    created: string;
+    lastUpdated: string;
+    status: string;
+    storedBy: string;
+    dueDate: string;
+    eventDate: string;
 }

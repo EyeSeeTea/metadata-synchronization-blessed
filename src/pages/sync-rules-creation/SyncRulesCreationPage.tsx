@@ -7,26 +7,23 @@ import SyncWizard from "../../components/sync-wizard/SyncWizard";
 import i18n from "../../locales";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
+import { SyncRuleType } from "../../types/synchronization";
 
-interface SyncRulesCreationProps {}
-
-const SyncRulesCreation: React.FC<SyncRulesCreationProps> = () => {
+const SyncRulesCreation: React.FC = () => {
     const history = useHistory();
     const { id, action, type } = useParams();
     const d2 = useD2();
     const [dialogOpen, updateDialogOpen] = useState(false);
-    const [syncRule, updateSyncRule] = useState(
-        SyncRule.create(type as "data" | "metadata" | undefined)
-    );
+    const [syncRule, updateSyncRule] = useState(SyncRule.create(type as SyncRuleType | undefined));
     const isEdit = action === "edit" && !!id;
 
     const title = !isEdit
-        ? i18n.t(`New synchronization rule`)
-        : i18n.t(`Edit synchronization rule`);
+        ? i18n.t(`New {{type}} synchronization rule`, { type })
+        : i18n.t(`Edit {{type}} synchronization rule`, { type });
 
     const cancel = !isEdit
-        ? i18n.t(`Cancel synchronization rule creation`)
-        : i18n.t(`Cancel synchronization rule editing`);
+        ? i18n.t(`Cancel {{type}} synchronization rule creation`, { type })
+        : i18n.t(`Cancel {{type}} synchronization rule editing`, { type });
 
     const closeDialog = () => updateDialogOpen(false);
     const openDialog = () => updateDialogOpen(true);

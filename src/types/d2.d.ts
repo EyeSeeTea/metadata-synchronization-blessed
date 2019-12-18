@@ -123,6 +123,7 @@ export interface DataImportParams {
 }
 
 export type MetadataImportStatus = "PENDING" | "OK" | "WARNING" | "ERROR" | "NETWORK ERROR";
+export type DataImportStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
 
 export interface MetadataImportResponse {
     status: MetadataImportStatus;
@@ -131,10 +132,31 @@ export interface MetadataImportResponse {
     stats?: MetadataImportStats;
 }
 
+export interface DataImportResponse {
+    status: DataImportStatus;
+    dataSetComplete?: string;
+    description?: string;
+    importCount?: DataImportStats;
+    importOptions?: DataImportParams;
+    responseType?: "ImportSummary";
+    conflicts?: {
+        object: string;
+        value: string;
+    }[];
+    response?: any;
+}
+
 export interface MetadataImportStats {
     created: number;
     deleted: number;
     ignored: number;
     updated: number;
     total: number;
+}
+
+export interface DataImportStats {
+    imported: number;
+    updated: number;
+    ignored: number;
+    deleted: number;
 }

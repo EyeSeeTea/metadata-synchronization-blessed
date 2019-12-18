@@ -12,6 +12,18 @@ import SyncRule from "../../models/syncRule";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { getValueForCollection } from "../../utils/d2-ui-components";
 
+const config = {
+    metadata: {
+        title: i18n.t("Metadata Synchronization History"),
+    },
+    aggregated: {
+        title: i18n.t("Aggregated Synchronization History"),
+    },
+    events: {
+        title: i18n.t("Events Synchronization History"),
+    },
+};
+
 class HistoryPage extends React.Component {
     static propTypes = {
         d2: PropTypes.object.isRequired,
@@ -167,12 +179,17 @@ class HistoryPage extends React.Component {
 
     getSyncRuleName = id => {
         const { syncRules } = this.state;
-        const syncRule = syncRules.find(rule => rule.id === id) || {};
-        return syncRule.name;
+        const syncRule = _.find(syncRules, { id });
+        return syncRule?.name;
     };
 
     columns = [
-        { name: "user", text: i18n.t("User"), sortable: true },
+        {
+            name: "syncRule",
+            text: i18n.t("Sync Rule"),
+            sortable: true,
+            getValue: ({ syncRule }) => this.getSyncRuleName(syncRule),
+        },
         { name: "date", text: i18n.t("Timestamp"), sortable: true },
         {
             name: "status",
@@ -180,12 +197,7 @@ class HistoryPage extends React.Component {
             sortable: true,
             getValue: notification => _.startCase(_.toLower(notification.status)),
         },
-        {
-            name: "syncRule",
-            text: i18n.t("Sync Rule"),
-            sortable: true,
-            getValue: ({ syncRule }) => this.getSyncRuleName(syncRule),
-        },
+        { name: "user", text: i18n.t("User"), sortable: true },
     ];
 
     changeStatusFilter = event => {
@@ -208,9 +220,9 @@ class HistoryPage extends React.Component {
 
     async componentDidMount() {
         const { d2, match } = this.props;
-        const id = match.params.id;
+        const { id, type } = match.params;
 
-        const { objects: syncRules } = await SyncRule.list(d2, null, { paging: false });
+        const { objects: syncRules } = await SyncRule.list(d2, { type }, { paging: false });
         const syncReport = !!id ? await SyncReport.get(d2, id) : null;
 
         this.setState({
@@ -222,11 +234,13 @@ class HistoryPage extends React.Component {
 
     render() {
         const { tableKey, toDelete, syncReport, summaryOpen, statusFilter } = this.state;
-        const { d2 } = this.props;
+        const { d2, match } = this.props;
+        const { type } = match.params;
+        const { title } = config[type];
 
         return (
             <React.Fragment>
-                <PageHeader title={i18n.t("Synchronization History")} onBackClick={this.backHome} />
+                <PageHeader title={title} onBackClick={this.backHome} />
                 <OldObjectsTable
                     key={tableKey}
                     d2={d2}
@@ -239,7 +253,7 @@ class HistoryPage extends React.Component {
                     list={SyncReport.list}
                     hideSearchBox={true}
                     customFiltersComponent={this.renderCustomFilters}
-                    customFilters={{ statusFilter }}
+                    customFilters={{ statusFilter, type }}
                 />
 
                 <SyncSummary

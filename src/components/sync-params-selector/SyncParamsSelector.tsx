@@ -1,20 +1,14 @@
-import React, { useState } from "react";
-import { Typography, withStyles } from "@material-ui/core";
 import i18n from "@dhis2/d2-i18n";
-
-import { SynchronizationParams } from "../../types/synchronization";
+import { Typography, withStyles } from "@material-ui/core";
+import React from "react";
+import SyncRule from "../../models/syncRule";
+import RadioButtonGroup from "../radio-button-group/RadioButtonGroup";
 import { Toggle } from "../toggle/Toggle";
 
 interface Props {
-    defaultParams: SynchronizationParams;
-    onChange(newParams: SynchronizationParams): void;
+    syncRule: SyncRule;
+    onChange(newParams: SyncRule): void;
     classes: any;
-}
-
-interface PseudoEvent {
-    target: {
-        value: boolean;
-    };
 }
 
 const styles = () => ({
@@ -25,40 +19,54 @@ const styles = () => ({
 });
 
 const SyncParamsSelector = (props: Props) => {
-    const { defaultParams, onChange, classes } = props;
-    const [syncParams, updateSyncParams] = useState<SynchronizationParams>(defaultParams);
+    const { syncRule, onChange, classes } = props;
+    const { syncParams, dataParams } = syncRule;
 
-    const changeSharingSettings = (event: PseudoEvent) => {
-        const { value } = event.target;
-        const newParams: SynchronizationParams = {
-            ...syncParams,
-            includeSharingSettings: value,
-        };
+    if (syncRule.type === "events") return null;
 
-        updateSyncParams(newParams);
-        onChange(newParams);
+    const changeSharingSettings = (includeSharingSettings: boolean) => {
+        onChange(
+            syncRule.updateSyncParams({
+                ...syncParams,
+                includeSharingSettings,
+            })
+        );
     };
 
-    const changeAtomic = (event: PseudoEvent) => {
-        const { value } = event.target;
-        const newParams: SynchronizationParams = {
-            ...syncParams,
-            atomicMode: value ? "NONE" : "ALL",
-        };
-
-        updateSyncParams(newParams);
-        onChange(newParams);
+    const changeAtomic = (value: boolean) => {
+        onChange(
+            syncRule.updateSyncParams({
+                ...syncParams,
+                atomicMode: value ? "NONE" : "ALL",
+            })
+        );
     };
 
-    const changeReplace = (event: PseudoEvent) => {
-        const { value } = event.target;
-        const newParams: SynchronizationParams = {
-            ...syncParams,
-            mergeMode: value ? "REPLACE" : "MERGE",
-        };
+    const changeReplace = (value: boolean) => {
+        onChange(
+            syncRule.updateSyncParams({
+                ...syncParams,
+                mergeMode: value ? "REPLACE" : "MERGE",
+            })
+        );
+    };
 
-        updateSyncParams(newParams);
-        onChange(newParams);
+    const changeMetadataStrategy = (importStrategy: string) => {
+        onChange(
+            syncRule.updateSyncParams({
+                ...syncParams,
+                importStrategy: importStrategy as "CREATE_AND_UPDATE" | "CREATE" | "UPDATE",
+            })
+        );
+    };
+
+    const changeAggregatedStrategy = (strategy: string) => {
+        onChange(
+            syncRule.updateDataParams({
+                ...dataParams,
+                strategy: strategy as "NEW_AND_UPDATES" | "NEW" | "UPDATES",
+            })
+        );
     };
 
     return (
@@ -66,28 +74,60 @@ const SyncParamsSelector = (props: Props) => {
             <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
                 {i18n.t("Advanced options")}
             </Typography>
-            <div>
-                <Toggle
-                    label={i18n.t("Include user information and sharing settings")}
-                    onChange={changeSharingSettings}
-                    value={!!syncParams.includeSharingSettings}
-                />
-            </div>
 
-            <div>
-                <Toggle
-                    label={i18n.t("Disable atomic verification")}
-                    onChange={changeAtomic}
-                    value={syncParams.atomicMode === "NONE"}
+            {syncRule.type === "metadata" && (
+                <RadioButtonGroup
+                    value={syncParams.importStrategy || "CREATE_AND_UPDATE"}
+                    items={[
+                        { id: "CREATE_AND_UPDATE", name: "Create and update" },
+                        { id: "CREATE", name: "Create" },
+                        { id: "UPDATE", name: "Update" },
+                    ]}
+                    onValueChange={changeMetadataStrategy}
                 />
-            </div>
-            <div>
-                <Toggle
-                    label={i18n.t("Replace objects in destination instance")}
-                    onChange={changeReplace}
-                    value={syncParams.mergeMode === "REPLACE"}
+            )}
+
+            {syncRule.type === "metadata" && (
+                <div>
+                    <Toggle
+                        label={i18n.t("Include user information and sharing settings")}
+                        onValueChange={changeSharingSettings}
+                        value={!!syncParams.includeSharingSettings}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "metadata" && (
+                <div>
+                    <Toggle
+                        label={i18n.t("Disable atomic verification")}
+                        onValueChange={changeAtomic}
+                        value={syncParams.atomicMode === "NONE"}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "metadata" && (
+                <div>
+                    <Toggle
+                        label={i18n.t("Replace objects in destination instance")}
+                        onValueChange={changeReplace}
+                        value={syncParams.mergeMode === "REPLACE"}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "aggregated" && (
+                <RadioButtonGroup
+                    value={dataParams.strategy || "NEW_AND_UPDATES"}
+                    items={[
+                        { id: "NEW_AND_UPDATES", name: "New and updates" },
+                        { id: "NEW", name: "New" },
+                        { id: "UPDATES", name: "Updates" },
+                    ]}
+                    onValueChange={changeAggregatedStrategy}
                 />
-            </div>
+            )}
         </React.Fragment>
     );
 };

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-11-26T08:12:56.548Z\n"
-"PO-Revision-Date: 2019-11-26T08:12:56.548Z\n"
+"POT-Creation-Date: 2019-12-17T09:55:31.520Z\n"
+"PO-Revision-Date: 2019-12-17T09:55:31.520Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -14,25 +14,7 @@ msgstr ""
 msgid "<No value>"
 msgstr ""
 
-msgid "Name"
-msgstr ""
-
-msgid "Metadata Type"
-msgstr ""
-
-msgid "Last update"
-msgstr ""
-
-msgid "Details"
-msgstr ""
-
-msgid "Select with children subtree"
-msgstr ""
-
 msgid "Metadata type"
-msgstr ""
-
-msgid "Deleted date"
 msgstr ""
 
 msgid "Last updated date"
@@ -45,6 +27,27 @@ msgid "{{displayName}} Level"
 msgstr ""
 
 msgid "Only selected items"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Select with children subtree"
+msgstr ""
+
+msgid "Select"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Metadata Type"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Deleted date"
 msgstr ""
 
 msgid "Help"
@@ -146,6 +149,9 @@ msgstr ""
 msgid "Ok"
 msgstr ""
 
+msgid "Destination instance"
+msgstr ""
+
 msgid "Status"
 msgstr ""
 
@@ -231,6 +237,12 @@ msgstr ""
 msgid "Category options"
 msgstr ""
 
+msgid "Programs"
+msgstr ""
+
+msgid "Events"
+msgstr ""
+
 msgid "Field cannot be blank"
 msgstr ""
 
@@ -238,6 +250,12 @@ msgid "Code"
 msgstr ""
 
 msgid "Description"
+msgstr ""
+
+msgid "Selected {{difference}} elements"
+msgstr ""
+
+msgid "Removed {{difference}} elements"
 msgstr ""
 
 msgid "Cancel synchronization rule wizard"
@@ -272,19 +290,19 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-msgid "Every hour"
+msgid "Every day"
 msgstr ""
 
-msgid "Every day at midnight"
+msgid "Every month"
 msgstr ""
 
-msgid "Every day at 3 AM"
+msgid "Every three months"
 msgstr ""
 
-msgid "Every day at noon"
+msgid "Every six months"
 msgstr ""
 
-msgid "Every week"
+msgid "Every year"
 msgstr ""
 
 msgid "Select frequency"
@@ -299,16 +317,28 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
-msgid "Start date (*)"
+msgid "UID"
 msgstr ""
 
-msgid "End date (*)"
+msgid "Organisation unit"
 msgstr ""
 
-msgid "Selected {{difference}} elements"
+msgid "Last updated"
 msgstr ""
 
-msgid "Removed {{difference}} elements"
+msgid "Stored by"
+msgstr ""
+
+msgid "Due date"
+msgstr ""
+
+msgid "Sync all events"
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "End date"
 msgstr ""
 
 msgid "Retrieving information from remote instances"
@@ -321,6 +351,15 @@ msgid "Fetching metadata from origin instance"
 msgstr ""
 
 msgid "Importing data in instance {{instance}}"
+msgstr ""
+
+msgid "Fetching data from data sets and data element groups"
+msgstr ""
+
+msgid "Fetching data from data elements"
+msgstr ""
+
+msgid "Fetching data from events"
 msgstr ""
 
 msgid "Not a valid DHIS2 instance"
@@ -339,6 +378,15 @@ msgid "Network error {{error}}, check if server is up and CORS is enabled"
 msgstr ""
 
 msgid "Metadata Synchronization"
+msgstr ""
+
+msgid "Metadata Synchronization History"
+msgstr ""
+
+msgid "Aggregated Synchronization History"
+msgstr ""
+
+msgid "Events Synchronization History"
 msgstr ""
 
 msgid "Ready"
@@ -383,9 +431,6 @@ msgid "Sync Rule"
 msgstr ""
 
 msgid "Synchronization status"
-msgstr ""
-
-msgid "Synchronization History"
 msgstr ""
 
 msgid "Delete History Notifications?"
@@ -466,13 +511,19 @@ msgstr[1] ""
 msgid "Instance Configuration"
 msgstr ""
 
-msgid "Data Synchronization"
+msgid "Aggregated Synchronization"
+msgstr ""
+
+msgid "Events Synchronization"
 msgstr ""
 
 msgid "Metadata Synchronization Rules"
 msgstr ""
 
-msgid "Data Synchronization Rules"
+msgid "Aggregated Synchronization Rules"
+msgstr ""
+
+msgid "Events Synchronization Rules"
 msgstr ""
 
 msgid "Deleted objects"
@@ -484,27 +535,6 @@ msgstr ""
 msgid "Deleted Objects Synchronization"
 msgstr ""
 
-msgid "Last updated"
-msgstr ""
-
-msgid "UID"
-msgstr ""
-
-msgid "Short name"
-msgstr ""
-
-msgid "ID"
-msgstr ""
-
-msgid "API link"
-msgstr ""
-
-msgid "Data synchronization"
-msgstr ""
-
-msgid "Group by metadata type"
-msgstr ""
-
 msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
@@ -514,16 +544,16 @@ msgstr ""
 msgid "Synchronizing metadata"
 msgstr ""
 
-msgid "New synchronization rule"
+msgid "New {{type}} synchronization rule"
 msgstr ""
 
-msgid "Edit synchronization rule"
+msgid "Edit {{type}} synchronization rule"
 msgstr ""
 
-msgid "Cancel synchronization rule creation"
+msgid "Cancel {{type}} synchronization rule creation"
 msgstr ""
 
-msgid "Cancel synchronization rule editing"
+msgid "Cancel {{type}} synchronization rule editing"
 msgstr ""
 
 msgid "Destination instances"
@@ -570,6 +600,15 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Level"
+msgstr ""
+
+msgid "Short name"
+msgstr ""
+
+msgid "ID"
+msgstr ""
+
+msgid "API link"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"

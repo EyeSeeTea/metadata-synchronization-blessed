@@ -5,9 +5,9 @@ import { withSnackbar, withLoading } from "d2-ui-components";
 import SyncIcon from "@material-ui/icons/Sync";
 import { withRouter } from "react-router-dom";
 
-import { startSynchronization } from "../../logic/synchronization";
+import { startMetadataSynchronization } from "../../logic/synchronization";
 import { startDelete } from "../../logic/delete";
-import MetadataTable from "../../components/metadata-table/MetadataTable";
+import MetadataTable from "../../components/old-metadata-table/OldMetadataTable";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import PageHeader from "../../components/page-header/PageHeader";
@@ -89,7 +89,7 @@ class GenericSynchronizationPage extends React.Component {
         const { isDelete, loading, d2 } = this.props;
         const { metadataIds } = this.state.syncRule;
 
-        const action = isDelete ? startDelete : startSynchronization;
+        const action = isDelete ? startDelete : startMetadataSynchronization;
         loading.show(true, i18n.t("Synchronizing metadata"));
 
         try {

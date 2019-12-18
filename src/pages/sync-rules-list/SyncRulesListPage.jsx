@@ -1,7 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
-import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
+import { ApiContext } from "d2-api";
 import {
     ConfirmationDialog,
     DatePicker,
@@ -9,26 +7,48 @@ import {
     withLoading,
     withSnackbar,
 } from "d2-ui-components";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 import { withRouter } from "react-router-dom";
-
-import PageHeader from "../../components/page-header/PageHeader";
-import SyncRule from "../../models/syncRule";
-import Instance from "../../models/instance";
-import { getValueForCollection } from "../../utils/d2-ui-components";
-import { startSynchronization } from "../../logic/synchronization";
-import SyncReport from "../../models/syncReport";
-import SyncSummary from "../../components/sync-summary/SyncSummary";
 import Dropdown from "../../components/dropdown/Dropdown";
+import PageHeader from "../../components/page-header/PageHeader";
 import SharingDialog from "../../components/sharing-dialog/SharingDialog";
-import { getValidationMessages } from "../../utils/validations";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
+import {
+    startAggregatedSynchronization,
+    startEventsSynchronization,
+    startMetadataSynchronization,
+} from "../../logic/synchronization";
+import Instance from "../../models/instance";
+import SyncReport from "../../models/syncReport";
+import SyncRule from "../../models/syncRule";
+import { getValueForCollection } from "../../utils/d2-ui-components";
 import {
     getUserInfo,
-    isGlobalAdmin,
     isAppConfigurator,
     isAppExecutor,
+    isGlobalAdmin,
 } from "../../utils/permissions";
+import { getValidationMessages } from "../../utils/validations";
+
+const config = {
+    metadata: {
+        title: i18n.t("Metadata Synchronization Rules"),
+        action: startMetadataSynchronization,
+    },
+    aggregated: {
+        title: i18n.t("Aggregated Synchronization Rules"),
+        action: startAggregatedSynchronization,
+    },
+    events: {
+        title: i18n.t("Events Synchronization Rules"),
+        action: startEventsSynchronization,
+    },
+};
 
 class SyncRulesPage extends React.Component {
+    static contextType = ApiContext;
     static propTypes = {
         d2: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
@@ -182,11 +202,13 @@ class SyncRulesPage extends React.Component {
         history.push(`/sync-rules/${match.params.type}/edit/${rule.id}`);
     };
 
-    executeRule = async ({ builder, name, id }) => {
+    executeRule = async ({ builder, name, id, type = "metadata" }) => {
         const { d2, loading } = this.props;
-        loading.show(true, i18n.t("Synchronizing metadata"));
+        const { api } = this.context;
+        const { action } = config[type];
+
         try {
-            for await (const { message, syncReport, done } of startSynchronization(d2, {
+            for await (const { message, syncReport, done } of action(d2, api, {
                 ...builder,
                 syncRule: id,
             })) {
@@ -272,6 +294,7 @@ class SyncRulesPage extends React.Component {
             multiple: false,
             isActive: this.verifyUserCanEdit,
             onClick: this.editRule,
+            isPrimary: true,
         },
         {
             name: "delete",
@@ -388,10 +411,7 @@ class SyncRulesPage extends React.Component {
         } = this.state;
         const { d2, match } = this.props;
         const { type } = match.params;
-        const title =
-            type === "metadata"
-                ? i18n.t("Metadata Synchronization Rules")
-                : i18n.t("Data Synchronization Rules");
+        const { title } = config[type];
 
         return (
             <React.Fragment>

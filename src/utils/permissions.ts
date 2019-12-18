@@ -7,17 +7,25 @@ const AppRoles: {
     [key: string]: {
         name: string;
         description: string;
+        initialize: boolean;
     };
 } = {
     CONFIGURATION_ACCESS: {
         name: "METADATA_SYNC_CONFIGURATOR",
         description:
             "APP - This role allows to create new instances and synchronization rules in the Metadata Sync app",
+        initialize: true,
     },
     SYNC_RULE_EXECUTION_ACCESS: {
         name: "METADATA_SYNC_EXECUTOR",
         description:
             "APP - This role allows to execute synchronization rules in the Metadata Sync app",
+        initialize: true,
+    },
+    SHOW_DELETED_OBJECTS: {
+        name: "METADATA_SYNC_SHOW_DELETED_OBJECTS",
+        description: "APP - This role allows the user to synchronize deleted objects",
+        initialize: false,
     },
 };
 
@@ -40,6 +48,13 @@ const getUserRoles = memoize(async (d2: D2) => {
     ).data;
     return userCredentials.userRoles;
 });
+
+export const shouldShowDeletedObjects = async (d2: D2) => {
+    const userRoles = await getUserRoles(d2);
+    const { name } = AppRoles.SHOW_DELETED_OBJECTS;
+
+    return !!userRoles.find((role: any) => role.name === name);
+};
 
 export const isGlobalAdmin = async (d2: D2) => {
     const userRoles = await getUserRoles(d2);
@@ -79,34 +94,36 @@ export const getUserInfo = memoize(
 
 export const initializeAppRoles = async (baseUrl: string) => {
     for (const role in AppRoles) {
-        const { name, description } = AppRoles[role];
-        const { userRoles } = (
-            await axios.get(baseUrl + "/metadata", {
-                withCredentials: true,
-                params: {
-                    userRoles: true,
-                    filter: `name:eq:${name}`,
-                    fields: "id",
-                },
-            })
-        ).data as { userRoles?: { id: string }[] };
-
-        if (!userRoles || userRoles.length === 0) {
-            await axios.post(
-                baseUrl + "/metadata.json",
-                {
-                    userRoles: [
-                        {
-                            name,
-                            description,
-                            publicAccess: "--------",
-                        },
-                    ],
-                },
-                {
+        const { name, description, initialize } = AppRoles[role];
+        if (initialize) {
+            const { userRoles } = (
+                await axios.get(baseUrl + "/metadata", {
                     withCredentials: true,
-                }
-            );
+                    params: {
+                        userRoles: true,
+                        filter: `name:eq:${name}`,
+                        fields: "id",
+                    },
+                })
+            ).data as { userRoles?: { id: string }[] };
+
+            if (!userRoles || userRoles.length === 0) {
+                await axios.post(
+                    baseUrl + "/metadata.json",
+                    {
+                        userRoles: [
+                            {
+                                name,
+                                description,
+                                publicAccess: "--------",
+                            },
+                        ],
+                    },
+                    {
+                        withCredentials: true,
+                    }
+                );
+            }
         }
     }
 };

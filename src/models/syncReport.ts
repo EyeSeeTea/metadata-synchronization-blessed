@@ -16,6 +16,7 @@ import {
     SynchronizationReport,
     SynchronizationReportStatus,
     SynchronizationResult,
+    SyncRuleType,
 } from "../types/synchronization";
 
 const dataStoreKey = "notifications";
@@ -29,16 +30,17 @@ export default class SyncReport {
         this.syncReport = {
             id: generateUid(),
             date: new Date(),
-            ..._.pick(syncReport, ["id", "date", "user", "status", "types", "syncRule"]),
+            ..._.pick(syncReport, ["id", "date", "user", "status", "types", "syncRule", "type"]),
         };
     }
 
-    public static create(): SyncReport {
+    public static create(type: SyncRuleType = "metadata"): SyncReport {
         return new SyncReport({
             id: "",
             user: "",
             status: "READY" as SynchronizationReportStatus,
             types: [],
+            type,
         });
     }
 
@@ -56,11 +58,22 @@ export default class SyncReport {
         filters: SyncReportTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
-        const { statusFilter } = filters;
-        const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
-        return statusFilter
-            ? { ...data, objects: _.filter(data.objects, e => e.status === statusFilter) }
-            : data;
+        const { statusFilter, type } = filters;
+        const { page = 1, pageSize = 20, paging = true, sorting } = pagination || {};
+
+        const data = await getPaginatedData(d2, dataStoreKey, filters, { paging: false, sorting });
+        const filteredObjects = _(data.objects)
+            .filter(e => (statusFilter ? e.status === statusFilter : true))
+            .filter(({ type: elementType = "metadata" }) => elementType === type)
+            .value();
+
+        const total = filteredObjects.length;
+        const pageCount = paging ? Math.ceil(filteredObjects.length / pageSize) : 1;
+        const firstItem = paging ? (page - 1) * pageSize : 0;
+        const lastItem = paging ? firstItem + pageSize : total;
+        const objects = _.slice(filteredObjects, firstItem, lastItem);
+
+        return { objects, pager: { page, pageCount, total } };
     }
 
     public async save(d2: D2): Promise<void> {

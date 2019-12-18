@@ -45,15 +45,17 @@ const configI18n = ({ keyUiLocale: uiLocale }) => {
     document.documentElement.setAttribute("dir", isLangRTL(uiLocale) ? "rtl" : "ltr");
 };
 
+const query = {
+    userSettings: { resource: "/userSettings" },
+};
+
 const App = () => {
     const { baseUrl } = useConfig();
     const [d2, setD2] = useState(null);
     const [api, setApi] = useState(null);
     const [showShareButton, setShowShareButton] = useState(false);
     const showHeader = !process.env.REACT_APP_CYPRESS;
-    const { loading, error, data } = useDataQuery({
-        userSettings: { resource: "/userSettings" },
-    });
+    const { loading, error, data } = useDataQuery(query);
 
     useEffect(() => {
         const run = async () => {
