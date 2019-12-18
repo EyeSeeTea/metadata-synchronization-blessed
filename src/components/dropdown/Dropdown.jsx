@@ -32,7 +32,7 @@ const getMaterialTheme = () =>
         },
     });
 
-export default function Dropdown({ items, value, onChange, label, hideEmpty }) {
+export default function Dropdown({ items, value, onChange, label, hideEmpty, emptyLabel }) {
     const materialTheme = getMaterialTheme();
     return (
         <MuiThemeProvider theme={materialTheme}>
@@ -49,7 +49,9 @@ export default function Dropdown({ items, value, onChange, label, hideEmpty }) {
                         },
                     }}
                 >
-                    {!hideEmpty && <MenuItem value={""}>{i18n.t("<No value>")}</MenuItem>}
+                    {!hideEmpty && (
+                        <MenuItem value={""}>{emptyLabel || i18n.t("<No value>")}</MenuItem>
+                    )}
                     {items.map((element, index) => (
                         <MenuItem key={`element-${index}`} value={element.id}>
                             {element.name}
@@ -67,8 +69,9 @@ Dropdown.propTypes = {
     label: PropTypes.string.isRequired,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     hideEmpty: PropTypes.bool,
+    emptyLabel: PropTypes.string,
 };
 
 Dropdown.defaultProps = {
-    displayEmpty: true,
+    hideEmpty: false,
 };

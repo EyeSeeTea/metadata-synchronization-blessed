@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-17T09:55:31.520Z\n"
-"PO-Revision-Date: 2019-12-17T09:55:31.520Z\n"
+"POT-Creation-Date: 2019-12-17T11:19:04.700Z\n"
+"PO-Revision-Date: 2019-12-17T11:19:04.700Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -305,10 +305,7 @@ msgstr ""
 msgid "Every year"
 msgstr ""
 
-msgid "Select frequency"
-msgstr ""
-
-msgid "Custom"
+msgid "Select frequency template"
 msgstr ""
 
 msgid "Cron expression"

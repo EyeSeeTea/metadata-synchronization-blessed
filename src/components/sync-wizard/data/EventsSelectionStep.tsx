@@ -91,12 +91,6 @@ export default function EventsSelectionStep({ syncRule, onChange }: EventsSelect
                     details={details}
                     actions={actions}
                     forceSelectionColumn={true}
-                    initialState={{
-                        pagination: {
-                            pageSizeOptions: [10],
-                            pageSize: 10,
-                        },
-                    }}
                     onChange={handleTableChange}
                     selection={syncRule.dataSyncEvents ?? []}
                 />
