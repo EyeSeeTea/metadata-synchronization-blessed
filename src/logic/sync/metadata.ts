@@ -10,8 +10,10 @@ import {
     getAllReferences,
     getMetadata,
     postMetadata,
+    cleanMetadataImportResponse,
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
+import { MetadataImportResponse } from "../../types/d2";
 
 export class MetadataSync extends GenericSync {
     protected readonly type = "metadata";
@@ -93,5 +95,9 @@ export class MetadataSync extends GenericSync {
         const payloadPackage = await this.buildPayload();
 
         return postMetadata(instance, payloadPackage, syncParams);
+    }
+
+    protected cleanResponse(response: MetadataImportResponse, instance: Instance) {
+        return cleanMetadataImportResponse(response, instance);
     }
 }

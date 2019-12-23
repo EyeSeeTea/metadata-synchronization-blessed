@@ -1,8 +1,14 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance from "../../models/instance";
-import { getAggregatedData, postAggregatedData } from "../../utils/synchronization";
+import {
+    getAggregatedData,
+    postAggregatedData,
+    cleanDataImportResponse,
+} from "../../utils/synchronization";
 import { GenericSync } from "./generic";
+import { DataImportResponse } from "../../types/d2";
+import { DataValue } from "../../types/synchronization";
 
 export class AggregatedSync extends GenericSync {
     protected readonly type = "aggregated";
@@ -48,7 +54,12 @@ export class AggregatedSync extends GenericSync {
             _.find(dataElements, { id: dataElement })
         );
 
-        return { dataValues: _.uniqWith([...directDataValues, ...indirectDataValues], _.isEqual) };
+        const dataValues = _.uniqWith(
+            [...directDataValues, ...indirectDataValues],
+            _.isEqual
+        ) as DataValue[];
+
+        return { dataValues };
     });
 
     protected async postPayload(instance: Instance) {
@@ -57,5 +68,9 @@ export class AggregatedSync extends GenericSync {
         const payloadPackage = await this.buildPayload();
 
         return postAggregatedData(instance, payloadPackage, dataParams);
+    }
+
+    protected cleanResponse(response: DataImportResponse, instance: Instance) {
+        return cleanDataImportResponse(response, instance);
     }
 }

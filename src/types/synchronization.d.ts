@@ -45,6 +45,14 @@ export interface MetadataPackage {
     [metadataType: string]: any[];
 }
 
+export interface AggregatedPackage {
+    dataValues: DataValue[];
+}
+
+export interface EventsPackage {
+    events: ProgramEvent[];
+}
+
 export interface SynchronizationResult {
     status: MetadataImportStatus | DataImportStatus;
     instance: {
@@ -125,4 +133,17 @@ export interface ProgramEvent {
     storedBy: string;
     dueDate: string;
     eventDate: string;
+}
+
+export interface DataValue {
+    dataElement: string;
+    period: string;
+    orgUnit: string;
+    categoryOptionCombo: string;
+    attributeOptionCombo: string;
+    value: string;
+    storedBy: string;
+    created: string;
+    lastUpdated: string;
+    followUp: boolean;
 }

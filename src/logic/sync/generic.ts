@@ -5,13 +5,17 @@ import memoize from "nano-memoize";
 import Instance from "../../models/instance";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
-import { D2, DataImportStatus } from "../../types/d2";
+import { D2, DataImportResponse, DataImportStatus, MetadataImportResponse } from "../../types/d2";
 import {
     SynchronizationBuilder,
     SynchronizationReportStatus,
+    SynchronizationResult,
     SyncRuleType,
+    MetadataPackage,
+    AggregatedPackage,
+    EventsPackage,
 } from "../../types/synchronization";
-import { cleanDataImportResponse, getMetadata } from "../../utils/synchronization";
+import { getMetadata } from "../../utils/synchronization";
 
 export abstract class GenericSync {
     protected readonly d2: D2;
@@ -26,8 +30,16 @@ export abstract class GenericSync {
         this.builder = builder;
     }
 
-    protected abstract async buildPayload(): Promise<any>; // TODO: typing
-    protected abstract async postPayload(instance: Instance): Promise<any>; // TODO: typing
+    protected abstract async buildPayload(): Promise<
+        MetadataPackage | AggregatedPackage | EventsPackage
+    >;
+    protected abstract async postPayload(
+        instance: Instance
+    ): Promise<MetadataImportResponse | DataImportResponse>;
+    protected abstract cleanResponse(
+        response: MetadataImportResponse | DataImportResponse,
+        instance: Instance
+    ): SynchronizationResult;
 
     protected extractMetadata = memoize(async () => {
         const { metadataIds } = this.builder;
@@ -79,7 +91,7 @@ export abstract class GenericSync {
 
             console.debug("Start import on destination instance", instance.toObject());
             const response = await this.postPayload(instance);
-            syncReport.addSyncResult(cleanDataImportResponse(response, instance));
+            syncReport.addSyncResult(this.cleanResponse(response, instance));
             console.debug("Finished importing data on instance", instance.toObject());
 
             yield { syncReport };

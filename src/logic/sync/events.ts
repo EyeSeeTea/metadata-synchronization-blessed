@@ -1,7 +1,12 @@
 import memoize from "nano-memoize";
 import Instance from "../../models/instance";
-import { getEventsData, postEventsData } from "../../utils/synchronization";
+import {
+    getEventsData,
+    postEventsData,
+    cleanDataImportResponse,
+} from "../../utils/synchronization";
 import { GenericSync } from "./generic";
+import { DataImportResponse } from "../../types/d2";
 
 export class EventsSync extends GenericSync {
     protected readonly type = "events";
@@ -25,5 +30,9 @@ export class EventsSync extends GenericSync {
         const payloadPackage = await this.buildPayload();
 
         return postEventsData(instance, payloadPackage, dataParams);
+    }
+
+    protected cleanResponse(response: DataImportResponse, instance: Instance) {
+        return cleanDataImportResponse(response, instance);
     }
 }
