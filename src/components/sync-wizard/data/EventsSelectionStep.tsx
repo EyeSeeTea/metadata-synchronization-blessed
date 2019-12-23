@@ -17,6 +17,7 @@ interface EventsSelectionStepProps {
 const columns = [
     { name: "id" as const, text: i18n.t("UID"), sortable: true },
     { name: "orgUnitName" as const, text: i18n.t("Organisation unit"), sortable: true },
+    { name: "eventDate" as const, text: i18n.t("Event date"), sortable: true },
     { name: "lastUpdated" as const, text: i18n.t("Last updated"), sortable: true },
     { name: "status" as const, text: i18n.t("Status"), sortable: true },
     { name: "storedBy" as const, text: i18n.t("Stored by"), sortable: true },
@@ -27,9 +28,10 @@ const details = [
     { name: "orgUnitName" as const, text: i18n.t("Organisation unit") },
     { name: "created" as const, text: i18n.t("Created") },
     { name: "lastUpdated" as const, text: i18n.t("Last updated") },
+    { name: "eventDate" as const, text: i18n.t("Event date") },
+    { name: "dueDate" as const, text: i18n.t("Due date") },
     { name: "status" as const, text: i18n.t("Status") },
     { name: "storedBy" as const, text: i18n.t("Stored by") },
-    { name: "dueDate" as const, text: i18n.t("Due date") },
 ];
 
 export default function EventsSelectionStep({ syncRule, onChange }: EventsSelectionStepProps) {
