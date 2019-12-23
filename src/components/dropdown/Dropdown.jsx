@@ -1,8 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { createMuiTheme } from "@material-ui/core/styles";
 import { FormControl, InputLabel, MenuItem, MuiThemeProvider, Select } from "@material-ui/core";
+import { createMuiTheme } from "@material-ui/core/styles";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 
 const getMaterialTheme = () =>
     createMuiTheme({
@@ -32,7 +33,15 @@ const getMaterialTheme = () =>
         },
     });
 
-export default function Dropdown({ items, value, onChange, label, hideEmpty, emptyLabel }) {
+export default function Dropdown({
+    items,
+    value,
+    onChange = _.noop,
+    onValueChange = _.noop,
+    label,
+    hideEmpty,
+    emptyLabel,
+}) {
     const materialTheme = getMaterialTheme();
     return (
         <MuiThemeProvider theme={materialTheme}>
@@ -40,7 +49,10 @@ export default function Dropdown({ items, value, onChange, label, hideEmpty, emp
                 <InputLabel>{label}</InputLabel>
                 <Select
                     value={value}
-                    onChange={onChange}
+                    onChange={e => {
+                        onChange(e);
+                        onValueChange(e.target.value);
+                    }}
                     MenuProps={{
                         getContentAnchorEl: null,
                         anchorOrigin: {
@@ -65,7 +77,8 @@ export default function Dropdown({ items, value, onChange, label, hideEmpty, emp
 
 Dropdown.propTypes = {
     items: PropTypes.array.isRequired,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
+    onValueChange: PropTypes.func,
     label: PropTypes.string.isRequired,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     hideEmpty: PropTypes.bool,
