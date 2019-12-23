@@ -18,7 +18,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
-import SyncSummary from "../../components/sync-summary/SyncSummary";
+import SyncSummary, { formatStatusTag } from "../../components/sync-summary/SyncSummary";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
@@ -119,7 +119,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
             name: "status",
             text: i18n.t("Status"),
             sortable: true,
-            getValue: notification => _.startCase(_.toLower(notification.status)),
+            getValue: ({ status }) => formatStatusTag(status),
         },
         { name: "user", text: i18n.t("User"), sortable: true },
     ];
@@ -176,7 +176,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
             text: i18n.t("View summary"),
             icon: <DescriptionIcon />,
             multiple: false,
-            onClick: data => setSyncReport(new SyncReport(data[0])),
+            onClick: ([data]) => !!data && setSyncReport(SyncReport.build(data)),
         },
     ];
 
@@ -237,14 +237,12 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
                 onChange={updateTable}
             />
 
-            {syncReport && (
-                <SyncSummary
-                    d2={d2}
-                    response={syncReport}
-                    isOpen={true}
-                    handleClose={() => setSyncReport(null)}
-                />
-            )}
+            <SyncSummary
+                d2={d2}
+                response={syncReport ?? SyncReport.create()}
+                isOpen={!!syncReport}
+                handleClose={() => setSyncReport(null)}
+            />
 
             {toDelete.length > 0 && (
                 <ConfirmationDialog
