@@ -12,11 +12,11 @@ export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
     const { syncRule, onChange } = props;
 
     const updateStartDate = (date: Date | null) => {
-        onChange(syncRule.updateDataSyncStartDate(date || undefined));
+        onChange(syncRule.updateDataSyncStartDate(date ?? undefined).updateDataSyncEvents([]));
     };
 
     const updateEndDate = (date: Date | null) => {
-        onChange(syncRule.updateDataSyncEndDate(date || undefined));
+        onChange(syncRule.updateDataSyncEndDate(date ?? undefined).updateDataSyncEvents([]));
     };
 
     const mandatory = syncRule.type === "aggregated" ? " (*)" : "";

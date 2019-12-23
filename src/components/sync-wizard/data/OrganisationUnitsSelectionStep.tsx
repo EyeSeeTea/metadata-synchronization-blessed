@@ -24,7 +24,7 @@ const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
     }, [d2]);
 
     const changeSelection = (orgUnitsPaths: string[]) => {
-        onChange(syncRule.updateDataSyncOrgUnitPaths(orgUnitsPaths));
+        onChange(syncRule.updateDataSyncOrgUnitPaths(orgUnitsPaths).updateDataSyncEvents([]));
     };
 
     if (_.isEmpty(organisationUnitsRootIds)) {
