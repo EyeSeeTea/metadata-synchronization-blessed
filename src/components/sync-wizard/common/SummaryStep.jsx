@@ -64,6 +64,10 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
 
     const closeCancelDialog = () => setCancelDialogOpen(false);
 
+    const name = syncRule.isOnDemand()
+        ? `Rule generated on ${moment().format("YYYY-MM-DD HH:mm:ss")}`
+        : syncRule.name;
+
     const save = async () => {
         setIsSaving(true);
 
@@ -71,9 +75,6 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
         if (errors.length > 0) {
             snackbar.error(errors.join("\n"));
         } else {
-            const name = syncRule.isOnDemand()
-                ? `Rule generated on ${moment().toString()}`
-                : syncRule.name;
             await syncRule.updateName(name).save(d2);
             onCancel();
         }
@@ -97,7 +98,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
 
         const json = JSON.stringify(payload, null, 4);
         const blob = new Blob([json], { type: "application/json" });
-        FileSaver.saveAs(blob, "payload.json");
+        FileSaver.saveAs(blob, `${syncRule.type}-sync-${moment().format("YYYYMMDDHHmm")}.json`);
         loading.reset();
     };
 
@@ -120,7 +121,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
             />
 
             <ul>
-                <LiEntry label={i18n.t("Name")} value={syncRule.name} />
+                <LiEntry label={i18n.t("Name")} value={name} />
 
                 <LiEntry label={i18n.t("Code")} value={syncRule.code} />
 
