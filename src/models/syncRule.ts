@@ -383,6 +383,10 @@ export default class SyncRule {
         });
     }
 
+    public isOnDemand() {
+        return this.name === "On-demand";
+    }
+
     public isVisibleToUser(userInfo: UserInfo, permission: "READ" | "WRITE" = "READ") {
         const { id: userId, userGroups } = userInfo;
         const token = permission === "READ" ? "r" : "w";

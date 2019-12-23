@@ -73,6 +73,7 @@ const commonSteps: {
         label: i18n.t("Summary"),
         component: SummaryStep,
         validationKeys: [],
+        showOnSyncDialog: true,
     },
 };
 

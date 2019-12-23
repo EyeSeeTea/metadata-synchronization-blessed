@@ -1,9 +1,10 @@
 import i18n from "@dhis2/d2-i18n";
 import { Button, LinearProgress, withStyles } from "@material-ui/core";
 import { useD2, useD2Api } from "d2-api";
-import { ConfirmationDialog, withLoading, useSnackbar } from "d2-ui-components";
+import { ConfirmationDialog, useSnackbar, withLoading } from "d2-ui-components";
 import FileSaver from "file-saver";
 import _ from "lodash";
+import moment from "moment";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { AggregatedSync } from "../../../logic/sync/aggregated";
@@ -70,7 +71,10 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
         if (errors.length > 0) {
             snackbar.error(errors.join("\n"));
         } else {
-            await syncRule.save(d2);
+            const name = syncRule.isOnDemand()
+                ? `Rule generated on ${moment().toString()}`
+                : syncRule.name;
+            await syncRule.updateName(name).save(d2);
             onCancel();
         }
 
@@ -91,7 +95,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
         const sync = new SyncClass(d2, api, builder);
         const payload = await sync.buildPayload();
 
-        const json = JSON.stringify(payload);
+        const json = JSON.stringify(payload, null, 4);
         const blob = new Blob([json], { type: "application/json" });
         FileSaver.saveAs(blob, "payload.json");
         loading.reset();
@@ -197,11 +201,13 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
 
             <div className={classes.buttonContainer}>
                 <div>
-                    <Button onClick={openCancelDialog} variant="contained">
-                        {i18n.t("Cancel")}
-                    </Button>
+                    {!syncRule.isOnDemand() && (
+                        <Button onClick={openCancelDialog} variant="contained">
+                            {i18n.t("Cancel")}
+                        </Button>
+                    )}
                     <Button className={classes.saveButton} onClick={save} variant="contained">
-                        {i18n.t("Save")}
+                        {syncRule.isOnDemand() ? i18n.t("Save as sync Rule") : i18n.t("Save")}
                     </Button>
                 </div>
                 <div>
