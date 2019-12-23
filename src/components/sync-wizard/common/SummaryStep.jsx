@@ -1,10 +1,14 @@
 import i18n from "@dhis2/d2-i18n";
 import { Button, LinearProgress, withStyles } from "@material-ui/core";
-import { useD2 } from "d2-api";
-import { ConfirmationDialog, withSnackbar } from "d2-ui-components";
+import { useD2, useD2Api } from "d2-api";
+import { ConfirmationDialog, withLoading, useSnackbar } from "d2-ui-components";
+import FileSaver from "file-saver";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
+import { AggregatedSync } from "../../../logic/sync/aggregated";
+import { EventsSync } from "../../../logic/sync/events";
+import { MetadataSync } from "../../../logic/sync/metadata";
 import { getBaseUrl } from "../../../utils/d2";
 import { getMetadata } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
@@ -27,14 +31,33 @@ const styles = () => ({
         backgroundColor: "#2b98f0",
         color: "white",
     },
+    buttonContainer: {
+        display: "flex",
+        justifyContent: "space-between",
+    },
 });
 
-const SaveStep = ({ syncRule, classes, onCancel, snackbar }) => {
+const config = {
+    metadata: {
+        SyncClass: MetadataSync,
+    },
+    aggregated: {
+        SyncClass: AggregatedSync,
+    },
+    events: {
+        SyncClass: EventsSync,
+    },
+};
+
+const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
+    const d2 = useD2();
+    const api = useD2Api();
+    const snackbar = useSnackbar();
+
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [metadata, updateMetadata] = useState({});
     const [instanceOptions, setInstanceOptions] = useState([]);
-    const d2 = useD2();
 
     const openCancelDialog = () => setCancelDialogOpen(true);
 
@@ -52,6 +75,26 @@ const SaveStep = ({ syncRule, classes, onCancel, snackbar }) => {
         }
 
         setIsSaving(false);
+    };
+
+    const downloadJSON = async () => {
+        const { SyncClass } = config[syncRule.type];
+        const builder = _.pick(syncRule, [
+            "metadataIds",
+            "targetInstances",
+            "syncParams",
+            "dataParams",
+        ]);
+
+        loading.show(true, "Generating JSON file");
+
+        const sync = new SyncClass(d2, api, builder);
+        const payload = await sync.buildPayload();
+
+        const json = JSON.stringify(payload);
+        const blob = new Blob([json], { type: "application/json" });
+        FileSaver.saveAs(blob, "payload.json");
+        loading.reset();
     };
 
     useEffect(() => {
@@ -152,12 +195,21 @@ const SaveStep = ({ syncRule, classes, onCancel, snackbar }) => {
                 )}
             </ul>
 
-            <Button onClick={openCancelDialog} variant="contained">
-                {i18n.t("Cancel")}
-            </Button>
-            <Button className={classes.saveButton} onClick={save} variant="contained">
-                {i18n.t("Save")}
-            </Button>
+            <div className={classes.buttonContainer}>
+                <div>
+                    <Button onClick={openCancelDialog} variant="contained">
+                        {i18n.t("Cancel")}
+                    </Button>
+                    <Button className={classes.saveButton} onClick={save} variant="contained">
+                        {i18n.t("Save")}
+                    </Button>
+                </div>
+                <div>
+                    <Button onClick={downloadJSON} variant="contained">
+                        {i18n.t("Download JSON")}
+                    </Button>
+                </div>
+            </div>
 
             {isSaving && <LinearProgress />}
         </React.Fragment>
@@ -168,9 +220,9 @@ SaveStep.propTypes = {
     syncRule: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
     onCancel: PropTypes.func.isRequired,
-    snackbar: PropTypes.object.isRequired,
+    loading: PropTypes.object.isRequired,
 };
 
 SaveStep.defaultProps = {};
 
-export default withSnackbar(withStyles(styles)(SaveStep));
+export default withLoading(withStyles(styles)(SaveStep));

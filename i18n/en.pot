@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-23T07:33:16.467Z\n"
-"PO-Revision-Date: 2019-12-23T07:33:16.467Z\n"
+"POT-Creation-Date: 2019-12-23T08:28:24.412Z\n"
+"PO-Revision-Date: 2019-12-23T08:28:24.412Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -258,6 +258,33 @@ msgstr ""
 msgid "Removed {{difference}} elements"
 msgstr ""
 
+msgid "Every day"
+msgstr ""
+
+msgid "Every month"
+msgstr ""
+
+msgid "Every three months"
+msgstr ""
+
+msgid "Every six months"
+msgstr ""
+
+msgid "Every year"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Select frequency template"
+msgstr ""
+
+msgid "Cron expression"
+msgstr ""
+
+msgid "Cron expression must be valid"
+msgstr ""
+
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -275,9 +302,6 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-msgid "Enabled"
-msgstr ""
-
 msgid "Disabled"
 msgstr ""
 
@@ -290,28 +314,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-msgid "Every day"
-msgstr ""
-
-msgid "Every month"
-msgstr ""
-
-msgid "Every three months"
-msgstr ""
-
-msgid "Every six months"
-msgstr ""
-
-msgid "Every year"
-msgstr ""
-
-msgid "Select frequency template"
-msgstr ""
-
-msgid "Cron expression"
-msgstr ""
-
-msgid "Cron expression must be valid"
+msgid "Download JSON"
 msgstr ""
 
 msgid "UID"
