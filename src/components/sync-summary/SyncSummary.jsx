@@ -39,6 +39,18 @@ const styles = theme => ({
     },
 });
 
+export const formatStatusTag = value => {
+    const text = _.startCase(_.toLower(value));
+    const color =
+        value === "ERROR" || value === "FAILURE" || value === "NETWORK ERROR"
+            ? "#e53935"
+            : value === "DONE" || value === "SUCCESS" || value === "OK"
+            ? "#7cb342"
+            : "#3e2723";
+
+    return <b style={{ color }}>{text}</b>;
+};
+
 class SyncSummary extends React.Component {
     static propTypes = {
         isOpen: PropTypes.bool.isRequired,
@@ -145,7 +157,8 @@ class SyncSummary extends React.Component {
                                         })`}
                                     </Typography>
                                     <Typography className={classes.expansionPanelHeading2}>
-                                        {`${i18n.t("Status")}: ${status}`}
+                                        {`${i18n.t("Status")}: `}
+                                        {formatStatusTag(status)}
                                     </Typography>
                                 </ExpansionPanelSummary>
 

@@ -63,7 +63,7 @@ export interface SynchronizationResult {
 export type SynchronizationReportStatus = "READY" | "RUNNING" | "FAILURE" | "DONE";
 
 export interface SynchronizationReport {
-    id?: string;
+    id: string;
     date?: Date;
     user: string;
     status: SynchronizationReportStatus;

@@ -26,6 +26,7 @@ export interface OrganisationUnitTableFilters extends TableFilters {
 export interface SyncReportTableFilters extends TableFilters {
     type: string;
     statusFilter?: string;
+    syncRuleFilter?: string;
 }
 
 export interface SyncRuleTableFilters extends TableFilters {

@@ -30,7 +30,7 @@ import { D2 } from "../../types/d2";
 import { SyncRuleType } from "../../types/synchronization";
 import { isAppConfigurator } from "../../utils/permissions";
 
-interface GenericSynchronizationPageProps {
+interface SyncOnDemandPageProps {
     isDelete?: boolean;
     loading: any; // TODO
 }
@@ -69,7 +69,7 @@ const config: Record<
     },
 };
 
-const SyncOnDemandPage: React.FC<GenericSynchronizationPageProps> = ({ isDelete, loading }) => {
+const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete, loading }) => {
     const snackbar = useSnackbar();
     const d2 = useD2();
     const api = useD2Api();
