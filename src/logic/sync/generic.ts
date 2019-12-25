@@ -58,7 +58,7 @@ export abstract class GenericSync {
             types: _.keys(metadataPackage),
             status: "RUNNING" as SynchronizationReportStatus,
             syncRule,
-            type: "events",
+            type: this.type,
         });
     }
 
