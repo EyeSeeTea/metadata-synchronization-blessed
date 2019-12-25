@@ -1,12 +1,15 @@
+import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance from "../../models/instance";
+import { DataImportResponse } from "../../types/d2";
+import { EventsPackage } from "../../types/synchronization";
 import {
+    buildMetadataDictionary,
+    cleanDataImportResponse,
     getEventsData,
     postEventsData,
-    cleanDataImportResponse,
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
-import { DataImportResponse } from "../../types/d2";
 
 export class EventsSync extends GenericSync {
     protected readonly type = "events";
@@ -34,5 +37,21 @@ export class EventsSync extends GenericSync {
 
     protected cleanResponse(response: DataImportResponse, instance: Instance) {
         return cleanDataImportResponse(response, instance);
+    }
+
+    protected async buildDataStats() {
+        const metadataPackage = await this.extractMetadata();
+        const dictionary = buildMetadataDictionary(metadataPackage);
+        const { events } = (await this.buildPayload()) as EventsPackage;
+
+        return _(events)
+            .groupBy("program")
+            .mapValues((array, program) => ({
+                program: dictionary[program]?.name ?? program,
+                count: array.length,
+                orgUnits: _.uniq(array.map(({ orgUnitName }) => orgUnitName)),
+            }))
+            .values()
+            .value();
     }
 }

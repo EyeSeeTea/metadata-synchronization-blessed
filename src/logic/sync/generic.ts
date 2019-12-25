@@ -7,13 +7,15 @@ import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2, DataImportResponse, DataImportStatus, MetadataImportResponse } from "../../types/d2";
 import {
+    AggregatedDataStats,
+    AggregatedPackage,
+    EventsDataStats,
+    EventsPackage,
+    MetadataPackage,
     SynchronizationBuilder,
     SynchronizationReportStatus,
     SynchronizationResult,
     SyncRuleType,
-    MetadataPackage,
-    AggregatedPackage,
-    EventsPackage,
 } from "../../types/synchronization";
 import { getMetadata } from "../../utils/synchronization";
 
@@ -23,6 +25,7 @@ export abstract class GenericSync {
     protected readonly builder: SynchronizationBuilder;
 
     protected abstract readonly type: SyncRuleType;
+    protected readonly fields: string = "id,name";
 
     constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
         this.d2 = d2;
@@ -40,18 +43,21 @@ export abstract class GenericSync {
         response: MetadataImportResponse | DataImportResponse,
         instance: Instance
     ): SynchronizationResult;
+    protected abstract async buildDataStats(): Promise<
+        AggregatedDataStats[] | EventsDataStats[] | undefined
+    >;
 
     protected extractMetadata = memoize(async () => {
         const { metadataIds } = this.builder;
         const { baseUrl } = this.d2.Api.getApi();
-        const fields = this.type === "aggregated" ? "id,dataSetElements,dataElementGroups" : "id";
 
-        return getMetadata(baseUrl, metadataIds, fields);
+        return getMetadata(baseUrl, metadataIds, this.fields);
     });
 
     private async buildSyncReport() {
         const { syncRule } = this.builder;
         const metadataPackage = await this.extractMetadata();
+        const dataStats = await this.buildDataStats();
 
         return SyncReport.build({
             user: this.d2.currentUser.username,
@@ -59,6 +65,7 @@ export abstract class GenericSync {
             status: "RUNNING" as SynchronizationReportStatus,
             syncRule,
             type: "events",
+            dataStats,
         });
     }
 

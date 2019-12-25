@@ -349,3 +349,30 @@ export async function postEventsData(
 ): Promise<any> {
     return postData(instance, "/events", data, _.pick(additionalParams, []));
 }
+
+export function buildMetadataDictionary(metadataPackage: MetadataPackage) {
+    return _(metadataPackage)
+        .values()
+        .flatten()
+        .tap(array => {
+            const dataSetElements = _.flatten(
+                _.map(metadataPackage.dataSets ?? [], e =>
+                    _.map(e.dataSetElements ?? [], ({ dataElement }) => dataElement)
+                )
+            );
+
+            const groupDataElements = _.flatten(
+                _.map(metadataPackage.dataElementGroups ?? [], e => e.dataElements ?? [])
+            );
+
+            const groupSetDataElements = _.flatten(
+                _.map(metadataPackage.dataElementGroupSets ?? [], e =>
+                    _.flatten(_.map(e.dataElementGroups ?? [], ({ dataElements }) => dataElements))
+                )
+            );
+
+            array.push(...dataSetElements, ...groupDataElements, ...groupSetDataElements);
+        })
+        .keyBy("id")
+        .value();
+}

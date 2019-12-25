@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-23T21:01:32.052Z\n"
-"PO-Revision-Date: 2019-12-23T21:01:32.052Z\n"
+"POT-Creation-Date: 2019-12-25T08:43:28.148Z\n"
+"PO-Revision-Date: 2019-12-25T08:43:28.148Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -134,6 +134,18 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
+msgid "Data element"
+msgstr ""
+
+msgid "Program"
+msgstr ""
+
+msgid "Number of entries"
+msgstr ""
+
+msgid "Org units"
+msgstr ""
+
 msgid "Identifier"
 msgstr ""
 
@@ -159,6 +171,9 @@ msgid "Summary"
 msgstr ""
 
 msgid "Messages"
+msgstr ""
+
+msgid "Data Statistics"
 msgstr ""
 
 msgid "JSON Response"

@@ -100,4 +100,8 @@ export class MetadataSync extends GenericSync {
     protected cleanResponse(response: MetadataImportResponse, instance: Instance) {
         return cleanMetadataImportResponse(response, instance);
     }
+
+    protected async buildDataStats() {
+        return undefined;
+    }
 }
