@@ -48,7 +48,7 @@ const config: Record<
         SyncClass: MetadataSync,
     },
     aggregated: {
-        title: i18n.t("Aggregated Synchronization"),
+        title: i18n.t("Aggregated Data Synchronization"),
         models: [
             DataSetModel,
             AggregatedDataElementModel,

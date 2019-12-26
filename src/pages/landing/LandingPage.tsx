@@ -1,53 +1,19 @@
 import i18n from "@dhis2/d2-i18n";
 import { makeStyles } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import ListItem from "@material-ui/core/ListItem";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import _ from "lodash";
-import FontIcon from "@material-ui/core/Icon";
 import React, { useMemo, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import MenuCards from "./MenuCards.component";
 import { useD2 } from "d2-api";
 import { shouldShowDeletedObjects } from "../../utils/permissions";
 import { D2 } from "../../types/d2";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles({
-    root: {
-        display: "flex",
-        flexGrow: 1,
-        justifyContent: "center",
-    },
-    listItem: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        textDecoration: "none",
-        "&:hover": {
-            backgroundColor: "#f9f9f9",
-        },
-        cursor: "pointer",
-        padding: 45,
-        height: "100%",
-    },
-    container: {
-        width: "90%",
-        padding: 10,
-    },
-    item: {
-        padding: 20,
-    },
-    title: {
-        marginLeft: 10,
-        color: "#000000",
-    },
-    icons: {
-        fontSize: "70px !important",
-        marginRight: 10,
-        color: "#000000",
-    },
-    paper: {
-        height: "100%",
+    cardItem: {
+        fontSize: 24,
+        fontWeight: 300,
+        color: "rgba(0, 0, 0, 0.87)",
+        padding: "16px 0px 5px",
+        margin: 0,
     },
 });
 
@@ -55,114 +21,125 @@ const LandingPage: React.FC = () => {
     const classes = useStyles();
     const d2 = useD2();
     const [showDeletedObjects, setShowDeletedObjects] = useState(false);
+    const history = useHistory();
 
     useEffect(() => {
         shouldShowDeletedObjects(d2 as D2).then(setShowDeletedObjects);
     }, [d2]);
 
     const rows = [
-        [
-            {
-                key: "instance-configurator",
-                title: i18n.t("Instance Configuration"),
-                icon: "edit",
-            },
-        ],
-        [
-            { key: "sync/metadata", title: i18n.t("Metadata Synchronization"), icon: "sync" },
-            {
-                key: "sync/aggregated",
-                title: i18n.t("Aggregated Synchronization"),
-                icon: "sync",
-            },
-            {
-                key: "sync/events",
-                title: i18n.t("Events Synchronization"),
-                icon: "sync",
-            },
-        ],
-        [
-            {
-                key: "sync-rules/metadata",
-                title: i18n.t("Metadata Synchronization Rules"),
-                icon: "playlist_add_check",
-            },
-            {
-                key: "sync-rules/aggregated",
-                title: i18n.t("Aggregated Synchronization Rules"),
-                icon: "playlist_add_check",
-            },
-            {
-                key: "sync-rules/events",
-                title: i18n.t("Events Synchronization Rules"),
-                icon: "playlist_add_check",
-            },
-        ],
-        [
-            {
-                key: "history/metadata",
-                title: i18n.t("Metadata Synchronization History"),
-                icon: "history",
-            },
-            {
-                key: "history/aggregated",
-                title: i18n.t("Aggregated Synchronization History"),
-                icon: "history",
-            },
-            {
-                key: "history/events",
-                title: i18n.t("Events Synchronization History"),
-                icon: "history",
-            },
-        ],
-        [
-            showDeletedObjects && {
-                key: "sync/deleted",
-                title: i18n.t("Deleted objects"),
-                icon: "delete",
-            },
-        ],
+        {
+            title: "Destination instance settings",
+            key: "instances",
+            children: [
+                {
+                    name: i18n.t("Destination instances"),
+                    description: i18n.t("Destination instance settings description"),
+                    canCreate: true,
+                    add: () => history.push("/instance-configurator/new"),
+                    list: () => history.push("/instance-configurator"),
+                },
+            ],
+        },
+        {
+            title: "Metadata sync",
+            key: "metadata",
+            children: [
+                {
+                    name: i18n.t("Manual sync"),
+                    description: i18n.t("Metadata manual synchronization"),
+                    list: () => history.push("/sync/metadata"),
+                },
+                {
+                    name: i18n.t("Sync Rules"),
+                    description: i18n.t("Metadata synchronization rules description"),
+                    canCreate: true,
+                    add: () => history.push("/sync-rules/metadata/new"),
+                    list: () => history.push("/sync-rules/metadata"),
+                },
+                {
+                    name: i18n.t("History"),
+                    description: i18n.t("Metadata synchronization history"),
+                    list: () => history.push("/history/metadata"),
+                },
+            ],
+        },
+        {
+            title: "Aggregated Data Sync",
+            key: "aggregated",
+            children: [
+                {
+                    name: i18n.t("Manual sync"),
+                    description: i18n.t("Aggregated Data manual synchronization"),
+                    list: () => history.push("/sync/aggregated"),
+                },
+                {
+                    name: i18n.t("Sync Rules"),
+                    description: i18n.t("Aggregated Data synchronization rules description"),
+                    canCreate: true,
+                    add: () => history.push("/sync-rules/aggregated/new"),
+                    list: () => history.push("/sync-rules/aggregated"),
+                },
+                {
+                    name: i18n.t("History"),
+                    description: i18n.t("Aggregated Data synchronization history"),
+                    list: () => history.push("/history/aggregated"),
+                },
+            ],
+        },
+        {
+            title: "Events Sync",
+            key: "events",
+            children: [
+                {
+                    name: i18n.t("Manual sync"),
+                    description: i18n.t("Event manual synchronization"),
+                    list: () => history.push("/sync/events"),
+                },
+                {
+                    name: i18n.t("Sync Rules"),
+                    description: i18n.t("Event synchronization rules description"),
+                    canCreate: true,
+                    add: () => history.push("/sync-rules/events/new"),
+                    list: () => history.push("/sync-rules/events"),
+                },
+                {
+                    name: i18n.t("History"),
+                    description: i18n.t("events synchronization history"),
+                    list: () => history.push("/history/events"),
+                },
+            ],
+        },
     ];
+
+    if (showDeletedObjects) {
+        rows.push({
+            title: "Other",
+            key: "other",
+            children: [
+                {
+                    name: i18n.t("Deleted objects"),
+                    description: i18n.t("List & Sync deleted objects"),
+                    list: () => history.push("/sync/deleted"),
+                },
+            ],
+        });
+    }
 
     const menuItems = useMemo(
         () =>
-            rows.map(items =>
-                _(items)
-                    .compact()
-                    .map(({ key, title, icon }, _index, collection) => (
-                        <Grid
-                            item
-                            xs={(12 / collection.length) as 12 | 6 | 4 | 3}
-                            className={classes.item}
-                            key={key}
-                        >
-                            <Paper elevation={2} className={classes.paper}>
-                                <ListItem
-                                    data-test={`page-${key}`}
-                                    component={Link}
-                                    to={`/${key}`}
-                                    className={classes.listItem}
-                                >
-                                    <FontIcon className={classes.icons}>{icon}</FontIcon>
-                                    <Typography className={classes.title} variant="h5">
-                                        {title}
-                                    </Typography>
-                                </ListItem>
-                            </Paper>
-                        </Grid>
-                    ))
-                    .value()
-            ),
+            rows.map(row => (
+                <div>
+                    <div key={row.title}>
+                        <h1 className={classes.cardItem}>{row.title}</h1>
+                        <MenuCards menuItems={row.children} />
+                    </div>
+                </div>
+            )),
         [rows, classes]
     );
 
-    return (
-        <div className={classes.root}>
-            <Grid container spacing={2} data-test="pages" className={classes.container}>
-                {menuItems}
-            </Grid>
-        </div>
-    );
+    return <div>{menuItems}</div>;
 };
 
 export default LandingPage;

@@ -1,6 +1,6 @@
 {
   "name": "metadata-synchronization",
-  "description": "Advanced metadata synchronization utility",
+  "description": "Advanced metadata & data synchronization utility",
   "version": "0.5.0",
   "license": "GPL-3.0",
   "author": "EyeSeeTea team",
