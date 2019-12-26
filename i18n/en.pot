@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-26T15:51:04.130Z\n"
-"PO-Revision-Date: 2019-12-26T15:51:04.130Z\n"
+"POT-Creation-Date: 2019-12-26T17:11:40.844Z\n"
+"PO-Revision-Date: 2019-12-26T17:11:40.844Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -574,10 +574,10 @@ msgstr ""
 msgid "List & Sync deleted objects"
 msgstr ""
 
-msgid "add"
+msgid "Add"
 msgstr ""
 
-msgid "list"
+msgid "List"
 msgstr ""
 
 msgid "Deleted by"

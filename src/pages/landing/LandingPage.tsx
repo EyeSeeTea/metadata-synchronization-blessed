@@ -1,33 +1,38 @@
 import i18n from "@dhis2/d2-i18n";
 import { makeStyles } from "@material-ui/core";
-import React, { useMemo, useState, useEffect } from "react";
-import MenuCards from "./MenuCards.component";
 import { useD2 } from "d2-api";
-import { shouldShowDeletedObjects } from "../../utils/permissions";
-import { D2 } from "../../types/d2";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { D2 } from "../../types/d2";
+import { shouldShowDeletedObjects } from "../../utils/permissions";
+import MenuCard, { MenuCardProps } from "./MenuCard";
 
 const useStyles = makeStyles({
-    cardItem: {
+    title: {
         fontSize: 24,
         fontWeight: 300,
         color: "rgba(0, 0, 0, 0.87)",
-        padding: "16px 0px 5px",
+        padding: "15px 0px 15px",
         margin: 0,
     },
 });
 
 const LandingPage: React.FC = () => {
-    const classes = useStyles();
     const d2 = useD2();
-    const [showDeletedObjects, setShowDeletedObjects] = useState(false);
+    const classes = useStyles();
     const history = useHistory();
+    const [showDeletedObjects, setShowDeletedObjects] = useState(false);
 
     useEffect(() => {
         shouldShowDeletedObjects(d2 as D2).then(setShowDeletedObjects);
     }, [d2]);
 
-    const rows = [
+    const cards: {
+        title: string;
+        key: string;
+        isVisible?: boolean;
+        children: MenuCardProps[];
+    }[] = [
         {
             title: "Destination instance settings",
             key: "instances",
@@ -35,9 +40,8 @@ const LandingPage: React.FC = () => {
                 {
                     name: i18n.t("Destination instances"),
                     description: i18n.t("Destination instance settings description"),
-                    canCreate: true,
-                    add: () => history.push("/instance-configurator/new"),
-                    list: () => history.push("/instance-configurator"),
+                    addAction: () => history.push("/instance-configurator/new"),
+                    listAction: () => history.push("/instance-configurator"),
                 },
             ],
         },
@@ -48,19 +52,18 @@ const LandingPage: React.FC = () => {
                 {
                     name: i18n.t("Manual sync"),
                     description: i18n.t("Metadata manual synchronization"),
-                    list: () => history.push("/sync/metadata"),
+                    listAction: () => history.push("/sync/metadata"),
                 },
                 {
                     name: i18n.t("Sync Rules"),
                     description: i18n.t("Metadata synchronization rules description"),
-                    canCreate: true,
-                    add: () => history.push("/sync-rules/metadata/new"),
-                    list: () => history.push("/sync-rules/metadata"),
+                    addAction: () => history.push("/sync-rules/metadata/new"),
+                    listAction: () => history.push("/sync-rules/metadata"),
                 },
                 {
                     name: i18n.t("History"),
                     description: i18n.t("Metadata synchronization history"),
-                    list: () => history.push("/history/metadata"),
+                    listAction: () => history.push("/history/metadata"),
                 },
             ],
         },
@@ -71,19 +74,18 @@ const LandingPage: React.FC = () => {
                 {
                     name: i18n.t("Manual sync"),
                     description: i18n.t("Aggregated Data manual synchronization"),
-                    list: () => history.push("/sync/aggregated"),
+                    listAction: () => history.push("/sync/aggregated"),
                 },
                 {
                     name: i18n.t("Sync Rules"),
                     description: i18n.t("Aggregated Data synchronization rules description"),
-                    canCreate: true,
-                    add: () => history.push("/sync-rules/aggregated/new"),
-                    list: () => history.push("/sync-rules/aggregated"),
+                    addAction: () => history.push("/sync-rules/aggregated/new"),
+                    listAction: () => history.push("/sync-rules/aggregated"),
                 },
                 {
                     name: i18n.t("History"),
                     description: i18n.t("Aggregated Data synchronization history"),
-                    list: () => history.push("/history/aggregated"),
+                    listAction: () => history.push("/history/aggregated"),
                 },
             ],
         },
@@ -94,52 +96,53 @@ const LandingPage: React.FC = () => {
                 {
                     name: i18n.t("Manual sync"),
                     description: i18n.t("Event manual synchronization"),
-                    list: () => history.push("/sync/events"),
+                    listAction: () => history.push("/sync/events"),
                 },
                 {
                     name: i18n.t("Sync Rules"),
                     description: i18n.t("Event synchronization rules description"),
-                    canCreate: true,
-                    add: () => history.push("/sync-rules/events/new"),
-                    list: () => history.push("/sync-rules/events"),
+                    addAction: () => history.push("/sync-rules/events/new"),
+                    listAction: () => history.push("/sync-rules/events"),
                 },
                 {
                     name: i18n.t("History"),
                     description: i18n.t("events synchronization history"),
-                    list: () => history.push("/history/events"),
+                    listAction: () => history.push("/history/events"),
+                },
+            ],
+        },
+        {
+            title: "Other",
+            key: "other",
+            isVisible: showDeletedObjects,
+            children: [
+                {
+                    name: i18n.t("Deleted objects"),
+                    description: i18n.t("List & Sync deleted objects"),
+                    listAction: () => history.push("/sync/deleted"),
                 },
             ],
         },
     ];
 
-    if (showDeletedObjects) {
-        rows.push({
-            title: "Other",
-            key: "other",
-            children: [
-                {
-                    name: i18n.t("Deleted objects"),
-                    description: i18n.t("List & Sync deleted objects"),
-                    list: () => history.push("/sync/deleted"),
-                },
-            ],
-        });
-    }
+    return (
+        <React.Fragment>
+            {cards.map(
+                ({ key, title, isVisible = true, children }) =>
+                    isVisible && (
+                        <div key={`card-${key}`}>
+                            <h1 className={classes.title}>{title}</h1>
 
-    const menuItems = useMemo(
-        () =>
-            rows.map(row => (
-                <div>
-                    <div key={row.title}>
-                        <h1 className={classes.cardItem}>{row.title}</h1>
-                        <MenuCards menuItems={row.children} />
-                    </div>
-                </div>
-            )),
-        [rows, classes]
+                            {children.map((props, index) => (
+                                <MenuCard key={`card-${key}-${index}`} {...props} />
+                            ))}
+
+                            <div style={{ clear: "both" }} />
+                        </div>
+                    )
+            )}
+        </React.Fragment>
     );
-
-    return <div>{menuItems}</div>;
 };
 
 export default LandingPage;
