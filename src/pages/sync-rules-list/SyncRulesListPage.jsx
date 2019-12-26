@@ -7,7 +7,9 @@ import {
     withLoading,
     withSnackbar,
 } from "d2-ui-components";
+import FileSaver from "file-saver";
 import _ from "lodash";
+import moment from "moment";
 import PropTypes from "prop-types";
 import React from "react";
 import { withRouter } from "react-router-dom";
@@ -153,6 +155,29 @@ class SyncRulesPage extends React.Component {
 
         this.setState({ allInstances, userInfo, globalAdmin, appConfigurator, appExecutor });
     }
+
+    downloadJSON = async ruleData => {
+        const { loading, d2 } = this.props;
+        const { api } = this.context;
+        const syncRule = SyncRule.build(ruleData);
+        const { SyncClass } = config[syncRule.type];
+        const builder = _.pick(syncRule, [
+            "metadataIds",
+            "targetInstances",
+            "syncParams",
+            "dataParams",
+        ]);
+
+        loading.show(true, "Generating JSON file");
+
+        const sync = new SyncClass(d2, api, builder);
+        const payload = await sync.buildPayload();
+
+        const json = JSON.stringify(payload, null, 4);
+        const blob = new Blob([json], { type: "application/json" });
+        FileSaver.saveAs(blob, `${syncRule.type}-sync-${moment().format("YYYYMMDDHHmm")}.json`);
+        loading.reset();
+    };
 
     backHome = () => {
         this.props.history.push("/");
@@ -306,6 +331,13 @@ class SyncRulesPage extends React.Component {
             isActive: this.verifyUserCanExecute,
             onClick: this.executeRule,
             icon: "settings_input_antenna",
+        },
+        {
+            name: "download",
+            text: i18n.t("Download JSON"),
+            multiple: false,
+            onClick: this.downloadJSON,
+            icon: "cloud_download",
         },
         {
             name: "toggleEnable",
