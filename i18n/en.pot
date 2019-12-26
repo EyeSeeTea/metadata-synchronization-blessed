@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-23T06:44:38.574Z\n"
-"PO-Revision-Date: 2019-12-23T06:44:38.574Z\n"
+"POT-Creation-Date: 2019-12-23T21:01:32.052Z\n"
+"PO-Revision-Date: 2019-12-23T21:01:32.052Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -258,6 +258,33 @@ msgstr ""
 msgid "Removed {{difference}} elements"
 msgstr ""
 
+msgid "Every day"
+msgstr ""
+
+msgid "Every month"
+msgstr ""
+
+msgid "Every three months"
+msgstr ""
+
+msgid "Every six months"
+msgstr ""
+
+msgid "Every year"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Select frequency template"
+msgstr ""
+
+msgid "Cron expression"
+msgstr ""
+
+msgid "Cron expression must be valid"
+msgstr ""
+
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -275,9 +302,6 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-msgid "Enabled"
-msgstr ""
-
 msgid "Disabled"
 msgstr ""
 
@@ -287,31 +311,13 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+msgid "Save as sync Rule"
+msgstr ""
+
 msgid "Save"
 msgstr ""
 
-msgid "Every day"
-msgstr ""
-
-msgid "Every month"
-msgstr ""
-
-msgid "Every three months"
-msgstr ""
-
-msgid "Every six months"
-msgstr ""
-
-msgid "Every year"
-msgstr ""
-
-msgid "Select frequency template"
-msgstr ""
-
-msgid "Cron expression"
-msgstr ""
-
-msgid "Cron expression must be valid"
+msgid "Download JSON"
 msgstr ""
 
 msgid "UID"
@@ -347,19 +353,10 @@ msgstr ""
 msgid "Deleting objects in instance {{instance}}"
 msgstr ""
 
-msgid "Fetching metadata from origin instance"
+msgid "Preparing synchronization"
 msgstr ""
 
 msgid "Importing data in instance {{instance}}"
-msgstr ""
-
-msgid "Fetching data from data sets and data element groups"
-msgstr ""
-
-msgid "Fetching data from data elements"
-msgstr ""
-
-msgid "Fetching data from events"
 msgstr ""
 
 msgid "Not a valid DHIS2 instance"
@@ -402,6 +399,9 @@ msgid "Done"
 msgstr ""
 
 msgid "Sync Rule"
+msgstr ""
+
+msgid "(manual synchronization)"
 msgstr ""
 
 msgid "Timestamp"

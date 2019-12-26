@@ -9,7 +9,7 @@ import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
 import Dropdown from "../dropdown/Dropdown";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import { d2BaseModelDetails } from "../../utils/d2";
-import { listByIds, getOrgUnitSubtree } from "../../logic/metadata";
+import { listByIds, getOrgUnitSubtree } from "../../logic/utils";
 
 const styles = {
     checkbox: {

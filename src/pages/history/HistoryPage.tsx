@@ -112,7 +112,8 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
             name: "syncRule",
             text: i18n.t("Sync Rule"),
             sortable: true,
-            getValue: ({ syncRule: id }) => _.find(syncRules, { id })?.name,
+            getValue: ({ syncRule: id }) =>
+                _.find(syncRules, { id })?.name ?? i18n.t("(manual synchronization)"),
         },
         { name: "date", text: i18n.t("Timestamp"), sortable: true },
         {

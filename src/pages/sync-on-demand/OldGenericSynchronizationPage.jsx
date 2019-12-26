@@ -5,7 +5,6 @@ import { withSnackbar, withLoading } from "d2-ui-components";
 import SyncIcon from "@material-ui/icons/Sync";
 import { withRouter } from "react-router-dom";
 
-import { startMetadataSynchronization } from "../../logic/synchronization";
 import { startDelete } from "../../logic/delete";
 import MetadataTable from "../../components/old-metadata-table/OldMetadataTable";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
@@ -89,12 +88,13 @@ class GenericSynchronizationPage extends React.Component {
         const { isDelete, loading, d2 } = this.props;
         const { metadataIds } = this.state.syncRule;
 
-        const action = isDelete ? startDelete : startMetadataSynchronization;
+        if (!isDelete)
+            throw new Error("Metadata sync is now available on the new sync on demand page");
         loading.show(true, i18n.t("Synchronizing metadata"));
 
         try {
             const builder = { metadataIds, targetInstances, syncParams };
-            for await (const { message, syncReport, done } of action(d2, builder)) {
+            for await (const { message, syncReport, done } of startDelete(d2, builder)) {
                 if (message) loading.show(true, message);
                 if (syncReport) await syncReport.save(d2);
                 if (done) {

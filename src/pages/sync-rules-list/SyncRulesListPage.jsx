@@ -7,7 +7,9 @@ import {
     withLoading,
     withSnackbar,
 } from "d2-ui-components";
+import FileSaver from "file-saver";
 import _ from "lodash";
+import moment from "moment";
 import PropTypes from "prop-types";
 import React from "react";
 import { withRouter } from "react-router-dom";
@@ -15,11 +17,9 @@ import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
 import SharingDialog from "../../components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
-import {
-    startAggregatedSynchronization,
-    startEventsSynchronization,
-    startMetadataSynchronization,
-} from "../../logic/synchronization";
+import { AggregatedSync } from "../../logic/sync/aggregated";
+import { EventsSync } from "../../logic/sync/events";
+import { MetadataSync } from "../../logic/sync/metadata";
 import Instance from "../../models/instance";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
@@ -35,15 +35,15 @@ import { getValidationMessages } from "../../utils/validations";
 const config = {
     metadata: {
         title: i18n.t("Metadata Synchronization Rules"),
-        action: startMetadataSynchronization,
+        SyncClass: MetadataSync,
     },
     aggregated: {
         title: i18n.t("Aggregated Synchronization Rules"),
-        action: startAggregatedSynchronization,
+        SyncClass: AggregatedSync,
     },
     events: {
         title: i18n.t("Events Synchronization Rules"),
-        action: startEventsSynchronization,
+        SyncClass: EventsSync,
     },
 };
 
@@ -156,6 +156,29 @@ class SyncRulesPage extends React.Component {
         this.setState({ allInstances, userInfo, globalAdmin, appConfigurator, appExecutor });
     }
 
+    downloadJSON = async ruleData => {
+        const { loading, d2 } = this.props;
+        const { api } = this.context;
+        const syncRule = SyncRule.build(ruleData);
+        const { SyncClass } = config[syncRule.type];
+        const builder = _.pick(syncRule, [
+            "metadataIds",
+            "targetInstances",
+            "syncParams",
+            "dataParams",
+        ]);
+
+        loading.show(true, "Generating JSON file");
+
+        const sync = new SyncClass(d2, api, builder);
+        const payload = await sync.buildPayload();
+
+        const json = JSON.stringify(payload, null, 4);
+        const blob = new Blob([json], { type: "application/json" });
+        FileSaver.saveAs(blob, `${syncRule.type}-sync-${moment().format("YYYYMMDDHHmm")}.json`);
+        loading.reset();
+    };
+
     backHome = () => {
         this.props.history.push("/");
     };
@@ -202,16 +225,14 @@ class SyncRulesPage extends React.Component {
         history.push(`/sync-rules/${match.params.type}/edit/${rule.id}`);
     };
 
-    executeRule = async ({ builder, name, id, type = "metadata" }) => {
+    executeRule = async ({ builder, name, id: syncRule, type = "metadata" }) => {
         const { d2, loading } = this.props;
         const { api } = this.context;
-        const { action } = config[type];
+        const { SyncClass } = config[type];
 
         try {
-            for await (const { message, syncReport, done } of action(d2, api, {
-                ...builder,
-                syncRule: id,
-            })) {
+            const sync = new SyncClass(d2, api, { ...builder, syncRule });
+            for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) loading.show(true, message);
                 if (syncReport) await syncReport.save(d2);
                 if (done && syncReport) {
@@ -310,6 +331,13 @@ class SyncRulesPage extends React.Component {
             isActive: this.verifyUserCanExecute,
             onClick: this.executeRule,
             icon: "settings_input_antenna",
+        },
+        {
+            name: "download",
+            text: i18n.t("Download JSON"),
+            multiple: false,
+            onClick: this.downloadJSON,
+            icon: "cloud_download",
         },
         {
             name: "toggleEnable",

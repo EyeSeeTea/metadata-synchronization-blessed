@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import i18n from "../../locales";
 import GeneralInfoStep from "./common/GeneralInfoStep";
 import InstanceSelectionStep from "./common/InstanceSelectionStep";
-import SaveStep from "./common/SaveStep";
+import SummaryStep from "./common/SummaryStep";
 import SchedulerStep from "./common/SchedulerStep";
 import CategoryOptionsSelectionStep from "./data/CategoryOptionsSelectionStep";
 import MetadataSelectionStep from "./common/MetadataSelectionStep";
@@ -71,8 +71,9 @@ const commonSteps: {
     summary: {
         key: "summary",
         label: i18n.t("Summary"),
-        component: SaveStep,
+        component: SummaryStep,
         validationKeys: [],
+        showOnSyncDialog: true,
     },
 };
 

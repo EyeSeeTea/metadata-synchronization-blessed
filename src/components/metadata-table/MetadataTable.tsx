@@ -7,7 +7,7 @@ import moment from "moment";
 import memoize from "nano-memoize";
 import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import i18n from "../../locales";
-import { getOrgUnitSubtree } from "../../logic/metadata";
+import { getOrgUnitSubtree } from "../../logic/utils";
 import { D2Model, DataElementModel } from "../../models/d2Model";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import { D2 } from "../../types/d2";

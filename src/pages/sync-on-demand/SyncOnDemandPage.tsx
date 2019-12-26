@@ -9,12 +9,9 @@ import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
-import { startDelete } from "../../logic/delete";
-import {
-    startAggregatedSynchronization,
-    startEventsSynchronization,
-    startMetadataSynchronization,
-} from "../../logic/synchronization";
+import { AggregatedSync } from "../../logic/sync/aggregated";
+import { EventsSync } from "../../logic/sync/events";
+import { MetadataSync } from "../../logic/sync/metadata";
 import {
     AggregatedDataElementModel,
     D2Model,
@@ -41,14 +38,14 @@ const config: Record<
         title: string;
         models: typeof D2Model[];
         childrenKeys: string[] | undefined;
-        action: Function;
+        SyncClass: typeof MetadataSync | typeof AggregatedSync | typeof EventsSync;
     }
 > = {
     metadata: {
         title: i18n.t("Metadata Synchronization"),
         models: metadataModels,
         childrenKeys: undefined,
-        action: startMetadataSynchronization,
+        SyncClass: MetadataSync,
     },
     aggregated: {
         title: i18n.t("Aggregated Synchronization"),
@@ -59,13 +56,13 @@ const config: Record<
             DataElementGroupSetModel,
         ],
         childrenKeys: ["dataElements", "dataElementGroups"],
-        action: startAggregatedSynchronization,
+        SyncClass: AggregatedSync,
     },
     events: {
         title: i18n.t("Events Synchronization"),
         models: [ProgramModel],
         childrenKeys: ["dataElements"],
-        action: startEventsSynchronization,
+        SyncClass: EventsSync,
     },
 };
 
@@ -135,7 +132,9 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete, loading }
     };
 
     const handleSynchronization = async (syncRule: SyncRule) => {
-        const action = isDelete ? startDelete : config[syncRule.type].action;
+        if (isDelete) throw new Error("Delete is not yet implemented on new sync on demand page");
+
+        const { SyncClass } = config[syncRule.type];
         const builder = _.pick(syncRule, [
             "metadataIds",
             "targetInstances",
@@ -146,7 +145,8 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete, loading }
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
         try {
-            for await (const { message, syncReport, done } of action(d2 as D2, api, builder)) {
+            const sync = new SyncClass(d2 as D2, api, builder);
+            for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) loading.show(true, message);
                 if (syncReport) await syncReport.save(d2 as D2);
                 if (done) {
