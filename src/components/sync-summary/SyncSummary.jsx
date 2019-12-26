@@ -1,10 +1,4 @@
-import React from "react";
-import _ from "lodash";
 import i18n from "@dhis2/d2-i18n";
-import PropTypes from "prop-types";
-import { ConfirmationDialog } from "d2-ui-components";
-import ReactJson from "react-json-view";
-
 import {
     DialogContent,
     ExpansionPanel,
@@ -15,10 +9,16 @@ import {
     TableCell,
     TableHead,
     TableRow,
+    Tooltip,
     Typography,
     withStyles,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { ConfirmationDialog } from "d2-ui-components";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import ReactJson from "react-json-view";
 import SyncReport from "../../models/syncReport";
 
 const styles = theme => ({
@@ -36,6 +36,10 @@ const styles = theme => ({
     },
     expansionPanel: {
         paddingBottom: "10px",
+    },
+    tooltip: {
+        maxWidth: 650,
+        fontSize: "0.9em",
     },
 });
 
@@ -91,6 +95,42 @@ class SyncSummary extends React.Component {
                             </TableRow>
                         )
                     )}
+                </TableBody>
+            </Table>
+        );
+    }
+
+    static buildDataStatsTable(type, stats, classes) {
+        const elementName = type === "aggregated" ? i18n.t("Data element") : i18n.t("Program");
+
+        return (
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>{elementName}</TableCell>
+                        <TableCell>{i18n.t("Number of entries")}</TableCell>
+                        {type === "events" && <TableCell>{i18n.t("Org units")}</TableCell>}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {stats.map(({ dataElement, program, count, orgUnits }, i) => (
+                        <TableRow key={`row-${i}`}>
+                            <TableCell>{dataElement || program}</TableCell>
+                            <TableCell>{count}</TableCell>
+                            {type === "events" && (
+                                <Tooltip
+                                    classes={{ tooltip: classes.tooltip }}
+                                    open={orgUnits.length <= 3 ? false : undefined}
+                                    title={orgUnits.join(", ")}
+                                    placement="top"
+                                >
+                                    <TableCell>{`${_.take(orgUnits, 3).join(", ")} ${
+                                        orgUnits.length > 3 ? "and more" : ""
+                                    }`}</TableCell>
+                                </Tooltip>
+                            )}
+                        </TableRow>
+                    ))}
                 </TableBody>
             </Table>
         );
@@ -197,6 +237,24 @@ class SyncSummary extends React.Component {
                                 )}
                             </ExpansionPanel>
                         ))}
+
+                        {response.syncReport.dataStats && (
+                            <ExpansionPanel>
+                                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Typography className={classes.expansionPanelHeading1}>
+                                        {i18n.t("Data Statistics")}
+                                    </Typography>
+                                </ExpansionPanelSummary>
+
+                                <ExpansionPanelDetails>
+                                    {SyncSummary.buildDataStatsTable(
+                                        response.syncReport.type,
+                                        response.syncReport.dataStats,
+                                        classes
+                                    )}
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                        )}
 
                         <ExpansionPanel>
                             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>

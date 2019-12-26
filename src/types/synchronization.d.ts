@@ -78,6 +78,18 @@ export interface SynchronizationReport {
     types: string[];
     syncRule?: string;
     type: SyncRuleType;
+    dataStats?: AggregatedDataStats[] | EventsDataStats[];
+}
+
+export interface AggregatedDataStats {
+    dataElement: string;
+    count: number;
+}
+
+export interface EventsDataStats {
+    program: string;
+    count: number;
+    orgUnits: string[];
 }
 
 export interface NestedRules {

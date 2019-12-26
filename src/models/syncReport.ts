@@ -32,7 +32,16 @@ export default class SyncReport {
         this.syncReport = {
             id: generateUid(),
             date: new Date(),
-            ..._.pick(syncReport, ["id", "date", "user", "status", "types", "syncRule", "type"]),
+            ..._.pick(syncReport, [
+                "id",
+                "date",
+                "user",
+                "status",
+                "types",
+                "syncRule",
+                "type",
+                "dataStats",
+            ]),
         };
     }
 

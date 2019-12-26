@@ -1,17 +1,20 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance from "../../models/instance";
-import {
-    getAggregatedData,
-    postAggregatedData,
-    cleanDataImportResponse,
-} from "../../utils/synchronization";
-import { GenericSync } from "./generic";
 import { DataImportResponse } from "../../types/d2";
 import { DataValue } from "../../types/synchronization";
+import {
+    buildMetadataDictionary,
+    cleanDataImportResponse,
+    getAggregatedData,
+    postAggregatedData,
+} from "../../utils/synchronization";
+import { GenericSync } from "./generic";
 
 export class AggregatedSync extends GenericSync {
     protected readonly type = "aggregated";
+    protected readonly fields =
+        "id,dataElements[id,name]dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
 
     protected buildPayload = memoize(async () => {
         const { dataParams = {} } = this.builder;
@@ -72,5 +75,20 @@ export class AggregatedSync extends GenericSync {
 
     protected cleanResponse(response: DataImportResponse, instance: Instance) {
         return cleanDataImportResponse(response, instance);
+    }
+
+    protected async buildDataStats() {
+        const metadataPackage = await this.extractMetadata();
+        const dictionary = buildMetadataDictionary(metadataPackage);
+        const { dataValues } = await this.buildPayload();
+
+        return _(dataValues)
+            .groupBy("dataElement")
+            .mapValues((array, dataElement) => ({
+                dataElement: dictionary[dataElement]?.name ?? dataElement,
+                count: array.length,
+            }))
+            .values()
+            .value();
     }
 }
