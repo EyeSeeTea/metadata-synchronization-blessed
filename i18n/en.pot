@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-26T17:11:40.844Z\n"
-"PO-Revision-Date: 2019-12-26T17:11:40.844Z\n"
+"POT-Creation-Date: 2019-12-27T11:13:03.978Z\n"
+"PO-Revision-Date: 2019-12-27T11:13:03.978Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -526,12 +526,6 @@ msgstr[1] ""
 msgid "Instance Configuration"
 msgstr ""
 
-msgid "Destination instances"
-msgstr ""
-
-msgid "Destination instance settings description"
-msgstr ""
-
 msgid "Manual sync"
 msgstr ""
 
@@ -572,6 +566,12 @@ msgid "Deleted objects"
 msgstr ""
 
 msgid "List & Sync deleted objects"
+msgstr ""
+
+msgid "Destination instances"
+msgstr ""
+
+msgid "Destination instance settings description"
 msgstr ""
 
 msgid "Add"

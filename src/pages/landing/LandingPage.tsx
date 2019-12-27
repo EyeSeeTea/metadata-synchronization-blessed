@@ -8,6 +8,9 @@ import { shouldShowDeletedObjects } from "../../utils/permissions";
 import MenuCard, { MenuCardProps } from "./MenuCard";
 
 const useStyles = makeStyles({
+    container: {
+        marginLeft: 30
+    },
     title: {
         fontSize: 24,
         fontWeight: 300,
@@ -33,18 +36,6 @@ const LandingPage: React.FC = () => {
         isVisible?: boolean;
         children: MenuCardProps[];
     }[] = [
-        {
-            title: "Destination instance settings",
-            key: "instances",
-            children: [
-                {
-                    name: i18n.t("Destination instances"),
-                    description: i18n.t("Destination instance settings description"),
-                    addAction: () => history.push("/instance-configurator/new"),
-                    listAction: () => history.push("/instance-configurator"),
-                },
-            ],
-        },
         {
             title: "Metadata sync",
             key: "metadata",
@@ -123,10 +114,22 @@ const LandingPage: React.FC = () => {
                 },
             ],
         },
+        {
+            title: "Configuration",
+            key: "configuration",
+            children: [
+                {
+                    name: i18n.t("Destination instances"),
+                    description: i18n.t("Destination instance settings description"),
+                    addAction: () => history.push("/instance-configurator/new"),
+                    listAction: () => history.push("/instance-configurator"),
+                },
+            ],
+        },
     ];
 
     return (
-        <React.Fragment>
+        <div className={classes.container}>
             {cards.map(
                 ({ key, title, isVisible = true, children }) =>
                     isVisible && (
@@ -141,7 +144,7 @@ const LandingPage: React.FC = () => {
                         </div>
                     )
             )}
-        </React.Fragment>
+        </div>
     );
 };
 
