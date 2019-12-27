@@ -9,7 +9,7 @@ import MenuCard, { MenuCardProps } from "./MenuCard";
 
 const useStyles = makeStyles({
     container: {
-        marginLeft: 30
+        marginLeft: 30,
     },
     title: {
         fontSize: 24,
@@ -37,7 +37,7 @@ const LandingPage: React.FC = () => {
         children: MenuCardProps[];
     }[] = [
         {
-            title: "Metadata sync",
+            title: "Metadata Sync",
             key: "metadata",
             children: [
                 {
@@ -46,7 +46,7 @@ const LandingPage: React.FC = () => {
                     listAction: () => history.push("/sync/metadata"),
                 },
                 {
-                    name: i18n.t("Sync Rules"),
+                    name: i18n.t("Sync rules"),
                     description: i18n.t("Metadata synchronization rules description"),
                     addAction: () => history.push("/sync-rules/metadata/new"),
                     listAction: () => history.push("/sync-rules/metadata"),
@@ -68,7 +68,7 @@ const LandingPage: React.FC = () => {
                     listAction: () => history.push("/sync/aggregated"),
                 },
                 {
-                    name: i18n.t("Sync Rules"),
+                    name: i18n.t("Sync rules"),
                     description: i18n.t("Aggregated Data synchronization rules description"),
                     addAction: () => history.push("/sync-rules/aggregated/new"),
                     listAction: () => history.push("/sync-rules/aggregated"),
@@ -90,7 +90,7 @@ const LandingPage: React.FC = () => {
                     listAction: () => history.push("/sync/events"),
                 },
                 {
-                    name: i18n.t("Sync Rules"),
+                    name: i18n.t("Sync rules"),
                     description: i18n.t("Event synchronization rules description"),
                     addAction: () => history.push("/sync-rules/events/new"),
                     listAction: () => history.push("/sync-rules/events"),
@@ -119,7 +119,7 @@ const LandingPage: React.FC = () => {
             key: "configuration",
             children: [
                 {
-                    name: i18n.t("Destination instances"),
+                    name: i18n.t("Destination instance settings"),
                     description: i18n.t("Destination instance settings description"),
                     addAction: () => history.push("/instance-configurator/new"),
                     listAction: () => history.push("/instance-configurator"),
@@ -129,15 +129,15 @@ const LandingPage: React.FC = () => {
     ];
 
     return (
-        <div className={classes.container}>
+        <div className={classes.container} data-test="pages">
             {cards.map(
                 ({ key, title, isVisible = true, children }) =>
                     isVisible && (
-                        <div key={`card-${key}`}>
+                        <div key={`card-${key}`} data-test={key}>
                             <h1 className={classes.title}>{title}</h1>
 
                             {children.map((props, index) => (
-                                <MenuCard key={`card-${key}-${index}`} {...props} />
+                                <MenuCard key={`card-${key}-${index}`} dataTest={`card-${key}-${index}`} {...props} />
                             ))}
 
                             <div style={{ clear: "both" }} />

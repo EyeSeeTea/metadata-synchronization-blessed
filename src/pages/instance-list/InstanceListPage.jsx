@@ -155,7 +155,7 @@ class InstancesPage extends React.Component {
                     }
                     saveText={i18n.t("Ok")}
                 />
-                <PageHeader title={i18n.t("Instance Configuration")} onBackClick={this.backHome} />
+                <PageHeader title={i18n.t("Destination Instance Settings")} onBackClick={this.backHome} />
                 <OldObjectsTable
                     key={tableKey}
                     d2={d2}

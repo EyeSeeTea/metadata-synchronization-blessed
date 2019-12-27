@@ -15,6 +15,7 @@ export interface MenuCardProps {
     description?: string;
     addAction?: () => void;
     listAction?: () => void;
+    dataTest?:string;
 }
 
 const useStyles = makeStyles({
@@ -44,11 +45,11 @@ const useStyles = makeStyles({
     },
 });
 
-const MenuCard: React.FC<MenuCardProps> = ({ name, description, addAction, listAction }) => {
+const MenuCard: React.FC<MenuCardProps> = ({ name, description, addAction, listAction, dataTest }) => {
     const classes = useStyles();
 
     return (
-        <Card className={classes.card}>
+        <Card data-test={dataTest} className={classes.card}>
             <CardHeader
                 onClick={listAction ?? _.noop}
                 classes={{ root: classes.header, title: classes.headerText }}
