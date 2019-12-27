@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-27T11:13:03.978Z\n"
-"PO-Revision-Date: 2019-12-27T11:13:03.978Z\n"
+"POT-Creation-Date: 2019-12-27T12:34:12.730Z\n"
+"PO-Revision-Date: 2019-12-27T12:34:12.730Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -523,7 +523,7 @@ msgid_plural "Are you sure you want to delete {{count}} instances?"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Instance Configuration"
+msgid "Destination Instance Settings"
 msgstr ""
 
 msgid "Manual sync"
@@ -532,7 +532,7 @@ msgstr ""
 msgid "Metadata manual synchronization"
 msgstr ""
 
-msgid "Sync Rules"
+msgid "Sync rules"
 msgstr ""
 
 msgid "Metadata synchronization rules description"
@@ -568,7 +568,7 @@ msgstr ""
 msgid "List & Sync deleted objects"
 msgstr ""
 
-msgid "Destination instances"
+msgid "Destination instance settings"
 msgstr ""
 
 msgid "Destination instance settings description"
@@ -623,6 +623,9 @@ msgid "Aggregated Data Synchronization Rules"
 msgstr ""
 
 msgid "Events Synchronization Rules"
+msgstr ""
+
+msgid "Destination instances"
 msgstr ""
 
 msgid "Last executed"

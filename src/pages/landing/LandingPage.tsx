@@ -137,7 +137,11 @@ const LandingPage: React.FC = () => {
                             <h1 className={classes.title}>{title}</h1>
 
                             {children.map((props, index) => (
-                                <MenuCard key={`card-${key}-${index}`} dataTest={`card-${key}-${index}`} {...props} />
+                                <MenuCard
+                                    key={`card-${key}-${index}`}
+                                    dataTest={`card-${key}-${index}`}
+                                    {...props}
+                                />
                             ))}
 
                             <div style={{ clear: "both" }} />

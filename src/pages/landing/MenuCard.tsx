@@ -15,7 +15,7 @@ export interface MenuCardProps {
     description?: string;
     addAction?: () => void;
     listAction?: () => void;
-    dataTest?:string;
+    dataTest?: string;
 }
 
 const useStyles = makeStyles({
@@ -45,7 +45,13 @@ const useStyles = makeStyles({
     },
 });
 
-const MenuCard: React.FC<MenuCardProps> = ({ name, description, addAction, listAction, dataTest }) => {
+const MenuCard: React.FC<MenuCardProps> = ({
+    name,
+    description,
+    addAction,
+    listAction,
+    dataTest,
+}) => {
     const classes = useStyles();
 
     return (

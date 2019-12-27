@@ -16,19 +16,19 @@ context("Landing page", () => {
         cy.contains("Events Sync");
         cy.contains("Configuration");
 
-        cy.get(dataTest("metadata")).contains("Manual sync")
-        cy.get(dataTest("metadata")).contains("Sync rules")
-        cy.get(dataTest("metadata")).contains("History")
+        cy.get(dataTest("metadata")).contains("Manual sync");
+        cy.get(dataTest("metadata")).contains("Sync rules");
+        cy.get(dataTest("metadata")).contains("History");
 
-        cy.get(dataTest("aggregated")).contains("Manual sync")
-        cy.get(dataTest("aggregated")).contains("Sync rules")
-        cy.get(dataTest("aggregated")).contains("History")
+        cy.get(dataTest("aggregated")).contains("Manual sync");
+        cy.get(dataTest("aggregated")).contains("Sync rules");
+        cy.get(dataTest("aggregated")).contains("History");
 
-        cy.get(dataTest("events")).contains("Manual sync")
-        cy.get(dataTest("events")).contains("Sync rules")
-        cy.get(dataTest("events")).contains("History")
-        
-        cy.get(dataTest("configuration")).contains("Destination instance settings")
+        cy.get(dataTest("events")).contains("Manual sync");
+        cy.get(dataTest("events")).contains("Sync rules");
+        cy.get(dataTest("events")).contains("History");
+
+        cy.get(dataTest("configuration")).contains("Destination instance settings");
     });
 
     // Metadata
