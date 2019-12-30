@@ -52,12 +52,7 @@ const SyncRulesCreation: React.FC = () => {
 
             <PageHeader title={title} onBackClick={openDialog} />
 
-            <SyncWizard
-                isEdit={isEdit}
-                syncRule={syncRule}
-                onChange={updateSyncRule}
-                onCancel={exit}
-            />
+            <SyncWizard syncRule={syncRule} onChange={updateSyncRule} onCancel={exit} />
         </React.Fragment>
     );
 };

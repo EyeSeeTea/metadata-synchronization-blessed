@@ -5,11 +5,10 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import SyncRule from "../../models/syncRule";
 import { getValidationMessages } from "../../utils/validations";
-import { aggregatedSteps, eventsSteps, metadataSteps } from "./Steps";
+import { aggregatedSteps, eventsSteps, metadataSteps, SyncWizardStep } from "./Steps";
 
 interface SyncWizardProps {
     syncRule: SyncRule;
-    isEdit?: boolean;
     isDialog?: boolean;
     onChange?(syncRule: SyncRule): void;
     onCancel?(): void;
@@ -23,7 +22,6 @@ const config = {
 
 const SyncWizard: React.FC<SyncWizardProps> = ({
     syncRule,
-    isEdit = false,
     isDialog = false,
     onChange = _.noop,
     onCancel = _.noop,
@@ -42,22 +40,28 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
             },
         }));
 
-    const onStepChangeRequest = async (currentStep: any) => {
-        return getValidationMessages(d2, syncRule, currentStep.validationKeys);
+    const onStepChangeRequest = async (_currentStep: SyncWizardStep, newStep: SyncWizardStep) => {
+        const index = _(steps).findIndex(step => step.key === newStep.key);
+        const validationMessages = await Promise.all(
+            _.take(steps, index).map(({ validationKeys }) =>
+                getValidationMessages(d2, syncRule, validationKeys)
+            )
+        );
+
+        return _.flatten(validationMessages);
     };
 
     const urlHash = location.hash.slice(1);
     const stepExists = steps.find(step => step.key === urlHash);
     const firstStepKey = steps.map(step => step.key)[0];
     const initialStepKey = stepExists ? urlHash : firstStepKey;
-    const lastClickableStepIndex = isEdit ? steps.length - 1 : 0;
 
     return (
         <Wizard
             useSnackFeedback={true}
             onStepChangeRequest={onStepChangeRequest}
             initialStepKey={initialStepKey}
-            lastClickableStepIndex={lastClickableStepIndex}
+            lastClickableStepIndex={steps.length - 1}
             steps={steps}
         />
     );
