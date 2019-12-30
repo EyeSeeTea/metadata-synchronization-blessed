@@ -65,6 +65,14 @@ export default class SyncRule {
         return this.syncRule.builder.metadataIds;
     }
 
+    public get dataSyncAttributeCategoryOptions(): string[] {
+        return this.syncRule.builder.dataParams?.attributeCategoryOptions ?? [];
+    }
+
+    public get dataSyncAllAttributeCategoryOptions(): boolean {
+        return this.syncRule.builder.dataParams?.allAttributeCategoryOptions ?? false;
+    }
+
     public get dataSyncOrgUnitPaths(): string[] {
         return this.syncRule.builder.dataParams?.orgUnitPaths ?? [];
     }
@@ -148,9 +156,6 @@ export default class SyncRule {
                 metadataIds: [],
                 dataParams: {
                     strategy: "NEW_AND_UPDATES",
-                    orgUnitPaths: [],
-                    startDate: undefined,
-                    endDate: undefined,
                 },
                 syncParams: {
                     importStrategy: "CREATE_AND_UPDATE",
@@ -263,6 +268,34 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 metadataIds,
+            },
+        });
+    }
+
+    public updateDataSyncAttributeCategoryOptions(attributeCategoryOptions?: string[]): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder.dataParams,
+                    attributeCategoryOptions,
+                },
+            },
+        });
+    }
+
+    public updateDataSyncAllAttributeCategoryOptions(
+        allAttributeCategoryOptions?: boolean
+    ): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder.dataParams,
+                    allAttributeCategoryOptions,
+                },
             },
         });
     }

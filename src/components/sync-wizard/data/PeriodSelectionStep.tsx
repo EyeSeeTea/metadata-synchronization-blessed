@@ -1,16 +1,9 @@
 import i18n from "@dhis2/d2-i18n";
 import { DatePicker } from "d2-ui-components";
 import React from "react";
-import SyncRule from "../../../models/syncRule";
+import { SyncWizardStepProps } from "../Steps";
 
-interface PeriodSelectionStepProps {
-    syncRule: SyncRule;
-    onChange: (syncRule: SyncRule) => void;
-}
-
-export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
-    const { syncRule, onChange } = props;
-
+const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const updateStartDate = (date: Date | null) => {
         onChange(syncRule.updateDataSyncStartDate(date ?? undefined).updateDataSyncEvents([]));
     };
@@ -39,4 +32,6 @@ export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
             </div>
         </React.Fragment>
     );
-}
+};
+
+export default PeriodSelectionStep;

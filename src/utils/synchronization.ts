@@ -214,11 +214,20 @@ export async function getAggregatedData(
     dataSet: string[] = [],
     dataElementGroup: string[] = []
 ) {
-    const { startDate, endDate, orgUnitPaths = [] } = params;
+    const {
+        startDate,
+        endDate,
+        orgUnitPaths = [],
+        allAttributeCategoryOptions,
+        attributeCategoryOptions,
+    } = params;
 
     if (dataSet.length === 0 && dataElementGroup.length === 0) return {};
 
     const orgUnit = _.compact(orgUnitPaths.map(path => _.last(path.split("/"))));
+    const attributeOptionCombo = !allAttributeCategoryOptions
+        ? attributeCategoryOptions
+        : undefined;
 
     return api
         .get("/dataValueSets", {
@@ -228,6 +237,7 @@ export async function getAggregatedData(
             includeDeleted: false,
             startDate: moment(startDate).format("YYYY-MM-DD"),
             endDate: moment(endDate).format("YYYY-MM-DD"),
+            attributeOptionCombo,
             dataSet,
             dataElementGroup,
             orgUnit,
