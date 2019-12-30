@@ -3,16 +3,10 @@ import { useD2Api } from "d2-api";
 import { ObjectsTable, TableState } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import SyncRule from "../../../models/syncRule";
 import { ProgramEvent } from "../../../types/synchronization";
 import { getEventsData } from "../../../utils/synchronization";
 import { Toggle } from "../../toggle/Toggle";
-
-interface EventsSelectionStepProps {
-    syncRule: SyncRule;
-    onChange: (syncRule: SyncRule) => void;
-    type: "dataElements" | "programs";
-}
+import { SyncWizardStepProps } from "../Steps";
 
 const columns = [
     { name: "id" as const, text: i18n.t("UID"), sortable: true },
@@ -34,7 +28,7 @@ const details = [
     { name: "storedBy" as const, text: i18n.t("Stored by") },
 ];
 
-export default function EventsSelectionStep({ syncRule, onChange }: EventsSelectionStepProps) {
+export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
     const api = useD2Api();
     const [objects, setObjects] = useState<ProgramEvent[]>([]);
 
@@ -42,9 +36,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: EventsSelect
         getEventsData(
             api,
             {
-                orgUnitPaths: syncRule.dataSyncOrgUnitPaths,
-                startDate: syncRule.dataSyncStartDate ?? undefined,
-                endDate: syncRule.dataSyncEndDate ?? undefined,
+                ...syncRule.dataParams,
                 allEvents: true,
             },
             syncRule.metadataIds

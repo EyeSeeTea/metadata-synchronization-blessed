@@ -30,7 +30,7 @@ const SyncRulesCreation: React.FC = () => {
 
     const exit = () => {
         updateDialogOpen(false);
-        history.goBack();
+        history.push(`/sync-rules/${type}`);
     };
 
     useEffect(() => {

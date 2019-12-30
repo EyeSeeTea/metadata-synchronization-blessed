@@ -1,21 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { withSnackbar, OrgUnitsSelector } from "d2-ui-components";
-import SyncRule from "../../../models/syncRule";
-import { D2 } from "../../../types/d2";
-import { getCurrentUserOrganisationUnits } from "../../../utils/d2";
-import _ from "lodash";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { useD2 } from "d2-api";
+import { OrgUnitsSelector, withSnackbar } from "d2-ui-components";
+import _ from "lodash";
+import React, { useEffect, useState } from "react";
+import { D2 } from "../../../types/d2";
+import { getCurrentUserOrganisationUnits } from "../../../utils/d2";
+import { SyncWizardStepProps } from "../Steps";
 
-interface OrganisationUnitsStepProps {
-    syncRule: SyncRule;
-    onChange: (syncRule: SyncRule) => void;
-}
-
-const OrganisationUnitsSelectionStep: React.FC<OrganisationUnitsStepProps> = ({
-    syncRule,
-    onChange,
-}) => {
+const OrganisationUnitsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const d2 = useD2();
     const [organisationUnitsRootIds, setOrganisationUnitsRootIds] = useState<string[]>([]);
 

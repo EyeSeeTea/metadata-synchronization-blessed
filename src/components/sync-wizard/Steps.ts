@@ -1,14 +1,15 @@
+import i18n from "@dhis2/d2-i18n";
 import { ReactNode } from "react";
-import i18n from "../../locales";
+import SyncRule from "../../models/syncRule";
 import GeneralInfoStep from "./common/GeneralInfoStep";
 import InstanceSelectionStep from "./common/InstanceSelectionStep";
-import SummaryStep from "./common/SummaryStep";
-import SchedulerStep from "./common/SchedulerStep";
-import CategoryOptionsSelectionStep from "./data/CategoryOptionsSelectionStep";
 import MetadataSelectionStep from "./common/MetadataSelectionStep";
+import SchedulerStep from "./common/SchedulerStep";
+import SummaryStep from "./common/SummaryStep";
+import CategoryOptionsSelectionStep from "./data/CategoryOptionsSelectionStep";
+import EventsSelectionStep from "./data/EventsSelectionStep";
 import OrganisationUnitsSelectionStep from "./data/OrganisationUnitsSelectionStep";
 import PeriodSelectionStep from "./data/PeriodSelectionStep";
-import EventsSelectionStep from "./data/EventsSelectionStep";
 
 export interface SyncWizardStep {
     key: string;
@@ -19,6 +20,11 @@ export interface SyncWizardStep {
     component: ReactNode;
     validationKeys: string[];
     showOnSyncDialog?: boolean;
+}
+
+export interface SyncWizardStepProps {
+    syncRule: SyncRule;
+    onChange: (syncRule: SyncRule) => void;
 }
 
 const commonSteps: {
@@ -145,7 +151,7 @@ export const eventsSteps: SyncWizardStep[] = [
         key: "period",
         label: i18n.t("Period"),
         component: PeriodSelectionStep,
-        validationKeys: [],
+        validationKeys: ["dataSyncStartDate", "dataSyncEndDate"],
         showOnSyncDialog: true,
     },
     {
