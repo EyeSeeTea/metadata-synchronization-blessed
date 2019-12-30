@@ -161,6 +161,7 @@ export default class SyncRule {
                 metadataIds: [],
                 dataParams: {
                     strategy: "NEW_AND_UPDATES",
+                    allAttributeCategoryOptions: true,
                 },
                 syncParams: {
                     importStrategy: "CREATE_AND_UPDATE",
