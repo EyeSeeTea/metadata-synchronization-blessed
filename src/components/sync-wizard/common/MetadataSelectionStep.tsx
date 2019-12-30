@@ -10,13 +10,8 @@ import {
     ProgramModel,
 } from "../../../models/d2Model";
 import { metadataModels } from "../../../models/d2ModelFactory";
-import SyncRule from "../../../models/syncRule";
 import MetadataTable from "../../metadata-table/MetadataTable";
-
-interface MetadataSelectionStepProps {
-    syncRule: SyncRule;
-    onChange: (syncRule: SyncRule) => void;
-}
+import { SyncWizardStepProps } from "../Steps";
 
 const config = {
     metadata: {
@@ -38,7 +33,7 @@ const config = {
     },
 };
 
-export default function MetadataSelectionStep(props: MetadataSelectionStepProps) {
+export default function MetadataSelectionStep(props: SyncWizardStepProps) {
     const { syncRule, onChange } = props;
     const { models, childrenKeys } = config[syncRule.type];
 

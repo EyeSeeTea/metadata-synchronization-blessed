@@ -2,14 +2,9 @@ import i18n from "@dhis2/d2-i18n";
 import { makeStyles } from "@material-ui/core";
 import { DatePicker } from "d2-ui-components";
 import React from "react";
-import SyncRule from "../../../models/syncRule";
 import { DataSyncPeriod } from "../../../types/synchronization";
 import Dropdown from "../../dropdown/Dropdown";
-
-interface PeriodSelectionStepProps {
-    syncRule: SyncRule;
-    onChange: (syncRule: SyncRule) => void;
-}
+import { SyncWizardStepProps } from "../Steps";
 
 const useStyles = makeStyles({
     dropdown: {
@@ -36,8 +31,7 @@ export const availablePeriods = [
     { id: "LAST_YEAR", name: i18n.t("Last year") },
 ];
 
-export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
-    const { syncRule, onChange } = props;
+const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const classes = useStyles();
 
     const updatePeriod = (period: DataSyncPeriod) => {
@@ -90,4 +84,6 @@ export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
             )}
         </React.Fragment>
     );
-}
+};
+
+export default PeriodSelectionStep;

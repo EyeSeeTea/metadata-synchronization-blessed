@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-30T09:29:50.313Z\n"
-"PO-Revision-Date: 2019-12-30T09:29:50.313Z\n"
+"POT-Creation-Date: 2019-12-30T12:41:57.453Z\n"
+"PO-Revision-Date: 2019-12-30T12:41:57.453Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -311,6 +311,12 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
+msgid "Start date"
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
 msgid "Target instances [{{total}}]"
 msgstr ""
 
@@ -333,6 +339,9 @@ msgid "Save"
 msgstr ""
 
 msgid "Download JSON"
+msgstr ""
+
+msgid "Sync all attribute category options"
 msgstr ""
 
 msgid "UID"
@@ -378,12 +387,6 @@ msgid "Last six months"
 msgstr ""
 
 msgid "Last year"
-msgstr ""
-
-msgid "Start date"
-msgstr ""
-
-msgid "End date"
 msgstr ""
 
 msgid "Retrieving information from remote instances"
