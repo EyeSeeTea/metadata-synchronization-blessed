@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-25T08:43:28.148Z\n"
-"PO-Revision-Date: 2019-12-25T08:43:28.148Z\n"
+"POT-Creation-Date: 2019-12-30T05:31:11.289Z\n"
+"PO-Revision-Date: 2019-12-30T05:31:11.289Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -389,13 +389,13 @@ msgstr ""
 msgid "Network error {{error}}, check if server is up and CORS is enabled"
 msgstr ""
 
-msgid "Metadata Synchronization"
+msgid "Metadata & Data Synchronization"
 msgstr ""
 
 msgid "Metadata Synchronization History"
 msgstr ""
 
-msgid "Aggregated Synchronization History"
+msgid "Aggregated Data Synchronization History"
 msgstr ""
 
 msgid "Events Synchronization History"
@@ -523,25 +523,61 @@ msgid_plural "Are you sure you want to delete {{count}} instances?"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Instance Configuration"
+msgid "Destination Instance Settings"
 msgstr ""
 
-msgid "Aggregated Synchronization"
+msgid "Manual sync"
 msgstr ""
 
-msgid "Events Synchronization"
+msgid "Metadata manual synchronization"
 msgstr ""
 
-msgid "Metadata Synchronization Rules"
+msgid "Sync rules"
 msgstr ""
 
-msgid "Aggregated Synchronization Rules"
+msgid "Metadata synchronization rules description"
 msgstr ""
 
-msgid "Events Synchronization Rules"
+msgid "History"
+msgstr ""
+
+msgid "Metadata synchronization history"
+msgstr ""
+
+msgid "Aggregated Data manual synchronization"
+msgstr ""
+
+msgid "Aggregated Data synchronization rules description"
+msgstr ""
+
+msgid "Aggregated Data synchronization history"
+msgstr ""
+
+msgid "Event manual synchronization"
+msgstr ""
+
+msgid "Event synchronization rules description"
+msgstr ""
+
+msgid "Event synchronization history"
 msgstr ""
 
 msgid "Deleted objects"
+msgstr ""
+
+msgid "List & Sync deleted objects"
+msgstr ""
+
+msgid "Destination instance settings"
+msgstr ""
+
+msgid "Destination instance settings description"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "List"
 msgstr ""
 
 msgid "Deleted by"
@@ -559,6 +595,15 @@ msgstr ""
 msgid "Synchronizing metadata"
 msgstr ""
 
+msgid "Metadata Synchronization"
+msgstr ""
+
+msgid "Aggregated Data Synchronization"
+msgstr ""
+
+msgid "Events Synchronization"
+msgstr ""
+
 msgid "New {{type}} synchronization rule"
 msgstr ""
 
@@ -569,6 +614,15 @@ msgid "Cancel {{type}} synchronization rule creation"
 msgstr ""
 
 msgid "Cancel {{type}} synchronization rule editing"
+msgstr ""
+
+msgid "Metadata Synchronization Rules"
+msgstr ""
+
+msgid "Aggregated Data Synchronization Rules"
+msgstr ""
+
+msgid "Events Synchronization Rules"
 msgstr ""
 
 msgid "Destination instances"
