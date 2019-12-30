@@ -1,15 +1,48 @@
 import i18n from "@dhis2/d2-i18n";
+import { makeStyles } from "@material-ui/core";
 import { DatePicker } from "d2-ui-components";
 import React from "react";
-import SyncRule from "../../../models/syncRule";
+import { DataSyncPeriod } from "../../../types/synchronization";
+import Dropdown from "../../dropdown/Dropdown";
+import { SyncWizardStepProps } from "../Steps";
 
-interface PeriodSelectionStepProps {
-    syncRule: SyncRule;
-    onChange: (syncRule: SyncRule) => void;
-}
+const useStyles = makeStyles({
+    dropdown: {
+        marginTop: 20,
+        marginLeft: -10,
+    },
+    fixedPeriod: {
+        marginTop: 5,
+        marginBottom: -20,
+    },
+    datePicker: {
+        marginTop: -10,
+    },
+});
 
-export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
-    const { syncRule, onChange } = props;
+export const availablePeriods = [
+    { id: "ALL", name: i18n.t("All periods") },
+    { id: "FIXED", name: i18n.t("Fixed period") },
+    { id: "LAST_DAY", name: i18n.t("Last day") },
+    { id: "LAST_WEEK", name: i18n.t("Last week") },
+    { id: "LAST_MONTH", name: i18n.t("Last month") },
+    { id: "LAST_THREE_MONTHS", name: i18n.t("Last three months") },
+    { id: "LAST_SIX_MONTHS", name: i18n.t("Last six months") },
+    { id: "LAST_YEAR", name: i18n.t("Last year") },
+];
+
+const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
+    const classes = useStyles();
+
+    const updatePeriod = (period: DataSyncPeriod) => {
+        onChange(
+            syncRule
+                .updateDataSyncPeriod(period)
+                .updateDataSyncStartDate(undefined)
+                .updateDataSyncEndDate(undefined)
+                .updateDataSyncEvents([])
+        );
+    };
 
     const updateStartDate = (date: Date | null) => {
         onChange(syncRule.updateDataSyncStartDate(date ?? undefined).updateDataSyncEvents([]));
@@ -19,24 +52,38 @@ export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
         onChange(syncRule.updateDataSyncEndDate(date ?? undefined).updateDataSyncEvents([]));
     };
 
-    const mandatory = syncRule.type === "aggregated" ? " (*)" : "";
-
     return (
         <React.Fragment>
-            <div>
-                <DatePicker
-                    label={i18n.t("Start date") + mandatory}
-                    value={syncRule.dataSyncStartDate || null}
-                    onChange={updateStartDate}
+            <div className={classes.dropdown}>
+                <Dropdown
+                    label={i18n.t("Period")}
+                    items={availablePeriods}
+                    value={syncRule.dataSyncPeriod}
+                    onValueChange={updatePeriod}
+                    hideEmpty={true}
                 />
             </div>
-            <div>
-                <DatePicker
-                    label={i18n.t("End date") + mandatory}
-                    value={syncRule.dataSyncEndDate || null}
-                    onChange={updateEndDate}
-                />
-            </div>
+
+            {syncRule.dataSyncPeriod === "FIXED" && (
+                <div className={classes.fixedPeriod}>
+                    <div className={classes.datePicker}>
+                        <DatePicker
+                            label={`${i18n.t("Start date")} (*)`}
+                            value={syncRule.dataSyncStartDate || null}
+                            onChange={updateStartDate}
+                        />
+                    </div>
+                    <div className={classes.datePicker}>
+                        <DatePicker
+                            label={`${i18n.t("End date")} (*)`}
+                            value={syncRule.dataSyncEndDate || null}
+                            onChange={updateEndDate}
+                        />
+                    </div>
+                </div>
+            )}
         </React.Fragment>
     );
-}
+};
+
+export default PeriodSelectionStep;

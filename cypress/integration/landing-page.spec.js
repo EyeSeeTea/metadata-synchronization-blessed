@@ -11,41 +11,97 @@ context("Landing page", () => {
             .should("have.length", 1)
             .should("be.visible");
 
-        cy.contains("Instance Configuration");
-        cy.contains("Metadata Synchronization");
-        cy.contains("Data Synchronization");
-        cy.contains("Metadata Synchronization Rules");
-        cy.contains("Data Synchronization Rules");
-        cy.contains("Synchronization History");
+        cy.contains("Metadata Sync");
+        cy.contains("Aggregated Data Sync");
+        cy.contains("Events Sync");
+        cy.contains("Configuration");
+
+        cy.get(dataTest("metadata")).contains("Manual sync");
+        cy.get(dataTest("metadata")).contains("Sync rules");
+        cy.get(dataTest("metadata")).contains("History");
+
+        cy.get(dataTest("aggregated")).contains("Manual sync");
+        cy.get(dataTest("aggregated")).contains("Sync rules");
+        cy.get(dataTest("aggregated")).contains("History");
+
+        cy.get(dataTest("events")).contains("Manual sync");
+        cy.get(dataTest("events")).contains("Sync rules");
+        cy.get(dataTest("events")).contains("History");
+
+        cy.get(dataTest("configuration")).contains("Destination instance settings");
     });
 
-    it("enters the Instance Configurator page", function() {
-        cy.get(dataTest("page-instance-configurator")).click();
-        cy.get(dataTest("page-header-title")).contains("Instance Configuration");
-    });
-
-    it("enters the Metadata Synchronization page", function() {
-        cy.get(dataTest("page-sync/metadata")).click();
+    // Metadata
+    it("enters the Metadata manual sync page", function() {
+        cy.get("[data-test='card-metadata-0'] button[title='List']").click();
         cy.get(dataTest("page-header-title")).contains("Metadata Synchronization");
     });
 
-    it("enters the Data Synchronization page", function() {
-        cy.get(dataTest("page-sync/data")).click();
-        cy.get(dataTest("page-header-title")).contains("Data Synchronization");
-    });
-
-    it("enter the MetadataSynchronization Rules page", function() {
-        cy.get(dataTest("page-metadata-synchronization-rules")).click();
+    it("enters the Metadata sync rules page", function() {
+        cy.get("[data-test='card-metadata-1'] button[title='List']").click();
         cy.get(dataTest("page-header-title")).contains("Metadata Synchronization Rules");
     });
 
-    it("enter the DataSynchronization Rules page", function() {
-        cy.get(dataTest("page-data-synchronization-rules")).click();
-        cy.get(dataTest("page-header-title")).contains("Data Synchronization Rules");
+    it("enters the Metadata sync rules page", function() {
+        cy.get("[data-test='card-metadata-1'] button[title='Add']").click();
+        cy.get(dataTest("page-header-title")).contains("New metadata synchronization rule");
     });
 
-    it("enter the Synchronization History page", function() {
-        cy.get(dataTest("page-history")).click();
-        cy.get(dataTest("page-header-title")).contains("Synchronization History");
+    it("enters the Metadata history page", function() {
+        cy.get("[data-test='card-metadata-2'] button[title='List']").click();
+        cy.get(dataTest("page-header-title")).contains("Metadata Synchronization History");
+    });
+
+    // Aggregated Data
+    it("enters the Aggregated Data manual sync page", function() {
+        cy.get("[data-test='card-aggregated-0'] button[title='List']").click();
+        cy.get(dataTest("page-header-title")).contains("Aggregated Data Synchronization");
+    });
+
+    it("enters the Aggregated Data sync rules page", function() {
+        cy.get("[data-test='card-aggregated-1'] button[title='List']").click();
+        cy.get(dataTest("page-header-title")).contains("Aggregated Data Synchronization Rules");
+    });
+
+    it("enters the Aggregated Data sync rules page", function() {
+        cy.get("[data-test='card-aggregated-1'] button[title='Add']").click();
+        cy.get(dataTest("page-header-title")).contains("New aggregated synchronization rule");
+    });
+
+    it("enters the Aggregated Data history page", function() {
+        cy.get("[data-test='card-aggregated-2'] button[title='List']").click();
+        cy.get(dataTest("page-header-title")).contains("Aggregated Data Synchronization History");
+    });
+
+    // Events
+    it("enters the Events manual sync page", function() {
+        cy.get("[data-test='card-events-0'] button[title='List']").click();
+        cy.get(dataTest("page-header-title")).contains("Events Synchronization");
+    });
+
+    it("enters the Events sync rules page", function() {
+        cy.get("[data-test='card-events-1'] button[title='List']").click();
+        cy.get(dataTest("page-header-title")).contains("Events Synchronization Rules");
+    });
+
+    it("enters the Aggregated Data sync rules page", function() {
+        cy.get("[data-test='card-events-1'] button[title='Add']").click();
+        cy.get(dataTest("page-header-title")).contains("New events synchronization rule");
+    });
+
+    it("enters the Aggregated Data history page", function() {
+        cy.get("[data-test='card-events-2'] button[title='List']").click();
+        cy.get(dataTest("page-header-title")).contains("Events Synchronization History");
+    });
+
+    // Instance Settings
+    it("enters the Destination instance settings page", function() {
+        cy.get("[data-test='configuration'] button[title='List']").click();
+        cy.get(dataTest("page-header-title")).contains("Destination Instance Settings");
+    });
+
+    it("enters the Destination instance creation page", function() {
+        cy.get("[data-test='configuration'] button[title='Add']").click();
+        cy.get(dataTest("page-header-title")).contains("New Instance");
     });
 });

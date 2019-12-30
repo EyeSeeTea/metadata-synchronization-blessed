@@ -14,6 +14,7 @@ import { getBaseUrl } from "../../../utils/d2";
 import { getMetadata } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
 import { getInstances } from "./InstanceSelectionStep";
+import { availablePeriods } from "../data/PeriodSelectionStep";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -139,6 +140,30 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                         </ul>
                     </LiEntry>
                 ))}
+
+                {syncRule.type !== "metadata" && (
+                    <LiEntry
+                        label={i18n.t("Period")}
+                        value={_.find(availablePeriods, { id: syncRule.dataSyncPeriod })?.name}
+                    >
+                        {syncRule.dataSyncPeriod === "FIXED" && (
+                            <ul>
+                                <LiEntry
+                                    label={i18n.t("Start date")}
+                                    value={syncRule.dataSyncStartDate.format("YYYY-MM-DD")}
+                                />
+                            </ul>
+                        )}
+                        {syncRule.dataSyncPeriod === "FIXED" && (
+                            <ul>
+                                <LiEntry
+                                    label={i18n.t("End date")}
+                                    value={syncRule.dataSyncEndDate.format("YYYY-MM-DD")}
+                                />
+                            </ul>
+                        )}
+                    </LiEntry>
+                )}
 
                 <LiEntry
                     label={i18n.t("Target instances [{{total}}]", {

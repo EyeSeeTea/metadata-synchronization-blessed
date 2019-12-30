@@ -34,7 +34,7 @@ const config = {
         title: i18n.t("Metadata Synchronization History"),
     },
     aggregated: {
-        title: i18n.t("Aggregated Synchronization History"),
+        title: i18n.t("Aggregated Data Synchronization History"),
     },
     events: {
         title: i18n.t("Events Synchronization History"),

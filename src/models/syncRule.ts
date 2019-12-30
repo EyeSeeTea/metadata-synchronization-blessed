@@ -6,6 +6,7 @@ import { D2 } from "../types/d2";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import {
     DataSynchronizationParams,
+    DataSyncPeriod,
     MetadataSynchronizationParams,
     SharingSetting,
     SynchronizationRule,
@@ -65,8 +66,20 @@ export default class SyncRule {
         return this.syncRule.builder.metadataIds;
     }
 
+    public get dataSyncAttributeCategoryOptions(): string[] {
+        return this.syncRule.builder.dataParams?.attributeCategoryOptions ?? [];
+    }
+
+    public get dataSyncAllAttributeCategoryOptions(): boolean {
+        return this.syncRule.builder.dataParams?.allAttributeCategoryOptions ?? false;
+    }
+
     public get dataSyncOrgUnitPaths(): string[] {
         return this.syncRule.builder.dataParams?.orgUnitPaths ?? [];
+    }
+
+    public get dataSyncPeriod(): DataSyncPeriod {
+        return this.syncRule.builder.dataParams?.period ?? "ALL";
     }
 
     public get dataSyncStartDate(): Date | null {
@@ -148,9 +161,7 @@ export default class SyncRule {
                 metadataIds: [],
                 dataParams: {
                     strategy: "NEW_AND_UPDATES",
-                    orgUnitPaths: [],
-                    startDate: undefined,
-                    endDate: undefined,
+                    allAttributeCategoryOptions: true,
                 },
                 syncParams: {
                     importStrategy: "CREATE_AND_UPDATE",
@@ -267,6 +278,34 @@ export default class SyncRule {
         });
     }
 
+    public updateDataSyncAttributeCategoryOptions(attributeCategoryOptions?: string[]): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder.dataParams,
+                    attributeCategoryOptions,
+                },
+            },
+        });
+    }
+
+    public updateDataSyncAllAttributeCategoryOptions(
+        allAttributeCategoryOptions?: boolean
+    ): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder.dataParams,
+                    allAttributeCategoryOptions,
+                },
+            },
+        });
+    }
+
     public updateDataSyncOrgUnitPaths(orgUnitPaths: string[]): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
@@ -275,6 +314,19 @@ export default class SyncRule {
                 dataParams: {
                     ...this.syncRule.builder.dataParams,
                     orgUnitPaths,
+                },
+            },
+        });
+    }
+
+    public updateDataSyncPeriod(period?: DataSyncPeriod): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder.dataParams,
+                    period,
                 },
             },
         });
@@ -457,7 +509,7 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncStartDate: _.compact([
-                this.type === "aggregated" && !this.dataSyncStartDate
+                this.dataSyncPeriod === "FIXED" && !this.dataSyncStartDate
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "start date" },
@@ -465,13 +517,13 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncEndDate: _.compact([
-                this.type === "aggregated" && !this.dataSyncEndDate
+                this.dataSyncPeriod === "FIXED" && !this.dataSyncEndDate
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "end date" },
                       }
                     : null,
-                this.type === "aggregated" &&
+                this.dataSyncPeriod === "FIXED" &&
                 this.dataSyncEndDate &&
                 this.dataSyncStartDate &&
                 moment(this.dataSyncEndDate).isBefore(this.dataSyncStartDate)
