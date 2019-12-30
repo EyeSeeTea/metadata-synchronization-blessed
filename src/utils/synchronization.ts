@@ -244,9 +244,7 @@ export async function getAggregatedData(
     dataSet: string[] = [],
     dataElementGroup: string[] = []
 ) {
-
-    const { orgUnitPaths = [], allAttributeCategoryOptions,
-        attributeCategoryOptions, } = params;
+    const { orgUnitPaths = [], allAttributeCategoryOptions, attributeCategoryOptions } = params;
     const [startDate, endDate] = buildPeriodFromParams(params);
 
     if (dataSet.length === 0 && dataElementGroup.length === 0) return {};
@@ -264,7 +262,7 @@ export async function getAggregatedData(
             includeDeleted: false,
             startDate: startDate.format("YYYY-MM-DD"),
             endDate: endDate.format("YYYY-MM-DD"),
-                        attributeOptionCombo,
+            attributeOptionCombo,
             dataSet,
             dataElementGroup,
             orgUnit,

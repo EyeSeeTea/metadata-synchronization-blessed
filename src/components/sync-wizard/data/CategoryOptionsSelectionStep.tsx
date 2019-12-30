@@ -9,7 +9,9 @@ import { SyncWizardStepProps } from "../Steps";
 const CategoryOptionsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const d2 = useD2();
     const api = useD2Api();
-    const [selection, updateSelection] = useState<string[]>(syncRule.dataSyncAttributeCategoryOptions);
+    const [selection, updateSelection] = useState<string[]>(
+        syncRule.dataSyncAttributeCategoryOptions
+    );
 
     const updateSyncAll = (value: boolean) => {
         onChange(
@@ -30,7 +32,11 @@ const CategoryOptionsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule,
     );
 
     const options = useMemo(
-        () => _.uniqBy(_.map(data?.objects ?? [], ({ name }) => ({ value: name, text: name })), "value"),
+        () =>
+            _.uniqBy(
+                _.map(data?.objects ?? [], ({ name }) => ({ value: name, text: name })),
+                "value"
+            ),
         [data]
     );
 
