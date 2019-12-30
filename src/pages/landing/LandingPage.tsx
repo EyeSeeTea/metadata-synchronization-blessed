@@ -20,7 +20,7 @@ const useStyles = makeStyles({
     },
     clear: {
         clear: "both",
-    }
+    },
 });
 
 const LandingPage: React.FC = () => {
@@ -142,7 +142,8 @@ const LandingPage: React.FC = () => {
                             {children.map((props, index) => (
                                 <div
                                     key={`card-${key}-${index}`}
-                                    data-test={`card-${key}-${index}`}>
+                                    data-test={`card-${key}-${index}`}
+                                >
                                     <MenuCard {...props} />
                                 </div>
                             ))}
