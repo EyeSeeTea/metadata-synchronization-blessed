@@ -5,7 +5,6 @@ import React from "react";
 import SyncRule from "../../../models/syncRule";
 import { DataSyncPeriod } from "../../../types/synchronization";
 import Dropdown from "../../dropdown/Dropdown";
-import Typography from "@material-ui/core/Typography";
 
 interface PeriodSelectionStepProps {
     syncRule: SyncRule;
@@ -13,15 +12,12 @@ interface PeriodSelectionStepProps {
 }
 
 const useStyles = makeStyles({
-    title: {
-        fontWeight: 500,
-    },
     dropdown: {
         marginTop: 20,
         marginLeft: -10,
     },
     fixedPeriod: {
-        marginTop: 20,
+        marginTop: 5,
         marginBottom: -20,
     },
     datePicker: {
@@ -76,9 +72,6 @@ export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
 
             {syncRule.dataSyncPeriod === "FIXED" && (
                 <div className={classes.fixedPeriod}>
-                    <Typography className={classes.title} variant={"subtitle1"}>
-                        {i18n.t("Fixed period")}
-                    </Typography>
                     <div className={classes.datePicker}>
                         <DatePicker
                             label={`${i18n.t("Start date")} (*)`}
