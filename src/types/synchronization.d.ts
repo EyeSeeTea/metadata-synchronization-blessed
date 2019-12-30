@@ -27,6 +27,7 @@ export interface DataSynchronizationParams extends DataImportParams {
     attributeCategoryOptions?: string[];
     allAttributeCategoryOptions?: boolean;
     orgUnitPaths?: string[];
+    period?: DataSyncPeriod;
     startDate?: Date;
     endDate?: Date;
     events?: string[];
@@ -161,3 +162,13 @@ export interface DataValue {
     lastUpdated: string;
     followUp: boolean;
 }
+
+export type DataSyncPeriod =
+    | "ALL"
+    | "FIXED"
+    | "LAST_DAY"
+    | "LAST_WEEK"
+    | "LAST_MONTH"
+    | "LAST_THREE_MONTHS"
+    | "LAST_SIX_MONTHS"
+    | "LAST_YEAR";

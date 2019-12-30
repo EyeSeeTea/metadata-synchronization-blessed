@@ -2,25 +2,25 @@ import axios, { AxiosBasicCredentials } from "axios";
 import { D2Api } from "d2-api";
 import { isValidUid } from "d2/uid";
 import _ from "lodash";
+import moment, { Moment } from "moment";
+import memoize from "nano-memoize";
 import Instance from "../models/instance";
 import {
     D2,
-    MetadataImportParams,
-    MetadataImportResponse,
     DataImportParams,
     DataImportResponse,
+    MetadataImportParams,
+    MetadataImportResponse,
 } from "../types/d2";
 import {
     DataSynchronizationParams,
     MetadataPackage,
     NestedRules,
-    SynchronizationResult,
     ProgramEvent,
+    SynchronizationResult,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
 import { cleanModelName, getClassName } from "./d2";
-import moment from "moment";
-import memoize from "nano-memoize";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -208,19 +208,46 @@ export function cleanDataImportResponse(
     };
 }
 
+function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Moment] {
+    const {
+        period,
+        startDate = "1970-01-01",
+        endDate = moment()
+            .add(10, "years")
+            .endOf("year")
+            .format("YYYY-MM-DD"),
+    } = params;
+
+    switch (period) {
+        case "LAST_DAY":
+            return [moment().subtract(1, "day"), moment()];
+        case "LAST_WEEK":
+            return [moment().subtract(1, "week"), moment()];
+        case "LAST_MONTH":
+            return [moment().subtract(1, "month"), moment()];
+        case "LAST_THREE_MONTHS":
+            return [moment().subtract(3, "months"), moment()];
+        case "LAST_SIX_MONTHS":
+            return [moment().subtract(6, "months"), moment()];
+        case "LAST_YEAR":
+            return [moment().subtract(1, "year"), moment()];
+        default:
+        case "ALL":
+        case "FIXED":
+            return [moment(startDate), moment(endDate)];
+    }
+}
+
 export async function getAggregatedData(
     api: D2Api,
     params: DataSynchronizationParams,
     dataSet: string[] = [],
     dataElementGroup: string[] = []
 ) {
-    const {
-        startDate,
-        endDate,
-        orgUnitPaths = [],
-        allAttributeCategoryOptions,
-        attributeCategoryOptions,
-    } = params;
+
+    const { orgUnitPaths = [], allAttributeCategoryOptions,
+        attributeCategoryOptions, } = params;
+    const [startDate, endDate] = buildPeriodFromParams(params);
 
     if (dataSet.length === 0 && dataElementGroup.length === 0) return {};
 
@@ -235,9 +262,9 @@ export async function getAggregatedData(
             orgUnitIdScheme: "UID",
             categoryOptionComboIdScheme: "UID",
             includeDeleted: false,
-            startDate: moment(startDate).format("YYYY-MM-DD"),
-            endDate: moment(endDate).format("YYYY-MM-DD"),
-            attributeOptionCombo,
+            startDate: startDate.format("YYYY-MM-DD"),
+            endDate: endDate.format("YYYY-MM-DD"),
+                        attributeOptionCombo,
             dataSet,
             dataElementGroup,
             orgUnit,
@@ -275,7 +302,8 @@ export async function getEventsData(
     params: DataSynchronizationParams,
     programs: string[] = []
 ) {
-    const { startDate, endDate, orgUnitPaths = [], events = [], allEvents } = params;
+    const { period, orgUnitPaths = [], events = [], allEvents } = params;
+    const [startDate, endDate] = buildPeriodFromParams(params);
     const defaults = await getDefaultIds(api);
 
     if (programs.length === 0) return [];
@@ -289,8 +317,8 @@ export async function getEventsData(
             .get("/events", {
                 paging: false,
                 program,
-                startDate: startDate ? moment(startDate).format("YYYY-MM-DD") : undefined,
-                endDate: endDate ? moment(endDate).format("YYYY-MM-DD") : undefined,
+                startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
+                endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
             })
             .getData()) as { events: (ProgramEvent & { event: string })[] };
 

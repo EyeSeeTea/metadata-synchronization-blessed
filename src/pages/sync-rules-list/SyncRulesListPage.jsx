@@ -38,7 +38,7 @@ const config = {
         SyncClass: MetadataSync,
     },
     aggregated: {
-        title: i18n.t("Aggregated Synchronization Rules"),
+        title: i18n.t("Aggregated Data Synchronization Rules"),
         SyncClass: AggregatedSync,
     },
     events: {

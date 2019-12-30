@@ -151,7 +151,7 @@ export const eventsSteps: SyncWizardStep[] = [
         key: "period",
         label: i18n.t("Period"),
         component: PeriodSelectionStep,
-        validationKeys: [],
+        validationKeys: ["dataSyncStartDate", "dataSyncEndDate"],
         showOnSyncDialog: true,
     },
     {

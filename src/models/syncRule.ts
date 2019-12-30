@@ -6,6 +6,7 @@ import { D2 } from "../types/d2";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import {
     DataSynchronizationParams,
+    DataSyncPeriod,
     MetadataSynchronizationParams,
     SharingSetting,
     SynchronizationRule,
@@ -75,6 +76,10 @@ export default class SyncRule {
 
     public get dataSyncOrgUnitPaths(): string[] {
         return this.syncRule.builder.dataParams?.orgUnitPaths ?? [];
+    }
+
+    public get dataSyncPeriod(): DataSyncPeriod {
+        return this.syncRule.builder.dataParams?.period ?? "ALL";
     }
 
     public get dataSyncStartDate(): Date | null {
@@ -313,6 +318,19 @@ export default class SyncRule {
         });
     }
 
+    public updateDataSyncPeriod(period?: DataSyncPeriod): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder.dataParams,
+                    period,
+                },
+            },
+        });
+    }
+
     public updateDataSyncStartDate(startDate?: Date): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
@@ -490,7 +508,7 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncStartDate: _.compact([
-                this.type === "aggregated" && !this.dataSyncStartDate
+                this.dataSyncPeriod === "FIXED" && !this.dataSyncStartDate
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "start date" },
@@ -498,13 +516,13 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncEndDate: _.compact([
-                this.type === "aggregated" && !this.dataSyncEndDate
+                this.dataSyncPeriod === "FIXED" && !this.dataSyncEndDate
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "end date" },
                       }
                     : null,
-                this.type === "aggregated" &&
+                this.dataSyncPeriod === "FIXED" &&
                 this.dataSyncEndDate &&
                 this.dataSyncStartDate &&
                 moment(this.dataSyncEndDate).isBefore(this.dataSyncStartDate)
