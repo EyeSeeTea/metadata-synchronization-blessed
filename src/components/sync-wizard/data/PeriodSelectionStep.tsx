@@ -25,7 +25,7 @@ const useStyles = makeStyles({
     },
 });
 
-const dropdownItems = [
+export const availablePeriods = [
     { id: "ALL", name: i18n.t("All periods") },
     { id: "FIXED", name: i18n.t("Fixed period") },
     { id: "LAST_DAY", name: i18n.t("Last day") },
@@ -63,7 +63,7 @@ export default function PeriodSelectionStep(props: PeriodSelectionStepProps) {
             <div className={classes.dropdown}>
                 <Dropdown
                     label={i18n.t("Period")}
-                    items={dropdownItems}
+                    items={availablePeriods}
                     value={syncRule.dataSyncPeriod}
                     onValueChange={updatePeriod}
                     hideEmpty={true}
