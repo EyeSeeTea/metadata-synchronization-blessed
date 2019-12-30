@@ -75,6 +75,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
     const [syncRules, setSyncRules] = useState<SynchronizationRule[]>([]);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [toDelete, setToDelete] = useState<SynchronizationReport[]>([]);
+    const [selection, updateSelection] = useState<string[]>([]);
     const [response, updateResponse] = useState<{
         rows: SynchronizationReport[];
         pager: Partial<TablePagination>;
@@ -92,8 +93,9 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
                 { type, statusFilter, syncRuleFilter },
                 tableState ?? initialState
             ).then(updateResponse);
+            updateSelection(oldSelection => tableState?.selection ?? oldSelection);
         },
-        [d2, statusFilter, syncRuleFilter, type]
+        [d2, statusFilter, syncRuleFilter, type, updateSelection]
     );
 
     useEffect(() => {
@@ -202,6 +204,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
             );
         }
 
+        updateSelection([]);
         setToDelete([]);
     };
 
@@ -233,6 +236,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
                 details={details}
                 initialState={{ sorting: { field: "date", order: "desc" } }}
                 pagination={response.pager}
+                selection={selection}
                 actions={actions}
                 filterComponents={customFilters}
                 onChange={updateTable}
