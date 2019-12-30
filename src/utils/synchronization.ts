@@ -209,7 +209,14 @@ export function cleanDataImportResponse(
 }
 
 function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Moment] {
-    const { period, startDate = "1970-01-01", endDate = moment().format("YYYY-MM-DD") } = params;
+    const {
+        period,
+        startDate = "1970-01-01",
+        endDate = moment()
+            .add(10, "years")
+            .endOf("year")
+            .format("YYYY-MM-DD"),
+    } = params;
 
     switch (period) {
         case "LAST_DAY":
