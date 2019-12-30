@@ -33,6 +33,7 @@ const defaultState = {
 const getAllIdentifiers = memoize(
     async (
         _cacheKey: string,
+        search: string | undefined,
         apiModel: InstanceType<typeof D2ApiModel>,
         apiQuery: Parameters<InstanceType<typeof D2ApiModel>["get"]>[0]
     ) => {
@@ -43,11 +44,15 @@ const getAllIdentifiers = memoize(
                 fields: {
                     id: true as true,
                 },
+                filter: {
+                    name: { ilike: search },
+                    ...apiQuery.filter,
+                },
             })
             .getData();
         return _.map(objects, "id");
     },
-    { maxArgs: 1 }
+    { maxArgs: 2 }
 );
 
 export function D2ObjectsTable<T extends ReferenceObject = TableObject>(
@@ -71,8 +76,8 @@ export function D2ObjectsTable<T extends ReferenceObject = TableObject>(
     const { loading, data, error, refetch } = useD2ApiData();
 
     useEffect(() => {
-        getAllIdentifiers(apiModel.modelName, apiModel, apiQuery).then(updateIds);
-    }, [apiModel, apiQuery]);
+        getAllIdentifiers(apiModel.modelName, search, apiModel, apiQuery).then(updateIds);
+    }, [apiModel, apiQuery, search]);
 
     useEffect(
         () =>
