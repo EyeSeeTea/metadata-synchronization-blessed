@@ -18,6 +18,9 @@ const useStyles = makeStyles({
         padding: "15px 0px 15px",
         margin: 0,
     },
+    clear: {
+        clear: "both",
+    }
 });
 
 const LandingPage: React.FC = () => {
@@ -137,14 +140,14 @@ const LandingPage: React.FC = () => {
                             <h1 className={classes.title}>{title}</h1>
 
                             {children.map((props, index) => (
-                                <MenuCard
+                                <div
                                     key={`card-${key}-${index}`}
-                                    dataTest={`card-${key}-${index}`}
-                                    {...props}
-                                />
+                                    data-test={`card-${key}-${index}`}>
+                                    <MenuCard {...props} />
+                                </div>
                             ))}
 
-                            <div style={{ clear: "both" }} />
+                            <div className={classes.clear} />
                         </div>
                     )
             )}
