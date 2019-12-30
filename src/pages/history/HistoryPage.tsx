@@ -93,7 +93,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
                 { type, statusFilter, syncRuleFilter },
                 tableState ?? initialState
             ).then(updateResponse);
-            updateSelection(selection => tableState?.selection ?? selection);
+            updateSelection(oldSelection => tableState?.selection ?? oldSelection);
         },
         [d2, statusFilter, syncRuleFilter, type, updateSelection]
     );
