@@ -93,7 +93,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
                 { type, statusFilter, syncRuleFilter },
                 tableState ?? initialState
             ).then(updateResponse);
-            updateSelection(tableState?.selection ?? []);
+            updateSelection(selection => tableState?.selection ?? selection);
         },
         [d2, statusFilter, syncRuleFilter, type, updateSelection]
     );
@@ -106,7 +106,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
     }, [d2, id, type]);
 
     useEffect(() => {
-        updateTable({ selection });
+        updateTable();
     }, [d2, updateTable, toDelete]);
 
     const columns: TableColumn<SynchronizationReport>[] = [
