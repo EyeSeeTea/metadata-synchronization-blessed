@@ -97,7 +97,7 @@ const LandingPage: React.FC = () => {
                 },
                 {
                     name: i18n.t("History"),
-                    description: i18n.t("events synchronization history"),
+                    description: i18n.t("Event synchronization history"),
                     listAction: () => history.push("/history/events"),
                 },
             ],
