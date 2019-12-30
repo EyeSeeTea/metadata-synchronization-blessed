@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-30T05:31:11.289Z\n"
-"PO-Revision-Date: 2019-12-30T05:31:11.289Z\n"
+"POT-Creation-Date: 2019-12-30T09:29:50.313Z\n"
+"PO-Revision-Date: 2019-12-30T09:29:50.313Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -354,6 +354,30 @@ msgid "Due date"
 msgstr ""
 
 msgid "Sync all events"
+msgstr ""
+
+msgid "All periods"
+msgstr ""
+
+msgid "Fixed period"
+msgstr ""
+
+msgid "Last day"
+msgstr ""
+
+msgid "Last week"
+msgstr ""
+
+msgid "Last month"
+msgstr ""
+
+msgid "Last three months"
+msgstr ""
+
+msgid "Last six months"
+msgstr ""
+
+msgid "Last year"
 msgstr ""
 
 msgid "Start date"

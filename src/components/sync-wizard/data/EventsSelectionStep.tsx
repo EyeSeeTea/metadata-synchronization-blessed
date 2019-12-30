@@ -42,9 +42,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: EventsSelect
         getEventsData(
             api,
             {
-                orgUnitPaths: syncRule.dataSyncOrgUnitPaths,
-                startDate: syncRule.dataSyncStartDate ?? undefined,
-                endDate: syncRule.dataSyncEndDate ?? undefined,
+                ...syncRule.dataParams,
                 allEvents: true,
             },
             syncRule.metadataIds
