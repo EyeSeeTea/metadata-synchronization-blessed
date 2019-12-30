@@ -87,7 +87,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
     const goBack = () => history.goBack();
 
     const updateTable = useCallback(
-        (tableState?: Partial<TableState<SynchronizationReport>>) => {
+        (tableState?: TableState<SynchronizationReport>) => {
             SyncReport.list(
                 d2 as D2,
                 { type, statusFilter, syncRuleFilter },
