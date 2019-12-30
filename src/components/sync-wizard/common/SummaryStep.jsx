@@ -141,21 +141,6 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                     </LiEntry>
                 ))}
 
-                <LiEntry
-                    label={i18n.t("Target instances [{{total}}]", {
-                        total: syncRule.targetInstances.length,
-                    })}
-                >
-                    <ul>
-                        {syncRule.targetInstances.map(id => {
-                            const instance = instanceOptions.find(e => e.value === id);
-                            return instance ? (
-                                <LiEntry key={instance.value} label={instance.text} />
-                            ) : null;
-                        })}
-                    </ul>
-                </LiEntry>
-
                 {syncRule.type !== "metadata" && (
                     <LiEntry
                         label={i18n.t("Period")}
@@ -179,6 +164,21 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                         )}
                     </LiEntry>
                 )}
+
+                <LiEntry
+                    label={i18n.t("Target instances [{{total}}]", {
+                        total: syncRule.targetInstances.length,
+                    })}
+                >
+                    <ul>
+                        {syncRule.targetInstances.map(id => {
+                            const instance = instanceOptions.find(e => e.value === id);
+                            return instance ? (
+                                <LiEntry key={instance.value} label={instance.text} />
+                            ) : null;
+                        })}
+                    </ul>
+                </LiEntry>
 
                 {syncRule.type === "metadata" && (
                     <LiEntry label={i18n.t("Advanced options")}>
