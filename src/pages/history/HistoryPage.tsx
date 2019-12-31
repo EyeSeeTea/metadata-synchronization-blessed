@@ -179,6 +179,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
             text: i18n.t("View summary"),
             icon: <DescriptionIcon />,
             multiple: false,
+            primary: true,
             onClick: ([data]) => !!data && setSyncReport(SyncReport.build(data)),
         },
     ];

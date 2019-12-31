@@ -225,6 +225,12 @@ class SyncRulesPage extends React.Component {
         history.push(`/sync-rules/${match.params.type}/edit/${rule.id}`);
     };
 
+    replicateRule = data => {
+        const { history, match } = this.props;
+        const syncRule = SyncRule.build(data).replicate();
+        history.push({ pathname: `/sync-rules/${match.params.type}/new`, state: { syncRule } });
+    };
+
     executeRule = async ({ builder, name, id: syncRule, type = "metadata" }) => {
         const { d2, loading } = this.props;
         const { api } = this.context;
@@ -338,6 +344,13 @@ class SyncRulesPage extends React.Component {
             multiple: false,
             onClick: this.downloadJSON,
             icon: "cloud_download",
+        },
+        {
+            name: "replicate",
+            text: i18n.t("Replicate"),
+            multiple: false,
+            onClick: this.replicateRule,
+            icon: "content_copy",
         },
         {
             name: "toggleEnable",

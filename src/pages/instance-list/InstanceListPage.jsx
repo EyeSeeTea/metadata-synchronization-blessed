@@ -54,7 +54,17 @@ class InstancesPage extends React.Component {
     };
 
     editInstance = instance => {
-        this.props.history.push(`/instance-configurator/edit/${instance.id}`);
+        if (this.state.appConfigurator)
+            this.props.history.push(`/instance-configurator/edit/${instance.id}`);
+    };
+
+    replicateInstance = async data => {
+        const { history } = this.props;
+        const instance = await Instance.build(data);
+        history.push({
+            pathname: "/instance-configurator/new",
+            state: { instance: instance.replicate() },
+        });
     };
 
     testConnection = async instanceData => {
@@ -85,7 +95,15 @@ class InstancesPage extends React.Component {
             text: i18n.t("Edit"),
             multiple: false,
             isActive: () => this.state.appConfigurator,
+            isPrimary: true,
             onClick: this.editInstance,
+        },
+        {
+            name: "replicate",
+            text: i18n.t("Replicate"),
+            multiple: false,
+            onClick: this.replicateInstance,
+            icon: "content_copy",
         },
         {
             name: "delete",
