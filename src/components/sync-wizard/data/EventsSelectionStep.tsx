@@ -127,7 +127,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     const filteredObjects = objects.filter(
         ({ program }) => !programFilter || program === programFilter
     );
-    
+
     return (
         <React.Fragment>
             <Toggle
