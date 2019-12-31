@@ -135,17 +135,11 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete, loading }
         if (isDelete) throw new Error("Delete is not yet implemented on new sync on demand page");
 
         const { SyncClass } = config[syncRule.type];
-        const builder = _.pick(syncRule, [
-            "metadataIds",
-            "targetInstances",
-            "syncParams",
-            "dataParams",
-        ]);
 
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
         try {
-            const sync = new SyncClass(d2 as D2, api, builder);
+            const sync = new SyncClass(d2 as D2, api, syncRule.toBuilder());
             for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) loading.show(true, message);
                 if (syncReport) await syncReport.save(d2 as D2);
