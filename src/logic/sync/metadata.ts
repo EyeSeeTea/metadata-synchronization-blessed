@@ -67,7 +67,7 @@ export class MetadataSync extends GenericSync {
         return recursiveExport(originalBuilder);
     }
 
-    protected buildPayload = memoize(async () => {
+    public buildPayload = memoize(async () => {
         const { metadataIds, syncParams = {} } = this.builder;
         const { baseUrl } = this.d2.Api.getApi();
 

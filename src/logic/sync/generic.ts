@@ -33,7 +33,7 @@ export abstract class GenericSync {
         this.builder = builder;
     }
 
-    protected abstract async buildPayload(): Promise<
+    public abstract async buildPayload(): Promise<
         MetadataPackage | AggregatedPackage | EventsPackage
     >;
     protected abstract async postPayload(
@@ -47,7 +47,7 @@ export abstract class GenericSync {
         AggregatedDataStats[] | EventsDataStats[] | undefined
     >;
 
-    protected extractMetadata = memoize(async () => {
+    public extractMetadata = memoize(async () => {
         const { metadataIds } = this.builder;
         const { baseUrl } = this.d2.Api.getApi();
 

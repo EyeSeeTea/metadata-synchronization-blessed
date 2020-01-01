@@ -142,12 +142,23 @@ export interface ProgramEvent {
     orgUnit: string;
     orgUnitName: string;
     program: string;
+    href: string;
+    programStage: string;
     created: string;
+    deleted: boolean;
     lastUpdated: string;
     status: string;
     storedBy: string;
     dueDate: string;
     eventDate: string;
+    dataValues: {
+        lastUpdated: string;
+        storedBy: string;
+        created: string;
+        dataElement: string;
+        value: any;
+        providedElsewhere: boolean;
+    }[];
 }
 
 export interface DataValue {

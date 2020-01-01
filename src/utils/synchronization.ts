@@ -292,7 +292,7 @@ export const getDefaultIds = memoize(
 );
 
 export function cleanObjectDefault(object: ProgramEvent, defaults: string[]) {
-    return _.pickBy(object, value => !defaults.includes(value)) as ProgramEvent;
+    return _.pickBy(object, value => !defaults.includes(String(value))) as ProgramEvent;
 }
 
 export async function getEventsData(

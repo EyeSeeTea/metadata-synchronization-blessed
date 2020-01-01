@@ -255,6 +255,10 @@ export default class SyncRule {
         return { objects, pager: { page, pageCount, total } };
     }
 
+    public toBuilder() {
+        return _.pick(this, ["metadataIds", "targetInstances", "syncParams", "dataParams"]);
+    }
+
     public updateId(id: string): SyncRule {
         return SyncRule.build({
             ...this.syncRule,

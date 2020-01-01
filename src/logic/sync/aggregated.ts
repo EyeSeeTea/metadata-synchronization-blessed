@@ -16,7 +16,7 @@ export class AggregatedSync extends GenericSync {
     protected readonly fields =
         "id,dataElements[id,name]dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
 
-    protected buildPayload = memoize(async () => {
+    public buildPayload = memoize(async () => {
         const { dataParams = {} } = this.builder;
         const {
             dataSets = [],
