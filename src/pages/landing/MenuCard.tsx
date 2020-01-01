@@ -13,7 +13,7 @@ import React from "react";
 export interface MenuCardProps {
     name: string;
     description?: string;
-    addAction?: (() => void) | null;
+    addAction?: () => void;
     listAction?: () => void;
 }
 

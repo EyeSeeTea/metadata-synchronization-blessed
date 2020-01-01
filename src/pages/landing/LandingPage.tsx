@@ -59,7 +59,7 @@ const LandingPage: React.FC = () => {
                     ),
                     addAction: showCreateLinks
                         ? () => history.push("/sync-rules/metadata/new")
-                        : null,
+                        : undefined,
                     listAction: () => history.push("/sync-rules/metadata"),
                 },
                 {
@@ -89,7 +89,7 @@ const LandingPage: React.FC = () => {
                     ),
                     addAction: showCreateLinks
                         ? () => history.push("/sync-rules/aggregated/new")
-                        : null,
+                        : undefined,
                     listAction: () => history.push("/sync-rules/aggregated"),
                 },
                 {
@@ -119,7 +119,7 @@ const LandingPage: React.FC = () => {
                     ),
                     addAction: showCreateLinks
                         ? () => history.push("/sync-rules/events/new")
-                        : null,
+                        : undefined,
                     listAction: () => history.push("/sync-rules/events"),
                 },
                 {
@@ -154,7 +154,7 @@ const LandingPage: React.FC = () => {
                     ),
                     addAction: showCreateLinks
                         ? () => history.push("/instance-configurator/new")
-                        : null,
+                        : undefined,
                     listAction: () => history.push("/instance-configurator"),
                 },
             ],
