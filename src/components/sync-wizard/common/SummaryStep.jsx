@@ -11,10 +11,9 @@ import { AggregatedSync } from "../../../logic/sync/aggregated";
 import { EventsSync } from "../../../logic/sync/events";
 import { MetadataSync } from "../../../logic/sync/metadata";
 import { getBaseUrl } from "../../../utils/d2";
-import { getMetadata } from "../../../utils/synchronization";
+import { availablePeriods, getMetadata } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
 import { getInstances } from "./InstanceSelectionStep";
-import { availablePeriods } from "../data/PeriodSelectionStep";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -138,7 +137,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                 {syncRule.type !== "metadata" && (
                     <LiEntry
                         label={i18n.t("Period")}
-                        value={_.find(availablePeriods, { id: syncRule.dataSyncPeriod })?.name}
+                        value={availablePeriods[syncRule.dataSyncPeriod]?.name}
                     >
                         {syncRule.dataSyncPeriod === "FIXED" && (
                             <ul>

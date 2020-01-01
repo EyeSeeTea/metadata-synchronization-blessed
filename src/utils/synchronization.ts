@@ -1,3 +1,4 @@
+import i18n from "@dhis2/d2-i18n";
 import axios, { AxiosBasicCredentials } from "axios";
 import { D2Api } from "d2-api";
 import { isValidUid } from "d2/uid";
@@ -208,6 +209,29 @@ export function cleanDataImportResponse(
     };
 }
 
+export const availablePeriods: {
+    [id: string]: {
+        name: string;
+        start?: [number, string];
+        end?: [number, string];
+    };
+} = {
+    ALL: { name: i18n.t("All periods") },
+    FIXED: { name: i18n.t("Fixed period") },
+    TODAY: { name: i18n.t("Today"), start: [0, "day"] },
+    YESTERDAY: { name: i18n.t("Yesterday"), start: [1, "day"] },
+    LAST_7_DAYS: { name: i18n.t("Last 7 days"), start: [7, "day"], end: [0, "day"] },
+    LAST_14_DAYS: { name: i18n.t("Last 14 days"), start: [14, "day"], end: [0, "day"] },
+    THIS_WEEK: { name: i18n.t("This week"), start: [0, "isoWeek"] },
+    LAST_WEEK: { name: i18n.t("Last week"), start: [1, "isoWeek"] },
+    THIS_MONTH: { name: i18n.t("This month"), start: [0, "month"] },
+    LAST_MONTH: { name: i18n.t("Last month"), start: [1, "month"] },
+    THIS_QUARTER: { name: i18n.t("This quarter"), start: [0, "quarter"] },
+    LAST_QUARTER: { name: i18n.t("Last quarter"), start: [1, "quarter"] },
+    THIS_YEAR: { name: i18n.t("This year"), start: [0, "year"] },
+    LAST_YEAR: { name: i18n.t("Last year"), start: [1, "year"] },
+};
+
 function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Moment] {
     const {
         period,
@@ -218,23 +242,24 @@ function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Mome
             .format("YYYY-MM-DD"),
     } = params;
 
-    switch (period) {
-        case "LAST_DAY":
-            return [moment().subtract(1, "day"), moment()];
-        case "LAST_WEEK":
-            return [moment().subtract(1, "week"), moment()];
-        case "LAST_MONTH":
-            return [moment().subtract(1, "month"), moment()];
-        case "LAST_THREE_MONTHS":
-            return [moment().subtract(3, "months"), moment()];
-        case "LAST_SIX_MONTHS":
-            return [moment().subtract(6, "months"), moment()];
-        case "LAST_YEAR":
-            return [moment().subtract(1, "year"), moment()];
-        default:
-        case "ALL":
-        case "FIXED":
-            return [moment(startDate), moment(endDate)];
+    if (!period || period === "ALL" || period === "FIXED") {
+        return [moment(startDate), moment(endDate)];
+    } else {
+        const { start, end = start } = availablePeriods[period];
+        if (start === undefined || end === undefined)
+            throw new Error("Unsupported period provided");
+            
+        const [startAmount, startType] = start;
+        const [endAmount, endType] = end;
+
+        return [
+            moment()
+                .subtract(startAmount, startType as moment.unitOfTime.DurationConstructor)
+                .startOf(startType as moment.unitOfTime.DurationConstructor),
+            moment()
+                .subtract(endAmount, endType as moment.unitOfTime.DurationConstructor)
+                .endOf(endType as moment.unitOfTime.DurationConstructor),
+        ];
     }
 }
 
