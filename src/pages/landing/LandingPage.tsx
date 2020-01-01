@@ -4,7 +4,7 @@ import { useD2 } from "d2-api";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { D2 } from "../../types/d2";
-import { shouldShowDeletedObjects } from "../../utils/permissions";
+import { shouldShowDeletedObjects, isAppConfigurator } from "../../utils/permissions";
 import MenuCard, { MenuCardProps } from "./MenuCard";
 
 const useStyles = makeStyles({
@@ -28,9 +28,11 @@ const LandingPage: React.FC = () => {
     const classes = useStyles();
     const history = useHistory();
     const [showDeletedObjects, setShowDeletedObjects] = useState(false);
+    const [showCreateLinks, setShowCreateLinks] = useState(false);
 
     useEffect(() => {
         shouldShowDeletedObjects(d2 as D2).then(setShowDeletedObjects);
+        isAppConfigurator(d2 as D2).then(setShowCreateLinks);
     }, [d2]);
 
     const cards: {
@@ -55,7 +57,9 @@ const LandingPage: React.FC = () => {
                     description: i18n.t(
                         "Create, modify, delete, execute and schedule sync rules for metadata like data elements, organisation units and program indicators and groups and group sets."
                     ),
-                    addAction: () => history.push("/sync-rules/metadata/new"),
+                    addAction: showCreateLinks
+                        ? () => history.push("/sync-rules/metadata/new")
+                        : null,
                     listAction: () => history.push("/sync-rules/metadata"),
                 },
                 {
@@ -83,7 +87,9 @@ const LandingPage: React.FC = () => {
                     description: i18n.t(
                         "Create, modify, delete, execute and schedule sync rules for aggregated data by selecting the data sets, data elements or their groups and group sets together with the organisation unit, period and category options."
                     ),
-                    addAction: () => history.push("/sync-rules/aggregated/new"),
+                    addAction: showCreateLinks
+                        ? () => history.push("/sync-rules/aggregated/new")
+                        : null,
                     listAction: () => history.push("/sync-rules/aggregated"),
                 },
                 {
@@ -111,7 +117,9 @@ const LandingPage: React.FC = () => {
                     description: i18n.t(
                         "Create, modify, delete, execute and schedule sync rules for events by selecting the programs or events together with the organisation unit, period and category options."
                     ),
-                    addAction: () => history.push("/sync-rules/events/new"),
+                    addAction: showCreateLinks
+                        ? () => history.push("/sync-rules/events/new")
+                        : null,
                     listAction: () => history.push("/sync-rules/events"),
                 },
                 {
@@ -144,7 +152,9 @@ const LandingPage: React.FC = () => {
                     description: i18n.t(
                         "Create, check connectivity, modify and delete DHIS2 destination instances."
                     ),
-                    addAction: () => history.push("/instance-configurator/new"),
+                    addAction: showCreateLinks
+                        ? () => history.push("/instance-configurator/new")
+                        : null,
                     listAction: () => history.push("/instance-configurator"),
                 },
             ],
