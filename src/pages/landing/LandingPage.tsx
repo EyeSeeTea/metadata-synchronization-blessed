@@ -106,7 +106,7 @@ const LandingPage: React.FC = () => {
             key: "events",
             children: [
                 {
-                    name: i18n.t("Manually sync"),
+                    name: i18n.t("Manual sync"),
                     description: i18n.t(
                         "Manually synchronise events by selecting the programs or events together with the organisation unit, period and category options."
                     ),
