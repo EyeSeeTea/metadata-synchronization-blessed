@@ -45,18 +45,24 @@ const LandingPage: React.FC = () => {
             children: [
                 {
                     name: i18n.t("Manual sync"),
-                    description: i18n.t("Metadata manual synchronization"),
+                    description: i18n.t(
+                        "Manually synchronise metadata like data elements, organisation units and program indicators and groups and group sets."
+                    ),
                     listAction: () => history.push("/sync/metadata"),
                 },
                 {
                     name: i18n.t("Sync rules"),
-                    description: i18n.t("Metadata synchronization rules description"),
+                    description: i18n.t(
+                        "Create, modify, delete, execute and schedule sync rules for metadata like data elements, organisation units and program indicators and groups and group sets."
+                    ),
                     addAction: () => history.push("/sync-rules/metadata/new"),
                     listAction: () => history.push("/sync-rules/metadata"),
                 },
                 {
                     name: i18n.t("History"),
-                    description: i18n.t("Metadata synchronization history"),
+                    description: i18n.t(
+                        "View and analyse the status and results of the metadata manual syncs and sync rules executions."
+                    ),
                     listAction: () => history.push("/history/metadata"),
                 },
             ],
@@ -67,18 +73,24 @@ const LandingPage: React.FC = () => {
             children: [
                 {
                     name: i18n.t("Manual sync"),
-                    description: i18n.t("Aggregated Data manual synchronization"),
+                    description: i18n.t(
+                        "Manually synchronise aggregated data by selecting the data sets, data elements or their groups and group sets together with the organisation unit, period and category options."
+                    ),
                     listAction: () => history.push("/sync/aggregated"),
                 },
                 {
                     name: i18n.t("Sync rules"),
-                    description: i18n.t("Aggregated Data synchronization rules description"),
+                    description: i18n.t(
+                        "Create, modify, delete, execute and schedule sync rules for aggregated data by selecting the data sets, data elements or their groups and group sets together with the organisation unit, period and category options."
+                    ),
                     addAction: () => history.push("/sync-rules/aggregated/new"),
                     listAction: () => history.push("/sync-rules/aggregated"),
                 },
                 {
                     name: i18n.t("History"),
-                    description: i18n.t("Aggregated Data synchronization history"),
+                    description: i18n.t(
+                        "View and analyse the status and results of the aggregated data manual syncs and sync rules executions."
+                    ),
                     listAction: () => history.push("/history/aggregated"),
                 },
             ],
@@ -88,19 +100,25 @@ const LandingPage: React.FC = () => {
             key: "events",
             children: [
                 {
-                    name: i18n.t("Manual sync"),
-                    description: i18n.t("Event manual synchronization"),
+                    name: i18n.t("Manually sync"),
+                    description: i18n.t(
+                        "Manually synchronise events by selecting the programs or events together with the organisation unit, period and category options."
+                    ),
                     listAction: () => history.push("/sync/events"),
                 },
                 {
                     name: i18n.t("Sync rules"),
-                    description: i18n.t("Event synchronization rules description"),
+                    description: i18n.t(
+                        "Create, modify, delete, execute and schedule sync rules for events by selecting the programs or events together with the organisation unit, period and category options."
+                    ),
                     addAction: () => history.push("/sync-rules/events/new"),
                     listAction: () => history.push("/sync-rules/events"),
                 },
                 {
                     name: i18n.t("History"),
-                    description: i18n.t("Event synchronization history"),
+                    description: i18n.t(
+                        "View and analyse the status and results of the event manual syncs and sync rules executions."
+                    ),
                     listAction: () => history.push("/history/events"),
                 },
             ],
@@ -112,7 +130,7 @@ const LandingPage: React.FC = () => {
             children: [
                 {
                     name: i18n.t("Deleted objects"),
-                    description: i18n.t("List & Sync deleted objects"),
+                    description: i18n.t("Manually synchronise deleted objects."),
                     listAction: () => history.push("/sync/deleted"),
                 },
             ],
@@ -123,7 +141,9 @@ const LandingPage: React.FC = () => {
             children: [
                 {
                     name: i18n.t("Destination instance settings"),
-                    description: i18n.t("Destination instance settings description"),
+                    description: i18n.t(
+                        "Create, check connectivity, modify and delete DHIS2 destination instances."
+                    ),
                     addAction: () => history.push("/instance-configurator/new"),
                     listAction: () => history.push("/instance-configurator"),
                 },
