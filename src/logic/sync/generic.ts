@@ -5,7 +5,7 @@ import memoize from "nano-memoize";
 import Instance from "../../models/instance";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
-import { D2, DataImportResponse, DataImportStatus, MetadataImportResponse } from "../../types/d2";
+import { D2, DataImportResponse, ImportStatus, MetadataImportResponse } from "../../types/d2";
 import {
     AggregatedDataStats,
     AggregatedPackage,
@@ -83,7 +83,7 @@ export abstract class GenericSync {
         syncReport.addSyncResult(
             ...targetInstances.map(instance => ({
                 instance: instance.toObject(),
-                status: "PENDING" as DataImportStatus,
+                status: "PENDING" as ImportStatus,
                 date: new Date(),
             }))
         );

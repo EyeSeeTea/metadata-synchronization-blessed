@@ -1,12 +1,6 @@
 import { Ref } from "d2-api";
 import SyncReport from "../models/syncReport";
-import {
-    DataImportParams,
-    DataImportStatus,
-    MetadataImportParams,
-    MetadataImportStats,
-    MetadataImportStatus,
-} from "./d2";
+import { ImportStatus, DataImportParams, MetadataImportParams, MetadataImportStats } from "./d2";
 
 export interface SynchronizationBuilder {
     targetInstances: string[];
@@ -54,7 +48,7 @@ export interface EventsPackage {
 }
 
 export interface SynchronizationResult {
-    status: MetadataImportStatus | DataImportStatus;
+    status: ImportStatus;
     instance: {
         id: string;
         name?: string;

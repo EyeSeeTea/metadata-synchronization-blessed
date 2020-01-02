@@ -2,7 +2,7 @@ import i18n from "@dhis2/d2-i18n";
 import { D2Api } from "d2-api";
 import Instance from "../models/instance";
 import SyncReport from "../models/syncReport";
-import { D2, MetadataImportStatus } from "../types/d2";
+import { D2, ImportStatus } from "../types/d2";
 import {
     SynchronizationBuilder,
     SynchronizationReportStatus,
@@ -34,7 +34,7 @@ export async function* startDelete(
     syncReport.addSyncResult(
         ...targetInstances.map(instance => ({
             instance: instance.toObject(),
-            status: "PENDING" as MetadataImportStatus,
+            status: "PENDING" as ImportStatus,
             date: new Date(),
         }))
     );

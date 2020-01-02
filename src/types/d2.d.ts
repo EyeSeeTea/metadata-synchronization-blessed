@@ -122,18 +122,24 @@ export interface DataImportParams {
     format?: "json" | "xml" | "csv" | "pdf" | "adx";
 }
 
-export type MetadataImportStatus = "PENDING" | "OK" | "WARNING" | "ERROR" | "NETWORK ERROR";
-export type DataImportStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
+export type ImportStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
+export type ResponseImportStatus =
+    | "PENDING"
+    | "OK"
+    | "SUCCESS"
+    | "WARNING"
+    | "ERROR"
+    | "NETWORK ERROR";
 
 export interface MetadataImportResponse {
-    status: MetadataImportStatus;
+    status: ResponseImportStatus;
     importParams?: MetadataImportParams;
     typeReports?: any[];
     stats?: MetadataImportStats;
 }
 
 export interface DataImportResponse {
-    status: DataImportStatus;
+    status: ResponseImportStatus;
     dataSetComplete?: string;
     description?: string;
     importCount?: DataImportStats;
