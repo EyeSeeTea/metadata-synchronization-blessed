@@ -1,33 +1,46 @@
 import {
     D2Model,
+    defaultModel,
+    DataElementModel,
     DataElementGroupModel,
     DataElementGroupSetModel,
-    DataElementModel,
-    defaultModel,
+    IndicatorModel,
     IndicatorGroupModel,
     IndicatorGroupSetModel,
-    IndicatorModel,
+    OrganisationUnitModel,
     OrganisationUnitGroupModel,
     OrganisationUnitGroupSetModel,
-    OrganisationUnitModel,
-    ValidationRuleGroupModel,
+    OrganisationUnitLevelModel,
     ValidationRuleModel,
+    ValidationRuleGroupModel,
+    ProgramIndicatorModel,
+    ProgramIndicatorGroupModel,
+    ProgramRuleModel,
+    ProgramRuleVariableModel,
 } from "./d2Model";
+
 import { D2 } from "../types/d2";
 
 const classes: { [modelName: string]: typeof D2Model } = {
+    DataElementModel,
     DataElementGroupModel,
     DataElementGroupSetModel,
-    DataElementModel,
+    IndicatorModel,
     IndicatorGroupModel,
     IndicatorGroupSetModel,
-    IndicatorModel,
+    OrganisationUnitModel,
     OrganisationUnitGroupModel,
     OrganisationUnitGroupSetModel,
-    OrganisationUnitModel,
-    ValidationRuleGroupModel,
+    OrganisationUnitLevelModel,
     ValidationRuleModel,
+    ValidationRuleGroupModel,
+    ProgramIndicatorModel,
+    ProgramIndicatorGroupModel,
+    ProgramRuleModel,
+    ProgramRuleVariableModel,
 };
+
+export const metadataModels = Object.values(classes);
 
 /**
  * D2ModelProxy allows to create on-demand d2Model classes
@@ -37,5 +50,9 @@ const classes: { [modelName: string]: typeof D2Model } = {
 export function d2ModelFactory(d2: D2, d2ModelName: string): typeof D2Model {
     const modelName = d2.models[d2ModelName].name;
     const className = modelName.charAt(0).toUpperCase() + modelName.slice(1) + "Model";
+    console.debug(
+        `d2ModelFactory for modelName ${d2ModelName} return ` +
+            (!classes[className] ? `defaultModel` : className)
+    );
     return classes[className] || defaultModel(modelName);
 }

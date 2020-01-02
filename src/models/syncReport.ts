@@ -1,6 +1,14 @@
-import _ from "lodash";
+import { TableInitialState, TablePagination } from "d2-ui-components";
 import { generateUid } from "d2/uid";
-
+import _ from "lodash";
+import { D2 } from "../types/d2";
+import { SyncReportTableFilters } from "../types/d2-ui-components";
+import {
+    SynchronizationReport,
+    SynchronizationReportStatus,
+    SynchronizationResult,
+    SyncRuleType,
+} from "../types/synchronization";
 import {
     deleteData,
     deleteDataStore,
@@ -10,39 +18,44 @@ import {
     saveData,
     saveDataStore,
 } from "./dataStore";
-import { D2 } from "../types/d2";
-import { SyncReportTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import {
-    SynchronizationReport,
-    SynchronizationReportStatus,
-    SynchronizationResult,
-} from "../types/synchronization";
 
 const dataStoreKey = "notifications";
+
+type Optional<T, K extends keyof T> = Omit<T, K> & { [P in Extract<keyof T, K>]?: T[P] };
 
 export default class SyncReport {
     private results: SynchronizationResult[] | null;
     private readonly syncReport: SynchronizationReport;
 
-    constructor(syncReport: SynchronizationReport) {
+    constructor(syncReport: Optional<SynchronizationReport, "id">) {
         this.results = null;
         this.syncReport = {
             id: generateUid(),
             date: new Date(),
-            ..._.pick(syncReport, ["id", "date", "user", "status", "types", "syncRule"]),
+            ..._.pick(syncReport, [
+                "id",
+                "date",
+                "user",
+                "status",
+                "types",
+                "syncRule",
+                "type",
+                "dataStats",
+            ]),
         };
     }
 
-    public static create(): SyncReport {
+    public static create(type: SyncRuleType = "metadata"): SyncReport {
         return new SyncReport({
             id: "",
             user: "",
             status: "READY" as SynchronizationReportStatus,
             types: [],
+            type,
         });
     }
 
-    public static build(syncReport: SynchronizationReport | undefined): SyncReport {
+    public static build(syncReport?: Optional<SynchronizationReport, "id">): SyncReport {
         return syncReport ? new SyncReport(syncReport) : this.create();
     }
 
@@ -54,13 +67,30 @@ export default class SyncReport {
     public static async list(
         d2: D2,
         filters: SyncReportTableFilters,
-        pagination: TablePagination
-    ): Promise<TableList> {
-        const { statusFilter } = filters;
-        const data = await getPaginatedData(d2, dataStoreKey, filters, pagination);
-        return statusFilter
-            ? { ...data, objects: _.filter(data.objects, e => e.status === statusFilter) }
-            : data;
+        state?: TableInitialState<SynchronizationReport>,
+        paging: boolean = true
+    ): Promise<{ rows: SynchronizationReport[]; pager: Partial<TablePagination> }> {
+        const { statusFilter, syncRuleFilter, type } = filters;
+        const { pagination, sorting } = state || {};
+        const { page = 1, pageSize = 25 } = pagination || {};
+
+        const data = await getPaginatedData(d2, dataStoreKey, filters, {
+            paging: false,
+            sorting: [sorting?.field ?? "id", sorting?.order ?? "asc"],
+        });
+
+        const filteredObjects = _(data.objects)
+            .filter(e => (statusFilter ? e.status === statusFilter : true))
+            .filter(e => (syncRuleFilter ? e.syncRule === syncRuleFilter : true))
+            .filter(({ type: elementType = "metadata" }) => elementType === type)
+            .value();
+
+        const total = filteredObjects.length;
+        const firstItem = paging ? (page - 1) * pageSize : 0;
+        const lastItem = paging ? firstItem + pageSize : total;
+        const rows = _.slice(filteredObjects, firstItem, lastItem);
+
+        return { rows, pager: { ...pagination, page, pageSize, total } };
     }
 
     public async save(d2: D2): Promise<void> {
