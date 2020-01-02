@@ -1,15 +1,12 @@
 import { Ref } from "d2-api";
-
-import {
-    MetadataImportResponse,
-    MetadataImportStats,
-    MetadataImportParams,
-    DataImportParams,
-    DataImportResponse,
-    MetadataImportStatus,
-    DataImportStatus,
-} from "./d2";
 import SyncReport from "../models/syncReport";
+import {
+    DataImportParams,
+    DataImportStatus,
+    MetadataImportParams,
+    MetadataImportStats,
+    MetadataImportStatus,
+} from "./d2";
 
 export interface SynchronizationBuilder {
     targetInstances: string[];
@@ -177,9 +174,15 @@ export interface DataValue {
 export type DataSyncPeriod =
     | "ALL"
     | "FIXED"
-    | "LAST_DAY"
+    | "TODAY"
+    | "YESTERDAY"
+    | "LAST_7_DAYS"
+    | "LAST_14_DAYS"
+    | "THIS_WEEK"
     | "LAST_WEEK"
+    | "THIS_MONTH"
     | "LAST_MONTH"
-    | "LAST_THREE_MONTHS"
-    | "LAST_SIX_MONTHS"
+    | "THIS_QUARTER"
+    | "LAST_QUARTER"
+    | "THIS_YEAR"
     | "LAST_YEAR";

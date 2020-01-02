@@ -1,8 +1,10 @@
 import i18n from "@dhis2/d2-i18n";
 import { makeStyles } from "@material-ui/core";
 import { DatePicker } from "d2-ui-components";
+import _ from "lodash";
 import React from "react";
 import { DataSyncPeriod } from "../../../types/synchronization";
+import { availablePeriods } from "../../../utils/synchronization";
 import Dropdown from "../../dropdown/Dropdown";
 import { SyncWizardStepProps } from "../Steps";
 
@@ -19,17 +21,6 @@ const useStyles = makeStyles({
         marginTop: -10,
     },
 });
-
-export const availablePeriods = [
-    { id: "ALL", name: i18n.t("All periods") },
-    { id: "FIXED", name: i18n.t("Fixed period") },
-    { id: "LAST_DAY", name: i18n.t("Last day") },
-    { id: "LAST_WEEK", name: i18n.t("Last week") },
-    { id: "LAST_MONTH", name: i18n.t("Last month") },
-    { id: "LAST_THREE_MONTHS", name: i18n.t("Last three months") },
-    { id: "LAST_SIX_MONTHS", name: i18n.t("Last six months") },
-    { id: "LAST_YEAR", name: i18n.t("Last year") },
-];
 
 const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const classes = useStyles();
@@ -52,12 +43,17 @@ const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange
         onChange(syncRule.updateDataSyncEndDate(date ?? undefined).updateDataSyncEvents([]));
     };
 
+    const periodItems = _(availablePeriods)
+        .mapValues((value, key) => ({ ...value, id: key }))
+        .values()
+        .value();
+
     return (
         <React.Fragment>
             <div className={classes.dropdown}>
                 <Dropdown
                     label={i18n.t("Period")}
-                    items={availablePeriods}
+                    items={periodItems}
                     value={syncRule.dataSyncPeriod}
                     onValueChange={updatePeriod}
                     hideEmpty={true}
