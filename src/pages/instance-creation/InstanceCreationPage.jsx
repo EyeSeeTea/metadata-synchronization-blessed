@@ -24,9 +24,12 @@ class InstanceCreationPage extends React.Component {
     isEdit = this.props.match.params.action === "edit" && this.id;
 
     componentDidMount = async () => {
+        const { instance: stateInstance } = this.props.location.state ?? {};
         if (this.isEdit) {
             const instance = await Instance.get(this.props.d2, this.id);
             this.setState({ instance });
+        } else if (stateInstance) {
+            this.setState({ instance: stateInstance });
         }
     };
 

@@ -531,6 +531,9 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
+msgid "Replicate"
+msgstr ""
+
 msgid "Deleting Instances"
 msgstr ""
 

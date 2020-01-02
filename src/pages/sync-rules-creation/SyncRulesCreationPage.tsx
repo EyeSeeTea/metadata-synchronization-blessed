@@ -1,7 +1,7 @@
 import { useD2 } from "d2-api";
 import { ConfirmationDialog } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, useLocation } from "react-router-dom";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncWizard from "../../components/sync-wizard/SyncWizard";
 import i18n from "../../locales";
@@ -9,12 +9,19 @@ import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
 import { SyncRuleType } from "../../types/synchronization";
 
+interface SyncRulesCreationParams {
+    id: string;
+    action: "edit" | "new";
+    type: SyncRuleType;
+}
+
 const SyncRulesCreation: React.FC = () => {
     const history = useHistory();
-    const { id, action, type } = useParams();
+    const location = useLocation();
+    const { id, action, type } = useParams() as SyncRulesCreationParams;
     const d2 = useD2();
     const [dialogOpen, updateDialogOpen] = useState(false);
-    const [syncRule, updateSyncRule] = useState(SyncRule.create(type as SyncRuleType | undefined));
+    const [syncRule, updateSyncRule] = useState(location.state?.syncRule ?? SyncRule.create(type));
     const isEdit = action === "edit" && !!id;
 
     const title = !isEdit

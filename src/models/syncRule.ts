@@ -46,6 +46,14 @@ export default class SyncRule {
         };
     }
 
+    public replicate(): SyncRule {
+        return this.updateName(`Copy of ${this.syncRule.name}`).updateId(generateUid());
+    }
+
+    public get id(): string {
+        return this.syncRule.id ?? "";
+    }
+
     public get name(): string {
         return this.syncRule.name;
     }
@@ -249,6 +257,13 @@ export default class SyncRule {
 
     public toBuilder() {
         return _.pick(this, ["metadataIds", "targetInstances", "syncParams", "dataParams"]);
+    }
+
+    public updateId(id: string): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            id,
+        });
     }
 
     public updateName(name: string): SyncRule {

@@ -34,6 +34,10 @@ export default class Instance {
         this.api = new D2ApiDefault({ baseUrl, auth: { username, password } });
     }
 
+    public replicate(): Instance {
+        return this.setName(`Copy of ${this.data.name}`).setId(generateUid());
+    }
+
     public get id(): string {
         return this.data.id;
     }
