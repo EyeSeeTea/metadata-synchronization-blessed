@@ -157,7 +157,8 @@ export function cleanMetadataImportResponse(
     importResult: MetadataImportResponse,
     instance: Instance
 ): SynchronizationResult {
-    const { status, stats, typeReports = [] } = importResult;
+    const { status: importStatus, stats, typeReports = [] } = importResult;
+    const status = importStatus === "OK" ? "SUCCESS" : importStatus;
     const typeStats: any[] = [];
     const messages: any[] = [];
 
@@ -196,7 +197,8 @@ export function cleanDataImportResponse(
     importResult: DataImportResponse,
     instance: Instance
 ): SynchronizationResult {
-    const { status, importCount, response, conflicts = [] } = importResult;
+    const { status: importStatus, importCount, response, conflicts = [] } = importResult;
+    const status = importStatus === "OK" ? "SUCCESS" : importStatus;
     const messages = conflicts.map(({ object, value }) => ({ uid: object, message: value }));
     const eventsStats = _.pick(response, ["imported", "deleted", "ignored", "updated", "total"]);
 
@@ -248,7 +250,7 @@ function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Mome
         const { start, end = start } = availablePeriods[period];
         if (start === undefined || end === undefined)
             throw new Error("Unsupported period provided");
-            
+
         const [startAmount, startType] = start;
         const [endAmount, endType] = end;
 

@@ -14,7 +14,7 @@ import { SyncWizardStepProps } from "../Steps";
 export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
     const d2 = useD2();
     const api = useD2Api();
-    const [objects, setObjects] = useState<ProgramEvent[]>([]);
+    const [objects, setObjects] = useState<ProgramEvent[] | undefined>();
     const [programs, setPrograms] = useState<D2Program[]>([]);
     const [programFilter, changeProgramFilter] = useState<string>("");
 
@@ -124,9 +124,8 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     );
 
     const additionalColumns = buildAdditionalColumns();
-    const filteredObjects = objects.filter(
-        ({ program }) => !programFilter || program === programFilter
-    );
+    const filteredObjects =
+        objects?.filter(({ program }) => !programFilter || program === programFilter) ?? [];
 
     return (
         <React.Fragment>
@@ -138,6 +137,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
             {!syncRule.dataSyncAllEvents && (
                 <ObjectsTable<ProgramEvent>
                     rows={filteredObjects}
+                    loading={objects === undefined}
                     columns={[...columns, ...additionalColumns]}
                     details={details}
                     actions={actions}
