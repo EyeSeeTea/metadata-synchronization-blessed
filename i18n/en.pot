@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-31T21:54:43.700Z\n"
-"PO-Revision-Date: 2019-12-31T21:54:43.700Z\n"
+"POT-Creation-Date: 2020-01-02T14:29:04.644Z\n"
+"PO-Revision-Date: 2020-01-02T14:29:04.644Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -559,49 +559,71 @@ msgstr ""
 msgid "Manual sync"
 msgstr ""
 
-msgid "Metadata manual synchronization"
+msgid ""
+"Manually synchronise metadata like data elements, organisation units and "
+"program indicators and groups and group sets."
 msgstr ""
 
 msgid "Sync rules"
 msgstr ""
 
-msgid "Metadata synchronization rules description"
+msgid ""
+"Create, modify, delete, execute and schedule sync rules for metadata like "
+"data elements, organisation units and program indicators and groups and "
+"group sets."
 msgstr ""
 
 msgid "History"
 msgstr ""
 
-msgid "Metadata synchronization history"
+msgid ""
+"View and analyse the status and results of the metadata manual syncs and "
+"sync rules executions."
 msgstr ""
 
-msgid "Aggregated Data manual synchronization"
+msgid ""
+"Manually synchronise aggregated data by selecting the data sets, data "
+"elements or their groups and group sets together with the organisation "
+"unit, period and category options."
 msgstr ""
 
-msgid "Aggregated Data synchronization rules description"
+msgid ""
+"Create, modify, delete, execute and schedule sync rules for aggregated data "
+"by selecting the data sets, data elements or their groups and group sets "
+"together with the organisation unit, period and category options."
 msgstr ""
 
-msgid "Aggregated Data synchronization history"
+msgid ""
+"View and analyse the status and results of the aggregated data manual syncs "
+"and sync rules executions."
 msgstr ""
 
-msgid "Event manual synchronization"
+msgid ""
+"Manually synchronise events by selecting the programs or events together "
+"with the organisation unit, period and category options."
 msgstr ""
 
-msgid "Event synchronization rules description"
+msgid ""
+"Create, modify, delete, execute and schedule sync rules for events by "
+"selecting the programs or events together with the organisation unit, "
+"period and category options."
 msgstr ""
 
-msgid "Event synchronization history"
+msgid ""
+"View and analyse the status and results of the event manual syncs and sync "
+"rules executions."
 msgstr ""
 
 msgid "Deleted objects"
 msgstr ""
 
-msgid "List & Sync deleted objects"
+msgid "Manually synchronise deleted objects."
 msgstr ""
 
 msgid "Destination instance settings"
 msgstr ""
 
-msgid "Destination instance settings description"
+msgid "Create, check connectivity, modify and delete DHIS2 destination instances."
 msgstr ""
 
 msgid "Add"
@@ -698,9 +720,6 @@ msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Level"
-msgstr ""
-
 msgid "Short name"
 msgstr ""
 
@@ -708,6 +727,9 @@ msgid "ID"
 msgstr ""
 
 msgid "API link"
+msgstr ""
+
+msgid "Level"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"
