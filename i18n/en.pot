@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-12-30T12:41:57.453Z\n"
-"PO-Revision-Date: 2019-12-30T12:41:57.453Z\n"
+"POT-Creation-Date: 2020-01-01T19:01:06.288Z\n"
+"PO-Revision-Date: 2020-01-01T19:01:06.288Z\n"
 
 msgid "Search by name"
 msgstr ""
@@ -695,9 +695,6 @@ msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Level"
-msgstr ""
-
 msgid "Short name"
 msgstr ""
 
@@ -705,6 +702,9 @@ msgid "ID"
 msgstr ""
 
 msgid "API link"
+msgstr ""
+
+msgid "Level"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"
