@@ -13,8 +13,10 @@ import { GenericSync } from "./generic";
 
 export class EventsSync extends GenericSync {
     protected readonly type = "events";
+    protected readonly fields =
+        "id,name,programStages[programStageDataElements[dataElement[id,displayFormName,name]]]";
 
-    protected buildPayload = memoize(async () => {
+    public buildPayload = memoize(async () => {
         const { dataParams = {} } = this.builder;
         const { programs = [] } = await this.extractMetadata();
 

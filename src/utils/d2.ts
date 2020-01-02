@@ -22,39 +22,36 @@ export interface MetadataType {
 
 export const d2BaseModelColumns: TableColumn<MetadataType>[] = [
     { name: "displayName", text: i18n.t("Name"), sortable: true },
-    { name: "lastUpdated", text: i18n.t("Last update"), sortable: true },
-    { name: "id", text: i18n.t("UID"), sortable: true },
+    { name: "shortName", text: i18n.t("Short name"), sortable: true, hidden: true },
+    { name: "code", text: i18n.t("Code"), sortable: true, hidden: true },
+    { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
+    { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
+    { name: "lastUpdated", text: i18n.t("Last updated"), sortable: true },
+    { name: "id", text: i18n.t("ID"), sortable: true, hidden: true },
+    { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
 ];
+
+export const d2BaseModelDetails: ObjectsTableDetailField<MetadataType>[] = _.map(
+    d2BaseModelColumns,
+    column => _.pick(column, ["name", "text", "getValue"])
+);
 
 export const organisationUnitsColumns: typeof d2BaseModelColumns = [
     { name: "displayName", text: i18n.t("Name"), sortable: true },
+    { name: "shortName", text: i18n.t("Short name"), sortable: true, hidden: true },
+    { name: "code", text: i18n.t("Code"), sortable: true, hidden: true },
     { name: "level", text: i18n.t("Level"), sortable: true },
-    { name: "lastUpdated", text: i18n.t("Last update"), sortable: true },
-    { name: "id", text: i18n.t("UID"), sortable: true },
+    { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
+    { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
+    { name: "lastUpdated", text: i18n.t("Last updated"), sortable: true },
+    { name: "id", text: i18n.t("ID"), sortable: true, hidden: true },
+    { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
 ];
 
-export const d2BaseModelDetails: ObjectsTableDetailField<MetadataType>[] = [
-    { name: "displayName", text: i18n.t("Name") },
-    { name: "shortName", text: i18n.t("Short name") },
-    { name: "code", text: i18n.t("Code") },
-    { name: "description", text: i18n.t("Description") },
-    { name: "created", text: i18n.t("Created") },
-    { name: "lastUpdated", text: i18n.t("Last update") },
-    { name: "id", text: i18n.t("ID") },
-    { name: "href", text: i18n.t("API link") },
-];
-
-export const organisationUnitsDetails: typeof d2BaseModelDetails = [
-    { name: "displayName", text: i18n.t("Name") },
-    { name: "shortName", text: i18n.t("Short name") },
-    { name: "code", text: i18n.t("Code") },
-    { name: "level", text: i18n.t("Level") },
-    { name: "description", text: i18n.t("Description") },
-    { name: "created", text: i18n.t("Created") },
-    { name: "lastUpdated", text: i18n.t("Last update") },
-    { name: "id", text: i18n.t("ID") },
-    { name: "href", text: i18n.t("API link") },
-];
+export const organisationUnitsDetails: typeof d2BaseModelDetails = _.map(
+    organisationUnitsColumns,
+    column => _.pick(column, ["name", "text", "getValue"])
+);
 
 export const d2BaseModelFields = {
     id: include,

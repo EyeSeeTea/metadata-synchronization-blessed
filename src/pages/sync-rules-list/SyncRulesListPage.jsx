@@ -161,16 +161,10 @@ class SyncRulesPage extends React.Component {
         const { api } = this.context;
         const syncRule = SyncRule.build(ruleData);
         const { SyncClass } = config[syncRule.type];
-        const builder = _.pick(syncRule, [
-            "metadataIds",
-            "targetInstances",
-            "syncParams",
-            "dataParams",
-        ]);
 
         loading.show(true, "Generating JSON file");
 
-        const sync = new SyncClass(d2, api, builder);
+        const sync = new SyncClass(d2, api, syncRule.toBuilder());
         const payload = await sync.buildPayload();
 
         const json = JSON.stringify(payload, null, 4);
