@@ -10,8 +10,8 @@ before_install:
   # Install python dependencies
   - sudo apt-get update
   - sudo apt-get install python3 python python3-setuptools docker.io docker-compose
-  - git clone https://github.com/EyeSeeTea/d2-docker.git
   #  Install d2-docker
+  - git clone https://github.com/EyeSeeTea/d2-docker.git
   - cd d2-docker/
   - sudo python3 setup.py install
   - d2-docker --help
@@ -28,12 +28,14 @@ before_install:
 install:
   - yarn install --frozen-lockfile
   - yarn cy:verify
-  - yarn build
+  # - yarn build
+  - yarn build-webapp
 script:
-  - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true yarn start &
+  # - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true yarn start &
   - yarn wait-on http-get://localhost:8080
-  - yarn wait-on http-get://localhost:8081
-  - CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:run
+  - curl -F file=@metadata-synchronization.zip -X POST -u '$CYPRESS_DHIS2_AUTH' "http://localhost:8080/api/apps" 
+  # - yarn wait-on http-get://localhost:8081
+  - CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8080 yarn cy:e2e:run
   - kill $(jobs -p) || true
 addons:
   apt:
