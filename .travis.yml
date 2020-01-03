@@ -33,7 +33,7 @@ install:
 script:
   # - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true yarn start &
   - yarn wait-on http-get://localhost:8080
-  - curl -F file=@metadata-synchronization.zip -X POST -u '$CYPRESS_DHIS2_AUTH' "http://localhost:8080/api/apps" 
+  - curl -F file=@metadata-synchronization.zip -X POST -u "$CYPRESS_DHIS2_AUTH" "http://localhost:8080/api/apps" 
   # - yarn wait-on http-get://localhost:8081
   - CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8080 yarn cy:e2e:run
   - kill $(jobs -p) || true
