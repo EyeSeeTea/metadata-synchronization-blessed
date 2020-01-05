@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core";
 import { useD2 } from "d2-api";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { TestAttribute } from "../../components/test-attribute/TestAttribute";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { D2 } from "../../types/d2";
 import { isAppConfigurator, shouldShowDeletedObjects } from "../../utils/permissions";
 import MenuCard, { MenuCardProps } from "./MenuCard";
@@ -161,7 +161,7 @@ const LandingPage: React.FC = () => {
     ];
 
     return (
-        <TestAttribute>
+        <TestWrapper>
             <div className={classes.container} key="pages">
                 {cards.map(
                     ({ key, title, isVisible = true, children }) =>
@@ -178,7 +178,7 @@ const LandingPage: React.FC = () => {
                         )
                 )}
             </div>
-        </TestAttribute>
+        </TestWrapper>
     );
 };
 

@@ -8,6 +8,7 @@ import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { AggregatedSync } from "../../logic/sync/aggregated";
 import { EventsSync } from "../../logic/sync/events";
 import { SyncronizationClass } from "../../logic/sync/generic";
@@ -158,7 +159,7 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
     };
 
     return (
-        <React.Fragment>
+        <TestWrapper>
             <PageHeader onBackClick={goBack} title={title} />
 
             <MetadataTable
@@ -186,7 +187,7 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
                 isOpen={state.syncSummaryOpen}
                 handleClose={closeSummary}
             />
-        </React.Fragment>
+        </TestWrapper>
     );
 };
 
