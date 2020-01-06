@@ -5,25 +5,40 @@ import { TestWrapper } from "./TestWrapper";
 export function recursiveMap(
     children: React.ReactNode,
     fn: Function,
-    parent?: React.ReactNode
+    parentId?: string
 ): React.ReactNode {
     return React.Children.map(children, child => {
+        const id = concatStrings([parentId, generateTestId(child || {})]);
         if (!React.isValidElement(child)) {
             return child;
         }
 
         const clone = child.props.children
             ? React.cloneElement(child, {
-                  children: recursiveMap(child.props.children, fn, child),
+                  children: recursiveMap(child.props.children, fn, id),
               })
             : child;
 
-        return fn(clone, parent);
+        return fn(clone, id);
     });
+}
+
+export function concatStrings(
+    strings: (string | undefined)[],
+    separator = "-",
+    duplicates = false
+) {
+    return _(strings)
+        .map(string => (duplicates ? string : string?.split(separator)))
+        .flatten()
+        .compact()
+        .uniq()
+        .join(separator);
 }
 
 export function generateTestId({ props = {}, key }: { props?: any; key?: string }) {
     const id = _.kebabCase(_.toLower(props.id || props.title || props.name || key));
+    //console.log({id: props.id, title: props.title, name: props.name, key})
     return !!id ? id : undefined;
 }
 
@@ -37,10 +52,10 @@ export function isClassComponent(component: any) {
     return typeof component === "function" && !!component.prototype.isReactComponent ? true : false;
 }
 
-export function wrapType(type: any) {
+export function wrapType(type: any, parentId?: string) {
     return typeof type === "function" && !isClassComponent(type)
         ? (...props: any[]) => {
-              return <TestWrapper>{type(...props)}</TestWrapper>;
+            return <TestWrapper componentParent={parentId}>{type(...props)}</TestWrapper>;
           }
         : type;
 }
