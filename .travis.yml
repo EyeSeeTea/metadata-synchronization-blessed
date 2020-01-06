@@ -28,14 +28,12 @@ before_install:
 install:
   - yarn install --frozen-lockfile
   - yarn cy:verify
-  # - yarn build
-  - yarn build-webapp
+  - yarn build
 script:
-  # - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true yarn start &
+  - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true yarn start &
   - yarn wait-on http-get://localhost:8080
-  - curl -F file=@metadata-synchronization.zip -X POST -u $CYPRESS_DHIS2_AUTH "http://localhost:8080/api/apps" 
-  # - yarn wait-on http-get://localhost:8081
-  - CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8080 yarn cy:e2e:run
+  - yarn wait-on http-get://localhost:8081
+  - CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:run
   - kill $(jobs -p) || true
 addons:
   apt:
