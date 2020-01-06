@@ -38,7 +38,6 @@ export function concatStrings(
 
 export function generateTestId({ props = {}, key }: { props?: any; key?: string }) {
     const id = _.kebabCase(_.toLower(props.id || props.title || props.name || key));
-    //console.log({id: props.id, title: props.title, name: props.name, key})
     return !!id ? id : undefined;
 }
 

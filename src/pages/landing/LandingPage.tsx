@@ -162,7 +162,7 @@ const LandingPage: React.FC = () => {
 
     return (
         <TestWrapper>
-            <div className={classes.container} key="pages">
+            <div className={classes.container} key="landing">
                 {cards.map(
                     ({ key, title, isVisible = true, children }) =>
                         isVisible && (
@@ -170,7 +170,7 @@ const LandingPage: React.FC = () => {
                                 <h1 className={classes.title}>{title}</h1>
 
                                 {children.map(props => (
-                                    <MenuCard {...props} />
+                                    <MenuCard key={props.name} {...props} />
                                 ))}
 
                                 <div className={classes.clear} />
