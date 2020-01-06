@@ -11,7 +11,7 @@ import { AggregatedSync } from "../../../logic/sync/aggregated";
 import { EventsSync } from "../../../logic/sync/events";
 import { MetadataSync } from "../../../logic/sync/metadata";
 import { getBaseUrl } from "../../../utils/d2";
-import { availablePeriods, getMetadata } from "../../../utils/synchronization";
+import { availablePeriods, cleanOrgUnitPaths, getMetadata } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
 import { getInstances } from "./InstanceSelectionStep";
 
@@ -97,7 +97,12 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
     };
 
     useEffect(() => {
-        getMetadata(getBaseUrl(d2), syncRule.metadataIds, "id,name").then(updateMetadata);
+        const ids = [
+            ...syncRule.metadataIds,
+            ...syncRule.dataSyncAttributeCategoryOptions,
+            ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
+        ];
+        getMetadata(getBaseUrl(d2), ids, "id,name").then(updateMetadata);
         getInstances(d2).then(setInstanceOptions);
     }, [d2, syncRule]);
 
@@ -133,6 +138,26 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                         </ul>
                     </LiEntry>
                 ))}
+
+                {syncRule.type === "events" && (
+                    <LiEntry
+                        label={i18n.t("Events")}
+                        value={
+                            !!syncRule.dataSyncAllEvents
+                                ? i18n.t("All events")
+                                : i18n.t("{{total}} selected events", {
+                                      total: syncRule.dataSyncEvents.length,
+                                  })
+                        }
+                    />
+                )}
+
+                {syncRule.dataSyncAllAttributeCategoryOptions && (
+                    <LiEntry
+                        label={i18n.t("Category Option Combo")}
+                        value={i18n.t("All attribute category options")}
+                    />
+                )}
 
                 {syncRule.type !== "metadata" && (
                     <LiEntry
