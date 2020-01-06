@@ -52,7 +52,7 @@ export const TestWrapper: React.FC<TestWrapperProps> = ({
         dataTestDictionary.set(testAttribute, count + 1);
 
         return React.cloneElement(element, {
-            [testAttributeName]: testId,
+            [testAttributeName]: props[testAttributeName] ?? testId,
         });
     }
 

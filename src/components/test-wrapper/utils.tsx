@@ -55,7 +55,7 @@ export function isClassComponent(component: any) {
 export function wrapType(type: any, parentId?: string) {
     return typeof type === "function" && !isClassComponent(type)
         ? (...props: any[]) => {
-            return <TestWrapper componentParent={parentId}>{type(...props)}</TestWrapper>;
+              return <TestWrapper componentParent={parentId}>{type(...props)}</TestWrapper>;
           }
         : type;
 }
