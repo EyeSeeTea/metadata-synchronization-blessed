@@ -7,9 +7,7 @@ import {
     withLoading,
     withSnackbar,
 } from "d2-ui-components";
-import FileSaver from "file-saver";
 import _ from "lodash";
-import moment from "moment";
 import PropTypes from "prop-types";
 import React from "react";
 import { withRouter } from "react-router-dom";
@@ -30,6 +28,7 @@ import {
     isAppExecutor,
     isGlobalAdmin,
 } from "../../utils/permissions";
+import { requestJSONDownload } from "../../utils/synchronization";
 import { getValidationMessages } from "../../utils/validations";
 
 const config = {
@@ -163,13 +162,7 @@ class SyncRulesPage extends React.Component {
         const { SyncClass } = config[syncRule.type];
 
         loading.show(true, "Generating JSON file");
-
-        const sync = new SyncClass(d2, api, syncRule.toBuilder());
-        const payload = await sync.buildPayload();
-
-        const json = JSON.stringify(payload, null, 4);
-        const blob = new Blob([json], { type: "application/json" });
-        FileSaver.saveAs(blob, `${syncRule.type}-sync-${moment().format("YYYYMMDDHHmm")}.json`);
+        requestJSONDownload(SyncClass, syncRule, d2, api);
         loading.reset();
     };
 
