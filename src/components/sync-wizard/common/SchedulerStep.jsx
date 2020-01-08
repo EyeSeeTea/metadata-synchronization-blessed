@@ -8,11 +8,11 @@ import { Toggle } from "../../toggle/Toggle";
 import isValidCronExpression from "../../../utils/validCronExpression";
 
 const cronExpressions = [
-    { displayName: i18n.t("Every day"), id: "0 0 12 ? * *" },
-    { displayName: i18n.t("Every month"), id: "0 0 12 1 1/1 ?" },
-    { displayName: i18n.t("Every three months"), id: "0 0 12 1 1/3 ?" },
-    { displayName: i18n.t("Every six months"), id: "0 0 12 1 1/6 ?" },
-    { displayName: i18n.t("Every year"), id: "0 0 12 1 1 ?" },
+    { displayName: i18n.t("Every day"), id: "0 0 0 ? * *" },
+    { displayName: i18n.t("Every month"), id: "0 0 0 1 1/1 ?" },
+    { displayName: i18n.t("Every three months"), id: "0 0 0 1 1/3 ?" },
+    { displayName: i18n.t("Every six months"), id: "0 0 0 1 1/6 ?" },
+    { displayName: i18n.t("Every year"), id: "0 0 0 1 1 ?" },
 ];
 
 const SchedulerStep = ({ syncRule, onChange }) => {
