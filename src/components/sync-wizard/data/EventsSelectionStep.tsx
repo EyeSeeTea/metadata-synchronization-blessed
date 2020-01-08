@@ -11,6 +11,10 @@ import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 
+interface ProgramEventObject extends ProgramEvent {
+    [key: string]: any;
+}
+
 export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
     const d2 = useD2();
     const api = useD2Api();
@@ -135,7 +139,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 onValueChange={updateSyncAll}
             />
             {!syncRule.dataSyncAllEvents && (
-                <ObjectsTable<ProgramEvent>
+                <ObjectsTable<ProgramEventObject>
                     rows={filteredObjects}
                     loading={objects === undefined}
                     columns={[...columns, ...additionalColumns]}
