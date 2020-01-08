@@ -141,7 +141,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                     <LiEntry
                         label={i18n.t("Events")}
                         value={
-                            !!syncRule.dataSyncAllEvents
+                            syncRule.dataSyncAllEvents
                                 ? i18n.t("All events")
                                 : i18n.t("{{total}} selected events", {
                                       total: syncRule.dataSyncEvents.length,
@@ -166,7 +166,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                             <ul>
                                 <LiEntry
                                     label={i18n.t("Start date")}
-                                    value={syncRule.dataSyncStartDate.format("YYYY-MM-DD")}
+                                    value={moment(syncRule.dataSyncStartDate).format("YYYY-MM-DD")}
                                 />
                             </ul>
                         )}
@@ -174,7 +174,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                             <ul>
                                 <LiEntry
                                     label={i18n.t("End date")}
-                                    value={syncRule.dataSyncEndDate.format("YYYY-MM-DD")}
+                                    value={moment(syncRule.dataSyncEndDate).format("YYYY-MM-DD")}
                                 />
                             </ul>
                         )}
