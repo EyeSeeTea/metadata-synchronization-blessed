@@ -297,24 +297,26 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;
 
-        const newSelectedIds = _.reject(selection, { indeterminate: true }).map(({ id }) => id);
-        const notSelectedIds = _.difference(selectedIds, newSelectedIds);
-        const childrenOfSelected = _(rows)
-            .filter(({ id }) => !!notSelectedIds.includes(id))
+        const included = _.reject(selection, { indeterminate: true }).map(({ id }) => id);
+        const newlySelectedIds = _.difference(included, selectedIds);
+        const newlyUnselectedIds = _.difference(selectedIds, included);
+
+        const childrenOfNewlySelected = _(rows)
+            .filter(({ id }) => !!newlySelectedIds.includes(id))
             .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType)
             .flattenDeep()
             .map(({ id }) => id)
             .value();
 
-        const newExcludedIds = _(notSelectedIds)
+        const excluded = _(excludedIds)
+            .union(newlyUnselectedIds)
+            .difference(childrenOfNewlySelected)
             .filter(id => !_.find(rows, { id }))
-            .union(excludedIds)
-            .difference(childrenOfSelected)
             .value();
 
         updateSorting(sorting);
         updatePagination(pagination);
-        notifyNewSelection(newSelectedIds, newExcludedIds);
+        notifyNewSelection(included, excluded);
     };
 
     const exclusion = excludedIds.map(id => ({ id }));
