@@ -101,7 +101,7 @@
     "wait-on": "^3.3.0"
   },
   "manifest.webapp": {
-    "name": "Metadata Synchronization",
+    "name": "MetaData Synchronization",
     "description": "Advanced metadata synchronization utility",
     "icons": {
       "48": "icon.png"

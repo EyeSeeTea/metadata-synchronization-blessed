@@ -102,9 +102,7 @@ const App = () => {
                         <LoadingProvider>
                             <SnackbarProvider>
                                 {showHeader && (
-                                    <HeaderBar
-                                        appName={i18n.t("Metadata & Data Synchronization")}
-                                    />
+                                    <HeaderBar appName={i18n.t("MetaData Synchronization")} />
                                 )}
 
                                 <div id="app" className="content">

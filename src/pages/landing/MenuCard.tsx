@@ -31,6 +31,7 @@ const useStyles = makeStyles({
     },
     actions: {
         marginLeft: "auto",
+        marginTop: "15px",
     },
     header: {
         padding: "1rem",
