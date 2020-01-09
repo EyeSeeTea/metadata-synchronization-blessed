@@ -1,10 +1,11 @@
 import { Ref } from "d2-api";
 import SyncReport from "../models/syncReport";
-import { ImportStatus, DataImportParams, MetadataImportParams, MetadataImportStats } from "./d2";
+import { DataImportParams, ImportStatus, MetadataImportParams, MetadataImportStats } from "./d2";
 
 export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
+    excludedIds: string[];
     syncRule?: string;
     syncParams?: MetadataSynchronizationParams;
     dataParams?: DataSynchronizationParams;

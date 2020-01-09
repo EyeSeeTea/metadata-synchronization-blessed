@@ -74,6 +74,10 @@ export default class SyncRule {
         return this.syncRule.builder.metadataIds;
     }
 
+    public get excludedIds(): string[] {
+        return this.syncRule.builder.excludedIds;
+    }
+
     public get dataSyncAttributeCategoryOptions(): string[] {
         return this.syncRule.builder.dataParams?.attributeCategoryOptions ?? [];
     }
@@ -167,6 +171,7 @@ export default class SyncRule {
             builder: {
                 targetInstances: [],
                 metadataIds: [],
+                excludedIds: [],
                 dataParams: {
                     strategy: "NEW_AND_UPDATES",
                     allAttributeCategoryOptions: true,
@@ -256,7 +261,13 @@ export default class SyncRule {
     }
 
     public toBuilder() {
-        return _.pick(this, ["metadataIds", "targetInstances", "syncParams", "dataParams"]);
+        return _.pick(this, [
+            "metadataIds",
+            "excludedIds",
+            "targetInstances",
+            "syncParams",
+            "dataParams",
+        ]);
     }
 
     public updateId(id: string): SyncRule {
@@ -293,6 +304,16 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 metadataIds,
+            },
+        });
+    }
+
+    public updateExcludedIds(excludedIds: string[]): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                excludedIds,
             },
         });
     }

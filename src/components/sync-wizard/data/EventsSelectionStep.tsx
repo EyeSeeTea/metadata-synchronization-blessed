@@ -60,7 +60,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
 
     const handleTableChange = (tableState: TableState<ProgramEvent>) => {
         const { selection } = tableState;
-        onChange(syncRule.updateDataSyncEvents(selection));
+        onChange(syncRule.updateDataSyncEvents(selection.map(({ id }) => id)));
     };
 
     const updateSyncAll = (value: boolean) => {
@@ -147,7 +147,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                     actions={actions}
                     forceSelectionColumn={true}
                     onChange={handleTableChange}
-                    selection={syncRule.dataSyncEvents ?? []}
+                    selection={syncRule.dataSyncEvents?.map(id => ({ id })) ?? []}
                     filterComponents={filterComponents}
                 />
             )}

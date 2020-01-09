@@ -1,5 +1,6 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
-import { useD2, useD2Api, D2Api } from "d2-api";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
+import { D2Api, useD2, useD2Api } from "d2-api";
 import D2ApiModel from "d2-api/api/models";
 import { DatePicker, ReferenceObject, TableState } from "d2-ui-components";
 import _ from "lodash";
@@ -15,13 +16,13 @@ import { NamedRef } from "../../types/synchronization";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
 import D2ObjectsTable, { D2ObjectsTableProps } from "../d2-objects-table/D2ObjectsTable";
 import Dropdown from "../dropdown/Dropdown";
-import DoneAllIcon from "@material-ui/icons/DoneAll";
 
 interface MetadataTableProps
     extends Omit<D2ObjectsTableProps<MetadataType>, "columns" | "apiModel"> {
     models: typeof D2Model[];
-    selection?: string[];
-    notifyNewSelection?(selection: string[]): void;
+    selectedIds?: string[];
+    excludedIds?: string[];
+    notifyNewSelection?(selectedIds: string[], excludedIds: []): void;
 }
 
 const useStyles = makeStyles({
@@ -70,7 +71,8 @@ interface FiltersState {
 
 const MetadataTable: React.FC<MetadataTableProps> = ({
     models,
-    selection = [],
+    selectedIds = [],
+    excludedIds = [],
     notifyNewSelection = _.noop,
     ...rest
 }) => {
@@ -97,13 +99,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
         if (model && model.getLevelFilterName()) {
             getData(model.getLevelFilterName(), "level", d2, api).then(({ objects }) => {
+                // Inference does not work for orgUnits here
+                const levels = (objects as unknown) as { name: string; level: number }[];
                 updateFilters(state => ({
                     ...state,
-                    levelData: objects.map(e => ({
-                        //@ts-ignore Bug in inference (level not detected)
-                        id: e.level,
-                        //@ts-ignore Bug in inference (level not detected)
-                        name: `${e.level}. ${e.name}`,
+                    levelData: levels.map(({ name, level }) => ({
+                        id: String(level),
+                        name: `${level}. ${name}`,
                     })),
                 }));
             });
@@ -135,24 +137,28 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { selection } = tableState;
-        notifyNewSelection(selection);
+        const tableSelectedIds = selection.map(({ id }) => id);
+        const newSelectedIds = _.reject(tableSelectedIds, { indeterminate: true });
+        const newExcludedIds = _.difference(selectedIds, tableSelectedIds);
+
+        notifyNewSelection(newSelectedIds, newExcludedIds);
     };
 
-    const selectChildren = async (selectedOUs: NamedRef[]) => {
+    const selectOrgUnitChildren = async (selectedOUs: NamedRef[]) => {
         const ids = new Set<string>();
         for (const selectedOU of selectedOUs) {
             const subtree = await getOrgUnitSubtree(d2 as D2, selectedOU.id);
             subtree.forEach(id => ids.add(id));
         }
-        notifyNewSelection([...selection, ...Array.from(ids)]);
+        notifyNewSelection([...selectedIds, ...Array.from(ids)], excludedIds);
     };
 
     const addToSelection = (items: NamedRef[]) => {
         const ids = items.map(({ id }) => id);
-        const oldSelection = _.difference(selection, ids);
-        const newSelection = _.difference(ids, selection);
+        const oldSelection = _.difference(selectedIds, ids);
+        const newSelection = _.difference(ids, selectedIds);
 
-        notifyNewSelection([...oldSelection, ...newSelection]);
+        notifyNewSelection([...oldSelection, ...newSelection], excludedIds);
     };
 
     const groupTypes = models.map(model => ({
@@ -168,7 +174,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 lastUpdated: filters.lastUpdated
                     ? { ge: moment(filters.lastUpdated).format("YYYY-MM-DD") }
                     : undefined,
-                id: filters.showOnlySelected ? { in: selection } : undefined,
+                id: filters.showOnlySelected ? { in: selectedIds } : undefined,
                 ...model.getApiModelFilters(),
             },
         };
@@ -184,7 +190,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         return query;
     }, [
         model,
-        selection,
+        selectedIds,
         filters.lastUpdated,
         filters.showOnlySelected,
         filters.group,
@@ -256,7 +262,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             name: "select-children",
             text: i18n.t("Select with children subtree"),
             multiple: true,
-            onClick: selectChildren,
+            onClick: selectOrgUnitChildren,
             icon: <DoneAllIcon />,
             isActive: () => {
                 return model.getMetadataType() === "organisationUnit";
@@ -289,7 +295,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             filterComponents={filterComponents}
             forceSelectionColumn={true}
             actions={actions}
-            selection={selection}
+            selection={selectedIds.map(id => ({ id }))}
+            exclusion={excludedIds.map(id => ({ id }))}
             onChange={handleTableChange}
             initialState={initialState}
             {...rest}

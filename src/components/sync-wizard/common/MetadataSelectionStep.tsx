@@ -40,7 +40,7 @@ export default function MetadataSelectionStep(props: SyncWizardStepProps) {
     const [metadataIds, updateMetadataIds] = useState<string[]>([]);
     const snackbar = useSnackbar();
 
-    const changeSelection = (newMetadataIds: string[]) => {
+    const changeSelection = (newMetadataIds: string[], newExclusionIds: string[]) => {
         const additions = _.difference(newMetadataIds, metadataIds);
         if (additions.length > 0) {
             snackbar.info(
@@ -61,14 +61,15 @@ export default function MetadataSelectionStep(props: SyncWizardStepProps) {
             );
         }
 
-        onChange(syncRule.updateMetadataIds(newMetadataIds));
+        onChange(syncRule.updateMetadataIds(newMetadataIds).updateExcludedIds(newExclusionIds));
         updateMetadataIds(newMetadataIds);
     };
 
     return (
         <MetadataTable
             models={models}
-            selection={syncRule.metadataIds}
+            selectedIds={syncRule.metadataIds}
+            excludedIds={syncRule.excludedIds}
             notifyNewSelection={changeSelection}
             childrenKeys={childrenKeys}
         />

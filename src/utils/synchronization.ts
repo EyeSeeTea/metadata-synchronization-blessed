@@ -22,6 +22,7 @@ import {
     NestedRules,
     ProgramEvent,
     SynchronizationResult,
+    DataValue,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
 import { cleanModelName, getClassName } from "./d2";
@@ -297,7 +298,7 @@ export async function getAggregatedData(
             dataElementGroup,
             orgUnit,
         })
-        .getData();
+        .getData() as Promise<{ dataValues?: DataValue[] }>;
 }
 
 export const getDefaultIds = memoize(
