@@ -1,28 +1,34 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import { D2Api, useD2, useD2Api } from "d2-api";
+import { useD2, useD2Api, useD2ApiData } from "d2-api";
 import D2ApiModel from "d2-api/api/models";
-import { DatePicker, ReferenceObject, TableState } from "d2-ui-components";
+import {
+    DatePicker,
+    ObjectsTable,
+    ObjectsTableProps,
+    ReferenceObject,
+    TableSelection,
+    TableSorting,
+    TableState,
+} from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
-import memoize from "nano-memoize";
 import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import i18n from "../../locales";
 import { getOrgUnitSubtree } from "../../logic/utils";
 import { D2Model, DataElementModel } from "../../models/d2Model";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
 import { D2 } from "../../types/d2";
 import { NamedRef } from "../../types/synchronization";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
-import D2ObjectsTable, { D2ObjectsTableProps } from "../d2-objects-table/D2ObjectsTable";
 import Dropdown from "../dropdown/Dropdown";
+import { getAllIdentifiers, getFilterData } from "./utils";
 
-interface MetadataTableProps
-    extends Omit<D2ObjectsTableProps<MetadataType>, "columns" | "apiModel"> {
+interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     models: typeof D2Model[];
     selectedIds?: string[];
     excludedIds?: string[];
-    notifyNewSelection?(selectedIds: string[], excludedIds: []): void;
+    notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
+    childrenKeys?: string[];
 }
 
 const useStyles = makeStyles({
@@ -31,28 +37,6 @@ const useStyles = makeStyles({
         marginTop: 8,
     },
 });
-
-const getData = memoize(
-    (modelName: string, type: "group" | "level", d2: D2, api: D2Api) =>
-        d2ModelFactory(d2, modelName)
-            .getApiModel(api)
-            .get({
-                paging: false,
-                fields:
-                    type === "group"
-                        ? {
-                              id: true as true,
-                              name: true as true,
-                          }
-                        : {
-                              name: true as true,
-                              level: true as true,
-                          },
-                order: type === "group" ? undefined : `level:iasc`,
-            })
-            .getData(),
-    { maxArgs: 2 }
-);
 
 interface FiltersState {
     lastUpdated: Date | null;
@@ -69,18 +53,33 @@ interface FiltersState {
     }[];
 }
 
+const initialState = {
+    sorting: {
+        field: "displayName" as const,
+        order: "asc" as const,
+    },
+    pagination: {
+        page: 1,
+        pageSize: 25,
+    },
+};
+
 const MetadataTable: React.FC<MetadataTableProps> = ({
     models,
     selectedIds = [],
     excludedIds = [],
     notifyNewSelection = _.noop,
-    ...rest
+    childrenKeys = [],
 }) => {
     const d2 = useD2() as D2;
     const api = useD2Api();
     const classes = useStyles({});
 
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] || DataElementModel);
+    const [ids, updateIds] = useState<string[]>([]);
+    const [search, updateSearch] = useState<string | undefined>(undefined);
+    const [sorting, updateSorting] = useState<TableSorting<MetadataType>>(initialState.sorting);
+    const [pagination, updatePagination] = useState(initialState.pagination);
     const [filters, updateFilters] = useState<FiltersState>({
         lastUpdated: null,
         group: "",
@@ -89,28 +88,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         levelData: [],
         showOnlySelected: false,
     });
-
-    useEffect(() => {
-        if (model && model.getGroupFilterName()) {
-            getData(model.getGroupFilterName(), "group", d2, api).then(({ objects }) =>
-                updateFilters(state => ({ ...state, groupData: objects }))
-            );
-        }
-
-        if (model && model.getLevelFilterName()) {
-            getData(model.getLevelFilterName(), "level", d2, api).then(({ objects }) => {
-                // Inference does not work for orgUnits here
-                const levels = (objects as unknown) as { name: string; level: number }[];
-                updateFilters(state => ({
-                    ...state,
-                    levelData: levels.map(({ name, level }) => ({
-                        id: String(level),
-                        name: `${level}. ${name}`,
-                    })),
-                }));
-            });
-        }
-    }, [d2, api, model]);
 
     const changeDropdownFilter = (event: ChangeEvent<HTMLInputElement>) => {
         if (models.length === 0) throw new Error("You need to provide at least one model");
@@ -135,15 +112,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         updateFilters(state => ({ ...state, showOnlySelected: event.target.checked }));
     };
 
-    const handleTableChange = (tableState: TableState<ReferenceObject>) => {
-        const { selection } = tableState;
-        const tableSelectedIds = selection.map(({ id }) => id);
-        const newSelectedIds = _.reject(tableSelectedIds, { indeterminate: true });
-        const newExcludedIds = _.difference(selectedIds, tableSelectedIds);
-
-        notifyNewSelection(newSelectedIds, newExcludedIds);
-    };
-
     const selectOrgUnitChildren = async (selectedOUs: NamedRef[]) => {
         const ids = new Set<string>();
         for (const selectedOU of selectedOUs) {
@@ -161,47 +129,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         notifyNewSelection([...oldSelection, ...newSelection], excludedIds);
     };
 
-    const groupTypes = models.map(model => ({
-        id: model.getMetadataType(),
-        name: model.getD2Model(d2).displayName,
-    }));
-
-    const apiQuery: Parameters<InstanceType<typeof D2ApiModel>["get"]>[0] = useMemo(() => {
-        // TODO: Update in d2-api type definition with field accessor
-        const query: Parameters<InstanceType<typeof D2ApiModel>["get"]>[0] = {
-            fields: model ? model.getFields() : d2BaseModelFields,
-            filter: {
-                lastUpdated: filters.lastUpdated
-                    ? { ge: moment(filters.lastUpdated).format("YYYY-MM-DD") }
-                    : undefined,
-                id: filters.showOnlySelected ? { in: selectedIds } : undefined,
-                ...model.getApiModelFilters(),
-            },
-        };
-
-        if (query.filter && model.getGroupFilterName()) {
-            query.filter[`${model.getGroupFilterName()}.id`] = { eq: filters.group };
-        }
-
-        if (query.filter && model.getLevelFilterName()) {
-            query.filter["level"] = { eq: filters.level };
-        }
-
-        return query;
-    }, [
-        model,
-        selectedIds,
-        filters.lastUpdated,
-        filters.showOnlySelected,
-        filters.group,
-        filters.level,
-    ]);
-
     const filterComponents = _.compact([
         models.length > 1 && (
             <Dropdown
                 key={"metadata-filter"}
-                items={groupTypes}
+                items={models.map(model => ({
+                    id: model.getMetadataType(),
+                    name: model.getD2Model(d2).displayName,
+                }))}
                 onChange={changeDropdownFilter}
                 value={model.getMetadataType()}
                 label={i18n.t("Metadata type")}
@@ -278,28 +213,149 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         },
     ];
 
-    const initialState = {
-        sorting: {
-            field: "displayName" as const,
-            order: "asc" as const,
-        },
+    const apiModel = model.getApiModel(api);
+    const apiQuery = useMemo(() => {
+        const query: Parameters<InstanceType<typeof D2ApiModel>["get"]>[0] = {
+            fields: model ? model.getFields() : d2BaseModelFields,
+            filter: {
+                lastUpdated: filters.lastUpdated
+                    ? { ge: moment(filters.lastUpdated).format("YYYY-MM-DD") }
+                    : undefined,
+                id: filters.showOnlySelected ? { in: selectedIds } : undefined,
+                ...model.getApiModelFilters(),
+            },
+        };
+
+        if (query.filter && model.getGroupFilterName()) {
+            query.filter[`${model.getGroupFilterName()}.id`] = { eq: filters.group };
+        }
+
+        if (query.filter && model.getLevelFilterName()) {
+            query.filter["level"] = { eq: filters.level };
+        }
+
+        return query;
+    }, [
+        model,
+        selectedIds,
+        filters.lastUpdated,
+        filters.showOnlySelected,
+        filters.group,
+        filters.level,
+    ]);
+
+    const { loading, data, error, refetch } = useD2ApiData<any>();
+
+    useEffect(() => {
+        getAllIdentifiers(apiModel.modelName, search, apiModel, apiQuery).then(updateIds);
+    }, [apiModel, apiQuery, search]);
+
+    useEffect(
+        () =>
+            refetch(
+                apiModel.get({
+                    order: `${sorting.field}:i${sorting.order}`,
+                    page: pagination.page,
+                    pageSize: pagination.pageSize,
+                    ...apiQuery,
+                    filter: {
+                        name: { ilike: search },
+                        ...apiQuery.filter,
+                    },
+                })
+            ),
+        [apiModel, apiQuery, refetch, sorting, pagination, search]
+    );
+
+    useEffect(() => {
+        if (model && model.getGroupFilterName()) {
+            getFilterData(model.getGroupFilterName(), "group", d2, api).then(({ objects }) =>
+                updateFilters(state => ({ ...state, groupData: objects }))
+            );
+        }
+
+        if (model && model.getLevelFilterName()) {
+            getFilterData(model.getLevelFilterName(), "level", d2, api).then(({ objects }) => {
+                // Inference does not work for orgUnits here
+                const levels = (objects as unknown) as { name: string; level: number }[];
+                updateFilters(state => ({
+                    ...state,
+                    levelData: levels.map(({ name, level }) => ({
+                        id: String(level),
+                        name: `${level}. ${name}`,
+                    })),
+                }));
+            });
+        }
+    }, [d2, api, model]);
+
+    if (error) return <p>{"Error: " + JSON.stringify(error)}</p>;
+
+    const { objects, pager } = data || { objects: [], pager: undefined };
+    const rows = model.getApiModelTransform()(objects);
+
+    const handleTableChange = (tableState: TableState<ReferenceObject>) => {
+        const { sorting, pagination, selection } = tableState;
+
+        const newSelectedIds = _.reject(selection, { indeterminate: true }).map(({ id }) => id);
+        const notSelectedIds = _.difference(selectedIds, newSelectedIds);
+        const childrenOfSelected = _(rows)
+            .filter(({ id }) => !!notSelectedIds.includes(id))
+            .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType)
+            .flattenDeep()
+            .map(({ id }) => id)
+            .value();
+
+        const newExcludedIds = _(notSelectedIds)
+            .filter(id => !_.find(rows, { id }))
+            .union(excludedIds)
+            .difference(childrenOfSelected)
+            .value();
+
+        updateSorting(sorting);
+        updatePagination(pagination);
+        notifyNewSelection(newSelectedIds, newExcludedIds);
     };
 
+    const exclusion = excludedIds.map(id => ({ id }));
+    const selection = selectedIds.map(id => ({
+        id,
+        checked: true,
+        indeterminate: false,
+    }));
+
+    const childrenSelection: TableSelection[] = _(rows)
+        .intersectionBy(selection, "id")
+        .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType)
+        .flattenDeep()
+        .differenceBy(selection, "id")
+        .differenceBy(exclusion, "id")
+        .map(({ id }) => {
+            return {
+                id,
+                checked: true,
+                indeterminate: !_.find(selection, { id }),
+            } as TableSelection;
+        })
+        .value();
+
     return (
-        <D2ObjectsTable<MetadataType>
-            apiModel={model.getApiModel(api)}
-            apiQuery={apiQuery}
-            transformObjects={model.getApiModelTransform()}
+        <ObjectsTable<MetadataType>
+            rows={rows}
             columns={model.getColumns()}
             details={model.getDetails()}
+            onChangeSearch={updateSearch}
+            initialState={initialState}
+            searchBoxLabel={i18n.t("Search by name")}
+            pagination={pager}
+            onChange={handleTableChange}
+            ids={ids}
+            loading={loading}
+            selection={[...selection, ...childrenSelection]}
+            childrenKeys={childrenKeys}
             filterComponents={filterComponents}
             forceSelectionColumn={true}
             actions={actions}
-            selection={selectedIds.map(id => ({ id }))}
-            exclusion={excludedIds.map(id => ({ id }))}
-            onChange={handleTableChange}
-            initialState={initialState}
-            {...rest}
         />
     );
 };

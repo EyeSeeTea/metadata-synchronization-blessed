@@ -41,7 +41,7 @@ export abstract class D2Model {
     protected static details = d2BaseModelDetails;
     protected static fields = d2BaseModelFields;
     protected static initialSorting = ["name", "asc"];
-    protected static modelTransform: Function | undefined = undefined;
+    protected static modelTransform: Function = (objects: any[]) => objects;
     protected static modelFilters: any = {};
 
     // List method should be executed by a wrapper to preserve static context binding
