@@ -97,6 +97,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
     useEffect(() => {
         const ids = [
             ...syncRule.metadataIds,
+            ...syncRule.excludedIds,
             ...syncRule.dataSyncAttributeCategoryOptions,
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
@@ -136,6 +137,26 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                         </ul>
                     </LiEntry>
                 ))}
+
+                {syncRule.excludedIds.length > 0 && (
+                    <LiEntry label={i18n.t("Excluded elements")}>
+                        <ul>
+                            {syncRule.excludedIds.map(id => {
+                                const element = _(metadata)
+                                    .values()
+                                    .flatten()
+                                    .find({ id });
+
+                                return (
+                                    <LiEntry
+                                        key={id}
+                                        label={element ? `${element.name} (${id})` : id}
+                                    />
+                                );
+                            })}
+                        </ul>
+                    </LiEntry>
+                )}
 
                 {syncRule.type === "events" && (
                     <LiEntry
