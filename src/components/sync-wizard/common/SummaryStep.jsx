@@ -125,21 +125,30 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
 
                 <LiEntry label={i18n.t("Description")} value={syncRule.description} />
 
-                {_.keys(metadata).map(metadataType => (
-                    <LiEntry
-                        key={metadataType}
-                        label={`${d2.models[metadataType].displayName} [${metadata[metadataType].length}]`}
-                    >
-                        <ul>
-                            {metadata[metadataType].map(({ id, name }) => (
-                                <LiEntry key={id} label={`${name} (${id})`} />
-                            ))}
-                        </ul>
-                    </LiEntry>
-                ))}
+                {_.keys(metadata).map(metadataType => {
+                    const items = metadata[metadataType].filter(
+                        ({ id }) => !syncRule.excludedIds.includes(id)
+                    );
+                    return (
+                        items.length > 0 && (
+                            <LiEntry
+                                key={metadataType}
+                                label={`${d2.models[metadataType].displayName} [${items.length}]`}
+                            >
+                                <ul>
+                                    {items.map(({ id, name }) => (
+                                        <LiEntry key={id} label={`${name} (${id})`} />
+                                    ))}
+                                </ul>
+                            </LiEntry>
+                        )
+                    );
+                })}
 
                 {syncRule.excludedIds.length > 0 && (
-                    <LiEntry label={i18n.t("Excluded elements")}>
+                    <LiEntry
+                        label={`${i18n.t("Excluded elements")} [${syncRule.excludedIds.length}]`}
+                    >
                         <ul>
                             {syncRule.excludedIds.map(id => {
                                 const element = _(metadata)
