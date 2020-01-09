@@ -25,13 +25,12 @@ const useStyles = makeStyles({
         width: "230px",
     },
     content: {
-        height: "85px",
+        height: "120px",
         padding: ".5rem 1rem",
         fontSize: "14px",
     },
     actions: {
         marginLeft: "auto",
-        marginTop: "15px",
     },
     header: {
         padding: "1rem",
