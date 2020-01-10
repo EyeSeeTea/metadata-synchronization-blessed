@@ -2,7 +2,6 @@ import i18n from "@dhis2/d2-i18n";
 import { Button, LinearProgress, withStyles } from "@material-ui/core";
 import { useD2, useD2Api } from "d2-api";
 import { ConfirmationDialog, useSnackbar, withLoading } from "d2-ui-components";
-import FileSaver from "file-saver";
 import _ from "lodash";
 import moment from "moment";
 import PropTypes from "prop-types";
@@ -11,7 +10,12 @@ import { AggregatedSync } from "../../../logic/sync/aggregated";
 import { EventsSync } from "../../../logic/sync/events";
 import { MetadataSync } from "../../../logic/sync/metadata";
 import { getBaseUrl } from "../../../utils/d2";
-import { availablePeriods, getMetadata } from "../../../utils/synchronization";
+import {
+    availablePeriods,
+    cleanOrgUnitPaths,
+    getMetadata,
+    requestJSONDownload,
+} from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
 import { getInstances } from "./InstanceSelectionStep";
 
@@ -86,18 +90,17 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
         const { SyncClass } = config[syncRule.type];
 
         loading.show(true, "Generating JSON file");
-
-        const sync = new SyncClass(d2, api, syncRule.toBuilder());
-        const payload = await sync.buildPayload();
-
-        const json = JSON.stringify(payload, null, 4);
-        const blob = new Blob([json], { type: "application/json" });
-        FileSaver.saveAs(blob, `${syncRule.type}-sync-${moment().format("YYYYMMDDHHmm")}.json`);
+        requestJSONDownload(SyncClass, syncRule, d2, api);
         loading.reset();
     };
 
     useEffect(() => {
-        getMetadata(getBaseUrl(d2), syncRule.metadataIds, "id,name").then(updateMetadata);
+        const ids = [
+            ...syncRule.metadataIds,
+            ...syncRule.dataSyncAttributeCategoryOptions,
+            ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
+        ];
+        getMetadata(getBaseUrl(d2), ids, "id,name").then(updateMetadata);
         getInstances(d2).then(setInstanceOptions);
     }, [d2, syncRule]);
 
@@ -134,6 +137,26 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                     </LiEntry>
                 ))}
 
+                {syncRule.type === "events" && (
+                    <LiEntry
+                        label={i18n.t("Events")}
+                        value={
+                            syncRule.dataSyncAllEvents
+                                ? i18n.t("All events")
+                                : i18n.t("{{total}} selected events", {
+                                      total: syncRule.dataSyncEvents.length,
+                                  })
+                        }
+                    />
+                )}
+
+                {syncRule.dataSyncAllAttributeCategoryOptions && (
+                    <LiEntry
+                        label={i18n.t("Category Option Combo")}
+                        value={i18n.t("All attribute category options")}
+                    />
+                )}
+
                 {syncRule.type !== "metadata" && (
                     <LiEntry
                         label={i18n.t("Period")}
@@ -143,7 +166,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                             <ul>
                                 <LiEntry
                                     label={i18n.t("Start date")}
-                                    value={syncRule.dataSyncStartDate.format("YYYY-MM-DD")}
+                                    value={moment(syncRule.dataSyncStartDate).format("YYYY-MM-DD")}
                                 />
                             </ul>
                         )}
@@ -151,7 +174,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                             <ul>
                                 <LiEntry
                                     label={i18n.t("End date")}
-                                    value={syncRule.dataSyncEndDate.format("YYYY-MM-DD")}
+                                    value={moment(syncRule.dataSyncEndDate).format("YYYY-MM-DD")}
                                 />
                             </ul>
                         )}

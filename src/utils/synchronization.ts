@@ -2,10 +2,13 @@ import i18n from "@dhis2/d2-i18n";
 import axios, { AxiosBasicCredentials } from "axios";
 import { D2Api } from "d2-api";
 import { isValidUid } from "d2/uid";
+import FileSaver from "file-saver";
 import _ from "lodash";
 import moment, { Moment } from "moment";
 import memoize from "nano-memoize";
+import { SyncronizationClass } from "../logic/sync/generic";
 import Instance from "../models/instance";
+import SyncRule from "../models/syncRule";
 import {
     D2,
     DataImportParams,
@@ -276,7 +279,7 @@ export async function getAggregatedData(
 
     if (dataSet.length === 0 && dataElementGroup.length === 0) return {};
 
-    const orgUnit = _.compact(orgUnitPaths.map(path => _.last(path.split("/"))));
+    const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
     const attributeOptionCombo = !allAttributeCategoryOptions
         ? attributeCategoryOptions
         : undefined;
@@ -322,6 +325,10 @@ export function cleanObjectDefault(object: ProgramEvent, defaults: string[]) {
     return _.pickBy(object, value => !defaults.includes(String(value))) as ProgramEvent;
 }
 
+export function cleanOrgUnitPaths(orgUnitPaths: string[]): string[] {
+    return _.compact(orgUnitPaths.map(path => _.last(path.split("/"))));
+}
+
 export async function getEventsData(
     api: D2Api,
     params: DataSynchronizationParams,
@@ -333,7 +340,7 @@ export async function getEventsData(
 
     if (programs.length === 0) return [];
 
-    const orgUnits = _.compact(orgUnitPaths.map(path => _.last(path.split("/"))));
+    const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
     const result = [];
 
@@ -438,4 +445,21 @@ export function buildMetadataDictionary(metadataPackage: MetadataPackage) {
         })
         .keyBy("id")
         .value();
+}
+
+export async function requestJSONDownload(
+    SyncClass: SyncronizationClass,
+    syncRule: SyncRule,
+    d2: D2,
+    api: D2Api
+) {
+    const sync = new SyncClass(d2, api, syncRule.toBuilder());
+    const payload = await sync.buildPayload();
+
+    const json = JSON.stringify(payload, null, 4);
+    const blob = new Blob([json], { type: "application/json" });
+    const ruleName = _.kebabCase(_.toLower(syncRule.name));
+    const date = moment().format("YYYYMMDDHHmm");
+    const fileName = `${ruleName}-${syncRule.type}-sync-${date}.json`;
+    FileSaver.saveAs(blob, fileName);
 }

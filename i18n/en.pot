@@ -311,6 +311,18 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
+msgid "All events"
+msgstr ""
+
+msgid "{{total}} selected events"
+msgstr ""
+
+msgid "Category Option Combo"
+msgstr ""
+
+msgid "All attribute category options"
+msgstr ""
+
 msgid "Start date"
 msgstr ""
 
