@@ -10,6 +10,7 @@ import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { AggregatedSync } from "../../logic/sync/aggregated";
 import { EventsSync } from "../../logic/sync/events";
+import { SyncronizationClass } from "../../logic/sync/generic";
 import { MetadataSync } from "../../logic/sync/metadata";
 import {
     AggregatedDataElementModel,
@@ -37,7 +38,7 @@ const config: Record<
         title: string;
         models: typeof D2Model[];
         childrenKeys: string[] | undefined;
-        SyncClass: typeof MetadataSync | typeof AggregatedSync | typeof EventsSync;
+        SyncClass: SyncronizationClass;
     }
 > = {
     metadata: {

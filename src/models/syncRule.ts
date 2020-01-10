@@ -195,7 +195,7 @@ export default class SyncRule {
     }
 
     public static createOnDemand(type: SyncRuleType = "metadata"): SyncRule {
-        return SyncRule.create(type).updateName("On-demand");
+        return SyncRule.create(type).updateName("__MANUAL__");
     }
 
     public static build(syncRule: SynchronizationRule | undefined): SyncRule {
@@ -455,7 +455,7 @@ export default class SyncRule {
     }
 
     public isOnDemand() {
-        return this.name === "On-demand";
+        return this.name === "__MANUAL__";
     }
 
     public isVisibleToUser(userInfo: UserInfo, permission: "READ" | "WRITE" = "READ") {
