@@ -42,36 +42,6 @@ const LandingPage: React.FC = () => {
         children: MenuCardProps[];
     }[] = [
         {
-            title: "Metadata Sync",
-            key: "metadata",
-            children: [
-                {
-                    name: i18n.t("Manual sync"),
-                    description: i18n.t(
-                        "Manually synchronise metadata like data elements, organisation units and program indicators and groups and group sets."
-                    ),
-                    listAction: () => history.push("/sync/metadata"),
-                },
-                {
-                    name: i18n.t("Sync rules"),
-                    description: i18n.t(
-                        "Create, modify, delete, execute and schedule sync rules for metadata like data elements, organisation units and program indicators and groups and group sets."
-                    ),
-                    addAction: showCreateLinks
-                        ? () => history.push("/sync-rules/metadata/new")
-                        : undefined,
-                    listAction: () => history.push("/sync-rules/metadata"),
-                },
-                {
-                    name: i18n.t("History"),
-                    description: i18n.t(
-                        "View and analyse the status and results of the metadata manual syncs and sync rules executions."
-                    ),
-                    listAction: () => history.push("/history/metadata"),
-                },
-            ],
-        },
-        {
             title: "Aggregated Data Sync",
             key: "aggregated",
             children: [
@@ -128,6 +98,36 @@ const LandingPage: React.FC = () => {
                         "View and analyse the status and results of the event manual syncs and sync rules executions."
                     ),
                     listAction: () => history.push("/history/events"),
+                },
+            ],
+        },
+        {
+            title: "Metadata Sync",
+            key: "metadata",
+            children: [
+                {
+                    name: i18n.t("Manual sync"),
+                    description: i18n.t(
+                        "Manually synchronise metadata like data elements, organisation units and program indicators and groups and group sets."
+                    ),
+                    listAction: () => history.push("/sync/metadata"),
+                },
+                {
+                    name: i18n.t("Sync rules"),
+                    description: i18n.t(
+                        "Create, modify, delete, execute and schedule sync rules for metadata like data elements, organisation units and program indicators and groups and group sets."
+                    ),
+                    addAction: showCreateLinks
+                        ? () => history.push("/sync-rules/metadata/new")
+                        : undefined,
+                    listAction: () => history.push("/sync-rules/metadata"),
+                },
+                {
+                    name: i18n.t("History"),
+                    description: i18n.t(
+                        "View and analyse the status and results of the metadata manual syncs and sync rules executions."
+                    ),
+                    listAction: () => history.push("/history/metadata"),
                 },
             ],
         },
