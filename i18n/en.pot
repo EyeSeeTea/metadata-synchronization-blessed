@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-09T12:11:29.305Z\n"
-"PO-Revision-Date: 2020-01-09T12:11:29.305Z\n"
+"POT-Creation-Date: 2020-01-13T08:43:42.128Z\n"
+"PO-Revision-Date: 2020-01-13T08:43:42.128Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -519,12 +519,6 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-msgid "Edit"
-msgstr ""
-
-msgid "Replicate"
-msgstr ""
-
 msgid "Deleting Instances"
 msgstr ""
 
@@ -536,6 +530,12 @@ msgid_plural "Successfully deleted {{count}} instances"
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Edit"
+msgstr ""
+
+msgid "Replicate"
+msgstr ""
+
 msgid "Delete Instances?"
 msgstr ""
 
@@ -545,6 +545,9 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Destination Instance Settings"
+msgstr ""
+
+msgid "Metadata mapping"
 msgstr ""
 
 msgid "Manual sync"
@@ -615,6 +618,9 @@ msgid "Destination instance settings"
 msgstr ""
 
 msgid "Create, check connectivity, modify and delete DHIS2 destination instances."
+msgstr ""
+
+msgid "Create, modify and delete metadata mapping with destination instances."
 msgstr ""
 
 msgid "Add"

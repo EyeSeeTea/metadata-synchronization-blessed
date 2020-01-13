@@ -13,7 +13,7 @@ const instancesDataStoreKey = "instances";
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-export interface Data {
+export interface InstanceData {
     id: string;
     name: string;
     url: string;
@@ -25,10 +25,10 @@ export interface Data {
 export default class Instance {
     private static encryptionKey: string;
 
-    private readonly data: Data;
+    private readonly data: InstanceData;
     private readonly api: D2Api;
 
-    constructor(data: Data) {
+    constructor(data: InstanceData) {
         this.data = _.pick(data, ["id", "name", "url", "username", "password", "description"]);
         const { url: baseUrl, username, password } = data;
         this.api = new D2ApiDefault({ baseUrl, auth: { username, password } });
@@ -89,7 +89,7 @@ export default class Instance {
         return new Instance(initialData);
     }
 
-    public static async build(data: Data | undefined): Promise<Instance> {
+    public static async build(data: InstanceData | undefined): Promise<Instance> {
         const instance = data ? new Instance(data) : this.create();
         return instance.decryptPassword();
     }
@@ -121,7 +121,7 @@ export default class Instance {
         return deleteData(d2, instancesDataStoreKey, this.data);
     }
 
-    public toObject(): Omit<Data, "password"> {
+    public toObject(): Omit<InstanceData, "password"> {
         return _.omit(this.data, ["password"]);
     }
 
@@ -170,11 +170,11 @@ export default class Instance {
         const combination = [url, username].join("-");
         const instanceArray = await getData(d2, instancesDataStoreKey);
         const invalidCombinations = instanceArray.filter(
-            (inst: Data) => [inst.url, inst.username].join("-") === combination
+            (inst: InstanceData) => [inst.url, inst.username].join("-") === combination
         );
 
         return id
-            ? invalidCombinations.some((inst: Data) => inst.id !== id)
+            ? invalidCombinations.some((inst: InstanceData) => inst.id !== id)
             : !_.isEmpty(invalidCombinations);
     }
 
