@@ -3,6 +3,7 @@ import Icon from "@material-ui/core/Icon";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import SettingsInputAntenaIcon from "@material-ui/icons/SettingsInputAntenna";
+import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 import { useD2 } from "d2-api";
 import {
     ConfirmationDialog,
@@ -102,6 +103,11 @@ const InstanceListPage: React.FC<{ loading: any }> = ({ loading }) => {
         }
     };
 
+    const metadataMapping = async (data: InstanceData[]) => {
+        if (data.length !== 1) return;
+        history.push(`/instances/mapping/${data[0].id}`);
+    };
+
     const backHome = () => {
         history.push("/");
     };
@@ -161,6 +167,13 @@ const InstanceListPage: React.FC<{ loading: any }> = ({ loading }) => {
             onClick: testConnection,
             icon: <SettingsInputAntenaIcon />,
         },
+        {
+            name: "mapping",
+            text: i18n.t("Metadata mapping"),
+            multiple: false,
+            onClick: metadataMapping,
+            icon: <DoubleArrowIcon />,
+        },
     ];
 
     return (
@@ -170,11 +183,9 @@ const InstanceListPage: React.FC<{ loading: any }> = ({ loading }) => {
                 onSave={confirmDelete}
                 onCancel={cancelDelete}
                 title={i18n.t("Delete Instances?")}
-                description={
-                    i18n.t("Are you sure you want to delete {{count}} instances?", {
-                              count: toDelete.length,
-                          })
-                }
+                description={i18n.t("Are you sure you want to delete {{count}} instances?", {
+                    count: toDelete.length,
+                })}
                 saveText={i18n.t("Ok")}
             />
 
