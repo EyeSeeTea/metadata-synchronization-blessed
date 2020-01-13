@@ -2,7 +2,6 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance from "../../models/instance";
 import { DataImportResponse } from "../../types/d2";
-import { DataValue } from "../../types/synchronization";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,
@@ -17,7 +16,7 @@ export class AggregatedSync extends GenericSync {
         "id,dataElements[id,name]dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
 
     public buildPayload = memoize(async () => {
-        const { dataParams = {} } = this.builder;
+        const { dataParams = {}, excludedIds = [] } = this.builder;
         const {
             dataSets = [],
             dataElementGroups = [],
@@ -32,7 +31,6 @@ export class AggregatedSync extends GenericSync {
         );
 
         // Retrieve direct data values from dataSets and dataElementGroups
-        //@ts-ignore
         const { dataValues: directDataValues = [] } = await getAggregatedData(
             this.api,
             dataParams,
@@ -44,7 +42,6 @@ export class AggregatedSync extends GenericSync {
         );
 
         // Retrieve candidate data values from dataElements
-        //@ts-ignore
         const { dataValues: candidateDataValues = [] } = await getAggregatedData(
             this.api,
             dataParams,
@@ -53,14 +50,15 @@ export class AggregatedSync extends GenericSync {
         );
 
         // Retrieve indirect data values from dataElements
-        const indirectDataValues = _.filter(candidateDataValues, ({ dataElement }) =>
-            _.find(dataElements, { id: dataElement })
+        const indirectDataValues = _.filter(
+            candidateDataValues,
+            ({ dataElement }) => !!_.find(dataElements, { id: dataElement })
         );
 
-        const dataValues = _.uniqWith(
-            [...directDataValues, ...indirectDataValues],
-            _.isEqual
-        ) as DataValue[];
+        const dataValues = _([...directDataValues, ...indirectDataValues])
+            .uniqWith(_.isEqual)
+            .reject(({ dataElement }) => excludedIds.includes(dataElement))
+            .value();
 
         return { dataValues };
     });

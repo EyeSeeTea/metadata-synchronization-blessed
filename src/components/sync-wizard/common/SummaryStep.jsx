@@ -97,6 +97,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
     useEffect(() => {
         const ids = [
             ...syncRule.metadataIds,
+            ...syncRule.excludedIds,
             ...syncRule.dataSyncAttributeCategoryOptions,
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
@@ -124,18 +125,47 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
 
                 <LiEntry label={i18n.t("Description")} value={syncRule.description} />
 
-                {_.keys(metadata).map(metadataType => (
+                {_.keys(metadata).map(metadataType => {
+                    const items = metadata[metadataType].filter(
+                        ({ id }) => !syncRule.excludedIds.includes(id)
+                    );
+                    return (
+                        items.length > 0 && (
+                            <LiEntry
+                                key={metadataType}
+                                label={`${d2.models[metadataType].displayName} [${items.length}]`}
+                            >
+                                <ul>
+                                    {items.map(({ id, name }) => (
+                                        <LiEntry key={id} label={`${name} (${id})`} />
+                                    ))}
+                                </ul>
+                            </LiEntry>
+                        )
+                    );
+                })}
+
+                {syncRule.excludedIds.length > 0 && (
                     <LiEntry
-                        key={metadataType}
-                        label={`${d2.models[metadataType].displayName} [${metadata[metadataType].length}]`}
+                        label={`${i18n.t("Excluded elements")} [${syncRule.excludedIds.length}]`}
                     >
                         <ul>
-                            {metadata[metadataType].map(({ id, name }) => (
-                                <LiEntry key={id} label={`${name} (${id})`} />
-                            ))}
+                            {syncRule.excludedIds.map(id => {
+                                const element = _(metadata)
+                                    .values()
+                                    .flatten()
+                                    .find({ id });
+
+                                return (
+                                    <LiEntry
+                                        key={id}
+                                        label={element ? `${element.name} (${id})` : id}
+                                    />
+                                );
+                            })}
                         </ul>
                     </LiEntry>
-                ))}
+                )}
 
                 {syncRule.type === "events" && (
                     <LiEntry

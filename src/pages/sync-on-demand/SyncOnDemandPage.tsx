@@ -90,8 +90,8 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete, loading }
 
     const goBack = () => history.goBack();
 
-    const updateSelection = (selection: string[]) => {
-        updateSyncRule(syncRule.updateMetadataIds(selection));
+    const updateSelection = (selection: string[], exclusion: string[]) => {
+        updateSyncRule(syncRule.updateMetadataIds(selection).updateExcludedIds(exclusion));
     };
 
     const closeSummary = () => {
@@ -163,7 +163,8 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete, loading }
 
             <MetadataTable
                 models={models}
-                selection={syncRule.metadataIds}
+                selectedIds={syncRule.metadataIds}
+                excludedIds={syncRule.excludedIds}
                 notifyNewSelection={updateSelection}
                 onActionButtonClick={appConfigurator ? openSynchronizationDialog : undefined}
                 actionButtonLabel={<SyncIcon />}
