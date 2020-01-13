@@ -43,6 +43,7 @@ interface FiltersState {
     group: string;
     level: string;
     showOnlySelected: boolean;
+    selectedIds: string[];
     groupData: {
         id: string;
         name: string;
@@ -87,6 +88,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         level: "",
         levelData: [],
         showOnlySelected: false,
+        selectedIds: [],
     });
 
     const changeDropdownFilter = (event: ChangeEvent<HTMLInputElement>) => {
@@ -109,7 +111,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     };
 
     const changeOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
-        updateFilters(state => ({ ...state, showOnlySelected: event.target.checked }));
+        updateFilters(state => ({
+            ...state,
+            selectedIds,
+            showOnlySelected: event.target?.checked,
+        }));
     };
 
     const selectOrgUnitChildren = async (selectedOUs: NamedRef[]) => {
@@ -221,7 +227,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 lastUpdated: filters.lastUpdated
                     ? { ge: moment(filters.lastUpdated).format("YYYY-MM-DD") }
                     : undefined,
-                id: filters.showOnlySelected ? { in: selectedIds } : undefined,
+                id: filters.showOnlySelected ? { in: filters.selectedIds } : undefined,
                 ...model.getApiModelFilters(),
             },
         };
@@ -237,7 +243,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         return query;
     }, [
         model,
-        selectedIds,
+        filters.selectedIds,
         filters.lastUpdated,
         filters.showOnlySelected,
         filters.group,

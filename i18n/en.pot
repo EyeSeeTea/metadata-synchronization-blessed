@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-13T08:43:42.128Z\n"
-"PO-Revision-Date: 2020-01-13T08:43:42.128Z\n"
+"POT-Creation-Date: 2020-01-13T09:12:56.910Z\n"
+"PO-Revision-Date: 2020-01-13T09:12:56.910Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -536,6 +536,9 @@ msgstr ""
 msgid "Replicate"
 msgstr ""
 
+msgid "Metadata mapping"
+msgstr ""
+
 msgid "Delete Instances?"
 msgstr ""
 
@@ -545,9 +548,6 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Destination Instance Settings"
-msgstr ""
-
-msgid "Metadata mapping"
 msgstr ""
 
 msgid "Manual sync"
