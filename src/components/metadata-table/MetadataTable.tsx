@@ -70,6 +70,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     excludedIds = [],
     notifyNewSelection = _.noop,
     childrenKeys = [],
+    ...rest
 }) => {
     const d2 = useD2() as D2;
     const api = useD2Api();
@@ -358,6 +359,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             filterComponents={filterComponents}
             forceSelectionColumn={true}
             actions={actions}
+            {...rest}
         />
     );
 };
