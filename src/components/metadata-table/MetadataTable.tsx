@@ -10,6 +10,7 @@ import {
     TableSelection,
     TableSorting,
     TableState,
+    OrgUnitsSelector,
 } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
@@ -35,6 +36,10 @@ const useStyles = makeStyles({
     checkbox: {
         paddingLeft: 10,
         marginTop: 8,
+    },
+    orgUnitFilter: {
+        order: -1,
+        marginRight: "1rem",
     },
 });
 
@@ -191,6 +196,21 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             label={i18n.t("Only selected items")}
         />,
     ]);
+
+    const sideComponents = model.getCollectionName() === "organisationUnits" && (
+        <div className={classes.orgUnitFilter}>
+            <OrgUnitsSelector
+                key={"org-unit-selector"}
+                d2={d2}
+                withElevation={true}
+                controls={{}}
+                hideCheckboxes={true}
+                fullWidth={false}
+                height={500}
+                square={true}
+            />
+        </div>
+    );
 
     const actions = [
         {
@@ -364,6 +384,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             filterComponents={filterComponents}
             forceSelectionColumn={true}
             actions={actions}
+            sideComponents={sideComponents}
         />
     );
 };

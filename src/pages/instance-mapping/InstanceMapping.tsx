@@ -3,7 +3,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
-import { D2Model, OrganisationUnitModel } from "../../models/d2Model";
+import { D2Model, DataElementModel, OrganisationUnitModel } from "../../models/d2Model";
 
 /** TODO: Model
 interface MetadataMapping {
@@ -15,7 +15,7 @@ interface MetadataMapping {
 }
 */
 
-const models: typeof D2Model[] = [OrganisationUnitModel];
+const models: typeof D2Model[] = [DataElementModel, OrganisationUnitModel];
 
 const InstanceMappingPage: React.FC = () => {
     const history = useHistory();
