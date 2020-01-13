@@ -9,6 +9,7 @@ import {
     TableAction,
     TableColumn,
     TablePagination,
+    TableSelection,
     TableState,
     useSnackbar,
     withLoading,
@@ -75,7 +76,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
     const [syncRules, setSyncRules] = useState<SynchronizationRule[]>([]);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [toDelete, setToDelete] = useState<SynchronizationReport[]>([]);
-    const [selection, updateSelection] = useState<string[]>([]);
+    const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [response, updateResponse] = useState<{
         rows: SynchronizationReport[];
         pager: Partial<TablePagination>;
@@ -102,7 +103,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
         SyncRule.list(d2 as D2, { type }, { paging: false }).then(({ objects }) =>
             setSyncRules(objects)
         );
-        if (!!id) SyncReport.get(d2 as D2, id).then(setSyncReport);
+        if (id) SyncReport.get(d2 as D2, id).then(setSyncReport);
     }, [d2, id, type]);
 
     useEffect(() => {

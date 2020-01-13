@@ -18,6 +18,11 @@ import {
     SyncRuleType,
 } from "../../types/synchronization";
 import { getMetadata } from "../../utils/synchronization";
+import { AggregatedSync } from "./aggregated";
+import { EventsSync } from "./events";
+import { MetadataSync } from "./metadata";
+
+export type SyncronizationClass = typeof MetadataSync | typeof AggregatedSync | typeof EventsSync;
 
 export abstract class GenericSync {
     protected readonly d2: D2;

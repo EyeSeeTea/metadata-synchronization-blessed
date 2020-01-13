@@ -5,11 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-02T17:19:20.540Z\n"
-"PO-Revision-Date: 2020-01-02T17:19:20.540Z\n"
-
-msgid "Search by name"
-msgstr ""
+"POT-Creation-Date: 2020-01-09T12:11:29.305Z\n"
+"PO-Revision-Date: 2020-01-09T12:11:29.305Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -36,6 +33,9 @@ msgid "Select with children subtree"
 msgstr ""
 
 msgid "Select"
+msgstr ""
+
+msgid "Search by name"
 msgstr ""
 
 msgid "Name"
@@ -311,6 +311,21 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
+msgid "Excluded elements"
+msgstr ""
+
+msgid "All events"
+msgstr ""
+
+msgid "{{total}} selected events"
+msgstr ""
+
+msgid "Category Option Combo"
+msgstr ""
+
+msgid "All attribute category options"
+msgstr ""
+
 msgid "Start date"
 msgstr ""
 
@@ -392,7 +407,7 @@ msgstr ""
 msgid "Network error {{error}}, check if server is up and CORS is enabled"
 msgstr ""
 
-msgid "Metadata & Data Synchronization"
+msgid "MetaData Synchronization"
 msgstr ""
 
 msgid "Metadata Synchronization History"
@@ -536,37 +551,21 @@ msgid "Manual sync"
 msgstr ""
 
 msgid ""
-"Manually synchronise metadata like data elements, organisation units and "
-"program indicators and groups and group sets."
+"Manually synchronise aggregated data by selecting the data sets, data "
+"elements or their groups and group sets together with the organisation "
+"unit, period and category options."
 msgstr ""
 
 msgid "Sync rules"
 msgstr ""
 
 msgid ""
-"Create, modify, delete, execute and schedule sync rules for metadata like "
-"data elements, organisation units and program indicators and groups and "
-"group sets."
-msgstr ""
-
-msgid "History"
-msgstr ""
-
-msgid ""
-"View and analyse the status and results of the metadata manual syncs and "
-"sync rules executions."
-msgstr ""
-
-msgid ""
-"Manually synchronise aggregated data by selecting the data sets, data "
-"elements or their groups and group sets together with the organisation "
-"unit, period and category options."
-msgstr ""
-
-msgid ""
 "Create, modify, delete, execute and schedule sync rules for aggregated data "
 "by selecting the data sets, data elements or their groups and group sets "
 "together with the organisation unit, period and category options."
+msgstr ""
+
+msgid "History"
 msgstr ""
 
 msgid ""
@@ -588,6 +587,22 @@ msgstr ""
 msgid ""
 "View and analyse the status and results of the event manual syncs and sync "
 "rules executions."
+msgstr ""
+
+msgid ""
+"Manually synchronise metadata like data elements, organisation units and "
+"program indicators and groups and group sets."
+msgstr ""
+
+msgid ""
+"Create, modify, delete, execute and schedule sync rules for metadata like "
+"data elements, organisation units and program indicators and groups and "
+"group sets."
+msgstr ""
+
+msgid ""
+"View and analyse the status and results of the metadata manual syncs and "
+"sync rules executions."
 msgstr ""
 
 msgid "Deleted objects"

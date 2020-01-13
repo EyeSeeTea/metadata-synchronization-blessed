@@ -1,19 +1,39 @@
 language: node_js
 node_js:
   - 12.13.0
+dist: bionic
 cache:
   directories:
     - "$HOME/.cache"
 before_install:
   - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+  # Install python dependencies
+  - sudo apt-get update
+  - sudo apt-get install python3 python python3-setuptools docker.io docker-compose
+  #  Install d2-docker
+  - git clone https://github.com/EyeSeeTea/d2-docker.git
+  - cd d2-docker/
+  - sudo python3 setup.py install
+  - d2-docker --help
+  # Hack to not be prompted in the terminal
+  - sudo apt-get remove golang-docker-credential-helpers
+  # Start docker service
+  - sudo systemctl unmask docker.service
+  - sudo systemctl unmask docker.socket
+  - sudo systemctl start docker.service
+  # Login to docker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  # Start docker service
+  - d2-docker start eyeseetea/dhis2-data:2.30-datasync-sender -d
 install:
   - yarn install --frozen-lockfile
   - yarn cy:verify
   - yarn build
 script:
-  - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://dev2.eyeseetea.com:8083 REACT_APP_CYPRESS=true yarn start &
+  - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true yarn start &
+  - yarn wait-on http-get://localhost:8080
   - yarn wait-on http-get://localhost:8081
-  - CYPRESS_EXTERNAL_API=http://dev2.eyeseetea.com:8083 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:run --key $CYPRESS_KEY
+  - CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:run
   - kill $(jobs -p) || true
 addons:
   apt:

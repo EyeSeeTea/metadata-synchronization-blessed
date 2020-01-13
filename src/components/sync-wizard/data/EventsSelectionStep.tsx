@@ -11,6 +11,10 @@ import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 
+interface ProgramEventObject extends ProgramEvent {
+    [key: string]: any;
+}
+
 export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
     const d2 = useD2();
     const api = useD2Api();
@@ -56,7 +60,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
 
     const handleTableChange = (tableState: TableState<ProgramEvent>) => {
         const { selection } = tableState;
-        onChange(syncRule.updateDataSyncEvents(selection));
+        onChange(syncRule.updateDataSyncEvents(selection.map(({ id }) => id)));
     };
 
     const updateSyncAll = (value: boolean) => {
@@ -135,7 +139,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 onValueChange={updateSyncAll}
             />
             {!syncRule.dataSyncAllEvents && (
-                <ObjectsTable<ProgramEvent>
+                <ObjectsTable<ProgramEventObject>
                     rows={filteredObjects}
                     loading={objects === undefined}
                     columns={[...columns, ...additionalColumns]}
@@ -143,7 +147,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                     actions={actions}
                     forceSelectionColumn={true}
                     onChange={handleTableChange}
-                    selection={syncRule.dataSyncEvents ?? []}
+                    selection={syncRule.dataSyncEvents?.map(id => ({ id })) ?? []}
                     filterComponents={filterComponents}
                 />
             )}
