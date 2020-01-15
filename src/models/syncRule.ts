@@ -55,7 +55,7 @@ export default class SyncRule {
     }
 
     public get name(): string {
-        return this.syncRule.name;
+        return this.syncRule.name ?? "";
     }
 
     public get type(): SyncRuleType {
@@ -71,11 +71,11 @@ export default class SyncRule {
     }
 
     public get metadataIds(): string[] {
-        return this.syncRule.builder.metadataIds;
+        return this.syncRule.builder.metadataIds ?? [];
     }
 
     public get excludedIds(): string[] {
-        return this.syncRule.builder.excludedIds;
+        return this.syncRule.builder.excludedIds ?? [];
     }
 
     public get dataSyncAttributeCategoryOptions(): string[] {
@@ -111,11 +111,11 @@ export default class SyncRule {
     }
 
     public get targetInstances(): string[] {
-        return this.syncRule.builder.targetInstances;
+        return this.syncRule.builder.targetInstances ?? [];
     }
 
     public get enabled(): boolean {
-        return this.syncRule.enabled;
+        return this.syncRule.enabled ?? false;
     }
 
     public get frequency(): string | undefined {
@@ -141,23 +141,23 @@ export default class SyncRule {
     }
 
     public get publicAccess(): string {
-        return this.syncRule.publicAccess;
+        return this.syncRule.publicAccess ?? "--------";
     }
 
     public get userAccesses(): SharingSetting[] {
-        return this.syncRule.userAccesses;
+        return this.syncRule.userAccesses ?? [];
     }
 
     public get userGroupAccesses(): SharingSetting[] {
-        return this.syncRule.userGroupAccesses;
+        return this.syncRule.userGroupAccesses ?? [];
     }
 
     public get syncParams(): MetadataSynchronizationParams {
-        return this.syncRule.builder.syncParams || {};
+        return this.syncRule.builder.syncParams ?? {};
     }
 
     public get dataParams(): DataSynchronizationParams {
-        return this.syncRule.builder.dataParams || {};
+        return this.syncRule.builder.dataParams ?? {};
     }
 
     public static create(type: SyncRuleType = "metadata"): SyncRule {

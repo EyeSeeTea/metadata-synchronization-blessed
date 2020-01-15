@@ -1,6 +1,6 @@
 {
-    "short_name": "Metadata Sync",
-    "name": "Metadata Synchronization",
+    "short_name": "MetaData Synchronization",
+    "name": "MetaData Synchronization",
     "icons": [
         {
             "src": "favicon.ico",
