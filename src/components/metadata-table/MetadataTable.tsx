@@ -21,7 +21,7 @@ import { D2Model, DataElementModel } from "../../models/d2Model";
 import { D2 } from "../../types/d2";
 import { NamedRef } from "../../types/synchronization";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
-import { cleanOrgUnitPaths } from "../../utils/synchronization";
+import { cleanOrgUnitPaths, getRootOrgUnit } from "../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";
 import { getAllIdentifiers, getFilterData } from "./utils";
 
@@ -293,6 +293,12 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     useEffect(() => {
         getAllIdentifiers(apiModel.modelName, search, apiModel, apiQuery).then(updateIds);
     }, [apiModel, apiQuery, search]);
+
+    useEffect(() => {
+        getRootOrgUnit(api).then(({ objects: roots }) =>
+            changeParentOrgUnitFilter(roots.map(({ path }) => path))
+        );
+    }, [api]);
 
     useEffect(
         () =>

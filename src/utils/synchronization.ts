@@ -72,7 +72,7 @@ export function cleanReferences(
 export async function getMetadata(
     baseUrl: string,
     elements: string[],
-    fields: string = ":all",
+    fields = ":all",
     auth: AxiosBasicCredentials | undefined = undefined
 ): Promise<MetadataPackage> {
     const promises = [];
@@ -319,6 +319,17 @@ export const getDefaultIds = memoize(
             .map(({ id }) => id)
             .value();
     },
+    { maxArgs: 0 }
+);
+
+export const getRootOrgUnit = memoize(
+    async (api: D2Api) =>
+        api.models.organisationUnits
+            .get({
+                filter: { level: { eq: "1" } },
+                fields: { $owner: true },
+            })
+            .getData(),
     { maxArgs: 0 }
 );
 
