@@ -6,11 +6,11 @@ import {
     DatePicker,
     ObjectsTable,
     ObjectsTableProps,
+    OrgUnitsSelector,
     ReferenceObject,
     TableSelection,
     TableSorting,
     TableState,
-    OrgUnitsSelector,
 } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
@@ -21,6 +21,7 @@ import { D2Model, DataElementModel } from "../../models/d2Model";
 import { D2 } from "../../types/d2";
 import { NamedRef } from "../../types/synchronization";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
+import { cleanOrgUnitPaths } from "../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";
 import { getAllIdentifiers, getFilterData } from "./utils";
 
@@ -57,6 +58,7 @@ interface FiltersState {
         id: string;
         name: string;
     }[];
+    parentOrgUnits: string[];
 }
 
 const initialState = {
@@ -95,6 +97,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         levelData: [],
         showOnlySelected: false,
         selectedIds: [],
+        parentOrgUnits: [],
     });
 
     const changeDropdownFilter = (event: ChangeEvent<HTMLInputElement>) => {
@@ -113,7 +116,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     };
 
     const changeLevelFilter = (event: ChangeEvent<HTMLInputElement>) => {
-        updateFilters(state => ({ ...state, level: event.target.value }));
+        updateFilters(state => ({ ...state, level: event.target.value, parentOrgUnits: [] }));
     };
 
     const changeOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
@@ -121,6 +124,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             ...state,
             selectedIds,
             showOnlySelected: event.target?.checked,
+        }));
+    };
+
+    const changeParentOrgUnitFilter = (parentOrgUnits: string[]) => {
+        updateFilters(state => ({
+            ...state,
+            parentOrgUnits,
+            level: "",
         }));
     };
 
@@ -206,9 +217,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 withElevation={true}
                 controls={{}}
                 hideCheckboxes={true}
+                hideMemberCount={true}
                 fullWidth={false}
                 height={500}
                 square={true}
+                onChange={changeParentOrgUnitFilter}
+                selected={filters.parentOrgUnits}
+                singleSelection={true}
+                selectOnClick={true}
             />
         </div>
     );
@@ -261,15 +277,16 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             query.filter["level"] = { eq: filters.level };
         }
 
+        if (
+            query.filter &&
+            filters.parentOrgUnits.length > 0 &&
+            model.getCollectionName() === "organisationUnits"
+        ) {
+            query.filter["parent.id"] = { in: cleanOrgUnitPaths(filters.parentOrgUnits) };
+        }
+
         return query;
-    }, [
-        model,
-        filters.selectedIds,
-        filters.lastUpdated,
-        filters.showOnlySelected,
-        filters.group,
-        filters.level,
-    ]);
+    }, [model, filters]);
 
     const { loading, data, error, refetch } = useD2ApiData<any>();
 
