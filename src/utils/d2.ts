@@ -18,6 +18,7 @@ export interface MetadataType {
     href: string;
     level?: number;
     domainType?: "AGGREGATE" | "TRACKER" | "EVENT";
+    [key: string]: string | number | undefined;
 }
 
 export const d2BaseModelColumns: TableColumn<MetadataType>[] = [

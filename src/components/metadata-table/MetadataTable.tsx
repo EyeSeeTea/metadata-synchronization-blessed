@@ -11,10 +11,11 @@ import {
     TableSelection,
     TableSorting,
     TableState,
+    TableColumn,
 } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
-import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import i18n from "../../locales";
 import { getOrgUnitSubtree } from "../../logic/utils";
 import { D2Model, DataElementModel } from "../../models/d2Model";
@@ -29,8 +30,10 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     models: typeof D2Model[];
     selectedIds?: string[];
     excludedIds?: string[];
-    notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
     childrenKeys?: string[];
+    additionalColumns?: TableColumn<MetadataType>[];
+    additionalFilters?: ReactNode;
+    notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
 }
 
 const useStyles = makeStyles({
@@ -78,6 +81,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     excludedIds = [],
     notifyNewSelection = _.noop,
     childrenKeys = [],
+    additionalColumns = [],
+    additionalFilters = null,
     ...rest
 }) => {
     const d2 = useD2() as D2;
@@ -207,6 +212,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             }
             label={i18n.t("Only selected items")}
         />,
+        additionalFilters,
     ]);
 
     const sideComponents = model.getCollectionName() === "organisationUnits" && (
@@ -394,7 +400,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     return (
         <ObjectsTable<MetadataType>
             rows={rows}
-            columns={model.getColumns()}
+            columns={[...model.getColumns(), ...additionalColumns]}
             details={model.getDetails()}
             onChangeSearch={updateSearch}
             initialState={initialState}
