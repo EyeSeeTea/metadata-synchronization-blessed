@@ -5,10 +5,13 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-17T07:07:41.387Z\n"
-"PO-Revision-Date: 2020-01-17T07:07:41.387Z\n"
+"POT-Creation-Date: 2020-01-20T09:35:58.883Z\n"
+"PO-Revision-Date: 2020-01-20T09:35:58.883Z\n"
 
 msgid "<No value>"
+msgstr ""
+
+msgid "Edit mapping"
 msgstr ""
 
 msgid "Metadata type"
@@ -550,10 +553,10 @@ msgstr[1] ""
 msgid "Destination Instance Settings"
 msgstr ""
 
-msgid "Instance selection"
+msgid "Please select an instance from the dropdown"
 msgstr ""
 
-msgid "Edit mapping"
+msgid "Instance selection"
 msgstr ""
 
 msgid "Manual sync"

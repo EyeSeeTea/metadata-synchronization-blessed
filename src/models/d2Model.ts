@@ -30,8 +30,8 @@ export abstract class D2Model {
     // Metadata Type should be defined on subclasses
     protected static metadataType: string;
     protected static collectionName: keyof D2ModelSchemas;
-    protected static groupFilterName: string;
-    protected static levelFilterName: string;
+    protected static groupFilterName: keyof D2ModelSchemas;
+    protected static levelFilterName: keyof D2ModelSchemas;
 
     protected static excludeRules: string[] = [];
     protected static includeRules: string[] = [];
@@ -135,11 +135,11 @@ export abstract class D2Model {
         return this.initialSorting;
     }
 
-    public static getGroupFilterName(): string {
+    public static getGroupFilterName(): keyof D2ModelSchemas {
         return this.groupFilterName;
     }
 
-    public static getLevelFilterName(): string {
+    public static getLevelFilterName(): keyof D2ModelSchemas {
         return this.levelFilterName;
     }
 }
@@ -147,8 +147,8 @@ export abstract class D2Model {
 export class OrganisationUnitModel extends D2Model {
     protected static metadataType = "organisationUnit";
     protected static collectionName = "organisationUnits" as const;
-    protected static groupFilterName = "organisationUnitGroups";
-    protected static levelFilterName = "organisationUnitLevels";
+    protected static groupFilterName = "organisationUnitGroups" as const;
+    protected static levelFilterName = "organisationUnitLevels" as const;
 
     protected static excludeRules = ["legendSets", "dataSets", "programs", "users"];
     protected static includeRules = [
@@ -215,7 +215,7 @@ export class OrganisationUnitLevelModel extends D2Model {
 export class DataElementModel extends D2Model {
     protected static metadataType = "dataElement";
     protected static collectionName = "dataElements" as const;
-    protected static groupFilterName = "dataElementGroups";
+    protected static groupFilterName = "dataElementGroups" as const;
 
     protected static includeRules = [
         "attributes",
@@ -236,14 +236,14 @@ export class DataElementModel extends D2Model {
 }
 
 export class AggregatedDataElementModel extends DataElementModel {
-    protected static groupFilterName = D2Model.groupFilterName;
+    protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
     protected static modelFilters = { domainType: { eq: "AGGREGATE" } };
 }
 
 export class ProgramDataElementModel extends DataElementModel {
-    protected static groupFilterName = D2Model.groupFilterName;
+    protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
     protected static modelFilters = { domainType: { neq: "AGGREGATE" } };
@@ -324,7 +324,7 @@ export class ProgramModel extends D2Model {
 export class IndicatorModel extends D2Model {
     protected static metadataType = "indicator";
     protected static collectionName = "indicators" as const;
-    protected static groupFilterName = "indicatorGroups";
+    protected static groupFilterName = "indicatorGroups" as const;
 
     protected static excludeRules = ["dataSets", "programs"];
     protected static includeRules = [
@@ -370,7 +370,7 @@ export class IndicatorGroupSetModel extends D2Model {
 export class ProgramIndicatorModel extends D2Model {
     protected static metadataType = "programIndicator";
     protected static collectionName = "programIndicators" as const;
-    protected static groupFilterName = "programIndicatorGroups";
+    protected static groupFilterName = "programIndicatorGroups" as const;
 
     protected static excludeRules = ["programs"];
     protected static includeRules = [
@@ -412,7 +412,7 @@ export class ProgramRuleVariableModel extends D2Model {
 export class ValidationRuleModel extends D2Model {
     protected static metadataType = "validationRule";
     protected static collectionName = "validationRules" as const;
-    protected static groupFilterName = "validationRuleGroups";
+    protected static groupFilterName = "validationRuleGroups" as const;
 
     protected static excludeRules = ["legendSets"];
     protected static includeRules = [

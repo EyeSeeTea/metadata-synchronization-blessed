@@ -1,10 +1,11 @@
 import i18n from "@dhis2/d2-i18n";
 import { Icon, IconButton, makeStyles, Typography } from "@material-ui/core";
 import { useD2 } from "d2-api";
-import { TableColumn, ConfirmationDialog } from "d2-ui-components";
+import { TableColumn, useSnackbar } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import Dropdown from "../../components/dropdown/Dropdown";
+import MappingDialog from "../../components/mapping-dialog/MappingDialog";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import { D2Model, DataElementModel, OrganisationUnitModel } from "../../models/d2Model";
@@ -20,6 +21,9 @@ const useStyles = makeStyles({
         paddingLeft: 8,
         paddingRight: 8,
     },
+    instanceDropdown: {
+        order: 0,
+    },
 });
 
 export const getInstances = async (d2: D2) => {
@@ -31,9 +35,12 @@ const InstanceMappingPage: React.FC = () => {
     const d2 = useD2();
     const history = useHistory();
     const classes = useStyles();
+    const snackbar = useSnackbar();
+    const { id: instanceFilterDefault = "" } = useParams() as { id: string };
 
     const [instanceOptions, setInstanceOptions] = useState<Instance[]>([]);
-    const [instanceFilter, updateInstanceFilter] = useState<string>("");
+    const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
+    const [instanceFilter, updateInstanceFilter] = useState<string>(instanceFilterDefault);
     const [elementToEditMapping, openDialog] = useState<string | null>(null);
 
     const backHome = () => {
@@ -53,7 +60,13 @@ const InstanceMappingPage: React.FC = () => {
                         </Typography>
                         <IconButton
                             className={classes.iconButton}
-                            onClick={() => openDialog(row.id)}
+                            onClick={() =>
+                                instanceFilter
+                                    ? openDialog(row.id)
+                                    : snackbar.error(
+                                          i18n.t("Please select an instance from the dropdown")
+                                      )
+                            }
                         >
                             <Icon color="primary">open_in_new</Icon>
                         </IconButton>
@@ -64,34 +77,44 @@ const InstanceMappingPage: React.FC = () => {
     ];
 
     const filters = (
-        <Dropdown
-            key={"instance-filter"}
-            items={instanceOptions}
-            onValueChange={updateInstanceFilter}
-            value={instanceFilter}
-            label={i18n.t("Instance selection")}
-        />
+        <div className={classes.instanceDropdown}>
+            <Dropdown
+                key={"instance-filter"}
+                items={instanceOptions}
+                onValueChange={updateInstanceFilter}
+                value={instanceFilter}
+                label={i18n.t("Instance selection")}
+            />
+        </div>
     );
 
     useEffect(() => {
         getInstances(d2 as D2).then(setInstanceOptions);
     }, [d2]);
 
+    const updateModel = (model: typeof D2Model) => {
+        setModel(() => model);
+    };
+
     return (
         <React.Fragment>
             <PageHeader title={i18n.t("Metadata mapping")} onBackClick={backHome} />
 
-            <ConfirmationDialog
-                isOpen={!!elementToEditMapping}
-                title={i18n.t("Edit mapping")}
-                onCancel={() => openDialog(null)}
-                fullWidth
-            />
+            {!!elementToEditMapping && !!instanceFilter && (
+                <MappingDialog
+                    model={model}
+                    element={elementToEditMapping}
+                    onUpdateMapping={console.log}
+                    onClose={() => openDialog(null)}
+                    instance={instanceFilter}
+                />
+            )}
 
             <MetadataTable
                 models={models}
                 additionalColumns={columns}
                 additionalFilters={filters}
+                notifyNewModel={updateModel}
             />
         </React.Fragment>
     );

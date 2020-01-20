@@ -1,4 +1,4 @@
-import { Ref } from "d2-api";
+import { D2ModelSchemas, Ref } from "d2-api";
 import SyncReport from "../models/syncReport";
 import { DataImportParams, ImportStatus, MetadataImportParams, MetadataImportStats } from "./d2";
 
@@ -29,7 +29,7 @@ export interface DataSynchronizationParams extends DataImportParams {
 export type SynchronizationParams = MetadataSynchronizationParams | DataSynchronizationParams;
 
 export interface ExportBuilder {
-    type: string;
+    type: keyof D2ModelSchemas;
     ids: string[];
     excludeRules: string[][];
     includeRules: string[][];

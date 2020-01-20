@@ -94,9 +94,9 @@ export default class Instance {
         return instance.decryptPassword();
     }
 
-    public static async get(d2: D2, id: string): Promise<Instance> {
+    public static async get(d2: D2, id: string): Promise<Instance | undefined> {
         const data = await getDataById(d2, instancesDataStoreKey, id);
-        return this.build(data);
+        return data ? this.build(data) : undefined;
     }
 
     public static async list(
@@ -108,7 +108,7 @@ export default class Instance {
     }
 
     public async save(d2: D2): Promise<Response> {
-        const instance = await this.encryptPassword();
+        const instance = this.encryptPassword();
         const exists = !!instance.data.id;
         const element = exists ? instance.data : { ...instance.data, id: generateUid() };
 

@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import { useD2, useD2Api, useD2ApiData } from "d2-api";
+import { useD2, useD2Api, useD2ApiData, D2Api } from "d2-api";
 import D2ApiModel from "d2-api/api/models";
 import {
     DatePicker,
@@ -8,10 +8,10 @@ import {
     ObjectsTableProps,
     OrgUnitsSelector,
     ReferenceObject,
+    TableColumn,
     TableSelection,
     TableSorting,
     TableState,
-    TableColumn,
 } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
@@ -27,6 +27,7 @@ import Dropdown from "../dropdown/Dropdown";
 import { getAllIdentifiers, getFilterData } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
+    api?: D2Api;
     models: typeof D2Model[];
     selectedIds?: string[];
     excludedIds?: string[];
@@ -34,6 +35,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     additionalColumns?: TableColumn<MetadataType>[];
     additionalFilters?: ReactNode;
     notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
+    notifyNewModel?(model: typeof D2Model): void;
 }
 
 const useStyles = makeStyles({
@@ -44,6 +46,21 @@ const useStyles = makeStyles({
     orgUnitFilter: {
         order: -1,
         marginRight: "1rem",
+    },
+    metadataFilter: {
+        order: 1,
+    },
+    dateFilter: {
+        order: 2,
+    },
+    groupFilter: {
+        order: 3,
+    },
+    levelFilter: {
+        order: 4,
+    },
+    onlySelectedFilter: {
+        order: 5,
     },
 });
 
@@ -76,20 +93,23 @@ const initialState = {
 };
 
 const MetadataTable: React.FC<MetadataTableProps> = ({
+    api: providedApi,
     models,
     selectedIds = [],
     excludedIds = [],
     notifyNewSelection = _.noop,
+    notifyNewModel = _.noop,
     childrenKeys = [],
     additionalColumns = [],
     additionalFilters = null,
     ...rest
 }) => {
     const d2 = useD2() as D2;
-    const api = useD2Api();
+    const defaultApi = useD2Api();
+    const api = providedApi ?? defaultApi;
     const classes = useStyles({});
 
-    const [model, updateModel] = useState<typeof D2Model>(() => models[0] || DataElementModel);
+    const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const [ids, updateIds] = useState<string[]>([]);
     const [search, updateSearch] = useState<string | undefined>(undefined);
     const [sorting, updateSorting] = useState<TableSorting<MetadataType>>(initialState.sorting);
@@ -105,23 +125,23 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         parentOrgUnits: [],
     });
 
-    const changeDropdownFilter = (event: ChangeEvent<HTMLInputElement>) => {
+    const changeModelFilter = (modelName: string) => {
         if (models.length === 0) throw new Error("You need to provide at least one model");
-        const model =
-            _.find(models, model => model.getMetadataType() === event.target.value) || models[0];
+        const model = _.find(models, model => model.getMetadataType() === modelName) ?? models[0];
         updateModel(() => model);
+        notifyNewModel(model);
     };
 
     const changeLastUpdatedFilter = (date: Date | null) => {
         updateFilters(state => ({ ...state, lastUpdated: date }));
     };
 
-    const changeGroupFilter = (event: ChangeEvent<HTMLInputElement>) => {
-        updateFilters(state => ({ ...state, group: event.target.value }));
+    const changeGroupFilter = (group: string) => {
+        updateFilters(state => ({ ...state, group }));
     };
 
-    const changeLevelFilter = (event: ChangeEvent<HTMLInputElement>) => {
-        updateFilters(state => ({ ...state, level: event.target.value, parentOrgUnits: [] }));
+    const changeLevelFilter = (level: string) => {
+        updateFilters(state => ({ ...state, level, parentOrgUnits: [] }));
     };
 
     const changeOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
@@ -143,7 +163,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const selectOrgUnitChildren = async (selectedOUs: NamedRef[]) => {
         const ids = new Set<string>();
         for (const selectedOU of selectedOUs) {
-            const subtree = await getOrgUnitSubtree(d2 as D2, selectedOU.id);
+            const subtree = await getOrgUnitSubtree(api, selectedOU.id);
             subtree.forEach(id => ids.add(id));
         }
         notifyNewSelection([...selectedIds, ...Array.from(ids)], excludedIds);
@@ -157,68 +177,78 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         notifyNewSelection([...oldSelection, ...newSelection], excludedIds);
     };
 
-    const filterComponents = _.compact([
-        models.length > 1 && (
-            <Dropdown
-                key={"metadata-filter"}
-                items={models.map(model => ({
-                    id: model.getMetadataType(),
-                    name: model.getD2Model(d2).displayName,
-                }))}
-                onChange={changeDropdownFilter}
-                value={model.getMetadataType()}
-                label={i18n.t("Metadata type")}
-                hideEmpty={true}
-            />
-        ),
-        <DatePicker
-            key={"date-filter"}
-            placeholder={i18n.t("Last updated date")}
-            value={filters.lastUpdated}
-            onChange={changeLastUpdatedFilter}
-            isFilter
-        />,
-        model.getGroupFilterName() && (
-            <Dropdown
-                key={"group-filter"}
-                items={filters.groupData}
-                onChange={changeGroupFilter}
-                value={filters.group}
-                label={i18n.t("{{displayName}} Group", {
-                    displayName: model.getD2Model(d2).displayName,
-                })}
-            />
-        ),
-        model.getLevelFilterName() && (
-            <Dropdown
-                key={"level-filter"}
-                items={filters.levelData}
-                onChange={changeLevelFilter}
-                value={filters.level}
-                label={i18n.t("{{displayName}} Level", {
-                    displayName: model.getD2Model(d2).displayName,
-                })}
-            />
-        ),
-        <FormControlLabel
-            key={"only-selected-filter"}
-            className={classes.checkbox}
-            control={
-                <Checkbox
-                    checked={filters.showOnlySelected}
-                    data-test="show-only-selected-items"
-                    onChange={changeOnlySelectedFilter}
+    const filterComponents = (
+        <React.Fragment key={"metadata-table-filters"}>
+            {models.length > 1 && (
+                <div className={classes.metadataFilter}>
+                    <Dropdown
+                        items={models.map(model => ({
+                            id: model.getMetadataType(),
+                            name: model.getD2Model(d2).displayName,
+                        }))}
+                        onValueChange={changeModelFilter}
+                        value={model.getMetadataType()}
+                        label={i18n.t("Metadata type")}
+                        hideEmpty={true}
+                    />
+                </div>
+            )}
+
+            <div className={classes.dateFilter}>
+                <DatePicker
+                    placeholder={i18n.t("Last updated date")}
+                    value={filters.lastUpdated}
+                    onChange={changeLastUpdatedFilter}
+                    isFilter={true}
                 />
-            }
-            label={i18n.t("Only selected items")}
-        />,
-        additionalFilters,
-    ]);
+            </div>
+
+            {model.getGroupFilterName() && (
+                <div className={classes.groupFilter}>
+                    <Dropdown
+                        items={filters.groupData}
+                        onValueChange={changeGroupFilter}
+                        value={filters.group}
+                        label={i18n.t("{{displayName}} Group", {
+                            displayName: model.getD2Model(d2).displayName,
+                        })}
+                    />
+                </div>
+            )}
+
+            {model.getLevelFilterName() && (
+                <div className={classes.levelFilter}>
+                    <Dropdown
+                        items={filters.levelData}
+                        onValueChange={changeLevelFilter}
+                        value={filters.level}
+                        label={i18n.t("{{displayName}} Level", {
+                            displayName: model.getD2Model(d2).displayName,
+                        })}
+                    />
+                </div>
+            )}
+
+            <div className={classes.onlySelectedFilter}>
+                <FormControlLabel
+                    className={classes.checkbox}
+                    control={
+                        <Checkbox
+                            checked={filters.showOnlySelected}
+                            onChange={changeOnlySelectedFilter}
+                        />
+                    }
+                    label={i18n.t("Only selected items")}
+                />
+            </div>
+
+            {additionalFilters}
+        </React.Fragment>
+    );
 
     const sideComponents = model.getCollectionName() === "organisationUnits" && (
         <div className={classes.orgUnitFilter}>
             <OrgUnitsSelector
-                key={"org-unit-selector"}
                 d2={d2}
                 withElevation={true}
                 controls={{}}
@@ -297,8 +327,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const { loading, data, error, refetch } = useD2ApiData<any>();
 
     useEffect(() => {
-        getAllIdentifiers(apiModel.modelName, search, apiModel, apiQuery).then(updateIds);
-    }, [apiModel, apiQuery, search]);
+        getAllIdentifiers(search, apiModel.modelName, api.baseUrl, apiModel, apiQuery).then(
+            updateIds
+        );
+    }, [api.baseUrl, apiModel, apiQuery, search]);
 
     useEffect(() => {
         getRootOrgUnit(api).then(({ objects: roots }) =>
@@ -325,23 +357,28 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     useEffect(() => {
         if (model && model.getGroupFilterName()) {
-            getFilterData(model.getGroupFilterName(), "group", d2, api).then(({ objects }) =>
-                updateFilters(state => ({ ...state, groupData: objects }))
-            );
+            getFilterData(
+                model.getGroupFilterName(),
+                "group",
+                api.baseUrl,
+                api
+            ).then(({ objects }) => updateFilters(state => ({ ...state, groupData: objects })));
         }
 
         if (model && model.getLevelFilterName()) {
-            getFilterData(model.getLevelFilterName(), "level", d2, api).then(({ objects }) => {
-                // Inference does not work for orgUnits here
-                const levels = (objects as unknown) as { name: string; level: number }[];
-                updateFilters(state => ({
-                    ...state,
-                    levelData: levels.map(({ name, level }) => ({
-                        id: String(level),
-                        name: `${level}. ${name}`,
-                    })),
-                }));
-            });
+            getFilterData(model.getLevelFilterName(), "level", api.baseUrl, api).then(
+                ({ objects }) => {
+                    // Inference does not work for orgUnits here
+                    const levels = (objects as unknown) as { name: string; level: number }[];
+                    updateFilters(state => ({
+                        ...state,
+                        levelData: levels.map(({ name, level }) => ({
+                            id: String(level),
+                            name: `${level}. ${name}`,
+                        })),
+                    }));
+                }
+            );
         }
     }, [d2, api, model]);
 
