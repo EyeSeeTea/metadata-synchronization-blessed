@@ -5,13 +5,16 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-20T09:35:58.883Z\n"
-"PO-Revision-Date: 2020-01-20T09:35:58.883Z\n"
+"POT-Creation-Date: 2020-01-21T12:18:09.554Z\n"
+"PO-Revision-Date: 2020-01-21T12:18:09.554Z\n"
 
 msgid "<No value>"
 msgstr ""
 
 msgid "Edit mapping"
+msgstr ""
+
+msgid "Could not connect with remote instance"
 msgstr ""
 
 msgid "Metadata type"
