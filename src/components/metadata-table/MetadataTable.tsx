@@ -249,7 +249,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const sideComponents = model.getCollectionName() === "organisationUnits" && (
         <div className={classes.orgUnitFilter}>
             <OrgUnitsSelector
-                d2={d2}
+                api={api}
                 withElevation={true}
                 controls={{}}
                 hideCheckboxes={true}

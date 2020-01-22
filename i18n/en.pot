@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-21T12:18:09.554Z\n"
-"PO-Revision-Date: 2020-01-21T12:18:09.554Z\n"
+"POT-Creation-Date: 2020-01-22T14:10:39.040Z\n"
+"PO-Revision-Date: 2020-01-22T14:10:39.040Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -560,6 +560,9 @@ msgid "Please select an instance from the dropdown"
 msgstr ""
 
 msgid "Instance selection"
+msgstr ""
+
+msgid "Selected {{id}} to map with {{elementToEditMapping}}"
 msgstr ""
 
 msgid "Manual sync"

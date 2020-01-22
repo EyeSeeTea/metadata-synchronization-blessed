@@ -2,6 +2,7 @@ import i18n from "@dhis2/d2-i18n";
 import { Icon, IconButton, makeStyles, Typography } from "@material-ui/core";
 import { useD2 } from "d2-api";
 import { TableColumn, useSnackbar } from "d2-ui-components";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Dropdown from "../../components/dropdown/Dropdown";
@@ -12,6 +13,7 @@ import { D2Model, DataElementModel, OrganisationUnitModel } from "../../models/d
 import Instance from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
+import { cleanOrgUnitPaths } from "../../utils/synchronization";
 
 const models: typeof D2Model[] = [DataElementModel, OrganisationUnitModel];
 
@@ -96,6 +98,16 @@ const InstanceMappingPage: React.FC = () => {
         setModel(() => model);
     };
 
+    const updateMapping = (id: string) => {
+        snackbar.info(
+            i18n.t("Selected {{id}} to map with {{elementToEditMapping}}", {
+                id: _.first(cleanOrgUnitPaths([id])),
+                elementToEditMapping,
+            }),
+            { autoHideDuration: 1000 }
+        );
+    };
+
     return (
         <React.Fragment>
             <PageHeader title={i18n.t("Metadata mapping")} onBackClick={backHome} />
@@ -104,7 +116,7 @@ const InstanceMappingPage: React.FC = () => {
                 <MappingDialog
                     model={model}
                     element={elementToEditMapping}
-                    onUpdateMapping={console.log}
+                    onUpdateMapping={updateMapping}
                     onClose={() => openDialog(null)}
                     instance={instanceFilter}
                 />
