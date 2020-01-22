@@ -9,13 +9,18 @@ import Dropdown from "../../components/dropdown/Dropdown";
 import MappingDialog from "../../components/mapping-dialog/MappingDialog";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
-import { D2Model, DataElementModel, OrganisationUnitModel } from "../../models/d2Model";
+import {
+    CategoryOptionModel,
+    D2Model,
+    DataElementModel,
+    OrganisationUnitModel,
+} from "../../models/d2Model";
 import Instance from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPaths } from "../../utils/synchronization";
 
-const models: typeof D2Model[] = [DataElementModel, OrganisationUnitModel];
+const models: typeof D2Model[] = [DataElementModel, CategoryOptionModel, OrganisationUnitModel];
 
 const useStyles = makeStyles({
     iconButton: {

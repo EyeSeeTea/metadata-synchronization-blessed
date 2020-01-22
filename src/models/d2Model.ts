@@ -296,6 +296,11 @@ export class DataSetModel extends D2Model {
     };
 }
 
+export class CategoryOptionModel extends D2Model {
+    protected static metadataType = "categoryOption";
+    protected static collectionName = "categoryOptions" as const;
+}
+
 export class ProgramModel extends D2Model {
     protected static metadataType = "program";
     protected static collectionName = "programs" as const;
