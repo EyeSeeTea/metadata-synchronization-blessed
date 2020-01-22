@@ -1,6 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import DialogContent from "@material-ui/core/DialogContent";
-import { useD2, useD2Api } from "d2-api";
+import { useD2 } from "d2-api";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { D2Model, DataElementGroupModel } from "../../models/d2Model";
@@ -28,7 +28,6 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     onUpdateMapping,
 }) => {
     const d2 = useD2();
-    const api = useD2Api();
     const [instance, setInstance] = useState<Instance>();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
     const [selected, updateSelected] = useState<string | undefined>(initialSelection);
@@ -49,6 +48,33 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
         }
     };
 
+    const OrgUnitMapper = (
+        <div style={{ margin: "0 auto", width: "fit-content" }}>
+            <OrgUnitsSelector
+                api={instance?.getApi()}
+                onChange={onUpdateSelection}
+                selected={selected ? [selected] : []}
+                withElevation={false}
+                hideMemberCount={true}
+                controls={{}}
+                fullWidth={true}
+            />
+        </div>
+    );
+
+    const MetadataMapper = (
+        <MetadataTable
+            models={[model]}
+            api={instance?.getApi()}
+            notifyNewSelection={onUpdateSelection}
+            selection={selected ? [{ id: selected }] : []}
+            hideSelectAll={true}
+        />
+    );
+
+    const MapperComponent =
+        model.getCollectionName() === "organisationUnits" ? OrgUnitMapper : MetadataMapper;
+
     return (
         <ConfirmationDialog
             isOpen={!!element}
@@ -58,29 +84,9 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             fullWidth={true}
         >
             <DialogContent>
-                {connectionSuccess ? (
-                    model.getCollectionName() === "organisationUnits" ? (
-                        <div style={{ margin: "0 auto", width: "fit-content" }}>
-                            <OrgUnitsSelector
-                                api={api}
-                                onChange={onUpdateSelection}
-                                selected={[selected]}
-                                withElevation={false}
-                                hideMemberCount={true}
-                                controls={{}}
-                                fullWidth={true}
-                            />
-                        </div>
-                    ) : (
-                        <MetadataTable
-                            models={[model]}
-                            api={instance?.getApi()}
-                            notifyNewSelection={onUpdateSelection}
-                            selection={selected ? [{ id: selected }] : []}
-                            hideSelectAll={true}
-                        />
-                    )
-                ) : (
+                {!!instance?.getApi() && connectionSuccess && MapperComponent}
+
+                {!connectionSuccess && (
                     <Typography>{i18n.t("Could not connect with remote instance")}</Typography>
                 )}
             </DialogContent>
