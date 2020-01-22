@@ -436,7 +436,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     return (
         <ObjectsTable<MetadataType>
-            rows={rows}
+            rows={loading ? [] : rows}
             columns={[...model.getColumns(), ...additionalColumns]}
             details={model.getDetails()}
             onChangeSearch={updateSearch}
