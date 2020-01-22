@@ -1,14 +1,15 @@
 import i18n from "@dhis2/d2-i18n";
+import { Typography } from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
+import { makeStyles } from "@material-ui/styles";
 import { useD2 } from "d2-api";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { D2Model, DataElementGroupModel } from "../../models/d2Model";
 import Instance from "../../models/instance";
 import { D2 } from "../../types/d2";
 import MetadataTable from "../metadata-table/MetadataTable";
-import { Typography } from "@material-ui/core";
-import _ from "lodash";
 
 interface MappingDialogProps {
     model?: typeof D2Model;
@@ -19,6 +20,13 @@ interface MappingDialogProps {
     onUpdateMapping: (id: string) => void;
 }
 
+const useStyles = makeStyles({
+    orgUnitSelect: {
+        margin: "0 auto",
+        width: "fit-content",
+    },
+});
+
 const MappingDialog: React.FC<MappingDialogProps> = ({
     model = DataElementGroupModel,
     element,
@@ -28,6 +36,8 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     onUpdateMapping,
 }) => {
     const d2 = useD2();
+    const classes = useStyles();
+
     const [instance, setInstance] = useState<Instance>();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
     const [selected, updateSelected] = useState<string | undefined>(initialSelection);
@@ -48,8 +58,8 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
         }
     };
 
-    const OrgUnitMapper = (
-        <div style={{ margin: "0 auto", width: "fit-content" }}>
+    const OrgUnitMapper = instance?.getApi() && (
+        <div className={classes.orgUnitSelect}>
             <OrgUnitsSelector
                 api={instance?.getApi()}
                 onChange={onUpdateSelection}
