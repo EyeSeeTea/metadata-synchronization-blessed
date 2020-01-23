@@ -1,9 +1,9 @@
 import i18n from "@dhis2/d2-i18n";
 import Icon from "@material-ui/core/Icon";
 import DeleteIcon from "@material-ui/icons/Delete";
+import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 import EditIcon from "@material-ui/icons/Edit";
 import SettingsInputAntenaIcon from "@material-ui/icons/SettingsInputAntenna";
-import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 import { useD2 } from "d2-api";
 import {
     ConfirmationDialog,
@@ -13,8 +13,8 @@ import {
     TableColumn,
     TableSelection,
     TableState,
+    useLoading,
     useSnackbar,
-    withLoading,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -24,10 +24,11 @@ import Instance, { InstanceData } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { isAppConfigurator } from "../../utils/permissions";
 
-const InstanceListPage: React.FC<{ loading: any }> = ({ loading }) => {
+const InstanceListPage = () => {
     const d2 = useD2();
     const history = useHistory();
     const snackbar = useSnackbar();
+    const loading = useLoading();
 
     const [rows, setRows] = useState<InstanceData[]>([]);
     const [search, changeSearch] = useState<string>("");
@@ -205,4 +206,4 @@ const InstanceListPage: React.FC<{ loading: any }> = ({ loading }) => {
     );
 };
 
-export default withLoading(InstanceListPage);
+export default InstanceListPage;
