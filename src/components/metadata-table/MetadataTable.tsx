@@ -384,7 +384,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     if (error) return <p>{"Error: " + JSON.stringify(error)}</p>;
 
-    const { objects, pager } = data || { objects: [], pager: undefined };
+    const { objects, pager } = data ?? { objects: [], pager: undefined };
     const rows = model.getApiModelTransform()(objects);
 
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
@@ -434,10 +434,16 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         })
         .value();
 
+    const columns = _([...model.getColumns(), ...additionalColumns])
+        .reverse()
+        .uniqBy("name")
+        .reverse()
+        .value();
+
     return (
         <ObjectsTable<MetadataType>
             rows={loading ? [] : rows}
-            columns={[...model.getColumns(), ...additionalColumns]}
+            columns={columns}
             details={model.getDetails()}
             onChangeSearch={updateSearch}
             initialState={initialState}
