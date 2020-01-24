@@ -107,7 +107,7 @@ export abstract class D2Model {
         return this.metadataType;
     }
 
-    public static getCollectionName(): string {
+    public static getCollectionName(): keyof D2ModelSchemas {
         return this.collectionName;
     }
 

@@ -1,7 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import axios, { AxiosBasicCredentials } from "axios";
 import Cryptr from "cryptr";
-import { D2Api, D2ApiDefault } from "d2-api";
+import { D2Api, D2ApiDefault, D2ModelSchemas } from "d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { D2, Response } from "../types/d2";
@@ -13,6 +13,12 @@ const instancesDataStoreKey = "instances";
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
+export interface MetadataMapping {
+    type: keyof D2ModelSchemas;
+    originalId: string;
+    mappedId: string;
+}
+
 export interface InstanceData {
     id: string;
     name: string;
@@ -20,6 +26,7 @@ export interface InstanceData {
     username: string;
     password: string;
     description?: string;
+    metadataMapping: MetadataMapping[];
 }
 
 export default class Instance {
@@ -29,7 +36,15 @@ export default class Instance {
     private readonly api: D2Api;
 
     constructor(data: InstanceData) {
-        this.data = _.pick(data, ["id", "name", "url", "username", "password", "description"]);
+        this.data = _.pick(data, [
+            "id",
+            "name",
+            "url",
+            "username",
+            "password",
+            "description",
+            "metadataMapping",
+        ]);
         const { url: baseUrl, username, password } = data;
         this.api = new D2ApiDefault({ baseUrl, auth: { username, password } });
     }
@@ -63,7 +78,11 @@ export default class Instance {
     }
 
     public get description(): string {
-        return this.data.description ? this.data.description : "";
+        return this.data.description ?? "";
+    }
+
+    public get metadataMapping(): MetadataMapping[] {
+        return this.data.metadataMapping ?? [];
     }
 
     public get auth(): AxiosBasicCredentials {
@@ -85,6 +104,7 @@ export default class Instance {
             url: "",
             username: "",
             password: "",
+            metadataMapping: [],
         };
         return new Instance(initialData);
     }
@@ -147,6 +167,10 @@ export default class Instance {
 
     public setDescription(description: string): Instance {
         return new Instance({ ...this.data, description });
+    }
+
+    public setMetadataMapping(metadataMapping: MetadataMapping[]): Instance {
+        return new Instance({ ...this.data, metadataMapping });
     }
 
     public encryptPassword(): Instance {
