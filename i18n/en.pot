@@ -5,13 +5,13 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-22T14:10:39.040Z\n"
-"PO-Revision-Date: 2020-01-22T14:10:39.040Z\n"
+"POT-Creation-Date: 2020-01-26T08:29:19.931Z\n"
+"PO-Revision-Date: 2020-01-26T08:29:19.931Z\n"
 
 msgid "<No value>"
 msgstr ""
 
-msgid "Edit mapping"
+msgid "Edit mapping for {{displayName}} ({{id}})"
 msgstr ""
 
 msgid "Could not connect with remote instance"
@@ -556,13 +556,25 @@ msgstr[1] ""
 msgid "Destination Instance Settings"
 msgstr ""
 
+msgid "Item not found"
+msgstr ""
+
+msgid "Could not connect with instance"
+msgstr ""
+
 msgid "Please select an instance from the dropdown"
+msgstr ""
+
+msgid "Loading..."
+msgstr ""
+
+msgid "Please select an instance"
 msgstr ""
 
 msgid "Instance selection"
 msgstr ""
 
-msgid "Selected {{id}} to map with {{elementToEditMapping}}"
+msgid "Selected {{id}} to map with {{originalId}}"
 msgstr ""
 
 msgid "Manual sync"
