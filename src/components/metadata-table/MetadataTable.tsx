@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import { useD2, useD2Api, useD2ApiData, D2Api } from "d2-api";
+import { D2Api, useD2, useD2Api, useD2ApiData } from "d2-api";
 import D2ApiModel from "d2-api/api/models";
 import {
     DatePicker,
@@ -442,7 +442,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     return (
         <ObjectsTable<MetadataType>
-            rows={loading ? [] : rows}
+            rows={rows}
             columns={columns}
             details={model.getDetails()}
             onChangeSearch={updateSearch}
