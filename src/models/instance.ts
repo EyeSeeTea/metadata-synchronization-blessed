@@ -15,8 +15,11 @@ type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 export interface MetadataMapping {
     type: keyof D2ModelSchemas;
-    originalId: string;
     mappedId: string;
+}
+
+export interface MetadataMappingDictionary {
+    [id: string]: MetadataMapping;
 }
 
 export interface InstanceData {
@@ -26,7 +29,7 @@ export interface InstanceData {
     username: string;
     password: string;
     description?: string;
-    metadataMapping: MetadataMapping[];
+    metadataMapping: MetadataMappingDictionary;
 }
 
 export default class Instance {
@@ -81,8 +84,8 @@ export default class Instance {
         return this.data.description ?? "";
     }
 
-    public get metadataMapping(): MetadataMapping[] {
-        return this.data.metadataMapping ?? [];
+    public get metadataMapping(): MetadataMappingDictionary {
+        return this.data.metadataMapping ?? {};
     }
 
     public get auth(): AxiosBasicCredentials {
@@ -104,7 +107,7 @@ export default class Instance {
             url: "",
             username: "",
             password: "",
-            metadataMapping: [],
+            metadataMapping: {},
         };
         return new Instance(initialData);
     }
@@ -169,7 +172,7 @@ export default class Instance {
         return new Instance({ ...this.data, description });
     }
 
-    public setMetadataMapping(metadataMapping: MetadataMapping[]): Instance {
+    public setMetadataMapping(metadataMapping: MetadataMappingDictionary): Instance {
         return new Instance({ ...this.data, metadataMapping });
     }
 
