@@ -9,11 +9,12 @@ import React, { useEffect, useState } from "react";
 import { D2Model, DataElementGroupModel } from "../../models/d2Model";
 import Instance from "../../models/instance";
 import { D2 } from "../../types/d2";
+import { MetadataType } from "../../utils/d2";
 import MetadataTable from "../metadata-table/MetadataTable";
 
 interface MappingDialogProps {
     model?: typeof D2Model;
-    element: string;
+    element: MetadataType;
     instance: string;
     initialSelection?: string;
     onClose: () => void;
@@ -51,10 +52,10 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     }, [d2, instance]);
 
     const onUpdateSelection = (selectedIds: string[]) => {
-        const element = _.last(selectedIds);
-        if (element) {
-            onUpdateMapping(element);
-            updateSelected(element);
+        const newSelection = _.last(selectedIds);
+        if (newSelection) {
+            onUpdateMapping(newSelection);
+            updateSelected(newSelection);
         }
     };
 
@@ -88,7 +89,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     return (
         <ConfirmationDialog
             isOpen={!!element}
-            title={i18n.t("Edit mapping")}
+            title={i18n.t("Edit mapping for {{displayName}} ({{id}})", element)}
             onCancel={onClose}
             maxWidth={"lg"}
             fullWidth={true}
