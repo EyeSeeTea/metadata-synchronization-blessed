@@ -1,7 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import axios, { AxiosBasicCredentials } from "axios";
 import Cryptr from "cryptr";
-import { D2Api, D2ApiDefault, D2ModelSchemas } from "d2-api";
+import { D2Api, D2ApiDefault } from "d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { D2, Response } from "../types/d2";
@@ -14,12 +14,13 @@ const instancesDataStoreKey = "instances";
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 export interface MetadataMapping {
-    type: keyof D2ModelSchemas;
     mappedId: string;
 }
 
 export interface MetadataMappingDictionary {
-    [id: string]: MetadataMapping;
+    [model: string]: {
+        [id: string]: MetadataMapping;
+    };
 }
 
 export interface InstanceData {

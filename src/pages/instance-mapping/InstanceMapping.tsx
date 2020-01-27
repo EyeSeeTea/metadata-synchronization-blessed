@@ -90,7 +90,9 @@ const InstanceMappingPage: React.FC = () => {
 
     useEffect(() => {
         if (rows.length === 0) return;
-        const ids = rows.map(({ id }) => instance?.metadataMapping[id]?.mappedId ?? id);
+        const ids = rows.map(({ id }) =>
+            _.get(instance?.metadataMapping, [type, id, "mappedId"], id)
+        );
 
         const updateMapping = (response: any) => {
             const newMappings = _.mapKeys(
@@ -99,12 +101,16 @@ const InstanceMappingPage: React.FC = () => {
                         ? i18n.t("Item not found")
                         : i18n.t("Could not connect with instance");
                     const collection = response ? response[type] : {};
-                    const mappedId = instance?.metadataMapping[originalId]?.mappedId ?? originalId;
+                    const mappedId = _.get(
+                        instance?.metadataMapping,
+                        [type, originalId, "mappedId"],
+                        originalId
+                    );
                     const name = _.find(collection, ["id", mappedId])?.name ?? defaultName;
 
-                    return { type, originalId, mappedId, name };
+                    return { originalId, mappedId, name };
                 }),
-                ({ originalId }) => `${instance?.id}-${originalId}`
+                ({ originalId }) => `${instance?.id}-${type}-${originalId}`
             );
 
             updateDictionary(prevDictionary => ({
@@ -128,7 +134,7 @@ const InstanceMappingPage: React.FC = () => {
                 name: "mapped-id",
                 text: "Mapped ID",
                 getValue: (row: MetadataType) => {
-                    const { mappedId = row.id } = instance?.metadataMapping[row.id] ?? {};
+                    const { mappedId = row.id } = _.get(instance?.metadataMapping, [type, row.id]) ?? {};
 
                     return (
                         <span>
@@ -157,16 +163,18 @@ const InstanceMappingPage: React.FC = () => {
                 name: "mapped-name",
                 text: "Mapped Name",
                 getValue: (row: MetadataType) => {
-                    const key = `${instance?.id}-${row.id}`;
+                    const key = `${instance?.id}-${type}-${row.id}`;
                     const defaultName = instance
                         ? i18n.t("Loading...")
                         : i18n.t("Please select an instance");
+
+                    console.log(dictionary, key)
 
                     return dictionary[key]?.name ?? defaultName;
                 },
             },
         ],
-        [classes, dictionary, instance, snackbar]
+        [classes, dictionary, type, instance, snackbar]
     );
 
     const filters = useMemo(
@@ -190,13 +198,11 @@ const InstanceMappingPage: React.FC = () => {
 
         if (originalId && mappedId) {
             instance
-                ?.setMetadataMapping({
-                    ...instance.metadataMapping,
-                    [originalId]: {
-                        type,
+                ?.setMetadataMapping(
+                    _.set(instance.metadataMapping, [type, originalId], {
                         mappedId,
-                    },
-                })
+                    })
+                )
                 .save(d2 as D2)
                 .then(() => {
                     snackbar.info(
@@ -209,8 +215,7 @@ const InstanceMappingPage: React.FC = () => {
                 });
 
             queryApi(instance, type, [mappedId])?.then(response => {
-                dictionary[`${instance?.id}-${originalId}`] = {
-                    type,
+                dictionary[`${instance?.id}-${type}-${originalId}`] = {
                     mappedId,
                     name: _.find(response[type], ["id", mappedId])?.name,
                 };
