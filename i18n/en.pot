@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-27T07:24:32.733Z\n"
-"PO-Revision-Date: 2020-01-27T07:24:32.733Z\n"
+"POT-Creation-Date: 2020-01-27T07:28:00.213Z\n"
+"PO-Revision-Date: 2020-01-27T07:28:00.213Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -562,6 +562,9 @@ msgstr ""
 msgid "Could not connect with instance"
 msgstr ""
 
+msgid "Selected {{id}} to map with {{originalId}}"
+msgstr ""
+
 msgid "Please select an instance from the dropdown"
 msgstr ""
 
@@ -575,9 +578,6 @@ msgid "Please select an instance"
 msgstr ""
 
 msgid "Instance selection"
-msgstr ""
-
-msgid "Selected {{id}} to map with {{originalId}}"
 msgstr ""
 
 msgid "Manual sync"
