@@ -250,7 +250,7 @@ const InstanceMappingPage: React.FC = () => {
                     element={elementToMap}
                     onUpdateMapping={updateMapping}
                     onClose={() => updateElementToMap(null)}
-                    instance={instanceFilter}
+                    instance={instance}
                 />
             )}
 
@@ -263,7 +263,7 @@ const InstanceMappingPage: React.FC = () => {
                     updateRows([]);
                     setModel(() => model);
                 }}
-                onRowsChange={updateRows}
+                notifyRowsChange={updateRows}
                 loading={loading}
             />
         </React.Fragment>

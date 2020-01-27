@@ -36,6 +36,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     additionalFilters?: ReactNode;
     notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
     notifyNewModel?(model: typeof D2Model): void;
+    notifyRowsChange?(rows: MetadataType[]): void;
 }
 
 const useStyles = makeStyles({
@@ -99,6 +100,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     excludedIds = [],
     notifyNewSelection = _.noop,
     notifyNewModel = _.noop,
+    notifyRowsChange = _.noop,
     childrenKeys = [],
     additionalColumns = [],
     additionalFilters = null,
@@ -383,10 +385,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         }
     }, [d2, api, model]);
 
-    if (error) return <p>{"Error: " + JSON.stringify(error)}</p>;
-
     const { objects, pager } = data ?? { objects: [], pager: undefined };
-    const rows = model.getApiModelTransform()(objects);
+    const rows = useMemo(() => model.getApiModelTransform()(objects), [model, objects]);
+    useEffect(() => notifyRowsChange(rows), [notifyRowsChange, rows]);
 
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;
@@ -440,6 +441,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         .uniqBy("name")
         .reverse()
         .value();
+
+    if (error) return <p>{"Error: " + JSON.stringify(error)}</p>;
 
     return (
         <ObjectsTable<MetadataType>

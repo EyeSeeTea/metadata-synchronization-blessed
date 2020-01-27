@@ -2,21 +2,18 @@ import i18n from "@dhis2/d2-i18n";
 import { Typography } from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
 import { makeStyles } from "@material-ui/styles";
-import { useD2 } from "d2-api";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { D2Model, DataElementGroupModel } from "../../models/d2Model";
 import Instance from "../../models/instance";
-import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import MetadataTable from "../metadata-table/MetadataTable";
 
 interface MappingDialogProps {
-    model?: typeof D2Model;
     element: MetadataType;
-    instance: string;
-    initialSelection?: string;
+    model?: typeof D2Model;
+    instance?: Instance;
     onClose: () => void;
     onUpdateMapping: (id: string) => void;
 }
@@ -31,25 +28,33 @@ const useStyles = makeStyles({
 const MappingDialog: React.FC<MappingDialogProps> = ({
     model = DataElementGroupModel,
     element,
-    instance: instanceId,
-    initialSelection,
+    instance,
     onClose,
     onUpdateMapping,
 }) => {
-    const d2 = useD2();
     const classes = useStyles();
-
-    const [instance, setInstance] = useState<Instance>();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
-    const [selected, updateSelected] = useState<string | undefined>(initialSelection);
+
+    const defaultSelection = _.get(instance?.metadataMapping, [
+        model.getCollectionName(),
+        element.id,
+        "mappedId",
+    ]);
+    const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
     useEffect(() => {
-        Instance.get(d2 as D2, instanceId).then(setInstance);
-    }, [d2, instanceId]);
+        let mounted = true;
 
-    useEffect(() => {
-        instance?.check().then(({ status }) => setConnectionSuccess(status));
-    }, [d2, instance]);
+        instance?.check().then(({ status }) => {
+            if (mounted) {
+                setConnectionSuccess(status);
+            }
+        });
+
+        return () => {
+            mounted = false;
+        };
+    }, [instance]);
 
     const onUpdateSelection = (selectedIds: string[]) => {
         const newSelection = _.last(selectedIds);
