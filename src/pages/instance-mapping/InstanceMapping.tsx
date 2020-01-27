@@ -1,7 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
-import { Icon, IconButton, makeStyles, Typography } from "@material-ui/core";
+import { Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { D2ModelSchemas, useD2 } from "d2-api";
-import { TableColumn, useSnackbar } from "d2-ui-components";
+import { TableAction, TableColumn, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -227,12 +227,14 @@ const InstanceMappingPage: React.FC = () => {
                             <Typography variant={"inherit"} gutterBottom>
                                 {cleanId}
                             </Typography>
-                            <IconButton
-                                className={classes.iconButton}
-                                onClick={() => openMappingDialog(row)}
-                            >
-                                <Icon color="primary">open_in_new</Icon>
-                            </IconButton>
+                            <Tooltip title={i18n.t("Set mapping")} placement="top">
+                                <IconButton
+                                    className={classes.iconButton}
+                                    onClick={() => openMappingDialog(row)}
+                                >
+                                    <Icon color="primary">open_in_new</Icon>
+                                </IconButton>
+                            </Tooltip>
                         </span>
                     );
                 },
@@ -253,7 +255,7 @@ const InstanceMappingPage: React.FC = () => {
         [classes, dictionary, type, instance, openMappingDialog]
     );
 
-    const filters = useMemo(
+    const filters: ReactNode = useMemo(
         () => (
             <div className={classes.instanceDropdown}>
                 <Dropdown
@@ -268,13 +270,24 @@ const InstanceMappingPage: React.FC = () => {
         [classes, instanceOptions, instanceFilter]
     );
 
-    const actions = [
+    const actions: TableAction<MetadataType>[] = [
+        {
+            name: "map",
+            text: i18n.t("Set mapping"),
+            primary: true,
+            multiple: false,
+            onClick: (rows: MetadataType[]) => {
+                if (rows.length === 1) openMappingDialog(rows[0]);
+            },
+            icon: <Icon>open_in_new</Icon>,
+        },
         {
             name: "clear",
             text: i18n.t("Clear mapping"),
             primary: true,
             multiple: true,
             onClick: clearMapping,
+            icon: <Icon>clear</Icon>,
         },
     ];
 
