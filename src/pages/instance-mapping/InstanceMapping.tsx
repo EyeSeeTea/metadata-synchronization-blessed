@@ -72,6 +72,7 @@ const InstanceMappingPage: React.FC = () => {
     const type = model.getCollectionName();
     const [instance, setInstance] = useState<Instance>();
     const [loading, setLoading] = useState<boolean>(false);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const [instanceOptions, setInstanceOptions] = useState<Instance[]>([]);
     const [instanceFilter, setInstanceFilter] = useState<string>(instanceFilterDefault);
@@ -307,6 +308,12 @@ const InstanceMappingPage: React.FC = () => {
                 }}
                 notifyRowsChange={setRows}
                 loading={loading}
+                selectedIds={selectedIds}
+                notifyNewSelection={selectedIds => setSelectedIds(selectedIds)}
+                ids={
+                    // TODO: https://github.com/EyeSeeTea/d2-ui-components/issues/118
+                    undefined
+                }
             />
         </React.Fragment>
     );
