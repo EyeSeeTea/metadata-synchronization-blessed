@@ -130,13 +130,19 @@ const InstanceMappingPage: React.FC = () => {
 
     const openMappingDialog = useCallback(
         (row: MetadataType) => {
-            if (instance) {
-                updateElementToMap(row);
+            if (!instance) {
+                snackbar.error(i18n.t("Please select an instance from the dropdown"), {
+                    autoHideDuration: 1000,
+                });
+            } else if (loading) {
+                snackbar.warning(i18n.t("Please wait to finish loading"), {
+                    autoHideDuration: 1000,
+                });
             } else {
-                snackbar.error(i18n.t("Please select an instance from the dropdown"));
+                updateElementToMap(row);
             }
         },
-        [instance, snackbar]
+        [instance, loading, snackbar]
     );
 
     const columns: TableColumn<MetadataType>[] = useMemo(
@@ -252,7 +258,11 @@ const InstanceMappingPage: React.FC = () => {
                 models={models}
                 additionalColumns={columns}
                 additionalFilters={filters}
-                notifyNewModel={model => setModel(() => model)}
+                notifyNewModel={model => {
+                    setLoading(true);
+                    updateRows([]);
+                    setModel(() => model);
+                }}
                 onRowsChange={updateRows}
                 loading={loading}
             />
