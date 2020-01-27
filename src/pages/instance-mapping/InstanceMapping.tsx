@@ -3,7 +3,7 @@ import { Icon, IconButton, makeStyles, Typography } from "@material-ui/core";
 import { D2ModelSchemas, useD2 } from "d2-api";
 import { TableColumn, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
-import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useState, useCallback } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Dropdown from "../../components/dropdown/Dropdown";
 import MappingDialog from "../../components/mapping-dialog/MappingDialog";
@@ -128,6 +128,17 @@ const InstanceMappingPage: React.FC = () => {
             .catch(() => updateMapping(null));
     }, [instance, rows, type, setLoading]);
 
+    const openMappingDialog = useCallback(
+        (row: MetadataType) => {
+            if (instance) {
+                updateElementToMap(row);
+            } else {
+                snackbar.error(i18n.t("Please select an instance from the dropdown"));
+            }
+        },
+        [instance, snackbar]
+    );
+
     const columns: TableColumn<MetadataType>[] = useMemo(
         () => [
             {
@@ -138,8 +149,11 @@ const InstanceMappingPage: React.FC = () => {
                 name: "mapped-id",
                 text: "Mapped ID",
                 getValue: (row: MetadataType) => {
-                    const { mappedId = row.id } =
-                        _.get(instance?.metadataMapping, [type, row.id]) ?? {};
+                    const mappedId = _.get(
+                        instance?.metadataMapping,
+                        [type, row.id, "mappedId"],
+                        row.id
+                    );
 
                     return (
                         <span>
@@ -148,15 +162,7 @@ const InstanceMappingPage: React.FC = () => {
                             </Typography>
                             <IconButton
                                 className={classes.iconButton}
-                                onClick={() => {
-                                    if (instance) {
-                                        updateElementToMap(row);
-                                    } else {
-                                        snackbar.error(
-                                            i18n.t("Please select an instance from the dropdown")
-                                        );
-                                    }
-                                }}
+                                onClick={() => openMappingDialog(row)}
                             >
                                 <Icon color="primary">open_in_new</Icon>
                             </IconButton>
@@ -173,13 +179,11 @@ const InstanceMappingPage: React.FC = () => {
                         ? i18n.t("Loading...")
                         : i18n.t("Please select an instance");
 
-                    console.log(dictionary, key);
-
                     return dictionary[key]?.name ?? defaultName;
                 },
             },
         ],
-        [classes, dictionary, type, instance, snackbar]
+        [classes, dictionary, type, instance, openMappingDialog]
     );
 
     const filters = useMemo(
@@ -197,35 +201,33 @@ const InstanceMappingPage: React.FC = () => {
         [classes, instanceOptions, instanceFilter]
     );
 
-    const updateMapping = (ids: string) => {
+    const updateMapping = async (ids: string) => {
         const originalId = elementToMap?.id;
         const mappedId = _.first(cleanOrgUnitPaths([ids]));
 
-        if (instance && originalId && mappedId) {
-            instance
-                .setMetadataMapping(
-                    _.set(instance.metadataMapping, [type, originalId], {
-                        mappedId,
-                    })
-                )
-                .save(d2 as D2)
-                .then(() => {
-                    snackbar.info(
-                        i18n.t("Selected {{id}} to map with {{originalId}}", {
-                            mappedId,
-                            originalId,
-                        }),
-                        { autoHideDuration: 1000 }
-                    );
-                });
+        if (!instance || !originalId || !mappedId) return;
 
-            queryApi(instance, type, [mappedId]).then(response => {
-                dictionary[`${instance.id}-${type}-${originalId}`] = {
+        await instance
+            .setMetadataMapping(
+                _.set(instance.metadataMapping, [type, originalId], {
                     mappedId,
-                    name: _.find(response[type], ["id", mappedId])?.name,
-                };
-            });
-        }
+                })
+            )
+            .save(d2 as D2);
+
+        const response = await queryApi(instance, type, [mappedId]);
+        dictionary[`${instance.id}-${type}-${originalId}`] = {
+            mappedId,
+            name: _.find(response[type], ["id", mappedId])?.name,
+        };
+
+        snackbar.info(
+            i18n.t("Selected {{id}} to map with {{originalId}}", {
+                mappedId,
+                originalId,
+            }),
+            { autoHideDuration: 1000 }
+        );
     };
 
     const backHome = () => {
