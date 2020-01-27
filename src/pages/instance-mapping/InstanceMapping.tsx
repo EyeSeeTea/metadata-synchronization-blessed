@@ -151,11 +151,11 @@ const InstanceMappingPage: React.FC = () => {
             };
 
             snackbar.info(
-                i18n.t("Selected {{mappedId}} to map with {{originalId}}", {
-                    mappedId,
-                    originalId,
+                i18n.t("Selected {{id}} to map with {{name}}", {
+                    id: _.first(cleanOrgUnitPaths([mappedId])),
+                    name: elementToMap?.displayName,
                 }),
-                { autoHideDuration: 1000 }
+                { autoHideDuration: 2500 }
             );
         } catch (e) {
             snackbar.error(i18n.t("Could not apply mapping, please try again."));
@@ -165,7 +165,7 @@ const InstanceMappingPage: React.FC = () => {
     const clearMapping = async (items: MetadataType[]) => {
         if (!instance) {
             snackbar.error(i18n.t("Please select an instance from the dropdown"), {
-                autoHideDuration: 1000,
+                autoHideDuration: 2500,
             });
             return;
         }
@@ -184,7 +184,7 @@ const InstanceMappingPage: React.FC = () => {
             i18n.t("Cleared mapping for {{total}} elements", {
                 total: items.length,
             }),
-            { autoHideDuration: 1000 }
+            { autoHideDuration: 2500 }
         );
     };
 
@@ -192,15 +192,16 @@ const InstanceMappingPage: React.FC = () => {
         (row: MetadataType) => {
             if (!instance) {
                 snackbar.error(i18n.t("Please select an instance from the dropdown"), {
-                    autoHideDuration: 1000,
+                    autoHideDuration: 2500,
                 });
             } else if (loading) {
                 snackbar.warning(i18n.t("Please wait to finish loading"), {
-                    autoHideDuration: 1000,
+                    autoHideDuration: 2500,
                 });
             } else {
                 setElementToMap(row);
             }
+            setSelectedIds([]);
         },
         [instance, loading, snackbar]
     );
@@ -272,9 +273,13 @@ const InstanceMappingPage: React.FC = () => {
 
     const actions: TableAction<MetadataType>[] = [
         {
+            name: "select",
+            text: "Select",
+            isActive: () => false,
+        },
+        {
             name: "map",
             text: i18n.t("Set mapping"),
-            primary: true,
             multiple: false,
             onClick: (rows: MetadataType[]) => {
                 if (rows.length === 1) openMappingDialog(rows[0]);
@@ -284,7 +289,6 @@ const InstanceMappingPage: React.FC = () => {
         {
             name: "clear",
             text: i18n.t("Clear mapping"),
-            primary: true,
             multiple: true,
             onClick: clearMapping,
             icon: <Icon>clear</Icon>,
@@ -315,8 +319,9 @@ const InstanceMappingPage: React.FC = () => {
                 additionalFilters={filters}
                 additionalActions={actions}
                 notifyNewModel={model => {
-                    setLoading(true);
+                    setLoading(!!instance);
                     setRows([]);
+                    setSelectedIds([]);
                     setModel(() => model);
                 }}
                 notifyRowsChange={setRows}
