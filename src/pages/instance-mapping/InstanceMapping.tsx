@@ -3,7 +3,7 @@ import { Icon, IconButton, makeStyles, Typography } from "@material-ui/core";
 import { D2ModelSchemas, useD2 } from "d2-api";
 import { TableColumn, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
-import React, { ReactNode, useEffect, useMemo, useState, useCallback } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Dropdown from "../../components/dropdown/Dropdown";
 import MappingDialog from "../../components/mapping-dialog/MappingDialog";
@@ -49,7 +49,7 @@ const queryApi = (instance: Instance, type: keyof D2ModelSchemas, ids: string[])
                 },
                 filter: {
                     id: {
-                        in: ids,
+                        in: cleanOrgUnitPaths(ids),
                     },
                 },
             },
@@ -74,10 +74,10 @@ const InstanceMappingPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
     const [instanceOptions, setInstanceOptions] = useState<Instance[]>([]);
-    const [instanceFilter, updateInstanceFilter] = useState<string>(instanceFilterDefault);
-    const [elementToMap, updateElementToMap] = useState<MetadataType | null>(null);
-    const [rows, updateRows] = useState<MetadataType[]>([]);
-    const [dictionary, updateDictionary] = useState<{
+    const [instanceFilter, setInstanceFilter] = useState<string>(instanceFilterDefault);
+    const [elementToMap, setElementToMap] = useState<MetadataType | null>(null);
+    const [rows, setRows] = useState<MetadataType[]>([]);
+    const [dictionary, setDictionary] = useState<{
         [id: string]: NamedMetadataMapping;
     }>({});
 
@@ -96,7 +96,7 @@ const InstanceMappingPage: React.FC = () => {
             _.get(instance?.metadataMapping, [type, id, "mappedId"], id)
         );
 
-        const updateMapping = (response: any) => {
+        const updateDictionary = (response: any) => {
             const newMappings = _.mapKeys(
                 rows.map(({ id: originalId }) => {
                     const defaultName = response
@@ -108,14 +108,15 @@ const InstanceMappingPage: React.FC = () => {
                         [type, originalId, "mappedId"],
                         originalId
                     );
-                    const name = _.find(collection, ["id", mappedId])?.name ?? defaultName;
+                    const cleanId = _.first(cleanOrgUnitPaths([mappedId]));
+                    const name = _.find(collection, ["id", cleanId])?.name ?? defaultName;
 
                     return { originalId, mappedId, name };
                 }),
                 ({ originalId }) => `${instance.id}-${type}-${originalId}`
             );
 
-            updateDictionary(prevDictionary => ({
+            setDictionary(prevDictionary => ({
                 ...prevDictionary,
                 ...newMappings,
             }));
@@ -124,37 +125,40 @@ const InstanceMappingPage: React.FC = () => {
         };
 
         queryApi(instance, type, ids)
-            .then(updateMapping)
-            .catch(() => updateMapping(null));
+            .then(updateDictionary)
+            .catch(() => updateDictionary(null));
     }, [instance, rows, type, setLoading]);
 
-    const updateMapping = async (ids: string) => {
+    const updateMapping = async (mappedId: string) => {
         const originalId = elementToMap?.id;
-        const mappedId = _.first(cleanOrgUnitPaths([ids]));
 
         if (!instance || !originalId || !mappedId) return;
 
-        await instance
-            .setMetadataMapping(
-                _.set(instance.metadataMapping, [type, originalId], {
-                    mappedId,
-                })
-            )
-            .save(d2 as D2);
+        try {
+            await instance
+                .setMetadataMapping(
+                    _.set(instance.metadataMapping, [type, originalId], {
+                        mappedId,
+                    })
+                )
+                .save(d2 as D2);
 
-        const response = await queryApi(instance, type, [mappedId]);
-        dictionary[`${instance.id}-${type}-${originalId}`] = {
-            mappedId,
-            name: _.find(response[type], ["id", mappedId])?.name,
-        };
-
-        snackbar.info(
-            i18n.t("Selected {{id}} to map with {{originalId}}", {
+            const response = await queryApi(instance, type, [mappedId]);
+            dictionary[`${instance.id}-${type}-${originalId}`] = {
                 mappedId,
-                originalId,
-            }),
-            { autoHideDuration: 1000 }
-        );
+                name: _.find(response[type], ["id", mappedId])?.name,
+            };
+
+            snackbar.info(
+                i18n.t("Selected {{id}} to map with {{originalId}}", {
+                    mappedId,
+                    originalId,
+                }),
+                { autoHideDuration: 1000 }
+            );
+        } catch (e) {
+            snackbar.error(i18n.t("Could not apply mapping, please try again."));
+        }
     };
 
     const openMappingDialog = useCallback(
@@ -168,7 +172,7 @@ const InstanceMappingPage: React.FC = () => {
                     autoHideDuration: 1000,
                 });
             } else {
-                updateElementToMap(row);
+                setElementToMap(row);
             }
         },
         [instance, loading, snackbar]
@@ -189,11 +193,12 @@ const InstanceMappingPage: React.FC = () => {
                         [type, row.id, "mappedId"],
                         row.id
                     );
+                    const cleanId = _.first(cleanOrgUnitPaths([mappedId]));
 
                     return (
                         <span>
                             <Typography variant={"inherit"} gutterBottom>
-                                {mappedId}
+                                {cleanId}
                             </Typography>
                             <IconButton
                                 className={classes.iconButton}
@@ -227,7 +232,7 @@ const InstanceMappingPage: React.FC = () => {
                 <Dropdown
                     key={"instance-filter"}
                     items={instanceOptions}
-                    onValueChange={updateInstanceFilter}
+                    onValueChange={setInstanceFilter}
                     value={instanceFilter}
                     label={i18n.t("Instance selection")}
                 />
@@ -249,7 +254,7 @@ const InstanceMappingPage: React.FC = () => {
                     model={model}
                     element={elementToMap}
                     onUpdateMapping={updateMapping}
-                    onClose={() => updateElementToMap(null)}
+                    onClose={() => setElementToMap(null)}
                     instance={instance}
                 />
             )}
@@ -260,10 +265,10 @@ const InstanceMappingPage: React.FC = () => {
                 additionalFilters={filters}
                 notifyNewModel={model => {
                     setLoading(true);
-                    updateRows([]);
+                    setRows([]);
                     setModel(() => model);
                 }}
-                notifyRowsChange={updateRows}
+                notifyRowsChange={setRows}
                 loading={loading}
             />
         </React.Fragment>

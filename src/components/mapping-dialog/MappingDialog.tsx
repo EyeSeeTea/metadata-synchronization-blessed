@@ -46,9 +46,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
         let mounted = true;
 
         instance?.check().then(({ status }) => {
-            if (mounted) {
-                setConnectionSuccess(status);
-            }
+            if (mounted) setConnectionSuccess(status);
         });
 
         return () => {
