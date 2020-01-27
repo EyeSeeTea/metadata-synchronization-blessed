@@ -12,6 +12,7 @@ import {
     TableSelection,
     TableSorting,
     TableState,
+    TableAction,
 } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
@@ -34,6 +35,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     childrenKeys?: string[];
     additionalColumns?: TableColumn<MetadataType>[];
     additionalFilters?: ReactNode;
+    additionalActions?: TableAction<MetadataType>[];
     notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
     notifyNewModel?(model: typeof D2Model): void;
     notifyRowsChange?(rows: MetadataType[]): void;
@@ -93,6 +95,13 @@ const initialState = {
     },
 };
 
+const uniqCombine = (items: any[]) =>
+    _(items)
+        .reverse()
+        .uniqBy("name")
+        .reverse()
+        .value();
+
 const MetadataTable: React.FC<MetadataTableProps> = ({
     api: providedApi,
     models,
@@ -104,6 +113,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     childrenKeys = [],
     additionalColumns = [],
     additionalFilters = null,
+    additionalActions = [],
     loading: providedLoading,
     ...rest
 }) => {
@@ -268,7 +278,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         </div>
     );
 
-    const actions = [
+    const tableActions = [
         {
             name: "details",
             text: i18n.t("Details"),
@@ -436,11 +446,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         })
         .value();
 
-    const columns = _([...model.getColumns(), ...additionalColumns])
-        .reverse()
-        .uniqBy("name")
-        .reverse()
-        .value();
+    const columns = uniqCombine([...model.getColumns(), ...additionalColumns]);
+    const actions = uniqCombine([...tableActions, ...additionalActions]);
 
     if (error) return <p>{"Error: " + JSON.stringify(error)}</p>;
 
