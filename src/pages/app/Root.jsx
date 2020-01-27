@@ -9,6 +9,8 @@ import DeletedObjectsPage from "../sync-deleted-objects/DeletedObjectsPage";
 import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
+import withAuthorization from "../../components/authorization/Authorization";
+import { shouldShowDeletedObjects } from "../../utils/permissions";
 
 class Root extends React.Component {
     static propTypes = {
@@ -36,7 +38,12 @@ class Root extends React.Component {
 
                     <Route
                         path="/sync/deleted"
-                        render={props => <DeletedObjectsPage {...this.props} {...props} />}
+                        render={props => {
+                            const { d2 } = this.props;
+                            return withAuthorization([() => shouldShowDeletedObjects(d2)])(
+                                <DeletedObjectsPage {...this.props} {...props} />
+                            );
+                        }}
                     />
 
                     <Route
