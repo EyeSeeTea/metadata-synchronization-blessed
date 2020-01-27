@@ -254,7 +254,7 @@ const InstanceMappingPage: React.FC = () => {
                 additionalFilters={filters}
                 notifyNewModel={model => setModel(() => model)}
                 onRowsChange={updateRows}
-                loading={loading ? true : undefined}
+                loading={loading}
             />
         </React.Fragment>
     );

@@ -102,6 +102,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     childrenKeys = [],
     additionalColumns = [],
     additionalFilters = null,
+    loading: providedLoading,
     ...rest
 }) => {
     const d2 = useD2() as D2;
@@ -451,7 +452,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             pagination={pager}
             onChange={handleTableChange}
             ids={ids}
-            loading={loading}
+            loading={providedLoading || loading}
             selection={[...selection, ...childrenSelection]}
             childrenKeys={childrenKeys}
             filterComponents={filterComponents}
