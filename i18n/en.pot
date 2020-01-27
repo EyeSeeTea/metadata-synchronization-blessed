@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-27T07:28:00.213Z\n"
-"PO-Revision-Date: 2020-01-27T07:28:00.213Z\n"
+"POT-Creation-Date: 2020-01-27T09:22:04.595Z\n"
+"PO-Revision-Date: 2020-01-27T09:22:04.595Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -562,10 +562,16 @@ msgstr ""
 msgid "Could not connect with instance"
 msgstr ""
 
-msgid "Selected {{id}} to map with {{originalId}}"
+msgid "Selected {{mappedId}} to map with {{originalId}}"
+msgstr ""
+
+msgid "Could not apply mapping, please try again."
 msgstr ""
 
 msgid "Please select an instance from the dropdown"
+msgstr ""
+
+msgid "Cleared mapping for {{total}} elements"
 msgstr ""
 
 msgid "Please wait to finish loading"
@@ -578,6 +584,9 @@ msgid "Please select an instance"
 msgstr ""
 
 msgid "Instance selection"
+msgstr ""
+
+msgid "Clear mapping"
 msgstr ""
 
 msgid "Manual sync"

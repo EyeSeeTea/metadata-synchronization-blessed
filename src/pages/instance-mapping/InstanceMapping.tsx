@@ -135,13 +135,13 @@ const InstanceMappingPage: React.FC = () => {
         if (!instance || !originalId || !mappedId) return;
 
         try {
-            await instance
-                .setMetadataMapping(
-                    _.set(instance.metadataMapping, [type, originalId], {
-                        mappedId,
-                    })
-                )
-                .save(d2 as D2);
+            const newInstance = instance.setMetadataMapping(
+                _.set(instance.metadataMapping, [type, originalId], {
+                    mappedId,
+                })
+            );
+            newInstance.save(d2 as D2);
+            setInstance(newInstance);
 
             const response = await queryApi(instance, type, [mappedId]);
             dictionary[`${instance.id}-${type}-${originalId}`] = {
@@ -150,7 +150,7 @@ const InstanceMappingPage: React.FC = () => {
             };
 
             snackbar.info(
-                i18n.t("Selected {{id}} to map with {{originalId}}", {
+                i18n.t("Selected {{mappedId}} to map with {{originalId}}", {
                     mappedId,
                     originalId,
                 }),
@@ -159,6 +159,32 @@ const InstanceMappingPage: React.FC = () => {
         } catch (e) {
             snackbar.error(i18n.t("Could not apply mapping, please try again."));
         }
+    };
+
+    const clearMapping = async (items: MetadataType[]) => {
+        if (!instance) {
+            snackbar.error(i18n.t("Please select an instance from the dropdown"), {
+                autoHideDuration: 1000,
+            });
+            return;
+        }
+
+        const newMapping = _.cloneDeep(instance.metadataMapping);
+        for (const item of items) {
+            _.unset(newMapping, [type, item.id]);
+            _.unset(dictionary, `${instance.id}-${type}-${item.id}`);
+        }
+
+        const newInstance = instance.setMetadataMapping(newMapping);
+        await newInstance.save(d2 as D2);
+        setInstance(newInstance);
+
+        snackbar.info(
+            i18n.t("Cleared mapping for {{total}} elements", {
+                total: items.length,
+            }),
+            { autoHideDuration: 1000 }
+        );
     };
 
     const openMappingDialog = useCallback(
@@ -241,6 +267,16 @@ const InstanceMappingPage: React.FC = () => {
         [classes, instanceOptions, instanceFilter]
     );
 
+    const actions = [
+        {
+            name: "clear",
+            text: i18n.t("Clear mapping"),
+            primary: true,
+            multiple: true,
+            onClick: clearMapping,
+        },
+    ];
+
     const backHome = () => {
         history.push("/");
     };
@@ -263,6 +299,7 @@ const InstanceMappingPage: React.FC = () => {
                 models={models}
                 additionalColumns={columns}
                 additionalFilters={filters}
+                additionalActions={actions}
                 notifyNewModel={model => {
                     setLoading(true);
                     setRows([]);
