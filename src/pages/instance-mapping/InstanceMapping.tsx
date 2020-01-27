@@ -128,6 +128,35 @@ const InstanceMappingPage: React.FC = () => {
             .catch(() => updateMapping(null));
     }, [instance, rows, type, setLoading]);
 
+    const updateMapping = async (ids: string) => {
+        const originalId = elementToMap?.id;
+        const mappedId = _.first(cleanOrgUnitPaths([ids]));
+
+        if (!instance || !originalId || !mappedId) return;
+
+        await instance
+            .setMetadataMapping(
+                _.set(instance.metadataMapping, [type, originalId], {
+                    mappedId,
+                })
+            )
+            .save(d2 as D2);
+
+        const response = await queryApi(instance, type, [mappedId]);
+        dictionary[`${instance.id}-${type}-${originalId}`] = {
+            mappedId,
+            name: _.find(response[type], ["id", mappedId])?.name,
+        };
+
+        snackbar.info(
+            i18n.t("Selected {{id}} to map with {{originalId}}", {
+                mappedId,
+                originalId,
+            }),
+            { autoHideDuration: 1000 }
+        );
+    };
+
     const openMappingDialog = useCallback(
         (row: MetadataType) => {
             if (!instance) {
@@ -206,35 +235,6 @@ const InstanceMappingPage: React.FC = () => {
         ),
         [classes, instanceOptions, instanceFilter]
     );
-
-    const updateMapping = async (ids: string) => {
-        const originalId = elementToMap?.id;
-        const mappedId = _.first(cleanOrgUnitPaths([ids]));
-
-        if (!instance || !originalId || !mappedId) return;
-
-        await instance
-            .setMetadataMapping(
-                _.set(instance.metadataMapping, [type, originalId], {
-                    mappedId,
-                })
-            )
-            .save(d2 as D2);
-
-        const response = await queryApi(instance, type, [mappedId]);
-        dictionary[`${instance.id}-${type}-${originalId}`] = {
-            mappedId,
-            name: _.find(response[type], ["id", mappedId])?.name,
-        };
-
-        snackbar.info(
-            i18n.t("Selected {{id}} to map with {{originalId}}", {
-                mappedId,
-                originalId,
-            }),
-            { autoHideDuration: 1000 }
-        );
-    };
 
     const backHome = () => {
         history.push("/");
