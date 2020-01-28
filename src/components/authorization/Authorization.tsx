@@ -1,23 +1,36 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import i18n from "../../locales";
+import { Typography } from "@material-ui/core";
 
-const withAuthorization = (authorizeFunctions: any) => (WrappedComponent: any) => {
-    return class WithAuthorization extends React.Component {
-        isAuthorized = async () => {
-            const authorizedResults = await Promise.all(authorizeFunctions);
+interface SyncWizardStepProps {
+    authorize: () => Promise<boolean>;
+}
 
-            debugger;
-            return authorizedResults.includes(true);
-        };
+const Authorization: React.FC<SyncWizardStepProps> = props => {
+    const [isAuthorize, setIsAuthorize] = useState<boolean>(true);
 
-        render() {
-            debugger;
-            if (this.isAuthorized()) {
-                return <WrappedComponent {...this.props} />;
-            } else {
-                return <h1>Unauthorized!</h1>;
-            }
+    useEffect(() => {
+        // Create an scoped async function in the hook
+        async function executeIsAuthorize() {
+            const authorized = await props.authorize();
+
+            setIsAuthorize(authorized);
         }
-    };
+        // Execute the created function directly
+        executeIsAuthorize();
+    }, [props]);
+
+    if (isAuthorize) {
+        return <React.Fragment>{props.children}</React.Fragment>;
+    } else {
+        return (
+            <Typography variant="h6" component="h1">
+                {i18n.t(
+                    "Unauthorized - You do not have permission to view this page using credentials that you supplied."
+                )}
+            </Typography>
+        );
+    }
 };
 
-export default withAuthorization;
+export default Authorization;

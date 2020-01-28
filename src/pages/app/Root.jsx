@@ -9,7 +9,7 @@ import DeletedObjectsPage from "../sync-deleted-objects/DeletedObjectsPage";
 import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
-import withAuthorization from "../../components/authorization/Authorization";
+import Authorization from "../../components/authorization/Authorization";
 import { shouldShowDeletedObjects } from "../../utils/permissions";
 
 class Root extends React.Component {
@@ -38,12 +38,11 @@ class Root extends React.Component {
 
                     <Route
                         path="/sync/deleted"
-                        render={props => {
-                            const { d2 } = this.props;
-                            return withAuthorization([() => shouldShowDeletedObjects(d2)])(
+                        render={props => 
+                            <Authorization authorize={() => (shouldShowDeletedObjects(this.props.d2))}>
                                 <DeletedObjectsPage {...this.props} {...props} />
-                            );
-                        }}
+                            </Authorization>
+                        }
                     />
 
                     <Route
