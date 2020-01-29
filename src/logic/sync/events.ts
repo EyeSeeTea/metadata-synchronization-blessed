@@ -63,25 +63,37 @@ export class EventsSync extends GenericSync {
         instance: Instance,
         payload: EventsPackage
     ): Promise<SyncronizationPayload> {
-        const { organisationUnits = {}, dataElements = {} } = instance.metadataMapping;
+        const {
+            organisationUnits = {},
+            dataElements = {},
+            programs = {},
+            programStages = {},
+        } = instance.metadataMapping;
         const { events: oldEvents } = payload;
 
-        const events = oldEvents.map(({ orgUnit, orgUnitName, dataValues, ...rest }) => {
-            const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
+        const events = oldEvents.map(
+            ({ orgUnit, orgUnitName, program, programStage, dataValues, ...rest }) => {
+                const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
+                const mappedProgram = programs[program]?.mappedId ?? program;
+                const mappedProgramStage = programStages[programStage]?.mappedId ?? programStage;
 
-            return {
-                orgUnit: cleanOrgUnitPath(mappedOrgUnit),
-                dataValues: dataValues.map(({ dataElement, ...rest }) => {
-                    const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
+                return {
+                    orgUnit: cleanOrgUnitPath(mappedOrgUnit),
+                    program: mappedProgram,
+                    programStage: mappedProgramStage,
+                    dataValues: dataValues.map(({ dataElement, ...rest }) => {
+                        const mappedDataElement =
+                            dataElements[dataElement]?.mappedId ?? dataElement;
 
-                    return {
-                        dataElement: mappedDataElement,
-                        ...rest,
-                    };
-                }),
-                ...rest,
-            };
-        });
+                        return {
+                            dataElement: mappedDataElement,
+                            ...rest,
+                        };
+                    }),
+                    ...rest,
+                };
+            }
+        );
 
         return { events };
     }

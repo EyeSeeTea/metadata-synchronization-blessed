@@ -312,7 +312,7 @@ export class ProgramModel extends D2Model {
         return objects.map(object => ({
             ...object,
             dataElements: _.flatten(
-                object.programStages.map(({ displayName, programStageDataElements }) =>
+                object.programStages?.map(({ displayName, programStageDataElements }) =>
                     programStageDataElements.map(({ dataElement }) => ({
                         ...dataElement,
                         displayName:
@@ -320,10 +320,15 @@ export class ProgramModel extends D2Model {
                                 ? `[${displayName}] ${dataElement.displayName}`
                                 : dataElement.displayName,
                     }))
-                )
+                ) ?? []
             ),
         }));
     };
+}
+
+export class ProgramStageModel extends D2Model {
+    protected static metadataType = "programStage";
+    protected static collectionName = "programStages" as const;
 }
 
 export class IndicatorModel extends D2Model {

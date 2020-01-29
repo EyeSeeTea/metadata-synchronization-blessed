@@ -14,13 +14,21 @@ import {
     D2Model,
     DataElementModel,
     OrganisationUnitModel,
+    ProgramModel,
+    ProgramStageModel,
 } from "../../models/d2Model";
 import Instance, { MetadataMapping } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath, cleanOrgUnitPaths } from "../../utils/synchronization";
 
-const models: typeof D2Model[] = [DataElementModel, CategoryOptionModel, OrganisationUnitModel];
+const models: typeof D2Model[] = [
+    DataElementModel,
+    CategoryOptionModel,
+    OrganisationUnitModel,
+    ProgramModel,
+    ProgramStageModel,
+];
 
 const useStyles = makeStyles({
     iconButton: {

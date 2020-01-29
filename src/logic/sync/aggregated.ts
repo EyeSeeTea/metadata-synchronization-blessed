@@ -100,18 +100,16 @@ export class AggregatedSync extends GenericSync {
         const { organisationUnits = {}, dataElements = {} } = instance.metadataMapping;
         const { dataValues: oldDataValues } = payload;
 
-        const dataValues = oldDataValues.map(
-            ({ orgUnit, dataElement, ...rest }) => {
-                const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
-                const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
+        const dataValues = oldDataValues.map(({ orgUnit, dataElement, ...rest }) => {
+            const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
+            const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
 
-                return {
-                    orgUnit: cleanOrgUnitPath(mappedOrgUnit),
-                    dataElement: mappedDataElement,
-                    ...rest,
-                };
-            }
-        );
+            return {
+                orgUnit: cleanOrgUnitPath(mappedOrgUnit),
+                dataElement: mappedDataElement,
+                ...rest,
+            };
+        });
 
         return { dataValues };
     }
