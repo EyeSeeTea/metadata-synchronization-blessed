@@ -18,7 +18,7 @@ import {
 import Instance, { MetadataMapping } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
-import { cleanOrgUnitPaths } from "../../utils/synchronization";
+import { cleanOrgUnitPath, cleanOrgUnitPaths } from "../../utils/synchronization";
 
 const models: typeof D2Model[] = [DataElementModel, CategoryOptionModel, OrganisationUnitModel];
 
@@ -109,7 +109,7 @@ const InstanceMappingPage: React.FC = () => {
                         [type, originalId, "mappedId"],
                         originalId
                     );
-                    const cleanId = _.first(cleanOrgUnitPaths([mappedId]));
+                    const cleanId = cleanOrgUnitPath(mappedId);
                     const name = _.find(collection, ["id", cleanId])?.name ?? defaultName;
 
                     return { originalId, mappedId, name };
@@ -151,7 +151,7 @@ const InstanceMappingPage: React.FC = () => {
 
             snackbar.info(
                 i18n.t("Selected {{id}} to map with {{displayName}}", {
-                    id: _.first(cleanOrgUnitPaths([mappedId])),
+                    id: cleanOrgUnitPath(mappedId),
                     displayName,
                 }),
                 { autoHideDuration: 2500 }
@@ -220,7 +220,7 @@ const InstanceMappingPage: React.FC = () => {
                         [type, row.id, "mappedId"],
                         row.id
                     );
-                    const cleanId = _.first(cleanOrgUnitPaths([mappedId]));
+                    const cleanId = cleanOrgUnitPath(mappedId);
 
                     return (
                         <span>

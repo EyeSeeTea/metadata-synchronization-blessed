@@ -337,8 +337,12 @@ export function cleanObjectDefault(object: ProgramEvent, defaults: string[]) {
     return _.pickBy(object, value => !defaults.includes(String(value))) as ProgramEvent;
 }
 
+export function cleanOrgUnitPath(orgUnitPath: string): string {
+    return _.last(orgUnitPath.split("/")) ?? orgUnitPath;
+}
+
 export function cleanOrgUnitPaths(orgUnitPaths: string[]): string[] {
-    return _.compact(orgUnitPaths.map(path => _.last(path.split("/"))));
+    return orgUnitPaths.map(cleanOrgUnitPath);
 }
 
 export async function getEventsData(
