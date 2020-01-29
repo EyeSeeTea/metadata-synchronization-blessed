@@ -10,13 +10,12 @@ const Authorization: React.FC<SyncWizardStepProps> = props => {
     const [isAuthorize, setIsAuthorize] = useState<boolean>(true);
 
     useEffect(() => {
-        // Create an scoped async function in the hook
         async function executeIsAuthorize() {
             const authorized = await props.authorize();
 
             setIsAuthorize(authorized);
         }
-        // Execute the created function directly
+
         executeIsAuthorize();
     }, [props]);
 
