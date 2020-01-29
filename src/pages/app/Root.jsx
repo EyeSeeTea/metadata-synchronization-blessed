@@ -40,7 +40,9 @@ class Root extends React.Component {
                         path="/sync/deleted"
                         render={props => (
                             <Authorization
-                                authorize={() => permissions.shouldShowDeletedObjects(this.props.d2)}
+                                authorize={() =>
+                                    permissions.shouldShowDeletedObjects(this.props.d2)
+                                }
                             >
                                 <DeletedObjectsPage {...this.props} {...props} />
                             </Authorization>

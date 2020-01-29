@@ -80,16 +80,16 @@ export const isAppExecutor = async (d2: D2) => {
     return globalAdmin || !!userRoles.find((role: any) => role.name === name);
 };
 
-export const verifyUserHasAccessToSyncRule = async (d2: D2, syncRuleUId:string) => {
+export const verifyUserHasAccessToSyncRule = async (d2: D2, syncRuleUId: string) => {
     const appConfigurator = await isAppConfigurator(d2);
     const globalAdmin = await isGlobalAdmin(d2);
     const userInfo = await getUserInfo(d2);
 
     if (globalAdmin) return true;
 
-    const syncRule = await SyncRule.get(d2,syncRuleUId);
+    const syncRule = await SyncRule.get(d2, syncRuleUId);
 
-    const syncRuleVisibleToUser =  syncRule.isVisibleToUser(userInfo, "WRITE")
+    const syncRuleVisibleToUser = syncRule.isVisibleToUser(userInfo, "WRITE");
 
     return appConfigurator && syncRuleVisibleToUser;
 };
