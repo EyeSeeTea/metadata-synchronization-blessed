@@ -23,6 +23,7 @@ import { EventsSync } from "./events";
 import { MetadataSync } from "./metadata";
 
 export type SyncronizationClass = typeof MetadataSync | typeof AggregatedSync | typeof EventsSync;
+export type SyncronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
 export abstract class GenericSync {
     protected readonly d2: D2;
@@ -38,9 +39,11 @@ export abstract class GenericSync {
         this.builder = builder;
     }
 
-    public abstract async buildPayload(): Promise<
-        MetadataPackage | AggregatedPackage | EventsPackage
-    >;
+    public abstract async buildPayload(): Promise<SyncronizationPayload>;
+    protected abstract async mapMetadata(
+        instance: Instance,
+        payload: SyncronizationPayload
+    ): Promise<SyncronizationPayload>;
     protected abstract async postPayload(
         instance: Instance
     ): Promise<MetadataImportResponse | DataImportResponse>;

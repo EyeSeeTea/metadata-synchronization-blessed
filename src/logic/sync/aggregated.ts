@@ -2,9 +2,11 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance from "../../models/instance";
 import { DataImportResponse } from "../../types/d2";
+import { AggregatedPackage } from "../../types/synchronization";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,
+    cleanOrgUnitPath,
     getAggregatedData,
     postAggregatedData,
 } from "../../utils/synchronization";
@@ -67,8 +69,9 @@ export class AggregatedSync extends GenericSync {
         const { dataParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
+        const mappedPayloadPackage = await this.mapMetadata(instance, payloadPackage);
 
-        return postAggregatedData(instance, payloadPackage, dataParams);
+        return postAggregatedData(instance, mappedPayloadPackage, dataParams);
     }
 
     protected cleanResponse(response: DataImportResponse, instance: Instance) {
@@ -88,5 +91,28 @@ export class AggregatedSync extends GenericSync {
             }))
             .values()
             .value();
+    }
+
+    protected async mapMetadata(
+        instance: Instance,
+        payload: AggregatedPackage
+    ): Promise<AggregatedPackage> {
+        const { organisationUnits = {}, dataElements = {} } = instance.metadataMapping;
+        const { dataValues: oldDataValues } = payload;
+
+        const dataValues = oldDataValues.map(
+            ({ orgUnit, dataElement, ...rest }) => {
+                const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
+                const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
+
+                return {
+                    orgUnit: cleanOrgUnitPath(mappedOrgUnit),
+                    dataElement: mappedDataElement,
+                    ...rest,
+                };
+            }
+        );
+
+        return { dataValues };
     }
 }
