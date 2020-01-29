@@ -10,7 +10,7 @@ import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
 import Authorization from "../../components/authorization/Authorization";
-import { shouldShowDeletedObjects } from "../../utils/permissions";
+import * as permissions from "../../utils/permissions";
 
 class Root extends React.Component {
     static propTypes = {
@@ -40,7 +40,7 @@ class Root extends React.Component {
                         path="/sync/deleted"
                         render={props => (
                             <Authorization
-                                authorize={() => shouldShowDeletedObjects(this.props.d2)}
+                                authorize={() => permissions.shouldShowDeletedObjects(this.props.d2)}
                             >
                                 <DeletedObjectsPage {...this.props} {...props} />
                             </Authorization>
@@ -51,7 +51,18 @@ class Root extends React.Component {
                         path={
                             "/sync-rules/:type(metadata|aggregated|events)/:action(new|edit)/:id?"
                         }
-                        render={props => <SyncRulesCreationPage {...this.props} {...props} />}
+                        render={props => (
+                            <Authorization
+                                authorize={() =>
+                                    permissions.verifyUserHasAccessToSyncRule(
+                                        this.props.d2,
+                                        props.match.params.id
+                                    )
+                                }
+                            >
+                                <SyncRulesCreationPage {...this.props} {...props} />
+                            </Authorization>
+                        )}
                     />
 
                     <Route

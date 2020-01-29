@@ -2,6 +2,7 @@ import axios from "axios";
 import memoize from "nano-memoize";
 
 import { D2 } from "../types/d2";
+import SyncRule from "../models/syncRule";
 
 const AppRoles: {
     [key: string]: {
@@ -77,6 +78,20 @@ export const isAppExecutor = async (d2: D2) => {
     const { name } = AppRoles.SYNC_RULE_EXECUTION_ACCESS;
 
     return globalAdmin || !!userRoles.find((role: any) => role.name === name);
+};
+
+export const verifyUserHasAccessToSyncRule = async (d2: D2, syncRuleUId:string) => {
+    const appConfigurator = await isAppConfigurator(d2);
+    const globalAdmin = await isGlobalAdmin(d2);
+    const userInfo = await getUserInfo(d2);
+
+    if (globalAdmin) return true;
+
+    const syncRule = await SyncRule.get(d2,syncRuleUId);
+
+    const syncRuleVisibleToUser =  syncRule.isVisibleToUser(userInfo, "WRITE")
+
+    return appConfigurator && syncRuleVisibleToUser;
 };
 
 export const getUserInfo = memoize(
