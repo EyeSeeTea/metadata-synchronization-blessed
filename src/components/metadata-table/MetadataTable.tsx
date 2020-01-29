@@ -334,7 +334,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             query.rootJunction = "OR";
             query.filter["parent.id"] = { in: cleanOrgUnitPaths(filters.parentOrgUnits) };
             query.filter["id"] = { in: cleanOrgUnitPaths(filters.parentOrgUnits) };
-            query.order = "level:asc,displayName"
+            query.order = "level:asc,displayName:asc";
         }
 
         return query;
