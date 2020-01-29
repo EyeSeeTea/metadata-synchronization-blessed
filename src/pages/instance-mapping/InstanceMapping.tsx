@@ -131,9 +131,8 @@ const InstanceMappingPage: React.FC = () => {
     }, [instance, rows, type, setLoading]);
 
     const updateMapping = async (mappedId: string) => {
-        const originalId = elementToMap?.id;
-
-        if (!instance || !originalId || !mappedId) return;
+        if (!instance || !elementToMap || !mappedId) return;
+        const { id: originalId, displayName } = elementToMap;
 
         try {
             const newInstance = instance.setMetadataMapping(
@@ -151,9 +150,9 @@ const InstanceMappingPage: React.FC = () => {
             };
 
             snackbar.info(
-                i18n.t("Selected {{id}} to map with {{name}}", {
+                i18n.t("Selected {{id}} to map with {{displayName}}", {
                     id: _.first(cleanOrgUnitPaths([mappedId])),
-                    name: elementToMap?.displayName,
+                    displayName,
                 }),
                 { autoHideDuration: 2500 }
             );

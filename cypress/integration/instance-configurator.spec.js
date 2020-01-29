@@ -11,7 +11,7 @@ context("Destination Settings", function() {
     });
 
     it("opens a new instance page", function() {
-        cy.get(dataTest("list-action-bar")).click();
+        cy.get(dataTest("objects-table-action-button")).click();
         cy.get(dataTest("page-header-title")).contains("New Instance");
     });
 });
