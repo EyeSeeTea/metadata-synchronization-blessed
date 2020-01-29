@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import i18n from "../../locales";
 import { Typography } from "@material-ui/core";
 
-interface SyncWizardStepProps {
+interface AuthorizationProps {
     authorize: () => Promise<boolean>;
 }
 
-const Authorization: React.FC<SyncWizardStepProps> = props => {
+const Authorization: React.FC<AuthorizationProps> = props => {
     const [isAuthorize, setIsAuthorize] = useState<boolean>(true);
 
     useEffect(() => {
