@@ -11,11 +11,15 @@ import {
     SharingSetting,
     SynchronizationRule,
     SyncRuleType,
+    MetadataIncludeExcludeRules,
+    ExcludeIncludeRules,
 } from "../types/synchronization";
 import { Validation } from "../types/validations";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
 import isValidCronExpression from "../utils/validCronExpression";
 import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
+import { extractChildrenFromRules, extractParentsFromRule } from "../utils/metadataIncludeExclude";
+import { D2Model } from "./d2Model";
 
 const dataStoreKey = "rules";
 
@@ -110,6 +114,14 @@ export default class SyncRule {
         return this.syncRule.builder.dataParams?.allEvents ?? false;
     }
 
+    public get useDefaultIncludeExclude(): boolean {
+        return this.syncRule.builder.useDefaultIncludeExclude ?? true;
+    }
+
+    public get metadataExcludeIncludeRules(): MetadataIncludeExcludeRules {
+        return this.syncRule.builder.metadataIncludeExcludeRules ?? {};
+    }
+
     public get targetInstances(): string[] {
         return this.syncRule.builder.targetInstances ?? [];
     }
@@ -169,6 +181,8 @@ export default class SyncRule {
             description: "",
             type: type,
             builder: {
+                metadataIncludeExcludeRules: {},
+                useDefaultIncludeExclude: true,
                 targetInstances: [],
                 metadataIds: [],
                 excludedIds: [],
@@ -299,11 +313,147 @@ export default class SyncRule {
     }
 
     public updateMetadataIds(metadataIds: string[]): SyncRule {
+        if (_.isEqual(this.metadataIds, metadataIds)) {
+            return SyncRule.build({
+                ...this.syncRule,
+                builder: {
+                    ...this.syncRule.builder,
+                    metadataIds,
+                },
+            });
+        } else {
+            // When metadataIds really has changed we should reset
+            // useDefaultIncludeExclude and metadataIncludeExcludeRules
+            return SyncRule.build({
+                ...this.syncRule,
+                builder: {
+                    ...this.syncRule.builder,
+                    metadataIds,
+                    useDefaultIncludeExclude: true,
+                    metadataIncludeExcludeRules: {},
+                },
+            });
+        }
+    }
+
+    public markToUseDefaultIncludeExclude(): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
             builder: {
                 ...this.syncRule.builder,
-                metadataIds,
+                useDefaultIncludeExclude: true,
+                metadataIncludeExcludeRules: {},
+            },
+        });
+    }
+
+    public markToNotUseDefaultIncludeExclude(models: Array<typeof D2Model>): SyncRule {
+        const metadataIncludeExcludeRules: MetadataIncludeExcludeRules = models.reduce(
+            (accumulator: any, model: typeof D2Model) => ({
+                ...accumulator,
+                [model.getMetadataType()]: {
+                    includeRules: model.getIncludeRules().map(array => array.join(".")),
+                    excludeRules: model.getExcludeRules().map(array => array.join(".")),
+                },
+            }),
+            {}
+        );
+
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                useDefaultIncludeExclude: false,
+                metadataIncludeExcludeRules,
+            },
+        });
+    }
+
+    public moveRuleFromExcludeToInclude(type: string, ruleIndexes: number[]): SyncRule {
+        return this.moveIncludeExcludeRules(type, ruleIndexes, true);
+    }
+
+    public moveRuleFromIncludeToExclude(type: string, ruleIndexes: number[]): SyncRule {
+        return this.moveIncludeExcludeRules(type, ruleIndexes, false);
+    }
+
+    private moveIncludeExcludeRules(
+        type: string,
+        ruleIndexes: number[],
+        include: boolean
+    ): SyncRule {
+        if (!this.metadataExcludeIncludeRules) {
+            throw Error("metadataExcludeIncludeRules is not defined");
+        }
+
+        const oldIncludeRules = this.metadataExcludeIncludeRules[type].includeRules;
+        const oldExcludeRules = this.metadataExcludeIncludeRules[type].excludeRules;
+
+        if (include) {
+            const rulesToInclude = oldExcludeRules.filter((_, index) =>
+                ruleIndexes.includes(index)
+            );
+
+            const rulesToIncludeWithParents = _.uniq(
+                rulesToInclude.reduce(
+                    (array: string[], rule: string) => [
+                        ...array,
+                        rule,
+                        ...extractParentsFromRule(rule),
+                    ],
+                    []
+                )
+            );
+
+            const excludeIncludeRules = {
+                includeRules: _.uniq([...oldIncludeRules, ...rulesToIncludeWithParents]),
+                excludeRules: oldExcludeRules.filter(
+                    rule => !rulesToIncludeWithParents.includes(rule)
+                ),
+            };
+
+            return this.updateIncludeExcludeRules(type, excludeIncludeRules);
+        } else {
+            const rulesToExclude = oldIncludeRules.filter((_, index) =>
+                ruleIndexes.includes(index)
+            );
+
+            const rulesToExcludeWithChildren = _.uniq(
+                rulesToExclude.reduce(
+                    (array: string[], rule: string) => [
+                        ...array,
+                        rule,
+                        ...extractChildrenFromRules(rule, oldIncludeRules),
+                    ],
+                    []
+                )
+            );
+
+            const excludeIncludeRules = {
+                includeRules: oldIncludeRules.filter(
+                    rule => !rulesToExcludeWithChildren.includes(rule)
+                ),
+                excludeRules: [...oldExcludeRules, ...rulesToExcludeWithChildren],
+            };
+
+            return this.updateIncludeExcludeRules(type, excludeIncludeRules);
+        }
+    }
+
+    private updateIncludeExcludeRules(
+        type: string,
+        excludeIncludeRules: ExcludeIncludeRules
+    ): SyncRule {
+        const metadataIncludeExcludeRules = {
+            ...this.metadataExcludeIncludeRules,
+            [type]: excludeIncludeRules,
+        };
+
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                metadataIncludeExcludeRules,
             },
         });
     }
@@ -527,84 +677,85 @@ export default class SyncRule {
             name: _.compact([
                 !this.name.trim()
                     ? {
-                          key: "cannot_be_blank",
-                          namespace: { field: "name" },
-                      }
+                        key: "cannot_be_blank",
+                        namespace: { field: "name" },
+                    }
                     : null,
             ]),
             metadataIds: _.compact([
                 this.metadataIds.length === 0
                     ? {
-                          key: "cannot_be_empty",
-                          namespace: { element: "metadata element" },
-                      }
+                        key: "cannot_be_empty",
+                        namespace: { element: "metadata element" },
+                    }
                     : null,
             ]),
             dataSyncOrganisationUnits: _.compact([
                 this.type !== "metadata" && this.dataSyncOrgUnitPaths.length === 0
                     ? {
-                          key: "cannot_be_empty",
-                          namespace: { element: "organisation unit" },
-                      }
+                        key: "cannot_be_empty",
+                        namespace: { element: "organisation unit" },
+                    }
                     : null,
             ]),
             dataSyncStartDate: _.compact([
                 this.dataSyncPeriod === "FIXED" && !this.dataSyncStartDate
                     ? {
-                          key: "cannot_be_empty",
-                          namespace: { element: "start date" },
-                      }
+                        key: "cannot_be_empty",
+                        namespace: { element: "start date" },
+                    }
                     : null,
             ]),
             dataSyncEndDate: _.compact([
                 this.dataSyncPeriod === "FIXED" && !this.dataSyncEndDate
                     ? {
-                          key: "cannot_be_empty",
-                          namespace: { element: "end date" },
-                      }
+                        key: "cannot_be_empty",
+                        namespace: { element: "end date" },
+                    }
                     : null,
                 this.dataSyncPeriod === "FIXED" &&
-                this.dataSyncEndDate &&
-                this.dataSyncStartDate &&
-                moment(this.dataSyncEndDate).isBefore(this.dataSyncStartDate)
+                    this.dataSyncEndDate &&
+                    this.dataSyncStartDate &&
+                    moment(this.dataSyncEndDate).isBefore(this.dataSyncStartDate)
                     ? {
-                          key: "invalid_period",
-                          namespace: {},
-                      }
+                        key: "invalid_period",
+                        namespace: {},
+                    }
                     : null,
             ]),
             dataSyncEvents: _.compact([
                 this.type === "events" &&
-                !this.dataSyncAllEvents &&
-                this.dataSyncEvents.length === 0
+                    !this.dataSyncAllEvents &&
+                    this.dataSyncEvents.length === 0
                     ? {
-                          key: "cannot_be_empty",
-                          namespace: { element: "event" },
-                      }
+                        key: "cannot_be_empty",
+                        namespace: { element: "event" },
+                    }
                     : null,
             ]),
+            metadataIncludeExclude: [],
             targetInstances: _.compact([
                 this.targetInstances.length === 0
                     ? {
-                          key: "cannot_be_empty",
-                          namespace: { element: "instance" },
-                      }
+                        key: "cannot_be_empty",
+                        namespace: { element: "instance" },
+                    }
                     : null,
             ]),
             frequency: _.compact([
                 this.frequency && !isValidCronExpression(this.frequency)
                     ? {
-                          key: "cron_expression_must_be_valid",
-                          namespace: { expression: "frequency" },
-                      }
+                        key: "cron_expression_must_be_valid",
+                        namespace: { expression: "frequency" },
+                    }
                     : null,
             ]),
             enabled: _.compact([
                 this.enabled && !isValidCronExpression(this.frequency)
                     ? {
-                          key: "cannot_enable_without_valid",
-                          namespace: { expression: "frequency" },
-                      }
+                        key: "cannot_enable_without_valid",
+                        namespace: { expression: "frequency" },
+                    }
                     : null,
             ]),
         });
