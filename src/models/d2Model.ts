@@ -301,6 +301,11 @@ export class CategoryOptionModel extends D2Model {
     protected static collectionName = "categoryOptions" as const;
 }
 
+export class CategoryOptionComboModel extends D2Model {
+    protected static metadataType = "categoryOptionCombo";
+    protected static collectionName = "categoryOptionCombos" as const;
+}
+
 export class ProgramModel extends D2Model {
     protected static metadataType = "program";
     protected static collectionName = "programs" as const;

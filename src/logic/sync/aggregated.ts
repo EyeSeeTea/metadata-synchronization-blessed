@@ -97,19 +97,35 @@ export class AggregatedSync extends GenericSync {
         instance: Instance,
         payload: AggregatedPackage
     ): Promise<AggregatedPackage> {
-        const { organisationUnits = {}, dataElements = {} } = instance.metadataMapping;
+        const {
+            organisationUnits = {},
+            dataElements = {},
+            categoryOptionCombos: optionCombos = {},
+        } = instance.metadataMapping;
         const { dataValues: oldDataValues } = payload;
 
-        const dataValues = oldDataValues.map(({ orgUnit, dataElement, ...rest }) => {
-            const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
-            const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
+        const dataValues = oldDataValues.map(
+            ({
+                orgUnit,
+                dataElement,
+                categoryOptionCombo: categoryOption,
+                attributeOptionCombo: attributeOption,
+                ...rest
+            }) => {
+                const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
+                const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
+                const mappedCategory = optionCombos[categoryOption]?.mappedId ?? categoryOption;
+                const mappedAttribute = optionCombos[attributeOption]?.mappedId ?? attributeOption;
 
-            return {
-                orgUnit: cleanOrgUnitPath(mappedOrgUnit),
-                dataElement: mappedDataElement,
-                ...rest,
-            };
-        });
+                return {
+                    orgUnit: cleanOrgUnitPath(mappedOrgUnit),
+                    dataElement: mappedDataElement,
+                    categoryOptionCombo: mappedCategory,
+                    attributeOptionCombo: mappedAttribute,
+                    ...rest,
+                };
+            }
+        );
 
         return { dataValues };
     }
