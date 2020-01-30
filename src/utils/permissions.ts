@@ -89,7 +89,7 @@ export const verifyUserHasAccessToSyncRule = async (d2: D2, syncRuleUId: string)
 
     const syncRule = await SyncRule.get(d2, syncRuleUId);
 
-    const syncRuleVisibleToUser = syncRule.isVisibleToUser(userInfo, "WRITE");
+    const syncRuleVisibleToUser = syncRuleUId ? syncRule.isVisibleToUser(userInfo, "WRITE") : true;
 
     return appConfigurator && syncRuleVisibleToUser;
 };
