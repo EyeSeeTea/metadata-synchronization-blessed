@@ -81,11 +81,11 @@ export const isAppExecutor = async (d2: D2) => {
 };
 
 export const verifyUserHasAccessToSyncRule = async (d2: D2, syncRuleUId: string) => {
-    const appConfigurator = await isAppConfigurator(d2);
     const globalAdmin = await isGlobalAdmin(d2);
-    const userInfo = await getUserInfo(d2);
-
     if (globalAdmin) return true;
+
+    const appConfigurator = await isAppConfigurator(d2);
+    const userInfo = await getUserInfo(d2);
 
     const syncRule = await SyncRule.get(d2, syncRuleUId);
 
