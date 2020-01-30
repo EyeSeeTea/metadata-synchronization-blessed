@@ -6,21 +6,21 @@ interface AuthorizationProps {
     authorize: () => Promise<boolean>;
 }
 
-const Authorization: React.FC<AuthorizationProps> = props => {
+const Authorization: React.FC<AuthorizationProps> = ({ authorize, children }) => {
     const [isAuthorize, setIsAuthorize] = useState<boolean>(true);
 
     useEffect(() => {
         async function executeIsAuthorize() {
-            const authorized = await props.authorize();
+            const authorized = await authorize();
 
             setIsAuthorize(authorized);
         }
 
         executeIsAuthorize();
-    }, [props]);
+    }, [authorize]);
 
     if (isAuthorize) {
-        return <React.Fragment>{props.children}</React.Fragment>;
+        return <React.Fragment>{children}</React.Fragment>;
     } else {
         return (
             <Typography variant="h6" component="h1">
