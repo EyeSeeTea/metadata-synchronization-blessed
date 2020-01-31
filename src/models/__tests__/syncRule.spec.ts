@@ -1,5 +1,17 @@
 import SyncRule from "../syncRule";
-import { DataElementModel, IndicatorModel } from "../d2Model";
+import { DataElementModel, IndicatorModel, OrganisationUnitModel } from "../d2Model";
+
+const indicatorIncludeExcludeRules = {
+    includeRules: [
+        "attributes",
+        "legendSets",
+        "indicatorType",
+        "indicatorGroups",
+        "indicatorGroups.attributes",
+        "indicatorGroups.indicatorGroupSet",
+    ],
+    excludeRules: ["dataSets", "programs"],
+}
 
 describe("SyncRule", () => {
     describe("create", () => {
@@ -43,19 +55,20 @@ describe("SyncRule", () => {
             });
         });
 
-        describe("data", () => {
+        describe("events", () => {
             it("should return false when is created using create method", async () => {
-                const isValid = await SyncRule.create("data").isValid();
+                const isValid = await SyncRule.create("events").isValid();
                 expect(isValid).toEqual(false);
             });
             it("should return false when is created using createOnDemand method", async () => {
-                const isValid = await SyncRule.createOnDemand("data").isValid();
+                const isValid = await SyncRule.createOnDemand("events").isValid();
                 expect(isValid).toEqual(false);
             });
             it("should return true when contains name, instances and organisationUnits", async () => {
-                const syncRule = SyncRule.create("data")
+                const syncRule = SyncRule.create("events")
                     .updateName("SyncRule test")
                     .updateMetadataIds(["dataElement"])
+                    .updateDataSyncAllEvents(true)
                     .updateDataSyncOrgUnitPaths(["/JLA7wl59oN3/WeeW3tgF69f"])
                     .updateDataSyncStartDate(new Date())
                     .updateDataSyncEndDate(new Date())
@@ -64,7 +77,7 @@ describe("SyncRule", () => {
                 expect(isValid).toEqual(true);
             });
             it("should return false when does not contains organisationUnits", async () => {
-                const syncRule = SyncRule.create("data")
+                const syncRule = SyncRule.create("events")
                     .updateName("SyncRule test")
                     .updateTargetInstances(["fP3MMoWv6qp"]);
                 const isValid = await syncRule.isValid();
@@ -151,9 +164,11 @@ describe("SyncRule", () => {
 
     describe("moveRuleFromExcludeToInclude", () => {
         it("should add the rule to include and to remove it from exclude if select only one to move", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules(true);
 
-            const editedSyncRule = syncRule.moveRuleFromExcludeToInclude("organisationUnit", [0]);
+            const editedSyncRule = syncRule.moveRuleFromExcludeToInclude(
+                OrganisationUnitModel.getMetadataType(),
+                ["attributes"]);
 
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
@@ -165,10 +180,7 @@ describe("SyncRule", () => {
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                     ],
                 },
-                indicators: {
-                    includeRules: ["attributes", "legendSets"],
-                    excludeRules: ["dataSets", "programs"],
-                },
+                indicator: indicatorIncludeExcludeRules
             };
 
             expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
@@ -176,9 +188,11 @@ describe("SyncRule", () => {
             );
         });
         it("should add the rule and parent to include and to remove it from exclude list if select only one but with parent to move", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules(true);
 
-            const editedSyncRule = syncRule.moveRuleFromExcludeToInclude("organisationUnit", [2]);
+            const editedSyncRule = syncRule.moveRuleFromExcludeToInclude(
+                OrganisationUnitModel.getMetadataType(),
+                ["organisationUnitGroups.attributes"]);
 
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
@@ -196,10 +210,7 @@ describe("SyncRule", () => {
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                     ],
                 },
-                indicators: {
-                    includeRules: ["attributes", "legendSets"],
-                    excludeRules: ["dataSets", "programs"],
-                },
+                indicator: indicatorIncludeExcludeRules
             };
 
             expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
@@ -207,9 +218,11 @@ describe("SyncRule", () => {
             );
         });
         it("should add the rule and parents to include and to remove it from exclude list if select only one but with parents to move", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules(true);
 
-            const editedSyncRule = syncRule.moveRuleFromExcludeToInclude("organisationUnit", [4]);
+            const editedSyncRule = syncRule.moveRuleFromExcludeToInclude(
+                OrganisationUnitModel.getMetadataType(),
+                ["organisationUnitGroups.organisationUnitGroupSets.attributes"]);
 
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
@@ -224,10 +237,7 @@ describe("SyncRule", () => {
                     ],
                     excludeRules: ["attributes", "organisationUnitGroups.attributes"],
                 },
-                indicators: {
-                    includeRules: ["attributes", "legendSets"],
-                    excludeRules: ["dataSets", "programs"],
-                },
+                indicator: indicatorIncludeExcludeRules
             };
 
             expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
@@ -235,12 +245,11 @@ describe("SyncRule", () => {
             );
         });
         it("should add the rules to include and to remove it from exclude if select more of one to move", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules(true);
 
-            const editedSyncRule = syncRule.moveRuleFromExcludeToInclude("organisationUnit", [
-                0,
-                1,
-            ]);
+            const editedSyncRule = syncRule.moveRuleFromExcludeToInclude(
+                OrganisationUnitModel.getMetadataType(),
+                ["attributes", "organisationUnitGroups"]);
 
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
@@ -258,10 +267,7 @@ describe("SyncRule", () => {
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                     ],
                 },
-                indicators: {
-                    includeRules: ["attributes", "legendSets"],
-                    excludeRules: ["dataSets", "programs"],
-                },
+                indicator: indicatorIncludeExcludeRules
             };
 
             expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
@@ -269,13 +275,13 @@ describe("SyncRule", () => {
             );
         });
         it("should add the rules from include and to remove it to exclude without duplicates if select parent and children to move", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules(true);
 
-            const editedSyncRule = syncRule.moveRuleFromExcludeToInclude("organisationUnit", [
-                1,
-                3,
-                4,
-            ]);
+            const editedSyncRule = syncRule.moveRuleFromExcludeToInclude(
+                OrganisationUnitModel.getMetadataType(),
+                ["organisationUnitGroups",
+                    "organisationUnitGroups.organisationUnitGroupSets",
+                    "organisationUnitGroups.organisationUnitGroupSets.attributes"]);
 
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
@@ -290,10 +296,7 @@ describe("SyncRule", () => {
                     ],
                     excludeRules: ["attributes", "organisationUnitGroups.attributes"],
                 },
-                indicators: {
-                    includeRules: ["attributes", "legendSets"],
-                    excludeRules: ["dataSets", "programs"],
-                },
+                indicator: indicatorIncludeExcludeRules
             };
 
             expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
@@ -301,12 +304,14 @@ describe("SyncRule", () => {
             );
         });
         it("should add the rule from include and to remove it to exclude without duplicates if select children with parent to move and parent exists in include", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules(true);
 
-            const editedSyncRule1 = syncRule.moveRuleFromExcludeToInclude("organisationUnit", [1]);
+            const editedSyncRule1 = syncRule.moveRuleFromExcludeToInclude(
+                OrganisationUnitModel.getMetadataType(),
+                ["organisationUnitGroups"]);
             const editedSyncRule2 = editedSyncRule1.moveRuleFromExcludeToInclude(
-                "organisationUnit",
-                [1]
+                OrganisationUnitModel.getMetadataType(),
+                ["organisationUnitGroups.attributes"]
             );
 
             const expectedMetadataIncludeExcludeRules = {
@@ -325,10 +330,7 @@ describe("SyncRule", () => {
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                     ],
                 },
-                indicators: {
-                    includeRules: ["attributes", "legendSets"],
-                    excludeRules: ["dataSets", "programs"],
-                },
+                indicator: indicatorIncludeExcludeRules
             };
 
             expect(editedSyncRule2.metadataExcludeIncludeRules).toEqual(
@@ -339,9 +341,11 @@ describe("SyncRule", () => {
 
     describe("moveRuleFromIncludeToExclude", () => {
         it("should remove the rule from include and to add it to exclude if select only one to move", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules(true);
 
-            const editedSyncRule = syncRule.moveRuleFromIncludeToExclude("organisationUnit", [0]);
+            const editedSyncRule = syncRule.moveRuleFromIncludeToExclude(
+                OrganisationUnitModel.getMetadataType(),
+                ["legendSets"]);
 
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
@@ -355,10 +359,7 @@ describe("SyncRule", () => {
                         "legendSets",
                     ],
                 },
-                indicators: {
-                    includeRules: ["attributes", "legendSets"],
-                    excludeRules: ["dataSets", "programs"],
-                },
+                indicator: indicatorIncludeExcludeRules
             };
 
             expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
@@ -366,9 +367,11 @@ describe("SyncRule", () => {
             );
         });
         it("should remove the rule and child from include and to add it to exclude if select only one but with a child to move", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules(false);
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
 
-            const editedSyncRule = syncRule.moveRuleFromIncludeToExclude("organisationUnit", [3]);
+            const editedSyncRule = syncRule.moveRuleFromIncludeToExclude(
+                OrganisationUnitModel.getMetadataType(),
+                ["organisationUnitGroups.organisationUnitGroupSets"]);
 
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
@@ -386,10 +389,7 @@ describe("SyncRule", () => {
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                     ],
                 },
-                indicators: {
-                    includeRules: ["attributes", "legendSets"],
-                    excludeRules: ["dataSets", "programs"],
-                },
+                indicator: indicatorIncludeExcludeRules
             };
 
             expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
@@ -397,9 +397,11 @@ describe("SyncRule", () => {
             );
         });
         it("should remove the rule and children from include and to add it to exclude if select only one but with a children to move", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules(false);
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
 
-            const editedSyncRule = syncRule.moveRuleFromIncludeToExclude("organisationUnit", [1]);
+            const editedSyncRule = syncRule.moveRuleFromIncludeToExclude(
+                OrganisationUnitModel.getMetadataType(),
+                ["organisationUnitGroups"]);
 
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
@@ -415,10 +417,7 @@ describe("SyncRule", () => {
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                     ],
                 },
-                indicators: {
-                    includeRules: ["attributes", "legendSets"],
-                    excludeRules: ["dataSets", "programs"],
-                },
+                indicator: indicatorIncludeExcludeRules
             };
 
             expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
@@ -426,12 +425,11 @@ describe("SyncRule", () => {
             );
         });
         it("should remove the rules from include and to add the rules to exclude if select more of one to move", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules(true);
 
-            const editedSyncRule = syncRule.moveRuleFromIncludeToExclude("organisationUnit", [
-                0,
-                1,
-            ]);
+            const editedSyncRule = syncRule.moveRuleFromIncludeToExclude(
+                OrganisationUnitModel.getMetadataType(),
+                ["legendSets", "dataSets"]);
 
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
@@ -446,10 +444,7 @@ describe("SyncRule", () => {
                         "dataSets",
                     ],
                 },
-                indicators: {
-                    includeRules: ["attributes", "legendSets"],
-                    excludeRules: ["dataSets", "programs"],
-                },
+                indicator: indicatorIncludeExcludeRules
             };
 
             expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
@@ -457,14 +452,14 @@ describe("SyncRule", () => {
             );
         });
         it("should remove the rule and children from include and to add it to exclude without duplicates if select parents and children to move", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules(false);
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
 
-            const editedSyncRule = syncRule.moveRuleFromIncludeToExclude("organisationUnit", [
-                1,
-                2,
-                3,
-                4,
-            ]);
+            const editedSyncRule = syncRule.moveRuleFromIncludeToExclude(
+                OrganisationUnitModel.getMetadataType(),
+                ["organisationUnitGroups",
+                    "organisationUnitGroups.attributes",
+                    "organisationUnitGroups.organisationUnitGroupSets",
+                    "organisationUnitGroups.organisationUnitGroupSets.attributes"]);
 
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
@@ -480,85 +475,62 @@ describe("SyncRule", () => {
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                     ],
                 },
-                indicators: {
-                    includeRules: ["attributes", "legendSets"],
-                    excludeRules: ["dataSets", "programs"],
-                },
+                indicator: indicatorIncludeExcludeRules
             };
 
             expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
+        it("should throw error if try move to include non exists rule in exclude", () => {
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
+
+            const errorFunction = (): void => {
+                syncRule.moveRuleFromExcludeToInclude(
+                    OrganisationUnitModel.getMetadataType(), ["non existed rule"])
+            };
+
+            expect(errorFunction).toThrow(Error);
+        });
+        it("should throw error if try move to exclude non exists rule in include", () => {
+            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
+
+            const errorFunction = (): void => {
+                syncRule.moveRuleFromIncludeToExclude(
+                    OrganisationUnitModel.getMetadataType(), ["non existed rule"])
+            };
+
+            expect(errorFunction).toThrow(Error);
+        });
     });
 });
 
-function givenASyncRuleWithMetadataIncludeExcludeRules(dependantRulesInExclude = true) {
+function givenASyncRuleWithMetadataIncludeExcludeRules(dependantRulesInExclude = false): SyncRule {
+    const initialSyncRule = SyncRule.create("metadata")
+        .updateMetadataIds(["id1", "id2"])
+        .markToNotUseDefaultIncludeExclude([
+            OrganisationUnitModel,
+            IndicatorModel,
+        ]);
+
     if (dependantRulesInExclude) {
-        return createASyncRuleWithMetadataIncludeExcludeRules({
-            organisationUnit: {
-                includeRules: ["legendSets", "dataSets", "programs", "users"],
-                excludeRules: [
-                    "attributes",
-                    "organisationUnitGroups",
-                    "organisationUnitGroups.attributes",
-                    "organisationUnitGroups.organisationUnitGroupSets",
-                    "organisationUnitGroups.organisationUnitGroupSets.attributes",
-                ],
-            },
-            indicators: {
-                includeRules: ["attributes", "legendSets"],
-                excludeRules: ["dataSets", "programs"],
-            },
-        });
+        const includeRules = initialSyncRule.
+            metadataExcludeIncludeRules[OrganisationUnitModel.getMetadataType()].includeRules;
+        const excludeRules = initialSyncRule.
+            metadataExcludeIncludeRules[OrganisationUnitModel.getMetadataType()].excludeRules;
+
+        const editedSyncRule = initialSyncRule.moveRuleFromIncludeToExclude(
+            OrganisationUnitModel.getMetadataType(), includeRules);
+        return editedSyncRule.moveRuleFromExcludeToInclude(
+            OrganisationUnitModel.getMetadataType(), excludeRules);
     } else {
-        return createASyncRuleWithMetadataIncludeExcludeRules({
-            organisationUnit: {
-                includeRules: [
-                    "attributes",
-                    "organisationUnitGroups",
-                    "organisationUnitGroups.attributes",
-                    "organisationUnitGroups.organisationUnitGroupSets",
-                    "organisationUnitGroups.organisationUnitGroupSets.attributes",
-                ],
-                excludeRules: ["legendSets", "dataSets", "programs", "users"],
-            },
-            indicators: {
-                includeRules: ["attributes", "legendSets"],
-                excludeRules: ["dataSets", "programs"],
-            },
-        });
+        return initialSyncRule;
     }
 }
 
-function createASyncRuleWithMetadataIncludeExcludeRules(metadataIncludeExcludeRules) {
-    return new SyncRule({
-        id: "",
-        name: "",
-        description: "",
-        builder: {
-            metadataIncludeExcludeRules: metadataIncludeExcludeRules,
-            useDefaultIncludeExclude: false,
-            targetInstances: [],
-            metadataIds: ["id1", "id2"],
-        },
-        enabled: false,
-    });
+function givenASyncRuleWithoutMetadataIncludeExcludeRules(): SyncRule {
+    return SyncRule.create("metadata")
+        .updateMetadataIds(["id1", "id2"]);
 }
 
-function givenASyncRuleWithoutMetadataIncludeExcludeRules() {
-    return new SyncRule({
-        id: "",
-        name: "",
-        description: "",
-        builder: {
-            metadataIncludeExcludeRules: {},
-            useDefaultIncludeExclude: true,
-            targetInstances: [],
-            metadataIds: ["id1", "id2"],
-        },
-        enabled: false,
-    });
-}
-
-export {};
+export { };

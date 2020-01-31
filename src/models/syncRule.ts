@@ -13,6 +13,7 @@ import {
     SyncRuleType,
     MetadataIncludeExcludeRules,
     ExcludeIncludeRules,
+    SynchronizationBuilder,
 } from "../types/synchronization";
 import { Validation } from "../types/validations";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
@@ -181,7 +182,6 @@ export default class SyncRule {
             description: "",
             type: type,
             builder: {
-                metadataIncludeExcludeRules: {},
                 useDefaultIncludeExclude: true,
                 targetInstances: [],
                 metadataIds: [],
@@ -274,14 +274,21 @@ export default class SyncRule {
         return { objects, pager: { page, pageCount, total } };
     }
 
-    public toBuilder() {
-        return _.pick(this, [
+    public toBuilder(): SynchronizationBuilder {
+        const res = _.pick(this, [
             "metadataIds",
             "excludedIds",
             "targetInstances",
             "syncParams",
             "dataParams",
+            "useDefaultIncludeExclude",
+            "metadataIncludeExcludeRules"
         ]);
+
+        // I have realize this cast because pick fail parsing 
+        // metadataIncludeExcludeRules and useDefaultIncludeExclude
+        // if this cast is not realized
+        return res as SynchronizationBuilder;
     }
 
     public updateId(id: string): SyncRule {
@@ -369,17 +376,17 @@ export default class SyncRule {
         });
     }
 
-    public moveRuleFromExcludeToInclude(type: string, ruleIndexes: number[]): SyncRule {
-        return this.moveIncludeExcludeRules(type, ruleIndexes, true);
+    public moveRuleFromExcludeToInclude(type: string, rules: string[]): SyncRule {
+        return this.moveIncludeExcludeRules(type, rules, true);
     }
 
-    public moveRuleFromIncludeToExclude(type: string, ruleIndexes: number[]): SyncRule {
-        return this.moveIncludeExcludeRules(type, ruleIndexes, false);
+    public moveRuleFromIncludeToExclude(type: string, rules: string[]): SyncRule {
+        return this.moveIncludeExcludeRules(type, rules, false);
     }
 
     private moveIncludeExcludeRules(
         type: string,
-        ruleIndexes: number[],
+        rules: string[],
         include: boolean
     ): SyncRule {
         if (!this.metadataExcludeIncludeRules) {
@@ -390,9 +397,15 @@ export default class SyncRule {
         const oldExcludeRules = this.metadataExcludeIncludeRules[type].excludeRules;
 
         if (include) {
-            const rulesToInclude = oldExcludeRules.filter((_, index) =>
-                ruleIndexes.includes(index)
+            const rulesToInclude = rules;
+
+            const nonExistentExcludeRules = rulesToInclude.filter((rule: string) =>
+                !oldExcludeRules.includes(rule)
             );
+
+            if (nonExistentExcludeRules.length > 0) {
+                throw Error("Rules error: It's not possible move rules that do not exist in exclude to include");
+            }
 
             const rulesToIncludeWithParents = _.uniq(
                 rulesToInclude.reduce(
@@ -414,9 +427,15 @@ export default class SyncRule {
 
             return this.updateIncludeExcludeRules(type, excludeIncludeRules);
         } else {
-            const rulesToExclude = oldIncludeRules.filter((_, index) =>
-                ruleIndexes.includes(index)
+            const rulesToExclude = rules;
+
+            const nonExistentIncludeRules = rulesToExclude.filter((rule: string) =>
+                !oldIncludeRules.includes(rule)
             );
+
+            if (nonExistentIncludeRules.length > 0) {
+                throw Error("Rules error: It's not possible move rules that do not exist in inlude to exclude");
+            }
 
             const rulesToExcludeWithChildren = _.uniq(
                 rulesToExclude.reduce(
