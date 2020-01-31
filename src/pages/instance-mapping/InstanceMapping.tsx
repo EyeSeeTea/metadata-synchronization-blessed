@@ -10,7 +10,8 @@ import MappingDialog from "../../components/mapping-dialog/MappingDialog";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
-    CategoryOptionComboModel,
+    CategoryOptionModel,
+    CategoryComboModel,
     D2Model,
     DataElementModel,
     OrganisationUnitModel,
@@ -24,7 +25,8 @@ import { cleanOrgUnitPath, cleanOrgUnitPaths } from "../../utils/synchronization
 
 const models: typeof D2Model[] = [
     DataElementModel,
-    CategoryOptionComboModel,
+    CategoryOptionModel,
+    CategoryComboModel,
     OrganisationUnitModel,
     ProgramModel,
     ProgramStageModel,

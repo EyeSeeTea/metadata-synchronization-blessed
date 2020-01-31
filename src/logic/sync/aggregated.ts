@@ -1,8 +1,8 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import Instance from "../../models/instance";
+import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { DataImportResponse } from "../../types/d2";
-import { AggregatedPackage } from "../../types/synchronization";
+import { AggregatedPackage, DataValue } from "../../types/synchronization";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,
@@ -97,12 +97,9 @@ export class AggregatedSync extends GenericSync {
         instance: Instance,
         payload: AggregatedPackage
     ): Promise<AggregatedPackage> {
-        const {
-            organisationUnits = {},
-            dataElements = {},
-            categoryOptionCombos: optionCombos = {},
-        } = instance.metadataMapping;
+        const { organisationUnits = {}, dataElements = {} } = instance.metadataMapping;
         const { dataValues: oldDataValues } = payload;
+        const { optionCombos } = await this.matchCategoryOptionCombo(instance, oldDataValues);
 
         const dataValues = oldDataValues.map(
             ({
@@ -128,5 +125,78 @@ export class AggregatedSync extends GenericSync {
         );
 
         return { dataValues };
+    }
+
+    /**
+     * TODO before merging PR: 
+     * Clean-up this code to be more readable
+     */
+    private async matchCategoryOptionCombo(
+        instance: Instance,
+        dataValues: DataValue[]
+    ): Promise<MetadataMappingDictionary> {
+        const { categoryOptions = {}, categoryCombos = {} } = instance.metadataMapping;
+
+        const candidateOptionCombos = _(dataValues)
+            .map(({ categoryOptionCombo, attributeOptionCombo }) => [
+                categoryOptionCombo,
+                attributeOptionCombo,
+            ])
+            .flatten()
+            .uniq()
+            .value();
+
+        const { objects: originObjects } = await this.api.models.categoryOptionCombos
+            .get({
+                fields: { id: true, categoryOptions: { id: true }, categoryCombo: { id: true } },
+                filter: { id: { in: candidateOptionCombos } },
+                paging: false,
+            })
+            .getData();
+
+        const categoryOptionIds = _.flatten(
+            originObjects.map(({ categoryOptions: co }) =>
+                co.map(({ id }) => categoryOptions[id]?.mappedId ?? id)
+            )
+        );
+
+        const categoryComboIds = _.flatten(
+            originObjects.map(({ categoryCombo: cc }) => categoryCombos[cc.id]?.mappedId ?? cc.id)
+        );
+
+        const { objects: destinationObjects } = await instance
+            .getApi()
+            .models.categoryOptionCombos.get({
+                fields: { id: true, categoryOptions: { id: true }, categoryCombo: { id: true } },
+                filter: {
+                    "categoryOptions.id": { in: categoryOptionIds },
+                    "categoryCombo.id": { in: categoryComboIds },
+                },
+                rootJunction: "OR",
+                paging: false,
+            })
+            .getData();
+
+        const optionCombos = _(originObjects)
+            .map(({ id, categoryOptions: cos, categoryCombo: cc }) => {
+                const mappedObject = _.find(
+                    destinationObjects,
+                    o =>
+                        _.isEqual(
+                            _.sortBy(o.categoryOptions),
+                            _.sortBy(
+                                cos.map(co => ({ id: categoryOptions[co.id]?.mappedId ?? co.id }))
+                            )
+                        ) &&
+                        _.isEqual(o.categoryCombo, { id: categoryCombos[cc.id]?.mappedId ?? cc.id })
+                );
+
+                return mappedObject ? [id, { mappedId: mappedObject.id }] : undefined;
+            })
+            .compact()
+            .fromPairs()
+            .value();
+
+        return { optionCombos };
     }
 }
