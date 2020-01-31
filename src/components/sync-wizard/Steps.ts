@@ -99,6 +99,7 @@ export const metadataSteps: SyncWizardStep[] = [
         validationKeys: ["metadataIncludeExclude"],
         description: undefined,
         help: undefined,
+        showOnSyncDialog: true,
     },
     commonSteps.instanceSelection,
     commonSteps.scheduler,
