@@ -21,6 +21,7 @@ module.exports = {
             "error",
             { functions: false, classes: true, variables: true },
         ],
+        "@typescript-eslint/explicit-function-return-type": "off",
         "no-extra-semi": "off",
         "no-mixed-spaces-and-tabs": "off",
         "react-hooks/rules-of-hooks": "error",
