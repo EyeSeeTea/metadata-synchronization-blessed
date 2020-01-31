@@ -552,4 +552,4 @@ function givenASyncRuleWithoutMetadataIncludeExcludeRules(): SyncRule {
     return SyncRule.create("metadata").updateMetadataIds(["id1", "id2"]);
 }
 
-export { };
+export {};

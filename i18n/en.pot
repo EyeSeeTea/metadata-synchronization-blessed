@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-09T12:11:29.305Z\n"
-"PO-Revision-Date: 2020-01-09T12:11:29.305Z\n"
+"POT-Creation-Date: 2020-01-31T08:11:59.193Z\n"
+"PO-Revision-Date: 2020-01-31T08:11:59.193Z\n"
 
 msgid "<No value>"
 msgstr ""
@@ -240,6 +240,9 @@ msgstr ""
 msgid "Metadata"
 msgstr ""
 
+msgid "Include Exclude Selection"
+msgstr ""
+
 msgid "Data elements"
 msgstr ""
 
@@ -378,6 +381,9 @@ msgid "Due date"
 msgstr ""
 
 msgid "Sync all events"
+msgstr ""
+
+msgid "Use default configuration"
 msgstr ""
 
 msgid "Retrieving information from remote instances"

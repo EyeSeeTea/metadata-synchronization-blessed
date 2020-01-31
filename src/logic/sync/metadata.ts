@@ -68,8 +68,12 @@ export class MetadataSync extends GenericSync {
     }
 
     public buildPayload = memoize(async () => {
-        const { metadataIds, syncParams = {}, metadataIncludeExcludeRules = {},
-            useDefaultIncludeExclude, } = this.builder;
+        const {
+            metadataIds,
+            syncParams = {},
+            metadataIncludeExcludeRules = {},
+            useDefaultIncludeExclude,
+        } = this.builder;
         const { baseUrl } = this.d2.Api.getApi();
 
         const metadata = await getMetadata(baseUrl, metadataIds, "id");
