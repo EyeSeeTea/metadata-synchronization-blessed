@@ -282,10 +282,10 @@ export default class SyncRule {
             "syncParams",
             "dataParams",
             "useDefaultIncludeExclude",
-            "metadataIncludeExcludeRules"
+            "metadataIncludeExcludeRules",
         ]);
 
-        // I have realize this cast because pick fail parsing 
+        // I have realize this cast because pick fail parsing
         // metadataIncludeExcludeRules and useDefaultIncludeExclude
         // if this cast is not realized
         return res as SynchronizationBuilder;
@@ -384,11 +384,7 @@ export default class SyncRule {
         return this.moveIncludeExcludeRules(type, rules, false);
     }
 
-    private moveIncludeExcludeRules(
-        type: string,
-        rules: string[],
-        include: boolean
-    ): SyncRule {
+    private moveIncludeExcludeRules(type: string, rules: string[], include: boolean): SyncRule {
         if (!this.metadataExcludeIncludeRules) {
             throw Error("metadataExcludeIncludeRules is not defined");
         }
@@ -399,12 +395,14 @@ export default class SyncRule {
         if (include) {
             const rulesToInclude = rules;
 
-            const nonExistentExcludeRules = rulesToInclude.filter((rule: string) =>
-                !oldExcludeRules.includes(rule)
+            const nonExistentExcludeRules = rulesToInclude.filter(
+                (rule: string) => !oldExcludeRules.includes(rule)
             );
 
             if (nonExistentExcludeRules.length > 0) {
-                throw Error("Rules error: It's not possible move rules that do not exist in exclude to include");
+                throw Error(
+                    "Rules error: It's not possible move rules that do not exist in exclude to include"
+                );
             }
 
             const rulesToIncludeWithParents = _.uniq(
@@ -429,12 +427,14 @@ export default class SyncRule {
         } else {
             const rulesToExclude = rules;
 
-            const nonExistentIncludeRules = rulesToExclude.filter((rule: string) =>
-                !oldIncludeRules.includes(rule)
+            const nonExistentIncludeRules = rulesToExclude.filter(
+                (rule: string) => !oldIncludeRules.includes(rule)
             );
 
             if (nonExistentIncludeRules.length > 0) {
-                throw Error("Rules error: It's not possible move rules that do not exist in inlude to exclude");
+                throw Error(
+                    "Rules error: It's not possible move rules that do not exist in inlude to exclude"
+                );
             }
 
             const rulesToExcludeWithChildren = _.uniq(

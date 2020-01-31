@@ -68,18 +68,25 @@ export class MetadataSync extends GenericSync {
     }
 
     public buildPayload = memoize(async () => {
-        const { metadataIds, syncParams = {} } = this.builder;
+        const { metadataIds, syncParams = {}, metadataIncludeExcludeRules = {},
+            useDefaultIncludeExclude, } = this.builder;
         const { baseUrl } = this.d2.Api.getApi();
 
         const metadata = await getMetadata(baseUrl, metadataIds, "id");
         const exportPromises = _.keys(metadata)
             .map(type => {
                 const myClass = d2ModelFactory(this.d2, type);
+                const metadataType = myClass.getMetadataType();
+
                 return {
                     type,
                     ids: metadata[type].map(e => e.id),
-                    excludeRules: myClass.getExcludeRules(),
-                    includeRules: myClass.getIncludeRules(),
+                    excludeRules: !useDefaultIncludeExclude
+                        ? metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath)
+                        : myClass.getExcludeRules(),
+                    includeRules: !useDefaultIncludeExclude
+                        ? metadataIncludeExcludeRules[metadataType].includeRules.map(_.toPath)
+                        : myClass.getIncludeRules(),
                     includeSharingSettings: !!syncParams.includeSharingSettings,
                 };
             })
