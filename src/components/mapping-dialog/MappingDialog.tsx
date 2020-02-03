@@ -21,7 +21,6 @@ interface MappingDialogProps {
 const useStyles = makeStyles({
     orgUnitSelect: {
         margin: "0 auto",
-        width: "fit-content",
     },
 });
 
@@ -81,7 +80,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             models={[model]}
             api={instance?.getApi()}
             notifyNewSelection={onUpdateSelection}
-            selection={selected ? [{ id: selected }] : []}
+            selectedIds={selected ? [selected] : undefined}
             hideSelectAll={true}
         />
     );

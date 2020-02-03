@@ -301,6 +301,11 @@ export class CategoryOptionModel extends D2Model {
     protected static collectionName = "categoryOptions" as const;
 }
 
+export class CategoryComboModel extends D2Model {
+    protected static metadataType = "categoryCombo";
+    protected static collectionName = "categoryCombos" as const;
+}
+
 export class ProgramModel extends D2Model {
     protected static metadataType = "program";
     protected static collectionName = "programs" as const;
@@ -312,7 +317,7 @@ export class ProgramModel extends D2Model {
         return objects.map(object => ({
             ...object,
             dataElements: _.flatten(
-                object.programStages.map(({ displayName, programStageDataElements }) =>
+                object.programStages?.map(({ displayName, programStageDataElements }) =>
                     programStageDataElements.map(({ dataElement }) => ({
                         ...dataElement,
                         displayName:
@@ -320,10 +325,15 @@ export class ProgramModel extends D2Model {
                                 ? `[${displayName}] ${dataElement.displayName}`
                                 : dataElement.displayName,
                     }))
-                )
+                ) ?? []
             ),
         }));
     };
+}
+
+export class ProgramStageModel extends D2Model {
+    protected static metadataType = "programStage";
+    protected static collectionName = "programStages" as const;
 }
 
 export class IndicatorModel extends D2Model {
