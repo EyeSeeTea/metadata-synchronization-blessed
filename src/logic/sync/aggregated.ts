@@ -183,7 +183,10 @@ export class AggregatedSync extends GenericSync {
                 const candidates = _.filter(destinationObjects, o =>
                     _.isEqual(
                         _.sortBy(o.categoryOptions, ["id"]),
-                        _.sortBy(cos.map(co => ({ id: categoryOptions[co.id]?.mappedId ?? co.id })), ["id"])
+                        _.sortBy(
+                            cos.map(({ id }) => ({ id: categoryOptions[id]?.mappedId ?? id })),
+                            ["id"]
+                        )
                     )
                 );
 
