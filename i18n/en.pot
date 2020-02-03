@@ -16,6 +16,15 @@ msgstr ""
 msgid "<No value>"
 msgstr ""
 
+msgid "Edit mapping for {{displayName}} ({{id}})"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Could not connect with remote instance"
+msgstr ""
+
 msgid "Metadata type"
 msgstr ""
 
@@ -95,9 +104,6 @@ msgid "Who has access"
 msgstr ""
 
 msgid "Sharing settings"
-msgstr ""
-
-msgid "Close"
 msgstr ""
 
 msgid "Add users and user groups"
@@ -524,12 +530,6 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-msgid "Edit"
-msgstr ""
-
-msgid "Replicate"
-msgstr ""
-
 msgid "Deleting Instances"
 msgstr ""
 
@@ -541,6 +541,15 @@ msgid_plural "Successfully deleted {{count}} instances"
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Edit"
+msgstr ""
+
+msgid "Replicate"
+msgstr ""
+
+msgid "Metadata mapping"
+msgstr ""
+
 msgid "Delete Instances?"
 msgstr ""
 
@@ -550,6 +559,42 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Destination Instance Settings"
+msgstr ""
+
+msgid "Item not found"
+msgstr ""
+
+msgid "Could not connect with instance"
+msgstr ""
+
+msgid "Selected {{id}} to map with {{displayName}}"
+msgstr ""
+
+msgid "Could not apply mapping, please try again."
+msgstr ""
+
+msgid "Please select an instance from the dropdown"
+msgstr ""
+
+msgid "Cleared mapping for {{total}} elements"
+msgstr ""
+
+msgid "Please wait to finish loading"
+msgstr ""
+
+msgid "Set mapping"
+msgstr ""
+
+msgid "Loading..."
+msgstr ""
+
+msgid "Please select an instance"
+msgstr ""
+
+msgid "Instance selection"
+msgstr ""
+
+msgid "Clear mapping"
 msgstr ""
 
 msgid "Manual sync"
@@ -620,6 +665,9 @@ msgid "Destination instance settings"
 msgstr ""
 
 msgid "Create, check connectivity, modify and delete DHIS2 destination instances."
+msgstr ""
+
+msgid "Create, modify and delete metadata mapping with destination instances."
 msgstr ""
 
 msgid "Add"

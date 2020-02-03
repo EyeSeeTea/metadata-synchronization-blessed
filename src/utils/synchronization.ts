@@ -72,7 +72,7 @@ export function cleanReferences(
 export async function getMetadata(
     baseUrl: string,
     elements: string[],
-    fields: string = ":all",
+    fields = ":all",
     auth: AxiosBasicCredentials | undefined = undefined
 ): Promise<MetadataPackage> {
     const promises = [];
@@ -322,12 +322,27 @@ export const getDefaultIds = memoize(
     { maxArgs: 0 }
 );
 
+export const getRootOrgUnit = memoize(
+    async (api: D2Api) =>
+        api.models.organisationUnits
+            .get({
+                filter: { level: { eq: "1" } },
+                fields: { $owner: true },
+            })
+            .getData(),
+    { maxArgs: 0 }
+);
+
 export function cleanObjectDefault(object: ProgramEvent, defaults: string[]) {
     return _.pickBy(object, value => !defaults.includes(String(value))) as ProgramEvent;
 }
 
+export function cleanOrgUnitPath(orgUnitPath: string): string {
+    return _.last(orgUnitPath.split("/")) ?? orgUnitPath;
+}
+
 export function cleanOrgUnitPaths(orgUnitPaths: string[]): string[] {
-    return _.compact(orgUnitPaths.map(path => _.last(path.split("/"))));
+    return orgUnitPaths.map(cleanOrgUnitPath);
 }
 
 export async function getEventsData(

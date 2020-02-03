@@ -39,7 +39,7 @@ class InstanceCreationPage extends React.Component {
 
     handleConfirm = () => {
         this.setState({ dialogOpen: false });
-        this.props.history.push("/instance-configurator");
+        this.props.history.push("/instances");
     };
 
     handleDialogCancel = () => {

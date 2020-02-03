@@ -1,15 +1,15 @@
-import React from "react";
-import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
+import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
+import { ApiContext } from "d2-api";
+import { DatePicker, OldObjectsTable, withSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { DatePicker, OldObjectsTable, withSnackbar } from "d2-ui-components";
-import { Checkbox, FormControlLabel, withStyles } from "@material-ui/core";
-
-import Dropdown from "../dropdown/Dropdown";
+import PropTypes from "prop-types";
+import React from "react";
+import { getOrgUnitSubtree, listByIds } from "../../logic/utils";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import { d2BaseModelDetails } from "../../utils/d2";
-import { listByIds, getOrgUnitSubtree } from "../../logic/utils";
+import Dropdown from "../dropdown/Dropdown";
 
 const styles = {
     checkbox: {
@@ -18,6 +18,7 @@ const styles = {
 };
 
 class MetadataTable extends React.Component {
+    static contextType = ApiContext;
     static propTypes = {
         d2: PropTypes.object.isRequired,
         classes: PropTypes.object.isRequired,
@@ -68,11 +69,11 @@ class MetadataTable extends React.Component {
     };
 
     selectChildren = async selectedOUs => {
-        const { d2 } = this.props;
+        const { api } = this.context;
 
         const ids = new Set();
         for (const selectedOU of selectedOUs) {
-            const subtree = await getOrgUnitSubtree(d2, selectedOU.id);
+            const subtree = await getOrgUnitSubtree(api, selectedOU.id);
             subtree.forEach(id => ids.add(id));
         }
 
@@ -111,10 +112,11 @@ class MetadataTable extends React.Component {
 
     updateFilterData = memoize(async model => {
         const { d2 } = this.props;
+        const { api } = this.context;
         const newState = {};
 
         if (model && model.getGroupFilterName()) {
-            const groupClass = d2ModelFactory(d2, model.getGroupFilterName());
+            const groupClass = d2ModelFactory(api, model.getGroupFilterName());
             const groupList = await groupClass.listMethod(
                 d2,
                 { customFields: ["id", "name"] },
@@ -124,7 +126,7 @@ class MetadataTable extends React.Component {
         }
 
         if (model && model.getLevelFilterName()) {
-            const orgUnitLevelsClass = d2ModelFactory(d2, model.getLevelFilterName());
+            const orgUnitLevelsClass = d2ModelFactory(api, model.getLevelFilterName());
             const orgUnitLevelsList = await orgUnitLevelsClass.listMethod(
                 d2,
                 { customFields: ["level", "name"] },
@@ -170,10 +172,11 @@ class MetadataTable extends React.Component {
     };
 
     changeModelName = event => {
-        const { d2 } = this.props;
+        const { api } = this.context;
         const { filters } = this.state;
+
         this.setState({
-            model: event.target.value ? d2ModelFactory(d2, event.target.value) : this.defaultModel,
+            model: event.target.value ? d2ModelFactory(api, event.target.value) : this.defaultModel,
             filters: {
                 ...filters,
                 metadataType: event.target.value,

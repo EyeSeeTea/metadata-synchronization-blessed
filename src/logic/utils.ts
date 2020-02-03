@@ -1,10 +1,10 @@
-import _ from "lodash";
 import axios from "axios";
-
+import { D2Api } from "d2-api";
+import _ from "lodash";
 import { D2, ModelCollection, Params } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { d2BaseModelDetails, getBaseUrl, organisationUnitsDetails } from "../utils/d2";
 import { getMetadata } from "../utils/synchronization";
-import { d2BaseModelDetails, organisationUnitsDetails, getBaseUrl } from "../utils/d2";
 
 export async function listByIds(
     d2: D2,
@@ -77,17 +77,10 @@ export async function getDeletedObjects(
     return { toArray: () => deletedObjects, pager };
 }
 
-// BEWARE: This is a very dangerous operation (includeDescendants in old DHIS2 versions crashed the whole server)
-export async function getOrgUnitSubtree(d2: D2, orgUnitId: string): Promise<string[]> {
-    const { organisationUnits } = (
-        await axios.get(getBaseUrl(d2) + "/organisationUnits/" + orgUnitId, {
-            withCredentials: true,
-            params: {
-                fields: "id",
-                includeDescendants: true,
-            },
-        })
-    ).data as { organisationUnits: { id: string }[] };
+export async function getOrgUnitSubtree(api: D2Api, orgUnitId: string): Promise<string[]> {
+    const { organisationUnits } = (await api
+        .get(`/organisationUnits/${orgUnitId}`, { fields: "id", includeDescendants: true })
+        .getData()) as { organisationUnits: { id: string }[] };
 
-    return organisationUnits.map(ou => ou.id);
+    return organisationUnits.map(({ id }) => id);
 }

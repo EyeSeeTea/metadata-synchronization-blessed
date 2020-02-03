@@ -11,6 +11,7 @@ import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage"
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
 import Authorization from "../../components/authorization/Authorization";
 import * as permissions from "../../utils/permissions";
+import InstanceMappingPage from "../instance-mapping/InstanceMapping";
 
 class Root extends React.Component {
     static propTypes = {
@@ -22,12 +23,17 @@ class Root extends React.Component {
             <HashRouter>
                 <Switch>
                     <Route
-                        path={"/instance-configurator/:action(new|edit)/:id?"}
+                        path={"/instances/mapping/:id?"}
+                        render={props => <InstanceMappingPage {...this.props} {...props} />}
+                    />
+
+                    <Route
+                        path={"/instances/:action(new|edit)/:id?"}
                         render={props => <InstanceCreationPage {...this.props} {...props} />}
                     />
 
                     <Route
-                        path="/instance-configurator"
+                        path="/instances"
                         render={props => <InstanceListPage {...this.props} {...props} />}
                     />
 

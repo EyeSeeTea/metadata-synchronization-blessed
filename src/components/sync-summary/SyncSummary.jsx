@@ -138,7 +138,7 @@ class SyncSummary extends React.Component {
 
     static buildMessageTable(messages) {
         return (
-            <Table padding={"dense"}>
+            <Table>
                 <TableHead>
                     <TableRow>
                         <TableCell>{i18n.t("Identifier")}</TableCell>

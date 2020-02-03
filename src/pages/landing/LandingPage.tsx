@@ -152,10 +152,16 @@ const LandingPage: React.FC = () => {
                     description: i18n.t(
                         "Create, check connectivity, modify and delete DHIS2 destination instances."
                     ),
-                    addAction: showCreateLinks
-                        ? () => history.push("/instance-configurator/new")
-                        : undefined,
-                    listAction: () => history.push("/instance-configurator"),
+                    addAction: showCreateLinks ? () => history.push("/instances/new") : undefined,
+                    listAction: () => history.push("/instances"),
+                },
+                {
+                    name: i18n.t("Metadata mapping"),
+                    description: i18n.t(
+                        "Create, modify and delete metadata mapping with destination instances."
+                    ),
+                    addAction: undefined,
+                    listAction: () => history.push("/instances/mapping"),
                 },
             ],
         },
