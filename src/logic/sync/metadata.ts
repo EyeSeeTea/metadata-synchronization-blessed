@@ -14,7 +14,7 @@ import {
     getMetadata,
     postMetadata,
 } from "../../utils/synchronization";
-import { GenericSync } from "./generic";
+import { GenericSync, SyncronizationPayload } from "./generic";
 
 export class MetadataSync extends GenericSync {
     protected readonly type = "metadata";
@@ -104,5 +104,12 @@ export class MetadataSync extends GenericSync {
 
     protected async buildDataStats() {
         return undefined;
+    }
+
+    protected async mapMetadata(
+        _instance: Instance,
+        payload: SyncronizationPayload
+    ): Promise<SyncronizationPayload> {
+        return payload;
     }
 }

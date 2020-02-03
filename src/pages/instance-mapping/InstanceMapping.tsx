@@ -10,6 +10,7 @@ import MappingDialog from "../../components/mapping-dialog/MappingDialog";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
+    CategoryComboModel,
     CategoryOptionModel,
     D2Model,
     DataElementModel,
@@ -20,7 +21,12 @@ import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath, cleanOrgUnitPaths } from "../../utils/synchronization";
 
-const models: typeof D2Model[] = [DataElementModel, CategoryOptionModel, OrganisationUnitModel];
+const models: typeof D2Model[] = [
+    DataElementModel,
+    CategoryComboModel,
+    CategoryOptionModel,
+    OrganisationUnitModel,
+];
 
 const useStyles = makeStyles({
     iconButton: {
