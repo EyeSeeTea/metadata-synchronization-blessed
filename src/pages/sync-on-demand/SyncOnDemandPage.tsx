@@ -1,7 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import SyncIcon from "@material-ui/icons/Sync";
 import { useD2, useD2Api } from "d2-api";
-import { useSnackbar, withLoading } from "d2-ui-components";
+import { useSnackbar, useLoading } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
@@ -29,7 +29,6 @@ import { isAppConfigurator } from "../../utils/permissions";
 
 interface SyncOnDemandPageProps {
     isDelete?: boolean;
-    loading: any; // TODO
 }
 
 const config: Record<
@@ -66,8 +65,9 @@ const config: Record<
     },
 };
 
-const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete, loading }) => {
+const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
     const snackbar = useSnackbar();
+    const loading = useLoading();
     const d2 = useD2();
     const api = useD2Api();
     const history = useHistory();
@@ -190,4 +190,4 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete, loading }
     );
 };
 
-export default withLoading(SyncOnDemandPage);
+export default SyncOnDemandPage;
