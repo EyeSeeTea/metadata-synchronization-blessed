@@ -318,25 +318,13 @@ export default class SyncRule {
     }
 
     public updateMetadataIds(metadataIds: string[]): SyncRule {
-        if (_.isEqual(this.metadataIds, metadataIds)) {
-            return SyncRule.build({
-                ...this.syncRule,
-                builder: {
-                    ...this.syncRule.builder,
-                    metadataIds,
-                },
-            });
-        } else {
-            // When metadataIds really has changed we should reset
-            // useDefaultIncludeExclude and metadataIncludeExcludeRules
-            const data = _(_.cloneDeep(this.syncRule))
-                .set(["builder", "metadataIds"], metadataIds)
-                .set(["builder", "syncParams", "useDefaultIncludeExclude"], true)
-                .set(["builder", "syncParams", "metadataIncludeExcludeRules"], {})
-                .value();
+        const data = _(_.cloneDeep(this.syncRule))
+            .set(["builder", "metadataIds"], metadataIds)
+            .set(["builder", "syncParams", "useDefaultIncludeExclude"], true)
+            .set(["builder", "syncParams", "metadataIncludeExcludeRules"], {})
+            .value();
 
-            return SyncRule.build(data);
-        }
+        return SyncRule.build(data);
     }
 
     public markToUseDefaultIncludeExclude(): SyncRule {

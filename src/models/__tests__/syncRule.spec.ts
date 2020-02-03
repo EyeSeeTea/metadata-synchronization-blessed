@@ -148,18 +148,6 @@ describe("SyncRule", () => {
             expect(editedSyncRule.useDefaultIncludeExclude).toEqual(true);
             expect(editedSyncRule.metadataIncludeExcludeRules).toEqual({});
         });
-        it("should not reset exclude include rules if really has not changed", () => {
-            const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
-
-            const editedSyncRule = syncRule.updateMetadataIds(syncRule.metadataIds);
-
-            expect(editedSyncRule.useDefaultIncludeExclude).toEqual(
-                syncRule.useDefaultIncludeExclude
-            );
-            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
-                syncRule.metadataIncludeExcludeRules
-            );
-        });
     });
 
     describe("moveRuleFromExcludeToInclude", () => {
