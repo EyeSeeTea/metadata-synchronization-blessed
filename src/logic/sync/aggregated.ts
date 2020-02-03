@@ -99,7 +99,7 @@ export class AggregatedSync extends GenericSync {
     ): Promise<AggregatedPackage> {
         const { organisationUnits = {}, dataElements = {} } = instance.metadataMapping;
         const { dataValues: oldDataValues } = payload;
-        const { optionCombos } = await this.matchCategoryOptionCombo(instance, oldDataValues);
+        const { optionCombos } = await this.matchCategoryOptionCombos(instance, oldDataValues);
 
         const dataValues = oldDataValues.map(
             ({
@@ -127,16 +127,13 @@ export class AggregatedSync extends GenericSync {
         return { dataValues };
     }
 
-    /**
-     * TODO before merging PR: 
-     * Clean-up this code to be more readable
-     */
-    private async matchCategoryOptionCombo(
+    private async matchCategoryOptionCombos(
         instance: Instance,
         dataValues: DataValue[]
     ): Promise<MetadataMappingDictionary> {
         const { categoryOptions = {}, categoryCombos = {} } = instance.metadataMapping;
 
+        // Build a list of candidate option combos from the provided data values
         const candidateOptionCombos = _(dataValues)
             .map(({ categoryOptionCombo, attributeOptionCombo }) => [
                 categoryOptionCombo,
@@ -146,6 +143,7 @@ export class AggregatedSync extends GenericSync {
             .uniq()
             .value();
 
+        // Query origin for the category option combos asking for details of CO and CC
         const { objects: originObjects } = await this.api.models.categoryOptionCombos
             .get({
                 fields: { id: true, categoryOptions: { id: true }, categoryCombo: { id: true } },
@@ -154,16 +152,17 @@ export class AggregatedSync extends GenericSync {
             })
             .getData();
 
-        const categoryOptionIds = _.flatten(
-            originObjects.map(({ categoryOptions: co }) =>
-                co.map(({ id }) => categoryOptions[id]?.mappedId ?? id)
-            )
-        );
+        const categoryOptionIds = _(originObjects)
+            .map(o => o.categoryOptions.map(({ id }) => categoryOptions[id]?.mappedId ?? id))
+            .flatten()
+            .value();
 
-        const categoryComboIds = _.flatten(
-            originObjects.map(({ categoryCombo: cc }) => categoryCombos[cc.id]?.mappedId ?? cc.id)
-        );
+        const categoryComboIds = _(originObjects)
+            .map(({ categoryCombo: { id } }) => categoryCombos[id]?.mappedId ?? id)
+            .flatten()
+            .value();
 
+        // Query destination for category option combos containing mapped CO and CC
         const { objects: destinationObjects } = await instance
             .getApi()
             .models.categoryOptionCombos.get({
@@ -177,21 +176,25 @@ export class AggregatedSync extends GenericSync {
             })
             .getData();
 
+        // Compile a list of mapped category option combos from candidates per CO and CC
         const optionCombos = _(originObjects)
             .map(({ id, categoryOptions: cos, categoryCombo: cc }) => {
-                const mappedObject = _.find(
-                    destinationObjects,
-                    o =>
-                        _.isEqual(
-                            _.sortBy(o.categoryOptions),
-                            _.sortBy(
-                                cos.map(co => ({ id: categoryOptions[co.id]?.mappedId ?? co.id }))
-                            )
-                        ) &&
-                        _.isEqual(o.categoryCombo, { id: categoryCombos[cc.id]?.mappedId ?? cc.id })
+                // Candidates built from equal category options
+                const candidates = _.filter(destinationObjects, o =>
+                    _.isEqual(
+                        _.sortBy(o.categoryOptions, ["id"]),
+                        _.sortBy(cos.map(co => ({ id: categoryOptions[co.id]?.mappedId ?? co.id })), ["id"])
+                    )
                 );
 
-                return mappedObject ? [id, { mappedId: mappedObject.id }] : undefined;
+                // Exact object built from equal category options and combo
+                const exactObject = _.find(candidates, o =>
+                    _.isEqual(o.categoryCombo, { id: categoryCombos[cc.id]?.mappedId ?? cc.id })
+                );
+
+                // If there's only one candidate, ignore the category combo, else provide exact object
+                const result = candidates.length === 1 ? _.first(candidates) : exactObject;
+                return result ? [id, { mappedId: result.id }] : undefined;
             })
             .compact()
             .fromPairs()
