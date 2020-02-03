@@ -10,13 +10,7 @@ const Authorization: React.FC<AuthorizationProps> = ({ authorize, children }) =>
     const [isAuthorize, setIsAuthorize] = useState<boolean>(true);
 
     useEffect(() => {
-        async function executeIsAuthorize() {
-            const authorized = await authorize();
-
-            setIsAuthorize(authorized);
-        }
-
-        executeIsAuthorize();
+        authorize().then(setIsAuthorize);
     }, [authorize]);
 
     if (isAuthorize) {
