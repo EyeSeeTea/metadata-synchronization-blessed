@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { withSnackbar } from "d2-ui-components";
-import SyncRule from "../../../models/syncRule";
-import i18n from "../../../locales";
-import { getMetadata } from "../../../utils/synchronization";
-import { getBaseUrl } from "../../../utils/d2";
-import { D2, ModelDefinition } from "../../../types/d2";
-import _ from "lodash";
-import Dropdown from "../../dropdown/Dropdown";
-import { d2ModelFactory } from "../../../models/d2ModelFactory";
-import { D2Model } from "../../../models/d2Model";
-import { MultiSelector } from "d2-ui-components";
-import { Toggle } from "../../toggle/Toggle";
 import { makeStyles } from "@material-ui/core";
-import { useD2 } from "d2-api/react/context";
+import { D2ModelSchemas } from "d2-api";
+import { useD2, useD2Api } from "d2-api/react/context";
+import { MultiSelector, withSnackbar } from "d2-ui-components";
+import _ from "lodash";
+import React, { useEffect, useState } from "react";
+import i18n from "../../../locales";
+import { D2Model } from "../../../models/d2Model";
+import { d2ModelFactory } from "../../../models/d2ModelFactory";
+import SyncRule from "../../../models/syncRule";
+import { D2, ModelDefinition } from "../../../types/d2";
+import { MetadataPackage } from "../../../types/synchronization";
+import { getBaseUrl } from "../../../utils/d2";
+import { getMetadata } from "../../../utils/synchronization";
+import Dropdown from "../../dropdown/Dropdown";
+import { Toggle } from "../../toggle/Toggle";
 
 interface MetadataIncludeExcludeStepProps {
     syncRule: SyncRule;
@@ -109,30 +110,32 @@ const MetadataIncludeExcludeStep: React.FC<MetadataIncludeExcludeStepProps> = ({
     onChange,
 }) => {
     const classes = useStyles();
-    const d2 = useD2() as D2;
+    const d2 = useD2();
+    const api = useD2Api();
 
     const [modelSelectItems, setModelSelectItems] = useState<ModelSelectItem[]>([]);
     const [models, setModels] = useState<typeof D2Model[]>([]);
     const [selectedType, setSelectedType] = useState<string>("");
 
     useEffect(() => {
-        getMetadata(getBaseUrl(d2), syncRule.metadataIds, "id,name").then((metadata: any) => {
-            const models = _.keys(metadata).map((type: string) => {
-                return d2ModelFactory(d2, type);
-            });
+        getMetadata(getBaseUrl(d2 as D2), syncRule.metadataIds, "id,name").then(
+            (metadata: MetadataPackage) => {
+                const models = _.keys(metadata).map((type: string) => {
+                    return d2ModelFactory(api, type as keyof D2ModelSchemas);
+                });
 
-            const parseModels = (models: typeof D2Model[]) =>
-                models
-                    .map((model: typeof D2Model) => model.getD2Model(d2))
+                const options = models
+                    .map((model: typeof D2Model) => model.getD2Model(d2 as D2))
                     .map((model: ModelDefinition) => ({
                         name: model.displayName,
                         id: model.name,
                     }));
 
-            setModels(models);
-            setModelSelectItems(parseModels(models));
-        });
-    }, [d2, syncRule]);
+                setModels(models);
+                setModelSelectItems(options);
+            }
+        );
+    }, [d2, api, syncRule]);
 
     const { includeRules = [], excludeRules = [] } =
         syncRule.metadataIncludeExcludeRules[selectedType] || {};

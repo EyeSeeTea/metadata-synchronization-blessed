@@ -76,55 +76,55 @@ export default class SyncRule {
     }
 
     public get metadataIds(): string[] {
-        return this.syncRule.builder.metadataIds ?? [];
+        return this.syncRule.builder?.metadataIds ?? [];
     }
 
     public get excludedIds(): string[] {
-        return this.syncRule.builder.excludedIds ?? [];
+        return this.syncRule.builder?.excludedIds ?? [];
     }
 
     public get dataSyncAttributeCategoryOptions(): string[] {
-        return this.syncRule.builder.dataParams?.attributeCategoryOptions ?? [];
+        return this.syncRule.builder?.dataParams?.attributeCategoryOptions ?? [];
     }
 
     public get dataSyncAllAttributeCategoryOptions(): boolean {
-        return this.syncRule.builder.dataParams?.allAttributeCategoryOptions ?? false;
+        return this.syncRule.builder?.dataParams?.allAttributeCategoryOptions ?? false;
     }
 
     public get dataSyncOrgUnitPaths(): string[] {
-        return this.syncRule.builder.dataParams?.orgUnitPaths ?? [];
+        return this.syncRule.builder?.dataParams?.orgUnitPaths ?? [];
     }
 
     public get dataSyncPeriod(): DataSyncPeriod {
-        return this.syncRule.builder.dataParams?.period ?? "ALL";
+        return this.syncRule.builder?.dataParams?.period ?? "ALL";
     }
 
     public get dataSyncStartDate(): Date | null {
-        return this.syncRule.builder.dataParams?.startDate ?? null;
+        return this.syncRule.builder?.dataParams?.startDate ?? null;
     }
 
     public get dataSyncEndDate(): Date | null {
-        return this.syncRule.builder.dataParams?.endDate ?? null;
+        return this.syncRule.builder?.dataParams?.endDate ?? null;
     }
 
     public get dataSyncEvents(): string[] {
-        return this.syncRule.builder.dataParams?.events ?? [];
+        return this.syncRule.builder?.dataParams?.events ?? [];
     }
 
     public get dataSyncAllEvents(): boolean {
-        return this.syncRule.builder.dataParams?.allEvents ?? false;
+        return this.syncRule.builder?.dataParams?.allEvents ?? false;
     }
 
     public get useDefaultIncludeExclude(): boolean {
-        return this.syncRule.builder.useDefaultIncludeExclude ?? true;
+        return this.syncRule.builder?.useDefaultIncludeExclude ?? true;
     }
 
     public get metadataIncludeExcludeRules(): MetadataIncludeExcludeRules {
-        return this.syncRule.builder.metadataIncludeExcludeRules ?? {};
+        return this.syncRule.builder?.metadataIncludeExcludeRules ?? {};
     }
 
     public get targetInstances(): string[] {
-        return this.syncRule.builder.targetInstances ?? [];
+        return this.syncRule.builder?.targetInstances ?? [];
     }
 
     public get enabled(): boolean {
@@ -166,11 +166,11 @@ export default class SyncRule {
     }
 
     public get syncParams(): MetadataSynchronizationParams {
-        return this.syncRule.builder.syncParams ?? {};
+        return this.syncRule.builder?.syncParams ?? {};
     }
 
     public get dataParams(): DataSynchronizationParams {
-        return this.syncRule.builder.dataParams ?? {};
+        return this.syncRule.builder?.dataParams ?? {};
     }
 
     public static create(type: SyncRuleType = "metadata"): SyncRule {
@@ -254,7 +254,7 @@ export default class SyncRule {
             })
             .filter(rule =>
                 targetInstanceFilter
-                    ? rule.builder.targetInstances.includes(targetInstanceFilter)
+                    ? rule.builder?.targetInstances.includes(targetInstanceFilter)
                     : true
             )
             .filter(rule => (enabledFilter ? rule.enabled && enabledFilter === "enabled" : true))
@@ -488,7 +488,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     attributeCategoryOptions,
                 },
             },
@@ -503,7 +503,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     allAttributeCategoryOptions,
                 },
             },
@@ -516,7 +516,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     orgUnitPaths,
                 },
             },
@@ -529,7 +529,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     period,
                 },
             },
@@ -542,7 +542,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     startDate,
                 },
             },
@@ -555,7 +555,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     endDate,
                 },
             },
@@ -568,7 +568,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     events,
                 },
             },
@@ -581,7 +581,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     allEvents,
                 },
             },
