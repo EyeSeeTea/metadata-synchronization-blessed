@@ -11,14 +11,9 @@ import { D2, ModelDefinition } from "../../../types/d2";
 import { MetadataPackage } from "../../../types/synchronization";
 import { getBaseUrl } from "../../../utils/d2";
 import { getMetadata } from "../../../utils/synchronization";
-import Dropdown from "../../dropdown/Dropdown";
+import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
-
-interface ModelSelectItem {
-    name: string;
-    id: string;
-}
 
 const useStyles = makeStyles({
     includeExcludeContainer: {
@@ -105,7 +100,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
     const d2 = useD2();
     const api = useD2Api();
 
-    const [modelSelectItems, setModelSelectItems] = useState<ModelSelectItem[]>([]);
+    const [modelSelectItems, setModelSelectItems] = useState<DropdownOption[]>([]);
     const [models, setModels] = useState<typeof D2Model[]>([]);
     const [selectedType, setSelectedType] = useState<string>("");
 
