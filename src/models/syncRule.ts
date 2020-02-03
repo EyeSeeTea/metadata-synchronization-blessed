@@ -248,7 +248,13 @@ export default class SyncRule {
                     ? rule.builder.targetInstances.includes(targetInstanceFilter)
                     : true
             )
-            .filter(rule => (enabledFilter ? rule.enabled && enabledFilter === "enabled" : true))
+            .filter(rule => {
+                if (!enabledFilter) return true;
+                return (
+                    (rule.enabled && enabledFilter === "enabled") ||
+                    (!rule.enabled && enabledFilter === "disabled")
+                );
+            })
             .filter(rule =>
                 lastExecutedFilter && rule.lastExecuted
                     ? moment(lastExecutedFilter).isSameOrBefore(rule.lastExecuted, "date")

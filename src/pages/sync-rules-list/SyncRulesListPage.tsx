@@ -62,6 +62,11 @@ const config: {
     },
 };
 
+const enabledFilterData = [
+    { id: "enabled", name: i18n.t("Enabled") },
+    { id: "disabled", name: i18n.t("Disabled") },
+];
+
 const SyncRulesPage: React.FC = () => {
     const d2 = useD2();
     const api = useD2Api();
@@ -394,13 +399,8 @@ const SyncRulesPage: React.FC = () => {
         if (onSuccess) onSuccess();
     };
 
-    const enabledFilterData = [
-        { id: "enabled", name: i18n.t("Enabled") },
-        { id: "disabled", name: i18n.t("Disabled") },
-    ];
-
     const renderCustomFilters = (
-        <React.Fragment>
+        <React.Fragment key={"sync-rule-list-filters"}>
             <DatePicker
                 key={"date-filter"}
                 placeholder={i18n.t("Last executed date")}
