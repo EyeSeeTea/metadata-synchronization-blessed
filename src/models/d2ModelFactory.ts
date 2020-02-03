@@ -1,25 +1,24 @@
+import { D2Api, D2ModelSchemas } from "d2-api";
 import {
     D2Model,
-    defaultModel,
-    DataElementModel,
     DataElementGroupModel,
     DataElementGroupSetModel,
-    IndicatorModel,
+    DataElementModel,
+    defaultModel,
     IndicatorGroupModel,
     IndicatorGroupSetModel,
-    OrganisationUnitModel,
+    IndicatorModel,
     OrganisationUnitGroupModel,
     OrganisationUnitGroupSetModel,
     OrganisationUnitLevelModel,
-    ValidationRuleModel,
-    ValidationRuleGroupModel,
-    ProgramIndicatorModel,
+    OrganisationUnitModel,
     ProgramIndicatorGroupModel,
+    ProgramIndicatorModel,
     ProgramRuleModel,
     ProgramRuleVariableModel,
+    ValidationRuleGroupModel,
+    ValidationRuleModel,
 } from "./d2Model";
-
-import { D2 } from "../types/d2";
 
 const classes: { [modelName: string]: typeof D2Model } = {
     DataElementModel,
@@ -47,8 +46,8 @@ export const metadataModels = Object.values(classes);
  * If the class doesn't exist a new default class is created
  * d2ModelName: string (singular name property from d2.models)
  */
-export function d2ModelFactory(d2: D2, d2ModelName: string): typeof D2Model {
-    const modelName = d2.models[d2ModelName].name;
+export function d2ModelFactory(api: D2Api, d2ModelName: keyof D2ModelSchemas): typeof D2Model {
+    const { modelName = "default" } = api.models[d2ModelName];
     const className = modelName.charAt(0).toUpperCase() + modelName.slice(1) + "Model";
     console.debug(
         `d2ModelFactory for modelName ${d2ModelName} return ` +

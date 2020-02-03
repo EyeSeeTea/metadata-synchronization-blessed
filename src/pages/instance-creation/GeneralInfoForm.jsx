@@ -214,7 +214,7 @@ class GeneralInfoForm extends React.Component {
             this.setState({ isSaving: true });
             await instance.save(d2);
             this.setState({ isSaving: false });
-            this.props.history.push("/instance-configurator");
+            this.props.history.push("/instances");
         }
     };
 

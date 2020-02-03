@@ -79,8 +79,8 @@ export abstract class GenericSync {
         yield { message: i18n.t("Preparing synchronization") };
 
         // Build instance list
-        const targetInstances: Instance[] = await Promise.all(
-            targetInstanceIds.map(id => Instance.get(this.d2, id))
+        const targetInstances: Instance[] = _.compact(
+            await Promise.all(targetInstanceIds.map(id => Instance.get(this.d2, id)))
         );
 
         // Initialize sync report

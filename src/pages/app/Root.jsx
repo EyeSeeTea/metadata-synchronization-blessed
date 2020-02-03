@@ -9,6 +9,7 @@ import DeletedObjectsPage from "../sync-deleted-objects/DeletedObjectsPage";
 import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
+import InstanceMappingPage from "../instance-mapping/InstanceMapping";
 
 class Root extends React.Component {
     static propTypes = {
@@ -20,12 +21,17 @@ class Root extends React.Component {
             <HashRouter>
                 <Switch>
                     <Route
-                        path={"/instance-configurator/:action(new|edit)/:id?"}
+                        path={"/instances/mapping/:id?"}
+                        render={props => <InstanceMappingPage {...this.props} {...props} />}
+                    />
+
+                    <Route
+                        path={"/instances/:action(new|edit)/:id?"}
                         render={props => <InstanceCreationPage {...this.props} {...props} />}
                     />
 
                     <Route
-                        path="/instance-configurator"
+                        path="/instances"
                         render={props => <InstanceListPage {...this.props} {...props} />}
                     />
 

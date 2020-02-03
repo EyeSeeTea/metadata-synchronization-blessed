@@ -17,7 +17,7 @@ export interface Params {
     page?: number;
     pageSize?: number;
     filter?: string[];
-    fields?: string[];
+    fields?: (string | number)[];
     order?: string;
 }
 
