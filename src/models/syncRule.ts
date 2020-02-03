@@ -356,87 +356,60 @@ export default class SyncRule {
         return SyncRule.build(data);
     }
 
-    public moveRuleFromExcludeToInclude(type: string, rules: string[]): SyncRule {
-        return this.moveIncludeExcludeRules(type, rules, true);
-    }
+    public moveRuleFromExcludeToInclude(type: string, rulesToInclude: string[]): SyncRule {
+        const {
+            includeRules: oldIncludeRules,
+            excludeRules: oldExcludeRules,
+        } = this.metadataIncludeExcludeRules[type];
 
-    public moveRuleFromIncludeToExclude(type: string, rules: string[]): SyncRule {
-        return this.moveIncludeExcludeRules(type, rules, false);
-    }
-
-    private moveIncludeExcludeRules(type: string, rules: string[], include: boolean): SyncRule {
-        if (!this.metadataIncludeExcludeRules) {
-            throw Error("metadataIncludeExcludeRules is not defined");
+        if (_.difference(rulesToInclude, oldExcludeRules).length > 0) {
+            throw Error(
+                "Rules error: It's not possible move rules that do not exist in exclude to include"
+            );
         }
 
-        const oldIncludeRules = this.metadataIncludeExcludeRules[type].includeRules;
-        const oldExcludeRules = this.metadataIncludeExcludeRules[type].excludeRules;
+        const rulesToIncludeWithParents = _(rulesToInclude)
+            .map(extractParentsFromRule)
+            .flatten()
+            .union(rulesToInclude)
+            .uniq()
+            .value();
 
-        if (include) {
-            const rulesToInclude = rules;
+        const excludeIncludeRules = {
+            includeRules: _.uniq([...oldIncludeRules, ...rulesToIncludeWithParents]),
+            excludeRules: oldExcludeRules.filter(rule => !rulesToIncludeWithParents.includes(rule)),
+        };
 
-            const nonExistentExcludeRules = rulesToInclude.filter(
-                (rule: string) => !oldExcludeRules.includes(rule)
+        return this.updateIncludeExcludeRules(type, excludeIncludeRules);
+    }
+
+    public moveRuleFromIncludeToExclude(type: string, rulesToExclude: string[]): SyncRule {
+        const {
+            includeRules: oldIncludeRules,
+            excludeRules: oldExcludeRules,
+        } = this.metadataIncludeExcludeRules[type];
+
+        if (_.difference(rulesToExclude, oldIncludeRules).length > 0) {
+            throw Error(
+                "Rules error: It's not possible move rules that do not exist in include to exclude"
             );
-
-            if (nonExistentExcludeRules.length > 0) {
-                throw Error(
-                    "Rules error: It's not possible move rules that do not exist in exclude to include"
-                );
-            }
-
-            const rulesToIncludeWithParents = _.uniq(
-                rulesToInclude.reduce(
-                    (array: string[], rule: string) => [
-                        ...array,
-                        rule,
-                        ...extractParentsFromRule(rule),
-                    ],
-                    []
-                )
-            );
-
-            const excludeIncludeRules = {
-                includeRules: _.uniq([...oldIncludeRules, ...rulesToIncludeWithParents]),
-                excludeRules: oldExcludeRules.filter(
-                    rule => !rulesToIncludeWithParents.includes(rule)
-                ),
-            };
-
-            return this.updateIncludeExcludeRules(type, excludeIncludeRules);
-        } else {
-            const rulesToExclude = rules;
-
-            const nonExistentIncludeRules = rulesToExclude.filter(
-                (rule: string) => !oldIncludeRules.includes(rule)
-            );
-
-            if (nonExistentIncludeRules.length > 0) {
-                throw Error(
-                    "Rules error: It's not possible move rules that do not exist in inlude to exclude"
-                );
-            }
-
-            const rulesToExcludeWithChildren = _.uniq(
-                rulesToExclude.reduce(
-                    (array: string[], rule: string) => [
-                        ...array,
-                        rule,
-                        ...extractChildrenFromRules(rule, oldIncludeRules),
-                    ],
-                    []
-                )
-            );
-
-            const excludeIncludeRules = {
-                includeRules: oldIncludeRules.filter(
-                    rule => !rulesToExcludeWithChildren.includes(rule)
-                ),
-                excludeRules: [...oldExcludeRules, ...rulesToExcludeWithChildren],
-            };
-
-            return this.updateIncludeExcludeRules(type, excludeIncludeRules);
         }
+
+        const rulesToExcludeWithChildren = _(rulesToExclude)
+            .map(rule => extractChildrenFromRules(rule, oldIncludeRules))
+            .flatten()
+            .union(rulesToExclude)
+            .uniq()
+            .value();
+
+        const excludeIncludeRules = {
+            includeRules: oldIncludeRules.filter(
+                rule => !rulesToExcludeWithChildren.includes(rule)
+            ),
+            excludeRules: [...oldExcludeRules, ...rulesToExcludeWithChildren],
+        };
+
+        return this.updateIncludeExcludeRules(type, excludeIncludeRules);
     }
 
     private updateIncludeExcludeRules(
