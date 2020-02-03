@@ -69,13 +69,13 @@ export class MetadataSync extends GenericSync {
     }
 
     public buildPayload = memoize(async () => {
-        const {
-            metadataIds,
-            syncParams = {},
-            metadataIncludeExcludeRules = {},
-            useDefaultIncludeExclude,
-        } = this.builder;
         const { baseUrl } = this.d2.Api.getApi();
+        const { metadataIds, syncParams } = this.builder;
+        const {
+            includeSharingSettings = true,
+            metadataIncludeExcludeRules = {},
+            useDefaultIncludeExclude = {},
+        } = syncParams ?? {};
 
         const metadata = await getMetadata(baseUrl, metadataIds, "id");
         const exportPromises = _.keys(metadata)
@@ -86,13 +86,13 @@ export class MetadataSync extends GenericSync {
                 return {
                     type: type as keyof D2ModelSchemas,
                     ids: metadata[type].map(e => e.id),
-                    excludeRules: !useDefaultIncludeExclude
-                        ? metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath)
-                        : myClass.getExcludeRules(),
-                    includeRules: !useDefaultIncludeExclude
-                        ? metadataIncludeExcludeRules[metadataType].includeRules.map(_.toPath)
-                        : myClass.getIncludeRules(),
-                    includeSharingSettings: !!syncParams.includeSharingSettings,
+                    excludeRules: useDefaultIncludeExclude
+                        ? myClass.getExcludeRules()
+                        : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
+                    includeRules: useDefaultIncludeExclude
+                        ? myClass.getIncludeRules()
+                        : metadataIncludeExcludeRules[metadataType].includeRules.map(_.toPath),
+                    includeSharingSettings,
                 };
             })
             .map(newBuilder => this.exportMetadata(newBuilder));

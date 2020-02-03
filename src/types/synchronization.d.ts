@@ -3,8 +3,6 @@ import SyncReport from "../models/syncReport";
 import { DataImportParams, ImportStatus, MetadataImportParams, MetadataImportStats } from "./d2";
 
 export interface SynchronizationBuilder {
-    metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
-    useDefaultIncludeExclude: boolean;
     targetInstances: string[];
     metadataIds: string[];
     excludedIds: string[];
@@ -23,7 +21,9 @@ export interface ExcludeIncludeRules {
 }
 
 export interface MetadataSynchronizationParams extends MetadataImportParams {
-    includeSharingSettings?: boolean;
+    includeSharingSettings: boolean;
+    useDefaultIncludeExclude: boolean;
+    metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
 }
 
 export interface DataSynchronizationParams extends DataImportParams {

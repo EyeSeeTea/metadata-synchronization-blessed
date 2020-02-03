@@ -116,11 +116,11 @@ export default class SyncRule {
     }
 
     public get useDefaultIncludeExclude(): boolean {
-        return this.syncRule.builder?.useDefaultIncludeExclude ?? true;
+        return this.syncRule.builder?.syncParams?.useDefaultIncludeExclude ?? true;
     }
 
     public get metadataIncludeExcludeRules(): MetadataIncludeExcludeRules {
-        return this.syncRule.builder?.metadataIncludeExcludeRules ?? {};
+        return this.syncRule.builder?.syncParams?.metadataIncludeExcludeRules ?? {};
     }
 
     public get targetInstances(): string[] {
@@ -166,7 +166,12 @@ export default class SyncRule {
     }
 
     public get syncParams(): MetadataSynchronizationParams {
-        return this.syncRule.builder?.syncParams ?? {};
+        return (
+            this.syncRule.builder?.syncParams ?? {
+                includeSharingSettings: true,
+                useDefaultIncludeExclude: true,
+            }
+        );
     }
 
     public get dataParams(): DataSynchronizationParams {
@@ -182,7 +187,6 @@ export default class SyncRule {
             description: "",
             type: type,
             builder: {
-                useDefaultIncludeExclude: true,
                 targetInstances: [],
                 metadataIds: [],
                 excludedIds: [],
@@ -193,6 +197,7 @@ export default class SyncRule {
                 syncParams: {
                     importStrategy: "CREATE_AND_UPDATE",
                     includeSharingSettings: true,
+                    useDefaultIncludeExclude: true,
                     atomicMode: "ALL",
                     mergeMode: "MERGE",
                 },
@@ -281,8 +286,6 @@ export default class SyncRule {
             "targetInstances",
             "syncParams",
             "dataParams",
-            "useDefaultIncludeExclude",
-            "metadataIncludeExcludeRules",
         ]);
     }
 
@@ -326,31 +329,27 @@ export default class SyncRule {
         } else {
             // When metadataIds really has changed we should reset
             // useDefaultIncludeExclude and metadataIncludeExcludeRules
-            return SyncRule.build({
-                ...this.syncRule,
-                builder: {
-                    ...this.syncRule.builder,
-                    metadataIds,
-                    useDefaultIncludeExclude: true,
-                    metadataIncludeExcludeRules: {},
-                },
-            });
+            const data = _(_.cloneDeep(this.syncRule))
+                .set(["builder", "metadataIds"], metadataIds)
+                .set(["builder", "syncParams", "useDefaultIncludeExclude"], true)
+                .set(["builder", "syncParams", "metadataIncludeExcludeRules"], {})
+                .value();
+
+            return SyncRule.build(data);
         }
     }
 
     public markToUseDefaultIncludeExclude(): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                useDefaultIncludeExclude: true,
-                metadataIncludeExcludeRules: {},
-            },
-        });
+        const data = _(_.cloneDeep(this.syncRule))
+            .set(["builder", "syncParams", "useDefaultIncludeExclude"], true)
+            .set(["builder", "syncParams", "metadataIncludeExcludeRules"], {})
+            .value();
+
+        return SyncRule.build(data);
     }
 
     public markToNotUseDefaultIncludeExclude(models: Array<typeof D2Model>): SyncRule {
-        const metadataIncludeExcludeRules: MetadataIncludeExcludeRules = models.reduce(
+        const rules: MetadataIncludeExcludeRules = models.reduce(
             (accumulator: any, model: typeof D2Model) => ({
                 ...accumulator,
                 [model.getMetadataType()]: {
@@ -361,14 +360,12 @@ export default class SyncRule {
             {}
         );
 
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                useDefaultIncludeExclude: false,
-                metadataIncludeExcludeRules,
-            },
-        });
+        const data = _(_.cloneDeep(this.syncRule))
+            .set(["builder", "syncParams", "useDefaultIncludeExclude"], false)
+            .set(["builder", "syncParams", "metadataIncludeExcludeRules"], rules)
+            .value();
+
+        return SyncRule.build(data);
     }
 
     public moveRuleFromExcludeToInclude(type: string, rules: string[]): SyncRule {
@@ -458,18 +455,16 @@ export default class SyncRule {
         type: string,
         excludeIncludeRules: ExcludeIncludeRules
     ): SyncRule {
-        const metadataIncludeExcludeRules = {
+        const rules = {
             ...this.metadataIncludeExcludeRules,
             [type]: excludeIncludeRules,
         };
 
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                metadataIncludeExcludeRules,
-            },
-        });
+        const data = _(_.cloneDeep(this.syncRule))
+            .set(["builder", "syncParams", "metadataIncludeExcludeRules"], rules)
+            .value();
+
+        return SyncRule.build(data);
     }
 
     public updateExcludedIds(excludedIds: string[]): SyncRule {
