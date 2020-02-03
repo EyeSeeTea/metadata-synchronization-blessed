@@ -7,18 +7,13 @@ import React, { useEffect, useState } from "react";
 import i18n from "../../../locales";
 import { D2Model } from "../../../models/d2Model";
 import { d2ModelFactory } from "../../../models/d2ModelFactory";
-import SyncRule from "../../../models/syncRule";
 import { D2, ModelDefinition } from "../../../types/d2";
 import { MetadataPackage } from "../../../types/synchronization";
 import { getBaseUrl } from "../../../utils/d2";
 import { getMetadata } from "../../../utils/synchronization";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
-
-interface MetadataIncludeExcludeStepProps {
-    syncRule: SyncRule;
-    onChange: (syncRule: SyncRule) => void;
-}
+import { SyncWizardStepProps } from "../Steps";
 
 interface ModelSelectItem {
     name: string;
@@ -105,10 +100,7 @@ const includeExcludeRulesFriendlyNames: {
     "validationRuleGroups.attributes": "Attributes of validation rule groups",
 };
 
-const MetadataIncludeExcludeStep: React.FC<MetadataIncludeExcludeStepProps> = ({
-    syncRule,
-    onChange,
-}) => {
+const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const classes = useStyles();
     const d2 = useD2();
     const api = useD2Api();
