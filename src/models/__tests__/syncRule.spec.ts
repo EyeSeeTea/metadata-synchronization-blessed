@@ -93,7 +93,7 @@ describe("SyncRule", () => {
             const editedSyncRule = syncRule.markToUseDefaultIncludeExclude();
 
             expect(editedSyncRule.useDefaultIncludeExclude).toEqual(true);
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual({});
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual({});
         });
         it("should assign default exclude include rules in models if set to false", () => {
             const syncRule = givenASyncRuleWithoutMetadataIncludeExcludeRules();
@@ -104,7 +104,7 @@ describe("SyncRule", () => {
             ]);
 
             expect(editedSyncRule.useDefaultIncludeExclude).toEqual(false);
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual({
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual({
                 indicator: {
                     includeRules: [
                         "attributes",
@@ -146,7 +146,7 @@ describe("SyncRule", () => {
             const editedSyncRule = syncRule.updateMetadataIds(["newId1", "newId2"]);
 
             expect(editedSyncRule.useDefaultIncludeExclude).toEqual(true);
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual({});
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual({});
         });
         it("should not reset exclude include rules if really has not changed", () => {
             const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
@@ -156,8 +156,8 @@ describe("SyncRule", () => {
             expect(editedSyncRule.useDefaultIncludeExclude).toEqual(
                 syncRule.useDefaultIncludeExclude
             );
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
-                syncRule.metadataExcludeIncludeRules
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
+                syncRule.metadataIncludeExcludeRules
             );
         });
     });
@@ -184,7 +184,7 @@ describe("SyncRule", () => {
                 indicator: indicatorIncludeExcludeRules,
             };
 
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
@@ -215,7 +215,7 @@ describe("SyncRule", () => {
                 indicator: indicatorIncludeExcludeRules,
             };
 
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
@@ -243,7 +243,7 @@ describe("SyncRule", () => {
                 indicator: indicatorIncludeExcludeRules,
             };
 
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
@@ -274,7 +274,7 @@ describe("SyncRule", () => {
                 indicator: indicatorIncludeExcludeRules,
             };
 
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
@@ -306,7 +306,7 @@ describe("SyncRule", () => {
                 indicator: indicatorIncludeExcludeRules,
             };
 
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
@@ -341,7 +341,7 @@ describe("SyncRule", () => {
                 indicator: indicatorIncludeExcludeRules,
             };
 
-            expect(editedSyncRule2.metadataExcludeIncludeRules).toEqual(
+            expect(editedSyncRule2.metadataIncludeExcludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
@@ -371,7 +371,7 @@ describe("SyncRule", () => {
                 indicator: indicatorIncludeExcludeRules,
             };
 
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
@@ -402,7 +402,7 @@ describe("SyncRule", () => {
                 indicator: indicatorIncludeExcludeRules,
             };
 
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
@@ -431,7 +431,7 @@ describe("SyncRule", () => {
                 indicator: indicatorIncludeExcludeRules,
             };
 
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
@@ -459,7 +459,7 @@ describe("SyncRule", () => {
                 indicator: indicatorIncludeExcludeRules,
             };
 
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
@@ -493,7 +493,7 @@ describe("SyncRule", () => {
                 indicator: indicatorIncludeExcludeRules,
             };
 
-            expect(editedSyncRule.metadataExcludeIncludeRules).toEqual(
+            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual(
                 expectedMetadataIncludeExcludeRules
             );
         });
@@ -529,10 +529,10 @@ function givenASyncRuleWithMetadataIncludeExcludeRules(dependantRulesInExclude =
 
     if (dependantRulesInExclude) {
         const includeRules =
-            initialSyncRule.metadataExcludeIncludeRules[OrganisationUnitModel.getMetadataType()]
+            initialSyncRule.metadataIncludeExcludeRules[OrganisationUnitModel.getMetadataType()]
                 .includeRules;
         const excludeRules =
-            initialSyncRule.metadataExcludeIncludeRules[OrganisationUnitModel.getMetadataType()]
+            initialSyncRule.metadataIncludeExcludeRules[OrganisationUnitModel.getMetadataType()]
                 .excludeRules;
 
         const editedSyncRule = initialSyncRule.moveRuleFromIncludeToExclude(

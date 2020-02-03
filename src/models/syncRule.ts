@@ -119,7 +119,7 @@ export default class SyncRule {
         return this.syncRule.builder.useDefaultIncludeExclude ?? true;
     }
 
-    public get metadataExcludeIncludeRules(): MetadataIncludeExcludeRules {
+    public get metadataIncludeExcludeRules(): MetadataIncludeExcludeRules {
         return this.syncRule.builder.metadataIncludeExcludeRules ?? {};
     }
 
@@ -275,7 +275,7 @@ export default class SyncRule {
     }
 
     public toBuilder(): SynchronizationBuilder {
-        const res = _.pick(this, [
+        return _.pick(this, [
             "metadataIds",
             "excludedIds",
             "targetInstances",
@@ -284,11 +284,6 @@ export default class SyncRule {
             "useDefaultIncludeExclude",
             "metadataIncludeExcludeRules",
         ]);
-
-        // I have realize this cast because pick fail parsing
-        // metadataIncludeExcludeRules and useDefaultIncludeExclude
-        // if this cast is not realized
-        return res as SynchronizationBuilder;
     }
 
     public updateId(id: string): SyncRule {
@@ -385,12 +380,12 @@ export default class SyncRule {
     }
 
     private moveIncludeExcludeRules(type: string, rules: string[], include: boolean): SyncRule {
-        if (!this.metadataExcludeIncludeRules) {
-            throw Error("metadataExcludeIncludeRules is not defined");
+        if (!this.metadataIncludeExcludeRules) {
+            throw Error("metadataIncludeExcludeRules is not defined");
         }
 
-        const oldIncludeRules = this.metadataExcludeIncludeRules[type].includeRules;
-        const oldExcludeRules = this.metadataExcludeIncludeRules[type].excludeRules;
+        const oldIncludeRules = this.metadataIncludeExcludeRules[type].includeRules;
+        const oldExcludeRules = this.metadataIncludeExcludeRules[type].excludeRules;
 
         if (include) {
             const rulesToInclude = rules;
@@ -464,7 +459,7 @@ export default class SyncRule {
         excludeIncludeRules: ExcludeIncludeRules
     ): SyncRule {
         const metadataIncludeExcludeRules = {
-            ...this.metadataExcludeIncludeRules,
+            ...this.metadataIncludeExcludeRules,
             [type]: excludeIncludeRules,
         };
 

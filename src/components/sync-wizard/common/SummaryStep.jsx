@@ -180,12 +180,12 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                 {syncRule.type === "metadata" && !syncRule.useDefaultIncludeExclude && (
                     <LiEntry label={i18n.t("Include exclude configuration")}>
                         <ul>
-                            {_.keys(syncRule.metadataExcludeIncludeRules).map(key => (
+                            {_.keys(syncRule.metadataIncludeExcludeRules).map(key => (
                                 <LiEntry key={key} label={key}>
                                     <ul>
                                         <LiEntry label={i18n.t("Include rules")} />
                                         <ul>
-                                            {syncRule.metadataExcludeIncludeRules[
+                                            {syncRule.metadataIncludeExcludeRules[
                                                 key
                                             ].includeRules.map(includeRule => (
                                                 <ul>
@@ -195,7 +195,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                                         </ul>
                                         <LiEntry label={i18n.t("Exclude rules")} />
                                         <ul>
-                                            {syncRule.metadataExcludeIncludeRules[
+                                            {syncRule.metadataIncludeExcludeRules[
                                                 key
                                             ].excludeRules.map(excludeRule => (
                                                 <ul>

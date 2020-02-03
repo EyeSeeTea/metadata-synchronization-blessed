@@ -135,7 +135,7 @@ const MetadataIncludeExcludeStep: React.FC<MetadataIncludeExcludeStepProps> = ({
     }, [d2, syncRule]);
 
     const { includeRules = [], excludeRules = [] } =
-        syncRule.metadataExcludeIncludeRules[selectedType] || {};
+        syncRule.metadataIncludeExcludeRules[selectedType] || {};
     const allRules = [...includeRules, ...excludeRules];
     const ruleOptions = allRules.map(rule => ({
         value: rule,
