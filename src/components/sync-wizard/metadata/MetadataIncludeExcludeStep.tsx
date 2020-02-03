@@ -162,10 +162,10 @@ const MetadataIncludeExcludeStep: React.FC<MetadataIncludeExcludeStepProps> = ({
         const ruleToExclude = _.difference(oldIncludeRules, currentIncludeRules);
         const ruleToInclude = _.difference(currentIncludeRules, oldIncludeRules);
 
-        if (ruleToExclude.length > 0) {
-            onChange(syncRule.moveRuleFromExcludeToInclude(type, ruleToExclude));
-        } else if (ruleToInclude.length > 0) {
-            onChange(syncRule.moveRuleFromIncludeToExclude(type, ruleToInclude));
+        if (ruleToInclude.length > 0) {
+            onChange(syncRule.moveRuleFromExcludeToInclude(type, ruleToInclude));
+        } else if (ruleToExclude.length > 0) {
+            onChange(syncRule.moveRuleFromIncludeToExclude(type, ruleToExclude));
         }
     };
 
