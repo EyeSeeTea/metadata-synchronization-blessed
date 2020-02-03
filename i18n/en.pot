@@ -5,13 +5,16 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-29T11:41:56.445Z\n"
-"PO-Revision-Date: 2020-01-29T11:41:56.445Z\n"
+"POT-Creation-Date: 2020-02-03T09:12:33.555Z\n"
+"PO-Revision-Date: 2020-02-03T09:12:33.555Z\n"
 
 msgid "<No value>"
 msgstr ""
 
 msgid "Edit mapping for {{displayName}} ({{id}})"
+msgstr ""
+
+msgid "Close"
 msgstr ""
 
 msgid "Could not connect with remote instance"
@@ -96,9 +99,6 @@ msgid "Who has access"
 msgstr ""
 
 msgid "Sharing settings"
-msgstr ""
-
-msgid "Close"
 msgstr ""
 
 msgid "Add users and user groups"
