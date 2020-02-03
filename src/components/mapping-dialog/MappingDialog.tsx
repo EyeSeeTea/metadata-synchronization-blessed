@@ -96,6 +96,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             onCancel={onClose}
             maxWidth={"lg"}
             fullWidth={true}
+            cancelText={i18n.t("Close")}
         >
             <DialogContent>
                 {!!instance?.getApi() && connectionSuccess && MapperComponent}
