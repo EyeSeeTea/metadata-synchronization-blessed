@@ -9,6 +9,7 @@ import {
     DataSyncPeriod,
     MetadataSynchronizationParams,
     SharingSetting,
+    SynchronizationBuilder,
     SynchronizationRule,
     SyncRuleType,
 } from "../types/synchronization";
@@ -68,6 +69,10 @@ export default class SyncRule {
 
     public get description(): string | undefined {
         return this.syncRule.description;
+    }
+
+    public get builder(): SynchronizationBuilder {
+        return this.syncRule.builder ?? {};
     }
 
     public get metadataIds(): string[] {

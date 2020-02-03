@@ -102,7 +102,7 @@ interface NamedRef extends Ref {
 }
 
 export interface SynchronizationRule {
-    id?: string;
+    id: string;
     name: string;
     code?: string;
     created: Date;

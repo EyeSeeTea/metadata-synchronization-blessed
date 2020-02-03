@@ -125,8 +125,8 @@ export default class Instance {
 
     public static async list(
         d2: D2,
-        filters: TableFilters,
-        pagination: TablePagination
+        filters: TableFilters | null,
+        pagination: TablePagination | null
     ): Promise<TableList> {
         return getPaginatedData(d2, instancesDataStoreKey, filters, pagination);
     }
