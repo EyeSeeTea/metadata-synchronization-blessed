@@ -423,6 +423,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         updateSorting(sorting);
         updatePagination(pagination);
         notifyNewSelection(included, excluded);
+        updateFilters(state => ({
+            ...state,
+            selectedIds: included,
+        }));
     };
 
     const exclusion = excludedIds.map(id => ({ id }));
