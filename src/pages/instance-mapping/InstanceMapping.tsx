@@ -10,13 +10,11 @@ import MappingDialog from "../../components/mapping-dialog/MappingDialog";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
-    CategoryOptionModel,
     CategoryComboModel,
+    CategoryOptionModel,
     D2Model,
     DataElementModel,
     OrganisationUnitModel,
-    ProgramModel,
-    ProgramStageModel,
 } from "../../models/d2Model";
 import Instance, { MetadataMapping } from "../../models/instance";
 import { D2 } from "../../types/d2";
@@ -25,11 +23,9 @@ import { cleanOrgUnitPath, cleanOrgUnitPaths } from "../../utils/synchronization
 
 const models: typeof D2Model[] = [
     DataElementModel,
-    CategoryOptionModel,
     CategoryComboModel,
+    CategoryOptionModel,
     OrganisationUnitModel,
-    ProgramModel,
-    ProgramStageModel,
 ];
 
 const useStyles = makeStyles({
