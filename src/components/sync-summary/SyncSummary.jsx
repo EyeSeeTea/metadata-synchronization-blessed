@@ -184,7 +184,7 @@ class SyncSummary extends React.Component {
                     fullWidth={true}
                 >
                     <DialogContent>
-                        {results.map(({ instance, status, report, stats }, i) => (
+                        {results.map(({ instance, status, report, stats, message }, i) => (
                             <ExpansionPanel
                                 defaultExpanded={results.length === 1}
                                 className={classes.expansionPanel}
@@ -206,11 +206,11 @@ class SyncSummary extends React.Component {
                                     <Typography variant="overline">{i18n.t("Summary")}</Typography>
                                 </ExpansionPanelDetails>
 
-                                {response.message && (
+                                {message && (
                                     <ExpansionPanelDetails
                                         className={classes.expansionPanelDetails}
                                     >
-                                        <Typography variant="body2">{response.message}</Typography>
+                                        <Typography variant="body2">{message}</Typography>
                                     </ExpansionPanelDetails>
                                 )}
 

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-04T00:03:12.378Z\n"
-"PO-Revision-Date: 2020-02-04T00:03:12.378Z\n"
+"POT-Creation-Date: 2020-02-04T06:41:49.727Z\n"
+"PO-Revision-Date: 2020-02-04T06:41:49.727Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -249,6 +249,9 @@ msgstr ""
 msgid "Metadata"
 msgstr ""
 
+msgid "Include Exclude Selection"
+msgstr ""
+
 msgid "Data elements"
 msgstr ""
 
@@ -323,6 +326,21 @@ msgstr ""
 msgid "Excluded elements"
 msgstr ""
 
+msgid "Use default include exclude configuration"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Include exclude configuration"
+msgstr ""
+
+msgid "Include rules"
+msgstr ""
+
+msgid "Exclude rules"
+msgstr ""
+
 msgid "All events"
 msgstr ""
 
@@ -345,9 +363,6 @@ msgid "Target instances [{{total}}]"
 msgstr ""
 
 msgid "No"
-msgstr ""
-
-msgid "Disabled"
 msgstr ""
 
 msgid "Frequency"
@@ -387,6 +402,9 @@ msgid "Due date"
 msgstr ""
 
 msgid "Sync all events"
+msgstr ""
+
+msgid "Use default configuration"
 msgstr ""
 
 msgid "Retrieving information from remote instances"

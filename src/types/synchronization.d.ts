@@ -61,6 +61,7 @@ export interface EventsPackage {
 
 export interface SynchronizationResult {
     status: ImportStatus;
+    message?: string;
     instance: {
         id: string;
         name?: string;

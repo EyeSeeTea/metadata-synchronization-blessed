@@ -7,21 +7,20 @@ import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui
 import {
     DataSynchronizationParams,
     DataSyncPeriod,
+    ExcludeIncludeRules,
+    MetadataIncludeExcludeRules,
     MetadataSynchronizationParams,
     SharingSetting,
     SynchronizationBuilder,
     SynchronizationRule,
     SyncRuleType,
-    MetadataIncludeExcludeRules,
-    ExcludeIncludeRules,
-    SynchronizationBuilder,
 } from "../types/synchronization";
 import { Validation } from "../types/validations";
+import { extractChildrenFromRules, extractParentsFromRule } from "../utils/metadataIncludeExclude";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
 import isValidCronExpression from "../utils/validCronExpression";
-import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
-import { extractChildrenFromRules, extractParentsFromRule } from "../utils/metadataIncludeExclude";
 import { D2Model } from "./d2Model";
+import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
 
 const dataStoreKey = "rules";
 
