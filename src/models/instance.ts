@@ -132,7 +132,7 @@ export default class Instance {
     }
 
     public async save(d2: D2): Promise<Response> {
-        const instance = this.encryptPassword();
+        const instance = await this.encryptPassword();
         const exists = !!instance.data.id;
         const element = exists ? instance.data : { ...instance.data, id: generateUid() };
 
@@ -177,7 +177,7 @@ export default class Instance {
         return new Instance({ ...this.data, metadataMapping });
     }
 
-    public encryptPassword(): Instance {
+    private encryptPassword(): Instance {
         const password =
             this.data.password.length > 0
                 ? new Cryptr(Instance.encryptionKey).encrypt(this.data.password)
@@ -185,7 +185,7 @@ export default class Instance {
         return new Instance({ ...this.data, password });
     }
 
-    public decryptPassword(): Instance {
+    private decryptPassword(): Instance {
         const password =
             this.data.password.length > 0
                 ? new Cryptr(Instance.encryptionKey).decrypt(this.data.password)

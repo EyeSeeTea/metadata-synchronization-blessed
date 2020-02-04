@@ -21,7 +21,6 @@ interface MappingDialogProps {
 const useStyles = makeStyles({
     orgUnitSelect: {
         margin: "0 auto",
-        width: "fit-content",
     },
 });
 
