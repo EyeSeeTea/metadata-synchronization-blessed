@@ -8,7 +8,6 @@ import {
     SynchronizationBuilder,
     SynchronizationReportStatus,
     SynchronizationState,
-    SynchronizationReportStatus,
 } from "../types/synchronization";
 import { cleanMetadataImportResponse, getMetadata, postMetadata } from "../utils/synchronization";
 
@@ -48,15 +47,11 @@ export async function* startDelete(
                 instance: instance.name,
             }),
         };
-        console.debug(
-            "Deleting metadata on destination instance",
-            instance.toObject(),
-            metadataIds
-        );
+        console.debug("Deleting metadata on destination instance", instance.toObject(), metadataIds);
         const itemsToDelete = await getMetadata(instance.apiUrl, metadataIds, "id", instance.auth);
         const response = await postMetadata(instance, itemsToDelete, { importStrategy: "DELETE" });
 
-        syncReport.addSyncResult(cleanImportResponse(response, instance));
+        syncReport.addSyncResult(cleanMetadataImportResponse(response, instance));
         console.debug("Finished deleting metadata on instance", instance.toObject(), itemsToDelete);
         yield { syncReport };
     }
