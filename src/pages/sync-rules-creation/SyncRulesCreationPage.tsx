@@ -1,7 +1,7 @@
 import { useD2 } from "d2-api";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog, useLoading } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams, useLocation } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncWizard from "../../components/sync-wizard/SyncWizard";
 import i18n from "../../locales";
@@ -18,6 +18,7 @@ interface SyncRulesCreationParams {
 const SyncRulesCreation: React.FC = () => {
     const history = useHistory();
     const location = useLocation();
+    const loading = useLoading();
     const { id, action, type } = useParams() as SyncRulesCreationParams;
     const d2 = useD2();
     const [dialogOpen, updateDialogOpen] = useState(false);
@@ -42,9 +43,13 @@ const SyncRulesCreation: React.FC = () => {
 
     useEffect(() => {
         if (isEdit && !!id) {
-            SyncRule.get(d2 as D2, id).then(updateSyncRule);
+            loading.show(true, "Loading sync rule");
+            SyncRule.get(d2 as D2, id).then(syncRule => {
+                updateSyncRule(syncRule);
+                loading.reset();
+            });
         }
-    }, [d2, id, isEdit]);
+    }, [d2, loading, isEdit, id]);
 
     return (
         <React.Fragment>
