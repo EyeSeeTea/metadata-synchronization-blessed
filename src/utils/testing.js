@@ -8,8 +8,8 @@ import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { SnackbarProvider } from "d2-ui-components";
 
-import { muiTheme } from "../components/app/themes/dhis2.theme";
-import muiThemeLegacy from "../components/app/themes/dhis2-legacy.theme";
+import { muiTheme } from "../pages/app/themes/dhis2.theme";
+import muiThemeLegacy from "../pages/app/themes/dhis2-legacy.theme";
 
 // DHIS2 expects a browser environment, add some required keys to the global node namespace
 Object.assign(global, {
@@ -91,10 +91,12 @@ export async function getTestUser(d2, { auth, userAttributes }) {
         userAttributes
     );
     const user = getNewUser(partialUser);
-    const existingTestUser = (await api.get("/users", {
-        fields: ":owner",
-        filter: "userCredentials.username:eq:" + auth.username,
-    })).users[0];
+    const existingTestUser = (
+        await api.get("/users", {
+            fields: ":owner",
+            filter: "userCredentials.username:eq:" + auth.username,
+        })
+    ).users[0];
 
     let response, returnUser;
 

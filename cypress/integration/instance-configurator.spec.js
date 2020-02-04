@@ -1,17 +1,17 @@
 import { dataTest } from "../support/utils";
 
-context("Instance Configurator", function() {
+context("Destination Settings", function() {
     beforeEach(() => {
         cy.login("admin");
-        cy.visit("/#/instance-configurator");
+        cy.visit("/#/instances");
     });
 
     it("has the correct title", function() {
-        cy.get(dataTest("page-header-title")).contains("Instance Configuration");
+        cy.get(dataTest("page-header-title")).contains("Destination Instance Settings");
     });
 
     it("opens a new instance page", function() {
-        cy.get(dataTest("list-action-bar")).click();
+        cy.get(dataTest("objects-table-action-button")).click();
         cy.get(dataTest("page-header-title")).contains("New Instance");
     });
 });

@@ -1,21 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import {
-    createMuiTheme,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    MuiThemeProvider,
-    Select,
-} from "@material-ui/core";
-import cyan from "@material-ui/core/colors/cyan";
+import { FormControl, InputLabel, MenuItem, MuiThemeProvider, Select } from "@material-ui/core";
+import { createMuiTheme } from "@material-ui/core/styles";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 
 const getMaterialTheme = () =>
     createMuiTheme({
-        typography: {
-            useNextVariants: true,
-        },
         overrides: {
             MuiFormLabel: {
                 root: {
@@ -38,25 +29,19 @@ const getMaterialTheme = () =>
                 input: {
                     color: "#565656",
                 },
-                underline: {
-                    "&&&&:hover:before": {
-                        borderBottom: `1px solid #bdbdbd`,
-                    },
-                    "&:hover:not($disabled):before": {
-                        borderBottom: `1px solid #aaaaaa`,
-                    },
-                    "&:after": {
-                        borderBottom: `2px solid ${cyan["500"]}`,
-                    },
-                    "&:before": {
-                        borderBottom: `1px solid #bdbdbd`,
-                    },
-                },
             },
         },
     });
 
-export default function Dropdown({ items, value, onChange, label, hideEmpty }) {
+export default function Dropdown({
+    items,
+    value,
+    onChange = _.noop,
+    onValueChange = _.noop,
+    label,
+    hideEmpty,
+    emptyLabel,
+}) {
     const materialTheme = getMaterialTheme();
     return (
         <MuiThemeProvider theme={materialTheme}>
@@ -64,7 +49,10 @@ export default function Dropdown({ items, value, onChange, label, hideEmpty }) {
                 <InputLabel>{label}</InputLabel>
                 <Select
                     value={value}
-                    onChange={onChange}
+                    onChange={e => {
+                        onChange(e);
+                        onValueChange(e.target.value);
+                    }}
                     MenuProps={{
                         getContentAnchorEl: null,
                         anchorOrigin: {
@@ -73,7 +61,9 @@ export default function Dropdown({ items, value, onChange, label, hideEmpty }) {
                         },
                     }}
                 >
-                    {!hideEmpty && <MenuItem value={""}>{i18n.t("<No value>")}</MenuItem>}
+                    {!hideEmpty && (
+                        <MenuItem value={""}>{emptyLabel ?? i18n.t("<No value>")}</MenuItem>
+                    )}
                     {items.map((element, index) => (
                         <MenuItem key={`element-${index}`} value={element.id}>
                             {element.name}
@@ -87,12 +77,14 @@ export default function Dropdown({ items, value, onChange, label, hideEmpty }) {
 
 Dropdown.propTypes = {
     items: PropTypes.array.isRequired,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
+    onValueChange: PropTypes.func,
     label: PropTypes.string.isRequired,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     hideEmpty: PropTypes.bool,
+    emptyLabel: PropTypes.string,
 };
 
 Dropdown.defaultProps = {
-    displayEmpty: true,
+    hideEmpty: false,
 };

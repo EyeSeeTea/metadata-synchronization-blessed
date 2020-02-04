@@ -5,195 +5,25 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-09-17T10:45:09.309Z\n"
-"PO-Revision-Date: 2019-09-17T10:45:09.309Z\n"
+"POT-Creation-Date: 2020-02-04T00:03:12.378Z\n"
+"PO-Revision-Date: 2020-02-04T00:03:12.378Z\n"
 
-msgid "Metadata Synchronization"
+msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
 
 msgid "<No value>"
 msgstr ""
 
-msgid "Ready"
+msgid "Edit mapping for {{displayName}} ({{id}})"
 msgstr ""
 
-msgid "Running"
+msgid "Close"
 msgstr ""
 
-msgid "Failure"
-msgstr ""
-
-msgid "Done"
-msgstr ""
-
-msgid "Deleting History Notifications"
-msgstr ""
-
-msgid "Failed to delete some history notifications"
-msgstr ""
-
-msgid "Successfully deleted {{count}} history notifications"
-msgid_plural "Successfully deleted {{count}} history notifications"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Details"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "View summary"
-msgstr ""
-
-msgid "User"
-msgstr ""
-
-msgid "Timestamp"
-msgstr ""
-
-msgid "Status"
-msgstr ""
-
-msgid "Metadata Types"
-msgstr ""
-
-msgid "Sync Rule"
-msgstr ""
-
-msgid "Synchronization status"
-msgstr ""
-
-msgid "Synchronization History"
-msgstr ""
-
-msgid "Delete History Notifications?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{count}} history notifications?"
-msgid_plural "Are you sure you want to delete {{count}} history notifications?"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Ok"
-msgstr ""
-
-msgid "Server name"
-msgstr ""
-
-msgid "Field cannot be blank"
-msgstr ""
-
-msgid "Description"
-msgstr ""
-
-msgid "URL endpoint"
-msgstr ""
-
-msgid "Field should be an url"
-msgstr ""
-
-msgid "Username"
-msgstr ""
-
-msgid "Password"
-msgstr ""
-
-msgid "Please fix the issues before testing the connection"
-msgstr ""
-
-msgid "Connected successfully to instance"
-msgstr ""
-
-msgid "Please fix the issues before saving"
-msgstr ""
-
-msgid "Cancel"
-msgstr ""
-
-msgid "Test Connection"
-msgstr ""
-
-msgid "New Instance"
-msgstr ""
-
-msgid "Edit Instance"
-msgstr ""
-
-msgid "Cancel Instance Creation"
-msgstr ""
-
-msgid "Cancel Instance Editing"
-msgstr ""
-
-msgid "All your changes will be lost. Are you sure?"
-msgstr ""
-
-msgid "Saving..."
-msgstr ""
-
-msgid "Save"
-msgstr ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "Deleting Instances"
-msgstr ""
-
-msgid "Failed to delete some instances"
-msgstr ""
-
-msgid "Successfully deleted {{count}} instances"
-msgid_plural "Successfully deleted {{count}} instances"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Delete Instances?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{count}} instances?"
-msgid_plural "Are you sure you want to delete {{count}} instances?"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Instance Configuration"
-msgstr ""
-
-msgid "Organisation Units"
-msgstr ""
-
-msgid "Data Elements"
-msgstr ""
-
-msgid "Indicators"
-msgstr ""
-
-msgid "Validation Rules"
-msgstr ""
-
-msgid "Synchronization Rules"
-msgstr ""
-
-msgid "Deleted objects"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-msgid "Metadata Type"
-msgstr ""
-
-msgid "Last update"
-msgstr ""
-
-msgid "Select with children subtree"
+msgid "Could not connect with remote instance"
 msgstr ""
 
 msgid "Metadata type"
-msgstr ""
-
-msgid "Deleted date"
 msgstr ""
 
 msgid "Last updated date"
@@ -208,16 +38,157 @@ msgstr ""
 msgid "Only selected items"
 msgstr ""
 
+msgid "Details"
+msgstr ""
+
+msgid "Select with children subtree"
+msgstr ""
+
+msgid "Select"
+msgstr ""
+
+msgid "Search by name"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Metadata Type"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Deleted date"
+msgstr ""
+
 msgid "Help"
 msgstr ""
 
 msgid "Back"
 msgstr ""
 
-msgid "General info"
+msgid "External access"
 msgstr ""
 
-msgid "Metadata"
+msgid "Anyone can view without login"
+msgstr ""
+
+msgid "No access"
+msgstr ""
+
+msgid "Public access"
+msgstr ""
+
+msgid "METADATA"
+msgstr ""
+
+msgid "Can edit and view"
+msgstr ""
+
+msgid "Can view only"
+msgstr ""
+
+msgid "DATA"
+msgstr ""
+
+msgid "Can capture and view"
+msgstr ""
+
+msgid "Created by"
+msgstr ""
+
+msgid "Who has access"
+msgstr ""
+
+msgid "Sharing settings"
+msgstr ""
+
+msgid "Add users and user groups"
+msgstr ""
+
+msgid "Enter names"
+msgstr ""
+
+msgid "Synchronize"
+msgstr ""
+
+msgid "Advanced options"
+msgstr ""
+
+msgid "Include user information and sharing settings"
+msgstr ""
+
+msgid "Disable atomic verification"
+msgstr ""
+
+msgid "Replace objects in destination instance"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Deleted"
+msgstr ""
+
+msgid "Ignored"
+msgstr ""
+
+msgid "Updated"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Data element"
+msgstr ""
+
+msgid "Program"
+msgstr ""
+
+msgid "Number of entries"
+msgstr ""
+
+msgid "Org units"
+msgstr ""
+
+msgid "Identifier"
+msgstr ""
+
+msgid "Property"
+msgstr ""
+
+msgid "Message"
+msgstr ""
+
+msgid "Synchronization Results"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Destination instance"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Messages"
+msgstr ""
+
+msgid "Data Statistics"
+msgstr ""
+
+msgid "JSON Response"
+msgstr ""
+
+msgid "General info"
 msgstr ""
 
 msgid "Instance Selection"
@@ -275,25 +246,67 @@ msgid ""
 "is, you would use ? in the day of the week field."
 msgstr ""
 
-msgid "Summary"
+msgid "Metadata"
 msgstr ""
 
-msgid "New synchronization rule"
+msgid "Data elements"
 msgstr ""
 
-msgid "Edit synchronization rule"
+msgid "Organisation units"
 msgstr ""
 
-msgid "Cancel synchronization rule creation"
+msgid "Period"
 msgstr ""
 
-msgid "Cancel synchronization rule editing"
+msgid "Category options"
+msgstr ""
+
+msgid "Programs"
+msgstr ""
+
+msgid "Events"
+msgstr ""
+
+msgid "Field cannot be blank"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Description"
 msgstr ""
 
 msgid "Selected {{difference}} elements"
 msgstr ""
 
 msgid "Removed {{difference}} elements"
+msgstr ""
+
+msgid "Every day"
+msgstr ""
+
+msgid "Every month"
+msgstr ""
+
+msgid "Every three months"
+msgstr ""
+
+msgid "Every six months"
+msgstr ""
+
+msgid "Every year"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Select frequency template"
+msgstr ""
+
+msgid "Cron expression"
+msgstr ""
+
+msgid "Cron expression must be valid"
 msgstr ""
 
 msgid "Cancel synchronization rule wizard"
@@ -307,10 +320,31 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
+msgid "Excluded elements"
+msgstr ""
+
+msgid "All events"
+msgstr ""
+
+msgid "{{total}} selected events"
+msgstr ""
+
+msgid "Category Option Combo"
+msgstr ""
+
+msgid "All attribute category options"
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
 msgid "Target instances [{{total}}]"
 msgstr ""
 
-msgid "Enabled"
+msgid "No"
 msgstr ""
 
 msgid "Disabled"
@@ -319,31 +353,370 @@ msgstr ""
 msgid "Frequency"
 msgstr ""
 
-msgid "Every hour"
+msgid "Cancel"
 msgstr ""
 
-msgid "Every day at midnight"
+msgid "Save as sync Rule"
 msgstr ""
 
-msgid "Every day at 3 AM"
+msgid "Save"
 msgstr ""
 
-msgid "Every day at noon"
+msgid "Download JSON"
 msgstr ""
 
-msgid "Every week"
+msgid "Sync all attribute category options"
 msgstr ""
 
-msgid "Select frequency"
+msgid "UID"
 msgstr ""
 
-msgid "Custom"
+msgid "Organisation unit"
 msgstr ""
 
-msgid "Cron expression"
+msgid "Event date"
 msgstr ""
 
-msgid "Cron expression must be valid"
+msgid "Last updated"
+msgstr ""
+
+msgid "Stored by"
+msgstr ""
+
+msgid "Due date"
+msgstr ""
+
+msgid "Sync all events"
+msgstr ""
+
+msgid "Retrieving information from remote instances"
+msgstr ""
+
+msgid "Deleting objects in instance {{instance}}"
+msgstr ""
+
+msgid "Preparing synchronization"
+msgstr ""
+
+msgid "Importing data in instance {{instance}}"
+msgstr ""
+
+msgid "Not a valid DHIS2 instance"
+msgstr ""
+
+msgid "Wrong username/password"
+msgstr ""
+
+msgid "Wrong URL endpoint"
+msgstr ""
+
+msgid "Error {{status}}"
+msgstr ""
+
+msgid "Network error {{error}}, check if server is up and CORS is enabled"
+msgstr ""
+
+msgid "MetaData Synchronization"
+msgstr ""
+
+msgid "Metadata Synchronization History"
+msgstr ""
+
+msgid "Aggregated Data Synchronization History"
+msgstr ""
+
+msgid "Events Synchronization History"
+msgstr ""
+
+msgid "Ready"
+msgstr ""
+
+msgid "Running"
+msgstr ""
+
+msgid "Failure"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "Sync Rule"
+msgstr ""
+
+msgid "(manual synchronization)"
+msgstr ""
+
+msgid "Timestamp"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Metadata Types"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "View summary"
+msgstr ""
+
+msgid "Deleting History Notifications"
+msgstr ""
+
+msgid "Failed to delete some history notifications"
+msgstr ""
+
+msgid "Successfully deleted {{count}} history notifications"
+msgid_plural "Successfully deleted {{count}} history notifications"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Synchronization status"
+msgstr ""
+
+msgid "Delete History Notifications?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} history notifications?"
+msgid_plural "Are you sure you want to delete {{count}} history notifications?"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Server name"
+msgstr ""
+
+msgid "URL endpoint"
+msgstr ""
+
+msgid "Field should be an url"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Please fix the issues before testing the connection"
+msgstr ""
+
+msgid "Connected successfully to instance"
+msgstr ""
+
+msgid "Please fix the issues before saving"
+msgstr ""
+
+msgid "Test Connection"
+msgstr ""
+
+msgid "New Instance"
+msgstr ""
+
+msgid "Edit Instance"
+msgstr ""
+
+msgid "Cancel Instance Creation"
+msgstr ""
+
+msgid "Cancel Instance Editing"
+msgstr ""
+
+msgid "All your changes will be lost. Are you sure?"
+msgstr ""
+
+msgid "Saving..."
+msgstr ""
+
+msgid "Deleting Instances"
+msgstr ""
+
+msgid "Failed to delete some instances"
+msgstr ""
+
+msgid "Successfully deleted {{count}} instances"
+msgid_plural "Successfully deleted {{count}} instances"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Replicate"
+msgstr ""
+
+msgid "Metadata mapping"
+msgstr ""
+
+msgid "Delete Instances?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} instances?"
+msgid_plural "Are you sure you want to delete {{count}} instances?"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Destination Instance Settings"
+msgstr ""
+
+msgid "Item not found"
+msgstr ""
+
+msgid "Could not connect with instance"
+msgstr ""
+
+msgid "Selected {{id}} to map with {{displayName}}"
+msgstr ""
+
+msgid "Could not apply mapping, please try again."
+msgstr ""
+
+msgid "Please select an instance from the dropdown"
+msgstr ""
+
+msgid "Cleared mapping for {{total}} elements"
+msgstr ""
+
+msgid "Please wait to finish loading"
+msgstr ""
+
+msgid "Set mapping"
+msgstr ""
+
+msgid "Loading..."
+msgstr ""
+
+msgid "Please select an instance"
+msgstr ""
+
+msgid "Instance selection"
+msgstr ""
+
+msgid "Clear mapping"
+msgstr ""
+
+msgid "Manual sync"
+msgstr ""
+
+msgid ""
+"Manually synchronise aggregated data by selecting the data sets, data "
+"elements or their groups and group sets together with the organisation "
+"unit, period and category options."
+msgstr ""
+
+msgid "Sync rules"
+msgstr ""
+
+msgid ""
+"Create, modify, delete, execute and schedule sync rules for aggregated data "
+"by selecting the data sets, data elements or their groups and group sets "
+"together with the organisation unit, period and category options."
+msgstr ""
+
+msgid "History"
+msgstr ""
+
+msgid ""
+"View and analyse the status and results of the aggregated data manual syncs "
+"and sync rules executions."
+msgstr ""
+
+msgid ""
+"Manually synchronise events by selecting the programs or events together "
+"with the organisation unit, period and category options."
+msgstr ""
+
+msgid ""
+"Create, modify, delete, execute and schedule sync rules for events by "
+"selecting the programs or events together with the organisation unit, "
+"period and category options."
+msgstr ""
+
+msgid ""
+"View and analyse the status and results of the event manual syncs and sync "
+"rules executions."
+msgstr ""
+
+msgid ""
+"Manually synchronise metadata like data elements, organisation units and "
+"program indicators and groups and group sets."
+msgstr ""
+
+msgid ""
+"Create, modify, delete, execute and schedule sync rules for metadata like "
+"data elements, organisation units and program indicators and groups and "
+"group sets."
+msgstr ""
+
+msgid ""
+"View and analyse the status and results of the metadata manual syncs and "
+"sync rules executions."
+msgstr ""
+
+msgid "Deleted objects"
+msgstr ""
+
+msgid "Manually synchronise deleted objects."
+msgstr ""
+
+msgid "Destination instance settings"
+msgstr ""
+
+msgid "Create, check connectivity, modify and delete DHIS2 destination instances."
+msgstr ""
+
+msgid "Create, modify and delete metadata mapping with destination instances."
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "List"
+msgstr ""
+
+msgid "Deleted by"
+msgstr ""
+
+msgid "Deleted Objects Synchronization"
+msgstr ""
+
+msgid "Please select at least one element from the table to synchronize"
+msgstr ""
+
+msgid "Unknown error with the request"
+msgstr ""
+
+msgid "Synchronizing metadata"
+msgstr ""
+
+msgid "Metadata Synchronization"
+msgstr ""
+
+msgid "Aggregated Data Synchronization"
+msgstr ""
+
+msgid "Events Synchronization"
+msgstr ""
+
+msgid "New {{type}} synchronization rule"
+msgstr ""
+
+msgid "Edit {{type}} synchronization rule"
+msgstr ""
+
+msgid "Cancel {{type}} synchronization rule creation"
+msgstr ""
+
+msgid "Cancel {{type}} synchronization rule editing"
+msgstr ""
+
+msgid "Metadata Synchronization Rules"
+msgstr ""
+
+msgid "Aggregated Data Synchronization Rules"
+msgstr ""
+
+msgid "Events Synchronization Rules"
 msgstr ""
 
 msgid "Destination instances"
@@ -362,9 +735,6 @@ msgid "Successfully deleted {{count}} rules"
 msgid_plural "Successfully deleted {{count}} rules"
 msgstr[0] ""
 msgstr[1] ""
-
-msgid "Synchronizing metadata"
-msgstr ""
 
 msgid "Failed to execute rule {{name}}"
 msgstr ""
@@ -392,105 +762,6 @@ msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Synchronize Metadata"
-msgstr ""
-
-msgid "Synchronize"
-msgstr ""
-
-msgid "Type"
-msgstr ""
-
-msgid "Created"
-msgstr ""
-
-msgid "Deleted"
-msgstr ""
-
-msgid "Ignored"
-msgstr ""
-
-msgid "Updated"
-msgstr ""
-
-msgid "Total"
-msgstr ""
-
-msgid "Identifier"
-msgstr ""
-
-msgid "Property"
-msgstr ""
-
-msgid "Message"
-msgstr ""
-
-msgid "Synchronization Results"
-msgstr ""
-
-msgid "Messages"
-msgstr ""
-
-msgid "JSON Response"
-msgstr ""
-
-msgid "Data Elements Synchronization"
-msgstr ""
-
-msgid "Code"
-msgstr ""
-
-msgid "Deleted by"
-msgstr ""
-
-msgid "Deleted Objects Synchronization"
-msgstr ""
-
-msgid "Please select at least one element from the table to synchronize"
-msgstr ""
-
-msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Indicators Synchronization"
-msgstr ""
-
-msgid "Organisation Units Synchronization"
-msgstr ""
-
-msgid "Validation Rules Synchronization"
-msgstr ""
-
-msgid "Retrieving information from remote instances"
-msgstr ""
-
-msgid "Deleting objects in instance {{instance}}"
-msgstr ""
-
-msgid "Fetching metadata from origin instance"
-msgstr ""
-
-msgid "Importing data in instance {{instance}}"
-msgstr ""
-
-msgid "Not a valid DHIS2 instance"
-msgstr ""
-
-msgid "Wrong username/password"
-msgstr ""
-
-msgid "Wrong URL endpoint"
-msgstr ""
-
-msgid "Error {{status}}"
-msgstr ""
-
-msgid "Network error {{error}}, check if server is up and CORS is enabled"
-msgstr ""
-
-msgid "Level"
-msgstr ""
-
 msgid "Short name"
 msgstr ""
 
@@ -498,6 +769,51 @@ msgid "ID"
 msgstr ""
 
 msgid "API link"
+msgstr ""
+
+msgid "Level"
+msgstr ""
+
+msgid "All periods"
+msgstr ""
+
+msgid "Fixed period"
+msgstr ""
+
+msgid "Today"
+msgstr ""
+
+msgid "Yesterday"
+msgstr ""
+
+msgid "Last 7 days"
+msgstr ""
+
+msgid "Last 14 days"
+msgstr ""
+
+msgid "This week"
+msgstr ""
+
+msgid "Last week"
+msgstr ""
+
+msgid "This month"
+msgstr ""
+
+msgid "Last month"
+msgstr ""
+
+msgid "This quarter"
+msgstr ""
+
+msgid "Last quarter"
+msgstr ""
+
+msgid "This year"
+msgstr ""
+
+msgid "Last year"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"
@@ -513,4 +829,7 @@ msgid "Cron expression {{expression}} must be valid"
 msgstr ""
 
 msgid "To enable a rule you need to enter a valid {{expression}}"
+msgstr ""
+
+msgid "Start and end dates are not a valid period"
 msgstr ""

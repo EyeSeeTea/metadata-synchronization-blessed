@@ -1,17 +1,20 @@
 import i18n from "@dhis2/d2-i18n";
-
+import { D2Api } from "d2-api";
+import _ from "lodash";
 import Instance from "../models/instance";
 import SyncReport from "../models/syncReport";
-import { getMetadata, postMetadata, cleanImportResponse } from "../utils/synchronization";
-import { D2, MetadataImportStatus } from "../types/d2";
+import { D2, ImportStatus } from "../types/d2";
 import {
     SynchronizationBuilder,
+    SynchronizationReportStatus,
     SynchronizationState,
     SynchronizationReportStatus,
 } from "../types/synchronization";
+import { cleanMetadataImportResponse, getMetadata, postMetadata } from "../utils/synchronization";
 
 export async function* startDelete(
     d2: D2,
+    _api: D2Api,
     builder: SynchronizationBuilder
 ): AsyncIterableIterator<SynchronizationState> {
     const { targetInstances: targetInstanceIds, metadataIds } = builder;
@@ -20,19 +23,20 @@ export async function* startDelete(
     console.debug("Start delete process");
     yield { message: i18n.t("Retrieving information from remote instances") };
 
-    const targetInstances: Instance[] = await Promise.all(
-        targetInstanceIds.map(id => Instance.get(d2, id))
+    const targetInstances: Instance[] = _.compact(
+        await Promise.all(targetInstanceIds.map(id => Instance.get(d2, id)))
     );
 
     const syncReport = SyncReport.build({
         user: d2.currentUser.username,
         types: ["deletedObjects"],
         status: "RUNNING" as SynchronizationReportStatus,
+        type: "metadata",
     });
     syncReport.addSyncResult(
         ...targetInstances.map(instance => ({
             instance: instance.toObject(),
-            status: "PENDING" as MetadataImportStatus,
+            status: "PENDING" as ImportStatus,
             date: new Date(),
         }))
     );

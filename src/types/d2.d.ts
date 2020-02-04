@@ -17,7 +17,7 @@ export interface Params {
     page?: number;
     pageSize?: number;
     filter?: string[];
-    fields?: string[];
+    fields?: (string | number)[];
     order?: string;
 }
 
@@ -85,6 +85,9 @@ export interface D2 {
         username: string;
         name: string;
         email: string;
+        getUserRoles(): Promise<any>;
+        getUserGroups(): Promise<any>;
+        getOrganisationUnits(): Promise<any>;
     };
 }
 
@@ -108,14 +111,46 @@ export interface MetadataImportParams {
     username?: string;
 }
 
-export type MetadataImportStatus = "PENDING" | "OK" | "WARNING" | "ERROR" | "NETWORK ERROR";
+export interface DataImportParams {
+    idScheme?: "UID" | "CODE";
+    dataElementIdScheme?: "UID" | "CODE" | "NAME";
+    orgUnitIdScheme?: "UID" | "CODE" | "NAME";
+    dryRun?: boolean;
+    preheatCache?: boolean;
+    skipExistingCheck?: boolean;
+    strategy?: "NEW_AND_UPDATES" | "NEW" | "UPDATES" | "DELETES";
+    format?: "json" | "xml" | "csv" | "pdf" | "adx";
+}
+
+export type ImportStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
+export type ResponseImportStatus =
+    | "PENDING"
+    | "OK"
+    | "SUCCESS"
+    | "WARNING"
+    | "ERROR"
+    | "NETWORK ERROR";
 
 export interface MetadataImportResponse {
-    status: MetadataImportStatus;
+    status: ResponseImportStatus;
     importParams?: MetadataImportParams;
     typeReports?: any[];
     stats?: MetadataImportStats;
     message?: string;
+}
+
+export interface DataImportResponse {
+    status: ResponseImportStatus;
+    dataSetComplete?: string;
+    description?: string;
+    importCount?: DataImportStats;
+    importOptions?: DataImportParams;
+    responseType?: "ImportSummary";
+    conflicts?: {
+        object: string;
+        value: string;
+    }[];
+    response?: any;
 }
 
 export interface MetadataImportStats {
@@ -124,4 +159,11 @@ export interface MetadataImportStats {
     ignored: number;
     updated: number;
     total: number;
+}
+
+export interface DataImportStats {
+    imported: number;
+    updated: number;
+    ignored: number;
+    deleted: number;
 }

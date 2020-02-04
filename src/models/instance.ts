@@ -1,34 +1,60 @@
-import _ from "lodash";
+import i18n from "@dhis2/d2-i18n";
 import axios, { AxiosBasicCredentials } from "axios";
 import Cryptr from "cryptr";
-import i18n from "@dhis2/d2-i18n";
+import { D2Api, D2ApiDefault } from "d2-api";
 import { generateUid } from "d2/uid";
-
-import { deleteData, getData, getDataById, getPaginatedData, saveData } from "./dataStore";
+import _ from "lodash";
 import { D2, Response } from "../types/d2";
-import { Validation } from "../types/validations";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { Validation } from "../types/validations";
+import { deleteData, getData, getDataById, getPaginatedData, saveData } from "./dataStore";
 
 const instancesDataStoreKey = "instances";
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-export interface Data {
+export interface MetadataMapping {
+    mappedId: string;
+}
+
+export interface MetadataMappingDictionary {
+    [model: string]: {
+        [id: string]: MetadataMapping;
+    };
+}
+
+export interface InstanceData {
     id: string;
     name: string;
     url: string;
     username: string;
     password: string;
     description?: string;
+    metadataMapping: MetadataMappingDictionary;
 }
 
 export default class Instance {
     private static encryptionKey: string;
 
-    private readonly data: Data;
+    private readonly data: InstanceData;
+    private readonly api: D2Api;
 
-    constructor(data: Data) {
-        this.data = _.pick(data, ["id", "name", "url", "username", "password", "description"]);
+    constructor(data: InstanceData) {
+        this.data = _.pick(data, [
+            "id",
+            "name",
+            "url",
+            "username",
+            "password",
+            "description",
+            "metadataMapping",
+        ]);
+        const { url: baseUrl, username, password } = data;
+        this.api = new D2ApiDefault({ baseUrl, auth: { username, password } });
+    }
+
+    public replicate(): Instance {
+        return this.setName(`Copy of ${this.data.name}`).setId(generateUid());
     }
 
     public get id(): string {
@@ -56,11 +82,19 @@ export default class Instance {
     }
 
     public get description(): string {
-        return this.data.description ? this.data.description : "";
+        return this.data.description ?? "";
+    }
+
+    public get metadataMapping(): MetadataMappingDictionary {
+        return this.data.metadataMapping ?? {};
     }
 
     public get auth(): AxiosBasicCredentials {
         return { username: this.data.username, password: this.data.password };
+    }
+
+    public getApi(): D2Api {
+        return this.api;
     }
 
     public static setEncryptionKey(encryptionKey: string): void {
@@ -74,18 +108,19 @@ export default class Instance {
             url: "",
             username: "",
             password: "",
+            metadataMapping: {},
         };
         return new Instance(initialData);
     }
 
-    public static async build(data: Data | undefined): Promise<Instance> {
+    public static async build(data: InstanceData | undefined): Promise<Instance> {
         const instance = data ? new Instance(data) : this.create();
         return instance.decryptPassword();
     }
 
-    public static async get(d2: D2, id: string): Promise<Instance> {
+    public static async get(d2: D2, id: string): Promise<Instance | undefined> {
         const data = await getDataById(d2, instancesDataStoreKey, id);
-        return this.build(data);
+        return data ? this.build(data) : undefined;
     }
 
     public static async list(
@@ -97,7 +132,7 @@ export default class Instance {
     }
 
     public async save(d2: D2): Promise<Response> {
-        const instance = this.encryptPassword();
+        const instance = await this.encryptPassword();
         const exists = !!instance.data.id;
         const element = exists ? instance.data : { ...instance.data, id: generateUid() };
 
@@ -110,7 +145,7 @@ export default class Instance {
         return deleteData(d2, instancesDataStoreKey, this.data);
     }
 
-    public toObject(): Omit<Data, "password"> {
+    public toObject(): Omit<InstanceData, "password"> {
         return _.omit(this.data, ["password"]);
     }
 
@@ -138,6 +173,10 @@ export default class Instance {
         return new Instance({ ...this.data, description });
     }
 
+    public setMetadataMapping(metadataMapping: MetadataMappingDictionary): Instance {
+        return new Instance({ ...this.data, metadataMapping });
+    }
+
     private encryptPassword(): Instance {
         const password =
             this.data.password.length > 0
@@ -159,11 +198,11 @@ export default class Instance {
         const combination = [url, username].join("-");
         const instanceArray = await getData(d2, instancesDataStoreKey);
         const invalidCombinations = instanceArray.filter(
-            (inst: Data) => [inst.url, inst.username].join("-") === combination
+            (inst: InstanceData) => [inst.url, inst.username].join("-") === combination
         );
 
         return id
-            ? invalidCombinations.some((inst: Data) => inst.id !== id)
+            ? invalidCombinations.some((inst: InstanceData) => inst.id !== id)
             : !_.isEmpty(invalidCombinations);
     }
 
