@@ -51,6 +51,8 @@ const includeExcludeRulesFriendlyNames: {
     "dataElementGroups.dataElementGroupSets": "Data element group sets of data element groups",
     "dataElementGroups.dataElementGroupSets.attributes":
         "Attributes of data element group sets in data element groups",
+    "dataElementGroups.dataElementGroupSets.dataElementGroups":
+        "Data element groups of dataelement group sets in data element groups",
     dataElementGroupSets: "Data element group sets",
     "dataElementGroupSets.attributes": "Attributes of data element group sets",
     indicators: "Indicators",
