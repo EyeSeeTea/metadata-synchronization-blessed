@@ -261,7 +261,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     );
 
     const sideComponents = model.getCollectionName() === "organisationUnits" && (
-        <div className={classes.orgUnitFilter}>
+        <div key={"org-unit-selector-filter"} className={classes.orgUnitFilter}>
             <OrgUnitsSelector
                 api={api}
                 withElevation={true}
