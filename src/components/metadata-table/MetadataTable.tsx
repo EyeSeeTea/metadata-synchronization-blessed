@@ -407,16 +407,19 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         const newlySelectedIds = _.difference(included, selectedIds);
         const newlyUnselectedIds = _.difference(selectedIds, included);
 
-        const childrenOfNewlySelected = _(rows)
-            .filter(({ id }) => !!newlySelectedIds.includes(id))
-            .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType)
-            .flattenDeep()
-            .map(({ id }) => id)
-            .value();
+        const parseChildren = (ids: string[]) =>
+            _(rows)
+                .filter(({ id }) => !!ids.includes(id))
+                .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType)
+                .flattenDeep()
+                .map(({ id }) => id)
+                .value();
 
         const excluded = _(excludedIds)
             .union(newlyUnselectedIds)
-            .difference(childrenOfNewlySelected)
+            .difference(parseChildren(newlyUnselectedIds))
+            .difference(newlySelectedIds)
+            .difference(parseChildren(newlySelectedIds))
             .filter(id => !_.find(rows, { id }))
             .value();
 
