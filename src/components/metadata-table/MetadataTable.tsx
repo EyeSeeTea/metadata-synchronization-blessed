@@ -8,11 +8,11 @@ import {
     ObjectsTableProps,
     OrgUnitsSelector,
     ReferenceObject,
+    TableAction,
     TableColumn,
     TableSelection,
     TableSorting,
     TableState,
-    TableAction,
 } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";

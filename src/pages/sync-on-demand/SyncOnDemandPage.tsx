@@ -1,7 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import SyncIcon from "@material-ui/icons/Sync";
 import { useD2, useD2Api } from "d2-api";
-import { useSnackbar, useLoading } from "d2-ui-components";
+import { useLoading, useSnackbar } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
