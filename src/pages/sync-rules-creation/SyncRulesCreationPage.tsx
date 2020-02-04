@@ -17,7 +17,7 @@ interface SyncRulesCreationParams {
 
 const SyncRulesCreation: React.FC = () => {
     const history = useHistory();
-    const location = useLocation();
+    const location = useLocation<{ syncRule?: SyncRule }>();
     const loading = useLoading();
     const { id, action, type } = useParams() as SyncRulesCreationParams;
     const d2 = useD2();
