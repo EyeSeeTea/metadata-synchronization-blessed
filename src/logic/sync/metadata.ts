@@ -105,6 +105,7 @@ export class MetadataSync extends GenericSync {
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
+        console.debug("Metadata package", payloadPackage);
 
         return postMetadata(instance, payloadPackage, syncParams);
     }

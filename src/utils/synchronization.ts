@@ -230,8 +230,6 @@ export function cleanDataImportResponse(
         message: description,
     }));
 
-    console.log({ importResult });
-
     return {
         status,
         message,
@@ -360,8 +358,10 @@ export const getRootOrgUnit = memoize(
     { maxArgs: 0 }
 );
 
-export function cleanObjectDefault(object: ProgramEvent, defaults: string[]) {
-    return _.pickBy(object, value => !defaults.includes(String(value))) as ProgramEvent;
+export function cleanObjectDefault(object: ProgramEvent, defaults: string[]): ProgramEvent;
+export function cleanObjectDefault(object: DataValue, defaults: string[]): DataValue;
+export function cleanObjectDefault(object: ProgramEvent | DataValue, defaults: string[]) {
+    return _.pickBy(object, value => !defaults.includes(String(value)));
 }
 
 export function cleanOrgUnitPath(orgUnitPath: string): string {
