@@ -136,6 +136,7 @@ export interface MetadataImportResponse {
     importParams?: MetadataImportParams;
     typeReports?: any[];
     stats?: MetadataImportStats;
+    message?: string;
 }
 
 export interface DataImportResponse {

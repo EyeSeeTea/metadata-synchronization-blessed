@@ -47,12 +47,16 @@ export async function* startDelete(
                 instance: instance.name,
             }),
         };
-        console.debug("Deleting metadata on destination instance", instance, metadataIds);
+        console.debug(
+            "Deleting metadata on destination instance",
+            instance.toObject(),
+            metadataIds
+        );
         const itemsToDelete = await getMetadata(instance.apiUrl, metadataIds, "id", instance.auth);
         const response = await postMetadata(instance, itemsToDelete, { importStrategy: "DELETE" });
 
         syncReport.addSyncResult(cleanMetadataImportResponse(response, instance));
-        console.debug("Finished deleting metadata on instance", instance, itemsToDelete);
+        console.debug("Finished deleting metadata on instance", instance.toObject(), itemsToDelete);
         yield { syncReport };
     }
 
