@@ -11,8 +11,19 @@ export interface SynchronizationBuilder {
     dataParams?: DataSynchronizationParams;
 }
 
+export interface MetadataIncludeExcludeRules {
+    [metadataType: string]: ExcludeIncludeRules;
+}
+
+export interface ExcludeIncludeRules {
+    excludeRules: string[];
+    includeRules: string[];
+}
+
 export interface MetadataSynchronizationParams extends MetadataImportParams {
-    includeSharingSettings?: boolean;
+    includeSharingSettings: boolean;
+    useDefaultIncludeExclude: boolean;
+    metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
 }
 
 export interface DataSynchronizationParams extends DataImportParams {

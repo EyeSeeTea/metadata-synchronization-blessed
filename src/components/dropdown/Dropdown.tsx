@@ -4,7 +4,7 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import _ from "lodash";
 import React from "react";
 
-interface DropdownOption {
+export interface DropdownOption {
     id: string;
     name: string;
 }
