@@ -123,8 +123,18 @@ export async function postMetadata(
 
         return response.data;
     } catch (error) {
-        if (error.response) {
-            return error.response;
+        if (error.response && error.response.data) {
+            const {
+                status,
+                httpStatus = "Unknown",
+                httpStatusCode = 400,
+                message = "Request failed unexpectedly",
+            } = error.response.data;
+            return { status, message: `Error ${httpStatusCode} (${httpStatus}): ${message}` };
+        } else if (error.response) {
+            const { status, statusText } = error.response;
+            console.error(status, statusText, error);
+            return { status: "ERROR", message: `Unknown error: ${status} ${statusText}` };
         } else {
             console.error(error);
             return { status: "NETWORK ERROR" };
