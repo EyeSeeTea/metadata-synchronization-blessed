@@ -18,9 +18,7 @@ const Authorization: React.FC<AuthorizationProps> = ({ authorize, children }) =>
     } else {
         return (
             <Typography variant="h6" component="h1">
-                {i18n.t(
-                    "Unauthorized - You do not have permission to view this page."
-                )}
+                {i18n.t("Unauthorized - You do not have permission to view this page.")}
             </Typography>
         );
     }

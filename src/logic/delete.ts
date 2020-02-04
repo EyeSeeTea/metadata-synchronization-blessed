@@ -47,7 +47,11 @@ export async function* startDelete(
                 instance: instance.name,
             }),
         };
-        console.debug("Deleting metadata on destination instance", instance.toObject(), metadataIds);
+        console.debug(
+            "Deleting metadata on destination instance",
+            instance.toObject(),
+            metadataIds
+        );
         const itemsToDelete = await getMetadata(instance.apiUrl, metadataIds, "id", instance.auth);
         const response = await postMetadata(instance, itemsToDelete, { importStrategy: "DELETE" });
 
