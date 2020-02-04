@@ -318,6 +318,7 @@ const SyncRulesPage: React.FC = () => {
             name: "details",
             text: i18n.t("Details"),
             multiple: false,
+            primary: !appConfigurator,
         },
         {
             name: "edit",
@@ -325,7 +326,7 @@ const SyncRulesPage: React.FC = () => {
             multiple: false,
             isActive: verifyUserCanEdit,
             onClick: editRule,
-            primary: true,
+            primary: appConfigurator,
             icon: <Icon>edit</Icon>,
         },
         {
