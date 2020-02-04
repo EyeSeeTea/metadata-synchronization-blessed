@@ -441,7 +441,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const childrenSelection: TableSelection[] = _(rows)
         .intersectionBy(selection, "id")
-        .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType)
+        .map(row => _.values(_.pick(row, childrenKeys)))
         .flattenDeep()
         .differenceBy(selection, "id")
         .differenceBy(exclusion, "id")
@@ -450,7 +450,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 id,
                 checked: true,
                 indeterminate: !_.find(selection, { id }),
-            } as TableSelection;
+            };
         })
         .value();
 
