@@ -179,7 +179,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             const subtree = await getOrgUnitSubtree(api, selectedOU.id);
             subtree.forEach(id => ids.add(id));
         }
-        notifyNewSelection([...selectedIds, ...Array.from(ids)], excludedIds);
+        const includedIds = _.uniq([...selectedIds, ...Array.from(ids)]);
+        notifyNewSelection(includedIds, excludedIds);
     };
 
     const addToSelection = (items: NamedRef[]) => {
