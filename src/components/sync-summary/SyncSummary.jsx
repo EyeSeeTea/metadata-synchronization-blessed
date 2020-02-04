@@ -206,6 +206,14 @@ class SyncSummary extends React.Component {
                                     <Typography variant="overline">{i18n.t("Summary")}</Typography>
                                 </ExpansionPanelDetails>
 
+                                {response.message && (
+                                    <ExpansionPanelDetails
+                                        className={classes.expansionPanelDetails}
+                                    >
+                                        <Typography variant="body2">{response.message}</Typography>
+                                    </ExpansionPanelDetails>
+                                )}
+
                                 {report && (
                                     <ExpansionPanelDetails
                                         className={classes.expansionPanelDetails}
