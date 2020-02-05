@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-04T06:41:49.727Z\n"
-"PO-Revision-Date: 2020-02-04T06:41:49.727Z\n"
+"POT-Creation-Date: 2020-02-05T11:58:28.972Z\n"
+"PO-Revision-Date: 2020-02-05T11:58:28.972Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -402,6 +402,9 @@ msgid "Due date"
 msgstr ""
 
 msgid "Sync all events"
+msgstr ""
+
+msgid "You do not have assigned any organisation unit"
 msgstr ""
 
 msgid "Use default configuration"
