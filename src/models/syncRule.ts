@@ -11,11 +11,16 @@ import {
     SharingSetting,
     SynchronizationRule,
     SyncRuleType,
+    MetadataIncludeExcludeRules,
+    ExcludeIncludeRules,
+    SynchronizationBuilder,
 } from "../types/synchronization";
 import { Validation } from "../types/validations";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
 import isValidCronExpression from "../utils/validCronExpression";
 import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
+import { extractChildrenFromRules, extractParentsFromRule } from "../utils/metadataIncludeExclude";
+import { D2Model } from "./d2Model";
 
 const dataStoreKey = "rules";
 
@@ -71,47 +76,55 @@ export default class SyncRule {
     }
 
     public get metadataIds(): string[] {
-        return this.syncRule.builder.metadataIds ?? [];
+        return this.syncRule.builder?.metadataIds ?? [];
     }
 
     public get excludedIds(): string[] {
-        return this.syncRule.builder.excludedIds ?? [];
+        return this.syncRule.builder?.excludedIds ?? [];
     }
 
     public get dataSyncAttributeCategoryOptions(): string[] {
-        return this.syncRule.builder.dataParams?.attributeCategoryOptions ?? [];
+        return this.syncRule.builder?.dataParams?.attributeCategoryOptions ?? [];
     }
 
     public get dataSyncAllAttributeCategoryOptions(): boolean {
-        return this.syncRule.builder.dataParams?.allAttributeCategoryOptions ?? false;
+        return this.syncRule.builder?.dataParams?.allAttributeCategoryOptions ?? false;
     }
 
     public get dataSyncOrgUnitPaths(): string[] {
-        return this.syncRule.builder.dataParams?.orgUnitPaths ?? [];
+        return this.syncRule.builder?.dataParams?.orgUnitPaths ?? [];
     }
 
     public get dataSyncPeriod(): DataSyncPeriod {
-        return this.syncRule.builder.dataParams?.period ?? "ALL";
+        return this.syncRule.builder?.dataParams?.period ?? "ALL";
     }
 
     public get dataSyncStartDate(): Date | null {
-        return this.syncRule.builder.dataParams?.startDate ?? null;
+        return this.syncRule.builder?.dataParams?.startDate ?? null;
     }
 
     public get dataSyncEndDate(): Date | null {
-        return this.syncRule.builder.dataParams?.endDate ?? null;
+        return this.syncRule.builder?.dataParams?.endDate ?? null;
     }
 
     public get dataSyncEvents(): string[] {
-        return this.syncRule.builder.dataParams?.events ?? [];
+        return this.syncRule.builder?.dataParams?.events ?? [];
     }
 
     public get dataSyncAllEvents(): boolean {
-        return this.syncRule.builder.dataParams?.allEvents ?? false;
+        return this.syncRule.builder?.dataParams?.allEvents ?? false;
+    }
+
+    public get useDefaultIncludeExclude(): boolean {
+        return this.syncRule.builder?.syncParams?.useDefaultIncludeExclude ?? true;
+    }
+
+    public get metadataIncludeExcludeRules(): MetadataIncludeExcludeRules {
+        return this.syncRule.builder?.syncParams?.metadataIncludeExcludeRules ?? {};
     }
 
     public get targetInstances(): string[] {
-        return this.syncRule.builder.targetInstances ?? [];
+        return this.syncRule.builder?.targetInstances ?? [];
     }
 
     public get enabled(): boolean {
@@ -153,11 +166,16 @@ export default class SyncRule {
     }
 
     public get syncParams(): MetadataSynchronizationParams {
-        return this.syncRule.builder.syncParams ?? {};
+        return (
+            this.syncRule.builder?.syncParams ?? {
+                includeSharingSettings: true,
+                useDefaultIncludeExclude: true,
+            }
+        );
     }
 
     public get dataParams(): DataSynchronizationParams {
-        return this.syncRule.builder.dataParams ?? {};
+        return this.syncRule.builder?.dataParams ?? {};
     }
 
     public static create(type: SyncRuleType = "metadata"): SyncRule {
@@ -179,6 +197,7 @@ export default class SyncRule {
                 syncParams: {
                     importStrategy: "CREATE_AND_UPDATE",
                     includeSharingSettings: true,
+                    useDefaultIncludeExclude: true,
                     atomicMode: "ALL",
                     mergeMode: "MERGE",
                 },
@@ -240,7 +259,7 @@ export default class SyncRule {
             })
             .filter(rule =>
                 targetInstanceFilter
-                    ? rule.builder.targetInstances.includes(targetInstanceFilter)
+                    ? rule.builder?.targetInstances.includes(targetInstanceFilter)
                     : true
             )
             .filter(rule => (enabledFilter ? rule.enabled && enabledFilter === "enabled" : true))
@@ -260,7 +279,7 @@ export default class SyncRule {
         return { objects, pager: { page, pageCount, total } };
     }
 
-    public toBuilder() {
+    public toBuilder(): SynchronizationBuilder {
         return _.pick(this, [
             "metadataIds",
             "excludedIds",
@@ -299,13 +318,114 @@ export default class SyncRule {
     }
 
     public updateMetadataIds(metadataIds: string[]): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                metadataIds,
-            },
-        });
+        const data = _(_.cloneDeep(this.syncRule))
+            .set(["builder", "metadataIds"], metadataIds)
+            .set(["builder", "syncParams", "useDefaultIncludeExclude"], true)
+            .set(["builder", "syncParams", "metadataIncludeExcludeRules"], {})
+            .value();
+
+        return SyncRule.build(data);
+    }
+
+    public markToUseDefaultIncludeExclude(): SyncRule {
+        const data = _(_.cloneDeep(this.syncRule))
+            .set(["builder", "syncParams", "useDefaultIncludeExclude"], true)
+            .set(["builder", "syncParams", "metadataIncludeExcludeRules"], {})
+            .value();
+
+        return SyncRule.build(data);
+    }
+
+    public markToNotUseDefaultIncludeExclude(models: Array<typeof D2Model>): SyncRule {
+        const rules: MetadataIncludeExcludeRules = models.reduce(
+            (accumulator: any, model: typeof D2Model) => ({
+                ...accumulator,
+                [model.getMetadataType()]: {
+                    includeRules: model.getIncludeRules().map(array => array.join(".")),
+                    excludeRules: model.getExcludeRules().map(array => array.join(".")),
+                },
+            }),
+            {}
+        );
+
+        const data = _(_.cloneDeep(this.syncRule))
+            .set(["builder", "syncParams", "useDefaultIncludeExclude"], false)
+            .set(["builder", "syncParams", "metadataIncludeExcludeRules"], rules)
+            .value();
+
+        return SyncRule.build(data);
+    }
+
+    public moveRuleFromExcludeToInclude(type: string, rulesToInclude: string[]): SyncRule {
+        const {
+            includeRules: oldIncludeRules,
+            excludeRules: oldExcludeRules,
+        } = this.metadataIncludeExcludeRules[type];
+
+        if (_.difference(rulesToInclude, oldExcludeRules).length > 0) {
+            throw Error(
+                "Rules error: It's not possible move rules that do not exist in exclude to include"
+            );
+        }
+
+        const rulesToIncludeWithParents = _(rulesToInclude)
+            .map(extractParentsFromRule)
+            .flatten()
+            .union(rulesToInclude)
+            .uniq()
+            .value();
+
+        const excludeIncludeRules = {
+            includeRules: _.uniq([...oldIncludeRules, ...rulesToIncludeWithParents]),
+            excludeRules: oldExcludeRules.filter(rule => !rulesToIncludeWithParents.includes(rule)),
+        };
+
+        return this.updateIncludeExcludeRules(type, excludeIncludeRules);
+    }
+
+    public moveRuleFromIncludeToExclude(type: string, rulesToExclude: string[]): SyncRule {
+        const {
+            includeRules: oldIncludeRules,
+            excludeRules: oldExcludeRules,
+        } = this.metadataIncludeExcludeRules[type];
+
+        if (_.difference(rulesToExclude, oldIncludeRules).length > 0) {
+            throw Error(
+                "Rules error: It's not possible move rules that do not exist in include to exclude"
+            );
+        }
+
+        const rulesToExcludeWithChildren = _(rulesToExclude)
+            .map(rule => extractChildrenFromRules(rule, oldIncludeRules))
+            .flatten()
+            .union(rulesToExclude)
+            .uniq()
+            .value();
+
+        const excludeIncludeRules = {
+            includeRules: oldIncludeRules.filter(
+                rule => !rulesToExcludeWithChildren.includes(rule)
+            ),
+            excludeRules: [...oldExcludeRules, ...rulesToExcludeWithChildren],
+        };
+
+        return this.updateIncludeExcludeRules(type, excludeIncludeRules);
+    }
+
+    private updateIncludeExcludeRules(
+        type: string,
+        excludeIncludeRules: ExcludeIncludeRules
+    ): SyncRule {
+        const rules = {
+            ...this.metadataIncludeExcludeRules,
+            [type]: excludeIncludeRules,
+        };
+
+        const data = _(_.cloneDeep(this.syncRule))
+            .set(["builder", "syncParams", "metadataIncludeExcludeRules"], rules)
+            .value();
+
+        return SyncRule.build(data);
     }
 
     public updateExcludedIds(excludedIds: string[]): SyncRule {
@@ -324,7 +444,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     attributeCategoryOptions,
                 },
             },
@@ -339,7 +459,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     allAttributeCategoryOptions,
                 },
             },
@@ -352,7 +472,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     orgUnitPaths,
                 },
             },
@@ -365,7 +485,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     period,
                 },
             },
@@ -378,7 +498,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     startDate,
                 },
             },
@@ -391,7 +511,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     endDate,
                 },
             },
@@ -404,7 +524,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     events,
                 },
             },
@@ -417,7 +537,7 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 dataParams: {
-                    ...this.syncRule.builder.dataParams,
+                    ...this.syncRule.builder?.dataParams,
                     allEvents,
                 },
             },
@@ -583,6 +703,7 @@ export default class SyncRule {
                       }
                     : null,
             ]),
+            metadataIncludeExclude: [],
             targetInstances: _.compact([
                 this.targetInstances.length === 0
                     ? {

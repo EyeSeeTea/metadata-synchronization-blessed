@@ -18,6 +18,7 @@ import {
 } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
 import { getInstances } from "./InstanceSelectionStep";
+import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -163,6 +164,61 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                                     />
                                 );
                             })}
+                        </ul>
+                    </LiEntry>
+                )}
+                {syncRule.type === "metadata" && (
+                    <LiEntry
+                        label={i18n.t("Use default include exclude configuration")}
+                        value={
+                            syncRule.useDefaultIncludeExclude
+                                ? i18n.t("Enabled")
+                                : i18n.t("Disabled")
+                        }
+                    />
+                )}
+
+                {syncRule.type === "metadata" && !syncRule.useDefaultIncludeExclude && (
+                    <LiEntry label={i18n.t("Include exclude configuration")}>
+                        <ul>
+                            {_.keys(syncRule.metadataIncludeExcludeRules).map(key => (
+                                <LiEntry key={key} label={key}>
+                                    <ul>
+                                        <LiEntry label={i18n.t("Include rules")} />
+                                        <ul>
+                                            {syncRule.metadataIncludeExcludeRules[
+                                                key
+                                            ].includeRules.map(includeRule => (
+                                                <ul>
+                                                    <LiEntry
+                                                        label={
+                                                            includeExcludeRulesFriendlyNames[
+                                                                includeRule
+                                                            ] || includeRule
+                                                        }
+                                                    />
+                                                </ul>
+                                            ))}
+                                        </ul>
+                                        <LiEntry label={i18n.t("Exclude rules")} />
+                                        <ul>
+                                            {syncRule.metadataIncludeExcludeRules[
+                                                key
+                                            ].excludeRules.map(excludeRule => (
+                                                <ul>
+                                                    <LiEntry
+                                                        label={
+                                                            includeExcludeRulesFriendlyNames[
+                                                                excludeRule
+                                                            ] || excludeRule
+                                                        }
+                                                    />
+                                                </ul>
+                                            ))}
+                                        </ul>
+                                    </ul>
+                                </LiEntry>
+                            ))}
                         </ul>
                     </LiEntry>
                 )}
