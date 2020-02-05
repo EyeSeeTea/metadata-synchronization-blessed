@@ -9,6 +9,8 @@ import {
     cleanOrgUnitPath,
     getAggregatedData,
     postAggregatedData,
+    getDefaultIds,
+    cleanObjectDefault,
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
 
@@ -70,6 +72,7 @@ export class AggregatedSync extends GenericSync {
 
         const payloadPackage = await this.buildPayload();
         const mappedPayloadPackage = await this.mapMetadata(instance, payloadPackage);
+        console.debug("Aggregated package", { payloadPackage, mappedPayloadPackage });
 
         return postAggregatedData(instance, mappedPayloadPackage, dataParams);
     }
@@ -100,29 +103,33 @@ export class AggregatedSync extends GenericSync {
         const { organisationUnits = {}, dataElements = {} } = instance.metadataMapping;
         const { dataValues: oldDataValues } = payload;
         const { optionCombos } = await this.matchCategoryOptionCombos(instance, oldDataValues);
+        const defaultIds = await getDefaultIds(this.api);
 
-        const dataValues = oldDataValues.map(
-            ({
-                orgUnit,
-                dataElement,
-                categoryOptionCombo: categoryOption,
-                attributeOptionCombo: attributeOption,
-                ...rest
-            }) => {
-                const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
-                const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
-                const mappedCategory = optionCombos[categoryOption]?.mappedId ?? categoryOption;
-                const mappedAttribute = optionCombos[attributeOption]?.mappedId ?? attributeOption;
+        const dataValues = oldDataValues
+            .map(dataValue => cleanObjectDefault(dataValue, defaultIds))
+            .map(
+                ({
+                    orgUnit,
+                    dataElement,
+                    categoryOptionCombo: categoryOption,
+                    attributeOptionCombo: attributeOption,
+                    ...rest
+                }) => {
+                    const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
+                    const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
+                    const mappedCategory = optionCombos[categoryOption]?.mappedId ?? categoryOption;
+                    const mappedAttribute =
+                        optionCombos[attributeOption]?.mappedId ?? attributeOption;
 
-                return {
-                    orgUnit: cleanOrgUnitPath(mappedOrgUnit),
-                    dataElement: mappedDataElement,
-                    categoryOptionCombo: mappedCategory,
-                    attributeOptionCombo: mappedAttribute,
-                    ...rest,
-                };
-            }
-        );
+                    return {
+                        orgUnit: cleanOrgUnitPath(mappedOrgUnit),
+                        dataElement: mappedDataElement,
+                        categoryOptionCombo: mappedCategory,
+                        attributeOptionCombo: mappedAttribute,
+                        ...rest,
+                    };
+                }
+            );
 
         return { dataValues };
     }

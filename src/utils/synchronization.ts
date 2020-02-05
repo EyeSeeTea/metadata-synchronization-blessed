@@ -1,5 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
-import axios, { AxiosBasicCredentials } from "axios";
+import axios, { AxiosBasicCredentials, AxiosError } from "axios";
 import { D2Api } from "d2-api";
 import { isValidUid } from "d2/uid";
 import FileSaver from "file-saver";
@@ -123,22 +123,28 @@ export async function postMetadata(
 
         return response.data;
     } catch (error) {
-        if (error.response && error.response.data) {
-            const {
-                status,
-                httpStatus = "Unknown",
-                httpStatusCode = 400,
-                message = "Request failed unexpectedly",
-            } = error.response.data;
-            return { status, message: `Error ${httpStatusCode} (${httpStatus}): ${message}` };
-        } else if (error.response) {
-            const { status, statusText } = error.response;
-            console.error(status, statusText, error);
-            return { status: "ERROR", message: `Unknown error: ${status} ${statusText}` };
-        } else {
-            console.error(error);
-            return { status: "NETWORK ERROR" };
-        }
+        return buildResponseError(error);
+    }
+}
+
+function buildResponseError(error: AxiosError): MetadataImportResponse {
+    if (error.response && error.response.data) {
+        const {
+            httpStatus = "Unknown",
+            httpStatusCode = 400,
+            message = "Request failed unexpectedly",
+        } = error.response.data;
+        return {
+            ...error.response.data,
+            message: `Error ${httpStatusCode} (${httpStatus}): ${message}`,
+        };
+    } else if (error.response) {
+        const { status, statusText } = error.response;
+        console.error(status, statusText, error);
+        return { status: "ERROR", message: `Unknown error: ${status} ${statusText}` };
+    } else {
+        console.error(error);
+        return { status: "NETWORK ERROR" };
     }
 }
 
@@ -171,7 +177,7 @@ export function cleanMetadataImportResponse(
     importResult: MetadataImportResponse,
     instance: Instance
 ): SynchronizationResult {
-    const { status: importStatus, stats, typeReports = [] } = importResult;
+    const { status: importStatus, stats, message, typeReports = [] } = importResult;
     const status = importStatus === "OK" ? "SUCCESS" : importStatus;
     const typeStats: any[] = [];
     const messages: any[] = [];
@@ -201,6 +207,7 @@ export function cleanMetadataImportResponse(
     return {
         status,
         stats,
+        message,
         instance: instance.toObject(),
         report: { typeStats, messages },
         date: new Date(),
@@ -211,16 +218,24 @@ export function cleanDataImportResponse(
     importResult: DataImportResponse,
     instance: Instance
 ): SynchronizationResult {
-    const { status: importStatus, importCount, response, conflicts = [] } = importResult;
+    const { status: importStatus, message, importCount, response, conflicts } = importResult;
     const status = importStatus === "OK" ? "SUCCESS" : importStatus;
-    const messages = conflicts.map(({ object, value }) => ({ uid: object, message: value }));
     const eventsStats = _.pick(response, ["imported", "deleted", "ignored", "updated", "total"]);
+    const aggregatedMessages = conflicts?.map(({ object, value }) => ({
+        uid: object,
+        message: value,
+    }));
+    const eventsMessages = response?.importSummaries?.map(({ reference, description }) => ({
+        uid: reference,
+        message: description,
+    }));
 
     return {
         status,
+        message,
         stats: importCount || eventsStats,
         instance: instance.toObject(),
-        report: { messages },
+        report: { messages: aggregatedMessages ?? eventsMessages ?? [] },
         date: new Date(),
     };
 }
@@ -343,8 +358,10 @@ export const getRootOrgUnit = memoize(
     { maxArgs: 0 }
 );
 
-export function cleanObjectDefault(object: ProgramEvent, defaults: string[]) {
-    return _.pickBy(object, value => !defaults.includes(String(value))) as ProgramEvent;
+export function cleanObjectDefault(object: ProgramEvent, defaults: string[]): ProgramEvent;
+export function cleanObjectDefault(object: DataValue, defaults: string[]): DataValue;
+export function cleanObjectDefault(object: ProgramEvent | DataValue, defaults: string[]) {
+    return _.pickBy(object, value => !defaults.includes(String(value)));
 }
 
 export function cleanOrgUnitPath(orgUnitPath: string): string {
@@ -420,13 +437,7 @@ export async function postData(
 
         return response;
     } catch (error) {
-        if (error.response) {
-            console.log("DEBUG", error);
-            return error.response;
-        } else {
-            console.error(error);
-            return { status: "NETWORK ERROR" };
-        }
+        return buildResponseError(error);
     }
 }
 

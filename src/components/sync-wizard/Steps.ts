@@ -26,6 +26,7 @@ export interface SyncWizardStep {
 export interface SyncWizardStepProps {
     syncRule: SyncRule;
     onChange: (syncRule: SyncRule) => void;
+    onCancel: () => void;
 }
 
 const commonSteps: {

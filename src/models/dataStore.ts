@@ -71,8 +71,8 @@ export async function getDataById(d2: D2, dataStoreKey: string, id: string): Pro
 export async function getPaginatedData(
     d2: D2,
     dataStoreKey: string,
-    filters: TableFilters,
-    pagination: TablePagination
+    filters: TableFilters | null,
+    pagination: TablePagination | null
 ): Promise<TableList> {
     const { search = null } = filters || {};
     const { page = 1, pageSize = 20, paging = true, sorting = ["id", "asc"] } = pagination || {};

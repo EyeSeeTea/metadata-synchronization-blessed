@@ -66,7 +66,7 @@ const initialState = {
     pagination: { pageSize: 25, page: 1, total: 0 },
 };
 
-const HistoryPage = () => {
+const HistoryPage: React.FC = () => {
     const d2 = useD2();
     const snackbar = useSnackbar();
     const loading = useLoading();

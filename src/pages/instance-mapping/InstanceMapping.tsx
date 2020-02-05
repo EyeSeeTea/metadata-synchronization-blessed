@@ -332,7 +332,7 @@ const InstanceMappingPage: React.FC = () => {
                 notifyRowsChange={setRows}
                 loading={loading}
                 selectedIds={selectedIds}
-                notifyNewSelection={selectedIds => setSelectedIds(selectedIds)}
+                notifyNewSelection={setSelectedIds}
                 ids={
                     // TODO: https://github.com/EyeSeeTea/d2-ui-components/issues/118
                     undefined

@@ -8,11 +8,11 @@ import {
     ObjectsTableProps,
     OrgUnitsSelector,
     ReferenceObject,
+    TableAction,
     TableColumn,
     TableSelection,
     TableSorting,
     TableState,
-    TableAction,
 } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
@@ -179,7 +179,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             const subtree = await getOrgUnitSubtree(api, selectedOU.id);
             subtree.forEach(id => ids.add(id));
         }
-        notifyNewSelection([...selectedIds, ...Array.from(ids)], excludedIds);
+        const includedIds = _.uniq([...selectedIds, ...Array.from(ids)]);
+        notifyNewSelection(includedIds, excludedIds);
     };
 
     const addToSelection = (items: NamedRef[]) => {
@@ -260,7 +261,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     );
 
     const sideComponents = model.getCollectionName() === "organisationUnits" && (
-        <div className={classes.orgUnitFilter}>
+        <div key={"org-unit-selector-filter"} className={classes.orgUnitFilter}>
             <OrgUnitsSelector
                 api={api}
                 withElevation={true}
@@ -407,16 +408,19 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         const newlySelectedIds = _.difference(included, selectedIds);
         const newlyUnselectedIds = _.difference(selectedIds, included);
 
-        const childrenOfNewlySelected = _(rows)
-            .filter(({ id }) => !!newlySelectedIds.includes(id))
-            .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType)
-            .flattenDeep()
-            .map(({ id }) => id)
-            .value();
+        const parseChildren = (ids: string[]) =>
+            _(rows)
+                .filter(({ id }) => !!ids.includes(id))
+                .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType)
+                .flattenDeep()
+                .map(({ id }) => id)
+                .value();
 
         const excluded = _(excludedIds)
             .union(newlyUnselectedIds)
-            .difference(childrenOfNewlySelected)
+            .difference(parseChildren(newlyUnselectedIds))
+            .difference(newlySelectedIds)
+            .difference(parseChildren(newlySelectedIds))
             .filter(id => !_.find(rows, { id }))
             .value();
 
@@ -438,7 +442,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const childrenSelection: TableSelection[] = _(rows)
         .intersectionBy(selection, "id")
-        .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType)
+        .map(row => _.values(_.pick(row, childrenKeys)))
         .flattenDeep()
         .differenceBy(selection, "id")
         .differenceBy(exclusion, "id")
@@ -447,7 +451,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 id,
                 checked: true,
                 indeterminate: !_.find(selection, { id }),
-            } as TableSelection;
+            };
         })
         .value();
 

@@ -7,20 +7,20 @@ import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui
 import {
     DataSynchronizationParams,
     DataSyncPeriod,
+    ExcludeIncludeRules,
+    MetadataIncludeExcludeRules,
     MetadataSynchronizationParams,
     SharingSetting,
+    SynchronizationBuilder,
     SynchronizationRule,
     SyncRuleType,
-    MetadataIncludeExcludeRules,
-    ExcludeIncludeRules,
-    SynchronizationBuilder,
 } from "../types/synchronization";
 import { Validation } from "../types/validations";
+import { extractChildrenFromRules, extractParentsFromRule } from "../utils/metadataIncludeExclude";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
 import isValidCronExpression from "../utils/validCronExpression";
-import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
-import { extractChildrenFromRules, extractParentsFromRule } from "../utils/metadataIncludeExclude";
 import { D2Model } from "./d2Model";
+import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
 
 const dataStoreKey = "rules";
 
@@ -73,6 +73,10 @@ export default class SyncRule {
 
     public get description(): string | undefined {
         return this.syncRule.description;
+    }
+
+    public get builder(): SynchronizationBuilder {
+        return this.syncRule.builder ?? {};
     }
 
     public get metadataIds(): string[] {
@@ -262,7 +266,13 @@ export default class SyncRule {
                     ? rule.builder?.targetInstances.includes(targetInstanceFilter)
                     : true
             )
-            .filter(rule => (enabledFilter ? rule.enabled && enabledFilter === "enabled" : true))
+            .filter(rule => {
+                if (!enabledFilter) return true;
+                return (
+                    (rule.enabled && enabledFilter === "enabled") ||
+                    (!rule.enabled && enabledFilter === "disabled")
+                );
+            })
             .filter(rule =>
                 lastExecutedFilter && rule.lastExecuted
                     ? moment(lastExecutedFilter).isSameOrBefore(rule.lastExecuted, "date")
