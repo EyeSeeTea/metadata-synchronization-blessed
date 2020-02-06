@@ -245,12 +245,9 @@ const HistoryPage: React.FC = () => {
                 onChange={updateTable}
             />
 
-            <SyncSummary
-                d2={d2}
-                response={syncReport ?? SyncReport.create()}
-                isOpen={!!syncReport}
-                handleClose={() => setSyncReport(null)}
-            />
+            {!!syncReport && (
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
+            )}
 
             {toDelete.length > 0 && (
                 <ConfirmationDialog
