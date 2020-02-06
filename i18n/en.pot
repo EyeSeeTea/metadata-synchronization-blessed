@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-05T12:18:08.159Z\n"
-"PO-Revision-Date: 2020-02-05T12:18:08.159Z\n"
+"POT-Creation-Date: 2020-02-06T08:39:26.406Z\n"
+"PO-Revision-Date: 2020-02-06T08:39:26.406Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -123,6 +123,9 @@ msgid "Disable atomic verification"
 msgstr ""
 
 msgid "Replace objects in destination instance"
+msgstr ""
+
+msgid "Dry Run"
 msgstr ""
 
 msgid "Type"
