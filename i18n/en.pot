@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-05T12:18:08.159Z\n"
-"PO-Revision-Date: 2020-02-05T12:18:08.159Z\n"
+"POT-Creation-Date: 2020-02-06T20:51:02.363Z\n"
+"PO-Revision-Date: 2020-02-06T20:51:02.363Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -531,6 +531,9 @@ msgstr ""
 msgid "Please fix the issues before saving"
 msgstr ""
 
+msgid "Metadata mapping"
+msgstr ""
+
 msgid "Test Connection"
 msgstr ""
 
@@ -567,9 +570,6 @@ msgid "Edit"
 msgstr ""
 
 msgid "Replicate"
-msgstr ""
-
-msgid "Metadata mapping"
 msgstr ""
 
 msgid "Delete Instances?"
@@ -686,10 +686,9 @@ msgstr ""
 msgid "Destination instance settings"
 msgstr ""
 
-msgid "Create, check connectivity, modify and delete DHIS2 destination instances."
-msgstr ""
-
-msgid "Create, modify and delete metadata mapping with destination instances."
+msgid ""
+"Create, check connectivity, modify and delete DHIS2 destination instances. "
+"Map metadata objects between instances."
 msgstr ""
 
 msgid "Add"

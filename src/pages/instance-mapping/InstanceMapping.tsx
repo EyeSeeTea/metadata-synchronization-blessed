@@ -301,7 +301,7 @@ const InstanceMappingPage: React.FC = () => {
     ];
 
     const backHome = () => {
-        history.push("/");
+        history.push("/instances");
     };
 
     return (
