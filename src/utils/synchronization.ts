@@ -103,9 +103,8 @@ export async function postMetadata(
     additionalParams?: MetadataImportParams
 ): Promise<MetadataImportResponse> {
     try {
-        debugger;
-
         const params: MetadataImportParams = {
+            importMode: additionalParams?.importMode ?? "COMMIT",
             identifier: "UID",
             importReportMode: "FULL",
             importStrategy: "CREATE_AND_UPDATE",
@@ -113,7 +112,6 @@ export async function postMetadata(
             atomicMode: "ALL",
             ...additionalParams,
         };
-
         const response = await axios.post(instance.url + "/api/metadata", metadata, {
             auth: {
                 username: instance.username,
@@ -416,7 +414,6 @@ export async function postData(
     additionalParams?: DataImportParams
 ): Promise<any> {
     try {
-        debugger;
         const response = await instance
             .getApi()
             .post(
@@ -430,6 +427,7 @@ export async function postData(
                     skipExistingCheck: false,
                     format: "json",
                     async: false,
+                    dryRun: additionalParams?.dryRun ?? false,
                     ...additionalParams,
                 },
                 data
