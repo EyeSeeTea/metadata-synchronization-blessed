@@ -155,14 +155,6 @@ const LandingPage: React.FC = () => {
                     addAction: showCreateLinks ? () => history.push("/instances/new") : undefined,
                     listAction: () => history.push("/instances"),
                 },
-                {
-                    name: i18n.t("Metadata mapping"),
-                    description: i18n.t(
-                        "Create, modify and delete metadata mapping with destination instances."
-                    ),
-                    addAction: undefined,
-                    listAction: () => history.push("/instances/mapping"),
-                },
             ],
         },
     ];
