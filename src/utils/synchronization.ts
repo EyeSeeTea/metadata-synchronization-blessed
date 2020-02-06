@@ -335,8 +335,8 @@ export const getDefaultIds = memoize(
                 fields: "id",
             })
             .getData()) as {
-                [key: string]: { id: string }[];
-            };
+            [key: string]: { id: string }[];
+        };
 
         return _(response)
             .omit(["system"])
@@ -447,7 +447,12 @@ export async function postAggregatedData(
     data: object,
     additionalParams?: DataImportParams
 ): Promise<any> {
-    return postData(instance, "/dataValueSets", data, _.pick(additionalParams, ["strategy", "dryRun"]));
+    return postData(
+        instance,
+        "/dataValueSets",
+        data,
+        _.pick(additionalParams, ["strategy", "dryRun"])
+    );
 }
 
 export async function postEventsData(
