@@ -34,7 +34,6 @@ export const TestWrapper: React.FC<TestWrapperProps> = ({
     componentParent,
 }) => {
     const testAttributeName = attributeName || `data-test`;
-    const isProduction = process.env.NODE_ENV === "production";
 
     function withTestAttribute(nodes: React.ReactNode, parentId?: string) {
         const node = React.Children.only(nodes) as any;
@@ -49,7 +48,8 @@ export const TestWrapper: React.FC<TestWrapperProps> = ({
 
         const count = dataTestDictionary.get(testAttribute) ?? 0;
         const testId = concatStrings([testAttribute, count > 1 ? String(count) : undefined]);
-        dataTestDictionary.set(testAttribute, count + 1);
+        // TODO: Disabled for now
+        // dataTestDictionary.set(testAttribute, count + 1);
 
         return React.cloneElement(element, {
             [testAttributeName]: props[testAttributeName] ?? testId,
@@ -58,7 +58,7 @@ export const TestWrapper: React.FC<TestWrapperProps> = ({
 
     return (
         <React.Fragment>
-            {isProduction ? children : recursiveMap(children, withTestAttribute)}
+            {process.env.REACT_APP_CYPRESS ? recursiveMap(children, withTestAttribute) : children}
         </React.Fragment>
     );
 };
