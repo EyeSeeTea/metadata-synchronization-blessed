@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-06T20:51:02.363Z\n"
-"PO-Revision-Date: 2020-02-06T20:51:02.363Z\n"
+"POT-Creation-Date: 2020-02-06T21:04:27.739Z\n"
+"PO-Revision-Date: 2020-02-06T21:04:27.739Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -598,7 +598,10 @@ msgstr ""
 msgid "Please select an instance from the dropdown"
 msgstr ""
 
-msgid "Cleared mapping for {{total}} elements"
+msgid "Disabled mapping for {{total}} elements"
+msgstr ""
+
+msgid "Reset mapping for {{total}} elements to default values"
 msgstr ""
 
 msgid "Please wait to finish loading"
@@ -616,7 +619,10 @@ msgstr ""
 msgid "Instance selection"
 msgstr ""
 
-msgid "Clear mapping"
+msgid "Disable mapping"
+msgstr ""
+
+msgid "Reset mapping to default values"
 msgstr ""
 
 msgid "Manual sync"

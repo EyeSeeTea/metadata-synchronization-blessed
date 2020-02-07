@@ -466,12 +466,7 @@ const SyncRulesPage: React.FC = () => {
             )}
 
             {!!syncReport && (
-                <SyncSummary
-                    d2={d2}
-                    response={syncReport}
-                    isOpen={true}
-                    handleClose={() => setSyncReport(null)}
-                />
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
             )}
 
             {!!sharingSettingsObject && (
