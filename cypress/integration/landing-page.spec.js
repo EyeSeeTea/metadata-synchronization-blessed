@@ -4,6 +4,7 @@ context("Landing page", () => {
     beforeEach(() => {
         cy.login("admin");
         cy.visit("/#/");
+        cy.get(dataTest("headerbar-title")).contains("MetaData Synchronization");
     });
 
     it("renders a table with all pages of the application", () => {
