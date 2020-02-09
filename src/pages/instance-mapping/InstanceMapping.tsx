@@ -157,7 +157,7 @@ const InstanceMappingPage: React.FC = () => {
             setInstance(newInstance);
             setSelectedIds([]);
 
-            const action = mappedId ? i18n.t("Set") : i18n.t("Reset");
+            const action = mappedId ? i18n.t("Set") : i18n.t("Reset to default");
             const operation = mappedId === "DISABLED" ? i18n.t("Disabled") : action;
 
             snackbar.info(
