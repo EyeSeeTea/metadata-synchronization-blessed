@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-09T11:11:11.735Z\n"
-"PO-Revision-Date: 2020-02-09T11:11:11.735Z\n"
+"POT-Creation-Date: 2020-02-09T11:36:50.939Z\n"
+"PO-Revision-Date: 2020-02-09T11:36:50.939Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -15,6 +15,9 @@ msgid "<No value>"
 msgstr ""
 
 msgid "Edit mapping for {{displayName}} ({{id}})"
+msgstr ""
+
+msgid "Edit mapping for {{total}} elements"
 msgstr ""
 
 msgid "Close"
@@ -590,9 +593,6 @@ msgid "Could not connect with instance"
 msgstr ""
 
 msgid "Please select an instance from the dropdown"
-msgstr ""
-
-msgid "Please wait to finish loading"
 msgstr ""
 
 msgid "Set"
