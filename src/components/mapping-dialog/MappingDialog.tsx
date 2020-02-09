@@ -2,7 +2,7 @@ import i18n from "@dhis2/d2-i18n";
 import { Typography } from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
 import { makeStyles } from "@material-ui/styles";
-import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
+import { ConfirmationDialog, OrgUnitsSelector, TableSelection } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { D2Model, DataElementGroupModel } from "../../models/d2Model";
@@ -11,7 +11,8 @@ import { MetadataType } from "../../utils/d2";
 import MetadataTable from "../metadata-table/MetadataTable";
 
 interface MappingDialogProps {
-    element: MetadataType;
+    rows: MetadataType[];
+    elements: TableSelection[];
     model?: typeof D2Model;
     instance?: Instance;
     onClose: () => void;
@@ -26,19 +27,19 @@ const useStyles = makeStyles({
 
 const MappingDialog: React.FC<MappingDialogProps> = ({
     model = DataElementGroupModel,
-    element,
+    rows,
+    elements,
     instance,
     onClose,
     onUpdateMapping,
 }) => {
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
+    const element = elements.length === 1 ? _.find(rows, ["id", elements[0]?.id]) : undefined;
 
-    const defaultSelection = _.get(instance?.metadataMapping, [
-        model.getCollectionName(),
-        element.id,
-        "mappedId",
-    ]);
+    const defaultSelection = element
+        ? _.get(instance?.metadataMapping, [model.getCollectionName(), element.id, "mappedId"])
+        : undefined;
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
     useEffect(() => {
@@ -88,10 +89,15 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const MapperComponent =
         model.getCollectionName() === "organisationUnits" ? OrgUnitMapper : MetadataMapper;
 
+    const title =
+        elements.length === 1
+            ? i18n.t("Edit mapping for {{displayName}} ({{id}})", element)
+            : i18n.t("Edit mapping for {{total}} elements", { total: elements.length });
+
     return (
         <ConfirmationDialog
-            isOpen={!!element}
-            title={i18n.t("Edit mapping for {{displayName}} ({{id}})", element)}
+            isOpen={elements.length > 0}
+            title={title}
             onCancel={onClose}
             maxWidth={"lg"}
             fullWidth={true}

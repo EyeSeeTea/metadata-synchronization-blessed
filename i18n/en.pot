@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-06T21:04:27.739Z\n"
-"PO-Revision-Date: 2020-02-06T21:04:27.739Z\n"
+"POT-Creation-Date: 2020-02-09T11:11:11.735Z\n"
+"PO-Revision-Date: 2020-02-09T11:11:11.735Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -589,22 +589,22 @@ msgstr ""
 msgid "Could not connect with instance"
 msgstr ""
 
-msgid "Selected {{id}} to map with {{displayName}}"
-msgstr ""
-
-msgid "Could not apply mapping, please try again."
-msgstr ""
-
 msgid "Please select an instance from the dropdown"
 msgstr ""
 
-msgid "Disabled mapping for {{total}} elements"
-msgstr ""
-
-msgid "Reset mapping for {{total}} elements to default values"
-msgstr ""
-
 msgid "Please wait to finish loading"
+msgstr ""
+
+msgid "Set"
+msgstr ""
+
+msgid "Reset"
+msgstr ""
+
+msgid "{{operation}} mapping for {{total}} elements"
+msgstr ""
+
+msgid "Could not apply mapping, please try again."
 msgstr ""
 
 msgid "Set mapping"
