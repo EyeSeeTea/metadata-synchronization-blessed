@@ -104,7 +104,7 @@ export async function postMetadata(
 ): Promise<MetadataImportResponse> {
     try {
         const params: MetadataImportParams = {
-            importMode: "COMMIT",
+            importMode: additionalParams?.importMode ?? "COMMIT",
             identifier: "UID",
             importReportMode: "FULL",
             importStrategy: "CREATE_AND_UPDATE",
@@ -112,7 +112,6 @@ export async function postMetadata(
             atomicMode: "ALL",
             ...additionalParams,
         };
-
         const response = await axios.post(instance.url + "/api/metadata", metadata, {
             auth: {
                 username: instance.username,
@@ -428,7 +427,7 @@ export async function postData(
                     skipExistingCheck: false,
                     format: "json",
                     async: false,
-                    dryRun: false,
+                    dryRun: additionalParams?.dryRun ?? false,
                     ...additionalParams,
                 },
                 data
@@ -446,7 +445,12 @@ export async function postAggregatedData(
     data: object,
     additionalParams?: DataImportParams
 ): Promise<any> {
-    return postData(instance, "/dataValueSets", data, _.pick(additionalParams, ["strategy"]));
+    return postData(
+        instance,
+        "/dataValueSets",
+        data,
+        _.pick(additionalParams, ["strategy", "dryRun"])
+    );
 }
 
 export async function postEventsData(
@@ -454,7 +458,7 @@ export async function postEventsData(
     data: object,
     additionalParams?: DataImportParams
 ): Promise<any> {
-    return postData(instance, "/events", data, _.pick(additionalParams, []));
+    return postData(instance, "/events", data, _.pick(additionalParams, ["dryRun"]));
 }
 
 export function buildMetadataDictionary(metadataPackage: MetadataPackage) {
