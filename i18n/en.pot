@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-09T12:09:45.827Z\n"
-"PO-Revision-Date: 2020-02-09T12:09:45.827Z\n"
+"POT-Creation-Date: 2020-02-10T07:55:31.472Z\n"
+"PO-Revision-Date: 2020-02-10T07:55:31.472Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -607,6 +607,12 @@ msgstr ""
 msgid "Could not apply mapping, please try again."
 msgstr ""
 
+msgid "Looking for candidates to apply auto-maping"
+msgstr ""
+
+msgid "Applying auto-maping for {{name}}"
+msgstr ""
+
 msgid "Set mapping"
 msgstr ""
 
@@ -638,6 +644,9 @@ msgid "Are you sure you want to disable mapping for {{total}} elements?"
 msgstr ""
 
 msgid "Please select at least one item to disable mapping"
+msgstr ""
+
+msgid "Auto-map element"
 msgstr ""
 
 msgid "Reset mapping to default values"

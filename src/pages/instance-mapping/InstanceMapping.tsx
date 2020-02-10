@@ -414,7 +414,7 @@ const InstanceMappingPage: React.FC = () => {
             text: i18n.t("Auto-map element"),
             multiple: true,
             onClick: applyAutoMapping,
-            icon: <Icon>label_important</Icon>,
+            icon: <Icon>compare_arrows</Icon>,
         },
         {
             name: "disable-mapping",
