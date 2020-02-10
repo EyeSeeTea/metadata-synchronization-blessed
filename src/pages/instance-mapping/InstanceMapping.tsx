@@ -167,7 +167,36 @@ const InstanceMappingPage: React.FC = () => {
         }
     };
 
-    const clearMapping = async (items: MetadataType[]) => {
+    const disableMapping = async (items: MetadataType[]) => {
+        if (!instance) {
+            snackbar.error(i18n.t("Please select an instance from the dropdown"), {
+                autoHideDuration: 2500,
+            });
+            return;
+        }
+
+        const newMapping = _.cloneDeep(instance.metadataMapping);
+        for (const item of items) {
+            _.set(newMapping, [type, item.id], { mappedId: "DISABLED" });
+            _.set(dictionary, `${instance.id}-${type}-${item.id}`, {
+                mappedId: "DISABLED",
+                name: "Disabled",
+            });
+        }
+
+        const newInstance = instance.setMetadataMapping(newMapping);
+        await newInstance.save(d2 as D2);
+        setInstance(newInstance);
+
+        snackbar.info(
+            i18n.t("Disabled mapping for {{total}} elements", {
+                total: items.length,
+            }),
+            { autoHideDuration: 2500 }
+        );
+    };
+
+    const resetMapping = async (items: MetadataType[]) => {
         if (!instance) {
             snackbar.error(i18n.t("Please select an instance from the dropdown"), {
                 autoHideDuration: 2500,
@@ -186,7 +215,7 @@ const InstanceMappingPage: React.FC = () => {
         setInstance(newInstance);
 
         snackbar.info(
-            i18n.t("Cleared mapping for {{total}} elements", {
+            i18n.t("Reset mapping for {{total}} elements to default values", {
                 total: items.length,
             }),
             { autoHideDuration: 2500 }
@@ -227,11 +256,12 @@ const InstanceMappingPage: React.FC = () => {
                         row.id
                     );
                     const cleanId = cleanOrgUnitPath(mappedId);
+                    const name = cleanId === "DISABLED" ? i18n.t("Disabled") : cleanId;
 
                     return (
                         <span>
                             <Typography variant={"inherit"} gutterBottom>
-                                {cleanId}
+                                {name}
                             </Typography>
                             <Tooltip title={i18n.t("Set mapping")} placement="top">
                                 <IconButton
@@ -253,8 +283,9 @@ const InstanceMappingPage: React.FC = () => {
                     const defaultName = instance
                         ? i18n.t("Loading...")
                         : i18n.t("Please select an instance");
+                    const { name, mappedId } = dictionary[key] ?? {};
 
-                    return dictionary[key]?.name ?? defaultName;
+                    return mappedId === "DISABLED" ? "-" : name ?? defaultName;
                 },
             },
         ],
@@ -283,7 +314,7 @@ const InstanceMappingPage: React.FC = () => {
             isActive: () => false,
         },
         {
-            name: "map",
+            name: "set-mapping",
             text: i18n.t("Set mapping"),
             multiple: false,
             onClick: (rows: MetadataType[]) => {
@@ -292,16 +323,24 @@ const InstanceMappingPage: React.FC = () => {
             icon: <Icon>open_in_new</Icon>,
         },
         {
-            name: "clear",
-            text: i18n.t("Clear mapping"),
+            name: "disable-mapping",
+            text: i18n.t("Disable mapping"),
             multiple: true,
-            onClick: clearMapping,
+            onClick: disableMapping,
+            icon: <Icon>sync_disabled</Icon>,
+            isActive: () => type === "dataElements" || type === "organisationUnits",
+        },
+        {
+            name: "reset-mapping",
+            text: i18n.t("Reset mapping to default values"),
+            multiple: true,
+            onClick: resetMapping,
             icon: <Icon>clear</Icon>,
         },
     ];
 
     const backHome = () => {
-        history.push("/");
+        history.push("/instances");
     };
 
     return (

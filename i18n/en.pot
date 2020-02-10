@@ -537,6 +537,9 @@ msgstr ""
 msgid "Please fix the issues before saving"
 msgstr ""
 
+msgid "Metadata mapping"
+msgstr ""
+
 msgid "Test Connection"
 msgstr ""
 
@@ -575,9 +578,6 @@ msgstr ""
 msgid "Replicate"
 msgstr ""
 
-msgid "Metadata mapping"
-msgstr ""
-
 msgid "Delete Instances?"
 msgstr ""
 
@@ -604,7 +604,10 @@ msgstr ""
 msgid "Please select an instance from the dropdown"
 msgstr ""
 
-msgid "Cleared mapping for {{total}} elements"
+msgid "Disabled mapping for {{total}} elements"
+msgstr ""
+
+msgid "Reset mapping for {{total}} elements to default values"
 msgstr ""
 
 msgid "Please wait to finish loading"
@@ -622,7 +625,10 @@ msgstr ""
 msgid "Instance selection"
 msgstr ""
 
-msgid "Clear mapping"
+msgid "Disable mapping"
+msgstr ""
+
+msgid "Reset mapping to default values"
 msgstr ""
 
 msgid "Manual sync"
@@ -692,10 +698,9 @@ msgstr ""
 msgid "Destination instance settings"
 msgstr ""
 
-msgid "Create, check connectivity, modify and delete DHIS2 destination instances."
-msgstr ""
-
-msgid "Create, modify and delete metadata mapping with destination instances."
+msgid ""
+"Create, check connectivity, modify and delete DHIS2 destination instances. "
+"Map metadata objects between instances."
 msgstr ""
 
 msgid "Add"

@@ -104,9 +104,4 @@ context("Landing page", () => {
         cy.get("[data-test='card-configuration-0'] button[title='Add']").click();
         cy.get(dataTest("page-header-title")).contains("New Instance");
     });
-
-    it("enters the Destination instance settings page", function() {
-        cy.get("[data-test='card-configuration-1'] button[title='List']").click();
-        cy.get(dataTest("page-header-title")).contains("Metadata mapping");
-    });
 });
