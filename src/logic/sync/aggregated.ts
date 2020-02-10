@@ -6,11 +6,11 @@ import { AggregatedPackage, DataValue } from "../../types/synchronization";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,
+    cleanObjectDefault,
     cleanOrgUnitPath,
     getAggregatedData,
-    postAggregatedData,
     getDefaultIds,
-    cleanObjectDefault,
+    postAggregatedData,
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
 
@@ -129,6 +129,9 @@ export class AggregatedSync extends GenericSync {
                         ...rest,
                     };
                 }
+            )
+            .filter(
+                ({ orgUnit, dataElement }) => orgUnit !== "DISABLED" && dataElement !== "DISABLED"
             );
 
         return { dataValues };

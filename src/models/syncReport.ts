@@ -61,14 +61,14 @@ export default class SyncReport {
 
     public static async get(d2: D2, id: string): Promise<SyncReport | null> {
         const data = await getDataById(d2, dataStoreKey, id);
-        return !!data ? this.build(data) : null;
+        return data ? this.build(data) : null;
     }
 
     public static async list(
         d2: D2,
         filters: SyncReportTableFilters,
         state?: TableInitialState<SynchronizationReport>,
-        paging: boolean = true
+        paging = true
     ): Promise<{ rows: SynchronizationReport[]; pager: Partial<TablePagination> }> {
         const { statusFilter, syncRuleFilter, type } = filters;
         const { pagination, sorting } = state || {};
@@ -115,11 +115,9 @@ export default class SyncReport {
         this.results = _.unionBy([...result], this.results, "instance.id");
     }
 
-    public async loadSyncResults(d2: D2): Promise<void> {
+    public async loadSyncResults(d2: D2): Promise<SynchronizationResult[]> {
         const { id } = this.syncReport;
-        if (id && !this.results) {
-            this.results = await getDataStore(d2, `${dataStoreKey}-${id}`, []);
-        }
+        return id ? getDataStore(d2, `${dataStoreKey}-${id}`, []) : [];
     }
 
     public hasErrors(): boolean {

@@ -1,4 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
+import { Typography } from "@material-ui/core";
 import { D2Program, useD2, useD2Api } from "d2-api";
 import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "d2-ui-components";
 import _ from "lodash";
@@ -21,6 +22,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     const [objects, setObjects] = useState<ProgramEvent[] | undefined>();
     const [programs, setPrograms] = useState<D2Program[]>([]);
     const [programFilter, changeProgramFilter] = useState<string>("");
+    const [error, setError] = useState();
 
     useEffect(() => {
         getEventsData(
@@ -30,7 +32,9 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 allEvents: true,
             },
             syncRule.metadataIds
-        ).then(setObjects);
+        )
+            .then(setObjects)
+            .catch(setError);
     }, [api, syncRule]);
 
     useEffect(() => {
@@ -130,6 +134,10 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     const additionalColumns = buildAdditionalColumns();
     const filteredObjects =
         objects?.filter(({ program }) => !programFilter || program === programFilter) ?? [];
+
+    if (error) {
+        return <Typography>{i18n.t("You do not have permission to list the events")}</Typography>;
+    }
 
     return (
         <React.Fragment>

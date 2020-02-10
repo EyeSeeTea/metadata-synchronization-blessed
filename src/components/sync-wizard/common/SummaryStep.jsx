@@ -17,6 +17,7 @@ import {
 } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
 import { getInstanceOptions } from "./InstanceSelectionStep";
+import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -190,7 +191,13 @@ const SaveStep = ({ syncRule, onCancel }) => {
                                                 key
                                             ].includeRules.map(includeRule => (
                                                 <ul>
-                                                    <LiEntry label={includeRule} />
+                                                    <LiEntry
+                                                        label={
+                                                            includeExcludeRulesFriendlyNames[
+                                                                includeRule
+                                                            ] || includeRule
+                                                        }
+                                                    />
                                                 </ul>
                                             ))}
                                         </ul>
@@ -200,7 +207,13 @@ const SaveStep = ({ syncRule, onCancel }) => {
                                                 key
                                             ].excludeRules.map(excludeRule => (
                                                 <ul>
-                                                    <LiEntry label={excludeRule} />
+                                                    <LiEntry
+                                                        label={
+                                                            includeExcludeRulesFriendlyNames[
+                                                                excludeRule
+                                                            ] || excludeRule
+                                                        }
+                                                    />
                                                 </ul>
                                             ))}
                                         </ul>
