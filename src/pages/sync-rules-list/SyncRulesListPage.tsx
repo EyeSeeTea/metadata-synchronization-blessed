@@ -109,6 +109,7 @@ const SyncRulesPage: React.FC = () => {
         targetInstanceFilter,
         enabledFilter,
         lastExecutedFilter,
+        sharingSettingsObject,
     ]);
 
     const [allInstances, setAllInstances] = useState<Instance[]>([]);
@@ -286,7 +287,8 @@ const SyncRulesPage: React.FC = () => {
         if (!object) return;
 
         setSharingSettingsObject({
-            object,
+            //@ts-ignore
+            object: object.syncRule,
             meta: { allowPublicAccess: true, allowExternalAccess: false },
         });
     };
