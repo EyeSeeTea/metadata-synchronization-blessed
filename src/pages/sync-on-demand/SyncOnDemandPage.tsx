@@ -77,13 +77,8 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
 
     const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand(type));
     const [appConfigurator, updateAppConfigurator] = useState(false);
-
-    const [state, setState] = useState({
-        importResponse: SyncReport.create(),
-        syncDialogOpen: false,
-        syncSummaryOpen: false,
-        enableDialogSync: false,
-    });
+    const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
+    const [syncDialogOpen, setSyncDialogOpen] = useState(false);
 
     useEffect(() => {
         isAppConfigurator(d2 as D2).then(updateAppConfigurator);
@@ -95,13 +90,9 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
         updateSyncRule(syncRule.updateMetadataIds(selection).updateExcludedIds(exclusion));
     };
 
-    const closeSummary = () => {
-        setState(state => ({ ...state, syncSummaryOpen: false }));
-    };
-
     const openSynchronizationDialog = () => {
         if (syncRule.metadataIds.length > 0) {
-            setState(state => ({ ...state, syncDialogOpen: true }));
+            setSyncDialogOpen(true);
         } else {
             snackbar.error(
                 i18n.t("Please select at least one element from the table to synchronize")
@@ -109,27 +100,19 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
         }
     };
 
-    const finishSynchronization = (importResponse?: any) => {
+    const finishSynchronization = (importResponse?: SyncReport) => {
+        setSyncDialogOpen(false);
+
         if (importResponse) {
-            setState(state => ({
-                ...state,
-                syncDialogOpen: false,
-                syncSummaryOpen: true,
-                importResponse,
-            }));
+            setSyncReport(importResponse);
         } else {
             snackbar.error(i18n.t("Unknown error with the request"));
-            setState(state => ({ ...state, syncDialogOpen: false }));
         }
     };
 
     const closeDialogs = () => {
         updateSyncRule(SyncRule.createOnDemand(type));
-        setState(state => ({
-            ...state,
-            syncDialogOpen: false,
-            syncSummaryOpen: false,
-        }));
+        setSyncDialogOpen(false);
     };
 
     const handleSynchronization = async (syncRule: SyncRule) => {
@@ -172,21 +155,20 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
                 childrenKeys={config[type].childrenKeys}
             />
 
-            <SyncDialog
-                title={title}
-                syncRule={syncRule}
-                isOpen={state.syncDialogOpen}
-                onChange={updateSyncRule}
-                onClose={closeDialogs}
-                task={handleSynchronization}
-            />
+            {syncDialogOpen && (
+                <SyncDialog
+                    title={title}
+                    syncRule={syncRule}
+                    isOpen={true}
+                    onChange={updateSyncRule}
+                    onClose={closeDialogs}
+                    task={handleSynchronization}
+                />
+            )}
 
-            <SyncSummary
-                d2={d2}
-                response={state.importResponse}
-                isOpen={state.syncSummaryOpen}
-                handleClose={closeSummary}
-            />
+            {!!syncReport && (
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
+            )}
         </TestWrapper>
     );
 };
