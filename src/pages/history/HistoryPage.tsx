@@ -16,7 +16,7 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncSummary, { formatStatusTag } from "../../components/sync-summary/SyncSummary";
@@ -151,13 +151,9 @@ const HistoryPage: React.FC = () => {
                 if (!syncRule) return null;
 
                 return (
-                    <a
-                        href={`/#/sync-rules/${type}/edit/${syncRule.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Edit {syncRule.name}
-                    </a>
+                    <Link to={`/sync-rules/${type}/edit/${syncRule.id}`} target="_blank">
+                        {i18n.t("Edit {{name}}", syncRule)}
+                    </Link>
                 );
             },
         },
