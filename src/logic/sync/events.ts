@@ -8,8 +8,9 @@ import {
     cleanDataImportResponse,
     getEventsData,
     postEventsData,
+    cleanOrgUnitPath,
 } from "../../utils/synchronization";
-import { GenericSync } from "./generic";
+import { GenericSync, SyncronizationPayload } from "./generic";
 
 export class EventsSync extends GenericSync {
     protected readonly type = "events";
@@ -33,8 +34,10 @@ export class EventsSync extends GenericSync {
         const { dataParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
+        const mappedPayloadPackage = await this.mapMetadata(instance, payloadPackage);
+        console.debug("Events package", { payloadPackage, mappedPayloadPackage });
 
-        return postEventsData(instance, payloadPackage, dataParams);
+        return postEventsData(instance, mappedPayloadPackage, dataParams);
     }
 
     protected cleanResponse(response: DataImportResponse, instance: Instance) {
@@ -55,5 +58,44 @@ export class EventsSync extends GenericSync {
             }))
             .values()
             .value();
+    }
+
+    protected async mapMetadata(
+        instance: Instance,
+        payload: EventsPackage
+    ): Promise<SyncronizationPayload> {
+        const {
+            organisationUnits = {},
+            dataElements = {},
+            programs = {},
+            programStages = {},
+        } = instance.metadataMapping;
+        const { events: oldEvents } = payload;
+
+        const events = oldEvents.map(
+            ({ orgUnit, orgUnitName, program, programStage, dataValues, ...rest }) => {
+                const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
+                const mappedProgram = programs[program]?.mappedId ?? program;
+                const mappedProgramStage = programStages[programStage]?.mappedId ?? programStage;
+
+                return {
+                    orgUnit: cleanOrgUnitPath(mappedOrgUnit),
+                    program: mappedProgram,
+                    programStage: mappedProgramStage,
+                    dataValues: dataValues.map(({ dataElement, ...rest }) => {
+                        const mappedDataElement =
+                            dataElements[dataElement]?.mappedId ?? dataElement;
+
+                        return {
+                            dataElement: mappedDataElement,
+                            ...rest,
+                        };
+                    }),
+                    ...rest,
+                };
+            }
+        );
+
+        return { events };
     }
 }

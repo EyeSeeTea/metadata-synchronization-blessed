@@ -1,10 +1,9 @@
 import i18n from "@dhis2/d2-i18n";
-import { Button, LinearProgress, withStyles } from "@material-ui/core";
+import { Button, LinearProgress, makeStyles } from "@material-ui/core";
 import { useD2, useD2Api } from "d2-api";
-import { ConfirmationDialog, useSnackbar, withLoading } from "d2-ui-components";
+import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { AggregatedSync } from "../../../logic/sync/aggregated";
 import { EventsSync } from "../../../logic/sync/events";
@@ -17,7 +16,8 @@ import {
     requestJSONDownload,
 } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
-import { getInstances } from "./InstanceSelectionStep";
+import { getInstanceOptions } from "./InstanceSelectionStep";
+import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -30,7 +30,7 @@ const LiEntry = ({ label, value, children }) => {
     );
 };
 
-const styles = () => ({
+const useStyles = makeStyles({
     saveButton: {
         margin: 10,
         backgroundColor: "#2b98f0",
@@ -54,10 +54,12 @@ const config = {
     },
 };
 
-const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
+const SaveStep = ({ syncRule, onCancel }) => {
     const d2 = useD2();
     const api = useD2Api();
     const snackbar = useSnackbar();
+    const loading = useLoading();
+    const classes = useStyles();
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -102,7 +104,7 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
         getMetadata(getBaseUrl(d2), ids, "id,name").then(updateMetadata);
-        getInstances(d2).then(setInstanceOptions);
+        getInstanceOptions(d2).then(setInstanceOptions);
     }, [d2, syncRule]);
 
     return (
@@ -163,6 +165,61 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
                                     />
                                 );
                             })}
+                        </ul>
+                    </LiEntry>
+                )}
+                {syncRule.type === "metadata" && (
+                    <LiEntry
+                        label={i18n.t("Use default include exclude configuration")}
+                        value={
+                            syncRule.useDefaultIncludeExclude
+                                ? i18n.t("Enabled")
+                                : i18n.t("Disabled")
+                        }
+                    />
+                )}
+
+                {syncRule.type === "metadata" && !syncRule.useDefaultIncludeExclude && (
+                    <LiEntry label={i18n.t("Include exclude configuration")}>
+                        <ul>
+                            {_.keys(syncRule.metadataIncludeExcludeRules).map(key => (
+                                <LiEntry key={key} label={key}>
+                                    <ul>
+                                        <LiEntry label={i18n.t("Include rules")} />
+                                        <ul>
+                                            {syncRule.metadataIncludeExcludeRules[
+                                                key
+                                            ].includeRules.map(includeRule => (
+                                                <ul>
+                                                    <LiEntry
+                                                        label={
+                                                            includeExcludeRulesFriendlyNames[
+                                                                includeRule
+                                                            ] || includeRule
+                                                        }
+                                                    />
+                                                </ul>
+                                            ))}
+                                        </ul>
+                                        <LiEntry label={i18n.t("Exclude rules")} />
+                                        <ul>
+                                            {syncRule.metadataIncludeExcludeRules[
+                                                key
+                                            ].excludeRules.map(excludeRule => (
+                                                <ul>
+                                                    <LiEntry
+                                                        label={
+                                                            includeExcludeRulesFriendlyNames[
+                                                                excludeRule
+                                                            ] || excludeRule
+                                                        }
+                                                    />
+                                                </ul>
+                                            ))}
+                                        </ul>
+                                    </ul>
+                                </LiEntry>
+                            ))}
                         </ul>
                     </LiEntry>
                 )}
@@ -294,13 +351,4 @@ const SaveStep = ({ syncRule, classes, onCancel, loading }) => {
     );
 };
 
-SaveStep.propTypes = {
-    syncRule: PropTypes.object.isRequired,
-    classes: PropTypes.object.isRequired,
-    onCancel: PropTypes.func.isRequired,
-    loading: PropTypes.object.isRequired,
-};
-
-SaveStep.defaultProps = {};
-
-export default withLoading(withStyles(styles)(SaveStep));
+export default SaveStep;

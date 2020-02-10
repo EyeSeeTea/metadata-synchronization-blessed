@@ -5,10 +5,22 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-01-09T12:11:29.305Z\n"
-"PO-Revision-Date: 2020-01-09T12:11:29.305Z\n"
+"POT-Creation-Date: 2020-02-06T21:04:27.739Z\n"
+"PO-Revision-Date: 2020-02-06T21:04:27.739Z\n"
+
+msgid "Unauthorized - You do not have permission to view this page."
+msgstr ""
 
 msgid "<No value>"
+msgstr ""
+
+msgid "Edit mapping for {{displayName}} ({{id}})"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Could not connect with remote instance"
 msgstr ""
 
 msgid "Metadata type"
@@ -90,9 +102,6 @@ msgid "Who has access"
 msgstr ""
 
 msgid "Sharing settings"
-msgstr ""
-
-msgid "Close"
 msgstr ""
 
 msgid "Add users and user groups"
@@ -240,6 +249,9 @@ msgstr ""
 msgid "Metadata"
 msgstr ""
 
+msgid "Include Exclude Selection"
+msgstr ""
+
 msgid "Data elements"
 msgstr ""
 
@@ -314,6 +326,21 @@ msgstr ""
 msgid "Excluded elements"
 msgstr ""
 
+msgid "Use default include exclude configuration"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Include exclude configuration"
+msgstr ""
+
+msgid "Include rules"
+msgstr ""
+
+msgid "Exclude rules"
+msgstr ""
+
 msgid "All events"
 msgstr ""
 
@@ -336,9 +363,6 @@ msgid "Target instances [{{total}}]"
 msgstr ""
 
 msgid "No"
-msgstr ""
-
-msgid "Disabled"
 msgstr ""
 
 msgid "Frequency"
@@ -377,7 +401,16 @@ msgstr ""
 msgid "Due date"
 msgstr ""
 
+msgid "You do not have permission to list the events"
+msgstr ""
+
 msgid "Sync all events"
+msgstr ""
+
+msgid "You do not have assigned any organisation unit"
+msgstr ""
+
+msgid "Use default configuration"
 msgstr ""
 
 msgid "Retrieving information from remote instances"
@@ -498,6 +531,9 @@ msgstr ""
 msgid "Please fix the issues before saving"
 msgstr ""
 
+msgid "Metadata mapping"
+msgstr ""
+
 msgid "Test Connection"
 msgstr ""
 
@@ -519,12 +555,6 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-msgid "Edit"
-msgstr ""
-
-msgid "Replicate"
-msgstr ""
-
 msgid "Deleting Instances"
 msgstr ""
 
@@ -536,6 +566,12 @@ msgid_plural "Successfully deleted {{count}} instances"
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Edit"
+msgstr ""
+
+msgid "Replicate"
+msgstr ""
+
 msgid "Delete Instances?"
 msgstr ""
 
@@ -545,6 +581,48 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Destination Instance Settings"
+msgstr ""
+
+msgid "Item not found"
+msgstr ""
+
+msgid "Could not connect with instance"
+msgstr ""
+
+msgid "Selected {{id}} to map with {{displayName}}"
+msgstr ""
+
+msgid "Could not apply mapping, please try again."
+msgstr ""
+
+msgid "Please select an instance from the dropdown"
+msgstr ""
+
+msgid "Disabled mapping for {{total}} elements"
+msgstr ""
+
+msgid "Reset mapping for {{total}} elements to default values"
+msgstr ""
+
+msgid "Please wait to finish loading"
+msgstr ""
+
+msgid "Set mapping"
+msgstr ""
+
+msgid "Loading..."
+msgstr ""
+
+msgid "Please select an instance"
+msgstr ""
+
+msgid "Instance selection"
+msgstr ""
+
+msgid "Disable mapping"
+msgstr ""
+
+msgid "Reset mapping to default values"
 msgstr ""
 
 msgid "Manual sync"
@@ -614,7 +692,9 @@ msgstr ""
 msgid "Destination instance settings"
 msgstr ""
 
-msgid "Create, check connectivity, modify and delete DHIS2 destination instances."
+msgid ""
+"Create, check connectivity, modify and delete DHIS2 destination instances. "
+"Map metadata objects between instances."
 msgstr ""
 
 msgid "Add"

@@ -32,7 +32,7 @@ export interface SyncReportTableFilters extends TableFilters {
 export interface SyncRuleTableFilters extends TableFilters {
     targetInstanceFilter?: string;
     enabledFilter?: string;
-    lastExecutedFilter?: Moment;
+    lastExecutedFilter?: Moment | null;
     type?: SyncRuleType;
 }
 

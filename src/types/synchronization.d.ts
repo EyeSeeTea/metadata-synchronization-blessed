@@ -1,4 +1,4 @@
-import { Ref } from "d2-api";
+import { D2ModelSchemas, Ref } from "d2-api";
 import SyncReport from "../models/syncReport";
 import { DataImportParams, ImportStatus, MetadataImportParams, MetadataImportStats } from "./d2";
 
@@ -11,8 +11,19 @@ export interface SynchronizationBuilder {
     dataParams?: DataSynchronizationParams;
 }
 
+export interface MetadataIncludeExcludeRules {
+    [metadataType: string]: ExcludeIncludeRules;
+}
+
+export interface ExcludeIncludeRules {
+    excludeRules: string[];
+    includeRules: string[];
+}
+
 export interface MetadataSynchronizationParams extends MetadataImportParams {
-    includeSharingSettings?: boolean;
+    includeSharingSettings: boolean;
+    useDefaultIncludeExclude: boolean;
+    metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
 }
 
 export interface DataSynchronizationParams extends DataImportParams {
@@ -29,7 +40,7 @@ export interface DataSynchronizationParams extends DataImportParams {
 export type SynchronizationParams = MetadataSynchronizationParams | DataSynchronizationParams;
 
 export interface ExportBuilder {
-    type: string;
+    type: keyof D2ModelSchemas;
     ids: string[];
     excludeRules: string[][];
     includeRules: string[][];
@@ -50,6 +61,7 @@ export interface EventsPackage {
 
 export interface SynchronizationResult {
     status: ImportStatus;
+    message?: string;
     instance: {
         id: string;
         name?: string;
@@ -102,7 +114,7 @@ interface NamedRef extends Ref {
 }
 
 export interface SynchronizationRule {
-    id?: string;
+    id: string;
     name: string;
     code?: string;
     created: Date;

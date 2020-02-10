@@ -96,12 +96,12 @@ context("Landing page", () => {
 
     // Instance Settings
     it("enters the Destination instance settings page", function() {
-        cy.get("[data-test='configuration'] button[title='List']").click();
+        cy.get("[data-test='card-configuration-0'] button[title='List']").click();
         cy.get(dataTest("page-header-title")).contains("Destination Instance Settings");
     });
 
     it("enters the Destination instance creation page", function() {
-        cy.get("[data-test='configuration'] button[title='Add']").click();
+        cy.get("[data-test='card-configuration-0'] button[title='Add']").click();
         cy.get(dataTest("page-header-title")).contains("New Instance");
     });
 });

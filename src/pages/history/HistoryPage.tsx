@@ -11,8 +11,8 @@ import {
     TablePagination,
     TableSelection,
     TableState,
+    useLoading,
     useSnackbar,
-    withLoading,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
@@ -66,9 +66,10 @@ const initialState = {
     pagination: { pageSize: 25, page: 1, total: 0 },
 };
 
-const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
-    const snackbar = useSnackbar();
+const HistoryPage: React.FC = () => {
     const d2 = useD2();
+    const snackbar = useSnackbar();
+    const loading = useLoading();
     const history = useHistory();
     const { id, type } = useParams() as { id: string; type: SyncRuleType };
     const { title } = config[type];
@@ -244,12 +245,9 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
                 onChange={updateTable}
             />
 
-            <SyncSummary
-                d2={d2}
-                response={syncReport ?? SyncReport.create()}
-                isOpen={!!syncReport}
-                handleClose={() => setSyncReport(null)}
-            />
+            {!!syncReport && (
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
+            )}
 
             {toDelete.length > 0 && (
                 <ConfirmationDialog
@@ -268,4 +266,4 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
     );
 };
 
-export default withLoading(HistoryPage);
+export default HistoryPage;
