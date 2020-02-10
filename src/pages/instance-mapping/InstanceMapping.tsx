@@ -186,6 +186,7 @@ const InstanceMappingPage: React.FC = () => {
                     { autoHideDuration: 2500 }
                 );
             } catch (e) {
+                console.error(e);
                 snackbar.error(i18n.t("Could not apply mapping, please try again."));
             }
         },
@@ -224,16 +225,20 @@ const InstanceMappingPage: React.FC = () => {
                 fields: { id: true },
                 filter: {
                     name: { ilike: selectedItem.name },
-                    displayName: { ilike: selectedItem.displayName },
+                    shortName: { ilike: selectedItem.shortName },
                     code: { eq: selectedItem.code },
                 },
                 rootJunction: "OR",
             })
             .getData();
 
-        if (candidates.length === 1) {
+        if (candidates.length === 0) {
+            snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
+        } else if (candidates.length === 1) {
             await applyMapping(items, candidates[0].id);
             setElementsToMap(selection);
+        } else {
+            snackbar.warning(i18n.t("There're more than one candidates to apply auto-mapping"));
         }
     };
 
