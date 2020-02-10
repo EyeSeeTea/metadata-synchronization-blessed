@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-06T08:39:26.406Z\n"
-"PO-Revision-Date: 2020-02-06T08:39:26.406Z\n"
+"POT-Creation-Date: 2020-02-10T06:30:14.673Z\n"
+"PO-Revision-Date: 2020-02-10T06:30:14.673Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -366,6 +366,9 @@ msgid "Target instances [{{total}}]"
 msgstr ""
 
 msgid "No"
+msgstr ""
+
+msgid "Dry run"
 msgstr ""
 
 msgid "Frequency"

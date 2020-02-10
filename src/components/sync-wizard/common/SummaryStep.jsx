@@ -315,6 +315,16 @@ const SaveStep = ({ syncRule, onCancel }) => {
                                 }
                             />
                         </ul>
+                        <ul>
+                            <LiEntry
+                                label={i18n.t("Dry run")}
+                                value={
+                                    syncRule.syncParams.importMode === "VALIDATE"
+                                        ? i18n.t("Yes")
+                                        : i18n.t("No")
+                                }
+                            />
+                        </ul>
                     </LiEntry>
                 )}
 
