@@ -1,11 +1,12 @@
 import i18n from "@dhis2/d2-i18n";
 import { Fab, Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
-import { D2ModelSchemas, useD2 } from "d2-api";
+import { D2ModelSchemas, useD2, useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
     TableAction,
     TableColumn,
     TableSelection,
+    useLoading,
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
@@ -85,15 +86,17 @@ interface WarningDialog {
 
 const InstanceMappingPage: React.FC = () => {
     const d2 = useD2();
+    const api = useD2Api();
     const history = useHistory();
     const classes = useStyles();
     const snackbar = useSnackbar();
+    const loading = useLoading();
     const { id: instanceFilterDefault = "" } = useParams() as { id: string };
 
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const type = model.getCollectionName();
     const [instance, setInstance] = useState<Instance>();
-    const [loading, setLoading] = useState<boolean>(false);
+    const [isLoading, setLoading] = useState<boolean>(false);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const [warningDialog, setWarningDialog] = useState<WarningDialog | null>(null);
@@ -202,6 +205,59 @@ const InstanceMappingPage: React.FC = () => {
 
     const resetMapping = async (_items: MetadataType[], selection: TableSelection[]) => {
         applyMapping(selection, undefined);
+    };
+
+    const applyAutoMapping = async (_items: MetadataType[], selection: TableSelection[]) => {
+        if (!instance) {
+            snackbar.error(i18n.t("Please select an instance from the dropdown"), {
+                autoHideDuration: 2500,
+            });
+            return;
+        }
+
+        loading.show(true, i18n.t("Looking for candidates to apply auto-maping"));
+
+        const { objects: originalObjects } = await model
+            .getApiModel(api)
+            .get({
+                fields: {
+                    id: true,
+                    name: true,
+                    displayName: true,
+                    code: true,
+                },
+                filter: {
+                    id: {
+                        in: selection.map(({ id }) => id),
+                    },
+                },
+            })
+            .getData();
+
+        for (const item of selection) {
+            const original = _.find(originalObjects, ["id", item.id]);
+            loading.updateMessage(i18n.t("Applying auto-maping for {{name}}", original));
+
+            const { objects: candidates } = await instance
+                .getApi()
+                //@ts-ignore
+                .models[type].get({
+                    fields: { id: true },
+                    filter: {
+                        name: { ilike: original?.name },
+                        displayName: { ilike: original?.displayName },
+                        code: { eq: original?.code },
+                    },
+                    rootJunction: "OR",
+                })
+                .getData();
+
+            if (candidates.length === 1) {
+                await applyMapping([item], candidates[0].id);
+            }
+        }
+
+        loading.reset();
     };
 
     const openMappingDialog = useCallback(
@@ -354,6 +410,13 @@ const InstanceMappingPage: React.FC = () => {
             icon: <Icon>open_in_new</Icon>,
         },
         {
+            name: "auto-mapping",
+            text: i18n.t("Auto-map element"),
+            multiple: true,
+            onClick: applyAutoMapping,
+            icon: <Icon>label_important</Icon>,
+        },
+        {
             name: "disable-mapping",
             text: i18n.t("Disable mapping"),
             multiple: true,
@@ -415,7 +478,7 @@ const InstanceMappingPage: React.FC = () => {
                     setModel(() => model);
                 }}
                 notifyRowsChange={setRows}
-                loading={loading}
+                loading={isLoading}
                 selectedIds={selectedIds}
                 notifyNewSelection={setSelectedIds}
             />
