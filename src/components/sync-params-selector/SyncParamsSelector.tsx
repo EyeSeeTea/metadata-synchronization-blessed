@@ -21,8 +21,6 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
     const classes = useStyles();
     const { syncParams, dataParams } = syncRule;
 
-    if (syncRule.type === "events") return null;
-
     const changeSharingSettings = (includeSharingSettings: boolean) => {
         onChange(
             syncRule.updateSyncParams({
@@ -66,6 +64,24 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                 strategy: strategy as "NEW_AND_UPDATES" | "NEW" | "UPDATES",
             })
         );
+    };
+
+    const changeDryRun = (dryRun: boolean) => {
+        if (syncRule.type === "metadata") {
+            onChange(
+                syncRule.updateSyncParams({
+                    ...syncParams,
+                    importMode: dryRun ? "VALIDATE" : "COMMIT",
+                })
+            );
+        } else {
+            onChange(
+                syncRule.updateDataParams({
+                    ...dataParams,
+                    dryRun,
+                })
+            );
+        }
     };
 
     return (
@@ -127,6 +143,18 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                     onValueChange={changeAggregatedStrategy}
                 />
             )}
+
+            <div>
+                <Toggle
+                    label={i18n.t("Dry Run")}
+                    onValueChange={changeDryRun}
+                    value={
+                        syncRule.type === "metadata"
+                            ? syncParams.importMode === "VALIDATE"
+                            : dataParams.dryRun || false
+                    }
+                />
+            </div>
         </React.Fragment>
     );
 };
