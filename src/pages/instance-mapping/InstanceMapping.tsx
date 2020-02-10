@@ -204,7 +204,7 @@ const InstanceMappingPage: React.FC = () => {
         applyMapping(selection, undefined);
     };
 
-    const applyAutoMapping = async (items: MetadataType[]) => {
+    const applyAutoMapping = async (items: MetadataType[], selection: TableSelection[]) => {
         if (!instance) {
             snackbar.error(i18n.t("Please select an instance from the dropdown"), {
                 autoHideDuration: 2500,
@@ -233,6 +233,7 @@ const InstanceMappingPage: React.FC = () => {
 
         if (candidates.length === 1) {
             await applyMapping(items, candidates[0].id);
+            setElementsToMap(selection);
         }
     };
 
