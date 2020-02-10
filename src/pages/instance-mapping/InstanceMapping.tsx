@@ -267,6 +267,12 @@ const InstanceMappingPage: React.FC = () => {
 
     const actions: TableAction<MetadataType>[] = [
         {
+            // Required to disable default "select" action
+            name: "select",
+            text: "Select",
+            isActive: () => false,
+        },
+        {
             name: "set-mapping",
             text: i18n.t("Set mapping"),
             multiple: false,
