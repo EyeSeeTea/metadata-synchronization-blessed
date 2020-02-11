@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-06T21:04:27.739Z\n"
-"PO-Revision-Date: 2020-02-06T21:04:27.739Z\n"
+"POT-Creation-Date: 2020-02-10T13:02:18.062Z\n"
+"PO-Revision-Date: 2020-02-10T13:02:18.062Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -477,6 +477,9 @@ msgid "User"
 msgstr ""
 
 msgid "Metadata Types"
+msgstr ""
+
+msgid "Edit {{name}}"
 msgstr ""
 
 msgid "Delete"
