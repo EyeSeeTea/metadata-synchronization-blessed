@@ -308,11 +308,15 @@ const SyncRulesPage: React.FC = () => {
     };
 
     const verifyUserCanEditSharingSettings = (rules: SyncRule[]) => {
-        return verifyUserHasAccess(rules, appConfigurator || appExecutor);
+        return verifyUserHasAccess(rules, appConfigurator);
     };
 
     const verifyUserCanExecute = () => {
         return appExecutor;
+    };
+
+    const verifyUserCanConfigure = () => {
+        return appConfigurator;
     };
 
     const actions: TableAction<SyncRule>[] = [
@@ -358,6 +362,7 @@ const SyncRulesPage: React.FC = () => {
             name: "replicate",
             text: i18n.t("Replicate"),
             multiple: false,
+            isActive: verifyUserCanConfigure,
             onClick: replicateRule,
             icon: <Icon>content_copy</Icon>,
         },
@@ -443,7 +448,7 @@ const SyncRulesPage: React.FC = () => {
                 columns={columns}
                 details={details}
                 actions={actions}
-                onActionButtonClick={appConfigurator ? createRule : _.noop}
+                onActionButtonClick={appConfigurator ? createRule : undefined}
                 filterComponents={renderCustomFilters}
                 onChange={handleTableChange}
                 searchBoxLabel={i18n.t("Search by name")}
