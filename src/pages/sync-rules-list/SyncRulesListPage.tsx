@@ -448,7 +448,7 @@ const SyncRulesPage: React.FC = () => {
                 columns={columns}
                 details={details}
                 actions={actions}
-                onActionButtonClick={appConfigurator ? createRule : _.noop}
+                onActionButtonClick={appConfigurator ? createRule : undefined}
                 filterComponents={renderCustomFilters}
                 onChange={handleTableChange}
                 searchBoxLabel={i18n.t("Search by name")}
