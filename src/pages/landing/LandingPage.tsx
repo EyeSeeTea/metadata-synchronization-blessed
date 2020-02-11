@@ -46,6 +46,7 @@ const LandingPage: React.FC = () => {
             key: "aggregated",
             children: [
                 {
+                    isVisible: isConfiguratorRole,
                     name: i18n.t("Manual sync"),
                     description: i18n.t(
                         "Manually synchronise aggregated data by selecting the data sets, data elements or their groups and group sets together with the organisation unit, period and category options."
@@ -76,6 +77,7 @@ const LandingPage: React.FC = () => {
             key: "events",
             children: [
                 {
+                    isVisible: isConfiguratorRole,
                     name: i18n.t("Manual sync"),
                     description: i18n.t(
                         "Manually synchronise events by selecting the programs or events together with the organisation unit, period and category options."
@@ -106,6 +108,7 @@ const LandingPage: React.FC = () => {
             key: "metadata",
             children: [
                 {
+                    isVisible: isConfiguratorRole,
                     name: i18n.t("Manual sync"),
                     description: i18n.t(
                         "Manually synchronise metadata like data elements, organisation units and program indicators and groups and group sets."
