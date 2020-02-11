@@ -1,16 +1,15 @@
 import _ from "lodash";
 import React from "react";
 import { TestWrapper } from "./TestWrapper";
+import memoize from "nano-memoize";
 
-export function recursiveMap(
-    children: React.ReactNode,
-    fn: Function,
-    parentId?: string
-): React.ReactNode {
-    return React.Children.map(children, child => {
+export function recursiveMap(children: React.ReactNode, fn: Function, parentId?: string) {
+    const result: any[] = [];
+    React.Children.forEach(children, child => {
         const id = concatStrings([parentId, generateTestId(child || {})]);
         if (!React.isValidElement(child)) {
-            return child;
+            result.push(child);
+            return;
         }
 
         const clone = child.props.children
@@ -19,8 +18,10 @@ export function recursiveMap(
               })
             : child;
 
-        return fn(clone, id);
+        result.push(fn(clone, id));
     });
+
+    return result;
 }
 
 export function concatStrings(
@@ -38,23 +39,23 @@ export function concatStrings(
 
 export function generateTestId({ props = {}, key }: { props?: any; key?: string }) {
     const id = _.kebabCase(_.toLower(props.id || props.title || props.name || key));
-    return !!id ? id : undefined;
+    return id ? id : undefined;
 }
 
 export function removeParentheses(string: string) {
     if (typeof string !== "string") return undefined;
     const result = string.substring(string.lastIndexOf("(") + 1, string.indexOf(")"));
-    return !!result ? result : string;
+    return result ? result : string;
 }
 
 export function isClassComponent(component: any) {
     return typeof component === "function" && !!component.prototype.isReactComponent ? true : false;
 }
 
-export function wrapType(type: any, parentId?: string) {
+export const wrapType = memoize((type: any, parentId?: string) => {
     return typeof type === "function" && !isClassComponent(type)
         ? (...props: any[]) => {
               return <TestWrapper componentParent={parentId}>{type(...props)}</TestWrapper>;
           }
         : type;
-}
+});

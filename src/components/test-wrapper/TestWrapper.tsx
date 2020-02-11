@@ -1,12 +1,12 @@
 import _ from "lodash";
 import React from "react";
 import {
+    concatStrings,
     generateTestId,
     isClassComponent,
     recursiveMap,
     removeParentheses,
     wrapType,
-    concatStrings,
 } from "./utils";
 
 interface TestWrapperProps {
