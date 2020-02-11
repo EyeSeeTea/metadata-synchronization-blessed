@@ -151,7 +151,7 @@ const HistoryPage: React.FC = () => {
             text: i18n.t("Sync Rule"),
             getValue: ({ syncRule: id }) => {
                 const syncRule = syncRules.find(e => e.id === id);
-                if (!syncRule) return null;
+                if (!appConfigurator || !syncRule) return null;
 
                 return (
                     <Link to={`/sync-rules/${type}/edit/${syncRule.id}`} target="_blank">
