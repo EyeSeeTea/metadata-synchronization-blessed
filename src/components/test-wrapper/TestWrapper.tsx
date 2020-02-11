@@ -48,12 +48,16 @@ export const TestWrapper: React.FC<TestWrapperProps> = ({
 
         const count = dataTestDictionary.get(testAttribute) ?? 0;
         const testId = concatStrings([testAttribute, count > 1 ? String(count) : undefined]);
+        const dataTest = props[testAttributeName] ?? testId;
+        const isReactFragment = element.type.toString() === "Symbol(react.fragment)";
         // TODO: Disabled for now
         // dataTestDictionary.set(testAttribute, count + 1);
 
-        return React.cloneElement(element, {
-            [testAttributeName]: props[testAttributeName] ?? testId,
-        });
+        return isReactFragment
+            ? element
+            : React.cloneElement(element, {
+                  [testAttributeName]: isReactFragment ? undefined : dataTest,
+              });
     }
 
     return (
