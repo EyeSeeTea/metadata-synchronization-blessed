@@ -17,7 +17,7 @@ export interface Params {
     page?: number;
     pageSize?: number;
     filter?: string[];
-    fields?: string[];
+    fields?: (string | number)[];
     order?: string;
 }
 
@@ -136,10 +136,12 @@ export interface MetadataImportResponse {
     importParams?: MetadataImportParams;
     typeReports?: any[];
     stats?: MetadataImportStats;
+    message?: string;
 }
 
 export interface DataImportResponse {
     status: ResponseImportStatus;
+    message?: string;
     dataSetComplete?: string;
     description?: string;
     importCount?: DataImportStats;
@@ -149,7 +151,19 @@ export interface DataImportResponse {
         object: string;
         value: string;
     }[];
-    response?: any;
+    response?: {
+        responseType: "ImportSummaries";
+        status: ResponseImportStatus;
+        importOptions?: DataImportParams;
+        importSummaries: {
+            responseType?: "ImportSummary";
+            status?: ResponseImportStatus;
+            importOptions?: DataImportParams;
+            description?: string;
+            importCount?: DataImportStats;
+            reference?: string;
+        }[];
+    };
 }
 
 export interface MetadataImportStats {

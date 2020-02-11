@@ -1,11 +1,12 @@
 import { useD2 } from "d2-api";
 import { MultiSelector } from "d2-ui-components";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import Instance from "../../../models/instance";
+import { D2 } from "../../../types/d2";
 import SyncParamsSelector from "../../sync-params-selector/SyncParamsSelector";
+import { SyncWizardStepProps } from "../Steps";
 
-export const getInstances = async d2 => {
+export const getInstanceOptions = async (d2: D2) => {
     const { objects } = await Instance.list(d2, {}, { paging: false });
     return objects.map(instance => ({
         value: instance.id,
@@ -13,19 +14,18 @@ export const getInstances = async d2 => {
     }));
 };
 
-const InstanceSelectionStep = props => {
-    const { syncRule, onChange } = props;
-    const [instanceOptions, setInstanceOptions] = useState([]);
-    const [selectedOptions, setSelectedOptions] = useState(syncRule.targetInstances);
+const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const d2 = useD2();
+    const [selectedOptions, setSelectedOptions] = useState<string[]>(syncRule.targetInstances);
+    const [instanceOptions, setInstanceOptions] = useState<{ value: string; text: string }[]>([]);
 
-    const changeInstances = instances => {
+    const changeInstances = (instances: string[]) => {
         setSelectedOptions(instances);
         onChange(syncRule.updateTargetInstances(instances));
     };
 
     useEffect(() => {
-        getInstances(d2).then(setInstanceOptions);
+        getInstanceOptions(d2 as D2).then(setInstanceOptions);
     }, [d2]);
 
     return (
@@ -42,12 +42,5 @@ const InstanceSelectionStep = props => {
         </React.Fragment>
     );
 };
-
-InstanceSelectionStep.propTypes = {
-    syncRule: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired,
-};
-
-InstanceSelectionStep.defaultProps = {};
 
 export default InstanceSelectionStep;

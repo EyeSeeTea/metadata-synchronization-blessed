@@ -1,15 +1,14 @@
-import PropTypes from "prop-types";
-import React, { Component, Fragment } from "react";
-import IconButton from "@material-ui/core/IconButton";
+import i18n from "@dhis2/d2-i18n";
 import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
 import MenuList from "@material-ui/core/MenuList";
 import Popover from "@material-ui/core/Popover";
-import NotInterestedIcon from "@material-ui/icons/NotInterested";
-import CreateIcon from "@material-ui/icons/Create";
-import VisibilityIcon from "@material-ui/icons/Visibility";
 import { withStyles } from "@material-ui/core/styles";
-import i18n from "@dhis2/d2-i18n";
-
+import CreateIcon from "@material-ui/icons/Create";
+import NotInterestedIcon from "@material-ui/icons/NotInterested";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import PropTypes from "prop-types";
+import React, { Component, Fragment } from "react";
 import PermissionOption from "./PermissionOption";
 
 const styles = {

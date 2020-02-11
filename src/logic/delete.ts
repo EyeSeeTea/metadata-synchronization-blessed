@@ -1,5 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { D2Api } from "d2-api";
+import _ from "lodash";
 import Instance from "../models/instance";
 import SyncReport from "../models/syncReport";
 import { D2, ImportStatus } from "../types/d2";
@@ -21,8 +22,8 @@ export async function* startDelete(
     console.debug("Start delete process");
     yield { message: i18n.t("Retrieving information from remote instances") };
 
-    const targetInstances: Instance[] = await Promise.all(
-        targetInstanceIds.map(id => Instance.get(d2, id))
+    const targetInstances: Instance[] = _.compact(
+        await Promise.all(targetInstanceIds.map(id => Instance.get(d2, id)))
     );
 
     const syncReport = SyncReport.build({
@@ -46,12 +47,16 @@ export async function* startDelete(
                 instance: instance.name,
             }),
         };
-        console.debug("Deleting metadata on destination instance", instance, metadataIds);
+        console.debug(
+            "Deleting metadata on destination instance",
+            instance.toObject(),
+            metadataIds
+        );
         const itemsToDelete = await getMetadata(instance.apiUrl, metadataIds, "id", instance.auth);
         const response = await postMetadata(instance, itemsToDelete, { importStrategy: "DELETE" });
 
         syncReport.addSyncResult(cleanMetadataImportResponse(response, instance));
-        console.debug("Finished deleting metadata on instance", instance, itemsToDelete);
+        console.debug("Finished deleting metadata on instance", instance.toObject(), itemsToDelete);
         yield { syncReport };
     }
 

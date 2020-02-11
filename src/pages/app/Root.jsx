@@ -9,6 +9,9 @@ import DeletedObjectsPage from "../sync-deleted-objects/DeletedObjectsPage";
 import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
+import Authorization from "../../components/authorization/Authorization";
+import * as permissions from "../../utils/permissions";
+import InstanceMappingPage from "../instance-mapping/InstanceMapping";
 
 class Root extends React.Component {
     static propTypes = {
@@ -20,12 +23,17 @@ class Root extends React.Component {
             <HashRouter>
                 <Switch>
                     <Route
-                        path={"/instance-configurator/:action(new|edit)/:id?"}
+                        path={"/instances/mapping/:id?"}
+                        render={props => <InstanceMappingPage {...this.props} {...props} />}
+                    />
+
+                    <Route
+                        path={"/instances/:action(new|edit)/:id?"}
                         render={props => <InstanceCreationPage {...this.props} {...props} />}
                     />
 
                     <Route
-                        path="/instance-configurator"
+                        path="/instances"
                         render={props => <InstanceListPage {...this.props} {...props} />}
                     />
 
@@ -36,14 +44,33 @@ class Root extends React.Component {
 
                     <Route
                         path="/sync/deleted"
-                        render={props => <DeletedObjectsPage {...this.props} {...props} />}
+                        render={props => (
+                            <Authorization
+                                authorize={() =>
+                                    permissions.shouldShowDeletedObjects(this.props.d2)
+                                }
+                            >
+                                <DeletedObjectsPage {...this.props} {...props} />
+                            </Authorization>
+                        )}
                     />
 
                     <Route
                         path={
                             "/sync-rules/:type(metadata|aggregated|events)/:action(new|edit)/:id?"
                         }
-                        render={props => <SyncRulesCreationPage {...this.props} {...props} />}
+                        render={props => (
+                            <Authorization
+                                authorize={() =>
+                                    permissions.verifyUserHasAccessToSyncRule(
+                                        this.props.d2,
+                                        props.match.params.id
+                                    )
+                                }
+                            >
+                                <SyncRulesCreationPage {...this.props} {...props} />
+                            </Authorization>
+                        )}
                     />
 
                     <Route

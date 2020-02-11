@@ -10,6 +10,7 @@ import CategoryOptionsSelectionStep from "./data/CategoryOptionsSelectionStep";
 import EventsSelectionStep from "./data/EventsSelectionStep";
 import OrganisationUnitsSelectionStep from "./data/OrganisationUnitsSelectionStep";
 import PeriodSelectionStep from "./data/PeriodSelectionStep";
+import MetadataIncludeExcludeStep from "./metadata/MetadataIncludeExcludeStep";
 
 export interface SyncWizardStep {
     key: string;
@@ -25,6 +26,7 @@ export interface SyncWizardStep {
 export interface SyncWizardStepProps {
     syncRule: SyncRule;
     onChange: (syncRule: SyncRule) => void;
+    onCancel: () => void;
 }
 
 const commonSteps: {
@@ -90,6 +92,15 @@ export const metadataSteps: SyncWizardStep[] = [
         label: i18n.t("Metadata"),
         component: MetadataSelectionStep,
         validationKeys: ["metadataIds"],
+    },
+    {
+        key: "include-exclude-selection",
+        label: i18n.t("Include Exclude Selection"),
+        component: MetadataIncludeExcludeStep,
+        validationKeys: ["metadataIncludeExclude"],
+        description: undefined,
+        help: undefined,
+        showOnSyncDialog: true,
     },
     commonSteps.instanceSelection,
     commonSteps.scheduler,

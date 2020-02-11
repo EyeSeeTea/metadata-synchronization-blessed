@@ -25,8 +25,11 @@ const styles = () => ({
         justifyContent: "space-between",
         paddingTop: 30,
     },
-    testButton: {
+    actionButtonsContainer: {
         marginTop: 10,
+    },
+    metadataMappingButton: {
+        margin: 16,
     },
 });
 
@@ -195,6 +198,12 @@ class GeneralInfoForm extends React.Component {
         }
     };
 
+    goToMetadataMapping = async () => {
+        const { instance, history } = this.props;
+
+        history.push(`/instances/mapping/${instance.id}`);
+    };
+
     saveAction = async () => {
         const { d2, instance } = this.props;
         const fields = this.generateFields();
@@ -214,12 +223,12 @@ class GeneralInfoForm extends React.Component {
             this.setState({ isSaving: true });
             await instance.save(d2);
             this.setState({ isSaving: false });
-            this.props.history.push("/instance-configurator");
+            this.props.history.push("/instances");
         }
     };
 
     render() {
-        const { classes } = this.props;
+        const { classes, instance } = this.props;
         const fields = this.generateFields();
 
         return (
@@ -243,7 +252,15 @@ class GeneralInfoForm extends React.Component {
                                 data-test={"cancel-button"}
                             />
                         </div>
-                        <div className={classes.testButton}>
+                        <div className={classes.actionButtonsContainer}>
+                            {instance.id && (
+                                <RaisedButton
+                                    label={i18n.t("Metadata mapping")}
+                                    onClick={this.goToMetadataMapping}
+                                    data-test={"metadata-mapping-button"}
+                                    className={classes.metadataMappingButton}
+                                />
+                            )}
                             <RaisedButton
                                 label={i18n.t("Test Connection")}
                                 onClick={this.testConnection}

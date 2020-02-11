@@ -11,12 +11,12 @@ import {
     TablePagination,
     TableSelection,
     TableState,
+    useLoading,
     useSnackbar,
-    withLoading,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncSummary, { formatStatusTag } from "../../components/sync-summary/SyncSummary";
@@ -29,6 +29,7 @@ import {
     SyncRuleType,
 } from "../../types/synchronization";
 import { getValueForCollection } from "../../utils/d2-ui-components";
+import { isAppConfigurator } from "../../utils/permissions";
 
 const config = {
     metadata: {
@@ -66,9 +67,10 @@ const initialState = {
     pagination: { pageSize: 25, page: 1, total: 0 },
 };
 
-const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
-    const snackbar = useSnackbar();
+const HistoryPage: React.FC = () => {
     const d2 = useD2();
+    const snackbar = useSnackbar();
+    const loading = useLoading();
     const history = useHistory();
     const { id, type } = useParams() as { id: string; type: SyncRuleType };
     const { title } = config[type];
@@ -81,6 +83,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
         rows: SynchronizationReport[];
         pager: Partial<TablePagination>;
     }>({ rows: [], pager: initialState.pagination });
+    const [appConfigurator, setAppConfigurator] = useState(false);
 
     const [statusFilter, updateStatusFilter] = useState("");
     const [syncRuleFilter, updateSyncRuleFilter] = useState("");
@@ -104,6 +107,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
             setSyncRules(objects)
         );
         if (id) SyncReport.get(d2 as D2, id).then(setSyncReport);
+        isAppConfigurator(d2 as D2).then(setAppConfigurator);
     }, [d2, id, type]);
 
     useEffect(() => {
@@ -147,20 +151,20 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
             text: i18n.t("Sync Rule"),
             getValue: ({ syncRule: id }) => {
                 const syncRule = syncRules.find(e => e.id === id);
-                if (!syncRule) return null;
+                if (!appConfigurator || !syncRule) return null;
 
                 return (
-                    <a
-                        href={`/#/sync-rules/${type}/edit/${syncRule.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Edit {syncRule.name}
-                    </a>
+                    <Link to={`/sync-rules/${type}/edit/${syncRule.id}`} target="_blank">
+                        {i18n.t("Edit {{name}}", syncRule)}
+                    </Link>
                 );
             },
         },
     ];
+
+    const verifyUserCanConfigure = () => {
+        return appConfigurator;
+    };
 
     const actions: TableAction<SynchronizationReport>[] = [
         {
@@ -171,6 +175,7 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
         {
             name: "delete",
             text: i18n.t("Delete"),
+            isActive: verifyUserCanConfigure,
             icon: <DeleteIcon />,
             multiple: true,
             onClick: setToDelete,
@@ -244,12 +249,9 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
                 onChange={updateTable}
             />
 
-            <SyncSummary
-                d2={d2}
-                response={syncReport ?? SyncReport.create()}
-                isOpen={!!syncReport}
-                handleClose={() => setSyncReport(null)}
-            />
+            {!!syncReport && (
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
+            )}
 
             {toDelete.length > 0 && (
                 <ConfirmationDialog
@@ -268,4 +270,4 @@ const HistoryPage: React.FC<{ loading: any }> = ({ loading }) => {
     );
 };
 
-export default withLoading(HistoryPage);
+export default HistoryPage;
