@@ -146,6 +146,7 @@ const LandingPage: React.FC = () => {
         {
             title: "Configuration",
             key: "configuration",
+            isVisible: isConfiguratorRole,
             children: [
                 {
                     name: i18n.t("Destination instance settings"),
