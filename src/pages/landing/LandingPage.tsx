@@ -28,11 +28,11 @@ const LandingPage: React.FC = () => {
     const classes = useStyles();
     const history = useHistory();
     const [showDeletedObjects, setShowDeletedObjects] = useState(false);
-    const [isConfiguratorRole, setIsConfiguratorRole] = useState(false);
+    const [appConfigurator, setAppConfigurator] = useState(false);
 
     useEffect(() => {
         shouldShowDeletedObjects(d2 as D2).then(setShowDeletedObjects);
-        isAppConfigurator(d2 as D2).then(setIsConfiguratorRole);
+        isAppConfigurator(d2 as D2).then(setAppConfigurator);
     }, [d2]);
 
     const cards: {
@@ -46,7 +46,7 @@ const LandingPage: React.FC = () => {
             key: "aggregated",
             children: [
                 {
-                    isVisible: isConfiguratorRole,
+                    isVisible: appConfigurator,
                     name: i18n.t("Manual sync"),
                     description: i18n.t(
                         "Manually synchronise aggregated data by selecting the data sets, data elements or their groups and group sets together with the organisation unit, period and category options."
@@ -58,7 +58,7 @@ const LandingPage: React.FC = () => {
                     description: i18n.t(
                         "Create, modify, delete, execute and schedule sync rules for aggregated data by selecting the data sets, data elements or their groups and group sets together with the organisation unit, period and category options."
                     ),
-                    addAction: isConfiguratorRole
+                    addAction: appConfigurator
                         ? () => history.push("/sync-rules/aggregated/new")
                         : undefined,
                     listAction: () => history.push("/sync-rules/aggregated"),
@@ -77,7 +77,7 @@ const LandingPage: React.FC = () => {
             key: "events",
             children: [
                 {
-                    isVisible: isConfiguratorRole,
+                    isVisible: appConfigurator,
                     name: i18n.t("Manual sync"),
                     description: i18n.t(
                         "Manually synchronise events by selecting the programs or events together with the organisation unit, period and category options."
@@ -89,7 +89,7 @@ const LandingPage: React.FC = () => {
                     description: i18n.t(
                         "Create, modify, delete, execute and schedule sync rules for events by selecting the programs or events together with the organisation unit, period and category options."
                     ),
-                    addAction: isConfiguratorRole
+                    addAction: appConfigurator
                         ? () => history.push("/sync-rules/events/new")
                         : undefined,
                     listAction: () => history.push("/sync-rules/events"),
@@ -108,7 +108,7 @@ const LandingPage: React.FC = () => {
             key: "metadata",
             children: [
                 {
-                    isVisible: isConfiguratorRole,
+                    isVisible: appConfigurator,
                     name: i18n.t("Manual sync"),
                     description: i18n.t(
                         "Manually synchronise metadata like data elements, organisation units and program indicators and groups and group sets."
@@ -120,7 +120,7 @@ const LandingPage: React.FC = () => {
                     description: i18n.t(
                         "Create, modify, delete, execute and schedule sync rules for metadata like data elements, organisation units and program indicators and groups and group sets."
                     ),
-                    addAction: isConfiguratorRole
+                    addAction: appConfigurator
                         ? () => history.push("/sync-rules/metadata/new")
                         : undefined,
                     listAction: () => history.push("/sync-rules/metadata"),
@@ -149,16 +149,14 @@ const LandingPage: React.FC = () => {
         {
             title: "Configuration",
             key: "configuration",
-            isVisible: isConfiguratorRole,
+            isVisible: appConfigurator,
             children: [
                 {
                     name: i18n.t("Destination instance settings"),
                     description: i18n.t(
                         "Create, check connectivity, modify and delete DHIS2 destination instances. Map metadata objects between instances."
                     ),
-                    addAction: isConfiguratorRole
-                        ? () => history.push("/instances/new")
-                        : undefined,
+                    addAction: appConfigurator ? () => history.push("/instances/new") : undefined,
                     listAction: () => history.push("/instances"),
                 },
             ],
