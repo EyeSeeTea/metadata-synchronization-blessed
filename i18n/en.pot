@@ -125,6 +125,9 @@ msgstr ""
 msgid "Replace objects in destination instance"
 msgstr ""
 
+msgid "Dry Run"
+msgstr ""
+
 msgid "Type"
 msgstr ""
 
@@ -363,6 +366,9 @@ msgid "Target instances [{{total}}]"
 msgstr ""
 
 msgid "No"
+msgstr ""
+
+msgid "Dry run"
 msgstr ""
 
 msgid "Frequency"
