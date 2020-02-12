@@ -23,6 +23,7 @@ import PageHeader from "../../components/page-header/PageHeader";
 import Instance, { InstanceData } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { isAppConfigurator } from "../../utils/permissions";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 const InstanceListPage = () => {
     const d2 = useD2();
@@ -178,7 +179,7 @@ const InstanceListPage = () => {
     ];
 
     return (
-        <React.Fragment>
+        <TestWrapper>
             <ConfirmationDialog
                 isOpen={toDelete.length > 0}
                 onSave={confirmDelete}
@@ -202,7 +203,7 @@ const InstanceListPage = () => {
                 selection={selection}
                 onChange={updateTable}
             />
-        </React.Fragment>
+        </TestWrapper>
     );
 };
 
