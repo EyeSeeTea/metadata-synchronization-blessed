@@ -16,7 +16,7 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncSummary, { formatStatusTag } from "../../components/sync-summary/SyncSummary";
@@ -29,6 +29,7 @@ import {
     SyncRuleType,
 } from "../../types/synchronization";
 import { getValueForCollection } from "../../utils/d2-ui-components";
+import { isAppConfigurator } from "../../utils/permissions";
 
 const config = {
     metadata: {
@@ -82,6 +83,7 @@ const HistoryPage: React.FC = () => {
         rows: SynchronizationReport[];
         pager: Partial<TablePagination>;
     }>({ rows: [], pager: initialState.pagination });
+    const [appConfigurator, setAppConfigurator] = useState(false);
 
     const [statusFilter, updateStatusFilter] = useState("");
     const [syncRuleFilter, updateSyncRuleFilter] = useState("");
@@ -105,6 +107,7 @@ const HistoryPage: React.FC = () => {
             setSyncRules(objects)
         );
         if (id) SyncReport.get(d2 as D2, id).then(setSyncReport);
+        isAppConfigurator(d2 as D2).then(setAppConfigurator);
     }, [d2, id, type]);
 
     useEffect(() => {
@@ -148,20 +151,20 @@ const HistoryPage: React.FC = () => {
             text: i18n.t("Sync Rule"),
             getValue: ({ syncRule: id }) => {
                 const syncRule = syncRules.find(e => e.id === id);
-                if (!syncRule) return null;
+                if (!appConfigurator || !syncRule) return null;
 
                 return (
-                    <a
-                        href={`/#/sync-rules/${type}/edit/${syncRule.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Edit {syncRule.name}
-                    </a>
+                    <Link to={`/sync-rules/${type}/edit/${syncRule.id}`} target="_blank">
+                        {i18n.t("Edit {{name}}", syncRule)}
+                    </Link>
                 );
             },
         },
     ];
+
+    const verifyUserCanConfigure = () => {
+        return appConfigurator;
+    };
 
     const actions: TableAction<SynchronizationReport>[] = [
         {
@@ -172,6 +175,7 @@ const HistoryPage: React.FC = () => {
         {
             name: "delete",
             text: i18n.t("Delete"),
+            isActive: verifyUserCanConfigure,
             icon: <DeleteIcon />,
             multiple: true,
             onClick: setToDelete,
