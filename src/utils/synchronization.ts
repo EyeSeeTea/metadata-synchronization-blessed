@@ -104,7 +104,7 @@ export async function postMetadata(
 ): Promise<MetadataImportResponse> {
     try {
         const params: MetadataImportParams = {
-            importMode: additionalParams?.importMode ?? "COMMIT",
+            importMode: "COMMIT",
             identifier: "UID",
             importReportMode: "FULL",
             importStrategy: "CREATE_AND_UPDATE",
@@ -427,7 +427,7 @@ export async function postData(
                     skipExistingCheck: false,
                     format: "json",
                     async: false,
-                    dryRun: additionalParams?.dryRun ?? false,
+                    dryRun: false,
                     ...additionalParams,
                 },
                 data
