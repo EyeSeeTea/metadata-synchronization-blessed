@@ -81,7 +81,7 @@ const SyncRulesPage: React.FC = () => {
     const [sorting, setSorting] = useState<TableSorting<SyncRule>>({ field: "name", order: "asc" });
 
     const [refreshKey, setRefreshKey] = useState(0);
-    const [toDelete, setToDelete] = useState<SyncRule[]>([]);
+    const [toDelete, setToDelete] = useState<string[]>([]);
     const [search, setSearchFilter] = useState("");
     const [targetInstanceFilter, setTargetInstanceFilter] = useState("");
     const [enabledFilter, setEnabledFilter] = useState("");
@@ -188,13 +188,13 @@ const SyncRulesPage: React.FC = () => {
         },
     ];
 
-    const downloadJSON = async (syncRules: SyncRule[]) => {
-        const syncRule = _.first(syncRules);
-        if (!syncRule) return;
-
+    const downloadJSON = async (ids: string[]) => {
+        const id = _.first(ids);
+        if (!id) return;
         loading.show(true, "Generating JSON file");
-        const { SyncClass } = config[syncRule.type];
-        requestJSONDownload(SyncClass, syncRule, d2 as D2, api);
+        const rule = await SyncRule.get(d2 as D2, id);
+        const { SyncClass } = config[rule.type];
+        await requestJSONDownload(SyncClass, rule, d2 as D2, api);
         loading.reset();
     };
 
@@ -206,7 +206,8 @@ const SyncRulesPage: React.FC = () => {
         loading.show(true, i18n.t("Deleting Sync Rules"));
 
         const results = [];
-        for (const rule of toDelete) {
+        for (const id of toDelete) {
+            const rule = await SyncRule.get(d2 as D2, id);
             results.push(await rule.remove(d2 as D2));
         }
 
@@ -227,16 +228,17 @@ const SyncRulesPage: React.FC = () => {
         history.push(`/sync-rules/${type}/new`);
     };
 
-    const editRule = (rules: SyncRule[]) => {
-        const rule = _.first(rules);
-        if (!rule) return;
+    const editRule = (ids: string[]) => {
+        const id = _.first(ids);
+        if (!id) return;
 
-        history.push(`/sync-rules/${type}/edit/${rule.id}`);
+        history.push(`/sync-rules/${type}/edit/${id}`);
     };
 
-    const replicateRule = (rules: SyncRule[]) => {
-        const rule = _.first(rules);
-        if (!rule) return;
+    const replicateRule = async (ids: string[]) => {
+        const id = _.first(ids);
+        if (!id) return;
+        const rule = await SyncRule.get(d2 as D2, id);
 
         history.push({
             pathname: `/sync-rules/${type}/new`,
@@ -244,9 +246,10 @@ const SyncRulesPage: React.FC = () => {
         });
     };
 
-    const executeRule = async (rules: SyncRule[]) => {
-        const rule = _.first(rules);
-        if (!rule) return;
+    const executeRule = async (ids: string[]) => {
+        const id = _.first(ids);
+        if (!id) return;
+        const rule = await SyncRule.get(d2 as D2, id);
 
         const { builder, name, id: syncRule, type = "metadata" } = rule;
         const { SyncClass } = config[type];
@@ -265,9 +268,10 @@ const SyncRulesPage: React.FC = () => {
         loading.reset();
     };
 
-    const toggleEnable = async (rules: SyncRule[]) => {
-        const oldSyncRule = _.first(rules);
-        if (!oldSyncRule) return;
+    const toggleEnable = async (ids: string[]) => {
+        const id = _.first(ids);
+        if (!id) return;
+        const oldSyncRule = await SyncRule.get(d2 as D2, id);
 
         const syncRule = oldSyncRule.updateEnabled(!oldSyncRule.enabled);
         const errors = await getValidationMessages(d2, syncRule);
@@ -282,13 +286,13 @@ const SyncRulesPage: React.FC = () => {
         }
     };
 
-    const openSharingSettings = (rules: SyncRule[]) => {
-        const object = _.first(rules);
-        if (!object) return;
+    const openSharingSettings = async (ids: string[]) => {
+        const id = _.first(ids);
+        if (!id) return;
+        const syncRule = await SyncRule.get(d2 as D2, id);
 
         setSharingSettingsObject({
-            //@ts-ignore
-            object: object.syncRule,
+            object: syncRule.toObject(),
             meta: { allowPublicAccess: true, allowExternalAccess: false },
         });
     };
