@@ -1,1 +1,1 @@
-export const dataTest = name => `[data-test="${name}"]`;
+export const dataTest = (name, filter) => `[data-test="${name}"] ${filter ? filter : ""}`.trim();

@@ -1,28 +1,25 @@
 import i18n from "@dhis2/d2-i18n";
-import { Typography, withStyles } from "@material-ui/core";
+import { makeStyles, Typography } from "@material-ui/core";
 import React from "react";
 import SyncRule from "../../models/syncRule";
 import RadioButtonGroup from "../radio-button-group/RadioButtonGroup";
 import { Toggle } from "../toggle/Toggle";
 
-interface Props {
+interface SyncParamsSelectorProps {
     syncRule: SyncRule;
     onChange(newParams: SyncRule): void;
-    classes: any;
 }
 
-const styles = () => ({
+const useStyles = makeStyles({
     advancedOptionsTitle: {
         marginTop: "40px",
         fontWeight: 500,
     },
 });
 
-const SyncParamsSelector = (props: Props) => {
-    const { syncRule, onChange, classes } = props;
+const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onChange }) => {
+    const classes = useStyles();
     const { syncParams, dataParams } = syncRule;
-
-    if (syncRule.type === "events") return null;
 
     const changeSharingSettings = (includeSharingSettings: boolean) => {
         onChange(
@@ -67,6 +64,24 @@ const SyncParamsSelector = (props: Props) => {
                 strategy: strategy as "NEW_AND_UPDATES" | "NEW" | "UPDATES",
             })
         );
+    };
+
+    const changeDryRun = (dryRun: boolean) => {
+        if (syncRule.type === "metadata") {
+            onChange(
+                syncRule.updateSyncParams({
+                    ...syncParams,
+                    importMode: dryRun ? "VALIDATE" : "COMMIT",
+                })
+            );
+        } else {
+            onChange(
+                syncRule.updateDataParams({
+                    ...dataParams,
+                    dryRun,
+                })
+            );
+        }
     };
 
     return (
@@ -128,8 +143,20 @@ const SyncParamsSelector = (props: Props) => {
                     onValueChange={changeAggregatedStrategy}
                 />
             )}
+
+            <div>
+                <Toggle
+                    label={i18n.t("Dry Run")}
+                    onValueChange={changeDryRun}
+                    value={
+                        syncRule.type === "metadata"
+                            ? syncParams.importMode === "VALIDATE"
+                            : dataParams.dryRun || false
+                    }
+                />
+            </div>
         </React.Fragment>
     );
 };
 
-export default withStyles(styles)(SyncParamsSelector);
+export default SyncParamsSelector;

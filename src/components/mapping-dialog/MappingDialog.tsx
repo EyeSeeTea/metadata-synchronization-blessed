@@ -2,7 +2,7 @@ import i18n from "@dhis2/d2-i18n";
 import { Typography } from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
 import { makeStyles } from "@material-ui/styles";
-import { ConfirmationDialog, OrgUnitsSelector, TableSelection } from "d2-ui-components";
+import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { D2Model, DataElementGroupModel } from "../../models/d2Model";
@@ -12,7 +12,7 @@ import MetadataTable from "../metadata-table/MetadataTable";
 
 interface MappingDialogProps {
     rows: MetadataType[];
-    elements: TableSelection[];
+    elements: string[];
     model?: typeof D2Model;
     instance?: Instance;
     onClose: () => void;
@@ -35,7 +35,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 }) => {
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
-    const element = elements.length === 1 ? _.find(rows, ["id", elements[0]?.id]) : undefined;
+    const element = elements.length === 1 ? _.find(rows, ["id", elements[0]]) : undefined;
 
     const defaultSelection = element
         ? _.get(instance?.metadataMapping, [model.getCollectionName(), element.id, "mappedId"])

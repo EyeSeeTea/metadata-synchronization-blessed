@@ -1,13 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import { Fab, Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { D2ModelSchemas, useD2 } from "d2-api";
-import {
-    ConfirmationDialog,
-    TableAction,
-    TableColumn,
-    TableSelection,
-    useSnackbar,
-} from "d2-ui-components";
+import { ConfirmationDialog, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -99,7 +93,7 @@ const InstanceMappingPage: React.FC = () => {
     const [warningDialog, setWarningDialog] = useState<WarningDialog | null>(null);
     const [instanceOptions, setInstanceOptions] = useState<Instance[]>([]);
     const [instanceFilter, setInstanceFilter] = useState<string>(instanceFilterDefault);
-    const [elementsToMap, setElementsToMap] = useState<TableSelection[]>([]);
+    const [elementsToMap, setElementsToMap] = useState<string[]>([]);
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [dictionary, setDictionary] = useState<{
         [id: string]: NamedMetadataMapping;
@@ -154,7 +148,7 @@ const InstanceMappingPage: React.FC = () => {
     }, [instance, rows, type, setLoading]);
 
     const applyMapping = useCallback(
-        async (selection: TableSelection[], mappedId: string | undefined) => {
+        async (selection: string[], mappedId: string | undefined) => {
             if (!instance) {
                 snackbar.error(i18n.t("Please select an instance from the dropdown"), {
                     autoHideDuration: 2500,
@@ -165,9 +159,9 @@ const InstanceMappingPage: React.FC = () => {
             try {
                 const newMapping = _.cloneDeep(instance.metadataMapping);
                 for (const item of selection) {
-                    _.unset(newMapping, [type, item.id]);
-                    _.unset(dictionary, `${instance.id}-${type}-${item.id}`);
-                    if (mappedId) _.set(newMapping, [type, item.id], { mappedId });
+                    _.unset(newMapping, [type, item]);
+                    _.unset(dictionary, `${instance.id}-${type}-${item}`);
+                    if (mappedId) _.set(newMapping, [type, item], { mappedId });
                 }
 
                 const newInstance = instance.setMetadataMapping(newMapping);
@@ -197,27 +191,34 @@ const InstanceMappingPage: React.FC = () => {
         applyMapping(elementsToMap, mappedId);
     };
 
-    const disableMapping = async (_items: MetadataType[], selection: TableSelection[]) => {
+    const disableMapping = async (selection: string[]) => {
         applyMapping(selection, "DISABLED");
     };
 
-    const resetMapping = async (_items: MetadataType[], selection: TableSelection[]) => {
+    const resetMapping = async (selection: string[]) => {
         applyMapping(selection, undefined);
     };
 
-    const applyAutoMapping = async (items: MetadataType[], selection: TableSelection[]) => {
+    const applyAutoMapping = async (selection: string[]) => {
+        const selectedItem = _.find(rows, ["id", selection[0]]);
+
         if (!instance) {
             snackbar.error(i18n.t("Please select an instance from the dropdown"), {
                 autoHideDuration: 2500,
             });
             return;
-        } else if (items.length !== 1) {
+        } else if (selection.length !== 1) {
             snackbar.error(i18n.t("Auto-mapping does not support multiple action yet"), {
                 autoHideDuration: 2500,
             });
+            return;
+        } else if (!selectedItem) {
+            snackbar.error(i18n.t("Unexpected error, could not apply auto mapping"), {
+                autoHideDuration: 2500,
+            });
+            return;
         }
 
-        const selectedItem = items[0];
         const { objects: candidates } = await instance
             .getApi()
             //@ts-ignore
@@ -235,7 +236,7 @@ const InstanceMappingPage: React.FC = () => {
         if (candidates.length === 0) {
             snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
         } else if (candidates.length === 1) {
-            await applyMapping(items, candidates[0].id);
+            await applyMapping(selection, candidates[0].id);
             setElementsToMap(selection);
         } else {
             snackbar.warning(i18n.t("There're more than one candidates to apply auto-mapping"));
@@ -243,7 +244,7 @@ const InstanceMappingPage: React.FC = () => {
     };
 
     const openMappingDialog = useCallback(
-        (_items: MetadataType[], selection: TableSelection[]) => {
+        (selection: string[]) => {
             if (!instance) {
                 snackbar.error(i18n.t("Please select an instance from the dropdown"), {
                     autoHideDuration: 2500,
@@ -282,7 +283,7 @@ const InstanceMappingPage: React.FC = () => {
                             <Tooltip title={i18n.t("Set mapping")} placement="top">
                                 <IconButton
                                     className={classes.iconButton}
-                                    onClick={() => openMappingDialog([row], [{ id: row.id }])}
+                                    onClick={() => openMappingDialog([row.id])}
                                 >
                                     <Icon color="primary">open_in_new</Icon>
                                 </IconButton>
@@ -333,11 +334,7 @@ const InstanceMappingPage: React.FC = () => {
                                         total: selectedIds.length,
                                     }
                                 ),
-                                action: () =>
-                                    applyMapping(
-                                        selectedIds.map(id => ({ id })),
-                                        undefined
-                                    ),
+                                action: () => applyMapping(selectedIds, undefined),
                             });
                         } else {
                             snackbar.error(
@@ -362,11 +359,7 @@ const InstanceMappingPage: React.FC = () => {
                                         total: selectedIds.length,
                                     }
                                 ),
-                                action: () =>
-                                    applyMapping(
-                                        selectedIds.map(id => ({ id })),
-                                        "DISABLED"
-                                    ),
+                                action: () => applyMapping(selectedIds, "DISABLED"),
                             });
                         } else {
                             snackbar.error(

@@ -315,6 +315,27 @@ const SaveStep = ({ syncRule, onCancel }) => {
                                 }
                             />
                         </ul>
+                        <ul>
+                            <LiEntry
+                                label={i18n.t("Dry run")}
+                                value={
+                                    syncRule.syncParams.importMode === "VALIDATE"
+                                        ? i18n.t("Yes")
+                                        : i18n.t("No")
+                                }
+                            />
+                        </ul>
+                    </LiEntry>
+                )}
+
+                {(syncRule.type === "events" || syncRule.type === "aggregated") && (
+                    <LiEntry label={i18n.t("Advanced options")}>
+                        <ul>
+                            <LiEntry
+                                label={i18n.t("Dry run")}
+                                value={syncRule.dataParams.dryRun ? i18n.t("Yes") : i18n.t("No")}
+                            />
+                        </ul>
                     </LiEntry>
                 )}
 
