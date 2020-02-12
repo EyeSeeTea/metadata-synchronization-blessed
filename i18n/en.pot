@@ -628,7 +628,25 @@ msgstr ""
 msgid "Instance selection"
 msgstr ""
 
+msgid "Reset mapping to default value"
+msgstr ""
+
+msgid "Are you sure you want to clear mapping for {{total}} elements?"
+msgstr ""
+
+msgid "Please select at least one item to reset mapping"
+msgstr ""
+
+msgid "Reset mapping"
+msgstr ""
+
 msgid "Disable mapping"
+msgstr ""
+
+msgid "Are you sure you want to disable mapping for {{total}} elements?"
+msgstr ""
+
+msgid "Please select at least one item to disable mapping"
 msgstr ""
 
 msgid "Reset mapping to default values"

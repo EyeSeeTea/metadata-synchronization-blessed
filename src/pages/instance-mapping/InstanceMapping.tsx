@@ -1,7 +1,13 @@
 import i18n from "@dhis2/d2-i18n";
-import { Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
+import { Fab, Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { D2ModelSchemas, useD2 } from "d2-api";
-import { TableAction, TableColumn, useSnackbar, TableSelection } from "d2-ui-components";
+import {
+    ConfirmationDialog,
+    TableAction,
+    TableColumn,
+    TableSelection,
+    useSnackbar,
+} from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -37,6 +43,10 @@ const useStyles = makeStyles({
     instanceDropdown: {
         order: 0,
     },
+    actionButtons: {
+        order: 10,
+        marginRight: 10,
+    },
 });
 
 export const getInstances = async (d2: D2) => {
@@ -67,6 +77,12 @@ interface NamedMetadataMapping extends MetadataMapping {
     name: ReactNode;
 }
 
+interface WarningDialog {
+    title?: string;
+    description?: string;
+    action?: () => void;
+}
+
 const InstanceMappingPage: React.FC = () => {
     const d2 = useD2();
     const history = useHistory();
@@ -80,6 +96,7 @@ const InstanceMappingPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+    const [warningDialog, setWarningDialog] = useState<WarningDialog | null>(null);
     const [instanceOptions, setInstanceOptions] = useState<Instance[]>([]);
     const [instanceFilter, setInstanceFilter] = useState<string>(instanceFilterDefault);
     const [elementsToMap, setElementsToMap] = useState<TableSelection[]>([]);
@@ -136,41 +153,44 @@ const InstanceMappingPage: React.FC = () => {
             .catch(() => updateDictionary(null));
     }, [instance, rows, type, setLoading]);
 
-    const applyMapping = async (selection: TableSelection[], mappedId: string | undefined) => {
-        if (!instance) {
-            snackbar.error(i18n.t("Please select an instance from the dropdown"), {
-                autoHideDuration: 2500,
-            });
-            return;
-        }
-
-        try {
-            const newMapping = _.cloneDeep(instance.metadataMapping);
-            for (const item of selection) {
-                _.unset(newMapping, [type, item.id]);
-                _.unset(dictionary, `${instance.id}-${type}-${item.id}`);
-                if (mappedId) _.set(newMapping, [type, item.id], { mappedId });
+    const applyMapping = useCallback(
+        async (selection: TableSelection[], mappedId: string | undefined) => {
+            if (!instance) {
+                snackbar.error(i18n.t("Please select an instance from the dropdown"), {
+                    autoHideDuration: 2500,
+                });
+                return;
             }
 
-            const newInstance = instance.setMetadataMapping(newMapping);
-            await newInstance.save(d2 as D2);
-            setInstance(newInstance);
-            setSelectedIds([]);
+            try {
+                const newMapping = _.cloneDeep(instance.metadataMapping);
+                for (const item of selection) {
+                    _.unset(newMapping, [type, item.id]);
+                    _.unset(dictionary, `${instance.id}-${type}-${item.id}`);
+                    if (mappedId) _.set(newMapping, [type, item.id], { mappedId });
+                }
 
-            const action = mappedId ? i18n.t("Set") : i18n.t("Reset to default");
-            const operation = mappedId === "DISABLED" ? i18n.t("Disabled") : action;
+                const newInstance = instance.setMetadataMapping(newMapping);
+                await newInstance.save(d2 as D2);
+                setInstance(newInstance);
+                setSelectedIds([]);
 
-            snackbar.info(
-                i18n.t("{{operation}} mapping for {{total}} elements", {
-                    operation,
-                    total: selection.length,
-                }),
-                { autoHideDuration: 2500 }
-            );
-        } catch (e) {
-            snackbar.error(i18n.t("Could not apply mapping, please try again."));
-        }
-    };
+                const action = mappedId ? i18n.t("Set") : i18n.t("Reset to default");
+                const operation = mappedId === "DISABLED" ? i18n.t("Disabled") : action;
+
+                snackbar.info(
+                    i18n.t("{{operation}} mapping for {{total}} elements", {
+                        operation,
+                        total: selection.length,
+                    }),
+                    { autoHideDuration: 2500 }
+                );
+            } catch (e) {
+                snackbar.error(i18n.t("Could not apply mapping, please try again."));
+            }
+        },
+        [d2, dictionary, instance, snackbar, type]
+    );
 
     const updateMapping = async (mappedId: string) => {
         applyMapping(elementsToMap, mappedId);
@@ -252,17 +272,77 @@ const InstanceMappingPage: React.FC = () => {
 
     const filters: ReactNode = useMemo(
         () => (
-            <div className={classes.instanceDropdown}>
-                <Dropdown
-                    key={"instance-filter"}
-                    items={instanceOptions}
-                    onValueChange={setInstanceFilter}
-                    value={instanceFilter}
-                    label={i18n.t("Instance selection")}
-                />
-            </div>
+            <React.Fragment>
+                <div className={classes.instanceDropdown}>
+                    <Dropdown
+                        key={"instance-filter"}
+                        items={instanceOptions}
+                        onValueChange={setInstanceFilter}
+                        value={instanceFilter}
+                        label={i18n.t("Instance selection")}
+                    />
+                </div>
+                <Fab
+                    className={classes.actionButtons}
+                    color="primary"
+                    onClick={() => {
+                        if (selectedIds.length > 0) {
+                            setWarningDialog({
+                                title: i18n.t("Reset mapping to default value"),
+                                description: i18n.t(
+                                    "Are you sure you want to clear mapping for {{total}} elements?",
+                                    {
+                                        total: selectedIds.length,
+                                    }
+                                ),
+                                action: () =>
+                                    applyMapping(
+                                        selectedIds.map(id => ({ id })),
+                                        undefined
+                                    ),
+                            });
+                        } else {
+                            snackbar.error(
+                                i18n.t("Please select at least one item to reset mapping")
+                            );
+                        }
+                    }}
+                    variant={"extended"}
+                >
+                    {i18n.t("Reset mapping")}
+                </Fab>
+                <Fab
+                    className={classes.actionButtons}
+                    color="primary"
+                    onClick={() => {
+                        if (selectedIds.length > 0) {
+                            setWarningDialog({
+                                title: i18n.t("Disable mapping"),
+                                description: i18n.t(
+                                    "Are you sure you want to disable mapping for {{total}} elements?",
+                                    {
+                                        total: selectedIds.length,
+                                    }
+                                ),
+                                action: () =>
+                                    applyMapping(
+                                        selectedIds.map(id => ({ id })),
+                                        "DISABLED"
+                                    ),
+                            });
+                        } else {
+                            snackbar.error(
+                                i18n.t("Please select at least one item to disable mapping")
+                            );
+                        }
+                    }}
+                    variant={"extended"}
+                >
+                    {i18n.t("Disable mapping")}
+                </Fab>
+            </React.Fragment>
         ),
-        [classes, instanceOptions, instanceFilter]
+        [classes, instanceOptions, instanceFilter, snackbar, selectedIds, applyMapping]
     );
 
     const actions: TableAction<MetadataType>[] = [
@@ -303,6 +383,20 @@ const InstanceMappingPage: React.FC = () => {
     return (
         <React.Fragment>
             <PageHeader title={i18n.t("Metadata mapping")} onBackClick={backHome} />
+
+            {!!warningDialog && (
+                <ConfirmationDialog
+                    open={true}
+                    title={warningDialog.title}
+                    description={warningDialog.description}
+                    saveText={i18n.t("Ok")}
+                    onSave={() => {
+                        if (warningDialog.action) warningDialog.action();
+                        setWarningDialog(null);
+                    }}
+                    onCancel={() => setWarningDialog(null)}
+                />
+            )}
 
             {!!instanceFilter && elementsToMap.length > 0 && (
                 <MappingDialog
