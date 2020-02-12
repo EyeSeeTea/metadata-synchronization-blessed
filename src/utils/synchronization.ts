@@ -333,8 +333,8 @@ export const getDefaultIds = memoize(
                 fields: "id",
             })
             .getData()) as {
-            [key: string]: { id: string }[];
-        };
+                [key: string]: { id: string }[];
+            };
 
         return _(response)
             .omit(["system"])
@@ -411,7 +411,7 @@ export async function postData(
     instance: Instance,
     endpoint: "/events" | "/dataValueSets",
     data: object,
-    additionalParams?: DataImportParams
+    additionalParams: DataImportParams
 ): Promise<any> {
     try {
         const response = await instance
