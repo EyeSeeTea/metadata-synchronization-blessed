@@ -9,7 +9,13 @@ import Dropdown from "../../components/dropdown/Dropdown";
 import MappingDialog from "../../components/mapping-dialog/MappingDialog";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
-import { CategoryComboModel, CategoryOptionModel, D2Model, DataElementModel, OrganisationUnitModel } from "../../models/d2Model";
+import {
+    CategoryComboModel,
+    CategoryOptionModel,
+    D2Model,
+    DataElementModel,
+    OrganisationUnitModel,
+} from "../../models/d2Model";
 import Instance, { MetadataMapping } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
@@ -283,11 +289,7 @@ const InstanceMappingPage: React.FC = () => {
                                         total: selectedIds.length,
                                     }
                                 ),
-                                action: () =>
-                                    applyMapping(
-                                        selectedIds,
-                                        undefined
-                                    ),
+                                action: () => applyMapping(selectedIds, undefined),
                             });
                         } else {
                             snackbar.error(
@@ -312,11 +314,7 @@ const InstanceMappingPage: React.FC = () => {
                                         total: selectedIds.length,
                                     }
                                 ),
-                                action: () =>
-                                    applyMapping(
-                                        selectedIds,
-                                        "DISABLED"
-                                    ),
+                                action: () => applyMapping(selectedIds, "DISABLED"),
                             });
                         } else {
                             snackbar.error(
