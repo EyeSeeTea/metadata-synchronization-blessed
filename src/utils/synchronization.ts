@@ -333,8 +333,8 @@ export const getDefaultIds = memoize(
                 fields: "id",
             })
             .getData()) as {
-                [key: string]: { id: string }[];
-            };
+            [key: string]: { id: string }[];
+        };
 
         return _(response)
             .omit(["system"])
