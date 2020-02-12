@@ -21,16 +21,13 @@ const WithSession: React.FC = ({ children }) => {
         const api = d2.Api.getApi();
         api.get("/me?fields=id", {})
             .then((_data: any) => {
-                debugger;
                 setLoggedIn(true);
             })
             .catch((_err: any) => {
-                debugger;
                 setLoggedIn(false);
             });
-    });
+    }, [d2.Api]);
 
-    debugger;
     if (isLoggedIn === undefined) {
         return (
             <div className={classes.loading}>

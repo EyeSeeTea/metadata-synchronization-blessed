@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { HashRouter, Route, Switch } from "react-router-dom";
+import { HashRouter, Switch } from "react-router-dom";
 import HistoryPage from "../history/HistoryPage";
 import InstanceCreationPage from "../instance-creation/InstanceCreationPage";
 import InstanceListPage from "../instance-list/InstanceListPage";
@@ -11,8 +11,8 @@ import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage"
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
 import * as permissions from "../../utils/permissions";
 import InstanceMappingPage from "../instance-mapping/InstanceMapping";
-import WithSession from "../../components/auth/WithSession";
-import WithSessionAndAuth from "../../components/auth/WithSessionAndAuth";
+import RouteWithSession from "../../components/auth/RouteWithSession";
+import RouteWithSessionAndAuth from "../../components/auth/RouteWithSessionAndAuth";
 
 class Root extends React.Component {
     static propTypes = {
@@ -23,98 +23,56 @@ class Root extends React.Component {
         return (
             <HashRouter>
                 <Switch>
-                    <Route
+                    <RouteWithSession
                         path={"/instances/mapping/:id?"}
-                        render={props => (
-                            <WithSession>
-                                <InstanceMappingPage {...this.props} {...props} />
-                            </WithSession>
-                        )}
+                        render={props => <InstanceMappingPage {...this.props} {...props} />}
                     />
 
-                    <Route
+                    <RouteWithSession
                         path={"/instances/:action(new|edit)/:id?"}
-                        render={props => (
-                            <WithSession>
-                                <InstanceCreationPage {...this.props} {...props} />
-                            </WithSession>
-                        )}
+                        render={props => <InstanceCreationPage {...this.props} {...props} />}
                     />
 
-                    <Route
+                    <RouteWithSession
                         path="/instances"
-                        render={props => (
-                            <WithSession>
-                                <InstanceListPage {...this.props} {...props} />
-                            </WithSession>
-                        )}
+                        render={props => <InstanceListPage {...this.props} {...props} />}
                     />
 
-                    <Route
+                    <RouteWithSession
                         path="/sync/:type(metadata|aggregated|events)"
-                        render={props => (
-                            <WithSession>
-                                <SyncOnDemandPage {...this.props} {...props} />
-                            </WithSession>
-                        )}
+                        render={props => <SyncOnDemandPage {...this.props} {...props} />}
                     />
 
-                    <Route
+                    <RouteWithSessionAndAuth
                         path="/sync/deleted"
-                        render={props => (
-                            <WithSessionAndAuth
-                                authorize={() =>
-                                    permissions.shouldShowDeletedObjects(this.props.d2)
-                                }
-                            >
-                                <DeletedObjectsPage {...this.props} {...props} />
-                            </WithSessionAndAuth>
-                        )}
+                        authorize={props => permissions.shouldShowDeletedObjects(this.props.d2)}
+                        render={props => <DeletedObjectsPage {...this.props} {...props} />}
                     />
 
-                    <Route
+                    <RouteWithSessionAndAuth
                         path={
                             "/sync-rules/:type(metadata|aggregated|events)/:action(new|edit)/:id?"
                         }
-                        render={props => (
-                            <WithSessionAndAuth
-                                authorize={() =>
-                                    permissions.verifyUserHasAccessToSyncRule(
-                                        this.props.d2,
-                                        props.match.params.id
-                                    )
-                                }
-                            >
-                                <SyncRulesCreationPage {...this.props} {...props} />
-                            </WithSessionAndAuth>
-                        )}
+                        authorize={props =>
+                            permissions.verifyUserHasAccessToSyncRule(
+                                this.props.d2,
+                                props.match.params.id
+                            )
+                        }
+                        render={props => <SyncRulesCreationPage {...this.props} {...props} />}
                     />
 
-                    <Route
+                    <RouteWithSession
                         path="/sync-rules/:type(metadata|aggregated|events)"
-                        render={props => (
-                            <WithSession>
-                                <SyncRulesPage {...this.props} {...props} />
-                            </WithSession>
-                        )}
+                        render={props => <SyncRulesPage {...this.props} {...props} />}
                     />
 
-                    <Route
+                    <RouteWithSession
                         path="/history/:type(metadata|aggregated|events)/:id?"
-                        render={props => (
-                            <WithSession>
-                                <HistoryPage {...this.props} {...props} />
-                            </WithSession>
-                        )}
+                        render={props => <HistoryPage {...this.props} {...props} />}
                     />
 
-                    <Route
-                        render={() => (
-                            <WithSession>
-                                <LandingPage {...this.props} />
-                            </WithSession>
-                        )}
-                    />
+                    <RouteWithSession render={() => <LandingPage {...this.props} />} />
                 </Switch>
             </HashRouter>
         );
