@@ -4,6 +4,7 @@ context("Destination Settings", function() {
     beforeEach(() => {
         cy.login("admin");
         cy.visit("/#/instances");
+        cy.get(dataTest("headerbar-title")).contains("MetaData Synchronization");
     });
 
     it("has the correct title", function() {
