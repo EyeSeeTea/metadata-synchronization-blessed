@@ -11,6 +11,9 @@ msgstr ""
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
 
+msgid "Login"
+msgstr ""
+
 msgid "<No value>"
 msgstr ""
 
