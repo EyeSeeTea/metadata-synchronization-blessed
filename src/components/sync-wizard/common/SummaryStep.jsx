@@ -287,6 +287,20 @@ const SaveStep = ({ syncRule, onCancel }) => {
                     <LiEntry label={i18n.t("Advanced options")}>
                         <ul>
                             <LiEntry
+                                label={i18n.t("Strategy")}
+                                value={
+                                    syncRule.syncParams.importStrategy === "CREATE_AND_UPDATE"
+                                        ? i18n.t("Create and update")
+                                        : syncRule.syncParams.importStrategy === "CREATE"
+                                        ? i18n.t("Create")
+                                        : syncRule.syncParams.importStrategy === "UPDATE"
+                                        ? i18n.t("Update")
+                                        : ""
+                                }
+                            />
+                        </ul>
+                        <ul>
+                            <LiEntry
                                 label={i18n.t("Include user information and sharing settings")}
                                 value={
                                     syncRule.syncParams.includeSharingSettings
@@ -327,9 +341,24 @@ const SaveStep = ({ syncRule, onCancel }) => {
                         </ul>
                     </LiEntry>
                 )}
-
                 {(syncRule.type === "events" || syncRule.type === "aggregated") && (
                     <LiEntry label={i18n.t("Advanced options")}>
+                        {syncRule.type === "aggregated" && (
+                            <ul>
+                                <LiEntry
+                                    label={i18n.t("Strategy")}
+                                    value={
+                                        syncRule.dataParams.strategy === "NEW_AND_UPDATES"
+                                            ? i18n.t("New and updates")
+                                            : syncRule.dataParams.strategy === "NEW"
+                                            ? i18n.t("New")
+                                            : syncRule.dataParams.strategy === "UPDATES"
+                                            ? i18n.t("Updates")
+                                            : ""
+                                    }
+                                />
+                            </ul>
+                        )}
                         <ul>
                             <LiEntry
                                 label={i18n.t("Dry run")}
