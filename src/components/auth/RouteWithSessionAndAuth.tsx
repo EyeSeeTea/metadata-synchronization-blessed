@@ -5,7 +5,7 @@ import WithAuthorization from "./WithAuthorization";
 import { RouteWithSessionProps } from "./RouteWithSession";
 
 export interface RouteWithSessionAndAuthProps extends RouteWithSessionProps {
-    authorize: (props: RouteComponentProps<any>) => Promise<boolean>;
+    authorize: (props: RouteComponentProps) => Promise<boolean>;
 }
 
 const RouteWithSessionAndAuth: React.FC<RouteWithSessionAndAuthProps> = ({

@@ -3,8 +3,8 @@ import { Route, RouteComponentProps } from "react-router-dom";
 import WithSession from "./WithSession";
 
 export interface RouteWithSessionProps {
-    render: (props: RouteComponentProps<any>) => React.ReactNode;
-    path: string | string[];
+    render: (props: RouteComponentProps) => React.ReactNode;
+    path?: string | string[];
 }
 
 const RouteWithSession: React.FC<RouteWithSessionProps> = ({ path, render }) => {
