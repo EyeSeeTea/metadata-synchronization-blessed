@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import i18n from "../../locales";
 import { Typography, CircularProgress, makeStyles } from "@material-ui/core";
-import { useD2 } from "d2-api";
-import { D2 } from "../../types/d2";
+import { useD2Api } from "d2-api";
 
 const useStyles = makeStyles({
     loading: {
@@ -12,21 +11,18 @@ const useStyles = makeStyles({
 });
 
 const WithSession: React.FC = ({ children }) => {
-    const d2 = useD2() as D2;
+    const api = useD2Api();
     const classes = useStyles();
 
     const [isLoggedIn, setLoggedIn] = useState<boolean | undefined>(undefined);
 
     useEffect(() => {
-        const api = d2.Api.getApi();
-        api.get("/me?fields=id", {})
-            .then((_data: any) => {
-                setLoggedIn(true);
-            })
-            .catch((_err: any) => {
-                setLoggedIn(false);
-            });
-    }, [d2.Api]);
+        api.currentUser
+            .get({ fields: { id: true } })
+            .getData()
+            .then(() => setLoggedIn(true))
+            .catch(() => setLoggedIn(false));
+    }, [api]);
 
     if (isLoggedIn === undefined) {
         return (
@@ -35,12 +31,13 @@ const WithSession: React.FC = ({ children }) => {
             </div>
         );
     } else if (isLoggedIn === false) {
+        const { baseUrl } = api;
         return (
             <Typography variant="h6" component="h1">
-                <a rel="noopener noreferrer" target="_blank" href={d2.Api.getApi().baseUrl}>
+                <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
                     {i18n.t("Login")}
                 </a>
-                {` ${d2.Api.getApi().baseUrl}`}
+                {` ${baseUrl}`}
             </Typography>
         );
     } else {
