@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-10T13:02:18.062Z\n"
-"PO-Revision-Date: 2020-02-10T13:02:18.062Z\n"
+"POT-Creation-Date: 2020-02-13T06:36:14.397Z\n"
+"PO-Revision-Date: 2020-02-13T06:36:14.397Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -365,10 +365,31 @@ msgstr ""
 msgid "Target instances [{{total}}]"
 msgstr ""
 
+msgid "Strategy"
+msgstr ""
+
+msgid "Create and update"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Update"
+msgstr ""
+
 msgid "No"
 msgstr ""
 
 msgid "Dry run"
+msgstr ""
+
+msgid "New and updates"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "Updates"
 msgstr ""
 
 msgid "Frequency"
