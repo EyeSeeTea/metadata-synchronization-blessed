@@ -32,6 +32,7 @@ Cypress.Cookies.defaults({
 Cypress.Commands.add("login", (username, _password = null) => {
     const password = _password || dhis2Auth[username];
 
+    cy.server();
     cy.log("Login", { username });
     cy.request({
         method: "GET",
