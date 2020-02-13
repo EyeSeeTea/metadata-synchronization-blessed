@@ -2,7 +2,6 @@ import { dataTest } from "../support/utils";
 
 context("Manual aggregated sync", function() {
     beforeEach(() => {
-        cy.server();
         cy.login("admin");
         cy.visit("/#/sync/aggregated");
         cy.get(dataTest("headerbar-title")).contains("MetaData Synchronization");
