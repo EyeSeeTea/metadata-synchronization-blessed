@@ -38,7 +38,17 @@ export function concatStrings(
 }
 
 export function generateTestId({ props = {}, key }: { props?: any; key?: string }) {
-    const id = _.kebabCase(_.toLower(props.id || props.title || props.name || key));
+    const id = _.kebabCase(
+        _.toLower(
+            props.id ||
+                props.title ||
+                props.name ||
+                props.label ||
+                props["aria-label"] ||
+                key ||
+                props.value
+        )
+    );
     return id ? id : undefined;
 }
 
@@ -55,7 +65,11 @@ export function isClassComponent(component: any) {
 export const wrapType = memoize((type: any, parentId?: string) => {
     return typeof type === "function" && !isClassComponent(type)
         ? (...props: any[]) => {
-              return <TestWrapper componentParent={parentId}>{type(...props)}</TestWrapper>;
+              return (
+                  <TestWrapper componentParent={parentId} data-test-wrapped={true}>
+                      {type(...props)}
+                  </TestWrapper>
+              );
           }
         : type;
 });
