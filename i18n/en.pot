@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-13T06:36:14.397Z\n"
-"PO-Revision-Date: 2020-02-13T06:36:14.397Z\n"
+"POT-Creation-Date: 2020-02-13T11:14:49.279Z\n"
+"PO-Revision-Date: 2020-02-13T11:14:49.280Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -120,6 +120,15 @@ msgid "Synchronize"
 msgstr ""
 
 msgid "Advanced options"
+msgstr ""
+
+msgid "Create and update"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Update"
 msgstr ""
 
 msgid "Include user information and sharing settings"
@@ -372,15 +381,6 @@ msgid "Target instances [{{total}}]"
 msgstr ""
 
 msgid "Strategy"
-msgstr ""
-
-msgid "Create and update"
-msgstr ""
-
-msgid "Create"
-msgstr ""
-
-msgid "Update"
 msgstr ""
 
 msgid "No"

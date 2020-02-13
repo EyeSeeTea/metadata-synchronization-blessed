@@ -289,14 +289,12 @@ const SaveStep = ({ syncRule, onCancel }) => {
                             <LiEntry
                                 label={i18n.t("Strategy")}
                                 value={
-                                    syncRule.syncParams.importStrategy
-                                        ? syncRule.syncParams.importStrategy === "CREATE_AND_UPDATE"
-                                            ? i18n.t("Create and update")
-                                            : syncRule.syncParams.importStrategy === "CREATE"
-                                            ? i18n.t("Create")
-                                            : syncRule.syncParams.importStrategy === "UPDATE"
-                                            ? i18n.t("Update")
-                                            : ""
+                                    syncRule.syncParams.importStrategy === "CREATE_AND_UPDATE"
+                                        ? i18n.t("Create and update")
+                                        : syncRule.syncParams.importStrategy === "CREATE"
+                                        ? i18n.t("Create")
+                                        : syncRule.syncParams.importStrategy === "UPDATE"
+                                        ? i18n.t("Update")
                                         : ""
                                 }
                             />

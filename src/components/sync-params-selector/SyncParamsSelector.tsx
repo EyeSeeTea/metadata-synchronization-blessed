@@ -94,9 +94,9 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                 <RadioButtonGroup
                     value={syncParams.importStrategy || "CREATE_AND_UPDATE"}
                     items={[
-                        { id: "CREATE_AND_UPDATE", name: "Create and update" },
-                        { id: "CREATE", name: "Create" },
-                        { id: "UPDATE", name: "Update" },
+                        { id: "CREATE_AND_UPDATE", name: i18n.t("Create and update") },
+                        { id: "CREATE", name: i18n.t("Create") },
+                        { id: "UPDATE", name: i18n.t("Update") },
                     ]}
                     onValueChange={changeMetadataStrategy}
                 />
