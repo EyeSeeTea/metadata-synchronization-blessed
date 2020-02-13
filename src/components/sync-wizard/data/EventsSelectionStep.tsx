@@ -71,8 +71,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
         onChange(syncRule.updateDataSyncAllEvents(value).updateDataSyncEvents(undefined));
     };
 
-    const addToSelection = (items: ProgramEvent[]) => {
-        const ids = items.map(({ id }) => id);
+    const addToSelection = (ids: string[]) => {
         const oldSelection = _.difference(syncRule.dataSyncEvents, ids);
         const newSelection = _.difference(ids, syncRule.dataSyncEvents);
 

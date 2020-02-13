@@ -217,6 +217,10 @@ export class DataElementModel extends D2Model {
     protected static collectionName = "dataElements" as const;
     protected static groupFilterName = "dataElementGroups" as const;
 
+    protected static excludeRules = [
+        "dataElementGroups.dataElements",
+        "dataElementGroups.dataElementGroupSets.dataElementGroups",
+    ];
     protected static includeRules = [
         "attributes",
         "dataSets",

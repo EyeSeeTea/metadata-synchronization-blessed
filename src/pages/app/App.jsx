@@ -54,7 +54,6 @@ const App = () => {
     const [d2, setD2] = useState(null);
     const [api, setApi] = useState(null);
     const [showShareButton, setShowShareButton] = useState(false);
-    const showHeader = !process.env.REACT_APP_CYPRESS;
     const { loading, error, data } = useDataQuery(query);
 
     useEffect(() => {
@@ -101,9 +100,7 @@ const App = () => {
                     <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                         <LoadingProvider>
                             <SnackbarProvider>
-                                {showHeader && (
-                                    <HeaderBar appName={i18n.t("MetaData Synchronization")} />
-                                )}
+                                <HeaderBar appName={i18n.t("MetaData Synchronization")} />
 
                                 <div id="app" className="content">
                                     <ApiContext.Provider value={{ d2, api }}>

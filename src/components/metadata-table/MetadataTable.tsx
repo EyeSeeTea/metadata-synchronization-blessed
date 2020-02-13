@@ -21,7 +21,6 @@ import i18n from "../../locales";
 import { getOrgUnitSubtree } from "../../logic/utils";
 import { D2Model, DataElementModel } from "../../models/d2Model";
 import { D2 } from "../../types/d2";
-import { NamedRef } from "../../types/synchronization";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPaths, getRootOrgUnit } from "../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";
@@ -173,18 +172,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         }));
     };
 
-    const selectOrgUnitChildren = async (selectedOUs: NamedRef[]) => {
+    const selectOrgUnitChildren = async (selectedOUs: string[]) => {
         const ids = new Set<string>();
         for (const selectedOU of selectedOUs) {
-            const subtree = await getOrgUnitSubtree(api, selectedOU.id);
+            const subtree = await getOrgUnitSubtree(api, selectedOU);
             subtree.forEach(id => ids.add(id));
         }
         const includedIds = _.uniq([...selectedIds, ...Array.from(ids)]);
         notifyNewSelection(includedIds, excludedIds);
     };
 
-    const addToSelection = (items: NamedRef[]) => {
-        const ids = items.map(({ id }) => id);
+    const addToSelection = (ids: string[]) => {
         const oldSelection = _.difference(selectedIds, ids);
         const newSelection = _.difference(ids, selectedIds);
 
