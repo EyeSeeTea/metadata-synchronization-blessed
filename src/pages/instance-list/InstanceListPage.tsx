@@ -23,6 +23,7 @@ import PageHeader from "../../components/page-header/PageHeader";
 import Instance, { InstanceData } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { isAppConfigurator } from "../../utils/permissions";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 const InstanceListPage = () => {
     const d2 = useD2();
@@ -33,7 +34,7 @@ const InstanceListPage = () => {
     const [rows, setRows] = useState<InstanceData[]>([]);
     const [search, changeSearch] = useState<string>("");
     const [selection, updateSelection] = useState<TableSelection[]>([]);
-    const [toDelete, deleteInstances] = useState<InstanceData[]>([]);
+    const [toDelete, deleteInstances] = useState<string[]>([]);
     const [appConfigurator, setAppConfigurator] = useState(false);
 
     useEffect(() => {
@@ -48,26 +49,28 @@ const InstanceListPage = () => {
         history.push("/instances/new");
     };
 
-    const editInstance = (data: InstanceData[]) => {
-        if (data.length !== 1) return;
-        if (appConfigurator) history.push(`/instances/edit/${data[0].id}`);
+    const editInstance = (ids: string[]) => {
+        if (ids.length !== 1) return;
+        if (appConfigurator) history.push(`/instances/edit/${ids[0]}`);
     };
 
-    const replicateInstance = async (data: InstanceData[]) => {
-        if (data.length !== 1) return;
-        const instance = await Instance.build(data[0]);
-        history.push({
-            pathname: "/instances/new",
-            state: { instance: instance.replicate() },
-        });
+    const replicateInstance = async (ids: string[]) => {
+        if (ids.length !== 1) return;
+        const instance = await Instance.get(d2 as D2, ids[0]);
+        if (instance) {
+            history.push({
+                pathname: "/instances/new",
+                state: { instance: instance.replicate() },
+            });
+        }
     };
 
-    const testConnection = async (data: InstanceData[]) => {
-        if (data.length !== 1) return;
-        const instance = await Instance.build(data[0]);
-        const connectionErrors = await instance.check();
-        if (!connectionErrors.status) {
-            snackbar.error(connectionErrors.error?.message ?? "Unknown error", {
+    const testConnection = async (ids: string[]) => {
+        if (ids.length !== 1) return;
+        const instance = await Instance.get(d2 as D2, ids[0]);
+        const connectionErrors = await instance?.check();
+        if (!connectionErrors || !connectionErrors.status) {
+            snackbar.error(connectionErrors?.error?.message ?? "Unknown error", {
                 autoHideDuration: null,
             });
         } else {
@@ -82,11 +85,11 @@ const InstanceListPage = () => {
     const confirmDelete = async () => {
         if (toDelete.length === 0) return;
         loading.show(true, i18n.t("Deleting Instances"));
-        const instances = toDelete.map(instanceData => new Instance(instanceData));
 
         const results = [];
-        for (const instance of instances) {
-            results.push(await instance.remove(d2 as D2));
+        for (const id of toDelete) {
+            const instance = await Instance.get(d2 as D2, id);
+            if (instance) results.push(await instance.remove(d2 as D2));
         }
 
         loading.reset();
@@ -104,9 +107,9 @@ const InstanceListPage = () => {
         }
     };
 
-    const metadataMapping = async (data: InstanceData[]) => {
-        if (data.length !== 1) return;
-        history.push(`/instances/mapping/${data[0].id}`);
+    const metadataMapping = async (ids: string[]) => {
+        if (ids.length !== 1) return;
+        history.push(`/instances/mapping/${ids[0]}`);
     };
 
     const backHome = () => {
@@ -178,7 +181,7 @@ const InstanceListPage = () => {
     ];
 
     return (
-        <React.Fragment>
+        <TestWrapper>
             <ConfirmationDialog
                 isOpen={toDelete.length > 0}
                 onSave={confirmDelete}
@@ -202,7 +205,7 @@ const InstanceListPage = () => {
                 selection={selection}
                 onChange={updateTable}
             />
-        </React.Fragment>
+        </TestWrapper>
     );
 };
 

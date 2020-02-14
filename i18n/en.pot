@@ -11,10 +11,16 @@ msgstr ""
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
 
+msgid "Login"
+msgstr ""
+
 msgid "<No value>"
 msgstr ""
 
 msgid "Edit mapping for {{displayName}} ({{id}})"
+msgstr ""
+
+msgid "Edit mapping for {{total}} elements"
 msgstr ""
 
 msgid "Close"
@@ -116,6 +122,15 @@ msgstr ""
 msgid "Advanced options"
 msgstr ""
 
+msgid "Create and update"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Update"
+msgstr ""
+
 msgid "Include user information and sharing settings"
 msgstr ""
 
@@ -123,6 +138,9 @@ msgid "Disable atomic verification"
 msgstr ""
 
 msgid "Replace objects in destination instance"
+msgstr ""
+
+msgid "Dry Run"
 msgstr ""
 
 msgid "Type"
@@ -371,7 +389,22 @@ msgstr ""
 msgid "Target instances [{{total}}]"
 msgstr ""
 
+msgid "Strategy"
+msgstr ""
+
 msgid "No"
+msgstr ""
+
+msgid "Dry run"
+msgstr ""
+
+msgid "New and updates"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "Updates"
 msgstr ""
 
 msgid "Frequency"
@@ -598,22 +631,19 @@ msgstr ""
 msgid "Could not connect with instance"
 msgstr ""
 
-msgid "Selected {{id}} to map with {{displayName}}"
-msgstr ""
-
-msgid "Could not apply mapping, please try again."
-msgstr ""
-
 msgid "Please select an instance from the dropdown"
 msgstr ""
 
-msgid "Disabled mapping for {{total}} elements"
+msgid "Set"
 msgstr ""
 
-msgid "Reset mapping for {{total}} elements to default values"
+msgid "Reset to default"
 msgstr ""
 
-msgid "Please wait to finish loading"
+msgid "{{operation}} mapping for {{total}} elements"
+msgstr ""
+
+msgid "Could not apply mapping, please try again."
 msgstr ""
 
 msgid "Set mapping"
@@ -628,7 +658,25 @@ msgstr ""
 msgid "Instance selection"
 msgstr ""
 
+msgid "Reset mapping to default value"
+msgstr ""
+
+msgid "Are you sure you want to clear mapping for {{total}} elements?"
+msgstr ""
+
+msgid "Please select at least one item to reset mapping"
+msgstr ""
+
+msgid "Reset mapping"
+msgstr ""
+
 msgid "Disable mapping"
+msgstr ""
+
+msgid "Are you sure you want to disable mapping for {{total}} elements?"
+msgstr ""
+
+msgid "Please select at least one item to disable mapping"
 msgstr ""
 
 msgid "Reset mapping to default values"

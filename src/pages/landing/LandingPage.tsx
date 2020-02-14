@@ -3,8 +3,9 @@ import { makeStyles } from "@material-ui/core";
 import { useD2 } from "d2-api";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { D2 } from "../../types/d2";
-import { shouldShowDeletedObjects, isAppConfigurator } from "../../utils/permissions";
+import { isAppConfigurator, shouldShowDeletedObjects } from "../../utils/permissions";
 import MenuCard, { MenuCardProps } from "./MenuCard";
 
 const useStyles = makeStyles({
@@ -164,27 +165,24 @@ const LandingPage: React.FC = () => {
     ];
 
     return (
-        <div className={classes.container} data-test="pages">
-            {cards.map(
-                ({ key, title, isVisible = true, children }) =>
-                    isVisible && (
-                        <div key={`card-${key}`} data-test={key}>
-                            <h1 className={classes.title}>{title}</h1>
+        <TestWrapper>
+            <div className={classes.container} key="landing">
+                {cards.map(
+                    ({ key, title, isVisible = true, children }) =>
+                        isVisible && (
+                            <div key={key}>
+                                <h1 className={classes.title}>{title}</h1>
 
-                            {children.map((props, index) => (
-                                <div
-                                    key={`card-${key}-${index}`}
-                                    data-test={`card-${key}-${index}`}
-                                >
-                                    <MenuCard {...props} />
-                                </div>
-                            ))}
+                                {children.map(props => (
+                                    <MenuCard key={props.name} {...props} />
+                                ))}
 
-                            <div className={classes.clear} />
-                        </div>
-                    )
-            )}
-        </div>
+                                <div className={classes.clear} />
+                            </div>
+                        )
+                )}
+            </div>
+        </TestWrapper>
     );
 };
 
