@@ -124,16 +124,29 @@ const SaveStep = ({ syncRule, onCancel }) => {
                         ? Object.entries(
                               targetInstances.find(instance => instance.id === instanceId)
                                   .metadataMapping
-                          ).map(([key, value]) => (
-                              <LiEntry key={key} label={key}>
+                          ).map(([modelKey, value]) => (
+                              <LiEntry key={modelKey} label={modelKey}>
                                   <ul>
-                                      {Object.entries(value).map(([key, value]) => (
-                                          <LiEntry
-                                              key={key}
-                                              label={`${i18n.t("Source")} ${key}`}
-                                              value={`${i18n.t("Target")} ${value.mappedId}`}
-                                          />
-                                      ))}
+                                      {Object.entries(value)
+                                          .filter(([key, value]) => {
+                                              //TODO: currently we only are filtering metadata mapping by existed models in metadada of sync rule
+                                              // (example: organisationUnits) we are not filtering metadata mapping by metadata related to data (aggregate, events)
+                                              // for example by dataElements, CategoryOption, this filter will be realize on the future in other issue.
+                                              // Then is possibble we need to use here other metadata array varibale to use for filters.
+                                              return (
+                                                  !metadata[modelKey] ||
+                                                  metadata[modelKey].some(
+                                                      metadataItem => metadataItem.id === key
+                                                  )
+                                              );
+                                          })
+                                          .map(([key, value]) => (
+                                              <LiEntry
+                                                  key={key}
+                                                  label={`${i18n.t("Source")} ${key}`}
+                                                  value={`${i18n.t("Target")} ${value.mappedId}`}
+                                              />
+                                          ))}
                                   </ul>
                               </LiEntry>
                           ))
@@ -142,6 +155,9 @@ const SaveStep = ({ syncRule, onCancel }) => {
             </LiEntry>
         );
     };
+
+    console.log(metadata);
+    console.log(syncRule);
 
     return (
         <React.Fragment>
