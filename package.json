@@ -61,7 +61,7 @@
     "pre-push": "yarn prettify && yarn lint && yarn localize && yarn jest",
     "cy:verify": "cypress verify",
     "cy:e2e:open": "CYPRESS_E2E=true cypress open",
-    "cy:e2e:run": "CYPRESS_E2E=true cypress run --browser chrome --headless"
+    "cy:e2e:run": "CYPRESS_E2E=true cypress run --browser chrome"
   },
   "husky": {
     "hooks": {
