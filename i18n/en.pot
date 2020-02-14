@@ -11,6 +11,9 @@ msgstr ""
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
 
+msgid "Login"
+msgstr ""
+
 msgid "<No value>"
 msgstr ""
 
@@ -117,6 +120,15 @@ msgid "Synchronize"
 msgstr ""
 
 msgid "Advanced options"
+msgstr ""
+
+msgid "Create and update"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Update"
 msgstr ""
 
 msgid "Include user information and sharing settings"
@@ -368,10 +380,22 @@ msgstr ""
 msgid "Target instances [{{total}}]"
 msgstr ""
 
+msgid "Strategy"
+msgstr ""
+
 msgid "No"
 msgstr ""
 
 msgid "Dry run"
+msgstr ""
+
+msgid "New and updates"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "Updates"
 msgstr ""
 
 msgid "Frequency"
