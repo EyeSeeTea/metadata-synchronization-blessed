@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-13T18:40:40.787Z\n"
-"PO-Revision-Date: 2020-02-13T18:40:40.787Z\n"
+"POT-Creation-Date: 2020-02-14T06:50:02.187Z\n"
+"PO-Revision-Date: 2020-02-14T06:50:02.187Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -641,9 +641,6 @@ msgid "Unexpected error, could not apply auto mapping"
 msgstr ""
 
 msgid "Could not find a suitable candidate to apply auto-mapping"
-msgstr ""
-
-msgid "There're more than one candidates to apply auto-mapping"
 msgstr ""
 
 msgid "Set mapping"

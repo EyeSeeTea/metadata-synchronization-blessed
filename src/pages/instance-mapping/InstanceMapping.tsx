@@ -259,10 +259,11 @@ const InstanceMappingPage: React.FC = () => {
             .getApi()
             //@ts-ignore
             .models[type].get({
-                fields: { id: true },
+                fields: { id: true, code: true },
                 filter: {
                     name: { token: selectedItem.name },
                     shortName: { token: selectedItem.shortName },
+                    id: { eq: selectedItem.id },
                     code: { eq: selectedItem.code },
                 },
                 rootJunction: "OR",
@@ -271,11 +272,14 @@ const InstanceMappingPage: React.FC = () => {
 
         if (candidates.length === 0) {
             snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
-        } else if (candidates.length === 1) {
-            await applyMapping(selection, candidates[0].id);
-            setElementsToMap(selection);
         } else {
-            snackbar.warning(i18n.t("There're more than one candidates to apply auto-mapping"));
+            const candidateWithSameId = _.find(candidates, ["id", selectedItem.id]);
+            const candidateWithSameCode = _.find(candidates, ["code", selectedItem.code]);
+            const firstCandidate = _.first(candidates);
+            const candidate = candidateWithSameId ?? candidateWithSameCode ?? firstCandidate;
+
+            await applyMapping(selection, candidate.id);
+            setElementsToMap(selection);
         }
     };
 
