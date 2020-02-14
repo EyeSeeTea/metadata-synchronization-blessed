@@ -18,6 +18,7 @@ import {
 import { getValidationMessages } from "../../../utils/validations";
 import { getInstanceOptions } from "./InstanceSelectionStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
+import Instance from "../../../models/instance";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -65,6 +66,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
     const [isSaving, setIsSaving] = useState(false);
     const [metadata, updateMetadata] = useState({});
     const [instanceOptions, setInstanceOptions] = useState([]);
+    const [targetInstances, setTargetInstances] = useState([]);
 
     const openCancelDialog = () => setCancelDialogOpen(true);
 
@@ -106,6 +108,40 @@ const SaveStep = ({ syncRule, onCancel }) => {
         getMetadata(getBaseUrl(d2), ids, "id,name").then(updateMetadata);
         getInstanceOptions(d2).then(setInstanceOptions);
     }, [d2, syncRule]);
+
+    useEffect(() => {
+        const getTargetInstances = async d2 =>
+            _.compact(await Promise.all(syncRule.targetInstances.map(id => Instance.get(d2, id))));
+
+        getTargetInstances(d2).then(setTargetInstances);
+    }, [d2, syncRule]);
+
+    const renderMetadataMapping = instanceId => {
+        return (
+            <LiEntry label={i18n.t("Metadata mapping")}>
+                <ul>
+                    {targetInstances.length > 0
+                        ? Object.entries(
+                              targetInstances.find(instance => instance.id === instanceId)
+                                  .metadataMapping
+                          ).map(([key, value]) => (
+                              <LiEntry key={key} label={key}>
+                                  <ul>
+                                      {Object.entries(value).map(([key, value]) => (
+                                          <LiEntry
+                                              key={key}
+                                              label={`${i18n.t("Source")} ${key}`}
+                                              value={`${i18n.t("Target")} ${value.mappedId}`}
+                                          />
+                                      ))}
+                                  </ul>
+                              </LiEntry>
+                          ))
+                        : null}
+                </ul>
+            </LiEntry>
+        );
+    };
 
     return (
         <React.Fragment>
@@ -275,9 +311,13 @@ const SaveStep = ({ syncRule, onCancel }) => {
                 >
                     <ul>
                         {syncRule.targetInstances.map(id => {
-                            const instance = instanceOptions.find(e => e.value === id);
-                            return instance ? (
-                                <LiEntry key={instance.value} label={instance.text} />
+                            const instanceOption = instanceOptions.find(e => e.value === id);
+                            return instanceOption ? (
+                                <LiEntry key={instanceOption.value} label={instanceOption.text}>
+                                    {syncRule.type !== "metadata" && (
+                                        <ul>{renderMetadataMapping(id)}</ul>
+                                    )}
+                                </LiEntry>
                             ) : null;
                         })}
                     </ul>
