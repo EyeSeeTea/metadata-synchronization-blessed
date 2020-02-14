@@ -36,7 +36,6 @@ script:
   - CYPRESS_EXTERNAL_API=http://localhost:8081 CYPRESS_ROOT_URL=http://localhost:3000 yarn cy:e2e:run
   - kill $(jobs -p) || true
 addons:
-  chrome: stable
   apt:
     packages:
     - libgconf-2-4
