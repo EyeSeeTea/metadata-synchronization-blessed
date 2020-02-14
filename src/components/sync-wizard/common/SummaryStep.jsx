@@ -156,9 +156,6 @@ const SaveStep = ({ syncRule, onCancel }) => {
         );
     };
 
-    console.log(metadata);
-    console.log(syncRule);
-
     return (
         <React.Fragment>
             <ConfirmationDialog
