@@ -1,6 +1,7 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import { D2Api, useD2, useD2Api, useD2ApiData } from "d2-api";
+import axios from "axios";
+import { D2Api, useD2, useD2Api } from "d2-api";
 import D2ApiModel from "d2-api/api/models";
 import {
     DatePicker,
@@ -10,6 +11,7 @@ import {
     ReferenceObject,
     TableAction,
     TableColumn,
+    TablePagination,
     TableSelection,
     TableSorting,
     TableState,
@@ -24,7 +26,7 @@ import { D2 } from "../../types/d2";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPaths, getRootOrgUnit } from "../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";
-import { getAllIdentifiers, getFilterData } from "./utils";
+import { getAllIdentifiers, getFilterData, getRows } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     api?: D2Api;
@@ -125,7 +127,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [ids, updateIds] = useState<string[]>([]);
     const [search, updateSearch] = useState<string | undefined>(undefined);
     const [sorting, updateSorting] = useState<TableSorting<MetadataType>>(initialState.sorting);
-    const [pagination, updatePagination] = useState(initialState.pagination);
+    const [pagination, updatePagination] = useState<Partial<TablePagination>>(
+        initialState.pagination
+    );
     const [filters, updateFilters] = useState<FiltersState>({
         lastUpdated: null,
         group: "",
@@ -136,6 +140,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         selectedIds: [],
         parentOrgUnits: [],
     });
+
+    const [error, setError] = useState<Error>();
+    const [data, setData] = useState<any>();
+    const [loading, setLoading] = useState<boolean>(false);
 
     const changeModelFilter = (modelName: string) => {
         if (models.length === 0) throw new Error("You need to provide at least one model");
@@ -337,12 +345,18 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         return query;
     }, [model, filters]);
 
-    const { loading, data, error, refetch } = useD2ApiData<any>();
-
     useEffect(() => {
-        getAllIdentifiers(search, apiModel.modelName, api.baseUrl, apiModel, apiQuery).then(
-            updateIds
+        const { cancel, response } = getAllIdentifiers(
+            apiModel.modelName,
+            api.baseUrl,
+            search,
+            apiQuery,
+            apiModel
         );
+
+        response.then(({ data }) => _.map(data.objects, "id")).then(updateIds);
+
+        return cancel;
     }, [api.baseUrl, apiModel, apiQuery, search]);
 
     useEffect(() => {
@@ -351,22 +365,30 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         );
     }, [api]);
 
-    useEffect(
-        () =>
-            refetch(
-                apiModel.get({
-                    order: `${sorting.field}:i${sorting.order}`,
-                    page: pagination.page,
-                    pageSize: pagination.pageSize,
-                    ...apiQuery,
-                    filter: {
-                        name: { ilike: search },
-                        ...apiQuery.filter,
-                    },
-                })
-            ),
-        [apiModel, apiQuery, refetch, sorting, pagination, search]
-    );
+    useEffect(() => {
+        const { response } = getRows(
+            apiModel.modelName,
+            api.baseUrl,
+            sorting,
+            pagination,
+            search,
+            apiQuery,
+            apiModel
+        );
+
+        setLoading(true);
+        response
+            .then(({ data }) => {
+                setLoading(false);
+                setData(data);
+            })
+            .catch(error => {
+                if (!axios.isCancel(error)) {
+                    setError(error);
+                    console.error(error);
+                }
+            });
+    }, [api.baseUrl, apiModel, apiQuery, sorting, pagination, search]);
 
     useEffect(() => {
         if (model && model.getGroupFilterName()) {
