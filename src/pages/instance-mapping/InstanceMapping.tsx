@@ -10,23 +10,26 @@ import MappingDialog from "../../components/mapping-dialog/MappingDialog";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
+    AggregatedDataElementModel,
     CategoryComboModel,
     CategoryOptionModel,
     D2Model,
     DataElementModel,
     OrganisationUnitModel,
+    ProgramDataElementModel,
 } from "../../models/d2Model";
 import Instance, { MetadataMapping } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath, cleanOrgUnitPaths } from "../../utils/synchronization";
 
-const models: typeof D2Model[] = [
-    DataElementModel,
-    CategoryComboModel,
-    CategoryOptionModel,
-    OrganisationUnitModel,
-];
+export type MappingType = "aggregated" | "tracker" | "orgUnit";
+
+const config = {
+    aggregated: { models: [AggregatedDataElementModel, CategoryComboModel, CategoryOptionModel] },
+    tracker: { models: [ProgramDataElementModel, CategoryComboModel, CategoryOptionModel] },
+    orgUnit: { models: [OrganisationUnitModel] },
+};
 
 const useStyles = makeStyles({
     iconButton: {
@@ -77,12 +80,18 @@ interface WarningDialog {
     action?: () => void;
 }
 
+interface InstanceMappingParams {
+    id: string;
+    section: MappingType;
+}
+
 const InstanceMappingPage: React.FC = () => {
     const d2 = useD2();
     const history = useHistory();
     const classes = useStyles();
     const snackbar = useSnackbar();
-    const { id: instanceFilterDefault = "" } = useParams() as { id: string };
+    const { id: instanceFilterDefault = "", section } = useParams() as InstanceMappingParams;
+    const { models } = config[section];
 
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const type = model.getCollectionName();
@@ -363,7 +372,7 @@ const InstanceMappingPage: React.FC = () => {
     ];
 
     const backHome = () => {
-        history.push("/instances");
+        history.push("/instances/mapping");
     };
 
     return (

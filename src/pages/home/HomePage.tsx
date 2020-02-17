@@ -1,32 +1,15 @@
 import i18n from "@dhis2/d2-i18n";
-import { makeStyles } from "@material-ui/core";
 import { useD2 } from "d2-api";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { Landing } from "../../components/landing/Landing";
+import { MenuCardProps } from "../../components/landing/MenuCard";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { D2 } from "../../types/d2";
 import { isAppConfigurator, shouldShowDeletedObjects } from "../../utils/permissions";
-import MenuCard, { MenuCardProps } from "./MenuCard";
-
-const useStyles = makeStyles({
-    container: {
-        marginLeft: 30,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 300,
-        color: "rgba(0, 0, 0, 0.87)",
-        padding: "15px 0px 15px",
-        margin: 0,
-    },
-    clear: {
-        clear: "both",
-    },
-});
 
 const LandingPage: React.FC = () => {
     const d2 = useD2();
-    const classes = useStyles();
     const history = useHistory();
     const [showDeletedObjects, setShowDeletedObjects] = useState(false);
     const [appConfigurator, setAppConfigurator] = useState(false);
@@ -166,22 +149,7 @@ const LandingPage: React.FC = () => {
 
     return (
         <TestWrapper>
-            <div className={classes.container} key="landing">
-                {cards.map(
-                    ({ key, title, isVisible = true, children }) =>
-                        isVisible && (
-                            <div key={key}>
-                                <h1 className={classes.title}>{title}</h1>
-
-                                {children.map(props => (
-                                    <MenuCard key={props.name} {...props} />
-                                ))}
-
-                                <div className={classes.clear} />
-                            </div>
-                        )
-                )}
-            </div>
+            <Landing cards={cards} />
         </TestWrapper>
     );
 };

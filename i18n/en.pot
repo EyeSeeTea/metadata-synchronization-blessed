@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-13T11:14:49.279Z\n"
-"PO-Revision-Date: 2020-02-13T11:14:49.280Z\n"
+"POT-Creation-Date: 2020-02-17T07:53:49.309Z\n"
+"PO-Revision-Date: 2020-02-17T07:53:49.309Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -15,6 +15,12 @@ msgid "Login"
 msgstr ""
 
 msgid "<No value>"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "List"
 msgstr ""
 
 msgid "Edit mapping for {{displayName}} ({{id}})"
@@ -543,6 +549,78 @@ msgid_plural "Are you sure you want to delete {{count}} history notifications?"
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Manual sync"
+msgstr ""
+
+msgid ""
+"Manually synchronise aggregated data by selecting the data sets, data "
+"elements or their groups and group sets together with the organisation "
+"unit, period and category options."
+msgstr ""
+
+msgid "Sync rules"
+msgstr ""
+
+msgid ""
+"Create, modify, delete, execute and schedule sync rules for aggregated data "
+"by selecting the data sets, data elements or their groups and group sets "
+"together with the organisation unit, period and category options."
+msgstr ""
+
+msgid "History"
+msgstr ""
+
+msgid ""
+"View and analyse the status and results of the aggregated data manual syncs "
+"and sync rules executions."
+msgstr ""
+
+msgid ""
+"Manually synchronise events by selecting the programs or events together "
+"with the organisation unit, period and category options."
+msgstr ""
+
+msgid ""
+"Create, modify, delete, execute and schedule sync rules for events by "
+"selecting the programs or events together with the organisation unit, "
+"period and category options."
+msgstr ""
+
+msgid ""
+"View and analyse the status and results of the event manual syncs and sync "
+"rules executions."
+msgstr ""
+
+msgid ""
+"Manually synchronise metadata like data elements, organisation units and "
+"program indicators and groups and group sets."
+msgstr ""
+
+msgid ""
+"Create, modify, delete, execute and schedule sync rules for metadata like "
+"data elements, organisation units and program indicators and groups and "
+"group sets."
+msgstr ""
+
+msgid ""
+"View and analyse the status and results of the metadata manual syncs and "
+"sync rules executions."
+msgstr ""
+
+msgid "Deleted objects"
+msgstr ""
+
+msgid "Manually synchronise deleted objects."
+msgstr ""
+
+msgid "Destination instance settings"
+msgstr ""
+
+msgid ""
+"Create, check connectivity, modify and delete DHIS2 destination instances. "
+"Map metadata objects between instances."
+msgstr ""
+
 msgid "Server name"
 msgstr ""
 
@@ -676,82 +754,10 @@ msgstr ""
 msgid "Reset mapping to default values"
 msgstr ""
 
-msgid "Manual sync"
+msgid "Aggregated"
 msgstr ""
 
-msgid ""
-"Manually synchronise aggregated data by selecting the data sets, data "
-"elements or their groups and group sets together with the organisation "
-"unit, period and category options."
-msgstr ""
-
-msgid "Sync rules"
-msgstr ""
-
-msgid ""
-"Create, modify, delete, execute and schedule sync rules for aggregated data "
-"by selecting the data sets, data elements or their groups and group sets "
-"together with the organisation unit, period and category options."
-msgstr ""
-
-msgid "History"
-msgstr ""
-
-msgid ""
-"View and analyse the status and results of the aggregated data manual syncs "
-"and sync rules executions."
-msgstr ""
-
-msgid ""
-"Manually synchronise events by selecting the programs or events together "
-"with the organisation unit, period and category options."
-msgstr ""
-
-msgid ""
-"Create, modify, delete, execute and schedule sync rules for events by "
-"selecting the programs or events together with the organisation unit, "
-"period and category options."
-msgstr ""
-
-msgid ""
-"View and analyse the status and results of the event manual syncs and sync "
-"rules executions."
-msgstr ""
-
-msgid ""
-"Manually synchronise metadata like data elements, organisation units and "
-"program indicators and groups and group sets."
-msgstr ""
-
-msgid ""
-"Create, modify, delete, execute and schedule sync rules for metadata like "
-"data elements, organisation units and program indicators and groups and "
-"group sets."
-msgstr ""
-
-msgid ""
-"View and analyse the status and results of the metadata manual syncs and "
-"sync rules executions."
-msgstr ""
-
-msgid "Deleted objects"
-msgstr ""
-
-msgid "Manually synchronise deleted objects."
-msgstr ""
-
-msgid "Destination instance settings"
-msgstr ""
-
-msgid ""
-"Create, check connectivity, modify and delete DHIS2 destination instances. "
-"Map metadata objects between instances."
-msgstr ""
-
-msgid "Add"
-msgstr ""
-
-msgid "List"
+msgid "Tracker"
 msgstr ""
 
 msgid "Deleted by"

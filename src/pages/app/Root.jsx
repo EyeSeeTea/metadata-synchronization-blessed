@@ -4,7 +4,7 @@ import { HashRouter, Switch } from "react-router-dom";
 import HistoryPage from "../history/HistoryPage";
 import InstanceCreationPage from "../instance-creation/InstanceCreationPage";
 import InstanceListPage from "../instance-list/InstanceListPage";
-import LandingPage from "../landing/LandingPage";
+import HomePage from "../home/HomePage";
 import DeletedObjectsPage from "../sync-deleted-objects/DeletedObjectsPage";
 import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
@@ -13,6 +13,7 @@ import * as permissions from "../../utils/permissions";
 import InstanceMappingPage from "../instance-mapping/InstanceMapping";
 import RouteWithSession from "../../components/auth/RouteWithSession";
 import RouteWithSessionAndAuth from "../../components/auth/RouteWithSessionAndAuth";
+import InstanceMappingLandingPage from "../instance-mapping/Landing";
 
 class Root extends React.Component {
     static propTypes = {
@@ -24,8 +25,13 @@ class Root extends React.Component {
             <HashRouter>
                 <Switch>
                     <RouteWithSession
-                        path={"/instances/mapping/:id?"}
+                        path={"/instances/mapping/:section(aggregated|tracker|orgUnit)/:id?"}
                         render={props => <InstanceMappingPage {...this.props} {...props} />}
+                    />
+
+                    <RouteWithSession
+                        path={"/instances/mapping/:id?"}
+                        render={props => <InstanceMappingLandingPage {...this.props} {...props} />}
                     />
 
                     <RouteWithSession
@@ -72,7 +78,7 @@ class Root extends React.Component {
                         render={props => <HistoryPage {...this.props} {...props} />}
                     />
 
-                    <RouteWithSession render={() => <LandingPage {...this.props} />} />
+                    <RouteWithSession render={() => <HomePage {...this.props} />} />
                 </Switch>
             </HashRouter>
         );
