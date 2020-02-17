@@ -172,7 +172,7 @@ class GeneralInfoForm extends React.Component {
                     {
                         message: i18n.t("Field cannot be blank"),
                         validator(value) {
-                            return Validators.isRequired(value);
+                            return instance.id ? true : Validators.isRequired(value);
                         },
                     },
                 ],
