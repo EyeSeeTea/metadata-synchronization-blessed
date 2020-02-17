@@ -191,13 +191,49 @@ const InstanceMappingPage: React.FC = () => {
         applyMapping(elementsToMap, mappedId);
     };
 
-    const disableMapping = async (selection: string[]) => {
-        applyMapping(selection, "DISABLED");
-    };
+    const disableMapping = useCallback(
+        async (selection: string[]) => {
+            if (selection.length === 0) {
+                snackbar.error(i18n.t("You need at least one item to disable mapping"));
+            } else if (selection.length === 1) {
+                applyMapping(selection, "DISABLED");
+            } else if (selection.length > 1) {
+                setWarningDialog({
+                    title: i18n.t("Disable mapping to default value"),
+                    description: i18n.t(
+                        "Are you sure you want to disable mapping for {{total}} elements?",
+                        {
+                            total: selection.length,
+                        }
+                    ),
+                    action: () => applyMapping(selection, "DISABLED"),
+                });
+            }
+        },
+        [applyMapping, snackbar]
+    );
 
-    const resetMapping = async (selection: string[]) => {
-        applyMapping(selection, undefined);
-    };
+    const resetMapping = useCallback(
+        async (selection: string[]) => {
+            if (selection.length === 0) {
+                snackbar.error(i18n.t("You need at least one item to reset mapping"));
+            } else if (selection.length === 1) {
+                applyMapping(selection, undefined);
+            } else if (selection.length > 1) {
+                setWarningDialog({
+                    title: i18n.t("Reset mapping to default value"),
+                    description: i18n.t(
+                        "Are you sure you want to clear mapping for {{total}} elements?",
+                        {
+                            total: selection.length,
+                        }
+                    ),
+                    action: () => applyMapping(selection, undefined),
+                });
+            }
+        },
+        [applyMapping, snackbar]
+    );
 
     const applyAutoMapping = async (selection: string[]) => {
         const selectedItem = _.find(rows, ["id", selection[0]]);
@@ -223,10 +259,11 @@ const InstanceMappingPage: React.FC = () => {
             .getApi()
             //@ts-ignore
             .models[type].get({
-                fields: { id: true },
+                fields: { id: true, code: true },
                 filter: {
-                    name: { ilike: selectedItem.name },
-                    shortName: { ilike: selectedItem.shortName },
+                    name: { token: selectedItem.name },
+                    shortName: { token: selectedItem.shortName },
+                    id: { eq: selectedItem.id },
                     code: { eq: selectedItem.code },
                 },
                 rootJunction: "OR",
@@ -235,11 +272,14 @@ const InstanceMappingPage: React.FC = () => {
 
         if (candidates.length === 0) {
             snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
-        } else if (candidates.length === 1) {
-            await applyMapping(selection, candidates[0].id);
-            setElementsToMap(selection);
         } else {
-            snackbar.warning(i18n.t("There're more than one candidates to apply auto-mapping"));
+            const candidateWithSameId = _.find(candidates, ["id", selectedItem.id]);
+            const candidateWithSameCode = _.find(candidates, ["code", selectedItem.code]);
+            const firstCandidate = _.first(candidates);
+            const candidate = candidateWithSameId ?? candidateWithSameCode ?? firstCandidate;
+
+            await applyMapping(selection, candidate.id);
+            setElementsToMap(selection);
         }
     };
 
@@ -324,24 +364,7 @@ const InstanceMappingPage: React.FC = () => {
                 <Fab
                     className={classes.actionButtons}
                     color="primary"
-                    onClick={() => {
-                        if (selectedIds.length > 0) {
-                            setWarningDialog({
-                                title: i18n.t("Reset mapping to default value"),
-                                description: i18n.t(
-                                    "Are you sure you want to clear mapping for {{total}} elements?",
-                                    {
-                                        total: selectedIds.length,
-                                    }
-                                ),
-                                action: () => applyMapping(selectedIds, undefined),
-                            });
-                        } else {
-                            snackbar.error(
-                                i18n.t("Please select at least one item to reset mapping")
-                            );
-                        }
-                    }}
+                    onClick={() => resetMapping(rows.map(({ id }) => id))}
                     variant={"extended"}
                 >
                     {i18n.t("Reset mapping")}
@@ -349,31 +372,14 @@ const InstanceMappingPage: React.FC = () => {
                 <Fab
                     className={classes.actionButtons}
                     color="primary"
-                    onClick={() => {
-                        if (selectedIds.length > 0) {
-                            setWarningDialog({
-                                title: i18n.t("Disable mapping"),
-                                description: i18n.t(
-                                    "Are you sure you want to disable mapping for {{total}} elements?",
-                                    {
-                                        total: selectedIds.length,
-                                    }
-                                ),
-                                action: () => applyMapping(selectedIds, "DISABLED"),
-                            });
-                        } else {
-                            snackbar.error(
-                                i18n.t("Please select at least one item to disable mapping")
-                            );
-                        }
-                    }}
+                    onClick={() => disableMapping(rows.map(({ id }) => id))}
                     variant={"extended"}
                 >
                     {i18n.t("Disable mapping")}
                 </Fab>
             </React.Fragment>
         ),
-        [classes, instanceOptions, instanceFilter, snackbar, selectedIds, applyMapping]
+        [classes, instanceOptions, instanceFilter, rows, disableMapping, resetMapping]
     );
 
     const actions: TableAction<MetadataType>[] = [

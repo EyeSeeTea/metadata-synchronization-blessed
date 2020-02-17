@@ -11,6 +11,9 @@ context("Manual aggregated sync", function() {
         cy.get(dataTest("page-header-title")).contains("Aggregated Data Synchronization");
     });
 
+    /**
+     * Database: d2-docker-eyeseetea-2-30-datasync-sender
+     */
     it("syncs correctly malaria annual data", function() {
         cy.route({
             method: "POST",

@@ -31,6 +31,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     selectedIds?: string[];
     excludedIds?: string[];
     childrenKeys?: string[];
+    initialShowOnlySelected?: boolean;
     additionalColumns?: TableColumn<MetadataType>[];
     additionalFilters?: ReactNode;
     additionalActions?: TableAction<MetadataType>[];
@@ -113,6 +114,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     additionalFilters = null,
     additionalActions = [],
     loading: providedLoading,
+    initialShowOnlySelected = false,
     ...rest
 }) => {
     const d2 = useD2() as D2;
@@ -131,8 +133,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         groupData: [],
         level: "",
         levelData: [],
-        showOnlySelected: false,
-        selectedIds: [],
+        showOnlySelected: initialShowOnlySelected,
+        selectedIds: selectedIds,
         parentOrgUnits: [],
     });
 
