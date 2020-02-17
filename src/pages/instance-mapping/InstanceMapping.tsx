@@ -18,10 +18,10 @@ import {
     OrganisationUnitModel,
     ProgramDataElementModel,
 } from "../../models/d2Model";
-import Instance, { MetadataMapping } from "../../models/instance";
+import Instance from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
-import { cleanOrgUnitPath, cleanOrgUnitPaths } from "../../utils/synchronization";
+import { cleanOrgUnitPath } from "../../utils/synchronization";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
@@ -51,8 +51,8 @@ export const getInstances = async (d2: D2) => {
     return objects;
 };
 
-const queryApi = (instance: Instance, type: keyof D2ModelSchemas, ids: string[]) => {
-    return instance
+const getName = async (instance: Instance, type: keyof D2ModelSchemas, id: string) => {
+    const response = await instance
         .getApi()
         .metadata.get({
             [type]: {
@@ -62,17 +62,15 @@ const queryApi = (instance: Instance, type: keyof D2ModelSchemas, ids: string[])
                 },
                 filter: {
                     id: {
-                        in: cleanOrgUnitPaths(ids),
+                        eq: cleanOrgUnitPath(id),
                     },
                 },
             },
         })
         .getData();
-};
 
-interface NamedMetadataMapping extends MetadataMapping {
-    name: ReactNode;
-}
+    return _.get(response, [type, 0, "name"]);
+};
 
 interface WarningDialog {
     title?: string;
@@ -90,11 +88,12 @@ const InstanceMappingPage: React.FC = () => {
     const history = useHistory();
     const classes = useStyles();
     const snackbar = useSnackbar();
+
     const { id: instanceFilterDefault = "", section } = useParams() as InstanceMappingParams;
     const { models } = config[section];
-
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const type = model.getCollectionName();
+
     const [instance, setInstance] = useState<Instance>();
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -104,9 +103,6 @@ const InstanceMappingPage: React.FC = () => {
     const [instanceFilter, setInstanceFilter] = useState<string>(instanceFilterDefault);
     const [elementsToMap, setElementsToMap] = useState<string[]>([]);
     const [rows, setRows] = useState<MetadataType[]>([]);
-    const [dictionary, setDictionary] = useState<{
-        [id: string]: NamedMetadataMapping;
-    }>({});
 
     useEffect(() => {
         getInstances(d2 as D2).then(setInstanceOptions);
@@ -115,46 +111,6 @@ const InstanceMappingPage: React.FC = () => {
     useEffect(() => {
         Instance.get(d2 as D2, instanceFilter).then(setInstance);
     }, [d2, instanceFilter]);
-
-    useEffect(() => {
-        if (!instance || rows.length === 0) return;
-        setLoading(true);
-        const ids = rows.map(({ id }) =>
-            _.get(instance?.metadataMapping, [type, id, "mappedId"], id)
-        );
-
-        const updateDictionary = (response: any) => {
-            const newMappings = _.mapKeys(
-                rows.map(({ id: originalId }) => {
-                    const defaultName = response
-                        ? i18n.t("Item not found")
-                        : i18n.t("Could not connect with instance");
-                    const collection = response ? response[type] : {};
-                    const mappedId = _.get(
-                        instance.metadataMapping,
-                        [type, originalId, "mappedId"],
-                        originalId
-                    );
-                    const cleanId = cleanOrgUnitPath(mappedId);
-                    const name = _.find(collection, ["id", cleanId])?.name ?? defaultName;
-
-                    return { originalId, mappedId, name };
-                }),
-                ({ originalId }) => `${instance.id}-${type}-${originalId}`
-            );
-
-            setDictionary(prevDictionary => ({
-                ...prevDictionary,
-                ...newMappings,
-            }));
-
-            setLoading(false);
-        };
-
-        queryApi(instance, type, ids)
-            .then(updateDictionary)
-            .catch(() => updateDictionary(null));
-    }, [instance, rows, type, setLoading]);
 
     const applyMapping = useCallback(
         async (selection: string[], mappedId: string | undefined) => {
@@ -169,8 +125,10 @@ const InstanceMappingPage: React.FC = () => {
                 const newMapping = _.cloneDeep(instance.metadataMapping);
                 for (const item of selection) {
                     _.unset(newMapping, [type, item]);
-                    _.unset(dictionary, `${instance.id}-${type}-${item}`);
-                    if (mappedId) _.set(newMapping, [type, item], { mappedId });
+                    if (mappedId) {
+                        const name = await getName(instance, type, mappedId);
+                        _.set(newMapping, [type, item], { mappedId, name });
+                    }
                 }
 
                 const newInstance = instance.setMetadataMapping(newMapping);
@@ -192,20 +150,29 @@ const InstanceMappingPage: React.FC = () => {
                 snackbar.error(i18n.t("Could not apply mapping, please try again."));
             }
         },
-        [d2, dictionary, instance, snackbar, type]
+        [d2, instance, snackbar, type]
     );
 
-    const updateMapping = async (mappedId: string) => {
-        applyMapping(elementsToMap, mappedId);
-    };
+    const updateMapping = useCallback(
+        async (mappedId: string) => {
+            applyMapping(elementsToMap, mappedId);
+        },
+        [applyMapping, elementsToMap]
+    );
 
-    const disableMapping = async (selection: string[]) => {
-        applyMapping(selection, "DISABLED");
-    };
+    const disableMapping = useCallback(
+        async (selection: string[]) => {
+            applyMapping(selection, "DISABLED");
+        },
+        [applyMapping]
+    );
 
-    const resetMapping = async (selection: string[]) => {
-        applyMapping(selection, undefined);
-    };
+    const resetMapping = useCallback(
+        async (selection: string[]) => {
+            applyMapping(selection, undefined);
+        },
+        [applyMapping]
+    );
 
     const openMappingDialog = useCallback(
         (selection: string[]) => {
@@ -260,17 +227,16 @@ const InstanceMappingPage: React.FC = () => {
                 name: "mapped-name",
                 text: "Mapped Name",
                 getValue: (row: MetadataType) => {
-                    const key = `${instance?.id}-${type}-${row.id}`;
-                    const defaultName = instance
-                        ? i18n.t("Loading...")
-                        : i18n.t("Please select an instance");
-                    const { name, mappedId } = dictionary[key] ?? {};
+                    const { mappedId, name } = _.get(instance?.metadataMapping, [type, row.id], {
+                        mappedId: row.id,
+                        name: i18n.t("Not mapped"),
+                    });
 
-                    return mappedId === "DISABLED" ? "-" : name ?? defaultName;
+                    return mappedId === "DISABLED" ? "-" : name;
                 },
             },
         ],
-        [classes, dictionary, type, instance, openMappingDialog]
+        [classes, type, instance, openMappingDialog]
     );
 
     const filters: ReactNode = useMemo(
@@ -340,40 +306,53 @@ const InstanceMappingPage: React.FC = () => {
         [classes, instanceOptions, instanceFilter, snackbar, selectedIds, applyMapping]
     );
 
-    const actions: TableAction<MetadataType>[] = [
-        {
-            // Required to disable default "select" action
-            name: "select",
-            text: "Select",
-            isActive: () => false,
-        },
-        {
-            name: "set-mapping",
-            text: i18n.t("Set mapping"),
-            multiple: false,
-            onClick: openMappingDialog,
-            icon: <Icon>open_in_new</Icon>,
-        },
-        {
-            name: "disable-mapping",
-            text: i18n.t("Disable mapping"),
-            multiple: true,
-            onClick: disableMapping,
-            icon: <Icon>sync_disabled</Icon>,
-            isActive: () => type === "dataElements" || type === "organisationUnits",
-        },
-        {
-            name: "reset-mapping",
-            text: i18n.t("Reset mapping to default values"),
-            multiple: true,
-            onClick: resetMapping,
-            icon: <Icon>clear</Icon>,
-        },
-    ];
+    const actions: TableAction<MetadataType>[] = useMemo(
+        () => [
+            {
+                // Required to disable default "select" action
+                name: "select",
+                text: "Select",
+                isActive: () => false,
+            },
+            {
+                name: "set-mapping",
+                text: i18n.t("Set mapping"),
+                multiple: false,
+                onClick: openMappingDialog,
+                icon: <Icon>open_in_new</Icon>,
+            },
+            {
+                name: "disable-mapping",
+                text: i18n.t("Disable mapping"),
+                multiple: true,
+                onClick: disableMapping,
+                icon: <Icon>sync_disabled</Icon>,
+                isActive: () => type === "dataElements" || type === "organisationUnits",
+            },
+            {
+                name: "reset-mapping",
+                text: i18n.t("Reset mapping to default values"),
+                multiple: true,
+                onClick: resetMapping,
+                icon: <Icon>clear</Icon>,
+            },
+        ],
+        [disableMapping, openMappingDialog, resetMapping, type]
+    );
 
     const backHome = () => {
         history.push("/instances/mapping");
     };
+
+    const notifyNewModel = useCallback(
+        model => {
+            setLoading(!!instance);
+            setRows([]);
+            setSelectedIds([]);
+            setModel(() => model);
+        },
+        [instance]
+    );
 
     return (
         <React.Fragment>
@@ -409,12 +388,7 @@ const InstanceMappingPage: React.FC = () => {
                 additionalColumns={columns}
                 additionalFilters={filters}
                 additionalActions={actions}
-                notifyNewModel={model => {
-                    setLoading(!!instance);
-                    setRows([]);
-                    setSelectedIds([]);
-                    setModel(() => model);
-                }}
+                notifyNewModel={notifyNewModel}
                 notifyRowsChange={setRows}
                 loading={loading}
                 selectedIds={selectedIds}

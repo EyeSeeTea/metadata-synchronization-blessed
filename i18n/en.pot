@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-17T07:53:49.309Z\n"
-"PO-Revision-Date: 2020-02-17T07:53:49.309Z\n"
+"POT-Creation-Date: 2020-02-17T08:44:16.264Z\n"
+"PO-Revision-Date: 2020-02-17T08:44:16.264Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -697,12 +697,6 @@ msgstr[1] ""
 msgid "Destination Instance Settings"
 msgstr ""
 
-msgid "Item not found"
-msgstr ""
-
-msgid "Could not connect with instance"
-msgstr ""
-
 msgid "Please select an instance from the dropdown"
 msgstr ""
 
@@ -721,10 +715,7 @@ msgstr ""
 msgid "Set mapping"
 msgstr ""
 
-msgid "Loading..."
-msgstr ""
-
-msgid "Please select an instance"
+msgid "Not mapped"
 msgstr ""
 
 msgid "Instance selection"
