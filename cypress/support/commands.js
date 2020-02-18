@@ -19,6 +19,8 @@ if (!appUrl) {
     throw new Error("CYPRESS_ROOT_URL not set");
 }
 
+Cypress.config("baseUrl", appUrl);
+
 const dhis2Auth = _(dhis2AuthEnvValue)
     .split(",")
     .map(auth => auth.split(":"))
