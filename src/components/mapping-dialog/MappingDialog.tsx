@@ -16,7 +16,7 @@ interface MappingDialogProps {
     model?: typeof D2Model;
     instance?: Instance;
     onClose: () => void;
-    onUpdateMapping: (id: string) => void;
+    onUpdateMapping: (id?: string) => void;
 }
 
 const useStyles = makeStyles({
@@ -56,10 +56,8 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 
     const onUpdateSelection = (selectedIds: string[]) => {
         const newSelection = _.last(selectedIds);
-        if (newSelection) {
-            onUpdateMapping(newSelection);
-            updateSelected(newSelection);
-        }
+        onUpdateMapping(newSelection);
+        updateSelected(newSelection);
     };
 
     const OrgUnitMapper = instance?.getApi() && (

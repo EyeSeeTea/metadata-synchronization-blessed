@@ -155,7 +155,7 @@ const InstanceMappingPage: React.FC = () => {
     );
 
     const updateMapping = useCallback(
-        async (mappedId: string) => {
+        async (mappedId?: string) => {
             applyMapping(elementsToMap, mappedId);
         },
         [applyMapping, elementsToMap]
