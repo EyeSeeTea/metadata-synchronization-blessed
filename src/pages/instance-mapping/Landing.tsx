@@ -1,22 +1,15 @@
 import i18n from "@dhis2/d2-i18n";
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Landing } from "../../components/landing/Landing";
-import { MenuCardProps } from "../../components/landing/MenuCard";
+import { Card, Landing } from "../../components/landing/Landing";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 const InstanceMappingLandingPage: React.FC = () => {
     const history = useHistory();
     const { id = "" } = useParams() as { id?: string };
 
-    const cards: {
-        title: string;
-        key: string;
-        isVisible?: boolean;
-        children: MenuCardProps[];
-    }[] = [
+    const cards: Card[] = [
         {
-            title: "Instance mapping",
             key: "mapping",
             children: [
                 {
@@ -35,9 +28,13 @@ const InstanceMappingLandingPage: React.FC = () => {
         },
     ];
 
+    const backHome = () => {
+        history.push("/instances");
+    };
+
     return (
         <TestWrapper>
-            <Landing cards={cards} />
+            <Landing title={i18n.t("Instance mapping")} cards={cards} onBackClick={backHome} />
         </TestWrapper>
     );
 };

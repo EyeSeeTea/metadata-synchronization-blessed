@@ -1,5 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import React from "react";
+import PageHeader from "../page-header/PageHeader";
 import MenuCard, { MenuCardProps } from "./MenuCard";
 
 const useStyles = makeStyles({
@@ -19,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 export interface Card {
-    title: string;
+    title?: string;
     key: string;
     isVisible?: boolean;
     children: MenuCardProps[];
@@ -27,27 +28,33 @@ export interface Card {
 
 export interface LandingProps {
     cards: Card[];
+    title?: string;
+    onBackClick?: () => void;
 }
 
-export const Landing: React.FC<LandingProps> = ({ cards }) => {
+export const Landing: React.FC<LandingProps> = ({ title, cards, onBackClick }) => {
     const classes = useStyles();
 
     return (
-        <div className={classes.container} key="landing">
-            {cards.map(
-                ({ key, title, isVisible = true, children }) =>
-                    isVisible && (
-                        <div key={key}>
-                            <h1 className={classes.title}>{title}</h1>
+        <React.Fragment>
+            {!!title && <PageHeader title={title} onBackClick={onBackClick} />}
 
-                            {children.map(props => (
-                                <MenuCard key={props.name} {...props} />
-                            ))}
+            <div className={classes.container} key="landing">
+                {cards.map(
+                    ({ key, title, isVisible = true, children }) =>
+                        isVisible && (
+                            <div key={key}>
+                                {!!title && <h1 className={classes.title}>{title}</h1>}
 
-                            <div className={classes.clear} />
-                        </div>
-                    )
-            )}
-        </div>
+                                {children.map(props => (
+                                    <MenuCard key={props.name} {...props} />
+                                ))}
+
+                                <div className={classes.clear} />
+                            </div>
+                        )
+                )}
+            </div>
+        </React.Fragment>
     );
 };

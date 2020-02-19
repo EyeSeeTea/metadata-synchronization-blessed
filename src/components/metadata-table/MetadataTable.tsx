@@ -26,7 +26,6 @@ import { D2 } from "../../types/d2";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPaths, getRootOrgUnit } from "../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";
-import { useWhyDidYouUpdate } from "./helper";
 import { getAllIdentifiers, getFilterData, getRows } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
@@ -104,24 +103,21 @@ const uniqCombine = (items: any[]) =>
         .reverse()
         .value();
 
-const MetadataTable: React.FC<MetadataTableProps> = props => {
-    useWhyDidYouUpdate("MetadataTable", props);
-    const {
-        api: providedApi,
-        models,
-        selectedIds = [],
-        excludedIds = [],
-        notifyNewSelection = _.noop,
-        notifyNewModel = _.noop,
-        notifyRowsChange = _.noop,
-        childrenKeys = [],
-        additionalColumns = [],
-        additionalFilters = null,
-        additionalActions = [],
-        loading: providedLoading,
-        ...rest
-    } = props;
-
+const MetadataTable: React.FC<MetadataTableProps> = ({
+    api: providedApi,
+    models,
+    selectedIds = [],
+    excludedIds = [],
+    notifyNewSelection = _.noop,
+    notifyNewModel = _.noop,
+    notifyRowsChange = _.noop,
+    childrenKeys = [],
+    additionalColumns = [],
+    additionalFilters = null,
+    additionalActions = [],
+    loading: providedLoading,
+    ...rest
+}) => {
     const d2 = useD2() as D2;
     const defaultApi = useD2Api();
     const api = providedApi ?? defaultApi;
