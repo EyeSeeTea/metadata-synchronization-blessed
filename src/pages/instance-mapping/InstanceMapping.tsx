@@ -196,18 +196,19 @@ const InstanceMappingPage: React.FC = () => {
                 return;
             }
 
-            const { objects: candidates } = await instance
+            const { [type]: candidates } = await instance
                 .getApi()
-                //@ts-ignore
-                .models[type].get({
-                    fields: { id: true, code: true },
-                    filter: {
-                        name: { token: selectedItem.name },
-                        shortName: { token: selectedItem.shortName },
-                        id: { eq: selectedItem.id },
-                        code: { eq: selectedItem.code },
+                .metadata.get({
+                    [type]: {
+                        fields: { id: true, code: true },
+                        filter: {
+                            name: { token: selectedItem.name },
+                            shortName: { token: selectedItem.shortName },
+                            id: { eq: selectedItem.id },
+                            code: { eq: selectedItem.code },
+                        },
+                        rootJunction: "OR",
                     },
-                    rootJunction: "OR",
                 })
                 .getData();
 
@@ -216,8 +217,7 @@ const InstanceMappingPage: React.FC = () => {
             } else {
                 const candidateWithSameId = _.find(candidates, ["id", selectedItem.id]);
                 const candidateWithSameCode = _.find(candidates, ["code", selectedItem.code]);
-                const firstCandidate = _.first(candidates);
-                const candidate = candidateWithSameId ?? candidateWithSameCode ?? firstCandidate;
+                const candidate = candidateWithSameId ?? candidateWithSameCode ?? candidates[0];
 
                 await applyMapping(selection, candidate.id);
                 setElementsToMap(selection);
