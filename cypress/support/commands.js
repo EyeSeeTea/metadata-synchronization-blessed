@@ -31,10 +31,14 @@ Cypress.Cookies.defaults({
     whitelist: "JSESSIONID",
 });
 
+const encryptionKey = Cypress.env("ENCRYPTION_KEY");
 Cypress.Commands.add("login", (username, _password = null) => {
     // Start server and create fixture for the encryption key
     cy.server();
-    cy.fixture("app-config.json").then(json => cy.route("GET", "app-config.json", json));
+    cy.fixture("app-config.json").then(json => {
+        if (encryptionKey) json.encryptionKey = encryptionKey;
+        cy.route("GET", "app-config.json", json);
+    });
 
     const password = _password || dhis2Auth[username];
 
