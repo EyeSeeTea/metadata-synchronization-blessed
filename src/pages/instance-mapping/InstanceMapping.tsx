@@ -374,6 +374,13 @@ const InstanceMappingPage: React.FC = () => {
                 onClick: resetMapping,
                 icon: <Icon>clear</Icon>,
             },
+            {
+                name: "related-mapping",
+                text: i18n.t("Related metadata mapping"),
+                multiple: false,
+                onClick: _.noop,
+                icon: <Icon>assignment</Icon>,
+            },
         ],
         [disableMapping, openMappingDialog, resetMapping, applyAutoMapping, type]
     );

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-19T10:50:00.219Z\n"
-"PO-Revision-Date: 2020-02-19T10:50:00.219Z\n"
+"POT-Creation-Date: 2020-02-19T10:53:48.054Z\n"
+"PO-Revision-Date: 2020-02-19T10:53:48.054Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -743,6 +743,9 @@ msgid "Auto-map element"
 msgstr ""
 
 msgid "Reset mapping to default values"
+msgstr ""
+
+msgid "Related metadata mapping"
 msgstr ""
 
 msgid "Aggregated"
