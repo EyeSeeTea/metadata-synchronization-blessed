@@ -227,12 +227,29 @@ const InstanceMappingPage: React.FC = () => {
                 name: "mapped-name",
                 text: "Mapped Name",
                 getValue: (row: MetadataType) => {
-                    const { mappedId, name } = _.get(instance?.metadataMapping, [type, row.id], {
-                        mappedId: row.id,
-                        name: i18n.t("Not mapped"),
-                    });
+                    const {
+                        mappedId = row.id,
+                        name = i18n.t("Not mapped"),
+                        hasWarnings = false,
+                    } = _.get(instance?.metadataMapping, [type, row.id]) ?? {};
 
-                    return mappedId === "DISABLED" ? "-" : name;
+                    return (
+                        <span>
+                            <Typography variant={"inherit"} gutterBottom>
+                                {mappedId === "DISABLED" ? "-" : name}
+                            </Typography>
+                            {hasWarnings && (
+                                <Tooltip title={i18n.t("Mapping has errors")} placement="top">
+                                    <IconButton
+                                        className={classes.iconButton}
+                                        onClick={_.noop}
+                                    >
+                                        <Icon color="error">warning</Icon>
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                        </span>
+                    );
                 },
             },
         ],
