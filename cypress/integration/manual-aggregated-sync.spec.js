@@ -62,7 +62,7 @@ context("Manual aggregated sync", function() {
         // Select receiver instance (multi-selector does not work fine with cypress?)
         cy.selectInMultiSelector(
             dataTest("DialogContent-aggregated-data-synchronization"),
-            "kiNVCEtS8Cl"
+            "Y5QsHDoD4I0"
         );
 
         // Execute synchronization and assert dialog appears
