@@ -14,10 +14,10 @@ const instancesDataStoreKey = "instances";
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 export interface MetadataMapping {
-    name: string;
     mappedId: string;
-    mapping: MetadataMappingDictionary;
-    hasWarnings: boolean;
+    conflicts?: boolean;
+    name?: string;
+    mapping?: MetadataMappingDictionary;
 }
 
 export interface MetadataMappingDictionary {

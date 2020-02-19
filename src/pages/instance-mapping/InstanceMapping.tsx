@@ -1,6 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { Fab, Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
-import { useD2 } from "d2-api";
+import { useD2, useD2Api } from "d2-api";
 import { ConfirmationDialog, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
@@ -17,7 +17,7 @@ import {
     OrganisationUnitModel,
     ProgramDataElementModel,
 } from "../../models/d2Model";
-import Instance from "../../models/instance";
+import Instance, { MetadataMapping } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
@@ -64,6 +64,7 @@ interface InstanceMappingParams {
 
 const InstanceMappingPage: React.FC = () => {
     const d2 = useD2();
+    const api = useD2Api();
     const history = useHistory();
     const classes = useStyles();
     const snackbar = useSnackbar();
@@ -96,10 +97,12 @@ const InstanceMappingPage: React.FC = () => {
 
             try {
                 const newMapping = _.cloneDeep(instance.metadataMapping);
-                const mapping = await buildMapping(instance, type, mappedId);
-                for (const item of selection) {
-                    _.unset(newMapping, [type, item]);
-                    if (mappedId) _.set(newMapping, [type, item], mapping);
+                for (const id of selection) {
+                    _.unset(newMapping, [type, id]);
+                    if (mappedId) {
+                        const mapping = await buildMapping(api, instance, type, id, mappedId);
+                        _.set(newMapping, [type, id], mapping);
+                    }
                 }
 
                 const newInstance = instance.setMetadataMapping(newMapping);
@@ -122,7 +125,7 @@ const InstanceMappingPage: React.FC = () => {
                 snackbar.error(i18n.t("Could not apply mapping, please try again."));
             }
         },
-        [d2, instance, snackbar, type]
+        [api, d2, instance, snackbar, type]
     );
 
     const updateMapping = useCallback(
@@ -167,7 +170,7 @@ const InstanceMappingPage: React.FC = () => {
                 return;
             }
 
-            const candidate = await autoMap(instance, type, selectedItem);
+            const { mappedId: candidate } = await autoMap(instance, type, selectedItem);
             if (!candidate) {
                 snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
             } else {
@@ -231,15 +234,19 @@ const InstanceMappingPage: React.FC = () => {
                 name: "mapped-name",
                 text: "Mapped Name",
                 getValue: (row: MetadataType) => {
-                    const { mappedId = row.id, name = i18n.t("Not mapped"), hasWarnings = false } =
+                    const {
+                        mappedId = row.id,
+                        name = mappedId === "DISABLED" ? undefined : i18n.t("Not mapped"),
+                        conflicts = false,
+                    }: Partial<MetadataMapping> =
                         _.get(instance?.metadataMapping, [type, row.id]) ?? {};
 
                     return (
                         <span>
                             <Typography variant={"inherit"} gutterBottom>
-                                {mappedId === "DISABLED" ? "-" : name}
+                                {name ?? "-"}
                             </Typography>
-                            {hasWarnings && (
+                            {conflicts && (
                                 <Tooltip title={i18n.t("Mapping has errors")} placement="top">
                                     <IconButton className={classes.iconButton} onClick={_.noop}>
                                         <Icon color="error">warning</Icon>

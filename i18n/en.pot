@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-19T10:53:48.054Z\n"
-"PO-Revision-Date: 2020-02-19T10:53:48.054Z\n"
+"POT-Creation-Date: 2020-02-19T14:49:47.496Z\n"
+"PO-Revision-Date: 2020-02-19T14:49:47.496Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -728,9 +728,6 @@ msgid "Not mapped"
 msgstr ""
 
 msgid "Mapping has errors"
-msgstr ""
-
-msgid "Instance selection"
 msgstr ""
 
 msgid "Reset mapping"
