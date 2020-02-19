@@ -377,7 +377,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     }, [api]);
 
     useEffect(() => {
-        const { cancel, response } = getRows(
+        const { response } = getRows(
             apiModel.modelName,
             api.baseUrl,
             sorting,
@@ -388,6 +388,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         );
 
         setLoading(true);
+        let active = true;
         response
             .then(({ data }) => {
                 //@ts-ignore TODO: Fix in d2-api
@@ -395,13 +396,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 const rows = model.getApiModelTransform()(objects);
                 notifyRowsChange(rows);
 
-                setRows(rows);
-                setPager(pager);
-                setLoading(false);
+                if (active) {
+                    setRows(rows);
+                    setPager(pager);
+                    setLoading(false);
+                }
             })
             .catch(handleError);
 
-        return cancel;
+        return () => {
+            active = false;
+        };
     }, [api.baseUrl, apiModel, apiQuery, sorting, pagination, search, model, notifyRowsChange]);
 
     useEffect(() => {
