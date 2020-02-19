@@ -36,6 +36,7 @@ Run integration tests locally:
 $ export CYPRESS_DHIS2_AUTH='admin:district'
 $ export CYPRESS_EXTERNAL_API="http://localhost:8080"
 $ export CYPRESS_ROOT_URL=http://localhost:8081
+$ export CYPRESS_ENCRYPTION_KEY=anyKey
 
 $ yarn cy:e2e:run # non-interactive
 $ yarn cy:e2e:open # interactive UI
