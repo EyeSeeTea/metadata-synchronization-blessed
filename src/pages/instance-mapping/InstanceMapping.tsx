@@ -95,7 +95,7 @@ const InstanceMappingPage: React.FC = () => {
     const type = model.getCollectionName();
 
     const [instance, setInstance] = useState<Instance>();
-    const [loading, setLoading] = useState<boolean>(false);
+    const [isLoading, setLoading] = useState<boolean>(false);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const [warningDialog, setWarningDialog] = useState<WarningDialog | null>(null);
@@ -147,6 +147,7 @@ const InstanceMappingPage: React.FC = () => {
                     { autoHideDuration: 2500 }
                 );
             } catch (e) {
+                console.error(e);
                 snackbar.error(i18n.t("Could not apply mapping, please try again."));
             }
         },
@@ -172,6 +173,57 @@ const InstanceMappingPage: React.FC = () => {
             applyMapping(selection, undefined);
         },
         [applyMapping]
+    );
+
+    const applyAutoMapping = useCallback(
+        async (selection: string[]) => {
+            const selectedItem = _.find(rows, ["id", selection[0]]);
+
+            if (!instance) {
+                snackbar.error(i18n.t("Please select an instance from the dropdown"), {
+                    autoHideDuration: 2500,
+                });
+                return;
+            } else if (selection.length !== 1) {
+                snackbar.error(i18n.t("Auto-mapping does not support multiple action yet"), {
+                    autoHideDuration: 2500,
+                });
+                return;
+            } else if (!selectedItem) {
+                snackbar.error(i18n.t("Unexpected error, could not apply auto mapping"), {
+                    autoHideDuration: 2500,
+                });
+                return;
+            }
+
+            const { objects: candidates } = await instance
+                .getApi()
+                //@ts-ignore
+                .models[type].get({
+                    fields: { id: true, code: true },
+                    filter: {
+                        name: { token: selectedItem.name },
+                        shortName: { token: selectedItem.shortName },
+                        id: { eq: selectedItem.id },
+                        code: { eq: selectedItem.code },
+                    },
+                    rootJunction: "OR",
+                })
+                .getData();
+
+            if (candidates.length === 0) {
+                snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
+            } else {
+                const candidateWithSameId = _.find(candidates, ["id", selectedItem.id]);
+                const candidateWithSameCode = _.find(candidates, ["code", selectedItem.code]);
+                const firstCandidate = _.first(candidates);
+                const candidate = candidateWithSameId ?? candidateWithSameCode ?? firstCandidate;
+
+                await applyMapping(selection, candidate.id);
+                setElementsToMap(selection);
+            }
+        },
+        [applyMapping, instance, rows, snackbar, type]
     );
 
     const openMappingDialog = useCallback(
@@ -227,11 +279,8 @@ const InstanceMappingPage: React.FC = () => {
                 name: "mapped-name",
                 text: "Mapped Name",
                 getValue: (row: MetadataType) => {
-                    const {
-                        mappedId = row.id,
-                        name = i18n.t("Not mapped"),
-                        hasWarnings = false,
-                    } = _.get(instance?.metadataMapping, [type, row.id]) ?? {};
+                    const { mappedId = row.id, name = i18n.t("Not mapped"), hasWarnings = false } =
+                        _.get(instance?.metadataMapping, [type, row.id]) ?? {};
 
                     return (
                         <span>
@@ -240,10 +289,7 @@ const InstanceMappingPage: React.FC = () => {
                             </Typography>
                             {hasWarnings && (
                                 <Tooltip title={i18n.t("Mapping has errors")} placement="top">
-                                    <IconButton
-                                        className={classes.iconButton}
-                                        onClick={_.noop}
-                                    >
+                                    <IconButton className={classes.iconButton} onClick={_.noop}>
                                         <Icon color="error">warning</Icon>
                                     </IconButton>
                                 </Tooltip>
@@ -271,24 +317,7 @@ const InstanceMappingPage: React.FC = () => {
                 <Fab
                     className={classes.actionButtons}
                     color="primary"
-                    onClick={() => {
-                        if (selectedIds.length > 0) {
-                            setWarningDialog({
-                                title: i18n.t("Reset mapping to default value"),
-                                description: i18n.t(
-                                    "Are you sure you want to clear mapping for {{total}} elements?",
-                                    {
-                                        total: selectedIds.length,
-                                    }
-                                ),
-                                action: () => applyMapping(selectedIds, undefined),
-                            });
-                        } else {
-                            snackbar.error(
-                                i18n.t("Please select at least one item to reset mapping")
-                            );
-                        }
-                    }}
+                    onClick={() => resetMapping(rows.map(({ id }) => id))}
                     variant={"extended"}
                 >
                     {i18n.t("Reset mapping")}
@@ -296,31 +325,14 @@ const InstanceMappingPage: React.FC = () => {
                 <Fab
                     className={classes.actionButtons}
                     color="primary"
-                    onClick={() => {
-                        if (selectedIds.length > 0) {
-                            setWarningDialog({
-                                title: i18n.t("Disable mapping"),
-                                description: i18n.t(
-                                    "Are you sure you want to disable mapping for {{total}} elements?",
-                                    {
-                                        total: selectedIds.length,
-                                    }
-                                ),
-                                action: () => applyMapping(selectedIds, "DISABLED"),
-                            });
-                        } else {
-                            snackbar.error(
-                                i18n.t("Please select at least one item to disable mapping")
-                            );
-                        }
-                    }}
+                    onClick={() => disableMapping(rows.map(({ id }) => id))}
                     variant={"extended"}
                 >
                     {i18n.t("Disable mapping")}
                 </Fab>
             </React.Fragment>
         ),
-        [classes, instanceOptions, instanceFilter, snackbar, selectedIds, applyMapping]
+        [classes, instanceOptions, instanceFilter, rows, disableMapping, resetMapping]
     );
 
     const actions: TableAction<MetadataType>[] = useMemo(
@@ -339,6 +351,15 @@ const InstanceMappingPage: React.FC = () => {
                 icon: <Icon>open_in_new</Icon>,
             },
             {
+                name: "auto-mapping",
+                text: i18n.t("Auto-map element"),
+                // To make this action multiple, we need cancellable model "save" operation
+                // Race conditions lead to unwanted bugs
+                multiple: false,
+                onClick: applyAutoMapping,
+                icon: <Icon>compare_arrows</Icon>,
+            },
+            {
                 name: "disable-mapping",
                 text: i18n.t("Disable mapping"),
                 multiple: true,
@@ -354,7 +375,7 @@ const InstanceMappingPage: React.FC = () => {
                 icon: <Icon>clear</Icon>,
             },
         ],
-        [disableMapping, openMappingDialog, resetMapping, type]
+        [disableMapping, openMappingDialog, resetMapping, applyAutoMapping, type]
     );
 
     const backHome = () => {
@@ -407,7 +428,7 @@ const InstanceMappingPage: React.FC = () => {
                 additionalActions={actions}
                 notifyNewModel={notifyNewModel}
                 notifyRowsChange={setRows}
-                loading={loading}
+                loading={isLoading}
                 selectedIds={selectedIds}
                 notifyNewSelection={setSelectedIds}
             />

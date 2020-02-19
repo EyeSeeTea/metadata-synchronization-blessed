@@ -15,10 +15,10 @@ context("Manual aggregated sync", function() {
      * Database: d2-docker-eyeseetea-2-30-datasync-sender
      */
     it("syncs correctly malaria annual data", function() {
-        cy.get('[data-test="search"] > div > [aria-invalid="false"]').type("Malaria annual data");
+        /**cy.get('[data-test="search"] > div > [aria-invalid="false"]').type("Malaria annual data");
         cy.get(dataTest("TableCell-data-table-row-0-column-displayname")).contains(
             "Malaria annual data"
-        );
+        );*/
         cy.get(dataTest("Checkbox-data-table-row-0")).click();
         cy.get(
             '[data-test="objects-table-action-button"] > :nth-child(1) > [focusable="false"]'
