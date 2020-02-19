@@ -5,7 +5,6 @@ import { ConfirmationDialog, TableAction, TableColumn, useSnackbar } from "d2-ui
 import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import Dropdown from "../../components/dropdown/Dropdown";
 import MappingDialog from "../../components/mapping-dialog/MappingDialog";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
@@ -69,7 +68,7 @@ const InstanceMappingPage: React.FC = () => {
     const classes = useStyles();
     const snackbar = useSnackbar();
 
-    const { id: instanceFilterDefault = "", section } = useParams() as InstanceMappingParams;
+    const { id: instanceId = "", section } = useParams() as InstanceMappingParams;
     const { models } = config[section];
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const type = model.getCollectionName();
@@ -79,18 +78,12 @@ const InstanceMappingPage: React.FC = () => {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const [warningDialog, setWarningDialog] = useState<WarningDialog | null>(null);
-    const [instanceOptions, setInstanceOptions] = useState<Instance[]>([]);
-    const [instanceFilter, setInstanceFilter] = useState<string>(instanceFilterDefault);
     const [elementsToMap, setElementsToMap] = useState<string[]>([]);
     const [rows, setRows] = useState<MetadataType[]>([]);
 
     useEffect(() => {
-        getInstances(d2 as D2).then(setInstanceOptions);
-    }, [d2]);
-
-    useEffect(() => {
-        Instance.get(d2 as D2, instanceFilter).then(setInstance);
-    }, [d2, instanceFilter]);
+        Instance.get(d2 as D2, instanceId).then(setInstance);
+    }, [d2, instanceId]);
 
     const applyMapping = useCallback(
         async (selection: string[], mappedId: string | undefined) => {
@@ -264,15 +257,6 @@ const InstanceMappingPage: React.FC = () => {
     const filters: ReactNode = useMemo(
         () => (
             <React.Fragment>
-                <div className={classes.instanceDropdown}>
-                    <Dropdown
-                        key={"instance-filter"}
-                        items={instanceOptions}
-                        onValueChange={setInstanceFilter}
-                        value={instanceFilter}
-                        label={i18n.t("Instance selection")}
-                    />
-                </div>
                 <Fab
                     className={classes.actionButtons}
                     color="primary"
@@ -291,7 +275,7 @@ const InstanceMappingPage: React.FC = () => {
                 </Fab>
             </React.Fragment>
         ),
-        [classes, instanceOptions, instanceFilter, rows, disableMapping, resetMapping]
+        [classes, rows, disableMapping, resetMapping]
     );
 
     const actions: TableAction<MetadataType>[] = useMemo(
@@ -376,7 +360,7 @@ const InstanceMappingPage: React.FC = () => {
                 />
             )}
 
-            {!!instanceFilter && elementsToMap.length > 0 && (
+            {!!instance && elementsToMap.length > 0 && (
                 <MappingDialog
                     rows={rows}
                     model={model}
