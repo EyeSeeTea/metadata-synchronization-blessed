@@ -1,6 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { Fab, Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
-import { D2ModelSchemas, useD2 } from "d2-api";
+import { useD2 } from "d2-api";
 import { ConfirmationDialog, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
@@ -22,6 +22,7 @@ import Instance from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
+import { autoMap, buildMapping } from "./utils";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
@@ -49,27 +50,6 @@ const useStyles = makeStyles({
 export const getInstances = async (d2: D2) => {
     const { objects } = await Instance.list(d2, {}, { paging: false });
     return objects;
-};
-
-const getName = async (instance: Instance, type: keyof D2ModelSchemas, id: string) => {
-    const response = await instance
-        .getApi()
-        .metadata.get({
-            [type]: {
-                fields: {
-                    id: true,
-                    name: true,
-                },
-                filter: {
-                    id: {
-                        eq: cleanOrgUnitPath(id),
-                    },
-                },
-            },
-        })
-        .getData();
-
-    return _.get(response, [type, 0, "name"]);
 };
 
 interface WarningDialog {
@@ -123,12 +103,10 @@ const InstanceMappingPage: React.FC = () => {
 
             try {
                 const newMapping = _.cloneDeep(instance.metadataMapping);
+                const mapping = await buildMapping(instance, type, mappedId);
                 for (const item of selection) {
                     _.unset(newMapping, [type, item]);
-                    if (mappedId) {
-                        const name = await getName(instance, type, mappedId);
-                        _.set(newMapping, [type, item], { mappedId, name });
-                    }
+                    if (mappedId) _.set(newMapping, [type, item], mapping);
                 }
 
                 const newInstance = instance.setMetadataMapping(newMapping);
@@ -196,30 +174,11 @@ const InstanceMappingPage: React.FC = () => {
                 return;
             }
 
-            const { [type]: candidates } = await instance
-                .getApi()
-                .metadata.get({
-                    [type]: {
-                        fields: { id: true, code: true },
-                        filter: {
-                            name: { token: selectedItem.name },
-                            shortName: { token: selectedItem.shortName },
-                            id: { eq: selectedItem.id },
-                            code: { eq: selectedItem.code },
-                        },
-                        rootJunction: "OR",
-                    },
-                })
-                .getData();
-
-            if (candidates.length === 0) {
+            const candidate = await autoMap(instance, type, selectedItem);
+            if (!candidate) {
                 snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
             } else {
-                const candidateWithSameId = _.find(candidates, ["id", selectedItem.id]);
-                const candidateWithSameCode = _.find(candidates, ["code", selectedItem.code]);
-                const candidate = candidateWithSameId ?? candidateWithSameCode ?? candidates[0];
-
-                await applyMapping(selection, candidate.id);
+                await applyMapping(selection, candidate);
                 setElementsToMap(selection);
             }
         },
