@@ -28,12 +28,39 @@ interface CombinedMetadata {
     };
 }
 
+const getCombinedMetadata = async (api: D2Api, model: typeof D2Model, id: string) => {
+    const { objects } = ((await model
+        .getApiModel(api)
+        .get({
+            fields: {
+                id: true,
+                name: true,
+                categoryCombo: {
+                    categories: {
+                        categoryOptions: { id: true, name: true, shortName: true, code: true },
+                    },
+                },
+                optionSet: { options: { id: true, name: true, shortName: true, code: true } },
+            },
+            filter: {
+                id: {
+                    eq: cleanOrgUnitPath(id),
+                },
+            },
+            defaults: "EXCLUDE",
+        })
+        .getData()) as unknown) as { objects: CombinedMetadata[] };
+
+    return objects;
+};
+
 export const autoMap = async (
     instanceApi: D2Api,
     model: typeof D2Model,
     selectedItem: Partial<MetadataType>,
-    defaultValue?: string
-): Promise<MetadataMapping> => {
+    defaultValue?: string,
+    filter?: string[]
+): Promise<MetadataMapping[]> => {
     const { objects } = await model
         .getApiModel(instanceApi)
         .get({
@@ -50,15 +77,22 @@ export const autoMap = async (
 
     const candidateWithSameId = _.find(objects, ["id", selectedItem.id]);
     const candidateWithSameCode = _.find(objects, ["code", selectedItem.code]);
-    const candidate = candidateWithSameId ?? candidateWithSameCode ?? objects[0] ?? {};
+    const candidates = _.flatten([candidateWithSameId ?? candidateWithSameCode ?? objects]).filter(
+        ({ id }) => filter?.includes(id) ?? true
+    );
 
-    return { mappedId: candidate.id ?? defaultValue, name: candidate.name };
+    if (candidates.length === 0 && defaultValue) {
+        return [{ mappedId: defaultValue }];
+    } else {
+        return candidates.map(({ id, name }) => ({ mappedId: id, name }));
+    }
 };
 
 const autoMapCollection = async (
     instanceApi: D2Api,
     collection: Partial<MetadataType>[],
-    model: typeof D2Model
+    model: typeof D2Model,
+    filter: string[]
 ) => {
     if (collection.length === 0) return { conflicts: false };
 
@@ -68,7 +102,7 @@ const autoMapCollection = async (
     let conflicts = false;
 
     for (const item of collection) {
-        const candidate = await autoMap(instanceApi, model, item, "DISABLED");
+        const candidate = (await autoMap(instanceApi, model, item, "DISABLED", filter))[0] ?? {};
         if (item.id)
             mapping[item.id] = {
                 ...candidate,
@@ -80,52 +114,46 @@ const autoMapCollection = async (
     return { conflicts, mapping };
 };
 
+const getCategoryOptions = (object: CombinedMetadata) => {
+    return _.flatten(
+        object.categoryCombo?.categories.map(({ categoryOptions }) => categoryOptions)
+    );
+};
+
+const getOptions = (object: CombinedMetadata) => {
+    return object.optionSet?.options ?? [];
+};
+
 export const buildMapping = async (
     api: D2Api,
     instanceApi: D2Api,
     model: typeof D2Model,
     originalId: string,
-    mappedId: string = ""
+    mappedId = ""
 ): Promise<MetadataMapping | undefined> => {
     if (mappedId === "DISABLED") return { mappedId: "DISABLED", conflicts: false, mapping: {} };
-    const { objects } = ((await model
-        .getApiModel(api)
-        .get({
-            fields: {
-                id: true,
-                name: true,
-                categoryCombo: {
-                    categories: {
-                        categoryOptions: { id: true, name: true, shortName: true, code: true },
-                    },
-                },
-                optionSet: { options: { id: true, name: true, shortName: true, code: true } },
-            },
-            filter: {
-                id: {
-                    eq: cleanOrgUnitPath(originalId),
-                },
-            },
-        })
-        .getData()) as unknown) as { objects: CombinedMetadata[] };
-    if (objects.length !== 1) return undefined;
-    const mappedElement = await autoMap(instanceApi, model, { id: mappedId }, mappedId);
+
+    const originMetadata = await getCombinedMetadata(api, model, originalId);
+    const destinationMetadata = await getCombinedMetadata(instanceApi, model, mappedId);
+    if (originMetadata.length !== 1 || destinationMetadata.length !== 1) return undefined;
+
+    const [mappedElement] = await autoMap(instanceApi, model, { id: mappedId }, mappedId);
 
     const {
         mapping: categoryOptions,
         conflicts: categoryOptionsConflicts,
     } = await autoMapCollection(
         instanceApi,
-        _.flatten(
-            objects[0]?.categoryCombo?.categories.map((category: any) => category.categoryOptions)
-        ),
-        CategoryOptionModel
+        getCategoryOptions(originMetadata[0]),
+        CategoryOptionModel,
+        getCategoryOptions(destinationMetadata[0]).map(({ id }) => id)
     );
 
     const { mapping: options, conflicts: optionsConflicts } = await autoMapCollection(
         instanceApi,
-        objects[0]?.optionSet?.options ?? [],
-        OptionModel
+        getOptions(originMetadata[0]),
+        OptionModel,
+        getOptions(destinationMetadata[0]).map(({ id }) => id)
     );
 
     const mapping = _.omitBy(

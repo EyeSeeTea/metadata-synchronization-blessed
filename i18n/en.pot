@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-20T14:57:37.624Z\n"
-"PO-Revision-Date: 2020-02-20T14:57:37.624Z\n"
+"POT-Creation-Date: 2020-02-20T15:35:34.973Z\n"
+"PO-Revision-Date: 2020-02-20T15:35:34.973Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -33,6 +33,9 @@ msgid "Close"
 msgstr ""
 
 msgid "Could not connect with remote instance"
+msgstr ""
+
+msgid "Applying mapping update"
 msgstr ""
 
 msgid "Set"

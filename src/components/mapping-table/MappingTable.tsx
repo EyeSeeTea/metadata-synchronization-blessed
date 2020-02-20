@@ -43,19 +43,19 @@ interface WarningDialog {
 export interface MappingTableProps {
     instance: Instance;
     models: typeof D2Model[];
-    isDialog?: boolean;
     filterRows?: (rows: MetadataType[]) => MetadataType[];
     mapping: MetadataMappingDictionary;
-    onChangeMapping?(mapping: MetadataMappingDictionary): void;
+    onChangeMapping(mapping: MetadataMappingDictionary): Promise<void>;
+    isChildrenMapping?: boolean;
 }
 
 export default function MappingTable({
     instance,
     models,
-    isDialog = false,
     filterRows,
     mapping,
-    onChangeMapping = _.noop,
+    onChangeMapping,
+    isChildrenMapping = false,
 }: MappingTableProps) {
     const api = useD2Api();
     const classes = useStyles();
@@ -77,20 +77,19 @@ export default function MappingTable({
 
     const applyMapping = useCallback(
         async (selection: string[], mappedId: string | undefined) => {
+            loading.show(true, i18n.t("Applying mapping update"));
             try {
-                loading.show(true, i18n.t("Applying mapping update"));
                 const newMapping = _.cloneDeep(mapping);
                 for (const id of selection) {
                     _.unset(newMapping, [type, id]);
-                    if (isDialog || mappedId) {
+                    if (isChildrenMapping || mappedId) {
                         const mapping = await buildMapping(api, instanceApi, model, id, mappedId);
                         _.set(newMapping, [type, id], mapping);
                     }
                 }
 
-                onChangeMapping(newMapping);
+                await onChangeMapping(newMapping);
                 setSelectedIds([]);
-                loading.reset();
 
                 const action = mappedId ? i18n.t("Set") : i18n.t("Reset to default");
                 const operation = mappedId === "DISABLED" ? i18n.t("Disabled") : action;
@@ -106,8 +105,19 @@ export default function MappingTable({
                 console.error(e);
                 snackbar.error(i18n.t("Could not apply mapping, please try again."));
             }
+            loading.reset();
         },
-        [api, instanceApi, snackbar, loading, type, model, mapping, isDialog, onChangeMapping]
+        [
+            api,
+            instanceApi,
+            snackbar,
+            loading,
+            type,
+            model,
+            mapping,
+            isChildrenMapping,
+            onChangeMapping,
+        ]
     );
 
     const updateMapping = useCallback(
@@ -147,7 +157,8 @@ export default function MappingTable({
                 return;
             }
 
-            const { mappedId: candidate } = await autoMap(instanceApi, model, selectedItem);
+            const { mappedId: candidate } =
+                (await autoMap(instanceApi, model, selectedItem))[0] ?? {};
             if (!candidate) {
                 snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
             } else {
@@ -202,7 +213,10 @@ export default function MappingTable({
                             <Tooltip title={i18n.t("Set mapping")} placement="top">
                                 <IconButton
                                     className={classes.iconButton}
-                                    onClick={() => openMappingDialog([row.id])}
+                                    onClick={event => {
+                                        event.stopPropagation();
+                                        openMappingDialog([row.id]);
+                                    }}
                                 >
                                     <Icon color="primary">open_in_new</Icon>
                                 </IconButton>
@@ -230,7 +244,10 @@ export default function MappingTable({
                                 <Tooltip title={i18n.t("Mapping has errors")} placement="top">
                                     <IconButton
                                         className={classes.iconButton}
-                                        onClick={() => !isDialog && openRelatedMapping([row.id])}
+                                        onClick={event => {
+                                            event.stopPropagation();
+                                            if (!isChildrenMapping) openRelatedMapping([row.id]);
+                                        }}
                                     >
                                         <Icon color="error">warning</Icon>
                                     </IconButton>
@@ -241,7 +258,7 @@ export default function MappingTable({
                 },
             },
         ],
-        [classes, type, mapping, openMappingDialog, isDialog, openRelatedMapping]
+        [classes, type, mapping, openMappingDialog, isChildrenMapping, openRelatedMapping]
     );
 
     const filters: ReactNode = useMemo(

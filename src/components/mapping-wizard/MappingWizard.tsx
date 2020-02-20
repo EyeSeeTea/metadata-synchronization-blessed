@@ -50,16 +50,10 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
         );
     };
 
-    const onChangeMapping = (subMapping: MetadataMappingDictionary) => {
+    const onChangeMapping = async (subMapping: MetadataMappingDictionary) => {
         const newMapping = _.clone(instance.metadataMapping);
         _.set(newMapping, mappingPath, subMapping);
         updateMapping(newMapping);
-        console.log("noop", {
-            newMapping,
-            subMapping,
-            original: instance.metadataMapping,
-            mappingPath,
-        });
     };
 
     const steps: MappingWizardStep[] = [
@@ -73,7 +67,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
                 onChangeMapping,
                 instance,
                 filterRows,
-                isDialog: true,
+                isChildrenMapping: true,
             },
             validationKeys: [],
         },
@@ -87,7 +81,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
                 onChangeMapping,
                 instance,
                 filterRows,
-                isDialog: true,
+                isChildrenMapping: true,
             },
             validationKeys: [],
             description: undefined,
