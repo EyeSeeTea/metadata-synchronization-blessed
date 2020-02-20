@@ -290,25 +290,29 @@ export default function MappingTable({
     const filters: ReactNode = useMemo(
         () => (
             <React.Fragment>
-                <Fab
-                    className={classes.actionButtons}
-                    color="primary"
-                    onClick={() => resetMapping(rows.map(({ id }) => id))}
-                    variant={"extended"}
-                >
-                    {i18n.t("Reset mapping")}
-                </Fab>
-                <Fab
-                    className={classes.actionButtons}
-                    color="primary"
-                    onClick={() => disableMapping(rows.map(({ id }) => id))}
-                    variant={"extended"}
-                >
-                    {i18n.t("Disable mapping")}
-                </Fab>
+                {!isChildrenMapping && (
+                    <Fab
+                        className={classes.actionButtons}
+                        color="primary"
+                        onClick={() => resetMapping(rows.map(({ id }) => id))}
+                        variant={"extended"}
+                    >
+                        {i18n.t("Reset mapping")}
+                    </Fab>
+                )}
+                {!isChildrenMapping && (
+                    <Fab
+                        className={classes.actionButtons}
+                        color="primary"
+                        onClick={() => disableMapping(rows.map(({ id }) => id))}
+                        variant={"extended"}
+                    >
+                        {i18n.t("Disable mapping")}
+                    </Fab>
+                )}
             </React.Fragment>
         ),
-        [classes, rows, disableMapping, resetMapping]
+        [classes, rows, disableMapping, resetMapping, isChildrenMapping]
     );
 
     const actions: TableAction<MetadataType>[] = useMemo(
