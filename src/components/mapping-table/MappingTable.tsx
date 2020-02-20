@@ -129,16 +129,42 @@ export default function MappingTable({
 
     const disableMapping = useCallback(
         async (selection: string[]) => {
-            applyMapping(selection, "DISABLED");
+            if (selection.length > 0) {
+                setWarningDialog({
+                    title: i18n.t("Disable mapping"),
+                    description: i18n.t(
+                        "Are you sure you want to disable mapping for {{total}} elements?",
+                        {
+                            total: selection.length,
+                        }
+                    ),
+                    action: () => applyMapping(selection, "DISABLED"),
+                });
+            } else {
+                snackbar.error(i18n.t("Please select at least one item to disable mapping"));
+            }
         },
-        [applyMapping]
+        [snackbar, applyMapping]
     );
 
     const resetMapping = useCallback(
         async (selection: string[]) => {
-            applyMapping(selection, undefined);
+            if (selection.length > 0) {
+                setWarningDialog({
+                    title: i18n.t("Reset mapping"),
+                    description: i18n.t(
+                        "Are you sure you want to reset mapping for {{total}} elements?",
+                        {
+                            total: selection.length,
+                        }
+                    ),
+                    action: () => applyMapping(selection, undefined),
+                });
+            } else {
+                snackbar.error(i18n.t("Please select at least one item to reset mapping"));
+            }
         },
-        [applyMapping]
+        [snackbar, applyMapping]
     );
 
     const applyAutoMapping = useCallback(

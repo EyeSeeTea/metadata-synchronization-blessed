@@ -374,9 +374,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     }, [api.baseUrl, apiModel, apiQuery, search]);
 
     useEffect(() => {
-        getRootOrgUnit(api).then(({ objects: roots }) =>
-            changeParentOrgUnitFilter(roots.map(({ path }) => path))
-        );
+        let mounted = true;
+        getRootOrgUnit(api).then(({ objects: roots }) => {
+            if (mounted) changeParentOrgUnitFilter(roots.map(({ path }) => path));
+        });
+        return () => {
+            mounted = false;
+        };
     }, [api]);
 
     useEffect(() => {
@@ -391,7 +395,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         );
 
         setLoading(true);
-        let active = true;
+        let mounted = true;
         response
             .then(({ data }) => {
                 //@ts-ignore TODO: Fix in d2-api
@@ -401,7 +405,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 const pager = filterRows ? undefined : responsePager;
                 notifyRowsChange(rows);
 
-                if (active) {
+                if (mounted) {
                     setRows(rows);
                     setPager(pager);
                     setLoading(false);
@@ -410,7 +414,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .catch(handleError);
 
         return () => {
-            active = false;
+            mounted = false;
         };
     }, [
         api.baseUrl,
