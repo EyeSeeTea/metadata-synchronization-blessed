@@ -3,33 +3,16 @@ import { Fab, Icon, IconButton, makeStyles, Tooltip, Typography } from "@materia
 import { useD2, useD2Api } from "d2-api";
 import { ConfirmationDialog, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import MappingDialog from "../../components/mapping-dialog/MappingDialog";
 import MappingWizard from "../../components/mapping-wizard/MappingWizard";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
-import {
-    AggregatedDataElementModel,
-    CategoryComboModel,
-    CategoryOptionModel,
-    D2Model,
-    DataElementModel,
-    OrganisationUnitModel,
-    ProgramDataElementModel,
-} from "../../models/d2Model";
-import Instance, { MetadataMapping } from "../../models/instance";
+import { D2Model, DataElementModel } from "../../models/d2Model";
+import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
 import { autoMap, buildMapping } from "./utils";
-
-export type MappingType = "aggregated" | "tracker" | "orgUnit";
-
-const config = {
-    aggregated: { models: [AggregatedDataElementModel, CategoryComboModel, CategoryOptionModel] },
-    tracker: { models: [ProgramDataElementModel, CategoryComboModel, CategoryOptionModel] },
-    orgUnit: { models: [OrganisationUnitModel] },
-};
 
 const useStyles = makeStyles({
     iconButton: {
@@ -57,23 +40,23 @@ interface WarningDialog {
     action?: () => void;
 }
 
-interface InstanceMappingParams {
-    id: string;
-    section: MappingType;
+export interface MappingTableProps {
+    models: typeof D2Model[];
+    instance: Instance;
+    updateInstance: (instance: Instance) => void;
+    mapping?: MetadataMappingDictionary;
+    onChange?(mapping: MetadataMappingDictionary): void;
 }
 
-export default function MappingTable() {
+export default function MappingTable({ models, instance, updateInstance }: MappingTableProps) {
     const d2 = useD2();
     const api = useD2Api();
     const classes = useStyles();
     const snackbar = useSnackbar();
 
-    const { id: instanceId = "", section } = useParams() as InstanceMappingParams;
-    const { models } = config[section];
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const type = model.getCollectionName();
 
-    const [instance, setInstance] = useState<Instance>();
     const [isLoading, setLoading] = useState<boolean>(false);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -82,10 +65,6 @@ export default function MappingTable() {
     const [rows, setRows] = useState<MetadataType[]>([]);
 
     const [openRelatedMetadata, setOpenRelatedMetadata] = useState<boolean>(false);
-
-    useEffect(() => {
-        Instance.get(d2 as D2, instanceId).then(setInstance);
-    }, [d2, instanceId]);
 
     const applyMapping = useCallback(
         async (selection: string[], mappedId: string | undefined) => {
@@ -108,7 +87,7 @@ export default function MappingTable() {
 
                 const newInstance = instance.setMetadataMapping(newMapping);
                 await newInstance.save(d2 as D2);
-                setInstance(newInstance);
+                updateInstance(newInstance);
                 setSelectedIds([]);
 
                 const action = mappedId ? i18n.t("Set") : i18n.t("Reset to default");
@@ -126,7 +105,7 @@ export default function MappingTable() {
                 snackbar.error(i18n.t("Could not apply mapping, please try again."));
             }
         },
-        [api, d2, instance, snackbar, type]
+        [api, d2, instance, snackbar, type, updateInstance]
     );
 
     const updateMapping = useCallback(
@@ -374,7 +353,12 @@ export default function MappingTable() {
             )}
 
             {openRelatedMetadata && (
-                <MappingWizard mapping={{}} onCancel={() => setOpenRelatedMetadata(false)} />
+                <MappingWizard
+                    mapping={{}}
+                    onCancel={() => setOpenRelatedMetadata(false)}
+                    instance={instance}
+                    updateInstance={updateInstance}
+                />
             )}
 
             <MetadataTable
