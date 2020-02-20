@@ -4452,10 +4452,10 @@ cypress@^4.0.1:
     url "0.11.0"
     yauzl "2.10.0"
 
-d2-api@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-0.1.0.tgz#2771a36ab84f55ec1222fb6dd84fc01062a05c6e"
-  integrity sha512-1YSxgJ5Ac9tMAdDl/YvsTw6iyYQ3rJX6XAkNpHF/LFSNfv7zRHJdxqlsEIgLOEEP6Fei8c34ZB2/hwT+U6aYtQ==
+d2-api@^0.1.1-beta.4:
+  version "0.1.1-beta.4"
+  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-0.1.1-beta.4.tgz#93cc2ca2a7c30de2e8a33e4b34f1faddeb3422dc"
+  integrity sha512-HoHEG3LQYow2mSg/5hXoBa9FIbkZD3TMlfBvnr82zhsfykwt+GOF//gkNrj8Sy4s7bKpdMGKk5i1hiPMpfJekg==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@dhis2/d2-i18n" "^1.0.5"

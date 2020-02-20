@@ -1,7 +1,13 @@
 import i18n from "@dhis2/d2-i18n";
 import { Fab, Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { useD2Api } from "d2-api";
-import { ConfirmationDialog, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
+import {
+    ConfirmationDialog,
+    TableAction,
+    TableColumn,
+    useSnackbar,
+    useLoading,
+} from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import MappingDialog from "../../components/mapping-dialog/MappingDialog";
@@ -9,7 +15,6 @@ import MappingWizard from "../../components/mapping-wizard/MappingWizard";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import { D2Model, DataElementModel } from "../../models/d2Model";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
-import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
 import { autoMap, buildMapping } from "./utils";
@@ -29,11 +34,6 @@ const useStyles = makeStyles({
     },
 });
 
-export const getInstances = async (d2: D2) => {
-    const { objects } = await Instance.list(d2, {}, { paging: false });
-    return objects;
-};
-
 interface WarningDialog {
     title?: string;
     description?: string;
@@ -41,16 +41,18 @@ interface WarningDialog {
 }
 
 export interface MappingTableProps {
-    models: typeof D2Model[];
-    filterRows?: (rows: MetadataType[]) => MetadataType[];
     instance: Instance;
+    models: typeof D2Model[];
+    isDialog?: boolean;
+    filterRows?: (rows: MetadataType[]) => MetadataType[];
     mapping: MetadataMappingDictionary;
     onChangeMapping?(mapping: MetadataMappingDictionary): void;
 }
 
 export default function MappingTable({
-    models,
     instance,
+    models,
+    isDialog = false,
     filterRows,
     mapping,
     onChangeMapping = _.noop,
@@ -58,6 +60,7 @@ export default function MappingTable({
     const api = useD2Api();
     const classes = useStyles();
     const snackbar = useSnackbar();
+    const loading = useLoading();
 
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const type = model.getCollectionName();
@@ -75,17 +78,19 @@ export default function MappingTable({
     const applyMapping = useCallback(
         async (selection: string[], mappedId: string | undefined) => {
             try {
+                loading.show(true, i18n.t("Applying mapping update"));
                 const newMapping = _.cloneDeep(mapping);
                 for (const id of selection) {
                     _.unset(newMapping, [type, id]);
-                    if (mappedId) {
-                        const mapping = await buildMapping(api, instanceApi, type, id, mappedId);
+                    if (isDialog || mappedId) {
+                        const mapping = await buildMapping(api, instanceApi, model, id, mappedId);
                         _.set(newMapping, [type, id], mapping);
                     }
                 }
 
                 onChangeMapping(newMapping);
                 setSelectedIds([]);
+                loading.reset();
 
                 const action = mappedId ? i18n.t("Set") : i18n.t("Reset to default");
                 const operation = mappedId === "DISABLED" ? i18n.t("Disabled") : action;
@@ -102,7 +107,7 @@ export default function MappingTable({
                 snackbar.error(i18n.t("Could not apply mapping, please try again."));
             }
         },
-        [api, instanceApi, snackbar, type, mapping, onChangeMapping]
+        [api, instanceApi, snackbar, loading, type, model, mapping, isDialog, onChangeMapping]
     );
 
     const updateMapping = useCallback(
@@ -142,7 +147,7 @@ export default function MappingTable({
                 return;
             }
 
-            const { mappedId: candidate } = await autoMap(instanceApi, type, selectedItem);
+            const { mappedId: candidate } = await autoMap(instanceApi, model, selectedItem);
             if (!candidate) {
                 snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
             } else {
@@ -150,7 +155,7 @@ export default function MappingTable({
                 setElementsToMap(selection);
             }
         },
-        [applyMapping, instanceApi, rows, snackbar, type]
+        [applyMapping, instanceApi, rows, snackbar, model]
     );
 
     const openMappingDialog = useCallback((selection: string[]) => {
@@ -161,16 +166,16 @@ export default function MappingTable({
     const openRelatedMapping = useCallback(
         (selection: string[]) => {
             const id = _.first(selection);
-            if (!id) return;
 
-            const relatedMapping = mapping[type][id]?.mapping ?? {};
-
-            if (!relatedMapping)
+            if (!id || !mapping[type][id]?.mapping) {
                 snackbar.error(
-                    "You need to map this element before accessing related metdata mapping"
+                    i18n.t(
+                        "You need to map this element before accessing its related metadata mapping"
+                    )
                 );
-
-            setRelatedMapping([type, id, "mapping"]);
+            } else {
+                setRelatedMapping([type, id, "mapping"]);
+            }
         },
         [mapping, type, snackbar]
     );
@@ -223,7 +228,10 @@ export default function MappingTable({
                             </Typography>
                             {conflicts && (
                                 <Tooltip title={i18n.t("Mapping has errors")} placement="top">
-                                    <IconButton className={classes.iconButton} onClick={_.noop}>
+                                    <IconButton
+                                        className={classes.iconButton}
+                                        onClick={() => !isDialog && openRelatedMapping([row.id])}
+                                    >
                                         <Icon color="error">warning</Icon>
                                     </IconButton>
                                 </Tooltip>
@@ -233,7 +241,7 @@ export default function MappingTable({
                 },
             },
         ],
-        [classes, type, mapping, openMappingDialog]
+        [classes, type, mapping, openMappingDialog, isDialog, openRelatedMapping]
     );
 
     const filters: ReactNode = useMemo(

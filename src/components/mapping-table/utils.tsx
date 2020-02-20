@@ -1,17 +1,41 @@
-import { D2Api, D2ModelSchemas } from "d2-api";
+import { D2Api } from "d2-api";
 import _ from "lodash";
+import { CategoryOptionModel, D2Model, OptionModel } from "../../models/d2Model";
 import { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
 
+interface CombinedMetadata {
+    id: string;
+    name: string;
+    categoryCombo: {
+        categories: {
+            categoryOptions: {
+                id: string;
+                name: string;
+                shortName: string;
+                code: string;
+            }[];
+        }[];
+    };
+    optionSet: {
+        options: {
+            id: string;
+            name: string;
+            shortName: string;
+            code: string;
+        }[];
+    };
+}
+
 export const autoMap = async (
     instanceApi: D2Api,
-    type: keyof D2ModelSchemas,
+    model: typeof D2Model,
     selectedItem: Partial<MetadataType>,
     defaultValue?: string
 ): Promise<MetadataMapping> => {
-    const { objects } = await instanceApi.models[type]
-        //@ts-ignore Fix in d2-api
+    const { objects } = await model
+        .getApiModel(instanceApi)
         .get({
             fields: { id: true, code: true, name: true },
             filter: {
@@ -33,8 +57,8 @@ export const autoMap = async (
 
 const autoMapCollection = async (
     instanceApi: D2Api,
-    collection: MetadataType[],
-    type: keyof D2ModelSchemas
+    collection: Partial<MetadataType>[],
+    model: typeof D2Model
 ) => {
     if (collection.length === 0) return { conflicts: false };
 
@@ -44,11 +68,12 @@ const autoMapCollection = async (
     let conflicts = false;
 
     for (const item of collection) {
-        const candidate = await autoMap(instanceApi, type, item, "DISABLED");
-        mapping[item.id] = {
-            ...candidate,
-            conflicts: candidate.mappedId === "DISABLED",
-        };
+        const candidate = await autoMap(instanceApi, model, item, "DISABLED");
+        if (item.id)
+            mapping[item.id] = {
+                ...candidate,
+                conflicts: candidate.mappedId === "DISABLED",
+            };
         if (candidate.mappedId === "DISABLED") conflicts = true;
     }
 
@@ -58,13 +83,13 @@ const autoMapCollection = async (
 export const buildMapping = async (
     api: D2Api,
     instanceApi: D2Api,
-    type: keyof D2ModelSchemas,
+    model: typeof D2Model,
     originalId: string,
-    mappedId: string
+    mappedId: string = ""
 ): Promise<MetadataMapping | undefined> => {
     if (mappedId === "DISABLED") return { mappedId: "DISABLED", conflicts: false, mapping: {} };
-    const { objects } = await api.models[type]
-        //@ts-ignore Fix in d2-api
+    const { objects } = ((await model
+        .getApiModel(api)
         .get({
             fields: {
                 id: true,
@@ -82,9 +107,9 @@ export const buildMapping = async (
                 },
             },
         })
-        .getData(); // TODO: Properly type metadata endpoint
+        .getData()) as unknown) as { objects: CombinedMetadata[] };
     if (objects.length !== 1) return undefined;
-    const mappedElement = await autoMap(instanceApi, type, { id: mappedId }, mappedId);
+    const mappedElement = await autoMap(instanceApi, model, { id: mappedId }, mappedId);
 
     const {
         mapping: categoryOptions,
@@ -94,13 +119,13 @@ export const buildMapping = async (
         _.flatten(
             objects[0]?.categoryCombo?.categories.map((category: any) => category.categoryOptions)
         ),
-        "categoryOptions"
+        CategoryOptionModel
     );
 
     const { mapping: options, conflicts: optionsConflicts } = await autoMapCollection(
         instanceApi,
         objects[0]?.optionSet?.options ?? [],
-        "options"
+        OptionModel
     );
 
     const mapping = _.omitBy(

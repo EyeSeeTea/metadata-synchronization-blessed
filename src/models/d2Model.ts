@@ -1,5 +1,11 @@
-import { D2Api, D2DataSetSchema, D2ModelSchemas, D2ProgramSchema, SelectedPick } from "d2-api";
-import D2ApiModel from "d2-api/api/models";
+import {
+    D2Api,
+    D2DataSetSchema,
+    D2ModelSchemas,
+    D2ProgramSchema,
+    Model,
+    SelectedPick,
+} from "d2-api";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import { isValidUid } from "d2/uid";
 import _ from "lodash";
@@ -86,9 +92,9 @@ export abstract class D2Model {
         return d2.models[this.metadataType];
     }
 
-    public static getApiModel(api: D2Api): InstanceType<typeof D2ApiModel> {
+    public static getApiModel(api: D2Api): InstanceType<typeof Model> {
         const modelCollection = api.models as {
-            [ModelName in keyof D2ModelSchemas]: D2ApiModel<ModelName>;
+            [ModelName in keyof D2ModelSchemas]: Model<ModelName>;
         };
         return modelCollection[this.collectionName];
     }

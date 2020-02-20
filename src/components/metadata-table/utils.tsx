@@ -1,13 +1,11 @@
-import { D2Api, D2ModelSchemas } from "d2-api";
-import D2ApiModel from "d2-api/api/models";
+import { D2Api, D2ModelSchemas, Model } from "d2-api";
 import { TablePagination, TableSorting } from "d2-ui-components";
-import _ from "lodash";
 import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import { MetadataType } from "../../utils/d2";
 
 /**
- * Load memoized filter data from an instance
+ * Load memoized filter data from an instance (This should be removed with a cache on d2-api)
  * Note: _baseUrl is used as cacheKey to avoid memoizing values between instances
  */
 export const getFilterData = memoize(
@@ -33,7 +31,7 @@ export const getFilterData = memoize(
 );
 
 /**
- * Load memoized ids to enable selection in all pages
+ * Load memoized ids to enable selection in all pages (This should be removed with a cache on d2-api)
  * Note: _modelName and _baseUrl are used as cacheKey to avoid memoizing values between models and instances
  */
 export const getAllIdentifiers = memoize(
@@ -41,8 +39,8 @@ export const getAllIdentifiers = memoize(
         _modelName: string,
         _baseUrl: string,
         search: string | undefined,
-        apiQuery: Parameters<InstanceType<typeof D2ApiModel>["get"]>[0],
-        apiModel: InstanceType<typeof D2ApiModel>
+        apiQuery: Parameters<InstanceType<typeof Model>["get"]>[0],
+        apiModel: InstanceType<typeof Model>
     ) => {
         return apiModel.get({
             paging: false,
@@ -55,9 +53,13 @@ export const getAllIdentifiers = memoize(
             },
         });
     },
-    { maxArgs: 4, equals: _.isEqual }
+    { maxArgs: 4 }
 );
 
+/**
+ * Load memoized rows to display in metadata table (This should be removed with a cache on d2-api)
+ * Note: _modelName and _baseUrl are used as cachceKey to avoid memoizing values between models and instances
+ */
 export const getRows = memoize(
     (
         _modelName: string,
@@ -65,8 +67,8 @@ export const getRows = memoize(
         sorting: TableSorting<MetadataType>,
         pagination: Partial<TablePagination>,
         search: string | undefined,
-        apiQuery: Parameters<InstanceType<typeof D2ApiModel>["get"]>[0],
-        apiModel: InstanceType<typeof D2ApiModel>
+        apiQuery: Parameters<InstanceType<typeof Model>["get"]>[0],
+        apiModel: InstanceType<typeof Model>
     ) => {
         return apiModel.get({
             order: `${sorting.field}:i${sorting.order}`,
@@ -79,5 +81,5 @@ export const getRows = memoize(
             },
         });
     },
-    { maxArgs: 6, equals: _.isEqual }
+    { maxArgs: 6 }
 );
