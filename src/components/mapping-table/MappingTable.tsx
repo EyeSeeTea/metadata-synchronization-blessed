@@ -41,6 +41,7 @@ interface WarningDialog {
 }
 
 export interface MappingTableProps {
+    filterRows?: (rows: MetadataType[]) => MetadataType[];
     models: typeof D2Model[];
     instance: Instance;
     updateInstance: (instance: Instance) => void;
@@ -48,7 +49,12 @@ export interface MappingTableProps {
     onChange?(mapping: MetadataMappingDictionary): void;
 }
 
-export default function MappingTable({ models, instance, updateInstance }: MappingTableProps) {
+export default function MappingTable({
+    models,
+    instance,
+    updateInstance,
+    filterRows,
+}: MappingTableProps) {
     const d2 = useD2();
     const api = useD2Api();
     const classes = useStyles();
@@ -64,7 +70,7 @@ export default function MappingTable({ models, instance, updateInstance }: Mappi
     const [elementsToMap, setElementsToMap] = useState<string[]>([]);
     const [rows, setRows] = useState<MetadataType[]>([]);
 
-    const [openRelatedMetadata, setOpenRelatedMetadata] = useState<boolean>(false);
+    const [relatedMapping, setRelatedMapping] = useState<MetadataMappingDictionary>();
 
     const applyMapping = useCallback(
         async (selection: string[], mappedId: string | undefined) => {
@@ -173,6 +179,23 @@ export default function MappingTable({ models, instance, updateInstance }: Mappi
             }
         },
         [instance, snackbar]
+    );
+
+    const openRelatedMapping = useCallback(
+        (selection: string[]) => {
+            const id = _.first(selection);
+            if (!id) return;
+
+            const { mapping } = instance.metadataMapping[type][id] ?? {};
+
+            if (!mapping)
+                snackbar.error(
+                    "You need to map this element before accessing related metdata mapping"
+                );
+
+            setRelatedMapping(mapping);
+        },
+        [instance, type, snackbar]
     );
 
     const columns: TableColumn<MetadataType>[] = useMemo(
@@ -308,11 +331,18 @@ export default function MappingTable({ models, instance, updateInstance }: Mappi
                 name: "related-mapping",
                 text: i18n.t("Related metadata mapping"),
                 multiple: false,
-                onClick: () => setOpenRelatedMetadata(true),
+                onClick: openRelatedMapping,
                 icon: <Icon>assignment</Icon>,
             },
         ],
-        [disableMapping, openMappingDialog, resetMapping, applyAutoMapping, type]
+        [
+            disableMapping,
+            openMappingDialog,
+            resetMapping,
+            applyAutoMapping,
+            openRelatedMapping,
+            type,
+        ]
     );
 
     const notifyNewModel = useCallback(
@@ -352,10 +382,10 @@ export default function MappingTable({ models, instance, updateInstance }: Mappi
                 />
             )}
 
-            {openRelatedMetadata && (
+            {relatedMapping && (
                 <MappingWizard
-                    mapping={{}}
-                    onCancel={() => setOpenRelatedMetadata(false)}
+                    mapping={relatedMapping}
+                    onCancel={() => setRelatedMapping(undefined)}
                     instance={instance}
                     updateInstance={updateInstance}
                 />
@@ -363,6 +393,7 @@ export default function MappingTable({ models, instance, updateInstance }: Mappi
 
             <MetadataTable
                 models={models}
+                filterRows={filterRows}
                 additionalColumns={columns}
                 additionalFilters={filters}
                 additionalActions={actions}

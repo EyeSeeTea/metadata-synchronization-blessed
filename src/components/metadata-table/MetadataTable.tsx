@@ -30,6 +30,7 @@ import { getAllIdentifiers, getFilterData, getRows } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     api?: D2Api;
+    filterRows?: (rows: MetadataType[]) => MetadataType[];
     models: typeof D2Model[];
     selectedIds?: string[];
     excludedIds?: string[];
@@ -106,6 +107,7 @@ const uniqCombine = (items: any[]) =>
 
 const MetadataTable: React.FC<MetadataTableProps> = ({
     api: providedApi,
+    filterRows,
     models,
     selectedIds = [],
     excludedIds = [],
@@ -394,8 +396,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         response
             .then(({ data }) => {
                 //@ts-ignore TODO: Fix in d2-api
-                const { objects, pager } = data;
-                const rows = model.getApiModelTransform()(objects);
+                const { objects, pager: responsePager } = data;
+                const modelRows = model.getApiModelTransform()(objects);
+                const rows = filterRows ? filterRows(modelRows) : modelRows;
+                const pager = filterRows ? undefined : responsePager;
                 notifyRowsChange(rows);
 
                 if (active) {
@@ -409,7 +413,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         return () => {
             active = false;
         };
-    }, [api.baseUrl, apiModel, apiQuery, sorting, pagination, search, model, notifyRowsChange]);
+    }, [
+        api.baseUrl,
+        apiModel,
+        apiQuery,
+        sorting,
+        pagination,
+        search,
+        model,
+        notifyRowsChange,
+        filterRows,
+    ]);
 
     useEffect(() => {
         if (model && model.getGroupFilterName()) {

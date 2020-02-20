@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import { CategoryOptionModel, OptionModel } from "../../models/d2Model";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import MappingTable, { MappingTableProps } from "../mapping-table/MappingTable";
+import { MetadataType } from "../../utils/d2";
 
 interface MappingWizardStep {
     key: string;
@@ -37,19 +38,43 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
 }) => {
     const location = useLocation();
 
+    const filterRows = (rows: MetadataType[]) => {
+        return rows.filter(({ id }) =>
+            _(mapping)
+                .mapValues(Object.keys)
+                .values()
+                .flatten()
+                .includes(id)
+        );
+    };
+
     const steps: MappingWizardStep[] = [
         {
             key: "category-options",
             label: i18n.t("Category Options"),
             component: (props: MappingTableProps) => <MappingTable {...props} />,
-            props: { models: [CategoryOptionModel], mapping, onChange, instance, updateInstance },
+            props: {
+                models: [CategoryOptionModel],
+                mapping,
+                onChange,
+                instance,
+                updateInstance,
+                filterRows,
+            },
             validationKeys: [],
         },
         {
             key: "options",
             label: i18n.t("Options"),
             component: (props: MappingTableProps) => <MappingTable {...props} />,
-            props: { models: [OptionModel], mapping, onChange, instance, updateInstance }, // TODO
+            props: {
+                models: [OptionModel],
+                mapping,
+                onChange,
+                instance,
+                updateInstance,
+                filterRows,
+            },
             validationKeys: [],
             description: undefined,
             help: undefined,
