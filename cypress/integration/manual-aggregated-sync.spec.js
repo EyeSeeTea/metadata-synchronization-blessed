@@ -8,6 +8,7 @@ context("Manual aggregated sync", function() {
 
     const anyOrgUnit = "Ghana";
     const anyInstance = "Y5QsHDoD4I0";
+    const anyDataset = "Malaria annual data";
 
     beforeEach(() => {
         page.open();
@@ -18,8 +19,8 @@ context("Manual aggregated sync", function() {
     });
 
     it("should syncs correctly malaria annual data", function() {
-        page.search("Malaria annual data")
-            .selectRow("Malaria annual data")
+        page.search(anyDataset)
+            .selectRow(anyDataset)
             .openSyncDialog()
 
             .selectOrgUnit(anyOrgUnit)
@@ -40,8 +41,8 @@ context("Manual aggregated sync", function() {
     });
 
     it("should show the org unit step error if user try click on next without selecting the org unit", function() {
-        page.search("Malaria annual data")
-            .selectRow("Malaria annual data")
+        page.search(anyDataset)
+            .selectRow(anyDataset)
             .openSyncDialog()
             .next()
 
@@ -49,8 +50,8 @@ context("Manual aggregated sync", function() {
     });
 
     it("should show the instance selection step error if user try click on next without selecting an instance", function() {
-        page.search("Malaria annual data")
-            .selectRow("Malaria annual data")
+        page.search(anyDataset)
+            .selectRow(anyDataset)
             .openSyncDialog()
 
             .selectOrgUnit(anyOrgUnit)
@@ -68,15 +69,15 @@ context("Manual aggregated sync", function() {
     });
 
     it("should have synchronize button disabled to open sync dialog", function() {
-        page.search("Malaria annual data")
-            .selectRow("Malaria annual data")
+        page.search(anyDataset)
+            .selectRow(anyDataset)
             .openSyncDialog()
             .syncButton.should("be.disabled");
     });
 
     it("should have synchronize button disabled if only contains org unit", function() {
-        page.search("Malaria annual data")
-            .selectRow("Malaria annual data")
+        page.search(anyDataset)
+            .selectRow(anyDataset)
             .openSyncDialog()
 
             .selectOrgUnit(anyOrgUnit)
@@ -86,8 +87,8 @@ context("Manual aggregated sync", function() {
     });
 
     it("should have synchronize button disabled if only contains org unit and periods", function() {
-        page.search("Malaria annual data")
-            .selectRow("Malaria annual data")
+        page.search(anyDataset)
+            .selectRow(anyDataset)
             .openSyncDialog()
 
             .selectOrgUnit(anyOrgUnit)
@@ -100,8 +101,8 @@ context("Manual aggregated sync", function() {
     });
 
     it("should have synchronize button disabled if only contains org unit, periods and category options", function() {
-        page.search("Malaria annual data")
-            .selectRow("Malaria annual data")
+        page.search(anyDataset)
+            .selectRow(anyDataset)
             .openSyncDialog()
 
             .selectOrgUnit(anyOrgUnit)
@@ -117,8 +118,8 @@ context("Manual aggregated sync", function() {
     });
 
     it("should have synchronize button enabled if contains org unit, periods, category options and one instance", function() {
-        page.search("Malaria annual data")
-            .selectRow("Malaria annual data")
+        page.search(anyDataset)
+            .selectRow(anyDataset)
             .openSyncDialog()
 
             .selectOrgUnit(anyOrgUnit)
