@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-20T09:39:08.000Z\n"
-"PO-Revision-Date: 2020-02-20T09:39:08.000Z\n"
+"POT-Creation-Date: 2020-02-20T12:26:34.455Z\n"
+"PO-Revision-Date: 2020-02-20T12:26:34.455Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -33,9 +33,6 @@ msgid "Close"
 msgstr ""
 
 msgid "Could not connect with remote instance"
-msgstr ""
-
-msgid "Please select an instance from the dropdown"
 msgstr ""
 
 msgid "Set"

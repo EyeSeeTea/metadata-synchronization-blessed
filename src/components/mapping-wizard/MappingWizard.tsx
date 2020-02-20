@@ -6,8 +6,8 @@ import React, { ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import { CategoryOptionModel, OptionModel } from "../../models/d2Model";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import MappingTable, { MappingTableProps } from "../mapping-table/MappingTable";
 import { MetadataType } from "../../utils/d2";
+import MappingTable, { MappingTableProps } from "../mapping-table/MappingTable";
 
 interface MappingWizardStep {
     key: string;
@@ -22,30 +22,44 @@ interface MappingWizardStep {
 }
 
 interface MappingWizardProps {
-    mapping: MetadataMappingDictionary;
     instance: Instance;
-    updateInstance: (instance: Instance) => void;
-    onChange?(mapping: MetadataMappingDictionary): void;
+    mappingPath: string[];
+    updateMapping: (mapping: MetadataMappingDictionary) => void;
     onCancel?(): void;
 }
 
 const MappingWizard: React.FC<MappingWizardProps> = ({
-    mapping,
     instance,
-    onChange = _.noop,
+    mappingPath,
+    updateMapping,
     onCancel = _.noop,
-    updateInstance = _.noop,
 }) => {
     const location = useLocation();
 
+    const mapping: MetadataMappingDictionary = _.get(instance.metadataMapping, mappingPath, {});
     const filterRows = (rows: MetadataType[]) => {
-        return rows.filter(({ id }) =>
-            _(mapping)
-                .mapValues(Object.keys)
-                .values()
-                .flatten()
-                .includes(id)
+        return (
+            !!mapping &&
+            rows.filter(({ id }) =>
+                _(mapping)
+                    .mapValues(Object.keys)
+                    .values()
+                    .flatten()
+                    .includes(id)
+            )
         );
+    };
+
+    const onChangeMapping = (subMapping: MetadataMappingDictionary) => {
+        const newMapping = _.clone(instance.metadataMapping);
+        _.set(newMapping, mappingPath, subMapping);
+        updateMapping(newMapping);
+        console.log("noop", {
+            newMapping,
+            subMapping,
+            original: instance.metadataMapping,
+            mappingPath,
+        });
     };
 
     const steps: MappingWizardStep[] = [
@@ -56,9 +70,8 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
             props: {
                 models: [CategoryOptionModel],
                 mapping,
-                onChange,
+                onChangeMapping,
                 instance,
-                updateInstance,
                 filterRows,
             },
             validationKeys: [],
@@ -70,9 +83,8 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
             props: {
                 models: [OptionModel],
                 mapping,
-                onChange,
+                onChangeMapping,
                 instance,
-                updateInstance,
                 filterRows,
             },
             validationKeys: [],

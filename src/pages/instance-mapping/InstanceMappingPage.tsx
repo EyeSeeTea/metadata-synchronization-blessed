@@ -10,7 +10,7 @@ import {
     OrganisationUnitModel,
     ProgramDataElementModel,
 } from "../../models/d2Model";
-import Instance from "../../models/instance";
+import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { useD2 } from "d2-api";
 import { D2 } from "../../types/d2";
 
@@ -44,12 +44,25 @@ export default function InstanceMappingPage() {
         history.push("/instances/mapping");
     };
 
+    const onChangeMapping = async (mapping: MetadataMappingDictionary) => {
+        if (!instance) return;
+
+        const newInstance = instance.setMetadataMapping(mapping);
+        await newInstance.save(d2 as D2);
+        setInstance(newInstance);
+    };
+
     return (
         <React.Fragment>
             <PageHeader title={i18n.t("Metadata mapping")} onBackClick={backHome} />
 
             {!!instance && (
-                <MappingTable models={models} instance={instance} updateInstance={setInstance} />
+                <MappingTable
+                    models={models}
+                    instance={instance}
+                    mapping={instance.metadataMapping}
+                    onChangeMapping={onChangeMapping}
+                />
             )}
         </React.Fragment>
     );

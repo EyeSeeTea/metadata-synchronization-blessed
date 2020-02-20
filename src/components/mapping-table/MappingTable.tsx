@@ -1,6 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { Fab, Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
-import { useD2, useD2Api } from "d2-api";
+import { useD2Api } from "d2-api";
 import { ConfirmationDialog, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
@@ -41,27 +41,27 @@ interface WarningDialog {
 }
 
 export interface MappingTableProps {
-    filterRows?: (rows: MetadataType[]) => MetadataType[];
     models: typeof D2Model[];
+    filterRows?: (rows: MetadataType[]) => MetadataType[];
     instance: Instance;
-    updateInstance: (instance: Instance) => void;
-    mapping?: MetadataMappingDictionary;
-    onChange?(mapping: MetadataMappingDictionary): void;
+    mapping: MetadataMappingDictionary;
+    onChangeMapping?(mapping: MetadataMappingDictionary): void;
 }
 
 export default function MappingTable({
     models,
     instance,
-    updateInstance,
     filterRows,
+    mapping,
+    onChangeMapping = _.noop,
 }: MappingTableProps) {
-    const d2 = useD2();
     const api = useD2Api();
     const classes = useStyles();
     const snackbar = useSnackbar();
 
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const type = model.getCollectionName();
+    const instanceApi = instance.getApi();
 
     const [isLoading, setLoading] = useState<boolean>(false);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -70,30 +70,21 @@ export default function MappingTable({
     const [elementsToMap, setElementsToMap] = useState<string[]>([]);
     const [rows, setRows] = useState<MetadataType[]>([]);
 
-    const [relatedMapping, setRelatedMapping] = useState<MetadataMappingDictionary>();
+    const [relatedMapping, setRelatedMapping] = useState<string[]>();
 
     const applyMapping = useCallback(
         async (selection: string[], mappedId: string | undefined) => {
-            if (!instance) {
-                snackbar.error(i18n.t("Please select an instance from the dropdown"), {
-                    autoHideDuration: 2500,
-                });
-                return;
-            }
-
             try {
-                const newMapping = _.cloneDeep(instance.metadataMapping);
+                const newMapping = _.cloneDeep(mapping);
                 for (const id of selection) {
                     _.unset(newMapping, [type, id]);
                     if (mappedId) {
-                        const mapping = await buildMapping(api, instance, type, id, mappedId);
+                        const mapping = await buildMapping(api, instanceApi, type, id, mappedId);
                         _.set(newMapping, [type, id], mapping);
                     }
                 }
 
-                const newInstance = instance.setMetadataMapping(newMapping);
-                await newInstance.save(d2 as D2);
-                updateInstance(newInstance);
+                onChangeMapping(newMapping);
                 setSelectedIds([]);
 
                 const action = mappedId ? i18n.t("Set") : i18n.t("Reset to default");
@@ -111,7 +102,7 @@ export default function MappingTable({
                 snackbar.error(i18n.t("Could not apply mapping, please try again."));
             }
         },
-        [api, d2, instance, snackbar, type, updateInstance]
+        [api, instanceApi, snackbar, type, mapping, onChangeMapping]
     );
 
     const updateMapping = useCallback(
@@ -139,12 +130,7 @@ export default function MappingTable({
         async (selection: string[]) => {
             const selectedItem = _.find(rows, ["id", selection[0]]);
 
-            if (!instance) {
-                snackbar.error(i18n.t("Please select an instance from the dropdown"), {
-                    autoHideDuration: 2500,
-                });
-                return;
-            } else if (selection.length !== 1) {
+            if (selection.length !== 1) {
                 snackbar.error(i18n.t("Auto-mapping does not support multiple action yet"), {
                     autoHideDuration: 2500,
                 });
@@ -156,7 +142,7 @@ export default function MappingTable({
                 return;
             }
 
-            const { mappedId: candidate } = await autoMap(instance, type, selectedItem);
+            const { mappedId: candidate } = await autoMap(instanceApi, type, selectedItem);
             if (!candidate) {
                 snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
             } else {
@@ -164,38 +150,29 @@ export default function MappingTable({
                 setElementsToMap(selection);
             }
         },
-        [applyMapping, instance, rows, snackbar, type]
+        [applyMapping, instanceApi, rows, snackbar, type]
     );
 
-    const openMappingDialog = useCallback(
-        (selection: string[]) => {
-            if (!instance) {
-                snackbar.error(i18n.t("Please select an instance from the dropdown"), {
-                    autoHideDuration: 2500,
-                });
-            } else {
-                setElementsToMap(selection);
-                setSelectedIds([]);
-            }
-        },
-        [instance, snackbar]
-    );
+    const openMappingDialog = useCallback((selection: string[]) => {
+        setElementsToMap(selection);
+        setSelectedIds([]);
+    }, []);
 
     const openRelatedMapping = useCallback(
         (selection: string[]) => {
             const id = _.first(selection);
             if (!id) return;
 
-            const { mapping } = instance.metadataMapping[type][id] ?? {};
+            const relatedMapping = mapping[type][id]?.mapping ?? {};
 
-            if (!mapping)
+            if (!relatedMapping)
                 snackbar.error(
                     "You need to map this element before accessing related metdata mapping"
                 );
 
-            setRelatedMapping(mapping);
+            setRelatedMapping([type, id, "mapping"]);
         },
-        [instance, type, snackbar]
+        [mapping, type, snackbar]
     );
 
     const columns: TableColumn<MetadataType>[] = useMemo(
@@ -208,11 +185,7 @@ export default function MappingTable({
                 name: "mapped-id",
                 text: "Mapped ID",
                 getValue: (row: MetadataType) => {
-                    const mappedId = _.get(
-                        instance?.metadataMapping,
-                        [type, row.id, "mappedId"],
-                        row.id
-                    );
+                    const mappedId = _.get(mapping, [type, row.id, "mappedId"], row.id);
                     const cleanId = cleanOrgUnitPath(mappedId);
                     const name = cleanId === "DISABLED" ? i18n.t("Disabled") : cleanId;
 
@@ -241,8 +214,7 @@ export default function MappingTable({
                         mappedId = row.id,
                         name = mappedId === "DISABLED" ? undefined : i18n.t("Not mapped"),
                         conflicts = false,
-                    }: Partial<MetadataMapping> =
-                        _.get(instance?.metadataMapping, [type, row.id]) ?? {};
+                    }: Partial<MetadataMapping> = _.get(mapping, [type, row.id]) ?? {};
 
                     return (
                         <span>
@@ -261,7 +233,7 @@ export default function MappingTable({
                 },
             },
         ],
-        [classes, type, instance, openMappingDialog]
+        [classes, type, mapping, openMappingDialog]
     );
 
     const filters: ReactNode = useMemo(
@@ -345,15 +317,12 @@ export default function MappingTable({
         ]
     );
 
-    const notifyNewModel = useCallback(
-        model => {
-            setLoading(!!instance);
-            setRows([]);
-            setSelectedIds([]);
-            setModel(() => model);
-        },
-        [instance]
-    );
+    const notifyNewModel = useCallback(model => {
+        setLoading(true);
+        setRows([]);
+        setSelectedIds([]);
+        setModel(() => model);
+    }, []);
 
     return (
         <React.Fragment>
@@ -371,7 +340,7 @@ export default function MappingTable({
                 />
             )}
 
-            {!!instance && elementsToMap.length > 0 && (
+            {elementsToMap.length > 0 && (
                 <MappingDialog
                     rows={rows}
                     model={model}
@@ -379,15 +348,16 @@ export default function MappingTable({
                     onUpdateMapping={updateMapping}
                     onClose={() => setElementsToMap([])}
                     instance={instance}
+                    mapping={mapping}
                 />
             )}
 
             {relatedMapping && (
                 <MappingWizard
-                    mapping={relatedMapping}
-                    onCancel={() => setRelatedMapping(undefined)}
                     instance={instance}
-                    updateInstance={updateInstance}
+                    updateMapping={onChangeMapping}
+                    mappingPath={relatedMapping}
+                    onCancel={() => setRelatedMapping(undefined)}
                 />
             )}
 

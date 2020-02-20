@@ -1,17 +1,16 @@
 import { D2Api, D2ModelSchemas } from "d2-api";
 import _ from "lodash";
-import Instance, { MetadataMapping } from "../../models/instance";
+import { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
 
 export const autoMap = async (
-    instance: Instance,
+    instanceApi: D2Api,
     type: keyof D2ModelSchemas,
     selectedItem: Partial<MetadataType>,
     defaultValue?: string
 ): Promise<MetadataMapping> => {
-    const api = instance.getApi();
-    const { objects } = await api.models[type]
+    const { objects } = await instanceApi.models[type]
         //@ts-ignore Fix in d2-api
         .get({
             fields: { id: true, code: true, name: true },
@@ -33,17 +32,19 @@ export const autoMap = async (
 };
 
 const autoMapCollection = async (
-    instance: Instance,
+    instanceApi: D2Api,
     collection: MetadataType[],
     type: keyof D2ModelSchemas
 ) => {
+    if (collection.length === 0) return { conflicts: false };
+
     const mapping: {
         [id: string]: MetadataMapping;
     } = {};
     let conflicts = false;
 
     for (const item of collection) {
-        const candidate = await autoMap(instance, type, item, "DISABLED");
+        const candidate = await autoMap(instanceApi, type, item, "DISABLED");
         mapping[item.id] = {
             ...candidate,
             conflicts: candidate.mappedId === "DISABLED",
@@ -56,7 +57,7 @@ const autoMapCollection = async (
 
 export const buildMapping = async (
     api: D2Api,
-    instance: Instance,
+    instanceApi: D2Api,
     type: keyof D2ModelSchemas,
     originalId: string,
     mappedId: string
@@ -83,13 +84,13 @@ export const buildMapping = async (
         })
         .getData(); // TODO: Properly type metadata endpoint
     if (objects.length !== 1) return undefined;
-    const mappedElement = await autoMap(instance, type, { id: mappedId }, mappedId);
+    const mappedElement = await autoMap(instanceApi, type, { id: mappedId }, mappedId);
 
     const {
         mapping: categoryOptions,
         conflicts: categoryOptionsConflicts,
     } = await autoMapCollection(
-        instance,
+        instanceApi,
         _.flatten(
             objects[0]?.categoryCombo?.categories.map((category: any) => category.categoryOptions)
         ),
@@ -97,18 +98,23 @@ export const buildMapping = async (
     );
 
     const { mapping: options, conflicts: optionsConflicts } = await autoMapCollection(
-        instance,
+        instanceApi,
         objects[0]?.optionSet?.options ?? [],
         "options"
     );
+
+    const mapping = _.omitBy(
+        {
+            categoryOptions,
+            options,
+        },
+        _.isUndefined
+    ) as MetadataMappingDictionary;
 
     return {
         mappedId,
         name: mappedElement.name,
         conflicts: categoryOptionsConflicts || optionsConflicts,
-        mapping: {
-            categoryOptions,
-            options,
-        },
+        mapping,
     };
 };

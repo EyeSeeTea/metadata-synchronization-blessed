@@ -6,7 +6,7 @@ import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { D2Model, DataElementGroupModel } from "../../models/d2Model";
-import Instance from "../../models/instance";
+import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
 import MetadataTable from "../metadata-table/MetadataTable";
 
@@ -16,6 +16,7 @@ interface MappingDialogProps {
     model?: typeof D2Model;
     instance?: Instance;
     onClose: () => void;
+    mapping?: MetadataMappingDictionary;
     onUpdateMapping: (id?: string) => void;
 }
 
@@ -31,6 +32,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     elements,
     instance,
     onClose,
+    mapping,
     onUpdateMapping,
 }) => {
     const classes = useStyles();
@@ -38,7 +40,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const element = elements.length === 1 ? _.find(rows, ["id", elements[0]]) : undefined;
 
     const defaultSelection = element
-        ? _.get(instance?.metadataMapping, [model.getCollectionName(), element.id, "mappedId"])
+        ? _.get(mapping, [model.getCollectionName(), element.id, "mappedId"])
         : undefined;
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
@@ -60,7 +62,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
         updateSelected(newSelection);
     };
 
-    const OrgUnitMapper = instance?.getApi() && (
+    const OrgUnitMapper = (
         <div className={classes.orgUnitSelect}>
             <OrgUnitsSelector
                 api={instance?.getApi()}
@@ -103,7 +105,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             cancelText={i18n.t("Close")}
         >
             <DialogContent>
-                {!!instance?.getApi() && connectionSuccess && MapperComponent}
+                {!!instance && connectionSuccess && MapperComponent}
 
                 {!connectionSuccess && (
                     <Typography>{i18n.t("Could not connect with remote instance")}</Typography>
