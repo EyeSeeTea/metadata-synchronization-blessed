@@ -62,7 +62,7 @@ export const buildMapping = async (
     mappedId: string
 ): Promise<MetadataMapping | undefined> => {
     if (mappedId === "DISABLED") return { mappedId: "DISABLED", conflicts: false, mapping: {} };
-    const { objects } = (await api.models[type]
+    const { objects } = await api.models[type]
         //@ts-ignore Fix in d2-api
         .get({
             fields: {
@@ -81,7 +81,7 @@ export const buildMapping = async (
                 },
             },
         })
-        .getData()); // TODO: Properly type metadata endpoint
+        .getData(); // TODO: Properly type metadata endpoint
     if (objects.length !== 1) return undefined;
     const mappedElement = await autoMap(instance, type, { id: mappedId }, mappedId);
 

@@ -4,10 +4,10 @@ import { useD2, useD2Api } from "d2-api";
 import { ConfirmationDialog, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import MappingDialog from "../../components/mapping-dialog/MappingDialog";
+import MappingWizard from "../../components/mapping-wizard/MappingWizard";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
-import PageHeader from "../../components/page-header/PageHeader";
 import {
     AggregatedDataElementModel,
     CategoryComboModel,
@@ -62,10 +62,9 @@ interface InstanceMappingParams {
     section: MappingType;
 }
 
-const InstanceMappingPage: React.FC = () => {
+export default function MappingTable() {
     const d2 = useD2();
     const api = useD2Api();
-    const history = useHistory();
     const classes = useStyles();
     const snackbar = useSnackbar();
 
@@ -81,6 +80,8 @@ const InstanceMappingPage: React.FC = () => {
     const [warningDialog, setWarningDialog] = useState<WarningDialog | null>(null);
     const [elementsToMap, setElementsToMap] = useState<string[]>([]);
     const [rows, setRows] = useState<MetadataType[]>([]);
+
+    const [openRelatedMetadata, setOpenRelatedMetadata] = useState<boolean>(false);
 
     useEffect(() => {
         Instance.get(d2 as D2, instanceId).then(setInstance);
@@ -328,16 +329,12 @@ const InstanceMappingPage: React.FC = () => {
                 name: "related-mapping",
                 text: i18n.t("Related metadata mapping"),
                 multiple: false,
-                onClick: _.noop,
+                onClick: () => setOpenRelatedMetadata(true),
                 icon: <Icon>assignment</Icon>,
             },
         ],
         [disableMapping, openMappingDialog, resetMapping, applyAutoMapping, type]
     );
-
-    const backHome = () => {
-        history.push("/instances/mapping");
-    };
 
     const notifyNewModel = useCallback(
         model => {
@@ -351,8 +348,6 @@ const InstanceMappingPage: React.FC = () => {
 
     return (
         <React.Fragment>
-            <PageHeader title={i18n.t("Metadata mapping")} onBackClick={backHome} />
-
             {!!warningDialog && (
                 <ConfirmationDialog
                     open={true}
@@ -378,6 +373,10 @@ const InstanceMappingPage: React.FC = () => {
                 />
             )}
 
+            {openRelatedMetadata && (
+                <MappingWizard mapping={{}} onCancel={() => setOpenRelatedMetadata(false)} />
+            )}
+
             <MetadataTable
                 models={models}
                 additionalColumns={columns}
@@ -391,6 +390,4 @@ const InstanceMappingPage: React.FC = () => {
             />
         </React.Fragment>
     );
-};
-
-export default InstanceMappingPage;
+}

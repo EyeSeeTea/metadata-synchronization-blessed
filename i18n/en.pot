@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-19T14:49:47.496Z\n"
-"PO-Revision-Date: 2020-02-19T14:49:47.496Z\n"
+"POT-Creation-Date: 2020-02-20T09:39:08.000Z\n"
+"PO-Revision-Date: 2020-02-20T09:39:08.000Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -33,6 +33,66 @@ msgid "Close"
 msgstr ""
 
 msgid "Could not connect with remote instance"
+msgstr ""
+
+msgid "Please select an instance from the dropdown"
+msgstr ""
+
+msgid "Set"
+msgstr ""
+
+msgid "Reset to default"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "{{operation}} mapping for {{total}} elements"
+msgstr ""
+
+msgid "Could not apply mapping, please try again."
+msgstr ""
+
+msgid "Auto-mapping does not support multiple action yet"
+msgstr ""
+
+msgid "Unexpected error, could not apply auto mapping"
+msgstr ""
+
+msgid "Could not find a suitable candidate to apply auto-mapping"
+msgstr ""
+
+msgid "Set mapping"
+msgstr ""
+
+msgid "Not mapped"
+msgstr ""
+
+msgid "Mapping has errors"
+msgstr ""
+
+msgid "Reset mapping"
+msgstr ""
+
+msgid "Disable mapping"
+msgstr ""
+
+msgid "Auto-map element"
+msgstr ""
+
+msgid "Reset mapping to default values"
+msgstr ""
+
+msgid "Related metadata mapping"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Category Options"
+msgstr ""
+
+msgid "Options"
 msgstr ""
 
 msgid "Metadata type"
@@ -189,9 +249,6 @@ msgid "Message"
 msgstr ""
 
 msgid "Synchronization Results"
-msgstr ""
-
-msgid "Ok"
 msgstr ""
 
 msgid "Destination instance"
@@ -351,9 +408,6 @@ msgid "Excluded elements"
 msgstr ""
 
 msgid "Use default include exclude configuration"
-msgstr ""
-
-msgid "Disabled"
 msgstr ""
 
 msgid "Include exclude configuration"
@@ -695,54 +749,6 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Destination Instance Settings"
-msgstr ""
-
-msgid "Please select an instance from the dropdown"
-msgstr ""
-
-msgid "Set"
-msgstr ""
-
-msgid "Reset to default"
-msgstr ""
-
-msgid "{{operation}} mapping for {{total}} elements"
-msgstr ""
-
-msgid "Could not apply mapping, please try again."
-msgstr ""
-
-msgid "Auto-mapping does not support multiple action yet"
-msgstr ""
-
-msgid "Unexpected error, could not apply auto mapping"
-msgstr ""
-
-msgid "Could not find a suitable candidate to apply auto-mapping"
-msgstr ""
-
-msgid "Set mapping"
-msgstr ""
-
-msgid "Not mapped"
-msgstr ""
-
-msgid "Mapping has errors"
-msgstr ""
-
-msgid "Reset mapping"
-msgstr ""
-
-msgid "Disable mapping"
-msgstr ""
-
-msgid "Auto-map element"
-msgstr ""
-
-msgid "Reset mapping to default values"
-msgstr ""
-
-msgid "Related metadata mapping"
 msgstr ""
 
 msgid "Aggregated"

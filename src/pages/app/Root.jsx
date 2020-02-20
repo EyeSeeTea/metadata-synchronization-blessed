@@ -1,19 +1,19 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { HashRouter, Switch } from "react-router-dom";
+import RouteWithSession from "../../components/auth/RouteWithSession";
+import RouteWithSessionAndAuth from "../../components/auth/RouteWithSessionAndAuth";
+import * as permissions from "../../utils/permissions";
 import HistoryPage from "../history/HistoryPage";
+import HomePage from "../home/HomePage";
 import InstanceCreationPage from "../instance-creation/InstanceCreationPage";
 import InstanceListPage from "../instance-list/InstanceListPage";
-import HomePage from "../home/HomePage";
+import InstanceMappingLandingPage from "../instance-mapping/InstanceMappingLandingPage";
+import InstanceMappingPage from "../instance-mapping/InstanceMappingPage";
 import DeletedObjectsPage from "../sync-deleted-objects/DeletedObjectsPage";
 import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
-import * as permissions from "../../utils/permissions";
-import InstanceMappingPage from "../instance-mapping/InstanceMapping";
-import RouteWithSession from "../../components/auth/RouteWithSession";
-import RouteWithSessionAndAuth from "../../components/auth/RouteWithSessionAndAuth";
-import InstanceMappingLandingPage from "../instance-mapping/Landing";
 
 class Root extends React.Component {
     static propTypes = {
