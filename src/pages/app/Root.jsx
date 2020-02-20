@@ -25,12 +25,12 @@ class Root extends React.Component {
             <HashRouter>
                 <Switch>
                     <RouteWithSession
-                        path={"/instances/mapping/:section(aggregated|tracker|orgUnit)/:id?"}
+                        path={"/instances/mapping/:id/:section(aggregated|tracker|orgUnit)"}
                         render={props => <InstanceMappingPage {...this.props} {...props} />}
                     />
 
                     <RouteWithSession
-                        path={"/instances/mapping/:id?"}
+                        path={"/instances/mapping/:id"}
                         render={props => <InstanceMappingLandingPage {...this.props} {...props} />}
                     />
 

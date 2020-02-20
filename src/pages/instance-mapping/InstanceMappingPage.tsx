@@ -31,17 +31,17 @@ export default function InstanceMappingPage() {
     const history = useHistory();
     const d2 = useD2();
 
-    const { id: instanceId = "", section } = useParams() as InstanceMappingParams;
+    const { id, section } = useParams() as InstanceMappingParams;
     const { models } = config[section];
 
     const [instance, setInstance] = useState<Instance>();
 
     useEffect(() => {
-        Instance.get(d2 as D2, instanceId).then(setInstance);
-    }, [d2, instanceId]);
+        Instance.get(d2 as D2, id).then(setInstance);
+    }, [d2, id]);
 
     const backHome = () => {
-        history.push("/instances/mapping");
+        history.push(`/instances/mapping/${id}`);
     };
 
     const onChangeMapping = async (mapping: MetadataMappingDictionary) => {

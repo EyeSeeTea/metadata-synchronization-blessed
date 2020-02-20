@@ -6,7 +6,7 @@ import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 const InstanceMappingLandingPage: React.FC = () => {
     const history = useHistory();
-    const { id = "" } = useParams() as { id?: string };
+    const { id } = useParams() as { id: string };
 
     const cards: Card[] = [
         {
@@ -14,15 +14,15 @@ const InstanceMappingLandingPage: React.FC = () => {
             children: [
                 {
                     name: i18n.t("Aggregated"),
-                    listAction: () => history.push(`/instances/mapping/aggregated/${id}`),
+                    listAction: () => history.push(`/instances/mapping/${id}/aggregated`),
                 },
                 {
                     name: i18n.t("Tracker"),
-                    listAction: () => history.push(`/instances/mapping/tracker/${id}`),
+                    listAction: () => history.push(`/instances/mapping/${id}/tracker`),
                 },
                 {
                     name: i18n.t("Organisation units"),
-                    listAction: () => history.push(`/instances/mapping/orgUnit/${id}`),
+                    listAction: () => history.push(`/instances/mapping/${id}/orgUnit`),
                 },
             ],
         },
