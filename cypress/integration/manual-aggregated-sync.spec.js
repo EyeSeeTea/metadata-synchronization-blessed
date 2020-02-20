@@ -1,76 +1,136 @@
-import { dataTest } from "../support/utils";
+import ManualAggregateSyncPageObject from "../pageobjects/ManualAggregateSyncPageObject";
 
+/**
+ * Database: d2-docker-eyeseetea-2-30-datasync-sender
+ */
 context("Manual aggregated sync", function() {
+    const page = new ManualAggregateSyncPageObject(cy);
+
+    const anyOrgUnit = "Ghana";
+    const anyInstance = "Y5QsHDoD4I0";
+
     beforeEach(() => {
-        cy.login("admin");
-        cy.visit("/#/sync/aggregated");
-        cy.get(dataTest("headerbar-title")).contains("MetaData Synchronization");
+        page.open();
     });
 
-    it("has the correct title", function() {
-        cy.get(dataTest("page-header-title")).contains("Aggregated Data Synchronization");
+    it("should have the correct title", function() {
+        page.title.contains("Aggregated Data Synchronization");
     });
 
-    /**
-     * Database: d2-docker-eyeseetea-2-30-datasync-sender
-     */
-    it("syncs correctly malaria annual data", function() {
-        cy.route({
-            method: "POST",
-            url: "/api/dataValueSets*",
-        }).as("postDataValueSets");
+    it("should syncs correctly malaria annual data", function() {
+        page.search("Malaria annual data")
+            .selectRow("Malaria annual data")
+            .openSyncDialog()
 
-        // Search in the search-box
-        cy.get('[data-test="search"] > div > [aria-invalid="false"]').type("Malaria annual data");
+            .selectOrgUnit(anyOrgUnit)
+            .next()
 
-        // Select one element from the table
-        cy.get(dataTest("TableCell-data-table-row-0-column-displayname"))
-            .contains("Malaria annual data")
-            .click();
+            .selectAllPeriods()
+            .next()
 
-        // Open sync dialog
-        cy.get(
-            '[data-test="objects-table-action-button"] > :nth-child(1) > [focusable="false"]'
-        ).click();
+            .selectAllAttributesCategoryOptions()
+            .next()
 
-        // Select Ghana
-        cy.get(dataTest("DialogContent-aggregated-data-synchronization")).selectInOrgUnitTree(
-            "Ghana"
-        );
-        cy.get('[data-test="Button-next-→"]').click();
+            .selectReceiverInstance(anyInstance)
+            .synchronize()
 
-        // Select all periods
-        cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
-        cy.get('[data-test="MenuItem-period-dropdown-select-element-fixed"]').click();
-        cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
-        cy.get('[data-test="MenuItem-period-dropdown-select-element-all"]').click();
-        cy.get('[data-test="Button-next-→"]').click();
+            .syncResults.contains("Success");
 
-        // Select all attributes
-        cy.get(
-            '[data-test="FormControlLabel-sync-all-attribute-category-options"] > :nth-child(2)'
-        ).click();
-        cy.get(dataTest("group-editor-assign-all")).click();
-        cy.get('[data-test="Button-next-→"]').click();
+        page.closeSyncResultsDialog();
+    });
 
-        // Move to instance selection
-        cy.get(dataTest("DialogContent-aggregated-data-synchronization"))
-            .contains("Instance Selection")
-            .click();
-        cy.waitForStep("Instance Selection");
+    it("should show the org unit step error if user try click on next without selecting the org unit", function() {
+        page.search("Malaria annual data")
+            .selectRow("Malaria annual data")
+            .openSyncDialog()
+            .next()
 
-        // Select receiver instance (multi-selector does not work fine with cypress?)
-        cy.selectInMultiSelector(
-            dataTest("DialogContent-aggregated-data-synchronization"),
-            "Y5QsHDoD4I0"
-        );
+            .error.contains("You need to select at least one organisation unit");
+    });
 
-        // Execute synchronization and assert dialog appears
-        cy.contains("Synchronize").click();
-        cy.wait("@postDataValueSets");
-        cy.get('[data-test="DialogTitle-synchronization-results"]').contains(
-            "Synchronization Results"
-        );
-        cy.get('[data-test="Button-synchronization-results-save"]').click();
+    it("should show the instance selection step error if user try click on next without selecting an instance", function() {
+        page.search("Malaria annual data")
+            .selectRow("Malaria annual data")
+            .openSyncDialog()
+
+            .selectOrgUnit(anyOrgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .selectAllAttributesCategoryOptions()
+            .next()
+
+            .next()
+
+            .error.contains("You need to select at least one instance");
+    });
+
+    it("should have synchronize button disabled to open sync dialog", function() {
+        page.search("Malaria annual data")
+            .selectRow("Malaria annual data")
+            .openSyncDialog()
+            .syncButton.should("be.disabled");
+    });
+
+    it("should have synchronize button disabled if only contains org unit", function() {
+        page.search("Malaria annual data")
+            .selectRow("Malaria annual data")
+            .openSyncDialog()
+
+            .selectOrgUnit(anyOrgUnit)
+            .next()
+
+            .syncButton.should("be.disabled");
+    });
+
+    it("should have synchronize button disabled if only contains org unit and periods", function() {
+        page.search("Malaria annual data")
+            .selectRow("Malaria annual data")
+            .openSyncDialog()
+
+            .selectOrgUnit(anyOrgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .syncButton.should("be.disabled");
+    });
+
+    it("should have synchronize button disabled if only contains org unit, periods and category options", function() {
+        page.search("Malaria annual data")
+            .selectRow("Malaria annual data")
+            .openSyncDialog()
+
+            .selectOrgUnit(anyOrgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .selectAllAttributesCategoryOptions()
+            .next()
+
+            .syncButton.should("be.disabled");
+    });
+
+    it("should have synchronize button enabled if contains org unit, periods, category options and one instance", function() {
+        page.search("Malaria annual data")
+            .selectRow("Malaria annual data")
+            .openSyncDialog()
+
+            .selectOrgUnit(anyOrgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .selectAllAttributesCategoryOptions()
+            .next()
+
+            .selectReceiverInstance(anyInstance)
+            .syncButton.should("not.be.disabled");
     });
 });
