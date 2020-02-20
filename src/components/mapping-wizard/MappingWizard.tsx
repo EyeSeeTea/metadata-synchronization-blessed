@@ -2,12 +2,11 @@ import i18n from "@dhis2/d2-i18n";
 import { DialogContent } from "@material-ui/core";
 import { ConfirmationDialog, Wizard } from "d2-ui-components";
 import _ from "lodash";
-import { title } from "process";
 import React, { ReactNode } from "react";
 import { useLocation } from "react-router-dom";
+import { CategoryOptionModel, OptionModel } from "../../models/d2Model";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import MappingTable, { MappingTableProps } from "../mapping-table/MappingTable";
-import { CategoryOptionModel, OptionModel } from "../../models/d2Model";
 
 interface MappingWizardStep {
     key: string;
@@ -65,7 +64,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     return (
         <ConfirmationDialog
             isOpen={true}
-            title={title}
+            title={i18n.t("Related metadata mapping")}
             onCancel={onCancel}
             cancelText={i18n.t("Close")}
             maxWidth={"lg"}
