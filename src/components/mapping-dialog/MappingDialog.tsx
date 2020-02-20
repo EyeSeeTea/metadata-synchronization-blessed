@@ -105,7 +105,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             cancelText={i18n.t("Close")}
         >
             <DialogContent>
-                {!!instance && connectionSuccess && MapperComponent}
+                {!!instance?.getApi() && connectionSuccess && MapperComponent}
 
                 {!connectionSuccess && (
                     <Typography>{i18n.t("Could not connect with remote instance")}</Typography>
