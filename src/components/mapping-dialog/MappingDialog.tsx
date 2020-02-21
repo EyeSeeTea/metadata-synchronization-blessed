@@ -37,11 +37,10 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 }) => {
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
-    const element = elements.length === 1 ? _.find(rows, ["id", elements[0]]) : undefined;
 
-    const defaultSelection = element
-        ? _.get(mapping, [model.getCollectionName(), element.id, "mappedId"])
-        : undefined;
+    const element = elements.length === 1 ? _.find(rows, ["id", elements[0]]) : undefined;
+    const mappedId = _.get(mapping, [model.getCollectionName(), element?.id ?? "", "mappedId"]);
+    const defaultSelection = mappedId !== "DISABLED" ? mappedId : undefined;
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
     useEffect(() => {
