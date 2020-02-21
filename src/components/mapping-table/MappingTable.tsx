@@ -391,7 +391,7 @@ export default function MappingTable({
         <React.Fragment>
             {!!warningDialog && (
                 <ConfirmationDialog
-                    open={true}
+                    isOpen={true}
                     title={warningDialog.title}
                     description={warningDialog.description}
                     saveText={i18n.t("Ok")}
