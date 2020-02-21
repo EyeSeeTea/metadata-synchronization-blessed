@@ -3,7 +3,7 @@ import ManualAggregateSyncPageObject from "../pageobjects/ManualAggregateSyncPag
 /**
  * Database: d2-docker-eyeseetea-2-30-datasync-sender
  */
-context("Manual aggregated sync", function() {
+context("Manual aggregated sync", () => {
     const page = new ManualAggregateSyncPageObject(cy);
 
     const inputs = {
@@ -16,11 +16,11 @@ context("Manual aggregated sync", function() {
         page.open();
     });
 
-    it("should have the correct title", function() {
+    it("should have the correct title", () => {
         page.title.contains("Aggregated Data Synchronization");
     });
 
-    it("should syncs correctly malaria annual data", function() {
+    it("should syncs correctly malaria annual data", () => {
         page.search(inputs.dataSet)
             .selectRow(inputs.dataSet)
             .openSyncDialog()
@@ -42,7 +42,7 @@ context("Manual aggregated sync", function() {
         page.closeSyncResultsDialog();
     });
 
-    it("should show the org unit step error if user try click on next without selecting the org unit", function() {
+    it("should show the org unit step error if user try click on next without selecting the org unit", () => {
         page.search(inputs.dataSet)
             .selectRow(inputs.dataSet)
             .openSyncDialog()
@@ -51,7 +51,7 @@ context("Manual aggregated sync", function() {
             .error.contains("You need to select at least one organisation unit");
     });
 
-    it("should show the instance selection step error if user try click on next without selecting an instance", function() {
+    it("should show the instance selection step error if user try click on next without selecting an instance", () => {
         page.search(inputs.dataSet)
             .selectRow(inputs.dataSet)
             .openSyncDialog()
@@ -70,14 +70,14 @@ context("Manual aggregated sync", function() {
             .error.contains("You need to select at least one instance");
     });
 
-    it("should have synchronize button disabled to open sync dialog", function() {
+    it("should have synchronize button disabled to open sync dialog", () => {
         page.search(inputs.dataSet)
             .selectRow(inputs.dataSet)
             .openSyncDialog()
             .syncButton.should("be.disabled");
     });
 
-    it("should have synchronize button disabled if only contains org unit", function() {
+    it("should have synchronize button disabled if only contains org unit", () => {
         page.search(inputs.dataSet)
             .selectRow(inputs.dataSet)
             .openSyncDialog()
@@ -88,7 +88,7 @@ context("Manual aggregated sync", function() {
             .syncButton.should("be.disabled");
     });
 
-    it("should have synchronize button disabled if only contains org unit and periods", function() {
+    it("should have synchronize button disabled if only contains org unit and periods", () => {
         page.search(inputs.dataSet)
             .selectRow(inputs.dataSet)
             .openSyncDialog()
@@ -102,7 +102,7 @@ context("Manual aggregated sync", function() {
             .syncButton.should("be.disabled");
     });
 
-    it("should have synchronize button disabled if only contains org unit, periods and category options", function() {
+    it("should have synchronize button disabled if only contains org unit, periods and category options", () => {
         page.search(inputs.dataSet)
             .selectRow(inputs.dataSet)
             .openSyncDialog()
@@ -119,7 +119,7 @@ context("Manual aggregated sync", function() {
             .syncButton.should("be.disabled");
     });
 
-    it("should have synchronize button enabled if contains org unit, periods, category options and one instance", function() {
+    it("should have synchronize button enabled if contains org unit, periods, category options and one instance", () => {
         page.search(inputs.dataSet)
             .selectRow(inputs.dataSet)
             .openSyncDialog()
