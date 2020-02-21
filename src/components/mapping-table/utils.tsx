@@ -8,7 +8,7 @@ import { cleanOrgUnitPath } from "../../utils/synchronization";
 interface CombinedMetadata {
     id: string;
     name: string;
-    categoryCombo: {
+    categoryCombo?: {
         categories: {
             categoryOptions: {
                 id: string;
@@ -18,7 +18,7 @@ interface CombinedMetadata {
             }[];
         }[];
     };
-    optionSet: {
+    optionSet?: {
         options: {
             id: string;
             name: string;
@@ -165,4 +165,13 @@ export const buildMapping = async (
         conflicts: false,
         mapping,
     };
+};
+
+export const getValidIds = async (api: D2Api, model: typeof D2Model, id: string) => {
+    const combinedMetadata = await getCombinedMetadata(api, model, id);
+
+    const validCategoryOptions = getCategoryOptions(combinedMetadata[0]);
+    const validOptions = getOptions(combinedMetadata[0]);
+
+    return _.union(validCategoryOptions, validOptions).map(({ id }) => id);
 };

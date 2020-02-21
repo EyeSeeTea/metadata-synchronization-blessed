@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
-import { D2Api, Model, useD2, useD2Api } from "d2-api";
+import { D2Api, Model, useD2, useD2Api, PaginatedObjects } from "d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -29,7 +29,7 @@ import { getAllIdentifiers, getFilterData, getRows } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     api?: D2Api;
-    filterRows?: (rows: MetadataType[]) => MetadataType[];
+    filterRows?: string[];
     models: typeof D2Model[];
     selectedIds?: string[];
     excludedIds?: string[];
@@ -353,8 +353,12 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             query.order = "displayName:asc";
         }
 
+        if (query.filter && filterRows) {
+            query.filter["id"] = { in: filterRows };
+        }
+
         return query;
-    }, [model, filters]);
+    }, [model, filters, filterRows]);
 
     useEffect(() => {
         const { cancel, response } = getAllIdentifiers(
@@ -398,11 +402,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         let mounted = true;
         response
             .then(({ data }) => {
-                //@ts-ignore TODO: Fix in d2-api
-                const { objects, pager: responsePager } = data;
-                const modelRows = model.getApiModelTransform()(objects);
-                const rows = filterRows ? filterRows(modelRows) : modelRows;
-                const pager = filterRows ? undefined : responsePager;
+                // TODO: Fix this in d2-api instead of converting type
+                const { objects, pager } = (data as unknown) as PaginatedObjects<MetadataType>;
+                const rows = model.getApiModelTransform()(objects);
                 notifyRowsChange(rows);
 
                 if (mounted) {

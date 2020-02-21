@@ -5,8 +5,7 @@ import _ from "lodash";
 import React, { ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import { CategoryOptionModel, OptionModel } from "../../models/d2Model";
-import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import { MetadataType } from "../../utils/d2";
+import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import MappingTable, { MappingTableProps } from "../mapping-table/MappingTable";
 
 interface MappingWizardStep {
@@ -61,19 +60,17 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
 }) => {
     const location = useLocation();
 
-    const mapping: MetadataMappingDictionary = _.get(instance.metadataMapping, mappingPath, {});
-    const filterRows = (rows: MetadataType[]) => {
-        return (
-            !!mapping &&
-            rows.filter(({ id }) =>
-                _(mapping)
-                    .mapValues(Object.keys)
-                    .values()
-                    .flatten()
-                    .includes(id)
-            )
-        );
-    };
+    const { mappedId, mapping = {} }: MetadataMapping = _.get(
+        instance.metadataMapping,
+        mappingPath,
+        {}
+    );
+
+    const filterRows = _(mapping)
+        .mapValues(Object.keys)
+        .values()
+        .flatten()
+        .value();
 
     const onChangeMapping = async (subMapping: MetadataMappingDictionary) => {
         const newMapping = _.clone(instance.metadataMapping);
@@ -83,7 +80,14 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
 
     const steps: MappingWizardStep[] = availableSteps.map(step => ({
         ...step,
-        props: { ...step.props, mapping, onChangeMapping, instance, filterRows },
+        props: {
+            ...step.props,
+            mapping,
+            onChangeMapping,
+            instance,
+            filterRows,
+            mappingPath: [...mappingPath, mappedId],
+        },
     }));
 
     const urlHash = location.hash.slice(1);

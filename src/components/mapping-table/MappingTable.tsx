@@ -43,10 +43,11 @@ interface WarningDialog {
 export interface MappingTableProps {
     instance: Instance;
     models: typeof D2Model[];
-    filterRows?: (rows: MetadataType[]) => MetadataType[];
+    filterRows?: string[];
     mapping: MetadataMappingDictionary;
     onChangeMapping(mapping: MetadataMappingDictionary): Promise<void>;
     isChildrenMapping?: boolean;
+    mappingPath?: string[];
 }
 
 export default function MappingTable({
@@ -56,6 +57,7 @@ export default function MappingTable({
     mapping,
     onChangeMapping,
     isChildrenMapping = false,
+    mappingPath,
 }: MappingTableProps) {
     const api = useD2Api();
     const classes = useStyles();
@@ -211,7 +213,7 @@ export default function MappingTable({
                     )
                 );
             } else {
-                setRelatedMapping([type, id, "mapping"]);
+                setRelatedMapping([type, id]);
             }
         },
         [mapping, type, snackbar]
@@ -416,6 +418,7 @@ export default function MappingTable({
                     onClose={closeMappingDialog}
                     instance={instance}
                     mapping={mapping}
+                    mappingPath={mappingPath}
                 />
             )}
 
