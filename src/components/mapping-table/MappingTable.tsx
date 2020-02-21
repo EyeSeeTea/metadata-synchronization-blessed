@@ -259,14 +259,22 @@ export default function MappingTable({
                         mappedId = row.id,
                         name = mappedId === "DISABLED" ? undefined : i18n.t("Not mapped"),
                         conflicts = false,
+                        mapping: childrenMapping,
                     }: Partial<MetadataMapping> = _.get(mapping, [type, row.id]) ?? {};
+
+                    const childrenConflicts = _(childrenMapping)
+                        .values()
+                        .map(Object.values)
+                        .flatten()
+                        .some(["conflicts", true]);
+                    const showConflicts = conflicts || childrenConflicts;
 
                     return (
                         <span>
                             <Typography variant={"inherit"} gutterBottom>
                                 {name ?? "-"}
                             </Typography>
-                            {conflicts && (
+                            {showConflicts && (
                                 <Tooltip title={i18n.t("Mapping has errors")} placement="top">
                                     <IconButton
                                         className={classes.iconButton}

@@ -99,7 +99,6 @@ const autoMapCollection = async (
     const mapping: {
         [id: string]: MetadataMapping;
     } = {};
-    let conflicts = false;
 
     for (const item of collection) {
         const candidate = (await autoMap(instanceApi, model, item, "DISABLED", filter))[0] ?? {};
@@ -108,10 +107,9 @@ const autoMapCollection = async (
                 ...candidate,
                 conflicts: candidate.mappedId === "DISABLED",
             };
-        if (candidate.mappedId === "DISABLED") conflicts = true;
     }
 
-    return { conflicts, mapping };
+    return mapping;
 };
 
 const getCategoryOptions = (object: CombinedMetadata) => {
@@ -139,17 +137,14 @@ export const buildMapping = async (
 
     const [mappedElement] = await autoMap(instanceApi, model, { id: mappedId }, mappedId);
 
-    const {
-        mapping: categoryOptions,
-        conflicts: categoryOptionsConflicts,
-    } = await autoMapCollection(
+    const categoryOptions = await autoMapCollection(
         instanceApi,
         getCategoryOptions(originMetadata[0]),
         CategoryOptionModel,
         getCategoryOptions(destinationMetadata[0]).map(({ id }) => id)
     );
 
-    const { mapping: options, conflicts: optionsConflicts } = await autoMapCollection(
+    const options = await autoMapCollection(
         instanceApi,
         getOptions(originMetadata[0]),
         OptionModel,
@@ -167,7 +162,7 @@ export const buildMapping = async (
     return {
         mappedId,
         name: mappedElement.name,
-        conflicts: categoryOptionsConflicts || optionsConflicts,
+        conflicts: false,
         mapping,
     };
 };
