@@ -17,7 +17,7 @@ context("Manual aggregated sync", () => {
     });
 
     it("should have the correct title", () => {
-        page.title.contains("Aggregated Data Synchronization");
+        page.assertTitle(title => title.contains("Aggregated Data Synchronization"));
     });
 
     it("should syncs correctly malaria annual data", () => {
@@ -37,9 +37,8 @@ context("Manual aggregated sync", () => {
             .selectReceiverInstance(inputs.instance)
             .synchronize()
 
-            .syncResults.contains("Success");
-
-        page.closeSyncResultsDialog();
+            .assertSyncResults(syncResults => syncResults.contains("Success"))
+            .closeSyncResultsDialog();
     });
 
     it("should show the org unit step error if user try click on next without selecting the org unit", () => {
@@ -47,8 +46,9 @@ context("Manual aggregated sync", () => {
             .selectRow(inputs.dataSet)
             .openSyncDialog()
             .next()
-
-            .error.contains("You need to select at least one organisation unit");
+            .assertError(error =>
+                error.contains("You need to select at least one organisation unit")
+            );
     });
 
     it("should show the instance selection step error if user try click on next without selecting an instance", () => {
@@ -67,14 +67,14 @@ context("Manual aggregated sync", () => {
 
             .next()
 
-            .error.contains("You need to select at least one instance");
+            .assertError(error => error.contains("You need to select at least one instance"));
     });
 
     it("should have synchronize button disabled to open sync dialog", () => {
         page.search(inputs.dataSet)
             .selectRow(inputs.dataSet)
             .openSyncDialog()
-            .syncButton.should("be.disabled");
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
     });
 
     it("should have synchronize button disabled if only contains org unit", () => {
@@ -85,7 +85,7 @@ context("Manual aggregated sync", () => {
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
-            .syncButton.should("be.disabled");
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
     });
 
     it("should have synchronize button disabled if only contains org unit and periods", () => {
@@ -99,7 +99,7 @@ context("Manual aggregated sync", () => {
             .selectAllPeriods()
             .next()
 
-            .syncButton.should("be.disabled");
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
     });
 
     it("should have synchronize button disabled if only contains org unit, periods and category options", () => {
@@ -116,7 +116,7 @@ context("Manual aggregated sync", () => {
             .selectAllAttributesCategoryOptions()
             .next()
 
-            .syncButton.should("be.disabled");
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
     });
 
     it("should have synchronize button enabled if contains org unit, periods, category options and one instance", () => {
@@ -134,6 +134,7 @@ context("Manual aggregated sync", () => {
             .next()
 
             .selectReceiverInstance(inputs.instance)
-            .syncButton.should("not.be.disabled");
+
+            .assertSyncButton(syncButton => syncButton.should("not.be.disabled"));
     });
 });

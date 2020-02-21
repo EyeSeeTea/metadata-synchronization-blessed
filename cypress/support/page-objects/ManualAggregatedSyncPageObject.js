@@ -5,16 +5,24 @@ class ManualAggregatedSyncPageObject {
         this.cy = cy;
     }
 
-    get title() {
-        return this.cy.get(dataTest("page-header-title"));
+    assertTitle(assert) {
+        assert(this.cy.get(dataTest("page-header-title")));
+        return this;
     }
 
-    get error() {
-        return this.cy.get("#client-snackbar");
+    assertError(assert) {
+        assert(this.cy.get("#client-snackbar"));
+        return this;
     }
 
-    get syncResults() {
-        return this.cy.get('[data-test="Typography-synchronization-results-row-0"]');
+    assertSyncResults(assert) {
+        assert(this.cy.get('[data-test="Typography-synchronization-results-row-0"]'));
+        return this;
+    }
+
+    assertSyncButton(assert) {
+        assert(this.syncButton);
+        return this;
     }
 
     get syncButton() {
