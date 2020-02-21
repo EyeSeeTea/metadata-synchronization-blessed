@@ -28,6 +28,31 @@ interface MappingWizardProps {
     onCancel?(): void;
 }
 
+const availableSteps = [
+    {
+        key: "category-options",
+        label: i18n.t("Category Options"),
+        component: (props: MappingTableProps) => <MappingTable {...props} />,
+        props: {
+            models: [CategoryOptionModel],
+            isChildrenMapping: true,
+        },
+        validationKeys: [],
+    },
+    {
+        key: "options",
+        label: i18n.t("Options"),
+        component: (props: MappingTableProps) => <MappingTable {...props} />,
+        props: {
+            models: [OptionModel],
+            isChildrenMapping: true,
+        },
+        validationKeys: [],
+        description: undefined,
+        help: undefined,
+    },
+];
+
 const MappingWizard: React.FC<MappingWizardProps> = ({
     instance,
     mappingPath,
@@ -56,38 +81,10 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
         updateMapping(newMapping);
     };
 
-    const steps: MappingWizardStep[] = [
-        {
-            key: "category-options",
-            label: i18n.t("Category Options"),
-            component: (props: MappingTableProps) => <MappingTable {...props} />,
-            props: {
-                models: [CategoryOptionModel],
-                mapping,
-                onChangeMapping,
-                instance,
-                filterRows,
-                isChildrenMapping: true,
-            },
-            validationKeys: [],
-        },
-        {
-            key: "options",
-            label: i18n.t("Options"),
-            component: (props: MappingTableProps) => <MappingTable {...props} />,
-            props: {
-                models: [OptionModel],
-                mapping,
-                onChangeMapping,
-                instance,
-                filterRows,
-                isChildrenMapping: true,
-            },
-            validationKeys: [],
-            description: undefined,
-            help: undefined,
-        },
-    ];
+    const steps: MappingWizardStep[] = availableSteps.map(step => ({
+        ...step,
+        props: { ...step.props, mapping, onChangeMapping, instance, filterRows },
+    }));
 
     const urlHash = location.hash.slice(1);
     const stepExists = steps.find(step => step.key === urlHash);

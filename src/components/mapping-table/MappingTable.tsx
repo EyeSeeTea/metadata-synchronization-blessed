@@ -387,6 +387,10 @@ export default function MappingTable({
         setModel(() => model);
     }, []);
 
+    const closeWarningDialog = () => setWarningDialog(null);
+    const closeMappingDialog = () => setElementsToMap([]);
+    const closeWizard = () => setRelatedMapping(undefined);
+
     return (
         <React.Fragment>
             {!!warningDialog && (
@@ -399,7 +403,7 @@ export default function MappingTable({
                         if (warningDialog.action) warningDialog.action();
                         setWarningDialog(null);
                     }}
-                    onCancel={() => setWarningDialog(null)}
+                    onCancel={closeWarningDialog}
                 />
             )}
 
@@ -409,7 +413,7 @@ export default function MappingTable({
                     model={model}
                     elements={elementsToMap}
                     onUpdateMapping={updateMapping}
-                    onClose={() => setElementsToMap([])}
+                    onClose={closeMappingDialog}
                     instance={instance}
                     mapping={mapping}
                 />
@@ -420,7 +424,7 @@ export default function MappingTable({
                     instance={instance}
                     updateMapping={onChangeMapping}
                     mappingPath={relatedMapping}
-                    onCancel={() => setRelatedMapping(undefined)}
+                    onCancel={closeWizard}
                 />
             )}
 
