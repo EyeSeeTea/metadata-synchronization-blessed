@@ -1,10 +1,10 @@
-import ManualAggregateSyncPageObject from "../pageobjects/ManualAggregateSyncPageObject";
+import ManualAggregatedSyncPageObject from "../support/page-objects/ManualAggregatedSyncPageObject";
 
 /**
  * Database: d2-docker-eyeseetea-2-30-datasync-sender
  */
 context("Manual aggregated sync", () => {
-    const page = new ManualAggregateSyncPageObject(cy);
+    const page = new ManualAggregatedSyncPageObject(cy);
 
     const inputs = {
         orgUnit: "Ghana",

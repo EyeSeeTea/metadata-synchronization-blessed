@@ -1,6 +1,6 @@
-import { dataTest } from "../support/utils";
+import { dataTest } from "../utils";
 
-class ManualAggregateSyncPageObject {
+class ManualAggregatedSyncPageObject {
     constructor(cy) {
         this.cy = cy;
     }
@@ -114,4 +114,4 @@ class ManualAggregateSyncPageObject {
     }
 }
 
-export default ManualAggregateSyncPageObject;
+export default ManualAggregatedSyncPageObject;
