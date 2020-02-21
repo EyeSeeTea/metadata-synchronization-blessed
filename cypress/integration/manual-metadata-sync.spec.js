@@ -4,7 +4,7 @@ context("Manual metadata sync", function() {
     const page = new ManualMetadataSyncPageObject(cy);
 
     const anyDataElement = "ENTO-IR- Mosquito age";
-    const anyInstance = "hNRtP9Jl5yZ";
+    const anyInstance = "Y5QsHDoD4I0";
 
     beforeEach(() => {
         page.open();
@@ -27,98 +27,36 @@ context("Manual metadata sync", function() {
         page.closeSyncResultsDialog();
     });
 
-    // it("should show the org unit step error if user try click on next without selecting the org unit", function() {
-    //     page.search(anyDataset)
-    //         .selectRow(anyDataset)
-    //         .openSyncDialog()
-    //         .next()
+    it("should show the instance selection step error if user try click on next without selecting an instance", function() {
+        page.search(anyDataElement)
+            .selectRow(anyDataElement)
+            .openSyncDialog()
+            .next()
+            .next()
+            .error.contains("You need to select at least one instance");
+    });
 
-    //         .error.contains("You need to select at least one organisation unit");
-    // });
+    it("should have synchronize button disabled to open sync dialog", function() {
+        page.search(anyDataElement)
+            .selectRow(anyDataElement)
+            .openSyncDialog()
+            .syncButton.should("be.disabled");
+    });
 
-    // it("should show the instance selection step error if user try click on next without selecting an instance", function() {
-    //     page.search(anyDataset)
-    //         .selectRow(anyDataset)
-    //         .openSyncDialog()
+    it("should have synchronize button disabled if only contains default include exclude", function() {
+        page.search(anyDataElement)
+            .selectRow(anyDataElement)
+            .openSyncDialog()
+            .next()
+            .syncButton.should("be.disabled");
+    });
 
-    //         .selectOrgUnit(anyOrgUnit)
-    //         .next()
-
-    //         .selectAllPeriods()
-    //         .next()
-
-    //         .selectAllAttributesCategoryOptions()
-    //         .next()
-
-    //         .next()
-
-    //         .error.contains("You need to select at least one instance");
-    // });
-
-    // it("should have synchronize button disabled to open sync dialog", function() {
-    //     page.search(anyDataset)
-    //         .selectRow(anyDataset)
-    //         .openSyncDialog()
-    //         .syncButton.should("be.disabled");
-    // });
-
-    // it("should have synchronize button disabled if only contains org unit", function() {
-    //     page.search(anyDataset)
-    //         .selectRow(anyDataset)
-    //         .openSyncDialog()
-
-    //         .selectOrgUnit(anyOrgUnit)
-    //         .next()
-
-    //         .syncButton.should("be.disabled");
-    // });
-
-    // it("should have synchronize button disabled if only contains org unit and periods", function() {
-    //     page.search(anyDataset)
-    //         .selectRow(anyDataset)
-    //         .openSyncDialog()
-
-    //         .selectOrgUnit(anyOrgUnit)
-    //         .next()
-
-    //         .selectAllPeriods()
-    //         .next()
-
-    //         .syncButton.should("be.disabled");
-    // });
-
-    // it("should have synchronize button disabled if only contains org unit, periods and category options", function() {
-    //     page.search(anyDataset)
-    //         .selectRow(anyDataset)
-    //         .openSyncDialog()
-
-    //         .selectOrgUnit(anyOrgUnit)
-    //         .next()
-
-    //         .selectAllPeriods()
-    //         .next()
-
-    //         .selectAllAttributesCategoryOptions()
-    //         .next()
-
-    //         .syncButton.should("be.disabled");
-    // });
-
-    // it("should have synchronize button enabled if contains org unit, periods, category options and one instance", function() {
-    //     page.search(anyDataset)
-    //         .selectRow(anyDataset)
-    //         .openSyncDialog()
-
-    //         .selectOrgUnit(anyOrgUnit)
-    //         .next()
-
-    //         .selectAllPeriods()
-    //         .next()
-
-    //         .selectAllAttributesCategoryOptions()
-    //         .next()
-
-    //         .selectReceiverInstance(anyInstance)
-    //         .syncButton.should("not.be.disabled");
-    // });
+    it("should have synchronize button enabled if contains org unit, periods, category options and one instance", function() {
+        page.search(anyDataElement)
+            .selectRow(anyDataElement)
+            .openSyncDialog()
+            .next()
+            .selectReceiverInstance(anyInstance)
+            .syncButton.should("not.be.disabled");
+    });
 });
