@@ -28,6 +28,22 @@ interface CombinedMetadata {
     };
 }
 
+const getFieldsByModel = (model: typeof D2Model) => {
+    switch (model.getCollectionName()) {
+        case "dataElements":
+            return {
+                categoryCombo: {
+                    categories: {
+                        categoryOptions: { id: true, name: true, shortName: true, code: true },
+                    },
+                },
+                optionSet: { options: { id: true, name: true, shortName: true, code: true } },
+            };
+        default:
+            return {};
+    }
+};
+
 const getCombinedMetadata = async (api: D2Api, model: typeof D2Model, id: string) => {
     const { objects } = ((await model
         .getApiModel(api)
@@ -35,12 +51,7 @@ const getCombinedMetadata = async (api: D2Api, model: typeof D2Model, id: string
             fields: {
                 id: true,
                 name: true,
-                categoryCombo: {
-                    categories: {
-                        categoryOptions: { id: true, name: true, shortName: true, code: true },
-                    },
-                },
-                optionSet: { options: { id: true, name: true, shortName: true, code: true } },
+                ...getFieldsByModel(model),
             },
             filter: {
                 id: {
