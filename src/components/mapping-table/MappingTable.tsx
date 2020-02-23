@@ -228,6 +228,7 @@ export default function MappingTable({
             {
                 name: "mapped-id",
                 text: "Mapped ID",
+                sortable: false,
                 getValue: (row: MetadataType) => {
                     const mappedId = _.get(mapping, [type, row.id, "mappedId"], row.id);
                     const cleanId = cleanOrgUnitPath(mappedId);
@@ -256,6 +257,7 @@ export default function MappingTable({
             {
                 name: "mapped-name",
                 text: "Mapped Name",
+                sortable: false,
                 getValue: (row: MetadataType) => {
                     const {
                         mappedId = row.id,
