@@ -48,7 +48,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const mappedId = _.get(mapping, [model.getCollectionName(), element?.id ?? "", "mappedId"]);
     const defaultSelection = mappedId !== "DISABLED" ? mappedId : undefined;
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
-    const [filterRows, setFilterRows] = useState<string[]>([]);
+    const [filterRows, setFilterRows] = useState<string[]>();
 
     useEffect(() => {
         let mounted = true;
