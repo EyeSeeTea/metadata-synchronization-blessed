@@ -343,7 +343,26 @@ export const getDefaultIds = memoize(
             .map(({ id }) => id)
             .value();
     },
-    { maxArgs: 0 }
+    { serializer: (api: D2Api) => api.baseUrl }
+);
+
+export const getCategoryOptionCombos = memoize(
+    async (api: D2Api) => {
+        const { objects } = await api.models.categoryOptionCombos
+            .get({
+                paging: false,
+                fields: {
+                    id: true,
+                    name: true,
+                    categoryCombo: true,
+                    categoryOptions: true,
+                },
+            })
+            .getData();
+
+        return objects;
+    },
+    { serializer: (api: D2Api) => api.baseUrl }
 );
 
 export const getRootOrgUnit = memoize(
@@ -354,7 +373,7 @@ export const getRootOrgUnit = memoize(
                 fields: { $owner: true },
             })
             .getData(),
-    { maxArgs: 0 }
+    { serializer: (api: D2Api) => api.baseUrl }
 );
 
 export function cleanObjectDefault(object: ProgramEvent, defaults: string[]): ProgramEvent;

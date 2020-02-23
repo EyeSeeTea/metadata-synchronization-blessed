@@ -9,6 +9,8 @@ interface CombinedMetadata {
     id: string;
     name: string;
     categoryCombo?: {
+        id: string;
+        name: string;
         categories: {
             categoryOptions: {
                 id: string;
@@ -26,6 +28,14 @@ interface CombinedMetadata {
             code: string;
         }[];
     };
+    commentOptionSet?: {
+        options: {
+            id: string;
+            name: string;
+            shortName: string;
+            code: string;
+        }[];
+    };
 }
 
 const getFieldsByModel = (model: typeof D2Model) => {
@@ -33,11 +43,16 @@ const getFieldsByModel = (model: typeof D2Model) => {
         case "dataElements":
             return {
                 categoryCombo: {
+                    id: true,
+                    name: true,
                     categories: {
                         categoryOptions: { id: true, name: true, shortName: true, code: true },
                     },
                 },
                 optionSet: { options: { id: true, name: true, shortName: true, code: true } },
+                commentOptionSet: {
+                    options: { id: true, name: true, shortName: true, code: true },
+                },
             };
         default:
             return {};
@@ -130,7 +145,7 @@ const getCategoryOptions = (object: CombinedMetadata) => {
 };
 
 const getOptions = (object: CombinedMetadata) => {
-    return object.optionSet?.options ?? [];
+    return _.union(object.optionSet?.options, object.commentOptionSet?.options);
 };
 
 export const buildMapping = async (
@@ -148,6 +163,15 @@ export const buildMapping = async (
 
     const [mappedElement] = await autoMap(instanceApi, model, { id: mappedId }, mappedId);
 
+    const categoryCombos = {
+        [originMetadata[0].categoryCombo?.id ?? ""]: {
+            mappedId: destinationMetadata[0].categoryCombo?.id ?? "DISABLED",
+            name: destinationMetadata[0].categoryCombo?.name,
+            mapping: {},
+            conflicts: false,
+        },
+    };
+
     const categoryOptions = await autoMapCollection(
         instanceApi,
         getCategoryOptions(originMetadata[0]),
@@ -164,6 +188,7 @@ export const buildMapping = async (
 
     const mapping = _.omitBy(
         {
+            categoryCombos,
             categoryOptions,
             options,
         },

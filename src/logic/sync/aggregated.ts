@@ -1,17 +1,10 @@
+import { D2CategoryOptionCombo } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { DataImportResponse } from "../../types/d2";
 import { AggregatedPackage, DataValue } from "../../types/synchronization";
-import {
-    buildMetadataDictionary,
-    cleanDataImportResponse,
-    cleanObjectDefault,
-    cleanOrgUnitPath,
-    getAggregatedData,
-    getDefaultIds,
-    postAggregatedData,
-} from "../../utils/synchronization";
+import { buildMetadataDictionary, cleanDataImportResponse, cleanObjectDefault, cleanOrgUnitPath, getAggregatedData, getCategoryOptionCombos, getDefaultIds, postAggregatedData } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
 
 export class AggregatedSync extends GenericSync {
@@ -102,40 +95,83 @@ export class AggregatedSync extends GenericSync {
     ): Promise<AggregatedPackage> {
         const { dataValues: oldDataValues } = payload;
         const defaultIds = await getDefaultIds(this.api);
+        const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
+        const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
 
         const dataValues = oldDataValues
             .map(dataValue => cleanObjectDefault(dataValue, defaultIds))
-            .map(dataValue => this.buildMappedDataValue(dataValue, instance.metadataMapping))
+            .map(dataValue =>
+                this.buildMappedDataValue(
+                    dataValue,
+                    instance.metadataMapping,
+                    originCategoryOptionCombos,
+                    destinationCategoryOptionCombos
+                )
+            )
             .filter(this.isDisabledDataValue);
 
         return { dataValues };
     }
 
     private buildMappedDataValue(
-        {
-            orgUnit,
-            dataElement,
-            categoryOptionCombo: categoryOption,
-            attributeOptionCombo: attributeOption,
-            ...rest
-        }: DataValue,
-        mapping: MetadataMappingDictionary
+        { orgUnit, dataElement, categoryOptionCombo, ...rest }: DataValue,
+        mapping: MetadataMappingDictionary,
+        originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
     ): DataValue {
         const { organisationUnits = {}, dataElements = {} } = mapping;
-        const { categoryOptions = {} } = dataElements[dataElement]?.mapping ?? {};
 
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
-        const mappedCategory = categoryOptions[categoryOption]?.mappedId ?? categoryOption;
-        const mappedAttribute = categoryOptions[attributeOption]?.mappedId ?? attributeOption;
+        const mappedCategory = this.mapCategoryOptionCombo(
+            categoryOptionCombo,
+            dataElements[dataElement]?.mapping,
+            originCategoryOptionCombos,
+            destinationCategoryOptionCombos
+        );
 
         return {
             orgUnit: cleanOrgUnitPath(mappedOrgUnit),
             dataElement: mappedDataElement,
             categoryOptionCombo: mappedCategory,
-            attributeOptionCombo: mappedAttribute,
             ...rest,
         };
+    }
+
+    private mapCategoryOptionCombo(
+        optionCombo: string,
+        mapping: MetadataMappingDictionary = {},
+        originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+    ): string {
+        const { categoryOptions = {}, categoryCombos = {} } = mapping;
+        const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
+
+        // Candidates built from equal category options
+        const candidates = _.filter(destinationCategoryOptionCombos, o =>
+            _.isEqual(
+                _.sortBy(o.categoryOptions, ["id"]),
+                _.sortBy(
+                    origin?.categoryOptions?.map(({ id }) => ({
+                        id: categoryOptions[id]?.mappedId ?? id,
+                    })),
+                    ["id"]
+                )
+            )
+        );
+
+        // Exact object built from equal category options and combo
+        const exactObject = _.find(candidates, o =>
+            _.isEqual(o.categoryCombo, {
+                id:
+                    categoryCombos[origin?.categoryCombo?.id ?? ""]?.mappedId ??
+                    origin?.categoryCombo?.id,
+            })
+        );
+
+        // If there's only one candidate, ignore the category combo, else provide exact object
+        const result = candidates.length === 1 ? _.first(candidates) : exactObject;
+        return result?.id ?? optionCombo;
     }
 
     private isDisabledDataValue(dataValue: DataValue): boolean {
