@@ -363,8 +363,8 @@ export function cleanObjectDefault(object: ProgramEvent | DataValue, defaults: s
     return _.pickBy(object, value => !defaults.includes(String(value)));
 }
 
-export function cleanOrgUnitPath(orgUnitPath: string): string {
-    return _.last(orgUnitPath.split("/")) ?? orgUnitPath;
+export function cleanOrgUnitPath(orgUnitPath?: string): string {
+    return _.last(orgUnitPath?.split("/")) ?? orgUnitPath ?? "";
 }
 
 export function cleanOrgUnitPaths(orgUnitPaths: string[]): string[] {
