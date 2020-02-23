@@ -357,7 +357,6 @@ export default function MappingTable({
                 multiple: true,
                 onClick: disableMapping,
                 icon: <Icon>sync_disabled</Icon>,
-                isActive: () => type === "dataElements" || type === "organisationUnits",
             },
             {
                 name: "reset-mapping",
@@ -374,14 +373,7 @@ export default function MappingTable({
                 icon: <Icon>assignment</Icon>,
             },
         ],
-        [
-            disableMapping,
-            openMappingDialog,
-            resetMapping,
-            applyAutoMapping,
-            openRelatedMapping,
-            type,
-        ]
+        [disableMapping, openMappingDialog, resetMapping, applyAutoMapping, openRelatedMapping]
     );
 
     const notifyNewModel = useCallback(model => {

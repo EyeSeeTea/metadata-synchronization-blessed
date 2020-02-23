@@ -122,7 +122,7 @@ export class AggregatedSync extends GenericSync {
         mapping: MetadataMappingDictionary
     ): DataValue {
         const { organisationUnits = {}, dataElements = {} } = mapping;
-        const { categoryOptions = {} } = dataElements[dataElement].mapping ?? {};
+        const { categoryOptions = {} } = dataElements[dataElement]?.mapping ?? {};
 
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
