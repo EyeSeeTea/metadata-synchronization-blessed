@@ -74,7 +74,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
 
     const onChangeMapping = async (subMapping: MetadataMappingDictionary) => {
         const newMapping = _.clone(instance.metadataMapping);
-        _.set(newMapping, mappingPath, subMapping);
+        _.set(newMapping, [...mappingPath, "mapping"], subMapping);
         updateMapping(newMapping);
     };
 
