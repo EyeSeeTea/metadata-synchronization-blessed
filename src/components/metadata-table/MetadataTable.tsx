@@ -1,7 +1,6 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import { D2Api, useD2, useD2Api, useD2ApiData } from "d2-api";
-import D2ApiModel from "d2-api/api/models";
+import { D2Api, Model, useD2, useD2Api, useD2ApiData } from "d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -32,6 +31,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     selectedIds?: string[];
     excludedIds?: string[];
     childrenKeys?: string[];
+    initialShowOnlySelected?: boolean;
     additionalColumns?: TableColumn<MetadataType>[];
     additionalFilters?: ReactNode;
     additionalActions?: TableAction<MetadataType>[];
@@ -114,6 +114,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     additionalFilters = null,
     additionalActions = [],
     loading: providedLoading,
+    initialShowOnlySelected = false,
     ...rest
 }) => {
     const d2 = useD2() as D2;
@@ -132,8 +133,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         groupData: [],
         level: "",
         levelData: [],
-        showOnlySelected: false,
-        selectedIds: [],
+        showOnlySelected: initialShowOnlySelected,
+        selectedIds: selectedIds,
         parentOrgUnits: [],
     });
 
@@ -306,7 +307,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const apiModel = model.getApiModel(api);
     const apiQuery = useMemo(() => {
-        const query: Parameters<InstanceType<typeof D2ApiModel>["get"]>[0] = {
+        const query: Parameters<InstanceType<typeof Model>["get"]>[0] = {
             fields: model ? model.getFields() : d2BaseModelFields,
             filter: {
                 lastUpdated: filters.lastUpdated

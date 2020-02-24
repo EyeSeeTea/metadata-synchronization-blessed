@@ -36,14 +36,15 @@ Run integration tests locally:
 $ export CYPRESS_DHIS2_AUTH='admin:district'
 $ export CYPRESS_EXTERNAL_API="http://localhost:8080"
 $ export CYPRESS_ROOT_URL=http://localhost:8081
+$ export CYPRESS_ENCRYPTION_KEY=anyKey
 
 $ yarn cy:e2e:run # non-interactive
 $ yarn cy:e2e:open # interactive UI
 ```
 
-Application should be running at CYPRESS_ROOT_URL with as the environment variable REACT_APP_CYPRESS set to True. 
+Application should be running at CYPRESS_ROOT_URL with as the environment variable REACT_APP_CYPRESS set to True.
 
-For this to work in Travis CI, you will have to create an environment variable CYPRESS_DHIS2_AUTH (Settings -> Environment Variables) with the password used in your testing DHIS2 instance.
+For this to work in Travis CI, you will have to create an environment variables (Settings -> Environment Variables) CYPRESS_DHIS2_AUTH with the password used in your testing DHIS2 instance and CYPRESS_ENCRYPTION_KEY used to encrypt passwords of receiver instances.
 
 Note tests only pass on the testing docker instance eyeseetea/dhis2-data:2.30-datasync-sender
 
