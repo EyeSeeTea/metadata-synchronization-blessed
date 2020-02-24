@@ -646,6 +646,33 @@ msgstr ""
 msgid "Could not apply mapping, please try again."
 msgstr ""
 
+msgid "You need at least one item to disable mapping"
+msgstr ""
+
+msgid "Disable mapping to default value"
+msgstr ""
+
+msgid "Are you sure you want to disable mapping for {{total}} elements?"
+msgstr ""
+
+msgid "You need at least one item to reset mapping"
+msgstr ""
+
+msgid "Reset mapping to default value"
+msgstr ""
+
+msgid "Are you sure you want to clear mapping for {{total}} elements?"
+msgstr ""
+
+msgid "Auto-mapping does not support multiple action yet"
+msgstr ""
+
+msgid "Unexpected error, could not apply auto mapping"
+msgstr ""
+
+msgid "Could not find a suitable candidate to apply auto-mapping"
+msgstr ""
+
 msgid "Set mapping"
 msgstr ""
 
@@ -658,25 +685,13 @@ msgstr ""
 msgid "Instance selection"
 msgstr ""
 
-msgid "Reset mapping to default value"
-msgstr ""
-
-msgid "Are you sure you want to clear mapping for {{total}} elements?"
-msgstr ""
-
-msgid "Please select at least one item to reset mapping"
-msgstr ""
-
 msgid "Reset mapping"
 msgstr ""
 
 msgid "Disable mapping"
 msgstr ""
 
-msgid "Are you sure you want to disable mapping for {{total}} elements?"
-msgstr ""
-
-msgid "Please select at least one item to disable mapping"
+msgid "Auto-map element"
 msgstr ""
 
 msgid "Reset mapping to default values"

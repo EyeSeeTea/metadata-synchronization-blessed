@@ -83,6 +83,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             notifyNewSelection={onUpdateSelection}
             selectedIds={selected ? [selected] : undefined}
             hideSelectAll={true}
+            initialShowOnlySelected={!!selected}
         />
     );
 

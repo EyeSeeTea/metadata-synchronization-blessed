@@ -1,5 +1,4 @@
-import { D2Api, D2ModelSchemas } from "d2-api";
-import D2ApiModel from "d2-api/api/models";
+import { D2Api, D2ModelSchemas, Model } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
@@ -39,8 +38,8 @@ export const getAllIdentifiers = memoize(
         search: string | undefined,
         _modelName: string,
         _baseUrl: string,
-        apiModel: InstanceType<typeof D2ApiModel>,
-        apiQuery: Parameters<InstanceType<typeof D2ApiModel>["get"]>[0]
+        apiModel: InstanceType<typeof Model>,
+        apiQuery: Parameters<InstanceType<typeof Model>["get"]>[0]
     ) => {
         const { objects } = await apiModel
             .get({

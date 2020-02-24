@@ -62,10 +62,11 @@ const Dropdown: React.FC<DropdownProps> = ({
             <FormControl>
                 <InputLabel>{label}</InputLabel>
                 <Select
+                    key={`dropdown-select-${label}`}
                     value={value}
                     onChange={e => {
                         onChange(e);
-                        onValueChange(e.target.value);
+                        onValueChange(e.target.value as string);
                     }}
                     MenuProps={{
                         getContentAnchorEl: null,
@@ -78,8 +79,8 @@ const Dropdown: React.FC<DropdownProps> = ({
                     {!hideEmpty && (
                         <MenuItem value={""}>{emptyLabel ?? i18n.t("<No value>")}</MenuItem>
                     )}
-                    {items.map((element, index) => (
-                        <MenuItem key={`element-${index}`} value={element.id}>
+                    {items.map(element => (
+                        <MenuItem key={`element-${element.id}`} value={element.id}>
                             {element.name}
                         </MenuItem>
                     ))}

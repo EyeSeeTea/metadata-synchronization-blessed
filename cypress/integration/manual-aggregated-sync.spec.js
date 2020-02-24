@@ -1,27 +1,140 @@
-import { dataTest } from "../support/utils";
+import ManualAggregatedSyncPageObject from "../support/page-objects/ManualAggregatedSyncPageObject";
 
-context("Manual aggregated sync", function() {
+/**
+ * Database: d2-docker-eyeseetea-2-30-datasync-sender
+ */
+context("Manual aggregated sync", () => {
+    const page = new ManualAggregatedSyncPageObject(cy);
+
+    const inputs = {
+        orgUnit: "Ghana",
+        instance: "Y5QsHDoD4I0",
+        dataSet: "Malaria annual data",
+    };
+
     beforeEach(() => {
-        cy.login("admin");
-        cy.visit("/#/sync/aggregated");
-        cy.get(dataTest("headerbar-title")).contains("MetaData Synchronization");
+        page.open();
     });
 
-    it("has the correct title", function() {
-        cy.get(dataTest("page-header-title")).contains("Aggregated Data Synchronization");
+    it("should have the correct title", () => {
+        page.assertTitle(title => title.contains("Aggregated Data Synchronization"));
     });
 
-    /**
-     * Database: d2-docker-eyeseetea-2-30-datasync-sender
-     */
-    it("syncs correctly malaria annual data", function() {
-        cy.get('[data-test="search"] > div > [aria-invalid="false"]').type("Malaria annual data");
-        cy.get(dataTest("TableCell-data-table-row-0-column-displayname")).contains(
-            "Malaria annual data"
-        );
-        cy.get(dataTest("Checkbox-data-table-row-0")).click();
-        cy.get(
-            '[data-test="objects-table-action-button"] > :nth-child(1) > [focusable="false"]'
-        ).click();
+    it("should syncs correctly malaria annual data", () => {
+        page.search(inputs.dataSet)
+            .selectRow(inputs.dataSet)
+            .openSyncDialog()
+
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .selectAllAttributesCategoryOptions()
+            .next()
+
+            .selectReceiverInstance(inputs.instance)
+            .synchronize()
+
+            .assertSyncResults(syncResults => syncResults.contains("Success"))
+            .closeSyncResultsDialog();
+    });
+
+    it("should show the org unit step error if user try click on next without selecting the org unit", () => {
+        page.search(inputs.dataSet)
+            .selectRow(inputs.dataSet)
+            .openSyncDialog()
+            .next()
+            .assertError(error =>
+                error.contains("You need to select at least one organisation unit")
+            );
+    });
+
+    it("should show the instance selection step error if user try click on next without selecting an instance", () => {
+        page.search(inputs.dataSet)
+            .selectRow(inputs.dataSet)
+            .openSyncDialog()
+
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .selectAllAttributesCategoryOptions()
+            .next()
+
+            .next()
+
+            .assertError(error => error.contains("You need to select at least one instance"));
+    });
+
+    it("should have synchronize button disabled to open sync dialog", () => {
+        page.search(inputs.dataSet)
+            .selectRow(inputs.dataSet)
+            .openSyncDialog()
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
+    });
+
+    it("should have synchronize button disabled if only contains org unit", () => {
+        page.search(inputs.dataSet)
+            .selectRow(inputs.dataSet)
+            .openSyncDialog()
+
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
+    });
+
+    it("should have synchronize button disabled if only contains org unit and periods", () => {
+        page.search(inputs.dataSet)
+            .selectRow(inputs.dataSet)
+            .openSyncDialog()
+
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
+    });
+
+    it("should have synchronize button disabled if only contains org unit, periods and category options", () => {
+        page.search(inputs.dataSet)
+            .selectRow(inputs.dataSet)
+            .openSyncDialog()
+
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .selectAllAttributesCategoryOptions()
+            .next()
+
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
+    });
+
+    it("should have synchronize button enabled if contains org unit, periods, category options and one instance", () => {
+        page.search(inputs.dataSet)
+            .selectRow(inputs.dataSet)
+            .openSyncDialog()
+
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .selectAllAttributesCategoryOptions()
+            .next()
+
+            .selectReceiverInstance(inputs.instance)
+
+            .assertSyncButton(syncButton => syncButton.should("not.be.disabled"));
     });
 });
