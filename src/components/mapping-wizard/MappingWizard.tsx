@@ -1,21 +1,14 @@
 import i18n from "@dhis2/d2-i18n";
 import { DialogContent } from "@material-ui/core";
-import { ConfirmationDialog, Wizard } from "d2-ui-components";
+import { ConfirmationDialog, Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
-import React, { ReactNode } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import { CategoryOptionModel, OptionModel } from "../../models/d2Model";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import MappingTable, { MappingTableProps } from "../mapping-table/MappingTable";
 
-interface MappingWizardStep {
-    key: string;
-    label: string;
-    description?: string;
-    warning?: string;
-    help?: string;
-    props?: MappingTableProps;
-    component: ReactNode;
+interface MappingWizardStep extends WizardStep {
     validationKeys: string[];
     showOnSyncDialog?: boolean;
 }
@@ -78,6 +71,10 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
         updateMapping(newMapping);
     };
 
+    const onStepChangeRequest = async (_prev: WizardStep, _next: WizardStep) => {
+        return undefined;
+    };
+
     const steps: MappingWizardStep[] = availableSteps.map(step => ({
         ...step,
         props: {
@@ -107,7 +104,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
             <DialogContent>
                 <Wizard
                     useSnackFeedback={true}
-                    onStepChangeRequest={_.noop}
+                    onStepChangeRequest={onStepChangeRequest}
                     initialStepKey={initialStepKey}
                     lastClickableStepIndex={steps.length - 1}
                     steps={steps}

@@ -1,5 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
-import { ReactNode } from "react";
+import { WizardStep } from "d2-ui-components";
 import SyncRule from "../../models/syncRule";
 import GeneralInfoStep from "./common/GeneralInfoStep";
 import InstanceSelectionStep from "./common/InstanceSelectionStep";
@@ -12,13 +12,7 @@ import OrganisationUnitsSelectionStep from "./data/OrganisationUnitsSelectionSte
 import PeriodSelectionStep from "./data/PeriodSelectionStep";
 import MetadataIncludeExcludeStep from "./metadata/MetadataIncludeExcludeStep";
 
-export interface SyncWizardStep {
-    key: string;
-    label: string;
-    description?: string;
-    warning?: string;
-    help?: string;
-    component: ReactNode;
+export interface SyncWizardStep extends WizardStep {
     validationKeys: string[];
     showOnSyncDialog?: boolean;
 }

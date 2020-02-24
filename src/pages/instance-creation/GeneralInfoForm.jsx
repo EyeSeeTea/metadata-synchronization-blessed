@@ -43,6 +43,7 @@ class GeneralInfoForm extends React.Component {
 
     state = {
         isSaving: false,
+        passwordChanged: false,
     };
 
     setFormReference = formReference => {
@@ -64,6 +65,7 @@ class GeneralInfoForm extends React.Component {
                 newInstance = instance.setUsername(newValue);
                 break;
             case "password":
+                this.setState({ passwordChanged: true });
                 newInstance = instance.setPassword(newValue);
                 break;
             case "description":
@@ -156,7 +158,7 @@ class GeneralInfoForm extends React.Component {
             },
             {
                 name: "password",
-                value: instance.password,
+                value: this.state.passwordChanged ? instance.password : "",
                 component: TextField,
                 props: {
                     floatingLabelText: `${i18n.t("Password")} (*)`,
@@ -170,7 +172,7 @@ class GeneralInfoForm extends React.Component {
                     {
                         message: i18n.t("Field cannot be blank"),
                         validator(value) {
-                            return Validators.isRequired(value);
+                            return instance.id ? true : Validators.isRequired(value);
                         },
                     },
                 ],

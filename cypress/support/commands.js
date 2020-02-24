@@ -1,13 +1,25 @@
 // <reference types="Cypress" />
 /* global Cypress, cy */
 
-import { externalUrl, generateFixtures, stubBackend } from "./network-fixtures";
 import _ from "lodash";
 
+const externalUrl = Cypress.env("EXTERNAL_API");
+const appUrl = Cypress.env("ROOT_URL");
 const dhis2AuthEnvValue = Cypress.env("DHIS2_AUTH");
+
 if (!dhis2AuthEnvValue) {
     throw new Error("CYPRESS_DHIS2_AUTH=user1:pass1[,user2:pass2,...] not set");
 }
+
+if (!externalUrl) {
+    throw new Error("CYPRESS_EXTERNAL_API not set");
+}
+
+if (!appUrl) {
+    throw new Error("CYPRESS_ROOT_URL not set");
+}
+
+Cypress.config("baseUrl", appUrl);
 
 const dhis2Auth = _(dhis2AuthEnvValue)
     .split(",")
@@ -19,34 +31,27 @@ Cypress.Cookies.defaults({
     whitelist: "JSESSIONID",
 });
 
+const encryptionKey = Cypress.env("ENCRYPTION_KEY");
 Cypress.Commands.add("login", (username, _password = null) => {
     // Start server and create fixture for the encryption key
     cy.server();
-    cy.fixture("app-config.json").then(json => cy.route("GET", "app-config.json", json));
+    cy.fixture("app-config.json").then(json => {
+        if (encryptionKey) json.encryptionKey = encryptionKey;
+        cy.route("GET", "app-config.json", json);
+    });
 
     const password = _password || dhis2Auth[username];
-    if (stubBackend) {
-        cy.log(
-            "Stubbing all backend network requests - unmatched requests will automatically fail"
-        );
-    } else {
-        cy.log(`Performing end-to-end test with API server URL '${externalUrl}'`);
-        if (generateFixtures) {
-            cy.log("Generating fixtures from end-to-end network requests");
-        }
-    }
-    if (!stubBackend) {
-        cy.log("Login", { username });
-        cy.request({
-            method: "GET",
-            url: `${externalUrl}/api/me`,
-            auth: {
-                user: username,
-                pass: password,
-            },
-            log: true,
-        });
-    }
+
+    cy.log("Login", { username });
+    cy.request({
+        method: "GET",
+        url: `${externalUrl}/api/me`,
+        auth: {
+            user: username,
+            pass: password,
+        },
+        log: true,
+    });
 });
 
 Cypress.on("window:before:load", win => {
@@ -57,4 +62,27 @@ Cypress.on("uncaught:exception", (err, runnable) => {
     // returning false here prevents Cypress from failing the test
     console.error("uncaught:exception", { err, runnable });
     return false;
+});
+
+Cypress.Commands.add("waitForStep", stepName => {
+    cy.contains(stepName).should($el => {
+        console.log($el);
+        expect($el.attr("class")).to.contain("current-step", `Current step should be ${stepName}`);
+    });
+});
+
+Cypress.Commands.add("selectInMultiSelector", (selector, option) => {
+    cy.get(selector + " > div select:first").select(option);
+    cy.contains("Selected")
+        .next("button")
+        .click();
+});
+
+Cypress.Commands.add("selectInOrgUnitTree", label => {
+    cy.contains(label)
+        .find("input")
+        .click();
+    cy.contains(label)
+        .should("have.css", "color")
+        .and("equal", "rgb(255, 165, 0)");
 });

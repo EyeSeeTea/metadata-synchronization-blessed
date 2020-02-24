@@ -399,6 +399,15 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
+msgid "Metadata mapping"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "Target"
+msgstr ""
+
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 

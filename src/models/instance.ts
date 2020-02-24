@@ -136,7 +136,11 @@ export default class Instance {
     }
 
     public async save(api: D2Api): Promise<Response> {
-        const instance = this.encryptPassword();
+        const lastInstance = await Instance.get(api, this.id);
+        const password = this.password || lastInstance?.password;
+        if (!password) throw new Error("Attempting to save an instance without password");
+
+        const instance = this.setPassword(password).encryptPassword();
         const exists = !!instance.data.id;
         const element = exists ? instance.data : { ...instance.data, id: generateUid() };
 
@@ -243,7 +247,7 @@ export default class Instance {
                     : null,
             ]),
             password: _.compact([
-                !password
+                !password && !this.id
                     ? {
                           key: "cannot_be_blank",
                           namespace: { field: "password" },
