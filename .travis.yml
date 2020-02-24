@@ -31,8 +31,8 @@ install:
   - yarn build
 script:
   - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true yarn start &
-  - yarn wait-on http-get://localhost:8080
   - yarn wait-on http-get://localhost:8081
+  - yarn wait-on http-get://localhost:8080
   - CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:run
   - kill $(jobs -p) || true
 addons:

@@ -156,7 +156,6 @@ const SyncSummary = ({ response, onClose }) => {
     }, [d2, response]);
 
     if (results.length === 0) return null;
-
     return (
         <ConfirmationDialog
             isOpen={true}
@@ -167,7 +166,7 @@ const SyncSummary = ({ response, onClose }) => {
             fullWidth={true}
         >
             <DialogContent>
-                {results?.map(({ instance, status, report, stats, message }, i) => (
+                {results.map(({ instance, status, report, stats, message }, i) => (
                     <ExpansionPanel
                         defaultExpanded={results.length === 1}
                         className={classes.expansionPanel}

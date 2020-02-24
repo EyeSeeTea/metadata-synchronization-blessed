@@ -44,7 +44,9 @@ export const TestWrapper: React.FC<TestWrapperProps> = ({
         const className = removeParentheses(type.displayName || type.name || type);
         const testAttribute = concatStrings([className, namespace, componentParent, parentId, id]);
         const children = _.flatten([props.children]);
-        const element = React.createElement(wrapType(type, parentId), props, ...children);
+        const element = props["data-test-wrapped"]
+            ? node
+            : React.createElement(wrapType(type, parentId), props, ...children);
 
         const count = dataTestDictionary.get(testAttribute) ?? 0;
         const testId = concatStrings([testAttribute, count > 1 ? String(count) : undefined]);

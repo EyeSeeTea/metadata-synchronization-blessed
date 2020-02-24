@@ -101,6 +101,7 @@ export abstract class GenericSync {
             yield {
                 message: i18n.t("Importing data in instance {{instance}}", {
                     instance: instance.name,
+                    interpolation: { escapeValue: false },
                 }),
             };
 
