@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
-import { D2Api, Model, useD2, useD2Api, PaginatedObjects } from "d2-api";
+import { D2Api, Model, PaginatedObjects, useD2, useD2Api } from "d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -19,13 +19,12 @@ import _ from "lodash";
 import moment from "moment";
 import React, { ChangeEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import i18n from "../../locales";
-import { getOrgUnitSubtree } from "../../logic/utils";
 import { D2Model, DataElementModel } from "../../models/d2Model";
 import { D2 } from "../../types/d2";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPaths, getRootOrgUnit } from "../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";
-import { getAllIdentifiers, getFilterData, getRows } from "./utils";
+import { getAllIdentifiers, getFilterData, getOrgUnitSubtree, getRows } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     api?: D2Api;
@@ -363,7 +362,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     useEffect(() => {
         const { cancel, response } = getAllIdentifiers(
             apiModel.modelName,
-            api.baseUrl,
+            api.apiPath,
             search,
             apiQuery,
             apiModel
@@ -375,7 +374,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .catch(handleError);
 
         return cancel;
-    }, [api.baseUrl, apiModel, apiQuery, search]);
+    }, [api, apiModel, apiQuery, search]);
 
     useEffect(() => {
         let mounted = true;
@@ -390,7 +389,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     useEffect(() => {
         const { response } = getRows(
             apiModel.modelName,
-            api.baseUrl,
+            api.apiPath,
             sorting,
             pagination,
             search,
@@ -418,30 +417,20 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         return () => {
             mounted = false;
         };
-    }, [
-        api.baseUrl,
-        apiModel,
-        apiQuery,
-        sorting,
-        pagination,
-        search,
-        model,
-        notifyRowsChange,
-        filterRows,
-    ]);
+    }, [api, apiModel, apiQuery, sorting, pagination, search, model, notifyRowsChange, filterRows]);
 
     useEffect(() => {
         if (model && model.getGroupFilterName()) {
             getFilterData(
                 model.getGroupFilterName(),
                 "group",
-                api.baseUrl,
+                api.apiPath,
                 api
             ).then(({ objects }) => updateFilters(state => ({ ...state, groupData: objects })));
         }
 
         if (model && model.getLevelFilterName()) {
-            getFilterData(model.getLevelFilterName(), "level", api.baseUrl, api).then(
+            getFilterData(model.getLevelFilterName(), "level", api.apiPath, api).then(
                 ({ objects }) => {
                     // Inference does not work for orgUnits here
                     const levels = (objects as unknown) as { name: string; level: number }[];

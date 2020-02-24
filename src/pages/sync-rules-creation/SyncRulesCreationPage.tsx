@@ -1,4 +1,4 @@
-import { useD2 } from "d2-api";
+import { useD2Api } from "d2-api";
 import { ConfirmationDialog, useLoading } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
@@ -6,7 +6,6 @@ import PageHeader from "../../components/page-header/PageHeader";
 import SyncWizard from "../../components/sync-wizard/SyncWizard";
 import i18n from "../../locales";
 import SyncRule from "../../models/syncRule";
-import { D2 } from "../../types/d2";
 import { SyncRuleType } from "../../types/synchronization";
 
 interface SyncRulesCreationParams {
@@ -20,7 +19,7 @@ const SyncRulesCreation: React.FC = () => {
     const location = useLocation<{ syncRule?: SyncRule }>();
     const loading = useLoading();
     const { id, action, type } = useParams() as SyncRulesCreationParams;
-    const d2 = useD2();
+    const api = useD2Api();
     const [dialogOpen, updateDialogOpen] = useState(false);
     const [syncRule, updateSyncRule] = useState(location.state?.syncRule ?? SyncRule.create(type));
     const isEdit = action === "edit" && !!id;
@@ -44,12 +43,12 @@ const SyncRulesCreation: React.FC = () => {
     useEffect(() => {
         if (isEdit && !!id) {
             loading.show(true, "Loading sync rule");
-            SyncRule.get(d2 as D2, id).then(syncRule => {
+            SyncRule.get(api, id).then(syncRule => {
                 updateSyncRule(syncRule);
                 loading.reset();
             });
         }
-    }, [d2, loading, isEdit, id]);
+    }, [api, loading, isEdit, id]);
 
     return (
         <React.Fragment>

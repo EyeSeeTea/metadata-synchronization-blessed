@@ -9,7 +9,6 @@ import { D2Model } from "../../../models/d2Model";
 import { d2ModelFactory } from "../../../models/d2ModelFactory";
 import { D2, ModelDefinition } from "../../../types/d2";
 import { MetadataPackage } from "../../../types/synchronization";
-import { getBaseUrl } from "../../../utils/d2";
 import { getMetadata } from "../../../utils/synchronization";
 import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
@@ -38,23 +37,21 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
     const [selectedType, setSelectedType] = useState<string>("");
 
     useEffect(() => {
-        getMetadata(getBaseUrl(d2 as D2), syncRule.metadataIds, "id,name").then(
-            (metadata: MetadataPackage) => {
-                const models = _.keys(metadata).map((type: string) => {
-                    return d2ModelFactory(api, type as keyof D2ModelSchemas);
-                });
+        getMetadata(api, syncRule.metadataIds, "id,name").then((metadata: MetadataPackage) => {
+            const models = _.keys(metadata).map((type: string) => {
+                return d2ModelFactory(api, type as keyof D2ModelSchemas);
+            });
 
-                const options = models
-                    .map((model: typeof D2Model) => model.getD2Model(d2 as D2))
-                    .map((model: ModelDefinition) => ({
-                        name: model.displayName,
-                        id: model.name,
-                    }));
+            const options = models
+                .map((model: typeof D2Model) => model.getD2Model(d2 as D2))
+                .map((model: ModelDefinition) => ({
+                    name: model.displayName,
+                    id: model.name,
+                }));
 
-                setModels(models);
-                setModelSelectItems(options);
-            }
-        );
+            setModels(models);
+            setModelSelectItems(options);
+        });
     }, [d2, api, syncRule]);
 
     const { includeRules = [], excludeRules = [] } =

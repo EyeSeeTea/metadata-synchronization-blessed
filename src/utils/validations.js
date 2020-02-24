@@ -13,8 +13,8 @@ const translations = {
     invalid_period: () => i18n.t("Start and end dates are not a valid period"),
 };
 
-export async function getValidationMessages(d2, model, validationKeys = null) {
-    const validationObj = await model.validate(d2);
+export async function getValidationMessages(api, model, validationKeys = null) {
+    const validationObj = await model.validate(api);
 
     return _(validationObj)
         .at(validationKeys || _.keys(validationObj))

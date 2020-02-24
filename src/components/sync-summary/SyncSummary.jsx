@@ -14,7 +14,7 @@ import {
     Typography,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useD2 } from "d2-api";
+import { useD2Api } from "d2-api";
 import { ConfirmationDialog } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -71,7 +71,7 @@ const buildSummaryTable = stats => {
                 {stats.map(({ type, imported, created, deleted, ignored, updated, total }, i) => (
                     <TableRow key={`row-${i}`}>
                         <TableCell>{type}</TableCell>
-                        <TableCell>{created || imported}</TableCell>
+                        <TableCell>{created ?? imported ?? 0}</TableCell>
                         <TableCell>{deleted}</TableCell>
                         <TableCell>{ignored}</TableCell>
                         <TableCell>{updated}</TableCell>
@@ -147,13 +147,13 @@ const buildMessageTable = messages => {
 };
 
 const SyncSummary = ({ response, onClose }) => {
-    const d2 = useD2();
+    const api = useD2Api();
     const classes = useStyles();
     const [results, setResults] = useState([]);
 
     useEffect(() => {
-        response.loadSyncResults(d2).then(setResults);
-    }, [d2, response]);
+        response.loadSyncResults(api).then(setResults);
+    }, [api, response]);
 
     if (results.length === 0) return null;
 

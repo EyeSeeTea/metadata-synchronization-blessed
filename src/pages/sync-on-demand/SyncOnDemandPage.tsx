@@ -1,7 +1,13 @@
 import i18n from "@dhis2/d2-i18n";
 import SyncIcon from "@material-ui/icons/Sync";
 import { useD2, useD2Api } from "d2-api";
-import { useLoading, useSnackbar } from "d2-ui-components";
+import {
+    ObjectsTable,
+    ReferenceObject,
+    TableState,
+    useLoading,
+    useSnackbar,
+} from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
@@ -10,6 +16,7 @@ import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { AggregatedSync } from "../../logic/sync/aggregated";
+import { DeletedSync } from "../../logic/sync/deleted";
 import { EventsSync } from "../../logic/sync/events";
 import { SyncronizationClass } from "../../logic/sync/generic";
 import { MetadataSync } from "../../logic/sync/metadata";
@@ -22,15 +29,18 @@ import {
     ProgramModel,
 } from "../../models/d2Model";
 import { metadataModels } from "../../models/d2ModelFactory";
+import DeletedObject from "../../models/deletedObjects";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
 import { SyncRuleType } from "../../types/synchronization";
+import { MetadataType } from "../../utils/d2";
 import { isAppConfigurator } from "../../utils/permissions";
-
-interface SyncOnDemandPageProps {
-    isDelete?: boolean;
-}
+import {
+    deletedObjectsActions,
+    deletedObjectsColumns,
+    deletedObjectsDetails,
+} from "./deletedObjects";
 
 const config: Record<
     SyncRuleType,
@@ -64,9 +74,15 @@ const config: Record<
         childrenKeys: ["dataElements"],
         SyncClass: EventsSync,
     },
+    deleted: {
+        title: i18n.t("Deleted Objects Synchronization"),
+        models: [],
+        childrenKeys: undefined,
+        SyncClass: DeletedSync,
+    },
 };
 
-const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
+const SyncOnDemandPage: React.FC = () => {
     const snackbar = useSnackbar();
     const loading = useLoading();
     const d2 = useD2();
@@ -80,9 +96,15 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
 
+    const [deletedObjectsRows, setDeletedObjectsRows] = useState<MetadataType[]>([]);
     useEffect(() => {
-        isAppConfigurator(d2 as D2).then(updateAppConfigurator);
-    }, [d2, updateAppConfigurator]);
+        if (type === "deleted")
+            DeletedObject.list(api, {}, {}).then(({ objects }) => setDeletedObjectsRows(objects));
+    }, [api, type]);
+
+    useEffect(() => {
+        isAppConfigurator(api).then(updateAppConfigurator);
+    }, [api, updateAppConfigurator]);
 
     const goBack = () => history.goBack();
 
@@ -116,8 +138,6 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
     };
 
     const handleSynchronization = async (syncRule: SyncRule) => {
-        if (isDelete) throw new Error("Delete is not yet implemented on new sync on demand page");
-
         const { SyncClass } = config[syncRule.type];
 
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
@@ -126,7 +146,7 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
             const sync = new SyncClass(d2 as D2, api, syncRule.toBuilder());
             for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) loading.show(true, message);
-                if (syncReport) await syncReport.save(d2 as D2);
+                if (syncReport) await syncReport.save(api);
                 if (done) {
                     loading.reset();
                     finishSynchronization(syncReport);
@@ -141,19 +161,39 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
         closeDialogs();
     };
 
+    const handleDeletedObjectsTableChange = (tableState: TableState<ReferenceObject>) => {
+        const { selection } = tableState;
+        updateSyncRule(syncRule.updateMetadataIds(selection.map(({ id }) => id)));
+    };
+
     return (
         <TestWrapper>
             <PageHeader onBackClick={goBack} title={title} />
 
-            <MetadataTable
-                models={models}
-                selectedIds={syncRule.metadataIds}
-                excludedIds={syncRule.excludedIds}
-                notifyNewSelection={updateSelection}
-                onActionButtonClick={appConfigurator ? openSynchronizationDialog : undefined}
-                actionButtonLabel={<SyncIcon />}
-                childrenKeys={config[type].childrenKeys}
-            />
+            {type !== "deleted" && (
+                <MetadataTable
+                    models={models}
+                    selectedIds={syncRule.metadataIds}
+                    excludedIds={syncRule.excludedIds}
+                    notifyNewSelection={updateSelection}
+                    onActionButtonClick={appConfigurator ? openSynchronizationDialog : undefined}
+                    actionButtonLabel={<SyncIcon />}
+                    childrenKeys={config[type].childrenKeys}
+                />
+            )}
+
+            {type === "deleted" && (
+                <ObjectsTable<MetadataType>
+                    rows={deletedObjectsRows}
+                    columns={deletedObjectsColumns}
+                    details={deletedObjectsDetails}
+                    actions={deletedObjectsActions}
+                    forceSelectionColumn={true}
+                    onActionButtonClick={openSynchronizationDialog}
+                    onChange={handleDeletedObjectsTableChange}
+                    actionButtonLabel={<SyncIcon />}
+                />
+            )}
 
             {syncDialogOpen && (
                 <SyncDialog

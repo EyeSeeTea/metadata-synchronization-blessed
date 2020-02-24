@@ -31,6 +31,10 @@ const config = {
         models: [ProgramModel],
         childrenKeys: ["dataElements"],
     },
+    deleted: {
+        models: [],
+        childrenKeys: undefined,
+    },
 };
 
 export default function MetadataSelectionStep(props: SyncWizardStepProps) {

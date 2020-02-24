@@ -8,7 +8,6 @@ import React, { useEffect, useState } from "react";
 import { AggregatedSync } from "../../../logic/sync/aggregated";
 import { EventsSync } from "../../../logic/sync/events";
 import { MetadataSync } from "../../../logic/sync/metadata";
-import { getBaseUrl } from "../../../utils/d2";
 import {
     availablePeriods,
     cleanOrgUnitPaths,
@@ -16,8 +15,8 @@ import {
     requestJSONDownload,
 } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
-import { getInstanceOptions } from "./InstanceSelectionStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
+import { getInstanceOptions } from "./InstanceSelectionStep";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -77,11 +76,11 @@ const SaveStep = ({ syncRule, onCancel }) => {
     const save = async () => {
         setIsSaving(true);
 
-        const errors = await getValidationMessages(d2, syncRule);
+        const errors = await getValidationMessages(api, syncRule);
         if (errors.length > 0) {
             snackbar.error(errors.join("\n"));
         } else {
-            await syncRule.updateName(name).save(d2);
+            await syncRule.updateName(name).save(api);
             onCancel();
         }
 
@@ -103,9 +102,9 @@ const SaveStep = ({ syncRule, onCancel }) => {
             ...syncRule.dataSyncAttributeCategoryOptions,
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
-        getMetadata(getBaseUrl(d2), ids, "id,name").then(updateMetadata);
-        getInstanceOptions(d2).then(setInstanceOptions);
-    }, [d2, syncRule]);
+        getMetadata(api.apiPath, ids, "id,name").then(updateMetadata);
+        getInstanceOptions(api).then(setInstanceOptions);
+    }, [api, syncRule]);
 
     return (
         <React.Fragment>

@@ -104,7 +104,7 @@ const App = () => {
 
                                 <div id="app" className="content">
                                     <ApiContext.Provider value={{ d2, api }}>
-                                        <Root d2={d2} />
+                                        <Root />
                                     </ApiContext.Provider>
                                 </div>
 

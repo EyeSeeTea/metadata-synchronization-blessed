@@ -5,7 +5,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import SyncRule from "../../models/syncRule";
 import { getValidationMessages } from "../../utils/validations";
-import { aggregatedSteps, eventsSteps, metadataSteps, SyncWizardStep } from "./Steps";
+import { aggregatedSteps, deletedSteps, eventsSteps, metadataSteps, SyncWizardStep } from "./Steps";
 
 interface SyncWizardProps {
     syncRule: SyncRule;
@@ -18,6 +18,7 @@ const config = {
     metadata: metadataSteps,
     aggregated: aggregatedSteps,
     events: eventsSteps,
+    deleted: deletedSteps,
 };
 
 const SyncWizard: React.FC<SyncWizardProps> = ({

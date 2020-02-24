@@ -1,18 +1,18 @@
-import React from "react";
-import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { withRouter } from "react-router-dom";
-import _ from "lodash";
 import { TextField } from "@dhis2/d2-ui-core";
 import { FormBuilder, Validators } from "@dhis2/d2-ui-forms";
 import { Card, CardContent } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import RaisedButton from "material-ui/RaisedButton/RaisedButton";
+import { ApiContext } from "d2-api";
 import { withSnackbar } from "d2-ui-components";
+import _ from "lodash";
+import RaisedButton from "material-ui/RaisedButton/RaisedButton";
+import PropTypes from "prop-types";
+import React from "react";
+import { withRouter } from "react-router-dom";
 import { getValidationMessages } from "../../utils/validations";
-
-import SaveButton from "./SaveButton";
 import isFormValid from "./FieldValidator";
+import SaveButton from "./SaveButton";
 
 const styles = () => ({
     formContainer: {
@@ -34,8 +34,8 @@ const styles = () => ({
 });
 
 class GeneralInfoForm extends React.Component {
+    static contextType = ApiContext;
     static propTypes = {
-        d2: PropTypes.object.isRequired,
         instance: PropTypes.object.isRequired,
         snackbar: PropTypes.object.isRequired,
         cancelAction: PropTypes.func.isRequired,
@@ -205,7 +205,8 @@ class GeneralInfoForm extends React.Component {
     };
 
     saveAction = async () => {
-        const { d2, instance } = this.props;
+        const { api } = this.context;
+        const { instance } = this.props;
         const fields = this.generateFields();
         const formErrors = isFormValid(fields, this.formReference);
         if (formErrors.length > 0) {
@@ -213,7 +214,7 @@ class GeneralInfoForm extends React.Component {
             return;
         }
         const fieldKeys = fields.map(field => field.name);
-        const errorMessages = await getValidationMessages(d2, instance, fieldKeys);
+        const errorMessages = await getValidationMessages(api, instance, fieldKeys);
 
         if (!_(errorMessages).isEmpty()) {
             this.props.snackbar.error(errorMessages.join("\n"), {
@@ -221,7 +222,7 @@ class GeneralInfoForm extends React.Component {
             });
         } else {
             this.setState({ isSaving: true });
-            await instance.save(d2);
+            await instance.save(api);
             this.setState({ isSaving: false });
             this.props.history.push("/instances");
         }

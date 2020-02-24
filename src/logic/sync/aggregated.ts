@@ -4,7 +4,16 @@ import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { DataImportResponse } from "../../types/d2";
 import { AggregatedPackage, DataValue } from "../../types/synchronization";
-import { buildMetadataDictionary, cleanDataImportResponse, cleanObjectDefault, cleanOrgUnitPath, getAggregatedData, getCategoryOptionCombos, getDefaultIds, postAggregatedData } from "../../utils/synchronization";
+import {
+    buildMetadataDictionary,
+    cleanDataImportResponse,
+    cleanObjectDefault,
+    cleanOrgUnitPath,
+    getAggregatedData,
+    getCategoryOptionCombos,
+    getDefaultIds,
+    postAggregatedData,
+} from "../../utils/synchronization";
 import { GenericSync } from "./generic";
 
 export class AggregatedSync extends GenericSync {

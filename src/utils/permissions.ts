@@ -1,7 +1,6 @@
 import axios from "axios";
+import { D2Api } from "d2-api";
 import memoize from "nano-memoize";
-
-import { D2 } from "../types/d2";
 import SyncRule from "../models/syncRule";
 
 const AppRoles: {
@@ -37,75 +36,91 @@ export interface UserInfo {
     username: string;
 }
 
-const getUserRoles = memoize(async (d2: D2) => {
-    const baseUrl = d2.Api.getApi().baseUrl;
-    const { userCredentials } = (
-        await axios.get(baseUrl + "/me", {
-            withCredentials: true,
-            params: {
-                fields: "userCredentials[userRoles[:all]]",
-            },
-        })
-    ).data;
-    return userCredentials.userRoles;
-});
+export const getUserInfo = memoize(
+    async (api: D2Api): Promise<UserInfo> => {
+        const currentUser = await api.currentUser
+            .get({
+                fields: {
+                    id: true,
+                    name: true,
+                    userCredentials: { username: true },
+                    userGroups: true,
+                },
+            })
+            .getData();
 
-export const shouldShowDeletedObjects = async (d2: D2) => {
-    const userRoles = await getUserRoles(d2);
+        return {
+            userGroups: currentUser.userGroups,
+            id: currentUser.id,
+            name: currentUser.name,
+            username: currentUser.userCredentials.username,
+        };
+    },
+    { serializer: (api: D2Api) => api.baseUrl }
+);
+
+const getUserRoles = memoize(
+    async (api: D2Api) => {
+        const currentUser = await api.currentUser
+            .get({
+                fields: {
+                    userCredentials: {
+                        userRoles: {
+                            $all: true,
+                        },
+                    },
+                },
+            })
+            .getData();
+
+        return currentUser.userCredentials.userRoles;
+    },
+    { serializer: (api: D2Api) => api.baseUrl }
+);
+
+export const shouldShowDeletedObjects = async (api: D2Api) => {
+    const userRoles = await getUserRoles(api);
     const { name } = AppRoles.SHOW_DELETED_OBJECTS;
 
     return !!userRoles.find((role: any) => role.name === name);
 };
 
-export const isGlobalAdmin = async (d2: D2) => {
-    const userRoles = await getUserRoles(d2);
+export const isGlobalAdmin = async (api: D2Api) => {
+    const userRoles = await getUserRoles(api);
     return !!userRoles.find((role: any) =>
         role.authorities.find((authority: string) => authority === "ALL")
     );
 };
 
-export const isAppConfigurator = async (d2: D2) => {
-    const userRoles = await getUserRoles(d2);
-    const globalAdmin = await isGlobalAdmin(d2);
+export const isAppConfigurator = async (api: D2Api) => {
+    const userRoles = await getUserRoles(api);
+    const globalAdmin = await isGlobalAdmin(api);
     const { name } = AppRoles.CONFIGURATION_ACCESS;
 
     return globalAdmin || !!userRoles.find((role: any) => role.name === name);
 };
 
-export const isAppExecutor = async (d2: D2) => {
-    const userRoles = await getUserRoles(d2);
-    const globalAdmin = await isGlobalAdmin(d2);
+export const isAppExecutor = async (api: D2Api) => {
+    const userRoles = await getUserRoles(api);
+    const globalAdmin = await isGlobalAdmin(api);
     const { name } = AppRoles.SYNC_RULE_EXECUTION_ACCESS;
 
     return globalAdmin || !!userRoles.find((role: any) => role.name === name);
 };
 
-export const verifyUserHasAccessToSyncRule = async (d2: D2, syncRuleUId: string) => {
-    const globalAdmin = await isGlobalAdmin(d2);
+export const verifyUserHasAccessToSyncRule = async (api: D2Api, syncRuleUId: string) => {
+    const globalAdmin = await isGlobalAdmin(api);
     if (globalAdmin) return true;
 
-    const appConfigurator = await isAppConfigurator(d2);
-    const userInfo = await getUserInfo(d2);
+    const appConfigurator = await isAppConfigurator(api);
+    const userInfo = await getUserInfo(api);
 
-    const syncRule = await SyncRule.get(d2, syncRuleUId);
+    const syncRule = await SyncRule.get(api, syncRuleUId);
 
     const syncRuleVisibleToUser = syncRuleUId ? syncRule.isVisibleToUser(userInfo, "WRITE") : true;
 
     return appConfigurator && syncRuleVisibleToUser;
 };
-
-export const getUserInfo = memoize(
-    async (d2: D2): Promise<UserInfo> => {
-        const userGroups = await d2.currentUser.getUserGroups();
-
-        return {
-            userGroups: userGroups.toArray(),
-            id: d2.currentUser.id,
-            name: d2.currentUser.name,
-            username: d2.currentUser.username,
-        };
-    }
-);
 
 export const initializeAppRoles = async (baseUrl: string) => {
     for (const role in AppRoles) {
