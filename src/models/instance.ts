@@ -136,7 +136,14 @@ export default class Instance {
     }
 
     public async save(d2: D2): Promise<Response> {
-        const instance = await this.encryptPassword();
+        const lastInstance = await Instance.get(d2, this.id);
+
+        const instanceWithPassword =
+            lastInstance !== undefined && this.password === ""
+                ? this.setPassword(lastInstance.password)
+                : this;
+
+        const instance = instanceWithPassword.encryptPassword();
         const exists = !!instance.data.id;
         const element = exists ? instance.data : { ...instance.data, id: generateUid() };
 
@@ -245,7 +252,7 @@ export default class Instance {
                     : null,
             ]),
             password: _.compact([
-                !password
+                !password && !this.id
                     ? {
                           key: "cannot_be_blank",
                           namespace: { field: "password" },
