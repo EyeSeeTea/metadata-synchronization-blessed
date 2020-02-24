@@ -9,7 +9,12 @@ import { AggregatedSync } from "../../../logic/sync/aggregated";
 import { EventsSync } from "../../../logic/sync/events";
 import { MetadataSync } from "../../../logic/sync/metadata";
 import Instance from "../../../models/instance";
-import { availablePeriods, cleanOrgUnitPaths, getMetadata, requestJSONDownload } from "../../../utils/synchronization";
+import {
+    availablePeriods,
+    cleanOrgUnitPaths,
+    getMetadata,
+    requestJSONDownload,
+} from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
 import { getInstanceOptions } from "./InstanceSelectionStep";
