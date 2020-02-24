@@ -65,7 +65,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                     value={value}
                     onChange={e => {
                         onChange(e);
-                        onValueChange(e.target.value);
+                        onValueChange(e.target.value as string);
                     }}
                     MenuProps={{
                         getContentAnchorEl: null,

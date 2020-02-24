@@ -56,6 +56,7 @@ export const organisationUnitsDetails: typeof d2BaseModelDetails = _.map(
 
 export const d2BaseModelFields = {
     id: include,
+    name: include,
     displayName: include,
     shortName: include,
     code: include,
