@@ -176,6 +176,7 @@ export interface DataValue {
     created: string;
     lastUpdated: string;
     followUp: boolean;
+    comment?: string;
 }
 
 export type DataSyncPeriod =

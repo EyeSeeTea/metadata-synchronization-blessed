@@ -54,8 +54,12 @@ const getFieldsByModel = (model: typeof D2Model) => {
                     options: { id: true, name: true, shortName: true, code: true },
                 },
             };
+        case "options":
+            return {
+                code: true,
+            };
         default:
-            return {};
+            throw new Error(`Not implemented yet for model ${model.getCollectionName()}`);
     }
 };
 
@@ -110,7 +114,7 @@ export const autoMap = async (
     if (candidates.length === 0 && defaultValue) {
         return [{ mappedId: defaultValue }];
     } else {
-        return candidates.map(({ id, name }) => ({ mappedId: id, name }));
+        return candidates.map(({ id, name, code }) => ({ mappedId: id, name, code }));
     }
 };
 
@@ -120,19 +124,20 @@ const autoMapCollection = async (
     model: typeof D2Model,
     filter: string[]
 ) => {
-    if (collection.length === 0) return { conflicts: false };
+    if (collection.length === 0) return {};
 
     const mapping: {
         [id: string]: MetadataMapping;
     } = {};
 
     for (const item of collection) {
-        const candidate = (await autoMap(instanceApi, model, item, "DISABLED", filter))[0] ?? {};
-        if (item.id)
+        const candidate = (await autoMap(instanceApi, model, item, "DISABLED", filter))[0];
+        if (item.id && candidate) {
             mapping[item.id] = {
                 ...candidate,
                 conflicts: candidate.mappedId === "DISABLED",
             };
+        }
     }
 
     return mapping;
@@ -163,14 +168,16 @@ export const buildMapping = async (
 
     const [mappedElement] = await autoMap(instanceApi, model, { id: mappedId }, mappedId);
 
-    const categoryCombos = {
-        [originMetadata[0].categoryCombo?.id ?? ""]: {
-            mappedId: destinationMetadata[0].categoryCombo?.id ?? "DISABLED",
-            name: destinationMetadata[0].categoryCombo?.name,
-            mapping: {},
-            conflicts: false,
-        },
-    };
+    const categoryCombos = originMetadata[0].categoryCombo
+        ? {
+              [originMetadata[0].categoryCombo.id]: {
+                  mappedId: destinationMetadata[0].categoryCombo?.id ?? "DISABLED",
+                  name: destinationMetadata[0].categoryCombo?.name,
+                  mapping: {},
+                  conflicts: false,
+              },
+          }
+        : {};
 
     const categoryOptions = await autoMapCollection(
         instanceApi,
@@ -198,6 +205,7 @@ export const buildMapping = async (
     return {
         mappedId,
         name: mappedElement.name,
+        code: mappedElement.code,
         conflicts: false,
         mapping,
     };
