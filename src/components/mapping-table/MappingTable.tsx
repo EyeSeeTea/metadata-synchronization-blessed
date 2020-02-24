@@ -5,8 +5,8 @@ import {
     ConfirmationDialog,
     TableAction,
     TableColumn,
-    useSnackbar,
     useLoading,
+    useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
@@ -261,7 +261,7 @@ export default function MappingTable({
                 getValue: (row: MetadataType) => {
                     const {
                         mappedId = row.id,
-                        name = mappedId === "DISABLED" ? undefined : i18n.t("Not mapped"),
+                        mappedName = mappedId === "DISABLED" ? undefined : i18n.t("Not mapped"),
                         conflicts = false,
                         mapping: childrenMapping,
                     }: Partial<MetadataMapping> = _.get(mapping, [type, row.id]) ?? {};
@@ -276,7 +276,7 @@ export default function MappingTable({
                     return (
                         <span>
                             <Typography variant={"inherit"} gutterBottom>
-                                {name ?? "-"}
+                                {mappedName ?? "-"}
                             </Typography>
                             {showConflicts && (
                                 <Tooltip title={i18n.t("Mapping has errors")} placement="top">
@@ -371,9 +371,17 @@ export default function MappingTable({
                 multiple: false,
                 onClick: openRelatedMapping,
                 icon: <Icon>assignment</Icon>,
+                isActive: () => !isChildrenMapping,
             },
         ],
-        [disableMapping, openMappingDialog, resetMapping, applyAutoMapping, openRelatedMapping]
+        [
+            disableMapping,
+            openMappingDialog,
+            resetMapping,
+            applyAutoMapping,
+            openRelatedMapping,
+            isChildrenMapping,
+        ]
     );
 
     const notifyNewModel = useCallback(model => {

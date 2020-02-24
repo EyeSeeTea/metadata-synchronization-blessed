@@ -8,6 +8,8 @@ import { cleanOrgUnitPath } from "../../utils/synchronization";
 interface CombinedMetadata {
     id: string;
     name: string;
+    code: string;
+    path?: string;
     categoryCombo?: {
         id: string;
         name: string;
@@ -54,12 +56,8 @@ const getFieldsByModel = (model: typeof D2Model) => {
                     options: { id: true, name: true, shortName: true, code: true },
                 },
             };
-        case "options":
-            return {
-                code: true,
-            };
         default:
-            throw new Error(`Not implemented yet for model ${model.getCollectionName()}`);
+            return {};
     }
 };
 
@@ -70,6 +68,7 @@ const getCombinedMetadata = async (api: D2Api, model: typeof D2Model, id: string
             fields: {
                 id: true,
                 name: true,
+                code: true,
                 ...getFieldsByModel(model),
             },
             filter: {
@@ -91,19 +90,19 @@ export const autoMap = async (
     defaultValue?: string,
     filter?: string[]
 ): Promise<MetadataMapping[]> => {
-    const { objects } = await model
+    const { objects } = (await model
         .getApiModel(instanceApi)
         .get({
-            fields: { id: true, code: true, name: true },
+            fields: { id: true, code: true, name: true, path: true },
             filter: {
                 name: { token: selectedItem.name },
                 shortName: { token: selectedItem.shortName },
-                id: { eq: selectedItem.id },
+                id: { eq: cleanOrgUnitPath(selectedItem.id) },
                 code: { eq: selectedItem.code },
             },
             rootJunction: "OR",
         })
-        .getData();
+        .getData()) as { objects: CombinedMetadata[] };
 
     const candidateWithSameId = _.find(objects, ["id", selectedItem.id]);
     const candidateWithSameCode = _.find(objects, ["code", selectedItem.code]);
@@ -114,7 +113,12 @@ export const autoMap = async (
     if (candidates.length === 0 && defaultValue) {
         return [{ mappedId: defaultValue }];
     } else {
-        return candidates.map(({ id, name, code }) => ({ mappedId: id, name, code }));
+        return candidates.map(({ id, path, name, code }) => ({
+            mappedId: path ?? id,
+            mappedName: name,
+            mappedCode: code,
+            code: selectedItem.code,
+        }));
     }
 };
 
@@ -199,13 +203,11 @@ export const buildMapping = async (
             categoryOptions,
             options,
         },
-        _.isUndefined
+        _.isEmpty
     ) as MetadataMappingDictionary;
 
     return {
-        mappedId,
-        name: mappedElement.name,
-        code: mappedElement.code,
+        ...mappedElement,
         conflicts: false,
         mapping,
     };
