@@ -27,7 +27,7 @@
     "d2": "^31.8.1",
     "d2-api": "^0.1.1-beta.4",
     "d2-manifest": "^1.0.0",
-    "d2-ui-components": "^1.2.0-beta.1",
+    "d2-ui-components": "^1.2.0-beta.4",
     "downshift": "^4.1.0",
     "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
@@ -61,7 +61,7 @@
     "pre-push": "yarn prettify && yarn lint && yarn localize && yarn jest",
     "cy:verify": "cypress verify",
     "cy:e2e:open": "CYPRESS_E2E=true cypress open",
-    "cy:e2e:run": "CYPRESS_E2E=true cypress run"
+    "cy:e2e:run": "CYPRESS_E2E=true cypress run --browser chrome"
   },
   "husky": {
     "hooks": {

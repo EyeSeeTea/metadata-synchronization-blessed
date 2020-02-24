@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
-import { D2Api, Model, useD2, useD2Api, PaginatedObjects } from "d2-api";
+import { D2Api, Model, PaginatedObjects, useD2, useD2Api } from "d2-api";
 import {
     DatePicker,
     ObjectsTable,
