@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-20T17:32:34.811Z\n"
-"PO-Revision-Date: 2020-02-20T17:32:34.811Z\n"
+"POT-Creation-Date: 2020-02-25T07:34:13.075Z\n"
+"PO-Revision-Date: 2020-02-25T07:34:13.075Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -723,9 +723,6 @@ msgstr ""
 msgid "Please fix the issues before saving"
 msgstr ""
 
-msgid "Metadata mapping"
-msgstr ""
-
 msgid "Test Connection"
 msgstr ""
 
@@ -782,6 +779,15 @@ msgid "Tracker"
 msgstr ""
 
 msgid "Instance mapping"
+msgstr ""
+
+msgid "Aggregated metadata mapping"
+msgstr ""
+
+msgid "Tracker metadata mapping"
+msgstr ""
+
+msgid "Organisation unit metadata mapping"
 msgstr ""
 
 msgid "Deleted by"
