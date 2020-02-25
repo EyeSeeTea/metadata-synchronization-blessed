@@ -4,7 +4,11 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import MappingTable from "../../components/mapping-table/MappingTable";
 import PageHeader from "../../components/page-header/PageHeader";
-import { AggregatedDataElementModel, OrganisationUnitModel, ProgramDataElementModel } from "../../models/d2Model";
+import {
+    AggregatedDataElementModel,
+    OrganisationUnitModel,
+    ProgramDataElementModel,
+} from "../../models/d2Model";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { D2 } from "../../types/d2";
 

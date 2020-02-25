@@ -28,9 +28,7 @@ const InstanceMappingLandingPage: React.FC = () => {
                 },
                 {
                     name: i18n.t("Organisation units"),
-                    description: i18n.t(
-                        "Map organisation units between instances"
-                    ),
+                    description: i18n.t("Map organisation units between instances"),
                     listAction: () => history.push(`/instances/mapping/${id}/orgUnit`),
                 },
             ],
