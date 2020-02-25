@@ -289,6 +289,7 @@ export default function MappingTable({
                                         onClick={event => {
                                             event.stopPropagation();
                                             if (!isChildrenMapping) openRelatedMapping([row.id]);
+                                            else openMappingDialog([row.id]);
                                         }}
                                     >
                                         <Icon color="error">warning</Icon>
