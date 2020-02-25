@@ -89,7 +89,7 @@ export abstract class D2Model {
     }
 
     public static getD2Model(d2: D2): ModelDefinition {
-        return d2.models[this.metadataType];
+        return d2.models[this.collectionName];
     }
 
     public static getApiModel(api: D2Api): InstanceType<typeof Model> {
@@ -250,6 +250,7 @@ export class DataElementModel extends D2Model {
 }
 
 export class AggregatedDataElementModel extends DataElementModel {
+    protected static metadataType = "aggregatedDataElement";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
@@ -257,6 +258,7 @@ export class AggregatedDataElementModel extends DataElementModel {
 }
 
 export class ProgramDataElementModel extends DataElementModel {
+    protected static metadataType = "programDataElement";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
@@ -307,7 +309,7 @@ export class DataSetModel extends D2Model {
             ...rest,
             dataElements: dataSetElements.map(({ dataElement }) => ({
                 ...dataElement,
-                __type__: "dataElements",
+                __type__: "aggregatedDataElement",
             })),
         }));
     };
@@ -337,7 +339,7 @@ export class ProgramModel extends D2Model {
                 object.programStages?.map(({ displayName, programStageDataElements }) =>
                     programStageDataElements.map(({ dataElement }) => ({
                         ...dataElement,
-                        __type__: "dataElements",
+                        __type__: "programDataElement",
                         displayName:
                             object.programStages.length > 1
                                 ? `[${displayName}] ${dataElement.displayName}`

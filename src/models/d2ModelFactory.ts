@@ -1,55 +1,40 @@
 import { D2Api, D2ModelSchemas } from "d2-api";
 import _ from "lodash";
-import {
-    D2Model,
-    DataElementGroupModel,
-    DataElementGroupSetModel,
-    DataElementModel,
-    defaultModel,
-    IndicatorGroupModel,
-    IndicatorGroupSetModel,
-    IndicatorModel,
-    OrganisationUnitGroupModel,
-    OrganisationUnitGroupSetModel,
-    OrganisationUnitLevelModel,
-    OrganisationUnitModel,
-    ProgramIndicatorGroupModel,
-    ProgramIndicatorModel,
-    ProgramRuleModel,
-    ProgramRuleVariableModel,
-    ValidationRuleGroupModel,
-    ValidationRuleModel,
-} from "./d2Model";
+import * as classes from "./d2Model";
+import { D2Model, defaultModel } from "./d2Model";
 
-const classes: { [modelName: string]: typeof D2Model } = {
-    DataElementModel,
-    DataElementGroupModel,
-    DataElementGroupSetModel,
-    IndicatorModel,
-    IndicatorGroupModel,
-    IndicatorGroupSetModel,
-    OrganisationUnitModel,
-    OrganisationUnitGroupModel,
-    OrganisationUnitGroupSetModel,
-    OrganisationUnitLevelModel,
-    ValidationRuleModel,
-    ValidationRuleGroupModel,
-    ProgramIndicatorModel,
-    ProgramIndicatorGroupModel,
-    ProgramRuleModel,
-    ProgramRuleVariableModel,
-};
-
-export const metadataModels = Object.values(classes);
+export const metadataModels = [
+    classes.DataElementModel,
+    classes.DataElementGroupModel,
+    classes.DataElementGroupSetModel,
+    classes.IndicatorModel,
+    classes.IndicatorGroupModel,
+    classes.IndicatorGroupSetModel,
+    classes.OrganisationUnitModel,
+    classes.OrganisationUnitGroupModel,
+    classes.OrganisationUnitGroupSetModel,
+    classes.OrganisationUnitLevelModel,
+    classes.ValidationRuleModel,
+    classes.ValidationRuleGroupModel,
+    classes.ProgramIndicatorModel,
+    classes.ProgramIndicatorGroupModel,
+    classes.ProgramRuleModel,
+    classes.ProgramRuleVariableModel,
+];
 
 /**
  * D2ModelProxy allows to create on-demand d2Model classes
  * If the class doesn't exist a new default class is created
- * d2ModelName: keyof D2ModelSchemas (collection name)
+ * d2ModelName: string (collection name or metadata type)
  */
-export function d2ModelFactory(api: D2Api, d2ModelName: keyof D2ModelSchemas): typeof D2Model {
-    const { modelName = "default" } = api.models[d2ModelName];
-    const modelClass = _.find(classes, ["collectionName", modelName]) ?? defaultModel(modelName);
-    console.debug(`d2ModelFactory for modelName ${d2ModelName} returns ${modelClass.metadataType}`);
-    return modelClass;
+export function d2ModelFactory(api: D2Api, d2ModelName: string): typeof D2Model {
+    // TODO: Improvement, use schemas to find properties
+    const { modelName = "default" } = api.models[d2ModelName as keyof D2ModelSchemas] ?? {};
+
+    const directClass = _.find(classes, ["metadataType", d2ModelName]);
+    const modelClass = _.find(classes, ["collectionName", modelName]);
+
+    const result = directClass ?? modelClass ?? defaultModel(modelName);
+    console.debug(`d2ModelFactory for modelName ${d2ModelName} returns ${result.metadataType}`);
+    return result;
 }
