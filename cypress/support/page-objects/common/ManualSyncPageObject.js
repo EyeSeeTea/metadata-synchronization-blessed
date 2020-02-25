@@ -1,4 +1,4 @@
-import { dataTest } from "../../support/utils";
+import { dataTest } from "../../utils";
 
 export default class ManualSyncPageObject {
     constructor(cy, key) {
@@ -6,20 +6,28 @@ export default class ManualSyncPageObject {
         this.key = key;
     }
 
-    get title() {
-        return this.cy.get(dataTest("page-header-title"));
+    assertTitle(assert) {
+        assert(this.cy.get(dataTest("page-header-title")));
+        return this;
     }
 
-    get error() {
-        return this.cy.get("#client-snackbar");
+    assertError(assert) {
+        assert(this.cy.get("#client-snackbar"));
+        return this;
+    }
+
+    assertSyncResults(assert) {
+        assert(this.cy.get('[data-test="Typography-synchronization-results-row-0"]'));
+        return this;
+    }
+
+    assertSyncButton(assert) {
+        assert(this.syncButton);
+        return this;
     }
 
     get syncButton() {
         return this.cy.get(dataTest(`Button-${this.key}-synchronization-save`));
-    }
-
-    get syncResults() {
-        return this.cy.get('[data-test="Typography-synchronization-results-row-0"]');
     }
 
     open(url) {

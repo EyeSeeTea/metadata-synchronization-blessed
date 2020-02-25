@@ -1,4 +1,4 @@
-import { dataTest } from "../support/utils";
+import { dataTest } from "../utils";
 import ManualSyncPageObject from "./common/ManualSyncPageObject";
 
 class ManualMetadataSyncPageObject extends ManualSyncPageObject {

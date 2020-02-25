@@ -1,7 +1,7 @@
-import { dataTest } from "../support/utils";
+import { dataTest } from "../utils";
 import ManualSyncPageObject from "./common/ManualSyncPageObject";
 
-class ManualAggregateSyncPageObject extends ManualSyncPageObject {
+class ManualAggregatedSyncPageObject extends ManualSyncPageObject {
     constructor(cy) {
         super(cy, "aggregated-data");
     }
@@ -50,4 +50,4 @@ class ManualAggregateSyncPageObject extends ManualSyncPageObject {
     }
 }
 
-export default ManualAggregateSyncPageObject;
+export default ManualAggregatedSyncPageObject;

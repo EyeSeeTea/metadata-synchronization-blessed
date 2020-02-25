@@ -1,4 +1,4 @@
-import ManualMetadataSyncPageObject from "../pageobjects/ManualMetadataSyncPageObject";
+import ManualMetadataSyncPageObject from "../support/page-objects/ManualMetadataSyncPageObject";
 
 context("Manual metadata sync", function() {
     const page = new ManualMetadataSyncPageObject(cy);
@@ -11,7 +11,7 @@ context("Manual metadata sync", function() {
     });
 
     it("should have the correct title", function() {
-        page.title.contains("Metadata Synchronization");
+        page.assertTitle(title => title.contains("Metadata Synchronization"));
     });
 
     //TODO: this test is commented because some times on this page the search typing not working
@@ -26,10 +26,8 @@ context("Manual metadata sync", function() {
             .next()
             .selectReceiverInstance(anyInstance)
             .synchronize()
-
-            .syncResults.contains("Success");
-
-        page.closeSyncResultsDialog();
+            .assertSyncResults(syncResults => syncResults.contains("Success"))
+            .closeSyncResultsDialog();
     });
 
     it("should show the instance selection step error if user try click on next without selecting an instance", function() {
@@ -37,20 +35,20 @@ context("Manual metadata sync", function() {
             .openSyncDialog()
             .next()
             .next()
-            .error.contains("You need to select at least one instance");
+            .assertError(error => error.contains("You need to select at least one instance"));
     });
 
     it("should have synchronize button disabled to open sync dialog", function() {
         page.selectRow(anyDataElement)
             .openSyncDialog()
-            .syncButton.should("be.disabled");
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
     });
 
     it("should have synchronize button disabled if only contains default include exclude", function() {
         page.selectRow(anyDataElement)
             .openSyncDialog()
             .next()
-            .syncButton.should("be.disabled");
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
     });
 
     it("should have synchronize button enabled if contains org unit, periods, category options and one instance", function() {
@@ -58,6 +56,6 @@ context("Manual metadata sync", function() {
             .openSyncDialog()
             .next()
             .selectReceiverInstance(anyInstance)
-            .syncButton.should("not.be.disabled");
+            .assertSyncButton(syncButton => syncButton.should("not.be.disabled"));
     });
 });
