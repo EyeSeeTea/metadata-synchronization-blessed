@@ -163,12 +163,19 @@ export const buildMapping = async (
     model: typeof D2Model,
     originalId: string,
     mappedId = ""
-): Promise<MetadataMapping | undefined> => {
-    if (mappedId === "DISABLED") return { mappedId: "DISABLED", conflicts: false, mapping: {} };
-
+): Promise<MetadataMapping> => {
     const originMetadata = await getCombinedMetadata(api, model, originalId);
+    if (mappedId === "DISABLED")
+        return {
+            mappedId: "DISABLED",
+            mappedCode: "DISABLED",
+            code: originMetadata[0].code,
+            conflicts: false,
+            mapping: {},
+        };
+
     const destinationMetadata = await getCombinedMetadata(instanceApi, model, mappedId);
-    if (originMetadata.length !== 1 || destinationMetadata.length !== 1) return undefined;
+    if (originMetadata.length !== 1 || destinationMetadata.length !== 1) return {};
 
     const [mappedElement] = await autoMap(
         instanceApi,
