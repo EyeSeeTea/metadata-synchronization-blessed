@@ -51,6 +51,8 @@ export interface MappingTableProps {
     mappingPath?: string[];
 }
 
+const childrenKeys = ["dataElements"];
+
 export default function MappingTable({
     instance,
     models,
@@ -380,6 +382,21 @@ export default function MappingTable({
         setModel(() => model);
     }, []);
 
+    const updateRows = useCallback((rows: MetadataType[]) => {
+        const childrenRows = (_(rows)
+            .map(row =>
+                _(row)
+                    .pick(childrenKeys)
+                    .values()
+                    .flatten()
+                    .value()
+            )
+            .flatten()
+            .value() as unknown) as MetadataType[];
+
+        setRows([...rows, ...childrenRows]);
+    }, []);
+
     const closeWarningDialog = () => setWarningDialog(null);
     const closeMappingDialog = () => setElementsToMap([]);
     const closeWizard = () => setRelatedMapping(undefined);
@@ -428,12 +445,12 @@ export default function MappingTable({
                 additionalColumns={columns}
                 additionalActions={actions}
                 notifyNewModel={notifyNewModel}
-                notifyRowsChange={setRows}
+                notifyRowsChange={updateRows}
                 loading={isLoading}
                 selectedIds={selectedIds}
                 notifyNewSelection={setSelectedIds}
                 globalActions={globalActions}
-                childrenKeys={["dataElements"]}
+                childrenKeys={childrenKeys}
             />
         </React.Fragment>
     );
