@@ -7,8 +7,8 @@ import { cleanOrgUnitPath } from "../../utils/synchronization";
 
 interface CombinedMetadata {
     id: string;
-    name: string;
-    code: string;
+    name?: string;
+    code?: string;
     path?: string;
     categoryCombo?: {
         id: string;
@@ -111,15 +111,15 @@ export const autoMap = async (
     );
 
     if (candidates.length === 0 && defaultValue) {
-        return [{ mappedId: defaultValue }];
-    } else {
-        return candidates.map(({ id, path, name, code }) => ({
-            mappedId: path ?? id,
-            mappedName: name,
-            mappedCode: code,
-            code: selectedItem.code,
-        }));
+        candidates.push({ id: defaultValue, code: defaultValue });
     }
+
+    return candidates.map(({ id, path, name, code }) => ({
+        mappedId: path ?? id,
+        mappedName: name,
+        mappedCode: code,
+        code: selectedItem.code,
+    }));
 };
 
 const autoMapCollection = async (
@@ -170,7 +170,12 @@ export const buildMapping = async (
     const destinationMetadata = await getCombinedMetadata(instanceApi, model, mappedId);
     if (originMetadata.length !== 1 || destinationMetadata.length !== 1) return undefined;
 
-    const [mappedElement] = await autoMap(instanceApi, model, { id: mappedId }, mappedId);
+    const [mappedElement] = await autoMap(
+        instanceApi,
+        model,
+        { id: mappedId, code: originMetadata[0].code },
+        mappedId
+    );
 
     const categoryCombos = originMetadata[0].categoryCombo
         ? {
