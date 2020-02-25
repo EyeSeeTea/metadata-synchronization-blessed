@@ -225,6 +225,7 @@ export default function MappingTable({
                 name: "id",
                 text: "ID",
             },
+            { name: "__type__", text: "Metadata type" },
             {
                 name: "mapped-id",
                 text: "Mapped ID",
@@ -444,6 +445,7 @@ export default function MappingTable({
                 loading={isLoading}
                 selectedIds={selectedIds}
                 notifyNewSelection={setSelectedIds}
+                childrenKeys={["dataElements"]}
             />
         </React.Fragment>
     );

@@ -47,7 +47,7 @@ export abstract class D2Model {
     protected static details = d2BaseModelDetails;
     protected static fields = d2BaseModelFields;
     protected static initialSorting = ["name", "asc"];
-    protected static modelTransform: Function = (objects: any[]) => objects;
+    protected static modelTransform: Function = (objects: MetadataType[]) => objects;
     protected static modelFilters: any = {};
 
     // List method should be executed by a wrapper to preserve static context binding
@@ -100,8 +100,12 @@ export abstract class D2Model {
     }
 
     // TODO: This should be typed (not priority)
-    public static getApiModelTransform(): any {
-        return this.modelTransform;
+    public static getApiModelTransform(): Function {
+        return (objects: MetadataType[]) =>
+            this.modelTransform(objects).map((object: MetadataType) => ({
+                ...object,
+                __type__: this.collectionName,
+            }));
     }
 
     // TODO: This should be typed (not priority)
@@ -301,7 +305,10 @@ export class DataSetModel extends D2Model {
     ) => {
         return objects.map(({ dataSetElements = [], ...rest }) => ({
             ...rest,
-            dataElements: dataSetElements.map(({ dataElement }) => dataElement),
+            dataElements: dataSetElements.map(({ dataElement }) => ({
+                ...dataElement,
+                __type__: "dataElements",
+            })),
         }));
     };
 }
@@ -330,6 +337,7 @@ export class ProgramModel extends D2Model {
                 object.programStages?.map(({ displayName, programStageDataElements }) =>
                     programStageDataElements.map(({ dataElement }) => ({
                         ...dataElement,
+                        __type__: "dataElements",
                         displayName:
                             object.programStages.length > 1
                                 ? `[${displayName}] ${dataElement.displayName}`
