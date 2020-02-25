@@ -1,17 +1,11 @@
 import i18n from "@dhis2/d2-i18n";
-import React, { useState, useEffect } from "react";
+import { useD2 } from "d2-api";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import MappingTable from "../../components/mapping-table/MappingTable";
 import PageHeader from "../../components/page-header/PageHeader";
-import {
-    AggregatedDataElementModel,
-    CategoryComboModel,
-    CategoryOptionModel,
-    OrganisationUnitModel,
-    ProgramDataElementModel,
-} from "../../models/d2Model";
+import { AggregatedDataElementModel, OrganisationUnitModel, ProgramDataElementModel } from "../../models/d2Model";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import { useD2 } from "d2-api";
 import { D2 } from "../../types/d2";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
@@ -19,11 +13,11 @@ export type MappingType = "aggregated" | "tracker" | "orgUnit";
 const config = {
     aggregated: {
         title: i18n.t("Aggregated metadata mapping"),
-        models: [AggregatedDataElementModel, CategoryComboModel, CategoryOptionModel],
+        models: [AggregatedDataElementModel],
     },
     tracker: {
         title: i18n.t("Tracker metadata mapping"),
-        models: [ProgramDataElementModel, CategoryComboModel, CategoryOptionModel],
+        models: [ProgramDataElementModel],
     },
     orgUnit: {
         title: i18n.t("Organisation unit metadata mapping"),
