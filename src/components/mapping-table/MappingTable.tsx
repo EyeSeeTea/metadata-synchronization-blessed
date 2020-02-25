@@ -1,15 +1,16 @@
 import i18n from "@dhis2/d2-i18n";
-import { Fab, Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
+import { Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
     TableAction,
     TableColumn,
+    TableGlobalAction,
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { ReactNode, useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import MappingDialog from "../../components/mapping-dialog/MappingDialog";
 import MappingWizard from "../../components/mapping-wizard/MappingWizard";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
@@ -299,34 +300,6 @@ export default function MappingTable({
         [classes, type, mapping, openMappingDialog, isChildrenMapping, openRelatedMapping]
     );
 
-    const filters: ReactNode = useMemo(
-        () => (
-            <React.Fragment>
-                {!isChildrenMapping && (
-                    <Fab
-                        className={classes.actionButtons}
-                        color="primary"
-                        onClick={() => resetMapping(rows.map(({ id }) => id))}
-                        variant={"extended"}
-                    >
-                        {i18n.t("Reset mapping")}
-                    </Fab>
-                )}
-                {!isChildrenMapping && (
-                    <Fab
-                        className={classes.actionButtons}
-                        color="primary"
-                        onClick={() => disableMapping(rows.map(({ id }) => id))}
-                        variant={"extended"}
-                    >
-                        {i18n.t("Disable mapping")}
-                    </Fab>
-                )}
-            </React.Fragment>
-        ),
-        [classes, rows, disableMapping, resetMapping, isChildrenMapping]
-    );
-
     const actions: TableAction<MetadataType>[] = useMemo(
         () => [
             {
@@ -384,6 +357,21 @@ export default function MappingTable({
         ]
     );
 
+    const globalActions: TableGlobalAction[] = [
+        {
+            name: "reset-mapping",
+            text: i18n.t("Reset mapping"),
+            onClick: resetMapping,
+            icon: <Icon>clear</Icon>,
+        },
+        {
+            name: "disable-mapping",
+            text: i18n.t("Disable mapping"),
+            onClick: disableMapping,
+            icon: <Icon>sync_disabled</Icon>,
+        },
+    ];
+
     const notifyNewModel = useCallback(model => {
         setLoading(true);
         setRows([]);
@@ -437,13 +425,13 @@ export default function MappingTable({
                 models={models}
                 filterRows={filterRows}
                 additionalColumns={columns}
-                additionalFilters={filters}
                 additionalActions={actions}
                 notifyNewModel={notifyNewModel}
                 notifyRowsChange={setRows}
                 loading={isLoading}
                 selectedIds={selectedIds}
                 notifyNewSelection={setSelectedIds}
+                globalActions={globalActions}
             />
         </React.Fragment>
     );
