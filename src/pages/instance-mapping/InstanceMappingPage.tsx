@@ -17,9 +17,18 @@ import { D2 } from "../../types/d2";
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
 const config = {
-    aggregated: { models: [AggregatedDataElementModel, CategoryComboModel, CategoryOptionModel] },
-    tracker: { models: [ProgramDataElementModel, CategoryComboModel, CategoryOptionModel] },
-    orgUnit: { models: [OrganisationUnitModel] },
+    aggregated: {
+        title: i18n.t("Aggregated metadata mapping"),
+        models: [AggregatedDataElementModel, CategoryComboModel, CategoryOptionModel],
+    },
+    tracker: {
+        title: i18n.t("Tracker metadata mapping"),
+        models: [ProgramDataElementModel, CategoryComboModel, CategoryOptionModel],
+    },
+    orgUnit: {
+        title: i18n.t("Organisation unit metadata mapping"),
+        models: [OrganisationUnitModel],
+    },
 };
 
 interface InstanceMappingParams {
@@ -32,7 +41,7 @@ export default function InstanceMappingPage() {
     const d2 = useD2();
 
     const { id, section } = useParams() as InstanceMappingParams;
-    const { models } = config[section];
+    const { models, title } = config[section];
 
     const [instance, setInstance] = useState<Instance>();
 
@@ -54,7 +63,7 @@ export default function InstanceMappingPage() {
 
     return (
         <React.Fragment>
-            <PageHeader title={i18n.t("Metadata mapping")} onBackClick={backHome} />
+            <PageHeader title={title} onBackClick={backHome} />
 
             {!!instance && (
                 <MappingTable
