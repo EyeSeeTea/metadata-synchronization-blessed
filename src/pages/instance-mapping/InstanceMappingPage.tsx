@@ -7,7 +7,7 @@ import PageHeader from "../../components/page-header/PageHeader";
 import {
     AggregatedDataElementModel,
     OrganisationUnitModel,
-    ProgramDataElementModel,
+    ProgramModel,
 } from "../../models/d2Model";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { D2 } from "../../types/d2";
@@ -21,7 +21,7 @@ const config = {
     },
     tracker: {
         title: i18n.t("Tracker metadata mapping"),
-        models: [ProgramDataElementModel],
+        models: [ProgramModel],
     },
     orgUnit: {
         title: i18n.t("Organisation unit metadata mapping"),
