@@ -78,6 +78,14 @@ Cypress.Commands.add("selectInMultiSelector", (selector, option) => {
         .click();
 });
 
+Cypress.Commands.add("unselectInMultiSelector", (selector, option) => {
+    cy.get(selector + " > div select:last").select(option);
+    cy.contains("Selected")
+        .next("button")
+        .next("button")
+        .click();
+});
+
 Cypress.Commands.add("selectInOrgUnitTree", label => {
     cy.contains(label)
         .find("input")
