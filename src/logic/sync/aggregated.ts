@@ -51,7 +51,7 @@ export class AggregatedSync extends GenericSync {
         const { dataValues: candidateDataValues = [] } = await getAggregatedData(
             this.api,
             dataParams,
-            dataElements.map(de => _.compact(de.dataSetElements.map((dse: any) => dse.dataSet?.id))),
+            dataElements.map(de => de.dataSetElements.map((dse: any) => dse.dataSet?.id)),
             dataElements.map(de => de.dataElementGroups.map((deg: any) => deg.id))
         );
 
@@ -154,7 +154,9 @@ export class AggregatedSync extends GenericSync {
 
     private mapOptionValue(value: string, mapping: MetadataMappingDictionary): string {
         const { options } = mapping;
-        const candidate = _.find(_.values(options), ["code", value]);
+        const candidate = _(options)
+            .values()
+            .find(["code", value]);
 
         return candidate?.mappedCode ?? value;
     }
