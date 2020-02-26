@@ -26,15 +26,17 @@ const renderHelpButton = helpText => {
 function PageHeader({ variant, title, onBackClick, helpText }) {
     return (
         <div>
-            <IconButton
-                onClick={onBackClick}
-                color="secondary"
-                aria-label={i18n.t("Back")}
-                style={styles.backArrow}
-                data-test={"page-header-back"}
-            >
-                <Icon color="primary">arrow_back</Icon>
-            </IconButton>
+            {!!onBackClick && (
+                <IconButton
+                    onClick={onBackClick}
+                    color="secondary"
+                    aria-label={i18n.t("Back")}
+                    style={styles.backArrow}
+                    data-test={"page-header-back"}
+                >
+                    <Icon color="primary">arrow_back</Icon>
+                </IconButton>
+            )}
 
             <Typography
                 variant={variant}
@@ -52,7 +54,7 @@ function PageHeader({ variant, title, onBackClick, helpText }) {
 PageHeader.propTypes = {
     variant: PropTypes.string,
     title: PropTypes.string.isRequired,
-    onBackClick: PropTypes.func.isRequired,
+    onBackClick: PropTypes.func,
     helpText: PropTypes.string,
 };
 
