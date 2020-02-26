@@ -20,7 +20,7 @@ context("Manual aggregated sync", () => {
         page.assertTitle(title => title.contains("Aggregated Data Synchronization"));
     });
 
-    it("should syncs correctly malaria annual data", () => {
+    it("should sync correctly malaria annual data", () => {
         page.search(inputs.dataSet)
             .selectRow(inputs.dataSet)
             .openSyncDialog()
@@ -37,7 +37,7 @@ context("Manual aggregated sync", () => {
             .selectReceiverInstance(inputs.instance)
             .synchronize()
 
-            .assertSyncResults(syncResults => syncResults.contains("Success"))
+            .assertSyncResultsStatus(status => status.contains("Success"))
             .closeSyncResultsDialog();
     });
 

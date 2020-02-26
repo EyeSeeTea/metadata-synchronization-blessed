@@ -16,8 +16,13 @@ export default class ManualSyncPageObject {
         return this;
     }
 
-    assertSyncResults(assert) {
+    assertSyncResultsStatus(assert) {
         assert(this.cy.get('[data-test="Typography-synchronization-results-row-0"]'));
+        return this;
+    }
+
+    assertSyncResultsSummary(assert) {
+        assert(this.cy.get('[data-test="Table-synchronization-results-row-0"]'));
         return this;
     }
 
