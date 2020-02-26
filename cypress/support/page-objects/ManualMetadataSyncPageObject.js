@@ -8,6 +8,36 @@ class ManualMetadataSyncPageObject extends ManualSyncPageObject {
 
     open() {
         super.open("/#/sync/metadata");
+        this.cy
+            .route({
+                method: "GET",
+                url: "/api/metadata*",
+            })
+            .as("getMetadata");
+        return this;
+    }
+
+    changeUseDefaultConfiguration() {
+        this.cy.wait("@getMetadata");
+        this.cy.get(".MuiSwitch-root").click();
+        return this;
+    }
+
+    selectMetadataType(text) {
+        this.cy
+            .get(dataTest("DialogContent-metadata-synchronization"))
+            .contains("Metadata type")
+            .parent()
+            .click();
+        this.cy
+            .get('[role="listbox"]')
+            .contains(text)
+            .click();
+        return this;
+    }
+
+    excludeRule(rule) {
+        this.cy.unselectInMultiSelector(dataTest(`DialogContent-metadata-synchronization`), rule);
         return this;
     }
 
