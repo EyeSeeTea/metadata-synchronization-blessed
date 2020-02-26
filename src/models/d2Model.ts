@@ -346,6 +346,11 @@ export class ProgramStageModel extends D2Model {
     protected static collectionName = "programStages" as const;
 }
 
+export class OptionModel extends D2Model {
+    protected static metadataType = "option";
+    protected static collectionName = "options" as const;
+}
+
 export class IndicatorModel extends D2Model {
     protected static metadataType = "indicator";
     protected static collectionName = "indicators" as const;
