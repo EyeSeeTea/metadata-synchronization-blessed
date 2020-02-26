@@ -303,13 +303,14 @@ export class DataSetModel extends D2Model {
     protected static fields = dataSetFields;
 
     protected static modelTransform = (
-        objects: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]
+        dataSets: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]
     ) => {
-        return objects.map(({ dataSetElements = [], ...rest }) => ({
+        return dataSets.map(({ dataSetElements = [], ...rest }) => ({
             ...rest,
             dataElements: dataSetElements.map(({ dataElement }) => ({
                 ...dataElement,
-                __type__: "aggregatedDataElement",
+                __type__: "dataElement",
+                __mappingType__: "aggregatedDataElement",
             })),
         }));
     };
@@ -333,18 +334,22 @@ export class ProgramModel extends D2Model {
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFields>[]
     ) => {
-        return objects.map(object => ({
-            ...object,
+        return objects.map(program => ({
+            ...program,
             dataElements: _.flatten(
-                object.programStages?.map(({ displayName, programStageDataElements }) =>
-                    programStageDataElements.map(({ dataElement }) => ({
-                        ...dataElement,
-                        __type__: "programDataElement",
-                        displayName:
-                            object.programStages.length > 1
-                                ? `[${displayName}] ${dataElement.displayName}`
-                                : dataElement.displayName,
-                    }))
+                program.programStages?.map(
+                    ({ displayName, programStageDataElements, id: programStageId }) =>
+                        programStageDataElements.map(({ dataElement }) => ({
+                            ...dataElement,
+                            id: `${program.id}-${programStageId}-${dataElement.id}`,
+                            __originalId__: dataElement.id,
+                            __type__: "dataElement",
+                            __mappingType__: "programDataElement",
+                            displayName:
+                                program.programStages.length > 1
+                                    ? `[${displayName}] ${dataElement.displayName}`
+                                    : dataElement.displayName,
+                        }))
                 ) ?? []
             ),
         }));

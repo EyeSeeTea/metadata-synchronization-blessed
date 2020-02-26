@@ -94,6 +94,7 @@ export const dataSetFields = {
 export const programFields = {
     ...d2BaseModelFields,
     programStages: {
+        id: include,
         displayName: include,
         programStageDataElements: {
             dataElement: d2BaseModelFields,

@@ -6,7 +6,6 @@ import { D2ModelSchemas } from "d2-api";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { D2Model, DataElementGroupModel } from "../../models/d2Model";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
@@ -16,7 +15,6 @@ import MetadataTable from "../metadata-table/MetadataTable";
 interface MappingDialogProps {
     rows: MetadataType[];
     elements: string[];
-    model: typeof D2Model;
     instance: Instance;
     onClose: () => void;
     mapping: MetadataMappingDictionary;
@@ -31,7 +29,6 @@ const useStyles = makeStyles({
 });
 
 const MappingDialog: React.FC<MappingDialogProps> = ({
-    model = DataElementGroupModel,
     rows,
     elements,
     instance,
@@ -44,8 +41,14 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const [connectionSuccess, setConnectionSuccess] = useState(true);
     const api = instance.getApi();
 
-    const element = elements.length === 1 ? _.find(rows, ["id", elements[0]]) : undefined;
-    const mappedId = _.get(mapping, [model.getCollectionName(), element?.id ?? "", "mappedId"]);
+    if (elements.length > 1)
+        throw new Error("Applying mapping to more than one item is not supported yet");
+
+    const element = _.find(rows, ["id", elements[0]]);
+    const type = element?.__mappingType__ ?? element?.__type__ ?? "";
+    const model = d2ModelFactory(api, type as keyof D2ModelSchemas);
+    const id = _.get(mapping, [type, element?.id ?? "", "mappedId"]);
+    const mappedId = _.last(id?.split("-")) ?? id;
     const defaultSelection = mappedId !== "DISABLED" ? mappedId : undefined;
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
     const [filterRows, setFilterRows] = useState<string[]>();

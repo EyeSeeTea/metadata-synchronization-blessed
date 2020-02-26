@@ -19,6 +19,7 @@ import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../mode
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
 import { autoMap, buildMapping } from "./utils";
+import { d2ModelFactory } from "../../models/d2ModelFactory";
 
 const useStyles = makeStyles({
     iconButton: {
@@ -86,10 +87,19 @@ export default function MappingTable({
             try {
                 const newMapping = _.cloneDeep(mapping);
                 for (const id of selection) {
-                    _.unset(newMapping, [type, id]);
+                    const row = _.find(rows, ["id", id]);
+                    const rowType = row?.__mappingType__ ?? type;
+                    const model = d2ModelFactory(api, rowType as string);
+                    _.unset(newMapping, [rowType, id]);
                     if (isChildrenMapping || mappedId) {
-                        const mapping = await buildMapping(api, instanceApi, model, id, mappedId);
-                        _.set(newMapping, [type, id], mapping);
+                        const mapping = await buildMapping(
+                            api,
+                            instanceApi,
+                            model,
+                            (row?.__originalId__ as string) ?? id,
+                            mappedId
+                        );
+                        _.set(newMapping, [rowType, id], mapping);
                     }
                 }
 
@@ -118,10 +128,10 @@ export default function MappingTable({
             snackbar,
             loading,
             type,
-            model,
             mapping,
             isChildrenMapping,
             onChangeMapping,
+            rows,
         ]
     );
 
@@ -208,18 +218,20 @@ export default function MappingTable({
     const openRelatedMapping = useCallback(
         (selection: string[]) => {
             const id = _.first(selection);
+            const row = _.find(rows, ["id", id]);
+            const rowType = row?.__mappingType__ ?? type;
 
-            if (!id || !mapping[type][id]?.mapping) {
+            if (!id || !mapping[rowType] || !mapping[rowType][id]?.mapping) {
                 snackbar.error(
                     i18n.t(
                         "You need to map this element before accessing its related metadata mapping"
                     )
                 );
             } else {
-                setRelatedMapping([type, id]);
+                setRelatedMapping([rowType as string, id]);
             }
         },
-        [mapping, type, snackbar]
+        [mapping, rows, type, snackbar]
     );
 
     const columns: TableColumn<MetadataType>[] = useMemo(
@@ -227,6 +239,9 @@ export default function MappingTable({
             {
                 name: "id",
                 text: "ID",
+                getValue: (row: MetadataType) => {
+                    return _.last(row.id?.split("-")) ?? row.id;
+                },
             },
             { name: "__type__", text: "Metadata type" },
             {
@@ -234,8 +249,12 @@ export default function MappingTable({
                 text: "Mapped ID",
                 sortable: false,
                 getValue: (row: MetadataType) => {
-                    const mappedId = _.get(mapping, [type, row.id, "mappedId"], row.id);
-                    const cleanId = cleanOrgUnitPath(mappedId);
+                    const mappedId = _.get(
+                        mapping,
+                        [row.__mappingType__ ?? type, row.id, "mappedId"],
+                        row.id
+                    );
+                    const cleanId = _.last(cleanOrgUnitPath(mappedId)?.split("-")) ?? row.id;
                     const name = cleanId === "DISABLED" ? i18n.t("Disabled") : cleanId;
 
                     return (
@@ -268,7 +287,8 @@ export default function MappingTable({
                         mappedName = mappedId === "DISABLED" ? undefined : i18n.t("Not mapped"),
                         conflicts = false,
                         mapping: childrenMapping,
-                    }: Partial<MetadataMapping> = _.get(mapping, [type, row.id]) ?? {};
+                    }: Partial<MetadataMapping> =
+                        _.get(mapping, [row.__mappingType__ ?? type, row.id]) ?? {};
 
                     const childrenConflicts = _(childrenMapping)
                         .values()
@@ -421,7 +441,6 @@ export default function MappingTable({
             {elementsToMap.length > 0 && (
                 <MappingDialog
                     rows={rows}
-                    model={model}
                     elements={elementsToMap}
                     onUpdateMapping={updateMapping}
                     onClose={closeMappingDialog}
