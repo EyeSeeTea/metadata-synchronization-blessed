@@ -94,3 +94,9 @@ Cypress.Commands.add("selectInOrgUnitTree", label => {
         .should("have.css", "color")
         .and("equal", "rgb(255, 165, 0)");
 });
+
+Cypress.Commands.add("selectRowInTableByText", text => {
+    cy.get("table")
+        .contains(text)
+        .click();
+});
