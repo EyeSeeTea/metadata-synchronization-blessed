@@ -20,7 +20,7 @@ const InstanceMappingLandingPage: React.FC = () => {
                     listAction: () => history.push(`/instances/mapping/${id}/aggregated`),
                 },
                 {
-                    name: i18n.t("Tracker"),
+                    name: i18n.t("Events"),
                     description: i18n.t(
                         "Map data elements, category options and option sets for tracker data between instances"
                     ),

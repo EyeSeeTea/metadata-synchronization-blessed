@@ -783,9 +783,6 @@ msgid ""
 "between instances"
 msgstr ""
 
-msgid "Tracker"
-msgstr ""
-
 msgid ""
 "Map data elements, category options and option sets for tracker data "
 "between instances"
