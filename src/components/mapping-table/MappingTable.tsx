@@ -235,9 +235,12 @@ export default function MappingTable({
         (selection: string[]) => {
             const id = _.first(selection);
             const row = _.find(rows, ["id", id]);
-            const rowType = row?.__mappingType__ ?? type;
+            if (!id || !row) return;
 
-            if (!id || !mapping[rowType] || !mapping[rowType][id]?.mapping) {
+            const rowType = getMetadataTypeFromRow(row);
+            const { mapping: rowMapping } = mapping[rowType][id] ?? {};
+
+            if (!rowMapping) {
                 snackbar.error(
                     i18n.t(
                         "You need to map this element before accessing its related metadata mapping"
@@ -247,7 +250,7 @@ export default function MappingTable({
                 setRelatedMapping([rowType, id]);
             }
         },
-        [mapping, rows, type, snackbar]
+        [mapping, rows, snackbar]
     );
 
     const columns: TableColumn<MetadataType>[] = useMemo(
@@ -305,13 +308,13 @@ export default function MappingTable({
                 text: "Mapped Name",
                 sortable: false,
                 getValue: (row: MetadataType) => {
+                    const type = getMetadataTypeFromRow(row);
                     const {
                         mappedId = row.id,
                         mappedName = mappedId === "DISABLED" ? undefined : i18n.t("Not mapped"),
                         conflicts = false,
                         mapping: childrenMapping,
-                    }: Partial<MetadataMapping> =
-                        _.get(mapping, [row.__mappingType__ ?? type, row.id]) ?? {};
+                    }: Partial<MetadataMapping> = _.get(mapping, [type, row.id]) ?? {};
 
                     const childrenConflicts = _(childrenMapping)
                         .values()
