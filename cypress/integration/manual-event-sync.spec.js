@@ -6,8 +6,10 @@ context("Manual event sync", function() {
     const page = new ManualEventSyncPageObject(cy);
 
     const inputs = {
-        orgUnit: "Ahafo",
-        orgUnitLevel: "Level 5",
+        orgUnit: "Akrodie Health Centre",
+        orgUnitLevel1: "Ahafo",
+        orgUnitLevel2: "Asunafo North",
+        orgUnitLevel3: "Akrodie",
         instance: "pxPV4coHU56",
         program: "ENTO- ",
     };
@@ -20,9 +22,10 @@ context("Manual event sync", function() {
         page.search(inputs.program)
             .selectRow(inputs.program)
             .openSyncDialog()
-
+            .displayOrgUnitChildren(inputs.orgUnitLevel1)
+            .displayOrgUnitChildren(inputs.orgUnitLevel2)
+            .displayOrgUnitChildren(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
-            .selectOrgUnitLevel(inputs.orgUnitLevel)
             .next()
 
             .selectAllPeriods()

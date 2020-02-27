@@ -16,18 +16,13 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
         return this;
     }
 
-    selectOrgUnitLevel(orgUnitLevel) {
+    displayOrgUnitChildren(orgUnit) {
         this.cy
-            .get(
-                '[style="margin-bottom: -24px; margin-top: 0px;"] > [style="position: relative; min-height: 89px;"] > .MuiFormControl-root > .MuiInputBase-root > .MuiSelect-root'
-            )
-            .click();
-        this.cy.get('[data-value="5"]').click();
-
-        this.cy
-            .get(
-                '[style="margin-bottom: -24px; margin-top: 0px;"] > [style="position: relative; min-height: 89px;"] > [style="position: absolute; display: inline-block; top: 24px; margin-left: 16px;"] > [style="position: relative; top: 3px; margin-left: 0px;"] > .MuiButton-label'
-            )
+            .get(dataTest("DialogContent-events-synchronization"))
+            .contains(orgUnit)
+            .parent()
+            .parent()
+            .contains("▸")
             .click();
         return this;
     }
