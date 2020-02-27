@@ -238,3 +238,11 @@ export const getMetadataTypeFromRow = (object: MetadataType) => {
     const { __mappingType__, __type__ } = object;
     return __mappingType__ ?? __type__;
 };
+
+export const cleanNestedMappedId = (id: string): string => {
+    return (
+        _(id)
+            .split("-")
+            .last() ?? ""
+    );
+};

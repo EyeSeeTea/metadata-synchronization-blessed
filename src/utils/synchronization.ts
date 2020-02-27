@@ -383,7 +383,11 @@ export function cleanObjectDefault(object: ProgramEvent | DataValue, defaults: s
 }
 
 export function cleanOrgUnitPath(orgUnitPath?: string): string {
-    return _.last(orgUnitPath?.split("/")) ?? orgUnitPath ?? "";
+    return (
+        _(orgUnitPath)
+            .split("/")
+            .last() ?? ""
+    );
 }
 
 export function cleanOrgUnitPaths(orgUnitPaths: string[]): string[] {

@@ -20,7 +20,7 @@ import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../mode
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
-import { autoMap, buildMapping, getMetadataTypeFromRow } from "./utils";
+import { autoMap, buildMapping, cleanNestedMappedId, getMetadataTypeFromRow } from "./utils";
 
 const useStyles = makeStyles({
     iconButton: {
@@ -259,7 +259,7 @@ export default function MappingTable({
                 name: "id",
                 text: "ID",
                 getValue: (row: MetadataType) => {
-                    return _.last(row.id?.split("-")) ?? row.id;
+                    return cleanNestedMappedId(row.id);
                 },
             },
             {
@@ -267,7 +267,7 @@ export default function MappingTable({
                 text: "Metadata type",
                 hidden: model.getChildrenKeys() === undefined,
                 getValue: (row: MetadataType) => {
-                    return d2.models[row.__type__]?.displayName ?? type;
+                    return d2.models[row.__type__]?.displayName;
                 },
             },
             {
@@ -275,12 +275,9 @@ export default function MappingTable({
                 text: "Mapped ID",
                 sortable: false,
                 getValue: (row: MetadataType) => {
-                    const mappedId = _.get(
-                        mapping,
-                        [row.__mappingType__ ?? type, row.id, "mappedId"],
-                        row.id
-                    );
-                    const cleanId = _.last(cleanOrgUnitPath(mappedId)?.split("-")) ?? row.id;
+                    const type = getMetadataTypeFromRow(row);
+                    const mappedId = _.get(mapping, [type, row.id, "mappedId"], row.id);
+                    const cleanId = cleanNestedMappedId(cleanOrgUnitPath(mappedId));
                     const name = cleanId === "DISABLED" ? i18n.t("Disabled") : cleanId;
 
                     return (
@@ -347,16 +344,7 @@ export default function MappingTable({
                 },
             },
         ],
-        [
-            d2,
-            classes,
-            model,
-            type,
-            mapping,
-            openMappingDialog,
-            isChildrenMapping,
-            openRelatedMapping,
-        ]
+        [d2, classes, model, mapping, openMappingDialog, isChildrenMapping, openRelatedMapping]
     );
 
     const actions: TableAction<MetadataType>[] = useMemo(
