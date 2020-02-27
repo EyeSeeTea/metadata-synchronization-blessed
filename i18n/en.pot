@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-14T06:50:02.187Z\n"
-"PO-Revision-Date: 2020-02-14T06:50:02.187Z\n"
+"POT-Creation-Date: 2020-02-26T14:06:12.495Z\n"
+"PO-Revision-Date: 2020-02-26T14:06:12.495Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -15,6 +15,12 @@ msgid "Login"
 msgstr ""
 
 msgid "<No value>"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "List"
 msgstr ""
 
 msgid "Edit mapping for {{displayName}} ({{id}})"
@@ -27,6 +33,81 @@ msgid "Close"
 msgstr ""
 
 msgid "Could not connect with remote instance"
+msgstr ""
+
+msgid "Applying mapping update"
+msgstr ""
+
+msgid "Set"
+msgstr ""
+
+msgid "Reset to default"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "{{operation}} mapping for {{total}} elements"
+msgstr ""
+
+msgid "Could not apply mapping, please try again."
+msgstr ""
+
+msgid "Disable mapping"
+msgstr ""
+
+msgid "Are you sure you want to disable mapping for {{total}} elements?"
+msgstr ""
+
+msgid "Please select at least one item to disable mapping"
+msgstr ""
+
+msgid "Reset mapping"
+msgstr ""
+
+msgid "Are you sure you want to reset mapping for {{total}} elements?"
+msgstr ""
+
+msgid "Please select at least one item to reset mapping"
+msgstr ""
+
+msgid "Auto-mapping does not support multiple action yet"
+msgstr ""
+
+msgid "Unexpected error, could not apply auto mapping"
+msgstr ""
+
+msgid "Could not find a suitable candidate to apply auto-mapping"
+msgstr ""
+
+msgid "You need to map this element before accessing its related metadata mapping"
+msgstr ""
+
+msgid "Set mapping"
+msgstr ""
+
+msgid "Not mapped"
+msgstr ""
+
+msgid "Mapping has errors"
+msgstr ""
+
+msgid "Auto-map element"
+msgstr ""
+
+msgid "Reset mapping to default values"
+msgstr ""
+
+msgid "Related metadata mapping"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Category Options"
+msgstr ""
+
+msgid "Options"
 msgstr ""
 
 msgid "Metadata type"
@@ -185,9 +266,6 @@ msgstr ""
 msgid "Synchronization Results"
 msgstr ""
 
-msgid "Ok"
-msgstr ""
-
 msgid "Destination instance"
 msgstr ""
 
@@ -330,6 +408,15 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
+msgid "Metadata mapping"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "Target"
+msgstr ""
+
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -345,9 +432,6 @@ msgid "Excluded elements"
 msgstr ""
 
 msgid "Use default include exclude configuration"
-msgstr ""
-
-msgid "Disabled"
 msgstr ""
 
 msgid "Include exclude configuration"
@@ -543,154 +627,6 @@ msgid_plural "Are you sure you want to delete {{count}} history notifications?"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Server name"
-msgstr ""
-
-msgid "URL endpoint"
-msgstr ""
-
-msgid "Field should be an url"
-msgstr ""
-
-msgid "Username"
-msgstr ""
-
-msgid "Password"
-msgstr ""
-
-msgid "Please fix the issues before testing the connection"
-msgstr ""
-
-msgid "Connected successfully to instance"
-msgstr ""
-
-msgid "Please fix the issues before saving"
-msgstr ""
-
-msgid "Metadata mapping"
-msgstr ""
-
-msgid "Test Connection"
-msgstr ""
-
-msgid "New Instance"
-msgstr ""
-
-msgid "Edit Instance"
-msgstr ""
-
-msgid "Cancel Instance Creation"
-msgstr ""
-
-msgid "Cancel Instance Editing"
-msgstr ""
-
-msgid "All your changes will be lost. Are you sure?"
-msgstr ""
-
-msgid "Saving..."
-msgstr ""
-
-msgid "Deleting Instances"
-msgstr ""
-
-msgid "Failed to delete some instances"
-msgstr ""
-
-msgid "Successfully deleted {{count}} instances"
-msgid_plural "Successfully deleted {{count}} instances"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "Replicate"
-msgstr ""
-
-msgid "Delete Instances?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{count}} instances?"
-msgid_plural "Are you sure you want to delete {{count}} instances?"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Destination Instance Settings"
-msgstr ""
-
-msgid "Item not found"
-msgstr ""
-
-msgid "Could not connect with instance"
-msgstr ""
-
-msgid "Please select an instance from the dropdown"
-msgstr ""
-
-msgid "Set"
-msgstr ""
-
-msgid "Reset to default"
-msgstr ""
-
-msgid "{{operation}} mapping for {{total}} elements"
-msgstr ""
-
-msgid "Could not apply mapping, please try again."
-msgstr ""
-
-msgid "You need at least one item to disable mapping"
-msgstr ""
-
-msgid "Disable mapping to default value"
-msgstr ""
-
-msgid "Are you sure you want to disable mapping for {{total}} elements?"
-msgstr ""
-
-msgid "You need at least one item to reset mapping"
-msgstr ""
-
-msgid "Reset mapping to default value"
-msgstr ""
-
-msgid "Are you sure you want to clear mapping for {{total}} elements?"
-msgstr ""
-
-msgid "Auto-mapping does not support multiple action yet"
-msgstr ""
-
-msgid "Unexpected error, could not apply auto mapping"
-msgstr ""
-
-msgid "Could not find a suitable candidate to apply auto-mapping"
-msgstr ""
-
-msgid "Set mapping"
-msgstr ""
-
-msgid "Loading..."
-msgstr ""
-
-msgid "Please select an instance"
-msgstr ""
-
-msgid "Instance selection"
-msgstr ""
-
-msgid "Reset mapping"
-msgstr ""
-
-msgid "Disable mapping"
-msgstr ""
-
-msgid "Auto-map element"
-msgstr ""
-
-msgid "Reset mapping to default values"
-msgstr ""
-
 msgid "Manual sync"
 msgstr ""
 
@@ -763,10 +699,105 @@ msgid ""
 "Map metadata objects between instances."
 msgstr ""
 
-msgid "Add"
+msgid "Server name"
 msgstr ""
 
-msgid "List"
+msgid "URL endpoint"
+msgstr ""
+
+msgid "Field should be an url"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Please fix the issues before testing the connection"
+msgstr ""
+
+msgid "Connected successfully to instance"
+msgstr ""
+
+msgid "Please fix the issues before saving"
+msgstr ""
+
+msgid "Test Connection"
+msgstr ""
+
+msgid "New Instance"
+msgstr ""
+
+msgid "Edit Instance"
+msgstr ""
+
+msgid "Cancel Instance Creation"
+msgstr ""
+
+msgid "Cancel Instance Editing"
+msgstr ""
+
+msgid "All your changes will be lost. Are you sure?"
+msgstr ""
+
+msgid "Saving..."
+msgstr ""
+
+msgid "Deleting Instances"
+msgstr ""
+
+msgid "Failed to delete some instances"
+msgstr ""
+
+msgid "Successfully deleted {{count}} instances"
+msgid_plural "Successfully deleted {{count}} instances"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Replicate"
+msgstr ""
+
+msgid "Delete Instances?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} instances?"
+msgid_plural "Are you sure you want to delete {{count}} instances?"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Destination Instance Settings"
+msgstr ""
+
+msgid "Aggregated"
+msgstr ""
+
+msgid ""
+"Map data elements, category options and option sets for aggregated data "
+"between instances"
+msgstr ""
+
+msgid ""
+"Map data elements, category options and option sets for tracker data "
+"between instances"
+msgstr ""
+
+msgid "Map organisation units between instances"
+msgstr ""
+
+msgid "Instance mapping"
+msgstr ""
+
+msgid "Aggregated metadata mapping"
+msgstr ""
+
+msgid "Tracker metadata mapping"
+msgstr ""
+
+msgid "Organisation unit metadata mapping"
 msgstr ""
 
 msgid "Deleted by"

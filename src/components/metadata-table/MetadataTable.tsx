@@ -1,6 +1,7 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import { D2Api, Model, useD2, useD2Api, useD2ApiData } from "d2-api";
+import axios from "axios";
+import { D2Api, Model, PaginatedObjects, useD2, useD2Api } from "d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -9,6 +10,7 @@ import {
     ReferenceObject,
     TableAction,
     TableColumn,
+    TablePagination,
     TableSelection,
     TableSorting,
     TableState,
@@ -23,10 +25,11 @@ import { D2 } from "../../types/d2";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPaths, getRootOrgUnit } from "../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";
-import { getAllIdentifiers, getFilterData } from "./utils";
+import { getAllIdentifiers, getFilterData, getRows } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     api?: D2Api;
+    filterRows?: string[];
     models: typeof D2Model[];
     selectedIds?: string[];
     excludedIds?: string[];
@@ -103,6 +106,7 @@ const uniqCombine = (items: any[]) =>
 
 const MetadataTable: React.FC<MetadataTableProps> = ({
     api: providedApi,
+    filterRows,
     models,
     selectedIds = [],
     excludedIds = [],
@@ -126,7 +130,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [ids, updateIds] = useState<string[]>([]);
     const [search, updateSearch] = useState<string | undefined>(undefined);
     const [sorting, updateSorting] = useState<TableSorting<MetadataType>>(initialState.sorting);
-    const [pagination, updatePagination] = useState(initialState.pagination);
+    const [pagination, updatePagination] = useState<Partial<TablePagination>>(
+        initialState.pagination
+    );
     const [filters, updateFilters] = useState<FiltersState>({
         lastUpdated: null,
         group: "",
@@ -137,6 +143,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         selectedIds: selectedIds,
         parentOrgUnits: [],
     });
+
+    const [error, setError] = useState<Error>();
+    const [rows, setRows] = useState<MetadataType[]>([]);
+    const [pager, setPager] = useState<Partial<TablePagination>>({});
+    const [loading, setLoading] = useState<boolean>(true);
 
     const changeModelFilter = (modelName: string) => {
         if (models.length === 0) throw new Error("You need to provide at least one model");
@@ -305,6 +316,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         },
     ];
 
+    const handleError = (error: Error) => {
+        if (!axios.isCancel(error)) {
+            setError(error);
+            console.error(error);
+        }
+    };
+
     const apiModel = model.getApiModel(api);
     const apiQuery = useMemo(() => {
         const query: Parameters<InstanceType<typeof Model>["get"]>[0] = {
@@ -335,39 +353,82 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             query.order = "displayName:asc";
         }
 
-        return query;
-    }, [model, filters]);
+        if (query.filter && filterRows) {
+            query.filter["id"] = { in: filterRows };
+        }
 
-    const { loading, data, error, refetch } = useD2ApiData<any>();
+        return query;
+    }, [model, filters, filterRows]);
 
     useEffect(() => {
-        getAllIdentifiers(search, apiModel.modelName, api.baseUrl, apiModel, apiQuery).then(
-            updateIds
+        const { cancel, response } = getAllIdentifiers(
+            apiModel.modelName,
+            api.baseUrl,
+            search,
+            apiQuery,
+            apiModel
         );
+
+        response
+            .then(({ data }) => _.map(data.objects, "id"))
+            .then(updateIds)
+            .catch(handleError);
+
+        return cancel;
     }, [api.baseUrl, apiModel, apiQuery, search]);
 
     useEffect(() => {
-        getRootOrgUnit(api).then(({ objects: roots }) =>
-            changeParentOrgUnitFilter(roots.map(({ path }) => path))
-        );
+        let mounted = true;
+        getRootOrgUnit(api).then(({ objects: roots }) => {
+            if (mounted) changeParentOrgUnitFilter(roots.map(({ path }) => path));
+        });
+        return () => {
+            mounted = false;
+        };
     }, [api]);
 
-    useEffect(
-        () =>
-            refetch(
-                apiModel.get({
-                    order: `${sorting.field}:i${sorting.order}`,
-                    page: pagination.page,
-                    pageSize: pagination.pageSize,
-                    ...apiQuery,
-                    filter: {
-                        name: { ilike: search },
-                        ...apiQuery.filter,
-                    },
-                })
-            ),
-        [apiModel, apiQuery, refetch, sorting, pagination, search]
-    );
+    useEffect(() => {
+        const { response } = getRows(
+            apiModel.modelName,
+            api.baseUrl,
+            sorting,
+            pagination,
+            search,
+            apiQuery,
+            apiModel
+        );
+
+        setLoading(true);
+        let mounted = true;
+        response
+            .then(({ data }) => {
+                // TODO: Fix this in d2-api instead of converting type
+                const { objects, pager } = (data as unknown) as PaginatedObjects<MetadataType>;
+                const rows = model.getApiModelTransform()(objects);
+                notifyRowsChange(rows);
+
+                if (mounted) {
+                    setRows(rows);
+                    setPager(pager);
+                    setLoading(false);
+                }
+            })
+            .catch(handleError);
+
+        return () => {
+            mounted = false;
+        };
+    }, [
+        api.baseUrl,
+        apiModel,
+        apiQuery,
+        sorting,
+        pagination,
+        search,
+        model,
+        notifyRowsChange,
+        filterRows,
+    ]);
 
     useEffect(() => {
         if (model && model.getGroupFilterName()) {
@@ -395,10 +456,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             );
         }
     }, [d2, api, model]);
-
-    const { objects, pager } = data ?? { objects: [], pager: undefined };
-    const rows = useMemo(() => model.getApiModelTransform()(objects), [model, objects]);
-    useEffect(() => notifyRowsChange(rows), [notifyRowsChange, rows]);
 
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;
@@ -441,7 +498,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const childrenSelection: TableSelection[] = _(rows)
         .intersectionBy(selection, "id")
-        .map(row => _.values(_.pick(row, childrenKeys)))
+        .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType[])
         .flattenDeep()
         .differenceBy(selection, "id")
         .differenceBy(exclusion, "id")
