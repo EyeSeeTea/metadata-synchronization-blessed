@@ -1,64 +1,13 @@
 import { dataTest } from "../utils";
+import ManualSyncPageObject from "./common/ManualSyncPageObject";
 
-class ManualAggregatedSyncPageObject {
+class ManualAggregatedSyncPageObject extends ManualSyncPageObject {
     constructor(cy) {
-        this.cy = cy;
-    }
-
-    assertTitle(assert) {
-        assert(this.cy.get(dataTest("page-header-title")));
-        return this;
-    }
-
-    assertError(assert) {
-        assert(this.cy.get("#client-snackbar"));
-        return this;
-    }
-
-    assertSyncResults(assert) {
-        assert(this.cy.get('[data-test="Typography-synchronization-results-row-0"]'));
-        return this;
-    }
-
-    assertSyncButton(assert) {
-        assert(this.syncButton);
-        return this;
-    }
-
-    get syncButton() {
-        return this.cy.get('[data-test="Button-aggregated-data-synchronization-save"]');
+        super(cy, "aggregated-data");
     }
 
     open() {
-        this.cy.login("admin");
-        this.cy.visit("/#/sync/aggregated");
-        this.cy.get(dataTest("headerbar-title")).contains("MetaData Synchronization");
-        return this;
-    }
-
-    search(text) {
-        this.cy.get('[data-test="search"] > div > [aria-invalid="false"]').type(text);
-        return this;
-    }
-
-    selectRow(text) {
-        this.cy
-            .get(dataTest("TableCell-data-table-row-0-column-displayname"))
-            .contains(text)
-            .click();
-        return this;
-    }
-
-    openSyncDialog(text) {
-        this.cy
-            .get('[data-test="objects-table-action-button"] > :nth-child(1) > [focusable="false"]')
-            .click();
-
-        return this;
-    }
-
-    next() {
-        this.cy.get('[data-test="Button-next-→"]').click();
+        super.open("/#/sync/aggregated");
         return this;
     }
 
@@ -87,22 +36,6 @@ class ManualAggregatedSyncPageObject {
         return this;
     }
 
-    selectReceiverInstance(instance) {
-        // Move to instance selection
-        this.cy
-            .get(dataTest("DialogContent-aggregated-data-synchronization"))
-            .contains("Instance Selection")
-            .click();
-        this.cy.waitForStep("Instance Selection");
-
-        // Select receiver instance (multi-selector does not work fine with cypress?)
-        this.cy.selectInMultiSelector(
-            dataTest("DialogContent-aggregated-data-synchronization"),
-            instance
-        );
-        return this;
-    }
-
     synchronize() {
         this.cy
             .route({
@@ -113,11 +46,6 @@ class ManualAggregatedSyncPageObject {
 
         this.syncButton.click();
         this.cy.wait("@postDataValueSets");
-        return this;
-    }
-
-    closeSyncResultsDialog() {
-        this.cy.get('[data-test="Button-synchronization-results-save"]').click();
         return this;
     }
 }

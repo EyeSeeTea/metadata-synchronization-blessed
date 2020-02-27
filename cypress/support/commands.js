@@ -60,7 +60,7 @@ Cypress.on("window:before:load", win => {
 
 Cypress.on("uncaught:exception", (err, runnable) => {
     // returning false here prevents Cypress from failing the test
-    console.log("uncaught:exception", { err, runnable });
+    console.error("uncaught:exception", { err, runnable });
     return false;
 });
 
@@ -74,6 +74,14 @@ Cypress.Commands.add("waitForStep", stepName => {
 Cypress.Commands.add("selectInMultiSelector", (selector, option) => {
     cy.get(selector + " > div select:first").select(option);
     cy.contains("Selected")
+        .next("button")
+        .click();
+});
+
+Cypress.Commands.add("unselectInMultiSelector", (selector, option) => {
+    cy.get(selector + " > div select:last").select(option);
+    cy.contains("Selected")
+        .next("button")
         .next("button")
         .click();
 });
