@@ -19,6 +19,10 @@ context("Manual event sync", function() {
         page.open();
     });
 
+    it("should have the correct title", function() {
+        page.assertTitle(title => title.contains("Events Synchronization"));
+    });
+
     it("should sync correctly event", () => {
         page.search(inputs.program)
             .selectRow(inputs.program)
@@ -81,10 +85,6 @@ context("Manual event sync", function() {
 
             .next()
             .assertError(error => error.contains("You need to select at least one event"));
-    });
-
-    it("should have the correct title", function() {
-        page.assertTitle(title => title.contains("Events Synchronization"));
     });
 
     it("should show the org unit step error if user try click on next without selecting the org unit", function() {
