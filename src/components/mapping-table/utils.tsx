@@ -1,6 +1,6 @@
 import { D2Api } from "d2-api";
 import _ from "lodash";
-import { CategoryOptionModel, D2Model, OptionModel } from "../../models/d2Model";
+import { CategoryOptionModel, D2Model, OptionModel, ProgramStageModel } from "../../models/d2Model";
 import { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
@@ -38,6 +38,10 @@ interface CombinedMetadata {
             code: string;
         }[];
     };
+    programStages?: {
+        id: string;
+        name: string;
+    }[];
 }
 
 const getFieldsByModel = (model: typeof D2Model) => {
@@ -55,6 +59,17 @@ const getFieldsByModel = (model: typeof D2Model) => {
                 commentOptionSet: {
                     options: { id: true, name: true, shortName: true, code: true },
                 },
+            };
+        case "programs":
+            return {
+                categoryCombo: {
+                    id: true,
+                    name: true,
+                    categories: {
+                        categoryOptions: { id: true, name: true, shortName: true, code: true },
+                    },
+                },
+                programStages: { id: true, name: true },
             };
         default:
             return {};
@@ -124,17 +139,18 @@ export const autoMap = async (
 
 const autoMapCollection = async (
     instanceApi: D2Api,
-    collection: Partial<MetadataType>[],
+    originMetadata: Partial<MetadataType>[],
     model: typeof D2Model,
-    filter: string[]
+    destinationMetadata: Partial<MetadataType>[]
 ) => {
-    if (collection.length === 0) return {};
+    if (originMetadata.length === 0) return {};
+    const filter = _.compact(destinationMetadata.map(({ id }) => id));
 
     const mapping: {
         [id: string]: MetadataMapping;
     } = {};
 
-    for (const item of collection) {
+    for (const item of originMetadata) {
         const candidate = (await autoMap(instanceApi, model, item, "DISABLED", filter))[0];
         if (item.id && candidate) {
             mapping[item.id] = {
@@ -155,6 +171,55 @@ const getCategoryOptions = (object: CombinedMetadata) => {
 
 const getOptions = (object: CombinedMetadata) => {
     return _.union(object.optionSet?.options, object.commentOptionSet?.options);
+};
+
+const autoMapCategoryCombo = (
+    originMetadata: CombinedMetadata,
+    destinationMetadata: CombinedMetadata
+) => {
+    if (originMetadata.categoryCombo) {
+        const { id } = originMetadata.categoryCombo;
+        const { id: mappedId = "DISABLED", name: mappedName } =
+            destinationMetadata.categoryCombo ?? {};
+
+        return {
+            [id]: {
+                mappedId,
+                mappedName,
+                mapping: {},
+                conflicts: false,
+            },
+        };
+    } else {
+        return {};
+    }
+};
+
+const autoMapProgramStages = async (
+    instanceApi: D2Api,
+    originMetadata: CombinedMetadata,
+    destinationMetadata: CombinedMetadata
+) => {
+    const originProgramStages = originMetadata.programStages ?? [];
+    const destinationProgramStages = destinationMetadata.programStages ?? [];
+
+    if (originProgramStages.length === 1 && destinationProgramStages.length === 1) {
+        return {
+            [originProgramStages[0].id]: {
+                mappedId: destinationProgramStages[0].id,
+                mappedName: destinationProgramStages[0].name,
+                conflicts: false,
+                mapping: {},
+            },
+        };
+    } else {
+        return autoMapCollection(
+            instanceApi,
+            originProgramStages,
+            ProgramStageModel,
+            destinationProgramStages
+        );
+    }
 };
 
 export const buildMapping = async (
@@ -184,29 +249,26 @@ export const buildMapping = async (
         mappedId
     );
 
-    const categoryCombos = originMetadata[0].categoryCombo
-        ? {
-              [originMetadata[0].categoryCombo.id]: {
-                  mappedId: destinationMetadata[0].categoryCombo?.id ?? "DISABLED",
-                  name: destinationMetadata[0].categoryCombo?.name,
-                  mapping: {},
-                  conflicts: false,
-              },
-          }
-        : {};
+    const categoryCombos = autoMapCategoryCombo(originMetadata[0], destinationMetadata[0]);
 
     const categoryOptions = await autoMapCollection(
         instanceApi,
         getCategoryOptions(originMetadata[0]),
         CategoryOptionModel,
-        getCategoryOptions(destinationMetadata[0]).map(({ id }) => id)
+        getCategoryOptions(destinationMetadata[0])
     );
 
     const options = await autoMapCollection(
         instanceApi,
         getOptions(originMetadata[0]),
         OptionModel,
-        getOptions(destinationMetadata[0]).map(({ id }) => id)
+        getOptions(destinationMetadata[0])
+    );
+
+    const programStages = autoMapProgramStages(
+        instanceApi,
+        originMetadata[0],
+        destinationMetadata[0]
     );
 
     const mapping = _.omitBy(
@@ -214,6 +276,7 @@ export const buildMapping = async (
             categoryCombos,
             categoryOptions,
             options,
+            programStages,
         },
         _.isEmpty
     ) as MetadataMappingDictionary;
