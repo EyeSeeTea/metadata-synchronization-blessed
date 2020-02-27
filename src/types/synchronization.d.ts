@@ -144,7 +144,7 @@ export interface SharingSetting {
 export interface ProgramEvent {
     id: string;
     orgUnit: string;
-    orgUnitName: string;
+    orgUnitName?: string;
     program: string;
     href: string;
     programStage: string;
@@ -155,6 +155,8 @@ export interface ProgramEvent {
     storedBy: string;
     dueDate: string;
     eventDate: string;
+    attributeCategoryOptions?: string;
+    attributeOptionCombo?: string;
     dataValues: {
         lastUpdated: string;
         storedBy: string;

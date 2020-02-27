@@ -1,16 +1,19 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import Instance from "../../models/instance";
+import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { DataImportResponse } from "../../types/d2";
-import { EventsPackage } from "../../types/synchronization";
+import { EventsPackage, ProgramEvent } from "../../types/synchronization";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,
     getEventsData,
     postEventsData,
     cleanOrgUnitPath,
+    getCategoryOptionCombos,
+    mapCategoryOptionCombo,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
+import { D2CategoryOptionCombo } from "d2-api";
 
 export class EventsSync extends GenericSync {
     protected readonly type = "events";
@@ -54,7 +57,7 @@ export class EventsSync extends GenericSync {
             .mapValues((array, program) => ({
                 program: dictionary[program]?.name ?? program,
                 count: array.length,
-                orgUnits: _.uniq(array.map(({ orgUnitName }) => orgUnitName)),
+                orgUnits: _.uniq(array.map(({ orgUnit, orgUnitName }) => orgUnitName ?? orgUnit)),
             }))
             .values()
             .value();
@@ -64,38 +67,64 @@ export class EventsSync extends GenericSync {
         instance: Instance,
         payload: EventsPackage
     ): Promise<SyncronizationPayload> {
+        const { events: oldEvents } = payload;
+        const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
+        const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
+
+        const events = oldEvents.map(dataValue =>
+            this.buildMappedDataValue(
+                dataValue,
+                instance.metadataMapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            )
+        );
+
+        return { events };
+    }
+
+    private buildMappedDataValue(
+        { orgUnit, program, programStage, dataValues, attributeOptionCombo, ...rest }: ProgramEvent,
+        mapping: MetadataMappingDictionary,
+        originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+    ): ProgramEvent {
         const {
             organisationUnits = {},
             dataElements = {},
             programs = {},
             programStages = {},
-        } = instance.metadataMapping;
-        const { events: oldEvents } = payload;
+        } = mapping;
+        const { mappedId: mappedProgram = program, mapping: innerProgramMapping = {} } =
+            programs[program] ?? {};
+        const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
+        const mappedProgramStage = programStages[programStage]?.mappedId ?? programStage;
+        const mappedCategory = attributeOptionCombo
+            ? mapCategoryOptionCombo(
+                  attributeOptionCombo,
+                  innerProgramMapping,
+                  originCategoryOptionCombos,
+                  destinationCategoryOptionCombos
+              )
+            : undefined;
 
-        const events = oldEvents.map(
-            ({ orgUnit, orgUnitName, program, programStage, dataValues, ...rest }) => {
-                const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
-                const mappedProgram = programs[program]?.mappedId ?? program;
-                const mappedProgramStage = programStages[programStage]?.mappedId ?? programStage;
+        return _.omit(
+            {
+                orgUnit: cleanOrgUnitPath(mappedOrgUnit),
+                program: mappedProgram,
+                programStage: mappedProgramStage,
+                attributeOptionCombo: mappedCategory === "DISABLED" ? undefined : mappedCategory,
+                dataValues: dataValues.map(({ dataElement, ...rest }) => {
+                    const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
 
-                return {
-                    orgUnit: cleanOrgUnitPath(mappedOrgUnit),
-                    program: mappedProgram,
-                    programStage: mappedProgramStage,
-                    dataValues: dataValues.map(({ dataElement, ...rest }) => {
-                        const mappedDataElement =
-                            dataElements[dataElement]?.mappedId ?? dataElement;
-
-                        return {
-                            dataElement: mappedDataElement,
-                            ...rest,
-                        };
-                    }),
-                    ...rest,
-                };
-            }
+                    return {
+                        dataElement: mappedDataElement,
+                        ...rest,
+                    };
+                }),
+                ...rest,
+            },
+            ["orgUnitName", "attributeCategoryOptions"]
         );
-
-        return { events };
     }
 }

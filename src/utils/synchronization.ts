@@ -1,13 +1,13 @@
 import i18n from "@dhis2/d2-i18n";
 import axios, { AxiosBasicCredentials, AxiosError } from "axios";
-import { D2Api } from "d2-api";
+import { D2Api, D2CategoryOptionCombo } from "d2-api";
 import { isValidUid } from "d2/uid";
 import FileSaver from "file-saver";
 import _ from "lodash";
 import moment, { Moment } from "moment";
 import memoize from "nano-memoize";
 import { SyncronizationClass } from "../logic/sync/generic";
-import Instance from "../models/instance";
+import Instance, { MetadataMappingDictionary } from "../models/instance";
 import SyncRule from "../models/syncRule";
 import {
     D2,
@@ -224,10 +224,16 @@ export function cleanDataImportResponse(
         uid: object,
         message: value,
     }));
-    const eventsMessages = response?.importSummaries?.map(({ reference, description }) => ({
-        uid: reference,
-        message: description,
-    }));
+    const eventsMessages = _.flatten(
+        response?.importSummaries?.map(
+            ({ reference, description, conflicts }) =>
+                conflicts?.map(({ object, value }) => ({
+                    uid: reference,
+                    message: description ?? object,
+                    property: value,
+                })) ?? { uid: reference, message: description }
+        )
+    );
 
     return {
         status,
@@ -527,3 +533,44 @@ export async function requestJSONDownload(
     const fileName = `${ruleName}-${syncRule.type}-sync-${date}.json`;
     FileSaver.saveAs(blob, fileName);
 }
+
+export const mapCategoryOptionCombo = (
+    optionCombo: string,
+    mapping: MetadataMappingDictionary,
+    originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
+    destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+): string => {
+    const { categoryOptions = {}, categoryCombos = {} } = mapping;
+    const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
+    const isDisabled = _.some(
+        origin?.categoryOptions?.map(({ id }) => categoryOptions[id]),
+        { mappedId: "DISABLED" }
+    );
+    const defaultValue = isDisabled ? "DISABLED" : optionCombo;
+
+    // Candidates built from equal category options
+    const candidates = _.filter(destinationCategoryOptionCombos, o =>
+        _.isEqual(
+            _.sortBy(o.categoryOptions, ["id"]),
+            _.sortBy(
+                origin?.categoryOptions?.map(({ id }) => ({
+                    id: categoryOptions[id]?.mappedId ?? id,
+                })),
+                ["id"]
+            )
+        )
+    );
+
+    // Exact object built from equal category options and combo
+    const exactObject = _.find(candidates, o =>
+        _.isEqual(o.categoryCombo, {
+            id:
+                categoryCombos[origin?.categoryCombo?.id ?? ""]?.mappedId ??
+                origin?.categoryCombo?.id,
+        })
+    );
+
+    // If there's only one candidate, ignore the category combo, else provide exact object
+    const result = candidates.length === 1 ? _.first(candidates) : exactObject;
+    return result?.id ?? defaultValue;
+};

@@ -162,6 +162,10 @@ export interface DataImportResponse {
             description?: string;
             importCount?: DataImportStats;
             reference?: string;
+            conflicts?: {
+                object: string;
+                value: string;
+            }[];
         }[];
     };
 }
