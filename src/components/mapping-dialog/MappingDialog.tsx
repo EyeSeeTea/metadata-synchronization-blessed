@@ -57,9 +57,6 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const api = instance.getApi();
     const model = d2ModelFactory(api, type);
 
-    if (elements.length > 1)
-        throw new Error("Applying mapping to more than one item is not supported yet");
-
     useEffect(() => {
         let mounted = true;
 

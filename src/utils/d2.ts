@@ -19,6 +19,7 @@ export interface MetadataType {
     href: string;
     level?: number;
     domainType?: "AGGREGATE" | "TRACKER" | "EVENT";
+    __originalId__: string;
     __mappingType__: keyof D2ModelSchemas;
     __type__: keyof D2ModelSchemas;
     [key: string]: string | number | undefined;

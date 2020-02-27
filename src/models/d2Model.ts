@@ -49,6 +49,7 @@ export abstract class D2Model {
     protected static initialSorting = ["name", "asc"];
     protected static modelTransform: Function = (objects: MetadataType[]) => objects;
     protected static modelFilters: any = {};
+    protected static childrenKeys: string[] | undefined = undefined;
 
     // List method should be executed by a wrapper to preserve static context binding
     public static async listMethod(
@@ -151,6 +152,10 @@ export abstract class D2Model {
 
     public static getLevelFilterName(): keyof D2ModelSchemas {
         return this.levelFilterName;
+    }
+
+    public static getChildrenKeys(): string[] | undefined {
+        return this.childrenKeys;
     }
 }
 
@@ -301,6 +306,7 @@ export class DataSetModel extends D2Model {
     protected static metadataType = "dataSet";
     protected static collectionName = "dataSets" as const;
     protected static fields = dataSetFields;
+    protected static childrenKeys = ["dataElements"];
 
     protected static modelTransform = (
         dataSets: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]
@@ -330,6 +336,7 @@ export class ProgramModel extends D2Model {
     protected static metadataType = "program";
     protected static collectionName = "programs" as const;
     protected static fields = programFields;
+    protected static childrenKeys = ["dataElements"];
 
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFields>[]

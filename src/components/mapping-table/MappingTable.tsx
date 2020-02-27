@@ -52,8 +52,6 @@ export interface MappingTableProps {
     mappingPath?: string[];
 }
 
-const childrenKeys = ["dataElements"];
-
 export default function MappingTable({
     instance,
     models,
@@ -89,14 +87,14 @@ export default function MappingTable({
                 for (const id of selection) {
                     const row = _.find(rows, ["id", id]);
                     const rowType = row?.__mappingType__ ?? type;
-                    const model = d2ModelFactory(api, rowType as string);
+                    const model = d2ModelFactory(api, rowType);
                     _.unset(newMapping, [rowType, id]);
                     if (isChildrenMapping || mappedId) {
                         const mapping = await buildMapping(
                             api,
                             instanceApi,
                             model,
-                            (row?.__originalId__ as string) ?? id,
+                            row?.__originalId__ ?? id,
                             mappedId
                         );
                         _.set(newMapping, [rowType, id], mapping);
@@ -244,7 +242,7 @@ export default function MappingTable({
                     )
                 );
             } else {
-                setRelatedMapping([rowType as string, id]);
+                setRelatedMapping([rowType, id]);
             }
         },
         [mapping, rows, type, snackbar]
@@ -351,7 +349,7 @@ export default function MappingTable({
             {
                 name: "set-mapping",
                 text: i18n.t("Set mapping"),
-                multiple: false,
+                multiple: true,
                 onClick: openMappingDialog,
                 icon: <Icon>open_in_new</Icon>,
             },
@@ -419,20 +417,23 @@ export default function MappingTable({
         setModel(() => model);
     }, []);
 
-    const updateRows = useCallback((rows: MetadataType[]) => {
-        const childrenRows = (_(rows)
-            .map(row =>
-                _(row)
-                    .pick(childrenKeys)
-                    .values()
-                    .flatten()
-                    .value()
-            )
-            .flatten()
-            .value() as unknown) as MetadataType[];
+    const updateRows = useCallback(
+        (rows: MetadataType[]) => {
+            const childrenRows = (_(rows)
+                .map(row =>
+                    _(row)
+                        .pick(model.getChildrenKeys() ?? [])
+                        .values()
+                        .flatten()
+                        .value()
+                )
+                .flatten()
+                .value() as unknown) as MetadataType[];
 
-        setRows([...rows, ...childrenRows]);
-    }, []);
+            setRows([...rows, ...childrenRows]);
+        },
+        [model]
+    );
 
     const closeWarningDialog = () => setWarningDialog(null);
     const closeMappingDialog = () => setMappingConfig(null);
@@ -484,7 +485,7 @@ export default function MappingTable({
                 selectedIds={selectedIds}
                 notifyNewSelection={setSelectedIds}
                 globalActions={globalActions}
-                childrenKeys={childrenKeys}
+                childrenKeys={!isChildrenMapping ? model.getChildrenKeys() : undefined}
             />
         </React.Fragment>
     );
