@@ -11,11 +11,6 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
         return this;
     }
 
-    selectOrgUnit(orgUnit) {
-        this.cy.get(dataTest("DialogContent-events-synchronization")).selectInOrgUnitTree(orgUnit);
-        return this;
-    }
-
     displayOrgUnitChildren(orgUnit) {
         this.cy
             .get(dataTest("DialogContent-events-synchronization"))
@@ -33,14 +28,6 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
             .contains(event)
             .parent()
             .click();
-        return this;
-    }
-
-    selectAllPeriods() {
-        this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
-        this.cy.get('[data-test="MenuItem-period-dropdown-select-element-fixed"]').click();
-        this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
-        this.cy.get('[data-test="MenuItem-period-dropdown-select-element-all"]').click();
         return this;
     }
 
