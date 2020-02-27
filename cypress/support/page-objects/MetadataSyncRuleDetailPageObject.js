@@ -7,12 +7,7 @@ class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
     }
 
     assertSelectedMetadata(assert) {
-        assert(this.cy.contains("Clear selection").prev("span"));
-        return this;
-    }
-
-    assertSelectedInstances(assert) {
-        assert(this.cy.get("select:last"));
+        assert(this.cy.contains("items selected in all pages"));
         return this;
     }
 
