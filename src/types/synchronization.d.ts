@@ -157,14 +157,16 @@ export interface ProgramEvent {
     eventDate: string;
     attributeCategoryOptions?: string;
     attributeOptionCombo?: string;
-    dataValues: {
-        lastUpdated: string;
-        storedBy: string;
-        created: string;
-        dataElement: string;
-        value: any;
-        providedElsewhere: boolean;
-    }[];
+    dataValues: ProgramEventDataValue[];
+}
+
+export interface ProgramEventDataValue {
+    lastUpdated: string;
+    storedBy: string;
+    created: string;
+    dataElement: string;
+    value: any;
+    providedElsewhere: boolean;
 }
 
 export interface DataValue {

@@ -13,6 +13,7 @@ import {
     getCategoryOptionCombos,
     getDefaultIds,
     mapCategoryOptionCombo,
+    mapOptionValue,
     postAggregatedData,
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
@@ -134,8 +135,8 @@ export class AggregatedSync extends GenericSync {
 
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
-        const mappedValue = this.mapOptionValue(value, innerMapping);
-        const mappedComment = comment ? this.mapOptionValue(comment, innerMapping) : undefined;
+        const mappedValue = mapOptionValue(value, innerMapping);
+        const mappedComment = comment ? mapOptionValue(comment, innerMapping) : undefined;
         const mappedCategory = mapCategoryOptionCombo(
             categoryOptionCombo,
             innerMapping,
@@ -151,15 +152,6 @@ export class AggregatedSync extends GenericSync {
             comment: mappedComment,
             ...rest,
         };
-    }
-
-    private mapOptionValue(value: string, mapping: MetadataMappingDictionary): string {
-        const { options } = mapping;
-        const candidate = _(options)
-            .values()
-            .find(["code", value]);
-
-        return candidate?.mappedCode ?? value;
     }
 
     private isDisabledDataValue(dataValue: DataValue): boolean {

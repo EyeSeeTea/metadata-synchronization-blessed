@@ -229,8 +229,9 @@ export function cleanDataImportResponse(
             ({ reference, description, conflicts }) =>
                 conflicts?.map(({ object, value }) => ({
                     uid: reference,
-                    message: description ?? object,
-                    property: value,
+                    message: _([description, object, value])
+                        .compact()
+                        .join(" "),
                 })) ?? { uid: reference, message: description }
         )
     );
@@ -573,4 +574,13 @@ export const mapCategoryOptionCombo = (
     // If there's only one candidate, ignore the category combo, else provide exact object
     const result = candidates.length === 1 ? _.first(candidates) : exactObject;
     return result?.id ?? defaultValue;
+};
+
+export const mapOptionValue = (value: string, mapping: MetadataMappingDictionary): string => {
+    const { options } = mapping;
+    const candidate = _(options)
+        .values()
+        .find(["code", value]);
+
+    return candidate?.mappedCode ?? value;
 };

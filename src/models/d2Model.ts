@@ -255,7 +255,7 @@ export class DataElementModel extends D2Model {
 }
 
 export class AggregatedDataElementModel extends DataElementModel {
-    protected static metadataType = "aggregatedDataElement";
+    protected static metadataType = "aggregatedDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
@@ -263,7 +263,7 @@ export class AggregatedDataElementModel extends DataElementModel {
 }
 
 export class ProgramDataElementModel extends DataElementModel {
-    protected static metadataType = "programDataElement";
+    protected static metadataType = "programDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
@@ -316,7 +316,7 @@ export class DataSetModel extends D2Model {
             dataElements: dataSetElements.map(({ dataElement }) => ({
                 ...dataElement,
                 __type__: "dataElement",
-                __mappingType__: "aggregatedDataElement",
+                __mappingType__: "aggregatedDataElements",
             })),
         }));
     };
@@ -351,7 +351,7 @@ export class ProgramModel extends D2Model {
                             id: `${program.id}-${programStageId}-${dataElement.id}`,
                             __originalId__: dataElement.id,
                             __type__: "dataElement",
-                            __mappingType__: "programDataElement",
+                            __mappingType__: "programDataElements",
                             displayName:
                                 program.programStages.length > 1
                                     ? `[${displayName}] ${dataElement.displayName}`

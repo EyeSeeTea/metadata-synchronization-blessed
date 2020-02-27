@@ -1,19 +1,20 @@
+import { D2CategoryOptionCombo } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { DataImportResponse } from "../../types/d2";
-import { EventsPackage, ProgramEvent } from "../../types/synchronization";
+import { EventsPackage, ProgramEvent, ProgramEventDataValue } from "../../types/synchronization";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,
-    getEventsData,
-    postEventsData,
     cleanOrgUnitPath,
     getCategoryOptionCombos,
+    getEventsData,
     mapCategoryOptionCombo,
+    mapOptionValue,
+    postEventsData,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
-import { D2CategoryOptionCombo } from "d2-api";
 
 export class EventsSync extends GenericSync {
     protected readonly type = "events";
@@ -71,14 +72,16 @@ export class EventsSync extends GenericSync {
         const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
 
-        const events = oldEvents.map(dataValue =>
-            this.buildMappedDataValue(
-                dataValue,
-                instance.metadataMapping,
-                originCategoryOptionCombos,
-                destinationCategoryOptionCombos
+        const events = oldEvents
+            .map(dataValue =>
+                this.buildMappedDataValue(
+                    dataValue,
+                    instance.metadataMapping,
+                    originCategoryOptionCombos,
+                    destinationCategoryOptionCombos
+                )
             )
-        );
+            .filter(this.isDisabledEvent);
 
         return { events };
     }
@@ -89,14 +92,10 @@ export class EventsSync extends GenericSync {
         originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
     ): ProgramEvent {
-        const {
-            organisationUnits = {},
-            dataElements = {},
-            programs = {},
-            programStages = {},
-        } = mapping;
+        const { organisationUnits = {}, programDataElements = {}, programs = {} } = mapping;
         const { mappedId: mappedProgram = program, mapping: innerProgramMapping = {} } =
             programs[program] ?? {};
+        const { programStages = {} } = innerProgramMapping;
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedProgramStage = programStages[programStage]?.mappedId ?? programStage;
         const mappedCategory = attributeOptionCombo
@@ -113,18 +112,33 @@ export class EventsSync extends GenericSync {
                 orgUnit: cleanOrgUnitPath(mappedOrgUnit),
                 program: mappedProgram,
                 programStage: mappedProgramStage,
-                attributeOptionCombo: mappedCategory === "DISABLED" ? undefined : mappedCategory,
-                dataValues: dataValues.map(({ dataElement, ...rest }) => {
-                    const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
+                attributeOptionCombo: mappedCategory,
+                dataValues: dataValues
+                    .map(({ dataElement, value, ...rest }) => {
+                        const dataElementId = `${program}-${programStage}-${dataElement}`;
+                        const {
+                            mappedId: mappedDataElement = dataElement,
+                            mapping: dataElementMapping = {},
+                        } = programDataElements[dataElementId] ?? {};
+                        const mappedValue = mapOptionValue(value, dataElementMapping);
 
-                    return {
-                        dataElement: mappedDataElement,
-                        ...rest,
-                    };
-                }),
+                        return {
+                            dataElement: mappedDataElement,
+                            value: mappedValue,
+                            ...rest,
+                        };
+                    })
+                    .filter(this.isDisabledEvent),
                 ...rest,
             },
             ["orgUnitName", "attributeCategoryOptions"]
         );
+    }
+
+    private isDisabledEvent(event: ProgramEvent | ProgramEventDataValue): boolean {
+        return !_(event)
+            .pick(["orgUnit", "attributeOptionCombo", "dataElement", "value"])
+            .values()
+            .includes("DISABLED");
     }
 }
