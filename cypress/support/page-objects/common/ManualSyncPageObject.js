@@ -1,19 +1,10 @@
 import { dataTest } from "../../utils";
+import PageObject from "./PageObject";
 
-export default class ManualSyncPageObject {
+export default class ManualSyncPageObject extends PageObject {
     constructor(cy, key) {
-        this.cy = cy;
+        super(cy);
         this.key = key;
-    }
-
-    assertTitle(assert) {
-        assert(this.cy.get(dataTest("page-header-title")));
-        return this;
-    }
-
-    assertError(assert) {
-        assert(this.cy.get("#client-snackbar"));
-        return this;
     }
 
     assertSyncResultsStatus(assert) {
@@ -33,12 +24,6 @@ export default class ManualSyncPageObject {
 
     get syncButton() {
         return this.cy.get(dataTest(`Button-${this.key}-synchronization-save`));
-    }
-
-    open(url) {
-        this.cy.login("admin");
-        this.cy.visit(url);
-        this.cy.get(dataTest("headerbar-title")).contains("MetaData Synchronization");
     }
 
     search(text) {
