@@ -32,7 +32,6 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
         return this;
     }
 
-
     selectAllPeriods() {
         this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
         this.cy.get('[data-test="MenuItem-period-dropdown-select-element-fixed"]').click();

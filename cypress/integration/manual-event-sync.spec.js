@@ -5,22 +5,24 @@ import ManualEventSyncPageObject from "../support/page-objects/ManualEventSyncPa
 context("Manual event sync", function() {
     const page = new ManualEventSyncPageObject(cy);
 
-    const anyOrgUnit = "Ahafo";
-    const anyOrgUnitLevel = "Level 5";
-    const anyInstance = "pxPV4coHU56";
-    const anyProgram = "ENTO- ";
+    const inputs = {
+        orgUnit: "Ahafo",
+        orgUnitLevel: "Level 5",
+        instance: "pxPV4coHU56",
+        program: "ENTO- ",
+    };
 
     beforeEach(() => {
         page.open();
     });
 
     it("should show the event step error if user try click on next without event", function() {
-        page.search(anyProgram)
-            .selectRow(anyProgram)
+        page.search(inputs.program)
+            .selectRow(inputs.program)
             .openSyncDialog()
 
-            .selectOrgUnit(anyOrgUnit)
-            .selectOrgUnitLevel(anyOrgUnitLevel)
+            .selectOrgUnit(inputs.orgUnit)
+            .selectOrgUnitLevel(inputs.orgUnitLevel)
             .next()
 
             .selectAllPeriods()
@@ -35,8 +37,8 @@ context("Manual event sync", function() {
     });
 
     it("should show the org unit step error if user try click on next without selecting the org unit", function() {
-        page.search(anyProgram)
-            .selectRow(anyProgram)
+        page.search(inputs.program)
+            .selectRow(inputs.program)
             .openSyncDialog()
             .next()
             .assertError(error =>
