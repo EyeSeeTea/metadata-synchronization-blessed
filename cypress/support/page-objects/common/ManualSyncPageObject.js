@@ -32,10 +32,7 @@ export default class ManualSyncPageObject extends PageObject {
     }
 
     selectRow(text) {
-        this.cy
-            .get(dataTest("TableCell-data-table-row-0-column-displayname"))
-            .contains(text)
-            .click();
+        this.cy.selectRowInTableByText(text);
         return this;
     }
 
