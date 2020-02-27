@@ -18,7 +18,7 @@ import {
 import { getValidationMessages } from "../../../utils/validations";
 import { getInstanceOptions } from "./InstanceSelectionStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
-import Instance from "../../../models/instance";
+// import Instance from "../../../models/instance";
 
 const LiEntry = ({ label, value, children }) => {
     return (
