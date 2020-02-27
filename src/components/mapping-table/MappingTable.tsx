@@ -1,6 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
-import { useD2Api } from "d2-api";
+import { useD2, useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
     TableAction,
@@ -17,6 +17,7 @@ import MetadataTable from "../../components/metadata-table/MetadataTable";
 import { D2Model, DataElementModel } from "../../models/d2Model";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
+import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
 import { autoMap, buildMapping, getMetadataTypeFromRow } from "./utils";
@@ -62,6 +63,7 @@ export default function MappingTable({
     mappingPath,
 }: MappingTableProps) {
     const api = useD2Api();
+    const d2 = useD2() as D2;
     const classes = useStyles();
     const snackbar = useSnackbar();
     const loading = useLoading();
@@ -257,7 +259,14 @@ export default function MappingTable({
                     return _.last(row.id?.split("-")) ?? row.id;
                 },
             },
-            { name: "__type__", text: "Metadata type" },
+            {
+                name: "metadata-type",
+                text: "Metadata type",
+                hidden: model.getChildrenKeys() === undefined,
+                getValue: (row: MetadataType) => {
+                    return d2.models[row.__type__]?.displayName ?? type;
+                },
+            },
             {
                 name: "mapped-id",
                 text: "Mapped ID",
@@ -335,7 +344,16 @@ export default function MappingTable({
                 },
             },
         ],
-        [classes, type, mapping, openMappingDialog, isChildrenMapping, openRelatedMapping]
+        [
+            d2,
+            classes,
+            model,
+            type,
+            mapping,
+            openMappingDialog,
+            isChildrenMapping,
+            openRelatedMapping,
+        ]
     );
 
     const actions: TableAction<MetadataType>[] = useMemo(
