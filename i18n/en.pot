@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-25T07:39:41.860Z\n"
-"PO-Revision-Date: 2020-02-25T07:39:41.860Z\n"
+"POT-Creation-Date: 2020-02-27T11:04:29.056Z\n"
+"PO-Revision-Date: 2020-02-27T11:04:29.056Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -21,9 +21,6 @@ msgid "Add"
 msgstr ""
 
 msgid "List"
-msgstr ""
-
-msgid "Edit mapping for {{displayName}} ({{id}})"
 msgstr ""
 
 msgid "Edit mapping for {{total}} elements"
@@ -78,6 +75,12 @@ msgid "Unexpected error, could not apply auto mapping"
 msgstr ""
 
 msgid "Could not find a suitable candidate to apply auto-mapping"
+msgstr ""
+
+msgid "You need to select all items from the same type"
+msgstr ""
+
+msgid "You need to select at least one valid item"
 msgstr ""
 
 msgid "You need to map this element before accessing its related metadata mapping"

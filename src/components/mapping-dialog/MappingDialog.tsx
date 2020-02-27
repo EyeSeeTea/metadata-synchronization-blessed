@@ -8,18 +8,21 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import { MetadataType } from "../../utils/d2";
 import { getValidIds } from "../mapping-table/utils";
 import MetadataTable from "../metadata-table/MetadataTable";
 
-interface MappingDialogProps {
-    rows: MetadataType[];
+export interface MappingDialogConfig {
     elements: string[];
+    type: keyof D2ModelSchemas;
+    mappingPath: string[] | undefined;
+}
+
+export interface MappingDialogProps {
+    config: MappingDialogConfig;
     instance: Instance;
-    onClose: () => void;
     mapping: MetadataMappingDictionary;
-    onUpdateMapping: (id?: string) => void;
-    mappingPath?: string[];
+    onUpdateMapping: (items: string[], id?: string) => void;
+    onClose: () => void;
 }
 
 const useStyles = makeStyles({
@@ -29,29 +32,33 @@ const useStyles = makeStyles({
 });
 
 const MappingDialog: React.FC<MappingDialogProps> = ({
-    rows,
-    elements,
+    config,
     instance,
-    onClose,
     mapping,
     onUpdateMapping,
-    mappingPath,
+    onClose,
 }) => {
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
+    const [filterRows, setFilterRows] = useState<string[] | undefined>();
+    const { elements, type, mappingPath } = config;
+
+    const mappedId =
+        elements.length === 1
+            ? _.last(
+                  _(mapping)
+                      .get([type, elements[0] ?? "", "mappedId"])
+                      ?.split("-")
+              )
+            : undefined;
+    const defaultSelection = mappedId !== "DISABLED" ? mappedId : undefined;
+    const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
+
     const api = instance.getApi();
+    const model = d2ModelFactory(api, type);
 
     if (elements.length > 1)
         throw new Error("Applying mapping to more than one item is not supported yet");
-
-    const element = _.find(rows, ["id", elements[0]]);
-    const type = element?.__mappingType__ ?? element?.__type__ ?? "";
-    const model = d2ModelFactory(api, type as keyof D2ModelSchemas);
-    const id = _.get(mapping, [type, element?.id ?? "", "mappedId"]);
-    const mappedId = _.last(id?.split("-")) ?? id;
-    const defaultSelection = mappedId !== "DISABLED" ? mappedId : undefined;
-    const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
-    const [filterRows, setFilterRows] = useState<string[]>();
 
     useEffect(() => {
         let mounted = true;
@@ -75,7 +82,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 
     const onUpdateSelection = (selectedIds: string[]) => {
         const newSelection = _.last(selectedIds);
-        onUpdateMapping(newSelection);
+        onUpdateMapping(elements, newSelection);
         updateSelected(newSelection);
     };
 
@@ -108,15 +115,10 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const MapperComponent =
         model.getCollectionName() === "organisationUnits" ? OrgUnitMapper : MetadataMapper;
 
-    const title =
-        elements.length === 1
-            ? i18n.t("Edit mapping for {{displayName}} ({{id}})", element)
-            : i18n.t("Edit mapping for {{total}} elements", { total: elements.length });
-
     return (
         <ConfirmationDialog
             isOpen={elements.length > 0}
-            title={title}
+            title={i18n.t("Edit mapping for {{total}} elements", { total: elements.length })}
             onCancel={onClose}
             maxWidth={"lg"}
             fullWidth={true}

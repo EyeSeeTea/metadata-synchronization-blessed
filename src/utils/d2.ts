@@ -1,4 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
+import { D2ModelSchemas } from "d2-api";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import _ from "lodash";
 import { D2, Params } from "../types/d2";
@@ -18,6 +19,8 @@ export interface MetadataType {
     href: string;
     level?: number;
     domainType?: "AGGREGATE" | "TRACKER" | "EVENT";
+    __mappingType__: keyof D2ModelSchemas;
+    __type__: keyof D2ModelSchemas;
     [key: string]: string | number | undefined;
 }
 

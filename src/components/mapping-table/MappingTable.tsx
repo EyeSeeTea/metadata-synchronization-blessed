@@ -11,15 +11,15 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
-import MappingDialog from "../../components/mapping-dialog/MappingDialog";
+import MappingDialog, { MappingDialogConfig } from "../../components/mapping-dialog/MappingDialog";
 import MappingWizard from "../../components/mapping-wizard/MappingWizard";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import { D2Model, DataElementModel } from "../../models/d2Model";
+import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
-import { autoMap, buildMapping } from "./utils";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
+import { autoMap, buildMapping, getMetadataTypeFromRow } from "./utils";
 
 const useStyles = makeStyles({
     iconButton: {
@@ -76,7 +76,7 @@ export default function MappingTable({
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const [warningDialog, setWarningDialog] = useState<WarningDialog | null>(null);
-    const [elementsToMap, setElementsToMap] = useState<string[]>([]);
+    const [mappingConfig, setMappingConfig] = useState<MappingDialogConfig | null>(null);
     const [rows, setRows] = useState<MetadataType[]>([]);
 
     const [relatedMapping, setRelatedMapping] = useState<string[]>();
@@ -136,10 +136,10 @@ export default function MappingTable({
     );
 
     const updateMapping = useCallback(
-        async (mappedId?: string) => {
+        async (elementsToMap: string[], mappedId?: string) => {
             applyMapping(elementsToMap, mappedId);
         },
-        [applyMapping, elementsToMap]
+        [applyMapping]
     );
 
     const disableMapping = useCallback(
@@ -183,10 +183,10 @@ export default function MappingTable({
     );
 
     const applyAutoMapping = useCallback(
-        async (selection: string[]) => {
-            const selectedItem = _.find(rows, ["id", selection[0]]);
+        async (elements: string[]) => {
+            const selectedItem = _.find(rows, ["id", elements[0]]);
 
-            if (selection.length !== 1) {
+            if (elements.length !== 1) {
                 snackbar.error(i18n.t("Auto-mapping does not support multiple action yet"), {
                     autoHideDuration: 2500,
                 });
@@ -203,17 +203,33 @@ export default function MappingTable({
             if (!candidate) {
                 snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
             } else {
-                await applyMapping(selection, candidate);
-                setElementsToMap(selection);
+                const type = getMetadataTypeFromRow(selectedItem);
+                await applyMapping(elements, candidate);
+                setMappingConfig({ elements, mappingPath, type });
             }
         },
-        [applyMapping, instanceApi, rows, snackbar, model]
+        [applyMapping, instanceApi, rows, snackbar, model, mappingPath]
     );
 
-    const openMappingDialog = useCallback((selection: string[]) => {
-        setElementsToMap(selection);
-        setSelectedIds([]);
-    }, []);
+    const openMappingDialog = useCallback(
+        (elements: string[]) => {
+            const types = _(rows)
+                .filter(({ id }) => elements.includes(id))
+                .map(e => getMetadataTypeFromRow(e))
+                .uniq()
+                .value();
+
+            if (types.length === 1) {
+                setMappingConfig({ elements, mappingPath, type: types[0] });
+                setSelectedIds([]);
+            } else if (types.length > 1) {
+                snackbar.error(i18n.t("You need to select all items from the same type"));
+            } else {
+                snackbar.error(i18n.t("You need to select at least one valid item"));
+            }
+        },
+        [mappingPath, rows, snackbar]
+    );
 
     const openRelatedMapping = useCallback(
         (selection: string[]) => {
@@ -419,7 +435,7 @@ export default function MappingTable({
     }, []);
 
     const closeWarningDialog = () => setWarningDialog(null);
-    const closeMappingDialog = () => setElementsToMap([]);
+    const closeMappingDialog = () => setMappingConfig(null);
     const closeWizard = () => setRelatedMapping(undefined);
 
     return (
@@ -438,19 +454,17 @@ export default function MappingTable({
                 />
             )}
 
-            {elementsToMap.length > 0 && (
+            {!!mappingConfig && (
                 <MappingDialog
-                    rows={rows}
-                    elements={elementsToMap}
+                    instance={instance}
+                    config={mappingConfig}
+                    mapping={mapping}
                     onUpdateMapping={updateMapping}
                     onClose={closeMappingDialog}
-                    instance={instance}
-                    mapping={mapping}
-                    mappingPath={mappingPath}
                 />
             )}
 
-            {relatedMapping && (
+            {!!relatedMapping && (
                 <MappingWizard
                     instance={instance}
                     updateMapping={onChangeMapping}

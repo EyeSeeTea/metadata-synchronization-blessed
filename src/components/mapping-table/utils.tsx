@@ -233,3 +233,8 @@ export const getValidIds = async (api: D2Api, model: typeof D2Model, id: string)
 
     return _.union(validCategoryOptions, validOptions).map(({ id }) => id);
 };
+
+export const getMetadataTypeFromRow = (object: MetadataType) => {
+    const { __mappingType__, __type__ } = object;
+    return __mappingType__ ?? __type__;
+};
