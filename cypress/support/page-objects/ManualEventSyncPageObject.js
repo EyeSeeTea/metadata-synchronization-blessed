@@ -3,7 +3,7 @@ import ManualSyncPageObject from "./common/ManualSyncPageObject";
 
 class ManualEventSyncPageObject extends ManualSyncPageObject {
     constructor(cy) {
-        super(cy, "event");
+        super(cy, "events");
     }
 
     open() {
@@ -23,6 +23,15 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
             .parent()
             .parent()
             .contains("▸")
+            .click();
+        return this;
+    }
+
+    selectEvent(event) {
+        this.cy
+            .get(dataTest("DialogContent-events-synchronization"))
+            .contains(event)
+            .parent()
             .click();
         return this;
     }

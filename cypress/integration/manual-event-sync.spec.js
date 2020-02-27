@@ -10,6 +10,7 @@ context("Manual event sync", function() {
         orgUnitLevel1: "Ahafo",
         orgUnitLevel2: "Asunafo North",
         orgUnitLevel3: "Akrodie",
+        event: "PoKTdJQa8pV",
         instance: "pxPV4coHU56",
         program: "ENTO- ",
     };
@@ -18,10 +19,32 @@ context("Manual event sync", function() {
         page.open();
     });
 
+    it("should show the instance selection step error if user try click on next without selecting an instance", () => {
+        page.search(inputs.program)
+            .selectRow(inputs.program)
+            .openSyncDialog()
+
+            .displayOrgUnitChildren(inputs.orgUnitLevel1)
+            .displayOrgUnitChildren(inputs.orgUnitLevel2)
+            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .selectEvent(inputs.event)
+            .next()
+            .next()
+
+            .assertError(error => error.contains("You need to select at least one instance"));
+    });
+
     it("should show the event step error if user try click on next without event", function() {
         page.search(inputs.program)
             .selectRow(inputs.program)
             .openSyncDialog()
+
             .displayOrgUnitChildren(inputs.orgUnitLevel1)
             .displayOrgUnitChildren(inputs.orgUnitLevel2)
             .displayOrgUnitChildren(inputs.orgUnitLevel3)
@@ -47,5 +70,64 @@ context("Manual event sync", function() {
             .assertError(error =>
                 error.contains("You need to select at least one organisation unit")
             );
+    });
+
+    it("should have synchronize button disabled to open sync dialog", () => {
+        page.search(inputs.program)
+            .selectRow(inputs.program)
+            .openSyncDialog()
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
+    });
+
+    it("should have synchronize button disabled if only contains org unit", () => {
+        page.search(inputs.program)
+            .selectRow(inputs.program)
+            .openSyncDialog()
+
+            .displayOrgUnitChildren(inputs.orgUnitLevel1)
+            .displayOrgUnitChildren(inputs.orgUnitLevel2)
+            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
+    });
+
+    it("should have synchronize button disabled if only contains org unit and periods", () => {
+        page.search(inputs.program)
+
+            .selectRow(inputs.program)
+            .openSyncDialog()
+
+            .displayOrgUnitChildren(inputs.orgUnitLevel1)
+            .displayOrgUnitChildren(inputs.orgUnitLevel2)
+            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
+    });
+
+    it("should have synchronize button disabled if only contains org unit, periods and event", () => {
+        page.search(inputs.program)
+            .selectRow(inputs.program)
+            .openSyncDialog()
+
+            .displayOrgUnitChildren(inputs.orgUnitLevel1)
+            .displayOrgUnitChildren(inputs.orgUnitLevel2)
+            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .selectEvent(inputs.event)
+            .next()
+
+            .assertSyncButton(syncButton => syncButton.should("be.disabled"));
     });
 });
