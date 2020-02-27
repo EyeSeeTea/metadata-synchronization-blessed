@@ -43,6 +43,19 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
         this.cy.get('[data-test="MenuItem-period-dropdown-select-element-all"]').click();
         return this;
     }
+
+    synchronize() {
+        this.cy
+            .route({
+                method: "POST",
+                url: "/api/events*",
+            })
+            .as("postEvent");
+
+        this.syncButton.click();
+        this.cy.wait("@postEvent");
+        return this;
+    }
 }
 
 export default ManualEventSyncPageObject;

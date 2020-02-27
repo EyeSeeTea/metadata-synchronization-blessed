@@ -11,12 +11,37 @@ context("Manual event sync", function() {
         orgUnitLevel2: "Asunafo North",
         orgUnitLevel3: "Akrodie",
         event: "PoKTdJQa8pV",
-        instance: "pxPV4coHU56",
+        instance: "Y5QsHDoD4I0",
         program: "ENTO- ",
     };
 
     beforeEach(() => {
         page.open();
+    });
+
+    it("should sync correctly event", () => {
+        page.search(inputs.program)
+            .selectRow(inputs.program)
+            .openSyncDialog()
+
+            .displayOrgUnitChildren(inputs.orgUnitLevel1)
+            .displayOrgUnitChildren(inputs.orgUnitLevel2)
+            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
+            .selectAllPeriods()
+            .next()
+
+            .selectEvent(inputs.event)
+            .next()
+            .next()
+
+            .selectReceiverInstance(inputs.instance)
+            .synchronize()
+
+            .assertSyncResultsStatus(status => status.contains("Success"))
+            .closeSyncResultsDialog();
     });
 
     it("should show the instance selection step error if user try click on next without selecting an instance", () => {
