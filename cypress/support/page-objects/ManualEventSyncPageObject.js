@@ -1,4 +1,4 @@
-import { dataTest } from "../support/utils";
+import { dataTest } from "../utils";
 import ManualSyncPageObject from "./common/ManualSyncPageObject";
 
 class ManualEventSyncPageObject extends ManualSyncPageObject {
@@ -31,6 +31,7 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
             .click();
         return this;
     }
+
 
     selectAllPeriods() {
         this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();

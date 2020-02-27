@@ -1,5 +1,4 @@
-import ManualEventSyncPageObject from "../pageobjects/ManualEventSyncPageObject";
-
+import ManualEventSyncPageObject from "../support/page-objects/ManualEventSyncPageObject";
 /**
  * Database: d2-docker-eyeseetea-2-30-datasync-sender
  */
@@ -28,11 +27,11 @@ context("Manual event sync", function() {
             .next()
 
             .next()
-            .error.contains("You need to select at least one event");
+            .assertError(error => error.contains("You need to select at least one event"));
     });
 
     it("should have the correct title", function() {
-        page.title.contains("Events Synchronization");
+        page.assertTitle(title => title.contains("Events Synchronization"));
     });
 
     it("should show the org unit step error if user try click on next without selecting the org unit", function() {
@@ -40,7 +39,8 @@ context("Manual event sync", function() {
             .selectRow(anyProgram)
             .openSyncDialog()
             .next()
-
-            .error.contains("You need to select at least one organisation unit");
+            .assertError(error =>
+                error.contains("You need to select at least one organisation unit")
+            );
     });
 });
