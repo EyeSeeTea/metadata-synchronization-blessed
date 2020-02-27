@@ -1,19 +1,42 @@
 import { dataTest } from "../utils";
-import SyncRulesPageObject from "./common/SyncRulesPageObject";
+import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
 
-class MetadataSyncRulesPageObject extends SyncRulesPageObject {
+class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
     constructor(cy) {
         super(cy, "metadata");
     }
 
-    open() {
-        super.open("/#/sync-rules/metadata");
+    assertSelectedMetadata(assert) {
+        assert(this.cy.contains("Clear selection").prev("span"));
+        return this;
+    }
+
+    assertSelectedInstances(assert) {
+        assert(this.cy.get("select:last"));
+        return this;
+    }
+
+    open(uid) {
+        if (uid) {
+            super.open(`/#/sync-rules/metadata/edit/${uid}`);
+        } else {
+            super.open("/#/sync-rules/metadata/new");
+        }
+
         this.cy
             .route({
                 method: "GET",
                 url: "/api/metadata*",
             })
             .as("getMetadata");
+        return this;
+    }
+
+    checkOnlySelectedItems() {
+        this.cy
+            .contains("Only selected items")
+            .parent()
+            .click();
         return this;
     }
 
@@ -55,4 +78,4 @@ class MetadataSyncRulesPageObject extends SyncRulesPageObject {
     }
 }
 
-export default MetadataSyncRulesPageObject;
+export default MetadataSyncRuleDetailPageObject;
