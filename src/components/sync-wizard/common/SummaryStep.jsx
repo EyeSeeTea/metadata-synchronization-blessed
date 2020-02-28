@@ -18,7 +18,7 @@ import {
 import { getValidationMessages } from "../../../utils/validations";
 import { getInstanceOptions } from "./InstanceSelectionStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
-import Instance from "../../../models/instance";
+// import Instance from "../../../models/instance";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -66,7 +66,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
     const [isSaving, setIsSaving] = useState(false);
     const [metadata, updateMetadata] = useState({});
     const [instanceOptions, setInstanceOptions] = useState([]);
-    const [targetInstances, setTargetInstances] = useState([]);
+    //const [targetInstances, setTargetInstances] = useState([]);
 
     const openCancelDialog = () => setCancelDialogOpen(true);
 
@@ -109,52 +109,52 @@ const SaveStep = ({ syncRule, onCancel }) => {
         getInstanceOptions(d2).then(setInstanceOptions);
     }, [d2, syncRule]);
 
-    useEffect(() => {
-        const getTargetInstances = async d2 =>
-            _.compact(await Promise.all(syncRule.targetInstances.map(id => Instance.get(d2, id))));
+    // useEffect(() => {
+    //     const getTargetInstances = async d2 =>
+    //         _.compact(await Promise.all(syncRule.targetInstances.map(id => Instance.get(d2, id))));
 
-        getTargetInstances(d2).then(setTargetInstances);
-    }, [d2, syncRule]);
+    //     getTargetInstances(d2).then(setTargetInstances);
+    // }, [d2, syncRule]);
 
-    const renderMetadataMapping = instanceId => {
-        return (
-            <LiEntry label={i18n.t("Metadata mapping")}>
-                <ul>
-                    {targetInstances.length > 0
-                        ? Object.entries(
-                              targetInstances.find(instance => instance.id === instanceId)
-                                  .metadataMapping
-                          ).map(([modelKey, value]) => (
-                              <LiEntry key={modelKey} label={modelKey}>
-                                  <ul>
-                                      {Object.entries(value)
-                                          .filter(([key, value]) => {
-                                              //TODO: currently we only are filtering metadata mapping by existed models in metadada of sync rule
-                                              // (example: organisationUnits) we are not filtering metadata mapping by metadata related to data (aggregate, events)
-                                              // for example by dataElements, CategoryOption, this filter will be realize on the future in other issue.
-                                              // Then is possibble we need to use here other metadata array varibale to use for filters.
-                                              return (
-                                                  !metadata[modelKey] ||
-                                                  metadata[modelKey].some(
-                                                      metadataItem => metadataItem.id === key
-                                                  )
-                                              );
-                                          })
-                                          .map(([key, value]) => (
-                                              <LiEntry
-                                                  key={key}
-                                                  label={`${i18n.t("Source")} ${key}`}
-                                                  value={`${i18n.t("Target")} ${value.mappedId}`}
-                                              />
-                                          ))}
-                                  </ul>
-                              </LiEntry>
-                          ))
-                        : null}
-                </ul>
-            </LiEntry>
-        );
-    };
+    // const renderMetadataMapping = instanceId => {
+    //     return (
+    //         <LiEntry label={i18n.t("Metadata mapping")}>
+    //             <ul>
+    //                 {targetInstances.length > 0
+    //                     ? Object.entries(
+    //                           targetInstances.find(instance => instance.id === instanceId)
+    //                               .metadataMapping
+    //                       ).map(([modelKey, value]) => (
+    //                           <LiEntry key={modelKey} label={modelKey}>
+    //                               <ul>
+    //                                   {Object.entries(value)
+    //                                       .filter(([key, value]) => {
+    //                                           //TODO: currently we only are filtering metadata mapping by existed models in metadada of sync rule
+    //                                           // (example: organisationUnits) we are not filtering metadata mapping by metadata related to data (aggregate, events)
+    //                                           // for example by dataElements, CategoryOption, this filter will be realize on the future in other issue.
+    //                                           // Then is possibble we need to use here other metadata array varibale to use for filters.
+    //                                           return (
+    //                                               !metadata[modelKey] ||
+    //                                               metadata[modelKey].some(
+    //                                                   metadataItem => metadataItem.id === key
+    //                                               )
+    //                                           );
+    //                                       })
+    //                                       .map(([key, value]) => (
+    //                                           <LiEntry
+    //                                               key={key}
+    //                                               label={`${i18n.t("Source")} ${key}`}
+    //                                               value={`${i18n.t("Target")} ${value.mappedId}`}
+    //                                           />
+    //                                       ))}
+    //                               </ul>
+    //                           </LiEntry>
+    //                       ))
+    //                     : null}
+    //             </ul>
+    //         </LiEntry>
+    //     );
+    // };
 
     return (
         <React.Fragment>
@@ -327,9 +327,9 @@ const SaveStep = ({ syncRule, onCancel }) => {
                             const instanceOption = instanceOptions.find(e => e.value === id);
                             return instanceOption ? (
                                 <LiEntry key={instanceOption.value} label={instanceOption.text}>
-                                    {syncRule.type !== "metadata" && (
+                                    {/* {syncRule.type !== "metadata" && (
                                         <ul>{renderMetadataMapping(id)}</ul>
-                                    )}
+                                    )}  */}
                                 </LiEntry>
                             ) : null;
                         })}
