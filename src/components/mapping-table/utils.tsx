@@ -46,6 +46,10 @@ interface CombinedMetadata {
 
 const getFieldsByModel = (model: typeof D2Model) => {
     switch (model.getCollectionName()) {
+        case "organisationUnits":
+            return {
+                path: true,
+            };
         case "dataElements":
             return {
                 categoryCombo: {
@@ -246,12 +250,12 @@ export const buildMapping = async (
     const destinationMetadata = await getCombinedMetadata(instanceApi, model, mappedId);
     if (originMetadata.length !== 1 || destinationMetadata.length !== 1) return {};
 
-    const [mappedElement] = await autoMap(
-        instanceApi,
-        model,
-        { id: mappedId, code: originMetadata[0].code },
-        mappedId
-    );
+    const [mappedElement] = destinationMetadata.map(({ id, path, name, code }) => ({
+        mappedId: path ?? id,
+        mappedName: name,
+        mappedCode: code,
+        code: originMetadata[0].code,
+    }));
 
     const categoryCombos = autoMapCategoryCombo(originMetadata[0], destinationMetadata[0]);
 
