@@ -1,5 +1,6 @@
 import { dataTest } from "../../utils";
 import PageObject from "./PageObject";
+import * as instanceSelectionStep from "../../page-utils/instanceSelectionStep";
 
 export default class ManualSyncPageObject extends PageObject {
     constructor(cy, key) {
@@ -50,10 +51,11 @@ export default class ManualSyncPageObject extends PageObject {
     }
 
     selectReceiverInstance(instance) {
-        this.cy.selectInMultiSelector(
+        instanceSelectionStep.selectReceiverInstance(
             dataTest(`DialogContent-${this.key}-synchronization`),
             instance
         );
+
         return this;
     }
 

@@ -1,5 +1,6 @@
 import { dataTest } from "../utils";
 import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
+import * as includeExcludeStep from "../page-utils/includeExcludeStep";
 
 class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
     constructor(cy) {
@@ -18,12 +19,23 @@ class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
             super.open("/#/sync-rules/metadata/new");
         }
 
-        this.cy
-            .route({
-                method: "GET",
-                url: "/api/metadata*",
-            })
-            .as("getMetadata");
+        this.getMetadataRouteName = includeExcludeStep.getMetadataRouteName();
+
+        return this;
+    }
+
+    changeUseDefaultConfiguration() {
+        includeExcludeStep.changeUseDefaultConfiguration(this.getMetadataRouteName);
+        return this;
+    }
+
+    selectMetadataType(text) {
+        includeExcludeStep.selectMetadataType("", text);
+        return this;
+    }
+
+    excludeRule(rule) {
+        includeExcludeStep.excludeRule("", rule);
         return this;
     }
 
@@ -32,43 +44,6 @@ class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
             .contains("Only selected items")
             .parent()
             .click();
-        return this;
-    }
-
-    changeUseDefaultConfiguration() {
-        this.cy.wait("@getMetadata");
-        this.cy.get(".MuiSwitch-root").click();
-        return this;
-    }
-
-    selectMetadataType(text) {
-        this.cy
-            .get(dataTest("DialogContent-metadata-synchronization"))
-            .contains("Metadata type")
-            .parent()
-            .click();
-        this.cy
-            .get('[role="listbox"]')
-            .contains(text)
-            .click();
-        return this;
-    }
-
-    excludeRule(rule) {
-        this.cy.unselectInMultiSelector(dataTest(`DialogContent-metadata-synchronization`), rule);
-        return this;
-    }
-
-    synchronize() {
-        this.cy
-            .route({
-                method: "POST",
-                url: "/api/metadata*",
-            })
-            .as("postMetadata");
-
-        this.syncButton.click();
-        this.cy.wait("@postMetadata");
         return this;
     }
 }

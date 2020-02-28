@@ -1,5 +1,6 @@
 import { dataTest } from "../../utils";
 import PageObject from "./PageObject";
+import * as instanceSelectionStep from "../../page-utils/instanceSelectionStep";
 
 export default class SyncRuleDetailPageObject extends PageObject {
     constructor(cy, key) {
@@ -57,12 +58,13 @@ export default class SyncRuleDetailPageObject extends PageObject {
     }
 
     selectReceiverInstance(instance) {
-        this.cy.selectInMultiSelector(dataTest(`Paper`), instance);
+        instanceSelectionStep.selectReceiverInstance(dataTest(`Paper`), instance);
+
         return this;
     }
 
     assertSelectedInstances(assert) {
-        assert(this.cy.get("select:last"));
+        instanceSelectionStep.assertSelectedInstances(assert);
         return this;
     }
 

@@ -102,3 +102,16 @@ Cypress.Commands.add("selectRowInTableByText", text => {
         .contains(text)
         .click();
 });
+
+Cypress.Commands.add("selectInDropdown", (containerSelector, label, option) => {
+    const parent = containerSelector ? cy.get(containerSelector) : cy;
+
+    parent
+        .contains(label)
+        .parent()
+        .click();
+
+    cy.get('[role="listbox"]')
+        .contains(option)
+        .click();
+});
