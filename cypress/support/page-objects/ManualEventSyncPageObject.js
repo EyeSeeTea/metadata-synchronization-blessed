@@ -12,13 +12,7 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
     }
 
     expandOrgUnit(orgUnit) {
-        this.cy
-            .get(dataTest("DialogContent-events-synchronization"))
-            .contains(orgUnit)
-            .parent()
-            .parent()
-            .contains("▸")
-            .click();
+        this.cy.expandInOrgUnitTree(dataTest(`DialogContent-${this.key}-synchronization`), orgUnit);
         return this;
     }
 

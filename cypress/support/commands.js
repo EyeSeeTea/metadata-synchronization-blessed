@@ -94,3 +94,12 @@ Cypress.Commands.add("selectInOrgUnitTree", label => {
         .should("have.css", "color")
         .and("equal", "rgb(255, 165, 0)");
 });
+
+Cypress.Commands.add("expandInOrgUnitTree", (container, orgUnit) => {
+    cy.get(container)
+        .contains(orgUnit)
+        .parent()
+        .parent()
+        .contains("▸")
+        .click();
+});
