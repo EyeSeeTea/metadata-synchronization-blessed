@@ -173,6 +173,10 @@ const getOptions = (object: CombinedMetadata) => {
     return _.union(object.optionSet?.options, object.commentOptionSet?.options);
 };
 
+const getProgramStages = (object: CombinedMetadata) => {
+    return object.programStages ?? [];
+};
+
 const autoMapCategoryCombo = (
     originMetadata: CombinedMetadata,
     destinationMetadata: CombinedMetadata
@@ -200,8 +204,8 @@ const autoMapProgramStages = async (
     originMetadata: CombinedMetadata,
     destinationMetadata: CombinedMetadata
 ) => {
-    const originProgramStages = originMetadata.programStages ?? [];
-    const destinationProgramStages = destinationMetadata.programStages ?? [];
+    const originProgramStages = getProgramStages(originMetadata);
+    const destinationProgramStages = getProgramStages(destinationMetadata);
 
     if (originProgramStages.length === 1 && destinationProgramStages.length === 1) {
         return {
@@ -265,7 +269,7 @@ export const buildMapping = async (
         getOptions(destinationMetadata[0])
     );
 
-    const programStages = autoMapProgramStages(
+    const programStages = await autoMapProgramStages(
         instanceApi,
         originMetadata[0],
         destinationMetadata[0]
@@ -291,10 +295,11 @@ export const buildMapping = async (
 export const getValidIds = async (api: D2Api, model: typeof D2Model, id: string) => {
     const combinedMetadata = await getCombinedMetadata(api, model, id);
 
-    const validCategoryOptions = getCategoryOptions(combinedMetadata[0]);
-    const validOptions = getOptions(combinedMetadata[0]);
+    const categoryOptions = getCategoryOptions(combinedMetadata[0]);
+    const options = getOptions(combinedMetadata[0]);
+    const programStages = getProgramStages(combinedMetadata[0]);
 
-    return _.union(validCategoryOptions, validOptions).map(({ id }) => id);
+    return _.union(categoryOptions, options, programStages).map(({ id }) => id);
 };
 
 export const getMetadataTypeFromRow = (object: MetadataType) => {

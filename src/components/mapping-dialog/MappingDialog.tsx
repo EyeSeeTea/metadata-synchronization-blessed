@@ -8,6 +8,7 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
+import { MetadataType } from "../../utils/d2";
 import { getValidIds } from "../mapping-table/utils";
 import MetadataTable from "../metadata-table/MetadataTable";
 
@@ -15,6 +16,7 @@ export interface MappingDialogConfig {
     elements: string[];
     type: keyof D2ModelSchemas;
     mappingPath: string[] | undefined;
+    firstElement?: MetadataType;
 }
 
 export interface MappingDialogProps {
@@ -41,7 +43,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
     const [filterRows, setFilterRows] = useState<string[] | undefined>();
-    const { elements, type, mappingPath } = config;
+    const { elements, type, mappingPath, firstElement } = config;
 
     const mappedId =
         elements.length === 1
@@ -104,18 +106,21 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             notifyNewSelection={onUpdateSelection}
             selectedIds={selected ? [selected] : undefined}
             hideSelectAll={true}
-            initialShowOnlySelected={!!selected}
             filterRows={filterRows}
         />
     );
 
     const MapperComponent =
         model.getCollectionName() === "organisationUnits" ? OrgUnitMapper : MetadataMapper;
+    const title =
+        elements.length > 1
+            ? i18n.t("Edit mapping for {{total}} elements", { total: elements.length })
+            : i18n.t("Edit mapping for {{name}} ({{id}})", firstElement);
 
     return (
         <ConfirmationDialog
             isOpen={elements.length > 0}
-            title={i18n.t("Edit mapping for {{total}} elements", { total: elements.length })}
+            title={title}
             onCancel={onClose}
             maxWidth={"lg"}
             fullWidth={true}

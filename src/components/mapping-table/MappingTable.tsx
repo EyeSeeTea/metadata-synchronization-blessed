@@ -12,7 +12,7 @@ import {
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
 import MappingDialog, { MappingDialogConfig } from "../../components/mapping-dialog/MappingDialog";
-import MappingWizard from "../../components/mapping-wizard/MappingWizard";
+import MappingWizard, { MappingWizardConfig } from "../../components/mapping-wizard/MappingWizard";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import { D2Model, DataElementModel } from "../../models/d2Model";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
@@ -77,9 +77,8 @@ export default function MappingTable({
 
     const [warningDialog, setWarningDialog] = useState<WarningDialog | null>(null);
     const [mappingConfig, setMappingConfig] = useState<MappingDialogConfig | null>(null);
+    const [wizardConfig, setWizardConfig] = useState<MappingWizardConfig | null>(null);
     const [rows, setRows] = useState<MetadataType[]>([]);
-
-    const [relatedMapping, setRelatedMapping] = useState<string[]>();
 
     const applyMapping = useCallback(
         async (selection: string[], mappedId: string | undefined) => {
@@ -184,14 +183,14 @@ export default function MappingTable({
 
     const applyAutoMapping = useCallback(
         async (elements: string[]) => {
-            const selectedItem = _.find(rows, ["id", elements[0]]);
+            const firstElement = _.find(rows, ["id", elements[0]]);
 
             if (elements.length !== 1) {
                 snackbar.error(i18n.t("Auto-mapping does not support multiple action yet"), {
                     autoHideDuration: 2500,
                 });
                 return;
-            } else if (!selectedItem) {
+            } else if (!firstElement) {
                 snackbar.error(i18n.t("Unexpected error, could not apply auto mapping"), {
                     autoHideDuration: 2500,
                 });
@@ -199,13 +198,13 @@ export default function MappingTable({
             }
 
             const { mappedId: candidate } =
-                (await autoMap(instanceApi, model, selectedItem))[0] ?? {};
+                (await autoMap(instanceApi, model, firstElement))[0] ?? {};
             if (!candidate) {
                 snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
             } else {
-                const type = getMetadataTypeFromRow(selectedItem);
+                const type = getMetadataTypeFromRow(firstElement);
                 await applyMapping(elements, candidate);
-                setMappingConfig({ elements, mappingPath, type });
+                setMappingConfig({ elements, mappingPath, type, firstElement });
             }
         },
         [applyMapping, instanceApi, rows, snackbar, model, mappingPath]
@@ -213,6 +212,7 @@ export default function MappingTable({
 
     const openMappingDialog = useCallback(
         (elements: string[]) => {
+            const firstElement = _.find(rows, ["id", elements[0]]);
             const types = _(rows)
                 .filter(({ id }) => elements.includes(id))
                 .map(e => getMetadataTypeFromRow(e))
@@ -220,7 +220,7 @@ export default function MappingTable({
                 .value();
 
             if (types.length === 1) {
-                setMappingConfig({ elements, mappingPath, type: types[0] });
+                setMappingConfig({ elements, mappingPath, type: types[0], firstElement });
                 setSelectedIds([]);
             } else if (types.length > 1) {
                 snackbar.error(i18n.t("You need to select all items from the same type"));
@@ -234,11 +234,11 @@ export default function MappingTable({
     const openRelatedMapping = useCallback(
         (selection: string[]) => {
             const id = _.first(selection);
-            const row = _.find(rows, ["id", id]);
-            if (!id || !row) return;
+            const element = _.find(rows, ["id", id]);
+            if (!id || !element) return;
 
-            const rowType = getMetadataTypeFromRow(row);
-            const { mapping: rowMapping } = mapping[rowType][id] ?? {};
+            const type = getMetadataTypeFromRow(element);
+            const { mapping: rowMapping } = mapping[type][id] ?? {};
 
             if (!rowMapping) {
                 snackbar.error(
@@ -247,7 +247,7 @@ export default function MappingTable({
                     )
                 );
             } else {
-                setRelatedMapping([rowType, id]);
+                setWizardConfig({ mappingPath: [type, id], type, element });
             }
         },
         [mapping, rows, snackbar]
@@ -446,7 +446,7 @@ export default function MappingTable({
 
     const closeWarningDialog = () => setWarningDialog(null);
     const closeMappingDialog = () => setMappingConfig(null);
-    const closeWizard = () => setRelatedMapping(undefined);
+    const closeWizard = () => setWizardConfig(null);
 
     return (
         <React.Fragment>
@@ -474,11 +474,11 @@ export default function MappingTable({
                 />
             )}
 
-            {!!relatedMapping && (
+            {!!wizardConfig && (
                 <MappingWizard
                     instance={instance}
+                    config={wizardConfig}
                     updateMapping={onChangeMapping}
-                    mappingPath={relatedMapping}
                     onCancel={closeWizard}
                 />
             )}
