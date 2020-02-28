@@ -78,8 +78,10 @@ Cypress.Commands.add("selectInMultiSelector", (selector, option) => {
         .click();
 });
 
-Cypress.Commands.add("unselectInMultiSelector", (selector, option) => {
-    cy.get(selector + " > div select:last").select(option);
+Cypress.Commands.add("unselectInMultiSelector", (containerSelector, option) => {
+    const selector = containerSelector ? containerSelector + " > div select:last" : "select:last";
+
+    cy.get(selector).select(option);
     cy.contains("Selected")
         .next("button")
         .next("button")
