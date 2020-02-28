@@ -12,7 +12,7 @@ context("Manual event sync", function() {
         orgUnitLevel3: "Akrodie",
         event: "PoKTdJQa8pV",
         instance: "Y5QsHDoD4I0",
-        program: "ENTO- ",
+        program: "ENTO- Discriminating concentration bioassay",
     };
 
     beforeEach(() => {
@@ -24,8 +24,7 @@ context("Manual event sync", function() {
     });
 
     it("should sync correctly event", () => {
-        page.search(inputs.program)
-            .selectRow(inputs.program)
+        page.selectRow(inputs.program)
             .openSyncDialog()
 
             .expandOrgUnit(inputs.orgUnitLevel1)
@@ -49,8 +48,7 @@ context("Manual event sync", function() {
     });
 
     it("should show the instance selection step error if user try click on next without selecting an instance", () => {
-        page.search(inputs.program)
-            .selectRow(inputs.program)
+        page.selectRow(inputs.program)
             .openSyncDialog()
 
             .expandOrgUnit(inputs.orgUnitLevel1)
@@ -70,8 +68,7 @@ context("Manual event sync", function() {
     });
 
     it("should show the event step error if user try click on next without event", function() {
-        page.search(inputs.program)
-            .selectRow(inputs.program)
+        page.selectRow(inputs.program)
             .openSyncDialog()
 
             .expandOrgUnit(inputs.orgUnitLevel1)
@@ -88,8 +85,7 @@ context("Manual event sync", function() {
     });
 
     it("should show the org unit step error if user try click on next without selecting the org unit", function() {
-        page.search(inputs.program)
-            .selectRow(inputs.program)
+        page.selectRow(inputs.program)
             .openSyncDialog()
             .next()
             .assertError(error =>
@@ -98,15 +94,13 @@ context("Manual event sync", function() {
     });
 
     it("should have synchronize button disabled to open sync dialog", () => {
-        page.search(inputs.program)
-            .selectRow(inputs.program)
+        page.selectRow(inputs.program)
             .openSyncDialog()
             .assertSyncButton(syncButton => syncButton.should("be.disabled"));
     });
 
     it("should have synchronize button disabled if only contains org unit", () => {
-        page.search(inputs.program)
-            .selectRow(inputs.program)
+        page.selectRow(inputs.program)
             .openSyncDialog()
 
             .expandOrgUnit(inputs.orgUnitLevel1)
@@ -119,9 +113,7 @@ context("Manual event sync", function() {
     });
 
     it("should have synchronize button disabled if only contains org unit and periods", () => {
-        page.search(inputs.program)
-
-            .selectRow(inputs.program)
+        page.selectRow(inputs.program)
             .openSyncDialog()
 
             .expandOrgUnit(inputs.orgUnitLevel1)
@@ -137,8 +129,7 @@ context("Manual event sync", function() {
     });
 
     it("should have synchronize button disabled if only contains org unit, periods and event", () => {
-        page.search(inputs.program)
-            .selectRow(inputs.program)
+        page.selectRow(inputs.program)
             .openSyncDialog()
 
             .expandOrgUnit(inputs.orgUnitLevel1)
