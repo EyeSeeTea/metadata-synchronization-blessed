@@ -1,4 +1,4 @@
-import { D2Api, D2ModelSchemas, Model } from "d2-api";
+import { D2Api, D2ApiResponse, D2ModelSchemas, Model, PaginatedObjects } from "d2-api";
 import { TablePagination, TableSorting } from "d2-ui-components";
 import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
@@ -43,6 +43,7 @@ export const getAllIdentifiers = memoize(
         apiModel: InstanceType<typeof Model>
     ) => {
         return apiModel.get({
+            ...apiQuery,
             paging: false,
             fields: {
                 id: true as true,
@@ -69,12 +70,13 @@ export const getRows = memoize(
         search: string | undefined,
         apiQuery: Parameters<InstanceType<typeof Model>["get"]>[0],
         apiModel: InstanceType<typeof Model>
-    ) => {
+    ): D2ApiResponse<PaginatedObjects<MetadataType>> => {
         return apiModel.get({
             order: `${sorting.field}:i${sorting.order}`,
             page: pagination.page,
             pageSize: pagination.pageSize,
             ...apiQuery,
+            paging: undefined,
             filter: {
                 name: { ilike: search },
                 ...apiQuery.filter,

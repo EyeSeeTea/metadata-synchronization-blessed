@@ -373,13 +373,12 @@ export const getCategoryOptionCombos = memoize(
 );
 
 export const getRootOrgUnit = memoize(
-    async (api: D2Api) =>
-        api.models.organisationUnits
-            .get({
-                filter: { level: { eq: "1" } },
-                fields: { $owner: true },
-            })
-            .getData(),
+    (api: D2Api) => {
+        return api.models.organisationUnits.get({
+            filter: { level: { eq: "1" } },
+            fields: { $owner: true },
+        });
+    },
     { serializer: (api: D2Api) => api.baseUrl }
 );
 

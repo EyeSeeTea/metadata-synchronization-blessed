@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
-import { D2Api, Model, PaginatedObjects, useD2, useD2Api } from "d2-api";
+import { D2Api, Model, useD2, useD2Api } from "d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -83,7 +83,7 @@ interface FiltersState {
         id: string;
         name: string;
     }[];
-    parentOrgUnits: string[];
+    parentOrgUnits: string[] | null;
 }
 
 const initialState = {
@@ -141,7 +141,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         levelData: [],
         showOnlySelected: initialShowOnlySelected,
         selectedIds: selectedIds,
-        parentOrgUnits: [],
+        parentOrgUnits: null,
     });
 
     const [error, setError] = useState<Error>();
@@ -282,7 +282,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 height={500}
                 square={true}
                 onChange={changeParentOrgUnitFilter}
-                selected={filters.parentOrgUnits}
+                selected={filters.parentOrgUnits ?? []}
                 singleSelection={true}
                 selectOnClick={true}
             />
@@ -346,10 +346,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
         if (
             query.filter &&
+            filters.parentOrgUnits &&
             filters.parentOrgUnits.length > 0 &&
             model.getCollectionName() === "organisationUnits"
         ) {
-            query.filter["parent.id"] = { in: cleanOrgUnitPaths(filters.parentOrgUnits) };
+            query.filter["parent.id"] = { in: cleanOrgUnitPaths(filters.parentOrgUnits ?? []) };
             query.order = "displayName:asc";
         }
 
@@ -361,6 +362,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     }, [model, filters, filterRows]);
 
     useEffect(() => {
+        if (apiModel.modelName === "organisationUnits") return;
         const { cancel, response } = getAllIdentifiers(
             apiModel.modelName,
             api.baseUrl,
@@ -378,17 +380,21 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     }, [api.baseUrl, apiModel, apiQuery, search]);
 
     useEffect(() => {
-        let mounted = true;
-        getRootOrgUnit(api).then(({ objects: roots }) => {
-            if (mounted) changeParentOrgUnitFilter(roots.map(({ path }) => path));
+        if (apiModel.modelName !== "organisationUnits") return;
+
+        const { cancel, response } = getRootOrgUnit(api);
+
+        response.then(({ data }) => {
+            changeParentOrgUnitFilter(data.objects.map(({ path }) => path));
         });
-        return () => {
-            mounted = false;
-        };
-    }, [api]);
+
+        return cancel;
+    }, [api, apiModel.modelName]);
 
     useEffect(() => {
-        const { response } = getRows(
+        if (apiModel.modelName === "organisationUnits" && !filters.parentOrgUnits) return;
+
+        const { cancel, response } = getRows(
             apiModel.modelName,
             api.baseUrl,
             sorting,
@@ -399,25 +405,19 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         );
 
         setLoading(true);
-        let mounted = true;
         response
             .then(({ data }) => {
-                // TODO: Fix this in d2-api instead of converting type
-                const { objects, pager } = (data as unknown) as PaginatedObjects<MetadataType>;
+                const { objects, pager } = data;
                 const rows = model.getApiModelTransform()(objects);
                 notifyRowsChange(rows);
 
-                if (mounted) {
-                    setRows(rows);
-                    setPager(pager);
-                    setLoading(false);
-                }
+                setRows(rows);
+                setPager(pager);
+                setLoading(false);
             })
             .catch(handleError);
 
-        return () => {
-            mounted = false;
-        };
+        return cancel;
     }, [
         api.baseUrl,
         apiModel,
@@ -428,6 +428,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         model,
         notifyRowsChange,
         filterRows,
+        filters.parentOrgUnits,
     ]);
 
     useEffect(() => {
