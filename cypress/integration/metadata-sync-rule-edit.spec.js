@@ -12,25 +12,22 @@ context("Edit Metadata sync rule", function() {
                 url: `api/dataStore/metadata-synchronization/rules`,
                 response: syncRules,
             });
+            page.open(this.syncRule.id);
         });
     });
 
     it("should have the correct title", () => {
-        page.open(this.syncRule.id).assertTitle(title =>
-            title.contains("Edit metadata synchronization rule")
-        );
+        page.assertTitle(title => title.contains("Edit metadata synchronization rule"));
     });
 
     it("should have the correct general info", () => {
-        page.open(this.syncRule.id)
-            .assertName(name => name.should("have.value", this.syncRule.name))
+        page.assertName(name => name.should("have.value", this.syncRule.name))
             .assertCode(name => name.should("have.value", this.syncRule.code))
             .assertDescription(name => name.should("have.value", this.syncRule.description));
     });
 
     it("should have the correct selected metadata", () => {
-        page.open(this.syncRule.id)
-            .next()
+        page.next()
             .checkOnlySelectedItems()
             .assertSelectedMetadata(selectedMetadata => {
                 selectedMetadata.contains(
@@ -40,8 +37,7 @@ context("Edit Metadata sync rule", function() {
     });
 
     it("should have the correct selected instances", () => {
-        page.open(this.syncRule.id)
-            .next()
+        page.next()
             .next()
             .next()
             .assertSelectedInstances(selectedInstances =>
