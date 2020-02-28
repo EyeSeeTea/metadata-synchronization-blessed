@@ -1,6 +1,6 @@
 import MetadataSyncRuleListPageObject from "../support/page-objects/MetadataSyncRuleListPageObject";
 
-context("Metadata sync rule new", function() {
+context("Metadata sync rules ", function() {
     const page = new MetadataSyncRuleListPageObject(cy);
 
     beforeEach(() => {
