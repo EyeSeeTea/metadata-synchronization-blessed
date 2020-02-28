@@ -11,7 +11,7 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
         return this;
     }
 
-    displayOrgUnitChildren(orgUnit) {
+    expandOrgUnit(orgUnit) {
         this.cy
             .get(dataTest("DialogContent-events-synchronization"))
             .contains(orgUnit)

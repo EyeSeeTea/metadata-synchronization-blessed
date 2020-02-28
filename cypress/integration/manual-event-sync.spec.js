@@ -28,9 +28,9 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
@@ -53,9 +53,9 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
@@ -74,9 +74,9 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
@@ -109,9 +109,9 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
@@ -124,9 +124,9 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
@@ -141,9 +141,9 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
