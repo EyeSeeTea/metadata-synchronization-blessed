@@ -404,20 +404,24 @@ export default function MappingTable({
         ]
     );
 
-    const globalActions: TableGlobalAction[] = [
-        {
-            name: "reset-mapping",
-            text: i18n.t("Reset mapping"),
-            onClick: resetMapping,
-            icon: <Icon>clear</Icon>,
-        },
-        {
-            name: "disable-mapping",
-            text: i18n.t("Disable mapping"),
-            onClick: disableMapping,
-            icon: <Icon>sync_disabled</Icon>,
-        },
-    ];
+    const globalActions: TableGlobalAction[] = _.compact([
+        type !== "organisationUnits"
+            ? {
+                  name: "reset-mapping",
+                  text: i18n.t("Reset mapping"),
+                  onClick: resetMapping,
+                  icon: <Icon>clear</Icon>,
+              }
+            : undefined,
+        type !== "organisationUnits"
+            ? {
+                  name: "disable-mapping",
+                  text: i18n.t("Disable mapping"),
+                  onClick: disableMapping,
+                  icon: <Icon>sync_disabled</Icon>,
+              }
+            : undefined,
+    ]);
 
     const notifyNewModel = useCallback(model => {
         setLoading(true);
