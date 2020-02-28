@@ -83,7 +83,6 @@ export default class SyncRuleDetailPageObject extends PageObject {
 
     assertSave() {
         this.cy.wait("@save").then(xhr => {
-            debugger;
             assert.equal(xhr.response.body.httpStatusCode, 200);
         });
 
