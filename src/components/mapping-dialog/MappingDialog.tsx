@@ -99,6 +99,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
                 hideMemberCount={true}
                 controls={{}}
                 fullWidth={true}
+                initiallyExpanded={selected ? [selected] : undefined}
             />
         </div>
     );
