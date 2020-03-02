@@ -4458,10 +4458,10 @@ d2-manifest@^1.0.0:
     minimist "^1.1.0"
     readline-sync "^1.4.1"
 
-d2-ui-components@^1.2.0-beta.6:
-  version "1.2.0-beta.6"
-  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-1.2.0-beta.6.tgz#27e454a9d5fdf741771733bd05dca2b908f3cc2a"
-  integrity sha512-RIv9L5V6hcs08Ic3/3vdGSFuxR+kv10DoICmVtnBDyDuzu4MThbiP9y1tT4+M0p+UlhvUva9xfv75+F1q2lsMw==
+d2-ui-components@^1.2.0-beta.9:
+  version "1.2.0-beta.9"
+  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-1.2.0-beta.9.tgz#323609986c860ee6d209db156bf81725c5c1b93d"
+  integrity sha512-Mg+dNLSziTdaQqlNP6vYNEVPkAkKt4bkjDORkMBB4zUhRUSmebup4aOW8r72t5VNzi0Rf/Fv4JCttNwi4zHpuQ==
   dependencies:
     "@date-io/core" "^1.3.6"
     "@date-io/moment" "^1.0.2"

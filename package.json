@@ -27,7 +27,7 @@
     "d2": "^31.8.1",
     "d2-api": "^0.1.1-beta.4",
     "d2-manifest": "^1.0.0",
-    "d2-ui-components": "^1.2.0-beta.6",
+    "d2-ui-components": "^1.2.0-beta.9",
     "downshift": "^4.1.0",
     "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
