@@ -46,6 +46,7 @@ const OrganisationUnitsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRul
                 selected={syncRule.dataSyncOrgUnitPaths}
                 rootIds={orgUnitRootIds}
                 withElevation={false}
+                initiallyExpanded={syncRule.dataSyncOrgUnitPaths}
             />
         );
     }

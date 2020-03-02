@@ -47,8 +47,9 @@ export abstract class D2Model {
     protected static details = d2BaseModelDetails;
     protected static fields = d2BaseModelFields;
     protected static initialSorting = ["name", "asc"];
-    protected static modelTransform: Function = (objects: any[]) => objects;
+    protected static modelTransform: Function = (objects: MetadataType[]) => objects;
     protected static modelFilters: any = {};
+    protected static childrenKeys: string[] | undefined = undefined;
 
     // List method should be executed by a wrapper to preserve static context binding
     public static async listMethod(
@@ -89,7 +90,7 @@ export abstract class D2Model {
     }
 
     public static getD2Model(d2: D2): ModelDefinition {
-        return d2.models[this.metadataType];
+        return d2.models[this.collectionName];
     }
 
     public static getApiModel(api: D2Api): InstanceType<typeof Model> {
@@ -99,9 +100,12 @@ export abstract class D2Model {
         return modelCollection[this.collectionName];
     }
 
-    // TODO: This should be typed (not priority)
-    public static getApiModelTransform(): any {
-        return this.modelTransform;
+    public static getApiModelTransform(): (objects: MetadataType[]) => MetadataType[] {
+        return (objects: MetadataType[]) =>
+            this.modelTransform(objects).map((object: MetadataType) => ({
+                ...object,
+                __type__: this.collectionName,
+            }));
     }
 
     // TODO: This should be typed (not priority)
@@ -147,6 +151,10 @@ export abstract class D2Model {
 
     public static getLevelFilterName(): keyof D2ModelSchemas {
         return this.levelFilterName;
+    }
+
+    public static getChildrenKeys(): string[] | undefined {
+        return this.childrenKeys;
     }
 }
 
@@ -246,6 +254,7 @@ export class DataElementModel extends D2Model {
 }
 
 export class AggregatedDataElementModel extends DataElementModel {
+    protected static metadataType = "aggregatedDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
@@ -253,6 +262,7 @@ export class AggregatedDataElementModel extends DataElementModel {
 }
 
 export class ProgramDataElementModel extends DataElementModel {
+    protected static metadataType = "programDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
@@ -295,13 +305,18 @@ export class DataSetModel extends D2Model {
     protected static metadataType = "dataSet";
     protected static collectionName = "dataSets" as const;
     protected static fields = dataSetFields;
+    protected static childrenKeys = ["dataElements"];
 
     protected static modelTransform = (
-        objects: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]
+        dataSets: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]
     ) => {
-        return objects.map(({ dataSetElements = [], ...rest }) => ({
+        return dataSets.map(({ dataSetElements = [], ...rest }) => ({
             ...rest,
-            dataElements: dataSetElements.map(({ dataElement }) => dataElement),
+            dataElements: dataSetElements.map(({ dataElement }) => ({
+                ...dataElement,
+                __type__: "dataElement",
+                __mappingType__: "aggregatedDataElements",
+            })),
         }));
     };
 }
@@ -320,21 +335,27 @@ export class ProgramModel extends D2Model {
     protected static metadataType = "program";
     protected static collectionName = "programs" as const;
     protected static fields = programFields;
+    protected static childrenKeys = ["dataElements"];
 
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFields>[]
     ) => {
-        return objects.map(object => ({
-            ...object,
+        return objects.map(program => ({
+            ...program,
             dataElements: _.flatten(
-                object.programStages?.map(({ displayName, programStageDataElements }) =>
-                    programStageDataElements.map(({ dataElement }) => ({
-                        ...dataElement,
-                        displayName:
-                            object.programStages.length > 1
-                                ? `[${displayName}] ${dataElement.displayName}`
-                                : dataElement.displayName,
-                    }))
+                program.programStages?.map(
+                    ({ displayName, programStageDataElements, id: programStageId }) =>
+                        programStageDataElements.map(({ dataElement }) => ({
+                            ...dataElement,
+                            id: `${program.id}-${programStageId}-${dataElement.id}`,
+                            __originalId__: dataElement.id,
+                            __type__: "dataElement",
+                            __mappingType__: "programDataElements",
+                            displayName:
+                                program.programStages.length > 1
+                                    ? `[${displayName}] ${dataElement.displayName}`
+                                    : dataElement.displayName,
+                        }))
                 ) ?? []
             ),
         }));
