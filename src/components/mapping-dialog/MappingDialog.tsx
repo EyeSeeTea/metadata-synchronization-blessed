@@ -2,7 +2,6 @@ import i18n from "@dhis2/d2-i18n";
 import { Typography } from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
 import { makeStyles } from "@material-ui/styles";
-import { D2ModelSchemas } from "d2-api";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -14,7 +13,7 @@ import MetadataTable from "../metadata-table/MetadataTable";
 
 export interface MappingDialogConfig {
     elements: string[];
-    type: keyof D2ModelSchemas;
+    type: string;
     mappingPath: string[] | undefined;
     firstElement?: MetadataType;
 }
@@ -72,12 +71,17 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     }, [instance]);
 
     useEffect(() => {
-        if (!mappingPath) return;
-
-        const parentModel = d2ModelFactory(api, mappingPath[0] as keyof D2ModelSchemas);
-        const parentMappedId = mappingPath[2];
-        getValidIds(api, parentModel, parentMappedId).then(setFilterRows);
-    }, [api, mappingPath]);
+        if (mappingPath) {
+            const parentModel = d2ModelFactory(api, mappingPath[0]);
+            const parentMappedId = mappingPath[2];
+            getValidIds(api, parentModel, parentMappedId).then(setFilterRows);
+        } else if (type === "programDataElements" && elements.length === 1) {
+            const programModel = d2ModelFactory(api, "programs");
+            const originProgramId = elements[0].split("-")[0];
+            const { mappedId } = mapping.programs[originProgramId] ?? {};
+            if (mappedId) getValidIds(api, programModel, mappedId).then(setFilterRows);
+        }
+    }, [api, mappingPath, elements, mapping, type]);
 
     const onUpdateSelection = (selectedIds: string[]) => {
         const newSelection = _.last(selectedIds);

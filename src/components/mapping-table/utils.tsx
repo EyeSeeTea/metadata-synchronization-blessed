@@ -8,6 +8,7 @@ import { cleanOrgUnitPath } from "../../utils/synchronization";
 interface CombinedMetadata {
     id: string;
     name?: string;
+    shortName?: string;
     code?: string;
     path?: string;
     categoryCombo?: {
@@ -41,6 +42,11 @@ interface CombinedMetadata {
     programStages?: {
         id: string;
         name: string;
+        programStageDataElements?: {
+            dataElement: {
+                id: string;
+            };
+        }[];
     }[];
 }
 
@@ -81,7 +87,11 @@ const getFieldsByModel = (model: typeof D2Model) => {
                         categoryOptions: { id: true, name: true, shortName: true, code: true },
                     },
                 },
-                programStages: { id: true, name: true },
+                programStages: {
+                    id: true,
+                    name: true,
+                    programStageDataElements: { dataElement: { id: true } },
+                },
             };
         default:
             return {};
@@ -113,7 +123,7 @@ const getCombinedMetadata = async (api: D2Api, model: typeof D2Model, id: string
 export const autoMap = async (
     instanceApi: D2Api,
     model: typeof D2Model,
-    selectedItem: Partial<MetadataType>,
+    selectedItem: Partial<MetadataType> | CombinedMetadata,
     defaultValue?: string,
     filter?: string[]
 ): Promise<MetadataMapping[]> => {
@@ -152,9 +162,9 @@ export const autoMap = async (
 
 const autoMapCollection = async (
     instanceApi: D2Api,
-    originMetadata: Partial<MetadataType>[],
+    originMetadata: CombinedMetadata[],
     model: typeof D2Model,
-    destinationMetadata: Partial<MetadataType>[]
+    destinationMetadata: CombinedMetadata[]
 ) => {
     if (originMetadata.length === 0) return {};
     const filter = _.compact(destinationMetadata.map(({ id }) => id));
@@ -188,6 +198,16 @@ const getOptions = (object: CombinedMetadata) => {
 
 const getProgramStages = (object: CombinedMetadata) => {
     return object.programStages ?? [];
+};
+
+const getProgramStageDataElements = (object: CombinedMetadata) => {
+    return _.compact(
+        _.flatten(
+            object.programStages?.map(({ programStageDataElements }) =>
+                programStageDataElements?.map(({ dataElement }) => dataElement)
+            )
+        )
+    );
 };
 
 const autoMapCategoryCombo = (
@@ -311,8 +331,11 @@ export const getValidIds = async (api: D2Api, model: typeof D2Model, id: string)
     const categoryOptions = getCategoryOptions(combinedMetadata[0]);
     const options = getOptions(combinedMetadata[0]);
     const programStages = getProgramStages(combinedMetadata[0]);
+    const programStageDataElements = getProgramStageDataElements(combinedMetadata[0]);
 
-    return _.union(categoryOptions, options, programStages).map(({ id }) => id);
+    return _.union(categoryOptions, options, programStages, programStageDataElements).map(
+        ({ id }) => id
+    );
 };
 
 export const getMetadataTypeFromRow = (object: MetadataType) => {
