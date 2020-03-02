@@ -43,6 +43,11 @@ interface WarningDialog {
     action?: () => void;
 }
 
+interface MappingConfig {
+    selection: string[];
+    mappedId: string | undefined;
+}
+
 export interface MappingTableProps {
     instance: Instance;
     models: typeof D2Model[];
@@ -81,40 +86,34 @@ export default function MappingTable({
     const [rows, setRows] = useState<MetadataType[]>([]);
 
     const applyMapping = useCallback(
-        async (selection: string[], mappedId: string | undefined) => {
-            loading.show(true, i18n.t("Applying mapping update"));
+        async (config: MappingConfig[]) => {
             try {
                 const newMapping = _.cloneDeep(mapping);
-                for (const id of selection) {
-                    const row = _.find(rows, ["id", id]);
-                    const rowType = row?.__mappingType__ ?? type;
-                    const model = d2ModelFactory(api, rowType);
-                    _.unset(newMapping, [rowType, id]);
-                    if (isChildrenMapping || mappedId) {
-                        const mapping = await buildMapping(
-                            api,
-                            instanceApi,
-                            model,
-                            row?.__originalId__ ?? id,
-                            mappedId
+                for (const { selection, mappedId } of config) {
+                    for (const id of selection) {
+                        const row = _.find(rows, ["id", id]);
+                        loading.show(
+                            true,
+                            i18n.t("Applying mapping update for element {{id}}", { id })
                         );
-                        _.set(newMapping, [rowType, id], mapping);
+                        const rowType = row?.__mappingType__ ?? type;
+                        const model = d2ModelFactory(api, rowType);
+                        _.unset(newMapping, [rowType, id]);
+                        if (isChildrenMapping || mappedId) {
+                            const mapping = await buildMapping(
+                                api,
+                                instanceApi,
+                                model,
+                                row?.__originalId__ ?? id,
+                                mappedId
+                            );
+                            _.set(newMapping, [rowType, id], mapping);
+                        }
                     }
                 }
 
                 await onChangeMapping(newMapping);
                 setSelectedIds([]);
-
-                const action = mappedId ? i18n.t("Set") : i18n.t("Reset to default");
-                const operation = mappedId === "DISABLED" ? i18n.t("Disabled") : action;
-
-                snackbar.info(
-                    i18n.t("{{operation}} mapping for {{total}} elements", {
-                        operation,
-                        total: selection.length,
-                    }),
-                    { autoHideDuration: 2500 }
-                );
             } catch (e) {
                 console.error(e);
                 snackbar.error(i18n.t("Could not apply mapping, please try again."));
@@ -135,8 +134,8 @@ export default function MappingTable({
     );
 
     const updateMapping = useCallback(
-        async (elementsToMap: string[], mappedId?: string) => {
-            applyMapping(elementsToMap, mappedId);
+        async (selection: string[], mappedId?: string) => {
+            applyMapping([{ selection, mappedId }]);
         },
         [applyMapping]
     );
@@ -152,7 +151,7 @@ export default function MappingTable({
                             total: selection.length,
                         }
                     ),
-                    action: () => applyMapping(selection, "DISABLED"),
+                    action: () => applyMapping([{ selection, mappedId: "DISABLED" }]),
                 });
             } else {
                 snackbar.error(i18n.t("Please select at least one item to disable mapping"));
@@ -172,7 +171,7 @@ export default function MappingTable({
                             total: selection.length,
                         }
                     ),
-                    action: () => applyMapping(selection, undefined),
+                    action: () => applyMapping([{ selection, mappedId: undefined }]),
                 });
             } else {
                 snackbar.error(i18n.t("Please select at least one item to reset mapping"));
@@ -184,38 +183,45 @@ export default function MappingTable({
     const applyAutoMapping = useCallback(
         async (elements: string[]) => {
             try {
-                const firstElement = _.find(rows, ["id", elements[0]]);
+                loading.show(
+                    true,
+                    i18n.t("Preparing auto-mapping for {{total}} elements", {
+                        total: elements.length,
+                    })
+                );
+                const tasks = [];
+                for (const id of elements) {
+                    const element = _.find(rows, ["id", id]);
+                    const elementType = element?.__type__ ?? type;
 
-                if (elements.length !== 1) {
-                    snackbar.error(i18n.t("Auto-mapping does not support multiple action yet"), {
-                        autoHideDuration: 2500,
-                    });
-                    return;
-                } else if (!firstElement) {
-                    snackbar.error(i18n.t("Unexpected error, could not apply auto mapping"), {
-                        autoHideDuration: 2500,
-                    });
-                    return;
+                    const model = d2ModelFactory(instanceApi, elementType);
+                    const candidates = await autoMap(api, instanceApi, model, id);
+                    const { mappedId } = _.first(candidates) ?? {};
+
+                    if (!mappedId) {
+                        snackbar.error(
+                            i18n.t("Could not find a suitable candidate to apply auto-mapping")
+                        );
+                    } else {
+                        tasks.push({ selection: [id], mappedId });
+                    }
                 }
 
-                const model = d2ModelFactory(instanceApi, firstElement.__type__);
-                const candidates = await autoMap(instanceApi, model, firstElement);
-                const { mappedId } = _.first(candidates) ?? {};
+                await applyMapping(tasks);
 
-                if (!mappedId) {
-                    snackbar.error(
-                        i18n.t("Could not find a suitable candidate to apply auto-mapping")
-                    );
-                } else {
-                    const type = getMetadataTypeFromRow(firstElement);
-                    await applyMapping(elements, mappedId);
-                    setMappingConfig({ elements, mappingPath, type, firstElement });
+                if (elements.length === 1) {
+                    const firstElement = _.find(rows, ["id", elements[0]]);
+                    if (firstElement) {
+                        const type = getMetadataTypeFromRow(firstElement);
+                        setMappingConfig({ elements, mappingPath, type, firstElement });
+                    }
                 }
+                loading.reset();
             } catch (e) {
                 snackbar.error(i18n.t("Could not connect with remote instance"));
             }
         },
-        [applyMapping, instanceApi, rows, snackbar, mappingPath]
+        [api, type, loading, applyMapping, instanceApi, rows, snackbar, mappingPath]
     );
 
     const openMappingDialog = useCallback(
@@ -373,9 +379,7 @@ export default function MappingTable({
             {
                 name: "auto-mapping",
                 text: i18n.t("Auto-map element"),
-                // To make this action multiple, we need cancellable model "save" operation
-                // Race conditions lead to unwanted bugs
-                multiple: false,
+                multiple: true,
                 onClick: applyAutoMapping,
                 icon: <Icon>compare_arrows</Icon>,
             },
