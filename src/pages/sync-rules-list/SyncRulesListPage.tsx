@@ -41,6 +41,7 @@ import {
 } from "../../utils/permissions";
 import { requestJSONDownload } from "../../utils/synchronization";
 import { getValidationMessages } from "../../utils/validations";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 const config: {
     [key: string]: {
@@ -447,7 +448,7 @@ const SyncRulesPage: React.FC = () => {
     };
 
     return (
-        <React.Fragment>
+        <TestWrapper>
             <PageHeader title={title} onBackClick={backHome} />
             <ObjectsTable<SyncRule>
                 rows={rows}
@@ -492,7 +493,7 @@ const SyncRulesPage: React.FC = () => {
                     onSearchRequest={onSearchRequest}
                 />
             )}
-        </React.Fragment>
+        </TestWrapper>
     );
 };
 

@@ -78,8 +78,10 @@ Cypress.Commands.add("selectInMultiSelector", (selector, option) => {
         .click();
 });
 
-Cypress.Commands.add("unselectInMultiSelector", (selector, option) => {
-    cy.get(selector + " > div select:last").select(option);
+Cypress.Commands.add("unselectInMultiSelector", (containerSelector, option) => {
+    const selector = containerSelector ? containerSelector + " > div select:last" : "select:last";
+
+    cy.get(selector).select(option);
     cy.contains("Selected")
         .next("button")
         .next("button")
@@ -101,5 +103,24 @@ Cypress.Commands.add("expandInOrgUnitTree", (container, orgUnit) => {
         .parent()
         .parent()
         .contains("▸")
+        .click();
+});
+
+Cypress.Commands.add("selectRowInTableByText", text => {
+    cy.get("table")
+        .contains(text)
+        .click();
+});
+
+Cypress.Commands.add("selectInDropdown", (containerSelector, label, option) => {
+    const parent = containerSelector ? cy.get(containerSelector) : cy;
+
+    parent
+        .contains(label)
+        .parent()
+        .click();
+
+    cy.get('[role="listbox"]')
+        .contains(option)
         .click();
 });

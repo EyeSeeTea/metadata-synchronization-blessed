@@ -1,5 +1,6 @@
 import { dataTest } from "../utils";
 import ManualSyncPageObject from "./common/ManualSyncPageObject";
+import * as includeExcludeStep from "../page-utils/includeExcludeStep";
 
 class ManualMetadataSyncPageObject extends ManualSyncPageObject {
     constructor(cy) {
@@ -8,36 +9,25 @@ class ManualMetadataSyncPageObject extends ManualSyncPageObject {
 
     open() {
         super.open("/#/sync/metadata");
-        this.cy
-            .route({
-                method: "GET",
-                url: "/api/metadata*",
-            })
-            .as("getMetadata");
+        this.getMetadataRouteName = includeExcludeStep.getMetadataRouteName();
         return this;
     }
 
     changeUseDefaultConfiguration() {
-        this.cy.wait("@getMetadata");
-        this.cy.get(".MuiSwitch-root").click();
+        includeExcludeStep.changeUseDefaultConfiguration(this.getMetadataRouteName);
         return this;
     }
 
     selectMetadataType(text) {
-        this.cy
-            .get(dataTest("DialogContent-metadata-synchronization"))
-            .contains("Metadata type")
-            .parent()
-            .click();
-        this.cy
-            .get('[role="listbox"]')
-            .contains(text)
-            .click();
+        includeExcludeStep.selectMetadataType(
+            dataTest("DialogContent-metadata-synchronization"),
+            text
+        );
         return this;
     }
 
     excludeRule(rule) {
-        this.cy.unselectInMultiSelector(dataTest(`DialogContent-metadata-synchronization`), rule);
+        includeExcludeStep.excludeRule(dataTest(`DialogContent-metadata-synchronization`), rule);
         return this;
     }
 
