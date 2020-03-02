@@ -32,23 +32,8 @@ export default class ManualSyncPageObject extends PageObject {
         return this;
     }
 
-    selectOrgUnit(orgUnit) {
-        this.cy
-            .get(dataTest(`DialogContent-${this.key}-synchronization`))
-            .selectInOrgUnitTree(orgUnit);
-        return this;
-    }
-
     selectRow(text) {
         this.cy.selectRowInTableByText(text);
-        return this;
-    }
-
-    selectAllPeriods() {
-        this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
-        this.cy.get('[data-test="MenuItem-period-dropdown-select-element-fixed"]').click();
-        this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
-        this.cy.get('[data-test="MenuItem-period-dropdown-select-element-all"]').click();
         return this;
     }
 

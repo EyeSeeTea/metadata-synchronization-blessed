@@ -40,9 +40,18 @@ class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
 
     checkOnlySelectedItems() {
         this.cy
+            .route({
+                method: "GET",
+                url: "/api/dataElements*",
+            })
+            .as("getDataelements");
+
+        this.cy
             .contains("Only selected items")
-            .parent()
+            .find("input")
             .click();
+
+        this.cy.wait("@getDataelements");
         return this;
     }
 }

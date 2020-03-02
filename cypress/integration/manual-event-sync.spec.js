@@ -7,12 +7,13 @@ context("Manual event sync", function() {
 
     const inputs = {
         orgUnit: "Akrodie Health Centre",
+        orgUnitLevel0: "Ghana",
         orgUnitLevel1: "Ahafo",
         orgUnitLevel2: "Asunafo North",
         orgUnitLevel3: "Akrodie",
         event: "PoKTdJQa8pV",
         instance: "Y5QsHDoD4I0",
-        program: "ENTO- ",
+        program: "ENTO- Discriminating concentration bioassay",
     };
 
     beforeEach(() => {
@@ -28,9 +29,10 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel0)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
@@ -53,9 +55,10 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel0)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
@@ -74,9 +77,10 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel0)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
@@ -109,9 +113,10 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel0)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
@@ -120,13 +125,13 @@ context("Manual event sync", function() {
 
     it("should have synchronize button disabled if only contains org unit and periods", () => {
         page.search(inputs.program)
-
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel0)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 
@@ -141,9 +146,10 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
-            .displayOrgUnitChildren(inputs.orgUnitLevel1)
-            .displayOrgUnitChildren(inputs.orgUnitLevel2)
-            .displayOrgUnitChildren(inputs.orgUnitLevel3)
+            .expandOrgUnit(inputs.orgUnitLevel0)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
             .selectOrgUnit(inputs.orgUnit)
             .next()
 

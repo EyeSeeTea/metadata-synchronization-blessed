@@ -97,6 +97,15 @@ Cypress.Commands.add("selectInOrgUnitTree", label => {
         .and("equal", "rgb(255, 165, 0)");
 });
 
+Cypress.Commands.add("expandInOrgUnitTree", (container, orgUnit) => {
+    cy.get(container)
+        .contains(orgUnit)
+        .parent()
+        .parent()
+        .contains("▸")
+        .click();
+});
+
 Cypress.Commands.add("selectRowInTableByText", text => {
     cy.get("table")
         .contains(text)
