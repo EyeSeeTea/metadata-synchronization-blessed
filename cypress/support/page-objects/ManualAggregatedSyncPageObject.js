@@ -11,21 +11,6 @@ class ManualAggregatedSyncPageObject extends ManualSyncPageObject {
         return this;
     }
 
-    selectOrgUnit(orgUnit) {
-        this.cy
-            .get(dataTest("DialogContent-aggregated-data-synchronization"))
-            .selectInOrgUnitTree(orgUnit);
-        return this;
-    }
-
-    selectAllPeriods() {
-        this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
-        this.cy.get('[data-test="MenuItem-period-dropdown-select-element-fixed"]').click();
-        this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
-        this.cy.get('[data-test="MenuItem-period-dropdown-select-element-all"]').click();
-        return this;
-    }
-
     selectAllAttributesCategoryOptions() {
         this.cy
             .get(

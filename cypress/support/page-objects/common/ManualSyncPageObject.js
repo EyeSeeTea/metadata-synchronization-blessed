@@ -46,6 +46,13 @@ export default class ManualSyncPageObject {
         return this;
     }
 
+    selectOrgUnit(orgUnit) {
+        this.cy
+            .get(dataTest(`DialogContent-${this.key}-synchronization`))
+            .selectInOrgUnitTree(orgUnit);
+        return this;
+    }
+
     selectRow(text) {
         this.cy
             .get(dataTest("TableCell-data-table-row-0-column-displayname"))
@@ -54,7 +61,15 @@ export default class ManualSyncPageObject {
         return this;
     }
 
-    openSyncDialog(text) {
+    selectAllPeriods() {
+        this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
+        this.cy.get('[data-test="MenuItem-period-dropdown-select-element-fixed"]').click();
+        this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
+        this.cy.get('[data-test="MenuItem-period-dropdown-select-element-all"]').click();
+        return this;
+    }
+
+    openSyncDialog() {
         this.cy
             .get('[data-test="objects-table-action-button"] > :nth-child(1) > [focusable="false"]')
             .click();
