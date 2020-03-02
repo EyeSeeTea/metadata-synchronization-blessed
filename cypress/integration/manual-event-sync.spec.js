@@ -7,6 +7,7 @@ context("Manual event sync", function() {
 
     const inputs = {
         orgUnit: "Akrodie Health Centre",
+        orgUnitLevel0: "Ghana",
         orgUnitLevel1: "Ahafo",
         orgUnitLevel2: "Asunafo North",
         orgUnitLevel3: "Akrodie",
@@ -28,6 +29,7 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
@@ -53,6 +55,7 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
@@ -74,6 +77,7 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
@@ -109,6 +113,7 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
@@ -123,6 +128,7 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
@@ -140,6 +146,7 @@ context("Manual event sync", function() {
             .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
