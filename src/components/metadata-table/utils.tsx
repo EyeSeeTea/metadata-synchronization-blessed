@@ -78,7 +78,7 @@ export const getRows = memoize(
             ...apiQuery,
             paging: undefined,
             filter: {
-                name: { ilike: search },
+                name: { token: search },
                 ...apiQuery.filter,
             },
         });
