@@ -51,7 +51,7 @@ export class AggregatedSync extends GenericSync {
         const { dataValues: candidateDataValues = [] } = await getAggregatedData(
             this.api,
             dataParams,
-            dataElements.map(de => de.dataSetElements.map((dse: any) => dse.dataSet.id)),
+            dataElements.map(de => de.dataSetElements.map((dse: any) => dse.dataSet?.id)),
             dataElements.map(de => de.dataElementGroups.map((deg: any) => deg.id))
         );
 
@@ -123,18 +123,21 @@ export class AggregatedSync extends GenericSync {
     }
 
     private buildMappedDataValue(
-        { orgUnit, dataElement, categoryOptionCombo, ...rest }: DataValue,
+        { orgUnit, dataElement, categoryOptionCombo, value, comment, ...rest }: DataValue,
         mapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
     ): DataValue {
         const { organisationUnits = {}, dataElements = {} } = mapping;
+        const { mapping: innerMapping = {} } = dataElements[dataElement] ?? {};
 
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
+        const mappedValue = this.mapOptionValue(value, innerMapping);
+        const mappedComment = comment ? this.mapOptionValue(comment, innerMapping) : undefined;
         const mappedCategory = this.mapCategoryOptionCombo(
             categoryOptionCombo,
-            dataElements[dataElement]?.mapping,
+            innerMapping,
             originCategoryOptionCombos,
             destinationCategoryOptionCombos
         );
@@ -143,18 +146,34 @@ export class AggregatedSync extends GenericSync {
             orgUnit: cleanOrgUnitPath(mappedOrgUnit),
             dataElement: mappedDataElement,
             categoryOptionCombo: mappedCategory,
+            value: mappedValue,
+            comment: mappedComment,
             ...rest,
         };
     }
 
+    private mapOptionValue(value: string, mapping: MetadataMappingDictionary): string {
+        const { options } = mapping;
+        const candidate = _(options)
+            .values()
+            .find(["code", value]);
+
+        return candidate?.mappedCode ?? value;
+    }
+
     private mapCategoryOptionCombo(
         optionCombo: string,
-        mapping: MetadataMappingDictionary = {},
+        mapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
     ): string {
         const { categoryOptions = {}, categoryCombos = {} } = mapping;
         const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
+        const isDisabled = _.some(
+            origin?.categoryOptions?.map(({ id }) => categoryOptions[id]),
+            { mappedId: "DISABLED" }
+        );
+        const defaultValue = isDisabled ? "DISABLED" : optionCombo;
 
         // Candidates built from equal category options
         const candidates = _.filter(destinationCategoryOptionCombos, o =>
@@ -180,12 +199,18 @@ export class AggregatedSync extends GenericSync {
 
         // If there's only one candidate, ignore the category combo, else provide exact object
         const result = candidates.length === 1 ? _.first(candidates) : exactObject;
-        return result?.id ?? optionCombo;
+        return result?.id ?? defaultValue;
     }
 
     private isDisabledDataValue(dataValue: DataValue): boolean {
         return !_(dataValue)
-            .pick(["orgUnit", "dataElement", "categoryOptionCombo", "attributeOptionCombo"])
+            .pick([
+                "orgUnit",
+                "dataElement",
+                "categoryOptionCombo",
+                "attributeOptionCombo",
+                "value",
+            ])
             .values()
             .includes("DISABLED");
     }

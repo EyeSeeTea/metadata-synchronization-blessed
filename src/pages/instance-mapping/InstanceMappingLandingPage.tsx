@@ -14,14 +14,21 @@ const InstanceMappingLandingPage: React.FC = () => {
             children: [
                 {
                     name: i18n.t("Aggregated"),
+                    description: i18n.t(
+                        "Map data elements, category options and option sets for aggregated data between instances"
+                    ),
                     listAction: () => history.push(`/instances/mapping/${id}/aggregated`),
                 },
                 {
-                    name: i18n.t("Tracker"),
+                    name: i18n.t("Events"),
+                    description: i18n.t(
+                        "Map data elements, category options and option sets for tracker data between instances"
+                    ),
                     listAction: () => history.push(`/instances/mapping/${id}/tracker`),
                 },
                 {
                     name: i18n.t("Organisation units"),
+                    description: i18n.t("Map organisation units between instances"),
                     listAction: () => history.push(`/instances/mapping/${id}/orgUnit`),
                 },
             ],

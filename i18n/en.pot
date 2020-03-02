@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-24T09:47:03.568Z\n"
-"PO-Revision-Date: 2020-02-24T09:47:03.568Z\n"
+"POT-Creation-Date: 2020-03-02T07:20:34.244Z\n"
+"PO-Revision-Date: 2020-03-02T07:20:34.244Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -711,9 +711,6 @@ msgstr ""
 msgid "Please fix the issues before saving"
 msgstr ""
 
-msgid "Metadata mapping"
-msgstr ""
-
 msgid "Test Connection"
 msgstr ""
 
@@ -766,10 +763,29 @@ msgstr ""
 msgid "Aggregated"
 msgstr ""
 
-msgid "Tracker"
+msgid ""
+"Map data elements, category options and option sets for aggregated data "
+"between instances"
+msgstr ""
+
+msgid ""
+"Map data elements, category options and option sets for tracker data "
+"between instances"
+msgstr ""
+
+msgid "Map organisation units between instances"
 msgstr ""
 
 msgid "Instance mapping"
+msgstr ""
+
+msgid "Aggregated metadata mapping"
+msgstr ""
+
+msgid "Tracker metadata mapping"
+msgstr ""
+
+msgid "Organisation unit metadata mapping"
 msgstr ""
 
 msgid "Metadata Synchronization"

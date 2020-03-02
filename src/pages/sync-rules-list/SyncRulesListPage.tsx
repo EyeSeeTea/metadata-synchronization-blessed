@@ -265,6 +265,8 @@ const SyncRulesPage: React.FC = () => {
             console.error(error);
             snackbar.error(i18n.t("Failed to execute rule {{name}}", { name }));
         }
+
+        setRefreshKey(Math.random());
         loading.reset();
     };
 

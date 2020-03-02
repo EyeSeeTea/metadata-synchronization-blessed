@@ -7,7 +7,9 @@ import { cleanOrgUnitPath } from "../../utils/synchronization";
 
 interface CombinedMetadata {
     id: string;
-    name: string;
+    name?: string;
+    code?: string;
+    path?: string;
     categoryCombo?: {
         id: string;
         name: string;
@@ -54,12 +56,8 @@ const getFieldsByModel = (model: typeof D2Model) => {
                     options: { id: true, name: true, shortName: true, code: true },
                 },
             };
-        case "options":
-            return {
-                code: true,
-            };
         default:
-            throw new Error(`Not implemented yet for model ${model.getCollectionName()}`);
+            return {};
     }
 };
 
@@ -70,6 +68,7 @@ const getCombinedMetadata = async (api: D2Api, model: typeof D2Model, id: string
             fields: {
                 id: true,
                 name: true,
+                code: true,
                 ...getFieldsByModel(model),
             },
             filter: {
@@ -91,19 +90,19 @@ export const autoMap = async (
     defaultValue?: string,
     filter?: string[]
 ): Promise<MetadataMapping[]> => {
-    const { objects } = await model
+    const { objects } = (await model
         .getApiModel(instanceApi)
         .get({
-            fields: { id: true, code: true, name: true },
+            fields: { id: true, code: true, name: true, path: true },
             filter: {
                 name: { token: selectedItem.name },
                 shortName: { token: selectedItem.shortName },
-                id: { eq: selectedItem.id },
+                id: { eq: cleanOrgUnitPath(selectedItem.id) },
                 code: { eq: selectedItem.code },
             },
             rootJunction: "OR",
         })
-        .getData();
+        .getData()) as { objects: CombinedMetadata[] };
 
     const candidateWithSameId = _.find(objects, ["id", selectedItem.id]);
     const candidateWithSameCode = _.find(objects, ["code", selectedItem.code]);
@@ -112,10 +111,15 @@ export const autoMap = async (
     );
 
     if (candidates.length === 0 && defaultValue) {
-        return [{ mappedId: defaultValue }];
-    } else {
-        return candidates.map(({ id, name, code }) => ({ mappedId: id, name, code }));
+        candidates.push({ id: defaultValue, code: defaultValue });
     }
+
+    return candidates.map(({ id, path, name, code }) => ({
+        mappedId: path ?? id,
+        mappedName: name,
+        mappedCode: code,
+        code: selectedItem.code,
+    }));
 };
 
 const autoMapCollection = async (
@@ -159,14 +163,26 @@ export const buildMapping = async (
     model: typeof D2Model,
     originalId: string,
     mappedId = ""
-): Promise<MetadataMapping | undefined> => {
-    if (mappedId === "DISABLED") return { mappedId: "DISABLED", conflicts: false, mapping: {} };
-
+): Promise<MetadataMapping> => {
     const originMetadata = await getCombinedMetadata(api, model, originalId);
-    const destinationMetadata = await getCombinedMetadata(instanceApi, model, mappedId);
-    if (originMetadata.length !== 1 || destinationMetadata.length !== 1) return undefined;
+    if (mappedId === "DISABLED")
+        return {
+            mappedId: "DISABLED",
+            mappedCode: "DISABLED",
+            code: originMetadata[0].code,
+            conflicts: false,
+            mapping: {},
+        };
 
-    const [mappedElement] = await autoMap(instanceApi, model, { id: mappedId }, mappedId);
+    const destinationMetadata = await getCombinedMetadata(instanceApi, model, mappedId);
+    if (originMetadata.length !== 1 || destinationMetadata.length !== 1) return {};
+
+    const [mappedElement] = await autoMap(
+        instanceApi,
+        model,
+        { id: mappedId, code: originMetadata[0].code },
+        mappedId
+    );
 
     const categoryCombos = originMetadata[0].categoryCombo
         ? {
@@ -199,13 +215,11 @@ export const buildMapping = async (
             categoryOptions,
             options,
         },
-        _.isUndefined
+        _.isEmpty
     ) as MetadataMappingDictionary;
 
     return {
-        mappedId,
-        name: mappedElement.name,
-        code: mappedElement.code,
+        ...mappedElement,
         conflicts: false,
         mapping,
     };
