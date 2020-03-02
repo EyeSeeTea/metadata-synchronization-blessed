@@ -7,6 +7,7 @@ import SyncWizard from "../../components/sync-wizard/SyncWizard";
 import i18n from "../../locales";
 import SyncRule from "../../models/syncRule";
 import { SyncRuleType } from "../../types/synchronization";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 interface SyncRulesCreationParams {
     id: string;
@@ -51,7 +52,7 @@ const SyncRulesCreation: React.FC = () => {
     }, [api, loading, isEdit, id]);
 
     return (
-        <React.Fragment>
+        <TestWrapper>
             <ConfirmationDialog
                 isOpen={dialogOpen}
                 onSave={exit}
@@ -64,7 +65,7 @@ const SyncRulesCreation: React.FC = () => {
             <PageHeader title={title} onBackClick={openDialog} />
 
             <SyncWizard syncRule={syncRule} onChange={updateSyncRule} onCancel={exit} />
-        </React.Fragment>
+        </TestWrapper>
     );
 };
 
