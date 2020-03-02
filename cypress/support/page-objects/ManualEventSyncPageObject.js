@@ -19,7 +19,10 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
     }
 
     selectOrgUnit(orgUnit) {
-        selectOrgUnitStep.selectOrgUnit(dataTest(`DialogContent-${this.key}-synchronization`), orgUnit);
+        selectOrgUnitStep.selectOrgUnit(
+            dataTest(`DialogContent-${this.key}-synchronization`),
+            orgUnit
+        );
         return this;
     }
 
