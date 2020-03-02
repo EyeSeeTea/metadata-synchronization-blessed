@@ -100,8 +100,7 @@ export abstract class D2Model {
         return modelCollection[this.collectionName];
     }
 
-    // TODO: This should be typed (not priority)
-    public static getApiModelTransform(): Function {
+    public static getApiModelTransform(): (objects: MetadataType[]) => MetadataType[] {
         return (objects: MetadataType[]) =>
             this.modelTransform(objects).map((object: MetadataType) => ({
                 ...object,

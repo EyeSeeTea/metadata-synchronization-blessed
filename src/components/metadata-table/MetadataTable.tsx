@@ -331,7 +331,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 lastUpdated: filters.lastUpdated
                     ? { ge: moment(filters.lastUpdated).format("YYYY-MM-DD") }
                     : undefined,
-                id: filters.showOnlySelected ? { in: filters.selectedIds } : undefined,
                 ...model.getApiModelFilters(),
             },
         };
@@ -354,7 +353,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             query.order = "displayName:asc";
         }
 
-        if (query.filter && filterRows) {
+        if (query.filter && filters.showOnlySelected) {
+            query.filter["id"] = { in: filters.selectedIds };
+        } else if (query.filter && !!filterRows) {
             query.filter["id"] = { in: filterRows };
         }
 
