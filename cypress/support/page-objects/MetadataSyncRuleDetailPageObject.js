@@ -1,4 +1,3 @@
-import { dataTest } from "../utils";
 import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
 import * as includeExcludeStep from "../page-utils/includeExcludeStep";
 
