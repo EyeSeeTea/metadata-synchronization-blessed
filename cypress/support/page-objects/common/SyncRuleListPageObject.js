@@ -1,4 +1,3 @@
-import { dataTest } from "../../utils";
 import PageObject from "./PageObject";
 
 export default class SyncRuleListPageObject extends PageObject {
