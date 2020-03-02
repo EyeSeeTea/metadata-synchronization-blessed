@@ -54,7 +54,7 @@ export default class ManualSyncPageObject {
         return this;
     }
 
-    openSyncDialog(text) {
+    openSyncDialog() {
         this.cy
             .get('[data-test="objects-table-action-button"] > :nth-child(1) > [focusable="false"]')
             .click();
