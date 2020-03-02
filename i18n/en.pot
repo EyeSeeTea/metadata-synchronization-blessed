@@ -35,19 +35,7 @@ msgstr ""
 msgid "Could not connect with remote instance"
 msgstr ""
 
-msgid "Applying mapping update"
-msgstr ""
-
-msgid "Set"
-msgstr ""
-
-msgid "Reset to default"
-msgstr ""
-
-msgid "Disabled"
-msgstr ""
-
-msgid "{{operation}} mapping for {{total}} elements"
+msgid "Applying mapping update for element {{id}}"
 msgstr ""
 
 msgid "Could not apply mapping, please try again."
@@ -71,10 +59,7 @@ msgstr ""
 msgid "Please select at least one item to reset mapping"
 msgstr ""
 
-msgid "Auto-mapping does not support multiple action yet"
-msgstr ""
-
-msgid "Unexpected error, could not apply auto mapping"
+msgid "Preparing auto-mapping for {{total}} elements"
 msgstr ""
 
 msgid "Could not find a suitable candidate to apply auto-mapping"
@@ -87,6 +72,9 @@ msgid "You need to select at least one valid item"
 msgstr ""
 
 msgid "You need to map this element before accessing its related metadata mapping"
+msgstr ""
+
+msgid "Disabled"
 msgstr ""
 
 msgid "Set mapping"

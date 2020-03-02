@@ -121,13 +121,24 @@ const getCombinedMetadata = async (api: D2Api, model: typeof D2Model, id: string
 };
 
 export const autoMap = async (
+    api: D2Api,
     instanceApi: D2Api,
     model: typeof D2Model,
-    selectedItem: Partial<MetadataType> | CombinedMetadata,
+    selectedItemId: string,
     defaultValue?: string,
     filter?: string[]
 ): Promise<MetadataMapping[]> => {
-    const id = cleanNestedMappedId(cleanOrgUnitPath(selectedItem.id));
+    const { objects: originObjects } = (await model
+        .getApiModel(api)
+        .get({
+            fields: { id: true, code: true, name: true, shortName: true },
+            filter: { id: { eq: cleanNestedMappedId(cleanOrgUnitPath(selectedItemId)) } },
+        })
+        .getData()) as { objects: CombinedMetadata[] };
+
+    const selectedItem = originObjects[0];
+    if (!selectedItem) return [];
+
     const { objects } = (await model
         .getApiModel(instanceApi)
         .get({
@@ -135,14 +146,14 @@ export const autoMap = async (
             filter: {
                 name: { token: selectedItem.name },
                 shortName: { token: selectedItem.shortName },
-                id: { eq: id },
+                id: { eq: selectedItem.id },
                 code: { eq: selectedItem.code },
             },
             rootJunction: "OR",
         })
         .getData()) as { objects: CombinedMetadata[] };
 
-    const candidateWithSameId = _.find(objects, ["id", id]);
+    const candidateWithSameId = _.find(objects, ["id", selectedItem.id]);
     const candidateWithSameCode = _.find(objects, ["code", selectedItem.code]);
     const candidates = _.flatten([candidateWithSameId ?? candidateWithSameCode ?? objects]).filter(
         ({ id }) => filter?.includes(id) ?? true
@@ -161,6 +172,7 @@ export const autoMap = async (
 };
 
 const autoMapCollection = async (
+    api: D2Api,
     instanceApi: D2Api,
     originMetadata: CombinedMetadata[],
     model: typeof D2Model,
@@ -174,7 +186,7 @@ const autoMapCollection = async (
     } = {};
 
     for (const item of originMetadata) {
-        const candidate = (await autoMap(instanceApi, model, item, "DISABLED", filter))[0];
+        const candidate = (await autoMap(api, instanceApi, model, item.id, "DISABLED", filter))[0];
         if (item.id && candidate) {
             mapping[item.id] = {
                 ...candidate,
@@ -233,6 +245,7 @@ const autoMapCategoryCombo = (
 };
 
 const autoMapProgramStages = async (
+    api: D2Api,
     instanceApi: D2Api,
     originMetadata: CombinedMetadata,
     destinationMetadata: CombinedMetadata
@@ -251,6 +264,7 @@ const autoMapProgramStages = async (
         };
     } else {
         return autoMapCollection(
+            api,
             instanceApi,
             originProgramStages,
             ProgramStageModel,
@@ -289,6 +303,7 @@ export const buildMapping = async (
     const categoryCombos = autoMapCategoryCombo(originMetadata[0], destinationMetadata[0]);
 
     const categoryOptions = await autoMapCollection(
+        api,
         instanceApi,
         getCategoryOptions(originMetadata[0]),
         CategoryOptionModel,
@@ -296,6 +311,7 @@ export const buildMapping = async (
     );
 
     const options = await autoMapCollection(
+        api,
         instanceApi,
         getOptions(originMetadata[0]),
         OptionModel,
@@ -303,6 +319,7 @@ export const buildMapping = async (
     );
 
     const programStages = await autoMapProgramStages(
+        api,
         instanceApi,
         originMetadata[0],
         destinationMetadata[0]
