@@ -3,9 +3,8 @@ import PageObject from "./PageObject";
 import * as instanceSelectionStep from "../../page-utils/instanceSelectionStep";
 
 export default class SyncRuleDetailPageObject extends PageObject {
-    constructor(cy, key) {
+    constructor(cy) {
         super(cy);
-        this.key = key;
     }
 
     assertName(assert) {
