@@ -4,7 +4,7 @@ import * as includeExcludeStep from "../page-utils/includeExcludeStep";
 
 class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
     constructor(cy) {
-        super(cy, "metadata");
+        super(cy);
     }
 
     assertSelectedMetadata(assert) {
