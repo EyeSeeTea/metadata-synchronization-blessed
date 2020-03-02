@@ -1,10 +1,10 @@
 import SyncRuleListPageObject from "./common/SyncRuleListPageObject";
 
 class MetadataSyncRuleListPageObject extends SyncRuleListPageObject {
-    open() {
+    open(stubApiResponseName) {
         super.open("/#/sync-rules/metadata");
 
-        this.cy.wait("@getRules");
+        this.cy.wait(`@${stubApiResponseName}`);
 
         return this;
     }

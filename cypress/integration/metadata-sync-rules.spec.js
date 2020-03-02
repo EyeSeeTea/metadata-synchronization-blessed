@@ -4,6 +4,8 @@ context("Metadata sync rules ", function() {
     const page = new MetadataSyncRuleListPageObject(cy);
 
     beforeEach(() => {
+        const stubApiResponseName = "getRules";
+
         cy.fixture("metadata-sync-rules.json").then(syncRules => {
             this.syncRules = syncRules;
             cy.server();
@@ -11,8 +13,8 @@ context("Metadata sync rules ", function() {
                 method: "GET",
                 url: `api/dataStore/metadata-synchronization/rules`,
                 response: syncRules,
-            }).as("getRules");
-            page.open();
+            }).as(stubApiResponseName);
+            page.open(stubApiResponseName);
         });
     });
 
