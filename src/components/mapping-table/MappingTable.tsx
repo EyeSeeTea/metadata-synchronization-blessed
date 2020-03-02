@@ -399,7 +399,7 @@ export default function MappingTable({
                 multiple: false,
                 onClick: openRelatedMapping,
                 icon: <Icon>assignment</Icon>,
-                isActive: () => !isChildrenMapping,
+                isActive: () => !isChildrenMapping && type !== "organisationUnits",
             },
         ],
         [
@@ -409,6 +409,7 @@ export default function MappingTable({
             applyAutoMapping,
             openRelatedMapping,
             isChildrenMapping,
+            type,
         ]
     );
 
