@@ -7,6 +7,7 @@ context("Manual event sync", function() {
 
     const inputs = {
         orgUnit: "Akrodie Health Centre",
+        orgUnitLevel0: "Ghana",
         orgUnitLevel1: "Ahafo",
         orgUnitLevel2: "Asunafo North",
         orgUnitLevel3: "Akrodie",
@@ -24,9 +25,11 @@ context("Manual event sync", function() {
     });
 
     it("should sync correctly event", () => {
-        page.selectRow(inputs.program)
+        page.search(inputs.program)
+            .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
@@ -48,9 +51,11 @@ context("Manual event sync", function() {
     });
 
     it("should show the instance selection step error if user try click on next without selecting an instance", () => {
-        page.selectRow(inputs.program)
+        page.search(inputs.program)
+            .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
@@ -68,9 +73,11 @@ context("Manual event sync", function() {
     });
 
     it("should show the event step error if user try click on next without event", function() {
-        page.selectRow(inputs.program)
+        page.search(inputs.program)
+            .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
@@ -85,7 +92,8 @@ context("Manual event sync", function() {
     });
 
     it("should show the org unit step error if user try click on next without selecting the org unit", function() {
-        page.selectRow(inputs.program)
+        page.search(inputs.program)
+            .selectRow(inputs.program)
             .openSyncDialog()
             .next()
             .assertError(error =>
@@ -94,15 +102,18 @@ context("Manual event sync", function() {
     });
 
     it("should have synchronize button disabled to open sync dialog", () => {
-        page.selectRow(inputs.program)
+        page.search(inputs.program)
+            .selectRow(inputs.program)
             .openSyncDialog()
             .assertSyncButton(syncButton => syncButton.should("be.disabled"));
     });
 
     it("should have synchronize button disabled if only contains org unit", () => {
-        page.selectRow(inputs.program)
+        page.search(inputs.program)
+            .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
@@ -113,9 +124,11 @@ context("Manual event sync", function() {
     });
 
     it("should have synchronize button disabled if only contains org unit and periods", () => {
-        page.selectRow(inputs.program)
+        page.search(inputs.program)
+            .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
@@ -129,9 +142,11 @@ context("Manual event sync", function() {
     });
 
     it("should have synchronize button disabled if only contains org unit, periods and event", () => {
-        page.selectRow(inputs.program)
+        page.search(inputs.program)
+            .selectRow(inputs.program)
             .openSyncDialog()
 
+            .expandOrgUnit(inputs.orgUnitLevel0)
             .expandOrgUnit(inputs.orgUnitLevel1)
             .expandOrgUnit(inputs.orgUnitLevel2)
             .expandOrgUnit(inputs.orgUnitLevel3)
