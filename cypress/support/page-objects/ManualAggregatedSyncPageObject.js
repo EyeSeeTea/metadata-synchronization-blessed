@@ -1,5 +1,7 @@
 import { dataTest } from "../utils";
 import ManualSyncPageObject from "./common/ManualSyncPageObject";
+import * as selectOrgUnitStep from "../page-utils/selectOrgUnitStep";
+import * as selectPeriodStep from "../page-utils/selectPeriodStep";
 
 class ManualAggregatedSyncPageObject extends ManualSyncPageObject {
     constructor(cy) {
@@ -11,21 +13,6 @@ class ManualAggregatedSyncPageObject extends ManualSyncPageObject {
         return this;
     }
 
-    selectOrgUnit(orgUnit) {
-        this.cy
-            .get(dataTest("DialogContent-aggregated-data-synchronization"))
-            .selectInOrgUnitTree(orgUnit);
-        return this;
-    }
-
-    selectAllPeriods() {
-        this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
-        this.cy.get('[data-test="MenuItem-period-dropdown-select-element-fixed"]').click();
-        this.cy.get('[data-test="Select-period-dropdown-select"] > [tabindex="0"]').click();
-        this.cy.get('[data-test="MenuItem-period-dropdown-select-element-all"]').click();
-        return this;
-    }
-
     selectAllAttributesCategoryOptions() {
         this.cy
             .get(
@@ -33,6 +20,19 @@ class ManualAggregatedSyncPageObject extends ManualSyncPageObject {
             )
             .click();
         this.cy.get(dataTest("group-editor-assign-all")).click();
+        return this;
+    }
+
+    selectOrgUnit(orgUnit) {
+        selectOrgUnitStep.selectOrgUnit(
+            dataTest(`DialogContent-${this.key}-synchronization`),
+            orgUnit
+        );
+        return this;
+    }
+
+    selectAllPeriods() {
+        selectPeriodStep.selectAllPeriods();
         return this;
     }
 
