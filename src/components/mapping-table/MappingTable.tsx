@@ -183,31 +183,39 @@ export default function MappingTable({
 
     const applyAutoMapping = useCallback(
         async (elements: string[]) => {
-            const firstElement = _.find(rows, ["id", elements[0]]);
+            try {
+                const firstElement = _.find(rows, ["id", elements[0]]);
 
-            if (elements.length !== 1) {
-                snackbar.error(i18n.t("Auto-mapping does not support multiple action yet"), {
-                    autoHideDuration: 2500,
-                });
-                return;
-            } else if (!firstElement) {
-                snackbar.error(i18n.t("Unexpected error, could not apply auto mapping"), {
-                    autoHideDuration: 2500,
-                });
-                return;
-            }
+                if (elements.length !== 1) {
+                    snackbar.error(i18n.t("Auto-mapping does not support multiple action yet"), {
+                        autoHideDuration: 2500,
+                    });
+                    return;
+                } else if (!firstElement) {
+                    snackbar.error(i18n.t("Unexpected error, could not apply auto mapping"), {
+                        autoHideDuration: 2500,
+                    });
+                    return;
+                }
 
-            const { mappedId: candidate } =
-                (await autoMap(instanceApi, model, firstElement))[0] ?? {};
-            if (!candidate) {
-                snackbar.error(i18n.t("Could not find a suitable candidate to apply auto-mapping"));
-            } else {
-                const type = getMetadataTypeFromRow(firstElement);
-                await applyMapping(elements, candidate);
-                setMappingConfig({ elements, mappingPath, type, firstElement });
+                const model = d2ModelFactory(instanceApi, firstElement.__type__);
+                const candidates = await autoMap(instanceApi, model, firstElement);
+                const { mappedId } = _.first(candidates) ?? {};
+
+                if (!mappedId) {
+                    snackbar.error(
+                        i18n.t("Could not find a suitable candidate to apply auto-mapping")
+                    );
+                } else {
+                    const type = getMetadataTypeFromRow(firstElement);
+                    await applyMapping(elements, mappedId);
+                    setMappingConfig({ elements, mappingPath, type, firstElement });
+                }
+            } catch (e) {
+                snackbar.error(i18n.t("Could not connect with remote instance"));
             }
         },
-        [applyMapping, instanceApi, rows, snackbar, model, mappingPath]
+        [applyMapping, instanceApi, rows, snackbar, mappingPath]
     );
 
     const openMappingDialog = useCallback(

@@ -44,6 +44,14 @@ interface CombinedMetadata {
     }[];
 }
 
+export const cleanNestedMappedId = (id: string): string => {
+    return (
+        _(id)
+            .split("-")
+            .last() ?? ""
+    );
+};
+
 const getFieldsByModel = (model: typeof D2Model) => {
     switch (model.getCollectionName()) {
         case "organisationUnits":
@@ -109,6 +117,7 @@ export const autoMap = async (
     defaultValue?: string,
     filter?: string[]
 ): Promise<MetadataMapping[]> => {
+    const id = cleanNestedMappedId(cleanOrgUnitPath(selectedItem.id));
     const { objects } = (await model
         .getApiModel(instanceApi)
         .get({
@@ -116,14 +125,14 @@ export const autoMap = async (
             filter: {
                 name: { token: selectedItem.name },
                 shortName: { token: selectedItem.shortName },
-                id: { eq: cleanOrgUnitPath(selectedItem.id) },
+                id: { eq: id },
                 code: { eq: selectedItem.code },
             },
             rootJunction: "OR",
         })
         .getData()) as { objects: CombinedMetadata[] };
 
-    const candidateWithSameId = _.find(objects, ["id", selectedItem.id]);
+    const candidateWithSameId = _.find(objects, ["id", id]);
     const candidateWithSameCode = _.find(objects, ["code", selectedItem.code]);
     const candidates = _.flatten([candidateWithSameId ?? candidateWithSameCode ?? objects]).filter(
         ({ id }) => filter?.includes(id) ?? true
@@ -309,12 +318,4 @@ export const getValidIds = async (api: D2Api, model: typeof D2Model, id: string)
 export const getMetadataTypeFromRow = (object: MetadataType) => {
     const { __mappingType__, __type__ } = object;
     return __mappingType__ ?? __type__;
-};
-
-export const cleanNestedMappedId = (id: string): string => {
-    return (
-        _(id)
-            .split("-")
-            .last() ?? ""
-    );
 };
