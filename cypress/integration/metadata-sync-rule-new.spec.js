@@ -30,15 +30,6 @@ context("Metadata sync rule new", function() {
             );
     });
 
-    it("should show metadata step error if user try click on next without selecting an metadata item", () => {
-        page.typeName(inputs.name)
-            .next()
-            .next()
-            .assertError(error =>
-                error.contains("You need to select at least one metadata element")
-            );
-    });
-
     it("should show the instance selection step error if user try click on next without selecting an instance", () => {
         page.typeName(inputs.name)
             .next()
