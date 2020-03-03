@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-03T08:51:15.641Z\n"
-"PO-Revision-Date: 2020-03-03T08:51:15.641Z\n"
+"POT-Creation-Date: 2020-03-03T09:05:37.777Z\n"
+"PO-Revision-Date: 2020-03-03T09:05:37.777Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -42,6 +42,9 @@ msgid "Could not apply mapping, please try again."
 msgstr ""
 
 msgid "You need to map the item before applying a global mapping"
+msgstr ""
+
+msgid "Successfully applied global mapping"
 msgstr ""
 
 msgid "Disable mapping"

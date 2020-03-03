@@ -57,7 +57,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
 
     const onApplyGlobalMapping = async (type: string, id: string, subMapping: MetadataMapping) => {
         const newMapping = _.clone(instance.metadataMapping);
-        _.set(newMapping, [type, id], subMapping);
+        _.set(newMapping, [type, id], { ...subMapping, global: true });
         await updateMapping(newMapping);
     };
 
