@@ -288,8 +288,8 @@ export const buildMapping = async (
             mappedCode: "DISABLED",
             code: originMetadata[0].code,
             conflicts: false,
-            mapping: {},
             global: false,
+            mapping: {},
         };
 
     const destinationMetadata = await getCombinedMetadata(instanceApi, model, mappedId);
@@ -340,8 +340,8 @@ export const buildMapping = async (
     return {
         ...mappedElement,
         conflicts: false,
-        mapping,
         global: false,
+        mapping,
     };
 };
 

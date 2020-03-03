@@ -381,7 +381,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     }, [api.baseUrl, apiModel, apiQuery, search]);
 
     useEffect(() => {
-        if (apiModel.modelName !== "organisationUnits") return;
+        if (apiModel?.modelName !== "organisationUnits") return;
 
         const { cancel, response } = getRootOrgUnit(api);
 
@@ -390,7 +390,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         });
 
         return cancel;
-    }, [api, apiModel.modelName]);
+    }, [api, apiModel]);
 
     useEffect(() => {
         if (apiModel.modelName === "organisationUnits" && !filters.parentOrgUnits) return;

@@ -274,7 +274,7 @@ export default function MappingTable({
             if (!id || !element) return;
 
             const type = getMetadataTypeFromRow(element);
-            const { mapping: rowMapping } = mapping[type][id] ?? {};
+            const { mapping: rowMapping } = _.get(mapping, [type, id]) ?? {};
 
             if (!rowMapping || !type) {
                 snackbar.error(

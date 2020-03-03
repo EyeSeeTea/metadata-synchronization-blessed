@@ -36,6 +36,7 @@ export abstract class D2Model {
     // Metadata Type should be defined on subclasses
     protected static metadataType: string;
     protected static collectionName: keyof D2ModelSchemas;
+    protected static mappingType: string = D2Model.collectionName;
     protected static groupFilterName: keyof D2ModelSchemas;
     protected static levelFilterName: keyof D2ModelSchemas;
 
@@ -105,7 +106,7 @@ export abstract class D2Model {
             this.modelTransform(objects).map((object: MetadataType) => ({
                 ...object,
                 __type__: this.collectionName,
-                __mappingType__: this.metadataType,
+                __mappingType__: this.mappingType,
             }));
     }
 
@@ -120,6 +121,10 @@ export abstract class D2Model {
 
     public static getCollectionName(): keyof D2ModelSchemas {
         return this.collectionName;
+    }
+
+    public static getMappingType(): string {
+        return this.mappingType;
     }
 
     public static getExcludeRules(): string[][] {
@@ -255,7 +260,7 @@ export class DataElementModel extends D2Model {
 }
 
 export class AggregatedDataElementModel extends DataElementModel {
-    protected static metadataType = "aggregatedDataElements";
+    protected static mappingType = "aggregatedDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
@@ -263,7 +268,7 @@ export class AggregatedDataElementModel extends DataElementModel {
 }
 
 export class ProgramDataElementModel extends DataElementModel {
-    protected static metadataType = "programDataElements";
+    protected static mappingType = "programDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
@@ -315,8 +320,8 @@ export class DataSetModel extends D2Model {
             ...rest,
             dataElements: dataSetElements.map(({ dataElement }) => ({
                 ...dataElement,
-                __type__: "dataElement",
-                __mappingType__: "aggregatedDataElements",
+                __type__: AggregatedDataElementModel.getCollectionName(),
+                __mappingType__: AggregatedDataElementModel.getMappingType(),
             })),
         }));
     };
@@ -350,8 +355,8 @@ export class ProgramModel extends D2Model {
                             ...dataElement,
                             id: `${program.id}-${programStageId}-${dataElement.id}`,
                             __originalId__: dataElement.id,
-                            __type__: "dataElement",
-                            __mappingType__: "programDataElements",
+                            __type__: ProgramDataElementModel.getCollectionName(),
+                            __mappingType__: ProgramDataElementModel.getMappingType(),
                             displayName:
                                 program.programStages.length > 1
                                     ? `[${displayName}] ${dataElement.displayName}`

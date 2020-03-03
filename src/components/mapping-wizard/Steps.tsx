@@ -28,7 +28,7 @@ const availableSteps = {
 type MappingWizardStepBuilder = Omit<MappingWizardStep, "props"> & { models: typeof D2Model[] };
 
 export const modelSteps: { [key: string]: MappingWizardStepBuilder[] } = {
-    dataElements: [availableSteps.categoryOptions, availableSteps.options],
+    aggregatedDataElements: [availableSteps.categoryOptions, availableSteps.options],
     programDataElements: [availableSteps.options],
     programs: [availableSteps.categoryOptions, availableSteps.programStages],
 };

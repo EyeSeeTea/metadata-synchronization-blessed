@@ -539,14 +539,13 @@ export const mapCategoryOptionCombo = (
     mapping: MetadataMappingDictionary,
     originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
     destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
-): string => {
+): string | undefined => {
     const { categoryOptions = {}, categoryCombos = {} } = mapping;
     const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
     const isDisabled = _.some(
         origin?.categoryOptions?.map(({ id }) => categoryOptions[id]),
         { mappedId: "DISABLED" }
     );
-    const defaultValue = isDisabled ? "DISABLED" : optionCombo;
 
     // Candidates built from equal category options
     const candidates = _.filter(destinationCategoryOptionCombos, o =>
@@ -572,14 +571,18 @@ export const mapCategoryOptionCombo = (
 
     // If there's only one candidate, ignore the category combo, else provide exact object
     const result = candidates.length === 1 ? _.first(candidates) : exactObject;
+    const defaultValue = isDisabled ? "DISABLED" : undefined;
     return result?.id ?? defaultValue;
 };
 
-export const mapOptionValue = (value: string, mapping: MetadataMappingDictionary): string => {
+export const mapOptionValue = (
+    value: string | undefined,
+    mapping: MetadataMappingDictionary
+): string | undefined => {
     const { options } = mapping;
     const candidate = _(options)
         .values()
         .find(["code", value]);
 
-    return candidate?.mappedCode ?? value;
+    return candidate?.mappedCode;
 };

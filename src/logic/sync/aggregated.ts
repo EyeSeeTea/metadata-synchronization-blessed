@@ -126,30 +126,42 @@ export class AggregatedSync extends GenericSync {
 
     private buildMappedDataValue(
         { orgUnit, dataElement, categoryOptionCombo, value, comment, ...rest }: DataValue,
-        mapping: MetadataMappingDictionary,
+        globalMapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
     ): DataValue {
-        const { organisationUnits = {}, dataElements = {} } = mapping;
+        const { organisationUnits = {}, dataElements = {} } = globalMapping;
         const { mapping: innerMapping = {} } = dataElements[dataElement] ?? {};
 
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
-        const mappedValue = mapOptionValue(value, innerMapping);
-        const mappedComment = comment ? mapOptionValue(comment, innerMapping) : undefined;
-        const mappedCategory = mapCategoryOptionCombo(
-            categoryOptionCombo,
-            innerMapping,
-            originCategoryOptionCombos,
-            destinationCategoryOptionCombos
-        );
+        const mappedValue =
+            mapOptionValue(value, innerMapping) ?? mapOptionValue(value, globalMapping) ?? value;
+        const mappedComment =
+            mapOptionValue(comment, innerMapping) ??
+            mapOptionValue(comment, globalMapping) ??
+            comment;
+        const mappedCategory =
+            mapCategoryOptionCombo(
+                categoryOptionCombo,
+                innerMapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            ) ??
+            mapCategoryOptionCombo(
+                categoryOptionCombo,
+                globalMapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            ) ??
+            categoryOptionCombo;
 
         return {
             orgUnit: cleanOrgUnitPath(mappedOrgUnit),
             dataElement: mappedDataElement,
             categoryOptionCombo: mappedCategory,
             value: mappedValue,
-            comment: mappedComment,
+            comment: comment ? mappedComment : undefined,
             ...rest,
         };
     }
