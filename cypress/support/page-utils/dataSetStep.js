@@ -11,6 +11,8 @@ export function checkOnlySelectedItems() {
     cy.contains("Only selected items").click();
 
     cy.wait(`@${routeName}`);
+
+    cy.contains("items selected in all pages");
 }
 
 export function activeRouteToWait() {

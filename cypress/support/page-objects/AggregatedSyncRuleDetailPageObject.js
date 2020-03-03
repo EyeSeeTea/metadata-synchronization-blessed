@@ -10,9 +10,13 @@ class AggregatedSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
         super(cy);
     }
 
-    open(uid) {
+    open(uid, stubApiResponseName) {
         if (uid) {
             super.open(`/#/sync-rules/aggregated/edit/${uid}`);
+
+            if (stubApiResponseName) {
+                this.cy.wait(`@${stubApiResponseName}`);
+            }
         } else {
             super.open("/#/sync-rules/aggregated/new");
         }

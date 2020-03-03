@@ -4,6 +4,8 @@ context("Aggregated sync rule edit", function() {
     const page = new AggregatedSyncRuleDetailPageObject(cy);
 
     beforeEach(() => {
+        const stubApiResponseName = "getRules";
+
         cy.fixture("aggregated-sync-rules.json").then(syncRules => {
             this.syncRule = syncRules[0];
             cy.server();
@@ -11,8 +13,8 @@ context("Aggregated sync rule edit", function() {
                 method: "GET",
                 url: `api/dataStore/metadata-synchronization/rules`,
                 response: syncRules,
-            });
-            page.open(this.syncRule.id);
+            }).as(stubApiResponseName);
+            page.open(this.syncRule.id, stubApiResponseName);
         });
     });
 
