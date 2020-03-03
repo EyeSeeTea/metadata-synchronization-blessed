@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-03T09:05:37.777Z\n"
-"PO-Revision-Date: 2020-03-03T09:05:37.777Z\n"
+"POT-Creation-Date: 2020-03-03T09:39:41.006Z\n"
+"PO-Revision-Date: 2020-03-03T09:39:41.006Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -87,6 +87,9 @@ msgid "Set mapping"
 msgstr ""
 
 msgid "Not mapped"
+msgstr ""
+
+msgid "Global"
 msgstr ""
 
 msgid "Mapping has errors"
@@ -795,9 +798,6 @@ msgid ""
 msgstr ""
 
 msgid "Map organisation units between instances"
-msgstr ""
-
-msgid "Global"
 msgstr ""
 
 msgid "Map global category options, category combos and options between instances"

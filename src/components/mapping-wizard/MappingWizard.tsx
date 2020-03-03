@@ -70,6 +70,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
             ...step,
             props: {
                 models,
+                globalMapping: instance.metadataMapping,
                 mapping,
                 onChangeMapping,
                 onApplyGlobalMapping,

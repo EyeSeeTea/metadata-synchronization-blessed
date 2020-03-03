@@ -105,6 +105,7 @@ export abstract class D2Model {
             this.modelTransform(objects).map((object: MetadataType) => ({
                 ...object,
                 __type__: this.collectionName,
+                __mappingType__: this.metadataType,
             }));
     }
 

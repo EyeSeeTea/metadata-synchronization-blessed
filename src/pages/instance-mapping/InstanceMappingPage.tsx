@@ -85,6 +85,7 @@ export default function InstanceMappingPage() {
                     models={models}
                     instance={instance}
                     mapping={instance.metadataMapping}
+                    globalMapping={instance.metadataMapping}
                     onChangeMapping={onChangeMapping}
                     onApplyGlobalMapping={onApplyGlobalMapping}
                 />
