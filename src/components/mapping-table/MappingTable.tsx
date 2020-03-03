@@ -54,6 +54,7 @@ export interface MappingTableProps {
     filterRows?: string[];
     mapping: MetadataMappingDictionary;
     onChangeMapping(mapping: MetadataMappingDictionary): Promise<void>;
+    onApplyGlobalMapping(type: string, id: string, mapping: MetadataMapping): Promise<void>;
     isChildrenMapping?: boolean;
     mappingPath?: string[];
 }
@@ -64,6 +65,7 @@ export default function MappingTable({
     filterRows,
     mapping,
     onChangeMapping,
+    onApplyGlobalMapping,
     isChildrenMapping = false,
     mappingPath,
 }: MappingTableProps) {
@@ -130,6 +132,25 @@ export default function MappingTable({
             onChangeMapping,
             rows,
         ]
+    );
+
+    const makeMappingGlobal = useCallback(
+        async (selection: string[]) => {
+            const id = selection[0];
+            const firstElement = _.find(rows, ["id", id]);
+            const mappingType = getMetadataTypeFromRow(firstElement);
+            const elementMapping = _.get(mapping, [mappingType, id]);
+
+            if (!firstElement || !mappingType || !elementMapping?.mappedId) {
+                snackbar.error(i18n.t("You need to map the item before applying a global mapping"));
+            } else {
+                const originalType = firstElement.__type__;
+                await onApplyGlobalMapping(originalType, cleanNestedMappedId(id), elementMapping);
+                await applyMapping([{ selection: [id], mappedId: undefined }]);
+                snackbar.success(i18n.t("Successfully applied global mapping"));
+            }
+        },
+        [onApplyGlobalMapping, applyMapping, rows, mapping, snackbar]
     );
 
     const updateMapping = useCallback(
@@ -253,7 +274,7 @@ export default function MappingTable({
             const type = getMetadataTypeFromRow(element);
             const { mapping: rowMapping } = mapping[type][id] ?? {};
 
-            if (!rowMapping) {
+            if (!rowMapping || !type) {
                 snackbar.error(
                     i18n.t(
                         "You need to map this element before accessing its related metadata mapping"
@@ -376,6 +397,15 @@ export default function MappingTable({
                 icon: <Icon>open_in_new</Icon>,
             },
             {
+                name: "global-mapping",
+                text: i18n.t("Make this mapping global"),
+                multiple: false,
+                onClick: makeMappingGlobal,
+                icon: <Icon>add_circle_outline</Icon>,
+                isActive: (rows: MetadataType[]) =>
+                    isChildrenMapping || _.every(rows, ({ __type__ }) => __type__ !== type),
+            },
+            {
                 name: "auto-mapping",
                 text: i18n.t("Auto-map element"),
                 multiple: true,
@@ -410,6 +440,7 @@ export default function MappingTable({
             openMappingDialog,
             resetMapping,
             applyAutoMapping,
+            makeMappingGlobal,
             openRelatedMapping,
             isChildrenMapping,
             type,

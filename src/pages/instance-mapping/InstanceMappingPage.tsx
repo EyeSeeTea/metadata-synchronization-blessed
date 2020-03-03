@@ -1,5 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { useD2 } from "d2-api";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import MappingTable from "../../components/mapping-table/MappingTable";
@@ -13,7 +14,7 @@ import {
     ProgramDataElementModel,
     ProgramModel,
 } from "../../models/d2Model";
-import Instance, { MetadataMappingDictionary } from "../../models/instance";
+import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { D2 } from "../../types/d2";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
@@ -32,7 +33,7 @@ const config = {
         models: [OrganisationUnitModel],
     },
     global: {
-        title: i18n.t("Organisation unit metadata mapping"),
+        title: i18n.t("Global metadata mapping"),
         models: [CategoryOptionModel, CategoryComboModel, OptionModel, ProgramDataElementModel],
     },
 };
@@ -67,6 +68,14 @@ export default function InstanceMappingPage() {
         setInstance(newInstance);
     };
 
+    const onApplyGlobalMapping = async (type: string, id: string, subMapping: MetadataMapping) => {
+        if (!instance) return;
+
+        const newMapping = _.clone(instance.metadataMapping);
+        _.set(newMapping, [type, id], subMapping);
+        onChangeMapping(newMapping);
+    };
+
     return (
         <React.Fragment>
             <PageHeader title={title} onBackClick={backHome} />
@@ -77,6 +86,7 @@ export default function InstanceMappingPage() {
                     instance={instance}
                     mapping={instance.metadataMapping}
                     onChangeMapping={onChangeMapping}
+                    onApplyGlobalMapping={onApplyGlobalMapping}
                 />
             )}
         </React.Fragment>

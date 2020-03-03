@@ -358,7 +358,7 @@ export const getValidIds = async (api: D2Api, model: typeof D2Model, id: string)
     );
 };
 
-export const getMetadataTypeFromRow = (object: MetadataType) => {
-    const { __mappingType__, __type__ } = object;
-    return __mappingType__ ?? __type__;
+export const getMetadataTypeFromRow = (object?: MetadataType) => {
+    const { __mappingType__, __type__ } = object ?? {};
+    return __mappingType__ ?? __type__ ?? "";
 };
