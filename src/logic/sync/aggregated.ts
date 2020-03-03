@@ -12,6 +12,8 @@ import {
     getAggregatedData,
     getCategoryOptionCombos,
     getDefaultIds,
+    mapCategoryOptionCombo,
+    mapOptionValue,
     postAggregatedData,
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
@@ -133,9 +135,9 @@ export class AggregatedSync extends GenericSync {
 
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
-        const mappedValue = this.mapOptionValue(value, innerMapping);
-        const mappedComment = comment ? this.mapOptionValue(comment, innerMapping) : undefined;
-        const mappedCategory = this.mapCategoryOptionCombo(
+        const mappedValue = mapOptionValue(value, innerMapping);
+        const mappedComment = comment ? mapOptionValue(comment, innerMapping) : undefined;
+        const mappedCategory = mapCategoryOptionCombo(
             categoryOptionCombo,
             innerMapping,
             originCategoryOptionCombos,
@@ -150,56 +152,6 @@ export class AggregatedSync extends GenericSync {
             comment: mappedComment,
             ...rest,
         };
-    }
-
-    private mapOptionValue(value: string, mapping: MetadataMappingDictionary): string {
-        const { options } = mapping;
-        const candidate = _(options)
-            .values()
-            .find(["code", value]);
-
-        return candidate?.mappedCode ?? value;
-    }
-
-    private mapCategoryOptionCombo(
-        optionCombo: string,
-        mapping: MetadataMappingDictionary,
-        originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
-        destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
-    ): string {
-        const { categoryOptions = {}, categoryCombos = {} } = mapping;
-        const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
-        const isDisabled = _.some(
-            origin?.categoryOptions?.map(({ id }) => categoryOptions[id]),
-            { mappedId: "DISABLED" }
-        );
-        const defaultValue = isDisabled ? "DISABLED" : optionCombo;
-
-        // Candidates built from equal category options
-        const candidates = _.filter(destinationCategoryOptionCombos, o =>
-            _.isEqual(
-                _.sortBy(o.categoryOptions, ["id"]),
-                _.sortBy(
-                    origin?.categoryOptions?.map(({ id }) => ({
-                        id: categoryOptions[id]?.mappedId ?? id,
-                    })),
-                    ["id"]
-                )
-            )
-        );
-
-        // Exact object built from equal category options and combo
-        const exactObject = _.find(candidates, o =>
-            _.isEqual(o.categoryCombo, {
-                id:
-                    categoryCombos[origin?.categoryCombo?.id ?? ""]?.mappedId ??
-                    origin?.categoryCombo?.id,
-            })
-        );
-
-        // If there's only one candidate, ignore the category combo, else provide exact object
-        const result = candidates.length === 1 ? _.first(candidates) : exactObject;
-        return result?.id ?? defaultValue;
     }
 
     private isDisabledDataValue(dataValue: DataValue): boolean {

@@ -1,4 +1,3 @@
-import { dataTest } from "../utils";
 import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
 import * as includeExcludeStep from "../page-utils/includeExcludeStep";
 
@@ -41,9 +40,18 @@ class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
 
     checkOnlySelectedItems() {
         this.cy
+            .route({
+                method: "GET",
+                url: "/api/dataElements*",
+            })
+            .as("getDataelements");
+
+        this.cy
             .contains("Only selected items")
-            .parent()
+            .find("input")
             .click();
+
+        this.cy.wait("@getDataelements");
         return this;
     }
 }

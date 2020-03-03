@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-02-26T14:06:12.495Z\n"
-"PO-Revision-Date: 2020-02-26T14:06:12.495Z\n"
+"POT-Creation-Date: 2020-03-02T11:43:32.217Z\n"
+"PO-Revision-Date: 2020-03-02T11:43:32.217Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -23,10 +23,10 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-msgid "Edit mapping for {{displayName}} ({{id}})"
+msgid "Edit mapping for {{total}} elements"
 msgstr ""
 
-msgid "Edit mapping for {{total}} elements"
+msgid "Edit mapping for {{name}} ({{id}})"
 msgstr ""
 
 msgid "Close"
@@ -35,19 +35,7 @@ msgstr ""
 msgid "Could not connect with remote instance"
 msgstr ""
 
-msgid "Applying mapping update"
-msgstr ""
-
-msgid "Set"
-msgstr ""
-
-msgid "Reset to default"
-msgstr ""
-
-msgid "Disabled"
-msgstr ""
-
-msgid "{{operation}} mapping for {{total}} elements"
+msgid "Applying mapping update for element {{id}}"
 msgstr ""
 
 msgid "Could not apply mapping, please try again."
@@ -71,16 +59,22 @@ msgstr ""
 msgid "Please select at least one item to reset mapping"
 msgstr ""
 
-msgid "Auto-mapping does not support multiple action yet"
-msgstr ""
-
-msgid "Unexpected error, could not apply auto mapping"
+msgid "Preparing auto-mapping for {{total}} elements"
 msgstr ""
 
 msgid "Could not find a suitable candidate to apply auto-mapping"
 msgstr ""
 
+msgid "You need to select all items from the same type"
+msgstr ""
+
+msgid "You need to select at least one valid item"
+msgstr ""
+
 msgid "You need to map this element before accessing its related metadata mapping"
+msgstr ""
+
+msgid "Disabled"
 msgstr ""
 
 msgid "Set mapping"
@@ -104,10 +98,16 @@ msgstr ""
 msgid "Ok"
 msgstr ""
 
+msgid "Related metadata mapping for {{name}} ({{id}})"
+msgstr ""
+
 msgid "Category Options"
 msgstr ""
 
 msgid "Options"
+msgstr ""
+
+msgid "Program Stages"
 msgstr ""
 
 msgid "Metadata type"
@@ -794,7 +794,7 @@ msgstr ""
 msgid "Aggregated metadata mapping"
 msgstr ""
 
-msgid "Tracker metadata mapping"
+msgid "Events metadata mapping"
 msgstr ""
 
 msgid "Organisation unit metadata mapping"
