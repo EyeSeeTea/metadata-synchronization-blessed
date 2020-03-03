@@ -34,7 +34,7 @@ const InstanceMappingLandingPage: React.FC = () => {
                 {
                     name: i18n.t("Global"),
                     description: i18n.t(
-                        "Map global category options, category combos and options between instances"
+                        "Map global category options, category combos, options and tracker data elements between instances"
                     ),
                     listAction: () => history.push(`/instances/mapping/${id}/global`),
                 },
