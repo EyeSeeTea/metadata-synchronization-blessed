@@ -1,5 +1,4 @@
 import { makeStyles } from "@material-ui/core";
-import { D2ModelSchemas } from "d2-api";
 import { useD2, useD2Api } from "d2-api/react/context";
 import { MultiSelector, withSnackbar } from "d2-ui-components";
 import _ from "lodash";
@@ -39,7 +38,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
     useEffect(() => {
         getMetadata(api, syncRule.metadataIds, "id,name").then((metadata: MetadataPackage) => {
             const models = _.keys(metadata).map((type: string) => {
-                return d2ModelFactory(api, type as keyof D2ModelSchemas);
+                return d2ModelFactory(api, type);
             });
 
             const options = models

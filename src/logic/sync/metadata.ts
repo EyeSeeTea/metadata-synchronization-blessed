@@ -78,7 +78,7 @@ export class MetadataSync extends GenericSync {
         const metadata = await getMetadata(this.api, metadataIds, "id");
         const exportPromises = _.keys(metadata)
             .map(type => {
-                const myClass = d2ModelFactory(this.api, type as keyof D2ModelSchemas);
+                const myClass = d2ModelFactory(this.api, type);
                 const metadataType = myClass.getMetadataType();
 
                 return {
