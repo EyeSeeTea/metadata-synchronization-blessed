@@ -77,13 +77,12 @@ export default function MappingTable({
     const type = model.getCollectionName();
     const instanceApi = instance.getApi();
 
-    const [isLoading, setLoading] = useState<boolean>(false);
+    const [rows, setRows] = useState<MetadataType[]>([]);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const [warningDialog, setWarningDialog] = useState<WarningDialog | null>(null);
     const [mappingConfig, setMappingConfig] = useState<MappingDialogConfig | null>(null);
     const [wizardConfig, setWizardConfig] = useState<MappingWizardConfig | null>(null);
-    const [rows, setRows] = useState<MetadataType[]>([]);
 
     const applyMapping = useCallback(
         async (config: MappingConfig[]) => {
@@ -437,7 +436,6 @@ export default function MappingTable({
     ]);
 
     const notifyNewModel = useCallback(model => {
-        setLoading(true);
         setRows([]);
         setSelectedIds([]);
         setModel(() => model);
@@ -507,7 +505,6 @@ export default function MappingTable({
                 additionalActions={actions}
                 notifyNewModel={notifyNewModel}
                 notifyRowsChange={updateRows}
-                loading={isLoading}
                 selectedIds={selectedIds}
                 notifyNewSelection={setSelectedIds}
                 globalActions={globalActions}

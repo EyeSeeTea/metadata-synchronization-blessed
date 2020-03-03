@@ -168,6 +168,7 @@ export const autoMap = async (
         mappedName: name,
         mappedCode: code,
         code: selectedItem.code,
+        global: false,
     }));
 };
 
@@ -288,6 +289,7 @@ export const buildMapping = async (
             code: originMetadata[0].code,
             conflicts: false,
             mapping: {},
+            global: false,
         };
 
     const destinationMetadata = await getCombinedMetadata(instanceApi, model, mappedId);
@@ -339,6 +341,7 @@ export const buildMapping = async (
         ...mappedElement,
         conflicts: false,
         mapping,
+        global: false,
     };
 };
 

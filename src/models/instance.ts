@@ -20,6 +20,7 @@ export interface MetadataMapping {
     code?: string;
     mapping?: MetadataMappingDictionary;
     conflicts?: boolean;
+    global?: boolean;
 }
 
 export interface MetadataMappingDictionary {
