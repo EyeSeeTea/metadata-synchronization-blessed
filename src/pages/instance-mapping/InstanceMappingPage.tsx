@@ -6,7 +6,11 @@ import MappingTable from "../../components/mapping-table/MappingTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
     AggregatedDataElementModel,
+    CategoryComboModel,
+    CategoryOptionModel,
+    OptionModel,
     OrganisationUnitModel,
+    ProgramDataElementModel,
     ProgramModel,
 } from "../../models/d2Model";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
@@ -26,6 +30,10 @@ const config = {
     orgUnit: {
         title: i18n.t("Organisation unit metadata mapping"),
         models: [OrganisationUnitModel],
+    },
+    global: {
+        title: i18n.t("Organisation unit metadata mapping"),
+        models: [CategoryOptionModel, CategoryComboModel, OptionModel, ProgramDataElementModel],
     },
 };
 
