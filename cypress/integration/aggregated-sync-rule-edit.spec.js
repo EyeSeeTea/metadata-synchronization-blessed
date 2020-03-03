@@ -1,6 +1,6 @@
 import AggregatedSyncRuleDetailPageObject from "../support/page-objects/AggregatedSyncRuleDetailPageObject";
 
-context("Edit aggregated sync rule", function() {
+context("Aggregated sync rule edit", function() {
     const page = new AggregatedSyncRuleDetailPageObject(cy);
 
     beforeEach(() => {
