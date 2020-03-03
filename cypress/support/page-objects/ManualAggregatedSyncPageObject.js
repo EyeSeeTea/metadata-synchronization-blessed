@@ -1,7 +1,8 @@
 import { dataTest } from "../utils";
 import ManualSyncPageObject from "./common/ManualSyncPageObject";
-import * as selectOrgUnitStep from "../page-utils/selectOrgUnitStep";
-import * as selectPeriodStep from "../page-utils/selectPeriodStep";
+import * as orgUnitStep from "../page-utils/orgUnitStep";
+import * as periodStep from "../page-utils/periodStep";
+import * as categoryOptionsStep from "../page-utils/categoryOptionsStep";
 
 class ManualAggregatedSyncPageObject extends ManualSyncPageObject {
     constructor(cy) {
@@ -14,25 +15,17 @@ class ManualAggregatedSyncPageObject extends ManualSyncPageObject {
     }
 
     selectAllAttributesCategoryOptions() {
-        this.cy
-            .get(
-                '[data-test="FormControlLabel-sync-all-attribute-category-options"] > :nth-child(2)'
-            )
-            .click();
-        this.cy.get(dataTest("group-editor-assign-all")).click();
+        categoryOptionsStep.selectAllAttributesCategoryOptions();
         return this;
     }
 
     selectOrgUnit(orgUnit) {
-        selectOrgUnitStep.selectOrgUnit(
-            dataTest(`DialogContent-${this.key}-synchronization`),
-            orgUnit
-        );
+        orgUnitStep.selectOrgUnit(dataTest(`DialogContent-${this.key}-synchronization`), orgUnit);
         return this;
     }
 
     selectAllPeriods() {
-        selectPeriodStep.selectAllPeriods();
+        periodStep.selectAllPeriods();
         return this;
     }
 
