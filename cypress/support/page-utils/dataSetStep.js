@@ -1,18 +1,21 @@
+export const routeName = "dataSets";
+
 export function assertSelectedDatasetCountMessage(assert) {
+    cy.wait(`@${routeName}`);
     assert(cy.contains("items selected in all pages"));
-    return this;
 }
 
 export function checkOnlySelectedItems() {
-    const getDataSetsRouteName = "getDataSets";
-
-    cy.route({
-        method: "GET",
-        url: "/api/dataSets*",
-    }).as(getDataSetsRouteName);
+    activeRouteToWait();
 
     cy.contains("Only selected items").click();
 
-    cy.wait(`@${getDataSetsRouteName}`);
-    return this;
+    cy.wait(`@${routeName}`);
+}
+
+export function activeRouteToWait() {
+    cy.route({
+        method: "GET",
+        url: "/api/dataSets*",
+    }).as(routeName);
 }
