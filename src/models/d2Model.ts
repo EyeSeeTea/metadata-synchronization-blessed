@@ -36,7 +36,7 @@ export abstract class D2Model {
     // Metadata Type should be defined on subclasses
     protected static metadataType: string;
     protected static collectionName: keyof D2ModelSchemas;
-    protected static mappingType: string = D2Model.collectionName;
+    protected static mappingType: string;
     protected static groupFilterName: keyof D2ModelSchemas;
     protected static levelFilterName: keyof D2ModelSchemas;
 
@@ -124,7 +124,7 @@ export abstract class D2Model {
     }
 
     public static getMappingType(): string {
-        return this.mappingType;
+        return this.mappingType ?? this.collectionName;
     }
 
     public static getExcludeRules(): string[][] {

@@ -57,6 +57,7 @@ export interface MappingTableProps {
     onChangeMapping(mapping: MetadataMappingDictionary): Promise<void>;
     onApplyGlobalMapping(type: string, id: string, mapping: MetadataMapping): Promise<void>;
     isChildrenMapping?: boolean;
+    isGlobalMapping?: boolean;
     mappingPath?: string[];
 }
 
@@ -69,6 +70,7 @@ export default function MappingTable({
     onChangeMapping,
     onApplyGlobalMapping,
     isChildrenMapping = false,
+    isGlobalMapping = false,
     mappingPath,
 }: MappingTableProps) {
     const api = useD2Api();
@@ -78,7 +80,7 @@ export default function MappingTable({
     const loading = useLoading();
 
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
-    const type = model.getCollectionName();
+    const type = model.getMappingType();
     const instanceApi = instance.getApi();
 
     const [rows, setRows] = useState<MetadataType[]>([]);
@@ -110,7 +112,10 @@ export default function MappingTable({
                                 row?.__originalId__ ?? id,
                                 mappedId
                             );
-                            _.set(newMapping, [rowType, id], mapping);
+                            _.set(newMapping, [rowType, id], {
+                                ...mapping,
+                                global: isGlobalMapping,
+                            });
                         }
                     }
                 }
@@ -131,6 +136,7 @@ export default function MappingTable({
             type,
             mapping,
             isChildrenMapping,
+            isGlobalMapping,
             onChangeMapping,
             rows,
         ]
@@ -351,7 +357,9 @@ export default function MappingTable({
                     const id = cleanNestedMappedId(row.id);
 
                     const localItemMapping = _.get(mapping, [mappingType, row.id]);
-                    const globalItemMapping = _.get(globalMapping, [originalType, id]);
+                    const globalItemMapping =
+                        _.get(globalMapping, [originalType, id]) ??
+                        _.get(globalMapping, [mappingType, id]);
                     const itemMapping = !localItemMapping?.mappedId
                         ? globalItemMapping
                         : localItemMapping;

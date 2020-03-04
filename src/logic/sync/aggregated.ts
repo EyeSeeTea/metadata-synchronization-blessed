@@ -130,11 +130,11 @@ export class AggregatedSync extends GenericSync {
         originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
     ): DataValue {
-        const { organisationUnits = {}, dataElements = {} } = globalMapping;
-        const { mapping: innerMapping = {} } = dataElements[dataElement] ?? {};
+        const { organisationUnits = {}, aggregatedDataElements = {} } = globalMapping;
+        const { mapping: innerMapping = {} } = aggregatedDataElements[dataElement] ?? {};
 
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
-        const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
+        const mappedDataElement = aggregatedDataElements[dataElement]?.mappedId ?? dataElement;
         const mappedValue =
             mapOptionValue(value, innerMapping) ?? mapOptionValue(value, globalMapping) ?? value;
         const mappedComment =

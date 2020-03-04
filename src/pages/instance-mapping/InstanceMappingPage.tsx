@@ -23,18 +23,22 @@ const config = {
     aggregated: {
         title: i18n.t("Aggregated metadata mapping"),
         models: [AggregatedDataElementModel],
+        isGlobalMapping: false,
     },
     tracker: {
         title: i18n.t("Events metadata mapping"),
         models: [ProgramModel],
+        isGlobalMapping: false,
     },
     orgUnit: {
         title: i18n.t("Organisation unit metadata mapping"),
         models: [OrganisationUnitModel],
+        isGlobalMapping: false,
     },
     global: {
         title: i18n.t("Global metadata mapping"),
         models: [CategoryOptionModel, CategoryComboModel, OptionModel, ProgramDataElementModel],
+        isGlobalMapping: true,
     },
 };
 
@@ -48,7 +52,7 @@ export default function InstanceMappingPage() {
     const d2 = useD2();
 
     const { id, section } = useParams() as InstanceMappingParams;
-    const { models, title } = config[section];
+    const { models, title, isGlobalMapping } = config[section];
 
     const [instance, setInstance] = useState<Instance>();
 
@@ -88,6 +92,7 @@ export default function InstanceMappingPage() {
                     globalMapping={instance.metadataMapping}
                     onChangeMapping={onChangeMapping}
                     onApplyGlobalMapping={onApplyGlobalMapping}
+                    isGlobalMapping={isGlobalMapping}
                 />
             )}
         </React.Fragment>
