@@ -1,11 +1,11 @@
 import { useD2 } from "d2-api";
-import { Wizard } from "d2-ui-components";
+import { Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
 import React from "react";
 import { useLocation } from "react-router-dom";
 import SyncRule from "../../models/syncRule";
 import { getValidationMessages } from "../../utils/validations";
-import { aggregatedSteps, eventsSteps, metadataSteps, SyncWizardStep } from "./Steps";
+import { aggregatedSteps, eventsSteps, metadataSteps } from "./Steps";
 
 interface SyncWizardProps {
     syncRule: SyncRule;
@@ -40,7 +40,7 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
             },
         }));
 
-    const onStepChangeRequest = async (_currentStep: SyncWizardStep, newStep: SyncWizardStep) => {
+    const onStepChangeRequest = async (_currentStep: WizardStep, newStep: WizardStep) => {
         const index = _(steps).findIndex(step => step.key === newStep.key);
         const validationMessages = await Promise.all(
             _.take(steps, index).map(({ validationKeys }) =>

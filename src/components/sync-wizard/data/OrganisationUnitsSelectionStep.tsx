@@ -1,13 +1,13 @@
+import { makeStyles, Typography } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { useD2, useD2Api } from "d2-api";
-import { OrgUnitsSelector, withSnackbar } from "d2-ui-components";
+import { OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
+import i18n from "../../../locales";
 import { D2 } from "../../../types/d2";
 import { getCurrentUserOrganisationUnits } from "../../../utils/d2";
 import { SyncWizardStepProps } from "../Steps";
-import { makeStyles, Typography } from "@material-ui/core";
-import i18n from "../../../locales";
 
 const useStyles = makeStyles({
     loading: {
@@ -46,9 +46,10 @@ const OrganisationUnitsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRul
                 selected={syncRule.dataSyncOrgUnitPaths}
                 rootIds={orgUnitRootIds}
                 withElevation={false}
+                initiallyExpanded={syncRule.dataSyncOrgUnitPaths}
             />
         );
     }
 };
 
-export default withSnackbar(OrganisationUnitsSelectionStep);
+export default OrganisationUnitsSelectionStep;

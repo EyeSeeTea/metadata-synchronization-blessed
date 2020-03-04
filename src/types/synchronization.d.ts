@@ -144,7 +144,7 @@ export interface SharingSetting {
 export interface ProgramEvent {
     id: string;
     orgUnit: string;
-    orgUnitName: string;
+    orgUnitName?: string;
     program: string;
     href: string;
     programStage: string;
@@ -155,14 +155,18 @@ export interface ProgramEvent {
     storedBy: string;
     dueDate: string;
     eventDate: string;
-    dataValues: {
-        lastUpdated: string;
-        storedBy: string;
-        created: string;
-        dataElement: string;
-        value: any;
-        providedElsewhere: boolean;
-    }[];
+    attributeCategoryOptions?: string;
+    attributeOptionCombo?: string;
+    dataValues: ProgramEventDataValue[];
+}
+
+export interface ProgramEventDataValue {
+    lastUpdated: string;
+    storedBy: string;
+    created: string;
+    dataElement: string;
+    value: any;
+    providedElsewhere: boolean;
 }
 
 export interface DataValue {
@@ -176,6 +180,7 @@ export interface DataValue {
     created: string;
     lastUpdated: string;
     followUp: boolean;
+    comment?: string;
 }
 
 export type DataSyncPeriod =

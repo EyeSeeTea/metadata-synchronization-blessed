@@ -77,7 +77,7 @@ const HistoryPage: React.FC = () => {
 
     const [syncRules, setSyncRules] = useState<SynchronizationRule[]>([]);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
-    const [toDelete, setToDelete] = useState<SynchronizationReport[]>([]);
+    const [toDelete, setToDelete] = useState<string[]>([]);
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [response, updateResponse] = useState<{
         rows: SynchronizationReport[];
@@ -166,6 +166,14 @@ const HistoryPage: React.FC = () => {
         return appConfigurator;
     };
 
+    const openSummary = (ids: string[]) => {
+        const id = _.first(ids);
+        if (!id) return;
+
+        const item = _.find(response.rows, ["id", id]);
+        if (item) setSyncReport(SyncReport.build(item));
+    };
+
     const actions: TableAction<SynchronizationReport>[] = [
         {
             name: "details",
@@ -186,13 +194,17 @@ const HistoryPage: React.FC = () => {
             icon: <DescriptionIcon />,
             multiple: false,
             primary: true,
-            onClick: ([data]) => !!data && setSyncReport(SyncReport.build(data)),
+            onClick: openSummary,
         },
     ];
 
     const confirmDelete = async () => {
         loading.show(true, i18n.t("Deleting History Notifications"));
-        const notifications = toDelete.map(data => new SyncReport(data));
+        const notifications = _(toDelete)
+            .map(id => _.find(response.rows, ["id", id]))
+            .compact()
+            .map(data => new SyncReport(data))
+            .value();
 
         const results = [];
         for (const notification of notifications) {
