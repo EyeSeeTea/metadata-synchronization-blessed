@@ -1,7 +1,7 @@
 {
-  "baseUrl": "http://localhost:8081",
-  "defaultCommandTimeout": 15000,
-  "requestTimeout": 30000,
+  "defaultCommandTimeout": 25000,
+  "requestTimeout": 120000,
+  "responseTimeout": 30000,
   "chromeWebSecurity": false,
   "_comment": "chromeWebSecurity flag disabled to allow cypress to test redirection to external pages - TEMPORARY",
   "projectId": "5smeca"

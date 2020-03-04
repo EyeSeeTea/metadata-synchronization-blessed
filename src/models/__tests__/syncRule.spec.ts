@@ -133,7 +133,10 @@ describe("SyncRule", () => {
                         "dataElementGroups.dataElementGroupSets",
                         "dataElementGroups.dataElementGroupSets.attributes",
                     ],
-                    excludeRules: [],
+                    excludeRules: [
+                        "dataElementGroups.dataElements",
+                        "dataElementGroups.dataElementGroupSets.dataElementGroups",
+                    ],
                 },
             });
         });

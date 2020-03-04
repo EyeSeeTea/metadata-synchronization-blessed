@@ -17,7 +17,7 @@ module.exports = (on, config) => {
 
     on("task", {
         logRequest(req) {
-            console.log(req, config);
+            console.debug(req, config);
         },
     });
 };

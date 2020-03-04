@@ -8,6 +8,7 @@ import Instance from "../../models/instance";
 
 import PageHeader from "../../components/page-header/PageHeader";
 import GeneralInfoForm from "./GeneralInfoForm";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 class InstanceCreationPage extends React.Component {
     static propTypes = {
@@ -61,7 +62,7 @@ class InstanceCreationPage extends React.Component {
             : i18n.t("Cancel Instance Editing");
 
         return (
-            <React.Fragment>
+            <TestWrapper>
                 <ConfirmationDialog
                     isOpen={dialogOpen}
                     onSave={this.handleConfirm}
@@ -79,7 +80,7 @@ class InstanceCreationPage extends React.Component {
                     onChange={this.onChange}
                     cancelAction={this.cancelSave}
                 />
-            </React.Fragment>
+            </TestWrapper>
         );
     }
 }

@@ -55,6 +55,10 @@ export default class SyncRule {
         return this.updateName(`Copy of ${this.syncRule.name}`).updateId(generateUid());
     }
 
+    public toObject(): SynchronizationRule {
+        return _.clone(this.syncRule);
+    }
+
     public get id(): string {
         return this.syncRule.id ?? "";
     }
@@ -197,6 +201,7 @@ export default class SyncRule {
                 dataParams: {
                     strategy: "NEW_AND_UPDATES",
                     allAttributeCategoryOptions: true,
+                    dryRun: false,
                 },
                 syncParams: {
                     importStrategy: "CREATE_AND_UPDATE",
@@ -204,6 +209,7 @@ export default class SyncRule {
                     useDefaultIncludeExclude: true,
                     atomicMode: "ALL",
                     mergeMode: "MERGE",
+                    importMode: "COMMIT",
                 },
             },
             enabled: false,

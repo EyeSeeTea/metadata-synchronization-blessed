@@ -5,17 +5,25 @@ import { makeStyles } from "@material-ui/styles";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { D2Model, DataElementGroupModel } from "../../models/d2Model";
-import Instance from "../../models/instance";
+import { d2ModelFactory } from "../../models/d2ModelFactory";
+import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
+import { getValidIds } from "../mapping-table/utils";
 import MetadataTable from "../metadata-table/MetadataTable";
 
-interface MappingDialogProps {
-    element: MetadataType;
-    model?: typeof D2Model;
-    instance?: Instance;
+export interface MappingDialogConfig {
+    elements: string[];
+    type: string;
+    mappingPath: string[] | undefined;
+    firstElement?: MetadataType;
+}
+
+export interface MappingDialogProps {
+    config: MappingDialogConfig;
+    instance: Instance;
+    mapping: MetadataMappingDictionary;
+    onUpdateMapping: (items: string[], id?: string) => void;
     onClose: () => void;
-    onUpdateMapping: (id: string) => void;
 }
 
 const useStyles = makeStyles({
@@ -25,26 +33,35 @@ const useStyles = makeStyles({
 });
 
 const MappingDialog: React.FC<MappingDialogProps> = ({
-    model = DataElementGroupModel,
-    element,
+    config,
     instance,
-    onClose,
+    mapping,
     onUpdateMapping,
+    onClose,
 }) => {
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
+    const [filterRows, setFilterRows] = useState<string[] | undefined>();
+    const { elements, type, mappingPath, firstElement } = config;
 
-    const defaultSelection = _.get(instance?.metadataMapping, [
-        model.getCollectionName(),
-        element.id,
-        "mappedId",
-    ]);
+    const mappedId =
+        elements.length === 1
+            ? _.last(
+                  _(mapping)
+                      .get([type, elements[0] ?? "", "mappedId"])
+                      ?.split("-")
+              )
+            : undefined;
+    const defaultSelection = mappedId !== "DISABLED" ? mappedId : undefined;
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
+
+    const api = instance.getApi();
+    const model = d2ModelFactory(api, type);
 
     useEffect(() => {
         let mounted = true;
 
-        instance?.check().then(({ status }) => {
+        instance.check().then(({ status }) => {
             if (mounted) setConnectionSuccess(status);
         });
 
@@ -53,24 +70,36 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
         };
     }, [instance]);
 
+    useEffect(() => {
+        if (mappingPath) {
+            const parentModel = d2ModelFactory(api, mappingPath[0]);
+            const parentMappedId = mappingPath[2];
+            getValidIds(api, parentModel, parentMappedId).then(setFilterRows);
+        } else if (type === "programDataElements" && elements.length === 1) {
+            const programModel = d2ModelFactory(api, "programs");
+            const originProgramId = elements[0].split("-")[0];
+            const { mappedId } = mapping.programs[originProgramId] ?? {};
+            if (mappedId) getValidIds(api, programModel, mappedId).then(setFilterRows);
+        }
+    }, [api, mappingPath, elements, mapping, type]);
+
     const onUpdateSelection = (selectedIds: string[]) => {
         const newSelection = _.last(selectedIds);
-        if (newSelection) {
-            onUpdateMapping(newSelection);
-            updateSelected(newSelection);
-        }
+        onUpdateMapping(elements, newSelection);
+        updateSelected(newSelection);
     };
 
-    const OrgUnitMapper = instance?.getApi() && (
+    const OrgUnitMapper = (
         <div className={classes.orgUnitSelect}>
             <OrgUnitsSelector
-                api={instance?.getApi()}
+                api={api}
                 onChange={onUpdateSelection}
                 selected={selected ? [selected] : []}
                 withElevation={false}
                 hideMemberCount={true}
                 controls={{}}
                 fullWidth={true}
+                initiallyExpanded={selected ? [selected] : undefined}
             />
         </div>
     );
@@ -78,29 +107,35 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const MetadataMapper = (
         <MetadataTable
             models={[model]}
-            api={instance?.getApi()}
+            api={api}
             notifyNewSelection={onUpdateSelection}
             selectedIds={selected ? [selected] : undefined}
             hideSelectAll={true}
+            filterRows={filterRows}
+            initialShowOnlySelected={!!selected}
         />
     );
 
     const MapperComponent =
         model.getCollectionName() === "organisationUnits" ? OrgUnitMapper : MetadataMapper;
+    const title =
+        elements.length > 1
+            ? i18n.t("Edit mapping for {{total}} elements", { total: elements.length })
+            : i18n.t("Edit mapping for {{name}} ({{id}})", firstElement);
 
     return (
         <ConfirmationDialog
-            isOpen={!!element}
-            title={i18n.t("Edit mapping for {{displayName}} ({{id}})", element)}
+            isOpen={elements.length > 0}
+            title={title}
             onCancel={onClose}
             maxWidth={"lg"}
             fullWidth={true}
             cancelText={i18n.t("Close")}
         >
             <DialogContent>
-                {!!instance?.getApi() && connectionSuccess && MapperComponent}
-
-                {!connectionSuccess && (
+                {connectionSuccess ? (
+                    MapperComponent
+                ) : (
                     <Typography>{i18n.t("Could not connect with remote instance")}</Typography>
                 )}
             </DialogContent>

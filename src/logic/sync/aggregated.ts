@@ -1,3 +1,4 @@
+import { D2CategoryOptionCombo } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
@@ -9,7 +10,10 @@ import {
     cleanObjectDefault,
     cleanOrgUnitPath,
     getAggregatedData,
+    getCategoryOptionCombos,
     getDefaultIds,
+    mapCategoryOptionCombo,
+    mapOptionValue,
     postAggregatedData,
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
@@ -49,7 +53,7 @@ export class AggregatedSync extends GenericSync {
         const { dataValues: candidateDataValues = [] } = await getAggregatedData(
             this.api,
             dataParams,
-            dataElements.map(de => de.dataSetElements.map((dse: any) => dse.dataSet.id)),
+            dataElements.map(de => de.dataSetElements.map((dse: any) => dse.dataSet?.id)),
             dataElements.map(de => de.dataElementGroups.map((deg: any) => deg.id))
         );
 
@@ -100,119 +104,66 @@ export class AggregatedSync extends GenericSync {
         instance: Instance,
         payload: AggregatedPackage
     ): Promise<AggregatedPackage> {
-        const { organisationUnits = {}, dataElements = {} } = instance.metadataMapping;
         const { dataValues: oldDataValues } = payload;
-        const { optionCombos } = await this.matchCategoryOptionCombos(instance, oldDataValues);
         const defaultIds = await getDefaultIds(this.api);
+        const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
+        const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
 
         const dataValues = oldDataValues
             .map(dataValue => cleanObjectDefault(dataValue, defaultIds))
-            .map(
-                ({
-                    orgUnit,
-                    dataElement,
-                    categoryOptionCombo: categoryOption,
-                    attributeOptionCombo: attributeOption,
-                    ...rest
-                }) => {
-                    const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
-                    const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
-                    const mappedCategory = optionCombos[categoryOption]?.mappedId ?? categoryOption;
-                    const mappedAttribute =
-                        optionCombos[attributeOption]?.mappedId ?? attributeOption;
-
-                    return {
-                        orgUnit: cleanOrgUnitPath(mappedOrgUnit),
-                        dataElement: mappedDataElement,
-                        categoryOptionCombo: mappedCategory,
-                        attributeOptionCombo: mappedAttribute,
-                        ...rest,
-                    };
-                }
+            .map(dataValue =>
+                this.buildMappedDataValue(
+                    dataValue,
+                    instance.metadataMapping,
+                    originCategoryOptionCombos,
+                    destinationCategoryOptionCombos
+                )
             )
-            .filter(
-                ({ orgUnit, dataElement }) => orgUnit !== "DISABLED" && dataElement !== "DISABLED"
-            );
+            .filter(this.isDisabledDataValue);
 
         return { dataValues };
     }
 
-    private async matchCategoryOptionCombos(
-        instance: Instance,
-        dataValues: DataValue[]
-    ): Promise<MetadataMappingDictionary> {
-        const { categoryOptions = {}, categoryCombos = {} } = instance.metadataMapping;
+    private buildMappedDataValue(
+        { orgUnit, dataElement, categoryOptionCombo, value, comment, ...rest }: DataValue,
+        mapping: MetadataMappingDictionary,
+        originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+    ): DataValue {
+        const { organisationUnits = {}, dataElements = {} } = mapping;
+        const { mapping: innerMapping = {} } = dataElements[dataElement] ?? {};
 
-        // Build a list of candidate option combos from the provided data values
-        const candidateOptionCombos = _(dataValues)
-            .map(({ categoryOptionCombo, attributeOptionCombo }) => [
-                categoryOptionCombo,
-                attributeOptionCombo,
+        const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
+        const mappedDataElement = dataElements[dataElement]?.mappedId ?? dataElement;
+        const mappedValue = mapOptionValue(value, innerMapping);
+        const mappedComment = comment ? mapOptionValue(comment, innerMapping) : undefined;
+        const mappedCategory = mapCategoryOptionCombo(
+            categoryOptionCombo,
+            innerMapping,
+            originCategoryOptionCombos,
+            destinationCategoryOptionCombos
+        );
+
+        return {
+            orgUnit: cleanOrgUnitPath(mappedOrgUnit),
+            dataElement: mappedDataElement,
+            categoryOptionCombo: mappedCategory,
+            value: mappedValue,
+            comment: mappedComment,
+            ...rest,
+        };
+    }
+
+    private isDisabledDataValue(dataValue: DataValue): boolean {
+        return !_(dataValue)
+            .pick([
+                "orgUnit",
+                "dataElement",
+                "categoryOptionCombo",
+                "attributeOptionCombo",
+                "value",
             ])
-            .flatten()
-            .uniq()
-            .value();
-
-        // Query origin for the category option combos asking for details of CO and CC
-        const { objects: originObjects } = await this.api.models.categoryOptionCombos
-            .get({
-                fields: { id: true, categoryOptions: { id: true }, categoryCombo: { id: true } },
-                filter: { id: { in: candidateOptionCombos } },
-                paging: false,
-            })
-            .getData();
-
-        const categoryOptionIds = _(originObjects)
-            .map(o => o.categoryOptions.map(({ id }) => categoryOptions[id]?.mappedId ?? id))
-            .flatten()
-            .value();
-
-        const categoryComboIds = _(originObjects)
-            .map(({ categoryCombo: { id } }) => categoryCombos[id]?.mappedId ?? id)
-            .flatten()
-            .value();
-
-        // Query destination for category option combos containing mapped CO and CC
-        const { objects: destinationObjects } = await instance
-            .getApi()
-            .models.categoryOptionCombos.get({
-                fields: { id: true, categoryOptions: { id: true }, categoryCombo: { id: true } },
-                filter: {
-                    "categoryOptions.id": { in: categoryOptionIds },
-                    "categoryCombo.id": { in: categoryComboIds },
-                },
-                rootJunction: "OR",
-                paging: false,
-            })
-            .getData();
-
-        // Compile a list of mapped category option combos from candidates per CO and CC
-        const optionCombos = _(originObjects)
-            .map(({ id, categoryOptions: cos, categoryCombo: cc }) => {
-                // Candidates built from equal category options
-                const candidates = _.filter(destinationObjects, o =>
-                    _.isEqual(
-                        _.sortBy(o.categoryOptions, ["id"]),
-                        _.sortBy(
-                            cos.map(({ id }) => ({ id: categoryOptions[id]?.mappedId ?? id })),
-                            ["id"]
-                        )
-                    )
-                );
-
-                // Exact object built from equal category options and combo
-                const exactObject = _.find(candidates, o =>
-                    _.isEqual(o.categoryCombo, { id: categoryCombos[cc.id]?.mappedId ?? cc.id })
-                );
-
-                // If there's only one candidate, ignore the category combo, else provide exact object
-                const result = candidates.length === 1 ? _.first(candidates) : exactObject;
-                return result ? [id, { mappedId: result.id }] : undefined;
-            })
-            .compact()
-            .fromPairs()
-            .value();
-
-        return { optionCombos };
+            .values()
+            .includes("DISABLED");
     }
 }
