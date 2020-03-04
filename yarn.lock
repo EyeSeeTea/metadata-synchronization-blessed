@@ -4577,7 +4577,7 @@ d2-manifest@^1.0.0:
     minimist "^1.1.0"
     readline-sync "^1.4.1"
 
-d2-ui-components@^1.2.1-beta.2:
+d2-ui-components@1.2.1-beta.2:
   version "1.2.1-beta.2"
   resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-1.2.1-beta.2.tgz#d62e8ce00b1087d6d65f78b390b579f8c86f3c27"
   integrity sha512-IsgsgxxkhFChPKVUnbOT/dpi/99lGrUtrncCG8SP2h+y0LN3UHWMiYPwHwDSOVqTDAyg5def6mw5TwrKnG2/yQ==
