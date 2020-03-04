@@ -135,26 +135,14 @@ export class AggregatedSync extends GenericSync {
 
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedDataElement = aggregatedDataElements[dataElement]?.mappedId ?? dataElement;
-        const mappedValue =
-            mapOptionValue(value, innerMapping) ?? mapOptionValue(value, globalMapping) ?? value;
-        const mappedComment =
-            mapOptionValue(comment, innerMapping) ??
-            mapOptionValue(comment, globalMapping) ??
-            comment;
-        const mappedCategory =
-            mapCategoryOptionCombo(
-                categoryOptionCombo,
-                innerMapping,
-                originCategoryOptionCombos,
-                destinationCategoryOptionCombos
-            ) ??
-            mapCategoryOptionCombo(
-                categoryOptionCombo,
-                globalMapping,
-                originCategoryOptionCombos,
-                destinationCategoryOptionCombos
-            ) ??
-            categoryOptionCombo;
+        const mappedValue = mapOptionValue(value, [innerMapping, globalMapping]);
+        const mappedComment = mapOptionValue(comment, [innerMapping, globalMapping]);
+        const mappedCategory = mapCategoryOptionCombo(
+            categoryOptionCombo,
+            [innerMapping, globalMapping],
+            originCategoryOptionCombos,
+            destinationCategoryOptionCombos
+        );
 
         return {
             orgUnit: cleanOrgUnitPath(mappedOrgUnit),
