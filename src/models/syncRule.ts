@@ -120,7 +120,7 @@ export default class SyncRule {
     }
 
     public get dataSyncAllEvents(): boolean {
-        return this.syncRule.builder?.dataParams?.allEvents ?? false;
+        return this.syncRule.builder?.dataParams?.allEvents ?? true;
     }
 
     public get useDefaultIncludeExclude(): boolean {
