@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-05T18:36:03.758Z\n"
-"PO-Revision-Date: 2020-03-05T18:36:03.758Z\n"
+"POT-Creation-Date: 2020-03-05T18:49:13.439Z\n"
+"PO-Revision-Date: 2020-03-05T18:49:13.439Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -80,19 +80,22 @@ msgstr ""
 msgid "You need to map this element before accessing its related metadata mapping"
 msgstr ""
 
-msgid "Disabled"
+msgid "Set mapping"
 msgstr ""
 
-msgid "Set mapping"
+msgid "Mapping has errors"
 msgstr ""
 
 msgid "Not mapped"
 msgstr ""
 
-msgid "Global"
+msgid "Disabled"
 msgstr ""
 
-msgid "Mapping has errors"
+msgid "Mapped (Global)"
+msgstr ""
+
+msgid "Mapped"
 msgstr ""
 
 msgid "Make this mapping global"
@@ -798,6 +801,9 @@ msgid ""
 msgstr ""
 
 msgid "Map organisation units between instances"
+msgstr ""
+
+msgid "Global"
 msgstr ""
 
 msgid ""

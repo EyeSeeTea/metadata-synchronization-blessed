@@ -297,6 +297,21 @@ export default function MappingTable({
         [mapping, rows, snackbar]
     );
 
+    const getMappedItem = useCallback(
+        (row: MetadataType): MetadataMapping => {
+            const mappingType = getMetadataTypeFromRow(row);
+            const originalType = row.__type__;
+            const id = cleanNestedMappedId(row.id);
+
+            const localItemMapping = _.get(mapping, [mappingType, row.id]);
+            const globalItemMapping =
+                _.get(globalMapping, [originalType, id]) ?? _.get(globalMapping, [mappingType, id]);
+            const itemMapping = !localItemMapping?.mappedId ? globalItemMapping : localItemMapping;
+            return itemMapping ?? {};
+        },
+        [mapping, globalMapping]
+    );
+
     const columns: TableColumn<MetadataType>[] = useMemo(
         () => [
             {
@@ -319,20 +334,12 @@ export default function MappingTable({
                 text: "Mapped ID",
                 sortable: false,
                 getValue: (row: MetadataType) => {
-                    const mappingType = getMetadataTypeFromRow(row);
-                    const originalType = row.__type__;
-                    const id = cleanNestedMappedId(row.id);
-
-                    const localMappedId = _.get(mapping, [mappingType, row.id, "mappedId"]);
-                    const globalMappedId = _.get(globalMapping, [originalType, id, "mappedId"]);
-                    const mappedId = localMappedId ?? globalMappedId ?? row.id;
-                    const cleanId = cleanNestedMappedId(cleanOrgUnitPath(mappedId));
-                    const name = cleanId === "DISABLED" ? i18n.t("Disabled") : cleanId;
+                    const { mappedId } = getMappedItem(row);
 
                     return (
                         <span>
                             <Typography variant={"inherit"} gutterBottom>
-                                {name}
+                                {mappedId ? cleanOrgUnitPath(mappedId) : "-"}
                             </Typography>
                             <Tooltip title={i18n.t("Set mapping")} placement="top">
                                 <IconButton
@@ -354,25 +361,11 @@ export default function MappingTable({
                 text: "Mapped Name",
                 sortable: false,
                 getValue: (row: MetadataType) => {
-                    const mappingType = getMetadataTypeFromRow(row);
-                    const originalType = row.__type__;
-                    const id = cleanNestedMappedId(row.id);
-
-                    const localItemMapping = _.get(mapping, [mappingType, row.id]);
-                    const globalItemMapping =
-                        _.get(globalMapping, [originalType, id]) ??
-                        _.get(globalMapping, [mappingType, id]);
-                    const itemMapping = !localItemMapping?.mappedId
-                        ? globalItemMapping
-                        : localItemMapping;
-
                     const {
-                        mappedId = row.id,
-                        mappedName = mappedId === "DISABLED" ? undefined : i18n.t("Not mapped"),
+                        mappedName,
                         conflicts = false,
                         mapping: childrenMapping,
-                        global = false,
-                    }: Partial<MetadataMapping> = itemMapping ?? {};
+                    } = getMappedItem(row);
 
                     const childrenConflicts = _(childrenMapping)
                         .values()
@@ -383,11 +376,6 @@ export default function MappingTable({
 
                     return (
                         <span>
-                            {!!global && (
-                                <Typography variant={"inherit"} gutterBottom>
-                                    {`[${i18n.t("Global")}] `}
-                                </Typography>
-                            )}
                             <Typography variant={"inherit"} gutterBottom>
                                 {mappedName ?? "-"}
                             </Typography>
@@ -409,16 +397,35 @@ export default function MappingTable({
                     );
                 },
             },
+            {
+                name: "mapping-status",
+                text: "Mapping Status",
+                sortable: false,
+                getValue: (row: MetadataType) => {
+                    const { mappedId, global = false } = getMappedItem(row);
+
+                    const notMappedStatus = !mappedId ? i18n.t("Not mapped") : undefined;
+                    const disabledStatus = mappedId === "DISABLED" ? i18n.t("Disabled") : undefined;
+                    const globalStatus = global ? i18n.t("Mapped (Global)") : i18n.t("Mapped");
+
+                    return (
+                        <span>
+                            <Typography variant={"inherit"} gutterBottom>
+                                {notMappedStatus ?? disabledStatus ?? globalStatus}
+                            </Typography>
+                        </span>
+                    );
+                },
+            },
         ],
         [
             d2,
             classes,
             model,
-            mapping,
-            globalMapping,
             openMappingDialog,
             isChildrenMapping,
             openRelatedMapping,
+            getMappedItem,
         ]
     );
 
