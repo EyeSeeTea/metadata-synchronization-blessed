@@ -146,6 +146,7 @@ export default class Instance {
         const exists = !!instance.data.id;
         const element = exists ? instance.data : { ...instance.data, id: generateUid() };
 
+        if (exists) await instance.remove(api);
         return saveData(api, instancesDataStoreKey, element);
     }
 
