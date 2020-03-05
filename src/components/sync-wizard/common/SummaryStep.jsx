@@ -5,6 +5,7 @@ import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { AggregatedSync } from "../../../logic/sync/aggregated";
 import { EventsSync } from "../../../logic/sync/events";
 import { MetadataSync } from "../../../logic/sync/metadata";
@@ -16,8 +17,8 @@ import {
     requestJSONDownload,
 } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
-import { getInstanceOptions } from "./InstanceSelectionStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
+import { getInstanceOptions } from "./InstanceSelectionStep";
 // import Instance from "../../../models/instance";
 
 const LiEntry = ({ label, value, children }) => {
@@ -61,6 +62,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
     const snackbar = useSnackbar();
     const loading = useLoading();
     const classes = useStyles();
+    const history = useHistory();
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -83,7 +85,8 @@ const SaveStep = ({ syncRule, onCancel }) => {
         if (errors.length > 0) {
             snackbar.error(errors.join("\n"));
         } else {
-            await syncRule.updateName(name).save(d2);
+            const newSyncRule = await syncRule.updateName(name).save(d2);
+            history.push(`/sync-rules/${newSyncRule.type}/edit/${newSyncRule.id}`);
             onCancel();
         }
 
