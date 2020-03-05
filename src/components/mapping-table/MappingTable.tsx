@@ -173,9 +173,9 @@ export default function MappingTable({
         async (selection: string[]) => {
             if (selection.length > 0) {
                 setWarningDialog({
-                    title: i18n.t("Disable mapping"),
+                    title: i18n.t("Exclude mapping"),
                     description: i18n.t(
-                        "Are you sure you want to disable mapping for {{total}} elements?",
+                        "Are you sure you want to exclude mapping for {{total}} elements?",
                         {
                             total: selection.length,
                         }
@@ -183,7 +183,7 @@ export default function MappingTable({
                     action: () => applyMapping([{ selection, mappedId: "DISABLED" }]),
                 });
             } else {
-                snackbar.error(i18n.t("Please select at least one item to disable mapping"));
+                snackbar.error(i18n.t("Please select at least one item to exclude mapping"));
             }
         },
         [snackbar, applyMapping]
@@ -405,7 +405,7 @@ export default function MappingTable({
                     const { mappedId, global = false } = getMappedItem(row);
 
                     const notMappedStatus = !mappedId ? i18n.t("Not mapped") : undefined;
-                    const disabledStatus = mappedId === "DISABLED" ? i18n.t("Disabled") : undefined;
+                    const disabledStatus = mappedId === "DISABLED" ? i18n.t("Excluded") : undefined;
                     const globalStatus = global ? i18n.t("Mapped (Global)") : i18n.t("Mapped");
 
                     return (
@@ -462,7 +462,7 @@ export default function MappingTable({
             },
             {
                 name: "disable-mapping",
-                text: i18n.t("Disable mapping"),
+                text: i18n.t("Exclude mapping"),
                 multiple: true,
                 onClick: disableMapping,
                 icon: <Icon>sync_disabled</Icon>,
@@ -507,7 +507,7 @@ export default function MappingTable({
         type !== "organisationUnits"
             ? {
                   name: "disable-mapping",
-                  text: i18n.t("Disable mapping"),
+                  text: i18n.t("Exclude mapping"),
                   onClick: disableMapping,
                   icon: <Icon>sync_disabled</Icon>,
               }

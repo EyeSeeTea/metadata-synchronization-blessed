@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-05T18:49:13.439Z\n"
-"PO-Revision-Date: 2020-03-05T18:49:13.439Z\n"
+"POT-Creation-Date: 2020-03-05T18:53:29.883Z\n"
+"PO-Revision-Date: 2020-03-05T18:53:29.883Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -47,13 +47,13 @@ msgstr ""
 msgid "Successfully applied global mapping"
 msgstr ""
 
-msgid "Disable mapping"
+msgid "Exclude mapping"
 msgstr ""
 
-msgid "Are you sure you want to disable mapping for {{total}} elements?"
+msgid "Are you sure you want to exclude mapping for {{total}} elements?"
 msgstr ""
 
-msgid "Please select at least one item to disable mapping"
+msgid "Please select at least one item to exclude mapping"
 msgstr ""
 
 msgid "Reset mapping"
@@ -89,7 +89,7 @@ msgstr ""
 msgid "Not mapped"
 msgstr ""
 
-msgid "Disabled"
+msgid "Excluded"
 msgstr ""
 
 msgid "Mapped (Global)"
@@ -450,6 +450,9 @@ msgid "Excluded elements"
 msgstr ""
 
 msgid "Use default include exclude configuration"
+msgstr ""
+
+msgid "Disabled"
 msgstr ""
 
 msgid "Include exclude configuration"
