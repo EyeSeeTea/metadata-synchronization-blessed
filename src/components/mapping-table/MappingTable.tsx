@@ -244,10 +244,11 @@ export default function MappingTable({
                         setMappingConfig({ elements, mappingPath, type, firstElement });
                     }
                 }
-                loading.reset();
             } catch (e) {
+                console.error(e);
                 snackbar.error(i18n.t("Could not connect with remote instance"));
             }
+            loading.reset();
         },
         [api, type, loading, applyMapping, instanceApi, rows, snackbar, mappingPath]
     );
