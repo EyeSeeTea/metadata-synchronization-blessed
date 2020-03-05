@@ -81,6 +81,8 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
             },
         })) ?? [];
 
+    if (steps.length === 0) return null;
+
     const urlHash = location.hash.slice(1);
     const stepExists = steps.find(step => step.key === urlHash);
     const firstStepKey = steps.map(step => step.key)[0];
@@ -97,15 +99,13 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
             fullWidth={true}
         >
             <DialogContent>
-                {steps.length > 0 && (
-                    <Wizard
-                        useSnackFeedback={true}
-                        onStepChangeRequest={onStepChangeRequest}
-                        initialStepKey={initialStepKey}
-                        lastClickableStepIndex={steps.length - 1}
-                        steps={steps}
-                    />
-                )}
+                <Wizard
+                    useSnackFeedback={true}
+                    onStepChangeRequest={onStepChangeRequest}
+                    initialStepKey={initialStepKey}
+                    lastClickableStepIndex={steps.length - 1}
+                    steps={steps}
+                />
             </DialogContent>
         </ConfirmationDialog>
     );

@@ -20,6 +20,7 @@ import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../mode
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
+import { modelSteps } from "../mapping-wizard/Steps";
 import { autoMap, buildMapping, cleanNestedMappedId, getMetadataTypeFromRow } from "./utils";
 
 const useStyles = makeStyles({
@@ -472,7 +473,7 @@ export default function MappingTable({
                 multiple: false,
                 onClick: openRelatedMapping,
                 icon: <Icon>assignment</Icon>,
-                isActive: () => !isChildrenMapping && type !== "organisationUnits",
+                isActive: () => !isChildrenMapping && _.keys(modelSteps).includes(type),
             },
         ],
         [
