@@ -18,6 +18,7 @@ export interface MetadataType {
     lastUpdated: string;
     href: string;
     level?: number;
+    path?: string;
     domainType?: "AGGREGATE" | "TRACKER" | "EVENT";
     __originalId__: string;
     __mappingType__: keyof D2ModelSchemas;
@@ -46,6 +47,7 @@ export const organisationUnitsColumns: typeof d2BaseModelColumns = [
     { name: "shortName", text: i18n.t("Short name"), sortable: true, hidden: true },
     { name: "code", text: i18n.t("Code"), sortable: true, hidden: true },
     { name: "level", text: i18n.t("Level"), sortable: true },
+    { name: "path", text: i18n.t("Path"), sortable: false, hidden: true },
     { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
     { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
     { name: "lastUpdated", text: i18n.t("Last updated"), sortable: true },
@@ -109,6 +111,7 @@ export const programFields = {
 export const organisationUnitFields = {
     ...d2BaseModelFields,
     level: include,
+    path: include,
 };
 
 export function cleanParams(options: Params): Params {
