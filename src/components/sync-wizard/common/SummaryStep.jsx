@@ -179,6 +179,25 @@ const SaveStep = ({ syncRule, onCancel }) => {
 
                 <LiEntry label={i18n.t("Description")} value={syncRule.description} />
 
+                <LiEntry
+                    label={i18n.t("Target instances [{{total}}]", {
+                        total: syncRule.targetInstances.length,
+                    })}
+                >
+                    <ul>
+                        {syncRule.targetInstances.map(id => {
+                            const instanceOption = instanceOptions.find(e => e.value === id);
+                            return instanceOption ? (
+                                <LiEntry key={instanceOption.value} label={instanceOption.text}>
+                                    {/* {syncRule.type !== "metadata" && (
+                                        <ul>{renderMetadataMapping(id)}</ul>
+                                    )}  */}
+                                </LiEntry>
+                            ) : null;
+                        })}
+                    </ul>
+                </LiEntry>
+
                 {_.keys(metadata).map(metadataType => {
                     const items = metadata[metadataType].filter(
                         ({ id }) => !syncRule.excludedIds.includes(id)
@@ -319,25 +338,6 @@ const SaveStep = ({ syncRule, onCancel }) => {
                         )}
                     </LiEntry>
                 )}
-
-                <LiEntry
-                    label={i18n.t("Target instances [{{total}}]", {
-                        total: syncRule.targetInstances.length,
-                    })}
-                >
-                    <ul>
-                        {syncRule.targetInstances.map(id => {
-                            const instanceOption = instanceOptions.find(e => e.value === id);
-                            return instanceOption ? (
-                                <LiEntry key={instanceOption.value} label={instanceOption.text}>
-                                    {/* {syncRule.type !== "metadata" && (
-                                        <ul>{renderMetadataMapping(id)}</ul>
-                                    )}  */}
-                                </LiEntry>
-                            ) : null;
-                        })}
-                    </ul>
-                </LiEntry>
 
                 {syncRule.type === "metadata" && (
                     <LiEntry label={i18n.t("Advanced options")}>
