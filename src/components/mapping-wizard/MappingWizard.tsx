@@ -7,10 +7,12 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
+import { MappingTableProps } from "../mapping-table/MappingTable";
 import { modelSteps } from "./Steps";
 
 export interface MappingWizardStep extends WizardStep {
     showOnSyncDialog?: boolean;
+    props: MappingTableProps;
 }
 
 export interface MappingWizardConfig {
@@ -22,7 +24,7 @@ export interface MappingWizardConfig {
 export interface MappingWizardProps {
     instance: Instance;
     config: MappingWizardConfig;
-    updateMapping: (mapping: MetadataMappingDictionary) => void;
+    updateMapping: (mapping: MetadataMappingDictionary) => Promise<void>;
     onCancel?(): void;
 }
 
@@ -35,7 +37,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     const location = useLocation();
     const { mappingPath, type, element } = config;
 
-    const { mappedId, mapping = {} }: MetadataMapping = _.get(
+    const { mappedId = "", mapping = {} }: MetadataMapping = _.get(
         instance.metadataMapping,
         mappingPath,
         {}
@@ -50,7 +52,13 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     const onChangeMapping = async (subMapping: MetadataMappingDictionary) => {
         const newMapping = _.clone(instance.metadataMapping);
         _.set(newMapping, [...mappingPath, "mapping"], subMapping);
-        updateMapping(newMapping);
+        await updateMapping(newMapping);
+    };
+
+    const onApplyGlobalMapping = async (type: string, id: string, subMapping: MetadataMapping) => {
+        const newMapping = _.clone(instance.metadataMapping);
+        _.set(newMapping, [type, id], { ...subMapping, global: true });
+        await updateMapping(newMapping);
     };
 
     const onStepChangeRequest = async (_prev: WizardStep, _next: WizardStep) => {
@@ -58,15 +66,18 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     };
 
     const steps: MappingWizardStep[] =
-        modelSteps[type]?.map(step => ({
+        modelSteps[type]?.map(({ models, ...step }) => ({
             ...step,
             props: {
-                ...step.props,
+                models,
+                globalMapping: instance.metadataMapping,
                 mapping,
                 onChangeMapping,
+                onApplyGlobalMapping,
                 instance,
                 filterRows,
                 mappingPath: [...mappingPath, mappedId],
+                isChildrenMapping: true,
             },
         })) ?? [];
 

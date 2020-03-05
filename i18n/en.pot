@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-02T07:20:34.244Z\n"
-"PO-Revision-Date: 2020-03-02T07:20:34.244Z\n"
+"POT-Creation-Date: 2020-03-05T16:53:27.927Z\n"
+"PO-Revision-Date: 2020-03-05T16:53:27.927Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -39,6 +39,12 @@ msgid "Applying mapping update for element {{id}}"
 msgstr ""
 
 msgid "Could not apply mapping, please try again."
+msgstr ""
+
+msgid "You need to map the item before applying a global mapping"
+msgstr ""
+
+msgid "Successfully applied global mapping"
 msgstr ""
 
 msgid "Disable mapping"
@@ -83,7 +89,13 @@ msgstr ""
 msgid "Not mapped"
 msgstr ""
 
+msgid "Global"
+msgstr ""
+
 msgid "Mapping has errors"
+msgstr ""
+
+msgid "Make this mapping global"
 msgstr ""
 
 msgid "Auto-map element"
@@ -776,6 +788,11 @@ msgstr ""
 msgid "Map organisation units between instances"
 msgstr ""
 
+msgid ""
+"Map global category options, category combos, options and tracker data "
+"elements between instances"
+msgstr ""
+
 msgid "Instance mapping"
 msgstr ""
 
@@ -786,6 +803,9 @@ msgid "Events metadata mapping"
 msgstr ""
 
 msgid "Organisation unit metadata mapping"
+msgstr ""
+
+msgid "Global metadata mapping"
 msgstr ""
 
 msgid "Metadata Synchronization"

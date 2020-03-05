@@ -21,7 +21,7 @@ function Root() {
         <HashRouter>
             <Switch>
                 <RouteWithSession
-                    path={"/instances/mapping/:id/:section(aggregated|tracker|orgUnit)"}
+                    path={"/instances/mapping/:id/:section(aggregated|tracker|orgUnit|global)"}
                     render={props => <InstanceMappingPage {...props} />}
                 />
 

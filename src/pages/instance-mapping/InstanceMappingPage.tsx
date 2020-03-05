@@ -1,15 +1,20 @@
 import i18n from "@dhis2/d2-i18n";
 import { useD2Api } from "d2-api";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import MappingTable from "../../components/mapping-table/MappingTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
     AggregatedDataElementModel,
+    CategoryComboModel,
+    CategoryOptionModel,
+    OptionModel,
     OrganisationUnitModel,
+    ProgramDataElementModel,
     ProgramModel,
 } from "../../models/d2Model";
-import Instance, { MetadataMappingDictionary } from "../../models/instance";
+import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
@@ -17,14 +22,22 @@ const config = {
     aggregated: {
         title: i18n.t("Aggregated metadata mapping"),
         models: [AggregatedDataElementModel],
+        isGlobalMapping: false,
     },
     tracker: {
         title: i18n.t("Events metadata mapping"),
         models: [ProgramModel],
+        isGlobalMapping: false,
     },
     orgUnit: {
         title: i18n.t("Organisation unit metadata mapping"),
         models: [OrganisationUnitModel],
+        isGlobalMapping: false,
+    },
+    global: {
+        title: i18n.t("Global metadata mapping"),
+        models: [CategoryOptionModel, CategoryComboModel, OptionModel, ProgramDataElementModel],
+        isGlobalMapping: true,
     },
 };
 
@@ -38,7 +51,7 @@ export default function InstanceMappingPage() {
     const api = useD2Api();
 
     const { id, section } = useParams() as InstanceMappingParams;
-    const { models, title } = config[section];
+    const { models, title, isGlobalMapping } = config[section];
 
     const [instance, setInstance] = useState<Instance>();
 
@@ -58,6 +71,14 @@ export default function InstanceMappingPage() {
         setInstance(newInstance);
     };
 
+    const onApplyGlobalMapping = async (type: string, id: string, subMapping: MetadataMapping) => {
+        if (!instance) return;
+
+        const newMapping = _.clone(instance.metadataMapping);
+        _.set(newMapping, [type, id], { ...subMapping, global: true });
+        onChangeMapping(newMapping);
+    };
+
     return (
         <React.Fragment>
             <PageHeader title={title} onBackClick={backHome} />
@@ -67,7 +88,10 @@ export default function InstanceMappingPage() {
                     models={models}
                     instance={instance}
                     mapping={instance.metadataMapping}
+                    globalMapping={instance.metadataMapping}
                     onChangeMapping={onChangeMapping}
+                    onApplyGlobalMapping={onApplyGlobalMapping}
+                    isGlobalMapping={isGlobalMapping}
                 />
             )}
         </React.Fragment>

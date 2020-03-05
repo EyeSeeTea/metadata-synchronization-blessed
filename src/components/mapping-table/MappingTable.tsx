@@ -53,8 +53,11 @@ export interface MappingTableProps {
     models: typeof D2Model[];
     filterRows?: string[];
     mapping: MetadataMappingDictionary;
+    globalMapping: MetadataMappingDictionary;
     onChangeMapping(mapping: MetadataMappingDictionary): Promise<void>;
+    onApplyGlobalMapping(type: string, id: string, mapping: MetadataMapping): Promise<void>;
     isChildrenMapping?: boolean;
+    isGlobalMapping?: boolean;
     mappingPath?: string[];
 }
 
@@ -63,8 +66,11 @@ export default function MappingTable({
     models,
     filterRows,
     mapping,
+    globalMapping,
     onChangeMapping,
+    onApplyGlobalMapping,
     isChildrenMapping = false,
+    isGlobalMapping = false,
     mappingPath,
 }: MappingTableProps) {
     const api = useD2Api();
@@ -74,16 +80,15 @@ export default function MappingTable({
     const loading = useLoading();
 
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
-    const type = model.getCollectionName();
+    const type = model.getMappingType();
     const instanceApi = instance.getApi();
 
-    const [isLoading, setLoading] = useState<boolean>(false);
+    const [rows, setRows] = useState<MetadataType[]>([]);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const [warningDialog, setWarningDialog] = useState<WarningDialog | null>(null);
     const [mappingConfig, setMappingConfig] = useState<MappingDialogConfig | null>(null);
     const [wizardConfig, setWizardConfig] = useState<MappingWizardConfig | null>(null);
-    const [rows, setRows] = useState<MetadataType[]>([]);
 
     const applyMapping = useCallback(
         async (config: MappingConfig[]) => {
@@ -107,7 +112,10 @@ export default function MappingTable({
                                 row?.__originalId__ ?? id,
                                 mappedId
                             );
-                            _.set(newMapping, [rowType, id], mapping);
+                            _.set(newMapping, [rowType, id], {
+                                ...mapping,
+                                global: isGlobalMapping,
+                            });
                         }
                     }
                 }
@@ -128,9 +136,29 @@ export default function MappingTable({
             type,
             mapping,
             isChildrenMapping,
+            isGlobalMapping,
             onChangeMapping,
             rows,
         ]
+    );
+
+    const makeMappingGlobal = useCallback(
+        async (selection: string[]) => {
+            const id = selection[0];
+            const firstElement = _.find(rows, ["id", id]);
+            const mappingType = getMetadataTypeFromRow(firstElement);
+            const elementMapping = _.get(mapping, [mappingType, id]);
+
+            if (!firstElement || !mappingType || !elementMapping?.mappedId) {
+                snackbar.error(i18n.t("You need to map the item before applying a global mapping"));
+            } else {
+                const originalType = firstElement.__type__;
+                await onApplyGlobalMapping(originalType, cleanNestedMappedId(id), elementMapping);
+                await applyMapping([{ selection: [id], mappedId: undefined }]);
+                snackbar.success(i18n.t("Successfully applied global mapping"));
+            }
+        },
+        [onApplyGlobalMapping, applyMapping, rows, mapping, snackbar]
     );
 
     const updateMapping = useCallback(
@@ -252,9 +280,9 @@ export default function MappingTable({
             if (!id || !element) return;
 
             const type = getMetadataTypeFromRow(element);
-            const { mapping: rowMapping } = mapping[type][id] ?? {};
+            const { mapping: rowMapping } = _.get(mapping, [type, id]) ?? {};
 
-            if (!rowMapping) {
+            if (!rowMapping || !type) {
                 snackbar.error(
                     i18n.t(
                         "You need to map this element before accessing its related metadata mapping"
@@ -289,8 +317,13 @@ export default function MappingTable({
                 text: "Mapped ID",
                 sortable: false,
                 getValue: (row: MetadataType) => {
-                    const type = getMetadataTypeFromRow(row);
-                    const mappedId = _.get(mapping, [type, row.id, "mappedId"], row.id);
+                    const mappingType = getMetadataTypeFromRow(row);
+                    const originalType = row.__type__;
+                    const id = cleanNestedMappedId(row.id);
+
+                    const localMappedId = _.get(mapping, [mappingType, row.id, "mappedId"]);
+                    const globalMappedId = _.get(globalMapping, [originalType, id, "mappedId"]);
+                    const mappedId = localMappedId ?? globalMappedId ?? row.id;
                     const cleanId = cleanNestedMappedId(cleanOrgUnitPath(mappedId));
                     const name = cleanId === "DISABLED" ? i18n.t("Disabled") : cleanId;
 
@@ -319,13 +352,25 @@ export default function MappingTable({
                 text: "Mapped Name",
                 sortable: false,
                 getValue: (row: MetadataType) => {
-                    const type = getMetadataTypeFromRow(row);
+                    const mappingType = getMetadataTypeFromRow(row);
+                    const originalType = row.__type__;
+                    const id = cleanNestedMappedId(row.id);
+
+                    const localItemMapping = _.get(mapping, [mappingType, row.id]);
+                    const globalItemMapping =
+                        _.get(globalMapping, [originalType, id]) ??
+                        _.get(globalMapping, [mappingType, id]);
+                    const itemMapping = !localItemMapping?.mappedId
+                        ? globalItemMapping
+                        : localItemMapping;
+
                     const {
                         mappedId = row.id,
                         mappedName = mappedId === "DISABLED" ? undefined : i18n.t("Not mapped"),
                         conflicts = false,
                         mapping: childrenMapping,
-                    }: Partial<MetadataMapping> = _.get(mapping, [type, row.id]) ?? {};
+                        global = false,
+                    }: Partial<MetadataMapping> = itemMapping ?? {};
 
                     const childrenConflicts = _(childrenMapping)
                         .values()
@@ -336,6 +381,11 @@ export default function MappingTable({
 
                     return (
                         <span>
+                            {!!global && (
+                                <Typography variant={"inherit"} gutterBottom>
+                                    {`[${i18n.t("Global")}] `}
+                                </Typography>
+                            )}
                             <Typography variant={"inherit"} gutterBottom>
                                 {mappedName ?? "-"}
                             </Typography>
@@ -358,7 +408,16 @@ export default function MappingTable({
                 },
             },
         ],
-        [d2, classes, model, mapping, openMappingDialog, isChildrenMapping, openRelatedMapping]
+        [
+            d2,
+            classes,
+            model,
+            mapping,
+            globalMapping,
+            openMappingDialog,
+            isChildrenMapping,
+            openRelatedMapping,
+        ]
     );
 
     const actions: TableAction<MetadataType>[] = useMemo(
@@ -375,6 +434,15 @@ export default function MappingTable({
                 multiple: true,
                 onClick: openMappingDialog,
                 icon: <Icon>open_in_new</Icon>,
+            },
+            {
+                name: "global-mapping",
+                text: i18n.t("Make this mapping global"),
+                multiple: false,
+                onClick: makeMappingGlobal,
+                icon: <Icon>add_circle_outline</Icon>,
+                isActive: (rows: MetadataType[]) =>
+                    isChildrenMapping || _.every(rows, ({ __type__ }) => __type__ !== type),
             },
             {
                 name: "auto-mapping",
@@ -411,6 +479,7 @@ export default function MappingTable({
             openMappingDialog,
             resetMapping,
             applyAutoMapping,
+            makeMappingGlobal,
             openRelatedMapping,
             isChildrenMapping,
             type,
@@ -437,7 +506,6 @@ export default function MappingTable({
     ]);
 
     const notifyNewModel = useCallback(model => {
-        setLoading(true);
         setRows([]);
         setSelectedIds([]);
         setModel(() => model);
@@ -507,7 +575,6 @@ export default function MappingTable({
                 additionalActions={actions}
                 notifyNewModel={notifyNewModel}
                 notifyRowsChange={updateRows}
-                loading={isLoading}
                 selectedIds={selectedIds}
                 notifyNewSelection={setSelectedIds}
                 globalActions={globalActions}

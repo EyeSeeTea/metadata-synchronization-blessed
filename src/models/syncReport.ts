@@ -97,6 +97,7 @@ export default class SyncReport {
         const exists = !!this.syncReport.id;
         const element = exists ? this.syncReport : { ...this.syncReport, id: generateUid() };
 
+        if (exists) await this.remove(api);
         await saveDataStore(api, `${dataStoreKey}-${element.id}`, this.results);
         await saveData(api, dataStoreKey, element);
     }

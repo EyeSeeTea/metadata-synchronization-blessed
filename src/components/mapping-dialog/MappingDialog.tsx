@@ -78,7 +78,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
         } else if (type === "programDataElements" && elements.length === 1) {
             const programModel = d2ModelFactory(api, "programs");
             const originProgramId = elements[0].split("-")[0];
-            const { mappedId } = mapping.programs[originProgramId] ?? {};
+            const { mappedId } = _.get(mapping, ["programs", originProgramId]) ?? {};
             if (mappedId) getValidIds(api, programModel, mappedId).then(setFilterRows);
         }
     }, [api, mappingPath, elements, mapping, type]);
