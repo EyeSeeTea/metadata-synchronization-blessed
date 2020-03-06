@@ -1,0 +1,87 @@
+[
+    {
+        "id": "dZ7aQ9Sq6m2",
+        "name": "Event sync rule name",
+        "code": "Event sync rule code",
+        "created": "2020-03-02T07:12:51.250Z",
+        "description": "Event sync rule description",
+        "builder": {
+            "targetInstances": ["Y5QsHDoD4I0"],
+            "metadataIds": ["uEG2h3705XE"],
+            "excludedIds": [],
+            "dataParams": {
+                "strategy": "NEW_AND_UPDATES",
+                "allAttributeCategoryOptions": true,
+                "dryRun": false,
+                "orgUnitPaths": ["/E4h5WBOg71F/RnDSNvg7zR2/KwLlNNoREes/GY1mRd2suuj/PzO3UvH7za0"],
+                "events": ["uEG2h3705XE"],
+                "period": "FIXED",
+                "startDate": "2019-01-01T19:32:00.000Z",
+                "endDate": "2019-12-31T19:32:02.733Z"
+            },
+            "syncParams": {
+                "importStrategy": "CREATE_AND_UPDATE",
+                "includeSharingSettings": true,
+                "atomicMode": "ALL",
+                "mergeMode": "MERGE",
+                "importMode": "COMMIT"
+            }
+        },
+        "enabled": false,
+        "lastUpdated": "2020-03-02T07:12:51.250Z",
+        "lastUpdatedBy": {
+            "id": "M5zQapPyTZI",
+            "name": "admin admin"
+        },
+        "publicAccess": "rw------",
+        "user": {
+            "id": "M5zQapPyTZI",
+            "name": "admin admin"
+        },
+        "userAccesses": [],
+        "userGroupAccesses": [],
+        "type": "events"
+    },
+    {
+        "id": "dZ7aQ9Sq6m1",
+        "name": "Event sync rule name 2",
+        "code": "Event sync rule code 2",
+        "created": "2020-03-02T07:12:51.250Z",
+        "description": "Event sync rule description 2",
+        "builder": {
+            "targetInstances": ["Y5QsHDoD4I0"],
+            "metadataIds": ["uEG2h3705XE"],
+            "excludedIds": [],
+            "dataParams": {
+                "strategy": "NEW_AND_UPDATES",
+                "allAttributeCategoryOptions": true,
+                "dryRun": false,
+                "orgUnitPaths": ["/E4h5WBOg71F/RnDSNvg7zR2/KwLlNNoREes/GY1mRd2suuj/PzO3UvH7za0"],
+                "events": ["uEG2h3705XE"]
+            },
+            "syncParams": {
+                "importStrategy": "CREATE_AND_UPDATE",
+                "includeSharingSettings": true,
+                "useDefaultIncludeExclude": true,
+                "atomicMode": "ALL",
+                "mergeMode": "MERGE",
+                "importMode": "COMMIT",
+                "metadataIncludeExcludeRules": {}
+            }
+        },
+        "enabled": false,
+        "lastUpdated": "2020-03-02T07:12:51.250Z",
+        "lastUpdatedBy": {
+            "id": "M5zQapPyTZI",
+            "name": "admin admin"
+        },
+        "publicAccess": "rw------",
+        "user": {
+            "id": "M5zQapPyTZI",
+            "name": "admin admin"
+        },
+        "userAccesses": [],
+        "userGroupAccesses": [],
+        "type": "events"
+    }
+]
