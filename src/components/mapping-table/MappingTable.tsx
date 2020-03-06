@@ -47,6 +47,7 @@ interface WarningDialog {
 interface MappingConfig {
     selection: string[];
     mappedId: string | undefined;
+    overrides?: MetadataMapping;
 }
 
 export interface MappingTableProps {
@@ -113,7 +114,7 @@ export default function MappingTable({
         async (config: MappingConfig[]) => {
             try {
                 const newMapping = _.cloneDeep(mapping);
-                for (const { selection, mappedId } of config) {
+                for (const { selection, mappedId, overrides = {} } of config) {
                     for (const id of selection) {
                         const row = _.find(rows, ["id", id]);
                         loading.show(
@@ -134,6 +135,7 @@ export default function MappingTable({
                             _.set(newMapping, [rowType, id], {
                                 ...mapping,
                                 global: isGlobalMapping,
+                                ...overrides,
                             });
                         }
                     }
@@ -301,12 +303,16 @@ export default function MappingTable({
             );
             for (const id of selection) {
                 const row = _.find(rows, ["id", id]);
-                const { mappedId, global } = getMappedItem(row);
-                if (mappedId && !global) await applyMapping([{ selection: [id], mappedId }]);
+                const { mappedId, global, mapping, conflicts } = getMappedItem(row);
+                if (mappedId && (isGlobalMapping || !global)) {
+                    await applyMapping([
+                        { selection: [id], mappedId, overrides: { mapping, conflicts } },
+                    ]);
+                }
             }
             loading.reset();
         },
-        [applyMapping, getMappedItem, loading, rows]
+        [applyMapping, getMappedItem, loading, rows, isGlobalMapping]
     );
 
     const openRelatedMapping = useCallback(
@@ -510,7 +516,7 @@ export default function MappingTable({
                 isActive: (selected: MetadataType[]) => {
                     return _(selected)
                         .map(getMappedItem)
-                        .some(({ mappedId, global }) => !!mappedId && !global);
+                        .some(({ mappedId, global }) => !!mappedId && (isGlobalMapping || !global));
                 },
             },
             {
@@ -553,6 +559,7 @@ export default function MappingTable({
             openRelatedMapping,
             getMappedItem,
             isChildrenMapping,
+            isGlobalMapping,
             type,
         ]
     );
