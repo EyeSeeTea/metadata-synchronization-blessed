@@ -1,6 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
-import { D2ModelSchemas, useD2, useD2Api } from "d2-api";
+import { useD2, useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
     TableAction,
@@ -82,7 +82,7 @@ export default function MappingTable({
     const loading = useLoading();
 
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
-    const type = model.getMappingType() as keyof D2ModelSchemas;
+    const type = model.getMappingType();
     const instanceApi = instance.getApi();
 
     const [rows, setRows] = useState<MetadataType[]>([]);
