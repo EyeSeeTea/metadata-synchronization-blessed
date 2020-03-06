@@ -313,115 +313,137 @@ export default function MappingTable({
     );
 
     const columns: TableColumn<MetadataType>[] = useMemo(
-        () => [
-            {
-                name: "id",
-                text: "ID",
-                getValue: (row: MetadataType) => {
-                    return cleanNestedMappedId(row.id);
+        () =>
+            _.compact([
+                {
+                    name: "id",
+                    text: i18n.t("ID"),
+                    getValue: (row: MetadataType) => {
+                        return cleanNestedMappedId(row.id);
+                    },
                 },
-            },
-            {
-                name: "metadata-type",
-                text: "Metadata type",
-                hidden: model.getChildrenKeys() === undefined,
-                getValue: (row: MetadataType) => {
-                    return d2.models[row.__type__]?.displayName;
+                {
+                    name: "metadata-type",
+                    text: i18n.t("Metadata type"),
+                    hidden: model.getChildrenKeys() === undefined,
+                    getValue: (row: MetadataType) => {
+                        return d2.models[row.__type__]?.displayName;
+                    },
                 },
-            },
-            {
-                name: "mapped-id",
-                text: "Mapped ID",
-                sortable: false,
-                getValue: (row: MetadataType) => {
-                    const { mappedId } = getMappedItem(row);
+                {
+                    name: "mapped-id",
+                    text: i18n.t("Mapped ID"),
+                    sortable: false,
+                    getValue: (row: MetadataType) => {
+                        const { mappedId } = getMappedItem(row);
 
-                    return (
-                        <span>
-                            <Typography variant={"inherit"} gutterBottom>
-                                {mappedId ? cleanOrgUnitPath(mappedId) : "-"}
-                            </Typography>
-                            <Tooltip title={i18n.t("Set mapping")} placement="top">
-                                <IconButton
-                                    className={classes.iconButton}
-                                    onClick={event => {
-                                        event.stopPropagation();
-                                        openMappingDialog([row.id]);
-                                    }}
-                                >
-                                    <Icon color="primary">open_in_new</Icon>
-                                </IconButton>
-                            </Tooltip>
-                        </span>
-                    );
-                },
-            },
-            {
-                name: "mapped-name",
-                text: "Mapped Name",
-                sortable: false,
-                getValue: (row: MetadataType) => {
-                    const {
-                        mappedName,
-                        conflicts = false,
-                        mapping: childrenMapping,
-                    } = getMappedItem(row);
-
-                    const childrenConflicts = _(childrenMapping)
-                        .values()
-                        .map(Object.values)
-                        .flatten()
-                        .some(["conflicts", true]);
-                    const showConflicts = conflicts || childrenConflicts;
-
-                    return (
-                        <span>
-                            <Typography variant={"inherit"} gutterBottom>
-                                {mappedName ?? "-"}
-                            </Typography>
-                            {showConflicts && (
-                                <Tooltip title={i18n.t("Mapping has errors")} placement="top">
+                        return (
+                            <span>
+                                <Typography variant={"inherit"} gutterBottom>
+                                    {mappedId ? cleanOrgUnitPath(mappedId) : "-"}
+                                </Typography>
+                                <Tooltip title={i18n.t("Set mapping")} placement="top">
                                     <IconButton
                                         className={classes.iconButton}
                                         onClick={event => {
                                             event.stopPropagation();
-                                            if (!isChildrenMapping) openRelatedMapping([row.id]);
-                                            else openMappingDialog([row.id]);
+                                            openMappingDialog([row.id]);
                                         }}
                                     >
-                                        <Icon color="error">warning</Icon>
+                                        <Icon color="primary">open_in_new</Icon>
                                     </IconButton>
                                 </Tooltip>
-                            )}
-                        </span>
-                    );
+                            </span>
+                        );
+                    },
                 },
-            },
-            {
-                name: "mapping-status",
-                text: "Mapping Status",
-                sortable: false,
-                getValue: (row: MetadataType) => {
-                    const { mappedId, global = false } = getMappedItem(row);
+                {
+                    name: "mapped-name",
+                    text: i18n.t("Mapped Name"),
+                    sortable: false,
+                    getValue: (row: MetadataType) => {
+                        const {
+                            mappedName,
+                            conflicts = false,
+                            mapping: childrenMapping,
+                        } = getMappedItem(row);
 
-                    const notMappedStatus = !mappedId ? i18n.t("Not mapped") : undefined;
-                    const disabledStatus = mappedId === "DISABLED" ? i18n.t("Excluded") : undefined;
-                    const globalStatus = global ? i18n.t("Mapped (Global)") : i18n.t("Mapped");
+                        const childrenConflicts = _(childrenMapping)
+                            .values()
+                            .map(Object.values)
+                            .flatten()
+                            .some(["conflicts", true]);
+                        const showConflicts = conflicts || childrenConflicts;
 
-                    return (
-                        <span>
-                            <Typography variant={"inherit"} gutterBottom>
-                                {notMappedStatus ?? disabledStatus ?? globalStatus}
-                            </Typography>
-                        </span>
-                    );
+                        return (
+                            <span>
+                                <Typography variant={"inherit"} gutterBottom>
+                                    {mappedName ?? "-"}
+                                </Typography>
+                                {showConflicts && (
+                                    <Tooltip title={i18n.t("Mapping has errors")} placement="top">
+                                        <IconButton
+                                            className={classes.iconButton}
+                                            onClick={event => {
+                                                event.stopPropagation();
+                                                if (!isChildrenMapping)
+                                                    openRelatedMapping([row.id]);
+                                                else openMappingDialog([row.id]);
+                                            }}
+                                        >
+                                            <Icon color="error">warning</Icon>
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+                            </span>
+                        );
+                    },
                 },
-            },
-        ],
+                type === "organisationUnits"
+                    ? {
+                          name: "mapped-level",
+                          text: i18n.t("Mapped Level"),
+                          sortable: false,
+                          getValue: (row: MetadataType) => {
+                              const { mappedLevel } = getMappedItem(row);
+
+                              return (
+                                  <span>
+                                      <Typography variant={"inherit"} gutterBottom>
+                                          {mappedLevel ?? "-"}
+                                      </Typography>
+                                  </span>
+                              );
+                          },
+                      }
+                    : undefined,
+                {
+                    name: "mapping-status",
+                    text: i18n.t("Mapping Status"),
+                    sortable: false,
+                    getValue: (row: MetadataType) => {
+                        const { mappedId, global = false } = getMappedItem(row);
+
+                        const notMappedStatus = !mappedId ? i18n.t("Not mapped") : undefined;
+                        const disabledStatus =
+                            mappedId === "DISABLED" ? i18n.t("Excluded") : undefined;
+                        const globalStatus = global ? i18n.t("Mapped (Global)") : i18n.t("Mapped");
+
+                        return (
+                            <span>
+                                <Typography variant={"inherit"} gutterBottom>
+                                    {notMappedStatus ?? disabledStatus ?? globalStatus}
+                                </Typography>
+                            </span>
+                        );
+                    },
+                },
+            ]),
         [
             d2,
             classes,
             model,
+            type,
             openMappingDialog,
             isChildrenMapping,
             openRelatedMapping,

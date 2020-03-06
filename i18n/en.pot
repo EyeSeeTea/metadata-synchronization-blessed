@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-05T18:53:29.883Z\n"
-"PO-Revision-Date: 2020-03-05T18:53:29.883Z\n"
+"POT-Creation-Date: 2020-03-06T04:59:06.444Z\n"
+"PO-Revision-Date: 2020-03-06T04:59:06.444Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -80,10 +80,28 @@ msgstr ""
 msgid "You need to map this element before accessing its related metadata mapping"
 msgstr ""
 
+msgid "ID"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Mapped ID"
+msgstr ""
+
 msgid "Set mapping"
 msgstr ""
 
+msgid "Mapped Name"
+msgstr ""
+
 msgid "Mapping has errors"
+msgstr ""
+
+msgid "Mapped Level"
+msgstr ""
+
+msgid "Mapping Status"
 msgstr ""
 
 msgid "Not mapped"
@@ -123,9 +141,6 @@ msgid "Options"
 msgstr ""
 
 msgid "Program Stages"
-msgstr ""
-
-msgid "Metadata type"
 msgstr ""
 
 msgid "Last updated date"
@@ -918,9 +933,6 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Short name"
-msgstr ""
-
-msgid "ID"
 msgstr ""
 
 msgid "API link"
