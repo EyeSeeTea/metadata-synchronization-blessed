@@ -1,6 +1,6 @@
 [
     {
-        "id": "dZ7aQ9Sq6m2",
+        "id": "ckJYe5gJTx7",
         "name": "Event sync rule name",
         "code": "Event sync rule code",
         "created": "2020-03-02T07:12:51.250Z",
@@ -14,8 +14,8 @@
                 "allAttributeCategoryOptions": true,
                 "dryRun": false,
                 "orgUnitPaths": ["/E4h5WBOg71F/RnDSNvg7zR2/KwLlNNoREes/GY1mRd2suuj/PzO3UvH7za0"],
-                "events": ["uEG2h3705XE"],
-                "metadataIncludeExcludeRules": {}
+                "events": ["PoKTdJQa8pV"],
+                "periods": "ALL"
             },
             "syncParams": {
                 "importStrategy": "CREATE_AND_UPDATE",
@@ -43,7 +43,7 @@
         "type": "events"
     },
     {
-        "id": "dZ7aQ9Sq6m1",
+        "id": "ebh61hsl3Ip",
         "name": "Event sync rule name 2",
         "code": "Event sync rule code 2",
         "created": "2020-03-02T07:12:51.250Z",
@@ -57,7 +57,8 @@
                 "allAttributeCategoryOptions": true,
                 "dryRun": false,
                 "orgUnitPaths": ["/E4h5WBOg71F/RnDSNvg7zR2/KwLlNNoREes/GY1mRd2suuj/PzO3UvH7za0"],
-                "events": ["uEG2h3705XE"]
+                "events": ["PoKTdJQa8pV"],
+                "periods": "ALL"
             },
             "syncParams": {
                 "importStrategy": "CREATE_AND_UPDATE",
