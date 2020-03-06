@@ -15,3 +15,9 @@ export function selectOrgUnit(container, orgUnit) {
 
     return this;
 }
+
+export function expandOrgUnit(container, orgUnit) {
+    cy.get(container).expandInOrgUnitTree(container, orgUnit);
+    
+    return this;
+}
