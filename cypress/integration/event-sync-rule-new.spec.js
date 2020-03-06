@@ -5,7 +5,6 @@ context("Event sync rule new", function() {
 
     const inputs = {
         name: "test",
-        orgUnit: "Ghana",
         instance: "Y5QsHDoD4I0",
         orgUnit: "Akrodie Health Centre",
         orgUnitLevel0: "Ghana",
