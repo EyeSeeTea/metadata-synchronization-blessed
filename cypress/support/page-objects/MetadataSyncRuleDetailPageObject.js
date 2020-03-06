@@ -48,6 +48,7 @@ class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
 
         this.cy
             .contains("Only selected items")
+            .parent()
             .find("input")
             .click();
 
