@@ -1,4 +1,4 @@
-import { D2Api } from "d2-api";
+import { D2Api, D2ModelSchemas } from "d2-api";
 import _ from "lodash";
 import { CategoryOptionModel, D2Model, OptionModel, ProgramStageModel } from "../../models/d2Model";
 import { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
@@ -362,7 +362,10 @@ export const getValidIds = async (api: D2Api, model: typeof D2Model, id: string)
     );
 };
 
-export const getMetadataTypeFromRow = (object?: MetadataType) => {
+export const getMetadataTypeFromRow = (
+    object?: MetadataType,
+    defaultValue?: keyof D2ModelSchemas
+) => {
     const { __mappingType__, __type__ } = object ?? {};
-    return __mappingType__ ?? __type__ ?? "";
+    return __mappingType__ ?? __type__ ?? defaultValue ?? "";
 };

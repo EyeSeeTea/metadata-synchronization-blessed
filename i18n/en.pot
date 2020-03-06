@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-06T04:59:06.444Z\n"
-"PO-Revision-Date: 2020-03-06T04:59:06.444Z\n"
+"POT-Creation-Date: 2020-03-06T05:49:04.081Z\n"
+"PO-Revision-Date: 2020-03-06T05:49:04.081Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -77,6 +77,9 @@ msgstr ""
 msgid "You need to select at least one valid item"
 msgstr ""
 
+msgid "Validating mapping for {{total}} elements"
+msgstr ""
+
 msgid "You need to map this element before accessing its related metadata mapping"
 msgstr ""
 
@@ -117,6 +120,9 @@ msgid "Mapped"
 msgstr ""
 
 msgid "Make this mapping global"
+msgstr ""
+
+msgid "Validate mapping"
 msgstr ""
 
 msgid "Auto-map element"

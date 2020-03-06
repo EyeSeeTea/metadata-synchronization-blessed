@@ -1,6 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
-import { useD2, useD2Api } from "d2-api";
+import { D2ModelSchemas, useD2, useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
     TableAction,
@@ -81,7 +81,7 @@ export default function MappingTable({
     const loading = useLoading();
 
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
-    const type = model.getMappingType();
+    const type = model.getMappingType() as keyof D2ModelSchemas;
     const instanceApi = instance.getApi();
 
     const [rows, setRows] = useState<MetadataType[]>([]);
@@ -90,6 +90,24 @@ export default function MappingTable({
     const [warningDialog, setWarningDialog] = useState<WarningDialog | null>(null);
     const [mappingConfig, setMappingConfig] = useState<MappingDialogConfig | null>(null);
     const [wizardConfig, setWizardConfig] = useState<MappingWizardConfig | null>(null);
+
+    const getMappedItem = useCallback(
+        (row?: MetadataType): MetadataMapping => {
+            if (!row) return {};
+
+            const mappingType = getMetadataTypeFromRow(row);
+            const originalType = row.__type__;
+            const id = cleanNestedMappedId(row.id);
+
+            const localItemMapping = _.get(mapping, [mappingType, row.id]);
+            const globalItemMapping =
+                _.get(globalMapping, [originalType, id]) ?? _.get(globalMapping, [mappingType, id]);
+            const itemMapping = !localItemMapping?.mappedId ? globalItemMapping : localItemMapping;
+
+            return itemMapping ?? {};
+        },
+        [mapping, globalMapping]
+    );
 
     const applyMapping = useCallback(
         async (config: MappingConfig[]) => {
@@ -102,7 +120,7 @@ export default function MappingTable({
                             true,
                             i18n.t("Applying mapping update for element {{id}}", { id })
                         );
-                        const rowType = row?.__mappingType__ ?? type;
+                        const rowType = getMetadataTypeFromRow(row, type);
                         const model = d2ModelFactory(api, rowType);
                         _.unset(newMapping, [rowType, id]);
                         if (isChildrenMapping || mappedId) {
@@ -275,6 +293,22 @@ export default function MappingTable({
         [mappingPath, rows, snackbar]
     );
 
+    const validateMapping = useCallback(
+        async (selection: string[]) => {
+            loading.show(
+                true,
+                i18n.t("Validating mapping for {{total}} elements", { total: selection.length })
+            );
+            for (const id of selection) {
+                const row = _.find(rows, ["id", id]);
+                const { mappedId, global } = getMappedItem(row);
+                if (mappedId && !global) await applyMapping([{ selection: [id], mappedId }]);
+            }
+            loading.reset();
+        },
+        [applyMapping, getMappedItem, loading, rows]
+    );
+
     const openRelatedMapping = useCallback(
         (selection: string[]) => {
             const id = _.first(selection);
@@ -295,21 +329,6 @@ export default function MappingTable({
             }
         },
         [mapping, rows, snackbar]
-    );
-
-    const getMappedItem = useCallback(
-        (row: MetadataType): MetadataMapping => {
-            const mappingType = getMetadataTypeFromRow(row);
-            const originalType = row.__type__;
-            const id = cleanNestedMappedId(row.id);
-
-            const localItemMapping = _.get(mapping, [mappingType, row.id]);
-            const globalItemMapping =
-                _.get(globalMapping, [originalType, id]) ?? _.get(globalMapping, [mappingType, id]);
-            const itemMapping = !localItemMapping?.mappedId ? globalItemMapping : localItemMapping;
-            return itemMapping ?? {};
-        },
-        [mapping, globalMapping]
     );
 
     const columns: TableColumn<MetadataType>[] = useMemo(
@@ -472,8 +491,27 @@ export default function MappingTable({
                 multiple: false,
                 onClick: makeMappingGlobal,
                 icon: <Icon>add_circle_outline</Icon>,
-                isActive: (rows: MetadataType[]) =>
-                    isChildrenMapping || _.every(rows, ({ __type__ }) => __type__ !== type),
+                isActive: (selected: MetadataType[]) => {
+                    const isRowMappedAndNotGlobal = _(selected)
+                        .map(getMappedItem)
+                        .every(({ mappedId, global }) => !!mappedId && !global);
+                    const isRowCompatible =
+                        isChildrenMapping || _.every(selected, ({ __type__ }) => __type__ !== type);
+
+                    return isRowMappedAndNotGlobal && isRowCompatible;
+                },
+            },
+            {
+                name: "validate-mapping",
+                text: i18n.t("Validate mapping"),
+                multiple: true,
+                onClick: validateMapping,
+                icon: <Icon>find_replace</Icon>,
+                isActive: (selected: MetadataType[]) => {
+                    return _(selected)
+                        .map(getMappedItem)
+                        .some(({ mappedId, global }) => !!mappedId && !global);
+                },
             },
             {
                 name: "auto-mapping",
@@ -511,13 +549,23 @@ export default function MappingTable({
             resetMapping,
             applyAutoMapping,
             makeMappingGlobal,
+            validateMapping,
             openRelatedMapping,
+            getMappedItem,
             isChildrenMapping,
             type,
         ]
     );
 
     const globalActions: TableGlobalAction[] = _.compact([
+        type !== "organisationUnits"
+            ? {
+                  name: "validate-mapping",
+                  text: i18n.t("Validate mapping"),
+                  onClick: validateMapping,
+                  icon: <Icon>find_replace</Icon>,
+              }
+            : undefined,
         type !== "organisationUnits"
             ? {
                   name: "reset-mapping",
