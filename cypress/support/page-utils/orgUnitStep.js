@@ -7,7 +7,7 @@ export function assertSelectedOrgUnit(assert) {
     }).as(getOrgUnitsRouteName);
     cy.wait(`@${getOrgUnitsRouteName}`);
 
-    assert(cy.get(".ou-root .label > div[style*='color: orange;'"));
+    assert(cy.get(".ou-root * > div[style*='color: orange;'"));
 }
 
 export function selectOrgUnit(container, orgUnit) {
