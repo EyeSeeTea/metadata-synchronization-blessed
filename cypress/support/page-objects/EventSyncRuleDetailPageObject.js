@@ -3,6 +3,7 @@ import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
 import * as orgUnitStep from "../page-utils/orgUnitStep";
 import * as periodStep from "../page-utils/periodStep";
 import * as eventStep from "../page-utils/eventStep";
+import * as programStep from "../page-utils/programStep";
 
 class EventSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
     constructor(cy) {
@@ -23,13 +24,18 @@ class EventSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
         return this;
     }
 
+    assertSelectedEvent(event) {
+        eventStep.assertSelectedEvent(event);
+        return this;
+    }
+
     assertSelectedOrgUnit(assert) {
         orgUnitStep.assertSelectedOrgUnit(assert);
         return this;
     }
 
-    assertSelectedDatasetCountMessage(assert) {
-        dataSetStep.assertSelectedDatasetCountMessage(assert);
+    assertSelectedProgramsCountMessage(assert) {
+        programStep.assertSelectedProgramsCountMessage(assert);
         return this;
     }
 
@@ -54,7 +60,7 @@ class EventSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
     }
 
     checkOnlySelectedItems() {
-        dataSetStep.checkOnlySelectedItems();
+        programStep.checkOnlySelectedItems();
         return this;
     }
 }
