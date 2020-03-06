@@ -1,6 +1,6 @@
 import EventSyncRuleDetailPageObject from "../support/page-objects/EventSyncRuleDetailPageObject";
 
-context("Metadata synchronization rule new", function() {
+context("Event sync rule new", function() {
     const page = new EventSyncRuleDetailPageObject(cy);
 
     const inputs = {

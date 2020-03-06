@@ -1,6 +1,6 @@
 import AggregatedSyncRuleDetailPageObject from "../support/page-objects/AggregatedSyncRuleDetailPageObject";
 
-context("Metadata synchronization rule new", function() {
+context("Aggregated sync rule new", function() {
     const page = new AggregatedSyncRuleDetailPageObject(cy);
 
     const inputs = {
