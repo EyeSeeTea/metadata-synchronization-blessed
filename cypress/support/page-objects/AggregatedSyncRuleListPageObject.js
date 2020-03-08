@@ -1,8 +1,8 @@
 import SyncRuleListPageObject from "./common/SyncRuleListPageObject";
 
-class MetadataSyncRuleListPageObject extends SyncRuleListPageObject {
+class AggregatedSyncRuleListPageObject extends SyncRuleListPageObject {
     open(stubApiResponseName) {
-        super.open("/#/sync-rules/metadata");
+        super.open("/#/sync-rules/aggregated");
 
         this.cy.wait(`@${stubApiResponseName}`);
 
@@ -13,14 +13,14 @@ class MetadataSyncRuleListPageObject extends SyncRuleListPageObject {
         this.cy
             .route({
                 method: "POST",
-                url: "/api/metadata*",
+                url: "/api/dataValueSets*",
             })
-            .as("postMetadata");
+            .as("postDataValueSets");
 
         this.cy.contains("Execute").click();
-        this.cy.wait("@postMetadata");
+        this.cy.wait("@postDataValueSets");
         return this;
     }
 }
 
-export default MetadataSyncRuleListPageObject;
+export default AggregatedSyncRuleListPageObject;

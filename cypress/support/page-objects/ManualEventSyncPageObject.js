@@ -1,7 +1,7 @@
 import { dataTest } from "../utils";
 import ManualSyncPageObject from "./common/ManualSyncPageObject";
-import * as selectOrgUnitStep from "../page-utils/selectOrgUnitStep";
-import * as selectPeriodStep from "../page-utils/selectPeriodStep";
+import * as selectOrgUnitStep from "../page-utils/orgUnitStep";
+import * as selectPeriodStep from "../page-utils/periodStep";
 
 class ManualEventSyncPageObject extends ManualSyncPageObject {
     constructor(cy) {
