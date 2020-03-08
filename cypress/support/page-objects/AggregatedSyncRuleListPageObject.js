@@ -1,6 +1,6 @@
 import SyncRuleListPageObject from "./common/SyncRuleListPageObject";
 
-class MetadataSyncRuleListPageObject extends SyncRuleListPageObject {
+class AggregatedSyncRuleListPageObject extends SyncRuleListPageObject {
     open(stubApiResponseName) {
         super.open("/#/sync-rules/aggregated");
 
@@ -23,4 +23,4 @@ class MetadataSyncRuleListPageObject extends SyncRuleListPageObject {
     }
 }
 
-export default MetadataSyncRuleListPageObject;
+export default AggregatedSyncRuleListPageObject;
