@@ -40,6 +40,14 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
         return this;
     }
 
+    toggleAllEvents(value = true) {
+        this.cy
+            .get(dataTest("FormControlLabel-sync-all-events", "[type=checkbox]"))
+            .should(value ? "not.be.checked" : "be.checked")
+            .click();
+        return this;
+    }
+
     synchronize() {
         this.cy
             .route({

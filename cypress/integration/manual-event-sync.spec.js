@@ -39,6 +39,7 @@ context("Manual event sync", function() {
             .selectAllPeriods()
             .next()
 
+            .toggleAllEvents(false)
             .selectEvent(inputs.event)
             .next()
             .next()
@@ -65,6 +66,7 @@ context("Manual event sync", function() {
             .selectAllPeriods()
             .next()
 
+            .toggleAllEvents(false)
             .selectEvent(inputs.event)
             .next()
             .next()
