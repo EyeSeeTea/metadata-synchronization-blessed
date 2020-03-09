@@ -1,11 +1,7 @@
-import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
 import * as includeExcludeStep from "../page-utils/includeExcludeStep";
+import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
 
 class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
-    constructor(cy) {
-        super(cy);
-    }
-
     assertSelectedMetadata(assert) {
         assert(this.cy.contains("items selected in all pages"));
         return this;
