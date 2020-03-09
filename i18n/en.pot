@@ -794,7 +794,7 @@ msgstr ""
 msgid "Aggregated metadata mapping"
 msgstr ""
 
-msgid "Events metadata mapping"
+msgid "Program mapping"
 msgstr ""
 
 msgid "Organisation unit metadata mapping"
@@ -940,6 +940,9 @@ msgid "This year"
 msgstr ""
 
 msgid "Last year"
+msgstr ""
+
+msgid "Last 5 years"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"
