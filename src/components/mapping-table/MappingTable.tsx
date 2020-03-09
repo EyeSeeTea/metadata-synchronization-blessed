@@ -12,7 +12,10 @@ import {
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
 import MappingDialog, { MappingDialogConfig } from "../../components/mapping-dialog/MappingDialog";
-import MappingWizard, { MappingWizardConfig } from "../../components/mapping-wizard/MappingWizard";
+import MappingWizard, {
+    MappingWizardConfig,
+    prepareSteps,
+} from "../../components/mapping-wizard/MappingWizard";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import { D2Model, DataElementModel } from "../../models/d2Model";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
@@ -20,7 +23,6 @@ import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../mode
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
-import { modelSteps } from "../mapping-wizard/Steps";
 import { autoMap, buildMapping, cleanNestedMappedId, getMetadataTypeFromRow } from "./utils";
 
 const useStyles = makeStyles({
@@ -546,7 +548,13 @@ export default function MappingTable({
                 multiple: false,
                 onClick: openRelatedMapping,
                 icon: <Icon>assignment</Icon>,
-                isActive: () => !isChildrenMapping && _.keys(modelSteps).includes(type),
+                isActive: (selected: MetadataType[]) => {
+                    const element = selected[0];
+                    const type = getMetadataTypeFromRow(element);
+                    const steps = prepareSteps(type, element);
+
+                    return !isChildrenMapping && steps.length > 0;
+                },
             },
         ],
         [

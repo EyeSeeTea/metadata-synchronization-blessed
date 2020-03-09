@@ -27,6 +27,10 @@ export interface MappingWizardProps {
     onCancel?(): void;
 }
 
+export const prepareSteps = (type: string, element: MetadataType) => {
+    return modelSteps[type]?.filter(({ isVisible = _.noop }) => isVisible(type, element));
+};
+
 const MappingWizard: React.FC<MappingWizardProps> = ({
     instance,
     config,
@@ -65,7 +69,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     };
 
     const steps: MappingWizardStep[] =
-        modelSteps[type]?.map(({ models, ...step }) => ({
+        prepareSteps(type, element).map(({ models, isVisible, ...step }) => ({
             ...step,
             props: {
                 models,
