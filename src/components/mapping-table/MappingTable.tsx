@@ -23,7 +23,13 @@ import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../mode
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
-import { autoMap, buildMapping, cleanNestedMappedId, getMetadataTypeFromRow } from "./utils";
+import {
+    autoMap,
+    buildMapping,
+    cleanNestedMappedId,
+    getMetadataTypeFromRow,
+    getChildrenRows,
+} from "./utils";
 
 const useStyles = makeStyles({
     iconButton: {
@@ -303,18 +309,21 @@ export default function MappingTable({
                 true,
                 i18n.t("Validating mapping for {{total}} elements", { total: selection.length })
             );
-            for (const id of selection) {
-                const row = _.find(rows, ["id", id]);
+
+            const selectedRows = _.compact(selection.map(id => _.find(rows, ["id", id])));
+            const allRows = [...selectedRows, ...getChildrenRows(selectedRows, model)];
+
+            for (const row of allRows) {
                 const { mappedId, global, mapping, conflicts } = getMappedItem(row);
                 if (mappedId && (isGlobalMapping || !global)) {
                     await applyMapping([
-                        { selection: [id], mappedId, overrides: { mapping, conflicts } },
+                        { selection: [row.id], mappedId, overrides: { mapping, conflicts } },
                     ]);
                 }
             }
             loading.reset();
         },
-        [applyMapping, getMappedItem, loading, rows, isGlobalMapping]
+        [applyMapping, getMappedItem, loading, rows, isGlobalMapping, model]
     );
 
     const openRelatedMapping = useCallback(
@@ -607,18 +616,7 @@ export default function MappingTable({
 
     const updateRows = useCallback(
         (rows: MetadataType[]) => {
-            const childrenRows = (_(rows)
-                .map(row =>
-                    _(row)
-                        .pick(model.getChildrenKeys() ?? [])
-                        .values()
-                        .flatten()
-                        .value()
-                )
-                .flatten()
-                .value() as unknown) as MetadataType[];
-
-            setRows([...rows, ...childrenRows]);
+            setRows([...rows, ...getChildrenRows(rows, model)]);
         },
         [model]
     );

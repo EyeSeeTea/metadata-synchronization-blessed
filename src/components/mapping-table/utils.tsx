@@ -366,3 +366,11 @@ export const getMetadataTypeFromRow = (object?: MetadataType, defaultValue?: str
     const { __mappingType__, __type__ } = object ?? {};
     return __mappingType__ ?? __type__ ?? defaultValue ?? "";
 };
+
+export const getChildrenRows = (rows: MetadataType[], model: typeof D2Model): MetadataType[] => {
+    const childrenKeys = model.getChildrenKeys() ?? [];
+
+    return _.flattenDeep(
+        rows.map(row => Object.values(_.pick(row, childrenKeys)) as MetadataType[])
+    );
+};
