@@ -1,15 +1,11 @@
-import { dataTest } from "../utils";
-import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
+import * as eventStep from "../page-utils/eventStep";
 import * as orgUnitStep from "../page-utils/orgUnitStep";
 import * as periodStep from "../page-utils/periodStep";
-import * as eventStep from "../page-utils/eventStep";
 import * as programStep from "../page-utils/programStep";
+import { dataTest } from "../utils";
+import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
 
 class EventSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
-    constructor(cy) {
-        super(cy);
-    }
-
     open(uid, stubApiResponseName) {
         if (uid) {
             super.open(`/#/sync-rules/events/edit/${uid}`);
