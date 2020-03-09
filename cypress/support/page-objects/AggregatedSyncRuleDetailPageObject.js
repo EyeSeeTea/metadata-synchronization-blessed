@@ -1,15 +1,10 @@
-import { dataTest } from "../utils";
-import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
-import * as orgUnitStep from "../page-utils/orgUnitStep";
-import * as dataSetStep from "../page-utils/dataSetStep";
-import * as periodStep from "../page-utils/periodStep";
 import * as categoryOptionsStep from "../page-utils/categoryOptionsStep";
+import * as dataSetStep from "../page-utils/dataSetStep";
+import * as orgUnitStep from "../page-utils/orgUnitStep";
+import * as periodStep from "../page-utils/periodStep";
+import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
 
 class AggregatedSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
-    constructor(cy) {
-        super(cy);
-    }
-
     open(uid, stubApiResponseName) {
         if (uid) {
             super.open(`/#/sync-rules/aggregated/edit/${uid}`);
