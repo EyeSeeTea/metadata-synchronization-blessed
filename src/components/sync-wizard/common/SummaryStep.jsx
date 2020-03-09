@@ -5,6 +5,7 @@ import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { AggregatedSync } from "../../../logic/sync/aggregated";
 import { EventsSync } from "../../../logic/sync/events";
 import { MetadataSync } from "../../../logic/sync/metadata";
@@ -60,6 +61,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
     const snackbar = useSnackbar();
     const loading = useLoading();
     const classes = useStyles();
+    const history = useHistory();
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -82,7 +84,8 @@ const SaveStep = ({ syncRule, onCancel }) => {
         if (errors.length > 0) {
             snackbar.error(errors.join("\n"));
         } else {
-            await syncRule.updateName(name).save(api);
+            const newSyncRule = await syncRule.updateName(name).save(api);
+            history.push(`/sync-rules/${newSyncRule.type}/edit/${newSyncRule.id}`);
             onCancel();
         }
 
@@ -174,6 +177,25 @@ const SaveStep = ({ syncRule, onCancel }) => {
                 <LiEntry label={i18n.t("Code")} value={syncRule.code} />
 
                 <LiEntry label={i18n.t("Description")} value={syncRule.description} />
+
+                <LiEntry
+                    label={i18n.t("Target instances [{{total}}]", {
+                        total: syncRule.targetInstances.length,
+                    })}
+                >
+                    <ul>
+                        {syncRule.targetInstances.map(id => {
+                            const instanceOption = instanceOptions.find(e => e.value === id);
+                            return instanceOption ? (
+                                <LiEntry key={instanceOption.value} label={instanceOption.text}>
+                                    {/* {syncRule.type !== "metadata" && (
+                                        <ul>{renderMetadataMapping(id)}</ul>
+                                    )}  */}
+                                </LiEntry>
+                            ) : null;
+                        })}
+                    </ul>
+                </LiEntry>
 
                 {_.keys(metadata).map(metadataType => {
                     const items = metadata[metadataType].filter(
@@ -315,25 +337,6 @@ const SaveStep = ({ syncRule, onCancel }) => {
                         )}
                     </LiEntry>
                 )}
-
-                <LiEntry
-                    label={i18n.t("Target instances [{{total}}]", {
-                        total: syncRule.targetInstances.length,
-                    })}
-                >
-                    <ul>
-                        {syncRule.targetInstances.map(id => {
-                            const instanceOption = instanceOptions.find(e => e.value === id);
-                            return instanceOption ? (
-                                <LiEntry key={instanceOption.value} label={instanceOption.text}>
-                                    {/* {syncRule.type !== "metadata" && (
-                                        <ul>{renderMetadataMapping(id)}</ul>
-                                    )}  */}
-                                </LiEntry>
-                            ) : null;
-                        })}
-                    </ul>
-                </LiEntry>
 
                 {syncRule.type === "metadata" && (
                     <LiEntry label={i18n.t("Advanced options")}>

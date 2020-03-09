@@ -2,10 +2,6 @@ import * as includeExcludeStep from "../page-utils/includeExcludeStep";
 import SyncRuleDetailPageObject from "./common/SyncRuleDetailPageObject";
 
 class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
-    constructor(cy) {
-        super(cy, "metadata");
-    }
-
     assertSelectedMetadata(assert) {
         assert(this.cy.contains("items selected in all pages"));
         return this;
@@ -48,6 +44,7 @@ class MetadataSyncRuleDetailPageObject extends SyncRuleDetailPageObject {
 
         this.cy
             .contains("Only selected items")
+            .parent()
             .find("input")
             .click();
 

@@ -142,6 +142,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         selectedIds: selectedIds,
         parentOrgUnits: null,
     });
+    const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
 
     const [error, setError] = useState<Error>();
     const [rows, setRows] = useState<MetadataType[]>([]);
@@ -191,6 +192,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         }
         const includedIds = _.uniq([...selectedIds, ...Array.from(ids)]);
         notifyNewSelection(includedIds, excludedIds);
+
+        const orgUnitPaths = _(rows)
+            .intersectionBy(
+                selectedOUs.map(id => ({ id })),
+                "id"
+            )
+            .map(({ path }) => path)
+            .compact()
+            .value();
+        updateExpandOrgUnits(orgUnitPaths);
+        changeParentOrgUnitFilter(orgUnitPaths);
     };
 
     const addToSelection = (ids: string[]) => {
@@ -284,6 +296,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 selected={filters.parentOrgUnits ?? []}
                 singleSelection={true}
                 selectOnClick={true}
+                initiallyExpanded={expandOrgUnits}
             />
         </div>
     );

@@ -1,13 +1,8 @@
+import * as instanceSelectionStep from "../../page-utils/instanceSelectionStep";
 import { dataTest } from "../../utils";
 import PageObject from "./PageObject";
-import * as instanceSelectionStep from "../../page-utils/instanceSelectionStep";
 
 export default class SyncRuleDetailPageObject extends PageObject {
-    constructor(cy, key) {
-        super(cy);
-        this.key = key;
-    }
-
     assertName(assert) {
         assert(this.cy.get(dataTest("name")));
         return this;

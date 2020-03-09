@@ -119,7 +119,7 @@ export default class SyncRule {
     }
 
     public get dataSyncAllEvents(): boolean {
-        return this.syncRule.builder?.dataParams?.allEvents ?? false;
+        return this.syncRule.builder?.dataParams?.allEvents ?? true;
     }
 
     public get useDefaultIncludeExclude(): boolean {
@@ -637,7 +637,7 @@ export default class SyncRule {
         return isUserOwner || isPublic || hasUserAccess || hasGroupAccess;
     }
 
-    public async save(api: D2Api): Promise<void> {
+    public async save(api: D2Api): Promise<SyncRule> {
         const userInfo = await getUserInfo(api);
         const user = _.pick(userInfo, ["id", "name"]);
         const exists = !!this.syncRule.id;
@@ -651,6 +651,8 @@ export default class SyncRule {
             lastUpdated: new Date(),
             lastUpdatedBy: user,
         });
+
+        return new SyncRule(element);
     }
 
     public async remove(api: D2Api): Promise<void> {

@@ -1,6 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
 import { DialogContent } from "@material-ui/core";
-import { D2ModelSchemas } from "d2-api";
 import { ConfirmationDialog, Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
 import React from "react";
@@ -17,7 +16,7 @@ export interface MappingWizardStep extends WizardStep {
 
 export interface MappingWizardConfig {
     mappingPath: string[];
-    type: keyof D2ModelSchemas;
+    type: string;
     element: MetadataType;
 }
 
@@ -27,6 +26,10 @@ export interface MappingWizardProps {
     updateMapping: (mapping: MetadataMappingDictionary) => Promise<void>;
     onCancel?(): void;
 }
+
+export const prepareSteps = (type: string, element: MetadataType) => {
+    return modelSteps[type]?.filter(({ isVisible = _.noop }) => isVisible(type, element));
+};
 
 const MappingWizard: React.FC<MappingWizardProps> = ({
     instance,
@@ -66,7 +69,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     };
 
     const steps: MappingWizardStep[] =
-        modelSteps[type]?.map(({ models, ...step }) => ({
+        prepareSteps(type, element).map(({ models, isVisible, ...step }) => ({
             ...step,
             props: {
                 models,
@@ -80,6 +83,8 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
                 isChildrenMapping: true,
             },
         })) ?? [];
+
+    if (steps.length === 0) return null;
 
     const urlHash = location.hash.slice(1);
     const stepExists = steps.find(step => step.key === urlHash);
@@ -97,15 +102,13 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
             fullWidth={true}
         >
             <DialogContent>
-                {steps.length > 0 && (
-                    <Wizard
-                        useSnackFeedback={true}
-                        onStepChangeRequest={onStepChangeRequest}
-                        initialStepKey={initialStepKey}
-                        lastClickableStepIndex={steps.length - 1}
-                        steps={steps}
-                    />
-                )}
+                <Wizard
+                    useSnackFeedback={true}
+                    onStepChangeRequest={onStepChangeRequest}
+                    initialStepKey={initialStepKey}
+                    lastClickableStepIndex={steps.length - 1}
+                    steps={steps}
+                />
             </DialogContent>
         </ConfirmationDialog>
     );
