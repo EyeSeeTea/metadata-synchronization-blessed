@@ -1,13 +1,4 @@
 export function assertSelectedEvent(event) {
-    const getEventsRouteName = "getEvents";
-
-    cy.route({
-        method: "GET",
-        url: "/api/events*",
-    }).as(getEventsRouteName);
-
-    cy.wait(`@${getEventsRouteName}`);
-
     assert(
         cy
             .get('[data-test="Paper"]')

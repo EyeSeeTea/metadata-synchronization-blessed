@@ -12,6 +12,7 @@
             "dataParams": {
                 "strategy": "NEW_AND_UPDATES",
                 "allAttributeCategoryOptions": true,
+                "allEvents": false,
                 "dryRun": false,
                 "orgUnitPaths": ["/E4h5WBOg71F/RnDSNvg7zR2/KwLlNNoREes/GY1mRd2suuj/PzO3UvH7za0"],
                 "events": ["PoKTdJQa8pV"],
@@ -55,6 +56,7 @@
             "dataParams": {
                 "strategy": "NEW_AND_UPDATES",
                 "allAttributeCategoryOptions": true,
+                "allEvents": false,
                 "dryRun": false,
                 "orgUnitPaths": ["/E4h5WBOg71F/RnDSNvg7zR2/KwLlNNoREes/GY1mRd2suuj/PzO3UvH7za0"],
                 "events": ["PoKTdJQa8pV"],

@@ -89,7 +89,9 @@ context("Manual event sync", function() {
             .selectAllPeriods()
             .next()
 
+            .toggleAllEvents(false)
             .next()
+
             .assertError(error => error.contains("You need to select at least one event"));
     });
 
@@ -158,6 +160,7 @@ context("Manual event sync", function() {
             .selectAllPeriods()
             .next()
 
+            .toggleAllEvents(false)
             .selectEvent(inputs.event)
             .next()
 
