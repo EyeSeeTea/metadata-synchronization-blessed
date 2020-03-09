@@ -20,7 +20,7 @@ const config = {
         models: [AggregatedDataElementModel],
     },
     tracker: {
-        title: i18n.t("Events metadata mapping"),
+        title: i18n.t("Program mapping"),
         models: [ProgramModel],
     },
     orgUnit: {
