@@ -481,6 +481,24 @@ export class ValidationRuleGroupModel extends D2Model {
     protected static includeRules = ["attributes", "validationRules", "validationRules.attributes"];
 }
 
+export class DashboardModel extends D2Model {
+    protected static metadataType = "dashboard";
+    protected static collectionName = "dashboards" as const;
+    //protected static groupFilterName = "indicatorGroups" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "dashboardItems",
+        "charts",
+        "eventCharts",
+        "pivotTables",
+        "eventReports",
+        "maps",
+        "reports",
+        "reportTables"
+    ];
+}
+
 export function defaultModel(pascalCaseModelName: string): any {
     return class DefaultModel extends D2Model {
         protected static metadataType = pascalCaseModelName;
