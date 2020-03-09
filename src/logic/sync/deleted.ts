@@ -12,14 +12,13 @@ export class DeletedSync extends GenericSync {
     protected readonly type = "deleted";
 
     public buildPayload = memoize(async () => {
-        const { metadataIds } = this.builder;
-        return getMetadata(this.api, metadataIds, "id");
+        return {};
     });
 
     protected async postPayload(instance: Instance) {
-        const { syncParams = {} } = this.builder;
+        const { metadataIds, syncParams = {} } = this.builder;
 
-        const payloadPackage = await this.buildPayload();
+        const payloadPackage = await getMetadata(instance.getApi(), metadataIds, "id");
         console.debug("Metadata package", payloadPackage);
 
         return postMetadata(instance.getApi(), payloadPackage, {

@@ -67,7 +67,7 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
     };
 
     const changeDryRun = (dryRun: boolean) => {
-        if (syncRule.type === "metadata") {
+        if (syncRule.type === "metadata" || syncRule.type === "deleted") {
             onChange(
                 syncRule.updateSyncParams({
                     ...syncParams,
@@ -149,7 +149,7 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                     label={i18n.t("Dry Run")}
                     onValueChange={changeDryRun}
                     value={
-                        syncRule.type === "metadata"
+                        syncRule.type === "metadata" || syncRule.type === "deleted"
                             ? syncParams.importMode === "VALIDATE"
                             : dataParams.dryRun || false
                     }
