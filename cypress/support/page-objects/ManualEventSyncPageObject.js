@@ -1,7 +1,8 @@
 import { dataTest } from "../utils";
 import ManualSyncPageObject from "./common/ManualSyncPageObject";
-import * as selectOrgUnitStep from "../page-utils/orgUnitStep";
-import * as selectPeriodStep from "../page-utils/periodStep";
+import * as orgUnitStep from "../page-utils/orgUnitStep";
+import * as periodStep from "../page-utils/periodStep";
+import * as eventStep from "../page-utils/eventStep";
 
 class ManualEventSyncPageObject extends ManualSyncPageObject {
     constructor(cy) {
@@ -14,29 +15,22 @@ class ManualEventSyncPageObject extends ManualSyncPageObject {
     }
 
     expandOrgUnit(orgUnit) {
-        this.cy.expandInOrgUnitTree(dataTest(`DialogContent-${this.key}-synchronization`), orgUnit);
+        orgUnitStep.expandOrgUnit(dataTest(`DialogContent-${this.key}-synchronization`), orgUnit);
         return this;
     }
 
     selectOrgUnit(orgUnit) {
-        selectOrgUnitStep.selectOrgUnit(
-            dataTest(`DialogContent-${this.key}-synchronization`),
-            orgUnit
-        );
+        orgUnitStep.selectOrgUnit(dataTest(`DialogContent-${this.key}-synchronization`), orgUnit);
         return this;
     }
 
     selectAllPeriods() {
-        selectPeriodStep.selectAllPeriods();
+        periodStep.selectAllPeriods();
         return this;
     }
 
     selectEvent(event) {
-        this.cy
-            .get(dataTest("DialogContent-events-synchronization"))
-            .contains(event)
-            .parent()
-            .click();
+        eventStep.selectEvent(dataTest(`DialogContent-${this.key}-synchronization`), event);
         return this;
     }
 
