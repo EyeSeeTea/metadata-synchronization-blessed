@@ -597,5 +597,5 @@ export const mapProgramDataElement = (
         ? programDataElements[complexId]
         : programDataElements[dataElement];
 
-    return candidate;
+    return candidate ?? {};
 };

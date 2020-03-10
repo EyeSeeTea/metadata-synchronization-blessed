@@ -1,13 +1,18 @@
-import AggregatedSyncRuleDetailPageObject from "../support/page-objects/AggregatedSyncRuleDetailPageObject";
+import EventSyncRuleDetailPageObject from "../support/page-objects/EventSyncRuleDetailPageObject";
 
-context("Aggregated sync rule new", function() {
-    const page = new AggregatedSyncRuleDetailPageObject(cy);
+context("Event sync rule new", function() {
+    const page = new EventSyncRuleDetailPageObject(cy);
 
     const inputs = {
         name: "test",
-        orgUnit: "Ghana",
         instance: "Y5QsHDoD4I0",
-        dataSet: "Malaria annual data",
+        orgUnit: "Akrodie Health Centre",
+        orgUnitLevel0: "Ghana",
+        orgUnitLevel1: "Ahafo",
+        orgUnitLevel2: "Asunafo North",
+        orgUnitLevel3: "Akrodie",
+        event: "PoKTdJQa8pV",
+        program: "ENTO- Discriminating concentration bioassay",
     };
 
     beforeEach(() => {
@@ -15,7 +20,7 @@ context("Aggregated sync rule new", function() {
     });
 
     it("should have the correct title", () => {
-        page.assertTitle(title => title.contains("New aggregated synchronization rule"));
+        page.assertTitle(title => title.contains("New events synchronization rule"));
     });
 
     it("should show name step error if user try click on next without type a name", () => {
@@ -25,6 +30,14 @@ context("Aggregated sync rule new", function() {
     it("should show metadata step error if user try click on next without selecting an metadata item", () => {
         page.typeName(inputs.name)
             .next()
+
+            .expandOrgUnit(inputs.orgUnitLevel0)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
+            .selectOrgUnit(inputs.orgUnit)
+            .next()
+
             .next()
             .assertError(error =>
                 error.contains("You need to select at least one metadata element")
@@ -33,8 +46,6 @@ context("Aggregated sync rule new", function() {
 
     it("should show the org unit step error if user try click on next without selecting the org unit", () => {
         page.typeName(inputs.name)
-            .next()
-            .selectRow(inputs.dataSet)
             .next()
             .next()
             .assertError(error =>
@@ -46,16 +57,21 @@ context("Aggregated sync rule new", function() {
         page.typeName(inputs.name)
             .next()
 
-            .selectRow(inputs.dataSet)
+            .expandOrgUnit(inputs.orgUnitLevel0)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
+            .selectOrgUnit(inputs.orgUnit)
             .next()
 
-            .selectOrgUnit(inputs.orgUnit)
+            .selectRow(inputs.program)
             .next()
 
             .selectAllPeriods()
             .next()
 
-            .selectAllAttributesCategoryOptions()
+            .toggleAllEvents(false)
+            .selectEvent(inputs.event)
             .next()
 
             .next()
@@ -66,16 +82,21 @@ context("Aggregated sync rule new", function() {
         page.typeName(inputs.name)
             .next()
 
-            .selectRow(inputs.dataSet)
+            .expandOrgUnit(inputs.orgUnitLevel0)
+            .expandOrgUnit(inputs.orgUnitLevel1)
+            .expandOrgUnit(inputs.orgUnitLevel2)
+            .expandOrgUnit(inputs.orgUnitLevel3)
+            .selectOrgUnit(inputs.orgUnit)
             .next()
 
-            .selectOrgUnit(inputs.orgUnit)
+            .selectRow(inputs.program)
             .next()
 
             .selectAllPeriods()
             .next()
 
-            .selectAllAttributesCategoryOptions()
+            .toggleAllEvents(false)
+            .selectEvent(inputs.event)
             .next()
 
             .selectReceiverInstance(inputs.instance)
