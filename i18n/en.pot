@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-06T05:49:04.081Z\n"
-"PO-Revision-Date: 2020-03-06T05:49:04.081Z\n"
+"POT-Creation-Date: 2020-03-10T07:13:37.005Z\n"
+"PO-Revision-Date: 2020-03-10T07:13:37.005Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -35,7 +35,7 @@ msgstr ""
 msgid "Could not connect with remote instance"
 msgstr ""
 
-msgid "Applying mapping update for element {{id}}"
+msgid "Applying mapping update for element {{name}}"
 msgstr ""
 
 msgid "Could not apply mapping, please try again."
@@ -68,7 +68,7 @@ msgstr ""
 msgid "Preparing auto-mapping for {{total}} elements"
 msgstr ""
 
-msgid "Could not find a suitable candidate to apply auto-mapping"
+msgid "Could not find a suitable candidate to apply auto-mapping for {{id}}"
 msgstr ""
 
 msgid "You need to select all items from the same type"
@@ -126,6 +126,12 @@ msgid "Validate mapping"
 msgstr ""
 
 msgid "Auto-map element"
+msgstr ""
+
+msgid "Auto-map element with children"
+msgstr ""
+
+msgid "Auto-map children"
 msgstr ""
 
 msgid "Reset mapping to default values"

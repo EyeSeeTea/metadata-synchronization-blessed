@@ -247,7 +247,10 @@ export default function MappingTable({
                         total: elements.length,
                     })
                 );
-                const tasks = [];
+
+                const tasks: MappingConfig[] = [];
+                const errors: string[] = [];
+
                 for (const id of elements) {
                     const element = _.find(rows, ["id", id]);
                     const elementType = element?.__type__ ?? type;
@@ -257,8 +260,11 @@ export default function MappingTable({
                     const { mappedId } = _.first(candidates) ?? {};
 
                     if (!mappedId) {
-                        snackbar.error(
-                            i18n.t("Could not find a suitable candidate to apply auto-mapping")
+                        errors.push(
+                            i18n.t(
+                                "Could not find a suitable candidate to apply auto-mapping for {{id}}",
+                                { id: cleanNestedMappedId(id) }
+                            )
                         );
                     } else {
                         tasks.push({ selection: [id], mappedId });
@@ -267,7 +273,9 @@ export default function MappingTable({
 
                 await applyMapping(tasks);
 
-                if (elements.length === 1) {
+                if (errors.length > 0) {
+                    snackbar.error(_.take(errors, 10).join("\n"));
+                } else if (elements.length === 1) {
                     const firstElement = _.find(rows, ["id", elements[0]]);
                     if (firstElement) {
                         const type = getMetadataTypeFromRow(firstElement);
