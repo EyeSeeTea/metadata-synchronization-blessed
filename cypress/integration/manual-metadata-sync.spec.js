@@ -2,6 +2,7 @@ import ManualMetadataSyncPageObject from "../support/page-objects/ManualMetadata
 
 context("Manual metadata sync", () => {
     const page = new ManualMetadataSyncPageObject(cy);
+    const targetInstance = "Y5QsHDoD4I0";
 
     beforeEach(() => {
         page.open();
@@ -12,7 +13,7 @@ context("Manual metadata sync", () => {
             filterLabel: "Metadata type",
             filterValue: "Data Element",
             dataElement: "ENTO-ADULT- Household Head Name",
-            instance: "Y5QsHDoD4I0",
+            instance: targetInstance,
         };
 
         it("should have the correct title", () => {
@@ -108,7 +109,7 @@ context("Manual metadata sync", () => {
             filterLabel: "Metadata type",
             filterValue: "Dashboard",
             dataElement: "Malaria Quality Control",
-            instance: "Y5QsHDoD4I0",
+            instance: targetInstance,
         };
 
         it("should sync correctly one dashboard", () => {
@@ -117,6 +118,25 @@ context("Manual metadata sync", () => {
                 .openSyncDialog()
                 .next()
                 .selectReceiverInstance(dashboardInputs.instance)
+                .synchronize()
+                .assertSyncResultsStatus(status => status.contains("Success"))
+                .closeSyncResultsDialog();
+        });
+    });
+    context("User group", () => {
+        const userGroupInputs = {
+            filterLabel: "Metadata type",
+            filterValue: "User Group",
+            dataElement: "Malaria access",
+            instance: targetInstance,
+        };
+
+        it("should sync correctly one user group", () => {
+            page.selectFilterInTable(userGroupInputs.filterLabel, userGroupInputs.filterValue)
+                .selectRow(userGroupInputs.dataElement)
+                .openSyncDialog()
+                .next()
+                .selectReceiverInstance(userGroupInputs.instance)
                 .synchronize()
                 .assertSyncResultsStatus(status => status.contains("Success"))
                 .closeSyncResultsDialog();

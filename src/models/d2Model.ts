@@ -499,6 +499,14 @@ export class DashboardModel extends D2Model {
     ];
 }
 
+export class UserGroupModel extends D2Model {
+    protected static metadataType = "userGroup";
+    protected static collectionName = "userGroups" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = ["users"];
+}
+
 export function defaultModel(pascalCaseModelName: string): any {
     return class DefaultModel extends D2Model {
         protected static metadataType = pascalCaseModelName;
