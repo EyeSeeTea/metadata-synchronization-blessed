@@ -4,6 +4,8 @@ context("Manual metadata sync", function() {
     const page = new ManualMetadataSyncPageObject(cy);
 
     const inputs = {
+        filterLabel: "Metadata type",
+        filterValue: "Data Element",
         dataElement: "ENTO-ADULT- Household Head Name",
         instance: "Y5QsHDoD4I0",
     };
@@ -23,7 +25,8 @@ context("Manual metadata sync", function() {
     // });
 
     it("should sync correctly one data element", () => {
-        page.selectRow(inputs.dataElement)
+        page.selectFilterInTable(inputs.filterLabel, inputs.filterValue)
+            .selectRow(inputs.dataElement)
             .openSyncDialog()
             .next()
             .selectReceiverInstance(inputs.instance)
@@ -33,7 +36,8 @@ context("Manual metadata sync", function() {
     });
 
     it("should show the instance selection step error if user try click on next without selecting an instance", () => {
-        page.selectRow(inputs.dataElement)
+        page.selectFilterInTable(inputs.filterLabel, inputs.filterValue)
+            .selectRow(inputs.dataElement)
             .openSyncDialog()
             .next()
             .next()
@@ -41,21 +45,24 @@ context("Manual metadata sync", function() {
     });
 
     it("should have synchronize button disabled to open sync dialog", () => {
-        page.selectRow(inputs.dataElement)
+        page.selectFilterInTable(inputs.filterLabel, inputs.filterValue)
+            .selectRow(inputs.dataElement)
             .openSyncDialog()
 
             .assertSyncButton(syncButton => syncButton.should("be.disabled"));
     });
 
     it("should have synchronize button disabled if only contains default include exclude", () => {
-        page.selectRow(inputs.dataElement)
+        page.selectFilterInTable(inputs.filterLabel, inputs.filterValue)
+            .selectRow(inputs.dataElement)
             .openSyncDialog()
             .next()
             .assertSyncButton(syncButton => syncButton.should("be.disabled"));
     });
 
     it("should have synchronize button enabled if contains org unit, periods, category options and one instance", () => {
-        page.selectRow(inputs.dataElement)
+        page.selectFilterInTable(inputs.filterLabel, inputs.filterValue)
+            .selectRow(inputs.dataElement)
             .openSyncDialog()
             .next()
             .selectReceiverInstance(inputs.instance)
@@ -63,7 +70,8 @@ context("Manual metadata sync", function() {
     });
 
     it("should sync correctly with dependencies with default include rule", () => {
-        page.selectRow(inputs.dataElement)
+        page.selectFilterInTable(inputs.filterLabel, inputs.filterValue)
+            .selectRow(inputs.dataElement)
             .openSyncDialog()
             .next()
 
@@ -75,7 +83,8 @@ context("Manual metadata sync", function() {
             .closeSyncResultsDialog();
     });
     it("should sync correctly without excluded dependencies if rules are customized", () => {
-        page.selectRow(inputs.dataElement)
+        page.selectFilterInTable(inputs.filterLabel, inputs.filterValue)
+            .selectRow(inputs.dataElement)
             .openSyncDialog()
 
             .changeUseDefaultConfiguration()
