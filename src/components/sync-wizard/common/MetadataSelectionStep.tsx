@@ -72,6 +72,7 @@ export default function MetadataSelectionStep(props: SyncWizardStepProps) {
             excludedIds={syncRule.excludedIds}
             notifyNewSelection={changeSelection}
             childrenKeys={childrenKeys}
+            showIndeterminateSelection={true}
         />
     );
 }

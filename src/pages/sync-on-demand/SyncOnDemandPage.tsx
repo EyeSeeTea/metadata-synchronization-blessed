@@ -153,6 +153,7 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
                 onActionButtonClick={appConfigurator ? openSynchronizationDialog : undefined}
                 actionButtonLabel={<SyncIcon />}
                 childrenKeys={config[type].childrenKeys}
+                showIndeterminateSelection={true}
             />
 
             {syncDialogOpen && (

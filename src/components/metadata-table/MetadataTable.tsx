@@ -38,6 +38,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     additionalColumns?: TableColumn<MetadataType>[];
     additionalFilters?: ReactNode;
     additionalActions?: TableAction<MetadataType>[];
+    showIndeterminateSelection?: boolean;
     notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
     notifyNewModel?(model: typeof D2Model): void;
     notifyRowsChange?(rows: MetadataType[]): void;
@@ -119,6 +120,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     additionalActions = [],
     loading: providedLoading,
     initialShowOnlySelected = false,
+    showIndeterminateSelection = false,
     ...rest
 }) => {
     const d2 = useD2() as D2;
@@ -512,20 +514,22 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         indeterminate: false,
     }));
 
-    const childrenSelection: TableSelection[] = _(rows)
-        .intersectionBy(selection, "id")
-        .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType[])
-        .flattenDeep()
-        .differenceBy(selection, "id")
-        .differenceBy(exclusion, "id")
-        .map(({ id }) => {
-            return {
-                id,
-                checked: true,
-                indeterminate: !_.find(selection, { id }),
-            };
-        })
-        .value();
+    const childrenSelection: TableSelection[] = showIndeterminateSelection
+        ? _(rows)
+              .intersectionBy(selection, "id")
+              .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType[])
+              .flattenDeep()
+              .differenceBy(selection, "id")
+              .differenceBy(exclusion, "id")
+              .map(({ id }) => {
+                  return {
+                      id,
+                      checked: true,
+                      indeterminate: !_.find(selection, { id }),
+                  };
+              })
+              .value()
+        : [];
 
     const columns = uniqCombine([...model.getColumns(), ...additionalColumns]);
     const actions = uniqCombine([...tableActions, ...additionalActions]);
