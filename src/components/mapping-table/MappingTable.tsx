@@ -125,9 +125,10 @@ export default function MappingTable({
                 for (const { selection, mappedId, overrides = {} } of config) {
                     for (const id of selection) {
                         const row = _.find(rows, ["id", id]);
+                        const name = row?.name ?? cleanNestedMappedId(id);
                         loading.show(
                             true,
-                            i18n.t("Applying mapping update for element {{id}}", { id })
+                            i18n.t("Applying mapping update for element {{name}}", { name })
                         );
                         const rowType = getMetadataTypeFromRow(row, type);
                         const model = d2ModelFactory(api, rowType);
