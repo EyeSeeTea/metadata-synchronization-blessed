@@ -274,7 +274,7 @@ export default function MappingTable({
                 await applyMapping(tasks);
 
                 if (errors.length > 0) {
-                    snackbar.error(_.take(errors, 10).join("\n"));
+                    snackbar.error(errors.join("\n"));
                 } else if (elements.length === 1) {
                     const firstElement = _.find(rows, ["id", elements[0]]);
                     if (firstElement) {
@@ -365,7 +365,7 @@ export default function MappingTable({
                 .compact()
                 .value();
             const childrenRemovals = getChildrenRows(removedRows, model).map(({ id }) => id);
-            
+
             return _.difference(selection, childrenRemovals);
         });
     };
