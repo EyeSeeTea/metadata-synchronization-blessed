@@ -496,6 +496,8 @@ export default function MappingTable({
         ]
     );
 
+    const proposal = false;
+
     const actions: TableAction<MetadataType>[] = useMemo(
         () => [
             {
@@ -510,6 +512,20 @@ export default function MappingTable({
                 multiple: true,
                 onClick: openMappingDialog,
                 icon: <Icon>open_in_new</Icon>,
+            },
+            {
+                name: "select-with-children",
+                text: "Select with children",
+                multiple: true,
+                onClick: (selection: string[]) => {
+                    const selectedRows = _.compact(selection.map(id => _.find(rows, ["id", id])));
+                    const children = getChildrenRows(selectedRows, model).map(({ id }) => id);
+                    setSelectedIds(prevSelection =>
+                        _.uniq([...prevSelection, ...selection, ...children])
+                    );
+                },
+                icon: <Icon>done_all</Icon>,
+                isActive: () => proposal,
             },
             {
                 name: "global-mapping",
@@ -557,7 +573,7 @@ export default function MappingTable({
                 },
                 icon: <Icon>compare_arrows</Icon>,
                 isActive: (selection: MetadataType[]) => {
-                    return getChildrenRows(selection, model).length > 0;
+                    return !proposal && getChildrenRows(selection, model).length > 0;
                 },
             },
             {
@@ -571,7 +587,7 @@ export default function MappingTable({
                 },
                 icon: <Icon>compare_arrows</Icon>,
                 isActive: (selection: MetadataType[]) => {
-                    return getChildrenRows(selection, model).length > 0;
+                    return !proposal && getChildrenRows(selection, model).length > 0;
                 },
             },
             {
@@ -615,6 +631,9 @@ export default function MappingTable({
             isChildrenMapping,
             isGlobalMapping,
             type,
+            model,
+            rows,
+            proposal,
         ]
     );
 
