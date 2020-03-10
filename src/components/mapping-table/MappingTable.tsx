@@ -539,6 +539,34 @@ export default function MappingTable({
                 icon: <Icon>compare_arrows</Icon>,
             },
             {
+                name: "auto-mapping-with-children",
+                text: i18n.t("Auto-map element with children"),
+                multiple: false,
+                onClick: (selection: string[]) => {
+                    const selectedRows = _.compact(selection.map(id => _.find(rows, ["id", id])));
+                    const children = getChildrenRows(selectedRows, model).map(({ id }) => id);
+                    applyAutoMapping([...selection, ...children]);
+                },
+                icon: <Icon>compare_arrows</Icon>,
+                isActive: (selection: MetadataType[]) => {
+                    return getChildrenRows(selection, model).length > 0;
+                },
+            },
+            {
+                name: "auto-mapping-children",
+                text: i18n.t("Auto-map children"),
+                multiple: false,
+                onClick: (selection: string[]) => {
+                    const selectedRows = _.compact(selection.map(id => _.find(rows, ["id", id])));
+                    const children = getChildrenRows(selectedRows, model).map(({ id }) => id);
+                    applyAutoMapping(children);
+                },
+                icon: <Icon>compare_arrows</Icon>,
+                isActive: (selection: MetadataType[]) => {
+                    return getChildrenRows(selection, model).length > 0;
+                },
+            },
+            {
                 name: "disable-mapping",
                 text: i18n.t("Exclude mapping"),
                 multiple: true,
