@@ -46,6 +46,7 @@ context("Metadata sync rule new", function() {
     it("should create a new Sync Rule", () => {
         page.typeName(inputs.name)
             .next()
+            .selectFilterInTable(inputs.filterLabel, inputs.filterValue)
             .selectRow(inputs.dataElement)
             .next()
             .changeUseDefaultConfiguration()
