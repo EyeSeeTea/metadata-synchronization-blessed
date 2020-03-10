@@ -82,7 +82,10 @@ export default function InstanceMappingPage() {
 
     return (
         <React.Fragment>
-            <PageHeader title={title} onBackClick={backHome} />
+            <PageHeader
+                title={instance ? `${title} (${instance?.name})` : title}
+                onBackClick={backHome}
+            />
 
             {!!instance && (
                 <MappingTable
