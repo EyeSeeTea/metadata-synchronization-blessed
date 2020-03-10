@@ -357,6 +357,19 @@ export default function MappingTable({
         [mapping, rows, snackbar]
     );
 
+    const updateSelection = (selection: string[]) => {
+        setSelectedIds(prevSelection => {
+            const removedRows = _(prevSelection)
+                .difference(selection)
+                .map(id => _.find(rows, ["id", id]))
+                .compact()
+                .value();
+            const childrenRemovals = getChildrenRows(removedRows, model).map(({ id }) => id);
+            
+            return _.difference(selection, childrenRemovals);
+        });
+    };
+
     const columns: TableColumn<MetadataType>[] = useMemo(
         () =>
             _.compact([
@@ -496,7 +509,7 @@ export default function MappingTable({
         ]
     );
 
-    const proposal = false;
+    const proposal = true;
 
     const actions: TableAction<MetadataType>[] = useMemo(
         () => [
@@ -724,7 +737,7 @@ export default function MappingTable({
                 notifyNewModel={notifyNewModel}
                 notifyRowsChange={updateRows}
                 selectedIds={selectedIds}
-                notifyNewSelection={setSelectedIds}
+                notifyNewSelection={updateSelection}
                 globalActions={globalActions}
                 childrenKeys={!isChildrenMapping ? model.getChildrenKeys() : undefined}
             />
