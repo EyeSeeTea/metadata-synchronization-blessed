@@ -37,12 +37,14 @@ script:
   - yarn wait-on http-get://localhost:8081
   - yarn node cypress/support/runner.js -b chrome
   - cd test-report/
-  - git add . && git commit -m "Results for $TRAVIS_EVENT_TYPE on $TRAVIS_COMMIT"
-  - git push "https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${TRAVIS_REPO_SLUG}" gh-pages -f
+  - if [[ $TRAVIS_PULL_REQUEST_BRANCH != "" ]]; then BRANCH="${TRAVIS_PULL_REQUEST_BRANCH}"; else BRANCH="${TRAVIS_BRANCH}"; fi;
   - GITHUB_PAGES_ROOT=$(http -a ${GITHUB_USERNAME}:${GITHUB_PASSWORD} https://api.github.com/repos/${TRAVIS_REPO_SLUG}/pages | jq ".html_url" | tr -d '"')
   - GITHUB_PAGES_PATH=$(cat ../pages_path)
+  - echo "- Built ``${TRAVIS_COMMIT_MESSAGE}`` ${TRAVIS_COMMIT} against branch ${BRANCH} on $(date). [Report](${GITHUB_PAGES_ROOT}${GITHUB_PAGES_PATH})" >> README.md
+  - git add . && git commit -m "Results for $TRAVIS_EVENT_TYPE on $TRAVIS_COMMIT"
+  - git push "https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${TRAVIS_REPO_SLUG}" gh-pages -f
   - if [[ $TRAVIS_TEST_RESULT == 0 ]]; then MESSAGE_TITLE="Tests ran successfully :tada:"; else MESSAGE_TITLE="Tests failed with errors :rotating_light:"; fi;
-  - if [[ $TRAVIS_PULL_REQUEST != "false" ]]; then http -a ${GITHUB_USERNAME}:${GITHUB_PASSWORD} POST https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments body="<h3>${MESSAGE_TITLE}</h3><br />Build commit ${TRAVIS_COMMIT_MESSAGE} with commit id ${TRAVIS_COMMIT} on branch ${TRAVIS_PULL_REQUEST_BRANCH}<br /><br />Travis log available at ${TRAVIS_BUILD_WEB_URL}<br /><br />See cypress results at ${GITHUB_PAGES_ROOT}${GITHUB_PAGES_PATH}"; fi;
+  - if [[ $TRAVIS_PULL_REQUEST != "false" ]]; then http -a ${GITHUB_USERNAME}:${GITHUB_PASSWORD} POST https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments body="<h3>${MESSAGE_TITLE}</h3><br />Build commit ${TRAVIS_COMMIT_MESSAGE} with commit id ${TRAVIS_COMMIT} on branch ${BRANCH}<br /><br />Travis log available at ${TRAVIS_BUILD_WEB_URL}<br /><br />See cypress results at ${GITHUB_PAGES_ROOT}${GITHUB_PAGES_PATH}"; fi;
   - kill $(jobs -p) || true
 addons:
   apt:
