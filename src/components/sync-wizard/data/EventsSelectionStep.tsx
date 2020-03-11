@@ -135,8 +135,12 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
         objects?.filter(({ program }) => !programFilter || program === programFilter) ?? [];
 
     if (error) {
-        console.log(error)
-        return <Typography>{i18n.t("An error ocurred while trying to access the required events")}</Typography>;
+        console.log(error);
+        return (
+            <Typography>
+                {i18n.t("An error ocurred while trying to access the required events")}
+            </Typography>
+        );
     }
 
     return (
