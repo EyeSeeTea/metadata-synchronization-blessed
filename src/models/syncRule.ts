@@ -202,6 +202,7 @@ export default class SyncRule {
                     strategy: "NEW_AND_UPDATES",
                     allAttributeCategoryOptions: true,
                     dryRun: false,
+                    allEvents: true,
                 },
                 syncParams: {
                     importStrategy: "CREATE_AND_UPDATE",
