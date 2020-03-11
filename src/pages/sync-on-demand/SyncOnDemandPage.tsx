@@ -135,6 +135,7 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
             }
         } catch (error) {
             console.error(error);
+            snackbar.error(i18n.t("Failed to execute manual synchronization"));
         }
 
         loading.reset();
