@@ -70,6 +70,7 @@ context("Event sync rule new", function() {
             .selectAllPeriods()
             .next()
 
+            .toggleAllEvents(false)
             .selectEvent(inputs.event)
             .next()
 
@@ -94,6 +95,7 @@ context("Event sync rule new", function() {
             .selectAllPeriods()
             .next()
 
+            .toggleAllEvents(false)
             .selectEvent(inputs.event)
             .next()
 

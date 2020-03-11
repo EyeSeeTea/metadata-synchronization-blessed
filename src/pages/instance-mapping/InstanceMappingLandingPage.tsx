@@ -31,6 +31,13 @@ const InstanceMappingLandingPage: React.FC = () => {
                     description: i18n.t("Map organisation units between instances"),
                     listAction: () => history.push(`/instances/mapping/${id}/orgUnit`),
                 },
+                {
+                    name: i18n.t("Global"),
+                    description: i18n.t(
+                        "Map global category options, category combos, options and tracker data elements between instances"
+                    ),
+                    listAction: () => history.push(`/instances/mapping/${id}/global`),
+                },
             ],
         },
     ];
