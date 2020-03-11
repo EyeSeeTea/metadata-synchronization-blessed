@@ -122,20 +122,15 @@ const SyncOnDemandPage: React.FC<SyncOnDemandPageProps> = ({ isDelete }) => {
 
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
-        try {
-            const sync = new SyncClass(d2 as D2, api, syncRule.toBuilder());
-            for await (const { message, syncReport, done } of sync.execute()) {
-                if (message) loading.show(true, message);
-                if (syncReport) await syncReport.save(d2 as D2);
-                if (done) {
-                    loading.reset();
-                    finishSynchronization(syncReport);
-                    return;
-                }
+        const sync = new SyncClass(d2 as D2, api, syncRule.toBuilder());
+        for await (const { message, syncReport, done } of sync.execute()) {
+            if (message) loading.show(true, message);
+            if (syncReport) await syncReport.save(d2 as D2);
+            if (done) {
+                loading.reset();
+                finishSynchronization(syncReport);
+                return;
             }
-        } catch (error) {
-            console.error(error);
-            snackbar.error(i18n.t("Failed to execute manual synchronization"));
         }
 
         loading.reset();
