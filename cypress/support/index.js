@@ -14,5 +14,22 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import "./commands";
 import "cypress-xpath";
+import addContext from "mochawesome/addContext";
+import "./commands";
+
+Cypress.on("test:after:run", (test, runnable) => {
+    if (test.state === "failed") {
+        addContext({ test }, { title: "Travis link", value: process.env.TRAVIS_JOB_WEB_URL });
+        addContext({ test }, { title: "Video", value: `assets/videos/${Cypress.spec.name}.mp4` });
+        addContext(
+            { test },
+            {
+                title: "Screenshot",
+                value: `assets/screenshots/${Cypress.spec.name}/${runnable.parent.title} -- ${
+                    test.title
+                } ${test.hookName ? `-- ${test.hookName} hook ` : ""}(failed).png`,
+            }
+        );
+    }
+});
