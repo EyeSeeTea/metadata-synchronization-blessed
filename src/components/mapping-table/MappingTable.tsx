@@ -627,8 +627,9 @@ export default function MappingTable({
                     const element = selected[0];
                     const type = getMetadataTypeFromRow(element);
                     const steps = prepareSteps(type, element);
+                    const { mappedId } = getMappedItem(element);
 
-                    return !isChildrenMapping && steps.length > 0;
+                    return !!mappedId && !isChildrenMapping && steps.length > 0;
                 },
             },
         ],
