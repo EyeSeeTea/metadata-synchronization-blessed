@@ -28,7 +28,12 @@ export interface MetadataType {
     };
     programType?: "WITHOUT_REGISTRATION" | "WITH_REGISTRATION";
     __originalId__: string;
-    __mappingType__: keyof D2ModelSchemas | "aggregatedDataElements" | "programDataElements";
+    __mappingType__:
+        | keyof D2ModelSchemas
+        | "aggregatedDataElements"
+        | "programDataElements"
+        | "eventProgramModel"
+        | "trackerProgramModel";
     __type__: keyof D2ModelSchemas;
     [key: string]: string | number | object | undefined;
 }

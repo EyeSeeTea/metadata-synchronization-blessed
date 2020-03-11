@@ -368,6 +368,22 @@ export class ProgramModel extends D2Model {
     };
 }
 
+export class EventProgramModel extends ProgramModel {
+    protected static mappingType = "eventProgram";
+    protected static groupFilterName = ProgramModel.groupFilterName;
+    protected static fields = programFields;
+
+    protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
+}
+
+export class TrackerProgramModel extends ProgramModel {
+    protected static mappingType = "trackerProgram";
+    protected static groupFilterName = ProgramModel.groupFilterName;
+    protected static fields = programFields;
+
+    protected static modelFilters = { programType: { eq: "WITH_REGISTRATION" } };
+}
+
 export class ProgramStageModel extends D2Model {
     protected static metadataType = "programStage";
     protected static collectionName = "programStages" as const;

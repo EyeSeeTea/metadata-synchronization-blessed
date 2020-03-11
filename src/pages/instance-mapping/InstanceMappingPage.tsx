@@ -12,7 +12,7 @@ import {
     OptionModel,
     OrganisationUnitModel,
     ProgramDataElementModel,
-    ProgramModel,
+    EventProgramModel,
 } from "../../models/d2Model";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { D2 } from "../../types/d2";
@@ -27,7 +27,7 @@ const config = {
     },
     tracker: {
         title: i18n.t("Events metadata mapping"),
-        models: [ProgramModel],
+        models: [EventProgramModel],
         isGlobalMapping: false,
     },
     orgUnit: {
