@@ -382,6 +382,9 @@ export class ProgramModel extends D2Model {
         "categoryCombos.categoryOptionCombos",
         "categoryCombos.categoryOptionCombos.categoryOptions",
         "categoryCombos.categories",
+        "programIndicators",
+        "programIndicators.programIndicatorGroups",
+        "programIndicators.legendSets",
     ];
 
     protected static modelTransform = (
