@@ -351,17 +351,19 @@ export class ProgramModel extends D2Model {
             dataElements: _.flatten(
                 program.programStages?.map(
                     ({ displayName, programStageDataElements, id: programStageId }) =>
-                        programStageDataElements.map(({ dataElement }) => ({
-                            ...dataElement,
-                            id: `${program.id}-${programStageId}-${dataElement.id}`,
-                            __originalId__: dataElement.id,
-                            __type__: ProgramDataElementModel.getCollectionName(),
-                            __mappingType__: ProgramDataElementModel.getMappingType(),
-                            displayName:
-                                program.programStages.length > 1
-                                    ? `[${displayName}] ${dataElement.displayName}`
-                                    : dataElement.displayName,
-                        }))
+                        programStageDataElements
+                            .filter(({ dataElement }) => !!dataElement)
+                            .map(({ dataElement }) => ({
+                                ...dataElement,
+                                id: `${program.id}-${programStageId}-${dataElement.id}`,
+                                __originalId__: dataElement.id,
+                                __type__: ProgramDataElementModel.getCollectionName(),
+                                __mappingType__: ProgramDataElementModel.getMappingType(),
+                                displayName:
+                                    program.programStages.length > 1
+                                        ? `[${displayName}] ${dataElement.displayName}`
+                                        : dataElement.displayName,
+                            }))
                 ) ?? []
             ),
         }));
