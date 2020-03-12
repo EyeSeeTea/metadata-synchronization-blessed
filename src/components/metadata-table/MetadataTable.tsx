@@ -147,7 +147,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     });
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
 
-    const [error, setError] = useState<Error>();
+    const [error, setError] = useState<string>();
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [pager, setPager] = useState<Partial<TablePagination>>({});
     const [loading, setLoading] = useState<boolean>(true);
@@ -333,7 +333,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const handleError = (error: Error) => {
         if (!axios.isCancel(error)) {
-            setError(error);
+            setError("There was an error with the request");
             console.error(error);
         }
     };
@@ -534,7 +534,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const columns = uniqCombine([...model.getColumns(), ...additionalColumns]);
     const actions = uniqCombine([...tableActions, ...additionalActions]);
 
-    if (error) return <p>{"Error: " + JSON.stringify(error)}</p>;
+    if (error) return <p>{error}</p>;
 
     return (
         <ObjectsTable<MetadataType>
