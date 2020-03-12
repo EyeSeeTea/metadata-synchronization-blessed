@@ -88,7 +88,12 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
         },
         { name: "orgUnitName" as const, text: i18n.t("Organisation unit"), sortable: true },
         { name: "eventDate" as const, text: i18n.t("Event date"), sortable: true },
-        { name: "lastUpdated" as const, text: i18n.t("Last updated"), sortable: true },
+        {
+            name: "lastUpdated" as const,
+            text: i18n.t("Last updated"),
+            sortable: true,
+            hidden: true,
+        },
         { name: "status" as const, text: i18n.t("Status"), sortable: true },
         { name: "storedBy" as const, text: i18n.t("Stored by"), sortable: true },
     ];
