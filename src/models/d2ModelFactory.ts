@@ -8,6 +8,7 @@ export const metadataModels = [
     classes.DataElementModel,
     classes.DataElementGroupModel,
     classes.DataElementGroupSetModel,
+    classes.DataSetModel,
     classes.IndicatorModel,
     classes.IndicatorGroupModel,
     classes.IndicatorGroupSetModel,

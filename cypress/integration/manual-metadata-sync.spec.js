@@ -142,4 +142,23 @@ context("Manual metadata sync", () => {
                 .closeSyncResultsDialog();
         });
     });
+    context("Data set", () => {
+        const dataSetInputs = {
+            filterLabel: "Metadata type",
+            filterValue: "Data Set",
+            dataElement: "Malaria annual data",
+            instance: targetInstance,
+        };
+
+        it("should sync correctly one user group", () => {
+            page.selectFilterInTable(dataSetInputs.filterLabel, dataSetInputs.filterValue)
+                .selectRow(dataSetInputs.dataElement)
+                .openSyncDialog()
+                .next()
+                .selectReceiverInstance(dataSetInputs.instance)
+                .synchronize()
+                .assertSyncResultsStatus(status => status.contains("Success"))
+                .closeSyncResultsDialog();
+        });
+    });
 });
