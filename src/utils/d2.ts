@@ -32,8 +32,8 @@ export interface MetadataType {
         | keyof D2ModelSchemas
         | "aggregatedDataElements"
         | "programDataElements"
-        | "eventProgramModel"
-        | "trackerProgramModel";
+        | "eventPrograms"
+        | "trackerPrograms";
     __type__: keyof D2ModelSchemas;
     [key: string]: string | number | object | undefined;
 }
