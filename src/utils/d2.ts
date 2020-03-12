@@ -18,6 +18,7 @@ export interface MetadataType {
     lastUpdated: string;
     href: string;
     level?: number;
+    path?: string;
     domainType?: "AGGREGATE" | "TRACKER" | "EVENT";
     __originalId__: string;
     __mappingType__: keyof D2ModelSchemas;
@@ -109,6 +110,7 @@ export const programFields = {
 export const organisationUnitFields = {
     ...d2BaseModelFields,
     level: include,
+    path: include,
 };
 
 export function cleanParams(options: Params): Params {

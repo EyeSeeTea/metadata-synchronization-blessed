@@ -1,6 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import React from "react";
-import { CategoryOptionModel, OptionModel, ProgramStageModel } from "../../models/d2Model";
+import { CategoryOptionModel, D2Model, OptionModel, ProgramStageModel } from "../../models/d2Model";
 import MappingTable, { MappingTableProps } from "../mapping-table/MappingTable";
 import { MappingWizardStep } from "./MappingWizard";
 
@@ -9,33 +9,26 @@ const availableSteps = {
         key: "category-options",
         label: i18n.t("Category Options"),
         component: (props: MappingTableProps) => <MappingTable {...props} />,
-        props: {
-            models: [CategoryOptionModel],
-            isChildrenMapping: true,
-        },
+        models: [CategoryOptionModel],
     },
     options: {
         key: "options",
         label: i18n.t("Options"),
         component: (props: MappingTableProps) => <MappingTable {...props} />,
-        props: {
-            models: [OptionModel],
-            isChildrenMapping: true,
-        },
+        models: [OptionModel],
     },
     programStages: {
         key: "programStages",
         label: i18n.t("Program Stages"),
         component: (props: MappingTableProps) => <MappingTable {...props} />,
-        props: {
-            models: [ProgramStageModel],
-            isChildrenMapping: true,
-        },
+        models: [ProgramStageModel],
     },
 };
 
-export const modelSteps: { [key: string]: MappingWizardStep[] } = {
-    dataElements: [availableSteps.categoryOptions, availableSteps.options],
+type MappingWizardStepBuilder = Omit<MappingWizardStep, "props"> & { models: typeof D2Model[] };
+
+export const modelSteps: { [key: string]: MappingWizardStepBuilder[] } = {
+    aggregatedDataElements: [availableSteps.categoryOptions, availableSteps.options],
     programDataElements: [availableSteps.options],
     programs: [availableSteps.categoryOptions, availableSteps.programStages],
 };
