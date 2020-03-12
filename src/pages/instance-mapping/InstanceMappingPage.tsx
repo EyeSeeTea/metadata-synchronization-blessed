@@ -77,7 +77,7 @@ export default function InstanceMappingPage() {
 
         const newMapping = _.clone(instance.metadataMapping);
         _.set(newMapping, [type, id], { ...subMapping, global: true });
-        onChangeMapping(newMapping);
+        await onChangeMapping(newMapping);
     };
 
     return (
