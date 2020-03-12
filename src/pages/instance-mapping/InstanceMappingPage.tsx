@@ -26,7 +26,7 @@ const config = {
         isGlobalMapping: false,
     },
     tracker: {
-        title: i18n.t("Events metadata mapping"),
+        title: i18n.t("Program mapping"),
         models: [ProgramModel],
         isGlobalMapping: false,
     },
