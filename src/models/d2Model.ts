@@ -385,6 +385,23 @@ export class ProgramModel extends D2Model {
         "programIndicators",
         "programIndicators.programIndicatorGroups",
         "programIndicators.legendSets",
+        "dataApprovalWorkflow",
+        "dataApprovalWorkflow.dataApprovalLevels",
+        "programStages",
+        //"programStages.programStageDataElements.dataElement",
+        // "dataElements.attributes",
+        // "dataElements.legendSets",
+        // "dataElements.optionSets",
+        // "dataElements.optionSets.options",
+        // "dataElements.categoryCombos",
+        // "dataElements.categoryCombos.attributes",
+        // "dataElements.categoryCombos.categoryOptionCombos",
+        // "dataElements.categoryCombos.categoryOptionCombos.categoryOptions",
+        // "dataElements.categoryCombos.categories",
+        // "dataElements.dataElementGroups",
+        // "dataElements.dataElementGroups.attributes",
+        // "dataElements.dataElementGroups.dataElementGroupSets",
+        // "dataElements.dataElementGroups.dataElementGroupSets.attributes",
     ];
 
     protected static modelTransform = (
@@ -555,6 +572,11 @@ export class UserGroupModel extends D2Model {
 
     protected static excludeRules = [];
     protected static includeRules = ["users"];
+}
+
+export class DataApprovalWorkflowModel extends D2Model {
+    protected static metadataType = "dataApprovalWorkflow";
+    protected static collectionName = "dataApprovalWorkflows" as const;
 }
 
 export function defaultModel(pascalCaseModelName: string): any {
