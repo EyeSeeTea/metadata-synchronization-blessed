@@ -369,7 +369,7 @@ export class ProgramModel extends D2Model {
 }
 
 export class EventProgramModel extends ProgramModel {
-    protected static mappingType = "eventProgram";
+    protected static mappingType = "eventPrograms";
     protected static groupFilterName = ProgramModel.groupFilterName;
     protected static fields = programFields;
 
@@ -377,7 +377,7 @@ export class EventProgramModel extends ProgramModel {
 }
 
 export class TrackerProgramModel extends ProgramModel {
-    protected static mappingType = "trackerProgram";
+    protected static mappingType = "trackerPrograms";
     protected static groupFilterName = ProgramModel.groupFilterName;
     protected static fields = programFields;
 
