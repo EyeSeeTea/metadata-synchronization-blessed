@@ -25,10 +25,11 @@ import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
 import {
     autoMap,
+    buildDataElementFilterForProgram,
     buildMapping,
     cleanNestedMappedId,
-    getMetadataTypeFromRow,
     getChildrenRows,
+    getMetadataTypeFromRow,
 } from "./utils";
 
 const useStyles = makeStyles({
@@ -253,9 +254,17 @@ export default function MappingTable({
                 for (const id of elements) {
                     const element = _.find(rows, ["id", id]);
                     const elementType = element?.__type__ ?? type;
+                    const filter = await buildDataElementFilterForProgram(api, id, mapping);
 
                     const model = d2ModelFactory(instanceApi, elementType);
-                    const candidates = await autoMap(api, instanceApi, model, id);
+                    const candidates = await autoMap(
+                        api,
+                        instanceApi,
+                        model,
+                        id,
+                        undefined,
+                        filter
+                    );
                     const { mappedId } = _.first(candidates) ?? {};
 
                     if (!mappedId) {
@@ -287,7 +296,7 @@ export default function MappingTable({
             }
             loading.reset();
         },
-        [api, type, loading, applyMapping, instanceApi, rows, snackbar, mappingPath]
+        [api, type, loading, applyMapping, instanceApi, rows, snackbar, mappingPath, mapping]
     );
 
     const openMappingDialog = useCallback(

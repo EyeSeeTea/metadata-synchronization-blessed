@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
-import { getValidIds } from "../mapping-table/utils";
+import { buildDataElementFilterForProgram, getValidIds } from "../mapping-table/utils";
 import MetadataTable from "../metadata-table/MetadataTable";
 
 export interface MappingDialogConfig {
@@ -76,10 +76,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             const parentMappedId = mappingPath[2];
             getValidIds(api, parentModel, parentMappedId).then(setFilterRows);
         } else if (type === "programDataElements" && elements.length === 1) {
-            const programModel = d2ModelFactory(api, "programs");
-            const originProgramId = elements[0].split("-")[0];
-            const { mappedId } = _.get(mapping, ["programs", originProgramId]) ?? {};
-            if (mappedId) getValidIds(api, programModel, mappedId).then(setFilterRows);
+            buildDataElementFilterForProgram(api, elements[0], mapping).then(setFilterRows);
         }
     }, [api, mappingPath, elements, mapping, type]);
 
