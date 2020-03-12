@@ -378,6 +378,10 @@ export class ProgramModel extends D2Model {
     protected static excludeRules = [];
     protected static includeRules = [
         "attributes",
+        "categoryCombos.attributes",
+        "categoryCombos.categoryOptionCombos",
+        "categoryCombos.categoryOptionCombos.categoryOptions",
+        "categoryCombos.categories",
     ];
 
     protected static modelTransform = (
