@@ -121,7 +121,9 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
         model.getCollectionName() === "organisationUnits" ? OrgUnitMapper : MetadataMapper;
     const title =
         elements.length > 1
-            ? i18n.t(`Edit mapping for {{total}} elements - ${displayName}`, { total: elements.length })
+            ? i18n.t(`Edit mapping for {{total}} elements - ${displayName}`, {
+                  total: elements.length,
+              })
             : i18n.t(`Edit mapping for {{name}} ({{id}}) - ${displayName}`, firstElement);
 
     return (

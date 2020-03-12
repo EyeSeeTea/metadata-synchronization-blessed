@@ -734,6 +734,7 @@ export default function MappingTable({
                     instance={instance}
                     config={wizardConfig}
                     updateMapping={onChangeMapping}
+                    onApplyGlobalMapping={onApplyGlobalMapping}
                     onCancel={closeWizard}
                 />
             )}
