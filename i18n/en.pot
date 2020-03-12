@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-12T17:56:23.675Z\n"
-"PO-Revision-Date: 2020-03-12T17:56:23.675Z\n"
+"POT-Creation-Date: 2020-03-12T19:29:07.553Z\n"
+"PO-Revision-Date: 2020-03-12T19:29:07.553Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -825,6 +825,9 @@ msgid ""
 "between instances"
 msgstr ""
 
+msgid "Programs (events)"
+msgstr ""
+
 msgid ""
 "Map data elements, category options and option sets for tracker data "
 "between instances"
@@ -844,16 +847,16 @@ msgstr ""
 msgid "Instance mapping"
 msgstr ""
 
-msgid "Aggregated metadata mapping"
+msgid "Aggregated mapping"
 msgstr ""
 
-msgid "Program mapping"
+msgid "Program (events) mapping"
 msgstr ""
 
-msgid "Organisation unit metadata mapping"
+msgid "Organisation unit mapping"
 msgstr ""
 
-msgid "Global metadata mapping"
+msgid "Global mapping"
 msgstr ""
 
 msgid "Deleted by"

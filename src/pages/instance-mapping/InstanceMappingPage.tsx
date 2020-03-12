@@ -21,7 +21,7 @@ export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
 const config = {
     aggregated: {
-        title: i18n.t("Aggregated metadata mapping"),
+        title: i18n.t("Aggregated mapping"),
         models: [AggregatedDataElementModel],
         isGlobalMapping: false,
     },
@@ -31,12 +31,12 @@ const config = {
         isGlobalMapping: false,
     },
     orgUnit: {
-        title: i18n.t("Organisation unit metadata mapping"),
+        title: i18n.t("Organisation unit mapping"),
         models: [OrganisationUnitModel],
         isGlobalMapping: false,
     },
     global: {
-        title: i18n.t("Global metadata mapping"),
+        title: i18n.t("Global mapping"),
         models: [CategoryOptionModel, CategoryComboModel, OptionModel, ProgramDataElementModel],
         isGlobalMapping: true,
     },
