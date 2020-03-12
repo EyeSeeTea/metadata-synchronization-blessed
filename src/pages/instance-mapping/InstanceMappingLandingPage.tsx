@@ -61,7 +61,7 @@ const InstanceMappingLandingPage: React.FC = () => {
     return (
         <TestWrapper>
             <Landing
-                title={instance ? `${title} (${instance?.name})` : title}
+                title={instance ? `${title} - Destination instance: ${instance?.name}` : title}
                 cards={cards}
                 onBackClick={backHome}
             />
