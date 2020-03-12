@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-02T11:43:32.217Z\n"
-"PO-Revision-Date: 2020-03-02T11:43:32.217Z\n"
+"POT-Creation-Date: 2020-03-06T05:49:04.081Z\n"
+"PO-Revision-Date: 2020-03-06T05:49:04.081Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -41,13 +41,19 @@ msgstr ""
 msgid "Could not apply mapping, please try again."
 msgstr ""
 
-msgid "Disable mapping"
+msgid "You need to map the item before applying a global mapping"
 msgstr ""
 
-msgid "Are you sure you want to disable mapping for {{total}} elements?"
+msgid "Successfully applied global mapping"
 msgstr ""
 
-msgid "Please select at least one item to disable mapping"
+msgid "Exclude mapping"
+msgstr ""
+
+msgid "Are you sure you want to exclude mapping for {{total}} elements?"
+msgstr ""
+
+msgid "Please select at least one item to exclude mapping"
 msgstr ""
 
 msgid "Reset mapping"
@@ -71,19 +77,52 @@ msgstr ""
 msgid "You need to select at least one valid item"
 msgstr ""
 
+msgid "Validating mapping for {{total}} elements"
+msgstr ""
+
 msgid "You need to map this element before accessing its related metadata mapping"
 msgstr ""
 
-msgid "Disabled"
+msgid "ID"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Mapped ID"
 msgstr ""
 
 msgid "Set mapping"
 msgstr ""
 
-msgid "Not mapped"
+msgid "Mapped Name"
 msgstr ""
 
 msgid "Mapping has errors"
+msgstr ""
+
+msgid "Mapped Level"
+msgstr ""
+
+msgid "Mapping Status"
+msgstr ""
+
+msgid "Not mapped"
+msgstr ""
+
+msgid "Excluded"
+msgstr ""
+
+msgid "Mapped (Global)"
+msgstr ""
+
+msgid "Mapped"
+msgstr ""
+
+msgid "Make this mapping global"
+msgstr ""
+
+msgid "Validate mapping"
 msgstr ""
 
 msgid "Auto-map element"
@@ -108,9 +147,6 @@ msgid "Options"
 msgstr ""
 
 msgid "Program Stages"
-msgstr ""
-
-msgid "Metadata type"
 msgstr ""
 
 msgid "Last updated date"
@@ -428,10 +464,16 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
+msgid "Target instances [{{total}}]"
+msgstr ""
+
 msgid "Excluded elements"
 msgstr ""
 
 msgid "Use default include exclude configuration"
+msgstr ""
+
+msgid "Disabled"
 msgstr ""
 
 msgid "Include exclude configuration"
@@ -459,9 +501,6 @@ msgid "Start date"
 msgstr ""
 
 msgid "End date"
-msgstr ""
-
-msgid "Target instances [{{total}}]"
 msgstr ""
 
 msgid "Strategy"
@@ -788,6 +827,14 @@ msgstr ""
 msgid "Map organisation units between instances"
 msgstr ""
 
+msgid "Global"
+msgstr ""
+
+msgid ""
+"Map global category options, category combos, options and tracker data "
+"elements between instances"
+msgstr ""
+
 msgid "Instance mapping"
 msgstr ""
 
@@ -798,6 +845,9 @@ msgid "Program mapping"
 msgstr ""
 
 msgid "Organisation unit metadata mapping"
+msgstr ""
+
+msgid "Global metadata mapping"
 msgstr ""
 
 msgid "Deleted by"
@@ -889,9 +939,6 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Short name"
-msgstr ""
-
-msgid "ID"
 msgstr ""
 
 msgid "API link"

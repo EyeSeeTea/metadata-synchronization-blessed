@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
-import { D2Api, Model, useD2, useD2Api } from "d2-api";
+import { D2Api, useD2, useD2Api } from "d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -143,6 +143,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         selectedIds: selectedIds,
         parentOrgUnits: null,
     });
+    const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
 
     const [error, setError] = useState<Error>();
     const [rows, setRows] = useState<MetadataType[]>([]);
@@ -192,6 +193,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         }
         const includedIds = _.uniq([...selectedIds, ...Array.from(ids)]);
         notifyNewSelection(includedIds, excludedIds);
+
+        const orgUnitPaths = _(rows)
+            .intersectionBy(
+                selectedOUs.map(id => ({ id })),
+                "id"
+            )
+            .map(({ path }) => path)
+            .compact()
+            .value();
+        updateExpandOrgUnits(orgUnitPaths);
+        changeParentOrgUnitFilter(orgUnitPaths);
     };
 
     const addToSelection = (ids: string[]) => {
@@ -285,6 +297,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 selected={filters.parentOrgUnits ?? []}
                 singleSelection={true}
                 selectOnClick={true}
+                initiallyExpanded={expandOrgUnits}
             />
         </div>
     );
@@ -325,7 +338,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const apiModel = model.getApiModel(api);
     const apiQuery = useMemo(() => {
-        const query: Parameters<InstanceType<typeof Model>["get"]>[0] = {
+        const query: any = {
             fields: model ? model.getFields() : d2BaseModelFields,
             filter: {
                 lastUpdated: filters.lastUpdated
@@ -333,6 +346,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                     : undefined,
                 ...model.getApiModelFilters(),
             },
+            defaults: "EXCLUDE",
         };
 
         if (query.filter && model.getGroupFilterName()) {

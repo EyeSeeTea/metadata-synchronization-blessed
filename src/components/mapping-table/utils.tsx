@@ -11,6 +11,7 @@ interface CombinedMetadata {
     shortName?: string;
     code?: string;
     path?: string;
+    level?: number;
     categoryCombo?: {
         id: string;
         name: string;
@@ -63,6 +64,7 @@ const getFieldsByModel = (model: typeof D2Model) => {
         case "organisationUnits":
             return {
                 path: true,
+                level: true,
             };
         case "dataElements":
             return {
@@ -142,7 +144,7 @@ export const autoMap = async (
     const { objects } = (await model
         .getApiModel(instanceApi)
         .get({
-            fields: { id: true, code: true, name: true, path: true },
+            fields: { id: true, code: true, name: true, path: true, level: true },
             filter: {
                 name: { token: selectedItem.name },
                 shortName: { token: selectedItem.shortName },
@@ -163,11 +165,13 @@ export const autoMap = async (
         candidates.push({ id: defaultValue, code: defaultValue });
     }
 
-    return candidates.map(({ id, path, name, code }) => ({
+    return candidates.map(({ id, path, name, code, level }) => ({
         mappedId: path ?? id,
         mappedName: name,
         mappedCode: code,
+        mappedLevel: level,
         code: selectedItem.code,
+        global: false,
     }));
 };
 
@@ -287,16 +291,18 @@ export const buildMapping = async (
             mappedCode: "DISABLED",
             code: originMetadata[0].code,
             conflicts: false,
+            global: false,
             mapping: {},
         };
 
     const destinationMetadata = await getCombinedMetadata(instanceApi, model, mappedId);
     if (originMetadata.length !== 1 || destinationMetadata.length !== 1) return {};
 
-    const [mappedElement] = destinationMetadata.map(({ id, path, name, code }) => ({
+    const [mappedElement] = destinationMetadata.map(({ id, path, name, code, level }) => ({
         mappedId: path ?? id,
         mappedName: name,
         mappedCode: code,
+        mappedLevel: level,
         code: originMetadata[0].code,
     }));
 
@@ -338,6 +344,7 @@ export const buildMapping = async (
     return {
         ...mappedElement,
         conflicts: false,
+        global: false,
         mapping,
     };
 };
@@ -355,7 +362,7 @@ export const getValidIds = async (api: D2Api, model: typeof D2Model, id: string)
     );
 };
 
-export const getMetadataTypeFromRow = (object: MetadataType) => {
-    const { __mappingType__, __type__ } = object;
-    return __mappingType__ ?? __type__;
+export const getMetadataTypeFromRow = (object?: MetadataType, defaultValue?: string) => {
+    const { __mappingType__, __type__ } = object ?? {};
+    return __mappingType__ ?? __type__ ?? defaultValue ?? "";
 };
