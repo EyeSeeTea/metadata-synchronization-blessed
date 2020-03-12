@@ -375,6 +375,11 @@ export class ProgramModel extends D2Model {
     protected static fields = programFields;
     protected static childrenKeys = ["dataElements"];
 
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "attributes",
+    ];
+
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFields>[]
     ) => {
