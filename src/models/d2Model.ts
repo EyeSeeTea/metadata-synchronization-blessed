@@ -557,7 +557,7 @@ export class DashboardModel extends D2Model {
         "eventReports",
         "maps",
         "reports",
-        "reportTables"
+        "reportTables",
     ];
 }
 

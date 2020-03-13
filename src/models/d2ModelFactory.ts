@@ -22,7 +22,7 @@ export const metadataModels = [
     classes.ProgramIndicatorGroupModel,
     classes.ProgramRuleModel,
     classes.ProgramRuleVariableModel,
-    classes.UserGroupModel
+    classes.UserGroupModel,
 ];
 
 /**
