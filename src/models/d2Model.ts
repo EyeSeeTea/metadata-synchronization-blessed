@@ -334,7 +334,7 @@ export class DataSetModel extends D2Model {
         "indicators.indicatorTypes",
         "indicators.indicatorGroups",
         "indicators.indicatorGroups.attributes",
-        "indicators.indicatorGroups.indicatorGroupSet",
+        "indicators.indicatorGroups.indicatorGroupSets",
         "dataElements",
         "dataElements.attributes",
         "dataElements.legendSets",
@@ -446,7 +446,7 @@ export class IndicatorModel extends D2Model {
         "indicatorTypes",
         "indicatorGroups",
         "indicatorGroups.attributes",
-        "indicatorGroups.indicatorGroupSet",
+        "indicatorGroups.indicatorGroupSets",
     ];
 }
 
