@@ -546,7 +546,10 @@ export default function MappingTable({
                     );
                 },
                 icon: <Icon>done_all</Icon>,
-                isActive: () => proposal,
+                isActive: (selection: MetadataType[]) => {
+                    const children = getChildrenRows(selection, model);
+                    return proposal && children.length > 0;
+                },
             },
             {
                 name: "global-mapping",
