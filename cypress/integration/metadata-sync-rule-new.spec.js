@@ -5,6 +5,8 @@ context("Metadata sync rule new", function() {
 
     const inputs = {
         name: "test",
+        filterLabel: "Metadata type",
+        filterValue: "Data Element",
         dataElement: "ENTO-ADULT- Household Head Name",
         instance: "Y5QsHDoD4I0",
     };
@@ -33,6 +35,7 @@ context("Metadata sync rule new", function() {
     it("should show the instance selection step error if user try click on next without selecting an instance", () => {
         page.typeName(inputs.name)
             .next()
+            .selectFilterInTable(inputs.filterLabel, inputs.filterValue)
             .selectRow(inputs.dataElement)
             .next()
             .next()
@@ -43,6 +46,7 @@ context("Metadata sync rule new", function() {
     it("should create a new Sync Rule", () => {
         page.typeName(inputs.name)
             .next()
+            .selectFilterInTable(inputs.filterLabel, inputs.filterValue)
             .selectRow(inputs.dataElement)
             .next()
             .changeUseDefaultConfiguration()

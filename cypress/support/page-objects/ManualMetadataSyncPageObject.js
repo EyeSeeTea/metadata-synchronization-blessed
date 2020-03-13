@@ -26,6 +26,11 @@ class ManualMetadataSyncPageObject extends ManualSyncPageObject {
         return this;
     }
 
+    selectFilterInTable(filterLabel, filterValue) {
+        cy.selectFilterInTable(filterLabel, filterValue);
+        return this;
+    }
+
     excludeRule(rule) {
         includeExcludeStep.excludeRule(dataTest(`DialogContent-metadata-synchronization`), rule);
         return this;

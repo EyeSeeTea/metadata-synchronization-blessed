@@ -313,6 +313,44 @@ export class DataSetModel extends D2Model {
     protected static fields = dataSetFields;
     protected static childrenKeys = ["dataElements"];
 
+    protected static excludeRules = [
+        "indicators.dataSets",
+        "indicators.programs",
+        "dataElements.dataSets",
+        "dataElements.dataElementGroups.dataElements",
+        "dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",
+    ];
+    protected static includeRules = [
+        "attributes",
+        "legendSets",
+        "categoryCombos",
+        "categoryCombos.attributes",
+        "categoryCombos.categoryOptionCombos",
+        "categoryCombos.categoryOptionCombos.categoryOptions",
+        "categoryCombos.categories",
+        "indicators",
+        "indicators.attributes",
+        "indicators.legendSets",
+        "indicators.indicatorTypes",
+        "indicators.indicatorGroups",
+        "indicators.indicatorGroups.attributes",
+        "indicators.indicatorGroups.indicatorGroupSet",
+        "dataElements",
+        "dataElements.attributes",
+        "dataElements.legendSets",
+        "dataElements.optionSets",
+        "dataElements.optionSets.options",
+        "dataElements.categoryCombos",
+        "dataElements.categoryCombos.attributes",
+        "dataElements.categoryCombos.categoryOptionCombos",
+        "dataElements.categoryCombos.categoryOptionCombos.categoryOptions",
+        "dataElements.categoryCombos.categories",
+        "dataElements.dataElementGroups",
+        "dataElements.dataElementGroups.attributes",
+        "dataElements.dataElementGroups.dataElementGroupSets",
+        "dataElements.dataElementGroups.dataElementGroupSets.attributes",
+    ];
+
     protected static modelTransform = (
         dataSets: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]
     ) => {
@@ -405,7 +443,7 @@ export class IndicatorModel extends D2Model {
     protected static includeRules = [
         "attributes",
         "legendSets",
-        "indicatorType",
+        "indicatorTypes",
         "indicatorGroups",
         "indicatorGroups.attributes",
         "indicatorGroups.indicatorGroupSet",
@@ -503,6 +541,32 @@ export class ValidationRuleGroupModel extends D2Model {
 
     protected static excludeRules = ["legendSets", "validationRules.validationRuleGroups"];
     protected static includeRules = ["attributes", "validationRules", "validationRules.attributes"];
+}
+
+export class DashboardModel extends D2Model {
+    protected static metadataType = "dashboard";
+    protected static collectionName = "dashboards" as const;
+    //protected static groupFilterName = "indicatorGroups" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "dashboardItems",
+        "charts",
+        "eventCharts",
+        "pivotTables",
+        "eventReports",
+        "maps",
+        "reports",
+        "reportTables",
+    ];
+}
+
+export class UserGroupModel extends D2Model {
+    protected static metadataType = "userGroup";
+    protected static collectionName = "userGroups" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = ["users"];
 }
 
 export function defaultModel(pascalCaseModelName: string): any {

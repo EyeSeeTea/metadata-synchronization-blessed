@@ -47,6 +47,11 @@ export default class SyncRuleDetailPageObject extends PageObject {
         return this;
     }
 
+    selectFilterInTable(filterLabel, filterValue) {
+        cy.selectFilterInTable(filterLabel, filterValue);
+        return this;
+    }
+
     next() {
         this.cy.get('[data-test="Button-next-→"]').click();
         return this;
