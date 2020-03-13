@@ -351,21 +351,39 @@ export class ProgramModel extends D2Model {
             dataElements: _.flatten(
                 program.programStages?.map(
                     ({ displayName, programStageDataElements, id: programStageId }) =>
-                        programStageDataElements.map(({ dataElement }) => ({
-                            ...dataElement,
-                            id: `${program.id}-${programStageId}-${dataElement.id}`,
-                            __originalId__: dataElement.id,
-                            __type__: ProgramDataElementModel.getCollectionName(),
-                            __mappingType__: ProgramDataElementModel.getMappingType(),
-                            displayName:
-                                program.programStages.length > 1
-                                    ? `[${displayName}] ${dataElement.displayName}`
-                                    : dataElement.displayName,
-                        }))
+                        programStageDataElements
+                            .filter(({ dataElement }) => !!dataElement)
+                            .map(({ dataElement }) => ({
+                                ...dataElement,
+                                id: `${program.id}-${programStageId}-${dataElement.id}`,
+                                __originalId__: dataElement.id,
+                                __type__: ProgramDataElementModel.getCollectionName(),
+                                __mappingType__: ProgramDataElementModel.getMappingType(),
+                                displayName:
+                                    program.programStages.length > 1
+                                        ? `[${displayName}] ${dataElement.displayName}`
+                                        : dataElement.displayName,
+                            }))
                 ) ?? []
             ),
         }));
     };
+}
+
+export class EventProgramModel extends ProgramModel {
+    protected static mappingType = "eventPrograms";
+    protected static groupFilterName = ProgramModel.groupFilterName;
+    protected static fields = programFields;
+
+    protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
+}
+
+export class TrackerProgramModel extends ProgramModel {
+    protected static mappingType = "trackerPrograms";
+    protected static groupFilterName = ProgramModel.groupFilterName;
+    protected static fields = programFields;
+
+    protected static modelFilters = { programType: { eq: "WITH_REGISTRATION" } };
 }
 
 export class ProgramStageModel extends D2Model {
