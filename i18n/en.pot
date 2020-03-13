@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-12T20:52:13.879Z\n"
-"PO-Revision-Date: 2020-03-12T20:52:13.879Z\n"
+"POT-Creation-Date: 2020-03-13T11:26:21.083Z\n"
+"PO-Revision-Date: 2020-03-13T11:26:21.083Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -111,6 +111,9 @@ msgid "Mapped (Global)"
 msgstr ""
 
 msgid "Mapped"
+msgstr ""
+
+msgid "Select children"
 msgstr ""
 
 msgid "Make this mapping global"

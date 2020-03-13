@@ -535,14 +535,14 @@ export default function MappingTable({
                 icon: <Icon>open_in_new</Icon>,
             },
             {
-                name: "select-with-children",
-                text: "Select with children",
+                name: "select-children",
+                text: i18n.t("Select children"),
                 multiple: true,
                 onClick: (selection: string[]) => {
                     const selectedRows = _.compact(selection.map(id => _.find(rows, ["id", id])));
                     const children = getChildrenRows(selectedRows, model).map(({ id }) => id);
                     setSelectedIds(prevSelection =>
-                        _.uniq([...prevSelection, ...selection, ...children])
+                        _.uniq([...prevSelection, ...children])
                     );
                 },
                 icon: <Icon>done_all</Icon>,
