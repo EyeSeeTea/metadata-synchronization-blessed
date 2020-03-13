@@ -541,9 +541,7 @@ export default function MappingTable({
                 onClick: (selection: string[]) => {
                     const selectedRows = _.compact(selection.map(id => _.find(rows, ["id", id])));
                     const children = getChildrenRows(selectedRows, model).map(({ id }) => id);
-                    setSelectedIds(prevSelection =>
-                        _.uniq([...prevSelection, ...children])
-                    );
+                    setSelectedIds(prevSelection => _.uniq([...prevSelection, ...children]));
                 },
                 icon: <Icon>done_all</Icon>,
                 isActive: (selection: MetadataType[]) => {

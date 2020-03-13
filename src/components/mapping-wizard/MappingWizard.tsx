@@ -8,6 +8,9 @@ import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../mode
 import { MetadataType } from "../../utils/d2";
 import { MappingTableProps } from "../mapping-table/MappingTable";
 import { modelSteps } from "./Steps";
+import { d2ModelFactory } from "../../models/d2ModelFactory";
+import { useD2, useD2Api } from "d2-api";
+import { D2 } from "../../types/d2";
 
 export interface MappingWizardStep extends WizardStep {
     showOnSyncDialog?: boolean;
@@ -39,6 +42,8 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     onApplyGlobalMapping,
     onCancel = _.noop,
 }) => {
+    const d2 = useD2() as D2;
+    const api = useD2Api();
     const location = useLocation();
     const { mappingPath, type, element } = config;
 
@@ -86,7 +91,13 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     const stepExists = steps.find(step => step.key === urlHash);
     const firstStepKey = steps.map(step => step.key)[0];
     const initialStepKey = stepExists ? urlHash : firstStepKey;
-    const title = i18n.t("Related metadata mapping for {{name}} ({{id}})", element);
+
+    const model = d2ModelFactory(api, type);
+    const displayName = d2.models[model.getCollectionName()].displayName;
+    const title = i18n.t(
+        `Related metadata mapping for {{name}} ({{id}}) - ${displayName}`,
+        element
+    );
 
     return (
         <ConfirmationDialog

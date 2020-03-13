@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-13T11:26:21.083Z\n"
-"PO-Revision-Date: 2020-03-13T11:26:21.083Z\n"
+"POT-Creation-Date: 2020-03-13T11:37:38.805Z\n"
+"PO-Revision-Date: 2020-03-13T11:37:38.805Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -138,9 +138,6 @@ msgid "Related metadata mapping"
 msgstr ""
 
 msgid "Ok"
-msgstr ""
-
-msgid "Related metadata mapping for {{name}} ({{id}})"
 msgstr ""
 
 msgid "Category Options"
