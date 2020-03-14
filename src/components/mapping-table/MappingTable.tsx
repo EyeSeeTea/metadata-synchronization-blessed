@@ -254,7 +254,7 @@ export default function MappingTable({
                 for (const id of elements) {
                     const element = _.find(rows, ["id", id]);
                     const elementType = element?.__type__ ?? type;
-                    const filter = await buildDataElementFilterForProgram(api, id, mapping);
+                    const filter = await buildDataElementFilterForProgram(instanceApi, id, mapping);
 
                     const model = d2ModelFactory(instanceApi, elementType);
                     const candidates = await autoMap(
