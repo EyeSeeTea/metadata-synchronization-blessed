@@ -578,7 +578,8 @@ export default function MappingTable({
                         .map(getMappedItem)
                         .every(({ mappedId, global }) => !!mappedId && !global);
                     const isRowCompatible =
-                        isChildrenMapping || _.every(selected, ({ __type__ }) => __type__ !== type);
+                        isChildrenMapping ||
+                        _.every(selected, row => getMetadataTypeFromRow(row) !== type);
 
                     return isRowMappedAndNotGlobal && isRowCompatible;
                 },
