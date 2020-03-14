@@ -106,13 +106,14 @@ export default function MappingTable({
             if (!row) return {};
 
             const mappingType = getMetadataTypeFromRow(row);
-            const originalType = row.__type__;
             const id = cleanNestedMappedId(row.id);
 
             const localItemMapping = _.get(mapping, [mappingType, row.id]);
-            const globalItemMapping =
-                _.get(globalMapping, [originalType, id]) ?? _.get(globalMapping, [mappingType, id]);
-            const itemMapping = !localItemMapping?.mappedId ? globalItemMapping : localItemMapping;
+            const globalItemMapping = _.get(globalMapping, [mappingType, id]);
+
+            const isMapped = !!localItemMapping?.mappedId;
+            const isDifferent = localItemMapping?.mappedId !== globalItemMapping?.mappedId;
+            const itemMapping = isMapped && isDifferent ? localItemMapping : globalItemMapping;
 
             return itemMapping ?? {};
         },
@@ -184,11 +185,10 @@ export default function MappingTable({
                 snackbar.error(i18n.t("You need to map the item before applying a global mapping"));
             } else {
                 await onApplyGlobalMapping(mappingType, cleanNestedMappedId(id), elementMapping);
-                await applyMapping([{ selection: [id], mappedId: undefined }]);
                 snackbar.success(i18n.t("Successfully applied global mapping"));
             }
         },
-        [onApplyGlobalMapping, applyMapping, rows, mapping, snackbar]
+        [onApplyGlobalMapping, rows, mapping, snackbar]
     );
 
     const updateMapping = useCallback(
