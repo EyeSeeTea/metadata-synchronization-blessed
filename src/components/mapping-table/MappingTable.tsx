@@ -537,8 +537,6 @@ export default function MappingTable({
         ]
     );
 
-    const proposal = true;
-
     const actions: TableAction<MetadataType>[] = useMemo(
         () => [
             {
@@ -566,7 +564,7 @@ export default function MappingTable({
                 icon: <Icon>done_all</Icon>,
                 isActive: (selection: MetadataType[]) => {
                     const children = getChildrenRows(selection, model);
-                    return proposal && children.length > 0;
+                    return children.length > 0;
                 },
             },
             {
@@ -603,34 +601,6 @@ export default function MappingTable({
                 multiple: true,
                 onClick: applyAutoMapping,
                 icon: <Icon>compare_arrows</Icon>,
-            },
-            {
-                name: "auto-mapping-with-children",
-                text: i18n.t("Auto-map element with children"),
-                multiple: false,
-                onClick: (selection: string[]) => {
-                    const selectedRows = _.compact(selection.map(id => _.find(rows, ["id", id])));
-                    const children = getChildrenRows(selectedRows, model).map(({ id }) => id);
-                    applyAutoMapping([...selection, ...children]);
-                },
-                icon: <Icon>compare_arrows</Icon>,
-                isActive: (selection: MetadataType[]) => {
-                    return !proposal && getChildrenRows(selection, model).length > 0;
-                },
-            },
-            {
-                name: "auto-mapping-children",
-                text: i18n.t("Auto-map children"),
-                multiple: false,
-                onClick: (selection: string[]) => {
-                    const selectedRows = _.compact(selection.map(id => _.find(rows, ["id", id])));
-                    const children = getChildrenRows(selectedRows, model).map(({ id }) => id);
-                    applyAutoMapping(children);
-                },
-                icon: <Icon>compare_arrows</Icon>,
-                isActive: (selection: MetadataType[]) => {
-                    return !proposal && getChildrenRows(selection, model).length > 0;
-                },
             },
             {
                 name: "disable-mapping",
@@ -676,7 +646,6 @@ export default function MappingTable({
             type,
             model,
             rows,
-            proposal,
         ]
     );
 
