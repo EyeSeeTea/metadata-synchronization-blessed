@@ -320,7 +320,7 @@ export default function MappingTable({
         [mappingPath, rows, snackbar]
     );
 
-    const validateMapping = useCallback(
+    const applyValidateMapping = useCallback(
         async (selection: string[]) => {
             loading.show(
                 true,
@@ -341,6 +341,26 @@ export default function MappingTable({
             loading.reset();
         },
         [applyMapping, getMappedItem, loading, rows, isGlobalMapping, model]
+    );
+
+    const validateMapping = useCallback(
+        async (selection: string[]) => {
+            if (selection.length > 0) {
+                setWarningDialog({
+                    title: i18n.t("Validate mapping"),
+                    description: i18n.t(
+                        "Are you sure you want to validate mapping for {{total}} elements?",
+                        {
+                            total: selection.length,
+                        }
+                    ),
+                    action: () => applyValidateMapping(selection),
+                });
+            } else {
+                snackbar.error(i18n.t("Please select at least one item to validate mapping"));
+            }
+        },
+        [snackbar, applyValidateMapping]
     );
 
     const openRelatedMapping = useCallback(
