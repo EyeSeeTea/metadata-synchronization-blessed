@@ -375,7 +375,9 @@ export class ProgramModel extends D2Model {
     protected static fields = programFields;
     protected static childrenKeys = ["dataElements"];
 
-    protected static excludeRules = [];
+    protected static excludeRules = [
+        "programStages.dataElements.dataElementGroups.dataElements",
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",];
     protected static includeRules = [
         "attributes",
         "categoryCombos.attributes",
@@ -388,20 +390,21 @@ export class ProgramModel extends D2Model {
         "dataApprovalWorkflow",
         "dataApprovalWorkflow.dataApprovalLevels",
         "programStages",
-        //"programStages.programStageDataElements.dataElement",
-        // "dataElements.attributes",
-        // "dataElements.legendSets",
-        // "dataElements.optionSets",
-        // "dataElements.optionSets.options",
-        // "dataElements.categoryCombos",
-        // "dataElements.categoryCombos.attributes",
-        // "dataElements.categoryCombos.categoryOptionCombos",
-        // "dataElements.categoryCombos.categoryOptionCombos.categoryOptions",
-        // "dataElements.categoryCombos.categories",
-        // "dataElements.dataElementGroups",
-        // "dataElements.dataElementGroups.attributes",
-        // "dataElements.dataElementGroups.dataElementGroupSets",
-        // "dataElements.dataElementGroups.dataElementGroupSets.attributes",
+        "programStages.dataElements",
+        "programStages.dataElements.attributes",
+        "programStages.dataElements.legendSets",
+        "programStages.dataElements.optionSets",
+        "programStages.dataElements.optionSets.options",
+        "programStages.dataElements.categoryCombos",
+        "programStages.dataElements.categoryCombos.attributes",
+        "programStages.dataElements.categoryCombos.categoryOptionCombos",
+        "programStages.dataElements.categoryCombos.categoryOptionCombos.categoryOptions",
+        "programStages.dataElements.categoryCombos.categories",
+        "programStages.dataElements.dataElementGroups",
+        "programStages.dataElements.dataElementGroups.attributes",
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets",
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets.attributes",
+        "programStages.programStageSections"
     ];
 
     protected static modelTransform = (
