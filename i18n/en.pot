@@ -140,6 +140,9 @@ msgstr ""
 msgid "Ok"
 msgstr ""
 
+msgid "Related metadata mapping for {{name}} ({{id}})"
+msgstr ""
+
 msgid "Category Options"
 msgstr ""
 
