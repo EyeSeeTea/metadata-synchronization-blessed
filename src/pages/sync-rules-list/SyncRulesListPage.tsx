@@ -8,9 +8,6 @@ import {
     ObjectsTableDetailField,
     TableAction,
     TableColumn,
-    TablePagination,
-    TableSorting,
-    TableState,
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
@@ -22,6 +19,7 @@ import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
 import SharingDialog from "../../components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { AggregatedSync } from "../../logic/sync/aggregated";
 import { EventsSync } from "../../logic/sync/events";
 import { SyncronizationClass } from "../../logic/sync/generic";
@@ -41,7 +39,6 @@ import {
 } from "../../utils/permissions";
 import { requestJSONDownload } from "../../utils/synchronization";
 import { getValidationMessages } from "../../utils/validations";
-import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 const config: {
     [key: string]: {
@@ -78,8 +75,6 @@ const SyncRulesPage: React.FC = () => {
     const { title } = config[type];
 
     const [rows, setRows] = useState<SyncRule[]>([]);
-    const [pagination, setPagination] = useState<Partial<TablePagination>>({});
-    const [sorting, setSorting] = useState<TableSorting<SyncRule>>({ field: "name", order: "asc" });
 
     const [refreshKey, setRefreshKey] = useState(0);
     const [toDelete, setToDelete] = useState<string[]>([]);
@@ -91,12 +86,10 @@ const SyncRulesPage: React.FC = () => {
     const [sharingSettingsObject, setSharingSettingsObject] = useState<any>(null);
 
     useEffect(() => {
-        const { page, pageSize } = pagination;
-        const { field, order } = sorting;
         SyncRule.list(
             d2 as D2,
             { type, targetInstanceFilter, enabledFilter, lastExecutedFilter, search },
-            { paging: true, page, pageSize, sorting: [field, order] }
+            { paging: false }
         ).then(({ objects }) => {
             setRows(objects.map(SyncRule.build));
         });
@@ -104,8 +97,6 @@ const SyncRulesPage: React.FC = () => {
         d2,
         refreshKey,
         type,
-        pagination,
-        sorting,
         search,
         targetInstanceFilter,
         enabledFilter,
@@ -435,13 +426,6 @@ const SyncRulesPage: React.FC = () => {
         </React.Fragment>
     );
 
-    const handleTableChange = (tableState: TableState<SyncRule>) => {
-        const { sorting, pagination } = tableState;
-
-        setPagination(pagination);
-        setSorting(sorting);
-    };
-
     return (
         <TestWrapper>
             <PageHeader title={title} onBackClick={backHome} />
@@ -452,7 +436,6 @@ const SyncRulesPage: React.FC = () => {
                 actions={actions}
                 onActionButtonClick={appConfigurator ? createRule : undefined}
                 filterComponents={renderCustomFilters}
-                onChange={handleTableChange}
                 searchBoxLabel={i18n.t("Search by name")}
                 onChangeSearch={setSearchFilter}
             />
