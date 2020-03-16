@@ -1,7 +1,7 @@
 {
   "defaultCommandTimeout": 25000,
   "requestTimeout": 120000,
-  "responseTimeout": 30000,
+  "responseTimeout": 60000,
   "chromeWebSecurity": false,
   "_comment": "chromeWebSecurity flag disabled to allow cypress to test redirection to external pages - TEMPORARY",
   "projectId": "5smeca"
