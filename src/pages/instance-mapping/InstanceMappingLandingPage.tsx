@@ -1,12 +1,21 @@
 import i18n from "@dhis2/d2-i18n";
-import React from "react";
+import { useD2Api } from "d2-api";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Card, Landing } from "../../components/landing/Landing";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import Instance from "../../models/instance";
 
 const InstanceMappingLandingPage: React.FC = () => {
+    const api = useD2Api();
     const history = useHistory();
     const { id } = useParams() as { id: string };
+
+    const [instance, setInstance] = useState<Instance>();
+
+    useEffect(() => {
+        Instance.get(api, id).then(setInstance);
+    }, [api, id]);
 
     const cards: Card[] = [
         {
@@ -20,7 +29,7 @@ const InstanceMappingLandingPage: React.FC = () => {
                     listAction: () => history.push(`/instances/mapping/${id}/aggregated`),
                 },
                 {
-                    name: i18n.t("Events"),
+                    name: i18n.t("Programs (events)"),
                     description: i18n.t(
                         "Map data elements, category options and option sets for tracker data between instances"
                     ),
@@ -46,9 +55,15 @@ const InstanceMappingLandingPage: React.FC = () => {
         history.push("/instances");
     };
 
+    const title = i18n.t("Instance mapping");
+
     return (
         <TestWrapper>
-            <Landing title={i18n.t("Instance mapping")} cards={cards} onBackClick={backHome} />
+            <Landing
+                title={instance ? `${title} - Destination instance: ${instance?.name}` : title}
+                cards={cards}
+                onBackClick={backHome}
+            />
         </TestWrapper>
     );
 };

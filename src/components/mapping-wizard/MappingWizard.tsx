@@ -24,17 +24,19 @@ export interface MappingWizardProps {
     instance: Instance;
     config: MappingWizardConfig;
     updateMapping: (mapping: MetadataMappingDictionary) => Promise<void>;
+    onApplyGlobalMapping(type: string, id: string, mapping: MetadataMapping): Promise<void>;
     onCancel?(): void;
 }
 
 export const prepareSteps = (type: string, element: MetadataType) => {
-    return modelSteps[type]?.filter(({ isVisible = _.noop }) => isVisible(type, element));
+    return modelSteps[type]?.filter(({ isVisible = _.noop }) => isVisible(type, element)) ?? [];
 };
 
 const MappingWizard: React.FC<MappingWizardProps> = ({
     instance,
     config,
     updateMapping,
+    onApplyGlobalMapping,
     onCancel = _.noop,
 }) => {
     const location = useLocation();
@@ -55,12 +57,6 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     const onChangeMapping = async (subMapping: MetadataMappingDictionary) => {
         const newMapping = _.clone(instance.metadataMapping);
         _.set(newMapping, [...mappingPath, "mapping"], subMapping);
-        await updateMapping(newMapping);
-    };
-
-    const onApplyGlobalMapping = async (type: string, id: string, subMapping: MetadataMapping) => {
-        const newMapping = _.clone(instance.metadataMapping);
-        _.set(newMapping, [type, id], { ...subMapping, global: true });
         await updateMapping(newMapping);
     };
 

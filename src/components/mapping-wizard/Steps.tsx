@@ -43,5 +43,5 @@ type MappingWizardStepBuilder = Omit<MappingWizardStep, "props"> & {
 export const modelSteps: { [key: string]: MappingWizardStepBuilder[] } = {
     aggregatedDataElements: [availableSteps.categoryOptions, availableSteps.options],
     programDataElements: [availableSteps.options],
-    programs: [availableSteps.categoryOptions, availableSteps.programStages],
+    eventPrograms: [availableSteps.categoryOptions, availableSteps.programStages],
 };

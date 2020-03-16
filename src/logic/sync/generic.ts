@@ -110,10 +110,19 @@ export abstract class GenericSync {
                 }),
             };
 
-            console.debug("Start import on destination instance", instance.toObject());
-            const response = await this.postPayload(instance);
-            syncReport.addSyncResult(this.cleanResponse(response, instance));
-            console.debug("Finished importing data on instance", instance.toObject());
+            try {
+                console.debug("Start import on destination instance", instance.toObject());
+                const response = await this.postPayload(instance);
+                syncReport.addSyncResult(this.cleanResponse(response, instance));
+                console.debug("Finished importing data on instance", instance.toObject());
+            } catch (error) {
+                console.error("err", error);
+                syncReport.addSyncResult({
+                    status: "ERROR",
+                    instance: instance.toObject(),
+                    date: new Date(),
+                });
+            }
 
             yield { syncReport };
         }

@@ -4,9 +4,11 @@ import * as classes from "./d2Model";
 import { D2Model, defaultModel } from "./d2Model";
 
 export const metadataModels = [
+    classes.DashboardModel,
     classes.DataElementModel,
     classes.DataElementGroupModel,
     classes.DataElementGroupSetModel,
+    classes.DataSetModel,
     classes.IndicatorModel,
     classes.IndicatorGroupModel,
     classes.IndicatorGroupSetModel,
@@ -20,6 +22,7 @@ export const metadataModels = [
     classes.ProgramIndicatorGroupModel,
     classes.ProgramRuleModel,
     classes.ProgramRuleVariableModel,
+    classes.UserGroupModel,
 ];
 
 /**

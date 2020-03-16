@@ -252,19 +252,14 @@ const SyncRulesPage: React.FC = () => {
         if (!id) return;
         const rule = await SyncRule.get(api, id);
 
-        const { builder, name, id: syncRule, type = "metadata" } = rule;
+        const { builder, id: syncRule, type = "metadata" } = rule;
         const { SyncClass } = config[type];
 
-        try {
-            const sync = new SyncClass(d2 as D2, api, { ...builder, syncRule });
-            for await (const { message, syncReport, done } of sync.execute()) {
-                if (message) loading.show(true, message);
-                if (syncReport) await syncReport.save(api);
-                if (done && syncReport) setSyncReport(syncReport);
-            }
-        } catch (error) {
-            console.error(error);
-            snackbar.error(i18n.t("Failed to execute rule {{name}}", { name }));
+        const sync = new SyncClass(d2 as D2, api, { ...builder, syncRule });
+        for await (const { message, syncReport, done } of sync.execute()) {
+            if (message) loading.show(true, message);
+            if (syncReport) await syncReport.save(api);
+            if (done && syncReport) setSyncReport(syncReport);
         }
 
         setRefreshKey(Math.random());

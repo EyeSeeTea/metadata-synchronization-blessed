@@ -12,7 +12,7 @@ import {
     OptionModel,
     OrganisationUnitModel,
     ProgramDataElementModel,
-    ProgramModel,
+    EventProgramModel,
 } from "../../models/d2Model";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 
@@ -20,22 +20,22 @@ export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
 const config = {
     aggregated: {
-        title: i18n.t("Aggregated metadata mapping"),
+        title: i18n.t("Aggregated mapping"),
         models: [AggregatedDataElementModel],
         isGlobalMapping: false,
     },
     tracker: {
-        title: i18n.t("Events metadata mapping"),
-        models: [ProgramModel],
+        title: i18n.t("Program (events) mapping"),
+        models: [EventProgramModel],
         isGlobalMapping: false,
     },
     orgUnit: {
-        title: i18n.t("Organisation unit metadata mapping"),
+        title: i18n.t("Organisation unit mapping"),
         models: [OrganisationUnitModel],
         isGlobalMapping: false,
     },
     global: {
-        title: i18n.t("Global metadata mapping"),
+        title: i18n.t("Global mapping"),
         models: [CategoryOptionModel, CategoryComboModel, OptionModel, ProgramDataElementModel],
         isGlobalMapping: true,
     },
@@ -76,12 +76,15 @@ export default function InstanceMappingPage() {
 
         const newMapping = _.clone(instance.metadataMapping);
         _.set(newMapping, [type, id], { ...subMapping, global: true });
-        onChangeMapping(newMapping);
+        await onChangeMapping(newMapping);
     };
 
     return (
         <React.Fragment>
-            <PageHeader title={title} onBackClick={backHome} />
+            <PageHeader
+                title={instance ? `${title} - Destination instance: ${instance?.name}` : title}
+                onBackClick={backHome}
+            />
 
             {!!instance && (
                 <MappingTable

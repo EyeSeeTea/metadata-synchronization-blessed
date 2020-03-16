@@ -256,6 +256,7 @@ export const availablePeriods: {
     LAST_QUARTER: { name: i18n.t("Last quarter"), start: [1, "quarter"] },
     THIS_YEAR: { name: i18n.t("This year"), start: [0, "year"] },
     LAST_YEAR: { name: i18n.t("Last year"), start: [1, "year"] },
+    LAST_FIVE_YEARS: { name: i18n.t("Last 5 years"), start: [5, "year"], end: [1, "year"] },
 };
 
 function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Moment] {

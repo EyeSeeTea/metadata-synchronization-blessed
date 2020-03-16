@@ -23,19 +23,13 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-msgid "Edit mapping for {{total}} elements"
-msgstr ""
-
-msgid "Edit mapping for {{name}} ({{id}})"
-msgstr ""
-
 msgid "Close"
 msgstr ""
 
 msgid "Could not connect with remote instance"
 msgstr ""
 
-msgid "Applying mapping update for element {{id}}"
+msgid "Applying mapping update for element {{name}}"
 msgstr ""
 
 msgid "Could not apply mapping, please try again."
@@ -68,7 +62,7 @@ msgstr ""
 msgid "Preparing auto-mapping for {{total}} elements"
 msgstr ""
 
-msgid "Could not find a suitable candidate to apply auto-mapping"
+msgid "Could not find a suitable candidate to apply auto-mapping for {{id}}"
 msgstr ""
 
 msgid "You need to select all items from the same type"
@@ -126,6 +120,12 @@ msgid "Validate mapping"
 msgstr ""
 
 msgid "Auto-map element"
+msgstr ""
+
+msgid "Auto-map element with children"
+msgstr ""
+
+msgid "Auto-map children"
 msgstr ""
 
 msgid "Reset mapping to default values"
@@ -548,7 +548,7 @@ msgstr ""
 msgid "Due date"
 msgstr ""
 
-msgid "You do not have permission to list the events"
+msgid "An error ocurred while trying to access the required events"
 msgstr ""
 
 msgid "Sync all events"
@@ -807,6 +807,9 @@ msgid ""
 "between instances"
 msgstr ""
 
+msgid "Programs (events)"
+msgstr ""
+
 msgid ""
 "Map data elements, category options and option sets for tracker data "
 "between instances"
@@ -826,16 +829,16 @@ msgstr ""
 msgid "Instance mapping"
 msgstr ""
 
-msgid "Aggregated metadata mapping"
+msgid "Aggregated mapping"
 msgstr ""
 
-msgid "Events metadata mapping"
+msgid "Program (events) mapping"
 msgstr ""
 
-msgid "Organisation unit metadata mapping"
+msgid "Organisation unit mapping"
 msgstr ""
 
-msgid "Global metadata mapping"
+msgid "Global mapping"
 msgstr ""
 
 msgid "Metadata Synchronization"
@@ -899,9 +902,6 @@ msgid "Successfully deleted {{count}} rules"
 msgid_plural "Successfully deleted {{count}} rules"
 msgstr[0] ""
 msgstr[1] ""
-
-msgid "Failed to execute rule {{name}}"
-msgstr ""
 
 msgid "Successfully updated sync rule"
 msgstr ""
@@ -975,6 +975,9 @@ msgid "This year"
 msgstr ""
 
 msgid "Last year"
+msgstr ""
+
+msgid "Last 5 years"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"

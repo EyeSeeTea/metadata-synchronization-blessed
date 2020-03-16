@@ -28,6 +28,7 @@ context("Metadata sync rule edit", function() {
 
     it("should have the correct selected metadata", () => {
         page.next()
+            .selectFilterInTable("Metadata type", "Data Element")
             .checkOnlySelectedItems()
             .assertSelectedMetadata(selectedMetadata => {
                 selectedMetadata.contains(

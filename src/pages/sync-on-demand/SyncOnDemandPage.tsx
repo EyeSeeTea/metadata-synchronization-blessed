@@ -142,19 +142,15 @@ const SyncOnDemandPage: React.FC = () => {
 
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
-        try {
-            const sync = new SyncClass(d2 as D2, api, syncRule.toBuilder());
-            for await (const { message, syncReport, done } of sync.execute()) {
-                if (message) loading.show(true, message);
-                if (syncReport) await syncReport.save(api);
-                if (done) {
-                    loading.reset();
-                    finishSynchronization(syncReport);
-                    return;
-                }
+        const sync = new SyncClass(d2 as D2, api, syncRule.toBuilder());
+        for await (const { message, syncReport, done } of sync.execute()) {
+            if (message) loading.show(true, message);
+            if (syncReport) await syncReport.save(api);
+            if (done) {
+                loading.reset();
+                finishSynchronization(syncReport);
+                return;
             }
-        } catch (error) {
-            console.error(error);
         }
 
         loading.reset();
@@ -179,6 +175,7 @@ const SyncOnDemandPage: React.FC = () => {
                     onActionButtonClick={appConfigurator ? openSynchronizationDialog : undefined}
                     actionButtonLabel={<SyncIcon />}
                     childrenKeys={config[type].childrenKeys}
+                    showIndeterminateSelection={true}
                 />
             )}
 
