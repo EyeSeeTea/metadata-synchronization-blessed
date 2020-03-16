@@ -272,7 +272,7 @@ const SyncRulesPage: React.FC = () => {
         const oldSyncRule = await SyncRule.get(api, id);
 
         const syncRule = oldSyncRule.updateEnabled(!oldSyncRule.enabled);
-        const errors = await getValidationMessages(d2, syncRule);
+        const errors = await getValidationMessages(api, syncRule);
         if (errors.length > 0) {
             snackbar.error(errors.join("\n"), {
                 autoHideDuration: null,

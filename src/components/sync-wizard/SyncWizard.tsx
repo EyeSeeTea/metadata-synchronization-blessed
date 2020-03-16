@@ -1,4 +1,4 @@
-import { useD2 } from "d2-api";
+import { useD2Api } from "d2-api";
 import { Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
 import React from "react";
@@ -28,7 +28,7 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
     onCancel = _.noop,
 }) => {
     const location = useLocation();
-    const d2 = useD2();
+    const api = useD2Api();
 
     const steps = config[syncRule.type]
         .filter(({ showOnSyncDialog }) => !isDialog || showOnSyncDialog)
@@ -45,7 +45,7 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
         const index = _(steps).findIndex(step => step.key === newStep.key);
         const validationMessages = await Promise.all(
             _.take(steps, index).map(({ validationKeys }) =>
-                getValidationMessages(d2, syncRule, validationKeys)
+                getValidationMessages(api, syncRule, validationKeys)
             )
         );
 
