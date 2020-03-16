@@ -599,7 +599,7 @@ export default function MappingTable({
                 icon: <Icon>open_in_new</Icon>,
             },
             {
-                name: "select-children",
+                name: "select-children-rows",
                 text: i18n.t("Select children"),
                 multiple: true,
                 onClick: (selection: string[]) => {
