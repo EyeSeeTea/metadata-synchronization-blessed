@@ -9,7 +9,9 @@ export const initializeDataStoreMigrations = async (api: D2Api) => {
             .getData()) ?? ({} as any);
 
     // TODO: Apply migrations(remoteVersion: number, currentVersion: number); Incremental?
-    console.debug("Applying dataStore migragrions", { version, current: dataStoreVersion });
+    if (version !== dataStoreVersion) {
+        console.debug("Applying dataStore migrations", { version, current: dataStoreVersion });
+    }
 
     await api
         .dataStore(dataStoreNamespace)
