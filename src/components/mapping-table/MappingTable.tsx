@@ -422,11 +422,15 @@ export default function MappingTable({
                     sortable: false,
                     getValue: (row: MetadataType) => {
                         const { mappedId } = getMappedItem(row);
+                        const text =
+                            !!mappedId && mappedId !== "DISABLED"
+                                ? cleanOrgUnitPath(mappedId)
+                                : "-";
 
                         return (
                             <span>
                                 <Typography variant={"inherit"} gutterBottom>
-                                    {mappedId ? cleanOrgUnitPath(mappedId) : "-"}
+                                    {text}
                                 </Typography>
                                 <Tooltip title={i18n.t("Set mapping")} placement="top">
                                     <IconButton
