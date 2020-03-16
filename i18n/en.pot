@@ -74,6 +74,15 @@ msgstr ""
 msgid "Validating mapping for {{total}} elements"
 msgstr ""
 
+msgid "Validate mapping"
+msgstr ""
+
+msgid "Are you sure you want to validate mapping for {{total}} elements?"
+msgstr ""
+
+msgid "Please select at least one item to validate mapping"
+msgstr ""
+
 msgid "You need to map this element before accessing its related metadata mapping"
 msgstr ""
 
@@ -113,19 +122,13 @@ msgstr ""
 msgid "Mapped"
 msgstr ""
 
+msgid "Select children"
+msgstr ""
+
 msgid "Make this mapping global"
 msgstr ""
 
-msgid "Validate mapping"
-msgstr ""
-
 msgid "Auto-map element"
-msgstr ""
-
-msgid "Auto-map element with children"
-msgstr ""
-
-msgid "Auto-map children"
 msgstr ""
 
 msgid "Reset mapping to default values"
@@ -135,9 +138,6 @@ msgid "Related metadata mapping"
 msgstr ""
 
 msgid "Ok"
-msgstr ""
-
-msgid "Related metadata mapping for {{name}} ({{id}})"
 msgstr ""
 
 msgid "Category Options"

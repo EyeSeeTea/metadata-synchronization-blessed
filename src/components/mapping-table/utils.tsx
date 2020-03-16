@@ -292,7 +292,7 @@ export const buildMapping = async (
         return {
             mappedId: "DISABLED",
             mappedCode: "DISABLED",
-            code: originMetadata[0].code,
+            code: originMetadata[0]?.code,
             conflicts: false,
             global: false,
             mapping: {},
