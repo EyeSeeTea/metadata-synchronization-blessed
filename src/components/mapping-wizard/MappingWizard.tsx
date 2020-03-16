@@ -2,15 +2,12 @@ import i18n from "@dhis2/d2-i18n";
 import { DialogContent } from "@material-ui/core";
 import { ConfirmationDialog, Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
 import { MappingTableProps } from "../mapping-table/MappingTable";
 import { modelSteps } from "./Steps";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
-import { useD2, useD2Api } from "d2-api";
-import { D2 } from "../../types/d2";
 
 export interface MappingWizardStep extends WizardStep {
     showOnSyncDialog?: boolean;
@@ -42,8 +39,6 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     onApplyGlobalMapping,
     onCancel = _.noop,
 }) => {
-    const d2 = useD2() as D2;
-    const api = useD2Api();
     const location = useLocation();
     const { mappingPath, type, element } = config;
 
@@ -65,10 +60,6 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
         await updateMapping(newMapping);
     };
 
-    const onStepChangeRequest = async (_prev: WizardStep, _next: WizardStep) => {
-        return undefined;
-    };
-
     const steps: MappingWizardStep[] =
         prepareSteps(type, element).map(({ models, isVisible, ...step }) => ({
             ...step,
@@ -85,6 +76,13 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
             },
         })) ?? [];
 
+    const [stepName, updateStepName] = useState<string>(steps[0]?.label);
+
+    const onStepChangeRequest = async (_prev: WizardStep, next: WizardStep) => {
+        updateStepName(next.label);
+        return undefined;
+    };
+
     if (steps.length === 0) return null;
 
     const urlHash = location.hash.slice(1);
@@ -92,17 +90,12 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     const firstStepKey = steps.map(step => step.key)[0];
     const initialStepKey = stepExists ? urlHash : firstStepKey;
 
-    const model = d2ModelFactory(api, type);
-    const displayName = d2.models[model.getCollectionName()].displayName;
-    const title = i18n.t(
-        `Related metadata mapping for {{name}} ({{id}}) - ${displayName}`,
-        element
-    );
+    const title = i18n.t(`Related metadata mapping for {{name}} ({{id}})`, element);
 
     return (
         <ConfirmationDialog
             isOpen={true}
-            title={title}
+            title={title + stepName ? ` - ${stepName}` : ""}
             onCancel={onCancel}
             cancelText={i18n.t("Close")}
             maxWidth={"lg"}
