@@ -185,6 +185,7 @@ export default function MappingTable({
                 snackbar.error(i18n.t("You need to map the item before applying a global mapping"));
             } else {
                 await onApplyGlobalMapping(mappingType, cleanNestedMappedId(id), elementMapping);
+                //await applyMapping([{ selection, mappedId: undefined }]);
                 snackbar.success(i18n.t("Successfully applied global mapping"));
             }
         },
@@ -320,6 +321,42 @@ export default function MappingTable({
         [mappingPath, rows, snackbar]
     );
 
+    const createValidations = useCallback(
+        async (dict: MetadataMappingDictionary) => {
+            const result = _.cloneDeep(dict);
+
+            for (const type of _.keys(dict)) {
+                for (const id of _.keys(dict[type])) {
+                    const { mappedId, mapping = {}, ...rest } = dict[type][id];
+                    const itemModel = d2ModelFactory(api, type) ?? model;
+                    const innerMapping = await createValidations(mapping);
+                    const { mappedName, mappedCode, mappedLevel } = await buildMapping(
+                        api,
+                        instanceApi,
+                        itemModel,
+                        id,
+                        mappedId
+                    );
+
+                    result[type][id] = _.omitBy(
+                        {
+                            ...rest,
+                            mappedId,
+                            mappedName,
+                            mappedCode,
+                            mappedLevel,
+                            mapping: innerMapping,
+                        },
+                        _.isUndefined
+                    );
+                }
+            }
+
+            return result;
+        },
+        [api, instanceApi, model]
+    );
+
     const applyValidateMapping = useCallback(
         async (selection: string[]) => {
             loading.show(
@@ -327,20 +364,25 @@ export default function MappingTable({
                 i18n.t("Validating mapping for {{total}} elements", { total: selection.length })
             );
 
+            const tasks = [];
             const selectedRows = _.compact(selection.map(id => _.find(rows, ["id", id])));
             const allRows = [...selectedRows, ...getChildrenRows(selectedRows, model)];
 
             for (const row of allRows) {
-                const { mappedId, global, mapping, conflicts } = getMappedItem(row);
-                if (mappedId && (isGlobalMapping || !global)) {
-                    await applyMapping([
-                        { selection: [row.id], mappedId, overrides: { mapping, conflicts } },
-                    ]);
-                }
+                const type = getMetadataTypeFromRow(row);
+                const newMapping = await createValidations({
+                    [type]: {
+                        [row.id]: getMappedItem(row),
+                    },
+                });
+                const { mappedId, ...overrides } = newMapping[type][row.id];
+                tasks.push({ selection: [row.id], mappedId, overrides });
             }
+
+            applyMapping(tasks);
             loading.reset();
         },
-        [applyMapping, getMappedItem, loading, rows, isGlobalMapping, model]
+        [applyMapping, getMappedItem, loading, rows, createValidations, model]
     );
 
     const validateMapping = useCallback(
