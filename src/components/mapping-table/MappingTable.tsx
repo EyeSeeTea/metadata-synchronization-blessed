@@ -184,12 +184,12 @@ export default function MappingTable({
             if (!firstElement || !mappingType || !elementMapping?.mappedId) {
                 snackbar.error(i18n.t("You need to map the item before applying a global mapping"));
             } else {
+                await applyMapping([{ selection, mappedId: undefined }]);
                 await onApplyGlobalMapping(mappingType, cleanNestedMappedId(id), elementMapping);
-                //await applyMapping([{ selection, mappedId: undefined }]);
                 snackbar.success(i18n.t("Successfully applied global mapping"));
             }
         },
-        [onApplyGlobalMapping, rows, mapping, snackbar]
+        [onApplyGlobalMapping, applyMapping, rows, mapping, snackbar]
     );
 
     const updateMapping = useCallback(
