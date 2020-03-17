@@ -36,6 +36,7 @@ script:
   - yarn wait-on http-get://localhost:8080
   - yarn wait-on http-get://localhost:8081
   - yarn node cypress/support/runner.js -b chrome
+after_script:
   - cd feedback-ci/
   - if [[ $TRAVIS_PULL_REQUEST_BRANCH != "" ]]; then BRANCH="${TRAVIS_PULL_REQUEST_BRANCH}"; else BRANCH="${TRAVIS_BRANCH}"; fi;
   - GITHUB_PAGES_ROOT=$(http -a ${GITHUB_USERNAME}:${GITHUB_PASSWORD} https://api.github.com/repos/${FEEDBACK_REPO}/pages | jq ".html_url" | tr -d '"')
