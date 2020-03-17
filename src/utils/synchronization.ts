@@ -1,5 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
-import axios, { AxiosBasicCredentials, AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { D2Api, D2CategoryOptionCombo } from "d2-api";
 import { isValidUid } from "d2/uid";
 import FileSaver from "file-saver";
@@ -70,40 +70,36 @@ export function cleanReferences(
 }
 
 export async function getMetadata(
-    baseUrl: string,
+    api: D2Api,
     elements: string[],
-    fields = ":all",
-    auth: AxiosBasicCredentials | undefined = undefined
+    fields = ":all"
 ): Promise<MetadataPackage> {
     const promises = [];
     for (let i = 0; i < elements.length; i += 100) {
-        const requestUrl = baseUrl + "/metadata.json";
         const requestElements = elements.slice(i, i + 100).toString();
         promises.push(
-            axios.get(requestUrl, {
-                auth,
-                withCredentials: true,
-                params: {
-                    fields: fields,
+            api
+                .get("/metadata", {
+                    fields,
                     filter: "id:in:[" + requestElements + "]",
                     defaults: "EXCLUDE",
-                },
-            })
+                })
+                .getData()
         );
     }
     const response = await Promise.all(promises);
-    const results = _.deepMerge({}, ...response.map(result => result.data));
+    const results = _.deepMerge({}, ...response);
     if (results.system) delete results.system;
     return results;
 }
 
 export async function postMetadata(
-    instance: Instance,
-    metadata: object,
+    api: D2Api,
+    metadata: any,
     additionalParams?: MetadataImportParams
 ): Promise<MetadataImportResponse> {
     try {
-        const params: MetadataImportParams = {
+        const params = {
             importMode: "COMMIT",
             identifier: "UID",
             importReportMode: "FULL",
@@ -112,15 +108,8 @@ export async function postMetadata(
             atomicMode: "ALL",
             ...additionalParams,
         };
-        const response = await axios.post(instance.url + "/api/metadata", metadata, {
-            auth: {
-                username: instance.username,
-                password: instance.password,
-            },
-            params,
-        });
-
-        return response.data;
+        const response = await api.post("/metadata", params, metadata).getData();
+        return response as MetadataImportResponse;
     } catch (error) {
         return buildResponseError(error);
     }

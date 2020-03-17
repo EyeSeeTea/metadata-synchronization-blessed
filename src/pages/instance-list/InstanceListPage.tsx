@@ -4,7 +4,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 import EditIcon from "@material-ui/icons/Edit";
 import SettingsInputAntenaIcon from "@material-ui/icons/SettingsInputAntenna";
-import { useD2 } from "d2-api";
+import { useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
     ObjectsTable,
@@ -20,13 +20,12 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import PageHeader from "../../components/page-header/PageHeader";
-import Instance, { InstanceData } from "../../models/instance";
-import { D2 } from "../../types/d2";
-import { isAppConfigurator } from "../../utils/permissions";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import Instance, { InstanceData } from "../../models/instance";
+import { isAppConfigurator } from "../../utils/permissions";
 
 const InstanceListPage = () => {
-    const d2 = useD2();
+    const api = useD2Api();
     const history = useHistory();
     const snackbar = useSnackbar();
     const loading = useLoading();
@@ -38,12 +37,12 @@ const InstanceListPage = () => {
     const [appConfigurator, setAppConfigurator] = useState(false);
 
     useEffect(() => {
-        isAppConfigurator(d2 as D2).then(setAppConfigurator);
-    }, [d2]);
+        isAppConfigurator(api).then(setAppConfigurator);
+    }, [api]);
 
     useEffect(() => {
-        Instance.list(d2 as D2, { search }, {}).then(({ objects }) => setRows(objects));
-    }, [d2, search, toDelete]);
+        Instance.list(api, { search }, {}).then(({ objects }) => setRows(objects));
+    }, [api, search, toDelete]);
 
     const createInstance = () => {
         history.push("/instances/new");
@@ -56,7 +55,7 @@ const InstanceListPage = () => {
 
     const replicateInstance = async (ids: string[]) => {
         if (ids.length !== 1) return;
-        const instance = await Instance.get(d2 as D2, ids[0]);
+        const instance = await Instance.get(api, ids[0]);
         if (instance) {
             history.push({
                 pathname: "/instances/new",
@@ -67,7 +66,7 @@ const InstanceListPage = () => {
 
     const testConnection = async (ids: string[]) => {
         if (ids.length !== 1) return;
-        const instance = await Instance.get(d2 as D2, ids[0]);
+        const instance = await Instance.get(api, ids[0]);
         const connectionErrors = await instance?.check();
         if (!connectionErrors || !connectionErrors.status) {
             snackbar.error(connectionErrors?.error?.message ?? "Unknown error", {
@@ -88,8 +87,8 @@ const InstanceListPage = () => {
 
         const results = [];
         for (const id of toDelete) {
-            const instance = await Instance.get(d2 as D2, id);
-            if (instance) results.push(await instance.remove(d2 as D2));
+            const instance = await Instance.get(api, id);
+            if (instance) results.push(await instance.remove(api));
         }
 
         loading.reset();
