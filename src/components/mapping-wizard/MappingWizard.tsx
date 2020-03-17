@@ -1,9 +1,8 @@
 import i18n from "@dhis2/d2-i18n";
 import { DialogContent } from "@material-ui/core";
-import { D2ModelSchemas } from "d2-api";
 import { ConfirmationDialog, Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
@@ -17,7 +16,7 @@ export interface MappingWizardStep extends WizardStep {
 
 export interface MappingWizardConfig {
     mappingPath: string[];
-    type: keyof D2ModelSchemas;
+    type: string;
     element: MetadataType;
 }
 
@@ -25,13 +24,19 @@ export interface MappingWizardProps {
     instance: Instance;
     config: MappingWizardConfig;
     updateMapping: (mapping: MetadataMappingDictionary) => Promise<void>;
+    onApplyGlobalMapping(type: string, id: string, mapping: MetadataMapping): Promise<void>;
     onCancel?(): void;
 }
+
+export const prepareSteps = (type: string, element: MetadataType) => {
+    return modelSteps[type]?.filter(({ isVisible = _.noop }) => isVisible(type, element)) ?? [];
+};
 
 const MappingWizard: React.FC<MappingWizardProps> = ({
     instance,
     config,
     updateMapping,
+    onApplyGlobalMapping,
     onCancel = _.noop,
 }) => {
     const location = useLocation();
@@ -55,18 +60,8 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
         await updateMapping(newMapping);
     };
 
-    const onApplyGlobalMapping = async (type: string, id: string, subMapping: MetadataMapping) => {
-        const newMapping = _.clone(instance.metadataMapping);
-        _.set(newMapping, [type, id], { ...subMapping, global: true });
-        await updateMapping(newMapping);
-    };
-
-    const onStepChangeRequest = async (_prev: WizardStep, _next: WizardStep) => {
-        return undefined;
-    };
-
     const steps: MappingWizardStep[] =
-        modelSteps[type]?.map(({ models, ...step }) => ({
+        prepareSteps(type, element).map(({ models, isVisible, ...step }) => ({
             ...step,
             props: {
                 models,
@@ -81,13 +76,22 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
             },
         })) ?? [];
 
+    const [stepName, updateStepName] = useState<string>(steps[0]?.label);
+
+    const onStepChangeRequest = async (_prev: WizardStep, next: WizardStep) => {
+        updateStepName(next.label);
+        return undefined;
+    };
+
     if (steps.length === 0) return null;
 
     const urlHash = location.hash.slice(1);
     const stepExists = steps.find(step => step.key === urlHash);
     const firstStepKey = steps.map(step => step.key)[0];
     const initialStepKey = stepExists ? urlHash : firstStepKey;
-    const title = i18n.t("Related metadata mapping for {{name}} ({{id}})", element);
+
+    const mainTitle = i18n.t(`Related metadata mapping for {{name}} ({{id}})`, element);
+    const title = _.compact([mainTitle, stepName]).join(" - ");
 
     return (
         <ConfirmationDialog
