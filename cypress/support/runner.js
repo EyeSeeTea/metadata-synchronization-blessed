@@ -55,17 +55,19 @@ cypress
         headless: true,
         config: {
             video: true,
+            videoUploadOnPasses: false,
             screenshotsFolder: `${reportDir}/assets/screenshots`,
             videosFolder: `${reportDir}/assets/videos`,
             parallel: true,
             ciBuildId: process.env.TRAVIS_BUILD_ID,
         },
     })
-    .then(() => {
+    .then(result => {
         return generateReport({
             reportDir,
             reportFilename: "index",
             charts: true,
+            result,
         });
     })
     .catch(error => {
@@ -75,6 +77,8 @@ cypress
 
 function generateReport(options) {
     return merge(options).then(report => {
-        marge.create(report, options);
+        marge.create(report, options).then(() => {
+            process.exit(options.result.totalFailed);
+        });
     });
 }

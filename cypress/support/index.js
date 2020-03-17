@@ -20,7 +20,6 @@ import "./commands";
 
 Cypress.on("test:after:run", (test, runnable) => {
     if (test.state === "failed") {
-        addContext({ test }, { title: "Travis link", value: process.env.TRAVIS_JOB_WEB_URL });
         addContext({ test }, { title: "Video", value: `assets/videos/${Cypress.spec.name}.mp4` });
         addContext(
             { test },
