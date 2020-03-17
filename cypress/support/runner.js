@@ -1,9 +1,16 @@
+// eslint-disable-next-line
 const cypress = require("cypress");
+// eslint-disable-next-line
 const yargs = require("yargs");
+// eslint-disable-next-line
 const { merge } = require("mochawesome-merge");
+// eslint-disable-next-line
 const marge = require("mochawesome-report-generator");
+// eslint-disable-next-line
 const rm = require("rimraf");
+// eslint-disable-next-line
 const cypressConfig = require("../../cypress.json");
+// eslint-disable-next-line
 const fs = require("fs");
 
 const argv = yargs
@@ -25,8 +32,8 @@ const argv = yargs
 const pr = process.env.TRAVIS_PULL_REQUEST !== "false" && process.env.TRAVIS_PULL_REQUEST;
 const branch = process.env.TRAVIS_BRANCH ? process.env.TRAVIS_BRANCH : "default";
 const subfolder = pr ? `pr/${pr}` : `branch/${branch.split("/").join("-")}`;
-const pagesPath = `${subfolder}/${process.env.TRAVIS_COMMIT}`;
-const reportDir = `test-report/${pagesPath}`;
+const pagesPath = `${process.env.TRAVIS_REPO_SLUG}/${subfolder}/${process.env.TRAVIS_COMMIT}`;
+const reportDir = `feedback-ci/${pagesPath}`;
 
 fs.writeFile("pages_path", pagesPath, function(err) {
     if (err) console.log(err);
@@ -54,7 +61,7 @@ cypress
             ciBuildId: process.env.TRAVIS_BUILD_ID,
         },
     })
-    .then(_results => {
+    .then(() => {
         generateReport({
             reportDir,
             reportFilename: "index",
