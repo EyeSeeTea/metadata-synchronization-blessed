@@ -1,7 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import { makeStyles } from "@material-ui/core";
-import _ from "lodash";
 import React from "react";
+import { DataSyncAggregation } from "../../../types/synchronization";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
@@ -31,25 +31,32 @@ const aggregationItems = [
 const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const classes = useStyles();
 
-    console.log("TODO", onChange);
+    const updateEnableAggregation = (value: boolean) => {
+        onChange(syncRule.updateDataSyncEnableAggregation(value).updateDataSyncAggregationType());
+    };
+
+    const updateAggregationType = (value: DataSyncAggregation) => {
+        onChange(syncRule.updateDataSyncAggregationType(value));
+    };
 
     return (
         <React.Fragment>
             <Toggle
-                label={i18n.t("Sync all events")}
-                value={syncRule.dataSyncAllEvents}
-                onValueChange={_.noop}
+                label={i18n.t("Enable data aggregation")}
+                value={syncRule.dataSyncEnableAggregation}
+                onValueChange={updateEnableAggregation}
             />
 
-            <div className={classes.dropdown}>
-                <Dropdown
-                    label={i18n.t("Aggregation measure")}
-                    items={aggregationItems}
-                    value={""}
-                    onValueChange={_.noop}
-                    hideEmpty={true}
-                />
-            </div>
+            {syncRule.dataSyncEnableAggregation && (
+                <div className={classes.dropdown}>
+                    <Dropdown
+                        label={i18n.t("Aggregation type")}
+                        items={aggregationItems}
+                        value={syncRule.dataSyncAggregationType ?? ""}
+                        onValueChange={updateAggregationType}
+                    />
+                </div>
+            )}
         </React.Fragment>
     );
 };

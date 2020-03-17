@@ -138,7 +138,7 @@ export const aggregatedSteps: SyncWizardStep[] = [
         key: "aggregation",
         label: i18n.t("Aggregation"),
         component: AggregationStep,
-        validationKeys: [],
+        validationKeys: ["dataSyncAggregation"],
         showOnSyncDialog: true,
     },
     commonSteps.instanceSelection,
