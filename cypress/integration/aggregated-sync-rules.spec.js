@@ -1,12 +1,12 @@
-import MetadataSyncRuleListPageObject from "../support/page-objects/MetadataSyncRuleListPageObject";
+import AggregatedSyncRuleListPageObject from "../support/page-objects/AggregatedSyncRuleListPageObject";
 
-context("Metadata sync rules ", function() {
-    const page = new MetadataSyncRuleListPageObject(cy);
+context("Aggregated sync rules", function() {
+    const page = new AggregatedSyncRuleListPageObject(cy);
 
     beforeEach(() => {
         const stubApiResponseName = "getRules";
 
-        cy.fixture("metadata-sync-rules.json").then(syncRules => {
+        cy.fixture("aggregated-sync-rules.json").then(syncRules => {
             this.syncRules = syncRules;
             cy.server();
             cy.route({
@@ -19,7 +19,7 @@ context("Metadata sync rules ", function() {
     });
 
     it("should have the correct title", () => {
-        page.assertTitle(title => title.contains("Metadata Synchronization Rules"));
+        page.assertTitle(title => title.contains("Aggregated Data Synchronization Rules"));
     });
 
     it("should contains expected rows count", () => {

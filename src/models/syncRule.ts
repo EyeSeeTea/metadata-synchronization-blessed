@@ -120,7 +120,7 @@ export default class SyncRule {
     }
 
     public get dataSyncAllEvents(): boolean {
-        return this.syncRule.builder?.dataParams?.allEvents ?? false;
+        return this.syncRule.builder?.dataParams?.allEvents ?? true;
     }
 
     public get useDefaultIncludeExclude(): boolean {
@@ -202,6 +202,7 @@ export default class SyncRule {
                     strategy: "NEW_AND_UPDATES",
                     allAttributeCategoryOptions: true,
                     dryRun: false,
+                    allEvents: true,
                 },
                 syncParams: {
                     importStrategy: "CREATE_AND_UPDATE",
@@ -638,7 +639,7 @@ export default class SyncRule {
         return isUserOwner || isPublic || hasUserAccess || hasGroupAccess;
     }
 
-    public async save(d2: D2): Promise<void> {
+    public async save(d2: D2): Promise<SyncRule> {
         const userInfo = await getUserInfo(d2);
         const user = _.pick(userInfo, ["id", "name"]);
         const exists = !!this.syncRule.id;
@@ -652,6 +653,8 @@ export default class SyncRule {
             lastUpdated: new Date(),
             lastUpdatedBy: user,
         });
+
+        return new SyncRule(element);
     }
 
     public async remove(d2: D2): Promise<void> {

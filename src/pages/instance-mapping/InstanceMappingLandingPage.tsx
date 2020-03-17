@@ -1,12 +1,23 @@
 import i18n from "@dhis2/d2-i18n";
-import React from "react";
+import { useD2 } from "d2-api";
+import _ from "lodash";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Card, Landing } from "../../components/landing/Landing";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import Instance from "../../models/instance";
+import { D2 } from "../../types/d2";
 
 const InstanceMappingLandingPage: React.FC = () => {
+    const d2 = useD2();
     const history = useHistory();
     const { id } = useParams() as { id: string };
+
+    const [instance, setInstance] = useState<Instance>();
+
+    useEffect(() => {
+        Instance.get(d2 as D2, id).then(setInstance);
+    }, [d2, id]);
 
     const cards: Card[] = [
         {
@@ -20,7 +31,7 @@ const InstanceMappingLandingPage: React.FC = () => {
                     listAction: () => history.push(`/instances/mapping/${id}/aggregated`),
                 },
                 {
-                    name: i18n.t("Events"),
+                    name: i18n.t("Programs (events)"),
                     description: i18n.t(
                         "Map data elements, category options and option sets for tracker data between instances"
                     ),
@@ -31,6 +42,13 @@ const InstanceMappingLandingPage: React.FC = () => {
                     description: i18n.t("Map organisation units between instances"),
                     listAction: () => history.push(`/instances/mapping/${id}/orgUnit`),
                 },
+                {
+                    name: i18n.t("Global"),
+                    description: i18n.t(
+                        "Map global category options, category combos, options and tracker data elements between instances"
+                    ),
+                    listAction: () => history.push(`/instances/mapping/${id}/global`),
+                },
             ],
         },
     ];
@@ -39,9 +57,13 @@ const InstanceMappingLandingPage: React.FC = () => {
         history.push("/instances");
     };
 
+    const mainTitle = i18n.t("Instance mapping");
+    const instanceTitle = instance ? i18n.t("Destination instance {{name}}", instance) : undefined;
+    const title = _.compact([mainTitle, instanceTitle]).join(" - ");
+
     return (
         <TestWrapper>
-            <Landing title={i18n.t("Instance mapping")} cards={cards} onBackClick={backHome} />
+            <Landing title={title} cards={cards} onBackClick={backHome} />
         </TestWrapper>
     );
 };

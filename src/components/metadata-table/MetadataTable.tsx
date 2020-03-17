@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
-import { D2Api, Model, useD2, useD2Api } from "d2-api";
+import { D2Api, useD2, useD2Api } from "d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -38,6 +38,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     additionalColumns?: TableColumn<MetadataType>[];
     additionalFilters?: ReactNode;
     additionalActions?: TableAction<MetadataType>[];
+    showIndeterminateSelection?: boolean;
     notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
     notifyNewModel?(model: typeof D2Model): void;
     notifyRowsChange?(rows: MetadataType[]): void;
@@ -119,6 +120,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     additionalActions = [],
     loading: providedLoading,
     initialShowOnlySelected = false,
+    showIndeterminateSelection = false,
     ...rest
 }) => {
     const d2 = useD2() as D2;
@@ -143,8 +145,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         selectedIds: selectedIds,
         parentOrgUnits: null,
     });
+    const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
 
-    const [error, setError] = useState<Error>();
+    const [error, setError] = useState<string>();
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [pager, setPager] = useState<Partial<TablePagination>>({});
     const [loading, setLoading] = useState<boolean>(true);
@@ -192,6 +195,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         }
         const includedIds = _.uniq([...selectedIds, ...Array.from(ids)]);
         notifyNewSelection(includedIds, excludedIds);
+
+        const orgUnitPaths = _(rows)
+            .intersectionBy(
+                selectedOUs.map(id => ({ id })),
+                "id"
+            )
+            .map(({ path }) => path)
+            .compact()
+            .value();
+        updateExpandOrgUnits(orgUnitPaths);
+        changeParentOrgUnitFilter(orgUnitPaths);
     };
 
     const addToSelection = (ids: string[]) => {
@@ -285,6 +299,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 selected={filters.parentOrgUnits ?? []}
                 singleSelection={true}
                 selectOnClick={true}
+                initiallyExpanded={expandOrgUnits}
             />
         </div>
     );
@@ -318,14 +333,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const handleError = (error: Error) => {
         if (!axios.isCancel(error)) {
-            setError(error);
+            setError("There was an error with the request");
             console.error(error);
         }
     };
 
     const apiModel = model.getApiModel(api);
     const apiQuery = useMemo(() => {
-        const query: Parameters<InstanceType<typeof Model>["get"]>[0] = {
+        const query: any = {
             fields: model ? model.getFields() : d2BaseModelFields,
             filter: {
                 lastUpdated: filters.lastUpdated
@@ -333,6 +348,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                     : undefined,
                 ...model.getApiModelFilters(),
             },
+            defaults: "EXCLUDE",
         };
 
         if (query.filter && model.getGroupFilterName()) {
@@ -498,25 +514,27 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         indeterminate: false,
     }));
 
-    const childrenSelection: TableSelection[] = _(rows)
-        .intersectionBy(selection, "id")
-        .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType[])
-        .flattenDeep()
-        .differenceBy(selection, "id")
-        .differenceBy(exclusion, "id")
-        .map(({ id }) => {
-            return {
-                id,
-                checked: true,
-                indeterminate: !_.find(selection, { id }),
-            };
-        })
-        .value();
+    const childrenSelection: TableSelection[] = showIndeterminateSelection
+        ? _(rows)
+              .intersectionBy(selection, "id")
+              .map(row => (_.values(_.pick(row, childrenKeys)) as unknown) as MetadataType[])
+              .flattenDeep()
+              .differenceBy(selection, "id")
+              .differenceBy(exclusion, "id")
+              .map(({ id }) => {
+                  return {
+                      id,
+                      checked: true,
+                      indeterminate: !_.find(selection, { id }),
+                  };
+              })
+              .value()
+        : [];
 
     const columns = uniqCombine([...model.getColumns(), ...additionalColumns]);
     const actions = uniqCombine([...tableActions, ...additionalActions]);
 
-    if (error) return <p>{"Error: " + JSON.stringify(error)}</p>;
+    if (error) return <p>{error}</p>;
 
     return (
         <ObjectsTable<MetadataType>

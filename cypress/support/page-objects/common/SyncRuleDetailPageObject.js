@@ -1,13 +1,8 @@
+import * as instanceSelectionStep from "../../page-utils/instanceSelectionStep";
 import { dataTest } from "../../utils";
 import PageObject from "./PageObject";
-import * as instanceSelectionStep from "../../page-utils/instanceSelectionStep";
 
 export default class SyncRuleDetailPageObject extends PageObject {
-    constructor(cy, key) {
-        super(cy);
-        this.key = key;
-    }
-
     assertName(assert) {
         assert(this.cy.get(dataTest("name")));
         return this;
@@ -49,6 +44,11 @@ export default class SyncRuleDetailPageObject extends PageObject {
 
     selectRow(text) {
         this.cy.selectRowInTableByText(text);
+        return this;
+    }
+
+    selectFilterInTable(filterLabel, filterValue) {
+        cy.selectFilterInTable(filterLabel, filterValue);
         return this;
     }
 

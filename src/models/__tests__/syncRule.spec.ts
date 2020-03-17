@@ -5,10 +5,10 @@ const indicatorIncludeExcludeRules = {
     includeRules: [
         "attributes",
         "legendSets",
-        "indicatorType",
+        "indicatorTypes",
         "indicatorGroups",
         "indicatorGroups.attributes",
-        "indicatorGroups.indicatorGroupSet",
+        "indicatorGroups.indicatorGroupSets",
     ],
     excludeRules: ["dataSets", "programs"],
 };
@@ -109,10 +109,10 @@ describe("SyncRule", () => {
                     includeRules: [
                         "attributes",
                         "legendSets",
-                        "indicatorType",
+                        "indicatorTypes",
                         "indicatorGroups",
                         "indicatorGroups.attributes",
-                        "indicatorGroups.indicatorGroupSet",
+                        "indicatorGroups.indicatorGroupSets",
                     ],
                     excludeRules: ["dataSets", "programs"],
                 },
