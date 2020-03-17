@@ -130,6 +130,8 @@ export function cleanModelName(d2: D2, id: string, caller: string): string | nul
         return caller + "Sets";
     } else if (id === "workflow") {
         return "dataApprovalWorkflow";
+    } else if (id === "relatedProgram") {
+        return "programs";
     } else if (_.includes(["parent", "children", "ancestors"], id)) {
         return caller;
     } else {

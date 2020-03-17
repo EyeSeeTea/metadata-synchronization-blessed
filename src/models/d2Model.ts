@@ -377,7 +377,8 @@ export class ProgramModel extends D2Model {
 
     protected static excludeRules = [
         "programStages.dataElements.dataElementGroups.dataElements",
-        "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",];
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",
+        "programs"];
     protected static includeRules = [
         "attributes",
         "categoryCombos.attributes",
@@ -390,6 +391,8 @@ export class ProgramModel extends D2Model {
         "dataApprovalWorkflow",
         "dataApprovalWorkflow.dataApprovalLevels",
         "programStages",
+        "programStages.programStageSections",
+        "programStages.attributes",
         "programStages.dataElements",
         "programStages.dataElements.attributes",
         "programStages.dataElements.legendSets",
@@ -404,7 +407,12 @@ export class ProgramModel extends D2Model {
         "programStages.dataElements.dataElementGroups.attributes",
         "programStages.dataElements.dataElementGroups.dataElementGroupSets",
         "programStages.dataElements.dataElementGroups.dataElementGroupSets.attributes",
-        "programStages.programStageSections"
+        "programRuleVariables",
+        "trackedEntityTypes",
+        "trackedEntityTypes.trackedEntityAttributes",
+        "trackedEntityTypes.trackedEntityAttributes.legendSets",
+        "trackedEntityAttributes",
+        "trackedEntityAttributes.legendSets"
     ];
 
     protected static modelTransform = (
