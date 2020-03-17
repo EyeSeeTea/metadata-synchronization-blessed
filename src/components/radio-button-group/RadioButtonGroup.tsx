@@ -31,7 +31,7 @@ export default function RadioButtonGroup({
 }: RadioButtonGroupProps) {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         onChange(event);
-        onValueChange((event.target as HTMLInputElement).value);
+        onValueChange(event.target.value as string);
     };
 
     return (

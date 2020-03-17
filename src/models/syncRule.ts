@@ -1,8 +1,8 @@
 import cronstrue from "cronstrue";
+import { D2Api } from "d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import moment from "moment";
-import { D2 } from "../types/d2";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import {
     DataSynchronizationParams,
@@ -28,27 +28,26 @@ export default class SyncRule {
     private readonly syncRule: SynchronizationRule;
 
     constructor(syncRule: SynchronizationRule) {
-        this.syncRule = {
-            id: generateUid(),
-            ..._.pick(syncRule, [
-                "id",
-                "name",
-                "code",
-                "created",
-                "description",
-                "builder",
-                "enabled",
-                "frequency",
-                "lastExecuted",
-                "lastUpdated",
-                "lastUpdatedBy",
-                "publicAccess",
-                "user",
-                "userAccesses",
-                "userGroupAccesses",
-                "type",
-            ]),
-        };
+        this.syncRule = _.pick(syncRule, [
+            "id",
+            "name",
+            "code",
+            "created",
+            "description",
+            "builder",
+            "enabled",
+            "frequency",
+            "lastExecuted",
+            "lastUpdated",
+            "lastUpdatedBy",
+            "publicAccess",
+            "user",
+            "userAccesses",
+            "userGroupAccesses",
+            "type",
+        ]);
+
+        if (!this.syncRule.id) this.syncRule.id = generateUid();
     }
 
     public replicate(): SyncRule {
@@ -237,13 +236,13 @@ export default class SyncRule {
         return syncRule ? new SyncRule(syncRule) : this.create();
     }
 
-    public static async get(d2: D2, id: string): Promise<SyncRule> {
-        const data = await getDataById(d2, dataStoreKey, id);
+    public static async get(api: D2Api, id: string): Promise<SyncRule> {
+        const data = await getDataById(api, dataStoreKey, id);
         return this.build(data);
     }
 
     public static async list(
-        d2: D2,
+        api: D2Api,
         filters: SyncRuleTableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
@@ -255,10 +254,10 @@ export default class SyncRule {
         } = filters || {};
         const { page = 1, pageSize = 20, paging = true, sorting } = pagination || {};
 
-        const globalAdmin = await isGlobalAdmin(d2);
-        const userInfo = await getUserInfo(d2);
+        const globalAdmin = await isGlobalAdmin(api);
+        const userInfo = await getUserInfo(api);
 
-        const data = await getPaginatedData(d2, dataStoreKey, filters, { paging: false, sorting });
+        const data = await getPaginatedData(api, dataStoreKey, filters, { paging: false, sorting });
         const filteredObjects = _(data.objects)
             .filter(data => {
                 const rule = SyncRule.build(data);
@@ -639,16 +638,16 @@ export default class SyncRule {
         return isUserOwner || isPublic || hasUserAccess || hasGroupAccess;
     }
 
-    public async save(d2: D2): Promise<SyncRule> {
-        const userInfo = await getUserInfo(d2);
+    public async save(api: D2Api): Promise<SyncRule> {
+        const userInfo = await getUserInfo(api);
         const user = _.pick(userInfo, ["id", "name"]);
         const exists = !!this.syncRule.id;
         const element = exists
             ? this.syncRule
             : { ...this.syncRule, id: generateUid(), created: new Date(), user };
 
-        if (exists) await this.remove(d2);
-        await saveData(d2, dataStoreKey, {
+        if (exists) await this.remove(api);
+        await saveData(api, dataStoreKey, {
             ...element,
             lastUpdated: new Date(),
             lastUpdatedBy: user,
@@ -657,8 +656,8 @@ export default class SyncRule {
         return new SyncRule(element);
     }
 
-    public async remove(d2: D2): Promise<void> {
-        await deleteData(d2, dataStoreKey, this.syncRule);
+    public async remove(api: D2Api): Promise<void> {
+        await deleteData(api, dataStoreKey, this.syncRule);
     }
 
     public async validate(): Promise<Validation> {
@@ -680,7 +679,9 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncOrganisationUnits: _.compact([
-                this.type !== "metadata" && this.dataSyncOrgUnitPaths.length === 0
+                this.type !== "metadata" &&
+                this.type !== "deleted" &&
+                this.dataSyncOrgUnitPaths.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "organisation unit" },

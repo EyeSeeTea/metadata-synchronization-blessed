@@ -85,3 +85,11 @@ export const getRows = memoize(
     },
     { maxArgs: 6 }
 );
+
+export async function getOrgUnitSubtree(api: D2Api, orgUnitId: string): Promise<string[]> {
+    const { organisationUnits } = (await api
+        .get(`/organisationUnits/${orgUnitId}`, { fields: "id", includeDescendants: true })
+        .getData()) as { organisationUnits: { id: string }[] };
+
+    return organisationUnits.map(({ id }) => id);
+}

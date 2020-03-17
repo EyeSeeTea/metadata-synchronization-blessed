@@ -1,5 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
-import { useD2 } from "d2-api";
+import { useD2Api } from "d2-api";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -15,7 +15,6 @@ import {
     EventProgramModel,
 } from "../../models/d2Model";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
-import { D2 } from "../../types/d2";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
@@ -49,7 +48,7 @@ interface InstanceMappingParams {
 
 export default function InstanceMappingPage() {
     const history = useHistory();
-    const d2 = useD2();
+    const api = useD2Api();
 
     const { id, section } = useParams() as InstanceMappingParams;
     const { models, title: sectionTitle, isGlobalMapping } = config[section];
@@ -57,8 +56,8 @@ export default function InstanceMappingPage() {
     const [instance, setInstance] = useState<Instance>();
 
     useEffect(() => {
-        Instance.get(d2 as D2, id).then(setInstance);
-    }, [d2, id]);
+        Instance.get(api, id).then(setInstance);
+    }, [api, id]);
 
     const backHome = () => {
         history.push(`/instances/mapping/${id}`);
@@ -68,7 +67,7 @@ export default function InstanceMappingPage() {
         if (!instance) return;
 
         const newInstance = instance.setMetadataMapping(mapping);
-        await newInstance.save(d2 as D2);
+        await newInstance.save(api);
         setInstance(newInstance);
     };
 

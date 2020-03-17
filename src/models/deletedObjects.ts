@@ -1,10 +1,8 @@
-import _ from "lodash";
 import axios from "axios";
+import { D2Api } from "d2-api";
+import _ from "lodash";
 import moment from "moment";
-
-import { D2 } from "../types/d2";
-import { TableList, TablePagination, TableFilters } from "../types/d2-ui-components";
-import { getBaseUrl } from "../utils/d2";
+import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 
 type DeletedObjectData = {
     uid: string;
@@ -50,7 +48,7 @@ export default class DeletedObject {
     }
 
     public static async list(
-        d2: D2,
+        api: D2Api,
         filters: TableFilters,
         pagination: TablePagination
     ): Promise<TableList> {
@@ -59,7 +57,7 @@ export default class DeletedObject {
             pagination || {};
 
         const { deletedObjects: rawData } = (
-            await axios.get(getBaseUrl(d2) + "/deletedObjects", {
+            await axios.get(api.apiPath + "/deletedObjects", {
                 withCredentials: true,
                 params: {
                     fields: ":all,uid~rename(id)",

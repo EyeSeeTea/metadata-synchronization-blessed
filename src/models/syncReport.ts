@@ -1,7 +1,7 @@
+import { D2Api } from "d2-api";
 import { TableInitialState, TablePagination } from "d2-ui-components";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
-import { D2 } from "../types/d2";
 import { SyncReportTableFilters } from "../types/d2-ui-components";
 import {
     SynchronizationReport,
@@ -59,13 +59,13 @@ export default class SyncReport {
         return syncReport ? new SyncReport(syncReport) : this.create();
     }
 
-    public static async get(d2: D2, id: string): Promise<SyncReport | null> {
-        const data = await getDataById(d2, dataStoreKey, id);
+    public static async get(api: D2Api, id: string): Promise<SyncReport | null> {
+        const data = await getDataById(api, dataStoreKey, id);
         return data ? this.build(data) : null;
     }
 
     public static async list(
-        d2: D2,
+        api: D2Api,
         filters: SyncReportTableFilters,
         state?: TableInitialState<SynchronizationReport>,
         paging = true
@@ -74,7 +74,7 @@ export default class SyncReport {
         const { pagination, sorting } = state || {};
         const { page = 1, pageSize = 25 } = pagination || {};
 
-        const data = await getPaginatedData(d2, dataStoreKey, filters, {
+        const data = await getPaginatedData(api, dataStoreKey, filters, {
             paging: false,
             sorting: [sorting?.field ?? "id", sorting?.order ?? "asc"],
         });
@@ -93,18 +93,18 @@ export default class SyncReport {
         return { rows, pager: { ...pagination, page, pageSize, total } };
     }
 
-    public async save(d2: D2): Promise<void> {
+    public async save(api: D2Api): Promise<void> {
         const exists = !!this.syncReport.id;
         const element = exists ? this.syncReport : { ...this.syncReport, id: generateUid() };
 
-        if (exists) await this.remove(d2);
-        await saveDataStore(d2, `${dataStoreKey}-${element.id}`, this.results);
-        await saveData(d2, dataStoreKey, element);
+        if (exists) await this.remove(api);
+        await saveDataStore(api, `${dataStoreKey}-${element.id}`, this.results);
+        await saveData(api, dataStoreKey, element);
     }
 
-    public async remove(d2: D2): Promise<void> {
-        await deleteDataStore(d2, `${dataStoreKey}-${this.syncReport.id}`);
-        await deleteData(d2, dataStoreKey, this.syncReport);
+    public async remove(api: D2Api): Promise<void> {
+        await deleteDataStore(api, `${dataStoreKey}-${this.syncReport.id}`);
+        await deleteData(api, dataStoreKey, this.syncReport);
     }
 
     public setStatus(status: SynchronizationReportStatus): void {
@@ -115,9 +115,9 @@ export default class SyncReport {
         this.results = _.unionBy([...result], this.results, "instance.id");
     }
 
-    public async loadSyncResults(d2: D2): Promise<SynchronizationResult[]> {
+    public async loadSyncResults(api: D2Api): Promise<SynchronizationResult[]> {
         const { id } = this.syncReport;
-        return id ? getDataStore(d2, `${dataStoreKey}-${id}`, []) : [];
+        return id ? getDataStore(api, `${dataStoreKey}-${id}`, []) : [];
     }
 
     public hasErrors(): boolean {

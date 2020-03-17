@@ -101,6 +101,8 @@ export const metadataSteps: SyncWizardStep[] = [
     commonSteps.summary,
 ];
 
+export const deletedSteps: SyncWizardStep[] = [commonSteps.instanceSelection];
+
 export const aggregatedSteps: SyncWizardStep[] = [
     commonSteps.generalInfo,
     {

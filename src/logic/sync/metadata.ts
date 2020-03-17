@@ -31,8 +31,7 @@ export class MetadataSync extends GenericSync {
             const nestedIncludeRules: NestedRules = buildNestedRules(includeRules);
 
             // Get all the required metadata
-            const { baseUrl } = this.d2.Api.getApi();
-            const syncMetadata = await getMetadata(baseUrl, ids);
+            const syncMetadata = await getMetadata(this.api, ids);
             const elements = syncMetadata[model.plural] || [];
 
             for (const element of elements) {
@@ -69,7 +68,6 @@ export class MetadataSync extends GenericSync {
     }
 
     public buildPayload = memoize(async () => {
-        const { baseUrl } = this.d2.Api.getApi();
         const { metadataIds, syncParams } = this.builder;
         const {
             includeSharingSettings = true,
@@ -77,10 +75,10 @@ export class MetadataSync extends GenericSync {
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
 
-        const metadata = await getMetadata(baseUrl, metadataIds, "id");
+        const metadata = await getMetadata(this.api, metadataIds, "id");
         const exportPromises = _.keys(metadata)
             .map(type => {
-                const myClass = d2ModelFactory(this.api, type as keyof D2ModelSchemas);
+                const myClass = d2ModelFactory(this.api, type);
                 const metadataType = myClass.getMetadataType();
 
                 return {
@@ -107,7 +105,7 @@ export class MetadataSync extends GenericSync {
         const payloadPackage = await this.buildPayload();
         console.debug("Metadata package", payloadPackage);
 
-        return postMetadata(instance, payloadPackage, syncParams);
+        return postMetadata(instance.getApi(), payloadPackage, syncParams);
     }
 
     protected cleanResponse(response: MetadataImportResponse, instance: Instance) {

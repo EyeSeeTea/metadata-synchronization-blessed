@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-17T11:48:37.174Z\n"
-"PO-Revision-Date: 2020-03-17T11:48:37.174Z\n"
+"POT-Creation-Date: 2020-03-16T14:36:28.132Z\n"
+"PO-Revision-Date: 2020-03-16T14:36:28.132Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -186,18 +186,6 @@ msgid "Select"
 msgstr ""
 
 msgid "Search by name"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-msgid "Metadata Type"
-msgstr ""
-
-msgid "Last update"
-msgstr ""
-
-msgid "Deleted date"
 msgstr ""
 
 msgid "Help"
@@ -417,6 +405,9 @@ msgstr ""
 msgid "Events"
 msgstr ""
 
+msgid "Name"
+msgstr ""
+
 msgid "Field cannot be blank"
 msgstr ""
 
@@ -581,12 +572,6 @@ msgstr ""
 msgid "Use default configuration"
 msgstr ""
 
-msgid "Retrieving information from remote instances"
-msgstr ""
-
-msgid "Deleting objects in instance {{instance}}"
-msgstr ""
-
 msgid "Preparing synchronization"
 msgstr ""
 
@@ -618,6 +603,9 @@ msgid "Aggregated Data Synchronization History"
 msgstr ""
 
 msgid "Events Synchronization History"
+msgstr ""
+
+msgid "Deleted Synchronization History"
 msgstr ""
 
 msgid "Ready"
@@ -865,7 +853,13 @@ msgstr ""
 msgid "Global mapping"
 msgstr ""
 
-msgid "Deleted by"
+msgid "Metadata Synchronization"
+msgstr ""
+
+msgid "Aggregated Data Synchronization"
+msgstr ""
+
+msgid "Events Synchronization"
 msgstr ""
 
 msgid "Deleted Objects Synchronization"
@@ -877,16 +871,10 @@ msgstr ""
 msgid "Unknown error with the request"
 msgstr ""
 
-msgid "Synchronizing metadata"
+msgid "Deleted date"
 msgstr ""
 
-msgid "Metadata Synchronization"
-msgstr ""
-
-msgid "Aggregated Data Synchronization"
-msgstr ""
-
-msgid "Events Synchronization"
+msgid "Deleted by"
 msgstr ""
 
 msgid "New {{type}} synchronization rule"
