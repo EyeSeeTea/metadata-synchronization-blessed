@@ -5,7 +5,8 @@ import { D2, Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { getBaseUrl } from "../utils/d2";
 
-const dataStoreNamespace = "metadata-synchronization";
+export const dataStoreNamespace = "metadata-synchronization";
+export const dataStoreVersion = 1;
 
 export async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Promise<any> {
     const baseUrl = getBaseUrl(d2);

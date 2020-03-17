@@ -2,7 +2,7 @@ import i18n from "@dhis2/d2-i18n";
 import { DialogContent } from "@material-ui/core";
 import { ConfirmationDialog, Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
@@ -60,10 +60,6 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
         await updateMapping(newMapping);
     };
 
-    const onStepChangeRequest = async (_prev: WizardStep, _next: WizardStep) => {
-        return undefined;
-    };
-
     const steps: MappingWizardStep[] =
         prepareSteps(type, element).map(({ models, isVisible, ...step }) => ({
             ...step,
@@ -80,13 +76,22 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
             },
         })) ?? [];
 
+    const [stepName, updateStepName] = useState<string>(steps[0]?.label);
+
+    const onStepChangeRequest = async (_prev: WizardStep, next: WizardStep) => {
+        updateStepName(next.label);
+        return undefined;
+    };
+
     if (steps.length === 0) return null;
 
     const urlHash = location.hash.slice(1);
     const stepExists = steps.find(step => step.key === urlHash);
     const firstStepKey = steps.map(step => step.key)[0];
     const initialStepKey = stepExists ? urlHash : firstStepKey;
-    const title = i18n.t("Related metadata mapping for {{name}} ({{id}})", element);
+
+    const mainTitle = i18n.t(`Related metadata mapping for {{name}} ({{id}})`, element);
+    const title = _.compact([mainTitle, stepName]).join(" - ");
 
     return (
         <ConfirmationDialog

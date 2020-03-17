@@ -93,9 +93,9 @@ export class EventsSync extends GenericSync {
         originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
     ): ProgramEvent {
-        const { organisationUnits = {}, programs = {} } = globalMapping;
+        const { organisationUnits = {}, eventPrograms = {} } = globalMapping;
         const { mappedId: mappedProgram = program, mapping: innerMapping = {} } =
-            programs[program] ?? {};
+            eventPrograms[program] ?? {};
         const { programStages = {} } = innerMapping;
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedProgramStage = programStages[programStage]?.mappedId ?? programStage;
