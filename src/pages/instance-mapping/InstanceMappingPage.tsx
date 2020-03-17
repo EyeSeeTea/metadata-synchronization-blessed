@@ -51,7 +51,7 @@ export default function InstanceMappingPage() {
     const api = useD2Api();
 
     const { id, section } = useParams() as InstanceMappingParams;
-    const { models, title, isGlobalMapping } = config[section];
+    const { models, title: sectionTitle, isGlobalMapping } = config[section];
 
     const [instance, setInstance] = useState<Instance>();
 
@@ -79,12 +79,12 @@ export default function InstanceMappingPage() {
         await onChangeMapping(newMapping);
     };
 
+    const instanceTitle = instance ? i18n.t("Destination instance {{name}}", instance) : undefined;
+    const title = _.compact([sectionTitle, instanceTitle]).join(" - ");
+
     return (
         <React.Fragment>
-            <PageHeader
-                title={instance ? `${title} - Destination instance: ${instance?.name}` : title}
-                onBackClick={backHome}
-            />
+            <PageHeader title={title} onBackClick={backHome} />
 
             {!!instance && (
                 <MappingTable

@@ -443,6 +443,7 @@ export default function MappingTable({
     const columns: TableColumn<MetadataType>[] = useMemo(
         () =>
             _.compact([
+                { name: "lastUpdated", text: i18n.t("Last updated"), sortable: true, hidden: true },
                 {
                     name: "id",
                     text: i18n.t("ID"),

@@ -90,12 +90,13 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     const firstStepKey = steps.map(step => step.key)[0];
     const initialStepKey = stepExists ? urlHash : firstStepKey;
 
-    const title = i18n.t(`Related metadata mapping for {{name}} ({{id}})`, element);
+    const mainTitle = i18n.t(`Related metadata mapping for {{name}} ({{id}})`, element);
+    const title = _.compact([mainTitle, stepName]).join(" - ");
 
     return (
         <ConfirmationDialog
             isOpen={true}
-            title={title + stepName ? ` - ${stepName}` : ""}
+            title={title}
             onCancel={onCancel}
             cancelText={i18n.t("Close")}
             maxWidth={"lg"}

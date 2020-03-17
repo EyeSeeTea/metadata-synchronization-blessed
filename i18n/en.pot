@@ -23,6 +23,15 @@ msgstr ""
 msgid "List"
 msgstr ""
 
+msgid "Edit mapping for {{total}} elements"
+msgstr ""
+
+msgid "Edit mapping for {{name}} ({{id}})"
+msgstr ""
+
+msgid "Destination instance {{name}}"
+msgstr ""
+
 msgid "Close"
 msgstr ""
 
@@ -84,6 +93,9 @@ msgid "Please select at least one item to validate mapping"
 msgstr ""
 
 msgid "You need to map this element before accessing its related metadata mapping"
+msgstr ""
+
+msgid "Last updated"
 msgstr ""
 
 msgid "ID"
@@ -540,9 +552,6 @@ msgid "Organisation unit"
 msgstr ""
 
 msgid "Event date"
-msgstr ""
-
-msgid "Last updated"
 msgstr ""
 
 msgid "Stored by"
