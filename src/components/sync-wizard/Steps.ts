@@ -11,6 +11,7 @@ import EventsSelectionStep from "./data/EventsSelectionStep";
 import OrganisationUnitsSelectionStep from "./data/OrganisationUnitsSelectionStep";
 import PeriodSelectionStep from "./data/PeriodSelectionStep";
 import MetadataIncludeExcludeStep from "./metadata/MetadataIncludeExcludeStep";
+import AggregationStep from "./data/AggregationStep";
 
 export interface SyncWizardStep extends WizardStep {
     validationKeys: string[];
@@ -131,6 +132,13 @@ export const aggregatedSteps: SyncWizardStep[] = [
         label: i18n.t("Category options"),
         component: CategoryOptionsSelectionStep,
         validationKeys: ["categoryOptionIds"],
+        showOnSyncDialog: true,
+    },
+    {
+        key: "aggregation",
+        label: i18n.t("Aggregation"),
+        component: AggregationStep,
+        validationKeys: [],
         showOnSyncDialog: true,
     },
     commonSteps.instanceSelection,
