@@ -27,7 +27,7 @@ before_install:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - d2-docker start eyeseetea/dhis2-data:2.30-datasync-sender -d &
 install:
-  - git clone "https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${FEEDBACK_REPO}" feedback-ci
+  - git clone --single-branch --branch gh-pages "https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${FEEDBACK_REPO}" feedback-ci
   - yarn install --frozen-lockfile
   - yarn cy:verify
   - yarn test
@@ -42,7 +42,7 @@ script:
   - GITHUB_PAGES_PATH=$(cat ../pages_path)
   - echo "- Built ``${TRAVIS_REPO_SLUG} ${TRAVIS_COMMIT_MESSAGE}`` against branch ${BRANCH} on $(date). [Report](${GITHUB_PAGES_ROOT}${GITHUB_PAGES_PATH})" >> README.md
   - git add . && git commit -m "Results for $TRAVIS_EVENT_TYPE on $TRAVIS_COMMIT"
-  - git push "https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${FEEDBACK_REPO}" master -f
+  - git push "https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${FEEDBACK_REPO}" gh-pages -f
   - if [[ $TRAVIS_TEST_RESULT == 0 ]]; then MESSAGE_TITLE="Tests ran successfully :tada:"; else MESSAGE_TITLE="Tests failed with errors :rotating_light:"; fi;
   - if [[ $TRAVIS_PULL_REQUEST != "false" ]]; then http -a ${GITHUB_USERNAME}:${GITHUB_PASSWORD} POST https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments body="<h3>${MESSAGE_TITLE}</h3><br />Build commit ${TRAVIS_COMMIT_MESSAGE} with commit id ${TRAVIS_COMMIT} on branch ${BRANCH}<br /><br />Travis log available at ${TRAVIS_BUILD_WEB_URL}<br /><br />See cypress results at ${GITHUB_PAGES_ROOT}${GITHUB_PAGES_PATH}"; fi;
   - kill $(jobs -p) || true
