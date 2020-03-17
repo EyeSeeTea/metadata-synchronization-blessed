@@ -62,7 +62,7 @@ cypress
         },
     })
     .then(() => {
-        generateReport({
+        return generateReport({
             reportDir,
             reportFilename: "index",
             charts: true,
