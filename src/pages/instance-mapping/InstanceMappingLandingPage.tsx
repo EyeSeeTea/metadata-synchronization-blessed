@@ -1,11 +1,12 @@
 import i18n from "@dhis2/d2-i18n";
-import React, { useState, useEffect } from "react";
+import { useD2 } from "d2-api";
+import _ from "lodash";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Card, Landing } from "../../components/landing/Landing";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import Instance from "../../models/instance";
 import { D2 } from "../../types/d2";
-import { useD2 } from "d2-api";
 
 const InstanceMappingLandingPage: React.FC = () => {
     const d2 = useD2();
@@ -56,15 +57,13 @@ const InstanceMappingLandingPage: React.FC = () => {
         history.push("/instances");
     };
 
-    const title = i18n.t("Instance mapping");
+    const mainTitle = i18n.t("Instance mapping");
+    const instanceTitle = instance ? i18n.t("Destination instance {{name}}", instance) : undefined;
+    const title = _.compact([mainTitle, instanceTitle]).join(" - ");
 
     return (
         <TestWrapper>
-            <Landing
-                title={instance ? `${title} - Destination instance: ${instance?.name}` : title}
-                cards={cards}
-                onBackClick={backHome}
-            />
+            <Landing title={title} cards={cards} onBackClick={backHome} />
         </TestWrapper>
     );
 };

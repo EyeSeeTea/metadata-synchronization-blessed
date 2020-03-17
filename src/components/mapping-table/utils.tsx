@@ -393,5 +393,6 @@ export const buildDataElementFilterForProgram = async (
     const { mappedId } = _.get(mapping, ["eventPrograms", originProgramId]) ?? {};
 
     if (!mappedId) return undefined;
-    return getValidIds(api, programModel, mappedId);
+    const validIds = await getValidIds(api, programModel, mappedId);
+    return [...validIds, mappedId];
 };
