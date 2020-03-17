@@ -112,6 +112,10 @@ Cypress.Commands.add("selectRowInTableByText", text => {
         .click();
 });
 
+Cypress.Commands.add("selectFilterInTable", (filterLabel, filterValue) => {
+    cy.selectInDropdown("#app", filterLabel, filterValue);
+});
+
 Cypress.Commands.add("selectInDropdown", (containerSelector, label, option) => {
     const parent = containerSelector ? cy.get(containerSelector) : cy;
 

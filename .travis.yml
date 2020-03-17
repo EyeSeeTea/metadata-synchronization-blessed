@@ -1,44 +1,44 @@
 language: node_js
 node_js:
-  - 12.13.0
+    - 12.13.0
 dist: bionic
 cache:
-  directories:
-    - "$HOME/.cache"
+    directories:
+        - "$HOME/.cache"
 before_install:
-  - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-  # Install python dependencies
-  - sudo apt-get update
-  - sudo apt-get install python3 python python3-setuptools docker.io docker-compose
-  #  Install d2-docker
-  - git clone https://github.com/EyeSeeTea/d2-docker.git
-  - cd d2-docker/
-  - sudo python3 setup.py install
-  - d2-docker --help
-  # Hack to not be prompted in the terminal
-  - sudo apt-get remove golang-docker-credential-helpers
-  # Start docker service
-  - sudo systemctl unmask docker.service
-  - sudo systemctl unmask docker.socket
-  - sudo systemctl start docker.service
-  # Login to docker
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  # Start docker service
-  - d2-docker start eyeseetea/dhis2-data:2.30-datasync-sender -d
+    - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+    # Install python dependencies
+    - sudo apt-get update
+    - sudo apt-get install python3 python python3-setuptools docker.io docker-compose
+    #  Install d2-docker
+    - git clone https://github.com/EyeSeeTea/d2-docker.git
+    - cd d2-docker/
+    - sudo python3 setup.py install
+    - d2-docker --help
+    # Hack to not be prompted in the terminal
+    - sudo apt-get remove golang-docker-credential-helpers
+    # Start docker service
+    - sudo systemctl unmask docker.service
+    - sudo systemctl unmask docker.socket
+    - sudo systemctl start docker.service
+    # Login to docker
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    # Start docker service
+    - d2-docker start eyeseetea/dhis2-data:2.30-datasync-sender -d
 install:
-  - yarn install --frozen-lockfile
-  - yarn cy:verify
-  - yarn build
+    - yarn install --frozen-lockfile
+    - yarn cy:verify
+    - yarn build
 script:
-  - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true yarn start &
-  - yarn wait-on http-get://localhost:8081
-  - yarn wait-on http-get://localhost:8080
-  - CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:run
-  - kill $(jobs -p) || true
+    - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true yarn start &
+    - yarn wait-on http-get://localhost:8081
+    - yarn wait-on http-get://localhost:8080
+    - CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8081 yarn cy:e2e:run #--record --key $CYPRESS_KEY
+    - kill $(jobs -p) || true
 addons:
-  apt:
-    packages:
-    - libgconf-2-4
+    apt:
+        packages:
+            - libgconf-2-4
 notifications:
-  slack:
-    secure: R/tguoSgiUOK5qYmRoSv4qVkgGaF26PVnjqefXGc8oMc4scbssjbhQt+qVC2RuhB3ErXmez+BfaKcLLR6cEFY4cm+puBD+mU6fP2rDCiQRnmfaZmvdT/MY1KTSKlT2JzQ/YU9IQfdUetr/7lUbdyTcJQ8r+QOMwQu/drSGUEOt+eTHO5HQFVfhHnmoYWJ4oWxAWUyJx7DbXgRy9K5JlYlv2Vesol5vpSzjdXNlcXV3EPOD009ODO2+EboKujZHvLJakAjy/sCgtqB0ys22WXPv5dOj8FCJRjFSKpe9s5pZYjvjJfjD7GnIcP6/AAe+m3OC9/fDxdFtXeppJ95FNEQKyWCVAS9QNY50G4W0sHlR6VZ3OUhLnIQLKeNncTWG5QaUc4+/vYmbeEYFahOATMUX8I4uUVuT+5jDS883kHQ6Z8XxUWy3PztuM3kOz/cv3zppd2icpPtqDTkIql5CdA4ZHmBElD3GiIJgEfUOaUqn4isivALv024UnQhwrHCK55ymcphotzjdnhRQSlY2MeywA+TqaAtcYwoqKOBbvHQ2c8QMfanbT9UvmAE7+X0VruF5hgvaKA5DgT51RZl8YQVuLBbrfcT8+XrTypl2fwpJ4/23wltR/Ex9K7wJtjQeM1oz37mzFUW7zfvlHsXgWy2WtTkM/icAlxLM7ZN5YGMxI=
+    slack:
+        secure: R/tguoSgiUOK5qYmRoSv4qVkgGaF26PVnjqefXGc8oMc4scbssjbhQt+qVC2RuhB3ErXmez+BfaKcLLR6cEFY4cm+puBD+mU6fP2rDCiQRnmfaZmvdT/MY1KTSKlT2JzQ/YU9IQfdUetr/7lUbdyTcJQ8r+QOMwQu/drSGUEOt+eTHO5HQFVfhHnmoYWJ4oWxAWUyJx7DbXgRy9K5JlYlv2Vesol5vpSzjdXNlcXV3EPOD009ODO2+EboKujZHvLJakAjy/sCgtqB0ys22WXPv5dOj8FCJRjFSKpe9s5pZYjvjJfjD7GnIcP6/AAe+m3OC9/fDxdFtXeppJ95FNEQKyWCVAS9QNY50G4W0sHlR6VZ3OUhLnIQLKeNncTWG5QaUc4+/vYmbeEYFahOATMUX8I4uUVuT+5jDS883kHQ6Z8XxUWy3PztuM3kOz/cv3zppd2icpPtqDTkIql5CdA4ZHmBElD3GiIJgEfUOaUqn4isivALv024UnQhwrHCK55ymcphotzjdnhRQSlY2MeywA+TqaAtcYwoqKOBbvHQ2c8QMfanbT9UvmAE7+X0VruF5hgvaKA5DgT51RZl8YQVuLBbrfcT8+XrTypl2fwpJ4/23wltR/Ex9K7wJtjQeM1oz37mzFUW7zfvlHsXgWy2WtTkM/icAlxLM7ZN5YGMxI=

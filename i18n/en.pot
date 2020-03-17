@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-02T11:43:32.217Z\n"
-"PO-Revision-Date: 2020-03-02T11:43:32.217Z\n"
+"POT-Creation-Date: 2020-03-17T11:48:37.174Z\n"
+"PO-Revision-Date: 2020-03-17T11:48:37.174Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -29,25 +29,34 @@ msgstr ""
 msgid "Edit mapping for {{name}} ({{id}})"
 msgstr ""
 
+msgid "Destination instance {{name}}"
+msgstr ""
+
 msgid "Close"
 msgstr ""
 
 msgid "Could not connect with remote instance"
 msgstr ""
 
-msgid "Applying mapping update for element {{id}}"
+msgid "Applying mapping update for element {{name}}"
 msgstr ""
 
 msgid "Could not apply mapping, please try again."
 msgstr ""
 
-msgid "Disable mapping"
+msgid "You need to map the item before applying a global mapping"
 msgstr ""
 
-msgid "Are you sure you want to disable mapping for {{total}} elements?"
+msgid "Successfully applied global mapping"
 msgstr ""
 
-msgid "Please select at least one item to disable mapping"
+msgid "Exclude mapping"
+msgstr ""
+
+msgid "Are you sure you want to exclude mapping for {{total}} elements?"
+msgstr ""
+
+msgid "Please select at least one item to exclude mapping"
 msgstr ""
 
 msgid "Reset mapping"
@@ -62,7 +71,7 @@ msgstr ""
 msgid "Preparing auto-mapping for {{total}} elements"
 msgstr ""
 
-msgid "Could not find a suitable candidate to apply auto-mapping"
+msgid "Could not find a suitable candidate to apply auto-mapping for {{id}}"
 msgstr ""
 
 msgid "You need to select all items from the same type"
@@ -71,19 +80,64 @@ msgstr ""
 msgid "You need to select at least one valid item"
 msgstr ""
 
+msgid "Validating mapping for {{total}} elements"
+msgstr ""
+
+msgid "Validate mapping"
+msgstr ""
+
+msgid "Are you sure you want to validate mapping for {{total}} elements?"
+msgstr ""
+
+msgid "Please select at least one item to validate mapping"
+msgstr ""
+
 msgid "You need to map this element before accessing its related metadata mapping"
 msgstr ""
 
-msgid "Disabled"
+msgid "Last updated"
+msgstr ""
+
+msgid "ID"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Mapped ID"
 msgstr ""
 
 msgid "Set mapping"
 msgstr ""
 
-msgid "Not mapped"
+msgid "Mapped Name"
 msgstr ""
 
 msgid "Mapping has errors"
+msgstr ""
+
+msgid "Mapped Level"
+msgstr ""
+
+msgid "Mapping Status"
+msgstr ""
+
+msgid "Not mapped"
+msgstr ""
+
+msgid "Excluded"
+msgstr ""
+
+msgid "Mapped (Global)"
+msgstr ""
+
+msgid "Mapped"
+msgstr ""
+
+msgid "Select children"
+msgstr ""
+
+msgid "Make this mapping global"
 msgstr ""
 
 msgid "Auto-map element"
@@ -108,9 +162,6 @@ msgid "Options"
 msgstr ""
 
 msgid "Program Stages"
-msgstr ""
-
-msgid "Metadata type"
 msgstr ""
 
 msgid "Last updated date"
@@ -428,10 +479,16 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
+msgid "Target instances [{{total}}]"
+msgstr ""
+
 msgid "Excluded elements"
 msgstr ""
 
 msgid "Use default include exclude configuration"
+msgstr ""
+
+msgid "Disabled"
 msgstr ""
 
 msgid "Include exclude configuration"
@@ -459,9 +516,6 @@ msgid "Start date"
 msgstr ""
 
 msgid "End date"
-msgstr ""
-
-msgid "Target instances [{{total}}]"
 msgstr ""
 
 msgid "Strategy"
@@ -509,16 +563,13 @@ msgstr ""
 msgid "Event date"
 msgstr ""
 
-msgid "Last updated"
-msgstr ""
-
 msgid "Stored by"
 msgstr ""
 
 msgid "Due date"
 msgstr ""
 
-msgid "You do not have permission to list the events"
+msgid "An error ocurred while trying to access the required events"
 msgstr ""
 
 msgid "Sync all events"
@@ -780,6 +831,9 @@ msgid ""
 "between instances"
 msgstr ""
 
+msgid "Programs (events)"
+msgstr ""
+
 msgid ""
 "Map data elements, category options and option sets for tracker data "
 "between instances"
@@ -788,16 +842,27 @@ msgstr ""
 msgid "Map organisation units between instances"
 msgstr ""
 
+msgid "Global"
+msgstr ""
+
+msgid ""
+"Map global category options, category combos, options and tracker data "
+"elements between instances"
+msgstr ""
+
 msgid "Instance mapping"
 msgstr ""
 
-msgid "Aggregated metadata mapping"
+msgid "Aggregated mapping"
 msgstr ""
 
-msgid "Events metadata mapping"
+msgid "Program (events) mapping"
 msgstr ""
 
-msgid "Organisation unit metadata mapping"
+msgid "Organisation unit mapping"
+msgstr ""
+
+msgid "Global mapping"
 msgstr ""
 
 msgid "Deleted by"
@@ -862,9 +927,6 @@ msgid_plural "Successfully deleted {{count}} rules"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Failed to execute rule {{name}}"
-msgstr ""
-
 msgid "Successfully updated sync rule"
 msgstr ""
 
@@ -889,9 +951,6 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Short name"
-msgstr ""
-
-msgid "ID"
 msgstr ""
 
 msgid "API link"
@@ -940,6 +999,9 @@ msgid "This year"
 msgstr ""
 
 msgid "Last year"
+msgstr ""
+
+msgid "Last 5 years"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"
