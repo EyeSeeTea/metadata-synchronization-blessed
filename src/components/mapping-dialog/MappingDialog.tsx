@@ -125,8 +125,9 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
                   total: elements.length,
               })
             : i18n.t("Edit mapping for {{name}} ({{id}})", firstElement);
+    const instanceTitle = i18n.t("Destination instance {{name}}", instance);
 
-    const title = [mainTitle, displayName, `Destination instance: ${instance.name}`].join(" - ");
+    const title = _.compact([mainTitle, displayName, instanceTitle]).join(" - ");
 
     return (
         <ConfirmationDialog
