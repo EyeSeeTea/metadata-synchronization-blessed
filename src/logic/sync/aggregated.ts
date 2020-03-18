@@ -10,6 +10,7 @@ import {
     cleanObjectDefault,
     cleanOrgUnitPath,
     getAggregatedData,
+    getAnalyticsData,
     getCategoryOptionCombos,
     getDefaultIds,
     mapCategoryOptionCombo,
@@ -21,9 +22,19 @@ import { GenericSync } from "./generic";
 export class AggregatedSync extends GenericSync {
     protected readonly type = "aggregated";
     protected readonly fields =
-        "id,dataElements[id,name]dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
+        "id,dataElements[id,name],dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
 
     public buildPayload = memoize(async () => {
+        const { dataParams: { enableAggregation = false } = {} } = this.builder;
+
+        if (enableAggregation) {
+            return this.buildAnalyticsPayload();
+        } else {
+            return this.buildNormalPayload();
+        }
+    });
+
+    private buildNormalPayload = async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
         const {
             dataSets = [],
@@ -69,7 +80,49 @@ export class AggregatedSync extends GenericSync {
             .value();
 
         return { dataValues };
-    });
+    };
+
+    private buildAnalyticsPayload = async () => {
+        const { dataParams = {}, excludedIds = [] } = this.builder;
+
+        const {
+            dataSets = [],
+            dataElementGroups = [],
+            dataElementGroupSets = [],
+            dataElements = [],
+        } = await this.extractMetadata();
+
+        const dataElementIds = dataElements.map(({ id }) => id);
+        const dataSetIds = _.flatten(
+            dataSets.map(({ dataSetElements }) =>
+                dataSetElements.map(({ dataElement }: any) => dataElement.id)
+            )
+        );
+        const dataElementGroupIds = _.flatten(
+            dataElementGroups.map(({ dataElements }) => dataElements.map(({ id }: any) => id))
+        );
+        const dataElementGroupSetIds = _.flatten(
+            dataElementGroupSets.map(({ dataElementGroups }) =>
+                _.flatten(
+                    dataElementGroups.map(({ dataElements }: any) =>
+                        dataElements.map(({ id }: any) => id)
+                    )
+                )
+            )
+        );
+
+        const { dataValues: candidateDataValues = [] } = await getAnalyticsData(
+            this.api,
+            dataParams,
+            [...dataElementIds, ...dataSetIds, ...dataElementGroupIds, ...dataElementGroupSetIds]
+        );
+
+        const dataValues = _.reject(candidateDataValues, ({ dataElement }) =>
+            excludedIds.includes(dataElement)
+        );
+
+        return { dataValues };
+    };
 
     protected async postPayload(instance: Instance) {
         const { dataParams = {} } = this.builder;

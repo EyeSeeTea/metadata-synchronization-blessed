@@ -23,6 +23,7 @@ import {
     NestedRules,
     ProgramEvent,
     SynchronizationResult,
+    DataSyncAggregation,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
 import { cleanModelName, getClassName } from "./d2";
@@ -264,7 +265,7 @@ function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Mome
         period,
         startDate = "1970-01-01",
         endDate = moment()
-            .add(10, "years")
+            .add(1, "years")
             .endOf("year")
             .format("YYYY-MM-DD"),
     } = params;
@@ -290,11 +291,37 @@ function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Mome
     }
 }
 
+const aggregations = {
+    DAILY: { format: "YYYYMMDD", unit: "days" as const, amount: 1 },
+    WEEKLY: { format: "YYYY[W]W", unit: "weeks" as const, amount: 1 },
+    MONTHLY: { format: "YYYYMM", unit: "months" as const, amount: 1 },
+    QUARTERLY: { format: "YYYY[Q]Q", unit: "quarters" as const, amount: 1 },
+    YEARLY: { format: "YYYY", unit: "years" as const, amount: 1 },
+};
+
+const buildPeriodsForAggregation = (
+    aggregationType: DataSyncAggregation,
+    startDate: Moment,
+    endDate: Moment
+): string[] => {
+    const { format, unit, amount } = aggregations[aggregationType];
+
+    const current = startDate.clone();
+    const periods = [];
+
+    while (current.isSameOrBefore(endDate)) {
+        periods.push(current.format(format));
+        current.add(amount, unit);
+    }
+
+    return periods;
+};
+
 export async function getAggregatedData(
     api: D2Api,
     params: DataSynchronizationParams,
-    dataSet: string[] = [],
-    dataElementGroup: string[] = []
+    dataSet: string[],
+    dataElementGroup: string[]
 ) {
     const { orgUnitPaths = [], allAttributeCategoryOptions, attributeCategoryOptions } = params;
     const [startDate, endDate] = buildPeriodFromParams(params);
@@ -320,6 +347,48 @@ export async function getAggregatedData(
             orgUnit,
         })
         .getData() as Promise<{ dataValues?: DataValue[] }>;
+}
+
+export async function getAnalyticsData(
+    api: D2Api,
+    params: DataSynchronizationParams,
+    dataElements: string[]
+) {
+    const { orgUnitPaths = [], aggregationType } = params;
+    const [startDate, endDate] = buildPeriodFromParams(params);
+
+    if (dataElements.length === 0) return {};
+
+    const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
+    // TODO: Attribute option combos?
+
+    if (aggregationType) {
+        const periods = buildPeriodsForAggregation(aggregationType, startDate, endDate);
+
+        const promises = _.chunk(periods, 500).map(
+            period =>
+                api
+                    .get("/analytics/dataValueSet.json", {
+                        dimension: [
+                            `dx:${dataElements.join(";")}`,
+                            `pe:${period.join(";")}`,
+                            `ou:${orgUnit.join(";")}`,
+                        ],
+                    })
+                    .getData() as Promise<{ dataValues?: DataValue[] }>
+        );
+
+        const result = await Promise.all(promises);
+        const dataValues = result.reduce((acc, current) => {
+            const { dataValues = [] } = current;
+            acc.push(...dataValues);
+            return acc;
+        }, [] as DataValue[]);
+
+        return { dataValues };
+    } else {
+        throw new Error("Aggregated syncronization requires a valid aggregation type");
+    }
 }
 
 export const getDefaultIds = memoize(
