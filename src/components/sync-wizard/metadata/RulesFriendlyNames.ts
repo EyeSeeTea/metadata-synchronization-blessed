@@ -66,6 +66,14 @@ const includeExcludeRulesFriendlyNames: {
     "validationRules.validationRuleGroups": "Validation rule groups of validation rules",
     validationRuleGroups: "Validation rule groups",
     "validationRuleGroups.attributes": "Attributes of validation rule groups",
+    "dashboardItems": "Dashboard items",
+    "charts": "Charts",
+    "eventCharts": "Event charts",
+    "pivotTables": "Pivot tablets",
+    "eventReports": "Event reports",
+    "maps": "Maps",
+    "reports": "Reports",
+    "reportTables": "Report Tablets"
 };
 
 export default includeExcludeRulesFriendlyNames;
