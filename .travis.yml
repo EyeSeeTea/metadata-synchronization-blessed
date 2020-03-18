@@ -6,7 +6,7 @@ cache:
   directories:
     - "$HOME/.cache"
 env:
-  - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8081 CYPRESS_E2E=true FEEDBACK_REPO=EyeSeeTea/feedback-ci
+  - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8081 FEEDBACK_REPO=EyeSeeTea/feedback-ci
 before_install:
   - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
   # Install python dependencies
@@ -35,7 +35,7 @@ install:
 script:
   - yarn wait-on http-get://localhost:8080
   - yarn wait-on http-get://localhost:8081
-  - yarn node cypress/support/runner.js -b chrome
+  - CYPRESS_E2E=true yarn node cypress/support/runner.js -b chrome
 after_script:
   - cd feedback-ci/
   - if [[ $TRAVIS_PULL_REQUEST_BRANCH != "" ]]; then BRANCH="${TRAVIS_PULL_REQUEST_BRANCH}"; else BRANCH="${TRAVIS_BRANCH}"; fi;
