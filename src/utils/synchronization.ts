@@ -354,13 +354,20 @@ export async function getAnalyticsData(
     params: DataSynchronizationParams,
     dataElements: string[]
 ) {
-    const { orgUnitPaths = [], aggregationType } = params;
+    const {
+        orgUnitPaths = [],
+        allAttributeCategoryOptions,
+        attributeCategoryOptions,
+        aggregationType,
+    } = params;
     const [startDate, endDate] = buildPeriodFromParams(params);
 
     if (dataElements.length === 0) return {};
 
     const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
-    // TODO: Attribute option combos?
+    const attributeOptionCombo = !allAttributeCategoryOptions
+        ? attributeCategoryOptions
+        : undefined;
 
     if (aggregationType) {
         const periods = buildPeriodsForAggregation(aggregationType, startDate, endDate);
@@ -373,6 +380,7 @@ export async function getAnalyticsData(
                             `dx:${dataElements.join(";")}`,
                             `pe:${period.join(";")}`,
                             `ou:${orgUnit.join(";")}`,
+                            attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : "",
                         ],
                     })
                     .getData() as Promise<{ dataValues?: DataValue[] }>
