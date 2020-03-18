@@ -376,12 +376,12 @@ export async function getAnalyticsData(
             period =>
                 api
                     .get("/analytics/dataValueSet.json", {
-                        dimension: [
+                        dimension: _.compact([
                             `dx:${dataElements.join(";")}`,
                             `pe:${period.join(";")}`,
                             `ou:${orgUnit.join(";")}`,
                             attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : "",
-                        ],
+                        ]),
                     })
                     .getData() as Promise<{ dataValues?: DataValue[] }>
         );
