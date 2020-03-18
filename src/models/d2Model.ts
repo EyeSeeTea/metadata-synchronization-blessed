@@ -377,8 +377,7 @@ export class ProgramModel extends D2Model {
 
     protected static excludeRules = [
         "programStages.dataElements.dataElementGroups.dataElements",
-        "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",
-        "programs"];
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups"];
     protected static includeRules = [
         "attributes",
         "categoryCombos.attributes",
