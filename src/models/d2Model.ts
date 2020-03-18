@@ -406,6 +406,7 @@ export class ProgramModel extends D2Model {
         "programStages.dataElements.dataElementGroups.attributes",
         "programStages.dataElements.dataElementGroups.dataElementGroupSets",
         "programStages.dataElements.dataElementGroups.dataElementGroupSets.attributes",
+        "programStages.programNotificationTemplates",
         "programRuleVariables",
         "trackedEntityTypes",
         "trackedEntityTypes.trackedEntityAttributes",
