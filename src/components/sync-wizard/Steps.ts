@@ -140,6 +140,9 @@ export const aggregatedSteps: SyncWizardStep[] = [
         component: AggregationStep,
         validationKeys: ["dataSyncAggregation"],
         showOnSyncDialog: true,
+        warning: i18n.t(
+            "If aggregation is enabled, the synchronization will use the Analytics endpoint and group data by organisation units children and the chosen time periods"
+        ),
     },
     commonSteps.instanceSelection,
     commonSteps.scheduler,

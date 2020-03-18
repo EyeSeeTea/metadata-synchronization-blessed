@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-17T18:11:21.519Z\n"
-"PO-Revision-Date: 2020-03-17T18:11:21.519Z\n"
+"POT-Creation-Date: 2020-03-18T06:30:57.328Z\n"
+"PO-Revision-Date: 2020-03-18T06:30:57.328Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -400,6 +400,12 @@ msgid "Category options"
 msgstr ""
 
 msgid "Aggregation"
+msgstr ""
+
+msgid ""
+"If aggregation is enabled, the synchronization will use the Analytics "
+"endpoint and group data by organisation units children and the chosen time "
+"periods"
 msgstr ""
 
 msgid "Programs"
