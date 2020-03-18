@@ -41,7 +41,6 @@ after_script:
   - if [[ $TRAVIS_PULL_REQUEST_BRANCH != "" ]]; then BRANCH="${TRAVIS_PULL_REQUEST_BRANCH}"; else BRANCH="${TRAVIS_BRANCH}"; fi;
   - GITHUB_PAGES_ROOT=$(http -a ${GITHUB_USERNAME}:${GITHUB_PASSWORD} https://api.github.com/repos/${FEEDBACK_REPO}/pages | jq ".html_url" | tr -d '"')
   - GITHUB_PAGES_PATH=$(cat ../pages_path)
-#  - echo "- Built ``${TRAVIS_REPO_SLUG} ${TRAVIS_COMMIT_MESSAGE}`` against branch ${BRANCH} on $(date). [Report](${GITHUB_PAGES_ROOT}${GITHUB_PAGES_PATH})" >> README.md
   - git add . && git commit -m "Results for $TRAVIS_EVENT_TYPE on $TRAVIS_COMMIT"
   - git pull origin --no-edit
   - git push origin gh-pages
