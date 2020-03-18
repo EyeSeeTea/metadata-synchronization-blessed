@@ -8,6 +8,7 @@ import {
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
@@ -26,6 +27,7 @@ import {
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,
+    IndicatorModel,
     ProgramModel,
 } from "../../models/d2Model";
 import { metadataModels } from "../../models/d2ModelFactory";
@@ -36,6 +38,7 @@ import { D2 } from "../../types/d2";
 import { SyncRuleType } from "../../types/synchronization";
 import { MetadataType } from "../../utils/d2";
 import { isAppConfigurator } from "../../utils/permissions";
+import { getMetadata } from "../../utils/synchronization";
 import {
     deletedObjectsActions,
     deletedObjectsColumns,
@@ -64,6 +67,7 @@ const config: Record<
             AggregatedDataElementModel,
             DataElementGroupModel,
             DataElementGroupSetModel,
+            IndicatorModel,
         ],
         childrenKeys: ["dataElements", "dataElementGroups"],
         SyncClass: AggregatedSync,
@@ -108,8 +112,14 @@ const SyncOnDemandPage: React.FC = () => {
 
     const goBack = () => history.goBack();
 
-    const updateSelection = (selection: string[], exclusion: string[]) => {
-        updateSyncRule(syncRule.updateMetadataIds(selection).updateExcludedIds(exclusion));
+    const updateSelection = async (selection: string[], exclusion: string[]) => {
+        const metadata = await getMetadata(api, selection, "id");
+        updateSyncRule(
+            syncRule
+                .updateMetadataIds(selection)
+                .updateExcludedIds(exclusion)
+                .updateMetadataTypes(_.keys(metadata))
+        );
     };
 
     const openSynchronizationDialog = () => {

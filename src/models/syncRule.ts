@@ -91,6 +91,10 @@ export default class SyncRule {
         return this.syncRule.builder?.excludedIds ?? [];
     }
 
+    public get metadataTypes(): string[] {
+        return this.syncRule.builder?.metadataTypes ?? [];
+    }
+
     public get dataSyncAttributeCategoryOptions(): string[] {
         return this.syncRule.builder?.dataParams?.attributeCategoryOptions ?? [];
     }
@@ -124,7 +128,8 @@ export default class SyncRule {
     }
 
     public get dataSyncEnableAggregation(): boolean {
-        return this.syncRule.builder?.dataParams?.enableAggregation ?? false;
+        const defaultValue = this.syncRule.builder.metadataTypes.includes("indicators");
+        return this.syncRule.builder?.dataParams?.enableAggregation ?? defaultValue;
     }
 
     public get dataSyncAggregationType(): DataSyncAggregation | undefined {
@@ -206,12 +211,12 @@ export default class SyncRule {
                 targetInstances: [],
                 metadataIds: [],
                 excludedIds: [],
+                metadataTypes: [],
                 dataParams: {
                     strategy: "NEW_AND_UPDATES",
                     allAttributeCategoryOptions: true,
                     dryRun: false,
                     allEvents: true,
-                    enableAggregation: false,
                     aggregationType: undefined,
                 },
                 syncParams: {
@@ -310,6 +315,7 @@ export default class SyncRule {
         return _.pick(this, [
             "metadataIds",
             "excludedIds",
+            "metadataTypes",
             "targetInstances",
             "syncParams",
             "dataParams",
@@ -461,6 +467,16 @@ export default class SyncRule {
             builder: {
                 ...this.syncRule.builder,
                 excludedIds,
+            },
+        });
+    }
+
+    public updateMetadataTypes(metadataTypes: string[]): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                metadataTypes,
             },
         });
     }

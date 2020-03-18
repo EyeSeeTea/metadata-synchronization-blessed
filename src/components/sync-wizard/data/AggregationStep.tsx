@@ -1,5 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { makeStyles } from "@material-ui/core";
+import { useSnackbar } from "d2-ui-components";
 import React from "react";
 import { DataSyncAggregation } from "../../../types/synchronization";
 import Dropdown from "../../dropdown/Dropdown";
@@ -30,8 +31,16 @@ const aggregationItems = [
 
 const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const classes = useStyles();
+    const snackbar = useSnackbar();
 
     const updateEnableAggregation = (value: boolean) => {
+        if (syncRule.metadataTypes.includes("indicators") && !value) {
+            snackbar.warning(
+                i18n.t(
+                    "Without aggregation, any data value related to an indicator will be ignored"
+                )
+            );
+        }
         onChange(syncRule.updateDataSyncEnableAggregation(value).updateDataSyncAggregationType());
     };
 

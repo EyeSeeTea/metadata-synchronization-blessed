@@ -103,11 +103,13 @@ export abstract class D2Model {
 
     public static getApiModelTransform(): (objects: MetadataType[]) => MetadataType[] {
         return (objects: MetadataType[]) =>
-            this.modelTransform(objects).map((object: MetadataType) => ({
-                ...object,
-                __type__: this.collectionName,
-                __mappingType__: this.mappingType,
-            }));
+            this.modelTransform(objects).map(
+                ({ __type__, __mappingType__, ...object }: MetadataType) => ({
+                    ...object,
+                    __type__: __type__ ?? this.collectionName,
+                    __mappingType__: __mappingType__ ?? this.mappingType,
+                })
+            );
     }
 
     // TODO: This should be typed (not priority)
@@ -438,6 +440,7 @@ export class IndicatorModel extends D2Model {
     protected static metadataType = "indicator";
     protected static collectionName = "indicators" as const;
     protected static groupFilterName = "indicatorGroups" as const;
+    protected static mappingType = AggregatedDataElementModel.getMappingType();
 
     protected static excludeRules = ["dataSets", "programs"];
     protected static includeRules = [
