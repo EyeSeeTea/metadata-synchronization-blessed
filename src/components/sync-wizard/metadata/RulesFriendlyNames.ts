@@ -73,7 +73,27 @@ const includeExcludeRulesFriendlyNames: {
     "eventReports": "Event reports",
     "maps": "Maps",
     "reports": "Reports",
-    "reportTables": "Report Tablets"
+    "reportTables": "Report Tablets",
+    "indicators.dataSets": "Data sets of indicators",
+    "indicators.programs": "Programs of indicators",
+    "dataElements.dataSets": "Data sets of data elements",
+    "dataElements.dataElementGroups.dataElements": "Data elements of data element groups in data elements",
+    "dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups": "Data element groups in data element group sets of data element groups of data elements",
+    "indicators.legendSets": "Legends of indicators",
+    "indicators.indicatorTypes": "Indicator types of indicators",
+    "indicators.indicatorGroups.attributes": "Attributes of indicator groups in indicators",
+    "indicators.indicatorGroups.indicatorGroupSet": "Indicator group set of indicator groups in indicators",
+    "dataElements.legendSets": "Legends of data elements",
+    "dataElements.optionSets": "Option sets of data elements",
+    "dataElements.optionSets.options": "Options of option sets in data elements",
+    "dataElements.categoryCombos": "Category combinations of data elements",
+    "dataElements.categoryCombos.attributes": "Attributes of category combinations in data elements",
+    "dataElements.categoryCombos.categoryOptionCombos": "Category option combinations of Category combinations in data elements",
+    "dataElements.categoryCombos.categoryOptionCombos.categoryOptions": "Category options of Category option combinations in Category combinations in data elements",
+    "dataElements.categoryCombos.categories": "Categories of category combinations in data elements",
+    "dataElements.dataElementGroups.attributes": "Attributes of data element groups in data elements",
+    "dataElements.dataElementGroups.dataElementGroupSets": "Data element group sets of data element groups in data elements",
+    "dataElements.dataElementGroups.dataElementGroupSets.attributes": "Attributes of Data element group sets of data element groups in data elements",
 };
 
 export default includeExcludeRulesFriendlyNames;
