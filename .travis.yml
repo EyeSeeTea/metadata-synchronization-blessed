@@ -43,6 +43,8 @@ after_script:
   - GITHUB_PAGES_PATH=$(cat ../pages_path)
   - echo "- Built ``${TRAVIS_REPO_SLUG} ${TRAVIS_COMMIT_MESSAGE}`` against branch ${BRANCH} on $(date). [Report](${GITHUB_PAGES_ROOT}${GITHUB_PAGES_PATH})" >> README.md
   - git add . && git commit -m "Results for $TRAVIS_EVENT_TYPE on $TRAVIS_COMMIT"
+  - git fetch origin
+  - git rebase origin/gh-pages
   - git push "https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${FEEDBACK_REPO}" gh-pages -f
   - EXISTING_COMMENT=$(http -a ${GITHUB_USERNAME}:${GITHUB_PASSWORD} https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments | jq '[.[] | select(.user.login == "EyeSeeTeaBotTest")][0].id')
   - if [[ $TRAVIS_TEST_RESULT == 0 ]]; then MESSAGE_TITLE="Tests ran successfully :tada:"; else MESSAGE_TITLE="Tests failed with errors :rotating_light:"; fi;
