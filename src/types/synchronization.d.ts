@@ -132,7 +132,7 @@ export interface SynchronizationRule {
     type: SyncRuleType;
 }
 
-export type SyncRuleType = "metadata" | "aggregated" | "events";
+export type SyncRuleType = "metadata" | "aggregated" | "events" | "deleted";
 
 export interface SharingSetting {
     access: string;

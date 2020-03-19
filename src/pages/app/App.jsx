@@ -9,9 +9,10 @@ import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
 import _ from "lodash";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
-import Instance from "../../models/instance";
-import { initializeAppRoles } from "../../utils/permissions";
 import Share from "../../components/share/Share";
+import Instance from "../../models/instance";
+import { initializeDataStoreMigrations } from "../../utils/dataStore";
+import { initializeAppRoles } from "../../utils/permissions";
 import "./App.css";
 import Root from "./Root";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
@@ -77,6 +78,7 @@ const App = () => {
             }
 
             await initializeAppRoles(d2.Api.getApi().baseUrl);
+            await initializeDataStoreMigrations(api);
         };
 
         if (data) run();
@@ -104,7 +106,7 @@ const App = () => {
 
                                 <div id="app" className="content">
                                     <ApiContext.Provider value={{ d2, api }}>
-                                        <Root d2={d2} />
+                                        <Root />
                                     </ApiContext.Provider>
                                 </div>
 

@@ -23,7 +23,7 @@ export const metadataModels = [
     classes.ProgramIndicatorGroupModel,
     classes.ProgramRuleModel,
     classes.ProgramRuleVariableModel,
-    classes.UserGroupModel
+    classes.UserGroupModel,
 ];
 
 /**
@@ -39,8 +39,9 @@ export function d2ModelFactory(api: D2Api, d2ModelName: string): typeof D2Model 
 
     const directClass = _.find(classes, ["metadataType", d2ModelName]);
     const modelClass = _.find(classes, ["collectionName", modelName]);
+    const mappingClass = _.find(classes, ["mappingType", d2ModelName]);
 
-    const result = directClass ?? modelClass ?? defaultModel(modelName);
+    const result = directClass ?? modelClass ?? mappingClass ?? defaultModel(modelName);
     console.debug(`d2ModelFactory for modelName ${d2ModelName} returns ${result.metadataType}`);
     return result;
 }

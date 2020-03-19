@@ -1,7 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DescriptionIcon from "@material-ui/icons/Description";
-import { useD2 } from "d2-api";
+import { useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
     ObjectsTable,
@@ -22,7 +22,6 @@ import PageHeader from "../../components/page-header/PageHeader";
 import SyncSummary, { formatStatusTag } from "../../components/sync-summary/SyncSummary";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
-import { D2 } from "../../types/d2";
 import {
     SynchronizationReport,
     SynchronizationRule,
@@ -40,6 +39,9 @@ const config = {
     },
     events: {
         title: i18n.t("Events Synchronization History"),
+    },
+    deleted: {
+        title: i18n.t("Deleted Synchronization History"),
     },
 };
 
@@ -68,7 +70,7 @@ const initialState = {
 };
 
 const HistoryPage: React.FC = () => {
-    const d2 = useD2();
+    const api = useD2Api();
     const snackbar = useSnackbar();
     const loading = useLoading();
     const history = useHistory();
@@ -93,26 +95,26 @@ const HistoryPage: React.FC = () => {
     const updateTable = useCallback(
         (tableState?: TableState<SynchronizationReport>) => {
             SyncReport.list(
-                d2 as D2,
+                api,
                 { type, statusFilter, syncRuleFilter },
                 tableState ?? initialState
             ).then(updateResponse);
             updateSelection(oldSelection => tableState?.selection ?? oldSelection);
         },
-        [d2, statusFilter, syncRuleFilter, type, updateSelection]
+        [api, statusFilter, syncRuleFilter, type, updateSelection]
     );
 
     useEffect(() => {
-        SyncRule.list(d2 as D2, { type }, { paging: false }).then(({ objects }) =>
+        SyncRule.list(api, { type }, { paging: false }).then(({ objects }) =>
             setSyncRules(objects)
         );
-        if (id) SyncReport.get(d2 as D2, id).then(setSyncReport);
-        isAppConfigurator(d2 as D2).then(setAppConfigurator);
-    }, [d2, id, type]);
+        if (id) SyncReport.get(api, id).then(setSyncReport);
+        isAppConfigurator(api).then(setAppConfigurator);
+    }, [api, id, type]);
 
     useEffect(() => {
         updateTable();
-    }, [d2, updateTable, toDelete]);
+    }, [updateTable, toDelete]);
 
     const columns: TableColumn<SynchronizationReport>[] = [
         {
@@ -208,7 +210,7 @@ const HistoryPage: React.FC = () => {
 
         const results = [];
         for (const notification of notifications) {
-            results.push(await notification.remove(d2 as D2));
+            results.push(await notification.remove(api));
         }
 
         loading.reset();

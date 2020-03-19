@@ -36,6 +36,7 @@ export abstract class D2Model {
     // Metadata Type should be defined on subclasses
     protected static metadataType: string;
     protected static collectionName: keyof D2ModelSchemas;
+    protected static mappingType: string;
     protected static groupFilterName: keyof D2ModelSchemas;
     protected static levelFilterName: keyof D2ModelSchemas;
 
@@ -105,6 +106,7 @@ export abstract class D2Model {
             this.modelTransform(objects).map((object: MetadataType) => ({
                 ...object,
                 __type__: this.collectionName,
+                __mappingType__: this.mappingType,
             }));
     }
 
@@ -119,6 +121,10 @@ export abstract class D2Model {
 
     public static getCollectionName(): keyof D2ModelSchemas {
         return this.collectionName;
+    }
+
+    public static getMappingType(): string {
+        return this.mappingType ?? this.collectionName;
     }
 
     public static getExcludeRules(): string[][] {
@@ -254,7 +260,7 @@ export class DataElementModel extends D2Model {
 }
 
 export class AggregatedDataElementModel extends DataElementModel {
-    protected static metadataType = "aggregatedDataElements";
+    protected static mappingType = "aggregatedDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
@@ -262,7 +268,7 @@ export class AggregatedDataElementModel extends DataElementModel {
 }
 
 export class ProgramDataElementModel extends DataElementModel {
-    protected static metadataType = "programDataElements";
+    protected static mappingType = "programDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
@@ -328,7 +334,7 @@ export class DataSetModel extends D2Model {
         "indicators.indicatorTypes",
         "indicators.indicatorGroups",
         "indicators.indicatorGroups.attributes",
-        "indicators.indicatorGroups.indicatorGroupSet",
+        "indicators.indicatorGroups.indicatorGroupSets",
         "dataElements",
         "dataElements.attributes",
         "dataElements.legendSets",
@@ -352,8 +358,8 @@ export class DataSetModel extends D2Model {
             ...rest,
             dataElements: dataSetElements.map(({ dataElement }) => ({
                 ...dataElement,
-                __type__: "dataElement",
-                __mappingType__: "aggregatedDataElements",
+                __type__: AggregatedDataElementModel.getCollectionName(),
+                __mappingType__: AggregatedDataElementModel.getMappingType(),
             })),
         }));
     };
@@ -424,21 +430,39 @@ export class ProgramModel extends D2Model {
             dataElements: _.flatten(
                 program.programStages?.map(
                     ({ displayName, programStageDataElements, id: programStageId }) =>
-                        programStageDataElements.map(({ dataElement }) => ({
-                            ...dataElement,
-                            id: `${program.id}-${programStageId}-${dataElement.id}`,
-                            __originalId__: dataElement.id,
-                            __type__: "dataElement",
-                            __mappingType__: "programDataElements",
-                            displayName:
-                                program.programStages.length > 1
-                                    ? `[${displayName}] ${dataElement.displayName}`
-                                    : dataElement.displayName,
-                        }))
+                        programStageDataElements
+                            .filter(({ dataElement }) => !!dataElement)
+                            .map(({ dataElement }) => ({
+                                ...dataElement,
+                                id: `${program.id}-${programStageId}-${dataElement.id}`,
+                                __originalId__: dataElement.id,
+                                __type__: ProgramDataElementModel.getCollectionName(),
+                                __mappingType__: ProgramDataElementModel.getMappingType(),
+                                displayName:
+                                    program.programStages.length > 1
+                                        ? `[${displayName}] ${dataElement.displayName}`
+                                        : dataElement.displayName,
+                            }))
                 ) ?? []
             ),
         }));
     };
+}
+
+export class EventProgramModel extends ProgramModel {
+    protected static mappingType = "eventPrograms";
+    protected static groupFilterName = ProgramModel.groupFilterName;
+    protected static fields = programFields;
+
+    protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
+}
+
+export class TrackerProgramModel extends ProgramModel {
+    protected static mappingType = "trackerPrograms";
+    protected static groupFilterName = ProgramModel.groupFilterName;
+    protected static fields = programFields;
+
+    protected static modelFilters = { programType: { eq: "WITH_REGISTRATION" } };
 }
 
 export class ProgramStageModel extends D2Model {
@@ -463,7 +487,7 @@ export class IndicatorModel extends D2Model {
         "indicatorTypes",
         "indicatorGroups",
         "indicatorGroups.attributes",
-        "indicatorGroups.indicatorGroupSet",
+        "indicatorGroups.indicatorGroupSets",
     ];
 }
 
@@ -574,7 +598,7 @@ export class DashboardModel extends D2Model {
         "eventReports",
         "maps",
         "reports",
-        "reportTables"
+        "reportTables",
     ];
 }
 

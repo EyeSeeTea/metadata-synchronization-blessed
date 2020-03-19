@@ -18,11 +18,24 @@ export interface MetadataType {
     lastUpdated: string;
     href: string;
     level?: number;
+    path?: string;
     domainType?: "AGGREGATE" | "TRACKER" | "EVENT";
+    categoryCombo?: {
+        id: string;
+    };
+    optionSet?: {
+        id: string;
+    };
+    programType?: "WITHOUT_REGISTRATION" | "WITH_REGISTRATION";
     __originalId__: string;
-    __mappingType__: keyof D2ModelSchemas;
+    __mappingType__:
+        | keyof D2ModelSchemas
+        | "aggregatedDataElements"
+        | "programDataElements"
+        | "eventPrograms"
+        | "trackerPrograms";
     __type__: keyof D2ModelSchemas;
-    [key: string]: string | number | undefined;
+    [key: string]: string | number | object | undefined;
 }
 
 export const d2BaseModelColumns: TableColumn<MetadataType>[] = [
@@ -73,6 +86,8 @@ export const d2BaseModelFields = {
 export const dataElementFields = {
     ...d2BaseModelFields,
     domainType: include,
+    categoryCombo: include,
+    optionSet: include,
 };
 
 export const dataElementGroupFields = {
@@ -91,17 +106,19 @@ export const dataElementGroupSetFields = {
 export const dataSetFields = {
     ...d2BaseModelFields,
     dataSetElements: {
-        dataElement: d2BaseModelFields,
+        dataElement: dataElementFields,
     },
 };
 
 export const programFields = {
     ...d2BaseModelFields,
+    programType: include,
+    categoryCombo: include,
     programStages: {
         id: include,
         displayName: include,
         programStageDataElements: {
-            dataElement: d2BaseModelFields,
+            dataElement: dataElementFields,
         },
     },
 };
@@ -109,6 +126,7 @@ export const programFields = {
 export const organisationUnitFields = {
     ...d2BaseModelFields,
     level: include,
+    path: include,
 };
 
 export function cleanParams(options: Params): Params {
@@ -169,8 +187,6 @@ export function getClassName(className: string): string | undefined {
         .split(".")
         .last();
 }
-
-export const getBaseUrl = (d2: D2): string => d2.Api.getApi().baseUrl;
 
 export async function getCurrentUserOrganisationUnits(d2: D2): Promise<string[]> {
     const response: any = await d2.currentUser.getOrganisationUnits();

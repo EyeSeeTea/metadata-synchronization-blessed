@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import { useD2Api } from "d2-api";
 import React from "react";
 import { HashRouter, Switch } from "react-router-dom";
 import RouteWithSession from "../../components/auth/RouteWithSession";
@@ -10,79 +10,67 @@ import InstanceCreationPage from "../instance-creation/InstanceCreationPage";
 import InstanceListPage from "../instance-list/InstanceListPage";
 import InstanceMappingLandingPage from "../instance-mapping/InstanceMappingLandingPage";
 import InstanceMappingPage from "../instance-mapping/InstanceMappingPage";
-import DeletedObjectsPage from "../sync-deleted-objects/DeletedObjectsPage";
 import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
 
-class Root extends React.Component {
-    static propTypes = {
-        d2: PropTypes.object.isRequired,
-    };
+function Root() {
+    const api = useD2Api();
 
-    render() {
-        return (
-            <HashRouter>
-                <Switch>
-                    <RouteWithSession
-                        path={"/instances/mapping/:id/:section(aggregated|tracker|orgUnit)"}
-                        render={props => <InstanceMappingPage {...this.props} {...props} />}
-                    />
+    return (
+        <HashRouter>
+            <Switch>
+                <RouteWithSession
+                    path={"/instances/mapping/:id/:section(aggregated|tracker|orgUnit|global)"}
+                    render={props => <InstanceMappingPage {...props} />}
+                />
 
-                    <RouteWithSession
-                        path={"/instances/mapping/:id"}
-                        render={props => <InstanceMappingLandingPage {...this.props} {...props} />}
-                    />
+                <RouteWithSession
+                    path={"/instances/mapping/:id"}
+                    render={props => <InstanceMappingLandingPage {...props} />}
+                />
 
-                    <RouteWithSession
-                        path={"/instances/:action(new|edit)/:id?"}
-                        render={props => <InstanceCreationPage {...this.props} {...props} />}
-                    />
+                <RouteWithSession
+                    path={"/instances/:action(new|edit)/:id?"}
+                    render={props => <InstanceCreationPage {...props} />}
+                />
 
-                    <RouteWithSession
-                        path="/instances"
-                        render={props => <InstanceListPage {...this.props} {...props} />}
-                    />
+                <RouteWithSession
+                    path="/instances"
+                    render={props => <InstanceListPage {...props} />}
+                />
 
-                    <RouteWithSession
-                        path="/sync/:type(metadata|aggregated|events)"
-                        render={props => <SyncOnDemandPage {...this.props} {...props} />}
-                    />
+                <RouteWithSession
+                    path="/sync/:type(metadata|aggregated|events|deleted)"
+                    authorize={props =>
+                        props.match.params.type !== "deleted" ||
+                        permissions.shouldShowDeletedObjects(api)
+                    }
+                    render={props => <SyncOnDemandPage {...props} />}
+                />
 
-                    <RouteWithSessionAndAuth
-                        path="/sync/deleted"
-                        authorize={props => permissions.shouldShowDeletedObjects(this.props.d2)}
-                        render={props => <DeletedObjectsPage {...this.props} {...props} />}
-                    />
+                <RouteWithSessionAndAuth
+                    path={"/sync-rules/:type(metadata|aggregated|events)/:action(new|edit)/:id?"}
+                    authorize={props =>
+                        permissions.verifyUserHasAccessToSyncRule(api, props.match.params.id)
+                    }
+                    render={props => <SyncRulesCreationPage {...props} />}
+                />
 
-                    <RouteWithSessionAndAuth
-                        path={
-                            "/sync-rules/:type(metadata|aggregated|events)/:action(new|edit)/:id?"
-                        }
-                        authorize={props =>
-                            permissions.verifyUserHasAccessToSyncRule(
-                                this.props.d2,
-                                props.match.params.id
-                            )
-                        }
-                        render={props => <SyncRulesCreationPage {...this.props} {...props} />}
-                    />
+                <RouteWithSession
+                    path="/sync-rules/:type(metadata|aggregated|events)"
+                    render={props => <SyncRulesPage {...props} />}
+                />
 
-                    <RouteWithSession
-                        path="/sync-rules/:type(metadata|aggregated|events)"
-                        render={props => <SyncRulesPage {...this.props} {...props} />}
-                    />
+                <RouteWithSession
+                    path="/history/:type(metadata|aggregated|events)/:id?"
+                    render={props => <HistoryPage {...props} />}
+                />
 
-                    <RouteWithSession
-                        path="/history/:type(metadata|aggregated|events)/:id?"
-                        render={props => <HistoryPage {...this.props} {...props} />}
-                    />
-
-                    <RouteWithSession render={() => <HomePage {...this.props} />} />
-                </Switch>
-            </HashRouter>
-        );
-    }
+                <RouteWithSession render={() => <HomePage />} />
+            </Switch>
+        </HashRouter>
+    );
 }
 
 export default Root;
