@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-18T16:48:38.388Z\n"
-"PO-Revision-Date: 2020-03-18T16:48:38.388Z\n"
+"POT-Creation-Date: 2020-03-19T08:22:04.862Z\n"
+"PO-Revision-Date: 2020-03-19T08:22:04.862Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -833,6 +833,9 @@ msgstr ""
 msgid "Replicate"
 msgstr ""
 
+msgid "Run analytics"
+msgstr ""
+
 msgid "Delete Instances?"
 msgstr ""
 
@@ -970,6 +973,12 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Running analytics for instance {{name}}"
+msgstr ""
+
+msgid "Updating analytics done`for instance {{name}}"
+msgstr ""
 
 msgid "Short name"
 msgstr ""
