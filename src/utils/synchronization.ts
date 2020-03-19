@@ -25,7 +25,7 @@ import {
     DataValue,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
-import { cleanModelName, getClassName } from "./d2";
+import { cleanToModelName, getClassName, cleanToAPIChildReferenceName } from "./d2";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -39,21 +39,26 @@ export function buildNestedRules(rules: string[][] = []): NestedRules {
 }
 
 export function cleanObject(
+    d2: D2,
+    modelName: string,
     element: any,
     excludeRules: string[][] = [],
     includeSharingSettings: boolean
 ): any {
-    const leafRules = _(excludeRules)
+    const leafRules: string[] = _(excludeRules)
         .filter(path => path.length === 1)
         .map(_.first)
         .compact()
         .value();
 
+    const cleanLeafRules = leafRules.reduce((accumulator: string[], rule: string) =>
+        [...accumulator, ...cleanToAPIChildReferenceName(d2, rule, modelName)], []);
+
     const propsToRemove = includeSharingSettings ? [] : userProperties;
 
     return _.pick(
         element,
-        _.difference(_.keys(element), leafRules, blacklistedProperties, propsToRemove)
+        _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove)
     );
 }
 
@@ -160,7 +165,7 @@ export function getAllReferences(
             result = _.deepMerge(result, recursive);
         } else if (isValidUid(value)) {
             const metadataType = _(parents)
-                .map(k => cleanModelName(d2, k, type))
+                .map(k => cleanToModelName(d2, k, type))
                 .compact()
                 .first();
             if (metadataType) {
@@ -340,8 +345,8 @@ export const getDefaultIds = memoize(
                 fields: "id",
             })
             .getData()) as {
-            [key: string]: { id: string }[];
-        };
+                [key: string]: { id: string }[];
+            };
 
         return _(response)
             .omit(["system"])

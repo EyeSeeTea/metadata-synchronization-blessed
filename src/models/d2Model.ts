@@ -380,6 +380,7 @@ export class ProgramModel extends D2Model {
         "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups"];
     protected static includeRules = [
         "attributes",
+        "categoryCombos",
         "categoryCombos.attributes",
         "categoryCombos.categoryOptionCombos",
         "categoryCombos.categoryOptionCombos.categoryOptions",

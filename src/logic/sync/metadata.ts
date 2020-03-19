@@ -37,7 +37,7 @@ export class MetadataSync extends GenericSync {
 
             for (const element of elements) {
                 // Store metadata object in result
-                const object = cleanObject(element, excludeRules, includeSharingSettings);
+                const object = cleanObject(this.d2, model.name, element, excludeRules, includeSharingSettings);
                 result[model.plural] = result[model.plural] || [];
                 result[model.plural].push(object);
 
