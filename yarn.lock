@@ -4644,10 +4644,10 @@ d2-manifest@1.0.0:
     minimist "^1.1.0"
     readline-sync "^1.4.1"
 
-d2-ui-components@1.3.0-beta.1:
-  version "1.3.0-beta.1"
-  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-1.3.0-beta.1.tgz#9a00aab9d442ea4771ef0232ce0988cdd1693b64"
-  integrity sha512-r0pJla9uKYNaT5TFRzP3FFBV9zYFwphEq/LFXCAzOKUnm90+fSOecuU2yUwOAaU/h6fegug3dorx1hokLC+fmA==
+d2-ui-components@1.3.0-beta.2:
+  version "1.3.0-beta.2"
+  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-1.3.0-beta.2.tgz#8e25ba281be4ce075d8bb32af8cd672bcb7846e1"
+  integrity sha512-hSblrqrpFTDSv1ev4SEjWHcq8VZEI/rmOn9uiDX/P8G8kC1SPLJ9RYxOlolOPupRvI2klXF5tIVSAMqKyuRVKQ==
   dependencies:
     "@date-io/core" "^1.3.6"
     "@date-io/moment" "^1.0.2"
@@ -12604,7 +12604,7 @@ request@^2.87.0, request@^2.88.0:
     tunnel-agent "^0.6.0"
     uuid "^3.3.2"
 
-"request@github:cypress-io/request#b5af0d1fa47eec97ba980cde90a13e69a2afcd16":
+request@cypress-io/request#b5af0d1fa47eec97ba980cde90a13e69a2afcd16:
   version "2.88.1"
   resolved "https://codeload.github.com/cypress-io/request/tar.gz/b5af0d1fa47eec97ba980cde90a13e69a2afcd16"
   dependencies:
