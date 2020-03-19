@@ -158,7 +158,13 @@ export const autoMap = async (
 
     const candidateWithSameId = _.find(objects, ["id", selectedItem.id]);
     const candidateWithSameCode = _.find(objects, ["code", selectedItem.code]);
-    const candidates = _([candidateWithSameId, candidateWithSameCode, ...objects])
+    const candidateWithSameName = _.find(objects, ["name", selectedItem.name]);
+    const candidates = _([
+        candidateWithSameId,
+        candidateWithSameCode,
+        candidateWithSameName,
+        ...objects,
+    ])
         .compact()
         .uniq()
         .filter(({ id }) => filter?.includes(id) ?? true)
