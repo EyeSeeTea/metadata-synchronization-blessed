@@ -380,6 +380,7 @@ export async function getAnalyticsData(
                             `dx:${dataElements.join(";")}`,
                             `pe:${period.join(";")}`,
                             `ou:${orgUnit.join(";")}`,
+                            `co`,
                             attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : "",
                         ]),
                     })
