@@ -116,7 +116,6 @@ const getCombinedMetadata = async (api: D2Api, model: typeof D2Model, id: string
                     eq: cleanOrgUnitPath(id),
                 },
             },
-            defaults: "EXCLUDE",
         })
         .getData()) as unknown) as { objects: CombinedMetadata[] };
 
