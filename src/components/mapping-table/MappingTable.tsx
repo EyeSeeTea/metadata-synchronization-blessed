@@ -135,7 +135,7 @@ export default function MappingTable({
                         );
                         const rowType = getMappingTypeFromRow(row, type);
                         const model = d2ModelFactory(api, rowType);
-                        const customModel = d2ModelFactory(api, getCustomMapping(row));
+                        const customModel = d2ModelFactory(api, getCustomMapping(row, type));
                         _.unset(newMapping, [rowType, id]);
                         if (isChildrenMapping || mappedId) {
                             const mapping = await buildMapping({

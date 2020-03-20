@@ -395,7 +395,7 @@ export const getMappingTypeFromRow = (object?: MetadataType, defaultValue?: stri
     return __mappingType__ ?? __type__ ?? defaultValue ?? "";
 };
 
-export const getCustomMapping = (object?: MetadataType) => {
+export const getCustomMapping = (object?: MetadataType, defaultValue?: string) => {
     const { __mappingType__, __type__ } = object ?? {};
     if (
         __mappingType__ === IndicatorMappedModel.getMappingType() &&
@@ -404,7 +404,7 @@ export const getCustomMapping = (object?: MetadataType) => {
         return IndicatorMappedModel.getCollectionName();
     }
 
-    return getMappingTypeFromRow(object);
+    return getMappingTypeFromRow(object, defaultValue);
 };
 
 export const getChildrenRows = (rows: MetadataType[], model: typeof D2Model): MetadataType[] => {
