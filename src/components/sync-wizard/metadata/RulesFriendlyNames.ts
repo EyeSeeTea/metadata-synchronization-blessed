@@ -66,6 +66,7 @@ const includeExcludeRulesFriendlyNames: {
     "validationRules.validationRuleGroups": "Validation rule groups of validation rules",
     validationRuleGroups: "Validation rule groups",
     "validationRuleGroups.attributes": "Attributes of validation rule groups",
+    "users.userRoles": "User roles of users"
 };
 
 export default includeExcludeRulesFriendlyNames;
