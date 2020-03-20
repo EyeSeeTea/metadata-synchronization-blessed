@@ -128,7 +128,7 @@ export default class SyncRule {
     }
 
     public get dataSyncEnableAggregation(): boolean {
-        const defaultValue = this.syncRule.builder.metadataTypes.includes("indicators");
+        const defaultValue = this.metadataTypes.includes("indicators");
         return this.syncRule.builder?.dataParams?.enableAggregation ?? defaultValue;
     }
 
