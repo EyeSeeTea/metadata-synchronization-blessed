@@ -45,7 +45,9 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
     };
 
     const updateAggregationType = (value: DataSyncAggregation) => {
-        onChange(syncRule.updateDataSyncAggregationType(value));
+        onChange(
+            syncRule.updateDataSyncEnableAggregation(true).updateDataSyncAggregationType(value)
+        );
     };
 
     return (
