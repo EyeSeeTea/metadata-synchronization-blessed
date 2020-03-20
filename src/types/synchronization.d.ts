@@ -35,6 +35,7 @@ export interface DataSynchronizationParams extends DataImportParams {
     endDate?: Date;
     events?: string[];
     allEvents?: boolean;
+    generateNewUid?: boolean
 }
 
 export type SynchronizationParams = MetadataSynchronizationParams | DataSynchronizationParams;
