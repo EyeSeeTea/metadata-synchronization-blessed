@@ -24,6 +24,12 @@ import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore
 
 const dataStoreKey = "rules";
 
+const defaultSynchronizationBuilder: SynchronizationBuilder = {
+    targetInstances: [],
+    metadataIds: [],
+    excludedIds: [],
+};
+
 export default class SyncRule {
     private readonly syncRule: SynchronizationRule;
 
@@ -79,7 +85,7 @@ export default class SyncRule {
     }
 
     public get builder(): SynchronizationBuilder {
-        return this.syncRule.builder ?? {};
+        return this.syncRule.builder ?? defaultSynchronizationBuilder;
     }
 
     public get metadataIds(): string[] {
@@ -306,31 +312,19 @@ export default class SyncRule {
     }
 
     public updateId(id: string): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            id,
-        });
+        return this.update({ id });
     }
 
     public updateName(name: string): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            name,
-        });
+        return this.update({ name });
     }
 
     public updateCode(code: string): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            code,
-        });
+        return this.update({ code });
     }
 
     public updateDescription(description: string): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            description,
-        });
+        return this.update({ description });
     }
 
     public updateMetadataIds(metadataIds: string[]): SyncRule {
@@ -444,171 +438,91 @@ export default class SyncRule {
         return SyncRule.build(data);
     }
 
-    public updateExcludedIds(excludedIds: string[]): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
+    public update(partialRule: Partial<SynchronizationRule>): SyncRule {
+        return SyncRule.build({ ...this.syncRule, ...partialRule });
+    }
+
+    public updateBuilder(partialBuilder: Partial<SynchronizationBuilder>): SyncRule {
+        return this.update({
             builder: {
+                ...defaultSynchronizationBuilder,
                 ...this.syncRule.builder,
-                excludedIds,
+                ...partialBuilder,
             },
         });
     }
 
-    public updateDataSyncAttributeCategoryOptions(attributeCategoryOptions?: string[]): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                dataParams: {
-                    ...this.syncRule.builder?.dataParams,
-                    attributeCategoryOptions,
-                },
+    public updateBuilderDataParams(
+        partialDataParams: Partial<DataSynchronizationParams>
+    ): SyncRule {
+        return this.updateBuilder({
+            dataParams: {
+                ...this.syncRule.builder?.dataParams,
+                ...partialDataParams,
             },
         });
+    }
+
+    public updateExcludedIds(excludedIds: string[]): SyncRule {
+        return this.updateBuilder({ excludedIds });
+    }
+
+    public updateDataSyncAttributeCategoryOptions(attributeCategoryOptions?: string[]): SyncRule {
+        return this.updateBuilderDataParams({ attributeCategoryOptions });
     }
 
     public updateDataSyncAllAttributeCategoryOptions(
         allAttributeCategoryOptions?: boolean
     ): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                dataParams: {
-                    ...this.syncRule.builder?.dataParams,
-                    allAttributeCategoryOptions,
-                },
-            },
-        });
+        return this.updateBuilderDataParams({ allAttributeCategoryOptions });
     }
 
     public updateDataSyncOrgUnitPaths(orgUnitPaths: string[]): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                dataParams: {
-                    ...this.syncRule.builder?.dataParams,
-                    orgUnitPaths,
-                },
-            },
-        });
+        return this.updateBuilderDataParams({ orgUnitPaths });
     }
 
     public updateDataSyncPeriod(period?: DataSyncPeriod): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                dataParams: {
-                    ...this.syncRule.builder?.dataParams,
-                    period,
-                },
-            },
-        });
+        return this.updateBuilderDataParams({ period });
     }
 
     public updateDataSyncStartDate(startDate?: Date): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                dataParams: {
-                    ...this.syncRule.builder?.dataParams,
-                    startDate,
-                },
-            },
-        });
+        return this.updateBuilderDataParams({ startDate });
     }
 
     public updateDataSyncEndDate(endDate?: Date): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                dataParams: {
-                    ...this.syncRule.builder?.dataParams,
-                    endDate,
-                },
-            },
-        });
+        return this.updateBuilderDataParams({ endDate });
     }
 
     public updateDataSyncEvents(events?: string[]): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                dataParams: {
-                    ...this.syncRule.builder?.dataParams,
-                    events,
-                },
-            },
-        });
+        return this.updateBuilderDataParams({ events });
     }
 
     public updateDataSyncAllEvents(allEvents?: boolean): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                dataParams: {
-                    ...this.syncRule.builder?.dataParams,
-                    allEvents,
-                },
-            },
-        });
+        return this.updateBuilderDataParams({ allEvents });
     }
 
     public updateTargetInstances(targetInstances: string[]): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                targetInstances,
-            },
-        });
+        return this.updateBuilder({ targetInstances });
     }
 
     public updateSyncParams(syncParams: MetadataSynchronizationParams): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                syncParams,
-            },
-        });
+        return this.updateBuilder({ syncParams });
     }
 
     public updateDataParams(dataParams: DataSynchronizationParams): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            builder: {
-                ...this.syncRule.builder,
-                dataParams,
-            },
-        });
+        return this.updateBuilder({ dataParams });
     }
 
     public updateEnabled(enabled: boolean): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            enabled,
-        });
+        return this.update({ enabled });
     }
 
     public updateFrequency(frequency: string): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            frequency,
-        });
+        return this.update({ frequency });
     }
 
     public updateLastExecuted(lastExecuted: Date): SyncRule {
-        return SyncRule.build({
-            ...this.syncRule,
-            lastExecuted,
-        });
+        return this.update({ lastExecuted });
     }
 
     public isOnDemand() {
