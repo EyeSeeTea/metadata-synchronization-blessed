@@ -8,9 +8,6 @@ import {
     ObjectsTableDetailField,
     TableAction,
     TableColumn,
-    TablePagination,
-    TableSorting,
-    TableState,
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
@@ -22,6 +19,7 @@ import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
 import SharingDialog from "../../components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { AggregatedSync } from "../../logic/sync/aggregated";
 import { EventsSync } from "../../logic/sync/events";
 import { SyncronizationClass } from "../../logic/sync/generic";
@@ -41,7 +39,6 @@ import {
 } from "../../utils/permissions";
 import { requestJSONDownload } from "../../utils/synchronization";
 import { getValidationMessages } from "../../utils/validations";
-import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 const config: {
     [key: string]: {
@@ -78,8 +75,6 @@ const SyncRulesPage: React.FC = () => {
     const { title } = config[type];
 
     const [rows, setRows] = useState<SyncRule[]>([]);
-    const [pagination, setPagination] = useState<Partial<TablePagination>>({});
-    const [sorting, setSorting] = useState<TableSorting<SyncRule>>({ field: "name", order: "asc" });
 
     const [refreshKey, setRefreshKey] = useState(0);
     const [toDelete, setToDelete] = useState<string[]>([]);
@@ -91,21 +86,17 @@ const SyncRulesPage: React.FC = () => {
     const [sharingSettingsObject, setSharingSettingsObject] = useState<any>(null);
 
     useEffect(() => {
-        const { page, pageSize } = pagination;
-        const { field, order } = sorting;
         SyncRule.list(
-            d2 as D2,
+            api,
             { type, targetInstanceFilter, enabledFilter, lastExecutedFilter, search },
-            { paging: true, page, pageSize, sorting: [field, order] }
+            { paging: false }
         ).then(({ objects }) => {
             setRows(objects.map(SyncRule.build));
         });
     }, [
-        d2,
+        api,
         refreshKey,
         type,
-        pagination,
-        sorting,
         search,
         targetInstanceFilter,
         enabledFilter,
@@ -120,12 +111,12 @@ const SyncRulesPage: React.FC = () => {
     const [appExecutor, setAppExecutor] = useState(false);
 
     useEffect(() => {
-        Instance.list(d2 as D2, null, null).then(({ objects }) => setAllInstances(objects));
-        getUserInfo(d2 as D2).then(setUserInfo);
-        isGlobalAdmin(d2 as D2).then(setGlobalAdmin);
-        isAppConfigurator(d2 as D2).then(setAppConfigurator);
-        isAppExecutor(d2 as D2).then(setAppExecutor);
-    }, [d2]);
+        Instance.list(api, null, null).then(({ objects }) => setAllInstances(objects));
+        getUserInfo(api).then(setUserInfo);
+        isGlobalAdmin(api).then(setGlobalAdmin);
+        isAppConfigurator(api).then(setAppConfigurator);
+        isAppExecutor(api).then(setAppExecutor);
+    }, [api]);
 
     const getTargetInstances = (rule: SyncRule) => {
         return _(rule.targetInstances)
@@ -193,7 +184,7 @@ const SyncRulesPage: React.FC = () => {
         const id = _.first(ids);
         if (!id) return;
         loading.show(true, "Generating JSON file");
-        const rule = await SyncRule.get(d2 as D2, id);
+        const rule = await SyncRule.get(api, id);
         const { SyncClass } = config[rule.type];
         await requestJSONDownload(SyncClass, rule, d2 as D2, api);
         loading.reset();
@@ -208,8 +199,8 @@ const SyncRulesPage: React.FC = () => {
 
         const results = [];
         for (const id of toDelete) {
-            const rule = await SyncRule.get(d2 as D2, id);
-            results.push(await rule.remove(d2 as D2));
+            const rule = await SyncRule.get(api, id);
+            results.push(await rule.remove(api));
         }
 
         if (_.some(results, ["status", false])) {
@@ -239,7 +230,7 @@ const SyncRulesPage: React.FC = () => {
     const replicateRule = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
-        const rule = await SyncRule.get(d2 as D2, id);
+        const rule = await SyncRule.get(api, id);
 
         history.push({
             pathname: `/sync-rules/${type}/new`,
@@ -250,21 +241,16 @@ const SyncRulesPage: React.FC = () => {
     const executeRule = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
-        const rule = await SyncRule.get(d2 as D2, id);
+        const rule = await SyncRule.get(api, id);
 
-        const { builder, name, id: syncRule, type = "metadata" } = rule;
+        const { builder, id: syncRule, type = "metadata" } = rule;
         const { SyncClass } = config[type];
 
-        try {
-            const sync = new SyncClass(d2 as D2, api, { ...builder, syncRule });
-            for await (const { message, syncReport, done } of sync.execute()) {
-                if (message) loading.show(true, message);
-                if (syncReport) await syncReport.save(d2 as D2);
-                if (done && syncReport) setSyncReport(syncReport);
-            }
-        } catch (error) {
-            console.error(error);
-            snackbar.error(i18n.t("Failed to execute rule {{name}}", { name }));
+        const sync = new SyncClass(d2 as D2, api, { ...builder, syncRule });
+        for await (const { message, syncReport, done } of sync.execute()) {
+            if (message) loading.show(true, message);
+            if (syncReport) await syncReport.save(api);
+            if (done && syncReport) setSyncReport(syncReport);
         }
 
         setRefreshKey(Math.random());
@@ -274,16 +260,16 @@ const SyncRulesPage: React.FC = () => {
     const toggleEnable = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
-        const oldSyncRule = await SyncRule.get(d2 as D2, id);
+        const oldSyncRule = await SyncRule.get(api, id);
 
         const syncRule = oldSyncRule.updateEnabled(!oldSyncRule.enabled);
-        const errors = await getValidationMessages(d2, syncRule);
+        const errors = await getValidationMessages(api, syncRule);
         if (errors.length > 0) {
             snackbar.error(errors.join("\n"), {
                 autoHideDuration: null,
             });
         } else {
-            await syncRule.save(d2 as D2);
+            await syncRule.save(api);
             snackbar.success(i18n.t("Successfully updated sync rule"));
             setRefreshKey(Math.random());
         }
@@ -292,7 +278,7 @@ const SyncRulesPage: React.FC = () => {
     const openSharingSettings = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
-        const syncRule = await SyncRule.get(d2 as D2, id);
+        const syncRule = await SyncRule.get(api, id);
 
         setSharingSettingsObject({
             object: syncRule.toObject(),
@@ -408,7 +394,7 @@ const SyncRulesPage: React.FC = () => {
         };
 
         const syncRule = SyncRule.build(newSharingSettings.object);
-        await syncRule.save(d2 as D2);
+        await syncRule.save(api);
 
         setSharingSettingsObject(newSharingSettings);
         if (onSuccess) onSuccess();
@@ -440,13 +426,6 @@ const SyncRulesPage: React.FC = () => {
         </React.Fragment>
     );
 
-    const handleTableChange = (tableState: TableState<SyncRule>) => {
-        const { sorting, pagination } = tableState;
-
-        setPagination(pagination);
-        setSorting(sorting);
-    };
-
     return (
         <TestWrapper>
             <PageHeader title={title} onBackClick={backHome} />
@@ -457,7 +436,6 @@ const SyncRulesPage: React.FC = () => {
                 actions={actions}
                 onActionButtonClick={appConfigurator ? createRule : undefined}
                 filterComponents={renderCustomFilters}
-                onChange={handleTableChange}
                 searchBoxLabel={i18n.t("Search by name")}
                 onChangeSearch={setSearchFilter}
             />

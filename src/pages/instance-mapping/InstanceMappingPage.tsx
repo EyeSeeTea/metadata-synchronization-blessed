@@ -1,31 +1,43 @@
 import i18n from "@dhis2/d2-i18n";
-import { useD2 } from "d2-api";
+import { useD2Api } from "d2-api";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import MappingTable from "../../components/mapping-table/MappingTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
     AggregatedDataElementModel,
+    CategoryComboModel,
+    CategoryOptionModel,
+    OptionModel,
     OrganisationUnitModel,
-    ProgramModel,
+    ProgramDataElementModel,
+    EventProgramModel,
 } from "../../models/d2Model";
-import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import { D2 } from "../../types/d2";
+import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
 const config = {
     aggregated: {
-        title: i18n.t("Aggregated metadata mapping"),
+        title: i18n.t("Aggregated mapping"),
         models: [AggregatedDataElementModel],
+        isGlobalMapping: false,
     },
     tracker: {
-        title: i18n.t("Events metadata mapping"),
-        models: [ProgramModel],
+        title: i18n.t("Program (events) mapping"),
+        models: [EventProgramModel],
+        isGlobalMapping: false,
     },
     orgUnit: {
-        title: i18n.t("Organisation unit metadata mapping"),
+        title: i18n.t("Organisation unit mapping"),
         models: [OrganisationUnitModel],
+        isGlobalMapping: false,
+    },
+    global: {
+        title: i18n.t("Global mapping"),
+        models: [CategoryOptionModel, CategoryComboModel, OptionModel, ProgramDataElementModel],
+        isGlobalMapping: true,
     },
 };
 
@@ -36,16 +48,16 @@ interface InstanceMappingParams {
 
 export default function InstanceMappingPage() {
     const history = useHistory();
-    const d2 = useD2();
+    const api = useD2Api();
 
     const { id, section } = useParams() as InstanceMappingParams;
-    const { models, title } = config[section];
+    const { models, title: sectionTitle, isGlobalMapping } = config[section];
 
     const [instance, setInstance] = useState<Instance>();
 
     useEffect(() => {
-        Instance.get(d2 as D2, id).then(setInstance);
-    }, [d2, id]);
+        Instance.get(api, id).then(setInstance);
+    }, [api, id]);
 
     const backHome = () => {
         history.push(`/instances/mapping/${id}`);
@@ -55,9 +67,20 @@ export default function InstanceMappingPage() {
         if (!instance) return;
 
         const newInstance = instance.setMetadataMapping(mapping);
-        await newInstance.save(d2 as D2);
+        await newInstance.save(api);
         setInstance(newInstance);
     };
+
+    const onApplyGlobalMapping = async (type: string, id: string, subMapping: MetadataMapping) => {
+        if (!instance) return;
+
+        const newMapping = _.clone(instance.metadataMapping);
+        _.set(newMapping, [type, id], { ...subMapping, global: true });
+        await onChangeMapping(newMapping);
+    };
+
+    const instanceTitle = instance ? i18n.t("Destination instance {{name}}", instance) : undefined;
+    const title = _.compact([sectionTitle, instanceTitle]).join(" - ");
 
     return (
         <React.Fragment>
@@ -68,7 +91,10 @@ export default function InstanceMappingPage() {
                     models={models}
                     instance={instance}
                     mapping={instance.metadataMapping}
+                    globalMapping={instance.metadataMapping}
                     onChangeMapping={onChangeMapping}
+                    onApplyGlobalMapping={onApplyGlobalMapping}
+                    isGlobalMapping={isGlobalMapping}
                 />
             )}
         </React.Fragment>

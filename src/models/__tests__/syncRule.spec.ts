@@ -8,7 +8,7 @@ const indicatorIncludeExcludeRules = {
         "indicatorTypes",
         "indicatorGroups",
         "indicatorGroups.attributes",
-        "indicatorGroups.indicatorGroupSet",
+        "indicatorGroups.indicatorGroupSets",
     ],
     excludeRules: ["dataSets", "programs"],
 };
@@ -112,7 +112,7 @@ describe("SyncRule", () => {
                         "indicatorTypes",
                         "indicatorGroups",
                         "indicatorGroups.attributes",
-                        "indicatorGroups.indicatorGroupSet",
+                        "indicatorGroups.indicatorGroupSets",
                     ],
                     excludeRules: ["dataSets", "programs"],
                 },

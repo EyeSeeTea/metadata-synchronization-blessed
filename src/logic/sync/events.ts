@@ -12,6 +12,7 @@ import {
     getEventsData,
     mapCategoryOptionCombo,
     mapOptionValue,
+    mapProgramDataElement,
     postEventsData,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
@@ -88,20 +89,20 @@ export class EventsSync extends GenericSync {
 
     private buildMappedDataValue(
         { orgUnit, program, programStage, dataValues, attributeOptionCombo, ...rest }: ProgramEvent,
-        mapping: MetadataMappingDictionary,
+        globalMapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
     ): ProgramEvent {
-        const { organisationUnits = {}, programDataElements = {}, programs = {} } = mapping;
-        const { mappedId: mappedProgram = program, mapping: innerProgramMapping = {} } =
-            programs[program] ?? {};
-        const { programStages = {} } = innerProgramMapping;
+        const { organisationUnits = {}, eventPrograms = {} } = globalMapping;
+        const { mappedId: mappedProgram = program, mapping: innerMapping = {} } =
+            eventPrograms[program] ?? {};
+        const { programStages = {} } = innerMapping;
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedProgramStage = programStages[programStage]?.mappedId ?? programStage;
         const mappedCategory = attributeOptionCombo
             ? mapCategoryOptionCombo(
                   attributeOptionCombo,
-                  innerProgramMapping,
+                  [innerMapping, globalMapping],
                   originCategoryOptionCombos,
                   destinationCategoryOptionCombos
               )
@@ -115,12 +116,20 @@ export class EventsSync extends GenericSync {
                 attributeOptionCombo: mappedCategory,
                 dataValues: dataValues
                     .map(({ dataElement, value, ...rest }) => {
-                        const dataElementId = `${program}-${programStage}-${dataElement}`;
                         const {
                             mappedId: mappedDataElement = dataElement,
                             mapping: dataElementMapping = {},
-                        } = programDataElements[dataElementId] ?? {};
-                        const mappedValue = mapOptionValue(value, dataElementMapping);
+                        } = mapProgramDataElement(
+                            program,
+                            programStage,
+                            dataElement,
+                            globalMapping
+                        );
+
+                        const mappedValue = mapOptionValue(value, [
+                            dataElementMapping,
+                            globalMapping,
+                        ]);
 
                         return {
                             dataElement: mappedDataElement,

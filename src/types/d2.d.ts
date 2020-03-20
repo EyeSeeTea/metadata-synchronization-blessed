@@ -21,14 +21,6 @@ export interface Params {
     order?: string;
 }
 
-export interface D2Api {
-    baseUrl: string;
-
-    get(url: string, data: Params): Dictionary<any>;
-
-    post(url: string, data: Dictionary<any>): Dictionary<any>;
-}
-
 export interface Pager {
     page: number;
     pageCount: number;
