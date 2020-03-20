@@ -237,7 +237,7 @@ export default class SyncRule {
     }
 
     public static async get(api: D2Api, id: string): Promise<SyncRule> {
-        const data = await getDataById(api, dataStoreKey, id);
+        const data = await getDataById<SynchronizationRule>(api, dataStoreKey, id);
         return this.build(data);
     }
 
