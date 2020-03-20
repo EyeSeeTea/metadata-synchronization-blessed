@@ -9,8 +9,23 @@ import memoize from "nano-memoize";
 import { SyncronizationClass } from "../logic/sync/generic";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../models/instance";
 import SyncRule from "../models/syncRule";
-import { D2, DataImportParams, DataImportResponse, MetadataImportParams, MetadataImportResponse } from "../types/d2";
-import { AggregatedPackage, DataSyncAggregation, DataSynchronizationParams, DataValue, MetadataPackage, NestedRules, ProgramEvent, SynchronizationResult } from "../types/synchronization";
+import {
+    D2,
+    DataImportParams,
+    DataImportResponse,
+    MetadataImportParams,
+    MetadataImportResponse,
+} from "../types/d2";
+import {
+    AggregatedPackage,
+    DataSyncAggregation,
+    DataSynchronizationParams,
+    DataValue,
+    MetadataPackage,
+    NestedRules,
+    ProgramEvent,
+    SynchronizationResult,
+} from "../types/synchronization";
 import "../utils/lodash-mixins";
 import { cleanModelName, getClassName } from "./d2";
 

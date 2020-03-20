@@ -30,7 +30,6 @@ import {
     cleanNestedMappedId,
     getChildrenRows,
     getMappingTypeFromRow,
-    getCustomMapping,
 } from "./utils";
 
 const useStyles = makeStyles({
@@ -134,15 +133,14 @@ export default function MappingTable({
                             i18n.t("Applying mapping update for element {{name}}", { name })
                         );
                         const rowType = getMappingTypeFromRow(row, type);
-                        const model = d2ModelFactory(api, rowType);
-                        const customModel = d2ModelFactory(api, getCustomMapping(row, type));
+                        const instanceModel = d2ModelFactory(api, rowType);
                         _.unset(newMapping, [rowType, id]);
                         if (isChildrenMapping || mappedId) {
                             const mapping = await buildMapping({
                                 api,
                                 instanceApi,
-                                customModel,
                                 model,
+                                instanceModel,
                                 originalId: row?.__originalId__ ?? id,
                                 mappedId,
                             });
@@ -166,6 +164,7 @@ export default function MappingTable({
         [
             api,
             instanceApi,
+            model,
             snackbar,
             loading,
             type,
@@ -331,15 +330,13 @@ export default function MappingTable({
             for (const type of _.keys(dict)) {
                 for (const id of _.keys(dict[type])) {
                     const { mappedId, mapping = {}, ...rest } = dict[type][id];
-                    const itemModel = d2ModelFactory(api, type) ?? model;
-                    const row = _.find(rows, ["id", id]);
-                    const customModel = d2ModelFactory(instanceApi, getCustomMapping(row));
+                    const instanceModel = d2ModelFactory(api, type) ?? model;
                     const innerMapping = await createValidations(mapping);
                     const { mappedName, mappedCode, mappedLevel } = await buildMapping({
                         api,
                         instanceApi,
-                        model: itemModel,
-                        customModel,
+                        model,
+                        instanceModel,
                         originalId: id,
                         mappedId,
                     });
@@ -360,7 +357,7 @@ export default function MappingTable({
 
             return result;
         },
-        [api, instanceApi, model, rows]
+        [api, instanceApi, model]
     );
 
     const applyValidateMapping = useCallback(

@@ -1,12 +1,6 @@
 import { D2Api } from "d2-api";
 import _ from "lodash";
-import {
-    CategoryOptionModel,
-    D2Model,
-    IndicatorMappedModel,
-    OptionModel,
-    ProgramStageModel,
-} from "../../models/d2Model";
+import { CategoryOptionModel, D2Model, OptionModel, ProgramStageModel } from "../../models/d2Model";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
@@ -296,18 +290,18 @@ export const buildMapping = async ({
     api,
     instanceApi,
     model,
-    customModel = model,
+    instanceModel,
     originalId,
     mappedId = "",
 }: {
     api: D2Api;
     instanceApi: D2Api;
     model: typeof D2Model;
-    customModel?: typeof D2Model;
+    instanceModel: typeof D2Model;
     originalId: string;
     mappedId?: string;
 }): Promise<MetadataMapping> => {
-    const originMetadata = await getCombinedMetadata(api, customModel, originalId);
+    const originMetadata = await getCombinedMetadata(api, model, originalId);
     if (mappedId === "DISABLED")
         return {
             mappedId: "DISABLED",
@@ -318,7 +312,7 @@ export const buildMapping = async ({
             mapping: {},
         };
 
-    const destinationMetadata = await getCombinedMetadata(instanceApi, model, mappedId);
+    const destinationMetadata = await getCombinedMetadata(instanceApi, instanceModel, mappedId);
     if (originMetadata.length !== 1 || destinationMetadata.length !== 1) return {};
 
     const [mappedElement] = destinationMetadata.map(({ id, path, name, code, level }) => ({
@@ -393,18 +387,6 @@ export const getValidIds = async (
 export const getMappingTypeFromRow = (object?: MetadataType, defaultValue?: string) => {
     const { __mappingType__, __type__ } = object ?? {};
     return __mappingType__ ?? __type__ ?? defaultValue ?? "";
-};
-
-export const getCustomMapping = (object?: MetadataType, defaultValue?: string) => {
-    const { __mappingType__, __type__ } = object ?? {};
-    if (
-        __mappingType__ === IndicatorMappedModel.getMappingType() &&
-        __type__ === IndicatorMappedModel.getCollectionName()
-    ) {
-        return IndicatorMappedModel.getCollectionName();
-    }
-
-    return getMappingTypeFromRow(object, defaultValue);
 };
 
 export const getChildrenRows = (rows: MetadataType[], model: typeof D2Model): MetadataType[] => {
