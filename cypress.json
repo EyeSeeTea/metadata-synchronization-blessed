@@ -1,8 +1,14 @@
 {
-  "defaultCommandTimeout": 25000,
-  "requestTimeout": 120000,
-  "responseTimeout": 30000,
-  "chromeWebSecurity": false,
-  "_comment": "chromeWebSecurity flag disabled to allow cypress to test redirection to external pages - TEMPORARY",
-  "projectId": "5smeca"
+    "defaultCommandTimeout": 8000,
+    "requestTimeout": 10000,
+    "chromeWebSecurity": false,
+    "reporter": "mochawesome",
+    "reporterOptions": {
+        "reportDir": "mochawesome-report",
+        "charts": true,
+        "overwrite": false,
+        "html": false,
+        "json": true,
+        "timestamp": "mmddyyyy_HHMMss"
+    }
 }
