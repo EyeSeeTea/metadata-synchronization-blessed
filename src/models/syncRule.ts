@@ -217,6 +217,7 @@ export default class SyncRule {
                     allAttributeCategoryOptions: true,
                     dryRun: false,
                     allEvents: true,
+                    enableAggregation: undefined,
                     aggregationType: undefined,
                 },
                 syncParams: {
