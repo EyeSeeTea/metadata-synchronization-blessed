@@ -12,6 +12,7 @@ import {
     MetadataSynchronizationParams,
     SharingSetting,
     SynchronizationBuilder,
+    SynchronizationRuleDetails,
     SynchronizationRule,
     SyncRuleType,
 } from "../types/synchronization";
@@ -21,6 +22,7 @@ import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
 import isValidCronExpression from "../utils/validCronExpression";
 import { D2Model } from "./d2Model";
 import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
+import { getDataStore, saveDataStore } from "./dataStore";
 
 const dataStoreKey = "rules";
 
@@ -243,8 +245,15 @@ export default class SyncRule {
     }
 
     public static async get(api: D2Api, id: string): Promise<SyncRule> {
-        const data = await getDataById<SynchronizationRule>(api, dataStoreKey, id);
-        return this.build(data);
+        const syncRuleData = await getDataById<SynchronizationRule>(api, dataStoreKey, id);
+        if (!syncRuleData) throw new Error(`SyncRule not found: ${id}`);
+        const detailsKey = this.getDetailsKey(syncRuleData);
+        const defaultDetails: SynchronizationRuleDetails = {
+            builder: defaultSynchronizationBuilder,
+        };
+        const detailsData = await getDataStore(api, detailsKey, defaultDetails);
+        const dataWithMapping = { ...syncRuleData, builder: detailsData.builder };
+        return this.build(dataWithMapping);
     }
 
     public static async list(
@@ -552,6 +561,10 @@ export default class SyncRule {
         return isUserOwner || isPublic || hasUserAccess || hasGroupAccess;
     }
 
+    private static getDetailsKey(syncRule: SynchronizationRule): string {
+        return dataStoreKey + "-" + syncRule.id;
+    }
+
     public async save(api: D2Api): Promise<SyncRule> {
         const userInfo = await getUserInfo(api);
         const user = _.pick(userInfo, ["id", "name"]);
@@ -561,8 +574,16 @@ export default class SyncRule {
             : { ...this.syncRule, id: generateUid(), created: new Date(), user };
 
         if (exists) await this.remove(api);
+
+        const detailsKey = SyncRule.getDetailsKey(element);
+        const detailsData: SynchronizationRuleDetails = {
+            builder: element.builder || defaultSynchronizationBuilder,
+        };
+        await saveDataStore(api, detailsKey, detailsData);
+        const mainElement = _.omit(element, ["builder"]);
+
         await saveData(api, dataStoreKey, {
-            ...element,
+            ...mainElement,
             lastUpdated: new Date(),
             lastUpdatedBy: user,
         });
