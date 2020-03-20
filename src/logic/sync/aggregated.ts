@@ -90,9 +90,11 @@ export class AggregatedSync extends GenericSync {
             dataElementGroups = [],
             dataElementGroupSets = [],
             dataElements = [],
+            indicators = [],
         } = await this.extractMetadata();
 
         const dataElementIds = dataElements.map(({ id }) => id);
+        const indicatorIds = indicators.map(({ id }) => id);
         const dataSetIds = _.flatten(
             dataSets.map(({ dataSetElements }) =>
                 dataSetElements.map(({ dataElement }: any) => dataElement.id)
@@ -114,7 +116,8 @@ export class AggregatedSync extends GenericSync {
         const { dataValues: candidateDataValues = [] } = await getAnalyticsData(
             this.api,
             dataParams,
-            [...dataElementIds, ...dataSetIds, ...dataElementGroupIds, ...dataElementGroupSetIds]
+            [...dataElementIds, ...dataSetIds, ...dataElementGroupIds, ...dataElementGroupSetIds],
+            indicatorIds
         );
 
         const dataValues = _.reject(candidateDataValues, ({ dataElement }) =>

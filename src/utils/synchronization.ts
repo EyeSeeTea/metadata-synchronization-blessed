@@ -9,22 +9,8 @@ import memoize from "nano-memoize";
 import { SyncronizationClass } from "../logic/sync/generic";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../models/instance";
 import SyncRule from "../models/syncRule";
-import {
-    D2,
-    DataImportParams,
-    DataImportResponse,
-    MetadataImportParams,
-    MetadataImportResponse,
-} from "../types/d2";
-import {
-    DataSynchronizationParams,
-    DataValue,
-    MetadataPackage,
-    NestedRules,
-    ProgramEvent,
-    SynchronizationResult,
-    DataSyncAggregation,
-} from "../types/synchronization";
+import { D2, DataImportParams, DataImportResponse, MetadataImportParams, MetadataImportResponse } from "../types/d2";
+import { AggregatedPackage, DataSyncAggregation, DataSynchronizationParams, DataValue, MetadataPackage, NestedRules, ProgramEvent, SynchronizationResult } from "../types/synchronization";
 import "../utils/lodash-mixins";
 import { cleanModelName, getClassName } from "./d2";
 
@@ -322,11 +308,11 @@ export async function getAggregatedData(
     params: DataSynchronizationParams,
     dataSet: string[],
     dataElementGroup: string[]
-) {
+): Promise<AggregatedPackage> {
     const { orgUnitPaths = [], allAttributeCategoryOptions, attributeCategoryOptions } = params;
     const [startDate, endDate] = buildPeriodFromParams(params);
 
-    if (dataSet.length === 0 && dataElementGroup.length === 0) return {};
+    if (dataSet.length === 0 && dataElementGroup.length === 0) return { dataValues: [] };
 
     const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
     const attributeOptionCombo = !allAttributeCategoryOptions
@@ -334,7 +320,7 @@ export async function getAggregatedData(
         : undefined;
 
     return api
-        .get("/dataValueSets", {
+        .get<AggregatedPackage>("/dataValueSets", {
             dataElementIdScheme: "UID",
             orgUnitIdScheme: "UID",
             categoryOptionComboIdScheme: "UID",
@@ -346,14 +332,15 @@ export async function getAggregatedData(
             dataElementGroup,
             orgUnit,
         })
-        .getData() as Promise<{ dataValues?: DataValue[] }>;
+        .getData();
 }
 
 export async function getAnalyticsData(
     api: D2Api,
     params: DataSynchronizationParams,
-    dataElements: string[]
-) {
+    dataElements: string[],
+    indicators: string[]
+): Promise<AggregatedPackage> {
     const {
         orgUnitPaths = [],
         allAttributeCategoryOptions,
@@ -361,8 +348,6 @@ export async function getAnalyticsData(
         aggregationType,
     } = params;
     const [startDate, endDate] = buildPeriodFromParams(params);
-
-    if (dataElements.length === 0) return {};
 
     const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
     const attributeOptionCombo = !allAttributeCategoryOptions
@@ -372,20 +357,32 @@ export async function getAnalyticsData(
     if (aggregationType) {
         const periods = buildPeriodsForAggregation(aggregationType, startDate, endDate);
 
-        const promises = _.chunk(periods, 500).map(
-            period =>
-                api
-                    .get("/analytics/dataValueSet.json", {
-                        dimension: _.compact([
-                            `dx:${dataElements.join(";")}`,
-                            `pe:${period.join(";")}`,
-                            `ou:${orgUnit.join(";")}`,
-                            `co`,
-                            attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : "",
-                        ]),
-                    })
-                    .getData() as Promise<{ dataValues?: DataValue[] }>
-        );
+        const promises = _.chunk(periods, 500).reduce((acc, period) => {
+            acc.push(
+                ...[
+                    { dimension: dataElements, includeCategories: true },
+                    { dimension: indicators, includeCategories: false },
+                ].map(({ dimension, includeCategories }) => {
+                    return dimension.length > 0
+                        ? api
+                              .get<AggregatedPackage>("/analytics/dataValueSet.json", {
+                                  dimension: _.compact([
+                                      `dx:${dimension.join(";")}`,
+                                      `pe:${period.join(";")}`,
+                                      `ou:${orgUnit.join(";")}`,
+                                      includeCategories ? `co` : undefined,
+                                      attributeOptionCombo
+                                          ? `ao:${attributeOptionCombo.join(";")}`
+                                          : "",
+                                  ]),
+                              })
+                              .getData()
+                        : Promise.resolve({ dataValues: [] });
+                })
+            );
+
+            return acc;
+        }, [] as Promise<AggregatedPackage>[]);
 
         const result = await Promise.all(promises);
         const dataValues = result.reduce((acc, current) => {
