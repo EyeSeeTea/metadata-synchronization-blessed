@@ -27,7 +27,7 @@ import {
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,
-    IndicatorModel,
+    IndicatorMappedModel,
     ProgramModel,
 } from "../../models/d2Model";
 import { metadataModels } from "../../models/d2ModelFactory";
@@ -67,7 +67,7 @@ const config: Record<
             AggregatedDataElementModel,
             DataElementGroupModel,
             DataElementGroupSetModel,
-            IndicatorModel,
+            IndicatorMappedModel,
         ],
         childrenKeys: ["dataElements", "dataElementGroups"],
         SyncClass: AggregatedSync,

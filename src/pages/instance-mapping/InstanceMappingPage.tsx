@@ -10,7 +10,7 @@ import {
     CategoryComboModel,
     CategoryOptionModel,
     EventProgramModel,
-    IndicatorModel,
+    IndicatorMappedModel,
     OptionModel,
     OrganisationUnitModel,
     ProgramDataElementModel,
@@ -22,7 +22,7 @@ export type MappingType = "aggregated" | "tracker" | "orgUnit";
 const config = {
     aggregated: {
         title: i18n.t("Aggregated mapping"),
-        models: [AggregatedDataElementModel, IndicatorModel],
+        models: [AggregatedDataElementModel, IndicatorMappedModel],
         isGlobalMapping: false,
     },
     tracker: {

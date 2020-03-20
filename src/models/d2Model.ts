@@ -440,7 +440,6 @@ export class IndicatorModel extends D2Model {
     protected static metadataType = "indicator";
     protected static collectionName = "indicators" as const;
     protected static groupFilterName = "indicatorGroups" as const;
-    protected static mappingType = AggregatedDataElementModel.getMappingType();
 
     protected static excludeRules = ["dataSets", "programs"];
     protected static includeRules = [
@@ -451,6 +450,10 @@ export class IndicatorModel extends D2Model {
         "indicatorGroups.attributes",
         "indicatorGroups.indicatorGroupSets",
     ];
+}
+
+export class IndicatorMappedModel extends IndicatorModel {
+    protected static mappingType = AggregatedDataElementModel.getMappingType();
 }
 
 export class IndicatorGroupModel extends D2Model {

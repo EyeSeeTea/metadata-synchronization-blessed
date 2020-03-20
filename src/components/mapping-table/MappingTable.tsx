@@ -29,7 +29,8 @@ import {
     buildMapping,
     cleanNestedMappedId,
     getChildrenRows,
-    getMetadataTypeFromRow,
+    getMappingTypeFromRow,
+    getCustomMapping,
 } from "./utils";
 
 const useStyles = makeStyles({
@@ -105,7 +106,7 @@ export default function MappingTable({
         (row?: MetadataType): MetadataMapping => {
             if (!row) return {};
 
-            const mappingType = getMetadataTypeFromRow(row);
+            const mappingType = getMappingTypeFromRow(row);
             const id = cleanNestedMappedId(row.id);
 
             const localItemMapping = _.get(mapping, [mappingType, row.id]);
@@ -132,17 +133,19 @@ export default function MappingTable({
                             true,
                             i18n.t("Applying mapping update for element {{name}}", { name })
                         );
-                        const rowType = getMetadataTypeFromRow(row, type);
+                        const rowType = getMappingTypeFromRow(row, type);
                         const model = d2ModelFactory(api, rowType);
+                        const customModel = d2ModelFactory(api, getCustomMapping(row));
                         _.unset(newMapping, [rowType, id]);
                         if (isChildrenMapping || mappedId) {
-                            const mapping = await buildMapping(
+                            const mapping = await buildMapping({
                                 api,
                                 instanceApi,
+                                customModel,
                                 model,
-                                row?.__originalId__ ?? id,
-                                mappedId
-                            );
+                                originalId: row?.__originalId__ ?? id,
+                                mappedId,
+                            });
                             _.set(newMapping, [rowType, id], {
                                 ...mapping,
                                 global: isGlobalMapping,
@@ -178,7 +181,7 @@ export default function MappingTable({
         async (selection: string[]) => {
             const id = selection[0];
             const firstElement = _.find(rows, ["id", id]);
-            const mappingType = getMetadataTypeFromRow(firstElement);
+            const mappingType = getMappingTypeFromRow(firstElement);
             const elementMapping = _.get(mapping, [mappingType, id]);
 
             if (!firstElement || !mappingType || !elementMapping?.mappedId) {
@@ -287,7 +290,7 @@ export default function MappingTable({
                 } else if (elements.length === 1) {
                     const firstElement = _.find(rows, ["id", elements[0]]);
                     if (firstElement) {
-                        const type = getMetadataTypeFromRow(firstElement);
+                        const type = getMappingTypeFromRow(firstElement);
                         setMappingConfig({ elements, mappingPath, type, firstElement });
                     }
                 }
@@ -305,7 +308,7 @@ export default function MappingTable({
             const firstElement = _.find(rows, ["id", elements[0]]);
             const types = _(rows)
                 .filter(({ id }) => elements.includes(id))
-                .map(e => getMetadataTypeFromRow(e))
+                .map(e => getMappingTypeFromRow(e))
                 .uniq()
                 .value();
 
@@ -329,14 +332,17 @@ export default function MappingTable({
                 for (const id of _.keys(dict[type])) {
                     const { mappedId, mapping = {}, ...rest } = dict[type][id];
                     const itemModel = d2ModelFactory(api, type) ?? model;
+                    const row = _.find(rows, ["id", id]);
+                    const customModel = d2ModelFactory(instanceApi, getCustomMapping(row));
                     const innerMapping = await createValidations(mapping);
-                    const { mappedName, mappedCode, mappedLevel } = await buildMapping(
+                    const { mappedName, mappedCode, mappedLevel } = await buildMapping({
                         api,
                         instanceApi,
-                        itemModel,
-                        id,
-                        mappedId
-                    );
+                        model: itemModel,
+                        customModel,
+                        originalId: id,
+                        mappedId,
+                    });
 
                     result[type][id] = _.omitBy(
                         {
@@ -354,7 +360,7 @@ export default function MappingTable({
 
             return result;
         },
-        [api, instanceApi, model]
+        [api, instanceApi, model, rows]
     );
 
     const applyValidateMapping = useCallback(
@@ -369,7 +375,7 @@ export default function MappingTable({
             const allRows = [...selectedRows, ...getChildrenRows(selectedRows, model)];
 
             for (const row of allRows) {
-                const type = getMetadataTypeFromRow(row);
+                const type = getMappingTypeFromRow(row);
                 const newMapping = await createValidations({
                     [type]: {
                         [row.id]: getMappedItem(row),
@@ -411,7 +417,7 @@ export default function MappingTable({
             const element = _.find(rows, ["id", id]);
             if (!id || !element) return;
 
-            const type = getMetadataTypeFromRow(element);
+            const type = getMappingTypeFromRow(element);
             const { mapping: rowMapping } = _.get(mapping, [type, id]) ?? {};
 
             if (!rowMapping || !type) {
@@ -626,7 +632,7 @@ export default function MappingTable({
                         .every(({ mappedId, global }) => !!mappedId && !global);
                     const isRowCompatible =
                         isChildrenMapping ||
-                        _.every(selected, row => getMetadataTypeFromRow(row) !== type);
+                        _.every(selected, row => getMappingTypeFromRow(row) !== type);
 
                     return isRowMappedAndNotGlobal && isRowCompatible;
                 },
@@ -672,7 +678,7 @@ export default function MappingTable({
                 icon: <Icon>assignment</Icon>,
                 isActive: (selected: MetadataType[]) => {
                     const element = selected[0];
-                    const type = getMetadataTypeFromRow(element);
+                    const type = getMappingTypeFromRow(element);
                     const steps = prepareSteps(type, element);
                     const { mappedId } = getMappedItem(element);
 
