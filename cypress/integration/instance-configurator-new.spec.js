@@ -1,6 +1,6 @@
 import InstanceDetailPageObject from "../support/page-objects/InstanceDetailPageObject";
 
-context("Destination Settings", function() {
+context("New Instance Settings", function() {
     const page = new InstanceDetailPageObject(cy);
 
     beforeEach(() => {

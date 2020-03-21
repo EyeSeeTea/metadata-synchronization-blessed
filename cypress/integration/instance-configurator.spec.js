@@ -1,7 +1,7 @@
-import InstanceDetailPageObject from "../support/page-objects/InstanceDetailPageObject";
+import InstancePageObject from "../support/page-objects/common/InstancePageObject";
 
 context("Destination Settings", function() {
-    const page = new InstanceDetailPageObject(cy);
+    const page = new InstancePageObject(cy);
 
     beforeEach(() => {
         page.open();
