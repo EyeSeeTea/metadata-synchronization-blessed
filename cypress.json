@@ -1,6 +1,7 @@
 {
-    "defaultCommandTimeout": 8000,
-    "requestTimeout": 10000,
+    "defaultCommandTimeout": 25000,
+    "requestTimeout": 120000,
+    "responseTimeout": 120000,
     "chromeWebSecurity": false,
     "reporter": "mochawesome",
     "reporterOptions": {
