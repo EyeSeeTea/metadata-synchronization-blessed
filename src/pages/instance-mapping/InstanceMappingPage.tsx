@@ -10,6 +10,7 @@ import {
     CategoryComboModel,
     CategoryOptionModel,
     EventProgramModel,
+    EventProgramModelWithIndicatorsModel,
     IndicatorMappedModel,
     OptionModel,
     OrganisationUnitModel,
@@ -27,7 +28,7 @@ const config = {
     },
     tracker: {
         title: i18n.t("Program (events) mapping"),
-        models: [EventProgramModel],
+        models: [EventProgramModel, EventProgramModelWithIndicatorsModel],
         isGlobalMapping: false,
     },
     orgUnit: {

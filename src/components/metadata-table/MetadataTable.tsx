@@ -221,7 +221,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                     <Dropdown
                         items={models.map(model => ({
                             id: model.getMetadataType(),
-                            name: model.getD2Model(d2).displayName,
+                            name: model.getModelName(d2),
                         }))}
                         onValueChange={changeModelFilter}
                         value={model.getMetadataType()}
@@ -247,7 +247,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeGroupFilter}
                         value={filters.group}
                         label={i18n.t("{{displayName}} Group", {
-                            displayName: model.getD2Model(d2).displayName,
+                            displayName: model.getModelName(d2),
                         })}
                     />
                 </div>
@@ -260,7 +260,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeLevelFilter}
                         value={filters.level}
                         label={i18n.t("{{displayName}} Level", {
-                            displayName: model.getD2Model(d2).displayName,
+                            displayName: model.getModelName(d2),
                         })}
                     />
                 </div>

@@ -121,6 +121,7 @@ export const programFields = {
             dataElement: dataElementFields,
         },
     },
+    programIndicators: d2BaseModelFields,
 };
 
 export const organisationUnitFields = {

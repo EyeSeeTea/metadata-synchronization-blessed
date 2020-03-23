@@ -1,3 +1,4 @@
+import i18n from "@dhis2/d2-i18n";
 import {
     D2Api,
     D2DataSetSchema,
@@ -39,6 +40,7 @@ export abstract class D2Model {
     protected static mappingType: string;
     protected static groupFilterName: keyof D2ModelSchemas;
     protected static levelFilterName: keyof D2ModelSchemas;
+    protected static modelName: string | undefined;
 
     protected static excludeRules: string[] = [];
     protected static includeRules: string[] = [];
@@ -99,6 +101,10 @@ export abstract class D2Model {
             [ModelName in keyof D2ModelSchemas]: Model<ModelName>;
         };
         return modelCollection[this.collectionName];
+    }
+
+    public static getModelName(d2: D2): string {
+        return this.modelName ?? this.getD2Model(d2)?.displayName ?? "Unknown model";
     }
 
     public static getApiModelTransform(): (objects: MetadataType[]) => MetadataType[] {
@@ -573,6 +579,28 @@ export class UserGroupModel extends D2Model {
 
     protected static excludeRules = [];
     protected static includeRules = ["users"];
+}
+
+export class EventProgramModelWithIndicatorsModel extends EventProgramModel {
+    protected static metadataType = "eventProgramModelWithIndicators";
+    protected static modelName = i18n.t("Program (Indicators)");
+    protected static childrenKeys = ["programIndicators"];
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2ProgramSchema, typeof programFields>[]
+    ) => {
+        return EventProgramModel.modelTransform(objects).map(
+            ({ programIndicators, ...program }) => ({
+                ...program,
+                programIndicators: programIndicators.map(programIndicator => ({
+                    ...programIndicator,
+                    __originalId__: programIndicator.id,
+                    __type__: ProgramIndicatorModel.getCollectionName(),
+                    __mappingType__: ProgramDataElementModel.getMappingType(),
+                })),
+            })
+        );
+    };
 }
 
 export function defaultModel(pascalCaseModelName: string): any {
