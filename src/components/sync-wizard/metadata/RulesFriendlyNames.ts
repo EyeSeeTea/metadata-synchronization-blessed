@@ -66,6 +66,88 @@ const includeExcludeRulesFriendlyNames: {
     "validationRules.validationRuleGroups": "Validation rule groups of validation rules",
     validationRuleGroups: "Validation rule groups",
     "validationRuleGroups.attributes": "Attributes of validation rule groups",
+    dashboardItems: "Dashboard items",
+    charts: "Charts",
+    eventCharts: "Event charts",
+    pivotTables: "Pivot tablets",
+    eventReports: "Event reports",
+    maps: "Maps",
+    reports: "Reports",
+    reportTables: "Report Tablets",
+    "indicators.dataSets": "Data sets of indicators",
+    "indicators.programs": "Programs of indicators",
+    "dataElements.dataSets": "Data sets of data elements",
+    "dataElements.dataElementGroups.dataElements":
+        "Data elements of data element groups in data elements",
+    "dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups":
+        "Data element groups in data element group sets of data element groups of data elements",
+    "indicators.legendSets": "Legends of indicators",
+    "indicators.indicatorTypes": "Indicator types of indicators",
+    "indicators.indicatorGroups.attributes": "Attributes of indicator groups in indicators",
+    "indicators.indicatorGroups.indicatorGroupSet":
+        "Indicator group set of indicator groups in indicators",
+    "dataElements.legendSets": "Legends of data elements",
+    "dataElements.optionSets": "Option sets of data elements",
+    "dataElements.optionSets.options": "Options of option sets in data elements",
+    "dataElements.categoryCombos": "Category combinations of data elements",
+    "dataElements.categoryCombos.attributes":
+        "Attributes of category combinations in data elements",
+    "dataElements.categoryCombos.categoryOptionCombos":
+        "Category option combinations of Category combinations in data elements",
+    "dataElements.categoryCombos.categoryOptionCombos.categoryOptions":
+        "Category options of Category option combinations in Category combinations in data elements",
+    "dataElements.categoryCombos.categories":
+        "Categories of category combinations in data elements",
+    "dataElements.dataElementGroups.attributes":
+        "Attributes of data element groups in data elements",
+    "dataElements.dataElementGroups.dataElementGroupSets":
+        "Data element group sets of data element groups in data elements",
+    "dataElements.dataElementGroups.dataElementGroupSets.attributes":
+        "Attributes of Data element group sets of data element groups in data elements",
+    "programStages.dataElements.dataElementGroups.dataElements":
+        "Data elements of data element groups of data elements in program stages",
+    "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups":
+        "Data element groups of data element group sets of data element groups of data elements in program Stages",
+    programIndicators: "Program indicators",
+    "programIndicators.programIndicatorGroups": "Program indicator groups of program indicators",
+    "programIndicators.legendSets": "Legends of program indicators",
+    dataApprovalWorkflow: "Data approval workflow",
+    "dataApprovalWorkflow.dataApprovalLevels": "Data approval levels in data approval workflow",
+    programStages: "Program stages",
+    "programStages.programStageSections": "Program stage sections in program stages",
+    "programStages.attributes": "Attributes of program stages",
+    "programStages.dataElements": "Data elements in program stages",
+    "programStages.dataElements.attributes": "Attributes of data elements in program stages",
+    "programStages.dataElements.legendSets": "Legends of data elements in program stages",
+    "programStages.dataElements.optionSets": "Option sets of data elements in program stages",
+    "programStages.dataElements.optionSets.options":
+        "Options in option sets of data elements in program stages",
+    "programStages.dataElements.categoryCombos":
+        "Category combinations of data elements in program stages",
+    "programStages.dataElements.categoryCombos.attributes":
+        "Attributes of category combinations of data elements in program stages",
+    "programStages.dataElements.categoryCombos.categoryOptionCombos":
+        "Category option combinations of Category combinations of data elements in program stages",
+    "programStages.dataElements.categoryCombos.categoryOptionCombos.categoryOptions":
+        "Category options of Category option combinations of Category combinations of data elements in program stages",
+    "programStages.dataElements.categoryCombos.categories":
+        "Categories of category combinations of data elements in program stages",
+    "programStages.dataElements.dataElementGroups":
+        "Data element groups of data elements in program stages",
+    "programStages.dataElements.dataElementGroups.attributes":
+        "Attributes of data element groups of data elements in program stages",
+    "programStages.dataElements.dataElementGroups.dataElementGroupSets":
+        "Data element group sets of data element groups of data elements in program stages",
+    "programStages.dataElements.dataElementGroups.dataElementGroupSets.attributes":
+        "Atrributes of data element group sets of data element groups of data elements in program stages",
+    programRuleVariables: "Program rule variables",
+    trackedEntityTypes: "Tracked entity types",
+    "trackedEntityTypes.trackedEntityAttributes":
+        "Tracked entity attributes of tracked entity types",
+    "trackedEntityTypes.trackedEntityAttributes.legendSets":
+        "Legends of tracked entity attributes of tracked entity types",
+    trackedEntityAttributes: "Tracked entity attributes",
+    "trackedEntityAttributes.legendSets": "Legends of tracked entity attributes",
 };
 
 export default includeExcludeRulesFriendlyNames;
