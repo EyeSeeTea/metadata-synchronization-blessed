@@ -9,6 +9,7 @@ import {
     DataElementGroupSetModel,
     DataSetModel,
     IndicatorModel,
+    ProgramIndicatorModel,
     ProgramModel,
 } from "../../../models/d2Model";
 import { metadataModels } from "../../../models/d2ModelFactory";
@@ -32,7 +33,7 @@ const config = {
         childrenKeys: ["dataElements", "dataElementGroups"],
     },
     events: {
-        models: [ProgramModel],
+        models: [ProgramModel, ProgramIndicatorModel],
         childrenKeys: ["dataElements"],
     },
     deleted: {

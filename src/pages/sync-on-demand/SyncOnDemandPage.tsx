@@ -28,8 +28,8 @@ import {
     DataElementGroupSetModel,
     DataSetModel,
     IndicatorMappedModel,
-    ProgramModel,
     ProgramIndicatorModel,
+    ProgramModel,
 } from "../../models/d2Model";
 import { metadataModels } from "../../models/d2ModelFactory";
 import DeletedObject from "../../models/deletedObjects";
