@@ -594,6 +594,7 @@ export class EventProgramModelWithIndicatorsModel extends EventProgramModel {
                 ...program,
                 programIndicators: programIndicators.map(programIndicator => ({
                     ...programIndicator,
+                    id: `${program.id}-${programIndicator.id}`,
                     __originalId__: programIndicator.id,
                     __type__: ProgramIndicatorModel.getCollectionName(),
                     __mappingType__: ProgramDataElementModel.getMappingType(),

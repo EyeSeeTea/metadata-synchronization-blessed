@@ -15,7 +15,7 @@ import MetadataTable from "../metadata-table/MetadataTable";
 
 export interface MappingDialogConfig {
     elements: string[];
-    type: string;
+    mappingType: string;
     mappingPath: string[] | undefined;
     firstElement?: MetadataType;
 }
@@ -45,13 +45,13 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
     const [filterRows, setFilterRows] = useState<string[] | undefined>();
-    const { elements, type, mappingPath, firstElement } = config;
+    const { elements, mappingType, mappingPath, firstElement } = config;
 
     const mappedId =
         elements.length === 1
             ? _.last(
                   _(mapping)
-                      .get([type, elements[0] ?? "", "mappedId"])
+                      .get([mappingType, elements[0] ?? "", "mappedId"])
                       ?.split("-")
               )
             : undefined;
@@ -59,7 +59,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
     const api = instance.getApi();
-    const model = d2ModelFactory(api, type);
+    const model = d2ModelFactory(api, mappingType);
     const displayName = d2.models[model.getCollectionName()].displayName;
 
     useEffect(() => {
@@ -79,10 +79,10 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             const parentModel = d2ModelFactory(api, mappingPath[0]);
             const parentMappedId = mappingPath[2];
             getValidIds(api, parentModel, parentMappedId).then(setFilterRows);
-        } else if (type === "programDataElements" && elements.length === 1) {
+        } else if (mappingType === "programDataElements" && elements.length === 1) {
             buildDataElementFilterForProgram(api, elements[0], mapping).then(setFilterRows);
         }
-    }, [api, mappingPath, elements, mapping, type]);
+    }, [api, mappingPath, elements, mapping, mappingType]);
 
     const onUpdateSelection = (selectedIds: string[]) => {
         const newSelection = _.last(selectedIds);

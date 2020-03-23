@@ -293,7 +293,12 @@ export default function MappingTable({
                     const firstElement = _.find(rows, ["id", elements[0]]);
                     if (firstElement) {
                         const type = getMappingTypeFromRow(firstElement);
-                        setMappingConfig({ elements, mappingPath, type, firstElement });
+                        setMappingConfig({
+                            elements,
+                            mappingPath,
+                            mappingType: type,
+                            firstElement,
+                        });
                     }
                 }
             } catch (e) {
@@ -315,7 +320,7 @@ export default function MappingTable({
                 .value();
 
             if (types.length === 1) {
-                setMappingConfig({ elements, mappingPath, type: types[0], firstElement });
+                setMappingConfig({ elements, mappingPath, mappingType: types[0], firstElement });
                 setSelectedIds([]);
             } else if (types.length > 1) {
                 snackbar.error(i18n.t("You need to select all items from the same type"));
