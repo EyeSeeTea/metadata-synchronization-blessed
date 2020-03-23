@@ -23,7 +23,7 @@ import PageHeader from "../../components/page-header/PageHeader";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import Instance, { InstanceData } from "../../models/instance";
 import { executeAnalytics } from "../../utils/analytics";
-import { isAppConfigurator, isGlobalAdmin } from "../../utils/permissions";
+import { isAppConfigurator } from "../../utils/permissions";
 
 const InstanceListPage = () => {
     const api = useD2Api();
@@ -36,11 +36,9 @@ const InstanceListPage = () => {
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [toDelete, deleteInstances] = useState<string[]>([]);
     const [appConfigurator, setAppConfigurator] = useState(false);
-    const [globalAdmin, setGlobalAdmin] = useState(false);
 
     useEffect(() => {
         isAppConfigurator(api).then(setAppConfigurator);
-        isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
     useEffect(() => {
@@ -86,6 +84,7 @@ const InstanceListPage = () => {
             loading.show(true, message);
         }
 
+        snackbar.info(i18n.t("Analytics execution finished on {{name}}", instance));
         loading.reset();
     };
 
@@ -188,7 +187,7 @@ const InstanceListPage = () => {
             multiple: false,
             onClick: runAnalytics,
             icon: <Icon>data_usage</Icon>,
-            isActive: () => globalAdmin,
+            isActive: () => process.env.NODE_ENV === "development",
         },
         {
             name: "mapping",

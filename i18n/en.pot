@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-19T08:22:04.862Z\n"
-"PO-Revision-Date: 2020-03-19T08:22:04.862Z\n"
+"POT-Creation-Date: 2020-03-23T08:19:15.123Z\n"
+"PO-Revision-Date: 2020-03-23T08:19:15.123Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -814,6 +814,9 @@ msgid "All your changes will be lost. Are you sure?"
 msgstr ""
 
 msgid "Saving..."
+msgstr ""
+
+msgid "Analytics execution finished on {{name}}"
 msgstr ""
 
 msgid "Deleting Instances"

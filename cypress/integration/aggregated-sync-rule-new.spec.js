@@ -37,7 +37,7 @@ context("Aggregated sync rule new", function() {
 
             .selectRow(inputs.dataSet)
             .next()
-            
+
             .next()
             .assertError(error =>
                 error.contains("You need to select at least one organisation unit")
