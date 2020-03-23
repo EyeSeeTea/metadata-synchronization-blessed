@@ -21,7 +21,7 @@ const useStyles = makeStyles({
     },
 });
 
-const aggregationItems = [
+export const aggregationItems = [
     { id: "DAILY", name: i18n.t("Daily"), format: "YYYYMMDD" },
     { id: "WEEKLY", name: i18n.t("Weekly"), format: "YYYY[W]W" },
     { id: "MONTHLY", name: i18n.t("Monthly"), format: "YYYYMM" },
