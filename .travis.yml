@@ -35,7 +35,7 @@ install:
 script:
     - yarn wait-on http-get://localhost:8080
     - yarn wait-on http-get://localhost:8081
-    - TS_NODE_COMPILER_OPTIONS='{"module":"commonjs"}' npx ts-node src/migrations/run.ts "http://$CYPRESS_DHIS2_AUTH@localhost:8080"
+    - TS_NODE_COMPILER_OPTIONS='{"module":"commonjs"}' npx ts-node src/migrations/index.ts "http://$CYPRESS_DHIS2_AUTH@localhost:8080"
     - CYPRESS_E2E=true yarn node cypress/support/runner.js -b chrome
 after_script:
     - cd feedback-ci/
