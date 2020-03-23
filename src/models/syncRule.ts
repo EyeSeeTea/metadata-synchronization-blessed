@@ -1,5 +1,5 @@
 import cronstrue from "cronstrue";
-import { D2Api } from "d2-api";
+import { D2Api, Ref } from "d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import moment from "moment";
@@ -31,6 +31,9 @@ const defaultSynchronizationBuilder: SynchronizationBuilder = {
     metadataIds: [],
     excludedIds: [],
 };
+
+type SynchronizationRuleInList = Omit<SynchronizationRule, "builder"> &
+    Pick<SynchronizationBuilder, "targetInstances">;
 
 export default class SyncRule {
     private readonly syncRule: SynchronizationRule;
@@ -245,7 +248,7 @@ export default class SyncRule {
     }
 
     public static async get(api: D2Api, id: string): Promise<SyncRule> {
-        const syncRuleData = await getDataById<SynchronizationRule>(api, dataStoreKey, id);
+        const syncRuleData = await getDataById<SynchronizationRuleInList>(api, dataStoreKey, id);
         if (!syncRuleData) throw new Error(`SyncRule not found: ${id}`);
         const detailsKey = this.getDetailsKey(syncRuleData);
         const defaultDetails: SynchronizationRuleDetails = {
@@ -273,7 +276,14 @@ export default class SyncRule {
         const userInfo = await getUserInfo(api);
 
         const data = await getPaginatedData(api, dataStoreKey, filters, { paging: false, sorting });
-        const filteredObjects = _(data.objects)
+        const filteredObjects = _(data.objects as SynchronizationRuleInList[])
+            .map(syncRuleInList => ({
+                ...syncRuleInList,
+                builder: {
+                    ...defaultSynchronizationBuilder,
+                    targetInstances: syncRuleInList.targetInstances,
+                },
+            }))
             .filter(data => {
                 const rule = SyncRule.build(data);
                 return rule.type === type;
@@ -283,9 +293,7 @@ export default class SyncRule {
                 return globalAdmin || rule.isVisibleToUser(userInfo);
             })
             .filter(rule =>
-                targetInstanceFilter
-                    ? rule.builder?.targetInstances.includes(targetInstanceFilter)
-                    : true
+                targetInstanceFilter ? rule.targetInstances.includes(targetInstanceFilter) : true
             )
             .filter(rule => {
                 if (!enabledFilter) return true;
@@ -561,7 +569,7 @@ export default class SyncRule {
         return isUserOwner || isPublic || hasUserAccess || hasGroupAccess;
     }
 
-    private static getDetailsKey(syncRule: SynchronizationRule): string {
+    private static getDetailsKey<SyncRule extends Ref>(syncRule: SyncRule): string {
         return dataStoreKey + "-" + syncRule.id;
     }
 
@@ -569,26 +577,28 @@ export default class SyncRule {
         const userInfo = await getUserInfo(api);
         const user = _.pick(userInfo, ["id", "name"]);
         const exists = !!this.syncRule.id;
-        const element = exists
+        const syncRule = exists
             ? this.syncRule
             : { ...this.syncRule, id: generateUid(), created: new Date(), user };
 
         if (exists) await this.remove(api);
 
-        const detailsKey = SyncRule.getDetailsKey(element);
-        const detailsData: SynchronizationRuleDetails = {
-            builder: element.builder || defaultSynchronizationBuilder,
-        };
+        const detailsKey = SyncRule.getDetailsKey(syncRule);
+        const builder = syncRule.builder ?? defaultSynchronizationBuilder;
+        const detailsData: SynchronizationRuleDetails = { builder };
         await saveDataStore(api, detailsKey, detailsData);
-        const mainElement = _.omit(element, ["builder"]);
+        const syncRuleInList: SynchronizationRuleInList = {
+            ..._.omit(syncRule, ["builder"]),
+            targetInstances: builder.targetInstances,
+        };
 
         await saveData(api, dataStoreKey, {
-            ...mainElement,
+            ...syncRuleInList,
             lastUpdated: new Date(),
             lastUpdatedBy: user,
         });
 
-        return new SyncRule(element);
+        return new SyncRule(syncRule);
     }
 
     public async remove(api: D2Api): Promise<void> {
