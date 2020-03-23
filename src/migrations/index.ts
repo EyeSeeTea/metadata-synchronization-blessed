@@ -11,12 +11,17 @@ import instancesById from "./tasks/02.instances-by-id";
 import rulesById from "./tasks/03.rules-by-id";
 
 const migrations: Migration[] = [
-    { version: 1, fn: initial },
-    { version: 2, fn: instancesById },
-    { version: 3, fn: rulesById },
+    { version: 1, fn: initial, name: "Initial" },
+    { version: 2, fn: instancesById, name: "Create instances-ID" },
+    { version: 3, fn: rulesById, name: "Create rules-ID" },
 ];
 
-type Migration = { version: number; fn: MigrationFn };
+export const currentVersion =
+    _(migrations)
+        .map(info => info.version)
+        .max() || 0;
+
+type Migration = { version: number; fn: MigrationFn; name: string };
 type MigrationFn = (api: D2Api) => Promise<void>;
 type Debug = (message: string) => void;
 
@@ -40,7 +45,7 @@ class MigrationRunner {
     async migrate(): Promise<void> {
         const { api, debug } = this;
         const config = await getDataStore<Config>(api, "config", { version: 0 });
-        const { newVersion, migrationsToApply } = this.getMigrationData();
+        const { newVersion, migrationsToApply } = this.getMigrationData(config);
 
         if (!newVersion) {
             debug(`No migrations pending to run (current version: ${config.version})`);
@@ -62,7 +67,7 @@ class MigrationRunner {
     async runMigrations(migrations: Migration[], newVersion: number) {
         const { api, debug } = this;
         for (const migration of migrations) {
-            debug(`Apply migration ${migration.version}: ${migration.fn.name}`);
+            debug(`Apply migration ${migration.version}: ${migration.name}`);
             await migration.fn(api);
         }
         await saveDataStore(api, "config", { version: newVersion });
@@ -129,9 +134,9 @@ class MigrationRunner {
         await saveDataStore(api, "config", configWithCurrentMigration);
     }
 
-    getMigrationData() {
+    getMigrationData(config: Config) {
         const migrationsToApply = _(this.migrations)
-            //.filter(info => info.version > config.version)
+            .filter(info => info.version > config.version)
             .sortBy(info => info.version)
             .value();
         const newVersion = _(migrationsToApply)
