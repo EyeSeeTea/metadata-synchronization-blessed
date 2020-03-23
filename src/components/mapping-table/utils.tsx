@@ -288,19 +288,19 @@ const autoMapProgramStages = async (
 export const buildMapping = async ({
     api,
     instanceApi,
-    model,
-    instanceModel,
+    originModel,
+    destinationModel,
     originalId,
     mappedId = "",
 }: {
     api: D2Api;
     instanceApi: D2Api;
-    model: typeof D2Model;
-    instanceModel: typeof D2Model;
+    originModel: typeof D2Model;
+    destinationModel: typeof D2Model;
     originalId: string;
     mappedId?: string;
 }): Promise<MetadataMapping> => {
-    const originMetadata = await getCombinedMetadata(api, model, originalId);
+    const originMetadata = await getCombinedMetadata(api, originModel, originalId);
     if (mappedId === "DISABLED")
         return {
             mappedId: "DISABLED",
@@ -311,7 +311,7 @@ export const buildMapping = async ({
             mapping: {},
         };
 
-    const destinationMetadata = await getCombinedMetadata(instanceApi, instanceModel, mappedId);
+    const destinationMetadata = await getCombinedMetadata(instanceApi, destinationModel, mappedId);
     if (originMetadata.length !== 1 || destinationMetadata.length !== 1) return {};
 
     const [mappedElement] = destinationMetadata.map(({ id, path, name, code, level }) => ({
@@ -383,9 +383,14 @@ export const getValidIds = async (
     );
 };
 
+export const getTypeFromRow = (object?: MetadataType, defaultValue?: string) => {
+    const { __type__ } = object ?? {};
+    return __type__ ?? defaultValue ?? "";
+};
+
 export const getMappingTypeFromRow = (object?: MetadataType, defaultValue?: string) => {
-    const { __mappingType__, __type__ } = object ?? {};
-    return __mappingType__ ?? __type__ ?? defaultValue ?? "";
+    const { __mappingType__ } = object ?? {};
+    return __mappingType__ ?? getTypeFromRow(object, defaultValue);
 };
 
 export const getChildrenRows = (rows: MetadataType[], model: typeof D2Model): MetadataType[] => {

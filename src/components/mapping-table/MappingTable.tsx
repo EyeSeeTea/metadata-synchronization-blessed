@@ -30,6 +30,7 @@ import {
     cleanNestedMappedId,
     getChildrenRows,
     getMappingTypeFromRow,
+    getTypeFromRow,
 } from "./utils";
 
 const useStyles = makeStyles({
@@ -132,19 +133,21 @@ export default function MappingTable({
                             true,
                             i18n.t("Applying mapping update for element {{name}}", { name })
                         );
-                        const rowType = getMappingTypeFromRow(row, type);
-                        const instanceModel = d2ModelFactory(api, rowType);
-                        _.unset(newMapping, [rowType, id]);
+                        const rowType = getTypeFromRow(row, type);
+                        const originModel = d2ModelFactory(api, rowType) ?? model;
+                        const mappingType = getMappingTypeFromRow(row, type);
+                        const destinationModel = d2ModelFactory(api, mappingType);
+                        _.unset(newMapping, [mappingType, id]);
                         if (isChildrenMapping || mappedId) {
                             const mapping = await buildMapping({
                                 api,
                                 instanceApi,
-                                model,
-                                instanceModel,
+                                originModel,
+                                destinationModel,
                                 originalId: row?.__originalId__ ?? id,
                                 mappedId,
                             });
-                            _.set(newMapping, [rowType, id], {
+                            _.set(newMapping, [mappingType, id], {
                                 ...mapping,
                                 global: isGlobalMapping,
                                 ...overrides,
@@ -330,13 +333,17 @@ export default function MappingTable({
             for (const type of _.keys(dict)) {
                 for (const id of _.keys(dict[type])) {
                     const { mappedId, mapping = {}, ...rest } = dict[type][id];
-                    const instanceModel = d2ModelFactory(api, type) ?? model;
+                    const row = _.find(rows, ["id", id]);
+                    const rowType = getTypeFromRow(row, type);
+                    const originModel = d2ModelFactory(api, rowType) ?? model;
+                    const mappingType = getMappingTypeFromRow(row, type);
+                    const destinationModel = d2ModelFactory(api, mappingType);
                     const innerMapping = await createValidations(mapping);
                     const { mappedName, mappedCode, mappedLevel } = await buildMapping({
                         api,
                         instanceApi,
-                        model,
-                        instanceModel,
+                        originModel,
+                        destinationModel,
                         originalId: id,
                         mappedId,
                     });
@@ -357,7 +364,7 @@ export default function MappingTable({
 
             return result;
         },
-        [api, instanceApi, model]
+        [api, instanceApi, model, rows]
     );
 
     const applyValidateMapping = useCallback(
