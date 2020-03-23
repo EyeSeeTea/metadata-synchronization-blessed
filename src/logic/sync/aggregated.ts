@@ -131,7 +131,7 @@ export class AggregatedSync extends GenericSync {
         const { dataParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
-        const mappedPayloadPackage = await this.mapMetadata(instance, payloadPackage);
+        const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
         console.debug("Aggregated package", { payloadPackage, mappedPayloadPackage });
 
         return postAggregatedData(instance, mappedPayloadPackage, dataParams);
@@ -156,7 +156,7 @@ export class AggregatedSync extends GenericSync {
             .value();
     }
 
-    protected async mapMetadata(
+    protected async mapPayload(
         instance: Instance,
         payload: AggregatedPackage
     ): Promise<AggregatedPackage> {
@@ -166,7 +166,6 @@ export class AggregatedSync extends GenericSync {
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
 
         const dataValues = oldDataValues
-            .map(dataValue => cleanObjectDefault(dataValue, defaultIds))
             .map(dataValue =>
                 this.buildMappedDataValue(
                     dataValue,
@@ -175,6 +174,7 @@ export class AggregatedSync extends GenericSync {
                     destinationCategoryOptionCombos
                 )
             )
+            .map(dataValue => cleanObjectDefault(dataValue, defaultIds))
             .filter(this.isDisabledDataValue);
 
         return { dataValues };
