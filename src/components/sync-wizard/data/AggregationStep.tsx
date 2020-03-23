@@ -1,8 +1,11 @@
 import i18n from "@dhis2/d2-i18n";
 import { makeStyles } from "@material-ui/core";
+import { useD2Api } from "d2-api";
 import { useSnackbar } from "d2-ui-components";
-import React from "react";
+import _ from "lodash";
+import React, { useEffect, useState } from "react";
 import { DataSyncAggregation } from "../../../types/synchronization";
+import { getMetadata } from "../../../utils/synchronization";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
@@ -30,11 +33,13 @@ export const aggregationItems = [
 ];
 
 const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
+    const api = useD2Api();
     const classes = useStyles();
     const snackbar = useSnackbar();
+    const [indicatorWarning, setIndicatorWarning] = useState<boolean>(false);
 
     const updateEnableAggregation = (value: boolean) => {
-        if (syncRule.metadataTypes.includes("indicators") && !value) {
+        if (indicatorWarning && !value) {
             snackbar.warning(
                 i18n.t(
                     "Without aggregation, any data value related to an indicator will be ignored"
@@ -50,11 +55,22 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
         );
     };
 
+    useEffect(() => {
+        if (_.isUndefined(syncRule.dataSyncEnableAggregation)) {
+            getMetadata(api, syncRule.metadataIds, "id").then(metadata => {
+                if (_.keys(metadata).includes("indicators")) {
+                    setIndicatorWarning(true);
+                    onChange(syncRule.updateDataSyncEnableAggregation(true));
+                }
+            });
+        }
+    }, [api, onChange, syncRule]);
+
     return (
         <React.Fragment>
             <Toggle
                 label={i18n.t("Enable data aggregation")}
-                value={syncRule.dataSyncEnableAggregation}
+                value={!!syncRule.dataSyncEnableAggregation}
                 onValueChange={updateEnableAggregation}
             />
 

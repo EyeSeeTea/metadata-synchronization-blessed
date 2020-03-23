@@ -1,5 +1,4 @@
 import i18n from "@dhis2/d2-i18n";
-import { useD2Api } from "d2-api";
 import { useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
@@ -12,7 +11,6 @@ import {
     ProgramModel,
 } from "../../../models/d2Model";
 import { metadataModels } from "../../../models/d2ModelFactory";
-import { getMetadata } from "../../../utils/synchronization";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { SyncWizardStepProps } from "../Steps";
 
@@ -47,9 +45,8 @@ export default function MetadataSelectionStep(props: SyncWizardStepProps) {
 
     const [metadataIds, updateMetadataIds] = useState<string[]>([]);
     const snackbar = useSnackbar();
-    const api = useD2Api();
 
-    const changeSelection = async (newMetadataIds: string[], newExclusionIds: string[]) => {
+    const changeSelection = (newMetadataIds: string[], newExclusionIds: string[]) => {
         const additions = _.difference(newMetadataIds, metadataIds);
         if (additions.length > 0) {
             snackbar.info(
@@ -70,13 +67,7 @@ export default function MetadataSelectionStep(props: SyncWizardStepProps) {
             );
         }
 
-        const metadata = await getMetadata(api, newMetadataIds, "id");
-        onChange(
-            syncRule
-                .updateMetadataIds(newMetadataIds)
-                .updateExcludedIds(newExclusionIds)
-                .updateMetadataTypes(_.keys(metadata))
-        );
+        onChange(syncRule.updateMetadataIds(newMetadataIds).updateExcludedIds(newExclusionIds));
         updateMetadataIds(newMetadataIds);
     };
 

@@ -6,7 +6,6 @@ export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
     excludedIds: string[];
-    metadataTypes: string[];
     syncRule?: string;
     syncParams?: MetadataSynchronizationParams;
     dataParams?: DataSynchronizationParams;
