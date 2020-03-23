@@ -151,8 +151,7 @@ export function cleanModelName(d2: D2, id: string, caller: string): string | nul
     } else if (id === "notificationTemplates") {
         debugger;
         return "programNotificationTemplates";
-    }
-    else if (_.includes(["parent", "children", "ancestors"], id)) {
+    } else if (_.includes(["parent", "children", "ancestors"], id)) {
         return caller;
     } else {
         return null;

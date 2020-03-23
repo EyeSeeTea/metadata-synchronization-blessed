@@ -383,7 +383,8 @@ export class ProgramModel extends D2Model {
 
     protected static excludeRules = [
         "programStages.dataElements.dataElementGroups.dataElements",
-        "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups"];
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",
+    ];
     protected static includeRules = [
         "attributes",
         "categoryCombos.attributes",
@@ -418,7 +419,7 @@ export class ProgramModel extends D2Model {
         "trackedEntityTypes.trackedEntityAttributes",
         "trackedEntityTypes.trackedEntityAttributes.legendSets",
         "trackedEntityAttributes",
-        "trackedEntityAttributes.legendSets"
+        "trackedEntityAttributes.legendSets",
     ];
 
     protected static modelTransform = (
