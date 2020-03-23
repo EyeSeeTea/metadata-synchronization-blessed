@@ -29,6 +29,7 @@ import {
     DataSetModel,
     IndicatorMappedModel,
     ProgramModel,
+    ProgramIndicatorModel,
 } from "../../models/d2Model";
 import { metadataModels } from "../../models/d2ModelFactory";
 import DeletedObject from "../../models/deletedObjects";
@@ -74,7 +75,7 @@ const config: Record<
     },
     events: {
         title: i18n.t("Events Synchronization"),
-        models: [ProgramModel],
+        models: [ProgramModel, ProgramIndicatorModel],
         childrenKeys: ["dataElements"],
         SyncClass: EventsSync,
     },
