@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-24T10:12:11.219Z\n"
-"PO-Revision-Date: 2020-03-24T10:12:11.219Z\n"
+"POT-Creation-Date: 2020-03-24T11:21:24.286Z\n"
+"PO-Revision-Date: 2020-03-24T11:21:24.287Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -609,9 +609,6 @@ msgid "Preparing synchronization"
 msgstr ""
 
 msgid "Importing data in instance {{instance}}"
-msgstr ""
-
-msgid "Data Set with Data Elements"
 msgstr ""
 
 msgid "Program with Data Elements"

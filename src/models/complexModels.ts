@@ -19,8 +19,6 @@ export class AggregatedDataElementModel extends DataElementModel {
 }
 
 export class DataSetWithDataElementsModel extends DataSetModel {
-    protected static metadataType = "dataSetWithDataElements";
-    protected static modelName = i18n.t("Data Set with Data Elements");
     protected static childrenKeys = ["dataElements"];
 
     protected static modelTransform = (
@@ -45,10 +43,12 @@ export class ProgramDataElementModel extends DataElementModel {
     protected static modelFilters = { domainType: { neq: "AGGREGATE" } };
 }
 
-export class ProgramWithDataElementsModel extends ProgramModel {
-    protected static metadataType = "programWithDataElements";
+export class EventProgramWithDataElementsModel extends ProgramModel {
+    protected static metadataType = "eventProgramWithDataElements";
     protected static modelName = i18n.t("Program with Data Elements");
     protected static childrenKeys = ["dataElements"];
+
+    protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
 
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFields>[]
@@ -75,13 +75,6 @@ export class ProgramWithDataElementsModel extends ProgramModel {
             ),
         }));
     };
-}
-
-export class EventProgramWithDataElementsModel extends ProgramWithDataElementsModel {
-    protected static metadataType = "eventProgramWithDataElements";
-    protected static modelName = i18n.t("Program with Data Elements");
-
-    protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
 }
 
 export class EventProgramWithIndicatorsModel extends ProgramModel {

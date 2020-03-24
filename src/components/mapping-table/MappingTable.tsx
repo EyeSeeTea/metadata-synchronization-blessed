@@ -471,7 +471,10 @@ export default function MappingTable({
                     text: i18n.t("Metadata type"),
                     hidden: model.getChildrenKeys() === undefined,
                     getValue: (row: MetadataType) => {
-                        return d2.models[row.__type__]?.displayName;
+                        if (row.__type__) {
+                            const rowModel = d2ModelFactory(api, row.__type__);
+                            return rowModel.getModelName(d2);
+                        }
                     },
                 },
                 {
@@ -588,6 +591,7 @@ export default function MappingTable({
                 },
             ]),
         [
+            api,
             d2,
             classes,
             model,
