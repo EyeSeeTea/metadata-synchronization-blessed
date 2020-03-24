@@ -6,6 +6,16 @@ $ yarn install
 
 File `public/app-config.json` must be created by duplicating `public/app-config.template.json` and filling in the encryptionKey.
 
+## Migrations
+
+The app uses the DHIS2 data store to persist custom data. Whenever the schema of the data store changes, 1) create a [migration task](src/migrations/tasks) with the changes required, 2) Add it to the `migrations` variable in the [main script](src/migrations/index.ts).
+
+When the app starts, it will check the data store version and open a dialog if a migration is required. You can also run the migrations on the CLI:
+
+```
+$ yarn migrate 'http://admin:PASSWORD@localhost:8080'
+```
+
 ## Development
 
 Start development server:
@@ -61,13 +71,5 @@ $ yarn build-webapp
 ```
 $ yarn update-po
 # ... add/edit translations in po files ...
-$ yarn localize
-```
-
-### Create a new language
-
-```
-$ cp i18n/en.pot i18n/es.po
-# ... add translations to i18n/es.po ...
 $ yarn localize
 ```
