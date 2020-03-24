@@ -12,7 +12,7 @@ export type Migration = { version: number; fn: MigrationFn; name: string };
 export type MigrationFn = (api: D2Api, debug: Debug) => Promise<void>;
 
 export interface RunnerOptions {
-    baseUrl: string;
+    api: D2Api;
     debug?: Debug;
     migrations?: Migration[];
 }

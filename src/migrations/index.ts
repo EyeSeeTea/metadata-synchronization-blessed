@@ -1,4 +1,4 @@
-import { D2Api, D2ApiDefault } from "d2-api";
+import { D2Api } from "d2-api";
 import _ from "lodash";
 
 import { RunnerOptions, Config, Debug, Migration } from "../types/migrations";
@@ -26,8 +26,7 @@ export class MigrationsRunner {
     }
 
     static async init(options: RunnerOptions): Promise<MigrationsRunner> {
-        const { baseUrl } = options;
-        const api = new D2ApiDefault({ baseUrl: baseUrl });
+        const { api } = options;
         const config = await getDataStore<Config>(api, "config", { version: 0 });
         return new MigrationsRunner(api, config, options);
     }
@@ -181,15 +180,4 @@ function getMigrationsForWebpack(): Migration[] {
         const fn = tasks(key).default;
         return { version, fn, name: key };
     });
-}
-
-async function main() {
-    const [baseUrl] = process.argv.slice(2);
-    if (!baseUrl) throw new Error("Usage: index.ts DHIS2_URL");
-    const runner = await MigrationsRunner.init({ baseUrl, debug: console.debug });
-    runner.execute();
-}
-
-if (require.main === module) {
-    main();
 }

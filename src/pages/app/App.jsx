@@ -69,7 +69,6 @@ const App = () => {
             }).then(res => res.json());
             const d2 = await init({ baseUrl: baseUrl + "/api" });
             const api = new D2ApiDefault({ baseUrl });
-            axiosRetry(api.connection, { retries: axiosMaxRetries });
 
             Object.assign({ d2, api });
 
@@ -85,7 +84,7 @@ const App = () => {
             }
 
             await initializeAppRoles(d2.Api.getApi().baseUrl);
-            runMigrations(api).then(setMigrationsState);
+            runMigrations(baseUrl).then(setMigrationsState);
         };
 
         if (data) run();
@@ -134,7 +133,9 @@ const App = () => {
     }
 };
 
-async function runMigrations(api) {
+async function runMigrations(baseUrl) {
+    const api = new D2ApiDefault({ baseUrl });
+    axiosRetry(api.connection, { retries: axiosMaxRetries });
     const runner = await MigrationsRunner.init({ api, debug: console.debug });
     if (runner.hasPendingMigrations()) {
         return { type: "pending", runner };

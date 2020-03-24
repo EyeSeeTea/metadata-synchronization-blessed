@@ -1,8 +1,13 @@
 import _ from "lodash";
 import path from "path";
 import fs from "fs";
+import { D2ApiDefault } from "d2-api";
+import axiosRetry from "axios-retry";
+
 import { Migration } from "../types/migrations";
-import { MigrationsRunner } from ".";
+import { MigrationsRunner } from "./index";
+
+const axiosMaxRetries = 3;
 
 function getMigrationsForNode(): Migration[] {
     const directory = path.join(__dirname, "tasks");
@@ -21,7 +26,9 @@ async function main() {
     const [baseUrl] = process.argv.slice(2);
     if (!baseUrl) throw new Error("Usage: index.ts DHIS2_URL");
     const migrations = getMigrationsForNode();
-    const runner = await MigrationsRunner.init({ baseUrl, debug: console.debug, migrations });
+    const api = new D2ApiDefault({ baseUrl: baseUrl });
+    axiosRetry(api.connection, { retries: axiosMaxRetries });
+    const runner = await MigrationsRunner.init({ api, debug: console.debug, migrations });
     runner.execute();
 }
 
