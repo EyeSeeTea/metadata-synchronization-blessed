@@ -1,7 +1,7 @@
 import { D2Api, D2ApiDefault } from "d2-api";
 import _ from "lodash";
 
-import { Config } from "./types";
+import { Config, Debug } from "./types";
 import { promiseMap } from "./utils";
 import { dataStoreNamespace } from "../models/dataStore";
 import { getDataStore, saveDataStore, deleteDataStore } from "../models/dataStore";
@@ -20,8 +20,7 @@ const appVersion =
         .max() || 0;
 
 type Migration = { version: number; fn: MigrationFn; name: string };
-type MigrationFn = (api: D2Api) => Promise<void>;
-type Debug = (message: string) => void;
+type MigrationFn = (api: D2Api, debug: Debug) => Promise<void>;
 
 interface Options {
     baseUrl: string;
@@ -95,7 +94,7 @@ export class MigrationsRunner {
 
         for (const migration of migrations) {
             debug(`Apply migration ${migration.version}: ${migration.name}`);
-            await migration.fn(api);
+            await migration.fn(api, debug);
         }
 
         const newConfig = { version: appVersion };

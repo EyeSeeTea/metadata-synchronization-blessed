@@ -4,3 +4,5 @@ export interface Config {
     version: number;
     migration?: { version: number; error?: string };
 }
+
+export type Debug = (message: string) => void;
