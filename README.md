@@ -8,7 +8,7 @@ File `public/app-config.json` must be created by duplicating `public/app-config.
 
 ## Migrations
 
-The app uses the DHIS2 data store to persist custom data. Whenever the schema of the data store changes, 1) create a [migration task](src/migrations/tasks) with the changes required, 2) Add it to the `migrations` variable in the [main script](src/migrations/index.ts).
+The app uses the DHIS2 data store to persist custom data. Whenever the schema of the data store changes, create a [migration task](src/migrations/tasks) with an incremental version.
 
 When the app starts, it will check the data store version and open a dialog if a migration is required. You can also run the migrations on the CLI:
 

@@ -6,27 +6,18 @@ import { promiseMap } from "./utils";
 import { dataStoreNamespace } from "../models/dataStore";
 import { getDataStore, saveDataStore, deleteDataStore } from "../models/dataStore";
 
-import instancesById from "./tasks/01.instances-by-id";
-import rulesById from "./tasks/02.rules-by-id";
-
-const migrations: Migration[] = [
-    { version: 1, fn: instancesById, name: "Create instances-ID" },
-    { version: 2, fn: rulesById, name: "Create rules-ID" },
-];
-
-const appVersion = _.max(migrations.map(info => info.version)) || 0;
-
 export class MigrationsRunner {
-    migrations: Migration[];
-    debug: Debug;
-
-    backupPrefix = "backup-";
+    public migrations: Migration[];
+    public debug: Debug;
+    public appVersion: number;
+    private backupPrefix = "backup-";
 
     constructor(private api: D2Api, private config: Config, private options: RunnerOptions) {
-        const { debug = _.identity } = options;
-        this.migrations = migrations;
+        const { debug = _.identity, migrations } = options;
+        const allMigrations = migrations || getMigrationsForWebpack();
+        this.appVersion = _.max(allMigrations.map(info => info.version)) || 0;
         this.debug = debug;
-        this.migrations = this.getMigrationToApply(config);
+        this.migrations = this.getMigrationToApply(allMigrations, config);
     }
 
     setDebug(debug: Debug) {
@@ -67,11 +58,7 @@ export class MigrationsRunner {
             throw error;
         }
 
-        try {
-            await this.deleteBackup();
-        } catch (err) {
-            debug(`Error deleting backup (non-fatal)`);
-        }
+        await this.deleteBackup();
     }
 
     async runMigrations(migrations: Migration[]): Promise<Config> {
@@ -79,7 +66,7 @@ export class MigrationsRunner {
 
         const configWithCurrentMigration: Config = {
             ...config,
-            migration: { version: appVersion },
+            migration: { version: this.appVersion },
         };
         await saveDataStore(api, "config", configWithCurrentMigration);
 
@@ -88,19 +75,23 @@ export class MigrationsRunner {
             await migration.fn(api, debug);
         }
 
-        const newConfig = { version: appVersion };
+        const newConfig = { version: this.appVersion };
         await saveDataStore(api, "config", newConfig);
         return newConfig;
     }
 
     async deleteBackup() {
-        const { debug, api } = this;
-        const backupKeys = await this.getBackupKeys();
-        debug(`Delete backup entries`);
+        try {
+            const { debug, api } = this;
+            const backupKeys = await this.getBackupKeys();
+            debug(`Delete backup entries`);
 
-        await promiseMap(backupKeys, async backupKey => {
-            await deleteDataStore(api, backupKey);
-        });
+            await promiseMap(backupKeys, async backupKey => {
+                await deleteDataStore(api, backupKey);
+            });
+        } catch (err) {
+            this.debug(`Error deleting backup (non-fatal)`);
+        }
     }
 
     async rollBackExistingBackup() {
@@ -157,30 +148,39 @@ export class MigrationsRunner {
 
         const configWithCurrentMigration: Config = {
             ...this.config,
-            migration: { version: appVersion, error: errorMsg },
+            migration: { version: this.appVersion, error: errorMsg },
         };
         await saveDataStore(api, "config", configWithCurrentMigration);
         return configWithCurrentMigration;
     }
 
-    getMigrationToApply(config: Config) {
-        return _(this.migrations)
+    getMigrationToApply(allMigrations: Migration[], config: Config) {
+        return _(allMigrations)
             .filter(info => info.version > config.version)
             .sortBy(info => info.version)
             .value();
     }
 
     hasPendingMigrations(): boolean {
-        return this.config.version !== appVersion;
+        return this.config.version < this.appVersion;
     }
 
     get instanceVersion(): number {
         return this.config.version;
     }
+}
 
-    get appVersion(): number {
-        return appVersion;
-    }
+function getMigrationsForWebpack(): Migration[] {
+    const tasks = require.context("./tasks", false, /.*\.ts$/);
+    const keys = _.sortBy(tasks.keys());
+
+    return keys.map(key => {
+        const match = key.match(/(\d+)/);
+        if (!match) throw new Error(`Cannot get version from task: ${key}`);
+        const version = parseInt(match[1]);
+        const fn = tasks(key).default;
+        return { version, fn, name: key };
+    });
 }
 
 async function main() {
