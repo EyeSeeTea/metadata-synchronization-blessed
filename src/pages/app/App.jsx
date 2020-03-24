@@ -5,6 +5,7 @@ import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 import { init } from "d2";
 import { ApiContext, D2ApiDefault } from "d2-api";
+import axiosRetry from "axios-retry";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
 import _ from "lodash";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
@@ -18,6 +19,8 @@ import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
 import { MigrationsRunner } from "../../migrations";
 import Migrations from "../../components/migrations/Migrations";
+
+const axiosMaxRetries = 3;
 
 const generateClassName = createGenerateClassName({
     productionPrefix: "c",
@@ -66,6 +69,8 @@ const App = () => {
             }).then(res => res.json());
             const d2 = await init({ baseUrl: baseUrl + "/api" });
             const api = new D2ApiDefault({ baseUrl });
+            axiosRetry(api.connection, { retries: axiosMaxRetries });
+
             Object.assign({ d2, api });
 
             configI18n(data.userSettings);
