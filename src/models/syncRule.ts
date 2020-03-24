@@ -21,7 +21,7 @@ import { extractChildrenFromRules, extractParentsFromRule } from "../utils/metad
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
 import isValidCronExpression from "../utils/validCronExpression";
 import { D2Model } from "./d2Model";
-import { deleteData, getDataById, getPaginatedData, saveData } from "./dataStore";
+import { deleteData, getDataById, getPaginatedData, saveData, deleteDataStore } from "./dataStore";
 import { getDataStore, saveDataStore } from "./dataStore";
 
 const dataStoreKey = "rules";
@@ -603,6 +603,8 @@ export default class SyncRule {
 
     public async remove(api: D2Api): Promise<void> {
         await deleteData(api, dataStoreKey, this.syncRule);
+        const detailsKey = SyncRule.getDetailsKey(this.syncRule);
+        await deleteDataStore(api, detailsKey);
     }
 
     public async validate(): Promise<Validation> {

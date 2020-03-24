@@ -7,7 +7,7 @@ import _ from "lodash";
 import { Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { Validation } from "../types/validations";
-import { getDataStore, deleteData, saveData, saveDataStore } from "./dataStore";
+import { getDataStore, deleteData, saveData, saveDataStore, deleteDataStore } from "./dataStore";
 import { getData, getDataById, getPaginatedData } from "./dataStore";
 
 const instancesDataStoreKey = "instances";
@@ -173,7 +173,9 @@ export default class Instance {
     }
 
     public async remove(api: D2Api): Promise<Response> {
-        return deleteData(api, instancesDataStoreKey, this.data);
+        const response = await deleteData(api, instancesDataStoreKey, this.data);
+        const detailsKey = Instance.getDetailsKey(this.data);
+        return response.status ? toResponse(deleteDataStore(api, detailsKey)) : response;
     }
 
     public toObject(): Omit<InstanceData, "password"> {
@@ -330,5 +332,14 @@ export default class Instance {
                 return { status: false, error };
             }
         }
+    }
+}
+
+export async function toResponse(promise: Promise<void>): Promise<Response> {
+    try {
+        await promise;
+        return { status: true };
+    } catch (error) {
+        return { status: false, error };
     }
 }
