@@ -24,7 +24,8 @@ export class EventsSync extends GenericSync {
 
     public buildPayload = memoize(async () => {
         const { dataParams = {} } = this.builder;
-        const { programs = [] } = await this.extractMetadata();
+        const { programs = [], programIndicators = [] } = await this.extractMetadata();
+        console.log("TODO", programIndicators);
 
         const events = await getEventsData(
             this.api,

@@ -27,7 +27,6 @@ export interface MetadataType {
         id: string;
     };
     programType?: "WITHOUT_REGISTRATION" | "WITH_REGISTRATION";
-    __originalId__: string;
     __mappingType__:
         | keyof D2ModelSchemas
         | "aggregatedDataElements"
@@ -114,6 +113,10 @@ export const programFields = {
     ...d2BaseModelFields,
     programType: include,
     categoryCombo: include,
+};
+
+export const programFieldsWithDataElements = {
+    ...programFields,
     programStages: {
         id: include,
         displayName: include,
@@ -121,6 +124,10 @@ export const programFields = {
             dataElement: dataElementFields,
         },
     },
+};
+
+export const programFieldsWithIndicators = {
+    ...programFields,
     programIndicators: d2BaseModelFields,
 };
 

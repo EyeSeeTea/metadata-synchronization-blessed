@@ -61,7 +61,8 @@ export abstract class GenericSync {
     >;
 
     public extractMetadata = memoize(async () => {
-        return getMetadata(this.api, this.builder.metadataIds, this.fields);
+        const cleanIds = this.builder.metadataIds.map(id => _.last(id.split("-")) ?? id);
+        return getMetadata(this.api, cleanIds, this.fields);
     });
 
     private async buildSyncReport() {

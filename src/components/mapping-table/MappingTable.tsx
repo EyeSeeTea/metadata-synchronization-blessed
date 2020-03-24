@@ -144,7 +144,7 @@ export default function MappingTable({
                                 instanceApi,
                                 originModel,
                                 destinationModel,
-                                originalId: row?.__originalId__ ?? id,
+                                originalId: _.last(id.split("-")) ?? id,
                                 mappedId,
                             });
                             _.set(newMapping, [mappingType, id], {

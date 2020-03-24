@@ -45,7 +45,11 @@ export function d2ModelFactory(api: D2Api, d2ModelName: string): typeof D2Model 
     const modelClass = findClasses(["collectionName", modelName]);
     const mappingClass = findClasses(["mappingType", d2ModelName]);
 
-    const result = directClass ?? modelClass ?? mappingClass ?? defaultModel(modelName);
-    console.debug(`d2ModelFactory for modelName ${d2ModelName} returns ${result.metadataType}`);
-    return result;
+    const result = directClass ?? modelClass ?? mappingClass;
+    if (!result) {
+        console.error(
+            `Could not find a model for ${d2ModelName}... This is probably a mistake in your app.`
+        );
+    }
+    return result ?? defaultModel(modelName);
 }
