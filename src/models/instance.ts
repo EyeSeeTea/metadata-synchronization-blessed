@@ -165,9 +165,7 @@ export default class Instance {
 
         const detailsKey = Instance.getDetailsKey(instance);
         const detailsData: InstanceDetailsData = { metadataMapping: instance.metadataMapping };
-        const response: Response = await saveDataStore(api, detailsKey, detailsData)
-            .then(() => ({ status: true }))
-            .catch(error => ({ status: false, error }));
+        const response: Response = await toResponse(saveDataStore(api, detailsKey, detailsData));
         const mainElement = _.pick(element, _.keys(mainDefaultData));
         return response.status ? saveData(api, instancesDataStoreKey, mainElement) : response;
     }

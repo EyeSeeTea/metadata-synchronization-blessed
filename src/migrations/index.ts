@@ -1,7 +1,7 @@
 import { D2Api, D2ApiDefault } from "d2-api";
 import _ from "lodash";
 
-import { Config, Debug } from "./types";
+import { RunnerOptions, Config, Debug, Migration } from "../types/migrations";
 import { promiseMap } from "./utils";
 import { dataStoreNamespace } from "../models/dataStore";
 import { getDataStore, saveDataStore, deleteDataStore } from "../models/dataStore";
@@ -14,18 +14,7 @@ const migrations: Migration[] = [
     { version: 2, fn: rulesById, name: "Create rules-ID" },
 ];
 
-const appVersion =
-    _(migrations)
-        .map(info => info.version)
-        .max() || 0;
-
-type Migration = { version: number; fn: MigrationFn; name: string };
-type MigrationFn = (api: D2Api, debug: Debug) => Promise<void>;
-
-interface Options {
-    baseUrl: string;
-    debug?: Debug;
-}
+const appVersion = _.max(migrations.map(info => info.version)) || 0;
 
 export class MigrationsRunner {
     migrations: Migration[];
@@ -33,9 +22,10 @@ export class MigrationsRunner {
 
     backupPrefix = "backup-";
 
-    constructor(private api: D2Api, private config: Config, private options: Options) {
+    constructor(private api: D2Api, private config: Config, private options: RunnerOptions) {
+        const { debug = _.identity } = options;
         this.migrations = migrations;
-        this.debug = options.debug || _.identity;
+        this.debug = debug;
         this.migrations = this.getMigrationToApply(config);
     }
 
@@ -44,13 +34,14 @@ export class MigrationsRunner {
         return new MigrationsRunner(this.api, this.config, newOptions);
     }
 
-    static async init(options: Options): Promise<MigrationsRunner> {
-        const api = new D2ApiDefault({ baseUrl: options.baseUrl });
+    static async init(options: RunnerOptions): Promise<MigrationsRunner> {
+        const { baseUrl } = options;
+        const api = new D2ApiDefault({ baseUrl: baseUrl });
         const config = await getDataStore<Config>(api, "config", { version: 0 });
         return new MigrationsRunner(api, config, options);
     }
 
-    public async migrate(): Promise<void> {
+    public async execute(): Promise<void> {
         // Re-load the runner to make sure we have the latest data as config.
         const runner = await MigrationsRunner.init(this.options);
         return runner.migrateFromCurrent();
@@ -196,7 +187,7 @@ async function main() {
     const [baseUrl] = process.argv.slice(2);
     if (!baseUrl) throw new Error("Usage: index.ts DHIS2_URL");
     const runner = await MigrationsRunner.init({ baseUrl, debug: console.debug });
-    runner.migrate();
+    runner.execute();
 }
 
 if (require.main === module) {

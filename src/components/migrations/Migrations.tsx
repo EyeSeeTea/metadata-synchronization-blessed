@@ -71,7 +71,7 @@ function runMigrations(
 
     return runner
         .setDebug(debug)
-        .migrate()
+        .execute()
         .then(() => ({ type: "success" as const }))
         .catch(() => {
             debug("---");

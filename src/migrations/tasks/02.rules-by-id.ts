@@ -4,7 +4,7 @@ import { D2Api, Id } from "d2-api";
 import { getDataStore, saveDataStore } from "../../models/dataStore";
 import { promiseMap, getDuplicatedIds } from "../utils";
 import { Maybe } from "../../types/utils";
-import { Debug } from "../types";
+import { Debug } from "../../types/migrations";
 
 type SynchronizationBuilder = { targetInstances: Id[] };
 

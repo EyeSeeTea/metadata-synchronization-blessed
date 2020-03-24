@@ -1,9 +1,7 @@
-import { D2Api } from "d2-api";
+import { D2Api, Ref } from "d2-api";
 import _ from "lodash";
 import { Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-
-type Identifiable = { id: string };
 
 export const dataStoreNamespace = "metadata-synchronization";
 export const dataStoreVersion = 1;
@@ -38,7 +36,7 @@ export async function getData(api: D2Api, dataStoreKey: string): Promise<any> {
     return getDataStore(api, dataStoreKey, []);
 }
 
-export async function getDataById<T extends Identifiable>(
+export async function getDataById<T extends Ref>(
     api: D2Api,
     dataStoreKey: string,
     id: string

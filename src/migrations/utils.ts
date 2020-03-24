@@ -1,5 +1,5 @@
+import { Ref } from "d2-api";
 import _ from "lodash";
-import { Identifiable } from "./types";
 
 /* Map sequentially over T[] with an asynchronous function and return array of mapped values */
 export function promiseMap<T, S>(inputValues: T[], mapper: (value: T) => Promise<S>): Promise<S[]> {
@@ -13,9 +13,9 @@ export function promiseMap<T, S>(inputValues: T[], mapper: (value: T) => Promise
     return inputValues.reduce(reducer, Promise.resolve([]));
 }
 
-export function getDuplicatedIds<T extends Identifiable>(oldInstances: T[]): string[] {
-    return _(oldInstances)
-        .map(instance => instance.id)
+export function getDuplicatedIds<Obj extends Ref>(objects: Obj[]): string[] {
+    return _(objects)
+        .map(obj => obj.id)
         .countBy()
         .pickBy(count => count > 1)
         .keys()
