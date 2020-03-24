@@ -3,7 +3,7 @@ import i18n from "../../locales";
 import { ConfirmationDialog } from "d2-ui-components";
 import { MigrationsRunner } from "../../migrations";
 
-interface MigrationsProps {
+export interface MigrationsProps {
     runner: MigrationsRunner;
     onFinish: () => void;
 }
@@ -76,7 +76,9 @@ function runMigrations(
         .catch(() => {
             debug("---");
             debug(
-                "There has been an error. You can either retry or contact your administrator if you think there has been an un recoverable error"
+                i18n.t(
+                    "There has been an error. You can either retry or contact your administrator if you think there has been an un recoverable error"
+                )
             );
             return { type: "show-info" as const };
         });

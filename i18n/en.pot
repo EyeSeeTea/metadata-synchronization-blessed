@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-23T20:03:20.190Z\n"
-"PO-Revision-Date: 2020-03-23T20:03:20.190Z\n"
+"POT-Creation-Date: 2020-03-24T11:47:05.513Z\n"
+"PO-Revision-Date: 2020-03-24T11:47:05.513Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -198,6 +198,11 @@ msgid ""
 msgstr ""
 
 msgid "Migrations finished successfully, you may now continue to the app"
+msgstr ""
+
+msgid ""
+"There has been an error. You can either retry or contact your administrator "
+"if you think there has been an un recoverable error"
 msgstr ""
 
 msgid "Migrate instance"
