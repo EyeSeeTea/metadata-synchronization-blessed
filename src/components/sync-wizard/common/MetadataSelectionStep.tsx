@@ -3,8 +3,8 @@ import { useD2Api } from "d2-api";
 import { useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
+import { AggregatedDataElementModel } from "../../../models/complexModels";
 import {
-    AggregatedDataElementModel,
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,

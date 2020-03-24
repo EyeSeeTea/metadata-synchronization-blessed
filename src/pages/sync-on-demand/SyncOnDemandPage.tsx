@@ -23,13 +23,15 @@ import { SyncronizationClass } from "../../logic/sync/generic";
 import { MetadataSync } from "../../logic/sync/metadata";
 import {
     AggregatedDataElementModel,
+    DataSetWithDataElementsModel,
+    IndicatorMappedModel,
+    ProgramWithDataElementsModel,
+} from "../../models/complexModels";
+import {
     D2Model,
     DataElementGroupModel,
     DataElementGroupSetModel,
-    DataSetModel,
-    IndicatorMappedModel,
     ProgramIndicatorModel,
-    ProgramModel,
 } from "../../models/d2Model";
 import { metadataModels } from "../../models/d2ModelFactory";
 import DeletedObject from "../../models/deletedObjects";
@@ -64,7 +66,7 @@ const config: Record<
     aggregated: {
         title: i18n.t("Aggregated Data Synchronization"),
         models: [
-            DataSetModel,
+            DataSetWithDataElementsModel,
             AggregatedDataElementModel,
             DataElementGroupModel,
             DataElementGroupSetModel,
@@ -75,7 +77,7 @@ const config: Record<
     },
     events: {
         title: i18n.t("Events Synchronization"),
-        models: [ProgramModel, ProgramIndicatorModel],
+        models: [ProgramWithDataElementsModel, ProgramIndicatorModel],
         childrenKeys: ["dataElements"],
         SyncClass: EventsSync,
     },

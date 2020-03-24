@@ -1,12 +1,4 @@
-import i18n from "@dhis2/d2-i18n";
-import {
-    D2Api,
-    D2DataSetSchema,
-    D2ModelSchemas,
-    D2ProgramSchema,
-    Model,
-    SelectedPick,
-} from "d2-api";
+import { D2Api, D2ModelSchemas, Model } from "d2-api";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import { isValidUid } from "d2/uid";
 import _ from "lodash";
@@ -22,7 +14,6 @@ import {
     d2BaseModelColumns,
     d2BaseModelDetails,
     d2BaseModelFields,
-    dataElementFields,
     dataElementGroupFields,
     dataElementGroupSetFields,
     dataSetFields,
@@ -267,22 +258,6 @@ export class DataElementModel extends D2Model {
     ];
 }
 
-export class AggregatedDataElementModel extends DataElementModel {
-    protected static mappingType = "aggregatedDataElements";
-    protected static groupFilterName = DataElementModel.groupFilterName;
-    protected static fields = dataElementFields;
-
-    protected static modelFilters = { domainType: { eq: "AGGREGATE" } };
-}
-
-export class ProgramDataElementModel extends DataElementModel {
-    protected static mappingType = "programDataElements";
-    protected static groupFilterName = DataElementModel.groupFilterName;
-    protected static fields = dataElementFields;
-
-    protected static modelFilters = { domainType: { neq: "AGGREGATE" } };
-}
-
 export class DataElementGroupModel extends D2Model {
     protected static metadataType = "dataElementGroup";
     protected static collectionName = "dataElementGroups" as const;
@@ -319,7 +294,6 @@ export class DataSetModel extends D2Model {
     protected static metadataType = "dataSet";
     protected static collectionName = "dataSets" as const;
     protected static fields = dataSetFields;
-    protected static childrenKeys = ["dataElements"];
 
     protected static excludeRules = [
         "indicators.dataSets",
@@ -358,19 +332,6 @@ export class DataSetModel extends D2Model {
         "dataElements.dataElementGroups.dataElementGroupSets",
         "dataElements.dataElementGroups.dataElementGroupSets.attributes",
     ];
-
-    protected static modelTransform = (
-        dataSets: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]
-    ) => {
-        return dataSets.map(({ dataSetElements = [], ...rest }) => ({
-            ...rest,
-            dataElements: dataSetElements.map(({ dataElement }) => ({
-                ...dataElement,
-                __type__: AggregatedDataElementModel.getCollectionName(),
-                __mappingType__: AggregatedDataElementModel.getMappingType(),
-            })),
-        }));
-    };
 }
 
 export class CategoryOptionModel extends D2Model {
@@ -387,49 +348,6 @@ export class ProgramModel extends D2Model {
     protected static metadataType = "program";
     protected static collectionName = "programs" as const;
     protected static fields = programFields;
-    protected static childrenKeys = ["dataElements"];
-
-    protected static modelTransform = (
-        objects: SelectedPick<D2ProgramSchema, typeof programFields>[]
-    ) => {
-        return objects.map(program => ({
-            ...program,
-            dataElements: _.flatten(
-                program.programStages?.map(
-                    ({ displayName, programStageDataElements, id: programStageId }) =>
-                        programStageDataElements
-                            .filter(({ dataElement }) => !!dataElement)
-                            .map(({ dataElement }) => ({
-                                ...dataElement,
-                                id: `${program.id}-${programStageId}-${dataElement.id}`,
-                                __originalId__: dataElement.id,
-                                __type__: ProgramDataElementModel.getCollectionName(),
-                                __mappingType__: ProgramDataElementModel.getMappingType(),
-                                displayName:
-                                    program.programStages.length > 1
-                                        ? `[${displayName}] ${dataElement.displayName}`
-                                        : dataElement.displayName,
-                            }))
-                ) ?? []
-            ),
-        }));
-    };
-}
-
-export class EventProgramModel extends ProgramModel {
-    protected static mappingType = "eventPrograms";
-    protected static groupFilterName = ProgramModel.groupFilterName;
-    protected static fields = programFields;
-
-    protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
-}
-
-export class TrackerProgramModel extends ProgramModel {
-    protected static mappingType = "trackerPrograms";
-    protected static groupFilterName = ProgramModel.groupFilterName;
-    protected static fields = programFields;
-
-    protected static modelFilters = { programType: { eq: "WITH_REGISTRATION" } };
 }
 
 export class ProgramStageModel extends D2Model {
@@ -456,10 +374,6 @@ export class IndicatorModel extends D2Model {
         "indicatorGroups.attributes",
         "indicatorGroups.indicatorGroupSets",
     ];
-}
-
-export class IndicatorMappedModel extends IndicatorModel {
-    protected static mappingType = AggregatedDataElementModel.getMappingType();
 }
 
 export class IndicatorGroupModel extends D2Model {
@@ -579,29 +493,6 @@ export class UserGroupModel extends D2Model {
 
     protected static excludeRules = [];
     protected static includeRules = ["users"];
-}
-
-export class EventProgramModelWithIndicatorsModel extends EventProgramModel {
-    protected static metadataType = "eventProgramModelWithIndicators";
-    protected static modelName = i18n.t("Program (Indicators)");
-    protected static childrenKeys = ["programIndicators"];
-
-    protected static modelTransform = (
-        objects: SelectedPick<D2ProgramSchema, typeof programFields>[]
-    ) => {
-        return EventProgramModel.modelTransform(objects).map(
-            ({ programIndicators, ...program }) => ({
-                ...program,
-                programIndicators: programIndicators.map(programIndicator => ({
-                    ...programIndicator,
-                    id: `${program.id}-${programIndicator.id}`,
-                    __originalId__: programIndicator.id,
-                    __type__: ProgramIndicatorModel.getCollectionName(),
-                    __mappingType__: ProgramDataElementModel.getMappingType(),
-                })),
-            })
-        );
-    };
 }
 
 export function defaultModel(pascalCaseModelName: string): any {

@@ -7,14 +7,16 @@ import MappingTable from "../../components/mapping-table/MappingTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
     AggregatedDataElementModel,
-    CategoryComboModel,
-    CategoryOptionModel,
     EventProgramModel,
     EventProgramModelWithIndicatorsModel,
     IndicatorMappedModel,
+    ProgramDataElementModel,
+} from "../../models/complexModels";
+import {
+    CategoryComboModel,
+    CategoryOptionModel,
     OptionModel,
     OrganisationUnitModel,
-    ProgramDataElementModel,
 } from "../../models/d2Model";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 
