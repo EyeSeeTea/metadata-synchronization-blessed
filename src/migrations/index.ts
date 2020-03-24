@@ -6,8 +6,8 @@ import { promiseMap } from "./utils";
 import { dataStoreNamespace } from "../models/dataStore";
 import { getDataStore, saveDataStore, deleteDataStore } from "../models/dataStore";
 
-import instancesById from "./tasks/02.instances-by-id";
-import rulesById from "./tasks/03.rules-by-id";
+import instancesById from "./tasks/01.instances-by-id";
+import rulesById from "./tasks/02.rules-by-id";
 
 const migrations: Migration[] = [
     { version: 1, fn: instancesById, name: "Create instances-ID" },
@@ -31,6 +31,8 @@ interface Options {
 export class MigrationsRunner {
     migrations: Migration[];
     debug: Debug;
+
+    backupPrefix = "backup-";
 
     constructor(private api: D2Api, private config: Config, private options: Options) {
         this.migrations = migrations;
@@ -74,6 +76,12 @@ export class MigrationsRunner {
             await this.rollbackDataStore(error);
             throw error;
         }
+
+        try {
+            await this.deleteBackup();
+        } catch (err) {
+            debug(`Error deleting backup (non-fatal)`);
+        }
     }
 
     async runMigrations(migrations: Migration[]): Promise<Config> {
@@ -95,6 +103,16 @@ export class MigrationsRunner {
         return newConfig;
     }
 
+    async deleteBackup() {
+        const { debug, api } = this;
+        const backupKeys = await this.getBackupKeys();
+        debug(`Delete backup entries`);
+
+        await promiseMap(backupKeys, async backupKey => {
+            await deleteDataStore(api, backupKey);
+        });
+    }
+
     async rollBackExistingBackup() {
         if (this.config.migration) {
             await this.rollbackDataStore(new Error("Rollback existing backup"));
@@ -103,18 +121,17 @@ export class MigrationsRunner {
 
     async backupDataStore() {
         const { api, debug } = this;
-        debug(`Start backup`);
+        debug(`Backup data store`);
         const allKeys = await this.getDataStoreKeys();
         const keysToBackup = _(allKeys)
-            .reject(key => key.startsWith("backup-"))
+            .reject(key => key.startsWith(this.backupPrefix))
             .difference(["config"])
             .compact()
             .value();
 
         await promiseMap(keysToBackup, async key => {
             const value = await getDataStore(api, key, {});
-            const backupKey = "backup-" + key;
-            debug(`Backup: ${key} -> ${backupKey}`);
+            const backupKey = this.backupPrefix + key;
             await saveDataStore(api, backupKey, value);
         });
     }
@@ -126,21 +143,24 @@ export class MigrationsRunner {
             .getData();
     }
 
+    async getBackupKeys() {
+        const allKeys = await this.getDataStoreKeys();
+        return allKeys.filter(key => key.startsWith(this.backupPrefix));
+    }
+
     async rollbackDataStore(error: Error): Promise<Config> {
         const { api, debug, config } = this;
         const errorMsg = error.message || error.toString();
-        const allKeys = await this.getDataStoreKeys();
-        const keysToRestore = allKeys.filter(key => key.startsWith("backup-"));
+        const keysToRestore = await this.getBackupKeys();
 
         if (_.isEmpty(keysToRestore)) return config;
 
         debug(`Error: ${errorMsg}`);
-        debug("Start Rollback");
+        debug("Start rollback");
 
         await promiseMap(keysToRestore, async backupKey => {
             const value = await getDataStore(api, backupKey, {});
             const key = backupKey.replace(/^backup-/, "");
-            debug(`Rollback: ${backupKey} -> ${key}`);
             await saveDataStore(api, key, value);
             await deleteDataStore(api, backupKey);
         });
@@ -175,7 +195,7 @@ export class MigrationsRunner {
 
 async function main() {
     const [baseUrl] = process.argv.slice(2);
-    if (!baseUrl) throw new Error("Usage: config.ts DHIS2_URL");
+    if (!baseUrl) throw new Error("Usage: index.ts DHIS2_URL");
     const runner = await MigrationsRunner.init({ baseUrl, debug: console.debug });
     runner.migrate();
 }
