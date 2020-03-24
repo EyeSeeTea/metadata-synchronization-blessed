@@ -19,6 +19,7 @@ export class AggregatedDataElementModel extends DataElementModel {
 }
 
 export class DataSetWithDataElementsModel extends DataSetModel {
+    protected static metadataType = "dataSetWithDataElements";
     protected static modelName = i18n.t("Data Set with Data Elements");
     protected static childrenKeys = ["dataElements"];
 
@@ -45,6 +46,7 @@ export class ProgramDataElementModel extends DataElementModel {
 }
 
 export class ProgramWithDataElementsModel extends ProgramModel {
+    protected static metadataType = "programWithDataElements";
     protected static modelName = i18n.t("Program with Data Elements");
     protected static childrenKeys = ["dataElements"];
 
@@ -75,42 +77,33 @@ export class ProgramWithDataElementsModel extends ProgramModel {
     };
 }
 
-export class EventProgramModel extends ProgramWithDataElementsModel {
-    protected static mappingType = "eventPrograms";
-    protected static groupFilterName = ProgramModel.groupFilterName;
-    protected static fields = programFields;
+export class EventProgramWithDataElementsModel extends ProgramWithDataElementsModel {
+    protected static metadataType = "eventProgramWithDataElements";
+    protected static modelName = i18n.t("Program with Data Elements");
 
     protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
 }
 
-export class TrackerProgramModel extends ProgramWithDataElementsModel {
-    protected static mappingType = "trackerPrograms";
-    protected static groupFilterName = ProgramModel.groupFilterName;
-    protected static fields = programFields;
-
-    protected static modelFilters = { programType: { eq: "WITH_REGISTRATION" } };
-}
-
-export class EventProgramModelWithIndicatorsModel extends EventProgramModel {
-    protected static metadataType = "eventProgramModelWithIndicators";
+export class EventProgramWithIndicatorsModel extends ProgramModel {
+    protected static metadataType = "eventProgramWithIndicators";
     protected static modelName = i18n.t("Program with Indicators");
     protected static childrenKeys = ["programIndicators"];
+
+    protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
 
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFields>[]
     ) => {
-        return EventProgramModel.modelTransform(objects).map(
-            ({ programIndicators, ...program }) => ({
-                ...program,
-                programIndicators: programIndicators.map(programIndicator => ({
-                    ...programIndicator,
-                    id: `${program.id}-${programIndicator.id}`,
-                    __originalId__: programIndicator.id,
-                    __type__: ProgramIndicatorModel.getCollectionName(),
-                    __mappingType__: AggregatedDataElementModel.getMappingType(),
-                })),
-            })
-        );
+        return objects.map(({ programIndicators, ...program }) => ({
+            ...program,
+            programIndicators: programIndicators.map(programIndicator => ({
+                ...programIndicator,
+                id: `${program.id}-${programIndicator.id}`,
+                __originalId__: programIndicator.id,
+                __type__: ProgramIndicatorModel.getCollectionName(),
+                __mappingType__: AggregatedDataElementModel.getMappingType(),
+            })),
+        }));
     };
 }
 

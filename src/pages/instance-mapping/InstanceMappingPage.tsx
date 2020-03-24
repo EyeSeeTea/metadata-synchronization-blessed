@@ -7,8 +7,8 @@ import MappingTable from "../../components/mapping-table/MappingTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
     AggregatedDataElementModel,
-    EventProgramModel,
-    EventProgramModelWithIndicatorsModel,
+    EventProgramWithDataElementsModel,
+    EventProgramWithIndicatorsModel,
     IndicatorMappedModel,
     ProgramDataElementModel,
 } from "../../models/complexModels";
@@ -30,7 +30,7 @@ const config = {
     },
     tracker: {
         title: i18n.t("Program (events) mapping"),
-        models: [EventProgramModel, EventProgramModelWithIndicatorsModel],
+        models: [EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel],
         isGlobalMapping: false,
     },
     orgUnit: {

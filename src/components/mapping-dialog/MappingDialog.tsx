@@ -60,7 +60,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 
     const api = instance.getApi();
     const model = d2ModelFactory(api, mappingType);
-    const displayName = d2.models[model.getCollectionName()].displayName;
+    const displayName = model.getModelName(d2);
 
     useEffect(() => {
         let mounted = true;

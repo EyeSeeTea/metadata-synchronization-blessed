@@ -292,11 +292,11 @@ export default function MappingTable({
                 } else if (elements.length === 1) {
                     const firstElement = _.find(rows, ["id", elements[0]]);
                     if (firstElement) {
-                        const type = getMappingTypeFromRow(firstElement);
+                        const mappingType = getMappingTypeFromRow(firstElement);
                         setMappingConfig({
                             elements,
                             mappingPath,
-                            mappingType: type,
+                            mappingType,
                             firstElement,
                         });
                     }
