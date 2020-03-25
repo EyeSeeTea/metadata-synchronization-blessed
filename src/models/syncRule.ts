@@ -12,7 +12,6 @@ import {
     MetadataSynchronizationParams,
     SharingSetting,
     SynchronizationBuilder,
-    SynchronizationRuleDetails,
     SynchronizationRule,
     SyncRuleType,
 } from "../types/synchronization";
@@ -30,10 +29,28 @@ const defaultSynchronizationBuilder: SynchronizationBuilder = {
     targetInstances: [],
     metadataIds: [],
     excludedIds: [],
+    dataParams: {
+        strategy: "NEW_AND_UPDATES",
+        allAttributeCategoryOptions: true,
+        dryRun: false,
+        allEvents: true,
+    },
+    syncParams: {
+        importStrategy: "CREATE_AND_UPDATE",
+        includeSharingSettings: true,
+        useDefaultIncludeExclude: true,
+        atomicMode: "ALL",
+        mergeMode: "MERGE",
+        importMode: "COMMIT",
+    },
 };
 
-type SynchronizationRuleInList = Omit<SynchronizationRule, "builder"> &
+type DetailsKeys = "builder";
+
+type SynchronizationRuleMain = Omit<SynchronizationRule, "builder"> &
     Pick<SynchronizationBuilder, "targetInstances">;
+
+type SynchronizationRuleDetails = Pick<SynchronizationRule, DetailsKeys>;
 
 export default class SyncRule {
     private readonly syncRule: SynchronizationRule;
@@ -204,25 +221,7 @@ export default class SyncRule {
             created: new Date(),
             description: "",
             type: type,
-            builder: {
-                targetInstances: [],
-                metadataIds: [],
-                excludedIds: [],
-                dataParams: {
-                    strategy: "NEW_AND_UPDATES",
-                    allAttributeCategoryOptions: true,
-                    dryRun: false,
-                    allEvents: true,
-                },
-                syncParams: {
-                    importStrategy: "CREATE_AND_UPDATE",
-                    includeSharingSettings: true,
-                    useDefaultIncludeExclude: true,
-                    atomicMode: "ALL",
-                    mergeMode: "MERGE",
-                    importMode: "COMMIT",
-                },
-            },
+            builder: defaultSynchronizationBuilder,
             enabled: false,
             lastUpdated: new Date(),
             lastUpdatedBy: {
@@ -248,7 +247,7 @@ export default class SyncRule {
     }
 
     public static async get(api: D2Api, id: string): Promise<SyncRule> {
-        const syncRuleData = await getDataById<SynchronizationRuleInList>(api, dataStoreKey, id);
+        const syncRuleData = await getDataById<SynchronizationRuleMain>(api, dataStoreKey, id);
         if (!syncRuleData) throw new Error(`SyncRule not found: ${id}`);
         const detailsKey = this.getDetailsKey(syncRuleData);
         const defaultDetails: SynchronizationRuleDetails = {
@@ -276,12 +275,12 @@ export default class SyncRule {
         const userInfo = await getUserInfo(api);
 
         const data = await getPaginatedData(api, dataStoreKey, filters, { paging: false, sorting });
-        const filteredObjects = _(data.objects as SynchronizationRuleInList[])
-            .map(syncRuleInList => ({
-                ...syncRuleInList,
+        const filteredObjects = _(data.objects as SynchronizationRuleMain[])
+            .map(syncRuleMain => ({
+                ...syncRuleMain,
                 builder: {
                     ...defaultSynchronizationBuilder,
-                    targetInstances: syncRuleInList.targetInstances,
+                    targetInstances: syncRuleMain.targetInstances,
                 },
             }))
             .filter(data => {
@@ -587,13 +586,13 @@ export default class SyncRule {
         const builder = syncRule.builder ?? defaultSynchronizationBuilder;
         const detailsData: SynchronizationRuleDetails = { builder };
         await saveDataStore(api, detailsKey, detailsData);
-        const syncRuleInList: SynchronizationRuleInList = {
+        const syncRuleMain: SynchronizationRuleMain = {
             ..._.omit(syncRule, ["builder"]),
             targetInstances: builder.targetInstances,
         };
 
         await saveData(api, dataStoreKey, {
-            ...syncRuleInList,
+            ...syncRuleMain,
             lastUpdated: new Date(),
             lastUpdatedBy: user,
         });

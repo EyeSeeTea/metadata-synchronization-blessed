@@ -132,11 +132,7 @@ export interface SynchronizationRule {
     type: SyncRuleType;
 }
 
-type DetailsKeys = "builder";
-
 export type SynchronizationRuleMain = Omit<SynchronizationRule, DetailsKeys>;
-
-export type SynchronizationRuleDetails = Pick<SynchronizationRule, DetailsKeys>;
 
 export type SyncRuleType = "metadata" | "aggregated" | "events" | "deleted";
 

@@ -12,7 +12,6 @@ export interface SynchronizationRuleOld {
     id: string;
     builder: SynchronizationBuilder;
     targetInstances: Id[];
-    [k: string]: unknown;
 }
 
 type SynchronizationRuleNew = Omit<SynchronizationRuleOld, "builder">;

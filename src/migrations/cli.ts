@@ -7,8 +7,6 @@ import axiosRetry from "axios-retry";
 import { Migration } from "../types/migrations";
 import { MigrationsRunner } from "./index";
 
-const axiosMaxRetries = 3;
-
 function getMigrationsForNode(): Migration[] {
     const directory = path.join(__dirname, "tasks");
     const keys = _.sortBy(fs.readdirSync(directory));
@@ -27,7 +25,7 @@ async function main() {
     if (!baseUrl) throw new Error("Usage: index.ts DHIS2_URL");
     const migrations = getMigrationsForNode();
     const api = new D2ApiDefault({ baseUrl: baseUrl });
-    axiosRetry(api.connection, { retries: axiosMaxRetries });
+    axiosRetry(api.connection, { retries: 3 });
     const runner = await MigrationsRunner.init({ api, debug: console.debug, migrations });
     runner.execute();
 }

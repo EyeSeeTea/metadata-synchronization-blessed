@@ -137,6 +137,7 @@ async function runMigrations(baseUrl) {
     const api = new D2ApiDefault({ baseUrl });
     axiosRetry(api.connection, { retries: axiosMaxRetries });
     const runner = await MigrationsRunner.init({ api, debug: console.debug });
+
     if (runner.hasPendingMigrations()) {
         return { type: "pending", runner };
     } else {
