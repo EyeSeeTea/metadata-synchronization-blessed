@@ -107,7 +107,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
             ...syncRule.dataSyncAttributeCategoryOptions,
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
-        getMetadata(api.apiPath, ids, "id,name").then(updateMetadata);
+        getMetadata(api, ids, "id,name").then(updateMetadata);
         getInstanceOptions(api).then(setInstanceOptions);
     }, [api, syncRule]);
 
