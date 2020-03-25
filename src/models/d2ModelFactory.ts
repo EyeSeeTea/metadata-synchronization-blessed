@@ -18,6 +18,7 @@ export const metadataModels = [
     classes.OrganisationUnitLevelModel,
     classes.ValidationRuleModel,
     classes.ValidationRuleGroupModel,
+    classes.ProgramModel,
     classes.ProgramIndicatorModel,
     classes.ProgramIndicatorGroupModel,
     classes.ProgramRuleModel,

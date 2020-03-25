@@ -425,6 +425,15 @@ msgstr ""
 msgid "Category options"
 msgstr ""
 
+msgid "Aggregation"
+msgstr ""
+
+msgid ""
+"If aggregation is enabled, the synchronization will use the Analytics "
+"endpoint and group data by organisation units children and the chosen time "
+"periods"
+msgstr ""
+
 msgid "Programs"
 msgstr ""
 
@@ -566,6 +575,30 @@ msgid "Save"
 msgstr ""
 
 msgid "Download JSON"
+msgstr ""
+
+msgid "Daily"
+msgstr ""
+
+msgid "Weekly"
+msgstr ""
+
+msgid "Monthly"
+msgstr ""
+
+msgid "Quarterly"
+msgstr ""
+
+msgid "Yearly"
+msgstr ""
+
+msgid "Without aggregation, any data value related to an indicator will be ignored"
+msgstr ""
+
+msgid "Enable data aggregation"
+msgstr ""
+
+msgid "Aggregation type"
 msgstr ""
 
 msgid "Sync all attribute category options"
@@ -809,6 +842,9 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
+msgid "Analytics execution finished on {{name}}"
+msgstr ""
+
 msgid "Deleting Instances"
 msgstr ""
 
@@ -824,6 +860,9 @@ msgid "Edit"
 msgstr ""
 
 msgid "Replicate"
+msgstr ""
+
+msgid "Run analytics"
 msgstr ""
 
 msgid "Delete Instances?"
@@ -963,6 +1002,12 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Running analytics for instance {{name}}"
+msgstr ""
+
+msgid "Updating analytics done`for instance {{name}}"
+msgstr ""
 
 msgid "Short name"
 msgstr ""

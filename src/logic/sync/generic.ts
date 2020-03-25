@@ -45,7 +45,7 @@ export abstract class GenericSync {
     }
 
     public abstract async buildPayload(): Promise<SyncronizationPayload>;
-    protected abstract async mapMetadata(
+    protected abstract async mapPayload(
         instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload>;

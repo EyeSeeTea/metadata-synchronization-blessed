@@ -35,7 +35,7 @@ export class DeletedSync extends GenericSync {
         return undefined;
     }
 
-    protected async mapMetadata(
+    protected async mapPayload(
         _instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload> {

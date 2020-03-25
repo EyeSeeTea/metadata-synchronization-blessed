@@ -6,6 +6,7 @@ export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
     excludedIds: string[];
+    metadataTypes: string[];
     syncRule?: string;
     syncParams?: MetadataSynchronizationParams;
     dataParams?: DataSynchronizationParams;
@@ -35,6 +36,8 @@ export interface DataSynchronizationParams extends DataImportParams {
     endDate?: Date;
     events?: string[];
     allEvents?: boolean;
+    enableAggregation?: boolean;
+    aggregationType?: DataSyncAggregation;
 }
 
 export type SynchronizationParams = MetadataSynchronizationParams | DataSynchronizationParams;
@@ -200,3 +203,5 @@ export type DataSyncPeriod =
     | "LAST_QUARTER"
     | "THIS_YEAR"
     | "LAST_YEAR";
+
+export type DataSyncAggregation = "DAILY" | "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY";

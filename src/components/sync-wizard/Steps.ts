@@ -11,6 +11,7 @@ import EventsSelectionStep from "./data/EventsSelectionStep";
 import OrganisationUnitsSelectionStep from "./data/OrganisationUnitsSelectionStep";
 import PeriodSelectionStep from "./data/PeriodSelectionStep";
 import MetadataIncludeExcludeStep from "./metadata/MetadataIncludeExcludeStep";
+import AggregationStep from "./data/AggregationStep";
 
 export interface SyncWizardStep extends WizardStep {
     validationKeys: string[];
@@ -132,6 +133,16 @@ export const aggregatedSteps: SyncWizardStep[] = [
         component: CategoryOptionsSelectionStep,
         validationKeys: ["categoryOptionIds"],
         showOnSyncDialog: true,
+    },
+    {
+        key: "aggregation",
+        label: i18n.t("Aggregation"),
+        component: AggregationStep,
+        validationKeys: ["dataSyncAggregation"],
+        showOnSyncDialog: true,
+        warning: i18n.t(
+            "If aggregation is enabled, the synchronization will use the Analytics endpoint and group data by organisation units children and the chosen time periods"
+        ),
     },
     commonSteps.instanceSelection,
     commonSteps.scheduler,
