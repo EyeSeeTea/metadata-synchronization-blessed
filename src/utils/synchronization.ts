@@ -53,8 +53,13 @@ export function cleanObject(
         .compact()
         .value();
 
-    const cleanLeafRules = leafRules.reduce((accumulator: string[], rule: string) =>
-        [...accumulator, ...cleanToAPIChildReferenceName(d2, rule, modelName)], []);
+    const cleanLeafRules = leafRules.reduce(
+        (accumulator: string[], rule: string) => [
+            ...accumulator,
+            ...cleanToAPIChildReferenceName(d2, rule, modelName),
+        ],
+        []
+    );
 
     const propsToRemove = includeSharingSettings ? [] : userProperties;
 
@@ -425,8 +430,8 @@ export const getDefaultIds = memoize(
                 fields: "id",
             })
             .getData()) as {
-                [key: string]: { id: string }[];
-            };
+            [key: string]: { id: string }[];
+        };
 
         return _(response)
             .omit(["system"])

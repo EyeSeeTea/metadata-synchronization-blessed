@@ -151,7 +151,7 @@ export function cleanToModelName(d2: D2, id: string, caller: string): string | n
     } else if (id === "notificationTemplates") {
         return "programNotificationTemplates";
     }
-    // This options are for organisationUnit rule in organisationUnit model and 
+    // This options are for organisationUnit rule in organisationUnit model and
     // currently does not exits organisationUnit include rules for organisationUnit model
     else if (_.includes(["parent", "children", "ancestors"], id)) {
         return caller;
@@ -164,8 +164,11 @@ export function cleanToAPIChildReferenceName(d2: D2, key: string, parent: string
     if (key === "attributes") {
         return ["attributeValues"];
     } else if (key === "optionSets") {
-        return _.compact([d2.models[key].name, d2.models[key].plural,
-        parent === "dataElement" ? "commentOptionSet" : null]);
+        return _.compact([
+            d2.models[key].name,
+            d2.models[key].plural,
+            parent === "dataElement" ? "commentOptionSet" : null,
+        ]);
     } else if (key === parent + "Sets" && parent.endsWith("Group")) {
         return ["groupSets"];
     } else if (key === "dataApprovalWorkflow") {
