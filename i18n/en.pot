@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-24T11:21:24.286Z\n"
-"PO-Revision-Date: 2020-03-24T11:21:24.287Z\n"
+"POT-Creation-Date: 2020-03-25T15:41:33.569Z\n"
+"PO-Revision-Date: 2020-03-25T15:41:33.569Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -381,6 +381,15 @@ msgid ""
 "is, you would use ? in the day of the week field."
 msgstr ""
 
+msgid "Aggregation"
+msgstr ""
+
+msgid ""
+"If aggregation is enabled, the synchronization will use the Analytics "
+"endpoint and group data by organisation units children and the chosen time "
+"periods"
+msgstr ""
+
 msgid "Metadata"
 msgstr ""
 
@@ -397,15 +406,6 @@ msgid "Period"
 msgstr ""
 
 msgid "Category options"
-msgstr ""
-
-msgid "Aggregation"
-msgstr ""
-
-msgid ""
-"If aggregation is enabled, the synchronization will use the Analytics "
-"endpoint and group data by organisation units children and the chosen time "
-"periods"
 msgstr ""
 
 msgid "Programs"

@@ -5,7 +5,7 @@ import memoize from "nano-memoize";
 import Instance from "../../models/instance";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
-import { D2, DataImportResponse, ImportStatus, MetadataImportResponse } from "../../types/d2";
+import { D2, ImportStatus } from "../../types/d2";
 import {
     AggregatedDataStats,
     AggregatedPackage,
@@ -49,13 +49,7 @@ export abstract class GenericSync {
         instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload>;
-    protected abstract async postPayload(
-        instance: Instance
-    ): Promise<MetadataImportResponse | DataImportResponse>;
-    protected abstract cleanResponse(
-        response: MetadataImportResponse | DataImportResponse,
-        instance: Instance
-    ): SynchronizationResult;
+    protected abstract async postPayload(instance: Instance): Promise<SynchronizationResult[]>;
     protected abstract async buildDataStats(): Promise<
         AggregatedDataStats[] | EventsDataStats[] | undefined
     >;
@@ -99,6 +93,7 @@ export abstract class GenericSync {
                 instance: instance.toObject(),
                 status: "PENDING" as ImportStatus,
                 date: new Date(),
+                type: this.type,
             }))
         );
 
@@ -113,8 +108,8 @@ export abstract class GenericSync {
 
             try {
                 console.debug("Start import on destination instance", instance.toObject());
-                const response = await this.postPayload(instance);
-                syncReport.addSyncResult(this.cleanResponse(response, instance));
+                const syncResults = await this.postPayload(instance);
+                syncReport.addSyncResult(...syncResults);
                 console.debug("Finished importing data on instance", instance.toObject());
             } catch (error) {
                 console.error("err", error);
@@ -122,6 +117,7 @@ export abstract class GenericSync {
                     status: "ERROR",
                     instance: instance.toObject(),
                     date: new Date(),
+                    type: this.type,
                 });
             }
 

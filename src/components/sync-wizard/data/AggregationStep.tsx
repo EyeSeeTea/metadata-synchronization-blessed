@@ -53,7 +53,11 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
     return (
         <React.Fragment>
             <Toggle
-                label={i18n.t("Enable data aggregation")}
+                label={
+                    syncRule.type === "aggregated"
+                        ? i18n.t("Enable data aggregation")
+                        : i18n.t("Aggregate and sync program indicators")
+                }
                 value={!!syncRule.dataSyncEnableAggregation}
                 onValueChange={updateEnableAggregation}
             />

@@ -2,7 +2,6 @@ import { D2CategoryOptionCombo } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import { DataImportResponse } from "../../types/d2";
 import { AggregatedPackage, DataValue } from "../../types/synchronization";
 import {
     buildMetadataDictionary,
@@ -20,7 +19,7 @@ import {
 import { GenericSync } from "./generic";
 
 export class AggregatedSync extends GenericSync {
-    protected readonly type = "aggregated";
+    public readonly type = "aggregated";
     protected readonly fields =
         "id,dataElements[id,name],dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
 
@@ -134,11 +133,8 @@ export class AggregatedSync extends GenericSync {
         const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
         console.debug("Aggregated package", { payloadPackage, mappedPayloadPackage });
 
-        return postAggregatedData(instance, mappedPayloadPackage, dataParams);
-    }
-
-    protected cleanResponse(response: DataImportResponse, instance: Instance) {
-        return cleanDataImportResponse(response, instance);
+        const response = await postAggregatedData(instance, mappedPayloadPackage, dataParams);
+        return [cleanDataImportResponse(response, instance, this.type)];
     }
 
     protected async buildDataStats() {
@@ -156,7 +152,7 @@ export class AggregatedSync extends GenericSync {
             .value();
     }
 
-    protected async mapPayload(
+    public async mapPayload(
         instance: Instance,
         payload: AggregatedPackage
     ): Promise<AggregatedPackage> {

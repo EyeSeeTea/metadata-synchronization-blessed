@@ -1,6 +1,5 @@
 import memoize from "nano-memoize";
 import Instance from "../../models/instance";
-import { MetadataImportResponse } from "../../types/d2";
 import {
     cleanMetadataImportResponse,
     getMetadata,
@@ -21,14 +20,13 @@ export class DeletedSync extends GenericSync {
         const payloadPackage = await getMetadata(instance.getApi(), metadataIds, "id");
         console.debug("Metadata package", payloadPackage);
 
-        return postMetadata(instance.getApi(), payloadPackage, {
+        const response = await postMetadata(instance.getApi(), payloadPackage, {
             ...syncParams,
             importStrategy: "DELETE",
         });
-    }
 
-    protected cleanResponse(response: MetadataImportResponse, instance: Instance) {
-        return cleanMetadataImportResponse(response, instance);
+        const syncResult = cleanMetadataImportResponse(response, instance, this.type);
+        return [syncResult];
     }
 
     protected async buildDataStats() {

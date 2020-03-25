@@ -3,7 +3,6 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance from "../../models/instance";
-import { MetadataImportResponse } from "../../types/d2";
 import { ExportBuilder, MetadataPackage, NestedRules } from "../../types/synchronization";
 import {
     buildNestedRules,
@@ -111,11 +110,9 @@ export class MetadataSync extends GenericSync {
         const payloadPackage = await this.buildPayload();
         console.debug("Metadata package", payloadPackage);
 
-        return postMetadata(instance.getApi(), payloadPackage, syncParams);
-    }
-
-    protected cleanResponse(response: MetadataImportResponse, instance: Instance) {
-        return cleanMetadataImportResponse(response, instance);
+        const response = await postMetadata(instance.getApi(), payloadPackage, syncParams);
+        const syncResult = cleanMetadataImportResponse(response, instance, this.type);
+        return [syncResult];
     }
 
     protected async buildDataStats() {
