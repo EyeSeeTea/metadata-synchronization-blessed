@@ -389,6 +389,7 @@ export class ProgramModel extends D2Model {
     ];
     protected static includeRules = [
         "attributes",
+        "categoryCombos",
         "categoryCombos.attributes",
         "categoryCombos.categoryOptionCombos",
         "categoryCombos.categoryOptionCombos.categoryOptions",
@@ -613,7 +614,7 @@ export class UserGroupModel extends D2Model {
     protected static collectionName = "userGroups" as const;
 
     protected static excludeRules = [];
-    protected static includeRules = ["users"];
+    protected static includeRules = ["users", "users.userRoles"];
 }
 
 export class DataApprovalWorkflowModel extends D2Model {
