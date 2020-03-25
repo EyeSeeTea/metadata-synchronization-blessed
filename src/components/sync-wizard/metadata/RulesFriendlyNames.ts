@@ -140,16 +140,16 @@ const includeExcludeRulesFriendlyNames: {
         "Data element group sets of data element groups of data elements in program stages",
     "programStages.dataElements.dataElementGroups.dataElementGroupSets.attributes":
         "Atrributes of data element group sets of data element groups of data elements in program stages",
-    "programStages.programNotificationTemplates": "Notification templates of program",    
-    "programRuleVariables": "Program rule variables",
-    "trackedEntityTypes": "Tracked entity types",
+    "programStages.programNotificationTemplates": "Notification templates of program",
+    programRuleVariables: "Program rule variables",
+    trackedEntityTypes: "Tracked entity types",
     "trackedEntityTypes.trackedEntityAttributes":
         "Tracked entity attributes of tracked entity types",
     "trackedEntityTypes.trackedEntityAttributes.legendSets":
         "Legends of tracked entity attributes of tracked entity types",
     trackedEntityAttributes: "Tracked entity attributes",
     "trackedEntityAttributes.legendSets": "Legends of tracked entity attributes",
-    "users.userRoles": "User roles of users"
+    "users.userRoles": "User roles of users",
 };
 
 export default includeExcludeRulesFriendlyNames;
