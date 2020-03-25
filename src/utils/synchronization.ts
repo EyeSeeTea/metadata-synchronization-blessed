@@ -17,6 +17,8 @@ import {
     MetadataImportResponse,
 } from "../types/d2";
 import {
+    AggregatedPackage,
+    DataSyncAggregation,
     DataSynchronizationParams,
     DataValue,
     MetadataPackage,
@@ -269,7 +271,7 @@ function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Mome
         period,
         startDate = "1970-01-01",
         endDate = moment()
-            .add(10, "years")
+            .add(1, "years")
             .endOf("year")
             .format("YYYY-MM-DD"),
     } = params;
@@ -295,16 +297,42 @@ function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Mome
     }
 }
 
+const aggregations = {
+    DAILY: { format: "YYYYMMDD", unit: "days" as const, amount: 1 },
+    WEEKLY: { format: "YYYY[W]W", unit: "weeks" as const, amount: 1 },
+    MONTHLY: { format: "YYYYMM", unit: "months" as const, amount: 1 },
+    QUARTERLY: { format: "YYYY[Q]Q", unit: "quarters" as const, amount: 1 },
+    YEARLY: { format: "YYYY", unit: "years" as const, amount: 1 },
+};
+
+const buildPeriodsForAggregation = (
+    aggregationType: DataSyncAggregation,
+    startDate: Moment,
+    endDate: Moment
+): string[] => {
+    const { format, unit, amount } = aggregations[aggregationType];
+
+    const current = startDate.clone();
+    const periods = [];
+
+    while (current.isSameOrBefore(endDate)) {
+        periods.push(current.format(format));
+        current.add(amount, unit);
+    }
+
+    return periods;
+};
+
 export async function getAggregatedData(
     api: D2Api,
     params: DataSynchronizationParams,
-    dataSet: string[] = [],
-    dataElementGroup: string[] = []
-) {
+    dataSet: string[],
+    dataElementGroup: string[]
+): Promise<AggregatedPackage> {
     const { orgUnitPaths = [], allAttributeCategoryOptions, attributeCategoryOptions } = params;
     const [startDate, endDate] = buildPeriodFromParams(params);
 
-    if (dataSet.length === 0 && dataElementGroup.length === 0) return {};
+    if (dataSet.length === 0 && dataElementGroup.length === 0) return { dataValues: [] };
 
     const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
     const attributeOptionCombo = !allAttributeCategoryOptions
@@ -312,7 +340,7 @@ export async function getAggregatedData(
         : undefined;
 
     return api
-        .get("/dataValueSets", {
+        .get<AggregatedPackage>("/dataValueSets", {
             dataElementIdScheme: "UID",
             orgUnitIdScheme: "UID",
             categoryOptionComboIdScheme: "UID",
@@ -324,7 +352,69 @@ export async function getAggregatedData(
             dataElementGroup,
             orgUnit,
         })
-        .getData() as Promise<{ dataValues?: DataValue[] }>;
+        .getData();
+}
+
+export async function getAnalyticsData(
+    api: D2Api,
+    params: DataSynchronizationParams,
+    dataElements: string[],
+    indicators: string[]
+): Promise<AggregatedPackage> {
+    const {
+        orgUnitPaths = [],
+        allAttributeCategoryOptions,
+        attributeCategoryOptions,
+        aggregationType,
+    } = params;
+    const [startDate, endDate] = buildPeriodFromParams(params);
+
+    const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
+    const attributeOptionCombo = !allAttributeCategoryOptions
+        ? attributeCategoryOptions
+        : undefined;
+
+    if (aggregationType) {
+        const periods = buildPeriodsForAggregation(aggregationType, startDate, endDate);
+
+        const promises = _.chunk(periods, 500).reduce((acc, period) => {
+            acc.push(
+                ...[
+                    { dimension: dataElements, includeCategories: true },
+                    { dimension: indicators, includeCategories: false },
+                ].map(({ dimension, includeCategories }) => {
+                    return dimension.length > 0
+                        ? api
+                              .get<AggregatedPackage>("/analytics/dataValueSet.json", {
+                                  dimension: _.compact([
+                                      `dx:${dimension.join(";")}`,
+                                      `pe:${period.join(";")}`,
+                                      `ou:${orgUnit.join(";")}`,
+                                      includeCategories ? `co` : undefined,
+                                      attributeOptionCombo
+                                          ? `ao:${attributeOptionCombo.join(";")}`
+                                          : "",
+                                  ]),
+                              })
+                              .getData()
+                        : Promise.resolve({ dataValues: [] });
+                })
+            );
+
+            return acc;
+        }, [] as Promise<AggregatedPackage>[]);
+
+        const result = await Promise.all(promises);
+        const dataValues = result.reduce((acc, current) => {
+            const { dataValues = [] } = current;
+            acc.push(...dataValues);
+            return acc;
+        }, [] as DataValue[]);
+
+        return { dataValues };
+    } else {
+        throw new Error("Aggregated syncronization requires a valid aggregation type");
+    }
 }
 
 export const getDefaultIds = memoize(
