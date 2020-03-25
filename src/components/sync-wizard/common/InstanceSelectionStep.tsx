@@ -61,8 +61,6 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
         refreshGenerateNewUidParam();
     }, [selectedOptions, targetInstances]);
 
-    console.log(generateNewUidDisabled);
-
     return (
         <React.Fragment>
             <MultiSelector
