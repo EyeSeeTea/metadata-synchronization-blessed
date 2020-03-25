@@ -116,7 +116,6 @@ const getCombinedMetadata = async (api: D2Api, model: typeof D2Model, id: string
                     eq: cleanOrgUnitPath(id),
                 },
             },
-            defaults: "EXCLUDE",
         })
         .getData()) as unknown) as { objects: CombinedMetadata[] };
 
@@ -158,7 +157,13 @@ export const autoMap = async (
 
     const candidateWithSameId = _.find(objects, ["id", selectedItem.id]);
     const candidateWithSameCode = _.find(objects, ["code", selectedItem.code]);
-    const candidates = _([candidateWithSameId, candidateWithSameCode, ...objects])
+    const candidateWithSameName = _.find(objects, ["name", selectedItem.name]);
+    const candidates = _([
+        candidateWithSameId,
+        candidateWithSameCode,
+        candidateWithSameName,
+        ...objects,
+    ])
         .compact()
         .uniq()
         .filter(({ id }) => filter?.includes(id) ?? true)
@@ -280,14 +285,22 @@ const autoMapProgramStages = async (
     }
 };
 
-export const buildMapping = async (
-    api: D2Api,
-    instanceApi: D2Api,
-    model: typeof D2Model,
-    originalId: string,
-    mappedId = ""
-): Promise<MetadataMapping> => {
-    const originMetadata = await getCombinedMetadata(api, model, originalId);
+export const buildMapping = async ({
+    api,
+    instanceApi,
+    originModel,
+    destinationModel,
+    originalId,
+    mappedId = "",
+}: {
+    api: D2Api;
+    instanceApi: D2Api;
+    originModel: typeof D2Model;
+    destinationModel: typeof D2Model;
+    originalId: string;
+    mappedId?: string;
+}): Promise<MetadataMapping> => {
+    const originMetadata = await getCombinedMetadata(api, originModel, originalId);
     if (mappedId === "DISABLED")
         return {
             mappedId: "DISABLED",
@@ -298,7 +311,7 @@ export const buildMapping = async (
             mapping: {},
         };
 
-    const destinationMetadata = await getCombinedMetadata(instanceApi, model, mappedId);
+    const destinationMetadata = await getCombinedMetadata(instanceApi, destinationModel, mappedId);
     if (originMetadata.length !== 1 || destinationMetadata.length !== 1) return {};
 
     const [mappedElement] = destinationMetadata.map(({ id, path, name, code, level }) => ({
@@ -370,9 +383,14 @@ export const getValidIds = async (
     );
 };
 
-export const getMetadataTypeFromRow = (object?: MetadataType, defaultValue?: string) => {
-    const { __mappingType__, __type__ } = object ?? {};
-    return __mappingType__ ?? __type__ ?? defaultValue ?? "";
+export const getTypeFromRow = (object?: MetadataType, defaultValue?: string) => {
+    const { __type__ } = object ?? {};
+    return __type__ ?? defaultValue ?? "";
+};
+
+export const getMappingTypeFromRow = (object?: MetadataType, defaultValue?: string) => {
+    const { __mappingType__ } = object ?? {};
+    return __mappingType__ ?? getTypeFromRow(object, defaultValue);
 };
 
 export const getChildrenRows = (rows: MetadataType[], model: typeof D2Model): MetadataType[] => {

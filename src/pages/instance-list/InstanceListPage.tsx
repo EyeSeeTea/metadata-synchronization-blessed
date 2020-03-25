@@ -22,6 +22,7 @@ import { useHistory } from "react-router-dom";
 import PageHeader from "../../components/page-header/PageHeader";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import Instance, { InstanceData } from "../../models/instance";
+import { executeAnalytics } from "../../utils/analytics";
 import { isAppConfigurator } from "../../utils/permissions";
 
 const InstanceListPage = () => {
@@ -54,20 +55,18 @@ const InstanceListPage = () => {
     };
 
     const replicateInstance = async (ids: string[]) => {
-        if (ids.length !== 1) return;
         const instance = await Instance.get(api, ids[0]);
-        if (instance) {
-            history.push({
-                pathname: "/instances/new",
-                state: { instance: instance.replicate() },
-            });
-        }
+        if (!instance) return;
+        history.push({
+            pathname: "/instances/new",
+            state: { instance: instance.replicate() },
+        });
     };
 
     const testConnection = async (ids: string[]) => {
-        if (ids.length !== 1) return;
         const instance = await Instance.get(api, ids[0]);
-        const connectionErrors = await instance?.check();
+        if (!instance) return;
+        const connectionErrors = await instance.check();
         if (!connectionErrors || !connectionErrors.status) {
             snackbar.error(connectionErrors?.error?.message ?? "Unknown error", {
                 autoHideDuration: null,
@@ -75,6 +74,18 @@ const InstanceListPage = () => {
         } else {
             snackbar.success(i18n.t("Connected successfully to instance"));
         }
+    };
+
+    const runAnalytics = async (ids: string[]) => {
+        const instance = await Instance.get(api, ids[0]);
+        if (!instance) return;
+
+        for await (const message of executeAnalytics(instance)) {
+            loading.show(true, message);
+        }
+
+        snackbar.info(i18n.t("Analytics execution finished on {{name}}", instance));
+        loading.reset();
     };
 
     const cancelDelete = () => {
@@ -169,6 +180,14 @@ const InstanceListPage = () => {
             multiple: false,
             onClick: testConnection,
             icon: <SettingsInputAntenaIcon />,
+        },
+        {
+            name: "runAnalytics",
+            text: i18n.t("Run analytics"),
+            multiple: false,
+            onClick: runAnalytics,
+            icon: <Icon>data_usage</Icon>,
+            isActive: () => process.env.NODE_ENV === "development",
         },
         {
             name: "mapping",
