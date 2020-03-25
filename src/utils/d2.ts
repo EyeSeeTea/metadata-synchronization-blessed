@@ -154,6 +154,11 @@ export function cleanModelName(d2: D2, id: string, caller: string): string | nul
         return "optionSets";
     } else if (id === "groupSets" && caller.endsWith("Group")) {
         return caller + "Sets";
+    } else if (id === "workflow") {
+        return "dataApprovalWorkflow";
+    } else if (id === "notificationTemplates") {
+        debugger;
+        return "programNotificationTemplates";
     } else if (_.includes(["parent", "children", "ancestors"], id)) {
         return caller;
     } else {

@@ -348,6 +348,47 @@ export class ProgramModel extends D2Model {
     protected static metadataType = "program";
     protected static collectionName = "programs" as const;
     protected static fields = programFields;
+
+    protected static excludeRules = [
+        "programStages.dataElements.dataElementGroups.dataElements",
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",
+    ];
+    protected static includeRules = [
+        "attributes",
+        "categoryCombos.attributes",
+        "categoryCombos.categoryOptionCombos",
+        "categoryCombos.categoryOptionCombos.categoryOptions",
+        "categoryCombos.categories",
+        "programIndicators",
+        "programIndicators.programIndicatorGroups",
+        "programIndicators.legendSets",
+        "dataApprovalWorkflow",
+        "dataApprovalWorkflow.dataApprovalLevels",
+        "programStages",
+        "programStages.programStageSections",
+        "programStages.attributes",
+        "programStages.dataElements",
+        "programStages.dataElements.attributes",
+        "programStages.dataElements.legendSets",
+        "programStages.dataElements.optionSets",
+        "programStages.dataElements.optionSets.options",
+        "programStages.dataElements.categoryCombos",
+        "programStages.dataElements.categoryCombos.attributes",
+        "programStages.dataElements.categoryCombos.categoryOptionCombos",
+        "programStages.dataElements.categoryCombos.categoryOptionCombos.categoryOptions",
+        "programStages.dataElements.categoryCombos.categories",
+        "programStages.dataElements.dataElementGroups",
+        "programStages.dataElements.dataElementGroups.attributes",
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets",
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets.attributes",
+        "programStages.programNotificationTemplates",
+        "programRuleVariables",
+        "trackedEntityTypes",
+        "trackedEntityTypes.trackedEntityAttributes",
+        "trackedEntityTypes.trackedEntityAttributes.legendSets",
+        "trackedEntityAttributes",
+        "trackedEntityAttributes.legendSets",
+    ];
 }
 
 export class ProgramStageModel extends D2Model {
@@ -493,6 +534,11 @@ export class UserGroupModel extends D2Model {
 
     protected static excludeRules = [];
     protected static includeRules = ["users"];
+}
+
+export class DataApprovalWorkflowModel extends D2Model {
+    protected static metadataType = "dataApprovalWorkflow";
+    protected static collectionName = "dataApprovalWorkflows" as const;
 }
 
 export function defaultModel(pascalCaseModelName: string): any {

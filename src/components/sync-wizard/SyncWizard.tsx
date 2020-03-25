@@ -1,9 +1,10 @@
 import { useD2Api } from "d2-api";
 import { Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import SyncRule from "../../models/syncRule";
+import { getMetadata } from "../../utils/synchronization";
 import { getValidationMessages } from "../../utils/validations";
 import { aggregatedSteps, deletedSteps, eventsSteps, metadataSteps } from "./Steps";
 
@@ -29,6 +30,7 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
 }) => {
     const location = useLocation();
     const api = useD2Api();
+    const memoizedRule = useRef(syncRule);
 
     const steps = config[syncRule.type]
         .filter(({ showOnSyncDialog }) => !isDialog || showOnSyncDialog)
@@ -51,6 +53,18 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
 
         return _.flatten(validationMessages);
     };
+
+    // This effect should only run in the first load
+    useEffect(() => {
+        getMetadata(api, memoizedRule.current.metadataIds, "id").then(metadata => {
+            const types = _.keys(metadata);
+            onChange(
+                memoizedRule.current
+                    .updateMetadataTypes(types)
+                    .updateDataSyncEnableAggregation(types.includes("indicators"))
+            );
+        });
+    }, [api, onChange, memoizedRule]);
 
     const urlHash = location.hash.slice(1);
     const stepExists = steps.find(step => step.key === urlHash);
