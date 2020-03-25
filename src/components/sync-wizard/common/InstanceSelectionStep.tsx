@@ -23,27 +23,7 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
     const api = useD2Api();
     const [selectedOptions, setSelectedOptions] = useState<string[]>(syncRule.targetInstances);
     const [instanceOptions, setInstanceOptions] = useState<{ value: string; text: string }[]>([]);
-    //const [generateNewUidDisabled, setGenerateNewUidDisabled] = useState<boolean>(false);
     const [targetInstances, setTargetInstances] = useState<Instance[]>([]);
-
-    // const refreshGenerateNewUidParam = () => {
-    //     if (syncRule.type === "events") {
-    //         const selectedInstanceUrls = selectedOptions.map(
-    //             id => targetInstances.find(instance => instance.id === id)?.url
-    //         );
-
-    //         const includeSelectedCurrentUrl = selectedInstanceUrls.includes(api.baseUrl);
-
-    //         if (includeSelectedCurrentUrl) {
-    //             onChange(
-    //                 syncRule.updateDataParams({
-    //                     ...syncRule.dataParams,
-    //                     generateNewUid: true,
-    //                 })
-    //             );
-    //         }
-    //     }
-    // };
 
     const includeCurrentUrlAndTypeIsEvents = (selectedinstanceIds: string[]) => {
         return (
