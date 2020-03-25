@@ -145,7 +145,7 @@ export function isD2Model(d2: D2, modelName: string): boolean {
     return !!d2.models[modelName];
 }
 
-export function cleanModelName(d2: D2, id: string, caller: string): string | null {
+export function cleanToModelName(d2: D2, id: string, caller: string): string | null {
     if (isD2Model(d2, id)) {
         return d2.models[id].plural;
     } else if (id === "attributeValues") {
@@ -157,12 +157,36 @@ export function cleanModelName(d2: D2, id: string, caller: string): string | nul
     } else if (id === "workflow") {
         return "dataApprovalWorkflow";
     } else if (id === "notificationTemplates") {
-        debugger;
         return "programNotificationTemplates";
-    } else if (_.includes(["parent", "children", "ancestors"], id)) {
+    }
+    // This options are for organisationUnit rule in organisationUnit model and 
+    // currently does not exits organisationUnit include rules for organisationUnit model
+    else if (_.includes(["parent", "children", "ancestors"], id)) {
         return caller;
     } else {
         return null;
+    }
+}
+
+export function cleanToAPIChildReferenceName(d2: D2, key: string, parent: string): string[] {
+    if (key === "attributes") {
+        return ["attributeValues"];
+    } else if (key === "optionSets") {
+        return _.compact([d2.models[key].name, d2.models[key].plural,
+        parent === "dataElement" ? "commentOptionSet" : null]);
+    } else if (key === parent + "Sets" && parent.endsWith("Group")) {
+        return ["groupSets"];
+    } else if (key === "dataApprovalWorkflow") {
+        return ["workflow"];
+    } else if (key === "programNotificationTemplates") {
+        return ["notificationTemplates"];
+    } else if (key === "organisationUnit") {
+        return ["parent", "children", "ancestors"];
+    } else if (isD2Model(d2, key)) {
+        // Children reference name may be plural or singular
+        return [d2.models[key].name, d2.models[key].plural];
+    } else {
+        return [key];
     }
 }
 
