@@ -7,6 +7,7 @@ import {
     TableState,
     useLoading,
     useSnackbar,
+    DatePicker,
 } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -41,6 +42,7 @@ import {
     deletedObjectsColumns,
     deletedObjectsDetails,
 } from "./deletedObjects";
+import moment from "moment";
 
 const config: Record<
     SyncRuleType,
@@ -96,12 +98,22 @@ const SyncOnDemandPage: React.FC = () => {
     const [appConfigurator, updateAppConfigurator] = useState(false);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
+    const [seletedObjectsSearch, setDeletedObjectsSearch] = useState<string | undefined>(undefined);
+    const [deletedDateFilter, setDeletedDateFilter] = useState<Date | null>(null);
 
     const [deletedObjectsRows, setDeletedObjectsRows] = useState<MetadataType[]>([]);
     useEffect(() => {
         if (type === "deleted")
-            DeletedObject.list(api, {}, {}).then(({ objects }) => setDeletedObjectsRows(objects));
-    }, [api, type]);
+            DeletedObject.list(
+                api,
+                {
+                    search: seletedObjectsSearch,
+                    lastUpdatedDate:
+                        deletedDateFilter !== null ? moment(deletedDateFilter) : undefined,
+                },
+                {}
+            ).then(({ objects }) => setDeletedObjectsRows(objects));
+    }, [api, type, seletedObjectsSearch, deletedDateFilter]);
 
     useEffect(() => {
         isAppConfigurator(api).then(updateAppConfigurator);
@@ -177,6 +189,17 @@ const SyncOnDemandPage: React.FC = () => {
         },
     ];
 
+    const deletedObjectsfilterComponents = (
+        <React.Fragment>
+            <DatePicker
+                placeholder={i18n.t("Deleted date")}
+                value={deletedDateFilter}
+                onChange={setDeletedDateFilter}
+                isFilter={true}
+            />
+        </React.Fragment>
+    );
+
     return (
         <TestWrapper>
             <PageHeader onBackClick={goBack} title={title} />
@@ -205,6 +228,8 @@ const SyncOnDemandPage: React.FC = () => {
                     onActionButtonClick={openSynchronizationDialog}
                     onChange={handleDeletedObjectsTableChange}
                     actionButtonLabel={<SyncIcon />}
+                    onChangeSearch={setDeletedObjectsSearch}
+                    filterComponents={deletedObjectsfilterComponents}
                 />
             )}
 
