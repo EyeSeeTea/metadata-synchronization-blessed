@@ -34,8 +34,10 @@ context("Aggregated sync rule new", function() {
     it("should show the org unit step error if user try click on next without selecting the org unit", () => {
         page.typeName(inputs.name)
             .next()
+
             .selectRow(inputs.dataSet)
             .next()
+
             .next()
             .assertError(error =>
                 error.contains("You need to select at least one organisation unit")
@@ -58,6 +60,9 @@ context("Aggregated sync rule new", function() {
             .selectAllAttributesCategoryOptions()
             .next()
 
+            // Skip aggregation
+            .next()
+
             .next()
             .assertError(error => error.contains("You need to select at least one instance"));
     });
@@ -76,6 +81,9 @@ context("Aggregated sync rule new", function() {
             .next()
 
             .selectAllAttributesCategoryOptions()
+            .next()
+
+            // Skip aggregation
             .next()
 
             .selectReceiverInstance(inputs.instance)

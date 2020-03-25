@@ -116,7 +116,7 @@ export class MetadataSync extends GenericSync {
         return undefined;
     }
 
-    protected async mapMetadata(
+    protected async mapPayload(
         _instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload> {

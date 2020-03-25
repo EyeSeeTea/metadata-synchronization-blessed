@@ -5,6 +5,7 @@ import _ from "lodash";
 import moment from "moment";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import {
+    DataSyncAggregation,
     DataSynchronizationParams,
     DataSyncPeriod,
     ExcludeIncludeRules,
@@ -90,6 +91,10 @@ export default class SyncRule {
         return this.syncRule.builder?.excludedIds ?? [];
     }
 
+    public get metadataTypes(): string[] {
+        return this.syncRule.builder?.metadataTypes ?? [];
+    }
+
     public get dataSyncAttributeCategoryOptions(): string[] {
         return this.syncRule.builder?.dataParams?.attributeCategoryOptions ?? [];
     }
@@ -120,6 +125,14 @@ export default class SyncRule {
 
     public get dataSyncAllEvents(): boolean {
         return this.syncRule.builder?.dataParams?.allEvents ?? true;
+    }
+
+    public get dataSyncEnableAggregation(): boolean | undefined {
+        return this.syncRule.builder?.dataParams?.enableAggregation;
+    }
+
+    public get dataSyncAggregationType(): DataSyncAggregation | undefined {
+        return this.syncRule.builder?.dataParams?.aggregationType;
     }
 
     public get useDefaultIncludeExclude(): boolean {
@@ -197,11 +210,14 @@ export default class SyncRule {
                 targetInstances: [],
                 metadataIds: [],
                 excludedIds: [],
+                metadataTypes: [],
                 dataParams: {
                     strategy: "NEW_AND_UPDATES",
                     allAttributeCategoryOptions: true,
                     dryRun: false,
                     allEvents: true,
+                    enableAggregation: undefined,
+                    aggregationType: undefined,
                 },
                 syncParams: {
                     importStrategy: "CREATE_AND_UPDATE",
@@ -299,6 +315,7 @@ export default class SyncRule {
         return _.pick(this, [
             "metadataIds",
             "excludedIds",
+            "metadataTypes",
             "targetInstances",
             "syncParams",
             "dataParams",
@@ -454,6 +471,16 @@ export default class SyncRule {
         });
     }
 
+    public updateMetadataTypes(metadataTypes: string[]): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                metadataTypes,
+            },
+        });
+    }
+
     public updateDataSyncAttributeCategoryOptions(attributeCategoryOptions?: string[]): SyncRule {
         return SyncRule.build({
             ...this.syncRule,
@@ -555,6 +582,32 @@ export default class SyncRule {
                 dataParams: {
                     ...this.syncRule.builder?.dataParams,
                     allEvents,
+                },
+            },
+        });
+    }
+
+    public updateDataSyncEnableAggregation(enableAggregation?: boolean): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder?.dataParams,
+                    enableAggregation,
+                },
+            },
+        });
+    }
+
+    public updateDataSyncAggregationType(aggregationType?: DataSyncAggregation): SyncRule {
+        return SyncRule.build({
+            ...this.syncRule,
+            builder: {
+                ...this.syncRule.builder,
+                dataParams: {
+                    ...this.syncRule.builder?.dataParams,
+                    aggregationType,
                 },
             },
         });
@@ -720,6 +773,16 @@ export default class SyncRule {
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "event" },
+                      }
+                    : null,
+            ]),
+            dataSyncAggregation: _.compact([
+                this.type === "aggregated" &&
+                this.dataSyncEnableAggregation &&
+                !this.dataSyncAggregationType
+                    ? {
+                          key: "cannot_be_empty",
+                          namespace: { element: "aggregation type" },
                       }
                     : null,
             ]),

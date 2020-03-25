@@ -9,10 +9,11 @@ import {
     AggregatedDataElementModel,
     CategoryComboModel,
     CategoryOptionModel,
+    EventProgramModel,
+    IndicatorMappedModel,
     OptionModel,
     OrganisationUnitModel,
     ProgramDataElementModel,
-    EventProgramModel,
 } from "../../models/d2Model";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 
@@ -21,7 +22,7 @@ export type MappingType = "aggregated" | "tracker" | "orgUnit";
 const config = {
     aggregated: {
         title: i18n.t("Aggregated mapping"),
-        models: [AggregatedDataElementModel],
+        models: [AggregatedDataElementModel, IndicatorMappedModel],
         isGlobalMapping: false,
     },
     tracker: {

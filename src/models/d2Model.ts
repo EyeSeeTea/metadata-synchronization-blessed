@@ -103,11 +103,13 @@ export abstract class D2Model {
 
     public static getApiModelTransform(): (objects: MetadataType[]) => MetadataType[] {
         return (objects: MetadataType[]) =>
-            this.modelTransform(objects).map((object: MetadataType) => ({
-                ...object,
-                __type__: this.collectionName,
-                __mappingType__: this.mappingType,
-            }));
+            this.modelTransform(objects).map(
+                ({ __type__, __mappingType__, ...object }: MetadataType) => ({
+                    ...object,
+                    __type__: __type__ ?? this.collectionName,
+                    __mappingType__: __mappingType__ ?? this.mappingType,
+                })
+            );
     }
 
     // TODO: This should be typed (not priority)
@@ -489,6 +491,10 @@ export class IndicatorModel extends D2Model {
         "indicatorGroups.attributes",
         "indicatorGroups.indicatorGroupSets",
     ];
+}
+
+export class IndicatorMappedModel extends IndicatorModel {
+    protected static mappingType = AggregatedDataElementModel.getMappingType();
 }
 
 export class IndicatorGroupModel extends D2Model {
