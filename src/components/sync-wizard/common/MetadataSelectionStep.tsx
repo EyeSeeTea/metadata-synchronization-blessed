@@ -7,6 +7,7 @@ import {
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,
+    IndicatorModel,
     ProgramModel,
 } from "../../../models/d2Model";
 import { metadataModels } from "../../../models/d2ModelFactory";
@@ -24,6 +25,7 @@ const config = {
             AggregatedDataElementModel,
             DataElementGroupModel,
             DataElementGroupSetModel,
+            IndicatorModel,
         ],
         childrenKeys: ["dataElements", "dataElementGroups"],
     },

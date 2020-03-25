@@ -42,7 +42,7 @@ export class EventsSync extends GenericSync {
         const { dataParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
-        const mappedPayloadPackage = await this.mapMetadata(instance, payloadPackage);
+        const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
         console.debug("Events package", { payloadPackage, mappedPayloadPackage });
 
         return postEventsData(instance, mappedPayloadPackage, dataParams);
@@ -68,7 +68,7 @@ export class EventsSync extends GenericSync {
             .value();
     }
 
-    protected async mapMetadata(
+    protected async mapPayload(
         instance: Instance,
         payload: EventsPackage
     ): Promise<SyncronizationPayload> {

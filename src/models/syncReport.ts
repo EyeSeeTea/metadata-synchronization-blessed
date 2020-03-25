@@ -125,4 +125,8 @@ export default class SyncReport {
             _(["ERROR", "NETWORK ERROR"]).includes(result.status)
         );
     }
+
+    public get id(): string | undefined {
+        return this.syncReport.id;
+    }
 }
