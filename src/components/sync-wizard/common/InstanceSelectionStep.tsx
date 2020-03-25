@@ -23,43 +23,56 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
     const api = useD2Api();
     const [selectedOptions, setSelectedOptions] = useState<string[]>(syncRule.targetInstances);
     const [instanceOptions, setInstanceOptions] = useState<{ value: string; text: string }[]>([]);
-    const [generateNewUidDisabled, setGenerateNewUidDisabled] = useState<boolean>(false);
+    //const [generateNewUidDisabled, setGenerateNewUidDisabled] = useState<boolean>(false);
     const [targetInstances, setTargetInstances] = useState<Instance[]>([]);
 
-    const refreshGenerateNewUidParam = () => {
-        if (syncRule.type === "events") {
-            const selectedInstanceUrls = selectedOptions.map(
-                id => targetInstances.find(instance => instance.id === id)?.url
-            );
+    // const refreshGenerateNewUidParam = () => {
+    //     if (syncRule.type === "events") {
+    //         const selectedInstanceUrls = selectedOptions.map(
+    //             id => targetInstances.find(instance => instance.id === id)?.url
+    //         );
 
-            const includeSelectedCurrentUrl = selectedInstanceUrls.includes(api.baseUrl);
+    //         const includeSelectedCurrentUrl = selectedInstanceUrls.includes(api.baseUrl);
 
-            if (includeSelectedCurrentUrl) {
-                onChange(
-                    syncRule.updateDataParams({
-                        ...syncRule.dataParams,
-                        generateNewUid: true,
-                    })
-                );
-            }
+    //         if (includeSelectedCurrentUrl) {
+    //             onChange(
+    //                 syncRule.updateDataParams({
+    //                     ...syncRule.dataParams,
+    //                     generateNewUid: true,
+    //                 })
+    //             );
+    //         }
+    //     }
+    // };
 
-            setGenerateNewUidDisabled(includeSelectedCurrentUrl);
-        }
+    const includeCurrentUrlAndTypeIsEvents = (selectedinstanceIds: string[]) => {
+        return (
+            syncRule.type === "events" &&
+            selectedinstanceIds
+                .map(id => targetInstances.find(instance => instance.id === id)?.url)
+                .includes(api.baseUrl)
+        );
     };
 
     const changeInstances = (instances: string[]) => {
         setSelectedOptions(instances);
-        onChange(syncRule.updateTargetInstances(instances));
+
+        if (includeCurrentUrlAndTypeIsEvents(instances)) {
+            onChange(
+                syncRule.updateTargetInstances(instances).updateDataParams({
+                    ...syncRule.dataParams,
+                    generateNewUid: true,
+                })
+            );
+        } else {
+            onChange(syncRule.updateTargetInstances(instances));
+        }
     };
 
     useEffect(() => {
         getInstanceOptions(api).then(setInstanceOptions);
         getInstances(api).then(setTargetInstances);
     }, [api]);
-
-    useEffect(() => {
-        refreshGenerateNewUidParam();
-    }, [selectedOptions, targetInstances]);
 
     return (
         <React.Fragment>
@@ -74,7 +87,7 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
             <SyncParamsSelector
                 syncRule={syncRule}
                 onChange={onChange}
-                generateNewUidDisabled={generateNewUidDisabled}
+                generateNewUidDisabled={includeCurrentUrlAndTypeIsEvents(selectedOptions)}
             />
         </React.Fragment>
     );
