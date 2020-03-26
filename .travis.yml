@@ -25,7 +25,7 @@ before_install:
     - sudo systemctl start docker.service
     # Login to docker and start DHIS2 instance
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - d2-docker start eyeseetea/dhis2-data:2.30-datasync-sender -d &
+    - d2-docker start eyeseetea/dhis2-data:2.30-datasync-sender -d
 install:
     - git clone --single-branch --branch gh-pages "https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${FEEDBACK_REPO}" feedback-ci
     - yarn install --frozen-lockfile
