@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-25T15:41:33.569Z\n"
-"PO-Revision-Date: 2020-03-25T15:41:33.569Z\n"
+"POT-Creation-Date: 2020-03-26T05:48:57.486Z\n"
+"PO-Revision-Date: 2020-03-26T05:48:57.486Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -302,6 +302,21 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
+msgid "Program Indicators"
+msgstr ""
+
+msgid "Aggregated"
+msgstr ""
+
+msgid "Events"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Unknown"
+msgstr ""
+
 msgid "Synchronization Results"
 msgstr ""
 
@@ -390,9 +405,6 @@ msgid ""
 "periods"
 msgstr ""
 
-msgid "Metadata"
-msgstr ""
-
 msgid "Include Exclude Selection"
 msgstr ""
 
@@ -409,9 +421,6 @@ msgid "Category options"
 msgstr ""
 
 msgid "Programs"
-msgstr ""
-
-msgid "Events"
 msgstr ""
 
 msgid "Name"
@@ -570,6 +579,9 @@ msgid "Without aggregation, any data value related to an indicator will be ignor
 msgstr ""
 
 msgid "Enable data aggregation"
+msgstr ""
+
+msgid "Aggregate and sync program indicators"
 msgstr ""
 
 msgid "Aggregation type"
@@ -854,9 +866,6 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Destination Instance Settings"
-msgstr ""
-
-msgid "Aggregated"
 msgstr ""
 
 msgid ""
