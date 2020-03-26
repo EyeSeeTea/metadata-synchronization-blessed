@@ -136,6 +136,8 @@ export interface SynchronizationRule {
     type: SyncRuleType;
 }
 
+export type SynchronizationRuleMain = Omit<SynchronizationRule, DetailsKeys>;
+
 export type SyncRuleType = "metadata" | "aggregated" | "events" | "deleted";
 
 export interface SharingSetting {
