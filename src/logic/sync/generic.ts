@@ -35,8 +35,8 @@ export abstract class GenericSync {
     protected readonly api: D2Api;
     protected readonly builder: SynchronizationBuilder;
 
-    protected abstract readonly type: SyncRuleType;
-    protected readonly fields: string = "id,name";
+    public abstract readonly type: SyncRuleType;
+    public readonly fields: string = "id,name";
 
     constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
         this.d2 = d2;
@@ -45,12 +45,12 @@ export abstract class GenericSync {
     }
 
     public abstract async buildPayload(): Promise<SyncronizationPayload>;
-    protected abstract async mapPayload(
+    public abstract async mapPayload(
         instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload>;
-    protected abstract async postPayload(instance: Instance): Promise<SynchronizationResult[]>;
-    protected abstract async buildDataStats(): Promise<
+    public abstract async postPayload(instance: Instance): Promise<SynchronizationResult[]>;
+    public abstract async buildDataStats(): Promise<
         AggregatedDataStats[] | EventsDataStats[] | undefined
     >;
 

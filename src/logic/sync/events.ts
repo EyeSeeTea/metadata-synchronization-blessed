@@ -20,8 +20,8 @@ import { AggregatedSync } from "./aggregated";
 import { GenericSync, SyncronizationPayload } from "./generic";
 
 export class EventsSync extends GenericSync {
-    protected readonly type = "events";
-    protected readonly fields =
+    public readonly type = "events";
+    public readonly fields =
         "id,name,programStages[programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
 
     public buildPayload = memoize(async () => {
@@ -49,7 +49,7 @@ export class EventsSync extends GenericSync {
         return { events, dataValues };
     });
 
-    protected async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance) {
         const { dataParams = {} } = this.builder;
         const { events, dataValues } = await this.buildPayload();
         const aggregatedSync = new AggregatedSync(this.d2, this.api, this.builder);
@@ -70,7 +70,7 @@ export class EventsSync extends GenericSync {
         return [syncResultEvents, syncResultDataValues];
     }
 
-    protected async buildDataStats() {
+    public async buildDataStats() {
         const metadataPackage = await this.extractMetadata();
         const dictionary = buildMetadataDictionary(metadataPackage);
         const { events } = (await this.buildPayload()) as EventsPackage;
@@ -86,7 +86,7 @@ export class EventsSync extends GenericSync {
             .value();
     }
 
-    protected async mapPayload(
+    public async mapPayload(
         instance: Instance,
         payload: EventsPackage
     ): Promise<SyncronizationPayload> {

@@ -8,13 +8,13 @@ import {
 import { GenericSync, SyncronizationPayload } from "./generic";
 
 export class DeletedSync extends GenericSync {
-    protected readonly type = "deleted";
+    public readonly type = "deleted";
 
     public buildPayload = memoize(async () => {
         return {};
     });
 
-    protected async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance) {
         const { metadataIds, syncParams = {} } = this.builder;
 
         const payloadPackage = await getMetadata(instance.getApi(), metadataIds, "id");
@@ -29,11 +29,11 @@ export class DeletedSync extends GenericSync {
         return [syncResult];
     }
 
-    protected async buildDataStats() {
+    public async buildDataStats() {
         return undefined;
     }
 
-    protected async mapPayload(
+    public async mapPayload(
         _instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload> {

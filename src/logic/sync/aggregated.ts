@@ -20,7 +20,7 @@ import { GenericSync } from "./generic";
 
 export class AggregatedSync extends GenericSync {
     public readonly type = "aggregated";
-    protected readonly fields =
+    public readonly fields =
         "id,dataElements[id,name],dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
 
     public buildPayload = memoize(async () => {
@@ -126,7 +126,7 @@ export class AggregatedSync extends GenericSync {
         return { dataValues };
     };
 
-    protected async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance) {
         const { dataParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
@@ -137,7 +137,7 @@ export class AggregatedSync extends GenericSync {
         return [cleanDataImportResponse(response, instance, this.type)];
     }
 
-    protected async buildDataStats() {
+    public async buildDataStats() {
         const metadataPackage = await this.extractMetadata();
         const dictionary = buildMetadataDictionary(metadataPackage);
         const { dataValues } = await this.buildPayload();
