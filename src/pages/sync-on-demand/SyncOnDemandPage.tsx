@@ -1,14 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import SyncIcon from "@material-ui/icons/Sync";
 import { useD2, useD2Api } from "d2-api";
-import {
-    ObjectsTable,
-    ReferenceObject,
-    TableState,
-    useLoading,
-    useSnackbar,
-    DatePicker,
-} from "d2-ui-components";
+import { useLoading, useSnackbar } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
@@ -30,19 +23,13 @@ import {
 } from "../../models/complexModels";
 import { D2Model, DataElementGroupModel, DataElementGroupSetModel } from "../../models/d2Model";
 import { d2ModelFactory, metadataModels } from "../../models/d2ModelFactory";
-import DeletedObject from "../../models/deletedObjects";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
 import { SyncRuleType } from "../../types/synchronization";
 import { MetadataType } from "../../utils/d2";
 import { isAppConfigurator } from "../../utils/permissions";
-import {
-    deletedObjectsActions,
-    deletedObjectsColumns,
-    deletedObjectsDetails,
-} from "./deletedObjects";
-import moment from "moment";
+import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
 
 const config: Record<
     SyncRuleType,
@@ -98,22 +85,6 @@ const SyncOnDemandPage: React.FC = () => {
     const [appConfigurator, updateAppConfigurator] = useState(false);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
-    const [seletedObjectsSearch, setDeletedObjectsSearch] = useState<string | undefined>(undefined);
-    const [deletedDateFilter, setDeletedDateFilter] = useState<Date | null>(null);
-
-    const [deletedObjectsRows, setDeletedObjectsRows] = useState<MetadataType[]>([]);
-    useEffect(() => {
-        if (type === "deleted")
-            DeletedObject.list(
-                api,
-                {
-                    search: seletedObjectsSearch,
-                    lastUpdatedDate:
-                        deletedDateFilter !== null ? moment(deletedDateFilter) : undefined,
-                },
-                {}
-            ).then(({ objects }) => setDeletedObjectsRows(objects));
-    }, [api, type, seletedObjectsSearch, deletedDateFilter]);
 
     useEffect(() => {
         isAppConfigurator(api).then(updateAppConfigurator);
@@ -170,11 +141,6 @@ const SyncOnDemandPage: React.FC = () => {
         closeDialogs();
     };
 
-    const handleDeletedObjectsTableChange = (tableState: TableState<ReferenceObject>) => {
-        const { selection } = tableState;
-        updateSyncRule(syncRule.updateMetadataIds(selection.map(({ id }) => id)));
-    };
-
     const additionalColumns = [
         {
             name: "metadata-type",
@@ -189,22 +155,17 @@ const SyncOnDemandPage: React.FC = () => {
         },
     ];
 
-    const deletedObjectsfilterComponents = (
-        <React.Fragment>
-            <DatePicker
-                placeholder={i18n.t("Deleted date")}
-                value={deletedDateFilter}
-                onChange={setDeletedDateFilter}
-                isFilter={true}
-            />
-        </React.Fragment>
-    );
-
     return (
         <TestWrapper>
             <PageHeader onBackClick={goBack} title={title} />
 
-            {type !== "deleted" && (
+            {type === "deleted" ? (
+                <DeletedObjectsTable
+                    openSynchronizationDialog={openSynchronizationDialog}
+                    syncRule={syncRule}
+                    onChange={updateSyncRule}
+                />
+            ) : (
                 <MetadataTable
                     models={models}
                     selectedIds={syncRule.metadataIds}
@@ -215,21 +176,6 @@ const SyncOnDemandPage: React.FC = () => {
                     childrenKeys={config[type].childrenKeys}
                     showIndeterminateSelection={true}
                     additionalColumns={additionalColumns}
-                />
-            )}
-
-            {type === "deleted" && (
-                <ObjectsTable<MetadataType>
-                    rows={deletedObjectsRows}
-                    columns={deletedObjectsColumns}
-                    details={deletedObjectsDetails}
-                    actions={deletedObjectsActions}
-                    forceSelectionColumn={true}
-                    onActionButtonClick={openSynchronizationDialog}
-                    onChange={handleDeletedObjectsTableChange}
-                    actionButtonLabel={<SyncIcon />}
-                    onChangeSearch={setDeletedObjectsSearch}
-                    filterComponents={deletedObjectsfilterComponents}
                 />
             )}
 
