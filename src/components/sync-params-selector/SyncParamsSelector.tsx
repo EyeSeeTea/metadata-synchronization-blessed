@@ -6,6 +6,7 @@ import RadioButtonGroup from "../radio-button-group/RadioButtonGroup";
 import { Toggle } from "../toggle/Toggle";
 
 interface SyncParamsSelectorProps {
+    generateNewUidDisabled?: boolean;
     syncRule: SyncRule;
     onChange(newParams: SyncRule): void;
 }
@@ -17,7 +18,11 @@ const useStyles = makeStyles({
     },
 });
 
-const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onChange }) => {
+const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
+    syncRule,
+    onChange,
+    generateNewUidDisabled,
+}) => {
     const classes = useStyles();
     const { syncParams, dataParams } = syncRule;
 
@@ -44,6 +49,15 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
             syncRule.updateSyncParams({
                 ...syncParams,
                 mergeMode: value ? "REPLACE" : "MERGE",
+            })
+        );
+    };
+
+    const changeGenerateUID = (value: boolean) => {
+        onChange(
+            syncRule.updateDataParams({
+                ...dataParams,
+                generateNewUid: value,
             })
         );
     };
@@ -142,6 +156,17 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                     ]}
                     onValueChange={changeAggregatedStrategy}
                 />
+            )}
+
+            {syncRule.type === "events" && (
+                <div>
+                    <Toggle
+                        disabled={generateNewUidDisabled}
+                        label={i18n.t("Generate new UID")}
+                        onValueChange={changeGenerateUID}
+                        value={dataParams.generateNewUid ?? false}
+                    />
+                </div>
             )}
 
             <div>

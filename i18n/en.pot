@@ -286,6 +286,9 @@ msgstr ""
 msgid "Replace objects in destination instance"
 msgstr ""
 
+msgid "Generate new UID"
+msgstr ""
+
 msgid "Dry Run"
 msgstr ""
 
