@@ -12,6 +12,13 @@ context("Metadata sync rule edit", function() {
                 url: `api/dataStore/metadata-synchronization/rules`,
                 response: syncRules,
             });
+            for (const { id, builder } of syncRules) {
+                cy.route({
+                    method: "GET",
+                    url: `api/dataStore/metadata-synchronization/rules-${id}`,
+                    response: { builder },
+                });
+            }
             page.open(this.syncRule.id);
         });
     });
