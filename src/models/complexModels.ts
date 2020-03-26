@@ -48,12 +48,16 @@ export class ProgramDataElementModel extends DataElementModel {
     protected static modelFilters = { domainType: { neq: "AGGREGATE" } };
 }
 
-export class EventProgramWithDataElementsModel extends ProgramModel {
+export class EventProgramModel extends ProgramModel {
+    protected static mappingType = "eventPrograms";
+    protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
+}
+
+export class EventProgramWithDataElementsModel extends EventProgramModel {
     protected static metadataType = "eventProgramWithDataElements";
     protected static modelName = i18n.t("Program with Data Elements");
     protected static childrenKeys = ["dataElements"];
     protected static fields = programFieldsWithDataElements;
-    protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
 
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFieldsWithDataElements>[]
@@ -81,12 +85,11 @@ export class EventProgramWithDataElementsModel extends ProgramModel {
     };
 }
 
-export class EventProgramWithIndicatorsModel extends ProgramModel {
+export class EventProgramWithIndicatorsModel extends EventProgramModel {
     protected static metadataType = "eventProgramWithIndicators";
     protected static modelName = i18n.t("Program with Indicators");
     protected static childrenKeys = ["programIndicators"];
     protected static fields = programFieldsWithIndicators;
-    protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
 
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFieldsWithIndicators>[]
