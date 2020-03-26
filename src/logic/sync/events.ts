@@ -16,6 +16,7 @@ import {
     postEventsData,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
+import { generateUid } from "d2/uid";
 
 export class EventsSync extends GenericSync {
     protected readonly type = "events";
@@ -26,11 +27,15 @@ export class EventsSync extends GenericSync {
         const { dataParams = {} } = this.builder;
         const { programs = [] } = await this.extractMetadata();
 
-        const events = await getEventsData(
-            this.api,
-            dataParams,
-            programs.map(({ id }) => id)
-        );
+        const events = (
+            await getEventsData(
+                this.api,
+                dataParams,
+                programs.map(({ id }) => id)
+            )
+        ).map(event => {
+            return dataParams.generateNewUid ? { ...event, event: generateUid() } : event;
+        });
 
         return { events };
     });

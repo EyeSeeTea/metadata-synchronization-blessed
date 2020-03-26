@@ -36,6 +36,7 @@ export interface DataSynchronizationParams extends DataImportParams {
     endDate?: Date;
     events?: string[];
     allEvents?: boolean;
+    generateNewUid?: boolean;
     enableAggregation?: boolean;
     aggregationType?: DataSyncAggregation;
 }
