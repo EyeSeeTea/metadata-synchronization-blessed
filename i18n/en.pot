@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-26T05:48:57.486Z\n"
-"PO-Revision-Date: 2020-03-26T05:48:57.486Z\n"
+"POT-Creation-Date: 2020-03-26T08:31:26.677Z\n"
+"PO-Revision-Date: 2020-03-26T08:31:26.677Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -602,6 +602,11 @@ msgid "Yearly"
 msgstr ""
 
 msgid "Without aggregation, any data value related to an indicator will be ignored"
+msgstr ""
+
+msgid ""
+"Without aggregation, program indicators will not be aggregated and "
+"synchronized"
 msgstr ""
 
 msgid "Enable data aggregation"
