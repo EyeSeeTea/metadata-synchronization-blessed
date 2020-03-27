@@ -29,6 +29,7 @@ import {
 } from "../../types/synchronization";
 import { getValueForCollection } from "../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../utils/permissions";
+import { Typography } from "@material-ui/core";
 
 const config = {
     metadata: {
@@ -121,8 +122,13 @@ const HistoryPage: React.FC = () => {
             name: "syncRule",
             text: i18n.t("Sync Rule"),
             sortable: true,
-            getValue: ({ syncRule: id }) =>
-                _.find(syncRules, { id })?.name ?? i18n.t("(manual synchronization)"),
+            getValue: ({ syncRule: id, deletedSyncRuleLabel }) => {
+                return (
+                    deletedSyncRuleLabel ??
+                    _.find(syncRules, { id })?.name ??
+                    i18n.t("(manual synchronization)")
+                );
+            },
         },
         { name: "date", text: i18n.t("Timestamp"), sortable: true },
         {
@@ -151,15 +157,19 @@ const HistoryPage: React.FC = () => {
         {
             name: "syncRule",
             text: i18n.t("Sync Rule"),
-            getValue: ({ syncRule: id }) => {
-                const syncRule = syncRules.find(e => e.id === id);
-                if (!appConfigurator || !syncRule) return null;
+            getValue: ({ syncRule: id, deletedSyncRuleLabel }) => {
+                if (deletedSyncRuleLabel) {
+                    return <Typography>{deletedSyncRuleLabel}</Typography>;
+                } else {
+                    const syncRule = syncRules.find(e => e.id === id);
+                    if (!appConfigurator || !syncRule) return null;
 
-                return (
-                    <Link to={`/sync-rules/${type}/edit/${syncRule.id}`} target="_blank">
-                        {i18n.t("Edit {{name}}", syncRule)}
-                    </Link>
-                );
+                    return (
+                        <Link to={`/sync-rules/${type}/edit/${syncRule.id}`} target="_blank">
+                            {i18n.t("Edit {{name}}", syncRule)}
+                        </Link>
+                    );
+                }
             },
         },
     ];
