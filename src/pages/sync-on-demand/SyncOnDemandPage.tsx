@@ -22,14 +22,13 @@ import { SyncronizationClass } from "../../logic/sync/generic";
 import { MetadataSync } from "../../logic/sync/metadata";
 import {
     AggregatedDataElementModel,
-    D2Model,
-    DataElementGroupModel,
-    DataElementGroupSetModel,
-    DataSetModel,
+    DataSetWithDataElementsModel,
+    EventProgramWithDataElementsModel,
+    EventProgramWithIndicatorsModel,
     IndicatorMappedModel,
-    ProgramModel,
-} from "../../models/d2Model";
-import { metadataModels } from "../../models/d2ModelFactory";
+} from "../../models/complexModels";
+import { D2Model, DataElementGroupModel, DataElementGroupSetModel } from "../../models/d2Model";
+import { d2ModelFactory, metadataModels } from "../../models/d2ModelFactory";
 import DeletedObject from "../../models/deletedObjects";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
@@ -61,7 +60,7 @@ const config: Record<
     aggregated: {
         title: i18n.t("Aggregated Data Synchronization"),
         models: [
-            DataSetModel,
+            DataSetWithDataElementsModel,
             AggregatedDataElementModel,
             DataElementGroupModel,
             DataElementGroupSetModel,
@@ -72,8 +71,8 @@ const config: Record<
     },
     events: {
         title: i18n.t("Events Synchronization"),
-        models: [ProgramModel],
-        childrenKeys: ["dataElements"],
+        models: [EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel],
+        childrenKeys: ["dataElements", "programIndicators"],
         SyncClass: EventsSync,
     },
     deleted: {
@@ -87,7 +86,7 @@ const config: Record<
 const SyncOnDemandPage: React.FC = () => {
     const snackbar = useSnackbar();
     const loading = useLoading();
-    const d2 = useD2();
+    const d2 = useD2() as D2;
     const api = useD2Api();
     const history = useHistory();
     const { type } = useParams() as { type: SyncRuleType };
@@ -144,7 +143,7 @@ const SyncOnDemandPage: React.FC = () => {
 
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
-        const sync = new SyncClass(d2 as D2, api, syncRule.toBuilder());
+        const sync = new SyncClass(d2, api, syncRule.toBuilder());
         for await (const { message, syncReport, done } of sync.execute()) {
             if (message) loading.show(true, message);
             if (syncReport) await syncReport.save(api);
@@ -164,6 +163,20 @@ const SyncOnDemandPage: React.FC = () => {
         updateSyncRule(syncRule.updateMetadataIds(selection.map(({ id }) => id)));
     };
 
+    const additionalColumns = [
+        {
+            name: "metadata-type",
+            text: i18n.t("Metadata type"),
+            hidden: config[type].childrenKeys === undefined,
+            getValue: (row: MetadataType) => {
+                if (row.__type__) {
+                    const rowModel = d2ModelFactory(api, row.__type__);
+                    return rowModel.getModelName(d2);
+                }
+            },
+        },
+    ];
+
     return (
         <TestWrapper>
             <PageHeader onBackClick={goBack} title={title} />
@@ -178,6 +191,7 @@ const SyncOnDemandPage: React.FC = () => {
                     actionButtonLabel={<SyncIcon />}
                     childrenKeys={config[type].childrenKeys}
                     showIndeterminateSelection={true}
+                    additionalColumns={additionalColumns}
                 />
             )}
 

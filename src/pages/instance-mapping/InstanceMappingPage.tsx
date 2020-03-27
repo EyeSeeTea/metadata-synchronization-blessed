@@ -7,13 +7,16 @@ import MappingTable from "../../components/mapping-table/MappingTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
     AggregatedDataElementModel,
+    EventProgramWithDataElementsModel,
+    EventProgramWithIndicatorsModel,
+    IndicatorMappedModel,
+    ProgramDataElementModel,
+} from "../../models/complexModels";
+import {
     CategoryComboModel,
     CategoryOptionModel,
-    EventProgramModel,
-    IndicatorMappedModel,
     OptionModel,
     OrganisationUnitModel,
-    ProgramDataElementModel,
 } from "../../models/d2Model";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 
@@ -27,7 +30,7 @@ const config = {
     },
     tracker: {
         title: i18n.t("Program (events) mapping"),
-        models: [EventProgramModel],
+        models: [EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel],
         isGlobalMapping: false,
     },
     orgUnit: {

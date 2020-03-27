@@ -3,7 +3,6 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance from "../../models/instance";
-import { MetadataImportResponse } from "../../types/d2";
 import { ExportBuilder, MetadataPackage, NestedRules } from "../../types/synchronization";
 import {
     buildNestedRules,
@@ -17,9 +16,9 @@ import {
 import { GenericSync, SyncronizationPayload } from "./generic";
 
 export class MetadataSync extends GenericSync {
-    protected readonly type = "metadata";
+    public readonly type = "metadata";
 
-    private async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
+    public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
         const visitedIds: Set<string> = new Set();
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
             const { type, ids, excludeRules, includeRules, includeSharingSettings } = builder;
@@ -105,24 +104,22 @@ export class MetadataSync extends GenericSync {
         return _.deepMerge({}, ...exportResults);
     });
 
-    protected async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance) {
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
         console.debug("Metadata package", payloadPackage);
 
-        return postMetadata(instance.getApi(), payloadPackage, syncParams);
+        const response = await postMetadata(instance.getApi(), payloadPackage, syncParams);
+        const syncResult = cleanMetadataImportResponse(response, instance, this.type);
+        return [syncResult];
     }
 
-    protected cleanResponse(response: MetadataImportResponse, instance: Instance) {
-        return cleanMetadataImportResponse(response, instance);
-    }
-
-    protected async buildDataStats() {
+    public async buildDataStats() {
         return undefined;
     }
 
-    protected async mapPayload(
+    public async mapPayload(
         _instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload> {

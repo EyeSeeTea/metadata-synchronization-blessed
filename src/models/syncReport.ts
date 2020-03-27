@@ -60,7 +60,7 @@ export default class SyncReport {
     }
 
     public static async get(api: D2Api, id: string): Promise<SyncReport | null> {
-        const data = await getDataById(api, dataStoreKey, id);
+        const data = await getDataById<SynchronizationReport>(api, dataStoreKey, id);
         return data ? this.build(data) : null;
     }
 
@@ -112,7 +112,11 @@ export default class SyncReport {
     }
 
     public addSyncResult(...result: SynchronizationResult[]): void {
-        this.results = _.unionBy([...result], this.results, "instance.id");
+        this.results = _.unionBy(
+            [...result],
+            this.results,
+            ({ instance, type }) => `${instance.id}-${type}`
+        );
     }
 
     public async loadSyncResults(api: D2Api): Promise<SynchronizationResult[]> {

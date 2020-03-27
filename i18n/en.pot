@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-25T05:35:28.781Z\n"
-"PO-Revision-Date: 2020-03-25T05:35:28.781Z\n"
+"POT-Creation-Date: 2020-03-26T08:31:26.677Z\n"
+"PO-Revision-Date: 2020-03-26T08:31:26.677Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -188,6 +188,32 @@ msgstr ""
 msgid "Search by name"
 msgstr ""
 
+msgid "There are pending migrations"
+msgstr ""
+
+msgid ""
+"The app needs to run all pending migrations (v{{instanceVersion}} -> "
+"v{{appVersion}}) in order to continue. This may take a long time, make sure "
+"the process is not interrupted."
+msgstr ""
+
+msgid "Migrations finished successfully, you may now continue to the app"
+msgstr ""
+
+msgid ""
+"There has been an error. You can either retry or contact your administrator "
+"if you think there has been an un recoverable error"
+msgstr ""
+
+msgid "Migrate instance"
+msgstr ""
+
+msgid "Migrating..."
+msgstr ""
+
+msgid "Continue to the App"
+msgstr ""
+
 msgid "Help"
 msgstr ""
 
@@ -305,6 +331,21 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
+msgid "Program Indicators"
+msgstr ""
+
+msgid "Aggregated"
+msgstr ""
+
+msgid "Events"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Unknown"
+msgstr ""
+
 msgid "Synchronization Results"
 msgstr ""
 
@@ -384,7 +425,13 @@ msgid ""
 "is, you would use ? in the day of the week field."
 msgstr ""
 
-msgid "Metadata"
+msgid "Aggregation"
+msgstr ""
+
+msgid ""
+"If aggregation is enabled, the synchronization will use the Analytics "
+"endpoint and group data by organisation units children and the chosen time "
+"periods"
 msgstr ""
 
 msgid "Include Exclude Selection"
@@ -402,19 +449,7 @@ msgstr ""
 msgid "Category options"
 msgstr ""
 
-msgid "Aggregation"
-msgstr ""
-
-msgid ""
-"If aggregation is enabled, the synchronization will use the Analytics "
-"endpoint and group data by organisation units children and the chosen time "
-"periods"
-msgstr ""
-
 msgid "Programs"
-msgstr ""
-
-msgid "Events"
 msgstr ""
 
 msgid "Name"
@@ -572,7 +607,15 @@ msgstr ""
 msgid "Without aggregation, any data value related to an indicator will be ignored"
 msgstr ""
 
+msgid ""
+"Without aggregation, program indicators will not be aggregated and "
+"synchronized"
+msgstr ""
+
 msgid "Enable data aggregation"
+msgstr ""
+
+msgid "Aggregate and sync program indicators"
 msgstr ""
 
 msgid "Aggregation type"
@@ -612,6 +655,12 @@ msgid "Preparing synchronization"
 msgstr ""
 
 msgid "Importing data in instance {{instance}}"
+msgstr ""
+
+msgid "Program with Data Elements"
+msgstr ""
+
+msgid "Program with Indicators"
 msgstr ""
 
 msgid "Not a valid DHIS2 instance"
@@ -851,9 +900,6 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Destination Instance Settings"
-msgstr ""
-
-msgid "Aggregated"
 msgstr ""
 
 msgid ""

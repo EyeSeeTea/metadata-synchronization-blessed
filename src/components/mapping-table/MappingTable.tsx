@@ -144,7 +144,7 @@ export default function MappingTable({
                                 instanceApi,
                                 originModel,
                                 destinationModel,
-                                originalId: row?.__originalId__ ?? id,
+                                originalId: _.last(id.split("-")) ?? id,
                                 mappedId,
                             });
                             _.set(newMapping, [mappingType, id], {
@@ -258,19 +258,21 @@ export default function MappingTable({
                 const errors: string[] = [];
 
                 for (const id of elements) {
-                    const element = _.find(rows, ["id", id]);
-                    const elementType = element?.__type__ ?? type;
+                    const row = _.find(rows, ["id", id]);
                     const filter = await buildDataElementFilterForProgram(instanceApi, id, mapping);
 
-                    const model = d2ModelFactory(instanceApi, elementType);
-                    const candidates = await autoMap(
+                    const rowType = getTypeFromRow(row, type);
+                    const originModel = d2ModelFactory(api, rowType) ?? model;
+                    const mappingType = getMappingTypeFromRow(row, type);
+                    const destinationModel = d2ModelFactory(api, mappingType);
+                    const candidates = await autoMap({
                         api,
                         instanceApi,
-                        model,
-                        id,
-                        undefined,
-                        filter
-                    );
+                        originModel,
+                        destinationModel,
+                        selectedItemId: id,
+                        filter,
+                    });
                     const { mappedId } = _.first(candidates) ?? {};
 
                     if (!mappedId) {
@@ -292,8 +294,13 @@ export default function MappingTable({
                 } else if (elements.length === 1) {
                     const firstElement = _.find(rows, ["id", elements[0]]);
                     if (firstElement) {
-                        const type = getMappingTypeFromRow(firstElement);
-                        setMappingConfig({ elements, mappingPath, type, firstElement });
+                        const mappingType = getMappingTypeFromRow(firstElement);
+                        setMappingConfig({
+                            elements,
+                            mappingPath,
+                            mappingType,
+                            firstElement,
+                        });
                     }
                 }
             } catch (e) {
@@ -302,7 +309,7 @@ export default function MappingTable({
             }
             loading.reset();
         },
-        [api, type, loading, applyMapping, instanceApi, rows, snackbar, mappingPath, mapping]
+        [api, type, loading, applyMapping, instanceApi, rows, snackbar, mappingPath, mapping, model]
     );
 
     const openMappingDialog = useCallback(
@@ -315,7 +322,7 @@ export default function MappingTable({
                 .value();
 
             if (types.length === 1) {
-                setMappingConfig({ elements, mappingPath, type: types[0], firstElement });
+                setMappingConfig({ elements, mappingPath, mappingType: types[0], firstElement });
                 setSelectedIds([]);
             } else if (types.length > 1) {
                 snackbar.error(i18n.t("You need to select all items from the same type"));
@@ -466,7 +473,10 @@ export default function MappingTable({
                     text: i18n.t("Metadata type"),
                     hidden: model.getChildrenKeys() === undefined,
                     getValue: (row: MetadataType) => {
-                        return d2.models[row.__type__]?.displayName;
+                        if (row.__type__) {
+                            const rowModel = d2ModelFactory(api, row.__type__);
+                            return rowModel.getModelName(d2);
+                        }
                     },
                 },
                 {
@@ -583,6 +593,7 @@ export default function MappingTable({
                 },
             ]),
         [
+            api,
             d2,
             classes,
             model,

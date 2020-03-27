@@ -5,7 +5,7 @@ import memoize from "nano-memoize";
 import Instance from "../../models/instance";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
-import { D2, DataImportResponse, ImportStatus, MetadataImportResponse } from "../../types/d2";
+import { D2, ImportStatus } from "../../types/d2";
 import {
     AggregatedDataStats,
     AggregatedPackage,
@@ -35,8 +35,8 @@ export abstract class GenericSync {
     protected readonly api: D2Api;
     protected readonly builder: SynchronizationBuilder;
 
-    protected abstract readonly type: SyncRuleType;
-    protected readonly fields: string = "id,name";
+    public abstract readonly type: SyncRuleType;
+    public readonly fields: string = "id,name";
 
     constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
         this.d2 = d2;
@@ -45,23 +45,18 @@ export abstract class GenericSync {
     }
 
     public abstract async buildPayload(): Promise<SyncronizationPayload>;
-    protected abstract async mapPayload(
+    public abstract async mapPayload(
         instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload>;
-    protected abstract async postPayload(
-        instance: Instance
-    ): Promise<MetadataImportResponse | DataImportResponse>;
-    protected abstract cleanResponse(
-        response: MetadataImportResponse | DataImportResponse,
-        instance: Instance
-    ): SynchronizationResult;
-    protected abstract async buildDataStats(): Promise<
+    public abstract async postPayload(instance: Instance): Promise<SynchronizationResult[]>;
+    public abstract async buildDataStats(): Promise<
         AggregatedDataStats[] | EventsDataStats[] | undefined
     >;
 
     public extractMetadata = memoize(async () => {
-        return getMetadata(this.api, this.builder.metadataIds, this.fields);
+        const cleanIds = this.builder.metadataIds.map(id => _.last(id.split("-")) ?? id);
+        return getMetadata(this.api, cleanIds, this.fields);
     });
 
     private async buildSyncReport() {
@@ -98,6 +93,7 @@ export abstract class GenericSync {
                 instance: instance.toObject(),
                 status: "PENDING" as ImportStatus,
                 date: new Date(),
+                type: this.type,
             }))
         );
 
@@ -112,8 +108,8 @@ export abstract class GenericSync {
 
             try {
                 console.debug("Start import on destination instance", instance.toObject());
-                const response = await this.postPayload(instance);
-                syncReport.addSyncResult(this.cleanResponse(response, instance));
+                const syncResults = await this.postPayload(instance);
+                syncReport.addSyncResult(...syncResults);
                 console.debug("Finished importing data on instance", instance.toObject());
             } catch (error) {
                 console.error("err", error);
@@ -121,6 +117,7 @@ export abstract class GenericSync {
                     status: "ERROR",
                     instance: instance.toObject(),
                     date: new Date(),
+                    type: this.type,
                 });
             }
 
