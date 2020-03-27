@@ -18,40 +18,40 @@ context("Global mapping", function() {
     });
 
     it("has row menu with details action", function() {
-        page.openRowActions().assertOption(option => option.contains("Details"));
+        page.openRowMenu().assertOption(option => option.contains("Details"));
     });
 
     it("has row menu with set mapping action", function() {
-        page.openRowActions().assertOption(option => option.contains("Set mapping"));
+        page.openRowMenu().assertOption(option => option.contains("Set mapping"));
     });
 
     it("has row menu with auto-map element action", function() {
-        page.openRowActions().assertOption(option => option.contains("Auto-map element"));
+        page.openRowMenu().assertOption(option => option.contains("Auto-map element"));
     });
 
     it("has row menu with exclude mapping action", function() {
-        page.openRowActions().assertOption(option => option.contains("Exclude mapping"));
+        page.openRowMenu().assertOption(option => option.contains("Exclude mapping"));
     });
 
     it("has row menu with Reset mapping to default values action", function() {
-        page.openRowActions().assertOption(option =>
+        page.openRowMenu().assertOption(option =>
             option.contains("Reset mapping to default values")
         );
     });
 
     it("has general menu with Column settings action", function() {
-        page.openBulkActions().assertOption(option => option.contains("Column settings"));
+        page.openGeneralMenu().assertOption(option => option.contains("Column settings"));
     });
 
     it("has general menu with validate mapping action", function() {
-        page.openBulkActions().assertOption(option => option.contains("Validate mapping"));
+        page.openGeneralMenu().assertOption(option => option.contains("Validate mapping"));
     });
 
     it("has general menu with reset mapping action", function() {
-        page.openBulkActions().assertOption(option => option.contains("Reset mapping"));
+        page.openGeneralMenu().assertOption(option => option.contains("Reset mapping"));
     });
 
     it("has general menu with exclude mapping action", function() {
-        page.openBulkActions().assertOption(option => option.contains("Exclude mapping"));
+        page.openGeneralMenu().assertOption(option => option.contains("Exclude mapping"));
     });
 });
