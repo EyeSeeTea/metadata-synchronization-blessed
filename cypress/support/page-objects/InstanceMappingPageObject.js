@@ -28,7 +28,7 @@ class InstanceMappingPageObject extends InstancePageObject {
             .as(routeName);
         return this;
     }
-    
+
     openSection(option) {
         this.cy
             .get(dataTest("CardActions-landing-mapping-" + option))
