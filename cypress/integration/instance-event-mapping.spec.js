@@ -5,6 +5,9 @@ context("Event mapping", function() {
 
     const inputs = {
         instance: "Y5QsHDoD4I0",
+        program: "ENTO- Discriminating concentration bioassay",
+        alternativeProgram: "ENTO- Adult Surveillance",
+        excludedProgram: "ENTO- Inmature stages surveillance",
     };
 
     beforeEach(() => {
@@ -15,6 +18,92 @@ context("Event mapping", function() {
         page.assertTitle(title =>
             title.contains("Program (events) mapping - Destination instance this instance (8080)")
         );
+    });
+
+    it("should set mapping element", function() {
+        page.checkCheckboxByText(inputs.alternativeProgram);
+
+        page.openSelectedRowMenu().clickOption("Set mapping");
+        page.assertMappedObjectTitle(dialog =>
+            dialog.contains(
+                "Edit mapping for ENTO- Adult Surveillance (RwKq3U8uLjU) - Program - Destination instance this instance (8080)"
+            )
+        );
+
+        page.selectMappingObject(inputs.alternativeProgram);
+
+        page.closeDialog();
+        page.assertRowStatus(row => row.contains("Mapped"), inputs.alternativeProgram);
+    });
+
+    it("should show related metadata mapping option on mapped object", function() {
+        page.checkCheckboxByText(inputs.program);
+
+        page.openRowMenu().clickOption("Auto-map element");
+
+        page.closeDialog();
+        page.assertRowStatus(row => row.contains("Mapped"), inputs.alternativeProgram);
+
+        page.checkCheckboxByText(inputs.program);
+
+        page.openSelectedRowMenu().assertOption(option =>
+            option.contains("Related metadata mapping")
+        );
+    });
+
+    it("should auto-map element", function() {
+        page.checkCheckboxByText(inputs.program);
+
+        page.openRowMenu().clickOption("Auto-map element");
+        page.assertDialog(dialog => dialog.contains("There are 1 items selected in all pages."));
+        page.assertMappedObjectTitle(dialog =>
+            dialog.contains(
+                "Edit mapping for ENTO- Discriminating concentration bioassay (G9hvxFI8AYC) - Program - Destination instance this instance (8080)"
+            )
+        );
+
+        page.closeDialog();
+        page.assertRowStatus(row => row.contains("Mapped"), inputs.program);
+    });
+
+    it("should exclude element", function() {
+        page.checkCheckboxByText(inputs.excludedProgram);
+        page.openSelectedRowMenu().clickOption("Exclude mapping");
+        page.assertDialog(dialog =>
+            dialog.contains("Are you sure you want to exclude mapping for 1 elements?")
+        );
+
+        page.clickOkOnDialog();
+        page.assertRowStatus(row => row.contains("Excluded"), inputs.excludedProgram);
+    });
+
+    it("should validate mapping", function() {
+        page.checkCheckboxByText(inputs.alternativeProgram);
+        page.openSelectedRowMenu().clickOption("Auto-map element");
+        page.closeDialog();
+
+        page.checkCheckboxByText(inputs.alternativeProgram);
+        page.openSelectedRowMenu().clickOption("Validate mapping");
+        page.assertDialog(dialog =>
+            dialog.contains("Are you sure you want to validate mapping for 1 elements?")
+        );
+
+        page.clickOkOnDialog();
+        page.assertRowStatus(row => row.contains("Mapped"), inputs.alternativeProgram);
+    });
+
+    it("should reset mapping to default values", function() {
+        page.checkCheckboxByText(inputs.program);
+        page.openRowMenu().clickOption("Auto-map element");
+        page.closeDialog();
+
+        page.openRowMenu().clickOption("Reset mapping to default values");
+        page.assertDialog(dialog =>
+            dialog.contains("Are you sure you want to reset mapping for 1 elements?")
+        );
+
+        page.clickOkOnDialog();
+        page.assertRowStatus(row => row.contains("Not mapped"), inputs.program);
     });
 
     it("has row menu with details action", function() {

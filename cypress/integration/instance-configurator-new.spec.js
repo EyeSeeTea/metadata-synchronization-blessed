@@ -64,7 +64,7 @@ context("New Instance Settings", function() {
 
     it("should save successfully new instance", function() {
         page.newInstance()
-            .typeCreedentials("admin", "district")
+            .typeCreedentials("admin_test", "district")
             .typeName("test_save")
             .typeUrl("http://localhost:8080")
             .save()

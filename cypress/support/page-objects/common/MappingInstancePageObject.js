@@ -1,4 +1,3 @@
-import * as mappingStep from "../../page-utils/mappingStep";
 import PageObject from "./PageObject";
 
 export default class MappingInstancePageObject extends PageObject {
@@ -20,7 +19,7 @@ export default class MappingInstancePageObject extends PageObject {
         return this;
     }
 
-    openSelectedRowMenu(text) {
+    openSelectedRowMenu() {
         this.cy.get(".Mui-selected").rightclick();
         return this;
     }

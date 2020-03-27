@@ -22,9 +22,7 @@ context("OrgUnit mapping", function() {
     });
 
     it("has row menu with Select with children subtree action", function() {
-        page.openRowMenu().assertOption(option =>
-            option.contains("Select with children subtree")
-        );
+        page.openRowMenu().assertOption(option => option.contains("Select with children subtree"));
     });
 
     it("has row menu with set mapping action", function() {
