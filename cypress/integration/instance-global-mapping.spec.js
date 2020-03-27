@@ -77,20 +77,6 @@ context("Global mapping", function() {
         page.assertRowStatus(row => row.contains("Mapped"), inputs.alternativeObjectName);
     });
 
-    it("should reset mapping to default values", function() {
-        page.checkCheckboxByText(inputs.objectName);
-        page.openRowMenu().clickOption("Auto-map element");
-        page.closeDialog();
-
-        page.openRowMenu().clickOption("Reset mapping to default values");
-        page.assertDialog(dialog =>
-            dialog.contains("Are you sure you want to reset mapping for 1 elements?")
-        );
-
-        page.clickOkOnDialog();
-        page.assertRowStatus(row => row.contains("Not mapped"), inputs.objectName);
-    });
-
     it("has row menu with details action", function() {
         page.openRowMenu().assertOption(option => option.contains("Details"));
     });

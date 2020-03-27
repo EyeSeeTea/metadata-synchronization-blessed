@@ -84,20 +84,6 @@ context("Aggregated mapping", function() {
         page.assertRowStatus(row => row.contains("Mapped"), inputs.dataelement);
     });
 
-    it("should reset mapping to default values", function() {
-        page.checkCheckboxByText(inputs.dataelement);
-        page.openRowMenu().clickOption("Auto-map element");
-        page.closeDialog();
-
-        page.openRowMenu().clickOption("Reset mapping to default values");
-        page.assertDialog(dialog =>
-            dialog.contains("Are you sure you want to reset mapping for 1 elements?")
-        );
-
-        page.clickOkOnDialog();
-        page.assertRowStatus(row => row.contains("Not mapped"), inputs.dataelement);
-    });
-
     it("has the correct title", function() {
         page.assertTitle(title =>
             title.contains("Aggregated mapping - Destination instance this instance (8080)")
