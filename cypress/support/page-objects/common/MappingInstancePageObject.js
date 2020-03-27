@@ -20,7 +20,11 @@ export default class MappingInstancePageObject extends PageObject {
     }
 
     openBulkActions() {
-        this.cy.get(".MuiTableHead-root > .MuiTableRow-root > .MuiTableCell-alignCenter > .MuiButtonBase-root > .MuiIconButton-label > .MuiSvgIcon-root").click();
+        this.cy
+            .get(
+                ".MuiTableHead-root > .MuiTableRow-root > .MuiTableCell-alignCenter > .MuiButtonBase-root > .MuiIconButton-label > .MuiSvgIcon-root"
+            )
+            .click();
         return this;
     }
 

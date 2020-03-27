@@ -46,7 +46,7 @@ context("New Instance Settings", function() {
 
     it("should show URL and username combination already exists error when url/user is duplicated", function() {
         page.newInstance()
-            .typeCreedentials("who","test")
+            .typeCreedentials("who", "test")
             .typeName("receiver")
             .typeUrl("http://localhost:8081")
             .save()
@@ -55,7 +55,7 @@ context("New Instance Settings", function() {
 
     it("should connect successfully to instance", function() {
         page.newInstance()
-            .typeCreedentials("admin","district")
+            .typeCreedentials("admin", "district")
             .typeName("test connect")
             .typeUrl("http://localhost:8080/")
             .testConnection()
@@ -64,7 +64,7 @@ context("New Instance Settings", function() {
 
     it("should save successfully new instance", function() {
         page.newInstance()
-            .typeCreedentials("admin","district")
+            .typeCreedentials("admin", "district")
             .typeName("test_save")
             .typeUrl("http://localhost:8080")
             .save()
