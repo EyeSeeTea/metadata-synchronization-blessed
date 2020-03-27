@@ -84,9 +84,6 @@ const commonSteps: {
         component: AggregationStep,
         validationKeys: ["dataSyncAggregation"],
         showOnSyncDialog: true,
-        warning: i18n.t(
-            "If aggregation is enabled, the synchronization will use the Analytics endpoint and group data by organisation units children and the chosen time periods"
-        ),
     },
 };
 
@@ -144,7 +141,12 @@ export const aggregatedSteps: SyncWizardStep[] = [
         validationKeys: ["categoryOptionIds"],
         showOnSyncDialog: true,
     },
-    commonSteps.aggregation,
+    {
+        ...commonSteps.aggregation,
+        warning: i18n.t(
+            "If aggregation is enabled, the synchronization will use the Analytics endpoint and group data by organisation units children and the chosen time periods"
+        ),
+    },
     commonSteps.instanceSelection,
     commonSteps.scheduler,
     commonSteps.summary,
