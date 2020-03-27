@@ -7,7 +7,7 @@ export default class InstancePageObject extends PageObject {
     }
 
     open() {
-        super.open("/#/instances");
+        super.open("/#/instances/");
     }
 
     findInstance(instance) {
