@@ -34,23 +34,23 @@ class InstanceDetailPageObject extends InstancePageObject {
         return this;
     }
 
-    typeName() {
+    typeName(name) {
         this.cy
             .get(dataTest("name"))
             .parent()
-            .type("test");
+            .type(name);
         return this;
     }
 
-    typeCreedentials() {
+    typeCreedentials(user, pass) {
         this.cy
             .get(dataTest("username"))
             .parent()
-            .type("admin");
+            .type(user);
         this.cy
             .get(dataTest("password"))
             .parent()
-            .type("district");
+            .type(pass);
         return this;
     }
 

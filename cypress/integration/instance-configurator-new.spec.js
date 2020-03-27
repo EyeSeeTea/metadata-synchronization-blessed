@@ -44,21 +44,30 @@ context("New Instance Settings", function() {
             );
     });
 
+    it("should show URL and username combination already exists error when url/user is duplicated", function() {
+        page.newInstance()
+            .typeCreedentials("who","test")
+            .typeName("receiver")
+            .typeUrl("http://localhost:8081")
+            .save()
+            .assertError(error => error.contains("URL and username combination already exists"));
+    });
+
     it("should connect successfully to instance", function() {
         page.newInstance()
-            .typeCreedentials()
-            .typeName("test")
-            .typeUrl("http://localhost:8080")
+            .typeCreedentials("admin","district")
+            .typeName("test connect")
+            .typeUrl("http://localhost:8080/")
             .testConnection()
             .assertError(error => error.contains("Connected successfully to instance"));
     });
 
     it("should save successfully new instance", function() {
         page.newInstance()
-            .typeCreedentials()
-            .typeName("test")
-            .typeUrl("http://localhost:8080/test")
+            .typeCreedentials("admin","district")
+            .typeName("test_save")
+            .typeUrl("http://localhost:8080")
             .save()
-            .findInstance("test");
+            .findInstance("test_save");
     });
 });
