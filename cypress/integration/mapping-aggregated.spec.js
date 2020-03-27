@@ -38,4 +38,28 @@ context("Aggregated mapping", function() {
             option.contains("Reset mapping to default values")
         );
     });
+
+    it("bulk menu has the Column settings action", function() {
+        page.openBulkActions().assertOption(option =>
+            option.contains("Column settings")
+        );
+    });
+
+    it("bulk menu has the validate mapping action", function() {
+        page.openBulkActions().assertOption(option =>
+            option.contains("Validate mapping")
+        );
+    });
+
+    it("bulk menu has the reset mapping action", function() {
+        page.openBulkActions().assertOption(option =>
+            option.contains("Reset mapping")
+        );
+    });
+
+    it("bulk menu has the exclude mapping action", function() {
+        page.openBulkActions().assertOption(option =>
+            option.contains("Exclude mapping")
+        );
+    });
 });

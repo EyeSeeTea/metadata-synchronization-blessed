@@ -42,4 +42,10 @@ context("OrgUnit mapping", function() {
             option.contains("Reset mapping to default values")
         );
     });
+
+    it("bulk menu has the Column settings action", function() {
+        page.openBulkActions().assertOption(option =>
+            option.contains("Column settings")
+        );
+    });
 });
