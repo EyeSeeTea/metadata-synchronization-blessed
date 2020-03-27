@@ -19,6 +19,11 @@ export default class MappingInstancePageObject extends PageObject {
         return this;
     }
 
+    openBulkActions() {
+        this.cy.get(".MuiTableHead-root > .MuiTableRow-root > .MuiTableCell-alignCenter > .MuiButtonBase-root > .MuiIconButton-label > .MuiSvgIcon-root").click();
+        return this;
+    }
+
     assertOption(assert) {
         assert(this.cy.get(".MuiList-root"));
         return this;
