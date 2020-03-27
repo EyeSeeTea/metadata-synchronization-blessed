@@ -16,6 +16,7 @@ import {
     postEventsData,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
+import { generateUid } from "d2/uid";
 
 export class EventsSync extends GenericSync {
     protected readonly type = "events";
@@ -26,11 +27,15 @@ export class EventsSync extends GenericSync {
         const { dataParams = {} } = this.builder;
         const { programs = [] } = await this.extractMetadata();
 
-        const events = await getEventsData(
-            this.api,
-            dataParams,
-            programs.map(({ id }) => id)
-        );
+        const events = (
+            await getEventsData(
+                this.api,
+                dataParams,
+                programs.map(({ id }) => id)
+            )
+        ).map(event => {
+            return dataParams.generateNewUid ? { ...event, event: generateUid() } : event;
+        });
 
         return { events };
     });
@@ -39,7 +44,7 @@ export class EventsSync extends GenericSync {
         const { dataParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
-        const mappedPayloadPackage = await this.mapMetadata(instance, payloadPackage);
+        const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
         console.debug("Events package", { payloadPackage, mappedPayloadPackage });
 
         return postEventsData(instance, mappedPayloadPackage, dataParams);
@@ -65,7 +70,7 @@ export class EventsSync extends GenericSync {
             .value();
     }
 
-    protected async mapMetadata(
+    protected async mapPayload(
         instance: Instance,
         payload: EventsPackage
     ): Promise<SyncronizationPayload> {

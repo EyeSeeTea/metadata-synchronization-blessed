@@ -16,6 +16,7 @@ import {
     requestJSONDownload,
 } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
+import { aggregationItems } from "../data/AggregationStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
 import { getInstanceOptions } from "./InstanceSelectionStep";
 // import Instance from "../../../models/instance";
@@ -107,7 +108,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
             ...syncRule.dataSyncAttributeCategoryOptions,
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
-        getMetadata(api.apiPath, ids, "id,name").then(updateMetadata);
+        getMetadata(api, ids, "id,name").then(updateMetadata);
         getInstanceOptions(api).then(setInstanceOptions);
     }, [api, syncRule]);
 
@@ -336,6 +337,22 @@ const SaveStep = ({ syncRule, onCancel }) => {
                             </ul>
                         )}
                     </LiEntry>
+                )}
+
+                {syncRule.type === "aggregated" && (
+                    <LiEntry
+                        label={i18n.t("Aggregation")}
+                        value={
+                            syncRule.dataSyncEnableAggregation
+                                ? i18n.t(
+                                      _.find(aggregationItems, [
+                                          "id",
+                                          syncRule.dataSyncAggregationType,
+                                      ])?.name ?? i18n.t("Enabled")
+                                  )
+                                : i18n.t("Disabled")
+                        }
+                    />
                 )}
 
                 {syncRule.type === "metadata" && (

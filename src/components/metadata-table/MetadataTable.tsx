@@ -347,7 +347,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                     : undefined,
                 ...model.getApiModelFilters(),
             },
-            defaults: "EXCLUDE",
         };
 
         if (query.filter && model.getGroupFilterName()) {
