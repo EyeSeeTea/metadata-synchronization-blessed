@@ -18,6 +18,7 @@ import {
 } from "../../utils/synchronization";
 import { AggregatedSync } from "./aggregated";
 import { GenericSync, SyncronizationPayload } from "./generic";
+import { generateUid } from "d2/uid";
 
 export class EventsSync extends GenericSync {
     public readonly type = "events";
@@ -29,11 +30,15 @@ export class EventsSync extends GenericSync {
         const { enableAggregation = false } = dataParams;
         const { programs = [] } = await this.extractMetadata();
 
-        const events = await getEventsData(
-            this.api,
-            dataParams,
-            programs.map(({ id }) => id)
-        );
+        const events = (
+            await getEventsData(
+                this.api,
+                dataParams,
+                programs.map(({ id }) => id)
+            )
+        ).map(event => {
+            return dataParams.generateNewUid ? { ...event, event: generateUid() } : event;
+        });
 
         const indicatorIds = _.flatten(
             programs?.map(

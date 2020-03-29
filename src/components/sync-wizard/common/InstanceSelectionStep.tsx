@@ -13,19 +13,45 @@ export const getInstanceOptions = async (api: D2Api) => {
     }));
 };
 
+const getInstances = async (api: D2Api) => {
+    const { objects } = await Instance.list(api, {}, { paging: false });
+    return objects;
+};
+
 const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const d2 = useD2();
     const api = useD2Api();
     const [selectedOptions, setSelectedOptions] = useState<string[]>(syncRule.targetInstances);
     const [instanceOptions, setInstanceOptions] = useState<{ value: string; text: string }[]>([]);
+    const [targetInstances, setTargetInstances] = useState<Instance[]>([]);
+
+    const includeCurrentUrlAndTypeIsEvents = (selectedinstanceIds: string[]) => {
+        return (
+            syncRule.type === "events" &&
+            selectedinstanceIds
+                .map(id => targetInstances.find(instance => instance.id === id)?.url)
+                .includes(api.baseUrl)
+        );
+    };
 
     const changeInstances = (instances: string[]) => {
         setSelectedOptions(instances);
-        onChange(syncRule.updateTargetInstances(instances));
+
+        if (includeCurrentUrlAndTypeIsEvents(instances)) {
+            onChange(
+                syncRule.updateTargetInstances(instances).updateDataParams({
+                    ...syncRule.dataParams,
+                    generateNewUid: true,
+                })
+            );
+        } else {
+            onChange(syncRule.updateTargetInstances(instances));
+        }
     };
 
     useEffect(() => {
         getInstanceOptions(api).then(setInstanceOptions);
+        getInstances(api).then(setTargetInstances);
     }, [api]);
 
     return (
@@ -38,7 +64,11 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
                 selected={selectedOptions}
             />
 
-            <SyncParamsSelector syncRule={syncRule} onChange={onChange} />
+            <SyncParamsSelector
+                syncRule={syncRule}
+                onChange={onChange}
+                generateNewUidDisabled={includeCurrentUrlAndTypeIsEvents(selectedOptions)}
+            />
         </React.Fragment>
     );
 };
