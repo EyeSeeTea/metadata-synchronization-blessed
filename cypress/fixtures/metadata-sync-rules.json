@@ -5,25 +5,6 @@
         "code": "Metadata sync rule code",
         "created": "2020-02-26T08:43:11.739Z",
         "description": "Metadata sync rule description",
-        "builder": {
-            "targetInstances": ["Y5QsHDoD4I0"],
-            "metadataIds": ["t0ml4ZZpnu0"],
-            "excludedIds": [],
-            "dataParams": {
-                "strategy": "NEW_AND_UPDATES",
-                "allAttributeCategoryOptions": true,
-                "dryRun": false
-            },
-            "syncParams": {
-                "importStrategy": "CREATE_AND_UPDATE",
-                "includeSharingSettings": true,
-                "useDefaultIncludeExclude": true,
-                "atomicMode": "ALL",
-                "mergeMode": "MERGE",
-                "importMode": "COMMIT",
-                "metadataIncludeExcludeRules": {}
-            }
-        },
         "enabled": false,
         "lastUpdated": "2020-02-26T11:22:28.626Z",
         "lastUpdatedBy": {
@@ -45,25 +26,6 @@
         "code": "Metadata sync rule code 2",
         "created": "2020-02-26T08:43:11.739Z",
         "description": "Metadata sync rule description 2",
-        "builder": {
-            "targetInstances": ["Y5QsHDoD4I0"],
-            "metadataIds": ["t0ml4ZZpnu0"],
-            "excludedIds": [],
-            "dataParams": {
-                "strategy": "NEW_AND_UPDATES",
-                "allAttributeCategoryOptions": true,
-                "dryRun": false
-            },
-            "syncParams": {
-                "importStrategy": "CREATE_AND_UPDATE",
-                "includeSharingSettings": true,
-                "useDefaultIncludeExclude": true,
-                "atomicMode": "ALL",
-                "mergeMode": "MERGE",
-                "importMode": "COMMIT",
-                "metadataIncludeExcludeRules": {}
-            }
-        },
         "enabled": false,
         "lastUpdated": "2020-02-26T11:22:28.626Z",
         "lastUpdatedBy": {
