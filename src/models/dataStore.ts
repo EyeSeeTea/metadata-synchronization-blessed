@@ -1,4 +1,4 @@
-import { D2Api } from "d2-api";
+import { D2Api, Ref } from "d2-api";
 import _ from "lodash";
 import { Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
@@ -6,13 +6,13 @@ import { TableFilters, TableList, TablePagination } from "../types/d2-ui-compone
 export const dataStoreNamespace = "metadata-synchronization";
 export const dataStoreVersion = 1;
 
-export async function getDataStore(
+export async function getDataStore<T extends object>(
     api: D2Api,
     dataStoreKey: string,
-    defaultValue: any
-): Promise<any> {
+    defaultValue: T
+): Promise<T> {
     const dataStore = api.dataStore(dataStoreNamespace);
-    const value = await dataStore.get(dataStoreKey).getData();
+    const value = await dataStore.get<T>(dataStoreKey).getData();
     if (!value) await dataStore.save(dataStoreKey, defaultValue).getData();
     return value ?? defaultValue;
 }
@@ -36,8 +36,12 @@ export async function getData(api: D2Api, dataStoreKey: string): Promise<any> {
     return getDataStore(api, dataStoreKey, []);
 }
 
-export async function getDataById(api: D2Api, dataStoreKey: string, id: string): Promise<any> {
-    const rawData = await getDataStore(api, dataStoreKey, []);
+export async function getDataById<T extends Ref>(
+    api: D2Api,
+    dataStoreKey: string,
+    id: string
+): Promise<T | undefined> {
+    const rawData = await getDataStore<T[]>(api, dataStoreKey, []);
     return _.find(rawData, element => element.id === id);
 }
 
@@ -50,7 +54,7 @@ export async function getPaginatedData(
     const { search = null } = filters || {};
     const { page = 1, pageSize = 20, paging = true, sorting = ["id", "asc"] } = pagination || {};
 
-    const rawData = await getDataStore(api, dataStoreKey, []);
+    const rawData = await getDataStore<any>(api, dataStoreKey, []);
 
     const filteredData = search
         ? _.filter(rawData, o =>

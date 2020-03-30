@@ -25,9 +25,10 @@ import {
     NestedRules,
     ProgramEvent,
     SynchronizationResult,
+    SyncRuleType,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
-import { cleanToModelName, getClassName, cleanToAPIChildReferenceName } from "./d2";
+import { cleanToAPIChildReferenceName, cleanToModelName, getClassName } from "./d2";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -175,7 +176,8 @@ export function getAllReferences(
 
 export function cleanMetadataImportResponse(
     importResult: MetadataImportResponse,
-    instance: Instance
+    instance: Instance,
+    type: SyncRuleType
 ): SynchronizationResult {
     const { status: importStatus, stats, message, typeReports = [] } = importResult;
     const status = importStatus === "OK" ? "SUCCESS" : importStatus;
@@ -211,12 +213,14 @@ export function cleanMetadataImportResponse(
         instance: instance.toObject(),
         report: { typeStats, messages },
         date: new Date(),
+        type,
     };
 }
 
 export function cleanDataImportResponse(
     importResult: DataImportResponse,
-    instance: Instance
+    instance: Instance,
+    type: SyncRuleType
 ): SynchronizationResult {
     const { status: importStatus, message, importCount, response, conflicts } = importResult;
     const status = importStatus === "OK" ? "SUCCESS" : importStatus;
@@ -244,6 +248,7 @@ export function cleanDataImportResponse(
         instance: instance.toObject(),
         report: { messages: aggregatedMessages ?? eventsMessages ?? [] },
         date: new Date(),
+        type,
     };
 }
 

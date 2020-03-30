@@ -7,7 +7,8 @@ import _ from "lodash";
 import { Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { Validation } from "../types/validations";
-import { deleteData, getData, getDataById, getPaginatedData, saveData } from "./dataStore";
+import { getDataStore, deleteData, saveData, saveDataStore, deleteDataStore } from "./dataStore";
+import { getData, getDataById, getPaginatedData } from "./dataStore";
 
 const instancesDataStoreKey = "instances";
 
@@ -40,6 +41,26 @@ export interface InstanceData {
     metadataMapping: MetadataMappingDictionary;
 }
 
+type InstanceDataMain = Omit<InstanceData, "metadataMapping">;
+
+export interface InstanceDetailsData {
+    metadataMapping: MetadataMappingDictionary;
+}
+
+const mainDefaultData: InstanceDataMain = {
+    id: "",
+    name: "",
+    url: "",
+    username: "",
+    password: "",
+    description: "",
+};
+
+const initialData: InstanceData = {
+    ...mainDefaultData,
+    metadataMapping: {},
+};
+
 export default class Instance {
     private static encryptionKey: string;
 
@@ -47,15 +68,7 @@ export default class Instance {
     private readonly api: D2Api;
 
     constructor(data: InstanceData) {
-        this.data = _.pick(data, [
-            "id",
-            "name",
-            "url",
-            "username",
-            "password",
-            "description",
-            "metadataMapping",
-        ]);
+        this.data = _.pick(data, _.keys(initialData) as Array<keyof InstanceData>);
         const { url: baseUrl, username, password } = data;
         this.api = new D2ApiDefault({ baseUrl, auth: { username, password } });
     }
@@ -109,14 +122,6 @@ export default class Instance {
     }
 
     public static create(): Instance {
-        const initialData = {
-            id: "",
-            name: "",
-            url: "",
-            username: "",
-            password: "",
-            metadataMapping: {},
-        };
         return new Instance(initialData);
     }
 
@@ -125,9 +130,18 @@ export default class Instance {
         return instance.decryptPassword();
     }
 
+    private static getDetailsKey(instanceData: InstanceData): string {
+        return instancesDataStoreKey + "-" + instanceData.id;
+    }
+
     public static async get(api: D2Api, id: string): Promise<Instance | undefined> {
-        const data = await getDataById(api, instancesDataStoreKey, id);
-        return data ? this.build(data) : undefined;
+        const instanceData = await getDataById<InstanceData>(api, instancesDataStoreKey, id);
+        if (!instanceData) return;
+        const detailsKey = this.getDetailsKey(instanceData);
+        const defaultDetails: InstanceDetailsData = { metadataMapping: {} };
+        const detailsData = await getDataStore(api, detailsKey, defaultDetails);
+        const dataWithMapping = { ...instanceData, metadataMapping: detailsData.metadataMapping };
+        return this.build(dataWithMapping);
     }
 
     public static async list(
@@ -148,11 +162,18 @@ export default class Instance {
         const element = exists ? instance.data : { ...instance.data, id: generateUid() };
 
         if (exists) await instance.remove(api);
-        return saveData(api, instancesDataStoreKey, element);
+
+        const detailsKey = Instance.getDetailsKey(instance);
+        const detailsData: InstanceDetailsData = { metadataMapping: instance.metadataMapping };
+        const response: Response = await toResponse(saveDataStore(api, detailsKey, detailsData));
+        const mainElement = _.pick(element, _.keys(mainDefaultData));
+        return response.status ? saveData(api, instancesDataStoreKey, mainElement) : response;
     }
 
     public async remove(api: D2Api): Promise<Response> {
-        return deleteData(api, instancesDataStoreKey, this.data);
+        const response = await deleteData(api, instancesDataStoreKey, this.data);
+        const detailsKey = Instance.getDetailsKey(this.data);
+        return response.status ? toResponse(deleteDataStore(api, detailsKey)) : response;
     }
 
     public toObject(): Omit<InstanceData, "password"> {
@@ -309,5 +330,14 @@ export default class Instance {
                 return { status: false, error };
             }
         }
+    }
+}
+
+export async function toResponse(promise: Promise<void>): Promise<Response> {
+    try {
+        await promise;
+        return { status: true };
+    } catch (error) {
+        return { status: false, error };
     }
 }

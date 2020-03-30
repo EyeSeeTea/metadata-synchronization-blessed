@@ -146,6 +146,21 @@ const buildMessageTable = messages => {
     );
 };
 
+const getTypeName = (reportType, syncType) => {
+    switch (reportType) {
+        case "aggregated":
+            return syncType === "events" ? i18n.t("Program Indicators") : i18n.t("Aggregated");
+        case "events":
+            return i18n.t("Events");
+        case "metadata":
+            return i18n.t("Metadata");
+        case "deleted":
+            return i18n.t("Deleted");
+        default:
+            return i18n.t("Unknown");
+    }
+};
+
 const SyncSummary = ({ response, onClose }) => {
     const api = useD2Api();
     const classes = useStyles();
@@ -166,7 +181,7 @@ const SyncSummary = ({ response, onClose }) => {
             fullWidth={true}
         >
             <DialogContent>
-                {results.map(({ instance, status, report, stats, message }, i) => (
+                {results.map(({ instance, status, report, stats, message, type }, i) => (
                     <ExpansionPanel
                         defaultExpanded={results.length === 1}
                         className={classes.expansionPanel}
@@ -174,9 +189,9 @@ const SyncSummary = ({ response, onClose }) => {
                     >
                         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                             <Typography className={classes.expansionPanelHeading1}>
-                                {`${i18n.t("Destination instance")}: ${instance.name} (${
-                                    instance.url
-                                })`}
+                                {`${i18n.t("Destination instance")}: ${
+                                    instance.name
+                                } - ${getTypeName(type, response.syncReport.type)}`}
                             </Typography>
                             <Typography className={classes.expansionPanelHeading2}>
                                 {`${i18n.t("Status")}: `}

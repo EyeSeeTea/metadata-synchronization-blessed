@@ -339,7 +339,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
                     </LiEntry>
                 )}
 
-                {syncRule.type === "aggregated" && (
+                {syncRule.type !== "metadata" && (
                     <LiEntry
                         label={i18n.t("Aggregation")}
                         value={
