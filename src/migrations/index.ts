@@ -40,7 +40,7 @@ export class MigrationsRunner {
     public async migrateFromCurrent(): Promise<void> {
         const { config, migrations, debug } = this;
 
-        if (!this.hasPendingMigrations()) {
+        if (_.isEmpty(migrations)) {
             debug(`No migrations pending to run (current version: ${config.version})`);
             return;
         }
@@ -161,7 +161,7 @@ export class MigrationsRunner {
     }
 
     hasPendingMigrations(): boolean {
-        return this.config.version < this.appVersion;
+        return this.config.version != this.appVersion;
     }
 
     get instanceVersion(): number {
