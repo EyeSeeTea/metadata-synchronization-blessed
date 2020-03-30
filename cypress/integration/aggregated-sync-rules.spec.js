@@ -7,7 +7,7 @@ context("Aggregated sync rules", function() {
     beforeEach(() => {
         const stubApiResponseName = "getRules";
 
-        syncRuleFixture("aggregated", stubApiResponseName).then(syncRules => {
+        syncRuleFixture("aggregated", stubApiResponseName, syncRules => {
             this.syncRules = syncRules;
             page.open(stubApiResponseName);
         });

@@ -6,7 +6,7 @@ context("Event sync rules", function() {
     beforeEach(() => {
         const stubApiResponseName = "getRules";
 
-        syncRuleFixture("events", stubApiResponseName).then(syncRules => {
+        syncRuleFixture("events", stubApiResponseName, syncRules => {
             this.syncRules = syncRules;
             page.open(stubApiResponseName);
         });

@@ -5,7 +5,7 @@ context("Metadata sync rule edit", function() {
     const page = new MetadataSyncRuleDetailPageObject(cy);
 
     beforeEach(() => {
-        syncRuleFixture("metadata").then(syncRules => {
+        syncRuleFixture("metadata", "getRules", syncRules => {
             this.syncRule = syncRules[0];
             page.open(this.syncRule.id);
         });

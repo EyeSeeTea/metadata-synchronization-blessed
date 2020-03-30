@@ -7,7 +7,7 @@ context("Metadata sync rules ", function() {
     beforeEach(() => {
         const stubApiResponseName = "getRules";
 
-        syncRuleFixture("metadata", stubApiResponseName).then(syncRules => {
+        syncRuleFixture("metadata", stubApiResponseName, syncRules => {
             this.syncRules = syncRules;
             page.open(stubApiResponseName);
         });
