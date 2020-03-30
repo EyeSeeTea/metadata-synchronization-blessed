@@ -176,8 +176,8 @@ export default class Instance {
         return response.status ? toResponse(deleteDataStore(api, detailsKey)) : response;
     }
 
-    public toObject(): Omit<InstanceData, "password"> {
-        return _.omit(this.data, ["password"]);
+    public toObject(): Omit<InstanceData, "password" | "metadataMapping"> {
+        return _.omit(this.data, ["password", "metadataMapping"]);
     }
 
     public setId(id: string): Instance {
