@@ -206,12 +206,6 @@ msgstr ""
 msgid "There are pending migrations"
 msgstr ""
 
-msgid ""
-"The app needs to run all pending migrations (v{{instanceVersion}} -> "
-"v{{appVersion}}) in order to continue. This may take a long time, make sure "
-"the process is not interrupted."
-msgstr ""
-
 msgid "Migrations finished successfully, you may now continue to the app"
 msgstr ""
 
@@ -227,6 +221,21 @@ msgid "Migrating..."
 msgstr ""
 
 msgid "Continue to the App"
+msgstr ""
+
+msgid ""
+"The app needs to run all pending migrations (v{{instanceVersion}} -> "
+"v{{appVersion}}) in order to continue. This may take a long time, make sure "
+"the process is not interrupted."
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid ""
+"The database version (v{{instanceVersion}}) is greater than the app version "
+"(v{{appVersion}}), we cannot continue. Please contact the administrator to "
+"update the app."
 msgstr ""
 
 msgid "Help"
