@@ -283,7 +283,7 @@ export default class SyncRule {
             targetInstanceFilter = null,
             enabledFilter = null,
             lastExecutedFilter = null,
-            type = "metadata",
+            type = null,
         } = filters || {};
         const { page = 1, pageSize = 20, paging = true, sorting } = pagination || {};
 
@@ -301,7 +301,7 @@ export default class SyncRule {
             }))
             .filter(data => {
                 const rule = SyncRule.build(data);
-                return rule.type === type;
+                return _.isNull(type) || rule.type === type;
             })
             .filter(data => {
                 const rule = SyncRule.build(data);
