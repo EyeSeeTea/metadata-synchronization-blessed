@@ -1,10 +1,13 @@
 import { D2Api } from "d2-api";
 import _ from "lodash";
-
-import { RunnerOptions, Config, Debug, Migration } from "../types/migrations";
+import {
+    dataStoreNamespace,
+    deleteDataStore,
+    getDataStore,
+    saveDataStore,
+} from "../models/dataStore";
+import { Config, Debug, Migration, RunnerOptions } from "../types/migrations";
 import { promiseMap } from "./utils";
-import { dataStoreNamespace } from "../models/dataStore";
-import { getDataStore, saveDataStore, deleteDataStore } from "../models/dataStore";
 
 export class MigrationsRunner {
     public migrations: Migration[];
@@ -161,7 +164,7 @@ export class MigrationsRunner {
     }
 
     hasPendingMigrations(): boolean {
-        return this.config.version != this.appVersion;
+        return this.config.version !== this.appVersion;
     }
 
     get instanceVersion(): number {
