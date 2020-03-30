@@ -1,4 +1,5 @@
 import MetadataSyncRuleListPageObject from "../support/page-objects/MetadataSyncRuleListPageObject";
+import { syncRuleFixture } from "../support/utils";
 
 context("Metadata sync rules ", function() {
     const page = new MetadataSyncRuleListPageObject(cy);
@@ -6,24 +7,9 @@ context("Metadata sync rules ", function() {
     beforeEach(() => {
         const stubApiResponseName = "getRules";
 
-        cy.fixture("metadata-sync-rules.json").then(syncRules => {
-            cy.fixture("metadata-sync-rule.json").then(syncRuleBuilder => {
-                this.syncRules = syncRules;
-                cy.server();
-                cy.route({
-                    method: "GET",
-                    url: `api/dataStore/metadata-synchronization/rules`,
-                    response: syncRules,
-                }).as(stubApiResponseName);
-                for (const { id } of syncRules) {
-                    cy.route({
-                        method: "GET",
-                        url: `api/dataStore/metadata-synchronization/rules-${id}`,
-                        response: syncRuleBuilder,
-                    });
-                }
-                page.open(stubApiResponseName);
-            });
+        syncRuleFixture("metadata", stubApiResponseName).then(syncRules => {
+            this.syncRules = syncRules;
+            page.open(stubApiResponseName);
         });
     });
 

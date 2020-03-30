@@ -1,20 +1,19 @@
-import AggregatedSyncRuleListPageObject from "../support/page-objects/AggregatedSyncRuleListPageObject";
+import EventSyncRuleListPageObject from "../support/page-objects/EventSyncRuleListPageObject";
 import { syncRuleFixture } from "../support/utils";
-
-context("Aggregated sync rules", function() {
-    const page = new AggregatedSyncRuleListPageObject(cy);
+context("Event sync rules", function() {
+    const page = new EventSyncRuleListPageObject(cy);
 
     beforeEach(() => {
         const stubApiResponseName = "getRules";
 
-        syncRuleFixture("aggregated", stubApiResponseName).then(syncRules => {
+        syncRuleFixture("events", stubApiResponseName).then(syncRules => {
             this.syncRules = syncRules;
             page.open(stubApiResponseName);
         });
     });
 
     it("should have the correct title", () => {
-        page.assertTitle(title => title.contains("Aggregated Data Synchronization Rules"));
+        page.assertTitle(title => title.contains("Events Synchronization Rules"));
     });
 
     it("should contains expected rows count", () => {
