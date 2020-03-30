@@ -1999,6 +1999,11 @@
   dependencies:
     "@types/react" "*"
 
+"@types/webpack-env@^1.15.1":
+  version "1.15.1"
+  resolved "https://registry.npmjs.org/@types/webpack-env/-/webpack-env-1.15.1.tgz#c8e84705e08eed430b5e15b39c65b0944e4d1422"
+  integrity sha512-eWN5ElDTeBc5lRDh95SqA8x18D0ll2pWudU3uWiyfsRmIZcmUXpEsxPU+7+BsdCrO2vfLRC629u/MmjbmF+2tA==
+
 "@types/yargs-parser@*":
   version "15.0.0"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-15.0.0.tgz#cb3f9f741869e20cce330ffbeb9271590483882d"
@@ -2766,6 +2771,13 @@ axios-mock-adapter@^1.17.0:
   integrity sha512-q3efmwJUOO4g+wsLNSk9Ps1UlJoF3fQ3FSEe4uEEhkRtu7SoiAVPj8R3Hc/WP55MBTVFzaDP9QkdJhdVhP8A1Q==
   dependencies:
     deep-equal "^1.0.1"
+
+axios-retry@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.npmjs.org/axios-retry/-/axios-retry-3.1.2.tgz#4f4dcbefb0b434e22b72bd5e28a027d77b8a3458"
+  integrity sha512-+X0mtJ3S0mmia1kTVi1eA3DAC+oWnT2A29g3CpkzcBPMT6vJm+hn/WiV9wPt/KXLHVmg5zev9mWqkPx7bHMovg==
+  dependencies:
+    is-retry-allowed "^1.1.0"
 
 axios@0.19.2, axios@^0.19.0:
   version "0.19.2"
@@ -4605,10 +4617,10 @@ cypress@4.2.0:
     url "0.11.0"
     yauzl "2.10.0"
 
-d2-api@0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-0.2.0.tgz#e9a5a403db8216a910670e43baa53c923a304a10"
-  integrity sha512-A3BxaSPgssoBRDGetpxhBy33ja/9Pg6vKQ/J4WKQxAYR51cgnOTKhu4qtFqagYCx9XEg5DCSUn9osn8aVwrydw==
+d2-api@0.2.1-beta.1:
+  version "0.2.1-beta.1"
+  resolved "https://registry.npmjs.org/d2-api/-/d2-api-0.2.1-beta.1.tgz#202ba67b1527e49a7b07cbe6c24cc1c6606f439f"
+  integrity sha512-ZL4gzqIgU40XEUYNlogv/vuP+4K4AU0wbe0fw89GMFqI/nRuqf9EIdaC71iPRYbZksOAx9e7uvrpH7YzfQIQgg==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@dhis2/d2-i18n" "^1.0.5"
@@ -7727,6 +7739,11 @@ is-resolvable@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/is-resolvable/-/is-resolvable-1.1.0.tgz#fb18f87ce1feb925169c9a407c19318a3206ed88"
   integrity sha512-qgDYXFSR5WvEfuS5dMj6oTMEbrrSaM0CrFk2Yiq/gXnBvD9pMa2jGXxyhGLfvhZpuMZe18CJpFxAt3CRs42NMg==
+
+is-retry-allowed@^1.1.0:
+  version "1.2.0"
+  resolved "https://registry.npmjs.org/is-retry-allowed/-/is-retry-allowed-1.2.0.tgz#d778488bd0a4666a3be8a1482b9f2baafedea8b4"
+  integrity sha512-RUbUeKwvm3XG2VYamhJL1xFktgjvPzL0Hq8C+6yrWIswDy3BIXGqCxhxkc30N9jqK311gVU137K8Ei55/zVJRg==
 
 is-root@2.1.0:
   version "2.1.0"
