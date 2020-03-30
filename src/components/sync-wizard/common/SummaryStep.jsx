@@ -431,6 +431,18 @@ const SaveStep = ({ syncRule, onCancel }) => {
                                 />
                             </ul>
                         )}
+                        {syncRule.type === "events" && (
+                            <ul>
+                                <LiEntry
+                                    label={i18n.t("Generate new UID")}
+                                    value={
+                                        syncRule.dataParams.generateNewUid
+                                            ? i18n.t("Yes")
+                                            : i18n.t("No")
+                                    }
+                                />
+                            </ul>
+                        )}
                         <ul>
                             <LiEntry
                                 label={i18n.t("Dry run")}
