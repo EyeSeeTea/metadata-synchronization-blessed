@@ -7,21 +7,23 @@ context("Event sync rule edit", function() {
         const stubApiResponseName = "getRules";
 
         cy.fixture("event-sync-rules.json").then(syncRules => {
-            this.syncRule = syncRules[0];
-            cy.server();
-            cy.route({
-                method: "GET",
-                url: `api/dataStore/metadata-synchronization/rules`,
-                response: syncRules,
-            }).as(stubApiResponseName);
-            for (const { id, builder } of syncRules) {
+            cy.fixture("event-sync-rule.json").then(syncRuleBuilder => {
+                this.syncRule = { ...syncRules[0], builder: syncRuleBuilder.builder };
+                cy.server();
                 cy.route({
                     method: "GET",
-                    url: `api/dataStore/metadata-synchronization/rules-${id}`,
-                    response: { builder },
-                });
-            }
-            page.open(this.syncRule.id, stubApiResponseName);
+                    url: `api/dataStore/metadata-synchronization/rules`,
+                    response: syncRules,
+                }).as(stubApiResponseName);
+                for (const { id } of syncRules) {
+                    cy.route({
+                        method: "GET",
+                        url: `api/dataStore/metadata-synchronization/rules-${id}`,
+                        response: syncRuleBuilder,
+                    });
+                }
+                page.open(this.syncRule.id, stubApiResponseName);
+            });
         });
     });
 
