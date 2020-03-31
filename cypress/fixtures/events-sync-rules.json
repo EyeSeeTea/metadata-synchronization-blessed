@@ -1,12 +1,12 @@
 [
     {
-        "id": "JpEdpYwekbS",
-        "name": "Metadata sync rule name",
-        "code": "Metadata sync rule code",
-        "created": "2020-02-26T08:43:11.739Z",
-        "description": "Metadata sync rule description",
+        "id": "ckJYe5gJTx7",
+        "name": "Event sync rule name",
+        "code": "Event sync rule code",
+        "created": "2020-03-02T07:12:51.250Z",
+        "description": "Event sync rule description",
         "enabled": false,
-        "lastUpdated": "2020-02-26T11:22:28.626Z",
+        "lastUpdated": "2020-03-02T07:12:51.250Z",
         "lastUpdatedBy": {
             "id": "M5zQapPyTZI",
             "name": "admin admin"
@@ -18,16 +18,16 @@
         },
         "userAccesses": [],
         "userGroupAccesses": [],
-        "type": "metadata"
+        "type": "events"
     },
     {
-        "id": "JpEdpYwekbA",
-        "name": "Metadata sync rule name 2",
-        "code": "Metadata sync rule code 2",
-        "created": "2020-02-26T08:43:11.739Z",
-        "description": "Metadata sync rule description 2",
+        "id": "ebh61hsl3Ip",
+        "name": "Event sync rule name 2",
+        "code": "Event sync rule code 2",
+        "created": "2020-03-02T07:12:51.250Z",
+        "description": "Event sync rule description 2",
         "enabled": false,
-        "lastUpdated": "2020-02-26T11:22:28.626Z",
+        "lastUpdated": "2020-03-02T07:12:51.250Z",
         "lastUpdatedBy": {
             "id": "M5zQapPyTZI",
             "name": "admin admin"
@@ -39,6 +39,6 @@
         },
         "userAccesses": [],
         "userGroupAccesses": [],
-        "type": "metadata"
+        "type": "events"
     }
 ]
