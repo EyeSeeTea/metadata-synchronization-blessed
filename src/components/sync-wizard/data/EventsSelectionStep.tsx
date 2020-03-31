@@ -31,11 +31,11 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 ...syncRule.dataParams,
                 allEvents: true,
             },
-            syncRule.metadataIds
+            programs.map(({ id }) => id)
         )
             .then(setObjects)
             .catch(setError);
-    }, [api, syncRule]);
+    }, [api, syncRule, programs]);
 
     useEffect(() => {
         const sync = new EventsSync(d2 as D2, api, syncRule.toBuilder());
