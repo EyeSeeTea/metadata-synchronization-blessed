@@ -101,9 +101,7 @@ export class MetadataSync extends GenericSync {
             .map(newBuilder => this.exportMetadata(newBuilder));
         const exportResults: MetadataPackage[] = await Promise.all(exportPromises);
 
-        return _.mapValues(_.deepMerge({}, ...exportResults), elements =>
-            _.uniqBy(elements, "id")
-        );
+        return _.mapValues(_.deepMerge({}, ...exportResults), elements => _.uniqBy(elements, "id"));
     });
 
     public async postPayload(instance: Instance) {
