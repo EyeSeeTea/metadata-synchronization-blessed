@@ -1,23 +1,15 @@
 {
     "builder": {
-        "targetInstances": [
-            "Y5QsHDoD4I0"
-        ],
-        "metadataIds": [
-            "G9hvxFI8AYC"
-        ],
+        "targetInstances": ["Y5QsHDoD4I0"],
+        "metadataIds": ["G9hvxFI8AYC"],
         "excludedIds": [],
         "dataParams": {
             "strategy": "NEW_AND_UPDATES",
             "allAttributeCategoryOptions": true,
             "allEvents": false,
             "dryRun": false,
-            "orgUnitPaths": [
-                "/E4h5WBOg71F/RnDSNvg7zR2/KwLlNNoREes/GY1mRd2suuj/PzO3UvH7za0"
-            ],
-            "events": [
-                "PoKTdJQa8pV"
-            ],
+            "orgUnitPaths": ["/E4h5WBOg71F/RnDSNvg7zR2/KwLlNNoREes/GY1mRd2suuj/PzO3UvH7za0"],
+            "events": ["PoKTdJQa8pV"],
             "periods": "ALL"
         },
         "syncParams": {

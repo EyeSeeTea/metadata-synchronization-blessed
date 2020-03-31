@@ -2,19 +2,23 @@ import React from "react";
 import i18n from "../../locales";
 import { ConfirmationDialog } from "d2-ui-components";
 import { MigrationsRunner } from "../../migrations";
+import { Dialog, DialogTitle, DialogContent } from "@material-ui/core";
 
 export interface MigrationsProps {
     runner: MigrationsRunner;
     onFinish: () => void;
 }
 
-type State = { type: "show-info" } | { type: "migrating" } | { type: "success" };
+type State =
+    | { type: "show-info" }
+    | { type: "app-out-of-date" }
+    | { type: "migrating" }
+    | { type: "success" };
 
 const Migrations: React.FC<MigrationsProps> = props => {
     const { runner, onFinish } = props;
     const [messages, setMessages] = React.useState<string[]>([]);
-    const [state, setState] = React.useState<State>({ type: "show-info" });
-
+    const [state, setState] = React.useState<State>(getInitialState(runner));
     React.useEffect(followContents, [messages]);
 
     const debug = React.useCallback((message: string) => {
@@ -25,24 +29,23 @@ const Migrations: React.FC<MigrationsProps> = props => {
         runMigrations(runner, debug, setState).then(setState);
     }, [runner, debug]);
 
+    const actionText = getActionText(state);
+
+    if (state.type === "app-out-of-date") return <MigrationsError runner={runner} />;
+
     return (
         <ConfirmationDialog
             isOpen={true}
             title={i18n.t("There are pending migrations")}
             onSave={() => (state.type === "success" ? onFinish() : startMigration())}
-            saveText={getActionText(state)}
+            saveText={actionText}
             onCancel={undefined}
-            disableSave={state.type === "migrating"}
+            disableSave={state.type === "migrating" || !actionText}
             maxWidth="md"
             fullWidth={true}
         >
             <div id="migrations-contents">
-                <p>
-                    {i18n.t(
-                        "The app needs to run all pending migrations (v{{instanceVersion}} -> v{{appVersion}}) in order to continue. This may take a long time, make sure the process is not interrupted.",
-                        runner
-                    )}
-                </p>
+                <p>{getPendingMigrationsText(runner)}</p>
 
                 <p>
                     {messages.map((msg, idx) => (
@@ -90,7 +93,7 @@ function followContents() {
     if (divEl) divEl.scrollTop = divEl.scrollHeight;
 }
 
-function getActionText(state: State): string {
+function getActionText(state: State): string | undefined {
     switch (state.type) {
         case "show-info":
             return i18n.t("Migrate instance");
@@ -98,7 +101,39 @@ function getActionText(state: State): string {
             return i18n.t("Migrating...");
         case "success":
             return i18n.t("Continue to the App");
+        case "app-out-of-date":
+            return;
     }
 }
+
+function getInitialState(runner: MigrationsRunner): State {
+    if (runner.instanceVersion === runner.appVersion) {
+        return { type: "success" };
+    } else if (runner.instanceVersion > runner.appVersion) {
+        return { type: "app-out-of-date" };
+    } else {
+        return { type: "show-info" };
+    }
+}
+
+function getPendingMigrationsText(runner: MigrationsRunner): string {
+    return i18n.t(
+        "The app needs to run all pending migrations (v{{instanceVersion}} -> v{{appVersion}}) in order to continue. This may take a long time, make sure the process is not interrupted.",
+        runner
+    );
+}
+
+const MigrationsError: React.FC<{ runner: MigrationsRunner }> = ({ runner }) => (
+    <Dialog open={true}>
+        <DialogTitle>{i18n.t("Error")}</DialogTitle>
+
+        <DialogContent style={{ paddingBottom: 30 }}>
+            {i18n.t(
+                "The database version (v{{instanceVersion}}) is greater than the app version (v{{appVersion}}), we cannot continue. Please contact the administrator to update the app.",
+                runner
+            )}
+        </DialogContent>
+    </Dialog>
+);
 
 export default Migrations;

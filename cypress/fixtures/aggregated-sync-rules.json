@@ -19,9 +19,7 @@
         "userAccesses": [],
         "userGroupAccesses": [],
         "type": "aggregated",
-        "targetInstances": [
-            "Y5QsHDoD4I0"
-        ]
+        "targetInstances": ["Y5QsHDoD4I0"]
     },
     {
         "id": "Vmo16jI0yYo",
@@ -43,8 +41,6 @@
         "userAccesses": [],
         "userGroupAccesses": [],
         "type": "aggregated",
-        "targetInstances": [
-            "Y5QsHDoD4I0"
-        ]
+        "targetInstances": ["Y5QsHDoD4I0"]
     }
 ]

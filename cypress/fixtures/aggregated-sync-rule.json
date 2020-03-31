@@ -1,11 +1,7 @@
 {
     "builder": {
-        "targetInstances": [
-            "Y5QsHDoD4I0"
-        ],
-        "metadataIds": [
-            "qNtxTrp56wV"
-        ],
+        "targetInstances": ["Y5QsHDoD4I0"],
+        "metadataIds": ["qNtxTrp56wV"],
         "excludedIds": [],
         "metadataTypes": [],
         "dataParams": {
@@ -14,9 +10,7 @@
             "dryRun": false,
             "allEvents": true,
             "enableAggregation": false,
-            "orgUnitPaths": [
-                "/E4h5WBOg71F"
-            ],
+            "orgUnitPaths": ["/E4h5WBOg71F"],
             "events": []
         },
         "syncParams": {

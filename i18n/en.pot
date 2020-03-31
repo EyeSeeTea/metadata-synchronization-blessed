@@ -14,6 +14,27 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
+msgid "Identifier"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Deleted date"
+msgstr ""
+
+msgid "Deleted by"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Search deleted objects"
+msgstr ""
+
 msgid "<No value>"
 msgstr ""
 
@@ -101,9 +122,6 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-msgid "Metadata type"
-msgstr ""
-
 msgid "Mapped ID"
 msgstr ""
 
@@ -176,9 +194,6 @@ msgstr ""
 msgid "Only selected items"
 msgstr ""
 
-msgid "Details"
-msgstr ""
-
 msgid "Select with children subtree"
 msgstr ""
 
@@ -189,12 +204,6 @@ msgid "Search by name"
 msgstr ""
 
 msgid "There are pending migrations"
-msgstr ""
-
-msgid ""
-"The app needs to run all pending migrations (v{{instanceVersion}} -> "
-"v{{appVersion}}) in order to continue. This may take a long time, make sure "
-"the process is not interrupted."
 msgstr ""
 
 msgid "Migrations finished successfully, you may now continue to the app"
@@ -212,6 +221,21 @@ msgid "Migrating..."
 msgstr ""
 
 msgid "Continue to the App"
+msgstr ""
+
+msgid ""
+"The app needs to run all pending migrations (v{{instanceVersion}} -> "
+"v{{appVersion}}) in order to continue. This may take a long time, make sure "
+"the process is not interrupted."
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid ""
+"The database version (v{{instanceVersion}}) is greater than the app version "
+"(v{{appVersion}}), we cannot continue. Please contact the administrator to "
+"update the app."
 msgstr ""
 
 msgid "Help"
@@ -320,9 +344,6 @@ msgid "Number of entries"
 msgstr ""
 
 msgid "Org units"
-msgstr ""
-
-msgid "Identifier"
 msgstr ""
 
 msgid "Property"
@@ -456,9 +477,6 @@ msgid "Name"
 msgstr ""
 
 msgid "Field cannot be blank"
-msgstr ""
-
-msgid "Code"
 msgstr ""
 
 msgid "Description"
@@ -957,12 +975,6 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Deleted date"
-msgstr ""
-
-msgid "Deleted by"
 msgstr ""
 
 msgid "New {{type}} synchronization rule"

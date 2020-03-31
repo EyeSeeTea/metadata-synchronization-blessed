@@ -1,11 +1,7 @@
 {
     "builder": {
-        "targetInstances": [
-            "Y5QsHDoD4I0"
-        ],
-        "metadataIds": [
-            "t0ml4ZZpnu0"
-        ],
+        "targetInstances": ["Y5QsHDoD4I0"],
+        "metadataIds": ["t0ml4ZZpnu0"],
         "excludedIds": [],
         "dataParams": {
             "strategy": "NEW_AND_UPDATES",
