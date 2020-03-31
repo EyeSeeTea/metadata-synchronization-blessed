@@ -14,6 +14,27 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
+msgid "Identifier"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Deleted date"
+msgstr ""
+
+msgid "Deleted by"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Search deleted objects"
+msgstr ""
+
 msgid "<No value>"
 msgstr ""
 
@@ -101,9 +122,6 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-msgid "Metadata type"
-msgstr ""
-
 msgid "Mapped ID"
 msgstr ""
 
@@ -174,9 +192,6 @@ msgid "{{displayName}} Level"
 msgstr ""
 
 msgid "Only selected items"
-msgstr ""
-
-msgid "Details"
 msgstr ""
 
 msgid "Select with children subtree"
@@ -331,9 +346,6 @@ msgstr ""
 msgid "Org units"
 msgstr ""
 
-msgid "Identifier"
-msgstr ""
-
 msgid "Property"
 msgstr ""
 
@@ -465,9 +477,6 @@ msgid "Name"
 msgstr ""
 
 msgid "Field cannot be blank"
-msgstr ""
-
-msgid "Code"
 msgstr ""
 
 msgid "Description"
@@ -966,12 +975,6 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Deleted date"
-msgstr ""
-
-msgid "Deleted by"
 msgstr ""
 
 msgid "New {{type}} synchronization rule"
