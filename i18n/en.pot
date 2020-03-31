@@ -5,13 +5,34 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-30T04:31:42.427Z\n"
-"PO-Revision-Date: 2020-03-30T04:31:42.427Z\n"
+"POT-Creation-Date: 2020-03-31T10:11:01.081Z\n"
+"PO-Revision-Date: 2020-03-31T10:11:01.081Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
 
 msgid "Login"
+msgstr ""
+
+msgid "Identifier"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Deleted date"
+msgstr ""
+
+msgid "Deleted by"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Search deleted objects"
 msgstr ""
 
 msgid "<No value>"
@@ -101,9 +122,6 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-msgid "Metadata type"
-msgstr ""
-
 msgid "Mapped ID"
 msgstr ""
 
@@ -176,9 +194,6 @@ msgstr ""
 msgid "Only selected items"
 msgstr ""
 
-msgid "Details"
-msgstr ""
-
 msgid "Select with children subtree"
 msgstr ""
 
@@ -189,12 +204,6 @@ msgid "Search by name"
 msgstr ""
 
 msgid "There are pending migrations"
-msgstr ""
-
-msgid ""
-"The app needs to run all pending migrations (v{{instanceVersion}} -> "
-"v{{appVersion}}) in order to continue. This may take a long time, make sure "
-"the process is not interrupted."
 msgstr ""
 
 msgid "Migrations finished successfully, you may now continue to the app"
@@ -212,6 +221,21 @@ msgid "Migrating..."
 msgstr ""
 
 msgid "Continue to the App"
+msgstr ""
+
+msgid ""
+"The app needs to run all pending migrations (v{{instanceVersion}} -> "
+"v{{appVersion}}) in order to continue. This may take a long time, make sure "
+"the process is not interrupted."
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid ""
+"The database version (v{{instanceVersion}}) is greater than the app version "
+"(v{{appVersion}}), we cannot continue. Please contact the administrator to "
+"update the app."
 msgstr ""
 
 msgid "Help"
@@ -322,9 +346,6 @@ msgstr ""
 msgid "Org units"
 msgstr ""
 
-msgid "Identifier"
-msgstr ""
-
 msgid "Property"
 msgstr ""
 
@@ -428,12 +449,6 @@ msgstr ""
 msgid "Aggregation"
 msgstr ""
 
-msgid ""
-"If aggregation is enabled, the synchronization will use the Analytics "
-"endpoint and group data by organisation units children and the chosen time "
-"periods"
-msgstr ""
-
 msgid "Include Exclude Selection"
 msgstr ""
 
@@ -449,6 +464,12 @@ msgstr ""
 msgid "Category options"
 msgstr ""
 
+msgid ""
+"If aggregation is enabled, the synchronization will use the Analytics "
+"endpoint and group data by organisation units children and the chosen time "
+"periods"
+msgstr ""
+
 msgid "Programs"
 msgstr ""
 
@@ -456,9 +477,6 @@ msgid "Name"
 msgstr ""
 
 msgid "Field cannot be blank"
-msgstr ""
-
-msgid "Code"
 msgstr ""
 
 msgid "Description"
@@ -605,6 +623,11 @@ msgid "Yearly"
 msgstr ""
 
 msgid "Without aggregation, any data value related to an indicator will be ignored"
+msgstr ""
+
+msgid ""
+"Without aggregation, program indicators will not be aggregated and "
+"synchronized"
 msgstr ""
 
 msgid "Enable data aggregation"
@@ -952,12 +975,6 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Deleted date"
-msgstr ""
-
-msgid "Deleted by"
 msgstr ""
 
 msgid "New {{type}} synchronization rule"

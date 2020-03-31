@@ -26,9 +26,9 @@ export class EventsSync extends GenericSync {
         "id,name,programStages[programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
 
     public buildPayload = memoize(async () => {
-        const { dataParams = {} } = this.builder;
+        const { dataParams = {}, excludedIds = [] } = this.builder;
         const { enableAggregation = false } = dataParams;
-        const { programs = [] } = await this.extractMetadata();
+        const { programs = [], programIndicators = [] } = await this.extractMetadata();
 
         const events = (
             await getEventsData(
@@ -40,16 +40,26 @@ export class EventsSync extends GenericSync {
             return dataParams.generateNewUid ? { ...event, event: generateUid() } : event;
         });
 
-        const indicatorIds = _.flatten(
+        const directIndicators = programIndicators.map(({ id }) => id);
+        const indicatorsByProgram = _.flatten(
             programs?.map(
                 ({ programIndicators }: Partial<D2Program>) =>
                     programIndicators?.map(({ id }) => id) ?? []
             )
         );
 
-        const { dataValues = [] } = enableAggregation
-            ? await getAnalyticsData(this.api, dataParams, [], indicatorIds)
+        const { dataValues: candidateDataValues = [] } = enableAggregation
+            ? await getAnalyticsData(
+                  this.api,
+                  dataParams,
+                  [],
+                  [...directIndicators, ...indicatorsByProgram]
+              )
             : {};
+
+        const dataValues = _.reject(candidateDataValues, ({ dataElement }) =>
+            excludedIds.includes(dataElement)
+        );
 
         return { events, dataValues };
     });

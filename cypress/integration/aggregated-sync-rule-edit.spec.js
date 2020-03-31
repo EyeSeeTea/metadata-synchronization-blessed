@@ -14,6 +14,13 @@ context("Aggregated sync rule edit", function() {
                 url: `api/dataStore/metadata-synchronization/rules`,
                 response: syncRules,
             }).as(stubApiResponseName);
+            for (const { id, builder } of syncRules) {
+                cy.route({
+                    method: "GET",
+                    url: `api/dataStore/metadata-synchronization/rules-${id}`,
+                    response: { builder },
+                });
+            }
             page.open(this.syncRule.id, stubApiResponseName);
         });
     });
