@@ -62,7 +62,8 @@ const DeletedObjectsTable: React.FC<DeletedObjectsTableProps> = ({
             api,
             {
                 search,
-                lastUpdatedDate: dateFilter !== null ? moment(dateFilter).startOf('day') : undefined,
+                lastUpdatedDate:
+                    dateFilter !== null ? moment(dateFilter).startOf("day") : undefined,
             },
             {}
         ).then(({ objects }) => setDeletedObjectsRows(objects));

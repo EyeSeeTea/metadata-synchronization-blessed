@@ -120,7 +120,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const MapperComponent =
         model.getCollectionName() === "organisationUnits" ? OrgUnitMapper : MetadataMapper;
     const title =
-        elements.length > 1
+        elements.length > 1 || !firstElement
             ? i18n.t(
                   "Select {{type}} from destination instance {{instance}} to map {{total}} elements",
                   {
@@ -134,8 +134,8 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
                   {
                       type: modelName,
                       instance: instance.name,
-                      name: firstElement?.name,
-                      id: firstElement?.id,
+                      name: firstElement.name,
+                      id: firstElement.id,
                   }
               );
 
