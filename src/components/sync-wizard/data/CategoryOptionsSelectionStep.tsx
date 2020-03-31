@@ -1,32 +1,14 @@
-import i18n from "@dhis2/d2-i18n";
 import { useD2, useD2Api, useD2ApiData } from "d2-api";
 import { MultiSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useMemo } from "react";
+import i18n from "@dhis2/d2-i18n";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 
 const CategoryOptionsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const d2 = useD2();
     const api = useD2Api();
-
-    const updateSyncAll = (value: boolean) => {
-        onChange(
-            syncRule
-                .updateDataSyncAllAttributeCategoryOptions(value)
-                .updateDataSyncAttributeCategoryOptions(undefined)
-        );
-    };
-
-    const changeAttributeCategoryOptions = (selectedNames: string[]) => {
-        const attributeCategoryOptions = _(selectedNames)
-            .map(name => _.filter(data?.objects, { name }))
-            .flatten()
-            .map(({ id }) => id)
-            .value();
-
-        onChange(syncRule.updateDataSyncAttributeCategoryOptions(attributeCategoryOptions));
-    };
 
     const { data } = useD2ApiData(
         api.models.categoryOptionCombos.get({
@@ -56,6 +38,24 @@ const CategoryOptionsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule,
                 .value(),
         [data, syncRule]
     );
+
+    const updateSyncAll = (value: boolean) => {
+        onChange(
+            syncRule
+                .updateDataSyncAllAttributeCategoryOptions(value)
+                .updateDataSyncAttributeCategoryOptions(undefined)
+        );
+    };
+
+    const changeAttributeCategoryOptions = (selectedNames: string[]) => {
+        const attributeCategoryOptions = _(selectedNames)
+            .map(name => _.filter(data?.objects, { name }))
+            .flatten()
+            .map(({ id }) => id)
+            .value();
+
+        onChange(syncRule.updateDataSyncAttributeCategoryOptions(attributeCategoryOptions));
+    };
 
     return (
         <React.Fragment>

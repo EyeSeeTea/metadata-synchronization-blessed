@@ -77,6 +77,7 @@ export interface SynchronizationResult {
         messages: any[];
     };
     date: Date;
+    type: SyncRuleType;
 }
 
 export type SynchronizationReportStatus = "READY" | "RUNNING" | "FAILURE" | "DONE";

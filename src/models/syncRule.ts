@@ -723,7 +723,7 @@ export default class SyncRule {
                     : null,
             ]),
             dataSyncAggregation: _.compact([
-                this.type === "aggregated" &&
+                this.type !== "metadata" &&
                 this.dataSyncEnableAggregation &&
                 !this.dataSyncAggregationType
                     ? {

@@ -161,7 +161,7 @@ export class MigrationsRunner {
     }
 
     hasPendingMigrations(): boolean {
-        return this.config.version != this.appVersion;
+        return this.config.version !== this.appVersion;
     }
 
     get instanceVersion(): number {

@@ -122,15 +122,24 @@ const getCombinedMetadata = async (api: D2Api, model: typeof D2Model, id: string
     return objects;
 };
 
-export const autoMap = async (
-    api: D2Api,
-    instanceApi: D2Api,
-    model: typeof D2Model,
-    selectedItemId: string,
-    defaultValue?: string,
-    filter?: string[]
-): Promise<MetadataMapping[]> => {
-    const { objects: originObjects } = (await model
+export const autoMap = async ({
+    api,
+    instanceApi,
+    originModel,
+    destinationModel,
+    selectedItemId,
+    defaultValue,
+    filter,
+}: {
+    api: D2Api;
+    instanceApi: D2Api;
+    originModel: typeof D2Model;
+    destinationModel: typeof D2Model;
+    selectedItemId: string;
+    defaultValue?: string;
+    filter?: string[];
+}): Promise<MetadataMapping[]> => {
+    const { objects: originObjects } = (await originModel
         .getApiModel(api)
         .get({
             fields: { id: true, code: true, name: true, shortName: true },
@@ -141,7 +150,7 @@ export const autoMap = async (
     const selectedItem = originObjects[0];
     if (!selectedItem) return [];
 
-    const { objects } = (await model
+    const { objects } = (await destinationModel
         .getApiModel(instanceApi)
         .get({
             fields: { id: true, code: true, name: true, path: true, level: true },
@@ -198,7 +207,17 @@ const autoMapCollection = async (
     } = {};
 
     for (const item of originMetadata) {
-        const candidate = (await autoMap(api, instanceApi, model, item.id, "DISABLED", filter))[0];
+        const candidate = (
+            await autoMap({
+                api,
+                instanceApi,
+                originModel: model,
+                destinationModel: model,
+                selectedItemId: item.id,
+                defaultValue: "DISABLED",
+                filter,
+            })
+        )[0];
         if (item.id && candidate) {
             mapping[item.id] = {
                 ...candidate,

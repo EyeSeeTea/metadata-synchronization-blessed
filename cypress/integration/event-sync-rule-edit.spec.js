@@ -66,6 +66,7 @@ context("Event sync rule edit", function() {
             .next()
             .next()
             .next()
+            .next()
             .assertSelectedInstances(selectedInstances =>
                 selectedInstances.select(this.syncRule.builder.targetInstances[0])
             );

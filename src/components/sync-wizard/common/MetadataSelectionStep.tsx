@@ -2,12 +2,13 @@ import i18n from "@dhis2/d2-i18n";
 import { useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
+import { AggregatedDataElementModel } from "../../../models/complexModels";
 import {
-    AggregatedDataElementModel,
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,
     IndicatorModel,
+    ProgramIndicatorModel,
     ProgramModel,
 } from "../../../models/d2Model";
 import { metadataModels } from "../../../models/d2ModelFactory";
@@ -30,7 +31,7 @@ const config = {
         childrenKeys: ["dataElements", "dataElementGroups"],
     },
     events: {
-        models: [ProgramModel],
+        models: [ProgramModel, ProgramIndicatorModel],
         childrenKeys: ["dataElements"],
     },
     deleted: {

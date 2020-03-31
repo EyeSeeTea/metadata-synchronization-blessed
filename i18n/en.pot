@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-30T09:59:44.531Z\n"
-"PO-Revision-Date: 2020-03-30T09:59:44.531Z\n"
+"POT-Creation-Date: 2020-03-31T10:11:01.081Z\n"
+"PO-Revision-Date: 2020-03-31T10:11:01.081Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -340,6 +340,21 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
+msgid "Program Indicators"
+msgstr ""
+
+msgid "Aggregated"
+msgstr ""
+
+msgid "Events"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Unknown"
+msgstr ""
+
 msgid "Synchronization Results"
 msgstr ""
 
@@ -419,7 +434,7 @@ msgid ""
 "is, you would use ? in the day of the week field."
 msgstr ""
 
-msgid "Metadata"
+msgid "Aggregation"
 msgstr ""
 
 msgid "Include Exclude Selection"
@@ -437,9 +452,6 @@ msgstr ""
 msgid "Category options"
 msgstr ""
 
-msgid "Aggregation"
-msgstr ""
-
 msgid ""
 "If aggregation is enabled, the synchronization will use the Analytics "
 "endpoint and group data by organisation units children and the chosen time "
@@ -447,9 +459,6 @@ msgid ""
 msgstr ""
 
 msgid "Programs"
-msgstr ""
-
-msgid "Events"
 msgstr ""
 
 msgid "Name"
@@ -607,7 +616,15 @@ msgstr ""
 msgid "Without aggregation, any data value related to an indicator will be ignored"
 msgstr ""
 
+msgid ""
+"Without aggregation, program indicators will not be aggregated and "
+"synchronized"
+msgstr ""
+
 msgid "Enable data aggregation"
+msgstr ""
+
+msgid "Aggregate and sync program indicators"
 msgstr ""
 
 msgid "Aggregation type"
@@ -647,6 +664,12 @@ msgid "Preparing synchronization"
 msgstr ""
 
 msgid "Importing data in instance {{instance}}"
+msgstr ""
+
+msgid "Program with Data Elements"
+msgstr ""
+
+msgid "Program with Indicators"
 msgstr ""
 
 msgid "Not a valid DHIS2 instance"
@@ -886,9 +909,6 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Destination Instance Settings"
-msgstr ""
-
-msgid "Aggregated"
 msgstr ""
 
 msgid ""

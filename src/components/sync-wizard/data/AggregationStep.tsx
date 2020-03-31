@@ -40,6 +40,12 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
                     "Without aggregation, any data value related to an indicator will be ignored"
                 )
             );
+        } else if (syncRule.metadataTypes.includes("programIndicators") && !value) {
+            snackbar.warning(
+                i18n.t(
+                    "Without aggregation, program indicators will not be aggregated and synchronized"
+                )
+            );
         }
         onChange(syncRule.updateDataSyncEnableAggregation(value).updateDataSyncAggregationType());
     };
@@ -53,7 +59,11 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
     return (
         <React.Fragment>
             <Toggle
-                label={i18n.t("Enable data aggregation")}
+                label={
+                    syncRule.type === "aggregated"
+                        ? i18n.t("Enable data aggregation")
+                        : i18n.t("Aggregate and sync program indicators")
+                }
                 value={!!syncRule.dataSyncEnableAggregation}
                 onValueChange={updateEnableAggregation}
             />
