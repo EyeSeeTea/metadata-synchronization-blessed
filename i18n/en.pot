@@ -1007,6 +1007,9 @@ msgstr ""
 msgid "Deleting Sync Rules"
 msgstr ""
 
+msgid "deleted"
+msgstr ""
+
 msgid "Failed to delete some rules"
 msgstr ""
 
