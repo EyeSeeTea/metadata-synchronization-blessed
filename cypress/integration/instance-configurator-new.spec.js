@@ -7,11 +7,11 @@ context("New Instance Settings", function() {
         page.open();
     });
 
-    it("has the correct title", function() {
+    it("should have the correct title", function() {
         page.assertTitle(title => title.contains("Destination Instance Settings"));
     });
 
-    it("opens a new instance page", function() {
+    it("should opens a new instance page", function() {
         page.newInstance().assertTitle(title => title.contains("New Instance"));
     });
 

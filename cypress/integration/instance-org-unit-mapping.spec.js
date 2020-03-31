@@ -11,39 +11,39 @@ context("OrgUnit mapping", function() {
         page.open(inputs.instance);
     });
 
-    it("has the correct title", function() {
+    it("should have he correct title", function() {
         page.assertTitle(title =>
             title.contains("Organisation unit mapping - Destination instance this instance (8080)")
         );
     });
 
-    it("has row menu with details action", function() {
+    it("should have row menu with details action", function() {
         page.openRowMenu().assertOption(option => option.contains("Details"));
     });
 
-    it("has row menu with Select with children subtree action", function() {
+    it("should have row menu with Select with children subtree action", function() {
         page.openRowMenu().assertOption(option => option.contains("Select with children subtree"));
     });
 
-    it("has row menu with set mapping action", function() {
+    it("should have row menu with set mapping action", function() {
         page.openRowMenu().assertOption(option => option.contains("Set mapping"));
     });
 
-    it("has row menu with auto-map element action", function() {
+    it("should have row menu with auto-map element action", function() {
         page.openRowMenu().assertOption(option => option.contains("Auto-map element"));
     });
 
-    it("has row menu with exclude mapping action", function() {
+    it("should have row menu with exclude mapping action", function() {
         page.openRowMenu().assertOption(option => option.contains("Exclude mapping"));
     });
 
-    it("has row menu with Reset mapping to default values action", function() {
+    it("should have ow menu with Reset mapping to default values action", function() {
         page.openRowMenu().assertOption(option =>
             option.contains("Reset mapping to default values")
         );
     });
 
-    it("has general menu with Column settings action", function() {
+    it("should have general menu with Column settings action", function() {
         page.openGeneralMenu().assertOption(option => option.contains("Column settings"));
     });
 });

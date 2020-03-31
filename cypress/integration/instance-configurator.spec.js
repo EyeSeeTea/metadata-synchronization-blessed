@@ -7,11 +7,11 @@ context("Destination Settings", function() {
         page.open();
     });
 
-    it("has the correct title", function() {
+    it("should have the correct title", function() {
         page.assertTitle(title => title.contains("Destination Instance Settings"));
     });
 
-    it("has the localhost instance", function() {
+    it("should have the localhost instance", function() {
         page.findInstance("this instance (8080)");
     });
 });

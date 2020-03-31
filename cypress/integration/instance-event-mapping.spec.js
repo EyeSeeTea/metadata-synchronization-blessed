@@ -14,7 +14,7 @@ context("Event mapping", function() {
         page.open(inputs.instance);
     });
 
-    it("has the correct title", function() {
+    it("should have the correct title", function() {
         page.assertTitle(title =>
             title.contains("Program (events) mapping - Destination instance this instance (8080)")
         );
@@ -92,45 +92,45 @@ context("Event mapping", function() {
         page.assertRowStatus(row => row.contains("Mapped"), inputs.alternativeProgram);
     });
 
-    it("has row menu with details action", function() {
+    it("should have row menu with details action", function() {
         page.openRowMenu().assertOption(option => option.contains("Details"));
     });
 
-    it("has row menu with set mapping action", function() {
+    it("should have row menu with set mapping action", function() {
         page.openRowMenu().assertOption(option => option.contains("Set mapping"));
     });
 
-    it("has row menu with select children action", function() {
+    it("should have row menu with select children action", function() {
         page.openRowMenu().assertOption(option => option.contains("Select children"));
     });
 
-    it("has row menu with auto-map element action", function() {
+    it("should have row menu with auto-map element action", function() {
         page.openRowMenu().assertOption(option => option.contains("Auto-map element"));
     });
 
-    it("has row menu with exclude mapping action", function() {
+    it("should have row menu with exclude mapping action", function() {
         page.openRowMenu().assertOption(option => option.contains("Exclude mapping"));
     });
 
-    it("has row menu with Reset mapping to default values action", function() {
+    it("should have row menu with Reset mapping to default values action", function() {
         page.openRowMenu().assertOption(option =>
             option.contains("Reset mapping to default values")
         );
     });
 
-    it("has general menu with Column settings action", function() {
+    it("should have general menu with Column settings action", function() {
         page.openGeneralMenu().assertOption(option => option.contains("Column settings"));
     });
 
-    it("has general menu with validate mapping action", function() {
+    it("should have general menu with validate mapping action", function() {
         page.openGeneralMenu().assertOption(option => option.contains("Validate mapping"));
     });
 
-    it("has general menu with reset mapping action", function() {
+    it("should have general menu with reset mapping action", function() {
         page.openGeneralMenu().assertOption(option => option.contains("Reset mapping"));
     });
 
-    it("has general menu with exclude mapping action", function() {
+    it("should have general menu with exclude mapping action", function() {
         page.openGeneralMenu().assertOption(option => option.contains("Exclude mapping"));
     });
 });
