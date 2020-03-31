@@ -10,6 +10,9 @@ import {
     TableColumn,
     useLoading,
     useSnackbar,
+    TableState,
+    ReferenceObject,
+    TableSelection,
 } from "d2-ui-components";
 import _ from "lodash";
 import { Moment } from "moment";
@@ -77,6 +80,7 @@ const SyncRulesPage: React.FC = () => {
     const [rows, setRows] = useState<SyncRule[]>([]);
 
     const [refreshKey, setRefreshKey] = useState(0);
+    const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [toDelete, setToDelete] = useState<string[]>([]);
     const [search, setSearchFilter] = useState("");
     const [targetInstanceFilter, setTargetInstanceFilter] = useState("");
@@ -213,6 +217,7 @@ const SyncRulesPage: React.FC = () => {
 
         loading.reset();
         setToDelete([]);
+        updateSelection([]);
         setRefreshKey(Math.random());
     };
 
@@ -426,6 +431,11 @@ const SyncRulesPage: React.FC = () => {
         </React.Fragment>
     );
 
+    const handleTableChange = (tableState: TableState<ReferenceObject>) => {
+        const { selection } = tableState;
+        updateSelection(selection);
+    };
+
     return (
         <TestWrapper>
             <PageHeader title={title} onBackClick={backHome} />
@@ -434,6 +444,8 @@ const SyncRulesPage: React.FC = () => {
                 columns={columns}
                 details={details}
                 actions={actions}
+                selection={selection}
+                onChange={handleTableChange}
                 onActionButtonClick={appConfigurator ? createRule : undefined}
                 filterComponents={renderCustomFilters}
                 searchBoxLabel={i18n.t("Search by name")}
