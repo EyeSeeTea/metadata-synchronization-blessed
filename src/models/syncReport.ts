@@ -39,6 +39,7 @@ export default class SyncReport {
                 "status",
                 "types",
                 "syncRule",
+                "deletedSyncRuleLabel",
                 "type",
                 "dataStats",
             ]),

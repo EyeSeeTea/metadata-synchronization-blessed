@@ -89,6 +89,7 @@ export interface SynchronizationReport {
     status: SynchronizationReportStatus;
     types: string[];
     syncRule?: string;
+    deletedSyncRuleLabel?: string;
     type: SyncRuleType;
     dataStats?: AggregatedDataStats[] | EventsDataStats[];
 }
