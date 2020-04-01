@@ -1,16 +1,8 @@
 import { D2Api, D2ModelSchemas, Model } from "d2-api";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
-import { isValidUid } from "d2/uid";
 import _ from "lodash";
 import { D2, ModelDefinition } from "../types/d2";
 import {
-    OrganisationUnitTableFilters,
-    TableFilters,
-    TableList,
-    TablePagination,
-} from "../types/d2-ui-components";
-import {
-    cleanParams,
     d2BaseModelColumns,
     d2BaseModelDetails,
     d2BaseModelFields,
@@ -44,44 +36,6 @@ export abstract class D2Model {
     protected static modelTransform: Function = (objects: MetadataType[]) => objects;
     protected static modelFilters: any = {};
     protected static childrenKeys: string[] | undefined = undefined;
-
-    // List method should be executed by a wrapper to preserve static context binding
-    public static async listMethod(
-        d2: D2,
-        filters: TableFilters,
-        pagination: TablePagination
-    ): Promise<TableList> {
-        const {
-            search = null,
-            fields: overriddenFields = null,
-            lastUpdatedDate = null,
-            groupFilter = null,
-            customFilters = [],
-            customFields = [],
-        } = filters || {};
-        const { page = 1, pageSize = 20, sorting = this.initialSorting, paging = true } =
-            pagination || {};
-
-        const details = this.details.map(e => e.name);
-        const columns = this.columns.map(e => e.name);
-        const fields = overriddenFields
-            ? overriddenFields
-            : _.union(details, columns, customFields);
-
-        const [field, direction] = sorting;
-        const order = `${field}:i${direction}`;
-        const filter = _.compact([
-            search && isValidUid(search) ? `id:eq:${search}` : null,
-            search && !isValidUid(search) ? `displayName:ilike:${search}` : null,
-            lastUpdatedDate ? `lastUpdated:ge:${lastUpdatedDate.format("YYYY-MM-DD")}` : null,
-            groupFilter ? `${this.groupFilterName}.id:eq:${groupFilter}` : null,
-            ...customFilters,
-        ]);
-
-        const listParams = cleanParams({ fields, filter, page, pageSize, order, paging });
-        const collection = await this.getD2Model(d2).list(listParams);
-        return { pager: collection.pager, objects: collection.toArray() };
-    }
 
     public static getD2Model(d2: D2): ModelDefinition {
         return d2.models[this.collectionName];
@@ -181,19 +135,6 @@ export class OrganisationUnitModel extends D2Model {
     protected static columns = organisationUnitsColumns;
     protected static details = organisationUnitsDetails;
     protected static fields = organisationUnitFields;
-
-    public static async listMethod(
-        d2: D2,
-        filters: OrganisationUnitTableFilters,
-        pagination: TablePagination
-    ): Promise<TableList> {
-        const { levelFilter = null } = filters || {};
-        const newFilters = {
-            ...filters,
-            customFilters: _.compact([levelFilter ? `level:eq:${levelFilter}` : null]),
-        };
-        return super.listMethod(d2, newFilters, pagination);
-    }
 }
 
 export class OrganisationUnitGroupModel extends D2Model {

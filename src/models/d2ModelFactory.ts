@@ -27,7 +27,7 @@ export const metadataModels = [
     classes.UserGroupModel,
 ];
 
-const findClasses = (...args: any[]) => {
+const findClasses = (args: string[]) => {
     return _.find(classes, ...args) ?? _.find(complexClasses, ...args);
 };
 

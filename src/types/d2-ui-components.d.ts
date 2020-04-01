@@ -19,10 +19,6 @@ export interface TableFilters {
     metadataType?: string;
 }
 
-export interface OrganisationUnitTableFilters extends TableFilters {
-    levelFilter?: string;
-}
-
 export interface SyncReportTableFilters extends TableFilters {
     type: string;
     statusFilter?: string;
@@ -41,9 +37,4 @@ export interface TablePagination {
     pageSize?: number;
     sorting?: string[];
     paging?: boolean;
-}
-
-export interface TableLabel {
-    name: string;
-    text: string;
 }
