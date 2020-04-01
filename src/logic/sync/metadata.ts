@@ -4,6 +4,7 @@ import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance from "../../models/instance";
 import { ExportBuilder, MetadataPackage, NestedRules } from "../../types/synchronization";
+import { promiseMap } from "../../utils/common";
 import {
     buildNestedRules,
     cleanMetadataImportResponse,
@@ -81,25 +82,22 @@ export class MetadataSync extends GenericSync {
         } = syncParams ?? {};
 
         const metadata = await getMetadata(this.api, metadataIds, "id");
-        const exportPromises = _.keys(metadata)
-            .map(type => {
-                const myClass = d2ModelFactory(this.api, type);
-                const metadataType = myClass.getMetadataType();
+        const exportResults = await promiseMap(_.keys(metadata), type => {
+            const myClass = d2ModelFactory(this.api, type);
+            const metadataType = myClass.getMetadataType();
 
-                return {
-                    type: type as keyof D2ModelSchemas,
-                    ids: metadata[type].map(e => e.id),
-                    excludeRules: useDefaultIncludeExclude
-                        ? myClass.getExcludeRules()
-                        : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
-                    includeRules: useDefaultIncludeExclude
-                        ? myClass.getIncludeRules()
-                        : metadataIncludeExcludeRules[metadataType].includeRules.map(_.toPath),
-                    includeSharingSettings,
-                };
-            })
-            .map(newBuilder => this.exportMetadata(newBuilder));
-        const exportResults: MetadataPackage[] = await Promise.all(exportPromises);
+            return this.exportMetadata({
+                type: type as keyof D2ModelSchemas,
+                ids: metadata[type].map(e => e.id),
+                excludeRules: useDefaultIncludeExclude
+                    ? myClass.getExcludeRules()
+                    : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
+                includeRules: useDefaultIncludeExclude
+                    ? myClass.getIncludeRules()
+                    : metadataIncludeExcludeRules[metadataType].includeRules.map(_.toPath),
+                includeSharingSettings,
+            });
+        });
 
         return _.deepMerge({}, ...exportResults);
     });

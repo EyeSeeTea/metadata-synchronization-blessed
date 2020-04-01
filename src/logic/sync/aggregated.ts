@@ -18,6 +18,7 @@ import {
     postAggregatedData,
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
+import { promiseMap } from "../../utils/common";
 
 export class AggregatedSync extends GenericSync {
     public readonly type = "aggregated";
@@ -241,16 +242,23 @@ export class AggregatedSync extends GenericSync {
     ): Promise<DataValue[]> {
         const { dataParams = {} } = this.builder;
         const aggregatedCategoryOptions = getAggregatedOptions(mapping);
-        console.log("TODO", { aggregatedCategoryOptions });
 
-        const { dataValues = [] } = await getAnalyticsData({
-            api: this.api,
-            dataParams,
-            dimensionIds: [],
-            includeCategories: false,
-            filter: [],
-        });
+        const result = await promiseMap(
+            aggregatedCategoryOptions,
+            ({ dataElement, categoryOptions, category }) => {
+                return getAnalyticsData({
+                    api: this.api,
+                    dataParams,
+                    dimensionIds: [dataElement],
+                    includeCategories: false,
+                    filter: [`${category}:${categoryOptions.join(";")}`],
+                });
+            }
+        );
 
-        return dataValues;
+        return _(result)
+            .map(({ dataValues }) => dataValues)
+            .flatten()
+            .value();
     }
 }
