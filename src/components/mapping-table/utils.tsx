@@ -17,6 +17,7 @@ interface CombinedMetadata {
         id: string;
         name: string;
         categories: {
+            id: string;
             categoryOptions: {
                 id: string;
                 name: string;
@@ -73,6 +74,7 @@ const getFieldsByModel = (model: typeof D2Model) => {
                     id: true,
                     name: true,
                     categories: {
+                        id: true,
                         categoryOptions: { id: true, name: true, shortName: true, code: true },
                     },
                 },
@@ -128,6 +130,7 @@ export const autoMap = async ({
     originModel,
     destinationModel,
     selectedItemId,
+    defaultItem,
     defaultValue,
     filter,
 }: {
@@ -136,18 +139,21 @@ export const autoMap = async ({
     originModel: typeof D2Model;
     destinationModel: typeof D2Model;
     selectedItemId: string;
+    defaultItem?: CombinedMetadata;
     defaultValue?: string;
     filter?: string[];
 }): Promise<MetadataMapping[]> => {
-    const { objects: originObjects } = (await originModel
-        .getApiModel(api)
-        .get({
-            fields: { id: true, code: true, name: true, shortName: true },
-            filter: { id: { eq: cleanNestedMappedId(cleanOrgUnitPath(selectedItemId)) } },
-        })
-        .getData()) as { objects: CombinedMetadata[] };
-
-    const selectedItem = originObjects[0];
+    const selectedItem = _.first(
+        (
+            await originModel
+                .getApiModel(api)
+                .get({
+                    fields: { id: true, code: true, name: true, shortName: true },
+                    filter: { id: { eq: cleanNestedMappedId(cleanOrgUnitPath(selectedItemId)) } },
+                })
+                .getData()
+        ).objects
+    ) as CombinedMetadata | undefined;
     if (!selectedItem) return [];
 
     const { objects } = (await destinationModel
@@ -182,7 +188,17 @@ export const autoMap = async ({
         candidates.push({ id: defaultValue, code: defaultValue });
     }
 
+    const additionalProps = _.omit(defaultItem, [
+        "id",
+        "path",
+        "name",
+        "shortName",
+        "code",
+        "level",
+    ]);
+
     return candidates.map(({ id, path, name, code, level }) => ({
+        ...additionalProps,
         mappedId: path ?? id,
         mappedName: name,
         mappedCode: code,
@@ -207,17 +223,16 @@ const autoMapCollection = async (
     } = {};
 
     for (const item of originMetadata) {
-        const candidate = (
-            await autoMap({
-                api,
-                instanceApi,
-                originModel: model,
-                destinationModel: model,
-                selectedItemId: item.id,
-                defaultValue: "DISABLED",
-                filter,
-            })
-        )[0];
+        const [candidate] = await autoMap({
+            api,
+            instanceApi,
+            originModel: model,
+            destinationModel: model,
+            selectedItemId: item.id,
+            defaultItem: item,
+            defaultValue: "DISABLED",
+            filter,
+        });
         if (item.id && candidate) {
             mapping[item.id] = {
                 ...candidate,
@@ -231,7 +246,9 @@ const autoMapCollection = async (
 
 const getCategoryOptions = (object: CombinedMetadata) => {
     return _.flatten(
-        object.categoryCombo?.categories.map(({ categoryOptions }) => categoryOptions)
+        object.categoryCombo?.categories.map(({ id: category, categoryOptions }) =>
+            categoryOptions.map(option => ({ ...option, category }))
+        )
     );
 };
 

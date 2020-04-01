@@ -9,6 +9,7 @@ import {
     cleanObjectDefault,
     cleanOrgUnitPath,
     getAggregatedData,
+    getAggregatedOptions,
     getAnalyticsData,
     getCategoryOptionCombos,
     getDefaultIds,
@@ -128,6 +129,8 @@ export class AggregatedSync extends GenericSync {
 
     public async postPayload(instance: Instance) {
         const { dataParams = {} } = this.builder;
+        const aggregatedCategoryOptions = getAggregatedOptions(instance.metadataMapping);
+        console.log("TODO", { aggregatedCategoryOptions });
 
         const payloadPackage = await this.buildPayload();
         const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);

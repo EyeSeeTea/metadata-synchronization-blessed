@@ -18,6 +18,7 @@ import {
 } from "../types/d2";
 import {
     AggregatedPackage,
+    CategoryOptionAggregationBuilder,
     DataSyncAggregation,
     DataSynchronizationParams,
     DataValue,
@@ -466,6 +467,45 @@ export const getCategoryOptionCombos = memoize(
     },
     { serializer: (api: D2Api) => api.baseUrl }
 );
+
+/**
+ * Given all the aggregatedDataElements compile a list of dataElements
+ * that have aggregation for their category options
+ * @param MetadataMappingDictionary
+ */
+export const getAggregatedOptions = ({
+    aggregatedDataElements,
+}: MetadataMappingDictionary): CategoryOptionAggregationBuilder[] => {
+    const mappings = _.mapValues(
+        aggregatedDataElements,
+        ({ mapping }) => mapping?.categoryOptions ?? {}
+    );
+
+    return _.transform(
+        mappings,
+        (result, mapping, dataElement) => {
+            const builders = _(mapping)
+                .mapValues(({ mappedId = "DISABLED", category }, categoryOption) => ({
+                    categoryOption,
+                    mappedId,
+                    category,
+                }))
+                .values()
+                .groupBy(({ mappedId }) => mappedId)
+                .pickBy((values, mappedId) => values.length > 1 && mappedId !== "DISABLED")
+                .mapValues((values = [], mappedCategoryOption) => ({
+                    dataElement,
+                    categoryOptions: values.map(({ categoryOption }) => categoryOption),
+                    mappedCategoryOption,
+                    category: _.toString(values[0].category),
+                }))
+                .values()
+                .value();
+            result.push(...builders);
+        },
+        [] as CategoryOptionAggregationBuilder[]
+    );
+};
 
 export const getRootOrgUnit = memoize(
     (api: D2Api) => {
