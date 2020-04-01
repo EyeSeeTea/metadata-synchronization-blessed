@@ -175,9 +175,12 @@ export class AggregatedSync extends GenericSync {
         const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
         const { metadataMapping: mapping } = instance;
-        const instanceAggregatedValues = await this.buildInstanceAggregation(mapping);
+        const instanceAggregatedValues = await this.buildInstanceAggregation(
+            mapping,
+            destinationCategoryOptionCombos
+        );
 
-        const mappedValues = oldDataValues
+        const dataValues = _([...instanceAggregatedValues, ...oldDataValues])
             .map(dataValue =>
                 this.buildMappedDataValue(
                     dataValue,
@@ -187,9 +190,11 @@ export class AggregatedSync extends GenericSync {
                 )
             )
             .map(dataValue => cleanObjectDefault(dataValue, defaultIds))
-            .filter(this.isDisabledDataValue);
-
-        const dataValues = _.uniq([...instanceAggregatedValues, ...mappedValues]);
+            .filter(this.isDisabledDataValue)
+            .uniqBy(({ orgUnit, period, dataElement, categoryOptionCombo }) =>
+                [orgUnit, period, dataElement, categoryOptionCombo].join("-")
+            )
+            .value();
 
         return { dataValues };
     }
@@ -238,27 +243,31 @@ export class AggregatedSync extends GenericSync {
     }
 
     private async buildInstanceAggregation(
-        mapping: MetadataMappingDictionary
+        mapping: MetadataMappingDictionary,
+        categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
     ): Promise<DataValue[]> {
         const { dataParams = {} } = this.builder;
-        const aggregatedCategoryOptions = getAggregatedOptions(mapping);
+        const { enableAggregation = false } = dataParams;
+        if (!enableAggregation) return [];
 
         const result = await promiseMap(
-            aggregatedCategoryOptions,
-            ({ dataElement, categoryOptions, category }) => {
-                return getAnalyticsData({
+            getAggregatedOptions(mapping, categoryOptionCombos),
+            async ({ dataElement, categoryOptions, category, mappedOptionCombo }) => {
+                const { dataValues } = await getAnalyticsData({
                     api: this.api,
                     dataParams,
                     dimensionIds: [dataElement],
                     includeCategories: false,
                     filter: [`${category}:${categoryOptions.join(";")}`],
                 });
+
+                return dataValues.map(dataValue => ({
+                    ...dataValue,
+                    categoryOptionCombo: mappedOptionCombo,
+                }));
             }
         );
 
-        return _(result)
-            .map(({ dataValues }) => dataValues)
-            .flatten()
-            .value();
+        return _.flatten(result);
     }
 }

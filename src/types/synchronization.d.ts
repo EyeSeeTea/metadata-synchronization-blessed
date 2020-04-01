@@ -211,6 +211,6 @@ export type DataSyncAggregation = "DAILY" | "WEEKLY" | "MONTHLY" | "QUARTERLY" |
 export interface CategoryOptionAggregationBuilder {
     dataElement: string;
     categoryOptions: string[];
-    mappedCategoryOption: string;
+    mappedOptionCombo: string;
     category: string;
 }

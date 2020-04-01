@@ -318,10 +318,11 @@ const aggregations = {
 };
 
 const buildPeriodsForAggregation = (
-    aggregationType: DataSyncAggregation,
+    aggregationType: DataSyncAggregation | undefined,
     startDate: Moment,
     endDate: Moment
 ): string[] => {
+    if (!aggregationType) return [];
     const { format, unit, amount } = aggregations[aggregationType];
 
     const current = startDate.clone();
@@ -387,15 +388,15 @@ export async function getAnalyticsData({
         aggregationType,
     } = dataParams;
     const [startDate, endDate] = buildPeriodFromParams(dataParams);
-
+    const periods = buildPeriodsForAggregation(aggregationType, startDate, endDate);
     const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
     const attributeOptionCombo = !allAttributeCategoryOptions
         ? attributeCategoryOptions
         : undefined;
 
-    if (aggregationType) {
-        const periods = buildPeriodsForAggregation(aggregationType, startDate, endDate);
-
+    if (dimensionIds.length === 0 || orgUnit.length === 0) {
+        return { dataValues: [] };
+    } else if (aggregationType) {
         const result = await promiseMap(_.chunk(periods, 500), period => {
             return api
                 .get<AggregatedPackage>("/analytics/dataValueSet.json", {
@@ -404,7 +405,7 @@ export async function getAnalyticsData({
                         `pe:${period.join(";")}`,
                         `ou:${orgUnit.join(";")}`,
                         includeCategories ? `co` : undefined,
-                        attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : "",
+                        attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : undefined,
                     ]),
                     filter,
                 })
@@ -467,18 +468,23 @@ export const getCategoryOptionCombos = memoize(
  * that have aggregation for their category options
  * @param MetadataMappingDictionary
  */
-export const getAggregatedOptions = ({
-    aggregatedDataElements,
-}: MetadataMappingDictionary): CategoryOptionAggregationBuilder[] => {
-    const mappings = _.mapValues(
-        aggregatedDataElements,
-        ({ mapping }) => mapping?.categoryOptions ?? {}
-    );
+export const getAggregatedOptions = (
+    { aggregatedDataElements }: MetadataMappingDictionary,
+    categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+): CategoryOptionAggregationBuilder[] => {
+    const findOptionCombo = (mappedOption: string, mappedCombo?: string) =>
+        categoryOptionCombos.find(
+            ({ categoryCombo, categoryOptions }) =>
+                categoryCombo?.id === mappedCombo &&
+                categoryOptions?.map(({ id }) => id).includes(mappedOption)
+        )?.id ?? mappedOption;
 
     return _.transform(
-        mappings,
-        (result, mapping, dataElement) => {
-            const builders = _(mapping)
+        aggregatedDataElements,
+        (result, { mapping = {} }, dataElement) => {
+            const { categoryOptions, categoryCombos } = mapping;
+
+            const builders = _(categoryOptions)
                 .mapValues(({ mappedId = "DISABLED", category }, categoryOption) => ({
                     categoryOption,
                     mappedId,
@@ -489,9 +495,12 @@ export const getAggregatedOptions = ({
                 .pickBy((values, mappedId) => values.length > 1 && mappedId !== "DISABLED")
                 .mapValues((values = [], mappedCategoryOption) => ({
                     dataElement,
-                    categoryOptions: values.map(({ categoryOption }) => categoryOption),
-                    mappedCategoryOption,
                     category: _.toString(values[0].category),
+                    categoryOptions: values.map(({ categoryOption }) => categoryOption),
+                    mappedOptionCombo: findOptionCombo(
+                        mappedCategoryOption,
+                        _.values(categoryCombos)[0]?.mappedId
+                    ),
                 }))
                 .values()
                 .value();
