@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-31T10:11:01.081Z\n"
-"PO-Revision-Date: 2020-03-31T10:11:01.081Z\n"
+"POT-Creation-Date: 2020-03-31T05:09:52.458Z\n"
+"PO-Revision-Date: 2020-03-31T05:09:52.458Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -44,13 +44,14 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-msgid "Edit mapping for {{total}} elements"
+msgid ""
+"Select {{type}} from destination instance {{instance}} to map {{total}} "
+"elements"
 msgstr ""
 
-msgid "Edit mapping for {{name}} ({{id}})"
-msgstr ""
-
-msgid "Destination instance {{name}}"
+msgid ""
+"Select {{type}} from destination instance {{instance}} to map {{name}} "
+"({{id}})"
 msgstr ""
 
 msgid "Close"
@@ -947,6 +948,9 @@ msgstr ""
 msgid "Instance mapping"
 msgstr ""
 
+msgid "Destination instance {{name}}"
+msgstr ""
+
 msgid "Aggregated mapping"
 msgstr ""
 
@@ -1005,6 +1009,9 @@ msgid "Last executed"
 msgstr ""
 
 msgid "Deleting Sync Rules"
+msgstr ""
+
+msgid "deleted"
 msgstr ""
 
 msgid "Failed to delete some rules"

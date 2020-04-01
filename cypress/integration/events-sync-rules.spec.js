@@ -1,26 +1,13 @@
 import EventSyncRuleListPageObject from "../support/page-objects/EventSyncRuleListPageObject";
-
+import { syncRuleFixture } from "../support/utils";
 context("Event sync rules", function() {
     const page = new EventSyncRuleListPageObject(cy);
 
     beforeEach(() => {
         const stubApiResponseName = "getRules";
 
-        cy.fixture("event-sync-rules.json").then(syncRules => {
+        syncRuleFixture("events", stubApiResponseName, syncRules => {
             this.syncRules = syncRules;
-            cy.server();
-            cy.route({
-                method: "GET",
-                url: `api/dataStore/metadata-synchronization/rules`,
-                response: syncRules,
-            }).as(stubApiResponseName);
-            for (const { id, builder } of syncRules) {
-                cy.route({
-                    method: "GET",
-                    url: `api/dataStore/metadata-synchronization/rules-${id}`,
-                    response: { builder },
-                });
-            }
             page.open(stubApiResponseName);
         });
     });

@@ -1,10 +1,13 @@
 import { D2Api } from "d2-api";
 import _ from "lodash";
-
-import { RunnerOptions, Config, Debug, Migration } from "../types/migrations";
-import { promiseMap } from "./utils";
-import { dataStoreNamespace } from "../models/dataStore";
-import { getDataStore, saveDataStore, deleteDataStore } from "../models/dataStore";
+import {
+    dataStoreNamespace,
+    deleteDataStore,
+    getDataStore,
+    saveDataStore,
+} from "../models/dataStore";
+import { Config, Debug, Migration, RunnerOptions } from "../types/migrations";
+import { getMigrationsForWebpack, promiseMap } from "./utils";
 
 export class MigrationsRunner {
     public migrations: Migration[];
@@ -13,11 +16,10 @@ export class MigrationsRunner {
     private backupPrefix = "backup-";
 
     constructor(private api: D2Api, private config: Config, private options: RunnerOptions) {
-        const { debug = _.identity, migrations } = options;
-        const allMigrations = migrations || getMigrationsForWebpack();
-        this.appVersion = _.max(allMigrations.map(info => info.version)) || 0;
+        const { debug = _.identity, migrations = getMigrationsForWebpack() } = options;
+        this.appVersion = _.max(migrations.map(info => info.version)) || 0;
         this.debug = debug;
-        this.migrations = this.getMigrationToApply(allMigrations, config);
+        this.migrations = this.getMigrationToApply(migrations, config);
     }
 
     setDebug(debug: Debug) {
@@ -167,17 +169,4 @@ export class MigrationsRunner {
     get instanceVersion(): number {
         return this.config.version;
     }
-}
-
-function getMigrationsForWebpack(): Migration[] {
-    const tasks = require.context("./tasks", false, /.*\.ts$/);
-    const keys = _.sortBy(tasks.keys());
-
-    return keys.map(key => {
-        const match = key.match(/(\d+)/);
-        if (!match) throw new Error(`Cannot get version from task: ${key}`);
-        const version = parseInt(match[1]);
-        const fn = tasks(key).default;
-        return { version, fn, name: key };
-    });
 }

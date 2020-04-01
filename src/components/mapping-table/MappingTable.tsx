@@ -3,6 +3,7 @@ import { Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/
 import { useD2, useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
+    RowConfig,
     TableAction,
     TableColumn,
     TableGlobalAction,
@@ -17,6 +18,7 @@ import MappingWizard, {
     prepareSteps,
 } from "../../components/mapping-wizard/MappingWizard";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
+import { ProgramDataElementModel } from "../../models/complexModels";
 import { D2Model, DataElementModel } from "../../models/d2Model";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
@@ -457,6 +459,23 @@ export default function MappingTable({
         });
     };
 
+    const rowConfig = useCallback(
+        (row: MetadataType): RowConfig => {
+            // TODO: This should be abstracted once the client verifies all the cases this should happen
+            const parentId = _.first(row.id.split("-")) ?? row.id;
+            const isParentMapped = !!_.get(mapping, ["eventPrograms", parentId, "mappedId"]);
+            const { mappedId } = getMappedItem(row);
+            const mappingType = getMappingTypeFromRow(row);
+            const isProgramDataElement = mappingType === ProgramDataElementModel.getMappingType();
+
+            const hasErrors = isParentMapped && !mappedId && isProgramDataElement;
+            return {
+                style: hasErrors ? { backgroundColor: "#ffcdd2" } : undefined,
+            };
+        },
+        [getMappedItem, mapping]
+    );
+
     const columns: TableColumn<MetadataType>[] = useMemo(
         () =>
             _.compact([
@@ -809,6 +828,7 @@ export default function MappingTable({
                 notifyNewSelection={updateSelection}
                 globalActions={globalActions}
                 childrenKeys={!isChildrenMapping ? model.getChildrenKeys() : undefined}
+                rowConfig={rowConfig}
             />
         </React.Fragment>
     );

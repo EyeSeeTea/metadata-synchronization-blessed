@@ -10,6 +10,9 @@ import {
     TableColumn,
     useLoading,
     useSnackbar,
+    TableState,
+    ReferenceObject,
+    TableSelection,
 } from "d2-ui-components";
 import _ from "lodash";
 import { Moment } from "moment";
@@ -77,6 +80,7 @@ const SyncRulesPage: React.FC = () => {
     const [rows, setRows] = useState<SyncRule[]>([]);
 
     const [refreshKey, setRefreshKey] = useState(0);
+    const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [toDelete, setToDelete] = useState<string[]>([]);
     const [search, setSearchFilter] = useState("");
     const [targetInstanceFilter, setTargetInstanceFilter] = useState("");
@@ -200,7 +204,28 @@ const SyncRulesPage: React.FC = () => {
         const results = [];
         for (const id of toDelete) {
             const rule = await SyncRule.get(api, id);
+            const deletedRuleLabel = `${rule.name} (${i18n.t("deleted")})`;
+
             results.push(await rule.remove(api));
+
+            const syncReports = await SyncReport.list(
+                api,
+                { type: rule.type, syncRuleFilter: id },
+                {},
+                false
+            );
+
+            for (const syncReportData of syncReports.rows) {
+                const editedSyncReport = {
+                    ...syncReportData,
+                    deletedSyncRuleLabel: deletedRuleLabel,
+                };
+                const syncReport = SyncReport.build(editedSyncReport);
+                const syncResults = await syncReport.loadSyncResults(api);
+                syncReport.addSyncResult(syncResults[0]);
+
+                await syncReport.save(api);
+            }
         }
 
         if (_.some(results, ["status", false])) {
@@ -213,6 +238,7 @@ const SyncRulesPage: React.FC = () => {
 
         loading.reset();
         setToDelete([]);
+        updateSelection([]);
         setRefreshKey(Math.random());
     };
 
@@ -426,6 +452,11 @@ const SyncRulesPage: React.FC = () => {
         </React.Fragment>
     );
 
+    const handleTableChange = (tableState: TableState<ReferenceObject>) => {
+        const { selection } = tableState;
+        updateSelection(selection);
+    };
+
     return (
         <TestWrapper>
             <PageHeader title={title} onBackClick={backHome} />
@@ -434,6 +465,8 @@ const SyncRulesPage: React.FC = () => {
                 columns={columns}
                 details={details}
                 actions={actions}
+                selection={selection}
+                onChange={handleTableChange}
                 onActionButtonClick={appConfigurator ? createRule : undefined}
                 filterComponents={renderCustomFilters}
                 searchBoxLabel={i18n.t("Search by name")}
