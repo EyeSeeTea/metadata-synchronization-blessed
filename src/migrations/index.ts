@@ -7,7 +7,8 @@ import {
     saveDataStore,
 } from "../models/dataStore";
 import { Config, Debug, Migration, RunnerOptions } from "../types/migrations";
-import { getMigrationsForWebpack, promiseMap } from "./utils";
+import { promiseMap } from "../utils/common";
+import { getMigrationsForWebpack } from "./utils";
 
 export class MigrationsRunner {
     public migrations: Migration[];

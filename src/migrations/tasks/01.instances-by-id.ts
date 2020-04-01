@@ -1,10 +1,10 @@
-import _ from "lodash";
 import { D2Api } from "d2-api";
-
+import _ from "lodash";
 import { getDataStore, saveDataStore } from "../../models/dataStore";
-import { promiseMap, getDuplicatedIds } from "../utils";
-import { Maybe } from "../../types/utils";
 import { Debug } from "../../types/migrations";
+import { Maybe } from "../../types/utils";
+import { promiseMap } from "../../utils/common";
+import { getDuplicatedIds } from "../utils";
 
 interface InstanceOld {
     id: string;

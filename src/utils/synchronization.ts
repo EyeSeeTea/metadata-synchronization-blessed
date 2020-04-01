@@ -29,6 +29,7 @@ import {
     SyncRuleType,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
+import { promiseMap } from "./common";
 import { cleanToAPIChildReferenceName, cleanToModelName, getClassName } from "./d2";
 
 const blacklistedProperties = ["access"];
@@ -395,32 +396,25 @@ export async function getAnalyticsData({
     if (aggregationType) {
         const periods = buildPeriodsForAggregation(aggregationType, startDate, endDate);
 
-        const promises = _.chunk(periods, 500).reduce((acc, period) => {
-            if (dimensionIds.length > 0)
-                acc.push(
-                    api
-                        .get<AggregatedPackage>("/analytics/dataValueSet.json", {
-                            dimension: _.compact([
-                                `dx:${dimensionIds.join(";")}`,
-                                `pe:${period.join(";")}`,
-                                `ou:${orgUnit.join(";")}`,
-                                includeCategories ? `co` : undefined,
-                                attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : "",
-                            ]),
-                            filter,
-                        })
-                        .getData()
-                );
+        const result = await promiseMap(_.chunk(periods, 500), period => {
+            return api
+                .get<AggregatedPackage>("/analytics/dataValueSet.json", {
+                    dimension: _.compact([
+                        `dx:${dimensionIds.join(";")}`,
+                        `pe:${period.join(";")}`,
+                        `ou:${orgUnit.join(";")}`,
+                        includeCategories ? `co` : undefined,
+                        attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : "",
+                    ]),
+                    filter,
+                })
+                .getData();
+        });
 
-            return acc;
-        }, [] as Promise<AggregatedPackage>[]);
-
-        const result = await Promise.all(promises);
-        const dataValues = result.reduce((acc, current) => {
-            const { dataValues = [] } = current;
-            acc.push(...dataValues);
-            return acc;
-        }, [] as DataValue[]);
+        const dataValues = _(result)
+            .map(({ dataValues }) => dataValues)
+            .flatten()
+            .value();
 
         return { dataValues };
     } else {
