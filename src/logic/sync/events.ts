@@ -49,12 +49,12 @@ export class EventsSync extends GenericSync {
         );
 
         const { dataValues: candidateDataValues = [] } = enableAggregation
-            ? await getAnalyticsData(
-                  this.api,
+            ? await getAnalyticsData({
+                  api: this.api,
                   dataParams,
-                  [],
-                  [...directIndicators, ...indicatorsByProgram]
-              )
+                  dimensionIds: [...directIndicators, ...indicatorsByProgram],
+                  includeCategories: false,
+              })
             : {};
 
         const dataValues = _.reject(candidateDataValues, ({ dataElement }) =>

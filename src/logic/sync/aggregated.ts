@@ -113,14 +113,26 @@ export class AggregatedSync extends GenericSync {
             )
         );
 
-        const { dataValues: candidateDataValues = [] } = await getAnalyticsData(
-            this.api,
+        const { dataValues: dataElementValues = [] } = await getAnalyticsData({
+            api: this.api,
             dataParams,
-            [...dataElementIds, ...dataSetIds, ...dataElementGroupIds, ...dataElementGroupSetIds],
-            indicatorIds
-        );
+            dimensionIds: [
+                ...dataElementIds,
+                ...dataSetIds,
+                ...dataElementGroupIds,
+                ...dataElementGroupSetIds,
+            ],
+            includeCategories: true,
+        });
 
-        const dataValues = _.reject(candidateDataValues, ({ dataElement }) =>
+        const { dataValues: indicatorValues = [] } = await getAnalyticsData({
+            api: this.api,
+            dataParams,
+            dimensionIds: indicatorIds,
+            includeCategories: false,
+        });
+
+        const dataValues = _.reject([...dataElementValues, ...indicatorValues], ({ dataElement }) =>
             excludedIds.includes(dataElement)
         );
 
@@ -129,8 +141,6 @@ export class AggregatedSync extends GenericSync {
 
     public async postPayload(instance: Instance) {
         const { dataParams = {} } = this.builder;
-        const aggregatedCategoryOptions = getAggregatedOptions(instance.metadataMapping);
-        console.log("TODO", { aggregatedCategoryOptions });
 
         const payloadPackage = await this.buildPayload();
         const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
@@ -163,18 +173,22 @@ export class AggregatedSync extends GenericSync {
         const defaultIds = await getDefaultIds(this.api);
         const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
+        const { metadataMapping: mapping } = instance;
+        const instanceAggregatedValues = await this.buildInstanceAggregation(mapping);
 
-        const dataValues = oldDataValues
+        const mappedValues = oldDataValues
             .map(dataValue =>
                 this.buildMappedDataValue(
                     dataValue,
-                    instance.metadataMapping,
+                    mapping,
                     originCategoryOptionCombos,
                     destinationCategoryOptionCombos
                 )
             )
             .map(dataValue => cleanObjectDefault(dataValue, defaultIds))
             .filter(this.isDisabledDataValue);
+
+        const dataValues = _.uniq([...instanceAggregatedValues, ...mappedValues]);
 
         return { dataValues };
     }
@@ -220,5 +234,23 @@ export class AggregatedSync extends GenericSync {
             ])
             .values()
             .includes("DISABLED");
+    }
+
+    private async buildInstanceAggregation(
+        mapping: MetadataMappingDictionary
+    ): Promise<DataValue[]> {
+        const { dataParams = {} } = this.builder;
+        const aggregatedCategoryOptions = getAggregatedOptions(mapping);
+        console.log("TODO", { aggregatedCategoryOptions });
+
+        const { dataValues = [] } = await getAnalyticsData({
+            api: this.api,
+            dataParams,
+            dimensionIds: [],
+            includeCategories: false,
+            filter: [],
+        });
+
+        return dataValues;
     }
 }

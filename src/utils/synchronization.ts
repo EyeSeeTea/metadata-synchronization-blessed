@@ -366,19 +366,26 @@ export async function getAggregatedData(
         .getData();
 }
 
-export async function getAnalyticsData(
-    api: D2Api,
-    params: DataSynchronizationParams,
-    dataElements: string[],
-    indicators: string[]
-): Promise<AggregatedPackage> {
+export async function getAnalyticsData({
+    api,
+    dataParams,
+    dimensionIds,
+    filter,
+    includeCategories,
+}: {
+    api: D2Api;
+    dataParams: DataSynchronizationParams;
+    dimensionIds: string[];
+    filter?: string[];
+    includeCategories: boolean;
+}): Promise<AggregatedPackage> {
     const {
         orgUnitPaths = [],
         allAttributeCategoryOptions,
         attributeCategoryOptions,
         aggregationType,
-    } = params;
-    const [startDate, endDate] = buildPeriodFromParams(params);
+    } = dataParams;
+    const [startDate, endDate] = buildPeriodFromParams(dataParams);
 
     const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
     const attributeOptionCombo = !allAttributeCategoryOptions
@@ -389,28 +396,21 @@ export async function getAnalyticsData(
         const periods = buildPeriodsForAggregation(aggregationType, startDate, endDate);
 
         const promises = _.chunk(periods, 500).reduce((acc, period) => {
-            acc.push(
-                ...[
-                    { dimension: dataElements, includeCategories: true },
-                    { dimension: indicators, includeCategories: false },
-                ].map(({ dimension, includeCategories }) => {
-                    return dimension.length > 0
-                        ? api
-                              .get<AggregatedPackage>("/analytics/dataValueSet.json", {
-                                  dimension: _.compact([
-                                      `dx:${dimension.join(";")}`,
-                                      `pe:${period.join(";")}`,
-                                      `ou:${orgUnit.join(";")}`,
-                                      includeCategories ? `co` : undefined,
-                                      attributeOptionCombo
-                                          ? `ao:${attributeOptionCombo.join(";")}`
-                                          : "",
-                                  ]),
-                              })
-                              .getData()
-                        : Promise.resolve({ dataValues: [] });
-                })
-            );
+            if (dimensionIds.length > 0)
+                acc.push(
+                    api
+                        .get<AggregatedPackage>("/analytics/dataValueSet.json", {
+                            dimension: _.compact([
+                                `dx:${dimensionIds.join(";")}`,
+                                `pe:${period.join(";")}`,
+                                `ou:${orgUnit.join(";")}`,
+                                includeCategories ? `co` : undefined,
+                                attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : "",
+                            ]),
+                            filter,
+                        })
+                        .getData()
+                );
 
             return acc;
         }, [] as Promise<AggregatedPackage>[]);
