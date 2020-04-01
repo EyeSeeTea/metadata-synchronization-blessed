@@ -175,8 +175,8 @@ const SyncSummary = ({ response, onClose }) => {
         <ConfirmationDialog
             isOpen={true}
             title={i18n.t("Synchronization Results")}
-            onSave={onClose}
-            saveText={i18n.t("Ok")}
+            onCancel={onClose}
+            cancelText={i18n.t("Ok")}
             maxWidth={"lg"}
             fullWidth={true}
         >

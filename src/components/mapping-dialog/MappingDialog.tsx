@@ -60,7 +60,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 
     const api = instance.getApi();
     const model = d2ModelFactory(api, mappingType);
-    const displayName = model.getModelName(d2);
+    const modelName = model.getModelName(d2);
 
     useEffect(() => {
         let mounted = true;
@@ -119,15 +119,25 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 
     const MapperComponent =
         model.getCollectionName() === "organisationUnits" ? OrgUnitMapper : MetadataMapper;
-    const mainTitle =
-        elements.length > 1
-            ? i18n.t("Edit mapping for {{total}} elements", {
-                  total: elements.length,
-              })
-            : i18n.t("Edit mapping for {{name}} ({{id}})", firstElement);
-    const instanceTitle = i18n.t("Destination instance {{name}}", instance);
-
-    const title = _.compact([mainTitle, displayName, instanceTitle]).join(" - ");
+    const title =
+        elements.length > 1 || !firstElement
+            ? i18n.t(
+                  "Select {{type}} from destination instance {{instance}} to map {{total}} elements",
+                  {
+                      type: modelName,
+                      instance: instance.name,
+                      total: elements.length,
+                  }
+              )
+            : i18n.t(
+                  "Select {{type}} from destination instance {{instance}} to map {{name}} ({{id}})",
+                  {
+                      type: modelName,
+                      instance: instance.name,
+                      name: firstElement.name,
+                      id: firstElement.id,
+                  }
+              );
 
     return (
         <ConfirmationDialog
