@@ -204,7 +204,28 @@ const SyncRulesPage: React.FC = () => {
         const results = [];
         for (const id of toDelete) {
             const rule = await SyncRule.get(api, id);
+            const deletedRuleLabel = `${rule.name} (${i18n.t("deleted")})`;
+
             results.push(await rule.remove(api));
+
+            const syncReports = await SyncReport.list(
+                api,
+                { type: rule.type, syncRuleFilter: id },
+                {},
+                false
+            );
+
+            for (const syncReportData of syncReports.rows) {
+                const editedSyncReport = {
+                    ...syncReportData,
+                    deletedSyncRuleLabel: deletedRuleLabel,
+                };
+                const syncReport = SyncReport.build(editedSyncReport);
+                const syncResults = await syncReport.loadSyncResults(api);
+                syncReport.addSyncResult(syncResults[0]);
+
+                await syncReport.save(api);
+            }
         }
 
         if (_.some(results, ["status", false])) {
