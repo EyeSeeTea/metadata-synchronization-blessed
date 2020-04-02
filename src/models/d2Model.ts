@@ -246,6 +246,8 @@ export class DataSetModel extends D2Model {
     protected static includeRules = [
         "attributes",
         "legendSets",
+        "dataEntryForms",
+        "sections",
         "categoryCombos",
         "categoryCombos.attributes",
         "categoryCombos.categoryOptionCombos",
@@ -368,6 +370,8 @@ export class IndicatorGroupModel extends D2Model {
         "attributes",
         "indicators",
         "indicators.attributes",
+        "indicators.indicatorTypes",
+        "indicators.legendSets",
         "indicatorGroupSets",
         "indicatorGroupSets.attributes",
     ];
@@ -386,6 +390,8 @@ export class IndicatorGroupSetModel extends D2Model {
         "indicatorGroups",
         "indicatorGroups.indicators",
         "indicatorGroups.indicators.attributes",
+        "indicatorGroups.indicators.indicatorTypes",
+        "indicatorGroups.indicators.legendSets",
     ];
 }
 

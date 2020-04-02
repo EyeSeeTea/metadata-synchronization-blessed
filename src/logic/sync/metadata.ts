@@ -99,7 +99,7 @@ export class MetadataSync extends GenericSync {
             });
         });
 
-        return _.deepMerge({}, ...exportResults);
+        return _.mapValues(_.deepMerge({}, ...exportResults), elements => _.uniqBy(elements, "id"));
     });
 
     public async postPayload(instance: Instance) {
