@@ -27,8 +27,8 @@ export const metadataModels = [
     classes.UserGroupModel,
 ];
 
-const findClasses = (args: string[]) => {
-    return _.find(classes, ...args) ?? _.find(complexClasses, ...args);
+const findClasses = (key: string, value: string) => {
+    return _.find(classes, [key, value]) ?? _.find(complexClasses, [key, value]);
 };
 
 /**
@@ -42,9 +42,9 @@ export function d2ModelFactory(api: D2Api, d2ModelName: string): typeof D2Model 
     // TODO: Improvement, use schemas to find properties
     const { modelName = "default" } = api.models[d2ModelName as keyof D2ModelSchemas] ?? {};
 
-    const directClass = findClasses(["metadataType", d2ModelName]);
-    const modelClass = findClasses(["collectionName", modelName]);
-    const mappingClass = findClasses(["mappingType", d2ModelName]);
+    const directClass = findClasses("metadataType", d2ModelName);
+    const modelClass = findClasses("collectionName", modelName);
+    const mappingClass = findClasses("mappingType", d2ModelName);
 
     const result = directClass ?? modelClass ?? mappingClass;
     if (!result) {
