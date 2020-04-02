@@ -20,7 +20,7 @@ import {
     DataSetWithDataElementsModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
-    IndicatorMappedModel
+    IndicatorMappedModel,
 } from "../../models/complexModels";
 import { D2Model, DataElementGroupModel, DataElementGroupSetModel } from "../../models/d2Model";
 import { metadataModels } from "../../models/d2ModelFactory";

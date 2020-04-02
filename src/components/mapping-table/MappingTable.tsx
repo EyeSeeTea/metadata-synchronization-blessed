@@ -8,23 +8,18 @@ import {
     TableColumn,
     TableGlobalAction,
     useLoading,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
 import MappingDialog, { MappingDialogConfig } from "../../components/mapping-dialog/MappingDialog";
 import MappingWizard, {
     MappingWizardConfig,
-    prepareSteps
+    prepareSteps,
 } from "../../components/mapping-wizard/MappingWizard";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import { ProgramDataElementModel } from "../../models/complexModels";
-import {
-    D2Model,
-    DataElementModel,
-
-    OrganisationUnitModel
-} from "../../models/d2Model";
+import { D2Model, DataElementModel, OrganisationUnitModel } from "../../models/d2Model";
 import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { D2 } from "../../types/d2";
@@ -36,7 +31,7 @@ import {
     buildMapping,
     cleanNestedMappedId,
     EXCLUDED_KEY,
-    getChildrenRows
+    getChildrenRows,
 } from "./utils";
 
 const useStyles = makeStyles({
@@ -652,6 +647,9 @@ export default function MappingTable({
                 multiple: true,
                 onClick: openMappingDialog,
                 icon: <Icon>open_in_new</Icon>,
+                isActive: (selected: MetadataType[]) => {
+                    return _.every(selected, row => row.model.getMappingType());
+                },
             },
             {
                 name: "select-children-rows",
@@ -703,6 +701,9 @@ export default function MappingTable({
                 multiple: true,
                 onClick: applyAutoMapping,
                 icon: <Icon>compare_arrows</Icon>,
+                isActive: (selected: MetadataType[]) => {
+                    return _.every(selected, row => row.model.getMappingType());
+                },
             },
             {
                 name: "disable-mapping",
@@ -710,6 +711,9 @@ export default function MappingTable({
                 multiple: true,
                 onClick: disableMapping,
                 icon: <Icon>sync_disabled</Icon>,
+                isActive: (selected: MetadataType[]) => {
+                    return _.every(selected, row => row.model.getMappingType());
+                },
             },
             {
                 name: "reset-mapping",
@@ -717,6 +721,9 @@ export default function MappingTable({
                 multiple: true,
                 onClick: resetMapping,
                 icon: <Icon>clear</Icon>,
+                isActive: (selected: MetadataType[]) => {
+                    return _.every(selected, row => row.model.getMappingType());
+                },
             },
             {
                 name: "related-mapping",
