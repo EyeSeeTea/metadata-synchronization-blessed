@@ -421,16 +421,6 @@ export const getValidIds = async (
     );
 };
 
-export const getTypeFromRow = (object?: MetadataType, defaultValue?: string) => {
-    const { __type__ } = object ?? {};
-    return __type__ ?? defaultValue ?? "";
-};
-
-export const getMappingTypeFromRow = (object?: MetadataType, defaultValue?: string) => {
-    const { __mappingType__ } = object ?? {};
-    return __mappingType__ ?? getTypeFromRow(object, defaultValue);
-};
-
 export const getChildrenRows = (rows: MetadataType[], model: typeof D2Model): MetadataType[] => {
     const childrenKeys = model.getChildrenKeys() ?? [];
 

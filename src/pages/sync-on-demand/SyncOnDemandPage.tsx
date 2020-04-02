@@ -4,6 +4,7 @@ import { useD2, useD2Api } from "d2-api";
 import { useLoading, useSnackbar } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
@@ -19,17 +20,16 @@ import {
     DataSetWithDataElementsModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
-    IndicatorMappedModel,
+    IndicatorMappedModel
 } from "../../models/complexModels";
 import { D2Model, DataElementGroupModel, DataElementGroupSetModel } from "../../models/d2Model";
-import { d2ModelFactory, metadataModels } from "../../models/d2ModelFactory";
+import { metadataModels } from "../../models/d2ModelFactory";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
 import { SyncRuleType } from "../../types/synchronization";
 import { MetadataType } from "../../utils/d2";
 import { isAppConfigurator } from "../../utils/permissions";
-import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
 
 const config: Record<
     SyncRuleType,
@@ -147,10 +147,7 @@ const SyncOnDemandPage: React.FC = () => {
             text: i18n.t("Metadata type"),
             hidden: config[type].childrenKeys === undefined,
             getValue: (row: MetadataType) => {
-                if (row.__type__) {
-                    const rowModel = d2ModelFactory(api, row.__type__);
-                    return rowModel.getModelName(d2);
-                }
+                return row.model.getModelName(d2);
             },
         },
     ];

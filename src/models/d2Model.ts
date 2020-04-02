@@ -20,7 +20,6 @@ export abstract class D2Model {
     // Metadata Type should be defined on subclasses
     protected static metadataType: string;
     protected static collectionName: keyof D2ModelSchemas;
-    protected static mappingType: string;
     protected static groupFilterName: keyof D2ModelSchemas;
     protected static levelFilterName: keyof D2ModelSchemas;
     protected static modelName: string | undefined;
@@ -33,9 +32,11 @@ export abstract class D2Model {
     protected static details = d2BaseModelDetails;
     protected static fields = d2BaseModelFields;
     protected static initialSorting = ["name", "asc"];
-    protected static modelTransform: Function = (objects: MetadataType[]) => objects;
+    protected static modelTransform: Function = (objects: object[]) => objects;
     protected static modelFilters: any = {};
     protected static childrenKeys: string[] | undefined = undefined;
+    protected static mappingType: string | undefined;
+    protected static isGlobalMapping: boolean = false;
 
     public static getD2Model(d2: D2): ModelDefinition {
         return d2.models[this.collectionName];
@@ -53,14 +54,11 @@ export abstract class D2Model {
     }
 
     public static getApiModelTransform(): (objects: MetadataType[]) => MetadataType[] {
-        return (objects: MetadataType[]) =>
-            this.modelTransform(objects).map(
-                ({ __type__, __mappingType__, ...object }: MetadataType) => ({
-                    ...object,
-                    __type__: __type__ ?? this.collectionName,
-                    __mappingType__: __mappingType__ ?? this.mappingType,
-                })
-            );
+        return objects =>
+            this.modelTransform(objects).map(({ model, ...object }: MetadataType) => ({
+                ...object,
+                model: model ?? this,
+            }));
     }
 
     // TODO: This should be typed (not priority)
@@ -76,8 +74,12 @@ export abstract class D2Model {
         return this.collectionName;
     }
 
-    public static getMappingType(): string {
-        return this.mappingType ?? this.collectionName;
+    public static getMappingType(): string | undefined {
+        return this.mappingType;
+    }
+
+    public static getIsGlobalMapping(): boolean {
+        return this.isGlobalMapping;
     }
 
     public static getExcludeRules(): string[][] {
@@ -122,6 +124,7 @@ export class OrganisationUnitModel extends D2Model {
     protected static collectionName = "organisationUnits" as const;
     protected static groupFilterName = "organisationUnitGroups" as const;
     protected static levelFilterName = "organisationUnitLevels" as const;
+    protected static mappingType = "organisationUnits";
 
     protected static excludeRules = ["legendSets", "dataSets", "programs", "users"];
     protected static includeRules = [
@@ -290,6 +293,7 @@ export class CategoryOptionModel extends D2Model {
 export class CategoryComboModel extends D2Model {
     protected static metadataType = "categoryCombo";
     protected static collectionName = "categoryCombos" as const;
+    protected static mappingType = "categoryCombos";
 }
 
 export class ProgramModel extends D2Model {

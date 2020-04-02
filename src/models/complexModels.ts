@@ -35,6 +35,14 @@ export class AggregatedDataElementModel extends DataElementModel {
     protected static modelFilters = { domainType: { eq: "AGGREGATE" } };
 }
 
+export class IndicatorMappedModel extends IndicatorModel {
+    protected static mappingType = AggregatedDataElementModel.getMappingType();
+}
+
+export class ProgramIndicatorMappedModel extends ProgramIndicatorModel {
+    protected static mappingType = AggregatedDataElementModel.getMappingType();
+}
+
 export class DataSetWithDataElementsModel extends DataSetModel {
     protected static childrenKeys = ["dataElements"];
 
@@ -45,8 +53,7 @@ export class DataSetWithDataElementsModel extends DataSetModel {
             ...rest,
             dataElements: dataSetElements.map(({ dataElement }) => ({
                 ...dataElement,
-                __type__: AggregatedDataElementModel.getCollectionName(),
-                __mappingType__: AggregatedDataElementModel.getMappingType(),
+                model: AggregatedDataElementModel,
             })),
         }));
     };
@@ -84,8 +91,7 @@ export class EventProgramWithDataElementsModel extends EventProgramModel {
                             .map(({ dataElement }) => ({
                                 ...dataElement,
                                 id: `${program.id}-${programStageId}-${dataElement.id}`,
-                                __type__: ProgramDataElementModel.getCollectionName(),
-                                __mappingType__: ProgramDataElementModel.getMappingType(),
+                                model: ProgramDataElementModel,
                                 displayName:
                                     program.programStages.length > 1
                                         ? `[${displayName}] ${dataElement.displayName}`
@@ -110,15 +116,10 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
             ...program,
             programIndicators: programIndicators.map(programIndicator => ({
                 ...programIndicator,
-                __type__: ProgramIndicatorModel.getCollectionName(),
-                __mappingType__: AggregatedDataElementModel.getMappingType(),
+                model: ProgramIndicatorMappedModel,
             })),
         }));
     };
-}
-
-export class IndicatorMappedModel extends IndicatorModel {
-    protected static mappingType = AggregatedDataElementModel.getMappingType();
 }
 
 export class CategoryOptionsGlobalModel extends CategoryOptionModel {
@@ -134,13 +135,15 @@ export class CategoryOptionsGlobalModel extends CategoryOptionModel {
             .uniqBy("id")
             .value();
 
-        console.log({ categories, objects });
         return categories.map(category => ({
             ...category,
-            __type__: CategoryModel.getCollectionName(),
+            model: CategoryModel,
             categoryOptions: objects
                 .filter(({ categories }) => _.find(categories, { id: category.id }))
-                .map(option => ({ ...option, __type__: CategoryOptionModel.getCollectionName() })),
+                .map(option => ({
+                    ...option,
+                    model: CategoryOptionModel,
+                })),
         }));
     };
 }
@@ -159,8 +162,11 @@ export class OptionsByOptionSetModel extends OptionModel {
             "id"
         ).map(optionSet => ({
             ...optionSet,
-            __type__: OptionSetModel.getCollectionName(),
-            options: childrenRows[optionSet.id],
+            model: OptionSetModel,
+            options: childrenRows[optionSet.id].map(option => ({
+                ...option,
+                model: OptionModel,
+            })),
         }));
     };
 }

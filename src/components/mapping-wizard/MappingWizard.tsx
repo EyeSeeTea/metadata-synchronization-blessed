@@ -28,7 +28,8 @@ export interface MappingWizardProps {
     onCancel?(): void;
 }
 
-export const prepareSteps = (type: string, element: MetadataType) => {
+export const prepareSteps = (type: string | undefined, element: MetadataType) => {
+    if (!type) return [];
     return modelSteps[type]?.filter(({ isVisible = _.noop }) => isVisible(type, element)) ?? [];
 };
 
