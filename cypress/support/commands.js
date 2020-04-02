@@ -42,7 +42,7 @@ Cypress.Commands.overwrite("get", async (originalFn, selector, options) => {
 
     do {
         element = await originalFn(selector, options);
-        await timeout(150);
+        await timeout(350);
         detached = Cypress.dom.isDetached(element);
         retries += 1;
 
