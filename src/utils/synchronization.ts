@@ -415,6 +415,7 @@ export async function getAnalyticsData({
         const dataValues = _(result)
             .map(({ dataValues }) => dataValues)
             .flatten()
+            .compact()
             .value();
 
         return { dataValues };
