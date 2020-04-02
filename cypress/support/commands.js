@@ -140,6 +140,14 @@ Cypress.Commands.add("selectRowInTableByText", text => {
         .click();
 });
 
+Cypress.Commands.add("checkRowCheckboxByText", text => {
+    cy.get("table")
+        .contains(text)
+        .parent()
+        .find("input")
+        .click();
+});
+
 Cypress.Commands.add("selectFilterInTable", (filterLabel, filterValue) => {
     cy.selectInDropdown("#app", filterLabel, filterValue);
 });
