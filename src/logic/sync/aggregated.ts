@@ -172,7 +172,7 @@ export class AggregatedSync extends GenericSync {
     ): Promise<AggregatedPackage> {
         const { dataValues: oldDataValues } = payload;
         const { metadataMapping: mapping } = instance;
-        
+
         const defaultIds = await getDefaultIds(this.api);
         const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());

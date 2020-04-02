@@ -6,6 +6,8 @@ import { MetadataMapping, MetadataMappingDictionary } from "../../models/instanc
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
 
+export const EXCLUDED_KEY = "DISABLED";
+
 interface CombinedMetadata {
     id: string;
     name?: string;
@@ -230,13 +232,13 @@ const autoMapCollection = async (
             destinationModel: model,
             selectedItemId: item.id,
             defaultItem: item,
-            defaultValue: "DISABLED",
+            defaultValue: EXCLUDED_KEY,
             filter,
         });
         if (item.id && candidate) {
             mapping[item.id] = {
                 ...candidate,
-                conflicts: candidate.mappedId === "DISABLED",
+                conflicts: candidate.mappedId === EXCLUDED_KEY,
             };
         }
     }
@@ -276,7 +278,7 @@ const autoMapCategoryCombo = (
 ) => {
     if (originMetadata.categoryCombo) {
         const { id } = originMetadata.categoryCombo;
-        const { id: mappedId = "DISABLED", name: mappedName } =
+        const { id: mappedId = EXCLUDED_KEY, name: mappedName } =
             destinationMetadata.categoryCombo ?? {};
 
         return {
@@ -337,10 +339,10 @@ export const buildMapping = async ({
     mappedId?: string;
 }): Promise<MetadataMapping> => {
     const originMetadata = await getCombinedMetadata(api, originModel, originalId);
-    if (mappedId === "DISABLED")
+    if (mappedId === EXCLUDED_KEY)
         return {
-            mappedId: "DISABLED",
-            mappedCode: "DISABLED",
+            mappedId: EXCLUDED_KEY,
+            mappedCode: EXCLUDED_KEY,
             code: originMetadata[0]?.code,
             conflicts: false,
             global: false,
@@ -446,7 +448,7 @@ export const buildDataElementFilterForProgram = async (
     const originProgramId = nestedId.split("-")[0];
     const { mappedId } = _.get(mapping, ["eventPrograms", originProgramId]) ?? {};
 
-    if (!mappedId) return undefined;
+    if (!mappedId || mappedId === EXCLUDED_KEY) return undefined;
     const validIds = await getValidIds(api, programModel, mappedId);
     return [...validIds, mappedId];
 };

@@ -30,12 +30,11 @@ import {
     buildDataElementFilterForProgram,
     buildMapping,
     cleanNestedMappedId,
+    EXCLUDED_KEY,
     getChildrenRows,
     getMappingTypeFromRow,
     getTypeFromRow,
 } from "./utils";
-
-const EXCLUDED_KEY = "DISABLED";
 
 const useStyles = makeStyles({
     iconButton: {
