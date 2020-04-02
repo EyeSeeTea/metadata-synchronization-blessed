@@ -137,6 +137,14 @@ export const organisationUnitFields = {
     path: include,
 };
 
+export const categoryOptionField = {
+    ...d2BaseModelFields,
+    categories: {
+        id: include,
+        displayName: include,
+    },
+};
+
 export function isD2Model(d2: D2, modelName: string): boolean {
     return !!d2.models[modelName];
 }

@@ -1,13 +1,16 @@
 import i18n from "@dhis2/d2-i18n";
-import { D2DataSetSchema, D2ProgramSchema, SelectedPick } from "d2-api";
+import { D2CategoryOptionSchema, D2DataSetSchema, D2ProgramSchema, SelectedPick } from "d2-api";
 import _ from "lodash";
 import {
+    categoryOptionField,
     dataElementFields,
     dataSetFields,
     programFieldsWithDataElements,
     programFieldsWithIndicators,
 } from "../utils/d2";
 import {
+    CategoryModel,
+    CategoryOptionModel,
     DataElementModel,
     DataSetModel,
     IndicatorModel,
@@ -107,4 +110,28 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
 
 export class IndicatorMappedModel extends IndicatorModel {
     protected static mappingType = AggregatedDataElementModel.getMappingType();
+}
+
+export class CategoryOptionsGlobalModel extends CategoryOptionModel {
+    protected static fields = categoryOptionField;
+    protected static childrenKeys = ["children"];
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2CategoryOptionSchema, typeof categoryOptionField>[]
+    ) => {
+        const categories = _(objects)
+            .map(({ categories }) => categories)
+            .flatten()
+            .uniqBy("id")
+            .value();
+
+        console.log({ categories, objects });
+        return categories.map(category => ({
+            ...category,
+            __type__: CategoryModel.getCollectionName(),
+            children: objects
+                .filter(({ categories }) => _.find(categories, { id: category.id }))
+                .map(option => ({ ...option, __type__: CategoryOptionModel.getCollectionName() })),
+        }));
+    };
 }
