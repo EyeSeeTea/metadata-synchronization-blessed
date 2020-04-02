@@ -1,10 +1,17 @@
 import i18n from "@dhis2/d2-i18n";
-import { D2CategoryOptionSchema, D2DataSetSchema, D2ProgramSchema, SelectedPick } from "d2-api";
+import {
+    D2CategoryOptionSchema,
+    D2DataSetSchema,
+    D2OptionSchema,
+    D2ProgramSchema,
+    SelectedPick,
+} from "d2-api";
 import _ from "lodash";
 import {
-    categoryOptionField,
+    categoryOptionFields,
     dataElementFields,
     dataSetFields,
+    optionFields,
     programFieldsWithDataElements,
     programFieldsWithIndicators,
 } from "../utils/d2";
@@ -14,8 +21,10 @@ import {
     DataElementModel,
     DataSetModel,
     IndicatorModel,
+    OptionModel,
     ProgramIndicatorModel,
     ProgramModel,
+    OptionSetModel,
 } from "./d2Model";
 
 export class AggregatedDataElementModel extends DataElementModel {
@@ -113,11 +122,11 @@ export class IndicatorMappedModel extends IndicatorModel {
 }
 
 export class CategoryOptionsGlobalModel extends CategoryOptionModel {
-    protected static fields = categoryOptionField;
-    protected static childrenKeys = ["children"];
+    protected static fields = categoryOptionFields;
+    protected static childrenKeys = ["categoryOptions"];
 
     protected static modelTransform = (
-        objects: SelectedPick<D2CategoryOptionSchema, typeof categoryOptionField>[]
+        objects: SelectedPick<D2CategoryOptionSchema, typeof categoryOptionFields>[]
     ) => {
         const categories = _(objects)
             .map(({ categories }) => categories)
@@ -129,9 +138,29 @@ export class CategoryOptionsGlobalModel extends CategoryOptionModel {
         return categories.map(category => ({
             ...category,
             __type__: CategoryModel.getCollectionName(),
-            children: objects
+            categoryOptions: objects
                 .filter(({ categories }) => _.find(categories, { id: category.id }))
                 .map(option => ({ ...option, __type__: CategoryOptionModel.getCollectionName() })),
+        }));
+    };
+}
+
+export class OptionsByOptionSetModel extends OptionModel {
+    protected static fields = optionFields;
+    protected static childrenKeys = ["options"];
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2OptionSchema, typeof optionFields>[]
+    ) => {
+        const childrenRows = _.groupBy(objects, "optionSet.id");
+
+        return _.uniqBy(
+            objects.map(({ optionSet }) => optionSet),
+            "id"
+        ).map(optionSet => ({
+            ...optionSet,
+            __type__: OptionSetModel.getCollectionName(),
+            options: childrenRows[optionSet.id],
         }));
     };
 }

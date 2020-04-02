@@ -137,9 +137,17 @@ export const organisationUnitFields = {
     path: include,
 };
 
-export const categoryOptionField = {
+export const categoryOptionFields = {
     ...d2BaseModelFields,
     categories: {
+        id: include,
+        displayName: include,
+    },
+};
+
+export const optionFields = {
+    ...d2BaseModelFields,
+    optionSet: {
         id: include,
         displayName: include,
     },

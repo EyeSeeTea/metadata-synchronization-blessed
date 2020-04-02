@@ -11,9 +11,10 @@ import {
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
     IndicatorMappedModel,
+    OptionsByOptionSetModel,
     ProgramDataElementModel,
 } from "../../models/complexModels";
-import { CategoryComboModel, OptionModel, OrganisationUnitModel } from "../../models/d2Model";
+import { CategoryComboModel, OrganisationUnitModel } from "../../models/d2Model";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
@@ -39,7 +40,7 @@ const config = {
         models: [
             CategoryOptionsGlobalModel,
             CategoryComboModel,
-            OptionModel,
+            OptionsByOptionSetModel,
             ProgramDataElementModel,
         ],
         isGlobalMapping: true,
