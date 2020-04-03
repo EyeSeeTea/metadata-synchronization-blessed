@@ -3,7 +3,6 @@ import { DialogContent } from "@material-ui/core";
 import { ConfirmationDialog, Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
 import { MappingTableProps } from "../mapping-table/MappingTable";
@@ -40,7 +39,6 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     onApplyGlobalMapping,
     onCancel = _.noop,
 }) => {
-    const location = useLocation();
     const { mappingPath, type, element } = config;
 
     const { mappedId = "", mapping = {} }: MetadataMapping = _.get(
@@ -86,11 +84,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
 
     if (steps.length === 0) return null;
 
-    const urlHash = location.hash.slice(1);
-    const stepExists = steps.find(step => step.key === urlHash);
-    const firstStepKey = steps.map(step => step.key)[0];
-    const initialStepKey = stepExists ? urlHash : firstStepKey;
-
+    const initialStepKey = steps.map(step => step.key)[0];
     const mainTitle = i18n.t(`Related metadata mapping for {{name}} ({{id}})`, element);
     const title = _.compact([mainTitle, stepName]).join(" - ");
 
