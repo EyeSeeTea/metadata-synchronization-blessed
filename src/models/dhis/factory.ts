@@ -1,34 +1,34 @@
 import { D2Api, D2ModelSchemas } from "d2-api";
 import _ from "lodash";
-import * as complexClasses from "./complexModels";
-import * as classes from "./d2Model";
-import { D2Model, defaultModel } from "./d2Model";
+import { D2Model, defaultModel } from "./default";
+import * as mappingClasses from "./mapping";
+import * as metadataClasses from "./metadata";
 
 export const metadataModels = [
-    classes.DashboardModel,
-    classes.DataElementModel,
-    classes.DataElementGroupModel,
-    classes.DataElementGroupSetModel,
-    classes.DataSetModel,
-    classes.IndicatorModel,
-    classes.IndicatorGroupModel,
-    classes.IndicatorGroupSetModel,
-    classes.OrganisationUnitModel,
-    classes.OrganisationUnitGroupModel,
-    classes.OrganisationUnitGroupSetModel,
-    classes.OrganisationUnitLevelModel,
-    classes.ValidationRuleModel,
-    classes.ValidationRuleGroupModel,
-    classes.ProgramModel,
-    classes.ProgramIndicatorModel,
-    classes.ProgramIndicatorGroupModel,
-    classes.ProgramRuleModel,
-    classes.ProgramRuleVariableModel,
-    classes.UserGroupModel,
+    metadataClasses.DashboardModel,
+    metadataClasses.DataElementModel,
+    metadataClasses.DataElementGroupModel,
+    metadataClasses.DataElementGroupSetModel,
+    metadataClasses.DataSetModel,
+    metadataClasses.IndicatorModel,
+    metadataClasses.IndicatorGroupModel,
+    metadataClasses.IndicatorGroupSetModel,
+    metadataClasses.OrganisationUnitModel,
+    metadataClasses.OrganisationUnitGroupModel,
+    metadataClasses.OrganisationUnitGroupSetModel,
+    metadataClasses.OrganisationUnitLevelModel,
+    metadataClasses.ValidationRuleModel,
+    metadataClasses.ValidationRuleGroupModel,
+    metadataClasses.ProgramModel,
+    metadataClasses.ProgramIndicatorModel,
+    metadataClasses.ProgramIndicatorGroupModel,
+    metadataClasses.ProgramRuleModel,
+    metadataClasses.ProgramRuleVariableModel,
+    metadataClasses.UserGroupModel,
 ];
 
 const findClasses = (key: string, value: string) => {
-    return _.find(classes, [key, value]) ?? _.find(complexClasses, [key, value]);
+    return _.find(metadataClasses, [key, value]) ?? _.find(mappingClasses, [key, value]);
 };
 
 /**

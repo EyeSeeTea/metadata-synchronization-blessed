@@ -13,8 +13,8 @@ import {
     IndicatorMappedModel,
     OptionsByOptionSetModel,
     ProgramDataElementModel,
-} from "../../models/complexModels";
-import { CategoryComboModel, OrganisationUnitModel } from "../../models/d2Model";
+} from "../../models/dhis/mapping";
+import { CategoryComboModel, OrganisationUnitModel } from "../../models/dhis/metadata";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";

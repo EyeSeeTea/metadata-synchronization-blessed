@@ -1,7 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import _ from "lodash";
-import { D2Model } from "../models/d2Model";
+import { D2Model } from "../models/dhis/default";
 import { D2 } from "../types/d2";
 import "../utils/lodash-mixins";
 

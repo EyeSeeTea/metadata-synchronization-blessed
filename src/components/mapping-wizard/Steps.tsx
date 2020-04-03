@@ -1,6 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import React from "react";
-import { CategoryOptionModel, D2Model, OptionModel, ProgramStageModel } from "../../models/d2Model";
+import { D2Model } from "../../models/dhis/default";
+import { CategoryOptionModel, OptionModel, ProgramStageModel } from "../../models/dhis/metadata";
 import { MetadataType } from "../../utils/d2";
 import MappingTable, { MappingTableProps } from "../mapping-table/MappingTable";
 import { MappingWizardStep } from "./MappingWizard";

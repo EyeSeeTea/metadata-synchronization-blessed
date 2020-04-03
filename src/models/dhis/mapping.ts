@@ -14,7 +14,7 @@ import {
     optionFields,
     programFieldsWithDataElements,
     programFieldsWithIndicators,
-} from "../utils/d2";
+} from "../../utils/d2";
 import {
     CategoryModel,
     CategoryOptionModel,
@@ -25,7 +25,7 @@ import {
     ProgramIndicatorModel,
     ProgramModel,
     OptionSetModel,
-} from "./d2Model";
+} from "./metadata";
 
 export class AggregatedDataElementModel extends DataElementModel {
     protected static mappingType = "aggregatedDataElements";

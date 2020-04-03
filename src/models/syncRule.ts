@@ -20,9 +20,16 @@ import { Validation } from "../types/validations";
 import { extractChildrenFromRules, extractParentsFromRule } from "../utils/metadataIncludeExclude";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
 import isValidCronExpression from "../utils/validCronExpression";
-import { D2Model } from "./d2Model";
-import { deleteData, getDataById, getPaginatedData, saveData, deleteDataStore } from "./dataStore";
-import { getDataStore, saveDataStore } from "./dataStore";
+import {
+    deleteData,
+    deleteDataStore,
+    getDataById,
+    getDataStore,
+    getPaginatedData,
+    saveData,
+    saveDataStore,
+} from "./dataStore";
+import { D2Model } from "./dhis/default";
 
 const dataStoreKey = "rules";
 

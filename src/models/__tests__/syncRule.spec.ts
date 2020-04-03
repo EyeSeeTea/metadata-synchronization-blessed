@@ -1,5 +1,5 @@
 import SyncRule from "../syncRule";
-import { DataElementModel, IndicatorModel, OrganisationUnitModel } from "../d2Model";
+import { DataElementModel, IndicatorModel, OrganisationUnitModel } from "../dhis/metadata";
 
 const indicatorIncludeExcludeRules = {
     includeRules: [

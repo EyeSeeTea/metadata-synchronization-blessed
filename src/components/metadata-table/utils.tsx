@@ -1,7 +1,7 @@
 import { D2Api, D2ApiResponse, D2ModelSchemas, Model, PaginatedObjects } from "d2-api";
 import { TablePagination, TableSorting } from "d2-ui-components";
 import memoize from "nano-memoize";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
+import { d2ModelFactory } from "../../models/dhis/factory";
 import { MetadataType } from "../../utils/d2";
 
 /**

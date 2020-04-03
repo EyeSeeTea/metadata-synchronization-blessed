@@ -1,7 +1,7 @@
 import { D2ModelSchemas } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
+import { d2ModelFactory } from "../../models/dhis/factory";
 import Instance from "../../models/instance";
 import { ExportBuilder, MetadataPackage, NestedRules } from "../../types/synchronization";
 import { promiseMap } from "../../utils/common";

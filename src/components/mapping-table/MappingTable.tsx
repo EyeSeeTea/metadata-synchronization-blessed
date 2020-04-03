@@ -18,9 +18,10 @@ import MappingWizard, {
     prepareSteps,
 } from "../../components/mapping-wizard/MappingWizard";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
-import { ProgramDataElementModel } from "../../models/complexModels";
-import { D2Model, DataElementModel, OrganisationUnitModel } from "../../models/d2Model";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
+import { D2Model } from "../../models/dhis/default";
+import { d2ModelFactory } from "../../models/dhis/factory";
+import { ProgramDataElementModel } from "../../models/dhis/mapping";
+import { DataElementModel, OrganisationUnitModel } from "../../models/dhis/metadata";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";

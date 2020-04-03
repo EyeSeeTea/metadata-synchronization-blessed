@@ -15,15 +15,16 @@ import { DeletedSync } from "../../logic/sync/deleted";
 import { EventsSync } from "../../logic/sync/events";
 import { SyncronizationClass } from "../../logic/sync/generic";
 import { MetadataSync } from "../../logic/sync/metadata";
+import { D2Model } from "../../models/dhis/default";
+import { metadataModels } from "../../models/dhis/factory";
 import {
     AggregatedDataElementModel,
     DataSetWithDataElementsModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
     IndicatorMappedModel,
-} from "../../models/complexModels";
-import { D2Model, DataElementGroupModel, DataElementGroupSetModel } from "../../models/d2Model";
-import { metadataModels } from "../../models/d2ModelFactory";
+} from "../../models/dhis/mapping";
+import { DataElementGroupModel, DataElementGroupSetModel } from "../../models/dhis/metadata";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";

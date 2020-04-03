@@ -1,7 +1,8 @@
 import { D2Api } from "d2-api";
 import _ from "lodash";
-import { CategoryOptionModel, D2Model, OptionModel, ProgramStageModel } from "../../models/d2Model";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
+import { D2Model } from "../../models/dhis/default";
+import { d2ModelFactory } from "../../models/dhis/factory";
+import { CategoryOptionModel, OptionModel, ProgramStageModel } from "../../models/dhis/metadata";
 import { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";

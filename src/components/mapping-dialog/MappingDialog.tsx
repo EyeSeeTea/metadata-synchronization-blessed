@@ -6,12 +6,12 @@ import { useD2 } from "d2-api";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { buildDataElementFilterForProgram, getValidIds } from "../mapping-table/utils";
 import MetadataTable from "../metadata-table/MetadataTable";
+import { d2ModelFactory } from "../../models/dhis/factory";
 
 export interface MappingDialogConfig {
     elements: string[];

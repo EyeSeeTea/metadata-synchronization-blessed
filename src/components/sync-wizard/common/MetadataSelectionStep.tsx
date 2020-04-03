@@ -1,23 +1,23 @@
 import i18n from "@dhis2/d2-i18n";
+import { useD2Api } from "d2-api";
 import { useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
+import { metadataModels } from "../../../models/dhis/factory";
 import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
-} from "../../../models/complexModels";
+} from "../../../models/dhis/mapping";
 import {
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,
     IndicatorModel,
-} from "../../../models/d2Model";
-import { metadataModels } from "../../../models/d2ModelFactory";
+} from "../../../models/dhis/metadata";
+import { getMetadata } from "../../../utils/synchronization";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { SyncWizardStepProps } from "../Steps";
-import { getMetadata } from "../../../utils/synchronization";
-import { useD2Api } from "d2-api";
 
 const config = {
     metadata: {
