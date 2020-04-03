@@ -27,6 +27,7 @@ import {
     OrganisationUnitModel,
     ProgramIndicatorModel,
     ProgramModel,
+    ProgramStageModel,
 } from "./metadata";
 
 export class CategoryOptionMappedModel extends CategoryOptionModel {
@@ -47,6 +48,10 @@ export class OrganisationUnitMappedModel extends OrganisationUnitModel {
 
 export class ProgramIndicatorMappedModel extends ProgramIndicatorModel {
     protected static mappingType = "aggregatedDataElements";
+}
+
+export class ProgramStageMappedModel extends ProgramStageModel {
+    protected static mappingType = "programStages";
 }
 
 export class AggregatedDataElementModel extends DataElementModel {
