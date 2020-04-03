@@ -1,7 +1,7 @@
 import { D2Api } from "d2-api";
 import _ from "lodash";
 import { D2Model } from "../../models/dhis/default";
-import { d2ModelFactory } from "../../models/dhis/factory";
+import { EventProgramModel } from "../../models/dhis/mapping";
 import { CategoryOptionModel, OptionModel, ProgramStageModel } from "../../models/dhis/metadata";
 import { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
@@ -435,11 +435,13 @@ export const buildDataElementFilterForProgram = async (
     nestedId: string,
     mapping: MetadataMappingDictionary
 ): Promise<string[] | undefined> => {
-    const programModel = d2ModelFactory(api, "eventPrograms");
+    const mappingType = EventProgramModel.getMappingType();
+    if (!mappingType) return undefined;
+
     const originProgramId = nestedId.split("-")[0];
     const { mappedId } = _.get(mapping, ["eventPrograms", originProgramId]) ?? {};
 
     if (!mappedId || mappedId === EXCLUDED_KEY) return undefined;
-    const validIds = await getValidIds(api, programModel, mappedId);
+    const validIds = await getValidIds(api, EventProgramModel, mappedId);
     return [...validIds, mappedId];
 };

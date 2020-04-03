@@ -55,6 +55,7 @@ export class ProgramStageMappedModel extends ProgramStageModel {
 }
 
 export class AggregatedDataElementModel extends DataElementModel {
+    protected static metadataType = "aggregatedDataElements";
     protected static mappingType = "aggregatedDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
@@ -79,6 +80,7 @@ export class DataSetWithDataElementsModel extends DataSetModel {
 }
 
 export class ProgramDataElementModel extends DataElementModel {
+    protected static metadataType = "programDataElements";
     protected static mappingType = "programDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
@@ -87,6 +89,7 @@ export class ProgramDataElementModel extends DataElementModel {
 }
 
 export class EventProgramModel extends ProgramModel {
+    protected static metadataType = "eventPrograms";
     protected static mappingType = "eventPrograms";
     protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
 }
