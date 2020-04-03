@@ -252,7 +252,7 @@ export class AggregatedSync extends GenericSync {
         if (!enableAggregation) return [];
 
         const result = await promiseMap(
-            getAggregatedOptions(mapping, categoryOptionCombos),
+            await getAggregatedOptions(this.api, mapping, categoryOptionCombos),
             async ({ dataElement, categoryOptions, category, mappedOptionCombo }) => {
                 const { dataValues } = await getAnalyticsData({
                     api: this.api,

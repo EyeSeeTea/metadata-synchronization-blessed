@@ -20,7 +20,6 @@ interface CombinedMetadata {
         id: string;
         name: string;
         categories: {
-            id: string;
             categoryOptions: {
                 id: string;
                 name: string;
@@ -77,7 +76,6 @@ const getFieldsByModel = (model: typeof D2Model) => {
                     id: true,
                     name: true,
                     categories: {
-                        id: true,
                         categoryOptions: { id: true, name: true, shortName: true, code: true },
                     },
                 },
@@ -133,7 +131,6 @@ export const autoMap = async ({
     originModel,
     destinationModel,
     selectedItemId,
-    defaultItem,
     defaultValue,
     filter,
 }: {
@@ -142,7 +139,6 @@ export const autoMap = async ({
     originModel: typeof D2Model;
     destinationModel: typeof D2Model;
     selectedItemId: string;
-    defaultItem?: CombinedMetadata;
     defaultValue?: string;
     filter?: string[];
 }): Promise<MetadataMapping[]> => {
@@ -191,17 +187,7 @@ export const autoMap = async ({
         candidates.push({ id: defaultValue, code: defaultValue });
     }
 
-    const additionalProps = _.omit(defaultItem, [
-        "id",
-        "path",
-        "name",
-        "shortName",
-        "code",
-        "level",
-    ]);
-
     return _.sortBy(candidates, ["level"]).map(({ id, path, name, code, level }) => ({
-        ...additionalProps,
         mappedId: path ?? id,
         mappedName: name,
         mappedCode: code,
@@ -232,7 +218,6 @@ const autoMapCollection = async (
             originModel: model,
             destinationModel: model,
             selectedItemId: item.id,
-            defaultItem: item,
             defaultValue: EXCLUDED_KEY,
             filter,
         });
@@ -249,9 +234,7 @@ const autoMapCollection = async (
 
 const getCategoryOptions = (object: CombinedMetadata) => {
     return _.flatten(
-        object.categoryCombo?.categories.map(({ id: category, categoryOptions }) =>
-            categoryOptions.map(option => ({ ...option, category }))
-        )
+        object.categoryCombo?.categories.map(({ categoryOptions }) => categoryOptions)
     );
 };
 
