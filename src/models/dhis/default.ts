@@ -29,7 +29,7 @@ export abstract class D2Model {
     protected static modelFilters: any = {};
     protected static childrenKeys: string[] | undefined = undefined;
     protected static mappingType: string | undefined;
-    protected static isGlobalMapping: boolean = false;
+    protected static isGlobalMapping = false;
 
     public static getD2Model(d2: D2): ModelDefinition {
         return d2.models[this.collectionName];
