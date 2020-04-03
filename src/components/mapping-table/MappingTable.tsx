@@ -71,7 +71,6 @@ export interface MappingTableProps {
     onChangeMapping(mapping: MetadataMappingDictionary): Promise<void>;
     onApplyGlobalMapping(type: string, id: string, mapping: MetadataMapping): Promise<void>;
     isChildrenMapping?: boolean;
-    isGlobalMapping?: boolean;
     mappingPath?: string[];
 }
 
@@ -84,7 +83,6 @@ export default function MappingTable({
     onChangeMapping,
     onApplyGlobalMapping,
     isChildrenMapping = false,
-    isGlobalMapping = false,
     mappingPath,
 }: MappingTableProps) {
     const api = useD2Api();
@@ -151,7 +149,7 @@ export default function MappingTable({
                             });
                             _.set(newMapping, [mappingType, id], {
                                 ...mapping,
-                                global: isGlobalMapping,
+                                global: row.model.getIsGlobalMapping(),
                                 ...overrides,
                             });
                         }
@@ -166,17 +164,7 @@ export default function MappingTable({
             }
             loading.reset();
         },
-        [
-            api,
-            instanceApi,
-            snackbar,
-            loading,
-            mapping,
-            isChildrenMapping,
-            isGlobalMapping,
-            onChangeMapping,
-            rows,
-        ]
+        [api, instanceApi, snackbar, loading, mapping, isChildrenMapping, onChangeMapping, rows]
     );
 
     const makeMappingGlobal = useCallback(
@@ -691,6 +679,7 @@ export default function MappingTable({
                 onClick: validateMapping,
                 icon: <Icon>find_replace</Icon>,
                 isActive: (selected: MetadataType[]) => {
+                    const isGlobalMapping = _.some(selected, row => row.model.getIsGlobalMapping());
                     return _(selected)
                         .map(getMappedItem)
                         .some(({ mappedId, global }) => !!mappedId && (isGlobalMapping || !global));
@@ -752,7 +741,6 @@ export default function MappingTable({
             openRelatedMapping,
             getMappedItem,
             isChildrenMapping,
-            isGlobalMapping,
             model,
             rows,
         ]

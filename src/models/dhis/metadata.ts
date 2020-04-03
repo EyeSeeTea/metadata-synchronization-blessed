@@ -14,7 +14,6 @@ export class OrganisationUnitModel extends D2Model {
     protected static collectionName = "organisationUnits" as const;
     protected static groupFilterName = "organisationUnitGroups" as const;
     protected static levelFilterName = "organisationUnitLevels" as const;
-    protected static mappingType = "organisationUnits";
 
     protected static excludeRules = ["legendSets", "dataSets", "programs", "users"];
     protected static includeRules = [
@@ -183,7 +182,6 @@ export class CategoryOptionModel extends D2Model {
 export class CategoryComboModel extends D2Model {
     protected static metadataType = "categoryCombo";
     protected static collectionName = "categoryCombos" as const;
-    protected static mappingType = "categoryCombos";
 }
 
 export class ProgramModel extends D2Model {
@@ -365,7 +363,6 @@ export class ValidationRuleGroupModel extends D2Model {
 export class DashboardModel extends D2Model {
     protected static metadataType = "dashboard";
     protected static collectionName = "dashboards" as const;
-    //protected static groupFilterName = "indicatorGroups" as const;
 
     protected static excludeRules = [];
     protected static includeRules = [
