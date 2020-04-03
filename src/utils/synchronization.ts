@@ -425,7 +425,7 @@ export async function getAnalyticsData({
 }
 
 export const getDefaultIds = memoize(
-    async (api: D2Api) => {
+    async (api: D2Api, filter?: string) => {
         const response = (await api
             .get("/metadata", {
                 filter: "code:eq:default",
@@ -435,7 +435,9 @@ export const getDefaultIds = memoize(
             [key: string]: { id: string }[];
         };
 
-        return _(response)
+        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
+
+        return _(metadata)
             .omit(["system"])
             .values()
             .flatten()

@@ -5,7 +5,7 @@ import { EventProgramModel } from "../../models/dhis/mapping";
 import { CategoryOptionModel, OptionModel, ProgramStageModel } from "../../models/dhis/metadata";
 import { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
-import { cleanOrgUnitPath } from "../../utils/synchronization";
+import { cleanOrgUnitPath, getDefaultIds } from "../../utils/synchronization";
 
 export const EXCLUDED_KEY = "DISABLED";
 
@@ -416,10 +416,11 @@ export const getValidIds = async (
     const options = getOptions(combinedMetadata[0]);
     const programStages = getProgramStages(combinedMetadata[0]);
     const programStageDataElements = getProgramStageDataElements(combinedMetadata[0]);
+    const defaultValues = await getDefaultIds(api);
 
-    return _.union(categoryOptions, options, programStages, programStageDataElements).map(
-        ({ id }) => id
-    );
+    return _.union(categoryOptions, options, programStages, programStageDataElements)
+        .map(({ id }) => id)
+        .concat(...defaultValues);
 };
 
 export const getChildrenRows = (rows: MetadataType[], model: typeof D2Model): MetadataType[] => {
