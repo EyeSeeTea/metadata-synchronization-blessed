@@ -9,15 +9,13 @@ import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
+    GlobalCategoryComboModel,
+    GlobalCategoryOptionModel,
+    GlobalDataElementModel,
+    GlobalOptionModel,
     IndicatorMappedModel,
-    ProgramDataElementModel,
-} from "../../models/complexModels";
-import {
-    CategoryComboModel,
-    CategoryOptionModel,
-    OptionModel,
-    OrganisationUnitModel,
-} from "../../models/d2Model";
+    OrganisationUnitMappedModel,
+} from "../../models/dhis/mapping";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
@@ -26,22 +24,23 @@ const config = {
     aggregated: {
         title: i18n.t("Aggregated mapping"),
         models: [AggregatedDataElementModel, IndicatorMappedModel],
-        isGlobalMapping: false,
     },
     tracker: {
         title: i18n.t("Program (events) mapping"),
         models: [EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel],
-        isGlobalMapping: false,
     },
     orgUnit: {
         title: i18n.t("Organisation unit mapping"),
-        models: [OrganisationUnitModel],
-        isGlobalMapping: false,
+        models: [OrganisationUnitMappedModel],
     },
     global: {
         title: i18n.t("Global mapping"),
-        models: [CategoryOptionModel, CategoryComboModel, OptionModel, ProgramDataElementModel],
-        isGlobalMapping: true,
+        models: [
+            GlobalCategoryOptionModel,
+            GlobalCategoryComboModel,
+            GlobalOptionModel,
+            GlobalDataElementModel,
+        ],
     },
 };
 
@@ -55,7 +54,7 @@ export default function InstanceMappingPage() {
     const api = useD2Api();
 
     const { id, section } = useParams() as InstanceMappingParams;
-    const { models, title: sectionTitle, isGlobalMapping } = config[section];
+    const { models, title: sectionTitle } = config[section];
 
     const [instance, setInstance] = useState<Instance>();
 
@@ -98,7 +97,6 @@ export default function InstanceMappingPage() {
                     globalMapping={instance.metadataMapping}
                     onChangeMapping={onChangeMapping}
                     onApplyGlobalMapping={onApplyGlobalMapping}
-                    isGlobalMapping={isGlobalMapping}
                 />
             )}
         </React.Fragment>

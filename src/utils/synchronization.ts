@@ -425,7 +425,7 @@ export async function getAnalyticsData({
 }
 
 export const getDefaultIds = memoize(
-    async (api: D2Api) => {
+    async (api: D2Api, filter?: string) => {
         const response = (await api
             .get("/metadata", {
                 filter: "code:eq:default",
@@ -435,7 +435,9 @@ export const getDefaultIds = memoize(
             [key: string]: { id: string }[];
         };
 
-        return _(response)
+        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
+
+        return _(metadata)
             .omit(["system"])
             .values()
             .flatten()
@@ -464,15 +466,31 @@ export const getCategoryOptionCombos = memoize(
     { serializer: (api: D2Api) => api.baseUrl }
 );
 
+export const getAllDimensions = memoize(
+    async (api: D2Api) => {
+        const { dimensions } = await api
+            .get<{ dimensions: Array<{ id: string }> }>("/dimensions", {
+                paging: false,
+                fields: "id",
+            })
+            .getData();
+
+        return dimensions.map(({ id }) => id);
+    },
+    { serializer: (api: D2Api) => api.baseUrl }
+);
+
 /**
  * Given all the aggregatedDataElements compile a list of dataElements
  * that have aggregation for their category options
  * @param MetadataMappingDictionary
  */
-export const getAggregatedOptions = (
+export const getAggregatedOptions = async (
+    api: D2Api,
     { aggregatedDataElements }: MetadataMappingDictionary,
     categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
-): CategoryOptionAggregationBuilder[] => {
+): Promise<CategoryOptionAggregationBuilder[]> => {
+    const dimensions = await getAllDimensions(api);
     const findOptionCombo = (mappedOption: string, mappedCombo?: string) =>
         categoryOptionCombos.find(
             ({ categoryCombo, categoryOptions }) =>
@@ -480,23 +498,21 @@ export const getAggregatedOptions = (
                 categoryOptions?.map(({ id }) => id).includes(mappedOption)
         )?.id ?? mappedOption;
 
-    return _.transform(
+    const validOptions = _.transform(
         aggregatedDataElements,
         (result, { mapping = {} }, dataElement) => {
             const { categoryOptions, categoryCombos } = mapping;
 
             const builders = _(categoryOptions)
-                .mapValues(({ mappedId = "DISABLED", category }, categoryOption) => ({
+                .mapValues(({ mappedId = "DISABLED" }, categoryOption) => ({
                     categoryOption,
                     mappedId,
-                    category,
                 }))
                 .values()
                 .groupBy(({ mappedId }) => mappedId)
                 .pickBy((values, mappedId) => values.length > 1 && mappedId !== "DISABLED")
                 .mapValues((values = [], mappedCategoryOption) => ({
                     dataElement,
-                    category: _.toString(values[0].category),
                     categoryOptions: values.map(({ categoryOption }) => categoryOption),
                     mappedOptionCombo: findOptionCombo(
                         mappedCategoryOption,
@@ -507,8 +523,14 @@ export const getAggregatedOptions = (
                 .value();
             result.push(...builders);
         },
-        [] as CategoryOptionAggregationBuilder[]
+        [] as Omit<CategoryOptionAggregationBuilder, "category">[]
     );
+
+    const result = _.flatten(
+        dimensions.map(category => validOptions.map(item => ({ ...item, category })))
+    );
+
+    return result;
 };
 
 export const getRootOrgUnit = memoize(

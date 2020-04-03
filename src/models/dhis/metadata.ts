@@ -1,121 +1,13 @@
-import { D2Api, D2ModelSchemas, Model } from "d2-api";
-import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
-import _ from "lodash";
-import { D2, ModelDefinition } from "../types/d2";
 import {
-    d2BaseModelColumns,
-    d2BaseModelDetails,
-    d2BaseModelFields,
     dataElementGroupFields,
     dataElementGroupSetFields,
     dataSetFields,
-    MetadataType,
     organisationUnitFields,
     organisationUnitsColumns,
     organisationUnitsDetails,
     programFields,
-} from "../utils/d2";
-
-export abstract class D2Model {
-    // Metadata Type should be defined on subclasses
-    protected static metadataType: string;
-    protected static collectionName: keyof D2ModelSchemas;
-    protected static mappingType: string;
-    protected static groupFilterName: keyof D2ModelSchemas;
-    protected static levelFilterName: keyof D2ModelSchemas;
-    protected static modelName: string | undefined;
-
-    protected static excludeRules: string[] = [];
-    protected static includeRules: string[] = [];
-
-    // Other static properties can be optionally overridden on subclasses
-    protected static columns = d2BaseModelColumns;
-    protected static details = d2BaseModelDetails;
-    protected static fields = d2BaseModelFields;
-    protected static initialSorting = ["name", "asc"];
-    protected static modelTransform: Function = (objects: MetadataType[]) => objects;
-    protected static modelFilters: any = {};
-    protected static childrenKeys: string[] | undefined = undefined;
-
-    public static getD2Model(d2: D2): ModelDefinition {
-        return d2.models[this.collectionName];
-    }
-
-    public static getApiModel(api: D2Api): InstanceType<typeof Model> {
-        const modelCollection = api.models as {
-            [ModelName in keyof D2ModelSchemas]: Model<ModelName>;
-        };
-        return modelCollection[this.collectionName];
-    }
-
-    public static getModelName(d2: D2): string {
-        return this.modelName ?? this.getD2Model(d2)?.displayName ?? "Unknown model";
-    }
-
-    public static getApiModelTransform(): (objects: MetadataType[]) => MetadataType[] {
-        return (objects: MetadataType[]) =>
-            this.modelTransform(objects).map(
-                ({ __type__, __mappingType__, ...object }: MetadataType) => ({
-                    ...object,
-                    __type__: __type__ ?? this.collectionName,
-                    __mappingType__: __mappingType__ ?? this.mappingType,
-                })
-            );
-    }
-
-    // TODO: This should be typed (not priority)
-    public static getApiModelFilters(): any {
-        return this.modelFilters;
-    }
-
-    public static getMetadataType(): string {
-        return this.metadataType;
-    }
-
-    public static getCollectionName(): keyof D2ModelSchemas {
-        return this.collectionName;
-    }
-
-    public static getMappingType(): string {
-        return this.mappingType ?? this.collectionName;
-    }
-
-    public static getExcludeRules(): string[][] {
-        return this.excludeRules.map(_.toPath);
-    }
-
-    public static getIncludeRules(): string[][] {
-        return this.includeRules.map(_.toPath);
-    }
-
-    public static getColumns(): TableColumn<MetadataType>[] {
-        return this.columns;
-    }
-
-    public static getDetails(): ObjectsTableDetailField<MetadataType>[] {
-        return this.details;
-    }
-
-    public static getFields(): { [key: string]: true } {
-        return this.fields;
-    }
-
-    public static getInitialSorting(): string[] {
-        return this.initialSorting;
-    }
-
-    public static getGroupFilterName(): keyof D2ModelSchemas {
-        return this.groupFilterName;
-    }
-
-    public static getLevelFilterName(): keyof D2ModelSchemas {
-        return this.levelFilterName;
-    }
-
-    public static getChildrenKeys(): string[] | undefined {
-        return this.childrenKeys;
-    }
-}
+} from "../../utils/d2";
+import { D2Model } from "./default";
 
 export class OrganisationUnitModel extends D2Model {
     protected static metadataType = "organisationUnit";
@@ -277,6 +169,11 @@ export class DataSetModel extends D2Model {
     ];
 }
 
+export class CategoryModel extends D2Model {
+    protected static metadataType = "category";
+    protected static collectionName = "categories" as const;
+}
+
 export class CategoryOptionModel extends D2Model {
     protected static metadataType = "categoryOption";
     protected static collectionName = "categoryOptions" as const;
@@ -338,6 +235,11 @@ export class ProgramModel extends D2Model {
 export class ProgramStageModel extends D2Model {
     protected static metadataType = "programStage";
     protected static collectionName = "programStages" as const;
+}
+
+export class OptionSetModel extends D2Model {
+    protected static metadataType = "optionSet";
+    protected static collectionName = "optionSets" as const;
 }
 
 export class OptionModel extends D2Model {
@@ -461,7 +363,6 @@ export class ValidationRuleGroupModel extends D2Model {
 export class DashboardModel extends D2Model {
     protected static metadataType = "dashboard";
     protected static collectionName = "dashboards" as const;
-    //protected static groupFilterName = "indicatorGroups" as const;
 
     protected static excludeRules = [];
     protected static includeRules = [
@@ -487,11 +388,4 @@ export class UserGroupModel extends D2Model {
 export class DataApprovalWorkflowModel extends D2Model {
     protected static metadataType = "dataApprovalWorkflow";
     protected static collectionName = "dataApprovalWorkflows" as const;
-}
-
-export function defaultModel(pascalCaseModelName: string): any {
-    return class DefaultModel extends D2Model {
-        protected static metadataType = pascalCaseModelName;
-        protected static collectionName = pascalCaseModelName as keyof D2ModelSchemas;
-    };
 }

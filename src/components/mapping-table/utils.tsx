@@ -1,10 +1,11 @@
 import { D2Api } from "d2-api";
 import _ from "lodash";
-import { CategoryOptionModel, D2Model, OptionModel, ProgramStageModel } from "../../models/d2Model";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
+import { D2Model } from "../../models/dhis/default";
+import { EventProgramModel } from "../../models/dhis/mapping";
+import { CategoryOptionModel, OptionModel, ProgramStageModel } from "../../models/dhis/metadata";
 import { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
-import { cleanOrgUnitPath } from "../../utils/synchronization";
+import { cleanOrgUnitPath, getDefaultIds } from "../../utils/synchronization";
 
 export const EXCLUDED_KEY = "DISABLED";
 
@@ -19,7 +20,6 @@ interface CombinedMetadata {
         id: string;
         name: string;
         categories: {
-            id: string;
             categoryOptions: {
                 id: string;
                 name: string;
@@ -76,7 +76,6 @@ const getFieldsByModel = (model: typeof D2Model) => {
                     id: true,
                     name: true,
                     categories: {
-                        id: true,
                         categoryOptions: { id: true, name: true, shortName: true, code: true },
                     },
                 },
@@ -132,7 +131,6 @@ export const autoMap = async ({
     originModel,
     destinationModel,
     selectedItemId,
-    defaultItem,
     defaultValue,
     filter,
 }: {
@@ -141,7 +139,6 @@ export const autoMap = async ({
     originModel: typeof D2Model;
     destinationModel: typeof D2Model;
     selectedItemId: string;
-    defaultItem?: CombinedMetadata;
     defaultValue?: string;
     filter?: string[];
 }): Promise<MetadataMapping[]> => {
@@ -190,17 +187,7 @@ export const autoMap = async ({
         candidates.push({ id: defaultValue, code: defaultValue });
     }
 
-    const additionalProps = _.omit(defaultItem, [
-        "id",
-        "path",
-        "name",
-        "shortName",
-        "code",
-        "level",
-    ]);
-
-    return candidates.map(({ id, path, name, code, level }) => ({
-        ...additionalProps,
+    return _.sortBy(candidates, ["level"]).map(({ id, path, name, code, level }) => ({
         mappedId: path ?? id,
         mappedName: name,
         mappedCode: code,
@@ -231,7 +218,6 @@ const autoMapCollection = async (
             originModel: model,
             destinationModel: model,
             selectedItemId: item.id,
-            defaultItem: item,
             defaultValue: EXCLUDED_KEY,
             filter,
         });
@@ -248,9 +234,7 @@ const autoMapCollection = async (
 
 const getCategoryOptions = (object: CombinedMetadata) => {
     return _.flatten(
-        object.categoryCombo?.categories.map(({ id: category, categoryOptions }) =>
-            categoryOptions.map(option => ({ ...option, category }))
-        )
+        object.categoryCombo?.categories.map(({ categoryOptions }) => categoryOptions)
     );
 };
 
@@ -415,20 +399,11 @@ export const getValidIds = async (
     const options = getOptions(combinedMetadata[0]);
     const programStages = getProgramStages(combinedMetadata[0]);
     const programStageDataElements = getProgramStageDataElements(combinedMetadata[0]);
+    const defaultValues = await getDefaultIds(api);
 
-    return _.union(categoryOptions, options, programStages, programStageDataElements).map(
-        ({ id }) => id
-    );
-};
-
-export const getTypeFromRow = (object?: MetadataType, defaultValue?: string) => {
-    const { __type__ } = object ?? {};
-    return __type__ ?? defaultValue ?? "";
-};
-
-export const getMappingTypeFromRow = (object?: MetadataType, defaultValue?: string) => {
-    const { __mappingType__ } = object ?? {};
-    return __mappingType__ ?? getTypeFromRow(object, defaultValue);
+    return _.union(categoryOptions, options, programStages, programStageDataElements)
+        .map(({ id }) => id)
+        .concat(...defaultValues);
 };
 
 export const getChildrenRows = (rows: MetadataType[], model: typeof D2Model): MetadataType[] => {
@@ -444,11 +419,13 @@ export const buildDataElementFilterForProgram = async (
     nestedId: string,
     mapping: MetadataMappingDictionary
 ): Promise<string[] | undefined> => {
-    const programModel = d2ModelFactory(api, "eventPrograms");
+    const mappingType = EventProgramModel.getMappingType();
+    if (!mappingType) return undefined;
+
     const originProgramId = nestedId.split("-")[0];
     const { mappedId } = _.get(mapping, ["eventPrograms", originProgramId]) ?? {};
 
     if (!mappedId || mappedId === EXCLUDED_KEY) return undefined;
-    const validIds = await getValidIds(api, programModel, mappedId);
+    const validIds = await getValidIds(api, EventProgramModel, mappedId);
     return [...validIds, mappedId];
 };

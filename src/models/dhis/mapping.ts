@@ -1,21 +1,61 @@
 import i18n from "@dhis2/d2-i18n";
-import { D2DataSetSchema, D2ProgramSchema, SelectedPick } from "d2-api";
+import {
+    D2CategoryOptionSchema,
+    D2DataSetSchema,
+    D2OptionSchema,
+    D2ProgramSchema,
+    SelectedPick,
+} from "d2-api";
 import _ from "lodash";
 import {
+    categoryOptionFields,
     dataElementFields,
     dataSetFields,
+    optionFields,
     programFieldsWithDataElements,
     programFieldsWithIndicators,
-} from "../utils/d2";
+} from "../../utils/d2";
 import {
+    CategoryComboModel,
+    CategoryModel,
+    CategoryOptionModel,
     DataElementModel,
     DataSetModel,
     IndicatorModel,
+    OptionModel,
+    OptionSetModel,
+    OrganisationUnitModel,
     ProgramIndicatorModel,
     ProgramModel,
-} from "./d2Model";
+    ProgramStageModel,
+} from "./metadata";
+
+export class CategoryOptionMappedModel extends CategoryOptionModel {
+    protected static mappingType = "categoryOptions";
+}
+
+export class IndicatorMappedModel extends IndicatorModel {
+    protected static mappingType = "aggregatedDataElements";
+}
+
+export class OptionMappedModel extends OptionModel {
+    protected static mappingType = "options";
+}
+
+export class OrganisationUnitMappedModel extends OrganisationUnitModel {
+    protected static mappingType = "organisationUnits";
+}
+
+export class ProgramIndicatorMappedModel extends ProgramIndicatorModel {
+    protected static mappingType = "aggregatedDataElements";
+}
+
+export class ProgramStageMappedModel extends ProgramStageModel {
+    protected static mappingType = "programStages";
+}
 
 export class AggregatedDataElementModel extends DataElementModel {
+    protected static metadataType = "aggregatedDataElements";
     protected static mappingType = "aggregatedDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
@@ -33,14 +73,14 @@ export class DataSetWithDataElementsModel extends DataSetModel {
             ...rest,
             dataElements: dataSetElements.map(({ dataElement }) => ({
                 ...dataElement,
-                __type__: AggregatedDataElementModel.getCollectionName(),
-                __mappingType__: AggregatedDataElementModel.getMappingType(),
+                model: AggregatedDataElementModel,
             })),
         }));
     };
 }
 
 export class ProgramDataElementModel extends DataElementModel {
+    protected static metadataType = "programDataElements";
     protected static mappingType = "programDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
@@ -49,6 +89,7 @@ export class ProgramDataElementModel extends DataElementModel {
 }
 
 export class EventProgramModel extends ProgramModel {
+    protected static metadataType = "eventPrograms";
     protected static mappingType = "eventPrograms";
     protected static modelFilters = { programType: { eq: "WITHOUT_REGISTRATION" } };
 }
@@ -72,8 +113,7 @@ export class EventProgramWithDataElementsModel extends EventProgramModel {
                             .map(({ dataElement }) => ({
                                 ...dataElement,
                                 id: `${program.id}-${programStageId}-${dataElement.id}`,
-                                __type__: ProgramDataElementModel.getCollectionName(),
-                                __mappingType__: ProgramDataElementModel.getMappingType(),
+                                model: ProgramDataElementModel,
                                 displayName:
                                     program.programStages.length > 1
                                         ? `[${displayName}] ${dataElement.displayName}`
@@ -98,13 +138,69 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
             ...program,
             programIndicators: programIndicators.map(programIndicator => ({
                 ...programIndicator,
-                __type__: ProgramIndicatorModel.getCollectionName(),
-                __mappingType__: AggregatedDataElementModel.getMappingType(),
+                model: ProgramIndicatorMappedModel,
             })),
         }));
     };
 }
 
-export class IndicatorMappedModel extends IndicatorModel {
-    protected static mappingType = AggregatedDataElementModel.getMappingType();
+export class GlobalCategoryOptionModel extends CategoryOptionModel {
+    protected static fields = categoryOptionFields;
+    protected static childrenKeys = ["categoryOptions"];
+    protected static mappingType = "categoryOptions";
+    protected static isGlobalMapping = true;
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2CategoryOptionSchema, typeof categoryOptionFields>[]
+    ) => {
+        return _(objects)
+            .map(({ categories }) => categories)
+            .flatten()
+            .uniqBy("id")
+            .map(category => ({
+                ...category,
+                model: CategoryModel,
+                categoryOptions: objects
+                    .filter(({ categories }) => _.find(categories, { id: category.id }))
+                    .map(option => ({
+                        ...option,
+                        model: GlobalCategoryOptionModel,
+                    })),
+            }))
+            .value();
+    };
+}
+
+export class GlobalCategoryComboModel extends CategoryComboModel {
+    protected static mappingType = "categoryCombos";
+    protected static isGlobalMapping = true;
+}
+
+export class GlobalOptionModel extends OptionModel {
+    protected static fields = optionFields;
+    protected static childrenKeys = ["options"];
+    protected static mappingType = "options";
+    protected static isGlobalMapping = true;
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2OptionSchema, typeof optionFields>[]
+    ) => {
+        const childrenRows = _.groupBy(objects, "optionSet.id");
+
+        return _.uniqBy(
+            objects.map(({ optionSet }) => optionSet),
+            "id"
+        ).map(optionSet => ({
+            ...optionSet,
+            model: OptionSetModel,
+            options: childrenRows[optionSet.id].map(option => ({
+                ...option,
+                model: GlobalOptionModel,
+            })),
+        }));
+    };
+}
+
+export class GlobalDataElementModel extends ProgramDataElementModel {
+    protected static isGlobalMapping = true;
 }

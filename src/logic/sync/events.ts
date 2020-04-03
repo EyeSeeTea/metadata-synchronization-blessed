@@ -15,6 +15,7 @@ import {
     cleanOrgUnitPath,
     getAnalyticsData,
     getCategoryOptionCombos,
+    getDefaultIds,
     getEventsData,
     mapCategoryOptionCombo,
     mapOptionValue,
@@ -124,6 +125,7 @@ export class EventsSync extends GenericSync {
         const { events: oldEvents } = payload;
         const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
+        const defaultCategoryOptionCombos = await getDefaultIds(this.api, "categoryOptionCombos");
 
         const events = oldEvents
             .map(dataValue =>
@@ -131,7 +133,8 @@ export class EventsSync extends GenericSync {
                     dataValue,
                     instance.metadataMapping,
                     originCategoryOptionCombos,
-                    destinationCategoryOptionCombos
+                    destinationCategoryOptionCombos,
+                    defaultCategoryOptionCombos[0]
                 )
             )
             .filter(this.isDisabledEvent);
@@ -143,7 +146,8 @@ export class EventsSync extends GenericSync {
         { orgUnit, program, programStage, dataValues, attributeOptionCombo, ...rest }: ProgramEvent,
         globalMapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
-        destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+        destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
+        defaultCategoryOptionCombo: string
     ): ProgramEvent {
         const { organisationUnits = {}, eventPrograms = {} } = globalMapping;
         const { mappedId: mappedProgram = program, mapping: innerMapping = {} } =
@@ -151,14 +155,12 @@ export class EventsSync extends GenericSync {
         const { programStages = {} } = innerMapping;
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedProgramStage = programStages[programStage]?.mappedId ?? programStage;
-        const mappedCategory = attributeOptionCombo
-            ? mapCategoryOptionCombo(
-                  attributeOptionCombo,
-                  [innerMapping, globalMapping],
-                  originCategoryOptionCombos,
-                  destinationCategoryOptionCombos
-              )
-            : undefined;
+        const mappedCategory = mapCategoryOptionCombo(
+            attributeOptionCombo ?? defaultCategoryOptionCombo,
+            [innerMapping, globalMapping],
+            originCategoryOptionCombos,
+            destinationCategoryOptionCombos
+        );
 
         return _.omit(
             {
