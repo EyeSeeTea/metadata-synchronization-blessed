@@ -624,14 +624,18 @@ export default function MappingTable({
 
     const addToSelection = useCallback(
         (selection: string[]) => {
-            const newSelection = _(selection)
+            const ids = _(selection)
                 .map(id => _.find(rows, ["id", id]))
                 .compact()
                 .filter(row => !!row.model.getMappingType())
                 .map(({ id }) => id)
                 .value();
 
-            setSelectedIds(prevSelection => _.uniq([...prevSelection, ...newSelection]));
+            setSelectedIds(prevSelection => {
+                const oldSelection = _.difference(prevSelection, ids);
+                const newSelection = _.difference(ids, prevSelection);
+                return _.uniq([...oldSelection, ...newSelection]);
+            });
         },
         [rows]
     );
