@@ -7,13 +7,13 @@ import MappingTable from "../../components/mapping-table/MappingTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
     AggregatedDataElementModel,
-    CategoryComboGlobalModel,
-    CategoryOptionGlobalModel,
-    DataElementGlobalModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
+    GlobalCategoryComboModel,
+    GlobalCategoryOptionModel,
+    GlobalDataElementModel,
+    GlobalOptionModel,
     IndicatorMappedModel,
-    OptionGlobalModel,
     OrganisationUnitMappedModel,
 } from "../../models/dhis/mapping";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
@@ -36,10 +36,10 @@ const config = {
     global: {
         title: i18n.t("Global mapping"),
         models: [
-            CategoryOptionGlobalModel,
-            CategoryComboGlobalModel,
-            OptionGlobalModel,
-            DataElementGlobalModel,
+            GlobalCategoryOptionModel,
+            GlobalCategoryComboModel,
+            GlobalOptionModel,
+            GlobalDataElementModel,
         ],
     },
 };

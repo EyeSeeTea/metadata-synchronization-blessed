@@ -144,9 +144,10 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
     };
 }
 
-export class CategoryOptionGlobalModel extends CategoryOptionModel {
+export class GlobalCategoryOptionModel extends CategoryOptionModel {
     protected static fields = categoryOptionFields;
     protected static childrenKeys = ["categoryOptions"];
+    protected static mappingType = "categoryOptions";
     protected static isGlobalMapping = true;
 
     protected static modelTransform = (
@@ -163,21 +164,22 @@ export class CategoryOptionGlobalModel extends CategoryOptionModel {
                     .filter(({ categories }) => _.find(categories, { id: category.id }))
                     .map(option => ({
                         ...option,
-                        model: CategoryOptionMappedModel,
+                        model: GlobalCategoryOptionModel,
                     })),
             }))
             .value();
     };
 }
 
-export class CategoryComboGlobalModel extends CategoryComboModel {
+export class GlobalCategoryComboModel extends CategoryComboModel {
     protected static mappingType = "categoryCombos";
     protected static isGlobalMapping = true;
 }
 
-export class OptionGlobalModel extends OptionModel {
+export class GlobalOptionModel extends OptionModel {
     protected static fields = optionFields;
     protected static childrenKeys = ["options"];
+    protected static mappingType = "options";
     protected static isGlobalMapping = true;
 
     protected static modelTransform = (
@@ -193,12 +195,12 @@ export class OptionGlobalModel extends OptionModel {
             model: OptionSetModel,
             options: childrenRows[optionSet.id].map(option => ({
                 ...option,
-                model: OptionMappedModel,
+                model: GlobalOptionModel,
             })),
         }));
     };
 }
 
-export class DataElementGlobalModel extends ProgramDataElementModel {
+export class GlobalDataElementModel extends ProgramDataElementModel {
     protected static isGlobalMapping = true;
 }
