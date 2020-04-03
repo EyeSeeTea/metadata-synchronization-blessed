@@ -208,3 +208,10 @@ export type DataSyncPeriod =
     | "LAST_YEAR";
 
 export type DataSyncAggregation = "DAILY" | "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY";
+
+export interface CategoryOptionAggregationBuilder {
+    dataElement: string;
+    categoryOptions: string[];
+    mappedOptionCombo: string;
+    category: string;
+}

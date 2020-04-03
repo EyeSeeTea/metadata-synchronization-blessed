@@ -4,6 +4,7 @@ import _ from "lodash";
 import React, { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import SyncRule from "../../models/syncRule";
+import { promiseMap } from "../../utils/common";
 import { getMetadata } from "../../utils/synchronization";
 import { getValidationMessages } from "../../utils/validations";
 import { aggregatedSteps, deletedSteps, eventsSteps, metadataSteps } from "./Steps";
@@ -45,10 +46,8 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
 
     const onStepChangeRequest = async (_currentStep: WizardStep, newStep: WizardStep) => {
         const index = _(steps).findIndex(step => step.key === newStep.key);
-        const validationMessages = await Promise.all(
-            _.take(steps, index).map(({ validationKeys }) =>
-                getValidationMessages(api, syncRule, validationKeys)
-            )
+        const validationMessages = await promiseMap(_.take(steps, index), ({ validationKeys }) =>
+            getValidationMessages(api, syncRule, validationKeys)
         );
 
         return _.flatten(validationMessages);

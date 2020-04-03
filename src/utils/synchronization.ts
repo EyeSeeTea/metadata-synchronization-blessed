@@ -18,6 +18,7 @@ import {
 } from "../types/d2";
 import {
     AggregatedPackage,
+    CategoryOptionAggregationBuilder,
     DataSyncAggregation,
     DataSynchronizationParams,
     DataValue,
@@ -28,6 +29,7 @@ import {
     SyncRuleType,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
+import { promiseMap } from "./common";
 import { cleanToAPIChildReferenceName, cleanToModelName, getClassName } from "./d2";
 
 const blacklistedProperties = ["access"];
@@ -316,10 +318,11 @@ const aggregations = {
 };
 
 const buildPeriodsForAggregation = (
-    aggregationType: DataSyncAggregation,
+    aggregationType: DataSyncAggregation | undefined,
     startDate: Moment,
     endDate: Moment
 ): string[] => {
+    if (!aggregationType) return [];
     const { format, unit, amount } = aggregations[aggregationType];
 
     const current = startDate.clone();
@@ -365,61 +368,55 @@ export async function getAggregatedData(
         .getData();
 }
 
-export async function getAnalyticsData(
-    api: D2Api,
-    params: DataSynchronizationParams,
-    dataElements: string[],
-    indicators: string[]
-): Promise<AggregatedPackage> {
+export async function getAnalyticsData({
+    api,
+    dataParams,
+    dimensionIds,
+    filter,
+    includeCategories,
+}: {
+    api: D2Api;
+    dataParams: DataSynchronizationParams;
+    dimensionIds: string[];
+    filter?: string[];
+    includeCategories: boolean;
+}): Promise<AggregatedPackage> {
     const {
         orgUnitPaths = [],
         allAttributeCategoryOptions,
         attributeCategoryOptions,
         aggregationType,
-    } = params;
-    const [startDate, endDate] = buildPeriodFromParams(params);
-
+    } = dataParams;
+    const [startDate, endDate] = buildPeriodFromParams(dataParams);
+    const periods = buildPeriodsForAggregation(aggregationType, startDate, endDate);
     const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
     const attributeOptionCombo = !allAttributeCategoryOptions
         ? attributeCategoryOptions
         : undefined;
 
-    if (aggregationType) {
-        const periods = buildPeriodsForAggregation(aggregationType, startDate, endDate);
-
-        const promises = _.chunk(periods, 500).reduce((acc, period) => {
-            acc.push(
-                ...[
-                    { dimension: dataElements, includeCategories: true },
-                    { dimension: indicators, includeCategories: false },
-                ].map(({ dimension, includeCategories }) => {
-                    return dimension.length > 0
-                        ? api
-                              .get<AggregatedPackage>("/analytics/dataValueSet.json", {
-                                  dimension: _.compact([
-                                      `dx:${dimension.join(";")}`,
-                                      `pe:${period.join(";")}`,
-                                      `ou:${orgUnit.join(";")}`,
-                                      includeCategories ? `co` : undefined,
-                                      attributeOptionCombo
-                                          ? `ao:${attributeOptionCombo.join(";")}`
-                                          : "",
-                                  ]),
-                              })
-                              .getData()
-                        : Promise.resolve({ dataValues: [] });
+    if (dimensionIds.length === 0 || orgUnit.length === 0) {
+        return { dataValues: [] };
+    } else if (aggregationType) {
+        const result = await promiseMap(_.chunk(periods, 500), period => {
+            return api
+                .get<AggregatedPackage>("/analytics/dataValueSet.json", {
+                    dimension: _.compact([
+                        `dx:${dimensionIds.join(";")}`,
+                        `pe:${period.join(";")}`,
+                        `ou:${orgUnit.join(";")}`,
+                        includeCategories ? `co` : undefined,
+                        attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : undefined,
+                    ]),
+                    filter,
                 })
-            );
+                .getData();
+        });
 
-            return acc;
-        }, [] as Promise<AggregatedPackage>[]);
-
-        const result = await Promise.all(promises);
-        const dataValues = result.reduce((acc, current) => {
-            const { dataValues = [] } = current;
-            acc.push(...dataValues);
-            return acc;
-        }, [] as DataValue[]);
+        const dataValues = _(result)
+            .map(({ dataValues }) => dataValues)
+            .flatten()
+            .compact()
+            .value();
 
         return { dataValues };
     } else {
@@ -466,6 +463,53 @@ export const getCategoryOptionCombos = memoize(
     },
     { serializer: (api: D2Api) => api.baseUrl }
 );
+
+/**
+ * Given all the aggregatedDataElements compile a list of dataElements
+ * that have aggregation for their category options
+ * @param MetadataMappingDictionary
+ */
+export const getAggregatedOptions = (
+    { aggregatedDataElements }: MetadataMappingDictionary,
+    categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+): CategoryOptionAggregationBuilder[] => {
+    const findOptionCombo = (mappedOption: string, mappedCombo?: string) =>
+        categoryOptionCombos.find(
+            ({ categoryCombo, categoryOptions }) =>
+                categoryCombo?.id === mappedCombo &&
+                categoryOptions?.map(({ id }) => id).includes(mappedOption)
+        )?.id ?? mappedOption;
+
+    return _.transform(
+        aggregatedDataElements,
+        (result, { mapping = {} }, dataElement) => {
+            const { categoryOptions, categoryCombos } = mapping;
+
+            const builders = _(categoryOptions)
+                .mapValues(({ mappedId = "DISABLED", category }, categoryOption) => ({
+                    categoryOption,
+                    mappedId,
+                    category,
+                }))
+                .values()
+                .groupBy(({ mappedId }) => mappedId)
+                .pickBy((values, mappedId) => values.length > 1 && mappedId !== "DISABLED")
+                .mapValues((values = [], mappedCategoryOption) => ({
+                    dataElement,
+                    category: _.toString(values[0].category),
+                    categoryOptions: values.map(({ categoryOption }) => categoryOption),
+                    mappedOptionCombo: findOptionCombo(
+                        mappedCategoryOption,
+                        _.values(categoryCombos)[0]?.mappedId
+                    ),
+                }))
+                .values()
+                .value();
+            result.push(...builders);
+        },
+        [] as CategoryOptionAggregationBuilder[]
+    );
+};
 
 export const getRootOrgUnit = memoize(
     (api: D2Api) => {

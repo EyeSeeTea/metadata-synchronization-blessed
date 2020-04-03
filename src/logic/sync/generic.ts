@@ -17,6 +17,7 @@ import {
     SynchronizationResult,
     SyncRuleType,
 } from "../../types/synchronization";
+import { promiseMap } from "../../utils/common";
 import { getMetadata } from "../../utils/synchronization";
 import { AggregatedSync } from "./aggregated";
 import { DeletedSync } from "./deleted";
@@ -82,8 +83,8 @@ export abstract class GenericSync {
         yield { message: i18n.t("Preparing synchronization") };
 
         // Build instance list
-        const targetInstances: Instance[] = _.compact(
-            await Promise.all(targetInstanceIds.map(id => Instance.get(this.api, id)))
+        const targetInstances = _.compact(
+            await promiseMap(targetInstanceIds, id => Instance.get(this.api, id))
         );
 
         // Initialize sync report

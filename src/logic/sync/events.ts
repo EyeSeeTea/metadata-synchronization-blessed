@@ -1,8 +1,14 @@
 import { D2CategoryOptionCombo, D2Program } from "d2-api";
+import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import { EventsPackage, ProgramEvent, ProgramEventDataValue } from "../../types/synchronization";
+import {
+    DataValue,
+    EventsPackage,
+    ProgramEvent,
+    ProgramEventDataValue,
+} from "../../types/synchronization";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,
@@ -18,7 +24,6 @@ import {
 } from "../../utils/synchronization";
 import { AggregatedSync } from "./aggregated";
 import { GenericSync, SyncronizationPayload } from "./generic";
-import { generateUid } from "d2/uid";
 
 export class EventsSync extends GenericSync {
     public readonly type = "events";
@@ -49,12 +54,12 @@ export class EventsSync extends GenericSync {
         );
 
         const { dataValues: candidateDataValues = [] } = enableAggregation
-            ? await getAnalyticsData(
-                  this.api,
+            ? await getAnalyticsData({
+                  api: this.api,
                   dataParams,
-                  [],
-                  [...directIndicators, ...indicatorsByProgram]
-              )
+                  dimensionIds: [...directIndicators, ...indicatorsByProgram],
+                  includeCategories: false,
+              })
             : {};
 
         const dataValues = _.reject(candidateDataValues, ({ dataElement }) =>
@@ -65,24 +70,35 @@ export class EventsSync extends GenericSync {
     });
 
     public async postPayload(instance: Instance) {
-        const { dataParams = {} } = this.builder;
         const { events, dataValues } = await this.buildPayload();
+
+        const eventsResponse = await this.postEventsPayload(instance, events);
+        const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
+
+        return _.compact([eventsResponse, indicatorsResponse]);
+    }
+
+    private async postEventsPayload(instance: Instance, events: ProgramEvent[]) {
+        const { dataParams = {} } = this.builder;
+
+        const payload = await this.mapPayload(instance, { events });
+        console.debug("Events package", { events, payload });
+        const response = await postEventsData(instance, payload, dataParams);
+
+        return cleanDataImportResponse(response, instance, this.type);
+    }
+
+    private async postIndicatorPayload(instance: Instance, dataValues: DataValue[]) {
+        const { dataParams = {} } = this.builder;
+        const { enableAggregation } = dataParams;
+        if (!enableAggregation) return undefined;
+
         const aggregatedSync = new AggregatedSync(this.d2, this.api, this.builder);
+        const payload = await aggregatedSync.mapPayload(instance, { dataValues });
+        console.debug("Program indicator package", { dataValues, payload });
+        const response = await postAggregatedData(instance, payload, dataParams);
 
-        const mappedEvents = await this.mapPayload(instance, { events });
-        const mappedDataValues = await aggregatedSync.mapPayload(instance, { dataValues });
-        console.debug("Events package", { events, dataValues, mappedEvents, mappedDataValues });
-
-        const responseEvents = await postEventsData(instance, mappedEvents, dataParams);
-        const responseDataValues = await postAggregatedData(instance, mappedDataValues, dataParams);
-
-        const syncResultEvents = cleanDataImportResponse(responseEvents, instance, this.type);
-        const syncResultDataValues = cleanDataImportResponse(
-            responseDataValues,
-            instance,
-            aggregatedSync.type
-        );
-        return [syncResultEvents, syncResultDataValues];
+        return cleanDataImportResponse(response, instance, aggregatedSync.type);
     }
 
     public async buildDataStats() {

@@ -2,7 +2,7 @@ import i18n from "@dhis2/d2-i18n";
 import { D2ModelSchemas } from "d2-api";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import _ from "lodash";
-import { D2, Params } from "../types/d2";
+import { D2 } from "../types/d2";
 import "../utils/lodash-mixins";
 
 const include = true as true;
@@ -136,10 +136,6 @@ export const organisationUnitFields = {
     level: include,
     path: include,
 };
-
-export function cleanParams(options: Params): Params {
-    return _.omitBy(options, value => _.isArray(value) && _.isEmpty(value));
-}
 
 export function isD2Model(d2: D2, modelName: string): boolean {
     return !!d2.models[modelName];

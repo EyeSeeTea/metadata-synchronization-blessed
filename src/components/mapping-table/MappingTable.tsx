@@ -30,6 +30,7 @@ import {
     buildDataElementFilterForProgram,
     buildMapping,
     cleanNestedMappedId,
+    EXCLUDED_KEY,
     getChildrenRows,
     getMappingTypeFromRow,
     getTypeFromRow,
@@ -217,7 +218,7 @@ export default function MappingTable({
                             total: selection.length,
                         }
                     ),
-                    action: () => applyMapping([{ selection, mappedId: "DISABLED" }]),
+                    action: () => applyMapping([{ selection, mappedId: EXCLUDED_KEY }]),
                 });
             } else {
                 snackbar.error(i18n.t("Please select at least one item to exclude mapping"));
@@ -463,7 +464,8 @@ export default function MappingTable({
         (row: MetadataType): RowConfig => {
             // TODO: This should be abstracted once the client verifies all the cases this should happen
             const parentId = _.first(row.id.split("-")) ?? row.id;
-            const isParentMapped = !!_.get(mapping, ["eventPrograms", parentId, "mappedId"]);
+            const parentMapping = _.get(mapping, ["eventPrograms", parentId, "mappedId"]);
+            const isParentMapped = !!parentMapping && parentMapping !== EXCLUDED_KEY;
             const { mappedId } = getMappedItem(row);
             const mappingType = getMappingTypeFromRow(row);
             const isProgramDataElement = mappingType === ProgramDataElementModel.getMappingType();
@@ -505,7 +507,7 @@ export default function MappingTable({
                     getValue: (row: MetadataType) => {
                         const { mappedId } = getMappedItem(row);
                         const text =
-                            !!mappedId && mappedId !== "DISABLED"
+                            !!mappedId && mappedId !== EXCLUDED_KEY
                                 ? cleanOrgUnitPath(mappedId)
                                 : "-";
 
@@ -598,7 +600,7 @@ export default function MappingTable({
 
                         const notMappedStatus = !mappedId ? i18n.t("Not mapped") : undefined;
                         const disabledStatus =
-                            mappedId === "DISABLED" ? i18n.t("Excluded") : undefined;
+                            mappedId === EXCLUDED_KEY ? i18n.t("Excluded") : undefined;
                         const globalStatus = global ? i18n.t("Mapped (Global)") : i18n.t("Mapped");
 
                         return (

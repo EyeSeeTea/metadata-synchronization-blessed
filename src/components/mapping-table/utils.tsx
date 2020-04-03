@@ -6,6 +6,8 @@ import { MetadataMapping, MetadataMappingDictionary } from "../../models/instanc
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
 
+export const EXCLUDED_KEY = "DISABLED";
+
 interface CombinedMetadata {
     id: string;
     name?: string;
@@ -17,6 +19,7 @@ interface CombinedMetadata {
         id: string;
         name: string;
         categories: {
+            id: string;
             categoryOptions: {
                 id: string;
                 name: string;
@@ -73,6 +76,7 @@ const getFieldsByModel = (model: typeof D2Model) => {
                     id: true,
                     name: true,
                     categories: {
+                        id: true,
                         categoryOptions: { id: true, name: true, shortName: true, code: true },
                     },
                 },
@@ -128,6 +132,7 @@ export const autoMap = async ({
     originModel,
     destinationModel,
     selectedItemId,
+    defaultItem,
     defaultValue,
     filter,
 }: {
@@ -136,18 +141,21 @@ export const autoMap = async ({
     originModel: typeof D2Model;
     destinationModel: typeof D2Model;
     selectedItemId: string;
+    defaultItem?: CombinedMetadata;
     defaultValue?: string;
     filter?: string[];
 }): Promise<MetadataMapping[]> => {
-    const { objects: originObjects } = (await originModel
-        .getApiModel(api)
-        .get({
-            fields: { id: true, code: true, name: true, shortName: true },
-            filter: { id: { eq: cleanNestedMappedId(cleanOrgUnitPath(selectedItemId)) } },
-        })
-        .getData()) as { objects: CombinedMetadata[] };
-
-    const selectedItem = originObjects[0];
+    const selectedItem = _.first(
+        (
+            await originModel
+                .getApiModel(api)
+                .get({
+                    fields: { id: true, code: true, name: true, shortName: true },
+                    filter: { id: { eq: cleanNestedMappedId(cleanOrgUnitPath(selectedItemId)) } },
+                })
+                .getData()
+        ).objects
+    ) as CombinedMetadata | undefined;
     if (!selectedItem) return [];
 
     const { objects } = (await destinationModel
@@ -182,7 +190,17 @@ export const autoMap = async ({
         candidates.push({ id: defaultValue, code: defaultValue });
     }
 
+    const additionalProps = _.omit(defaultItem, [
+        "id",
+        "path",
+        "name",
+        "shortName",
+        "code",
+        "level",
+    ]);
+
     return candidates.map(({ id, path, name, code, level }) => ({
+        ...additionalProps,
         mappedId: path ?? id,
         mappedName: name,
         mappedCode: code,
@@ -207,21 +225,20 @@ const autoMapCollection = async (
     } = {};
 
     for (const item of originMetadata) {
-        const candidate = (
-            await autoMap({
-                api,
-                instanceApi,
-                originModel: model,
-                destinationModel: model,
-                selectedItemId: item.id,
-                defaultValue: "DISABLED",
-                filter,
-            })
-        )[0];
+        const [candidate] = await autoMap({
+            api,
+            instanceApi,
+            originModel: model,
+            destinationModel: model,
+            selectedItemId: item.id,
+            defaultItem: item,
+            defaultValue: EXCLUDED_KEY,
+            filter,
+        });
         if (item.id && candidate) {
             mapping[item.id] = {
                 ...candidate,
-                conflicts: candidate.mappedId === "DISABLED",
+                conflicts: candidate.mappedId === EXCLUDED_KEY,
             };
         }
     }
@@ -231,7 +248,9 @@ const autoMapCollection = async (
 
 const getCategoryOptions = (object: CombinedMetadata) => {
     return _.flatten(
-        object.categoryCombo?.categories.map(({ categoryOptions }) => categoryOptions)
+        object.categoryCombo?.categories.map(({ id: category, categoryOptions }) =>
+            categoryOptions.map(option => ({ ...option, category }))
+        )
     );
 };
 
@@ -259,7 +278,7 @@ const autoMapCategoryCombo = (
 ) => {
     if (originMetadata.categoryCombo) {
         const { id } = originMetadata.categoryCombo;
-        const { id: mappedId = "DISABLED", name: mappedName } =
+        const { id: mappedId = EXCLUDED_KEY, name: mappedName } =
             destinationMetadata.categoryCombo ?? {};
 
         return {
@@ -320,10 +339,10 @@ export const buildMapping = async ({
     mappedId?: string;
 }): Promise<MetadataMapping> => {
     const originMetadata = await getCombinedMetadata(api, originModel, originalId);
-    if (mappedId === "DISABLED")
+    if (mappedId === EXCLUDED_KEY)
         return {
-            mappedId: "DISABLED",
-            mappedCode: "DISABLED",
+            mappedId: EXCLUDED_KEY,
+            mappedCode: EXCLUDED_KEY,
             code: originMetadata[0]?.code,
             conflicts: false,
             global: false,
@@ -429,7 +448,7 @@ export const buildDataElementFilterForProgram = async (
     const originProgramId = nestedId.split("-")[0];
     const { mappedId } = _.get(mapping, ["eventPrograms", originProgramId]) ?? {};
 
-    if (!mappedId) return undefined;
+    if (!mappedId || mappedId === EXCLUDED_KEY) return undefined;
     const validIds = await getValidIds(api, programModel, mappedId);
     return [...validIds, mappedId];
 };

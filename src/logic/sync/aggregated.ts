@@ -9,6 +9,7 @@ import {
     cleanObjectDefault,
     cleanOrgUnitPath,
     getAggregatedData,
+    getAggregatedOptions,
     getAnalyticsData,
     getCategoryOptionCombos,
     getDefaultIds,
@@ -17,6 +18,7 @@ import {
     postAggregatedData,
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
+import { promiseMap } from "../../utils/common";
 
 export class AggregatedSync extends GenericSync {
     public readonly type = "aggregated";
@@ -112,14 +114,26 @@ export class AggregatedSync extends GenericSync {
             )
         );
 
-        const { dataValues: candidateDataValues = [] } = await getAnalyticsData(
-            this.api,
+        const { dataValues: dataElementValues = [] } = await getAnalyticsData({
+            api: this.api,
             dataParams,
-            [...dataElementIds, ...dataSetIds, ...dataElementGroupIds, ...dataElementGroupSetIds],
-            indicatorIds
-        );
+            dimensionIds: [
+                ...dataElementIds,
+                ...dataSetIds,
+                ...dataElementGroupIds,
+                ...dataElementGroupSetIds,
+            ],
+            includeCategories: true,
+        });
 
-        const dataValues = _.reject(candidateDataValues, ({ dataElement }) =>
+        const { dataValues: indicatorValues = [] } = await getAnalyticsData({
+            api: this.api,
+            dataParams,
+            dimensionIds: indicatorIds,
+            includeCategories: false,
+        });
+
+        const dataValues = _.reject([...dataElementValues, ...indicatorValues], ({ dataElement }) =>
             excludedIds.includes(dataElement)
         );
 
@@ -157,21 +171,31 @@ export class AggregatedSync extends GenericSync {
         payload: AggregatedPackage
     ): Promise<AggregatedPackage> {
         const { dataValues: oldDataValues } = payload;
+        const { metadataMapping: mapping } = instance;
+
         const defaultIds = await getDefaultIds(this.api);
         const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
+        const instanceAggregatedValues = await this.buildInstanceAggregation(
+            mapping,
+            destinationCategoryOptionCombos
+        );
 
-        const dataValues = oldDataValues
+        const dataValues = _([...instanceAggregatedValues, ...oldDataValues])
             .map(dataValue =>
                 this.buildMappedDataValue(
                     dataValue,
-                    instance.metadataMapping,
+                    mapping,
                     originCategoryOptionCombos,
                     destinationCategoryOptionCombos
                 )
             )
             .map(dataValue => cleanObjectDefault(dataValue, defaultIds))
-            .filter(this.isDisabledDataValue);
+            .filter(this.isDisabledDataValue)
+            .uniqBy(({ orgUnit, period, dataElement, categoryOptionCombo }) =>
+                [orgUnit, period, dataElement, categoryOptionCombo].join("-")
+            )
+            .value();
 
         return { dataValues };
     }
@@ -217,5 +241,34 @@ export class AggregatedSync extends GenericSync {
             ])
             .values()
             .includes("DISABLED");
+    }
+
+    private async buildInstanceAggregation(
+        mapping: MetadataMappingDictionary,
+        categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+    ): Promise<DataValue[]> {
+        const { dataParams = {} } = this.builder;
+        const { enableAggregation = false } = dataParams;
+        if (!enableAggregation) return [];
+
+        const result = await promiseMap(
+            getAggregatedOptions(mapping, categoryOptionCombos),
+            async ({ dataElement, categoryOptions, category, mappedOptionCombo }) => {
+                const { dataValues } = await getAnalyticsData({
+                    api: this.api,
+                    dataParams,
+                    dimensionIds: [dataElement],
+                    includeCategories: false,
+                    filter: [`${category}:${categoryOptions.join(";")}`],
+                });
+
+                return dataValues.map(dataValue => ({
+                    ...dataValue,
+                    categoryOptionCombo: mappedOptionCombo,
+                }));
+            }
+        );
+
+        return _.flatten(result);
     }
 }
