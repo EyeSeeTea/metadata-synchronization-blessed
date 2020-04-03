@@ -200,7 +200,7 @@ export const autoMap = async ({
         "level",
     ]);
 
-    return candidates.map(({ id, path, name, code, level }) => ({
+    return _.sortBy(candidates, ["level"]).map(({ id, path, name, code, level }) => ({
         ...additionalProps,
         mappedId: path ?? id,
         mappedName: name,
