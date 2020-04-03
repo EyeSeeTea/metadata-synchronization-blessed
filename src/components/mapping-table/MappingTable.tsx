@@ -622,8 +622,29 @@ export default function MappingTable({
         ]
     );
 
+    const addToSelection = useCallback(
+        (selection: string[]) => {
+            const newSelection = _(selection)
+                .map(id => _.find(rows, ["id", id]))
+                .compact()
+                .filter(row => !!row.model.getMappingType())
+                .map(({ id }) => id)
+                .value();
+
+            setSelectedIds(prevSelection => _.uniq([...prevSelection, ...newSelection]));
+        },
+        [rows]
+    );
+
     const actions: TableAction<MetadataType>[] = useMemo(
         () => [
+            {
+                name: "select",
+                text: "Select",
+                onClick: addToSelection,
+                isActive: () => false,
+                primary: true,
+            },
             {
                 name: "set-mapping",
                 text: i18n.t("Set mapping"),
@@ -726,6 +747,7 @@ export default function MappingTable({
             },
         ],
         [
+            addToSelection,
             disableMapping,
             openMappingDialog,
             resetMapping,
