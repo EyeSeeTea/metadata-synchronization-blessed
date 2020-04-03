@@ -790,8 +790,6 @@ export default function MappingTable({
     const closeMappingDialog = () => setMappingConfig(null);
     const closeWizard = () => setWizardConfig(null);
 
-    console.log("rows", rows);
-
     return (
         <React.Fragment>
             {!!warningDialog && (
