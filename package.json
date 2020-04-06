@@ -54,7 +54,7 @@
     "prebuild": "yarn test",
     "build": "rm -rf build/ && yarn localize && d2-manifest package.json manifest.webapp && react-scripts build && yarn run manifest && cp -r i18n icon.png build",
     "build-webapp": "yarn build && rm -f $npm_package_name.zip && cd build && zip -r ../$npm_package_name.zip *",
-    "build-scheduler": "npx ncc build src/scheduler/cli.ts -m",
+    "build-scheduler": "ncc build src/scheduler/cli.ts -m",
     "test": "jest",
     "lint": "eslint src cypress",
     "eject": "react-scripts eject",
