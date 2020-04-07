@@ -1,4 +1,5 @@
 import AggregatedSyncRuleDetailPageObject from "../support/page-objects/AggregatedSyncRuleDetailPageObject";
+import { syncRuleFixture } from "../support/utils";
 
 context("Aggregated sync rule edit", function() {
     const page = new AggregatedSyncRuleDetailPageObject(cy);
@@ -6,14 +7,8 @@ context("Aggregated sync rule edit", function() {
     beforeEach(() => {
         const stubApiResponseName = "getRules";
 
-        cy.fixture("aggregated-sync-rules.json").then(syncRules => {
+        syncRuleFixture("aggregated", stubApiResponseName, syncRules => {
             this.syncRule = syncRules[0];
-            cy.server();
-            cy.route({
-                method: "GET",
-                url: `api/dataStore/metadata-synchronization/rules`,
-                response: syncRules,
-            }).as(stubApiResponseName);
             page.open(this.syncRule.id, stubApiResponseName);
         });
     });
@@ -48,6 +43,7 @@ context("Aggregated sync rule edit", function() {
 
     it("should have the correct selected instances", () => {
         page.next()
+            .next()
             .next()
             .next()
             .next()

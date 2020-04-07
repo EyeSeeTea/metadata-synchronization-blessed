@@ -4,10 +4,11 @@ import Cryptr from "cryptr";
 import { D2Api, D2ApiDefault } from "d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
-import { D2, Response } from "../types/d2";
+import { Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import { Validation } from "../types/validations";
-import { deleteData, getData, getDataById, getPaginatedData, saveData } from "./dataStore";
+import { getDataStore, deleteData, saveData, saveDataStore, deleteDataStore } from "./dataStore";
+import { getData, getDataById, getPaginatedData } from "./dataStore";
 
 const instancesDataStoreKey = "instances";
 
@@ -22,6 +23,7 @@ export interface MetadataMapping {
     mapping?: MetadataMappingDictionary;
     conflicts?: boolean;
     global?: boolean;
+    [key: string]: unknown;
 }
 
 export interface MetadataMappingDictionary {
@@ -40,6 +42,26 @@ export interface InstanceData {
     metadataMapping: MetadataMappingDictionary;
 }
 
+type InstanceDataMain = Omit<InstanceData, "metadataMapping">;
+
+export interface InstanceDetailsData {
+    metadataMapping: MetadataMappingDictionary;
+}
+
+const mainDefaultData: InstanceDataMain = {
+    id: "",
+    name: "",
+    url: "",
+    username: "",
+    password: "",
+    description: "",
+};
+
+const initialData: InstanceData = {
+    ...mainDefaultData,
+    metadataMapping: {},
+};
+
 export default class Instance {
     private static encryptionKey: string;
 
@@ -47,15 +69,7 @@ export default class Instance {
     private readonly api: D2Api;
 
     constructor(data: InstanceData) {
-        this.data = _.pick(data, [
-            "id",
-            "name",
-            "url",
-            "username",
-            "password",
-            "description",
-            "metadataMapping",
-        ]);
+        this.data = _.pick(data, _.keys(initialData) as Array<keyof InstanceData>);
         const { url: baseUrl, username, password } = data;
         this.api = new D2ApiDefault({ baseUrl, auth: { username, password } });
     }
@@ -109,14 +123,6 @@ export default class Instance {
     }
 
     public static create(): Instance {
-        const initialData = {
-            id: "",
-            name: "",
-            url: "",
-            username: "",
-            password: "",
-            metadataMapping: {},
-        };
         return new Instance(initialData);
     }
 
@@ -125,42 +131,54 @@ export default class Instance {
         return instance.decryptPassword();
     }
 
-    public static async get(d2: D2, id: string): Promise<Instance | undefined> {
-        const data = await getDataById(d2, instancesDataStoreKey, id);
-        return data ? this.build(data) : undefined;
+    private static getDetailsKey(instanceData: InstanceData): string {
+        return instancesDataStoreKey + "-" + instanceData.id;
+    }
+
+    public static async get(api: D2Api, id: string): Promise<Instance | undefined> {
+        const instanceData = await getDataById<InstanceData>(api, instancesDataStoreKey, id);
+        if (!instanceData) return;
+        const detailsKey = this.getDetailsKey(instanceData);
+        const defaultDetails: InstanceDetailsData = { metadataMapping: {} };
+        const detailsData = await getDataStore(api, detailsKey, defaultDetails);
+        const dataWithMapping = { ...instanceData, metadataMapping: detailsData.metadataMapping };
+        return this.build(dataWithMapping);
     }
 
     public static async list(
-        d2: D2,
+        api: D2Api,
         filters: TableFilters | null,
         pagination: TablePagination | null
     ): Promise<TableList> {
-        return getPaginatedData(d2, instancesDataStoreKey, filters, pagination);
+        return getPaginatedData(api, instancesDataStoreKey, filters, pagination);
     }
 
-    public async save(d2: D2): Promise<Response> {
-        const lastInstance = await Instance.get(d2, this.id);
+    public async save(api: D2Api): Promise<Response> {
+        const lastInstance = await Instance.get(api, this.id);
+        const password = this.password || lastInstance?.password;
+        if (!password) throw new Error("Attempting to save an instance without password");
 
-        const instanceWithPassword =
-            lastInstance !== undefined && this.password === ""
-                ? this.setPassword(lastInstance.password)
-                : this;
-
-        const instance = instanceWithPassword.encryptPassword();
+        const instance = this.setPassword(password).encryptPassword();
         const exists = !!instance.data.id;
         const element = exists ? instance.data : { ...instance.data, id: generateUid() };
 
-        if (exists) await instance.remove(d2);
+        if (exists) await instance.remove(api);
 
-        return saveData(d2, instancesDataStoreKey, element);
+        const detailsKey = Instance.getDetailsKey(instance);
+        const detailsData: InstanceDetailsData = { metadataMapping: instance.metadataMapping };
+        const response: Response = await toResponse(saveDataStore(api, detailsKey, detailsData));
+        const mainElement = _.pick(element, _.keys(mainDefaultData));
+        return response.status ? saveData(api, instancesDataStoreKey, mainElement) : response;
     }
 
-    public async remove(d2: D2): Promise<Response> {
-        return deleteData(d2, instancesDataStoreKey, this.data);
+    public async remove(api: D2Api): Promise<Response> {
+        const response = await deleteData(api, instancesDataStoreKey, this.data);
+        const detailsKey = Instance.getDetailsKey(this.data);
+        return response.status ? toResponse(deleteDataStore(api, detailsKey)) : response;
     }
 
-    public toObject(): Omit<InstanceData, "password"> {
-        return _.omit(this.data, ["password"]);
+    public toObject(): Omit<InstanceData, "password" | "metadataMapping"> {
+        return _.omit(this.data, ["password", "metadataMapping"]);
     }
 
     public setId(id: string): Instance {
@@ -207,10 +225,10 @@ export default class Instance {
         return new Instance({ ...this.data, password });
     }
 
-    public async validateUrlUsernameCombo(d2: D2): Promise<boolean> {
+    public async validateUrlUsernameCombo(api: D2Api): Promise<boolean> {
         const { url, username, id } = this.data;
         const combination = [url, username].join("-");
-        const instanceArray = await getData(d2, instancesDataStoreKey);
+        const instanceArray = await getData(api, instancesDataStoreKey);
         const invalidCombinations = instanceArray.filter(
             (inst: InstanceData) => [inst.url, inst.username].join("-") === combination
         );
@@ -220,7 +238,7 @@ export default class Instance {
             : !_.isEmpty(invalidCombinations);
     }
 
-    public async validate(d2: D2): Promise<Validation> {
+    public async validate(api: D2Api): Promise<Validation> {
         const { name, url, username, password } = this.data;
 
         return _.pickBy({
@@ -247,7 +265,7 @@ export default class Instance {
                           namespace: { field: "username" },
                       }
                     : null,
-                (await this.validateUrlUsernameCombo(d2))
+                (await this.validateUrlUsernameCombo(api))
                     ? {
                           key: "url_username_combo_already_exists",
                           namespace: { field: "username", other: "url" },
@@ -313,5 +331,14 @@ export default class Instance {
                 return { status: false, error };
             }
         }
+    }
+}
+
+export async function toResponse(promise: Promise<void>): Promise<Response> {
+    try {
+        await promise;
+        return { status: true };
+    } catch (error) {
+        return { status: false, error };
     }
 }

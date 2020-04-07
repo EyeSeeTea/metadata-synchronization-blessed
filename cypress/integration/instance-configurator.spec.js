@@ -1,18 +1,17 @@
-import { dataTest } from "../support/utils";
+import InstancePageObject from "../support/page-objects/common/InstancePageObject";
 
 context("Destination Settings", function() {
+    const page = new InstancePageObject(cy);
+
     beforeEach(() => {
-        cy.login("admin");
-        cy.visit("/#/instances");
-        cy.get(dataTest("headerbar-title")).contains("MetaData Synchronization");
+        page.open();
     });
 
-    it("has the correct title", function() {
-        cy.get(dataTest("page-header-title")).contains("Destination Instance Settings");
+    it("should have the correct title", function() {
+        page.assertTitle(title => title.contains("Destination Instance Settings"));
     });
 
-    it("opens a new instance page", function() {
-        cy.get(dataTest("objects-table-action-button")).click();
-        cy.get(dataTest("page-header-title")).contains("New Instance");
+    it("should have the localhost instance", function() {
+        page.findInstance("this instance (8080)");
     });
 });

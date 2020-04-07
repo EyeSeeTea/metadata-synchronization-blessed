@@ -71,6 +71,7 @@ context("Manual event sync", function() {
             .next()
             .next()
 
+            .next()
             .assertError(error => error.contains("You need to select at least one instance"));
     });
 

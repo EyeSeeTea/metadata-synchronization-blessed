@@ -19,13 +19,13 @@ import _ from "lodash";
 import moment from "moment";
 import React, { ChangeEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import i18n from "../../locales";
-import { getOrgUnitSubtree } from "../../logic/utils";
-import { D2Model, DataElementModel } from "../../models/d2Model";
+import { D2Model } from "../../models/dhis/default";
+import { DataElementModel } from "../../models/dhis/metadata";
 import { D2 } from "../../types/d2";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPaths, getRootOrgUnit } from "../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";
-import { getAllIdentifiers, getFilterData, getRows } from "./utils";
+import { getAllIdentifiers, getFilterData, getOrgUnitSubtree, getRows } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     api?: D2Api;
@@ -222,7 +222,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                     <Dropdown
                         items={models.map(model => ({
                             id: model.getMetadataType(),
-                            name: model.getD2Model(d2).displayName,
+                            name: model.getModelName(d2),
                         }))}
                         onValueChange={changeModelFilter}
                         value={model.getMetadataType()}
@@ -248,7 +248,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeGroupFilter}
                         value={filters.group}
                         label={i18n.t("{{displayName}} Group", {
-                            displayName: model.getD2Model(d2).displayName,
+                            displayName: model.getModelName(d2),
                         })}
                     />
                 </div>
@@ -261,7 +261,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeLevelFilter}
                         value={filters.level}
                         label={i18n.t("{{displayName}} Level", {
-                            displayName: model.getD2Model(d2).displayName,
+                            displayName: model.getModelName(d2),
                         })}
                     />
                 </div>
@@ -348,7 +348,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                     : undefined,
                 ...model.getApiModelFilters(),
             },
-            defaults: "EXCLUDE",
         };
 
         if (query.filter && model.getGroupFilterName()) {
@@ -382,7 +381,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         if (apiModel.modelName === "organisationUnits") return;
         const { cancel, response } = getAllIdentifiers(
             apiModel.modelName,
-            api.baseUrl,
+            api.apiPath,
             search,
             apiQuery,
             apiModel
@@ -394,7 +393,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .catch(handleError);
 
         return cancel;
-    }, [api.baseUrl, apiModel, apiQuery, search]);
+    }, [api, apiModel, apiQuery, search]);
 
     useEffect(() => {
         if (apiModel.modelName !== "organisationUnits") return;
@@ -413,7 +412,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
         const { cancel, response } = getRows(
             apiModel.modelName,
-            api.baseUrl,
+            api.apiPath,
             sorting,
             pagination,
             search,
@@ -436,7 +435,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
         return cancel;
     }, [
-        api.baseUrl,
+        api,
         apiModel,
         apiQuery,
         sorting,
@@ -453,13 +452,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             getFilterData(
                 model.getGroupFilterName(),
                 "group",
-                api.baseUrl,
+                api.apiPath,
                 api
             ).then(({ objects }) => updateFilters(state => ({ ...state, groupData: objects })));
         }
 
         if (model && model.getLevelFilterName()) {
-            getFilterData(model.getLevelFilterName(), "level", api.baseUrl, api).then(
+            getFilterData(model.getLevelFilterName(), "level", api.apiPath, api).then(
                 ({ objects }) => {
                     // Inference does not work for orgUnits here
                     const levels = (objects as unknown) as { name: string; level: number }[];

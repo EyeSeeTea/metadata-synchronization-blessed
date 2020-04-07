@@ -1,15 +1,21 @@
 import i18n from "@dhis2/d2-i18n";
+import { useD2Api } from "d2-api";
 import { useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
+import { metadataModels } from "../../../models/dhis/factory";
 import {
     AggregatedDataElementModel,
+    EventProgramWithDataElementsModel,
+    EventProgramWithIndicatorsModel,
+} from "../../../models/dhis/mapping";
+import {
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,
-    ProgramModel,
-} from "../../../models/d2Model";
-import { metadataModels } from "../../../models/d2ModelFactory";
+    IndicatorModel,
+} from "../../../models/dhis/metadata";
+import { getMetadata } from "../../../utils/synchronization";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { SyncWizardStepProps } from "../Steps";
 
@@ -24,16 +30,22 @@ const config = {
             AggregatedDataElementModel,
             DataElementGroupModel,
             DataElementGroupSetModel,
+            IndicatorModel,
         ],
         childrenKeys: ["dataElements", "dataElementGroups"],
     },
     events: {
-        models: [ProgramModel],
-        childrenKeys: ["dataElements"],
+        models: [EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel],
+        childrenKeys: ["dataElements", "programIndicators"],
+    },
+    deleted: {
+        models: [],
+        childrenKeys: undefined,
     },
 };
 
 export default function MetadataSelectionStep(props: SyncWizardStepProps) {
+    const api = useD2Api();
     const { syncRule, onChange } = props;
     const { models, childrenKeys } = config[syncRule.type];
 
@@ -61,7 +73,19 @@ export default function MetadataSelectionStep(props: SyncWizardStepProps) {
             );
         }
 
-        onChange(syncRule.updateMetadataIds(newMetadataIds).updateExcludedIds(newExclusionIds));
+        getMetadata(api, newMetadataIds, "id").then(metadata => {
+            const types = _.keys(metadata);
+            onChange(
+                syncRule
+                    .updateMetadataIds(newMetadataIds)
+                    .updateExcludedIds(newExclusionIds)
+                    .updateMetadataTypes(types)
+                    .updateDataSyncEnableAggregation(
+                        types.includes("indicators") || types.includes("programIndicators")
+                    )
+            );
+        });
+
         updateMetadataIds(newMetadataIds);
     };
 

@@ -31,6 +31,34 @@ Cypress.Cookies.defaults({
     whitelist: "JSESSIONID",
 });
 
+const timeout = ms => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+Cypress.Commands.overwrite("get", async (originalFn, selector, options) => {
+    let element;
+    let detached;
+    let retries = 0;
+
+    do {
+        element = await originalFn(selector, options);
+        await timeout(350);
+        detached = Cypress.dom.isDetached(element);
+        retries += 1;
+
+        if (detached) {
+            Cypress.log({
+                name: "Get",
+                displayName: "Get",
+                message: "Element is detached from DOM",
+                consoleProps: () => ({ selector, retries }),
+            });
+        }
+    } while (detached && retries < 15);
+
+    return element;
+});
+
 const encryptionKey = Cypress.env("ENCRYPTION_KEY");
 Cypress.Commands.add("login", (username, _password = null) => {
     // Start server and create fixture for the encryption key
@@ -109,6 +137,14 @@ Cypress.Commands.add("expandInOrgUnitTree", (container, orgUnit) => {
 Cypress.Commands.add("selectRowInTableByText", text => {
     cy.get("table")
         .contains(text)
+        .click();
+});
+
+Cypress.Commands.add("checkRowCheckboxByText", text => {
+    cy.get("table")
+        .contains(text)
+        .parent()
+        .find("input")
         .click();
 });
 

@@ -1,17 +1,12 @@
 import MetadataSyncRuleDetailPageObject from "../support/page-objects/MetadataSyncRuleDetailPageObject";
+import { syncRuleFixture } from "../support/utils";
 
 context("Metadata sync rule edit", function() {
     const page = new MetadataSyncRuleDetailPageObject(cy);
 
     beforeEach(() => {
-        cy.fixture("metadata-sync-rules.json").then(syncRules => {
+        syncRuleFixture("metadata", "getRules", syncRules => {
             this.syncRule = syncRules[0];
-            cy.server();
-            cy.route({
-                method: "GET",
-                url: `api/dataStore/metadata-synchronization/rules`,
-                response: syncRules,
-            });
             page.open(this.syncRule.id);
         });
     });

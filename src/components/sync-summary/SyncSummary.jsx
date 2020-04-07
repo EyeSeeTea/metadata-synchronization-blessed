@@ -14,7 +14,7 @@ import {
     Typography,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useD2 } from "d2-api";
+import { useD2Api } from "d2-api";
 import { ConfirmationDialog } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -71,7 +71,7 @@ const buildSummaryTable = stats => {
                 {stats.map(({ type, imported, created, deleted, ignored, updated, total }, i) => (
                     <TableRow key={`row-${i}`}>
                         <TableCell>{type}</TableCell>
-                        <TableCell>{created || imported}</TableCell>
+                        <TableCell>{created ?? imported ?? 0}</TableCell>
                         <TableCell>{deleted}</TableCell>
                         <TableCell>{ignored}</TableCell>
                         <TableCell>{updated}</TableCell>
@@ -146,27 +146,42 @@ const buildMessageTable = messages => {
     );
 };
 
+const getTypeName = (reportType, syncType) => {
+    switch (reportType) {
+        case "aggregated":
+            return syncType === "events" ? i18n.t("Program Indicators") : i18n.t("Aggregated");
+        case "events":
+            return i18n.t("Events");
+        case "metadata":
+            return i18n.t("Metadata");
+        case "deleted":
+            return i18n.t("Deleted");
+        default:
+            return i18n.t("Unknown");
+    }
+};
+
 const SyncSummary = ({ response, onClose }) => {
-    const d2 = useD2();
+    const api = useD2Api();
     const classes = useStyles();
     const [results, setResults] = useState([]);
 
     useEffect(() => {
-        response.loadSyncResults(d2).then(setResults);
-    }, [d2, response]);
+        response.loadSyncResults(api).then(setResults);
+    }, [api, response]);
 
     if (results.length === 0) return null;
     return (
         <ConfirmationDialog
             isOpen={true}
             title={i18n.t("Synchronization Results")}
-            onSave={onClose}
-            saveText={i18n.t("Ok")}
+            onCancel={onClose}
+            cancelText={i18n.t("Ok")}
             maxWidth={"lg"}
             fullWidth={true}
         >
             <DialogContent>
-                {results.map(({ instance, status, report, stats, message }, i) => (
+                {results.map(({ instance, status, report, stats, message, type }, i) => (
                     <ExpansionPanel
                         defaultExpanded={results.length === 1}
                         className={classes.expansionPanel}
@@ -174,9 +189,9 @@ const SyncSummary = ({ response, onClose }) => {
                     >
                         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                             <Typography className={classes.expansionPanelHeading1}>
-                                {`${i18n.t("Destination instance")}: ${instance.name} (${
-                                    instance.url
-                                })`}
+                                {`${i18n.t("Destination instance")}: ${
+                                    instance.name
+                                } - ${getTypeName(type, response.syncReport.type)}`}
                             </Typography>
                             <Typography className={classes.expansionPanelHeading2}>
                                 {`${i18n.t("Status")}: `}

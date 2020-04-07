@@ -1,5 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
-import axios, { AxiosBasicCredentials, AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { D2Api, D2CategoryOptionCombo } from "d2-api";
 import { isValidUid } from "d2/uid";
 import FileSaver from "file-saver";
@@ -17,15 +17,20 @@ import {
     MetadataImportResponse,
 } from "../types/d2";
 import {
+    AggregatedPackage,
+    CategoryOptionAggregationBuilder,
+    DataSyncAggregation,
     DataSynchronizationParams,
     DataValue,
     MetadataPackage,
     NestedRules,
     ProgramEvent,
     SynchronizationResult,
+    SyncRuleType,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
-import { cleanModelName, getClassName } from "./d2";
+import { promiseMap } from "./common";
+import { cleanToAPIChildReferenceName, cleanToModelName, getClassName } from "./d2";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -39,21 +44,31 @@ export function buildNestedRules(rules: string[][] = []): NestedRules {
 }
 
 export function cleanObject(
+    d2: D2,
+    modelName: string,
     element: any,
     excludeRules: string[][] = [],
     includeSharingSettings: boolean
 ): any {
-    const leafRules = _(excludeRules)
+    const leafRules: string[] = _(excludeRules)
         .filter(path => path.length === 1)
         .map(_.first)
         .compact()
         .value();
 
+    const cleanLeafRules = leafRules.reduce(
+        (accumulator: string[], rule: string) => [
+            ...accumulator,
+            ...cleanToAPIChildReferenceName(d2, rule, modelName),
+        ],
+        []
+    );
+
     const propsToRemove = includeSharingSettings ? [] : userProperties;
 
     return _.pick(
         element,
-        _.difference(_.keys(element), leafRules, blacklistedProperties, propsToRemove)
+        _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove)
     );
 }
 
@@ -70,40 +85,36 @@ export function cleanReferences(
 }
 
 export async function getMetadata(
-    baseUrl: string,
+    api: D2Api,
     elements: string[],
-    fields = ":all",
-    auth: AxiosBasicCredentials | undefined = undefined
+    fields = ":all"
 ): Promise<MetadataPackage> {
     const promises = [];
     for (let i = 0; i < elements.length; i += 100) {
-        const requestUrl = baseUrl + "/metadata.json";
         const requestElements = elements.slice(i, i + 100).toString();
         promises.push(
-            axios.get(requestUrl, {
-                auth,
-                withCredentials: true,
-                params: {
-                    fields: fields,
+            api
+                .get("/metadata", {
+                    fields,
                     filter: "id:in:[" + requestElements + "]",
                     defaults: "EXCLUDE",
-                },
-            })
+                })
+                .getData()
         );
     }
     const response = await Promise.all(promises);
-    const results = _.deepMerge({}, ...response.map(result => result.data));
+    const results = _.deepMerge({}, ...response);
     if (results.system) delete results.system;
     return results;
 }
 
 export async function postMetadata(
-    instance: Instance,
-    metadata: object,
+    api: D2Api,
+    metadata: any,
     additionalParams?: MetadataImportParams
 ): Promise<MetadataImportResponse> {
     try {
-        const params: MetadataImportParams = {
+        const params = {
             importMode: "COMMIT",
             identifier: "UID",
             importReportMode: "FULL",
@@ -112,15 +123,8 @@ export async function postMetadata(
             atomicMode: "ALL",
             ...additionalParams,
         };
-        const response = await axios.post(instance.url + "/api/metadata", metadata, {
-            auth: {
-                username: instance.username,
-                password: instance.password,
-            },
-            params,
-        });
-
-        return response.data;
+        const response = await api.post("/metadata", params, metadata).getData();
+        return response as MetadataImportResponse;
     } catch (error) {
         return buildResponseError(error);
     }
@@ -160,7 +164,7 @@ export function getAllReferences(
             result = _.deepMerge(result, recursive);
         } else if (isValidUid(value)) {
             const metadataType = _(parents)
-                .map(k => cleanModelName(d2, k, type))
+                .map(k => cleanToModelName(d2, k, type))
                 .compact()
                 .first();
             if (metadataType) {
@@ -174,7 +178,8 @@ export function getAllReferences(
 
 export function cleanMetadataImportResponse(
     importResult: MetadataImportResponse,
-    instance: Instance
+    instance: Instance,
+    type: SyncRuleType
 ): SynchronizationResult {
     const { status: importStatus, stats, message, typeReports = [] } = importResult;
     const status = importStatus === "OK" ? "SUCCESS" : importStatus;
@@ -210,12 +215,14 @@ export function cleanMetadataImportResponse(
         instance: instance.toObject(),
         report: { typeStats, messages },
         date: new Date(),
+        type,
     };
 }
 
 export function cleanDataImportResponse(
     importResult: DataImportResponse,
-    instance: Instance
+    instance: Instance,
+    type: SyncRuleType
 ): SynchronizationResult {
     const { status: importStatus, message, importCount, response, conflicts } = importResult;
     const status = importStatus === "OK" ? "SUCCESS" : importStatus;
@@ -243,6 +250,7 @@ export function cleanDataImportResponse(
         instance: instance.toObject(),
         report: { messages: aggregatedMessages ?? eventsMessages ?? [] },
         date: new Date(),
+        type,
     };
 }
 
@@ -275,7 +283,7 @@ function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Mome
         period,
         startDate = "1970-01-01",
         endDate = moment()
-            .add(10, "years")
+            .add(1, "years")
             .endOf("year")
             .format("YYYY-MM-DD"),
     } = params;
@@ -301,16 +309,43 @@ function buildPeriodFromParams(params: DataSynchronizationParams): [Moment, Mome
     }
 }
 
+const aggregations = {
+    DAILY: { format: "YYYYMMDD", unit: "days" as const, amount: 1 },
+    WEEKLY: { format: "YYYY[W]W", unit: "weeks" as const, amount: 1 },
+    MONTHLY: { format: "YYYYMM", unit: "months" as const, amount: 1 },
+    QUARTERLY: { format: "YYYY[Q]Q", unit: "quarters" as const, amount: 1 },
+    YEARLY: { format: "YYYY", unit: "years" as const, amount: 1 },
+};
+
+const buildPeriodsForAggregation = (
+    aggregationType: DataSyncAggregation | undefined,
+    startDate: Moment,
+    endDate: Moment
+): string[] => {
+    if (!aggregationType) return [];
+    const { format, unit, amount } = aggregations[aggregationType];
+
+    const current = startDate.clone();
+    const periods = [];
+
+    while (current.isSameOrBefore(endDate)) {
+        periods.push(current.format(format));
+        current.add(amount, unit);
+    }
+
+    return periods;
+};
+
 export async function getAggregatedData(
     api: D2Api,
     params: DataSynchronizationParams,
-    dataSet: string[] = [],
-    dataElementGroup: string[] = []
-) {
+    dataSet: string[],
+    dataElementGroup: string[]
+): Promise<AggregatedPackage> {
     const { orgUnitPaths = [], allAttributeCategoryOptions, attributeCategoryOptions } = params;
     const [startDate, endDate] = buildPeriodFromParams(params);
 
-    if (dataSet.length === 0 && dataElementGroup.length === 0) return {};
+    if (dataSet.length === 0 && dataElementGroup.length === 0) return { dataValues: [] };
 
     const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
     const attributeOptionCombo = !allAttributeCategoryOptions
@@ -318,7 +353,7 @@ export async function getAggregatedData(
         : undefined;
 
     return api
-        .get("/dataValueSets", {
+        .get<AggregatedPackage>("/dataValueSets", {
             dataElementIdScheme: "UID",
             orgUnitIdScheme: "UID",
             categoryOptionComboIdScheme: "UID",
@@ -330,11 +365,67 @@ export async function getAggregatedData(
             dataElementGroup,
             orgUnit,
         })
-        .getData() as Promise<{ dataValues?: DataValue[] }>;
+        .getData();
+}
+
+export async function getAnalyticsData({
+    api,
+    dataParams,
+    dimensionIds,
+    filter,
+    includeCategories,
+}: {
+    api: D2Api;
+    dataParams: DataSynchronizationParams;
+    dimensionIds: string[];
+    filter?: string[];
+    includeCategories: boolean;
+}): Promise<AggregatedPackage> {
+    const {
+        orgUnitPaths = [],
+        allAttributeCategoryOptions,
+        attributeCategoryOptions,
+        aggregationType,
+    } = dataParams;
+    const [startDate, endDate] = buildPeriodFromParams(dataParams);
+    const periods = buildPeriodsForAggregation(aggregationType, startDate, endDate);
+    const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
+    const attributeOptionCombo = !allAttributeCategoryOptions
+        ? attributeCategoryOptions
+        : undefined;
+
+    if (dimensionIds.length === 0 || orgUnit.length === 0) {
+        return { dataValues: [] };
+    } else if (aggregationType) {
+        const result = await promiseMap(_.chunk(periods, 500), period => {
+            return api
+                .get<AggregatedPackage>("/analytics/dataValueSet.json", {
+                    dimension: _.compact([
+                        `dx:${dimensionIds.join(";")}`,
+                        `pe:${period.join(";")}`,
+                        `ou:${orgUnit.join(";")}`,
+                        includeCategories ? `co` : undefined,
+                        attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : undefined,
+                    ]),
+                    filter,
+                })
+                .getData();
+        });
+
+        const dataValues = _(result)
+            .map(({ dataValues }) => dataValues)
+            .flatten()
+            .compact()
+            .value();
+
+        return { dataValues };
+    } else {
+        throw new Error("Aggregated syncronization requires a valid aggregation type");
+    }
 }
 
 export const getDefaultIds = memoize(
-    async (api: D2Api) => {
+    async (api: D2Api, filter?: string) => {
         const response = (await api
             .get("/metadata", {
                 filter: "code:eq:default",
@@ -344,7 +435,9 @@ export const getDefaultIds = memoize(
             [key: string]: { id: string }[];
         };
 
-        return _(response)
+        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
+
+        return _(metadata)
             .omit(["system"])
             .values()
             .flatten()
@@ -372,6 +465,73 @@ export const getCategoryOptionCombos = memoize(
     },
     { serializer: (api: D2Api) => api.baseUrl }
 );
+
+export const getAllDimensions = memoize(
+    async (api: D2Api) => {
+        const { dimensions } = await api
+            .get<{ dimensions: Array<{ id: string }> }>("/dimensions", {
+                paging: false,
+                fields: "id",
+            })
+            .getData();
+
+        return dimensions.map(({ id }) => id);
+    },
+    { serializer: (api: D2Api) => api.baseUrl }
+);
+
+/**
+ * Given all the aggregatedDataElements compile a list of dataElements
+ * that have aggregation for their category options
+ * @param MetadataMappingDictionary
+ */
+export const getAggregatedOptions = async (
+    api: D2Api,
+    { aggregatedDataElements }: MetadataMappingDictionary,
+    categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+): Promise<CategoryOptionAggregationBuilder[]> => {
+    const dimensions = await getAllDimensions(api);
+    const findOptionCombo = (mappedOption: string, mappedCombo?: string) =>
+        categoryOptionCombos.find(
+            ({ categoryCombo, categoryOptions }) =>
+                categoryCombo?.id === mappedCombo &&
+                categoryOptions?.map(({ id }) => id).includes(mappedOption)
+        )?.id ?? mappedOption;
+
+    const validOptions = _.transform(
+        aggregatedDataElements,
+        (result, { mapping = {} }, dataElement) => {
+            const { categoryOptions, categoryCombos } = mapping;
+
+            const builders = _(categoryOptions)
+                .mapValues(({ mappedId = "DISABLED" }, categoryOption) => ({
+                    categoryOption,
+                    mappedId,
+                }))
+                .values()
+                .groupBy(({ mappedId }) => mappedId)
+                .pickBy((values, mappedId) => values.length > 1 && mappedId !== "DISABLED")
+                .mapValues((values = [], mappedCategoryOption) => ({
+                    dataElement,
+                    categoryOptions: values.map(({ categoryOption }) => categoryOption),
+                    mappedOptionCombo: findOptionCombo(
+                        mappedCategoryOption,
+                        _.values(categoryCombos)[0]?.mappedId
+                    ),
+                }))
+                .values()
+                .value();
+            result.push(...builders);
+        },
+        [] as Omit<CategoryOptionAggregationBuilder, "category">[]
+    );
+
+    const result = _.flatten(
+        dimensions.map(category => validOptions.map(item => ({ ...item, category })))
+    );
+
+    return result;
+};
 
 export const getRootOrgUnit = memoize(
     (api: D2Api) => {

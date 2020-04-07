@@ -31,11 +31,11 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 ...syncRule.dataParams,
                 allEvents: true,
             },
-            syncRule.metadataIds
+            programs.map(({ id }) => id)
         )
             .then(setObjects)
             .catch(setError);
-    }, [api, syncRule]);
+    }, [api, syncRule, programs]);
 
     useEffect(() => {
         const sync = new EventsSync(d2 as D2, api, syncRule.toBuilder());
@@ -140,7 +140,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
         objects?.filter(({ program }) => !programFilter || program === programFilter) ?? [];
 
     if (error) {
-        console.log(error);
+        console.error(error);
         return (
             <Typography>
                 {i18n.t("An error ocurred while trying to access the required events")}

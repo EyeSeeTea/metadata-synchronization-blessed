@@ -60,7 +60,7 @@ export default class ManualSyncPageObject extends PageObject {
     }
 
     closeSyncResultsDialog() {
-        this.cy.get('[data-test="Button-synchronization-results-save"]').click();
+        this.cy.get('[data-test="Button-synchronization-results-cancel"]').click();
         return this;
     }
 }

@@ -1,7 +1,7 @@
 import { D2Api, D2ApiResponse, D2ModelSchemas, Model, PaginatedObjects } from "d2-api";
 import { TablePagination, TableSorting } from "d2-ui-components";
 import memoize from "nano-memoize";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
+import { d2ModelFactory } from "../../models/dhis/factory";
 import { MetadataType } from "../../utils/d2";
 
 /**
@@ -85,3 +85,11 @@ export const getRows = memoize(
     },
     { maxArgs: 6 }
 );
+
+export async function getOrgUnitSubtree(api: D2Api, orgUnitId: string): Promise<string[]> {
+    const { organisationUnits } = (await api
+        .get(`/organisationUnits/${orgUnitId}`, { fields: "id", includeDescendants: true })
+        .getData()) as { organisationUnits: { id: string }[] };
+
+    return organisationUnits.map(({ id }) => id);
+}
