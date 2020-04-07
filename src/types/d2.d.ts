@@ -1,52 +1,5 @@
 import { Dictionary } from "lodash";
 
-export interface DataStoreNamespace {
-    delete(key: string): Promise<any>;
-
-    get(key: string): Promise<any>;
-
-    getKeys(): Promise<string[]>;
-
-    set(key: string, value: any, overrideUpdate?: boolean, encrypt?: boolean): Promise<any>;
-
-    update(key: string, value: any): Promise<any>;
-}
-
-export interface Params {
-    paging?: boolean;
-    page?: number;
-    pageSize?: number;
-    filter?: string[];
-    fields?: (string | number)[];
-    order?: string;
-}
-
-export interface D2Api {
-    baseUrl: string;
-
-    get(url: string, data: Params): Dictionary<any>;
-
-    post(url: string, data: Dictionary<any>): Dictionary<any>;
-}
-
-export interface Pager {
-    page: number;
-    pageCount: number;
-    total: number;
-}
-
-export interface ModelCollection {
-    modelDefinition: ModelDefinition;
-    pager: Pager;
-    size: number;
-
-    add(model: Model): ModelCollection;
-
-    clear(): ModelCollection;
-
-    toArray(): Model[];
-}
-
 export interface ModelDefinition {
     apiEndpoint: string;
     attributeProperties: any;
@@ -69,13 +22,6 @@ export interface ModelDefinition {
 export interface D2 {
     Api: {
         getApi(): D2Api;
-    };
-    dataStore: {
-        get(namespace: string): Promise<DataStoreNamespace>;
-        getAll(): Promise<DataStoreNamespace[]>;
-        has(namespace: string): Promise<boolean>;
-        create(namespace: string): Promise<DataStoreNamespace>;
-        delete(namespace: string): Promise<any>;
     };
     models: {
         [metadataType: string]: ModelDefinition;

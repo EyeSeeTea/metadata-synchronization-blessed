@@ -73,6 +73,7 @@ context("Event sync rule new", function() {
             .toggleAllEvents(false)
             .selectEvent(inputs.event)
             .next()
+            .next()
 
             .next()
             .assertError(error => error.contains("You need to select at least one instance"));
@@ -97,6 +98,7 @@ context("Event sync rule new", function() {
 
             .toggleAllEvents(false)
             .selectEvent(inputs.event)
+            .next()
             .next()
 
             .selectReceiverInstance(inputs.instance)

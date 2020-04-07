@@ -1,18 +1,17 @@
-import React from "react";
-import PropTypes from "prop-types";
 import i18n from "@dhis2/d2-i18n";
-import { withRouter } from "react-router-dom";
+import { ApiContext } from "d2-api";
 import { ConfirmationDialog } from "d2-ui-components";
-
-import Instance from "../../models/instance";
-
+import PropTypes from "prop-types";
+import React from "react";
+import { withRouter } from "react-router-dom";
 import PageHeader from "../../components/page-header/PageHeader";
-import GeneralInfoForm from "./GeneralInfoForm";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import Instance from "../../models/instance";
+import GeneralInfoForm from "./GeneralInfoForm";
 
 class InstanceCreationPage extends React.Component {
+    static contextType = ApiContext;
     static propTypes = {
-        d2: PropTypes.object.isRequired,
         history: PropTypes.object.isRequired,
     };
 
@@ -27,7 +26,7 @@ class InstanceCreationPage extends React.Component {
     componentDidMount = async () => {
         const { instance: stateInstance } = this.props.location.state ?? {};
         if (this.isEdit) {
-            const instance = await Instance.get(this.props.d2, this.id);
+            const instance = await Instance.get(this.context.api, this.id);
             this.setState({ instance });
         } else if (stateInstance) {
             this.setState({ instance: stateInstance });
@@ -53,7 +52,6 @@ class InstanceCreationPage extends React.Component {
 
     render() {
         const { dialogOpen, instance } = this.state;
-        const { d2 } = this.props;
 
         const title = !this.isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
 
@@ -75,7 +73,6 @@ class InstanceCreationPage extends React.Component {
                 <PageHeader title={title} onBackClick={this.cancelSave} helpText={undefined} />
 
                 <GeneralInfoForm
-                    d2={d2}
                     instance={instance}
                     onChange={this.onChange}
                     cancelAction={this.cancelSave}

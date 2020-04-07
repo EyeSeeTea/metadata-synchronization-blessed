@@ -6,7 +6,7 @@ import { useD2 } from "d2-api";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
+import { d2ModelFactory } from "../../models/dhis/factory";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
@@ -15,8 +15,8 @@ import MetadataTable from "../metadata-table/MetadataTable";
 
 export interface MappingDialogConfig {
     elements: string[];
-    type: string;
-    mappingPath: string[] | undefined;
+    mappingType?: string;
+    mappingPath?: string[];
     firstElement?: MetadataType;
 }
 
@@ -45,13 +45,16 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
     const [filterRows, setFilterRows] = useState<string[] | undefined>();
-    const { elements, type, mappingPath, firstElement } = config;
+    const { elements, mappingType, mappingPath, firstElement } = config;
+    if (!mappingType) {
+        throw new Error("Attempting to open mapping dialog without a valid mapping type");
+    }
 
     const mappedId =
         elements.length === 1
             ? _.last(
                   _(mapping)
-                      .get([type, elements[0] ?? "", "mappedId"])
+                      .get([mappingType, elements[0] ?? "", "mappedId"])
                       ?.split("-")
               )
             : undefined;
@@ -59,8 +62,8 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
     const api = instance.getApi();
-    const model = d2ModelFactory(api, type);
-    const displayName = d2.models[model.getCollectionName()].displayName;
+    const model = d2ModelFactory(api, mappingType);
+    const modelName = model.getModelName(d2);
 
     useEffect(() => {
         let mounted = true;
@@ -79,10 +82,10 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             const parentModel = d2ModelFactory(api, mappingPath[0]);
             const parentMappedId = mappingPath[2];
             getValidIds(api, parentModel, parentMappedId).then(setFilterRows);
-        } else if (type === "programDataElements" && elements.length === 1) {
+        } else if (mappingType === "programDataElements" && elements.length === 1) {
             buildDataElementFilterForProgram(api, elements[0], mapping).then(setFilterRows);
         }
-    }, [api, mappingPath, elements, mapping, type]);
+    }, [api, mappingPath, elements, mapping, mappingType]);
 
     const onUpdateSelection = (selectedIds: string[]) => {
         const newSelection = _.last(selectedIds);
@@ -119,15 +122,25 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 
     const MapperComponent =
         model.getCollectionName() === "organisationUnits" ? OrgUnitMapper : MetadataMapper;
-    const mainTitle =
-        elements.length > 1
-            ? i18n.t("Edit mapping for {{total}} elements", {
-                  total: elements.length,
-              })
-            : i18n.t("Edit mapping for {{name}} ({{id}})", firstElement);
-    const instanceTitle = i18n.t("Destination instance {{name}}", instance);
-
-    const title = _.compact([mainTitle, displayName, instanceTitle]).join(" - ");
+    const title =
+        elements.length > 1 || !firstElement
+            ? i18n.t(
+                  "Select {{type}} from destination instance {{instance}} to map {{total}} elements",
+                  {
+                      type: modelName,
+                      instance: instance.name,
+                      total: elements.length,
+                  }
+              )
+            : i18n.t(
+                  "Select {{type}} from destination instance {{instance}} to map {{name}} ({{id}})",
+                  {
+                      type: modelName,
+                      instance: instance.name,
+                      name: firstElement.name,
+                      id: firstElement.id,
+                  }
+              );
 
     return (
         <ConfirmationDialog

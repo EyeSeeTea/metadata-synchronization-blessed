@@ -6,6 +6,7 @@ import RadioButtonGroup from "../radio-button-group/RadioButtonGroup";
 import { Toggle } from "../toggle/Toggle";
 
 interface SyncParamsSelectorProps {
+    generateNewUidDisabled?: boolean;
     syncRule: SyncRule;
     onChange(newParams: SyncRule): void;
 }
@@ -17,7 +18,11 @@ const useStyles = makeStyles({
     },
 });
 
-const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onChange }) => {
+const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
+    syncRule,
+    onChange,
+    generateNewUidDisabled,
+}) => {
     const classes = useStyles();
     const { syncParams, dataParams } = syncRule;
 
@@ -48,6 +53,15 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
         );
     };
 
+    const changeGenerateUID = (value: boolean) => {
+        onChange(
+            syncRule.updateDataParams({
+                ...dataParams,
+                generateNewUid: value,
+            })
+        );
+    };
+
     const changeMetadataStrategy = (importStrategy: string) => {
         onChange(
             syncRule.updateSyncParams({
@@ -67,7 +81,7 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
     };
 
     const changeDryRun = (dryRun: boolean) => {
-        if (syncRule.type === "metadata") {
+        if (syncRule.type === "metadata" || syncRule.type === "deleted") {
             onChange(
                 syncRule.updateSyncParams({
                     ...syncParams,
@@ -144,12 +158,23 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                 />
             )}
 
+            {syncRule.type === "events" && (
+                <div>
+                    <Toggle
+                        disabled={generateNewUidDisabled}
+                        label={i18n.t("Generate new UID")}
+                        onValueChange={changeGenerateUID}
+                        value={dataParams.generateNewUid ?? false}
+                    />
+                </div>
+            )}
+
             <div>
                 <Toggle
                     label={i18n.t("Dry Run")}
                     onValueChange={changeDryRun}
                     value={
-                        syncRule.type === "metadata"
+                        syncRule.type === "metadata" || syncRule.type === "deleted"
                             ? syncParams.importMode === "VALIDATE"
                             : dataParams.dryRun || false
                     }

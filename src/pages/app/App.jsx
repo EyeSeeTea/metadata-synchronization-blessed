@@ -5,18 +5,22 @@ import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 import { init } from "d2";
 import { ApiContext, D2ApiDefault } from "d2-api";
+import axiosRetry from "axios-retry";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
 import _ from "lodash";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import Share from "../../components/share/Share";
 import Instance from "../../models/instance";
-import { initializeDataStoreMigrations } from "../../utils/dataStore";
 import { initializeAppRoles } from "../../utils/permissions";
 import "./App.css";
 import Root from "./Root";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
+import { MigrationsRunner } from "../../migrations";
+import Migrations from "../../components/migrations/Migrations";
+
+const axiosMaxRetries = 3;
 
 const generateClassName = createGenerateClassName({
     productionPrefix: "c",
@@ -54,6 +58,7 @@ const App = () => {
     const { baseUrl } = useConfig();
     const [d2, setD2] = useState(null);
     const [api, setApi] = useState(null);
+    const [migrationsState, setMigrationsState] = useState({ type: "checking" });
     const [showShareButton, setShowShareButton] = useState(false);
     const { loading, error, data } = useDataQuery(query);
 
@@ -64,6 +69,7 @@ const App = () => {
             }).then(res => res.json());
             const d2 = await init({ baseUrl: baseUrl + "/api" });
             const api = new D2ApiDefault({ baseUrl });
+
             Object.assign({ d2, api });
 
             configI18n(data.userSettings);
@@ -78,7 +84,7 @@ const App = () => {
             }
 
             await initializeAppRoles(d2.Api.getApi().baseUrl);
-            await initializeDataStoreMigrations(api);
+            runMigrations(baseUrl).then(setMigrationsState);
         };
 
         if (data) run();
@@ -93,9 +99,16 @@ const App = () => {
                 {` ${baseUrl}`}
             </h3>
         );
-    } else if (loading || !d2 || !api) {
+    } else if (migrationsState.type === "pending") {
+        return (
+            <Migrations
+                runner={migrationsState.runner}
+                onFinish={() => setMigrationsState({ type: "checked" })}
+            />
+        );
+    } else if (loading || !d2 || !api || migrationsState.type === "checking") {
         return <h3>Connecting to {baseUrl}...</h3>;
-    } else {
+    } else if (migrationsState.type === "checked") {
         return (
             <StylesProvider generateClassName={generateClassName}>
                 <MuiThemeProvider theme={muiTheme}>
@@ -106,7 +119,7 @@ const App = () => {
 
                                 <div id="app" className="content">
                                     <ApiContext.Provider value={{ d2, api }}>
-                                        <Root d2={d2} />
+                                        <Root />
                                     </ApiContext.Provider>
                                 </div>
 
@@ -119,5 +132,17 @@ const App = () => {
         );
     }
 };
+
+async function runMigrations(baseUrl) {
+    const api = new D2ApiDefault({ baseUrl });
+    axiosRetry(api.connection, { retries: axiosMaxRetries });
+    const runner = await MigrationsRunner.init({ api, debug: console.debug });
+
+    if (runner.hasPendingMigrations()) {
+        return { type: "pending", runner };
+    } else {
+        return { type: "checked" };
+    }
+}
 
 export default App;

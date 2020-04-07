@@ -150,12 +150,31 @@ context("Manual metadata sync", () => {
             instance: targetInstance,
         };
 
-        it("should sync correctly one user group", () => {
+        it("should sync correctly one data set", () => {
             page.selectFilterInTable(dataSetInputs.filterLabel, dataSetInputs.filterValue)
                 .selectRow(dataSetInputs.dataElement)
                 .openSyncDialog()
                 .next()
                 .selectReceiverInstance(dataSetInputs.instance)
+                .synchronize()
+                .assertSyncResultsStatus(status => status.contains("Success"))
+                .closeSyncResultsDialog();
+        });
+    });
+    context("Program", () => {
+        const programInputs = {
+            filterLabel: "Metadata type",
+            filterValue: "Program",
+            program: "ENTO- Adult Surveillance",
+            instance: targetInstance,
+        };
+
+        it("should sync correctly one program", () => {
+            page.selectFilterInTable(programInputs.filterLabel, programInputs.filterValue)
+                .selectRow(programInputs.program)
+                .openSyncDialog()
+                .next()
+                .selectReceiverInstance(programInputs.instance)
                 .synchronize()
                 .assertSyncResultsStatus(status => status.contains("Success"))
                 .closeSyncResultsDialog();

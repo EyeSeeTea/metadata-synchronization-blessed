@@ -5,13 +5,34 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-03-17T11:48:37.174Z\n"
-"PO-Revision-Date: 2020-03-17T11:48:37.174Z\n"
+"POT-Creation-Date: 2020-03-31T05:09:52.458Z\n"
+"PO-Revision-Date: 2020-03-31T05:09:52.458Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
 
 msgid "Login"
+msgstr ""
+
+msgid "Identifier"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Deleted date"
+msgstr ""
+
+msgid "Deleted by"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Search deleted objects"
 msgstr ""
 
 msgid "<No value>"
@@ -23,13 +44,14 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-msgid "Edit mapping for {{total}} elements"
+msgid ""
+"Select {{type}} from destination instance {{instance}} to map {{total}} "
+"elements"
 msgstr ""
 
-msgid "Edit mapping for {{name}} ({{id}})"
-msgstr ""
-
-msgid "Destination instance {{name}}"
+msgid ""
+"Select {{type}} from destination instance {{instance}} to map {{name}} "
+"({{id}})"
 msgstr ""
 
 msgid "Close"
@@ -99,9 +121,6 @@ msgid "Last updated"
 msgstr ""
 
 msgid "ID"
-msgstr ""
-
-msgid "Metadata type"
 msgstr ""
 
 msgid "Mapped ID"
@@ -176,9 +195,6 @@ msgstr ""
 msgid "Only selected items"
 msgstr ""
 
-msgid "Details"
-msgstr ""
-
 msgid "Select with children subtree"
 msgstr ""
 
@@ -188,16 +204,39 @@ msgstr ""
 msgid "Search by name"
 msgstr ""
 
-msgid "Name"
+msgid "There are pending migrations"
 msgstr ""
 
-msgid "Metadata Type"
+msgid "Migrations finished successfully, you may now continue to the app"
 msgstr ""
 
-msgid "Last update"
+msgid ""
+"There has been an error. You can either retry or contact your administrator "
+"if you think there has been an un recoverable error"
 msgstr ""
 
-msgid "Deleted date"
+msgid "Migrate instance"
+msgstr ""
+
+msgid "Migrating..."
+msgstr ""
+
+msgid "Continue to the App"
+msgstr ""
+
+msgid ""
+"The app needs to run all pending migrations (v{{instanceVersion}} -> "
+"v{{appVersion}}) in order to continue. This may take a long time, make sure "
+"the process is not interrupted."
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid ""
+"The database version (v{{instanceVersion}}) is greater than the app version "
+"(v{{appVersion}}), we cannot continue. Please contact the administrator to "
+"update the app."
 msgstr ""
 
 msgid "Help"
@@ -272,6 +311,9 @@ msgstr ""
 msgid "Replace objects in destination instance"
 msgstr ""
 
+msgid "Generate new UID"
+msgstr ""
+
 msgid "Dry Run"
 msgstr ""
 
@@ -305,13 +347,25 @@ msgstr ""
 msgid "Org units"
 msgstr ""
 
-msgid "Identifier"
-msgstr ""
-
 msgid "Property"
 msgstr ""
 
 msgid "Message"
+msgstr ""
+
+msgid "Program Indicators"
+msgstr ""
+
+msgid "Aggregated"
+msgstr ""
+
+msgid "Events"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Unknown"
 msgstr ""
 
 msgid "Synchronization Results"
@@ -393,7 +447,7 @@ msgid ""
 "is, you would use ? in the day of the week field."
 msgstr ""
 
-msgid "Metadata"
+msgid "Aggregation"
 msgstr ""
 
 msgid "Include Exclude Selection"
@@ -411,16 +465,19 @@ msgstr ""
 msgid "Category options"
 msgstr ""
 
+msgid ""
+"If aggregation is enabled, the synchronization will use the Analytics "
+"endpoint and group data by organisation units children and the chosen time "
+"periods"
+msgstr ""
+
 msgid "Programs"
 msgstr ""
 
-msgid "Events"
+msgid "Name"
 msgstr ""
 
 msgid "Field cannot be blank"
-msgstr ""
-
-msgid "Code"
 msgstr ""
 
 msgid "Description"
@@ -551,6 +608,38 @@ msgstr ""
 msgid "Download JSON"
 msgstr ""
 
+msgid "Daily"
+msgstr ""
+
+msgid "Weekly"
+msgstr ""
+
+msgid "Monthly"
+msgstr ""
+
+msgid "Quarterly"
+msgstr ""
+
+msgid "Yearly"
+msgstr ""
+
+msgid "Without aggregation, any data value related to an indicator will be ignored"
+msgstr ""
+
+msgid ""
+"Without aggregation, program indicators will not be aggregated and "
+"synchronized"
+msgstr ""
+
+msgid "Enable data aggregation"
+msgstr ""
+
+msgid "Aggregate and sync program indicators"
+msgstr ""
+
+msgid "Aggregation type"
+msgstr ""
+
 msgid "Sync all attribute category options"
 msgstr ""
 
@@ -581,16 +670,16 @@ msgstr ""
 msgid "Use default configuration"
 msgstr ""
 
-msgid "Retrieving information from remote instances"
-msgstr ""
-
-msgid "Deleting objects in instance {{instance}}"
-msgstr ""
-
 msgid "Preparing synchronization"
 msgstr ""
 
 msgid "Importing data in instance {{instance}}"
+msgstr ""
+
+msgid "Program with Data Elements"
+msgstr ""
+
+msgid "Program with Indicators"
 msgstr ""
 
 msgid "Not a valid DHIS2 instance"
@@ -618,6 +707,9 @@ msgid "Aggregated Data Synchronization History"
 msgstr ""
 
 msgid "Events Synchronization History"
+msgstr ""
+
+msgid "Deleted Synchronization History"
 msgstr ""
 
 msgid "Ready"
@@ -795,6 +887,9 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
+msgid "Analytics execution finished on {{name}}"
+msgstr ""
+
 msgid "Deleting Instances"
 msgstr ""
 
@@ -812,6 +907,9 @@ msgstr ""
 msgid "Replicate"
 msgstr ""
 
+msgid "Run analytics"
+msgstr ""
+
 msgid "Delete Instances?"
 msgstr ""
 
@@ -821,9 +919,6 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Destination Instance Settings"
-msgstr ""
-
-msgid "Aggregated"
 msgstr ""
 
 msgid ""
@@ -853,6 +948,9 @@ msgstr ""
 msgid "Instance mapping"
 msgstr ""
 
+msgid "Destination instance {{name}}"
+msgstr ""
+
 msgid "Aggregated mapping"
 msgstr ""
 
@@ -865,7 +963,13 @@ msgstr ""
 msgid "Global mapping"
 msgstr ""
 
-msgid "Deleted by"
+msgid "Metadata Synchronization"
+msgstr ""
+
+msgid "Aggregated Data Synchronization"
+msgstr ""
+
+msgid "Events Synchronization"
 msgstr ""
 
 msgid "Deleted Objects Synchronization"
@@ -875,18 +979,6 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Synchronizing metadata"
-msgstr ""
-
-msgid "Metadata Synchronization"
-msgstr ""
-
-msgid "Aggregated Data Synchronization"
-msgstr ""
-
-msgid "Events Synchronization"
 msgstr ""
 
 msgid "New {{type}} synchronization rule"
@@ -919,6 +1011,9 @@ msgstr ""
 msgid "Deleting Sync Rules"
 msgstr ""
 
+msgid "deleted"
+msgstr ""
+
 msgid "Failed to delete some rules"
 msgstr ""
 
@@ -949,6 +1044,12 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Running analytics for instance {{name}}"
+msgstr ""
+
+msgid "Updating analytics done`for instance {{name}}"
+msgstr ""
 
 msgid "Short name"
 msgstr ""

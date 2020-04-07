@@ -1,4 +1,5 @@
 import AggregatedSyncRuleListPageObject from "../support/page-objects/AggregatedSyncRuleListPageObject";
+import { syncRuleFixture } from "../support/utils";
 
 context("Aggregated sync rules", function() {
     const page = new AggregatedSyncRuleListPageObject(cy);
@@ -6,14 +7,8 @@ context("Aggregated sync rules", function() {
     beforeEach(() => {
         const stubApiResponseName = "getRules";
 
-        cy.fixture("aggregated-sync-rules.json").then(syncRules => {
+        syncRuleFixture("aggregated", stubApiResponseName, syncRules => {
             this.syncRules = syncRules;
-            cy.server();
-            cy.route({
-                method: "GET",
-                url: `api/dataStore/metadata-synchronization/rules`,
-                response: syncRules,
-            }).as(stubApiResponseName);
             page.open(stubApiResponseName);
         });
     });

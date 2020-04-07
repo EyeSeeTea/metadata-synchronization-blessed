@@ -2,7 +2,6 @@ import { D2CategoryOptionCombo } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import { DataImportResponse } from "../../types/d2";
 import { AggregatedPackage, DataValue } from "../../types/synchronization";
 import {
     buildMetadataDictionary,
@@ -10,6 +9,8 @@ import {
     cleanObjectDefault,
     cleanOrgUnitPath,
     getAggregatedData,
+    getAggregatedOptions,
+    getAnalyticsData,
     getCategoryOptionCombos,
     getDefaultIds,
     mapCategoryOptionCombo,
@@ -17,13 +18,24 @@ import {
     postAggregatedData,
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
+import { promiseMap } from "../../utils/common";
 
 export class AggregatedSync extends GenericSync {
-    protected readonly type = "aggregated";
-    protected readonly fields =
-        "id,dataElements[id,name]dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
+    public readonly type = "aggregated";
+    public readonly fields =
+        "id,dataElements[id,name],dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
 
     public buildPayload = memoize(async () => {
+        const { dataParams: { enableAggregation = false } = {} } = this.builder;
+
+        if (enableAggregation) {
+            return this.buildAnalyticsPayload();
+        } else {
+            return this.buildNormalPayload();
+        }
+    });
+
+    private buildNormalPayload = async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
         const {
             dataSets = [],
@@ -69,23 +81,77 @@ export class AggregatedSync extends GenericSync {
             .value();
 
         return { dataValues };
-    });
+    };
 
-    protected async postPayload(instance: Instance) {
+    private buildAnalyticsPayload = async () => {
+        const { dataParams = {}, excludedIds = [] } = this.builder;
+
+        const {
+            dataSets = [],
+            dataElementGroups = [],
+            dataElementGroupSets = [],
+            dataElements = [],
+            indicators = [],
+        } = await this.extractMetadata();
+
+        const dataElementIds = dataElements.map(({ id }) => id);
+        const indicatorIds = indicators.map(({ id }) => id);
+        const dataSetIds = _.flatten(
+            dataSets.map(({ dataSetElements }) =>
+                dataSetElements.map(({ dataElement }: any) => dataElement.id)
+            )
+        );
+        const dataElementGroupIds = _.flatten(
+            dataElementGroups.map(({ dataElements }) => dataElements.map(({ id }: any) => id))
+        );
+        const dataElementGroupSetIds = _.flatten(
+            dataElementGroupSets.map(({ dataElementGroups }) =>
+                _.flatten(
+                    dataElementGroups.map(({ dataElements }: any) =>
+                        dataElements.map(({ id }: any) => id)
+                    )
+                )
+            )
+        );
+
+        const { dataValues: dataElementValues = [] } = await getAnalyticsData({
+            api: this.api,
+            dataParams,
+            dimensionIds: [
+                ...dataElementIds,
+                ...dataSetIds,
+                ...dataElementGroupIds,
+                ...dataElementGroupSetIds,
+            ],
+            includeCategories: true,
+        });
+
+        const { dataValues: indicatorValues = [] } = await getAnalyticsData({
+            api: this.api,
+            dataParams,
+            dimensionIds: indicatorIds,
+            includeCategories: false,
+        });
+
+        const dataValues = _.reject([...dataElementValues, ...indicatorValues], ({ dataElement }) =>
+            excludedIds.includes(dataElement)
+        );
+
+        return { dataValues };
+    };
+
+    public async postPayload(instance: Instance) {
         const { dataParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
-        const mappedPayloadPackage = await this.mapMetadata(instance, payloadPackage);
+        const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
         console.debug("Aggregated package", { payloadPackage, mappedPayloadPackage });
 
-        return postAggregatedData(instance, mappedPayloadPackage, dataParams);
+        const response = await postAggregatedData(instance, mappedPayloadPackage, dataParams);
+        return [cleanDataImportResponse(response, instance, this.type)];
     }
 
-    protected cleanResponse(response: DataImportResponse, instance: Instance) {
-        return cleanDataImportResponse(response, instance);
-    }
-
-    protected async buildDataStats() {
+    public async buildDataStats() {
         const metadataPackage = await this.extractMetadata();
         const dictionary = buildMetadataDictionary(metadataPackage);
         const { dataValues } = await this.buildPayload();
@@ -100,26 +166,36 @@ export class AggregatedSync extends GenericSync {
             .value();
     }
 
-    protected async mapMetadata(
+    public async mapPayload(
         instance: Instance,
         payload: AggregatedPackage
     ): Promise<AggregatedPackage> {
         const { dataValues: oldDataValues } = payload;
+        const { metadataMapping: mapping } = instance;
+
         const defaultIds = await getDefaultIds(this.api);
         const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
+        const instanceAggregatedValues = await this.buildInstanceAggregation(
+            mapping,
+            destinationCategoryOptionCombos
+        );
 
-        const dataValues = oldDataValues
-            .map(dataValue => cleanObjectDefault(dataValue, defaultIds))
+        const dataValues = _([...instanceAggregatedValues, ...oldDataValues])
             .map(dataValue =>
                 this.buildMappedDataValue(
                     dataValue,
-                    instance.metadataMapping,
+                    mapping,
                     originCategoryOptionCombos,
                     destinationCategoryOptionCombos
                 )
             )
-            .filter(this.isDisabledDataValue);
+            .map(dataValue => cleanObjectDefault(dataValue, defaultIds))
+            .filter(this.isDisabledDataValue)
+            .uniqBy(({ orgUnit, period, dataElement, categoryOptionCombo }) =>
+                [orgUnit, period, dataElement, categoryOptionCombo].join("-")
+            )
+            .value();
 
         return { dataValues };
     }
@@ -165,5 +241,34 @@ export class AggregatedSync extends GenericSync {
             ])
             .values()
             .includes("DISABLED");
+    }
+
+    private async buildInstanceAggregation(
+        mapping: MetadataMappingDictionary,
+        categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+    ): Promise<DataValue[]> {
+        const { dataParams = {} } = this.builder;
+        const { enableAggregation = false } = dataParams;
+        if (!enableAggregation) return [];
+
+        const result = await promiseMap(
+            await getAggregatedOptions(this.api, mapping, categoryOptionCombos),
+            async ({ dataElement, categoryOptions, category, mappedOptionCombo }) => {
+                const { dataValues } = await getAnalyticsData({
+                    api: this.api,
+                    dataParams,
+                    dimensionIds: [dataElement],
+                    includeCategories: false,
+                    filter: [`${category}:${categoryOptions.join(";")}`],
+                });
+
+                return dataValues.map(dataValue => ({
+                    ...dataValue,
+                    categoryOptionCombo: mappedOptionCombo,
+                }));
+            }
+        );
+
+        return _.flatten(result);
     }
 }

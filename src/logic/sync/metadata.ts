@@ -1,10 +1,10 @@
 import { D2ModelSchemas } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { d2ModelFactory } from "../../models/d2ModelFactory";
+import { d2ModelFactory } from "../../models/dhis/factory";
 import Instance from "../../models/instance";
-import { MetadataImportResponse } from "../../types/d2";
 import { ExportBuilder, MetadataPackage, NestedRules } from "../../types/synchronization";
+import { promiseMap } from "../../utils/common";
 import {
     buildNestedRules,
     cleanMetadataImportResponse,
@@ -17,9 +17,9 @@ import {
 import { GenericSync, SyncronizationPayload } from "./generic";
 
 export class MetadataSync extends GenericSync {
-    protected readonly type = "metadata";
+    public readonly type = "metadata";
 
-    private async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
+    public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
         const visitedIds: Set<string> = new Set();
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
             const { type, ids, excludeRules, includeRules, includeSharingSettings } = builder;
@@ -31,13 +31,18 @@ export class MetadataSync extends GenericSync {
             const nestedIncludeRules: NestedRules = buildNestedRules(includeRules);
 
             // Get all the required metadata
-            const { baseUrl } = this.d2.Api.getApi();
-            const syncMetadata = await getMetadata(baseUrl, ids);
+            const syncMetadata = await getMetadata(this.api, ids);
             const elements = syncMetadata[model.plural] || [];
 
             for (const element of elements) {
                 // Store metadata object in result
-                const object = cleanObject(element, excludeRules, includeSharingSettings);
+                const object = cleanObject(
+                    this.d2,
+                    model.name,
+                    element,
+                    excludeRules,
+                    includeSharingSettings
+                );
                 result[model.plural] = result[model.plural] || [];
                 result[model.plural].push(object);
 
@@ -69,7 +74,6 @@ export class MetadataSync extends GenericSync {
     }
 
     public buildPayload = memoize(async () => {
-        const { baseUrl } = this.d2.Api.getApi();
         const { metadataIds, syncParams } = this.builder;
         const {
             includeSharingSettings = true,
@@ -77,48 +81,43 @@ export class MetadataSync extends GenericSync {
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
 
-        const metadata = await getMetadata(baseUrl, metadataIds, "id");
-        const exportPromises = _.keys(metadata)
-            .map(type => {
-                const myClass = d2ModelFactory(this.api, type as keyof D2ModelSchemas);
-                const metadataType = myClass.getMetadataType();
+        const metadata = await getMetadata(this.api, metadataIds, "id");
+        const exportResults = await promiseMap(_.keys(metadata), type => {
+            const myClass = d2ModelFactory(this.api, type);
+            const metadataType = myClass.getMetadataType();
 
-                return {
-                    type: type as keyof D2ModelSchemas,
-                    ids: metadata[type].map(e => e.id),
-                    excludeRules: useDefaultIncludeExclude
-                        ? myClass.getExcludeRules()
-                        : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
-                    includeRules: useDefaultIncludeExclude
-                        ? myClass.getIncludeRules()
-                        : metadataIncludeExcludeRules[metadataType].includeRules.map(_.toPath),
-                    includeSharingSettings,
-                };
-            })
-            .map(newBuilder => this.exportMetadata(newBuilder));
-        const exportResults: MetadataPackage[] = await Promise.all(exportPromises);
+            return this.exportMetadata({
+                type: type as keyof D2ModelSchemas,
+                ids: metadata[type].map(e => e.id),
+                excludeRules: useDefaultIncludeExclude
+                    ? myClass.getExcludeRules()
+                    : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
+                includeRules: useDefaultIncludeExclude
+                    ? myClass.getIncludeRules()
+                    : metadataIncludeExcludeRules[metadataType].includeRules.map(_.toPath),
+                includeSharingSettings,
+            });
+        });
 
-        return _.deepMerge({}, ...exportResults);
+        return _.mapValues(_.deepMerge({}, ...exportResults), elements => _.uniqBy(elements, "id"));
     });
 
-    protected async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance) {
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
         console.debug("Metadata package", payloadPackage);
 
-        return postMetadata(instance, payloadPackage, syncParams);
+        const response = await postMetadata(instance.getApi(), payloadPackage, syncParams);
+        const syncResult = cleanMetadataImportResponse(response, instance, this.type);
+        return [syncResult];
     }
 
-    protected cleanResponse(response: MetadataImportResponse, instance: Instance) {
-        return cleanMetadataImportResponse(response, instance);
-    }
-
-    protected async buildDataStats() {
+    public async buildDataStats() {
         return undefined;
     }
 
-    protected async mapMetadata(
+    public async mapPayload(
         _instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload> {

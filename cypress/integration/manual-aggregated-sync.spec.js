@@ -34,6 +34,9 @@ context("Manual aggregated sync", () => {
             .selectAllAttributesCategoryOptions()
             .next()
 
+            // Skip aggregation
+            .next()
+
             .selectReceiverInstance(inputs.instance)
             .synchronize()
 
@@ -63,6 +66,9 @@ context("Manual aggregated sync", () => {
             .next()
 
             .selectAllAttributesCategoryOptions()
+            .next()
+
+            // Skip aggregation
             .next()
 
             .next()
@@ -131,6 +137,9 @@ context("Manual aggregated sync", () => {
             .next()
 
             .selectAllAttributesCategoryOptions()
+            .next()
+
+            // Skip aggregation
             .next()
 
             .selectReceiverInstance(inputs.instance)

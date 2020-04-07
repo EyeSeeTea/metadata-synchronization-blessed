@@ -9,7 +9,6 @@ import { useHistory } from "react-router-dom";
 import { AggregatedSync } from "../../../logic/sync/aggregated";
 import { EventsSync } from "../../../logic/sync/events";
 import { MetadataSync } from "../../../logic/sync/metadata";
-import { getBaseUrl } from "../../../utils/d2";
 import {
     availablePeriods,
     cleanOrgUnitPaths,
@@ -17,6 +16,7 @@ import {
     requestJSONDownload,
 } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
+import { aggregationItems } from "../data/AggregationStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
 import { getInstanceOptions } from "./InstanceSelectionStep";
 // import Instance from "../../../models/instance";
@@ -81,11 +81,11 @@ const SaveStep = ({ syncRule, onCancel }) => {
     const save = async () => {
         setIsSaving(true);
 
-        const errors = await getValidationMessages(d2, syncRule);
+        const errors = await getValidationMessages(api, syncRule);
         if (errors.length > 0) {
             snackbar.error(errors.join("\n"));
         } else {
-            const newSyncRule = await syncRule.updateName(name).save(d2);
+            const newSyncRule = await syncRule.updateName(name).save(api);
             history.push(`/sync-rules/${newSyncRule.type}/edit/${newSyncRule.id}`);
             onCancel();
         }
@@ -108,9 +108,9 @@ const SaveStep = ({ syncRule, onCancel }) => {
             ...syncRule.dataSyncAttributeCategoryOptions,
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
-        getMetadata(getBaseUrl(d2), ids, "id,name").then(updateMetadata);
-        getInstanceOptions(d2).then(setInstanceOptions);
-    }, [d2, syncRule]);
+        getMetadata(api, ids, "id,name").then(updateMetadata);
+        getInstanceOptions(api).then(setInstanceOptions);
+    }, [api, syncRule]);
 
     // useEffect(() => {
     //     const getTargetInstances = async d2 =>
@@ -339,6 +339,22 @@ const SaveStep = ({ syncRule, onCancel }) => {
                     </LiEntry>
                 )}
 
+                {syncRule.type !== "metadata" && (
+                    <LiEntry
+                        label={i18n.t("Aggregation")}
+                        value={
+                            syncRule.dataSyncEnableAggregation
+                                ? i18n.t(
+                                      _.find(aggregationItems, [
+                                          "id",
+                                          syncRule.dataSyncAggregationType,
+                                      ])?.name ?? i18n.t("Enabled")
+                                  )
+                                : i18n.t("Disabled")
+                        }
+                    />
+                )}
+
                 {syncRule.type === "metadata" && (
                     <LiEntry label={i18n.t("Advanced options")}>
                         <ul>
@@ -411,6 +427,18 @@ const SaveStep = ({ syncRule, onCancel }) => {
                                             : syncRule.dataParams.strategy === "UPDATES"
                                             ? i18n.t("Updates")
                                             : ""
+                                    }
+                                />
+                            </ul>
+                        )}
+                        {syncRule.type === "events" && (
+                            <ul>
+                                <LiEntry
+                                    label={i18n.t("Generate new UID")}
+                                    value={
+                                        syncRule.dataParams.generateNewUid
+                                            ? i18n.t("Yes")
+                                            : i18n.t("No")
                                     }
                                 />
                             </ul>
