@@ -20,6 +20,7 @@ interface CombinedMetadata {
         id: string;
         name: string;
         categories: {
+            id: string;
             categoryOptions: {
                 id: string;
                 name: string;
@@ -76,6 +77,7 @@ const getFieldsByModel = (model: typeof D2Model) => {
                     id: true,
                     name: true,
                     categories: {
+                        id: true,
                         categoryOptions: { id: true, name: true, shortName: true, code: true },
                     },
                 },
@@ -180,7 +182,7 @@ export const autoMap = async ({
     ])
         .compact()
         .uniq()
-        .filter(({ id }) => filter?.includes(id) ?? true)
+        .filter(({ id }) => filter?.map(cleanNestedMappedId).includes(id) ?? true)
         .value();
 
     if (candidates.length === 0 && defaultValue) {
@@ -234,7 +236,9 @@ const autoMapCollection = async (
 
 const getCategoryOptions = (object: CombinedMetadata) => {
     return _.flatten(
-        object.categoryCombo?.categories.map(({ categoryOptions }) => categoryOptions)
+        object.categoryCombo?.categories.map(({ id: category, categoryOptions }) =>
+            categoryOptions.map(({ id, ...rest }) => ({ id: `${category}-${id}`, ...rest }))
+        )
     );
 };
 
@@ -403,7 +407,8 @@ export const getValidIds = async (
 
     return _.union(categoryOptions, options, programStages, programStageDataElements)
         .map(({ id }) => id)
-        .concat(...defaultValues);
+        .concat(...defaultValues)
+        .map(cleanNestedMappedId);
 };
 
 export const getChildrenRows = (rows: MetadataType[], model: typeof D2Model): MetadataType[] => {

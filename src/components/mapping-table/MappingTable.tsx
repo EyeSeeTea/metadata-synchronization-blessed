@@ -66,6 +66,7 @@ export interface MappingTableProps {
     instance: Instance;
     models: typeof D2Model[];
     filterRows?: string[];
+    transformRows?: (rows: MetadataType[]) => MetadataType[];
     mapping: MetadataMappingDictionary;
     globalMapping: MetadataMappingDictionary;
     onChangeMapping(mapping: MetadataMappingDictionary): Promise<void>;
@@ -78,6 +79,7 @@ export default function MappingTable({
     instance,
     models,
     filterRows,
+    transformRows,
     mapping,
     globalMapping,
     onChangeMapping,
@@ -849,6 +851,7 @@ export default function MappingTable({
             <MetadataTable
                 models={models}
                 filterRows={filterRows}
+                transformRows={transformRows}
                 additionalColumns={columns}
                 additionalActions={actions}
                 notifyNewModel={notifyNewModel}
