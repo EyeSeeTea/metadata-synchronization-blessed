@@ -716,7 +716,7 @@ export const mapCategoryOptionCombo = (
                 _.sortBy(o.categoryOptions, ["id"]),
                 _.sortBy(
                     origin?.categoryOptions?.map(({ id }) => ({
-                        id: categoryOptions[id]?.mappedId ?? id,
+                        id: categoryOptions[id]?.mappedId,
                     })),
                     ["id"]
                 )
