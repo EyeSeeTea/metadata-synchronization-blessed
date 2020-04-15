@@ -696,11 +696,12 @@ export async function requestJSONDownload(
 }
 
 export const mapCategoryOptionCombo = (
-    optionCombo: string,
+    optionCombo: string | undefined,
     mappings: MetadataMappingDictionary[],
     originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
     destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
-): string => {
+): string | undefined => {
+    if (!optionCombo) return undefined;
     for (const mapping of mappings) {
         const { categoryOptions = {}, categoryCombos = {} } = mapping;
         const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
@@ -715,7 +716,7 @@ export const mapCategoryOptionCombo = (
                 _.sortBy(o.categoryOptions, ["id"]),
                 _.sortBy(
                     origin?.categoryOptions?.map(({ id }) => ({
-                        id: categoryOptions[id]?.mappedId ?? id,
+                        id: categoryOptions[id]?.mappedId,
                     })),
                     ["id"]
                 )
