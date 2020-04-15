@@ -182,7 +182,7 @@ export interface DataValue {
     period: string;
     orgUnit: string;
     categoryOptionCombo: string;
-    attributeOptionCombo: string;
+    attributeOptionCombo?: string;
     value: string;
     storedBy: string;
     created: string;
