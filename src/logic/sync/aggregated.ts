@@ -201,7 +201,15 @@ export class AggregatedSync extends GenericSync {
     }
 
     private buildMappedDataValue(
-        { orgUnit, dataElement, categoryOptionCombo, value, comment, ...rest }: DataValue,
+        {
+            orgUnit,
+            dataElement,
+            categoryOptionCombo,
+            attributeOptionCombo,
+            value,
+            comment,
+            ...rest
+        }: DataValue,
         globalMapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
@@ -213,8 +221,15 @@ export class AggregatedSync extends GenericSync {
         const mappedDataElement = aggregatedDataElements[dataElement]?.mappedId ?? dataElement;
         const mappedValue = mapOptionValue(value, [innerMapping, globalMapping]);
         const mappedComment = mapOptionValue(comment, [innerMapping, globalMapping]);
-        const mappedCategory = mapCategoryOptionCombo(
-            categoryOptionCombo,
+        const mappedCategory =
+            mapCategoryOptionCombo(
+                categoryOptionCombo,
+                [innerMapping, globalMapping],
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            ) ?? categoryOptionCombo;
+        const mappedAttribute = mapCategoryOptionCombo(
+            attributeOptionCombo,
             [innerMapping, globalMapping],
             originCategoryOptionCombos,
             destinationCategoryOptionCombos
@@ -224,6 +239,7 @@ export class AggregatedSync extends GenericSync {
             orgUnit: cleanOrgUnitPath(mappedOrgUnit),
             dataElement: mappedDataElement,
             categoryOptionCombo: mappedCategory,
+            attributeOptionCombo: mappedAttribute,
             value: mappedValue,
             comment: comment ? mappedComment : undefined,
             ...rest,
