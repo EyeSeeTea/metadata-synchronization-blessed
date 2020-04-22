@@ -74,6 +74,25 @@ describe("mapPackage", () => {
         const dataElements = transformedPayload["dataElements"];
         expect(_.every(dataElements, de => de["33Name"])).toEqual(true);
     });
+    it("should apply all transformations in correct even if there are disordered transformations for the version argument", () => {
+        const transformations = [
+            {
+                version: 33,
+                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "32Name")
+            },
+            {
+                version: 32,
+                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "32Name", "33Name")
+            }
+        ];
+
+        const payload = givenAMetadataPackage();
+
+        const transformedPayload = mapPackageToD2Version(33, payload, transformations)
+
+        const dataElements = transformedPayload["dataElements"];
+        expect(_.every(dataElements, de => de["33Name"])).toEqual(true);
+    });
 });
 
 
