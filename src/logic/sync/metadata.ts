@@ -15,6 +15,7 @@ import {
     postMetadata,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
+import { mapPackage } from "../../data/MetadataPackageMapper";
 
 export class MetadataSync extends GenericSync {
     public readonly type = "metadata";
@@ -107,6 +108,13 @@ export class MetadataSync extends GenericSync {
 
         const payloadPackage = await this.buildPayload();
         console.debug("Metadata package", payloadPackage);
+
+        // TODO: retrieve version from instance
+        // Refactor: create instance domain model and repository
+        const version = 30;
+        const versionedPayloadPackage = mapPackage(version, payloadPackage);
+
+        console.debug("Versioned Metadata package", versionedPayloadPackage);
 
         const response = await postMetadata(instance.getApi(), payloadPackage, syncParams);
         const syncResult = cleanMetadataImportResponse(response, instance, this.type);
