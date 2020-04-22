@@ -3,7 +3,7 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../models/dhis/factory";
 import Instance from "../../models/instance";
-import { ExportBuilder, MetadataPackage, NestedRules } from "../../types/synchronization";
+import { ExportBuilder, NestedRules } from "../../types/synchronization";
 import { promiseMap } from "../../utils/common";
 import {
     buildNestedRules,
@@ -17,6 +17,7 @@ import {
 import { GenericSync, SyncronizationPayload } from "./generic";
 import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
 import { metadataTransformations } from "../../data/synchronization/mappers/PackageTransformations";
+import { MetadataPackage } from "../../domain/synchronization/Entities";
 
 export class MetadataSync extends GenericSync {
     public readonly type = "metadata";

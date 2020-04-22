@@ -2,7 +2,7 @@ import { D2CategoryOptionCombo } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import { AggregatedPackage, DataValue } from "../../types/synchronization";
+import { AggregatedPackage, DataValue } from "../../domain/synchronization/Entities";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,

@@ -8,10 +8,7 @@ import SyncRule from "../../models/syncRule";
 import { D2, ImportStatus } from "../../types/d2";
 import {
     AggregatedDataStats,
-    AggregatedPackage,
     EventsDataStats,
-    EventsPackage,
-    MetadataPackage,
     SynchronizationBuilder,
     SynchronizationReportStatus,
     SynchronizationResult,
@@ -23,6 +20,7 @@ import { AggregatedSync } from "./aggregated";
 import { DeletedSync } from "./deleted";
 import { EventsSync } from "./events";
 import { MetadataSync } from "./metadata";
+import { MetadataPackage, AggregatedPackage, EventsPackage } from "../../domain/synchronization/Entities";
 
 export type SyncronizationClass =
     | typeof MetadataSync

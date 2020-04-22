@@ -8,7 +8,7 @@ import {
     EventsPackage,
     ProgramEvent,
     ProgramEventDataValue,
-} from "../../types/synchronization";
+} from "../../domain/synchronization/Entities";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,

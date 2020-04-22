@@ -17,20 +17,17 @@ import {
     MetadataImportResponse,
 } from "../types/d2";
 import {
-    AggregatedPackage,
     CategoryOptionAggregationBuilder,
     DataSyncAggregation,
     DataSynchronizationParams,
-    DataValue,
-    MetadataPackage,
     NestedRules,
-    ProgramEvent,
     SynchronizationResult,
     SyncRuleType,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
 import { promiseMap } from "./common";
 import { cleanToAPIChildReferenceName, cleanToModelName, getClassName } from "./d2";
+import { MetadataPackage, AggregatedPackage, ProgramEvent, DataValue } from "../domain/synchronization/Entities";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -432,8 +429,8 @@ export const getDefaultIds = memoize(
                 fields: "id",
             })
             .getData()) as {
-            [key: string]: { id: string }[];
-        };
+                [key: string]: { id: string }[];
+            };
 
         const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
 
