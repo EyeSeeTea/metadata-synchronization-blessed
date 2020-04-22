@@ -112,7 +112,7 @@ export class MetadataSync extends GenericSync {
         // TODO: retrieve version from instance
         // Refactor: create instance domain model and repository
         const version = 30;
-        const versionedPayloadPackage = mapPackage(version, payloadPackage);
+        const versionedPayloadPackage = mapPackage(version, payloadPackage, []);
 
         console.debug("Versioned Metadata package", versionedPayloadPackage);
 
