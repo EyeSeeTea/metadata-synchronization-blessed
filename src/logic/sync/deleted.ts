@@ -6,8 +6,8 @@ import {
     postMetadata,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
-import { metadataTransformations } from "../../data/mappers/PackageTransformations";
-import { mapPackageToD2Version } from "../../data/mappers/D2VersionPackageMapper";
+import { metadataTransformations } from "../../data/synchronization/mappers/PackageTransformations";
+import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
 
 export class DeletedSync extends GenericSync {
     public readonly type = "deleted";

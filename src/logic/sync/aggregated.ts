@@ -19,8 +19,8 @@ import {
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
 import { promiseMap } from "../../utils/common";
-import { mapPackageToD2Version } from "../../data/mappers/D2VersionPackageMapper";
-import { aggregatedTransformations } from "../../data/mappers/PackageTransformations";
+import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
+import { aggregatedTransformations } from "../../data/synchronization/mappers/PackageTransformations";
 
 export class AggregatedSync extends GenericSync {
     public readonly type = "aggregated";

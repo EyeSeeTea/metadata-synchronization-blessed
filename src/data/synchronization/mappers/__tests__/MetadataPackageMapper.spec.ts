@@ -1,4 +1,4 @@
-import { MetadataPackage } from "../../../types/synchronization";
+import { MetadataPackage } from "../../../../types/synchronization";
 import { PackageTransformationStrategy, mapPackageToD2Version } from "../D2VersionPackageMapper";
 import _ from "lodash";
 

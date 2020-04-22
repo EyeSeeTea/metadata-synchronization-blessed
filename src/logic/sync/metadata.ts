@@ -15,8 +15,8 @@ import {
     postMetadata,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
-import { mapPackageToD2Version } from "../../data/mappers/D2VersionPackageMapper";
-import { metadataTransformations } from "../../data/mappers/PackageTransformations";
+import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
+import { metadataTransformations } from "../../data/synchronization/mappers/PackageTransformations";
 
 export class MetadataSync extends GenericSync {
     public readonly type = "metadata";

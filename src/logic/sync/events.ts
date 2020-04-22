@@ -25,8 +25,8 @@ import {
 } from "../../utils/synchronization";
 import { AggregatedSync } from "./aggregated";
 import { GenericSync, SyncronizationPayload } from "./generic";
-import { mapPackageToD2Version } from "../../data/mappers/D2VersionPackageMapper";
-import { eventsTransformations } from "../../data/mappers/PackageTransformations";
+import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
+import { eventsTransformations } from "../../data/synchronization/mappers/PackageTransformations";
 
 export class EventsSync extends GenericSync {
     public readonly type = "events";
