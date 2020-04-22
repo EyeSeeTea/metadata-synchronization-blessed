@@ -15,7 +15,8 @@ import {
     postMetadata,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
-import { mapPackage } from "../../data/MetadataPackageMapper";
+import { mapPackageToD2Version } from "../../data/mappers/D2VersionPackageMapper";
+import { metadataTransformations } from "../../data/mappers/PackageTransformations";
 
 export class MetadataSync extends GenericSync {
     public readonly type = "metadata";
@@ -107,16 +108,15 @@ export class MetadataSync extends GenericSync {
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
-        console.debug("Metadata package", payloadPackage);
 
         // TODO: retrieve version from instance
         // Refactor: create instance domain model and repository
         const version = 30;
-        const versionedPayloadPackage = mapPackage(version, payloadPackage, []);
+        const versionedPayloadPackage = mapPackageToD2Version(version, payloadPackage, metadataTransformations);
 
-        console.debug("Versioned Metadata package", versionedPayloadPackage);
+        console.debug("Metadata package", payloadPackage, versionedPayloadPackage);
 
-        const response = await postMetadata(instance.getApi(), payloadPackage, syncParams);
+        const response = await postMetadata(instance.getApi(), versionedPayloadPackage, syncParams);
         const syncResult = cleanMetadataImportResponse(response, instance, this.type);
         return [syncResult];
     }

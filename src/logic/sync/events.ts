@@ -25,6 +25,8 @@ import {
 } from "../../utils/synchronization";
 import { AggregatedSync } from "./aggregated";
 import { GenericSync, SyncronizationPayload } from "./generic";
+import { mapPackageToD2Version } from "../../data/mappers/D2VersionPackageMapper";
+import { eventsTransformations } from "../../data/mappers/PackageTransformations";
 
 export class EventsSync extends GenericSync {
     public readonly type = "events";
@@ -56,11 +58,11 @@ export class EventsSync extends GenericSync {
 
         const { dataValues: candidateDataValues = [] } = enableAggregation
             ? await getAnalyticsData({
-                  api: this.api,
-                  dataParams,
-                  dimensionIds: [...directIndicators, ...indicatorsByProgram],
-                  includeCategories: false,
-              })
+                api: this.api,
+                dataParams,
+                dimensionIds: [...directIndicators, ...indicatorsByProgram],
+                includeCategories: false,
+            })
             : {};
 
         const dataValues = _.reject(candidateDataValues, ({ dataElement }) =>
@@ -74,6 +76,7 @@ export class EventsSync extends GenericSync {
         const { events, dataValues } = await this.buildPayload();
 
         const eventsResponse = await this.postEventsPayload(instance, events);
+
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
         return _.compact([eventsResponse, indicatorsResponse]);
@@ -83,7 +86,13 @@ export class EventsSync extends GenericSync {
         const { dataParams = {} } = this.builder;
 
         const payload = await this.mapPayload(instance, { events });
-        console.debug("Events package", { events, payload });
+
+        // TODO: retrieve version from instance
+        // Refactor: create instance domain model and repository
+        const version = 30;
+        const versionedPayloadPackage = mapPackageToD2Version(version, payload, eventsTransformations);
+        console.debug("Events package", { events, payload, versionedPayloadPackage });
+
         const response = await postEventsData(instance, payload, dataParams);
 
         return cleanDataImportResponse(response, instance, this.type);

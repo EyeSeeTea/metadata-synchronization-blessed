@@ -6,6 +6,8 @@ import {
     postMetadata,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
+import { metadataTransformations } from "../../data/mappers/PackageTransformations";
+import { mapPackageToD2Version } from "../../data/mappers/D2VersionPackageMapper";
 
 export class DeletedSync extends GenericSync {
     public readonly type = "deleted";
@@ -18,7 +20,13 @@ export class DeletedSync extends GenericSync {
         const { metadataIds, syncParams = {} } = this.builder;
 
         const payloadPackage = await getMetadata(instance.getApi(), metadataIds, "id");
-        console.debug("Metadata package", payloadPackage);
+
+        // TODO: retrieve version from instance
+        // Refactor: create instance domain model and repository
+        const version = 30;
+        const versionedPayloadPackage = mapPackageToD2Version(version, payloadPackage, metadataTransformations);
+
+        console.debug("Metadata package", payloadPackage, versionedPayloadPackage);
 
         const response = await postMetadata(instance.getApi(), payloadPackage, {
             ...syncParams,

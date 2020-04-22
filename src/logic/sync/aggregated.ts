@@ -19,6 +19,8 @@ import {
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
 import { promiseMap } from "../../utils/common";
+import { mapPackageToD2Version } from "../../data/mappers/D2VersionPackageMapper";
+import { aggregatedTransformations } from "../../data/mappers/PackageTransformations";
 
 export class AggregatedSync extends GenericSync {
     public readonly type = "aggregated";
@@ -145,9 +147,14 @@ export class AggregatedSync extends GenericSync {
 
         const payloadPackage = await this.buildPayload();
         const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
-        console.debug("Aggregated package", { payloadPackage, mappedPayloadPackage });
 
-        const response = await postAggregatedData(instance, mappedPayloadPackage, dataParams);
+        // TODO: retrieve version from instance
+        // Refactor: create instance domain model and repository
+        const version = 30;
+        const versionedPayloadPackage = mapPackageToD2Version(version, mappedPayloadPackage, aggregatedTransformations);
+        console.debug("Aggregated package", { payloadPackage, mappedPayloadPackage, versionedPayloadPackage });
+
+        const response = await postAggregatedData(instance, versionedPayloadPackage, dataParams);
         return [cleanDataImportResponse(response, instance, this.type)];
     }
 
