@@ -1,9 +1,8 @@
-import { MetadataPackage } from "../types/synchronization";
 import _ from "lodash";
 
-export interface MetadataTransformationStrategy {
+export interface PackageTransformationStrategy<T> {
     version: number;
-    transform(payload: MetadataPackage): MetadataPackage
+    transform(payload: T): T
 }
 
 /**
@@ -14,8 +13,8 @@ export interface MetadataTransformationStrategy {
  * @param payload  payload to trasnform
  * @param transformations list of possible transformations to apply
  */
-export function mapPackage(d2Version: number, payload: MetadataPackage,
-    transformations: MetadataTransformationStrategy[] = []): MetadataPackage {
+export function mapPackageToD2Version<T>(d2Version: number, payload: T,
+    transformations: PackageTransformationStrategy<T>[] = []): T {
     const orderedTransformations = _.sortBy(transformations, 'version');
 
     const transformationstoApply = orderedTransformations.filter(
@@ -23,10 +22,10 @@ export function mapPackage(d2Version: number, payload: MetadataPackage,
 
     if (transformationstoApply.length > 0) {
         return transformations.reduce(
-            (transformedPayload: MetadataPackage, transformation: MetadataTransformationStrategy) =>
+            (transformedPayload: T, transformation: PackageTransformationStrategy<T>) =>
                 transformation.transform(transformedPayload), payload);
     } else {
-        console.log(`No transformations applied to package for dhis2 version ${d2Version}`)
+        console.log(`No D2 version transformations applied to package for version ${d2Version}`)
         return payload;
     }
 }

@@ -1,74 +1,75 @@
-import { MetadataPackage } from "../../types/synchronization";
-import { MetadataTransformationStrategy, mapPackage } from "../MetadataPackageMapper";
+import { MetadataPackage } from "../../../types/synchronization";
+import { PackageTransformationStrategy, mapPackageToD2Version } from "../D2VersionPackageMapper";
 import _ from "lodash";
 
 describe("mapPackage", () => {
     it("should no apply any transformation if not exist transformations", () => {
-        const transformations: MetadataTransformationStrategy[] = [];
+        const transformations: PackageTransformationStrategy<MetadataPackage>[] = [];
         const payload = givenAMetadataPackage();
 
-        const transformedPayload = mapPackage(33, payload, transformations)
+        const transformedPayload = mapPackageToD2Version(33, payload, transformations)
 
         expect(transformedPayload).toEqual(payload);
     });
     it("should no apply any transformation if there are no transformations for the version argument", () => {
-        const transformations: MetadataTransformationStrategy[] = [
+        const transformations = [
             {
                 version: 34,
-                transform: (payload) => renamePropInMetadataPackage(payload, "dataElements", "name", "34Name")
+                transform: (payload: MetadataPackage) =>
+                    renamePropInMetadataPackage(payload, "dataElements", "name", "34Name")
             }
         ];
 
         const payload = givenAMetadataPackage();
 
-        const transformedPayload = mapPackage(33, payload, transformations)
+        const transformedPayload = mapPackageToD2Version(33, payload, transformations)
 
         expect(transformedPayload).toEqual(payload);
     });
     it("should apply transformation if there are one lower version transformation than the version argument", () => {
-        const transformations: MetadataTransformationStrategy[] = [
+        const transformations = [
             {
                 version: 30,
-                transform: (payload) => renamePropInMetadataPackage(payload, "dataElements", "name", "30Name")
+                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "30Name")
             }
         ];
         const payload = givenAMetadataPackage();
 
-        const transformedPayload = mapPackage(33, payload, transformations);
+        const transformedPayload = mapPackageToD2Version(33, payload, transformations);
 
         const dataElements = transformedPayload["dataElements"];
         expect(_.every(dataElements, de => de["30Name"])).toEqual(true);
     });
     it("should apply transformation if there are one version transformation equal to the version argument", () => {
-        const transformations: MetadataTransformationStrategy[] = [
+        const transformations = [
             {
                 version: 33,
-                transform: (payload) => renamePropInMetadataPackage(payload, "dataElements", "name", "33Name")
+                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "33Name")
             }
         ];
 
         const payload = givenAMetadataPackage();
 
-        const transformedPayload = mapPackage(33, payload, transformations)
+        const transformedPayload = mapPackageToD2Version(33, payload, transformations)
 
         const dataElements = transformedPayload["dataElements"];
         expect(_.every(dataElements, de => de["33Name"])).toEqual(true);
     });
     it("should apply all transformations if there are two transformations for the version argument", () => {
-        const transformations: MetadataTransformationStrategy[] = [
+        const transformations = [
             {
                 version: 32,
-                transform: (payload) => renamePropInMetadataPackage(payload, "dataElements", "name", "32Name")
+                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "32Name")
             },
             {
                 version: 33,
-                transform: (payload) => renamePropInMetadataPackage(payload, "dataElements", "32Name", "33Name")
+                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "32Name", "33Name")
             }
         ];
 
         const payload = givenAMetadataPackage();
 
-        const transformedPayload = mapPackage(33, payload, transformations)
+        const transformedPayload = mapPackageToD2Version(33, payload, transformations)
 
         const dataElements = transformedPayload["dataElements"];
         expect(_.every(dataElements, de => de["33Name"])).toEqual(true);
