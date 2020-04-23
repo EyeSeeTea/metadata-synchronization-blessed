@@ -14,7 +14,7 @@ describe("mapPackage", () => {
     it("should no apply any transformation if there are no transformations for the version argument", () => {
         const transformations = [
             {
-                version: 34,
+                apiVersion: 34,
                 transform: (payload: MetadataPackage) =>
                     renamePropInMetadataPackage(payload, "dataElements", "name", "34Name")
             }
@@ -29,7 +29,7 @@ describe("mapPackage", () => {
     it("should apply transformation if there are one lower version transformation than the version argument", () => {
         const transformations = [
             {
-                version: 30,
+                apiVersion: 30,
                 transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "30Name")
             }
         ];
@@ -43,7 +43,7 @@ describe("mapPackage", () => {
     it("should apply transformation if there are one version transformation equal to the version argument", () => {
         const transformations = [
             {
-                version: 33,
+                apiVersion: 33,
                 transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "33Name")
             }
         ];
@@ -58,11 +58,11 @@ describe("mapPackage", () => {
     it("should apply all transformations if there are two transformations for the version argument", () => {
         const transformations = [
             {
-                version: 32,
+                apiVersion: 32,
                 transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "32Name")
             },
             {
-                version: 33,
+                apiVersion: 33,
                 transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "32Name", "33Name")
             }
         ];
@@ -77,11 +77,11 @@ describe("mapPackage", () => {
     it("should apply all transformations in correct even if there are disordered transformations for the version argument", () => {
         const transformations = [
             {
-                version: 33,
+                apiVersion: 33,
                 transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "32Name")
             },
             {
-                version: 32,
+                apiVersion: 32,
                 transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "32Name", "33Name")
             }
         ];

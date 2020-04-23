@@ -21,10 +21,11 @@ export class DeletedSync extends GenericSync {
 
         const payloadPackage = await getMetadata(instance.getApi(), metadataIds, "id");
 
-        // TODO: retrieve version from instance
-        // Refactor: create instance domain model and repository
-        const version = 30;
-        const versionedPayloadPackage = mapPackageToD2Version(version, payloadPackage, metadataTransformations);
+        if (!instance.apiVersion) {
+            throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
+        }
+
+        const versionedPayloadPackage = mapPackageToD2Version(instance.apiVersion, payloadPackage, metadataTransformations);
 
         console.debug("Metadata package", payloadPackage, versionedPayloadPackage);
 

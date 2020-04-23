@@ -40,6 +40,7 @@ export interface InstanceData {
     password: string;
     description?: string;
     metadataMapping: MetadataMappingDictionary;
+    version?: string
 }
 
 type InstanceDataMain = Omit<InstanceData, "metadataMapping">;
@@ -55,6 +56,7 @@ const mainDefaultData: InstanceDataMain = {
     username: "",
     password: "",
     description: "",
+    version: "",
 };
 
 const initialData: InstanceData = {
@@ -114,6 +116,14 @@ export default class Instance {
         return { username: this.data.username, password: this.data.password };
     }
 
+    public get version(): string | undefined {
+        return this.data.version;
+    }
+
+    public get apiVersion(): number | undefined {
+        return this.version ? +this.version?.split(".")[1] : undefined
+    }
+
     public getApi(): D2Api {
         return this.api;
     }
@@ -142,7 +152,9 @@ export default class Instance {
         const defaultDetails: InstanceDetailsData = { metadataMapping: {} };
         const detailsData = await getDataStore(api, detailsKey, defaultDetails);
         const dataWithMapping = { ...instanceData, metadataMapping: detailsData.metadataMapping };
-        return this.build(dataWithMapping);
+        const instance = await this.build(dataWithMapping);
+        const systemInfo = await instance.getApi().system.info.getData();
+        return instance.setVersion(systemInfo.version);
     }
 
     public static async list(
@@ -225,6 +237,10 @@ export default class Instance {
         return new Instance({ ...this.data, password });
     }
 
+    public setVersion(version: string): Instance {
+        return new Instance({ ...this.data, version });
+    }
+
     public async validateUrlUsernameCombo(api: D2Api): Promise<boolean> {
         const { url, username, id } = this.data;
         const combination = [url, username].join("-");
@@ -245,39 +261,39 @@ export default class Instance {
             name: _.compact([
                 !name.trim()
                     ? {
-                          key: "cannot_be_blank",
-                          namespace: { field: "name" },
-                      }
+                        key: "cannot_be_blank",
+                        namespace: { field: "name" },
+                    }
                     : null,
             ]),
             url: _.compact([
                 !url
                     ? {
-                          key: "cannot_be_blank",
-                          namespace: { field: "url" },
-                      }
+                        key: "cannot_be_blank",
+                        namespace: { field: "url" },
+                    }
                     : null,
             ]),
             username: _.compact([
                 !username
                     ? {
-                          key: "cannot_be_blank",
-                          namespace: { field: "username" },
-                      }
+                        key: "cannot_be_blank",
+                        namespace: { field: "username" },
+                    }
                     : null,
                 (await this.validateUrlUsernameCombo(api))
                     ? {
-                          key: "url_username_combo_already_exists",
-                          namespace: { field: "username", other: "url" },
-                      }
+                        key: "url_username_combo_already_exists",
+                        namespace: { field: "username", other: "url" },
+                    }
                     : null,
             ]),
             password: _.compact([
                 !password && !this.id
                     ? {
-                          key: "cannot_be_blank",
-                          namespace: { field: "password" },
-                      }
+                        key: "cannot_be_blank",
+                        namespace: { field: "password" },
+                    }
                     : null,
             ]),
         });
@@ -295,9 +311,9 @@ export default class Instance {
             return response.data.version
                 ? { status: true }
                 : {
-                      status: false,
-                      error: new Error(i18n.t("Not a valid DHIS2 instance")),
-                  };
+                    status: false,
+                    error: new Error(i18n.t("Not a valid DHIS2 instance")),
+                };
         } catch (error) {
             if (error.response) {
                 switch (error.response.status) {

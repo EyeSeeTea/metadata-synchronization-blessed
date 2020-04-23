@@ -87,10 +87,11 @@ export class EventsSync extends GenericSync {
 
         const payload = await this.mapPayload(instance, { events });
 
-        // TODO: retrieve version from instance
-        // Refactor: create instance domain model and repository
-        const version = 30;
-        const versionedPayloadPackage = mapPackageToD2Version(version, payload, eventsTransformations);
+        if (!instance.apiVersion) {
+            throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
+        }
+
+        const versionedPayloadPackage = mapPackageToD2Version(instance.apiVersion, payload, eventsTransformations);
         console.debug("Events package", { events, payload, versionedPayloadPackage });
 
         const response = await postEventsData(instance, payload, dataParams);

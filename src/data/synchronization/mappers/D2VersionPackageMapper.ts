@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 export interface PackageTransformationStrategy<T> {
-    version: number;
+    apiVersion: number;
     transform(payload: T): T
 }
 
@@ -18,14 +18,14 @@ export function mapPackageToD2Version<T>(d2Version: number, payload: T,
     const orderedTransformations = _.sortBy(transformations, 'version');
 
     const transformationstoApply = orderedTransformations.filter(
-        transformation => transformation.version <= d2Version);
+        transformation => transformation.apiVersion <= d2Version);
 
     if (transformationstoApply.length > 0) {
         return transformations.reduce(
             (transformedPayload: T, transformation: PackageTransformationStrategy<T>) =>
                 transformation.transform(transformedPayload), payload);
     } else {
-        console.log(`No D2 version transformations applied to package for version ${d2Version}`)
+        console.log(`No transformations applied to package for dhis2 web api version ${d2Version}`)
         return payload;
     }
 }
