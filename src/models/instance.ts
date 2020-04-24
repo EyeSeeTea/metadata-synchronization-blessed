@@ -40,7 +40,6 @@ export interface InstanceData {
     password: string;
     description?: string;
     metadataMapping: MetadataMappingDictionary;
-    version?: string
 }
 
 type InstanceDataMain = Omit<InstanceData, "metadataMapping">;
@@ -56,7 +55,6 @@ const mainDefaultData: InstanceDataMain = {
     username: "",
     password: "",
     description: "",
-    version: "",
 };
 
 const initialData: InstanceData = {
@@ -116,14 +114,6 @@ export default class Instance {
         return { username: this.data.username, password: this.data.password };
     }
 
-    public get version(): string | undefined {
-        return this.data.version;
-    }
-
-    public get apiVersion(): number | undefined {
-        return this.version ? +this.version?.split(".")[1] : undefined
-    }
-
     public getApi(): D2Api {
         return this.api;
     }
@@ -152,9 +142,7 @@ export default class Instance {
         const defaultDetails: InstanceDetailsData = { metadataMapping: {} };
         const detailsData = await getDataStore(api, detailsKey, defaultDetails);
         const dataWithMapping = { ...instanceData, metadataMapping: detailsData.metadataMapping };
-        const instance = await this.build(dataWithMapping);
-        const systemInfo = await instance.getApi().system.info.getData();
-        return instance.setVersion(systemInfo.version);
+        return this.build(dataWithMapping);
     }
 
     public static async list(
@@ -235,10 +223,6 @@ export default class Instance {
                 ? new Cryptr(Instance.encryptionKey).decrypt(this.data.password)
                 : "";
         return new Instance({ ...this.data, password });
-    }
-
-    public setVersion(version: string): Instance {
-        return new Instance({ ...this.data, version });
     }
 
     public async validateUrlUsernameCombo(api: D2Api): Promise<boolean> {

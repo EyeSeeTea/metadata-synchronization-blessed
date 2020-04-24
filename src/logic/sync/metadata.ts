@@ -3,6 +3,7 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../models/dhis/factory";
 import Instance from "../../models/instance";
+import InstanceEntity from "../../domain/instance/Instance";
 import { ExportBuilder, NestedRules } from "../../types/synchronization";
 import { promiseMap } from "../../utils/common";
 import {
@@ -105,16 +106,16 @@ export class MetadataSync extends GenericSync {
         return _.mapValues(_.deepMerge({}, ...exportResults), elements => _.uniqBy(elements, "id"));
     });
 
-    public async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
 
-        if (!instance.apiVersion) {
+        if (!instanceEntity.apiVersion) {
             throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
         }
 
-        const versionedPayloadPackage = mapPackageToD2Version(instance.apiVersion, payloadPackage, metadataTransformations);
+        const versionedPayloadPackage = mapPackageToD2Version(instanceEntity.apiVersion, payloadPackage, metadataTransformations);
 
         console.debug("Metadata package", payloadPackage, versionedPayloadPackage);
 

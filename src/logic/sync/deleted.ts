@@ -1,5 +1,6 @@
 import memoize from "nano-memoize";
 import Instance from "../../models/instance";
+import InstanceEntity from "../../domain/instance/Instance";
 import {
     cleanMetadataImportResponse,
     getMetadata,
@@ -16,16 +17,16 @@ export class DeletedSync extends GenericSync {
         return {};
     });
 
-    public async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
         const { metadataIds, syncParams = {} } = this.builder;
 
         const payloadPackage = await getMetadata(instance.getApi(), metadataIds, "id");
 
-        if (!instance.apiVersion) {
+        if (!instanceEntity.apiVersion) {
             throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
         }
 
-        const versionedPayloadPackage = mapPackageToD2Version(instance.apiVersion, payloadPackage, metadataTransformations);
+        const versionedPayloadPackage = mapPackageToD2Version(instanceEntity.apiVersion, payloadPackage, metadataTransformations);
 
         console.debug("Metadata package", payloadPackage, versionedPayloadPackage);
 

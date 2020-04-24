@@ -2,7 +2,11 @@ import i18n from "@dhis2/d2-i18n";
 import { D2Api } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
+
 import Instance from "../../models/instance";
+
+import InstanceEntity from "../../domain/instance/Instance";
+
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2, ImportStatus } from "../../types/d2";
@@ -21,6 +25,8 @@ import { DeletedSync } from "./deleted";
 import { EventsSync } from "./events";
 import { MetadataSync } from "./metadata";
 import { MetadataPackage, AggregatedPackage, EventsPackage } from "../../domain/synchronization/Entities";
+import InstanceRepository from "../../domain/instance/InstanceRepository";
+import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";
 
 export type SyncronizationClass =
     | typeof MetadataSync
@@ -33,6 +39,7 @@ export abstract class GenericSync {
     protected readonly d2: D2;
     protected readonly api: D2Api;
     protected readonly builder: SynchronizationBuilder;
+    protected readonly instanceRepository: InstanceRepository;
 
     public abstract readonly type: SyncRuleType;
     public readonly fields: string = "id,name";
@@ -41,6 +48,10 @@ export abstract class GenericSync {
         this.d2 = d2;
         this.api = api;
         this.builder = builder;
+
+        //TODO: composition root - This dependency should be injected by constructor when we have 
+        // composition root
+        this.instanceRepository = new InstanceD2ApiRepository(api);
     }
 
     public abstract async buildPayload(): Promise<SyncronizationPayload>;
@@ -48,7 +59,11 @@ export abstract class GenericSync {
         instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload>;
-    public abstract async postPayload(instance: Instance): Promise<SynchronizationResult[]>;
+
+    // We start to use domain concepts:
+    // for the moment old model instance and domain entity instance are going to live together for a while on sync classes.
+    // Little by little through refactors the old instance model should disappear
+    public abstract async postPayload(instance: Instance, instanceEntity: InstanceEntity): Promise<SynchronizationResult[]>;
     public abstract async buildDataStats(): Promise<
         AggregatedDataStats[] | EventsDataStats[] | undefined
     >;
@@ -107,8 +122,11 @@ export abstract class GenericSync {
 
             try {
                 console.debug("Start import on destination instance", instance.toObject());
-                const syncResults = await this.postPayload(instance);
+
+                const instanceEntity = await this.instanceRepository.getById(instance.id);
+                const syncResults = await this.postPayload(instance, instanceEntity);
                 syncReport.addSyncResult(...syncResults);
+
                 console.debug("Finished importing data on instance", instance.toObject());
             } catch (error) {
                 console.error("err", error);

@@ -3,6 +3,7 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
+import InstanceEntity from "../../domain/instance/Instance";
 import {
     DataValue,
     EventsPackage,
@@ -72,26 +73,26 @@ export class EventsSync extends GenericSync {
         return { events, dataValues };
     });
 
-    public async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
         const { events, dataValues } = await this.buildPayload();
 
-        const eventsResponse = await this.postEventsPayload(instance, events);
+        const eventsResponse = await this.postEventsPayload(instance, instanceEntity, events);
 
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
         return _.compact([eventsResponse, indicatorsResponse]);
     }
 
-    private async postEventsPayload(instance: Instance, events: ProgramEvent[]) {
+    private async postEventsPayload(instance: Instance, instanceEntity: InstanceEntity, events: ProgramEvent[]) {
         const { dataParams = {} } = this.builder;
 
         const payload = await this.mapPayload(instance, { events });
 
-        if (!instance.apiVersion) {
+        if (!instanceEntity.apiVersion) {
             throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
         }
 
-        const versionedPayloadPackage = mapPackageToD2Version(instance.apiVersion, payload, eventsTransformations);
+        const versionedPayloadPackage = mapPackageToD2Version(instanceEntity.apiVersion, payload, eventsTransformations);
         console.debug("Events package", { events, payload, versionedPayloadPackage });
 
         const response = await postEventsData(instance, payload, dataParams);

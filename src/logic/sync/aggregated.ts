@@ -2,6 +2,7 @@ import { D2CategoryOptionCombo } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
+import InstanceEntity from "../../domain/instance/Instance";
 import { AggregatedPackage, DataValue } from "../../domain/synchronization/Entities";
 import {
     buildMetadataDictionary,
@@ -142,17 +143,17 @@ export class AggregatedSync extends GenericSync {
         return { dataValues };
     };
 
-    public async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
         const { dataParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
         const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
 
-        if (!instance.apiVersion) {
+        if (!instanceEntity.apiVersion) {
             throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
         }
 
-        const versionedPayloadPackage = mapPackageToD2Version(instance.apiVersion, mappedPayloadPackage, aggregatedTransformations);
+        const versionedPayloadPackage = mapPackageToD2Version(instanceEntity.apiVersion, mappedPayloadPackage, aggregatedTransformations);
         console.debug("Aggregated package", { payloadPackage, mappedPayloadPackage, versionedPayloadPackage });
 
         const response = await postAggregatedData(instance, versionedPayloadPackage, dataParams);
