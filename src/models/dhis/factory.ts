@@ -25,6 +25,7 @@ export const metadataModels = [
     metadataClasses.ProgramRuleModel,
     metadataClasses.ProgramRuleVariableModel,
     metadataClasses.UserGroupModel,
+    metadataClasses.UserRoleModel
 ];
 
 const findClasses = (key: string, value: string) => {

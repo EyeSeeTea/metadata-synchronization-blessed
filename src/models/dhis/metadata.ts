@@ -385,6 +385,14 @@ export class UserGroupModel extends D2Model {
     protected static includeRules = ["users", "users.userRoles"];
 }
 
+export class UserRoleModel extends D2Model {
+    protected static metadataType = "userRole";
+    protected static collectionName = "userRoles" as const;
+
+    protected static excludeRules = ["users", "users.userRoles", "users.userGroups"];
+    protected static includeRules = [];
+}
+
 export class DataApprovalWorkflowModel extends D2Model {
     protected static metadataType = "dataApprovalWorkflow";
     protected static collectionName = "dataApprovalWorkflows" as const;

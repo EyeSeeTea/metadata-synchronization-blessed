@@ -150,6 +150,7 @@ const includeExcludeRulesFriendlyNames: {
     trackedEntityAttributes: "Tracked entity attributes",
     "trackedEntityAttributes.legendSets": "Legends of tracked entity attributes",
     "users.userRoles": "User roles of users",
+    "users.userGroups": "User groups of users"
 };
 
 export default includeExcludeRulesFriendlyNames;
