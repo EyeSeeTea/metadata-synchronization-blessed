@@ -3,7 +3,7 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import InstanceEntity from "../../domain/instance/Instance";
-import { AggregatedPackage, DataValue } from "../../domain/synchronization/Entities";
+import { AggregatedPackage, DataValue } from "../../domain/synchronization/DataEntities";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,

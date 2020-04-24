@@ -1,10 +1,10 @@
-import { D2ModelSchemas } from "d2-api";
+import { D2ModelSchemas, D2Api } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../models/dhis/factory";
 import Instance from "../../models/instance";
 import InstanceEntity from "../../domain/instance/Instance";
-import { ExportBuilder, NestedRules } from "../../types/synchronization";
+import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../types/synchronization";
 import { promiseMap } from "../../utils/common";
 import {
     buildNestedRules,
@@ -13,15 +13,24 @@ import {
     cleanReferences,
     getAllReferences,
     getMetadata,
-    postMetadata,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
-import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
-import { metadataTransformations } from "../../data/synchronization/mappers/PackageTransformations";
-import { MetadataPackage } from "../../domain/synchronization/Entities";
+import { MetadataPackage } from "../../domain/synchronization/MetadataEntities";
+import MetadataD2ApiRepository from "../../data/synchronization/repositories/MetadataD2ApiRepository";
+import { MetadataRepository } from "../../domain/synchronization/MetadataRepositoriy";
+import { D2 } from "../../types/d2";
 
 export class MetadataSync extends GenericSync {
     public readonly type = "metadata";
+    private metadataRepository: MetadataRepository
+
+    constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
+        super(d2, api, builder)
+
+        //TODO: composition root - This dependency should be injected by constructor when we have
+        // composition root
+        this.metadataRepository = new MetadataD2ApiRepository(api);
+    }
 
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
         const visitedIds: Set<string> = new Set();
@@ -111,15 +120,9 @@ export class MetadataSync extends GenericSync {
 
         const payloadPackage = await this.buildPayload();
 
-        if (!instanceEntity.apiVersion) {
-            throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
-        }
+        console.debug("Metadata package", payloadPackage);
 
-        const versionedPayloadPackage = mapPackageToD2Version(instanceEntity.apiVersion, payloadPackage, metadataTransformations);
-
-        console.debug("Metadata package", payloadPackage, versionedPayloadPackage);
-
-        const response = await postMetadata(instance.getApi(), versionedPayloadPackage, syncParams);
+        const response = await this.metadataRepository.save(payloadPackage, syncParams, instanceEntity);
         const syncResult = cleanMetadataImportResponse(response, instance, this.type);
         return [syncResult];
     }

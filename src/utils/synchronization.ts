@@ -13,7 +13,6 @@ import {
     D2,
     DataImportParams,
     DataImportResponse,
-    MetadataImportParams,
     MetadataImportResponse,
 } from "../types/d2";
 import {
@@ -27,7 +26,8 @@ import {
 import "../utils/lodash-mixins";
 import { promiseMap } from "./common";
 import { cleanToAPIChildReferenceName, cleanToModelName, getClassName } from "./d2";
-import { MetadataPackage, AggregatedPackage, ProgramEvent, DataValue } from "../domain/synchronization/Entities";
+import { AggregatedPackage, ProgramEvent, DataValue } from "../domain/synchronization/DataEntities";
+import { MetadataPackage } from "../domain/synchronization/MetadataEntities";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -103,28 +103,6 @@ export async function getMetadata(
     const results = _.deepMerge({}, ...response);
     if (results.system) delete results.system;
     return results;
-}
-
-export async function postMetadata(
-    api: D2Api,
-    metadata: any,
-    additionalParams?: MetadataImportParams
-): Promise<MetadataImportResponse> {
-    try {
-        const params = {
-            importMode: "COMMIT",
-            identifier: "UID",
-            importReportMode: "FULL",
-            importStrategy: "CREATE_AND_UPDATE",
-            mergeMode: "MERGE",
-            atomicMode: "ALL",
-            ...additionalParams,
-        };
-        const response = await api.post("/metadata", params, metadata).getData();
-        return response as MetadataImportResponse;
-    } catch (error) {
-        return buildResponseError(error);
-    }
 }
 
 function buildResponseError(error: AxiosError): MetadataImportResponse {

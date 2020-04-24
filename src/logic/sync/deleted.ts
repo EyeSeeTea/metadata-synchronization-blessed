@@ -3,15 +3,27 @@ import Instance from "../../models/instance";
 import InstanceEntity from "../../domain/instance/Instance";
 import {
     cleanMetadataImportResponse,
-    getMetadata,
-    postMetadata,
+    getMetadata
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
-import { metadataTransformations } from "../../data/synchronization/mappers/PackageTransformations";
-import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
+import { MetadataRepository } from "../../domain/synchronization/MetadataRepositoriy";
+import { D2 } from "../../types/d2";
+import { D2Api } from "d2-api";
+import { SynchronizationBuilder } from "../../types/synchronization";
+import MetadataD2ApiRepository from "../../data/synchronization/repositories/MetadataD2ApiRepository";
 
 export class DeletedSync extends GenericSync {
     public readonly type = "deleted";
+
+    private metadataRepository: MetadataRepository
+
+    constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
+        super(d2, api, builder)
+
+        //TODO: composition root - This dependency should be injected by constructor when we have
+        // composition root
+        this.metadataRepository = new MetadataD2ApiRepository(api);
+    }
 
     public buildPayload = memoize(async () => {
         return {};
@@ -22,18 +34,12 @@ export class DeletedSync extends GenericSync {
 
         const payloadPackage = await getMetadata(instance.getApi(), metadataIds, "id");
 
-        if (!instanceEntity.apiVersion) {
-            throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
-        }
+        console.debug("Metadata package", payloadPackage);
 
-        const versionedPayloadPackage = mapPackageToD2Version(instanceEntity.apiVersion, payloadPackage, metadataTransformations);
-
-        console.debug("Metadata package", payloadPackage, versionedPayloadPackage);
-
-        const response = await postMetadata(instance.getApi(), payloadPackage, {
+        const response = await this.metadataRepository.save(payloadPackage, {
             ...syncParams,
             importStrategy: "DELETE",
-        });
+        }, instanceEntity);
 
         const syncResult = cleanMetadataImportResponse(response, instance, this.type);
         return [syncResult];

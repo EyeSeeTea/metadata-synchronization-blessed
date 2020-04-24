@@ -1,5 +1,6 @@
 import { PackageTransformationStrategy } from "./D2VersionPackageMapper";
-import { MetadataPackage, EventsPackage, AggregatedPackage } from "../../../domain/synchronization/Entities";
+import { EventsPackage, AggregatedPackage } from "../../../domain/synchronization/DataEntities";
+import { MetadataPackage } from "../../../domain/synchronization/MetadataEntities";
 
 export const metadataTransformations: PackageTransformationStrategy<MetadataPackage>[] = [];
 export const eventsTransformations: PackageTransformationStrategy<EventsPackage>[] = [];

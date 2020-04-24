@@ -1,6 +1,6 @@
 import { PackageTransformationStrategy, mapPackageToD2Version } from "../D2VersionPackageMapper";
 import _ from "lodash";
-import { MetadataPackage } from "../../../../domain/synchronization/Entities";
+import { MetadataPackage } from "../../../../domain/synchronization/MetadataEntities";
 
 describe("mapPackage", () => {
     it("should no apply any transformation if not exist transformations", () => {

@@ -24,9 +24,11 @@ import { AggregatedSync } from "./aggregated";
 import { DeletedSync } from "./deleted";
 import { EventsSync } from "./events";
 import { MetadataSync } from "./metadata";
-import { MetadataPackage, AggregatedPackage, EventsPackage } from "../../domain/synchronization/Entities";
+import { MetadataPackage } from "../../domain/synchronization/MetadataEntities";
+import { AggregatedPackage, EventsPackage } from "../../domain/synchronization/DataEntities";
 import InstanceRepository from "../../domain/instance/InstanceRepository";
 import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";
+
 
 export type SyncronizationClass =
     | typeof MetadataSync

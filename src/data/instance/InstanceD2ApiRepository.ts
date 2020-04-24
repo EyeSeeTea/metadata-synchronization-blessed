@@ -16,6 +16,8 @@ export default class InstanceD2ApiRepository implements InstanceRepository {
     public static encryptionKey: string;
 
     constructor(d2Api: D2Api) {
+        //TODO: composition root - when we have composition root evaluate if has sense
+        // that this dependency should be current instance instead of D2Api
         this.d2Api = d2Api;
     }
     async getById(id: string): Promise<Instance> {
@@ -25,15 +27,20 @@ export default class InstanceD2ApiRepository implements InstanceRepository {
             throw Error(`Instance with id ${id} not found`);
         }
 
-        const version = await this.getVersion(instanceData);
+        const instanceDataWithRawPassword = {
+            ...instanceData,
+            password: this.decryptPassword(instanceData.password)
+        }
 
-        return new Instance({ ...instanceData, version });
+        const version = await this.getVersion(instanceDataWithRawPassword);
+
+        return new Instance({ ...instanceDataWithRawPassword, version });
     }
 
     private async getVersion(instanceData: InstanceData): Promise<string> {
         const api = new D2ApiDefault({
             baseUrl: instanceData.url,
-            auth: { username: instanceData.username, password: this.decryptPassword(instanceData.password) }
+            auth: { username: instanceData.username, password: instanceData.password }
         });
 
         const systemInfo = await api.system.info.getData();

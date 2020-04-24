@@ -6,7 +6,7 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { EventsSync } from "../../../logic/sync/events";
 import { D2 } from "../../../types/d2";
-import { ProgramEvent } from "../../../domain/synchronization/Entities";
+import { ProgramEvent } from "../../../domain/synchronization/DataEntities";
 import { getEventsData } from "../../../utils/synchronization";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
