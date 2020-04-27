@@ -319,6 +319,14 @@ export class IndicatorTypeModel extends D2Model {
     protected static includeRules = [];
 }
 
+export class LegendSetModel extends D2Model {
+    protected static metadataType = "legendSet";
+    protected static collectionName = "legendSets" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [];
+}
+
 export class ProgramIndicatorModel extends D2Model {
     protected static metadataType = "programIndicator";
     protected static collectionName = "programIndicators" as const;
