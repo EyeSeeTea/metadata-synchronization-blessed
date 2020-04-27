@@ -311,6 +311,14 @@ export class IndicatorGroupSetModel extends D2Model {
     ];
 }
 
+export class IndicatorTypeModel extends D2Model {
+    protected static metadataType = "indicatorType";
+    protected static collectionName = "indicatorTypes" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [];
+}
+
 export class ProgramIndicatorModel extends D2Model {
     protected static metadataType = "programIndicator";
     protected static collectionName = "programIndicators" as const;

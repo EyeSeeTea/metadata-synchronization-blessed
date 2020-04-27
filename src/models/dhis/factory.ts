@@ -13,6 +13,7 @@ export const metadataModels = [
     metadataClasses.IndicatorModel,
     metadataClasses.IndicatorGroupModel,
     metadataClasses.IndicatorGroupSetModel,
+    metadataClasses.IndicatorTypeModel,
     metadataClasses.OptionGroupModel,
     metadataClasses.OptionSetModel,
     metadataClasses.OptionModel,
