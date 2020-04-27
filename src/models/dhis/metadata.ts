@@ -9,6 +9,11 @@ import {
 } from "../../utils/d2";
 import { D2Model } from "./default";
 
+export class DataApprovalWorkflowModel extends D2Model {
+    protected static metadataType = "dataApprovalWorkflow";
+    protected static collectionName = "dataApprovalWorkflows" as const;
+}
+
 export class OrganisationUnitModel extends D2Model {
     protected static metadataType = "organisationUnit";
     protected static collectionName = "organisationUnits" as const;
@@ -423,7 +428,25 @@ export class UserRoleModel extends D2Model {
     protected static includeRules = [];
 }
 
-export class DataApprovalWorkflowModel extends D2Model {
-    protected static metadataType = "dataApprovalWorkflow";
-    protected static collectionName = "dataApprovalWorkflows" as const;
+export class TrackedEntityTypeModel extends D2Model {
+    protected static metadataType = "trackedEntityType";
+    protected static collectionName = "trackedEntityTypes" as const;
+
+    protected static excludeRules = [];
+
+    protected static includeRules = [
+        "trackedEntityAttributes",
+        "trackedEntityAttributes.legendSets",
+        "trackedEntityAttributes.optionSets",
+        "trackedEntityAttributes.optionSets.options",
+    ];
+}
+
+export class TrackedEntityAttributeModel extends D2Model {
+    protected static metadataType = "trackedEntityAttribute";
+    protected static collectionName = "trackedEntityAttributes" as const;
+
+    protected static excludeRules = [];
+
+    protected static includeRules = ["legendSets", "optionSets", "optionSets.options"];
 }
