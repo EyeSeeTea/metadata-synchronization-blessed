@@ -237,14 +237,28 @@ export class ProgramStageModel extends D2Model {
     protected static collectionName = "programStages" as const;
 }
 
+export class OptionGroupModel extends D2Model {
+    protected static metadataType = "optionGroup";
+    protected static collectionName = "optionGroups" as const;
+
+    protected static excludeRules = ["optionSets.options"];
+    protected static includeRules = ["options", "optionSets"];
+}
+
 export class OptionSetModel extends D2Model {
     protected static metadataType = "optionSet";
     protected static collectionName = "optionSets" as const;
+
+    protected static excludeRules = [""];
+    protected static includeRules = ["options"];
 }
 
 export class OptionModel extends D2Model {
     protected static metadataType = "option";
     protected static collectionName = "options" as const;
+
+    protected static excludeRules = ["optionSets.options"];
+    protected static includeRules = ["optionSets"];
 }
 
 export class IndicatorModel extends D2Model {
