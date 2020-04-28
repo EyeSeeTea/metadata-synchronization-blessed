@@ -215,7 +215,7 @@ export class LegendSetModel extends D2Model {
     protected static collectionName = "legendSets" as const;
 
     protected static excludeRules = [];
-    protected static includeRules = [];
+    protected static includeRules = ["attributes"];
 }
 
 export class OptionGroupModel extends D2Model {
@@ -231,7 +231,7 @@ export class OptionSetModel extends D2Model {
     protected static collectionName = "optionSets" as const;
 
     protected static excludeRules = [""];
-    protected static includeRules = ["options"];
+    protected static includeRules = ["attributes", "options", "options.attributes"];
 }
 
 export class OptionModel extends D2Model {
@@ -239,7 +239,7 @@ export class OptionModel extends D2Model {
     protected static collectionName = "options" as const;
 
     protected static excludeRules = ["optionSets.options"];
-    protected static includeRules = ["optionSets"];
+    protected static includeRules = ["attributes", "optionSets", "optionSets.attributes"];
 }
 
 export class OrganisationUnitModel extends D2Model {
@@ -397,7 +397,7 @@ export class UserModel extends D2Model {
     protected static collectionName = "users" as const;
 
     protected static excludeRules = ["userRoles.users", "userGroups.users"];
-    protected static includeRules = ["userRoles", "userGroups"];
+    protected static includeRules = ["attributes", "userRoles", "userGroups", "userGroups.attributes"];
 }
 
 export class UserGroupModel extends D2Model {
@@ -405,7 +405,7 @@ export class UserGroupModel extends D2Model {
     protected static collectionName = "userGroups" as const;
 
     protected static excludeRules = [];
-    protected static includeRules = ["users", "users.userRoles"];
+    protected static includeRules = ["attributes", "users", "users.userRoles"];
 }
 
 export class UserRoleModel extends D2Model {

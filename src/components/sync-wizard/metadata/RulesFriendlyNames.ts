@@ -152,12 +152,15 @@ const includeExcludeRulesFriendlyNames: {
     "users.userRoles": "User roles of users",
     "users.userGroups": "User groups of users",
     "options": "Options",
+    "options.attributes": "Attributes of options",
+    "optionSets.attributes": "Attributes of option sets",
     "trackedEntityAttributes.optionSets": "Option sets of tracked entity attributes",
     "trackedEntityAttributes.optionSets.options": "Options of Option sets in tracked entity attributes",
     "userRoles": "User roles",
     "userRoles.users": "Users in user roles",
     "userGroups": "User groups",
     "userGroups.users": "Users in user groups",
+    "userGroups.attributes": "Attributes of user groups"
 };
 
 export default includeExcludeRulesFriendlyNames;
