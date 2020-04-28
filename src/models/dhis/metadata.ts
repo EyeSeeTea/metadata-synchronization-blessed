@@ -9,64 +9,42 @@ import {
 } from "../../utils/d2";
 import { D2Model } from "./default";
 
+
+export class CategoryModel extends D2Model {
+    protected static metadataType = "category";
+    protected static collectionName = "categories" as const;
+}
+
+export class CategoryOptionModel extends D2Model {
+    protected static metadataType = "categoryOption";
+    protected static collectionName = "categoryOptions" as const;
+}
+
+export class CategoryComboModel extends D2Model {
+    protected static metadataType = "categoryCombo";
+    protected static collectionName = "categoryCombos" as const;
+}
+
+export class DashboardModel extends D2Model {
+    protected static metadataType = "dashboard";
+    protected static collectionName = "dashboards" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "dashboardItems",
+        "charts",
+        "eventCharts",
+        "pivotTables",
+        "eventReports",
+        "maps",
+        "reports",
+        "reportTables",
+    ];
+}
+
 export class DataApprovalWorkflowModel extends D2Model {
     protected static metadataType = "dataApprovalWorkflow";
     protected static collectionName = "dataApprovalWorkflows" as const;
-}
-
-export class OrganisationUnitModel extends D2Model {
-    protected static metadataType = "organisationUnit";
-    protected static collectionName = "organisationUnits" as const;
-    protected static groupFilterName = "organisationUnitGroups" as const;
-    protected static levelFilterName = "organisationUnitLevels" as const;
-
-    protected static excludeRules = ["legendSets", "dataSets", "programs", "users"];
-    protected static includeRules = [
-        "attributes",
-        "organisationUnitGroups",
-        "organisationUnitGroups.attributes",
-        "organisationUnitGroups.organisationUnitGroupSets",
-        "organisationUnitGroups.organisationUnitGroupSets.attributes",
-    ];
-
-    protected static columns = organisationUnitsColumns;
-    protected static details = organisationUnitsDetails;
-    protected static fields = organisationUnitFields;
-}
-
-export class OrganisationUnitGroupModel extends D2Model {
-    protected static metadataType = "organisationUnitGroup";
-    protected static collectionName = "organisationUnitGroups" as const;
-
-    protected static excludeRules = ["legendSets", "organisationUnits.organisationUnitGroups"];
-    protected static includeRules = [
-        "attributes",
-        "organisationUnits",
-        "organisationUnits.attributes",
-        "organisationUnitGroupSets",
-        "organisationUnitGroupSets.attributes",
-    ];
-}
-
-export class OrganisationUnitGroupSetModel extends D2Model {
-    protected static metadataType = "organisationUnitGroupSet";
-    protected static collectionName = "organisationUnitGroupSets" as const;
-
-    protected static excludeRules = [
-        "organisationUnitGroups.organisationUnitGroupSets",
-        "organisationUnitGroups.organisationUnits.organisationUnitGroups",
-    ];
-    protected static includeRules = [
-        "attributes",
-        "organisationUnitGroups",
-        "organisationUnitGroups.organisationUnits",
-        "organisationUnitGroups.organisationUnits.attributes",
-    ];
-}
-
-export class OrganisationUnitLevelModel extends D2Model {
-    protected static metadataType = "organisationUnitLevel";
-    protected static collectionName = "organisationUnitLevels" as const;
 }
 
 export class DataElementModel extends D2Model {
@@ -174,98 +152,6 @@ export class DataSetModel extends D2Model {
     ];
 }
 
-export class CategoryModel extends D2Model {
-    protected static metadataType = "category";
-    protected static collectionName = "categories" as const;
-}
-
-export class CategoryOptionModel extends D2Model {
-    protected static metadataType = "categoryOption";
-    protected static collectionName = "categoryOptions" as const;
-}
-
-export class CategoryComboModel extends D2Model {
-    protected static metadataType = "categoryCombo";
-    protected static collectionName = "categoryCombos" as const;
-}
-
-export class ProgramModel extends D2Model {
-    protected static metadataType = "program";
-    protected static collectionName = "programs" as const;
-    protected static fields = programFields;
-
-    protected static excludeRules = [
-        "programStages.dataElements.dataElementGroups.dataElements",
-        "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",
-    ];
-    protected static includeRules = [
-        "attributes",
-        "categoryCombos",
-        "categoryCombos.attributes",
-        "categoryCombos.categoryOptionCombos",
-        "categoryCombos.categoryOptionCombos.categoryOptions",
-        "categoryCombos.categories",
-        "programIndicators",
-        "programIndicators.programIndicatorGroups",
-        "programIndicators.legendSets",
-        "dataApprovalWorkflow",
-        "dataApprovalWorkflow.dataApprovalLevels",
-        "programStages",
-        "programStages.programStageSections",
-        "programStages.attributes",
-        "programStages.dataElements",
-        "programStages.dataElements.attributes",
-        "programStages.dataElements.legendSets",
-        "programStages.dataElements.optionSets",
-        "programStages.dataElements.optionSets.options",
-        "programStages.dataElements.categoryCombos",
-        "programStages.dataElements.categoryCombos.attributes",
-        "programStages.dataElements.categoryCombos.categoryOptionCombos",
-        "programStages.dataElements.categoryCombos.categoryOptionCombos.categoryOptions",
-        "programStages.dataElements.categoryCombos.categories",
-        "programStages.dataElements.dataElementGroups",
-        "programStages.dataElements.dataElementGroups.attributes",
-        "programStages.dataElements.dataElementGroups.dataElementGroupSets",
-        "programStages.dataElements.dataElementGroups.dataElementGroupSets.attributes",
-        "programStages.programNotificationTemplates",
-        "programRuleVariables",
-        "trackedEntityTypes",
-        "trackedEntityTypes.trackedEntityAttributes",
-        "trackedEntityTypes.trackedEntityAttributes.legendSets",
-        "trackedEntityAttributes",
-        "trackedEntityAttributes.legendSets",
-    ];
-}
-
-export class ProgramStageModel extends D2Model {
-    protected static metadataType = "programStage";
-    protected static collectionName = "programStages" as const;
-}
-
-export class OptionGroupModel extends D2Model {
-    protected static metadataType = "optionGroup";
-    protected static collectionName = "optionGroups" as const;
-
-    protected static excludeRules = ["optionSets.options"];
-    protected static includeRules = ["options", "optionSets"];
-}
-
-export class OptionSetModel extends D2Model {
-    protected static metadataType = "optionSet";
-    protected static collectionName = "optionSets" as const;
-
-    protected static excludeRules = [""];
-    protected static includeRules = ["options"];
-}
-
-export class OptionModel extends D2Model {
-    protected static metadataType = "option";
-    protected static collectionName = "options" as const;
-
-    protected static excludeRules = ["optionSets.options"];
-    protected static includeRules = ["optionSets"];
-}
-
 export class IndicatorModel extends D2Model {
     protected static metadataType = "indicator";
     protected static collectionName = "indicators" as const;
@@ -332,6 +218,138 @@ export class LegendSetModel extends D2Model {
     protected static includeRules = [];
 }
 
+export class OptionGroupModel extends D2Model {
+    protected static metadataType = "optionGroup";
+    protected static collectionName = "optionGroups" as const;
+
+    protected static excludeRules = ["optionSets.options"];
+    protected static includeRules = ["options", "optionSets"];
+}
+
+export class OptionSetModel extends D2Model {
+    protected static metadataType = "optionSet";
+    protected static collectionName = "optionSets" as const;
+
+    protected static excludeRules = [""];
+    protected static includeRules = ["options"];
+}
+
+export class OptionModel extends D2Model {
+    protected static metadataType = "option";
+    protected static collectionName = "options" as const;
+
+    protected static excludeRules = ["optionSets.options"];
+    protected static includeRules = ["optionSets"];
+}
+
+export class OrganisationUnitModel extends D2Model {
+    protected static metadataType = "organisationUnit";
+    protected static collectionName = "organisationUnits" as const;
+    protected static groupFilterName = "organisationUnitGroups" as const;
+    protected static levelFilterName = "organisationUnitLevels" as const;
+
+    protected static excludeRules = ["legendSets", "dataSets", "programs", "users"];
+    protected static includeRules = [
+        "attributes",
+        "organisationUnitGroups",
+        "organisationUnitGroups.attributes",
+        "organisationUnitGroups.organisationUnitGroupSets",
+        "organisationUnitGroups.organisationUnitGroupSets.attributes",
+    ];
+
+    protected static columns = organisationUnitsColumns;
+    protected static details = organisationUnitsDetails;
+    protected static fields = organisationUnitFields;
+}
+
+export class OrganisationUnitGroupModel extends D2Model {
+    protected static metadataType = "organisationUnitGroup";
+    protected static collectionName = "organisationUnitGroups" as const;
+
+    protected static excludeRules = ["legendSets", "organisationUnits.organisationUnitGroups"];
+    protected static includeRules = [
+        "attributes",
+        "organisationUnits",
+        "organisationUnits.attributes",
+        "organisationUnitGroupSets",
+        "organisationUnitGroupSets.attributes",
+    ];
+}
+
+export class OrganisationUnitGroupSetModel extends D2Model {
+    protected static metadataType = "organisationUnitGroupSet";
+    protected static collectionName = "organisationUnitGroupSets" as const;
+
+    protected static excludeRules = [
+        "organisationUnitGroups.organisationUnitGroupSets",
+        "organisationUnitGroups.organisationUnits.organisationUnitGroups",
+    ];
+    protected static includeRules = [
+        "attributes",
+        "organisationUnitGroups",
+        "organisationUnitGroups.organisationUnits",
+        "organisationUnitGroups.organisationUnits.attributes",
+    ];
+}
+
+export class OrganisationUnitLevelModel extends D2Model {
+    protected static metadataType = "organisationUnitLevel";
+    protected static collectionName = "organisationUnitLevels" as const;
+}
+
+export class ProgramModel extends D2Model {
+    protected static metadataType = "program";
+    protected static collectionName = "programs" as const;
+    protected static fields = programFields;
+
+    protected static excludeRules = [
+        "programStages.dataElements.dataElementGroups.dataElements",
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",
+    ];
+    protected static includeRules = [
+        "attributes",
+        "categoryCombos",
+        "categoryCombos.attributes",
+        "categoryCombos.categoryOptionCombos",
+        "categoryCombos.categoryOptionCombos.categoryOptions",
+        "categoryCombos.categories",
+        "programIndicators",
+        "programIndicators.programIndicatorGroups",
+        "programIndicators.legendSets",
+        "dataApprovalWorkflow",
+        "dataApprovalWorkflow.dataApprovalLevels",
+        "programStages",
+        "programStages.programStageSections",
+        "programStages.attributes",
+        "programStages.dataElements",
+        "programStages.dataElements.attributes",
+        "programStages.dataElements.legendSets",
+        "programStages.dataElements.optionSets",
+        "programStages.dataElements.optionSets.options",
+        "programStages.dataElements.categoryCombos",
+        "programStages.dataElements.categoryCombos.attributes",
+        "programStages.dataElements.categoryCombos.categoryOptionCombos",
+        "programStages.dataElements.categoryCombos.categoryOptionCombos.categoryOptions",
+        "programStages.dataElements.categoryCombos.categories",
+        "programStages.dataElements.dataElementGroups",
+        "programStages.dataElements.dataElementGroups.attributes",
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets",
+        "programStages.dataElements.dataElementGroups.dataElementGroupSets.attributes",
+        "programStages.programNotificationTemplates",
+        "programRuleVariables",
+        "trackedEntityTypes",
+        "trackedEntityTypes.trackedEntityAttributes",
+        "trackedEntityTypes.trackedEntityAttributes.legendSets",
+        "trackedEntityAttributes",
+        "trackedEntityAttributes.legendSets",
+    ];
+}
+
+export class ProgramStageModel extends D2Model {
+    protected static metadataType = "programStage";
+    protected static collectionName = "programStages" as const;
+}
+
 export class ProgramIndicatorModel extends D2Model {
     protected static metadataType = "programIndicator";
     protected static collectionName = "programIndicators" as const;
@@ -374,44 +392,6 @@ export class ProgramRuleVariableModel extends D2Model {
     protected static includeRules = ["attributes"];
 }
 
-export class ValidationRuleModel extends D2Model {
-    protected static metadataType = "validationRule";
-    protected static collectionName = "validationRules" as const;
-    protected static groupFilterName = "validationRuleGroups" as const;
-
-    protected static excludeRules = ["legendSets"];
-    protected static includeRules = [
-        "attributes",
-        "validationRuleGroups",
-        "validationRuleGroups.attributes",
-    ];
-}
-
-export class ValidationRuleGroupModel extends D2Model {
-    protected static metadataType = "validationRuleGroup";
-    protected static collectionName = "validationRuleGroups" as const;
-
-    protected static excludeRules = ["legendSets", "validationRules.validationRuleGroups"];
-    protected static includeRules = ["attributes", "validationRules", "validationRules.attributes"];
-}
-
-export class DashboardModel extends D2Model {
-    protected static metadataType = "dashboard";
-    protected static collectionName = "dashboards" as const;
-
-    protected static excludeRules = [];
-    protected static includeRules = [
-        "dashboardItems",
-        "charts",
-        "eventCharts",
-        "pivotTables",
-        "eventReports",
-        "maps",
-        "reports",
-        "reportTables",
-    ];
-}
-
 export class UserModel extends D2Model {
     protected static metadataType = "user";
     protected static collectionName = "users" as const;
@@ -434,6 +414,27 @@ export class UserRoleModel extends D2Model {
 
     protected static excludeRules = ["users", "users.userRoles", "users.userGroups"];
     protected static includeRules = [];
+}
+
+export class ValidationRuleModel extends D2Model {
+    protected static metadataType = "validationRule";
+    protected static collectionName = "validationRules" as const;
+    protected static groupFilterName = "validationRuleGroups" as const;
+
+    protected static excludeRules = ["legendSets"];
+    protected static includeRules = [
+        "attributes",
+        "validationRuleGroups",
+        "validationRuleGroups.attributes",
+    ];
+}
+
+export class ValidationRuleGroupModel extends D2Model {
+    protected static metadataType = "validationRuleGroup";
+    protected static collectionName = "validationRuleGroups" as const;
+
+    protected static excludeRules = ["legendSets", "validationRules.validationRuleGroups"];
+    protected static includeRules = ["attributes", "validationRules", "validationRules.attributes"];
 }
 
 export class TrackedEntityTypeModel extends D2Model {
