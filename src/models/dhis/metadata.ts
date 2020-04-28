@@ -412,6 +412,14 @@ export class DashboardModel extends D2Model {
     ];
 }
 
+export class UserModel extends D2Model {
+    protected static metadataType = "user";
+    protected static collectionName = "users" as const;
+
+    protected static excludeRules = ["userRoles.users", "userGroups.users"];
+    protected static includeRules = ["userRoles", "userGroups"];
+}
+
 export class UserGroupModel extends D2Model {
     protected static metadataType = "userGroup";
     protected static collectionName = "userGroups" as const;
