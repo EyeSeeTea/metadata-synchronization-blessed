@@ -13,16 +13,83 @@ import { D2Model } from "./default";
 export class CategoryModel extends D2Model {
     protected static metadataType = "category";
     protected static collectionName = "categories" as const;
-}
 
-export class CategoryOptionModel extends D2Model {
-    protected static metadataType = "categoryOption";
-    protected static collectionName = "categoryOptions" as const;
+    protected static excludeRules = [
+        "categoryCombos",
+        "categoryCombos.categories",
+        "categoryCombos.categories.attributes",
+        "categoryCombos.categories.categoryOptions",
+        "categoryCombos.categories.categoryOptions.attributes",
+    ];
+
+    protected static includeRules = [
+        "attributes",
+        "categoryOptions",
+        "categoryOptions.attributes"
+    ];
 }
 
 export class CategoryComboModel extends D2Model {
     protected static metadataType = "categoryCombo";
     protected static collectionName = "categoryCombos" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "categories",
+        "categories.attributes",
+        "categories.categoryOptions",
+        "categories.categoryOptions.attributes"
+    ];
+}
+
+export class CategoryOptionModel extends D2Model {
+    protected static metadataType = "categoryOption";
+    protected static collectionName = "categoryOptions" as const;
+
+    protected static excludeRules = [
+        "categories",
+        "categories.attributes",
+        "categories.categoryOptions",
+        "categories.categoryOptions.attributes",
+        "categoryOptionGroups",
+        "categoryOptionGroups.attributes",
+        "categoryOptionGroups.categoryOptions",
+        "categoryOptionGroups.categoryOptions.attributes",
+        "categoryOptionGroups.categoryOptionGroupSets",
+        "categoryOptionGroups.categoryOptionGroupSets.attributes"
+    ];
+    protected static includeRules = [
+        "attributes"
+    ];
+}
+
+
+export class CategoryOptionGroupModel extends D2Model {
+    protected static metadataType = "categoryOptionGroup";
+    protected static collectionName = "categoryOptionGroups" as const;
+
+    protected static excludeRules = [
+        "categoryOptionGroupSets",
+        "categoryOptionGroupSets.attributes"];
+    protected static includeRules = [
+        "attributes",
+        "categoryOptions",
+        "categoryOptions.attributes"
+    ];
+}
+
+export class CategoryOptionGroupSetModel extends D2Model {
+    protected static metadataType = "categoryOptionGroupSet";
+    protected static collectionName = "categoryOptionGroupSets" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "attributes",
+        "categoryOptionGroups",
+        "categoryOptionGroups.attributes",
+        "categoryOptionGroups.categoryOptions",
+        "categoryOptionGroups.categoryOptions.attributes",
+    ];
 }
 
 export class DashboardModel extends D2Model {

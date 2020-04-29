@@ -5,6 +5,11 @@ import * as mappingClasses from "./mapping";
 import * as metadataClasses from "./metadata";
 
 export const metadataModels = [
+    metadataClasses.CategoryModel,
+    metadataClasses.CategoryComboModel,
+    metadataClasses.CategoryOptionModel,
+    metadataClasses.CategoryOptionGroupModel,
+    metadataClasses.CategoryOptionGroupSetModel,
     metadataClasses.DashboardModel,
     metadataClasses.DataElementModel,
     metadataClasses.DataElementGroupModel,

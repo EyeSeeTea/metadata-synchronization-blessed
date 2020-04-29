@@ -160,7 +160,24 @@ const includeExcludeRulesFriendlyNames: {
     "userRoles.users": "Users in user roles",
     "userGroups": "User groups",
     "userGroups.users": "Users in user groups",
-    "userGroups.attributes": "Attributes of user groups"
+    "userGroups.attributes": "Attributes of user groups",
+    "categoryOptions": "Category options",
+    "categoryOptions.attributes": "Attributes of category options",
+    "categories": "Categories",
+    "categories.attributes": "Attributes of categories",
+    "categories.categoryOptions": "Category options in categories",
+    "categories.categoryOptions.attributes": "Attributes of Category options in categories",
+    "categoryOptionGroups": "Category option groups",
+    "categoryOptionGroups.attributes": "Attributes of category option groups",
+    "categoryOptionGroups.categoryOptionGroupSets": "Category option group sets of category option groups",
+    "categoryOptionGroups.categoryOptionGroupSets.attributes": "Attributes of category option group sets of category option groups",
+    "categoryOptionGroupSets": "Category option group sets",
+    "categoryOptionGroupSets.attributes": "Attributes of category option group sets",
+    "categoryCombos.categories.attributes": "Attributes of categories of category combinations",
+    "categoryCombos.categories.categoryOptions": "Category options in categories of category combinations",
+    "categoryCombos.categories.categoryOptions.attributes": "Attributes of category options in categories of category combinations",
+    "categoryOptionGroups.categoryOptions": "Category options in category option groups",
+    "categoryOptionGroups.categoryOptions.attributes": "Attributes of category options in category option groups",
 };
 
 export default includeExcludeRulesFriendlyNames;
