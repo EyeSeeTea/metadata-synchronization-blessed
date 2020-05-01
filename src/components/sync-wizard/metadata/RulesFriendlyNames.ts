@@ -178,6 +178,18 @@ const includeExcludeRulesFriendlyNames: {
     "categoryCombos.categories.categoryOptions.attributes": "Attributes of category options in categories of category combinations",
     "categoryOptionGroups.categoryOptions": "Category options in category option groups",
     "categoryOptionGroups.categoryOptions.attributes": "Attributes of category options in category option groups",
+    "programStageSections": "Program stage sections",
+    "dataElements.categoryCombos.categoryOptionCombos.categoryOptions.attributes": "Attributes of category options in category option combos of category combos of data elements",
+    "dataElements.categoryCombos.categories.attributes": "",
+    "programNotificationTemplates": "Program notification templates",
+    "dataElements.legendSets.attributes": "Attributes of legend sets of data elements",
+    "dataElements.optionSets.attributes": "Attributes of option sets of data elements",
+    "dataElements.optionSets.options.attributes": "Attributes of options in option sets of data elements",
+    "categoryCombos.categoryOptionCombos.categoryOptions.attributes": "Attributes of category options in category option combos of category combos",
+    "programStages.dataElements.legendSets.attributes": "Attributes of legend sets of data elements in program stages",
+    "programStages.dataElements.optionSets.attributes": "Attributes of option sets of data elements in program stages",
+    "programStages.dataElements.optionSets.options.attributes": "Attributes of options in option sets of data elements  in program stages",
+
 };
 
 export default includeExcludeRulesFriendlyNames;

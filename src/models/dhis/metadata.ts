@@ -379,7 +379,9 @@ export class ProgramModel extends D2Model {
         "categoryCombos.attributes",
         "categoryCombos.categoryOptionCombos",
         "categoryCombos.categoryOptionCombos.categoryOptions",
+        "categoryCombos.categoryOptionCombos.categoryOptions.attributes",
         "categoryCombos.categories",
+        "categoryCombos.categories.attributes",
         "programIndicators",
         "programIndicators.programIndicatorGroups",
         "programIndicators.legendSets",
@@ -391,8 +393,11 @@ export class ProgramModel extends D2Model {
         "programStages.dataElements",
         "programStages.dataElements.attributes",
         "programStages.dataElements.legendSets",
+        "programStages.dataElements.legendSets.attributes",
         "programStages.dataElements.optionSets",
+        "programStages.dataElements.optionSets.attributes",
         "programStages.dataElements.optionSets.options",
+        "programStages.dataElements.optionSets.options.attributes",
         "programStages.dataElements.categoryCombos",
         "programStages.dataElements.categoryCombos.attributes",
         "programStages.dataElements.categoryCombos.categoryOptionCombos",
@@ -409,12 +414,43 @@ export class ProgramModel extends D2Model {
         "trackedEntityTypes.trackedEntityAttributes.legendSets",
         "trackedEntityAttributes",
         "trackedEntityAttributes.legendSets",
+        "programNotificationTemplates"
     ];
 }
 
 export class ProgramStageModel extends D2Model {
     protected static metadataType = "programStage";
     protected static collectionName = "programStages" as const;
+
+    protected static excludeRules = [
+        "dataElements.dataElementGroups.dataElements",
+        "dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",
+    ];
+    protected static includeRules = [
+        "programs",
+        "programStageSections",
+        "attributes",
+        "dataElements",
+        "dataElements.attributes",
+        "dataElements.legendSets",
+        "dataElements.legendSets.attributes",
+        "dataElements.optionSets",
+        "dataElements.optionSets.attributes",
+        "dataElements.optionSets.options",
+        "dataElements.optionSets.options.attributes",
+        "dataElements.categoryCombos",
+        "dataElements.categoryCombos.attributes",
+        "dataElements.categoryCombos.categoryOptionCombos",
+        "dataElements.categoryCombos.categoryOptionCombos.categoryOptions",
+        "dataElements.categoryCombos.categoryOptionCombos.categoryOptions.attributes",
+        "dataElements.categoryCombos.categories",
+        "dataElements.categoryCombos.categories.attributes",
+        "dataElements.dataElementGroups",
+        "dataElements.dataElementGroups.attributes",
+        "dataElements.dataElementGroups.dataElementGroupSets",
+        "dataElements.dataElementGroups.dataElementGroupSets.attributes",
+        "programNotificationTemplates",
+    ];
 }
 
 export class ProgramIndicatorModel extends D2Model {
