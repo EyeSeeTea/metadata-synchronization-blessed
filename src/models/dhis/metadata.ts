@@ -453,6 +453,20 @@ export class ProgramStageModel extends D2Model {
     ];
 }
 
+export class ProgramStageSectionModel extends D2Model {
+    protected static metadataType = "programStageSection";
+    protected static collectionName = "programStageSections" as const;
+
+    protected static excludeRules = [
+
+    ];
+    protected static includeRules = [
+        "programStages",
+        "programStages.programStageSections",
+        "programStages.programs"
+    ];
+}
+
 export class ProgramIndicatorModel extends D2Model {
     protected static metadataType = "programIndicator";
     protected static collectionName = "programIndicators" as const;
