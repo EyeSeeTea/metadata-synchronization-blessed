@@ -59,6 +59,15 @@ export const organisationUnitsColumns: typeof d2BaseModelColumns = [
     { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
 ];
 
+export const programRuleActionsColumns: typeof d2BaseModelColumns = [
+    { name: "programRuleActionType", text: i18n.t("Action"), sortable: true },
+    { name: "lastUpdated", text: i18n.t("Last updated"), sortable: true },
+    { name: "programRule", text: i18n.t("Program Rule"), sortable: true, hidden: true },
+    { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
+    { name: "id", text: i18n.t("ID"), sortable: true, hidden: true },
+    { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
+];
+
 export const organisationUnitsDetails: typeof d2BaseModelDetails = _.map(
     organisationUnitsColumns,
     column => _.pick(column, ["name", "text", "getValue"])
@@ -129,6 +138,12 @@ export const organisationUnitFields = {
     ...d2BaseModelFields,
     level: include,
     path: include,
+};
+
+export const programRuleActionsFields = {
+    ...d2BaseModelFields,
+    programRuleActionType: include,
+    programRule: include,
 };
 
 export const categoryOptionFields = {

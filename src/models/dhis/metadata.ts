@@ -6,9 +6,10 @@ import {
     organisationUnitsColumns,
     organisationUnitsDetails,
     programFields,
+    programRuleActionsColumns,
+    programRuleActionsFields,
 } from "../../utils/d2";
 import { D2Model } from "./default";
-
 
 export class CategoryModel extends D2Model {
     protected static metadataType = "category";
@@ -499,6 +500,16 @@ export class ProgramRuleModel extends D2Model {
 
     protected static excludeRules = [];
     protected static includeRules = ["attributes", "programRuleActions"];
+}
+
+export class ProgramRuleActionModel extends D2Model {
+    protected static metadataType = "ProgramRuleAction";
+    protected static collectionName = "programRuleActions" as const;
+    protected static columns = programRuleActionsColumns;
+    protected static fields = programRuleActionsFields;
+
+    protected static excludeRules = [];
+    protected static includeRules = ["attributes"];
 }
 
 export class ProgramRuleVariableModel extends D2Model {
