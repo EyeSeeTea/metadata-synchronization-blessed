@@ -37,6 +37,7 @@ export const metadataModels = [
     metadataClasses.ProgramRuleVariableModel,
     metadataClasses.ProgramStageModel,
     metadataClasses.ProgramStageSectionModel,
+    metadataClasses.SectionModel,
     metadataClasses.UserModel,
     metadataClasses.UserGroupModel,
     metadataClasses.UserRoleModel,

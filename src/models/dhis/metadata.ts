@@ -462,9 +462,7 @@ export class ProgramStageSectionModel extends D2Model {
 
     ];
     protected static includeRules = [
-        "programStages",
-        "programStages.programStageSections",
-        "programStages.programs"
+        "attributes"
     ];
 }
 
@@ -515,6 +513,14 @@ export class ProgramRuleActionModel extends D2Model {
 export class ProgramRuleVariableModel extends D2Model {
     protected static metadataType = "programRuleVariable";
     protected static collectionName = "programRuleVariables" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = ["attributes"];
+}
+
+export class SectionModel extends D2Model {
+    protected static metadataType = "section";
+    protected static collectionName = "sections" as const;
 
     protected static excludeRules = [];
     protected static includeRules = ["attributes"];
