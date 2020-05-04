@@ -60,11 +60,11 @@ export const organisationUnitsColumns: typeof d2BaseModelColumns = [
 ];
 
 export const programRuleActionsColumns: typeof d2BaseModelColumns = [
+    { name: "id", text: i18n.t("ID"), sortable: true },
     { name: "programRuleActionType", text: i18n.t("Action"), sortable: true },
     { name: "lastUpdated", text: i18n.t("Last updated"), sortable: true },
     { name: "programRule", text: i18n.t("Program Rule"), sortable: true, hidden: true },
     { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
-    { name: "id", text: i18n.t("ID"), sortable: true, hidden: true },
     { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
 ];
 
