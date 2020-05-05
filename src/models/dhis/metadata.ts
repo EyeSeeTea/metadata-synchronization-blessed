@@ -527,6 +527,11 @@ export class ProgramRuleVariableModel extends D2Model {
     protected static includeRules = ["attributes"];
 }
 
+export class ReportModel extends D2Model {
+    protected static metadataType = "report";
+    protected static collectionName = "reports" as const;
+}
+
 export class SectionModel extends D2Model {
     protected static metadataType = "section";
     protected static collectionName = "sections" as const;
