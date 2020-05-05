@@ -14,6 +14,7 @@ export const metadataModels = [
     metadataClasses.DataElementModel,
     metadataClasses.DataElementGroupModel,
     metadataClasses.DataElementGroupSetModel,
+    metadataClasses.DataEntryFormModel,
     metadataClasses.DataSetModel,
     metadataClasses.IndicatorModel,
     metadataClasses.IndicatorGroupModel,

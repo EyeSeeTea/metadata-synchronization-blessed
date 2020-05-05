@@ -174,6 +174,11 @@ export class DataElementGroupSetModel extends D2Model {
     ];
 }
 
+export class DataEntryFormModel extends D2Model {
+    protected static metadataType = "dataEntryForm";
+    protected static collectionName = "dataEntryForms" as const;
+}
+
 export class DataSetModel extends D2Model {
     protected static metadataType = "dataSet";
     protected static collectionName = "dataSets" as const;
@@ -195,7 +200,9 @@ export class DataSetModel extends D2Model {
         "categoryCombos.attributes",
         "categoryCombos.categoryOptionCombos",
         "categoryCombos.categoryOptionCombos.categoryOptions",
+        "categoryCombos.categoryOptionCombos.categoryOptions.attributes",
         "categoryCombos.categories",
+        "categoryCombos.categories.attributes",
         "indicators",
         "indicators.attributes",
         "indicators.legendSets",
@@ -212,7 +219,9 @@ export class DataSetModel extends D2Model {
         "dataElements.categoryCombos.attributes",
         "dataElements.categoryCombos.categoryOptionCombos",
         "dataElements.categoryCombos.categoryOptionCombos.categoryOptions",
+        "dataElements.categoryCombos.categoryOptionCombos.categoryOptions.attributes",
         "dataElements.categoryCombos.categories",
+        "dataElements.categoryCombos.categories.attributes",
         "dataElements.dataElementGroups",
         "dataElements.dataElementGroups.attributes",
         "dataElements.dataElementGroups.dataElementGroupSets",
