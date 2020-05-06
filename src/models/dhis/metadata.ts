@@ -17,6 +17,7 @@ export class CategoryModel extends D2Model {
 
     protected static excludeRules = [
         "categoryCombos",
+        "categoryCombos.categoryOptionCombos",
         "categoryCombos.categories",
         "categoryCombos.categories.attributes",
         "categoryCombos.categories.categoryOptions",
@@ -37,6 +38,7 @@ export class CategoryComboModel extends D2Model {
     protected static excludeRules = [];
     protected static includeRules = [
         "categories",
+        "categoryOptionCombos",
         "categories.attributes",
         "categories.categoryOptions",
         "categories.categoryOptions.attributes"
@@ -61,6 +63,27 @@ export class CategoryOptionModel extends D2Model {
     ];
     protected static includeRules = [
         "attributes"
+    ];
+}
+
+export class CategoryOptionComboModel extends D2Model {
+    protected static metadataType = "categoryOptionCombo";
+    protected static collectionName = "categoryOptionCombos" as const;
+
+    protected static excludeRules = [
+        "categoryOptions.categories.categoryOptions",
+        "categoryCombos.categories.categoryOptions.attributes",
+        "categoryCombos.categories.categoryCombos",
+        "categoryOptions.categoryOptionCombos",
+    ];
+
+    protected static includeRules = [
+        "attributes",
+        "categoryCombos",
+        "categoryCombos.categories",
+        "categoryCombos.categories.attributes",
+        "categoryOptions",
+        "categoryOptions.attributes"
     ];
 }
 

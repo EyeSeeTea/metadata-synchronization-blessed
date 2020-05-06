@@ -189,7 +189,9 @@ const includeExcludeRulesFriendlyNames: {
     "programStages.dataElements.legendSets.attributes": "Attributes of legend sets of data elements in program stages",
     "programStages.dataElements.optionSets.attributes": "Attributes of option sets of data elements in program stages",
     "programStages.dataElements.optionSets.options.attributes": "Attributes of options in option sets of data elements  in program stages",
-
+    "categoryOptions.categories.categoryOptions": "Category options of categories in category options",
+    "categoryCombos.categories.categoryCombos": "Category combinations of categories in category combinations",
+    "categoryOptions.categoryOptionCombos": "Category option combinations of categories options",
 };
 
 export default includeExcludeRulesFriendlyNames;
