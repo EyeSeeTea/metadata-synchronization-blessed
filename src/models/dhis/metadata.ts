@@ -116,6 +116,11 @@ export class CategoryOptionGroupSetModel extends D2Model {
     ];
 }
 
+export class ChartModel extends D2Model {
+    protected static metadataType = "chart";
+    protected static collectionName = "charts" as const;
+}
+
 export class DashboardModel extends D2Model {
     protected static metadataType = "dashboard";
     protected static collectionName = "dashboards" as const;
@@ -252,6 +257,16 @@ export class DataSetModel extends D2Model {
     ];
 }
 
+export class EventChartModel extends D2Model {
+    protected static metadataType = "eventChart";
+    protected static collectionName = "eventCharts" as const;
+}
+
+export class EventReportModel extends D2Model {
+    protected static metadataType = "eventReport";
+    protected static collectionName = "eventReports" as const;
+}
+
 export class IndicatorModel extends D2Model {
     protected static metadataType = "indicator";
     protected static collectionName = "indicators" as const;
@@ -316,6 +331,16 @@ export class LegendSetModel extends D2Model {
 
     protected static excludeRules = [];
     protected static includeRules = ["attributes"];
+}
+
+export class MapModel extends D2Model {
+    protected static metadataType = "map";
+    protected static collectionName = "maps" as const;
+}
+
+export class MapViewModel extends D2Model {
+    protected static metadataType = "mapView";
+    protected static collectionName = "mapViews" as const;
 }
 
 export class OptionGroupModel extends D2Model {
