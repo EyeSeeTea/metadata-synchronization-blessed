@@ -9,7 +9,7 @@ import {
     programRuleActionsColumns,
     programRuleActionsFields,
 } from "../../utils/d2";
-import { D2Model } from "./default";
+import { D2Model, SearchFilter } from "./default";
 
 export class CategoryModel extends D2Model {
     protected static metadataType = "category";
@@ -562,6 +562,7 @@ export class ProgramRuleActionModel extends D2Model {
     protected static collectionName = "programRuleActions" as const;
     protected static columns = programRuleActionsColumns;
     protected static fields = programRuleActionsFields;
+    protected static searchFilter: SearchFilter = { field: "id", operator: "ilike" };
 
     protected static excludeRules = [];
     protected static includeRules = ["attributes"];

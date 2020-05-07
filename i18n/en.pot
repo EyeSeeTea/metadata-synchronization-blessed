@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-05-04T04:40:04.319Z\n"
-"PO-Revision-Date: 2020-05-04T04:40:04.319Z\n"
+"POT-Creation-Date: 2020-05-07T07:31:26.588Z\n"
+"PO-Revision-Date: 2020-05-07T07:31:26.588Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -201,7 +201,7 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-msgid "Search by name"
+msgid "Search by "
 msgstr ""
 
 msgid "There are pending migrations"
@@ -1035,6 +1035,9 @@ msgid "Last executed date"
 msgstr ""
 
 msgid "Destination Instance"
+msgstr ""
+
+msgid "Search by name"
 msgstr ""
 
 msgid "Delete Rules?"
