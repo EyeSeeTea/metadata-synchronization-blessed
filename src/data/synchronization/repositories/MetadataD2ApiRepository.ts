@@ -8,7 +8,7 @@ import { D2Api, D2ApiDefault } from "d2-api";
 import { AxiosError } from "axios";
 import Instance from "../../../domain/instance/Instance";
 import { mapPackageToD2Version } from "../mappers/D2VersionPackageMapper";
-import { metadataTransformations } from "../mappers/PackageTransformations";
+import { metadataTransformationsToDhis2 } from "../mappers/PackageTransformations";
 
 class MetadataD2ApiRepository implements MetadataRepository {
     private currentD2Api: D2Api;
@@ -38,7 +38,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
             };
 
             const apiVersion = await this.getVersion(targetInstance);
-            const versionedPayloadPackage = mapPackageToD2Version(apiVersion, metadata, metadataTransformations);
+            const versionedPayloadPackage = mapPackageToD2Version(apiVersion, metadata, metadataTransformationsToDhis2);
 
             console.debug("Versioned metadata package", versionedPayloadPackage);
 

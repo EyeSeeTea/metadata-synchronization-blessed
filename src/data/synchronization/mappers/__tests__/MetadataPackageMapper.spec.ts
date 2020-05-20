@@ -1,10 +1,11 @@
 import { PackageTransformationStrategy, mapPackageToD2Version } from "../D2VersionPackageMapper";
 import _ from "lodash";
 import { MetadataPackage } from "../../../../domain/synchronization/MetadataEntities";
+import { D2MetadataPackage } from "../../types";
 
 describe("mapPackage", () => {
     it("should no apply any transformation if not exist transformations", () => {
-        const transformations: PackageTransformationStrategy<MetadataPackage>[] = [];
+        const transformations: PackageTransformationStrategy<MetadataPackage, D2MetadataPackage>[] = [];
         const payload = givenAMetadataPackage();
 
         const transformedPayload = mapPackageToD2Version(33, payload, transformations)
@@ -15,7 +16,7 @@ describe("mapPackage", () => {
         const transformations = [
             {
                 apiVersion: 34,
-                transform: (payload: MetadataPackage) =>
+                transform: (payload: D2MetadataPackage) =>
                     renamePropInMetadataPackage(payload, "dataElements", "name", "34Name")
             }
         ];
@@ -30,7 +31,7 @@ describe("mapPackage", () => {
         const transformations = [
             {
                 apiVersion: 30,
-                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "30Name")
+                transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "30Name")
             }
         ];
         const payload = givenAMetadataPackage();
@@ -44,7 +45,7 @@ describe("mapPackage", () => {
         const transformations = [
             {
                 apiVersion: 33,
-                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "33Name")
+                transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "33Name")
             }
         ];
 
@@ -59,11 +60,11 @@ describe("mapPackage", () => {
         const transformations = [
             {
                 apiVersion: 32,
-                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "32Name")
+                transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "32Name")
             },
             {
                 apiVersion: 33,
-                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "32Name", "33Name")
+                transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "32Name", "33Name")
             }
         ];
 
@@ -78,11 +79,11 @@ describe("mapPackage", () => {
         const transformations = [
             {
                 apiVersion: 33,
-                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "32Name")
+                transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "name", "32Name")
             },
             {
                 apiVersion: 32,
-                transform: (payload: MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "32Name", "33Name")
+                transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "dataElements", "32Name", "33Name")
             }
         ];
 
@@ -127,7 +128,7 @@ function renamePropInMetadataPackage(
     payload: MetadataPackage,
     type: string,
     oldPropName: string,
-    newPropName: string) {
+    newPropName: string): D2MetadataPackage {
 
     const renameProp = (oldProp: string, newProp: string, { [oldProp]: old, ...others }) => {
         return { [newProp]: old, ...others };

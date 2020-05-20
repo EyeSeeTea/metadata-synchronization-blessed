@@ -1,7 +1,8 @@
 import { PackageTransformationStrategy } from "./D2VersionPackageMapper";
-import { EventsPackage, AggregatedPackage } from "../../../domain/synchronization/DataEntities";
 import { MetadataPackage } from "../../../domain/synchronization/MetadataEntities";
+import { D2MetadataPackage, D2AggregatedPackage, D2EventsPackage } from "../types";
+import { AggregatedPackage, EventsPackage } from "../../../domain/synchronization/DataEntities";
 
-export const metadataTransformations: PackageTransformationStrategy<MetadataPackage>[] = [];
-export const eventsTransformations: PackageTransformationStrategy<EventsPackage>[] = [];
-export const aggregatedTransformations: PackageTransformationStrategy<AggregatedPackage>[] = [];
+export const metadataTransformationsToDhis2: PackageTransformationStrategy<MetadataPackage, D2MetadataPackage>[] = [];
+export const aggregatedTransformationsToDhis2: PackageTransformationStrategy<AggregatedPackage, D2AggregatedPackage>[] = [];
+export const eventsTransformationsToDhis2: PackageTransformationStrategy<EventsPackage, D2EventsPackage>[] = [];

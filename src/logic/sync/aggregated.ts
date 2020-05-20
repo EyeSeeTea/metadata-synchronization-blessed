@@ -21,7 +21,7 @@ import {
 import { GenericSync } from "./generic";
 import { promiseMap } from "../../utils/common";
 import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
-import { aggregatedTransformations } from "../../data/synchronization/mappers/PackageTransformations";
+import { aggregatedTransformationsToDhis2 } from "../../data/synchronization/mappers/PackageTransformations";
 
 export class AggregatedSync extends GenericSync {
     public readonly type = "aggregated";
@@ -153,7 +153,7 @@ export class AggregatedSync extends GenericSync {
             throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
         }
 
-        const versionedPayloadPackage = mapPackageToD2Version(instanceEntity.apiVersion, mappedPayloadPackage, aggregatedTransformations);
+        const versionedPayloadPackage = mapPackageToD2Version(instanceEntity.apiVersion, mappedPayloadPackage, aggregatedTransformationsToDhis2);
         console.debug("Aggregated package", { payloadPackage, mappedPayloadPackage, versionedPayloadPackage });
 
         const response = await postAggregatedData(instance, versionedPayloadPackage, dataParams);

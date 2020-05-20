@@ -27,7 +27,7 @@ import {
 import { AggregatedSync } from "./aggregated";
 import { GenericSync, SyncronizationPayload } from "./generic";
 import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
-import { eventsTransformations } from "../../data/synchronization/mappers/PackageTransformations";
+import { eventsTransformationsToDhis2 } from "../../data/synchronization/mappers/PackageTransformations";
 
 export class EventsSync extends GenericSync {
     public readonly type = "events";
@@ -92,7 +92,7 @@ export class EventsSync extends GenericSync {
             throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
         }
 
-        const versionedPayloadPackage = mapPackageToD2Version(instanceEntity.apiVersion, payload, eventsTransformations);
+        const versionedPayloadPackage = mapPackageToD2Version(instanceEntity.apiVersion, payload, eventsTransformationsToDhis2);
         console.debug("Events package", { events, payload, versionedPayloadPackage });
 
         const response = await postEventsData(instance, payload, dataParams);
