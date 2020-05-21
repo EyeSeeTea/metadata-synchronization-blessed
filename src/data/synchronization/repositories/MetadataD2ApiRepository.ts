@@ -1,6 +1,5 @@
 import { MetadataRepository } from "../../../domain/synchronization/MetadataRepositoriy";
 import {
-    MetadataPackage,
     MetadataImportResponse,
     MetadataImportParams
 } from "../../../domain/synchronization/MetadataEntities";
@@ -10,6 +9,7 @@ import Instance from "../../../domain/instance/Instance";
 import { mapPackageToD2Version } from "../mappers/D2VersionPackageMapper";
 import { metadataTransformationsToDhis2 } from "../mappers/PackageTransformations";
 import { D2Api } from "../../../types/d2-api"
+import { MetadataPackage } from "../../../domain/metadata/entities";
 
 class MetadataD2ApiRepository implements MetadataRepository {
     private currentD2Api: D2Api;

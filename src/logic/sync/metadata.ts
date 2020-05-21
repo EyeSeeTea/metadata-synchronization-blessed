@@ -15,10 +15,10 @@ import {
     getMetadata,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
-import { MetadataPackage } from "../../domain/synchronization/MetadataEntities";
 import MetadataD2ApiRepository from "../../data/synchronization/repositories/MetadataD2ApiRepository";
 import { MetadataRepository } from "../../domain/synchronization/MetadataRepositoriy";
 import { D2 } from "../../types/d2";
+import { MetadataPackage, MetadataEntity } from "../../domain/metadata/entities";
 
 export class MetadataSync extends GenericSync {
     public readonly type = "metadata";
@@ -56,6 +56,7 @@ export class MetadataSync extends GenericSync {
                     excludeRules,
                     includeSharingSettings
                 );
+
                 result[model.plural] = result[model.plural] || [];
                 result[model.plural].push(object);
 
@@ -65,7 +66,8 @@ export class MetadataSync extends GenericSync {
                 const promises = includedReferences
                     .map(type => ({
                         type: type as keyof D2ModelSchemas,
-                        ids: references[type].filter(id => !visitedIds.has(id)),
+                        ids: references[type].filter(entity => !visitedIds.has(entity.id))
+                            .map(entity => entity.id),
                         excludeRules: nestedExcludeRules[type],
                         includeRules: nestedIncludeRules[type],
                         includeSharingSettings,
@@ -95,13 +97,14 @@ export class MetadataSync extends GenericSync {
         } = syncParams ?? {};
 
         const metadata = await getMetadata(this.api, metadataIds, "id");
+
         const exportResults = await promiseMap(_.keys(metadata), type => {
             const myClass = d2ModelFactory(this.api, type);
             const metadataType = myClass.getMetadataType();
 
             return this.exportMetadata({
                 type: type as keyof D2ModelSchemas,
-                ids: metadata[type].map(e => e.id),
+                ids: metadata[type].map((e: MetadataEntity) => e.id),
                 excludeRules: useDefaultIncludeExclude
                     ? myClass.getExcludeRules()
                     : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
@@ -112,7 +115,7 @@ export class MetadataSync extends GenericSync {
             });
         });
 
-        return _.mapValues(_.deepMerge({}, ...exportResults), elements => _.uniqBy(elements, "id"));
+        return _.mapValues(_.merge({}, ...exportResults), elements => _.uniqBy(elements, "id"));
     });
 
     public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {

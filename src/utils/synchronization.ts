@@ -27,7 +27,7 @@ import "../utils/lodash-mixins";
 import { promiseMap } from "./common";
 import { cleanToAPIChildReferenceName, cleanToModelName, getClassName } from "./d2";
 import { AggregatedPackage, ProgramEvent, DataValue } from "../domain/synchronization/DataEntities";
-import { MetadataPackage } from "../domain/synchronization/MetadataEntities";
+import { MetadataPackage } from "../domain/metadata/entities";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];

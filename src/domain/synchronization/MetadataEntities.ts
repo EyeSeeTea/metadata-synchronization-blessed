@@ -1,7 +1,3 @@
-export interface MetadataPackage {
-    [metadataType: string]: any[];
-}
-
 export interface MetadataImportResponse {
     status: ResponseImportStatus;
     importParams?: MetadataImportParams;
