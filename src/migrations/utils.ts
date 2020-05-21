@@ -1,4 +1,4 @@
-import { Ref } from "d2-api";
+import { Ref } from "../types/d2-api";
 import fs from "fs";
 import _ from "lodash";
 import path from "path";

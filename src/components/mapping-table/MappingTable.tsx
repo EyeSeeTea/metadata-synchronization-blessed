@@ -1,6 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
 import { Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
-import { useD2, useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
     RowConfig,
@@ -23,7 +22,6 @@ import { d2ModelFactory } from "../../models/dhis/factory";
 import { ProgramDataElementModel } from "../../models/dhis/mapping";
 import { DataElementModel, OrganisationUnitModel } from "../../models/dhis/metadata";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
-import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPath } from "../../utils/synchronization";
 import {
@@ -34,6 +32,8 @@ import {
     EXCLUDED_KEY,
     getChildrenRows,
 } from "./utils";
+import { useAppContext } from "../../contexts/ApiContext";
+import { D2 } from "../../types/d2";
 
 const useStyles = makeStyles({
     iconButton: {
@@ -85,8 +85,7 @@ export default function MappingTable({
     isChildrenMapping = false,
     mappingPath,
 }: MappingTableProps) {
-    const api = useD2Api();
-    const d2 = useD2() as D2;
+    const { api, d2 } = useAppContext();
     const classes = useStyles();
     const snackbar = useSnackbar();
     const loading = useLoading();
@@ -492,7 +491,7 @@ export default function MappingTable({
                     text: i18n.t("Metadata type"),
                     hidden: model.getChildrenKeys() === undefined,
                     getValue: (row: MetadataType) => {
-                        return row.model.getModelName(d2);
+                        return row.model.getModelName(d2 as D2);
                     },
                 },
                 {

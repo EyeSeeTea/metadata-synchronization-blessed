@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
-import { D2Api, useD2, useD2Api } from "d2-api";
+import { D2Api } from "../../types/d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -26,6 +26,7 @@ import { d2BaseModelFields, MetadataType } from "../../utils/d2";
 import { cleanOrgUnitPaths, getRootOrgUnit } from "../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";
 import { getAllIdentifiers, getFilterData, getOrgUnitSubtree, getRows } from "./utils";
+import { useAppContext } from "../../contexts/ApiContext";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     api?: D2Api;
@@ -123,9 +124,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     showIndeterminateSelection = false,
     ...rest
 }) => {
-    const d2 = useD2() as D2;
-    const defaultApi = useD2Api();
-    const api = providedApi ?? defaultApi;
+    const { d2, api: d2api } = useAppContext() as { d2: D2; api: D2Api };
+
+    const api = providedApi ?? d2api;
     const classes = useStyles({});
 
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);

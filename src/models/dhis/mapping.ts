@@ -1,19 +1,19 @@
 import i18n from "@dhis2/d2-i18n";
 import {
     D2CategoryOptionSchema,
-    D2DataSetSchema,
     D2OptionSchema,
     D2ProgramSchema,
     SelectedPick,
-} from "d2-api";
+    D2DataSetSchema,
+} from "../../types/d2-api";
 import _ from "lodash";
 import {
     categoryOptionFields,
     dataElementFields,
-    dataSetFields,
     optionFields,
     programFieldsWithDataElements,
     programFieldsWithIndicators,
+    dataSetFields,
 } from "../../utils/d2";
 import {
     CategoryComboModel,

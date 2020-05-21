@@ -1,6 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
 import SyncIcon from "@material-ui/icons/Sync";
-import { useD2Api } from "d2-api";
 import {
     ObjectsTable,
     ObjectsTableDetailField,
@@ -14,6 +13,7 @@ import DeletedObject from "../../models/deletedObjects";
 import SyncRule from "../../models/syncRule";
 import { MetadataType } from "../../utils/d2";
 import moment from "moment";
+import { useAppContext } from "../../contexts/ApiContext";
 
 const deletedObjectsColumns: TableColumn<MetadataType>[] = [
     { name: "id", text: i18n.t("Identifier"), sortable: true },
@@ -51,7 +51,7 @@ const DeletedObjectsTable: React.FC<DeletedObjectsTableProps> = ({
     syncRule,
     onChange,
 }) => {
-    const api = useD2Api();
+    const { api } = useAppContext();
 
     const [deletedObjectsRows, setDeletedObjectsRows] = useState<MetadataType[]>([]);
     const [search, setSearch] = useState<string | undefined>(undefined);

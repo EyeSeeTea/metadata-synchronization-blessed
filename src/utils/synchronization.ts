@@ -1,6 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { AxiosError } from "axios";
-import { D2Api, D2CategoryOptionCombo } from "d2-api";
+import { D2Api, D2CategoryOptionCombo } from "../types/d2-api";
 import { isValidUid } from "d2/uid";
 import FileSaver from "file-saver";
 import _ from "lodash";

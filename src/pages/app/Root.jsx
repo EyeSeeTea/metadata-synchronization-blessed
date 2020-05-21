@@ -1,4 +1,3 @@
-import { useD2Api } from "d2-api";
 import React from "react";
 import { HashRouter, Switch } from "react-router-dom";
 import RouteWithSession from "../../components/auth/RouteWithSession";
@@ -13,9 +12,10 @@ import InstanceMappingPage from "../instance-mapping/InstanceMappingPage";
 import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
+import { useAppContext } from "../../contexts/ApiContext";
 
 function Root() {
-    const api = useD2Api();
+    const { api } = useAppContext();
 
     return (
         <HashRouter>

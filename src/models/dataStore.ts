@@ -1,4 +1,4 @@
-import { D2Api, Ref } from "d2-api";
+import { D2Api, Ref } from "../types/d2-api";
 import _ from "lodash";
 import { Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
@@ -58,11 +58,11 @@ export async function getPaginatedData(
 
     const filteredData = search
         ? _.filter(rawData, o =>
-              _(o)
-                  .keys()
-                  .filter(k => typeof o[k] === "string")
-                  .some(k => o[k].toLowerCase().includes(search.toLowerCase()))
-          )
+            _(o)
+                .keys()
+                .filter(k => typeof o[k] === "string")
+                .some(k => o[k].toLowerCase().includes(search.toLowerCase()))
+        )
         : rawData;
 
     const [field, direction] = sorting;

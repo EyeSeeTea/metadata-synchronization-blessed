@@ -3,7 +3,7 @@ import { TextField } from "@dhis2/d2-ui-core";
 import { FormBuilder, Validators } from "@dhis2/d2-ui-forms";
 import { Card, CardContent } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import { ApiContext } from "d2-api";
+import { ApiContext } from "../../contexts/ApiContext";
 import { withSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import RaisedButton from "material-ui/RaisedButton/RaisedButton";

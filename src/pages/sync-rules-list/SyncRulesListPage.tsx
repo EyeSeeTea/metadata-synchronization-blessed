@@ -1,6 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
 import { Icon } from "@material-ui/core";
-import { useD2, useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
     DatePicker,
@@ -42,6 +41,7 @@ import {
 } from "../../utils/permissions";
 import { requestJSONDownload } from "../../utils/synchronization";
 import { getValidationMessages } from "../../utils/validations";
+import { useAppContext } from "../../contexts/ApiContext";
 
 const config: {
     [key: string]: {
@@ -69,8 +69,7 @@ const enabledFilterData = [
 ];
 
 const SyncRulesPage: React.FC = () => {
-    const d2 = useD2();
-    const api = useD2Api();
+    const { d2, api } = useAppContext();
     const loading = useLoading();
     const snackbar = useSnackbar();
     const history = useHistory();

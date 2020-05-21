@@ -4,11 +4,12 @@ import {
     MetadataImportResponse,
     MetadataImportParams
 } from "../../../domain/synchronization/MetadataEntities";
-import { D2Api, D2ApiDefault } from "d2-api";
+
 import { AxiosError } from "axios";
 import Instance from "../../../domain/instance/Instance";
 import { mapPackageToD2Version } from "../mappers/D2VersionPackageMapper";
 import { metadataTransformationsToDhis2 } from "../mappers/PackageTransformations";
+import { D2Api } from "../../../types/d2-api"
 
 class MetadataD2ApiRepository implements MetadataRepository {
     private currentD2Api: D2Api;
@@ -52,7 +53,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     private getApi(targetInstance?: Instance): D2Api {
-        return targetInstance ? new D2ApiDefault({
+        return targetInstance ? new D2Api({
             baseUrl: targetInstance.url,
             auth: { username: targetInstance.username, password: targetInstance.password }
         }) : this.currentD2Api;
@@ -60,8 +61,8 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
     private async getVersion(targetInstance?: Instance): Promise<number> {
         if (!targetInstance) {
-            const systemInfo = await this.currentD2Api.system.info.getData();
-            return +systemInfo.version.split(".")[1];
+            const version = await this.currentD2Api.getVersion();
+            return +version.split(".")[1];
         } else if (targetInstance.apiVersion) {
             return targetInstance.apiVersion;
         } else {

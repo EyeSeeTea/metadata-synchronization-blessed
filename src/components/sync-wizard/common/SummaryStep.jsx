@@ -1,6 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
 import { Button, LinearProgress, makeStyles } from "@material-ui/core";
-import { useD2, useD2Api } from "d2-api";
 import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
@@ -19,6 +18,7 @@ import { getValidationMessages } from "../../../utils/validations";
 import { aggregationItems } from "../data/AggregationStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
 import { getInstanceOptions } from "./InstanceSelectionStep";
+import { useAppContext } from "../../../contexts/ApiContext";
 // import Instance from "../../../models/instance";
 
 const LiEntry = ({ label, value, children }) => {
@@ -57,8 +57,8 @@ const config = {
 };
 
 const SaveStep = ({ syncRule, onCancel }) => {
-    const d2 = useD2();
-    const api = useD2Api();
+    const { d2, api } = useAppContext();
+
     const snackbar = useSnackbar();
     const loading = useLoading();
     const classes = useStyles();

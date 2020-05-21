@@ -1,4 +1,4 @@
-import { D2Api, D2ModelSchemas } from "d2-api";
+import { D2Api, D2ModelSchemas } from "../../types/d2-api";
 import _ from "lodash";
 import { D2Model, defaultModel } from "./default";
 import * as mappingClasses from "./mapping";

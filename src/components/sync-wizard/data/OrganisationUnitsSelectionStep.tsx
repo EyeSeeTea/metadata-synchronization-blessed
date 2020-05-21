@@ -1,6 +1,5 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { useD2, useD2Api } from "d2-api";
 import { OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -8,6 +7,7 @@ import i18n from "../../../locales";
 import { D2 } from "../../../types/d2";
 import { getCurrentUserOrganisationUnits } from "../../../utils/d2";
 import { SyncWizardStepProps } from "../Steps";
+import { useAppContext } from "../../../contexts/ApiContext";
 
 const useStyles = makeStyles({
     loading: {
@@ -17,8 +17,7 @@ const useStyles = makeStyles({
 });
 
 const OrganisationUnitsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
-    const d2 = useD2();
-    const api = useD2Api();
+    const { d2, api } = useAppContext();
     const classes = useStyles();
     const [orgUnitRootIds, setOrgUnitRootIds] = useState<string[] | undefined>();
 

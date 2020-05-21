@@ -1,4 +1,3 @@
-import { useD2Api } from "d2-api";
 import { Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useRef } from "react";
@@ -8,6 +7,7 @@ import { promiseMap } from "../../utils/common";
 import { getMetadata } from "../../utils/synchronization";
 import { getValidationMessages } from "../../utils/validations";
 import { aggregatedSteps, deletedSteps, eventsSteps, metadataSteps } from "./Steps";
+import { useAppContext } from "../../contexts/ApiContext";
 
 interface SyncWizardProps {
     syncRule: SyncRule;
@@ -30,7 +30,7 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
     onCancel = _.noop,
 }) => {
     const location = useLocation();
-    const api = useD2Api();
+    const { api } = useAppContext();
     const memoizedRule = useRef(syncRule);
 
     const steps = config[syncRule.type]

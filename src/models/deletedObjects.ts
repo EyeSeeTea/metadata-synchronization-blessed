@@ -1,5 +1,5 @@
 import axios from "axios";
-import { D2Api } from "d2-api";
+import { D2Api } from "../types/d2-api";
 import _ from "lodash";
 import moment from "moment";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
@@ -70,9 +70,9 @@ export default class DeletedObject {
             .filter(object =>
                 search
                     ? _(object)
-                          .keys()
-                          .filter(k => typeof object[k] === "string")
-                          .some(k => object[k].toLowerCase().includes(search.toLowerCase()))
+                        .keys()
+                        .filter(k => typeof object[k] === "string")
+                        .some(k => object[k].toLowerCase().includes(search.toLowerCase()))
                     : true
             )
             .filter(object =>

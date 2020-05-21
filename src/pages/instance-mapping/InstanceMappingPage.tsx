@@ -1,5 +1,4 @@
 import i18n from "@dhis2/d2-i18n";
-import { useD2Api } from "d2-api";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -17,6 +16,7 @@ import {
     OrganisationUnitMappedModel,
 } from "../../models/dhis/mapping";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
+import { useAppContext } from "../../contexts/ApiContext";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
@@ -51,7 +51,7 @@ interface InstanceMappingParams {
 
 export default function InstanceMappingPage() {
     const history = useHistory();
-    const api = useD2Api();
+    const { api } = useAppContext();
 
     const { id, section } = useParams() as InstanceMappingParams;
     const { models, title: sectionTitle } = config[section];

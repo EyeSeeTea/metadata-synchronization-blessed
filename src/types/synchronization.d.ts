@@ -1,4 +1,4 @@
-import { D2ModelSchemas, Ref } from "d2-api";
+import { D2ModelSchemas, Ref } from "../types/d2-api";
 import SyncReport from "../models/syncReport";
 import { DataImportParams, ImportStatus, MetadataImportParams, MetadataImportStats } from "./d2";
 

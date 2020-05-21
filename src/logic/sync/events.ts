@@ -1,4 +1,4 @@
-import { D2CategoryOptionCombo, D2Program } from "d2-api";
+import { D2CategoryOptionCombo, D2Program } from "../../types/d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";

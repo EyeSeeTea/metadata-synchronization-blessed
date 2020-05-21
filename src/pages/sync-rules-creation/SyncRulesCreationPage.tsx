@@ -1,4 +1,3 @@
-import { useD2Api } from "d2-api";
 import { ConfirmationDialog, useLoading } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
@@ -8,6 +7,7 @@ import i18n from "../../locales";
 import SyncRule from "../../models/syncRule";
 import { SyncRuleType } from "../../types/synchronization";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../contexts/ApiContext";
 
 interface SyncRulesCreationParams {
     id: string;
@@ -20,7 +20,7 @@ const SyncRulesCreation: React.FC = () => {
     const location = useLocation<{ syncRule?: SyncRule }>();
     const loading = useLoading();
     const { id, action, type } = useParams() as SyncRulesCreationParams;
-    const api = useD2Api();
+    const { api } = useAppContext();
     const [dialogOpen, updateDialogOpen] = useState(false);
     const [syncRule, updateSyncRule] = useState(location.state?.syncRule ?? SyncRule.create(type));
     const isEdit = action === "edit" && !!id;

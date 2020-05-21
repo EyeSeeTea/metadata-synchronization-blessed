@@ -1,4 +1,4 @@
-import { D2Api, Id } from "d2-api";
+import { D2Api, Id } from "../../types/d2-api";
 import _ from "lodash";
 import { getDataStore, saveDataStore } from "../../models/dataStore";
 import { Debug } from "../../types/migrations";

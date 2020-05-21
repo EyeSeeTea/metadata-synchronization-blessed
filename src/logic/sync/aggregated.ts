@@ -1,4 +1,4 @@
-import { D2CategoryOptionCombo } from "d2-api";
+import { D2CategoryOptionCombo } from "../../types/d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
