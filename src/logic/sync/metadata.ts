@@ -12,13 +12,13 @@ import {
     cleanObject,
     cleanReferences,
     getAllReferences,
-    getMetadata,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
 import MetadataD2ApiRepository from "../../data/synchronization/repositories/MetadataD2ApiRepository";
 import { MetadataRepository } from "../../domain/synchronization/MetadataRepositoriy";
 import { D2 } from "../../types/d2";
-import { MetadataPackage, MetadataEntity } from "../../domain/metadata/entities";
+import { MetadataPackage, MetadataPackageSchema } from "../../domain/metadata/entities";
+import { Ref } from "../../domain/common/Entities";
 
 export class MetadataSync extends GenericSync {
     public readonly type = "metadata";
@@ -44,7 +44,7 @@ export class MetadataSync extends GenericSync {
             const nestedIncludeRules: NestedRules = buildNestedRules(includeRules);
 
             // Get all the required metadata
-            const syncMetadata = await getMetadata(this.api, ids);
+            const syncMetadata = await this.metadataRepository.getMetadataByIds(ids);
             const elements = syncMetadata[model.plural] || [];
 
             for (const element of elements) {
@@ -96,15 +96,17 @@ export class MetadataSync extends GenericSync {
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
 
-        const metadata = await getMetadata(this.api, metadataIds, "id");
+        const metadata = await this.metadataRepository.getMetadataFieldsByIds<Ref>(metadataIds, "id");
 
         const exportResults = await promiseMap(_.keys(metadata), type => {
             const myClass = d2ModelFactory(this.api, type);
             const metadataType = myClass.getMetadataType();
 
+            const metadatatype = type as keyof MetadataPackageSchema;
+
             return this.exportMetadata({
-                type: type as keyof D2ModelSchemas,
-                ids: metadata[type].map((e: MetadataEntity) => e.id),
+                type: metadatatype,
+                ids: metadata[metadatatype].map((e) => e.id),
                 excludeRules: useDefaultIncludeExclude
                     ? myClass.getExcludeRules()
                     : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),

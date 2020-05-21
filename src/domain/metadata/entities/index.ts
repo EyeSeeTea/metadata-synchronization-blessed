@@ -3872,6 +3872,8 @@ export type MetadataPackageSchema = {
     messageConversations: MessageConversation[]
 }
 
+export type MetadataFieldsPackage<T> = Record<keyof MetadataPackageSchema, T[]>;
+
 export type MetadataPackage = Record<string, any[]>;
 
 //export type MetadataPackage = Record<keyof MetadataPackageSchema, MetadataEntity[]>;

@@ -9,7 +9,8 @@ import Instance from "../../../domain/instance/Instance";
 import { mapPackageToD2Version } from "../mappers/D2VersionPackageMapper";
 import { metadataTransformationsToDhis2 } from "../mappers/PackageTransformations";
 import { D2Api } from "../../../types/d2-api"
-import { MetadataPackage } from "../../../domain/metadata/entities";
+import { MetadataPackage, MetadataFieldsPackage } from "../../../domain/metadata/entities";
+import _ from "lodash";
 
 class MetadataD2ApiRepository implements MetadataRepository {
     private currentD2Api: D2Api;
@@ -21,6 +22,26 @@ class MetadataD2ApiRepository implements MetadataRepository {
         // For the moment I have not make this change becuase we should realize a request to current server
         // for every metadata sync execution where this class is created to retrieve current version
         this.currentD2Api = d2Api;
+    }
+
+    /**
+     * Return specific fields of metadata dhis2 models according to ids filter
+     * @param ids metadata ids to retrieve
+     */
+    async getMetadataFieldsByIds<T>(ids: string[], fields: string): Promise<MetadataFieldsPackage<T>> {
+        return this.getMetadata(ids, fields);
+    }
+
+    /**
+     * Return metadata entitites according to ids filter
+     * @param ids metadata ids to retrieve
+     */
+    async getMetadataByIds(ids: string[]): Promise<MetadataPackage> {
+        const metadata = await this.getMetadata(ids);
+
+        //Apply transformations
+
+        return metadata;
     }
 
     async save(metadata: MetadataPackage,
@@ -89,6 +110,29 @@ class MetadataD2ApiRepository implements MetadataRepository {
             console.error(error);
             return { status: "NETWORK ERROR" };
         }
+    }
+
+    private async getMetadata(
+        elements: string[],
+        fields = ":all"
+    ): Promise<MetadataPackage> {
+        const promises = [];
+        for (let i = 0; i < elements.length; i += 100) {
+            const requestElements = elements.slice(i, i + 100).toString();
+            promises.push(
+                this.currentD2Api
+                    .get("/metadata", {
+                        fields,
+                        filter: "id:in:[" + requestElements + "]",
+                        defaults: "EXCLUDE",
+                    })
+                    .getData()
+            );
+        }
+        const response = await Promise.all(promises);
+        const results = _.deepMerge({}, ...response);
+        if (results.system) delete results.system;
+        return results;
     }
 
 }
