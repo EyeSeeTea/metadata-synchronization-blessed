@@ -1,33 +1,10 @@
 import { Access, Id, Translation, Style, Expression, Ref } from "../../common/Entities";
 
 export type AttributeValue = {
-    attribute: Ref;
+    attribute: Attribute;
     created: string;
     lastUpdated: string;
     value: string;
-};
-
-export type UserRole = {
-    access: Access;
-    attributeValues: AttributeValue[];
-    authorities: string[];
-    code: Id;
-    created: string;
-    description: string;
-    displayName: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    id: Id;
-    lastUpdated: string;
-    lastUpdatedBy: Ref;
-    name: string;
-    publicAccess: string;
-    translations: Translation[];
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
-    users: Ref[];
 };
 
 export type Attribute = {
@@ -57,7 +34,7 @@ export type Attribute = {
     indicatorAttribute: boolean;
     indicatorGroupAttribute: boolean;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     legendSetAttribute: boolean;
     mandatory: boolean;
     name: string;
@@ -114,6 +91,29 @@ export type Attribute = {
     | "IMAGE";
 };
 
+export type UserRole = {
+    access: Access;
+    attributeValues: AttributeValue[];
+    authorities: string[];
+    code: Id;
+    created: string;
+    description: string;
+    displayName: string;
+    externalAccess: boolean;
+    favorite: boolean;
+    favorites: string[];
+    id: Id;
+    lastUpdated: string;
+    lastUpdatedBy: Ref;
+    name: string;
+    publicAccess: string;
+    translations: Translation[];
+    user: Ref;
+    userAccesses: UserAccess[];
+    userGroupAccesses: UserGroupAccess[];
+    users: Ref[];
+};
+
 export type User = {
     access: Access;
     attributeValues: AttributeValue[];
@@ -137,7 +137,7 @@ export type User = {
     languages: string;
     lastCheckedInterpretations: string;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     nationality: string;
     organisationUnits: Ref[];
@@ -165,7 +165,7 @@ export type UserGroup = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     managedByGroups: UserGroup[];
     managedGroups: UserGroup[];
     name: string;
@@ -190,9 +190,9 @@ export type Option = {
     formName: string;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
-    optionSet: OptionSet;
+    optionSet: Ref;
     publicAccess: string;
     sortOrder: number;
     style: Style;
@@ -213,9 +213,9 @@ export type OptionSet = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
-    options: Option[];
+    options: Ref[];
     publicAccess: string;
     translations: Translation[];
     user: Ref;
@@ -248,6 +248,64 @@ export type OptionSet = {
     | "FILE_RESOURCE"
     | "IMAGE";
     version: number;
+};
+
+export type OptionGroup = {
+    access: Access;
+    aggregationType:
+    | "SUM"
+    | "AVERAGE"
+    | "AVERAGE_SUM_ORG_UNIT"
+    | "LAST"
+    | "LAST_AVERAGE_ORG_UNIT"
+    | "COUNT"
+    | "STDDEV"
+    | "VARIANCE"
+    | "MIN"
+    | "MAX"
+    | "NONE"
+    | "CUSTOM"
+    | "DEFAULT";
+    attributeValues: AttributeValue[];
+    code: Id;
+    created: string;
+    description: string;
+    dimensionItem: string;
+    dimensionItemType:
+    | "DATA_ELEMENT"
+    | "DATA_ELEMENT_OPERAND"
+    | "INDICATOR"
+    | "REPORTING_RATE"
+    | "PROGRAM_DATA_ELEMENT"
+    | "PROGRAM_ATTRIBUTE"
+    | "PROGRAM_INDICATOR"
+    | "PERIOD"
+    | "ORGANISATION_UNIT"
+    | "CATEGORY_OPTION"
+    | "OPTION_GROUP"
+    | "DATA_ELEMENT_GROUP"
+    | "ORGANISATION_UNIT_GROUP"
+    | "CATEGORY_OPTION_GROUP";
+    displayDescription: string;
+    displayName: string;
+    displayShortName: string;
+    externalAccess: boolean;
+    favorite: boolean;
+    favorites: string[];
+    id: Id;
+    lastUpdated: string;
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
+    name: string;
+    optionSet: Ref;
+    options: Ref[];
+    publicAccess: string;
+    shortName: string;
+    translations: Translation[];
+    user: Ref;
+    userAccesses: UserAccess[];
+    userGroupAccesses: UserGroupAccess[];
 };
 
 export type OptionGroupSet = {
@@ -302,69 +360,11 @@ export type OptionGroupSet = {
     id: Id;
     items: any[];
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
     name: string;
-    optionGroups: OptionGroup[];
-    optionSet: OptionSet;
-    publicAccess: string;
-    shortName: string;
-    translations: Translation[];
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
-};
-
-export type OptionGroup = {
-    access: Access;
-    aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
-    attributeValues: AttributeValue[];
-    code: Id;
-    created: string;
-    description: string;
-    dimensionItem: string;
-    dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
-    displayDescription: string;
-    displayName: string;
-    displayShortName: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    id: Id;
-    lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
-    name: string;
-    optionSet: OptionSet;
-    options: Option[];
+    optionGroups: Ref[];
+    optionSet: Ref;
     publicAccess: string;
     shortName: string;
     translations: Translation[];
@@ -384,7 +384,7 @@ export type LegendSet = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     legends: Legend[];
     name: string;
     publicAccess: string;
@@ -407,7 +407,7 @@ export type ColorSet = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
     translations: Translation[];
@@ -433,9 +433,9 @@ export type OrganisationUnit = {
     | "NONE"
     | "CUSTOM"
     | "DEFAULT";
-    ancestors: OrganisationUnit[];
+    ancestors: Ref[];
     attributeValues: AttributeValue[];
-    children: OrganisationUnit[];
+    children: Ref[];
     closedDate: string;
     code: Id;
     comment: string;
@@ -470,16 +470,16 @@ export type OrganisationUnit = {
     featureType: "NONE" | "MULTI_POLYGON" | "POLYGON" | "POINT" | "SYMBOL";
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     leaf: boolean;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    legendSet: Ref;
+    legendSets: Ref[];
     level: number;
     memberCount: number;
     name: string;
     openingDate: string;
-    organisationUnitGroups: OrganisationUnitGroup[];
-    parent: OrganisationUnit;
+    organisationUnitGroups: Ref[];
+    parent: Ref;
     path: string;
     phoneNumber: string;
     programs: Program[];
@@ -505,7 +505,7 @@ export type OrganisationUnitLevel = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     level: number;
     name: string;
     offlineLevels: number;
@@ -561,14 +561,14 @@ export type OrganisationUnitGroup = {
     favorite: boolean;
     favorites: string[];
     featureType: "NONE" | "MULTI_POLYGON" | "POLYGON" | "POINT" | "SYMBOL";
-    groupSets: OrganisationUnitGroupSet[];
+    groupSets: Ref[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
-    organisationUnits: OrganisationUnit[];
+    organisationUnits: Ref[];
     publicAccess: string;
     shortName: string;
     symbol: string;
@@ -632,10 +632,10 @@ export type OrganisationUnitGroupSet = {
     includeSubhierarchyInAnalytics: boolean;
     items: any[];
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
     name: string;
-    organisationUnitGroups: OrganisationUnitGroup[];
+    organisationUnitGroups: Ref[];
     publicAccess: string;
     shortName: string;
     translations: Translation[];
@@ -661,9 +661,9 @@ export type CategoryOption = {
     | "CUSTOM"
     | "DEFAULT";
     attributeValues: AttributeValue[];
-    categories: Category[];
-    categoryOptionCombos: CategoryOptionCombo[];
-    categoryOptionGroups: CategoryOptionGroup[];
+    categories: Ref[];
+    categoryOptionCombos: Ref[];
+    categoryOptionGroups: Ref[];
     code: Id;
     created: string;
     description: string;
@@ -693,11 +693,11 @@ export type CategoryOption = {
     id: Id;
     isDefault: boolean;
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
-    organisationUnits: OrganisationUnit[];
+    organisationUnits: Ref[];
     publicAccess: string;
     shortName: string;
     startDate: string;
@@ -725,7 +725,7 @@ export type CategoryOptionGroup = {
     | "CUSTOM"
     | "DEFAULT";
     attributeValues: AttributeValue[];
-    categoryOptions: CategoryOption[];
+    categoryOptions: Ref[];
     code: Id;
     created: string;
     dataDimensionType: "DISAGGREGATION" | "ATTRIBUTE";
@@ -752,12 +752,12 @@ export type CategoryOptionGroup = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    groupSets: CategoryOptionGroupSet[];
+    groupSets: Ref[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
     publicAccess: string;
     shortName: string;
@@ -785,7 +785,7 @@ export type CategoryOptionGroupSet = {
     | "DEFAULT";
     allItems: boolean;
     attributeValues: AttributeValue[];
-    categoryOptionGroups: CategoryOptionGroup[];
+    categoryOptionGroups: Ref[];
     code: Id;
     created: string;
     dataDimension: boolean;
@@ -821,8 +821,8 @@ export type CategoryOptionGroupSet = {
     id: Id;
     items: any[];
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
     name: string;
     publicAccess: string;
     shortName: string;
@@ -850,8 +850,8 @@ export type Category = {
     | "DEFAULT";
     allItems: boolean;
     attributeValues: AttributeValue[];
-    categoryCombos: CategoryCombo[];
-    categoryOptions: CategoryOption[];
+    categoryCombos: Ref[];
+    categoryOptions: Ref[];
     code: Id;
     created: string;
     dataDimension: boolean;
@@ -887,8 +887,8 @@ export type Category = {
     id: Id;
     items: any[];
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
     name: string;
     publicAccess: string;
     shortName: string;
@@ -901,8 +901,8 @@ export type Category = {
 export type CategoryCombo = {
     access: Access;
     attributeValues: AttributeValue[];
-    categories: Category[];
-    categoryOptionCombos: CategoryOptionCombo[];
+    categories: Ref[];
+    categoryOptionCombos: Ref[];
     code: Id;
     created: string;
     dataDimensionType: "DISAGGREGATION" | "ATTRIBUTE";
@@ -913,7 +913,7 @@ export type CategoryCombo = {
     id: Id;
     isDefault: boolean;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
     skipTotal: boolean;
@@ -940,8 +940,8 @@ export type CategoryOptionCombo = {
     | "CUSTOM"
     | "DEFAULT";
     attributeValues: AttributeValue[];
-    categoryCombo: CategoryCombo;
-    categoryOptions: CategoryOption[];
+    categoryCombo: Ref;
+    categoryOptions: Ref[];
     code: Id;
     created: string;
     description: string;
@@ -970,9 +970,9 @@ export type CategoryOptionCombo = {
     id: Id;
     ignoreApproval: boolean;
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
     publicAccess: string;
     shortName: string;
@@ -1000,11 +1000,11 @@ export type DataElement = {
     | "CUSTOM"
     | "DEFAULT";
     attributeValues: AttributeValue[];
+    categoryCombo: Ref;
     code: Id;
-    commentOptionSet: OptionSet;
+    commentOptionSet: Ref;
     created: string;
-    dataElementCategoryCombo: CategoryCombo;
-    dataElementGroups: DataElementGroup[];
+    dataElementGroups: Ref[];
     dataSetElements: DataSetElement[];
     description: string;
     dimensionItem: string;
@@ -1034,9 +1034,9 @@ export type DataElement = {
     formName: string;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
     optionSet: OptionSet;
     optionSetValue: boolean;
@@ -1123,9 +1123,9 @@ export type DataElementGroup = {
     groupSets: DataElementGroupSet[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
     publicAccess: string;
     shortName: string;
@@ -1189,8 +1189,8 @@ export type DataElementGroupSet = {
     id: Id;
     items: any[];
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
     name: string;
     publicAccess: string;
     shortName: string;
@@ -1212,7 +1212,7 @@ export type IndicatorType = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     number: boolean;
     publicAccess: string;
@@ -1276,9 +1276,9 @@ export type Indicator = {
     indicatorGroups: IndicatorGroup[];
     indicatorType: IndicatorType;
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
     numerator: string;
     numeratorDescription: string;
@@ -1301,11 +1301,11 @@ export type IndicatorGroup = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    groupSet: IndicatorGroupSet;
     id: Id;
+    indicatorGroupSet: IndicatorGroupSet;
     indicators: Indicator[];
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
     translations: Translation[];
@@ -1328,7 +1328,7 @@ export type IndicatorGroupSet = {
     id: Id;
     indicatorGroups: IndicatorGroup[];
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
     translations: Translation[];
@@ -1350,7 +1350,7 @@ export type DataEntryForm = {
     htmlCode: string;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
     style: "COMFORTABLE" | "NORMAL" | "COMPACT" | "NONE";
@@ -1417,16 +1417,16 @@ export type DataSet = {
     indicators: Indicator[];
     interpretations: Interpretation[];
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     mobile: boolean;
     name: string;
     noValueRequiresComment: boolean;
     notificationRecipients: UserGroup;
     notifyCompletingUser: boolean;
     openFuturePeriods: number;
-    organisationUnits: OrganisationUnit[];
+    organisationUnits: Ref[];
     periodType: string;
     publicAccess: string;
     renderAsTabs: boolean;
@@ -1459,7 +1459,7 @@ export type DataSetNotificationTemplate = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     messageTemplate: string;
     name: string;
     notificationRecipient: "ORGANISATION_UNIT_CONTACT" | "USER_GROUP";
@@ -1493,7 +1493,7 @@ export type Section = {
     id: Id;
     indicators: Indicator[];
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
     showColumnTotals: boolean;
@@ -1517,7 +1517,7 @@ export type DataApprovalLevel = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     level: number;
     name: string;
     orgUnitLevel: number;
@@ -1543,7 +1543,7 @@ export type DataApprovalWorkflow = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     periodType: string;
     publicAccess: string;
@@ -1601,10 +1601,10 @@ export type ValidationRule = {
     importance: "HIGH" | "MEDIUM" | "LOW";
     instruction: string;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     leftSide: Expression;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
     notificationTemplates: ValidationNotificationTemplate[];
     operator:
@@ -1641,7 +1641,7 @@ export type ValidationRuleGroup = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
     translations: Translation[];
@@ -1662,7 +1662,7 @@ export type ValidationNotificationTemplate = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     messageTemplate: string;
     name: string;
     notifyParentOrganisationUnitOnly: boolean;
@@ -1729,9 +1729,9 @@ export type TrackedEntityAttribute = {
     id: Id;
     inherit: boolean;
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
     optionSet: OptionSet;
     optionSetValue: boolean;
@@ -1790,7 +1790,7 @@ export type RelationshipType = {
     fromConstraint: any;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
     toConstraint: any;
@@ -1816,7 +1816,7 @@ export type TrackedEntityType = {
     formName: string;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     maxTeiCountToReturn: number;
     minAttributesRequiredToSearch: number;
     name: string;
@@ -1825,32 +1825,6 @@ export type TrackedEntityType = {
     style: Style;
     trackedEntityTypeAttributes: TrackedEntityTypeAttribute[];
     translations: Translation[];
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
-};
-
-export type ProgramTrackedEntityAttributeGroup = {
-    access: Access;
-    attributeValues: AttributeValue[];
-    attributes: ProgramTrackedEntityAttribute[];
-    code: Id;
-    created: string;
-    description: string;
-    displayDescription: string;
-    displayName: string;
-    displayShortName: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    id: Id;
-    lastUpdated: string;
-    lastUpdatedBy: User;
-    name: string;
-    publicAccess: string;
-    shortName: string;
-    translations: Translation[];
-    uniqunessType: "NONE" | "STRICT" | "VALIDATION";
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
@@ -1869,13 +1843,13 @@ export type TrackedEntityTypeAttribute = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     mandatory: boolean;
     name: string;
     publicAccess: string;
     searchable: boolean;
-    trackedEntityAttribute: TrackedEntityAttribute;
-    trackedEntityType: TrackedEntityType;
+    trackedEntityAttribute: Ref;
+    trackedEntityType: Ref;
     translations: Translation[];
     user: Ref;
     userAccesses: UserAccess[];
@@ -1908,29 +1882,27 @@ export type TrackedEntityTypeAttribute = {
     | "IMAGE";
 };
 
-export type ProgramStageSection = {
+export type ProgramTrackedEntityAttributeGroup = {
     access: Access;
     attributeValues: AttributeValue[];
+    attributes: ProgramTrackedEntityAttribute[];
     code: Id;
     created: string;
-    dataElements: DataElement[];
     description: string;
+    displayDescription: string;
     displayName: string;
+    displayShortName: string;
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    formName: string;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
-    programIndicators: ProgramIndicator[];
-    programStage: ProgramStage;
     publicAccess: string;
-    renderType: any;
-    sortOrder: number;
-    style: Style;
+    shortName: string;
     translations: Translation[];
+    uniqunessType: "NONE" | "STRICT" | "VALIDATION";
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
@@ -1948,7 +1920,7 @@ export type ProgramNotificationTemplate = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     messageTemplate: string;
     name: string;
     notificationRecipient:
@@ -1973,6 +1945,34 @@ export type ProgramNotificationTemplate = {
     recipientUserGroup: UserGroup;
     relativeScheduledDays: number;
     subjectTemplate: string;
+    translations: Translation[];
+    user: Ref;
+    userAccesses: UserAccess[];
+    userGroupAccesses: UserGroupAccess[];
+};
+
+export type ProgramStageSection = {
+    access: Access;
+    attributeValues: AttributeValue[];
+    code: Id;
+    created: string;
+    dataElements: DataElement[];
+    description: string;
+    displayName: string;
+    externalAccess: boolean;
+    favorite: boolean;
+    favorites: string[];
+    formName: string;
+    id: Id;
+    lastUpdated: string;
+    lastUpdatedBy: Ref;
+    name: string;
+    programIndicators: ProgramIndicator[];
+    programStage: ProgramStage;
+    publicAccess: string;
+    renderType: any;
+    sortOrder: number;
+    style: Style;
     translations: Translation[];
     user: Ref;
     userAccesses: UserAccess[];
@@ -2004,7 +2004,7 @@ export type ProgramStage = {
     hideDueDate: boolean;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     minDaysFromStart: number;
     name: string;
     notificationTemplates: ProgramNotificationTemplate[];
@@ -2055,13 +2055,13 @@ export type Program = {
     ignoreOverdueEvents: boolean;
     incidentDateLabel: string;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     maxTeiCountToReturn: number;
     minAttributesRequiredToSearch: number;
     name: string;
     notificationTemplates: ProgramNotificationTemplate[];
     onlyEnrollOnce: boolean;
-    organisationUnits: OrganisationUnit[];
+    organisationUnits: Ref[];
     programIndicators: ProgramIndicator[];
     programRuleVariables: ProgramRuleVariable[];
     programSections: ProgramSection[];
@@ -2143,16 +2143,16 @@ export type EventChart = {
     hideTitle: boolean;
     id: Id;
     interpretations: Interpretation[];
-    itemOrganisationUnitGroups: OrganisationUnitGroup[];
+    itemOrganisationUnitGroups: Ref[];
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     legendDisplayStrategy: "FIXED" | "BY_DATA_ITEM";
-    legendSet: LegendSet;
+    legendSet: Ref;
     name: string;
     noSpaceBetweenColumns: boolean;
     organisationUnitGroupSetDimensions: OrganisationUnitGroupSetDimension[];
     organisationUnitLevels: number[];
-    organisationUnits: OrganisationUnit[];
+    organisationUnits: Ref[];
     outputType: "EVENT" | "ENROLLMENT" | "TRACKED_ENTITY_INSTANCE";
     parentGraphMap: Map;
     percentStackedValues: boolean;
@@ -2168,7 +2168,7 @@ export type EventChart = {
     rangeAxisMinValue: number;
     rangeAxisSteps: number;
     regressionType: "NONE" | "LINEAR" | "POLYNOMIAL" | "LOESS";
-    relatives: any;
+    relativePeriods: any;
     rowDimensions: string[];
     rows: any[];
     shortName: string;
@@ -2257,13 +2257,13 @@ export type EventReport = {
     hideTitle: boolean;
     id: Id;
     interpretations: Interpretation[];
-    itemOrganisationUnitGroups: OrganisationUnitGroup[];
+    itemOrganisationUnitGroups: Ref[];
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     organisationUnitGroupSetDimensions: OrganisationUnitGroupSetDimension[];
     organisationUnitLevels: number[];
-    organisationUnits: OrganisationUnit[];
+    organisationUnits: Ref[];
     outputType: "EVENT" | "ENROLLMENT" | "TRACKED_ENTITY_INSTANCE";
     parentGraphMap: Map;
     periods: any[];
@@ -2272,7 +2272,7 @@ export type EventReport = {
     programStage: ProgramStage;
     programStatus: "ACTIVE" | "COMPLETED" | "CANCELLED";
     publicAccess: string;
-    relatives: any;
+    relativePeriods: any;
     rowDimensions: string[];
     rowSubTotals: boolean;
     rowTotals: boolean;
@@ -2311,7 +2311,7 @@ export type ProgramSection = {
     formName: string;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     program: Program;
     programTrackedEntityAttribute: TrackedEntityAttribute[];
@@ -2378,9 +2378,9 @@ export type ProgramIndicator = {
     formName: string;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
     program: Program;
     programIndicatorGroups: ProgramIndicatorGroup[];
@@ -2395,7 +2395,6 @@ export type ProgramIndicator = {
 
 export type ProgramRuleVariable = {
     access: Access;
-    attribute: TrackedEntityAttribute;
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
@@ -2406,18 +2405,19 @@ export type ProgramRuleVariable = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     program: Program;
-    programStage: ProgramStage;
-    publicAccess: string;
-    sourceType:
+    programRuleVariableSourceType:
     | "DATAELEMENT_NEWEST_EVENT_PROGRAM_STAGE"
     | "DATAELEMENT_NEWEST_EVENT_PROGRAM"
     | "DATAELEMENT_CURRENT_EVENT"
     | "DATAELEMENT_PREVIOUS_EVENT"
     | "CALCULATED_VALUE"
     | "TEI_ATTRIBUTE";
+    programStage: ProgramStage;
+    publicAccess: string;
+    trackedEntityAttribute: TrackedEntityAttribute;
     translations: Translation[];
     useCodeForOptionSet: boolean;
     user: Ref;
@@ -2437,7 +2437,7 @@ export type ProgramIndicatorGroup = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     programIndicators: ProgramIndicator[];
     publicAccess: string;
@@ -2449,7 +2449,6 @@ export type ProgramIndicatorGroup = {
 
 export type ProgramRuleAction = {
     access: Access;
-    attribute: TrackedEntityAttribute;
     attributeValues: AttributeValue[];
     code: Id;
     content: string;
@@ -2462,7 +2461,7 @@ export type ProgramRuleAction = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     location: string;
     name: string;
     option: Option;
@@ -2491,6 +2490,7 @@ export type ProgramRuleAction = {
     programStage: ProgramStage;
     programStageSection: ProgramStageSection;
     publicAccess: string;
+    trackedEntityAttribute: TrackedEntityAttribute;
     translations: Translation[];
     user: Ref;
     userAccesses: UserAccess[];
@@ -2510,7 +2510,7 @@ export type ProgramRule = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     priority: number;
     program: Program;
@@ -2577,16 +2577,16 @@ export type MapView = {
     hideTitle: boolean;
     id: Id;
     interpretations: Interpretation[];
-    itemOrganisationUnitGroups: OrganisationUnitGroup[];
+    itemOrganisationUnitGroups: Ref[];
     labelFontColor: string;
     labelFontSize: string;
     labelFontStyle: string;
     labelFontWeight: string;
     labels: boolean;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     layer: string;
-    legendSet: LegendSet;
+    legendSet: Ref;
     method: number;
     name: string;
     opacity: number;
@@ -2600,7 +2600,7 @@ export type MapView = {
     | "ACCESSIBLE"
     | "CAPTURE"
     | "ALL";
-    organisationUnits: OrganisationUnit[];
+    organisationUnits: Ref[];
     parentGraph: string;
     parentGraphMap: Map;
     parentLevel: number;
@@ -2612,7 +2612,7 @@ export type MapView = {
     publicAccess: string;
     radiusHigh: number;
     radiusLow: number;
-    relatives: any;
+    relativePeriods: any;
     rows: any[];
     shortName: string;
     sortOrder: number;
@@ -2632,6 +2632,133 @@ export type MapView = {
     userOrganisationUnit: boolean;
     userOrganisationUnitChildren: boolean;
     userOrganisationUnitGrandChildren: boolean;
+};
+
+export type Chart = {
+    access: Access;
+    aggregationType:
+    | "SUM"
+    | "AVERAGE"
+    | "AVERAGE_SUM_ORG_UNIT"
+    | "LAST"
+    | "LAST_AVERAGE_ORG_UNIT"
+    | "COUNT"
+    | "STDDEV"
+    | "VARIANCE"
+    | "MIN"
+    | "MAX"
+    | "NONE"
+    | "CUSTOM"
+    | "DEFAULT";
+    attributeDimensions: any[];
+    attributeValues: AttributeValue[];
+    baseLineLabel: string;
+    baseLineValue: number;
+    category: string;
+    categoryDimensions: CategoryDimension[];
+    categoryOptionGroupSetDimensions: CategoryOptionGroupSetDimension[];
+    code: Id;
+    colorSet: ColorSet;
+    columns: any[];
+    completedOnly: boolean;
+    created: string;
+    cumulativeValues: boolean;
+    dataDimensionItems: any[];
+    dataElementDimensions: TrackedEntityDataElementDimension[];
+    dataElementGroupSetDimensions: DataElementGroupSetDimension[];
+    description: string;
+    digitGroupSeparator: "COMMA" | "SPACE" | "NONE";
+    displayDescription: string;
+    displayName: string;
+    displayShortName: string;
+    domainAxisLabel: string;
+    externalAccess: boolean;
+    favorite: boolean;
+    favorites: string[];
+    filterDimensions: string[];
+    filters: any[];
+    hideEmptyRowItems: "NONE" | "BEFORE_FIRST" | "AFTER_LAST" | "BEFORE_FIRST_AFTER_LAST" | "ALL";
+    hideLegend: boolean;
+    hideSubtitle: boolean;
+    hideTitle: boolean;
+    id: Id;
+    interpretations: Interpretation[];
+    itemOrganisationUnitGroups: Ref[];
+    lastUpdated: string;
+    lastUpdatedBy: Ref;
+    legendDisplayStrategy: "FIXED" | "BY_DATA_ITEM";
+    legendSet: Ref;
+    name: string;
+    noSpaceBetweenColumns: boolean;
+    organisationUnitGroupSetDimensions: OrganisationUnitGroupSetDimension[];
+    organisationUnitLevels: number[];
+    organisationUnits: Ref[];
+    parentGraphMap: Map;
+    percentStackedValues: boolean;
+    periods: any[];
+    programIndicatorDimensions: TrackedEntityProgramIndicatorDimension[];
+    publicAccess: string;
+    rangeAxisDecimals: number;
+    rangeAxisLabel: string;
+    rangeAxisMaxValue: number;
+    rangeAxisMinValue: number;
+    rangeAxisSteps: number;
+    regressionType: "NONE" | "LINEAR" | "POLYNOMIAL" | "LOESS";
+    relativePeriods: any;
+    rows: any[];
+    series: string;
+    shortName: string;
+    showData: boolean;
+    sortOrder: number;
+    subscribed: boolean;
+    subscribers: string[];
+    subtitle: string;
+    targetLineLabel: string;
+    targetLineValue: number;
+    timeField: string;
+    title: string;
+    topLimit: number;
+    translations: Translation[];
+    type:
+    | "COLUMN"
+    | "STACKED_COLUMN"
+    | "BAR"
+    | "STACKED_BAR"
+    | "LINE"
+    | "AREA"
+    | "PIE"
+    | "RADAR"
+    | "GAUGE";
+    user: Ref;
+    userAccesses: UserAccess[];
+    userGroupAccesses: UserGroupAccess[];
+    userOrganisationUnit: boolean;
+    userOrganisationUnitChildren: boolean;
+    userOrganisationUnitGrandChildren: boolean;
+};
+
+export type Document = {
+    access: Access;
+    attachment: boolean;
+    attributeValues: AttributeValue[];
+    code: Id;
+    contentType: string;
+    created: string;
+    displayName: string;
+    external: boolean;
+    externalAccess: boolean;
+    favorite: boolean;
+    favorites: string[];
+    id: Id;
+    lastUpdated: string;
+    lastUpdatedBy: Ref;
+    name: string;
+    publicAccess: string;
+    translations: Translation[];
+    url: string;
+    user: Ref;
+    userAccesses: UserAccess[];
+    userGroupAccesses: UserGroupAccess[];
 };
 
 export type Report = {
@@ -2654,10 +2781,10 @@ export type Report = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
-    relatives: any;
+    relativePeriods: any;
     reportParams: any;
     reportTable: ReportTable;
     translations: Translation[];
@@ -2716,24 +2843,24 @@ export type ReportTable = {
     hideTitle: boolean;
     id: Id;
     interpretations: Interpretation[];
-    itemOrganisationUnitGroups: OrganisationUnitGroup[];
+    itemOrganisationUnitGroups: Ref[];
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     legendDisplayStrategy: "FIXED" | "BY_DATA_ITEM";
     legendDisplayStyle: "FILL" | "TEXT";
-    legendSet: LegendSet;
+    legendSet: Ref;
     measureCriteria: string;
     name: string;
     numberType: "VALUE" | "ROW_PERCENTAGE" | "COLUMN_PERCENTAGE";
     organisationUnitGroupSetDimensions: OrganisationUnitGroupSetDimension[];
     organisationUnitLevels: number[];
-    organisationUnits: OrganisationUnit[];
+    organisationUnits: Ref[];
     parentGraphMap: Map;
     periods: any[];
     programIndicatorDimensions: TrackedEntityProgramIndicatorDimension[];
     publicAccess: string;
     regression: boolean;
-    relatives: any;
+    relativePeriods: any;
     reportParams: any;
     rowDimensions: string[];
     rowSubTotals: boolean;
@@ -2775,7 +2902,7 @@ export type Map = {
     id: Id;
     interpretations: Interpretation[];
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     latitude: number;
     longitude: number;
     mapViews: MapView[];
@@ -2790,133 +2917,6 @@ export type Map = {
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     zoom: number;
-};
-
-export type Chart = {
-    access: Access;
-    aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
-    attributeDimensions: any[];
-    attributeValues: AttributeValue[];
-    baseLineLabel: string;
-    baseLineValue: number;
-    category: string;
-    categoryDimensions: CategoryDimension[];
-    categoryOptionGroupSetDimensions: CategoryOptionGroupSetDimension[];
-    code: Id;
-    colorSet: ColorSet;
-    columns: any[];
-    completedOnly: boolean;
-    created: string;
-    cumulativeValues: boolean;
-    dataDimensionItems: any[];
-    dataElementDimensions: TrackedEntityDataElementDimension[];
-    dataElementGroupSetDimensions: DataElementGroupSetDimension[];
-    description: string;
-    digitGroupSeparator: "COMMA" | "SPACE" | "NONE";
-    displayDescription: string;
-    displayName: string;
-    displayShortName: string;
-    domainAxisLabel: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    filterDimensions: string[];
-    filters: any[];
-    hideEmptyRowItems: "NONE" | "BEFORE_FIRST" | "AFTER_LAST" | "BEFORE_FIRST_AFTER_LAST" | "ALL";
-    hideLegend: boolean;
-    hideSubtitle: boolean;
-    hideTitle: boolean;
-    id: Id;
-    interpretations: Interpretation[];
-    itemOrganisationUnitGroups: OrganisationUnitGroup[];
-    lastUpdated: string;
-    lastUpdatedBy: User;
-    legendDisplayStrategy: "FIXED" | "BY_DATA_ITEM";
-    legendSet: LegendSet;
-    name: string;
-    noSpaceBetweenColumns: boolean;
-    organisationUnitGroupSetDimensions: OrganisationUnitGroupSetDimension[];
-    organisationUnitLevels: number[];
-    organisationUnits: OrganisationUnit[];
-    parentGraphMap: Map;
-    percentStackedValues: boolean;
-    periods: any[];
-    programIndicatorDimensions: TrackedEntityProgramIndicatorDimension[];
-    publicAccess: string;
-    rangeAxisDecimals: number;
-    rangeAxisLabel: string;
-    rangeAxisMaxValue: number;
-    rangeAxisMinValue: number;
-    rangeAxisSteps: number;
-    regressionType: "NONE" | "LINEAR" | "POLYNOMIAL" | "LOESS";
-    relatives: any;
-    rows: any[];
-    series: string;
-    shortName: string;
-    showData: boolean;
-    sortOrder: number;
-    subscribed: boolean;
-    subscribers: string[];
-    subtitle: string;
-    targetLineLabel: string;
-    targetLineValue: number;
-    timeField: string;
-    title: string;
-    topLimit: number;
-    translations: Translation[];
-    type:
-    | "COLUMN"
-    | "STACKED_COLUMN"
-    | "BAR"
-    | "STACKED_BAR"
-    | "LINE"
-    | "AREA"
-    | "PIE"
-    | "RADAR"
-    | "GAUGE";
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
-    userOrganisationUnit: boolean;
-    userOrganisationUnitChildren: boolean;
-    userOrganisationUnitGrandChildren: boolean;
-};
-
-export type Document = {
-    access: Access;
-    attachment: boolean;
-    attributeValues: AttributeValue[];
-    code: Id;
-    contentType: string;
-    created: string;
-    displayName: string;
-    external: boolean;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    id: Id;
-    lastUpdated: string;
-    lastUpdatedBy: User;
-    name: string;
-    publicAccess: string;
-    translations: Translation[];
-    url: string;
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
 };
 
 export type DashboardItem = {
@@ -2938,7 +2938,7 @@ export type DashboardItem = {
     interpretationCount: number;
     interpretationLikeCount: number;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     map: Map;
     messages: boolean;
     name: string;
@@ -2986,7 +2986,7 @@ export type Dashboard = {
     id: Id;
     itemCount: number;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
     shortName: string;
@@ -2994,137 +2994,11 @@ export type Dashboard = {
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
-};
-
-export type ProgramTrackedEntityAttributeDimensionItem = {
-    access: Access;
-    aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
-    attribute: TrackedEntityAttribute;
-    attributeValues: AttributeValue[];
-    code: Id;
-    created: string;
-    description: string;
-    dimensionItem: string;
-    dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
-    displayDescription: string;
-    displayName: string;
-    displayShortName: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    id: Id;
-    lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
-    name: string;
-    program: Program;
-    publicAccess: string;
-    shortName: string;
-    translations: Translation[];
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
-};
-
-export type Color = {
-    access: Access;
-    attributeValues: AttributeValue[];
-    code: Id;
-    color: string;
-    created: string;
-    displayName: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    id: Id;
-    lastUpdated: string;
-    lastUpdatedBy: User;
-    name: string;
-    publicAccess: string;
-    translations: Translation[];
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
-};
-
-export type Icon = {};
-
-export type TrackedEntityInstance = {
-    access: Access;
-    attributeValues: AttributeValue[];
-    code: Id;
-    coordinates: string;
-    created: string;
-    createdAtClient: string;
-    deleted: boolean;
-    displayName: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    featureType: "NONE" | "MULTI_POLYGON" | "POLYGON" | "POINT" | "SYMBOL";
-    id: Id;
-    inactive: boolean;
-    lastUpdated: string;
-    lastUpdatedAtClient: string;
-    lastUpdatedBy: User;
-    name: string;
-    organisationUnit: OrganisationUnit;
-    programInstances: ProgramInstance[];
-    programOwners: any[];
-    publicAccess: string;
-    relationshipItems: any[];
-    representative: TrackedEntityInstance;
-    trackedEntityAttributeValues: any[];
-    trackedEntityType: TrackedEntityType;
-    translations: Translation[];
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
-};
-
-export type UserAccess = {
-    access: string;
-    displayName: string;
-    id: string;
-    userUid: string;
 };
 
 export type OrganisationUnitGroupSetDimension = {
-    dimension: OrganisationUnitGroupSet;
-    organisationUnitGroups: OrganisationUnitGroup[];
-};
-
-export type CategoryDimension = {
-    categoryOptions: CategoryOption[];
-    dimension: Category;
+    organisationUnitGroupSet: OrganisationUnitGroupSet;
+    organisationUnitGroups: Ref[];
 };
 
 export type DataElementOperand = {
@@ -3174,101 +3048,12 @@ export type DataElementOperand = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
     publicAccess: string;
     shortName: string;
-    translations: Translation[];
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
-};
-
-export type Relationship = {
-    access: Access;
-    attributeValues: AttributeValue[];
-    code: Id;
-    created: string;
-    description: string;
-    displayName: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    formName: string;
-    from: any;
-    id: Id;
-    lastUpdated: string;
-    lastUpdatedBy: User;
-    name: string;
-    publicAccess: string;
-    relationshipType: RelationshipType;
-    style: Style;
-    to: any;
-    translations: Translation[];
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
-};
-
-export type UserCredentials = {
-    access: Access;
-    attributeValues: AttributeValue[];
-    catDimensionConstraints: Category[];
-    code: Id;
-    cogsDimensionConstraints: CategoryOptionGroupSet[];
-    created: string;
-    disabled: boolean;
-    displayName: string;
-    externalAccess: boolean;
-    externalAuth: boolean;
-    favorite: boolean;
-    favorites: string[];
-    id: Id;
-    invitation: boolean;
-    lastLogin: string;
-    lastUpdated: string;
-    lastUpdatedBy: User;
-    ldapId: string;
-    name: string;
-    openId: string;
-    password: string;
-    passwordLastUpdated: string;
-    publicAccess: string;
-    selfRegistered: boolean;
-    translations: Translation[];
-    twoFA: boolean;
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
-    userInfo: Ref;
-    userRoles: Ref[];
-    username: string;
-};
-
-export type AnalyticsPeriodBoundary = {
-    access: Access;
-    analyticsPeriodBoundaryType:
-    | "BEFORE_START_OF_REPORTING_PERIOD"
-    | "BEFORE_END_OF_REPORTING_PERIOD"
-    | "AFTER_START_OF_REPORTING_PERIOD"
-    | "AFTER_END_OF_REPORTING_PERIOD";
-    attributeValues: AttributeValue[];
-    boundaryTarget: string;
-    code: Id;
-    created: string;
-    displayName: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    id: Id;
-    lastUpdated: string;
-    lastUpdatedBy: User;
-    name: string;
-    offsetPeriodType: string;
-    offsetPeriods: number;
-    publicAccess: string;
     translations: Translation[];
     user: Ref;
     userAccesses: UserAccess[];
@@ -3291,13 +3076,13 @@ export type Interpretation = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     likedBy: User[];
     likes: number;
     map: Map;
     mentions: any[];
     name: string;
-    organisationUnit: OrganisationUnit;
+    organisationUnit: Ref;
     period: any;
     publicAccess: string;
     reportTable: ReportTable;
@@ -3309,54 +3094,42 @@ export type Interpretation = {
     userGroupAccesses: UserGroupAccess[];
 };
 
-export type DataSetElement = {
-    categoryCombo: CategoryCombo;
-    dataElement: DataElement;
-    dataSet: DataSet;
+export type CategoryOptionGroupSetDimension = {
+    categoryOptionGroupSet: CategoryOptionGroupSet;
+    categoryOptionGroups: Ref[];
 };
 
-export type ProgramStageDataElement = {
+export type TrackedEntityProgramIndicatorDimension = {
+    filter: string;
+    legendSet: Ref;
+    programIndicator: ProgramIndicator;
+};
+
+export type Legend = {
     access: Access;
-    allowFutureDate: boolean;
-    allowProvidedElsewhere: boolean;
     attributeValues: AttributeValue[];
     code: Id;
-    compulsory: boolean;
+    color: string;
     created: string;
-    dataElement: DataElement;
-    displayInReports: boolean;
     displayName: string;
+    endValue: number;
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
     id: Id;
+    image: string;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
-    programStage: ProgramStage;
     publicAccess: string;
-    renderOptionsAsRadio: boolean;
-    renderType: any;
-    skipSynchronization: boolean;
-    sortOrder: number;
+    startValue: number;
     translations: Translation[];
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
 
-export type TrackedEntityDataElementDimension = {
-    dataElement: DataElement;
-    filter: string;
-    legendSet: LegendSet;
-};
-
-export type CategoryOptionGroupSetDimension = {
-    categoryOptionGroups: CategoryOptionGroup[];
-    dimension: CategoryOptionGroupSet;
-};
-
-export type ProgramStageInstance = {
+export type InterpretationComment = {
     access: Access;
     attributeValues: AttributeValue[];
     code: Id;
@@ -3367,8 +3140,38 @@ export type ProgramStageInstance = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
+    mentions: any[];
     name: string;
+    publicAccess: string;
+    text: string;
+    translations: Translation[];
+    user: Ref;
+    userAccesses: UserAccess[];
+    userGroupAccesses: UserGroupAccess[];
+};
+
+export type AnalyticsPeriodBoundary = {
+    access: Access;
+    analyticsPeriodBoundaryType:
+    | "BEFORE_START_OF_REPORTING_PERIOD"
+    | "BEFORE_END_OF_REPORTING_PERIOD"
+    | "AFTER_START_OF_REPORTING_PERIOD"
+    | "AFTER_END_OF_REPORTING_PERIOD";
+    attributeValues: AttributeValue[];
+    boundaryTarget: string;
+    code: Id;
+    created: string;
+    displayName: string;
+    externalAccess: boolean;
+    favorite: boolean;
+    favorites: string[];
+    id: Id;
+    lastUpdated: string;
+    lastUpdatedBy: Ref;
+    name: string;
+    offsetPeriodType: string;
+    offsetPeriods: number;
     publicAccess: string;
     translations: Translation[];
     user: Ref;
@@ -3421,9 +3224,9 @@ export type ProgramDataElementDimensionItem = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
-    legendSet: LegendSet;
-    legendSets: LegendSet[];
+    lastUpdatedBy: Ref;
+    legendSet: Ref;
+    legendSets: Ref[];
     name: string;
     program: Program;
     publicAccess: string;
@@ -3460,24 +3263,145 @@ export type ProgramDataElementDimensionItem = {
     | "IMAGE";
 };
 
-export type Legend = {
+export type UserGroupAccess = {
+    access: string;
+    displayName: string;
+    id: string;
+    userGroupUid: string;
+};
+
+export type DataElementGroupSetDimension = {
+    dataElementGroupSet: DataElementGroupSet;
+    dataElementGroups: DataElementGroup[];
+};
+
+export type CategoryDimension = {
+    category: Category;
+    categoryOptions: Ref[];
+};
+
+export type TrackedEntityDataElementDimension = {
+    dataElement: DataElement;
+    filter: string;
+    legendSet: Ref;
+};
+
+export type ProgramStageDataElement = {
+    access: Access;
+    allowFutureDate: boolean;
+    allowProvidedElsewhere: boolean;
+    attributeValues: AttributeValue[];
+    code: Id;
+    compulsory: boolean;
+    created: string;
+    dataElement: Ref;
+    displayInReports: boolean;
+    displayName: string;
+    externalAccess: boolean;
+    favorite: boolean;
+    favorites: string[];
+    id: Id;
+    lastUpdated: string;
+    lastUpdatedBy: Ref;
+    name: string;
+    programStage: Ref;
+    publicAccess: string;
+    renderOptionsAsRadio: boolean;
+    renderType: any;
+    skipSynchronization: boolean;
+    sortOrder: number;
+    translations: Translation[];
+    user: Ref;
+    userAccesses: UserAccess[];
+    userGroupAccesses: UserGroupAccess[];
+};
+
+export type UserCredentials = {
+    access: Access;
+    attributeValues: AttributeValue[];
+    catDimensionConstraints: Ref[];
+    code: Id;
+    cogsDimensionConstraints: Ref[];
+    created: string;
+    disabled: boolean;
+    displayName: string;
+    externalAccess: boolean;
+    externalAuth: boolean;
+    favorite: boolean;
+    favorites: string[];
+    id: Id;
+    invitation: boolean;
+    lastLogin: string;
+    lastUpdated: string;
+    lastUpdatedBy: Ref;
+    ldapId: string;
+    name: string;
+    openId: string;
+    password: string;
+    passwordLastUpdated: string;
+    publicAccess: string;
+    selfRegistered: boolean;
+    translations: Translation[];
+    twoFA: boolean;
+    user: Ref;
+    userAccesses: UserAccess[];
+    userGroupAccesses: UserGroupAccess[];
+    userInfo: User;
+    userRoles: Ref[];
+    username: string;
+};
+
+export type MessageConversation = {
+    access: Access;
+    assignee: Ref;
+    attributeValues: AttributeValue[];
+    code: Id;
+    created: string;
+    displayName: string;
+    externalAccess: boolean;
+    favorite: boolean;
+    favorites: string[];
+    followUp: boolean;
+    id: Id;
+    lastMessage: string;
+    lastSender: User;
+    lastSenderFirstname: string;
+    lastSenderSurname: string;
+    lastUpdated: string;
+    lastUpdatedBy: Ref;
+    messageCount: number;
+    messageType: "PRIVATE" | "SYSTEM" | "VALIDATION_RESULT" | "TICKET";
+    messages: any[];
+    name: string;
+    priority: "NONE" | "LOW" | "MEDIUM" | "HIGH";
+    publicAccess: string;
+    read: boolean;
+    status: "NONE" | "OPEN" | "PENDING" | "INVALID" | "SOLVED";
+    subject: string;
+    translations: Translation[];
+    user: Ref;
+    userAccesses: UserAccess[];
+    userFirstname: string;
+    userGroupAccesses: UserGroupAccess[];
+    userMessages: any[];
+    userSurname: string;
+};
+
+export type Color = {
     access: Access;
     attributeValues: AttributeValue[];
     code: Id;
     color: string;
     created: string;
     displayName: string;
-    endValue: number;
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
     id: Id;
-    image: string;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
-    startValue: number;
     translations: Translation[];
     user: Ref;
     userAccesses: UserAccess[];
@@ -3493,7 +3417,6 @@ export type DataInputPeriod = {
 export type ProgramTrackedEntityAttribute = {
     access: Access;
     allowFutureDate: boolean;
-    attribute: TrackedEntityAttribute;
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
@@ -3505,7 +3428,7 @@ export type ProgramTrackedEntityAttribute = {
     favorites: string[];
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     mandatory: boolean;
     name: string;
     program: Program;
@@ -3515,6 +3438,7 @@ export type ProgramTrackedEntityAttribute = {
     renderType: any;
     searchable: boolean;
     sortOrder: number;
+    trackedEntityAttribute: TrackedEntityAttribute;
     translations: Translation[];
     user: Ref;
     userAccesses: UserAccess[];
@@ -3547,126 +3471,17 @@ export type ProgramTrackedEntityAttribute = {
     | "IMAGE";
 };
 
-export type InterpretationComment = {
-    access: Access;
-    attributeValues: AttributeValue[];
-    code: Id;
-    created: string;
-    displayName: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    id: Id;
-    lastUpdated: string;
-    lastUpdatedBy: User;
-    mentions: any[];
-    name: string;
-    publicAccess: string;
-    text: string;
-    translations: Translation[];
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
+export type DataSetElement = {
+    categoryCombo: Ref;
+    dataElement: Ref;
+    dataSet: Ref;
 };
 
-export type TrackedEntityProgramIndicatorDimension = {
-    filter: string;
-    legendSet: LegendSet;
-    programIndicator: ProgramIndicator;
-};
-
-export type DataElementGroupSetDimension = {
-    dataElementGroups: DataElementGroup[];
-    dimension: DataElementGroupSet;
-};
-
-export type UserGroupAccess = {
+export type UserAccess = {
     access: string;
     displayName: string;
     id: string;
-    userGroupUid: string;
-};
-
-export type MinMaxDataElement = {
-    dataElement: DataElement;
-    generated: boolean;
-    max: number;
-    min: number;
-    optionCombo: CategoryOptionCombo;
-    source: OrganisationUnit;
-};
-
-export type MessageConversation = {
-    access: Access;
-    assignee: User;
-    attributeValues: AttributeValue[];
-    code: Id;
-    created: string;
-    displayName: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    followUp: boolean;
-    id: Id;
-    lastMessage: string;
-    lastSender: User;
-    lastSenderFirstname: string;
-    lastSenderSurname: string;
-    lastUpdated: string;
-    lastUpdatedBy: User;
-    messageCount: number;
-    messageType: "PRIVATE" | "SYSTEM" | "VALIDATION_RESULT" | "TICKET";
-    messages: any[];
-    name: string;
-    priority: "NONE" | "LOW" | "MEDIUM" | "HIGH";
-    publicAccess: string;
-    read: boolean;
-    status: "NONE" | "OPEN" | "PENDING" | "INVALID" | "SOLVED";
-    subject: string;
-    translations: Translation[];
-    user: Ref;
-    userAccesses: UserAccess[];
-    userFirstname: string;
-    userGroupAccesses: UserGroupAccess[];
-    userMessages: any[];
-    userSurname: string;
-};
-
-export type ProgramInstance = {
-    access: Access;
-    attributeValues: AttributeValue[];
-    code: Id;
-    created: string;
-    createdAtClient: string;
-    deleted: boolean;
-    displayName: string;
-    endDate: string;
-    enrollmentDate: string;
-    entityInstance: TrackedEntityInstance;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    followup: boolean;
-    id: Id;
-    incidentDate: string;
-    lastUpdated: string;
-    lastUpdatedAtClient: string;
-    lastUpdatedBy: User;
-    latitude: number;
-    longitude: number;
-    messageConversations: MessageConversation[];
-    name: string;
-    organisationUnit: OrganisationUnit;
-    program: Program;
-    programStageInstances: ProgramStageInstance[];
-    publicAccess: string;
-    relationshipItems: any[];
-    status: "ACTIVE" | "COMPLETED" | "CANCELLED";
-    trackedEntityComments: any[];
-    translations: Translation[];
-    user: Ref;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
+    userUid: string;
 };
 
 export type MetadataEntity =
@@ -3737,13 +3552,13 @@ export type MetadataPackageSchema = {
     attributes: Attribute[];
     users: Ref[];
     userGroups: UserGroup[];
-    options: Option[];
+    options: Ref[];
     optionSets: OptionSet[]
     optionGroupSets: OptionGroupSet[]
     optionGroups: OptionGroup[]
     legendSets: LegendSet[]
     colorSets: ColorSet[]
-    organisationUnits: OrganisationUnit[]
+    organisationUnits: Ref[]
     organisationUnitLevels: OrganisationUnitLevel[]
     organisationUnitGroups: OrganisationUnitGroup[]
     organisationUnitGroupSets: OrganisationUnitGroupSet[]
