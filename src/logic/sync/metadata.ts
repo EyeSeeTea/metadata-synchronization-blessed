@@ -66,8 +66,7 @@ export class MetadataSync extends GenericSync {
                 const promises = includedReferences
                     .map(type => ({
                         type: type as keyof D2ModelSchemas,
-                        ids: references[type].filter(entity => !visitedIds.has(entity.id))
-                            .map(entity => entity.id),
+                        ids: references[type].filter(id => !visitedIds.has(id)),
                         excludeRules: nestedExcludeRules[type],
                         includeRules: nestedIncludeRules[type],
                         includeSharingSettings,
@@ -117,7 +116,7 @@ export class MetadataSync extends GenericSync {
             });
         });
 
-        return _.mapValues(_.merge({}, ...exportResults), elements => _.uniqBy(elements, "id"));
+        return _.mapValues(_.deepMerge({}, ...exportResults), elements => _.uniqBy(elements, "id"));
     });
 
     public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
