@@ -1,7 +1,7 @@
 import { Access, Id, Translation, Style, Expression, Ref } from "../../common/Entities";
 
 export type AttributeValue = {
-    attribute: Attribute;
+    attribute: Ref;
     created: string;
     lastUpdated: string;
     value: string;
@@ -11,7 +11,7 @@ export type UserRole = {
     access: Access;
     attributeValues: AttributeValue[];
     authorities: string[];
-    code: string;
+    code: Id;
     created: string;
     description: string;
     displayName: string;
@@ -62,7 +62,7 @@ export type Attribute = {
     mandatory: boolean;
     name: string;
     optionAttribute: boolean;
-    optionSet: OptionSet;
+    optionSet: Ref;
     optionSetAttribute: boolean;
     organisationUnitAttribute: boolean;
     organisationUnitGroupAttribute: boolean;
@@ -79,7 +79,7 @@ export type Attribute = {
     trackedEntityTypeAttribute: boolean;
     translations: Translation[];
     unique: boolean;
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userAttribute: boolean;
     userGroupAccesses: UserGroupAccess[];
@@ -120,7 +120,7 @@ export type User = {
     birthday: string;
     code: Id;
     created: string;
-    dataViewOrganisationUnits: OrganisationUnit[];
+    dataViewOrganisationUnits: Ref[];
     displayName: string;
     education: string;
     email: string;
@@ -140,13 +140,13 @@ export type User = {
     lastUpdatedBy: User;
     name: string;
     nationality: string;
-    organisationUnits: OrganisationUnit[];
+    organisationUnits: Ref[];
     phoneNumber: string;
     publicAccess: string;
     surname: string;
-    teiSearchOrganisationUnits: OrganisationUnit[];
+    teiSearchOrganisationUnits: Ref[];
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userCredentials: UserCredentials;
     userGroupAccesses: UserGroupAccess[];
@@ -171,10 +171,10 @@ export type UserGroup = {
     name: string;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
-    users: User[];
+    users: Ref[];
 };
 
 export type Option = {
@@ -197,7 +197,7 @@ export type Option = {
     sortOrder: number;
     style: Style;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -218,7 +218,7 @@ export type OptionSet = {
     options: Option[];
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
@@ -310,7 +310,7 @@ export type OptionGroupSet = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -368,7 +368,7 @@ export type OptionGroup = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -390,7 +390,7 @@ export type LegendSet = {
     publicAccess: string;
     symbolizer: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -411,7 +411,7 @@ export type ColorSet = {
     name: string;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -488,10 +488,10 @@ export type OrganisationUnit = {
     translations: Translation[];
     type: string;
     url: string;
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
-    users: User[];
+    users: Ref[];
 };
 
 export type OrganisationUnitLevel = {
@@ -511,7 +511,7 @@ export type OrganisationUnitLevel = {
     offlineLevels: number;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -573,7 +573,7 @@ export type OrganisationUnitGroup = {
     shortName: string;
     symbol: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -639,7 +639,7 @@ export type OrganisationUnitGroupSet = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -703,7 +703,7 @@ export type CategoryOption = {
     startDate: string;
     style: Style;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -762,7 +762,7 @@ export type CategoryOptionGroup = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -827,7 +827,7 @@ export type CategoryOptionGroupSet = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -893,7 +893,7 @@ export type Category = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -918,7 +918,7 @@ export type CategoryCombo = {
     publicAccess: string;
     skipTotal: boolean;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -977,7 +977,7 @@ export type CategoryOptionCombo = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1045,7 +1045,7 @@ export type DataElement = {
     style: Style;
     translations: Translation[];
     url: string;
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
@@ -1130,7 +1130,7 @@ export type DataElementGroup = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1195,7 +1195,7 @@ export type DataElementGroupSet = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1217,7 +1217,7 @@ export type IndicatorType = {
     number: boolean;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1287,7 +1287,7 @@ export type Indicator = {
     style: Style;
     translations: Translation[];
     url: string;
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1309,7 +1309,7 @@ export type IndicatorGroup = {
     name: string;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1332,7 +1332,7 @@ export type IndicatorGroupSet = {
     name: string;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1355,7 +1355,7 @@ export type DataEntryForm = {
     publicAccess: string;
     style: "COMFORTABLE" | "NORMAL" | "COMPACT" | "NONE";
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1437,7 +1437,7 @@ export type DataSet = {
     style: Style;
     timelyDays: number;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     validCompleteOnly: boolean;
@@ -1471,7 +1471,7 @@ export type DataSetNotificationTemplate = {
     sendStrategy: "COLLECTIVE_SUMMARY" | "SINGLE_NOTIFICATION";
     subjectTemplate: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1500,7 +1500,7 @@ export type Section = {
     showRowTotals: boolean;
     sortOrder: number;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1524,7 +1524,7 @@ export type DataApprovalLevel = {
     orgUnitLevelName: string;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1548,7 +1548,7 @@ export type DataApprovalWorkflow = {
     periodType: string;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1623,7 +1623,7 @@ export type ValidationRule = {
     shortName: string;
     skipFormValidation: boolean;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     validationRuleGroups: ValidationRuleGroup[];
@@ -1645,7 +1645,7 @@ export type ValidationRuleGroup = {
     name: string;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     validationRules: ValidationRule[];
@@ -1672,7 +1672,7 @@ export type ValidationNotificationTemplate = {
     sendStrategy: "COLLECTIVE_SUMMARY" | "SINGLE_NOTIFICATION";
     subjectTemplate: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     validationRules: ValidationRule[];
@@ -1746,7 +1746,7 @@ export type TrackedEntityAttribute = {
     style: Style;
     translations: Translation[];
     unique: boolean;
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
@@ -1795,7 +1795,7 @@ export type RelationshipType = {
     publicAccess: string;
     toConstraint: any;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1825,7 +1825,7 @@ export type TrackedEntityType = {
     style: Style;
     trackedEntityTypeAttributes: TrackedEntityTypeAttribute[];
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1851,7 +1851,7 @@ export type ProgramTrackedEntityAttributeGroup = {
     shortName: string;
     translations: Translation[];
     uniqunessType: "NONE" | "STRICT" | "VALIDATION";
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1877,7 +1877,7 @@ export type TrackedEntityTypeAttribute = {
     trackedEntityAttribute: TrackedEntityAttribute;
     trackedEntityType: TrackedEntityType;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
@@ -1931,7 +1931,7 @@ export type ProgramStageSection = {
     sortOrder: number;
     style: Style;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -1974,7 +1974,7 @@ export type ProgramNotificationTemplate = {
     relativeScheduledDays: number;
     subjectTemplate: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -2022,7 +2022,7 @@ export type ProgramStage = {
     standardInterval: number;
     style: Style;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     validCompleteOnly: boolean;
@@ -2079,7 +2079,7 @@ export type Program = {
     trackedEntityType: TrackedEntityType;
     translations: Translation[];
     useFirstStageDuringRegistration: boolean;
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     userRoles: UserRole[];
@@ -2194,7 +2194,7 @@ export type EventChart = {
     | "PIE"
     | "RADAR"
     | "GAUGE";
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     userOrganisationUnit: boolean;
@@ -2289,7 +2289,7 @@ export type EventReport = {
     title: string;
     topLimit: number;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     userOrganisationUnit: boolean;
@@ -2320,7 +2320,7 @@ export type ProgramSection = {
     sortOrder: number;
     style: Style;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -2388,7 +2388,7 @@ export type ProgramIndicator = {
     shortName: string;
     style: Style;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -2420,7 +2420,7 @@ export type ProgramRuleVariable = {
     | "TEI_ATTRIBUTE";
     translations: Translation[];
     useCodeForOptionSet: boolean;
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -2442,7 +2442,7 @@ export type ProgramIndicatorGroup = {
     programIndicators: ProgramIndicator[];
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -2492,7 +2492,7 @@ export type ProgramRuleAction = {
     programStageSection: ProgramStageSection;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -2518,7 +2518,7 @@ export type ProgramRule = {
     programStage: ProgramStage;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -2626,7 +2626,7 @@ export type MapView = {
     topLimit: number;
     trackedEntityType: TrackedEntityType;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     userOrganisationUnit: boolean;
@@ -2662,7 +2662,7 @@ export type Report = {
     reportTable: ReportTable;
     translations: Translation[];
     type: "JASPER_REPORT_TABLE" | "JASPER_JDBC" | "HTML";
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -2751,7 +2751,7 @@ export type ReportTable = {
     title: string;
     topLimit: number;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     userOrganisationUnit: boolean;
@@ -2786,7 +2786,7 @@ export type Map = {
     subscribers: string[];
     title: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     zoom: number;
@@ -2887,7 +2887,7 @@ export type Chart = {
     | "PIE"
     | "RADAR"
     | "GAUGE";
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     userOrganisationUnit: boolean;
@@ -2914,7 +2914,7 @@ export type Document = {
     publicAccess: string;
     translations: Translation[];
     url: string;
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -2961,10 +2961,10 @@ export type DashboardItem = {
     | "TEXT"
     | "MESSAGES"
     | "APP";
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
-    users: User[];
+    users: Ref[];
     width: number;
     x: number;
     y: number;
@@ -2991,7 +2991,7 @@ export type Dashboard = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3049,7 +3049,7 @@ export type ProgramTrackedEntityAttributeDimensionItem = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3070,7 +3070,7 @@ export type Color = {
     name: string;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3105,7 +3105,7 @@ export type TrackedEntityInstance = {
     trackedEntityAttributeValues: any[];
     trackedEntityType: TrackedEntityType;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3181,7 +3181,7 @@ export type DataElementOperand = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3207,7 +3207,7 @@ export type Relationship = {
     style: Style;
     to: any;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3239,11 +3239,11 @@ export type UserCredentials = {
     selfRegistered: boolean;
     translations: Translation[];
     twoFA: boolean;
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
-    userInfo: User;
-    userRoles: UserRole[];
+    userInfo: Ref;
+    userRoles: Ref[];
     username: string;
 };
 
@@ -3270,7 +3270,7 @@ export type AnalyticsPeriodBoundary = {
     offsetPeriods: number;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3304,7 +3304,7 @@ export type Interpretation = {
     text: string;
     translations: Translation[];
     type: "REPORT_TABLE" | "CHART" | "MAP" | "EVENT_REPORT" | "EVENT_CHART" | "DATASET_REPORT";
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3340,7 +3340,7 @@ export type ProgramStageDataElement = {
     skipSynchronization: boolean;
     sortOrder: number;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3371,7 +3371,7 @@ export type ProgramStageInstance = {
     name: string;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3429,7 +3429,7 @@ export type ProgramDataElementDimensionItem = {
     publicAccess: string;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
@@ -3479,7 +3479,7 @@ export type Legend = {
     publicAccess: string;
     startValue: number;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3516,7 +3516,7 @@ export type ProgramTrackedEntityAttribute = {
     searchable: boolean;
     sortOrder: number;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
@@ -3564,7 +3564,7 @@ export type InterpretationComment = {
     publicAccess: string;
     text: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3624,7 +3624,7 @@ export type MessageConversation = {
     status: "NONE" | "OPEN" | "PENDING" | "INVALID" | "SOLVED";
     subject: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userFirstname: string;
     userGroupAccesses: UserGroupAccess[];
@@ -3664,7 +3664,7 @@ export type ProgramInstance = {
     status: "ACTIVE" | "COMPLETED" | "CANCELLED";
     trackedEntityComments: any[];
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -3735,7 +3735,7 @@ export type MetadataEntity =
 export type MetadataPackageSchema = {
     userRoles: UserRole[];
     attributes: Attribute[];
-    users: User[];
+    users: Ref[];
     userGroups: UserGroup[];
     options: Option[];
     optionSets: OptionSet[]
