@@ -27,7 +27,6 @@ import "../utils/lodash-mixins";
 import { promiseMap } from "./common";
 import { cleanToAPIChildReferenceName, cleanToModelName, getClassName } from "./d2";
 import { AggregatedPackage, ProgramEvent, DataValue } from "../domain/synchronization/DataEntities";
-import { MetadataPackage } from "../domain/metadata/entities";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -70,7 +69,7 @@ export function cleanObject(
 }
 
 export function cleanReferences(
-    references: MetadataPackage,
+    references: Record<string, string[]>,
     includeRules: string[][] = []
 ): string[] {
     const rules = _(includeRules)
@@ -85,7 +84,7 @@ export async function getMetadata(
     api: D2Api,
     elements: string[],
     fields = ":all"
-): Promise<MetadataPackage> {
+): Promise<Record<string, any[]>> {
     const promises = [];
     for (let i = 0; i < elements.length; i += 100) {
         const requestElements = elements.slice(i, i + 100).toString();
@@ -131,8 +130,8 @@ export function getAllReferences(
     obj: any,
     type: string,
     parents: string[] = []
-): MetadataPackage {
-    let result: MetadataPackage = {};
+): Record<string, string[]> {
+    let result: Record<string, string[]> = {};
     _.forEach(obj, (value, key) => {
         if (_.isObject(value) || _.isArray(value)) {
             const recursive = getAllReferences(d2, value, type, [...parents, key]);
@@ -626,7 +625,7 @@ export async function postEventsData(
     return postData(instance, "/events", data, _.pick(additionalParams, ["dryRun"]));
 }
 
-export function buildMetadataDictionary(metadataPackage: MetadataPackage) {
+export function buildMetadataDictionary(metadataPackage: Record<string, any[]>) {
     return _(metadataPackage)
         .values()
         .flatten()

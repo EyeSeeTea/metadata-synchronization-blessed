@@ -1,4 +1,4 @@
-import { Access, Id, Translation, Style, Expression } from "../../common/Entities";
+import { Access, Id, Translation, Style, Expression, Ref } from "../../common/Entities";
 
 export type AttributeValue = {
     attribute: Attribute;
@@ -7,28 +7,27 @@ export type AttributeValue = {
     value: string;
 };
 
-export type UserAuthorityGroup = {
+export type UserRole = {
     access: Access;
     attributeValues: AttributeValue[];
     authorities: string[];
-    code: Id;
+    code: string;
     created: string;
     description: string;
     displayName: string;
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Ref;
     name: string;
     publicAccess: string;
     translations: Translation[];
-    user: User;
+    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
-    users: User[];
+    users: Ref[];
 };
 
 export type Attribute = {
@@ -54,7 +53,6 @@ export type Attribute = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     indicatorAttribute: boolean;
     indicatorGroupAttribute: boolean;
@@ -132,7 +130,6 @@ export type User = {
     favorites: string[];
     firstName: string;
     gender: string;
-    href: string;
     id: Id;
     interests: string;
     introduction: string;
@@ -166,7 +163,6 @@ export type UserGroup = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -192,7 +188,6 @@ export type Option = {
     favorite: boolean;
     favorites: string[];
     formName: string;
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -216,7 +211,6 @@ export type OptionSet = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -305,7 +299,6 @@ export type OptionGroupSet = {
     favorite: boolean;
     favorites: string[];
     filter: string;
-    href: string;
     id: Id;
     items: any[];
     lastUpdated: string;
@@ -364,7 +357,6 @@ export type OptionGroup = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -390,7 +382,6 @@ export type LegendSet = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -414,7 +405,6 @@ export type ColorSet = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -478,7 +468,6 @@ export type OrganisationUnit = {
     favorite: boolean;
     favorites: string[];
     featureType: "NONE" | "MULTI_POLYGON" | "POLYGON" | "POINT" | "SYMBOL";
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -514,7 +503,6 @@ export type OrganisationUnitLevel = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -574,7 +562,6 @@ export type OrganisationUnitGroup = {
     favorites: string[];
     featureType: "NONE" | "MULTI_POLYGON" | "POLYGON" | "POINT" | "SYMBOL";
     groupSets: OrganisationUnitGroupSet[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -641,7 +628,6 @@ export type OrganisationUnitGroupSet = {
     favorite: boolean;
     favorites: string[];
     filter: string;
-    href: string;
     id: Id;
     includeSubhierarchyInAnalytics: boolean;
     items: any[];
@@ -704,7 +690,6 @@ export type CategoryOption = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     isDefault: boolean;
     lastUpdated: string;
@@ -768,7 +753,6 @@ export type CategoryOptionGroup = {
     favorite: boolean;
     favorites: string[];
     groupSets: CategoryOptionGroupSet[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -834,7 +818,6 @@ export type CategoryOptionGroupSet = {
     favorite: boolean;
     favorites: string[];
     filter: string;
-    href: string;
     id: Id;
     items: any[];
     lastUpdated: string;
@@ -901,7 +884,6 @@ export type Category = {
     favorite: boolean;
     favorites: string[];
     filter: string;
-    href: string;
     id: Id;
     items: any[];
     lastUpdated: string;
@@ -928,7 +910,6 @@ export type CategoryCombo = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     isDefault: boolean;
     lastUpdated: string;
@@ -986,7 +967,6 @@ export type CategoryOptionCombo = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     ignoreApproval: boolean;
     lastUpdated: string;
@@ -1052,7 +1032,6 @@ export type DataElement = {
     favorite: boolean;
     favorites: string[];
     formName: string;
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1142,7 +1121,6 @@ export type DataElementGroup = {
     favorite: boolean;
     favorites: string[];
     groupSets: DataElementGroupSet[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1208,7 +1186,6 @@ export type DataElementGroupSet = {
     favorite: boolean;
     favorites: string[];
     filter: string;
-    href: string;
     id: Id;
     items: any[];
     lastUpdated: string;
@@ -1233,7 +1210,6 @@ export type IndicatorType = {
     factor: number;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1296,7 +1272,6 @@ export type Indicator = {
     favorite: boolean;
     favorites: string[];
     formName: string;
-    href: string;
     id: Id;
     indicatorGroups: IndicatorGroup[];
     indicatorType: IndicatorType;
@@ -1327,7 +1302,6 @@ export type IndicatorGroup = {
     favorite: boolean;
     favorites: string[];
     groupSet: IndicatorGroupSet;
-    href: string;
     id: Id;
     indicators: Indicator[];
     lastUpdated: string;
@@ -1351,7 +1325,6 @@ export type IndicatorGroupSet = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     indicatorGroups: IndicatorGroup[];
     lastUpdated: string;
@@ -1374,7 +1347,6 @@ export type DataEntryForm = {
     favorite: boolean;
     favorites: string[];
     format: number;
-    href: string;
     htmlCode: string;
     id: Id;
     lastUpdated: string;
@@ -1441,7 +1413,6 @@ export type DataSet = {
     fieldCombinationRequired: boolean;
     formName: string;
     formType: "DEFAULT" | "CUSTOM" | "SECTION" | "SECTION_MULTIORG";
-    href: string;
     id: Id;
     indicators: Indicator[];
     interpretations: Interpretation[];
@@ -1486,7 +1457,6 @@ export type DataSetNotificationTemplate = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1520,7 +1490,6 @@ export type Section = {
     favorite: boolean;
     favorites: string[];
     greyedFields: DataElementOperand[];
-    href: string;
     id: Id;
     indicators: Indicator[];
     lastUpdated: string;
@@ -1546,7 +1515,6 @@ export type DataApprovalLevel = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1573,7 +1541,6 @@ export type DataApprovalWorkflow = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1630,7 +1597,6 @@ export type ValidationRule = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     importance: "HIGH" | "MEDIUM" | "LOW";
     instruction: string;
@@ -1673,7 +1639,6 @@ export type ValidationRuleGroup = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1695,7 +1660,6 @@ export type ValidationNotificationTemplate = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1762,7 +1726,6 @@ export type TrackedEntityAttribute = {
     favorites: string[];
     formName: string;
     generated: boolean;
-    href: string;
     id: Id;
     inherit: boolean;
     lastUpdated: string;
@@ -1825,7 +1788,6 @@ export type RelationshipType = {
     favorite: boolean;
     favorites: string[];
     fromConstraint: any;
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1852,7 +1814,6 @@ export type TrackedEntityType = {
     favorite: boolean;
     favorites: string[];
     formName: string;
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1882,7 +1843,6 @@ export type ProgramTrackedEntityAttributeGroup = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1907,7 +1867,6 @@ export type TrackedEntityTypeAttribute = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1961,7 +1920,6 @@ export type ProgramStageSection = {
     favorite: boolean;
     favorites: string[];
     formName: string;
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -1988,7 +1946,6 @@ export type ProgramNotificationTemplate = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -2045,7 +2002,6 @@ export type ProgramStage = {
     formType: "DEFAULT" | "CUSTOM" | "SECTION" | "SECTION_MULTIORG";
     generatedByEnrollmentDate: boolean;
     hideDueDate: boolean;
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -2095,7 +2051,6 @@ export type Program = {
     favorite: boolean;
     favorites: string[];
     formName: string;
-    href: string;
     id: Id;
     ignoreOverdueEvents: boolean;
     incidentDateLabel: string;
@@ -2127,7 +2082,7 @@ export type Program = {
     user: User;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
-    userRoles: UserAuthorityGroup[];
+    userRoles: UserRole[];
     version: number;
     withoutRegistration: boolean;
     workflow: DataApprovalWorkflow;
@@ -2186,7 +2141,6 @@ export type EventChart = {
     hideNaData: boolean;
     hideSubtitle: boolean;
     hideTitle: boolean;
-    href: string;
     id: Id;
     interpretations: Interpretation[];
     itemOrganisationUnitGroups: OrganisationUnitGroup[];
@@ -2301,7 +2255,6 @@ export type EventReport = {
     hideNaData: boolean;
     hideSubtitle: boolean;
     hideTitle: boolean;
-    href: string;
     id: Id;
     interpretations: Interpretation[];
     itemOrganisationUnitGroups: OrganisationUnitGroup[];
@@ -2356,7 +2309,6 @@ export type ProgramSection = {
     favorite: boolean;
     favorites: string[];
     formName: string;
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -2424,7 +2376,6 @@ export type ProgramIndicator = {
     favorites: string[];
     filter: string;
     formName: string;
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -2453,7 +2404,6 @@ export type ProgramRuleVariable = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -2485,7 +2435,6 @@ export type ProgramIndicatorGroup = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -2511,7 +2460,6 @@ export type ProgramRuleAction = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -2560,7 +2508,6 @@ export type ProgramRule = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -2628,7 +2575,6 @@ export type MapView = {
     hidden: boolean;
     hideSubtitle: boolean;
     hideTitle: boolean;
-    href: string;
     id: Id;
     interpretations: Interpretation[];
     itemOrganisationUnitGroups: OrganisationUnitGroup[];
@@ -2706,7 +2652,6 @@ export type Report = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -2769,7 +2714,6 @@ export type ReportTable = {
     hideEmptyRows: boolean;
     hideSubtitle: boolean;
     hideTitle: boolean;
-    href: string;
     id: Id;
     interpretations: Interpretation[];
     itemOrganisationUnitGroups: OrganisationUnitGroup[];
@@ -2828,7 +2772,6 @@ export type Map = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     interpretations: Interpretation[];
     lastUpdated: string;
@@ -2896,7 +2839,6 @@ export type Chart = {
     hideLegend: boolean;
     hideSubtitle: boolean;
     hideTitle: boolean;
-    href: string;
     id: Id;
     interpretations: Interpretation[];
     itemOrganisationUnitGroups: OrganisationUnitGroup[];
@@ -2965,7 +2907,6 @@ export type Document = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -2993,7 +2934,6 @@ export type DashboardItem = {
     favorite: boolean;
     favorites: string[];
     height: number;
-    href: string;
     id: Id;
     interpretationCount: number;
     interpretationLikeCount: number;
@@ -3043,7 +2983,6 @@ export type Dashboard = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     itemCount: number;
     lastUpdated: string;
@@ -3100,7 +3039,6 @@ export type ProgramTrackedEntityAttributeDimensionItem = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -3126,7 +3064,6 @@ export type Color = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -3153,7 +3090,6 @@ export type TrackedEntityInstance = {
     favorite: boolean;
     favorites: string[];
     featureType: "NONE" | "MULTI_POLYGON" | "POLYGON" | "POINT" | "SYMBOL";
-    href: string;
     id: Id;
     inactive: boolean;
     lastUpdated: string;
@@ -3236,7 +3172,6 @@ export type DataElementOperand = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -3263,7 +3198,6 @@ export type Relationship = {
     favorites: string[];
     formName: string;
     from: any;
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -3291,7 +3225,6 @@ export type UserCredentials = {
     externalAuth: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     invitation: boolean;
     lastLogin: string;
@@ -3310,7 +3243,7 @@ export type UserCredentials = {
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     userInfo: User;
-    userRoles: UserAuthorityGroup[];
+    userRoles: UserRole[];
     username: string;
 };
 
@@ -3329,7 +3262,6 @@ export type AnalyticsPeriodBoundary = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -3357,7 +3289,6 @@ export type Interpretation = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -3398,7 +3329,6 @@ export type ProgramStageDataElement = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -3435,7 +3365,6 @@ export type ProgramStageInstance = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -3490,7 +3419,6 @@ export type ProgramDataElementDimensionItem = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -3543,7 +3471,6 @@ export type Legend = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     image: string;
     lastUpdated: string;
@@ -3576,7 +3503,6 @@ export type ProgramTrackedEntityAttribute = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -3630,7 +3556,6 @@ export type InterpretationComment = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    href: string;
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: User;
@@ -3682,7 +3607,6 @@ export type MessageConversation = {
     favorite: boolean;
     favorites: string[];
     followUp: boolean;
-    href: string;
     id: Id;
     lastMessage: string;
     lastSender: User;
@@ -3723,7 +3647,6 @@ export type ProgramInstance = {
     favorite: boolean;
     favorites: string[];
     followup: boolean;
-    href: string;
     id: Id;
     incidentDate: string;
     lastUpdated: string;
@@ -3747,7 +3670,7 @@ export type ProgramInstance = {
 };
 
 export type MetadataEntity =
-    | UserAuthorityGroup
+    | UserRole
     | Attribute
     | User
     | UserGroup
@@ -3810,7 +3733,7 @@ export type MetadataEntity =
 
 
 export type MetadataPackageSchema = {
-    userRoles: UserAuthorityGroup[];
+    userRoles: UserRole[];
     attributes: Attribute[];
     users: User[];
     userGroups: UserGroup[];
@@ -3874,6 +3797,7 @@ export type MetadataPackageSchema = {
 
 export type MetadataFieldsPackage<T> = Record<keyof MetadataPackageSchema, T[]>;
 
-export type MetadataPackage = Record<string, any[]>;
+export type MetadataPackage = Record<string, MetadataEntity[]>;
 
+//TODO Try this
 //export type MetadataPackage = Record<keyof MetadataPackageSchema, MetadataEntity[]>;

@@ -45,7 +45,7 @@ export class MetadataSync extends GenericSync {
 
             // Get all the required metadata
             const syncMetadata = await this.metadataRepository.getMetadataByIds(ids);
-            const elements = syncMetadata[model.plural] || [];
+            const elements = syncMetadata[model.plural as keyof MetadataPackageSchema] || [];
 
             for (const element of elements) {
                 // Store metadata object in result
@@ -61,7 +61,7 @@ export class MetadataSync extends GenericSync {
                 result[model.plural].push(object);
 
                 // Get all the referenced metadata
-                const references: MetadataPackage = getAllReferences(this.d2, object, model.name);
+                const references = getAllReferences(this.d2, object, model.name);
                 const includedReferences = cleanReferences(references, includeRules);
                 const promises = includedReferences
                     .map(type => ({
@@ -116,7 +116,10 @@ export class MetadataSync extends GenericSync {
             });
         });
 
-        return _.mapValues(_.deepMerge({}, ...exportResults), elements => _.uniqBy(elements, "id"));
+        const metadataPackage: MetadataPackage = _.deepMerge({}, ...exportResults);
+        const metadataWithoutDuplicates: MetadataPackage = _.mapValues(metadataPackage, elements => _.uniqBy(elements, "id"));
+
+        return metadataWithoutDuplicates;
     });
 
     public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {

@@ -8,7 +8,7 @@ import { AxiosError } from "axios";
 import Instance from "../../../domain/instance/Instance";
 import { mapPackageToD2Version } from "../mappers/D2VersionPackageMapper";
 import { metadataTransformationsToDhis2 } from "../mappers/PackageTransformations";
-import { D2Api } from "../../../types/d2-api"
+import { D2Api, D2Model } from "../../../types/d2-api"
 import { MetadataPackage, MetadataFieldsPackage } from "../../../domain/metadata/entities";
 import _ from "lodash";
 
@@ -29,7 +29,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
      * @param ids metadata ids to retrieve
      */
     async getMetadataFieldsByIds<T>(ids: string[], fields: string): Promise<MetadataFieldsPackage<T>> {
-        return this.getMetadata(ids, fields);
+        return this.getMetadata<T>(ids, fields);
     }
 
     /**
@@ -37,9 +37,10 @@ class MetadataD2ApiRepository implements MetadataRepository {
      * @param ids metadata ids to retrieve
      */
     async getMetadataByIds(ids: string[]): Promise<MetadataPackage> {
-        const metadata = await this.getMetadata(ids);
+        const d2Metadata = await this.getMetadata<D2Model>(ids);
 
         //Apply transformations
+        const metadata = d2Metadata as MetadataPackage;
 
         return metadata;
     }
@@ -112,10 +113,10 @@ class MetadataD2ApiRepository implements MetadataRepository {
         }
     }
 
-    private async getMetadata(
+    private async getMetadata<T>(
         elements: string[],
         fields = ":all"
-    ): Promise<MetadataPackage> {
+    ): Promise<Record<string, T[]>> {
         const promises = [];
         for (let i = 0; i < elements.length; i += 100) {
             const requestElements = elements.slice(i, i + 100).toString();
