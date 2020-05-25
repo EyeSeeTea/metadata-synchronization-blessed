@@ -10,7 +10,7 @@ import { MetadataRepository } from "../../domain/synchronization/MetadataReposit
 import { D2 } from "../../types/d2";
 import { D2Api } from "../../types/d2-api";
 import { SynchronizationBuilder } from "../../types/synchronization";
-import MetadataD2ApiRepository from "../../data/synchronization/repositories/MetadataD2ApiRepository";
+import MetadataD2ApiRepository from "../../data/metadata/repositories/MetadataD2ApiRepository";
 
 export class DeletedSync extends GenericSync {
     public readonly type = "deleted";
