@@ -1,7 +1,7 @@
 import { Access, Id, Translation, Style, Expression, Ref } from "../../common/Entities";
 
 export type AttributeValue = {
-    attribute: Attribute;
+    attribute: Ref;
     created: string;
     lastUpdated: string;
     value: string;
@@ -166,8 +166,8 @@ export type UserGroup = {
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: Ref;
-    managedByGroups: UserGroup[];
-    managedGroups: UserGroup[];
+    managedByGroups: Ref[];
+    managedGroups: Ref[];
     name: string;
     publicAccess: string;
     translations: Translation[];
@@ -442,7 +442,7 @@ export type OrganisationUnit = {
     contactPerson: string;
     coordinates: string;
     created: string;
-    dataSets: DataSet[];
+    dataSets: Ref[];
     description: string;
     dimensionItem: string;
     dimensionItemType:
@@ -1038,7 +1038,7 @@ export type DataElement = {
     legendSet: Ref;
     legendSets: Ref[];
     name: string;
-    optionSet: OptionSet;
+    optionSet: Ref;
     optionSetValue: boolean;
     publicAccess: string;
     shortName: string;
@@ -1096,7 +1096,7 @@ export type DataElementGroup = {
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
-    dataElements: DataElement[];
+    dataElements: Ref[];
     description: string;
     dimensionItem: string;
     dimensionItemType:
@@ -1244,7 +1244,7 @@ export type Indicator = {
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
-    dataSets: DataSet[];
+    dataSets: Ref[];
     decimals: number;
     denominator: string;
     denominatorDescription: string;
@@ -1273,8 +1273,8 @@ export type Indicator = {
     favorites: string[];
     formName: string;
     id: Id;
-    indicatorGroups: IndicatorGroup[];
-    indicatorType: IndicatorType;
+    indicatorGroups: Ref[];
+    indicatorType: Ref;
     lastUpdated: string;
     lastUpdatedBy: Ref;
     legendSet: Ref;
@@ -1302,8 +1302,8 @@ export type IndicatorGroup = {
     favorite: boolean;
     favorites: string[];
     id: Id;
-    indicatorGroupSet: IndicatorGroupSet;
-    indicators: Indicator[];
+    indicatorGroupSet: Ref;
+    indicators: Ref[];
     lastUpdated: string;
     lastUpdatedBy: Ref;
     name: string;
@@ -1326,7 +1326,7 @@ export type IndicatorGroupSet = {
     favorite: boolean;
     favorites: string[];
     id: Id;
-    indicatorGroups: IndicatorGroup[];
+    indicatorGroups: Ref[];
     lastUpdated: string;
     lastUpdatedBy: Ref;
     name: string;
@@ -1377,13 +1377,13 @@ export type DataSet = {
     | "CUSTOM"
     | "DEFAULT";
     attributeValues: AttributeValue[];
-    categoryCombo: CategoryCombo;
+    categoryCombo: Ref;
     code: Id;
     compulsoryDataElementOperands: DataElementOperand[];
     compulsoryFieldsCompleteOnly: boolean;
     created: string;
     dataElementDecoration: boolean;
-    dataEntryForm: DataEntryForm;
+    dataEntryForm: Ref;
     dataInputPeriods: DataInputPeriod[];
     dataSetElements: DataSetElement[];
     description: string;
@@ -1414,8 +1414,8 @@ export type DataSet = {
     formName: string;
     formType: "DEFAULT" | "CUSTOM" | "SECTION" | "SECTION_MULTIORG";
     id: Id;
-    indicators: Indicator[];
-    interpretations: Interpretation[];
+    indicators: Ref[];
+    interpretations: Ref[];
     lastUpdated: string;
     lastUpdatedBy: Ref;
     legendSet: Ref;
@@ -1442,7 +1442,7 @@ export type DataSet = {
     userGroupAccesses: UserGroupAccess[];
     validCompleteOnly: boolean;
     version: number;
-    workflow: DataApprovalWorkflow;
+    workflow: Ref;
 };
 
 export type DataSetNotificationTemplate = {
@@ -1606,7 +1606,7 @@ export type ValidationRule = {
     legendSet: Ref;
     legendSets: Ref[];
     name: string;
-    notificationTemplates: ValidationNotificationTemplate[];
+    notificationTemplates: Ref[];
     operator:
     | "equal_to"
     | "not_equal_to"
@@ -1626,7 +1626,7 @@ export type ValidationRule = {
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
-    validationRuleGroups: ValidationRuleGroup[];
+    validationRuleGroups: Ref[];
 };
 
 export type ValidationRuleGroup = {
@@ -1648,7 +1648,7 @@ export type ValidationRuleGroup = {
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
-    validationRules: ValidationRule[];
+    validationRules: Ref[];
 };
 
 export type ValidationNotificationTemplate = {
@@ -2033,11 +2033,11 @@ export type Program = {
     accessLevel: "OPEN" | "AUDITED" | "PROTECTED" | "CLOSED";
     attributeValues: AttributeValue[];
     captureCoordinates: boolean;
-    categoryCombo: CategoryCombo;
+    categoryCombo: Ref;
     code: Id;
     completeEventsExpiryDays: number;
     created: string;
-    dataEntryForm: DataEntryForm;
+    dataEntryForm: Ref;
     description: string;
     displayDescription: string;
     displayFrontPageList: boolean;
@@ -2059,13 +2059,13 @@ export type Program = {
     maxTeiCountToReturn: number;
     minAttributesRequiredToSearch: number;
     name: string;
-    notificationTemplates: ProgramNotificationTemplate[];
+    notificationTemplates: Ref[];
     onlyEnrollOnce: boolean;
     organisationUnits: Ref[];
-    programIndicators: ProgramIndicator[];
-    programRuleVariables: ProgramRuleVariable[];
-    programSections: ProgramSection[];
-    programStages: ProgramStage[];
+    programIndicators: Ref[];
+    programRuleVariables: Ref[];
+    programSections: Ref[];
+    programStages: Ref[];
     programTrackedEntityAttributes: ProgramTrackedEntityAttribute[];
     programType: "WITH_REGISTRATION" | "WITHOUT_REGISTRATION";
     publicAccess: string;
@@ -2076,16 +2076,16 @@ export type Program = {
     shortName: string;
     skipOffline: boolean;
     style: Style;
-    trackedEntityType: TrackedEntityType;
+    trackedEntityType: Ref;
     translations: Translation[];
     useFirstStageDuringRegistration: boolean;
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
-    userRoles: UserRole[];
+    userRoles: Ref[];
     version: number;
     withoutRegistration: boolean;
-    workflow: DataApprovalWorkflow;
+    workflow: Ref;
 };
 
 export type EventChart = {
@@ -2382,8 +2382,8 @@ export type ProgramIndicator = {
     legendSet: Ref;
     legendSets: Ref[];
     name: string;
-    program: Program;
-    programIndicatorGroups: ProgramIndicatorGroup[];
+    program: Ref;
+    programIndicatorGroups: Ref[];
     publicAccess: string;
     shortName: string;
     style: Style;
@@ -2398,7 +2398,7 @@ export type ProgramRuleVariable = {
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
-    dataElement: DataElement;
+    dataElement: Ref;
     displayName: string;
     externalAccess: boolean;
     favorite: boolean;
@@ -2407,7 +2407,7 @@ export type ProgramRuleVariable = {
     lastUpdated: string;
     lastUpdatedBy: Ref;
     name: string;
-    program: Program;
+    program: Ref;
     programRuleVariableSourceType:
     | "DATAELEMENT_NEWEST_EVENT_PROGRAM_STAGE"
     | "DATAELEMENT_NEWEST_EVENT_PROGRAM"
@@ -2415,7 +2415,7 @@ export type ProgramRuleVariable = {
     | "DATAELEMENT_PREVIOUS_EVENT"
     | "CALCULATED_VALUE"
     | "TEI_ATTRIBUTE";
-    programStage: ProgramStage;
+    programStage: Ref;
     publicAccess: string;
     trackedEntityAttribute: TrackedEntityAttribute;
     translations: Translation[];
@@ -2439,7 +2439,7 @@ export type ProgramIndicatorGroup = {
     lastUpdated: string;
     lastUpdatedBy: Ref;
     name: string;
-    programIndicators: ProgramIndicator[];
+    programIndicators: Ref[];
     publicAccess: string;
     translations: Translation[];
     user: Ref;
@@ -2513,9 +2513,9 @@ export type ProgramRule = {
     lastUpdatedBy: Ref;
     name: string;
     priority: number;
-    program: Program;
-    programRuleActions: ProgramRuleAction[];
-    programStage: ProgramStage;
+    program: Ref;
+    programRuleActions: Ref[];
+    programStage: Ref;
     publicAccess: string;
     translations: Translation[];
     user: Ref;
@@ -2923,13 +2923,13 @@ export type DashboardItem = {
     access: Access;
     appKey: string;
     attributeValues: AttributeValue[];
-    chart: Chart;
+    chart: Ref;
     code: Id;
     contentCount: number;
     created: string;
     displayName: string;
-    eventChart: EventChart;
-    eventReport: EventReport;
+    eventChart: Ref;
+    eventReport: Ref;
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
@@ -2943,9 +2943,9 @@ export type DashboardItem = {
     messages: boolean;
     name: string;
     publicAccess: string;
-    reportTable: ReportTable;
-    reports: Report[];
-    resources: Document[];
+    reportTable: Ref;
+    reports: Ref[];
+    resources: Ref[];
     shape: "NORMAL" | "DOUBLE_WIDTH" | "FULL_WIDTH";
     text: string;
     translations: Translation[];
@@ -3431,14 +3431,14 @@ export type ProgramTrackedEntityAttribute = {
     lastUpdatedBy: Ref;
     mandatory: boolean;
     name: string;
-    program: Program;
+    program: Ref;
     programTrackedEntityAttributeGroups: ProgramTrackedEntityAttributeGroup[];
     publicAccess: string;
     renderOptionsAsRadio: boolean;
     renderType: any;
     searchable: boolean;
     sortOrder: number;
-    trackedEntityAttribute: TrackedEntityAttribute;
+    trackedEntityAttribute: Ref;
     translations: Translation[];
     user: Ref;
     userAccesses: UserAccess[];
