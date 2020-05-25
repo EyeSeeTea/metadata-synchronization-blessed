@@ -383,6 +383,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         const { cancel, response } = getAllIdentifiers(
             apiModel.modelName,
             api.apiPath,
+            model.getSearchFilter(),
             search,
             apiQuery,
             apiModel
@@ -394,7 +395,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .catch(handleError);
 
         return cancel;
-    }, [api, apiModel, apiQuery, search]);
+    }, [api, apiModel, apiQuery, search, model]);
 
     useEffect(() => {
         if (apiModel.modelName !== "organisationUnits") return;
@@ -416,6 +417,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             api.apiPath,
             sorting,
             pagination,
+            model.getSearchFilter(),
             search,
             apiQuery,
             apiModel
@@ -543,7 +545,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             details={model.getDetails()}
             onChangeSearch={updateSearch}
             initialState={initialState}
-            searchBoxLabel={i18n.t("Search by name")}
+            searchBoxLabel={i18n.t(`Search by `) + model.getSearchFilter().field}
             pagination={pager}
             onChange={handleTableChange}
             ids={ids}

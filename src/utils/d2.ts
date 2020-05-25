@@ -59,6 +59,15 @@ export const organisationUnitsColumns: typeof d2BaseModelColumns = [
     { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
 ];
 
+export const programRuleActionsColumns: typeof d2BaseModelColumns = [
+    { name: "id", text: i18n.t("ID"), sortable: true },
+    { name: "programRuleActionType", text: i18n.t("Action"), sortable: true },
+    { name: "lastUpdated", text: i18n.t("Last updated"), sortable: true },
+    { name: "programRule", text: i18n.t("Program Rule"), sortable: true, hidden: true },
+    { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
+    { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
+];
+
 export const organisationUnitsDetails: typeof d2BaseModelDetails = _.map(
     organisationUnitsColumns,
     column => _.pick(column, ["name", "text", "getValue"])
@@ -131,6 +140,12 @@ export const organisationUnitFields = {
     path: include,
 };
 
+export const programRuleActionsFields = {
+    ...d2BaseModelFields,
+    programRuleActionType: include,
+    programRule: include,
+};
+
 export const categoryOptionFields = {
     ...d2BaseModelFields,
     categories: {
@@ -152,6 +167,10 @@ export function isD2Model(d2: D2, modelName: string): boolean {
 }
 
 export function cleanToModelName(d2: D2, id: string, caller: string): string | null {
+    // TODO: Here we make some transformations from dhis2 children model name in the metadata response
+    // to exepcted children name for the app. On the future when we have the code more refactored
+    // towards clean architecture, this transformations should be realized in the data layer
+    // previously to return response to the sync use case
     if (isD2Model(d2, id)) {
         return d2.models[id].plural;
     } else if (id === "attributeValues") {
