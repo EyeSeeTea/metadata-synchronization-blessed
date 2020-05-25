@@ -1,8 +1,8 @@
-import { MetadataRepository } from "../../../domain/synchronization/MetadataRepositoriy";
+import { MetadataRepository } from "../../../domain/metadata/MetadataRepositoriy";
 import {
     MetadataImportResponse,
     MetadataImportParams
-} from "../../../domain/synchronization/MetadataEntities";
+} from "../../../domain/metadata/Types";
 
 import { AxiosError } from "axios";
 import Instance from "../../../domain/instance/Instance";

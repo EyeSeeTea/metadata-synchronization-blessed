@@ -6,7 +6,7 @@ import {
     getMetadata
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
-import { MetadataRepository } from "../../domain/synchronization/MetadataRepositoriy";
+import { MetadataRepository } from "../../domain/metadata/MetadataRepositoriy";
 import { D2 } from "../../types/d2";
 import { D2Api } from "../../types/d2-api";
 import { SynchronizationBuilder } from "../../types/synchronization";

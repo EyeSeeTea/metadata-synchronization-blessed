@@ -1,7 +1,7 @@
-import { MetadataImportResponse, MetadataImportParams } from "./MetadataEntities";
+import { MetadataImportResponse, MetadataImportParams } from "./Types";
 import Instance from "../instance/Instance";
 import { Id } from "../common/Entities";
-import { MetadataPackage, MetadataFieldsPackage } from "../metadata/entities";
+import { MetadataPackage, MetadataFieldsPackage } from "./entities";
 
 export interface MetadataRepository {
     getMetadataFieldsByIds<T>(ids: Id[], fields: string): Promise<MetadataFieldsPackage<T>>;

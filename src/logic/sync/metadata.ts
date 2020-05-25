@@ -15,7 +15,7 @@ import {
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
 import MetadataD2ApiRepository from "../../data/metadata/repositories/MetadataD2ApiRepository";
-import { MetadataRepository } from "../../domain/synchronization/MetadataRepositoriy";
+import { MetadataRepository } from "../../domain/metadata/MetadataRepositoriy";
 import { D2 } from "../../types/d2";
 import { MetadataPackage, MetadataPackageSchema } from "../../domain/metadata/entities";
 import { Ref } from "../../domain/common/Entities";
