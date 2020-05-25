@@ -150,7 +150,7 @@ export type User = {
     userAccesses: UserAccess[];
     userCredentials: UserCredentials;
     userGroupAccesses: UserGroupAccess[];
-    userGroups: UserGroup[];
+    userGroups: Ref[];
     welcomeMessage: string;
 };
 
@@ -295,7 +295,6 @@ export type OptionGroup = {
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: Ref;
-    legendSet: Ref;
     legendSets: Ref[];
     name: string;
     optionSet: Ref;
@@ -819,7 +818,7 @@ export type CategoryOptionGroupSet = {
     favorites: string[];
     filter: string;
     id: Id;
-    items: any[];
+    items: Ref[];
     lastUpdated: string;
     lastUpdatedBy: Ref;
     legendSet: Ref;
@@ -885,7 +884,7 @@ export type Category = {
     favorites: string[];
     filter: string;
     id: Id;
-    items: any[];
+    items: Ref[];
     lastUpdated: string;
     lastUpdatedBy: Ref;
     legendSet: Ref;
@@ -1479,11 +1478,11 @@ export type DataSetNotificationTemplate = {
 export type Section = {
     access: Access;
     attributeValues: AttributeValue[];
-    categoryCombos: CategoryCombo[];
+    categoryCombos: Ref[];
     code: Id;
     created: string;
-    dataElements: DataElement[];
-    dataSet: DataSet;
+    dataElements: Ref[];
+    dataSet: Ref;
     description: string;
     displayName: string;
     externalAccess: boolean;
@@ -1491,7 +1490,7 @@ export type Section = {
     favorites: string[];
     greyedFields: DataElementOperand[];
     id: Id;
-    indicators: Indicator[];
+    indicators: Ref[];
     lastUpdated: string;
     lastUpdatedBy: Ref;
     name: string;
@@ -1733,7 +1732,7 @@ export type TrackedEntityAttribute = {
     legendSet: Ref;
     legendSets: Ref[];
     name: string;
-    optionSet: OptionSet;
+    optionSet: Ref;
     optionSetValue: boolean;
     orgunitScope: boolean;
     pattern: string;
@@ -1956,7 +1955,7 @@ export type ProgramStageSection = {
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
-    dataElements: DataElement[];
+    dataElements: Ref[];
     description: string;
     displayName: string;
     externalAccess: boolean;
@@ -1967,8 +1966,8 @@ export type ProgramStageSection = {
     lastUpdated: string;
     lastUpdatedBy: Ref;
     name: string;
-    programIndicators: ProgramIndicator[];
-    programStage: ProgramStage;
+    programIndicators: Ref[];
+    programStage: Ref;
     publicAccess: string;
     renderType: any;
     sortOrder: number;
@@ -1987,7 +1986,7 @@ export type ProgramStage = {
     blockEntryForm: boolean;
     code: Id;
     created: string;
-    dataEntryForm: DataEntryForm;
+    dataEntryForm: Ref;
     description: string;
     displayDescription: string;
     displayGenerateEventBox: boolean;
@@ -2007,13 +2006,13 @@ export type ProgramStage = {
     lastUpdatedBy: Ref;
     minDaysFromStart: number;
     name: string;
-    notificationTemplates: ProgramNotificationTemplate[];
+    notificationTemplates: Ref[];
     openAfterEnrollment: boolean;
     periodType: string;
     preGenerateUID: boolean;
-    program: Program;
+    program: Ref;
     programStageDataElements: ProgramStageDataElement[];
-    programStageSections: ProgramStageSection[];
+    programStageSections: Ref[];
     publicAccess: string;
     remindCompleted: boolean;
     repeatable: boolean;
@@ -2105,7 +2104,7 @@ export type EventChart = {
     | "CUSTOM"
     | "DEFAULT";
     attributeDimensions: any[];
-    attributeValueDimension: TrackedEntityAttribute;
+    attributeValueDimension: any;
     attributeValues: AttributeValue[];
     baseLineLabel: string;
     baseLineValue: number;
@@ -2142,7 +2141,7 @@ export type EventChart = {
     hideSubtitle: boolean;
     hideTitle: boolean;
     id: Id;
-    interpretations: Interpretation[];
+    interpretations: Ref[];
     itemOrganisationUnitGroups: Ref[];
     lastUpdated: string;
     lastUpdatedBy: Ref;
@@ -2157,9 +2156,9 @@ export type EventChart = {
     parentGraphMap: Map;
     percentStackedValues: boolean;
     periods: any[];
-    program: Program;
+    program: Ref;
     programIndicatorDimensions: TrackedEntityProgramIndicatorDimension[];
-    programStage: ProgramStage;
+    programStage: Ref;
     programStatus: "ACTIVE" | "COMPLETED" | "CANCELLED";
     publicAccess: string;
     rangeAxisDecimals: number;
@@ -2220,7 +2219,7 @@ export type EventReport = {
     | "CUSTOM"
     | "DEFAULT";
     attributeDimensions: any[];
-    attributeValueDimension: TrackedEntityAttribute;
+    attributeValueDimension: any;
     attributeValues: AttributeValue[];
     categoryDimensions: CategoryDimension[];
     categoryOptionGroupSetDimensions: CategoryOptionGroupSetDimension[];
@@ -2256,7 +2255,7 @@ export type EventReport = {
     hideSubtitle: boolean;
     hideTitle: boolean;
     id: Id;
-    interpretations: Interpretation[];
+    interpretations: Ref[];
     itemOrganisationUnitGroups: Ref[];
     lastUpdated: string;
     lastUpdatedBy: Ref;
@@ -2267,9 +2266,9 @@ export type EventReport = {
     outputType: "EVENT" | "ENROLLMENT" | "TRACKED_ENTITY_INSTANCE";
     parentGraphMap: Map;
     periods: any[];
-    program: Program;
+    program: Ref;
     programIndicatorDimensions: TrackedEntityProgramIndicatorDimension[];
-    programStage: ProgramStage;
+    programStage: Ref;
     programStatus: "ACTIVE" | "COMPLETED" | "CANCELLED";
     publicAccess: string;
     relativePeriods: any;
@@ -2450,25 +2449,15 @@ export type ProgramIndicatorGroup = {
 export type ProgramRuleAction = {
     access: Access;
     attributeValues: AttributeValue[];
-    code: Id;
-    content: string;
     created: string;
-    data: string;
-    dataElement: DataElement;
-    displayName: string;
+    dataElement: Ref;
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: Ref;
-    location: string;
-    name: string;
-    option: Option;
-    optionGroup: OptionGroup;
-    programIndicator: ProgramIndicator;
-    programNotificationTemplate: ProgramNotificationTemplate;
-    programRule: ProgramRule;
+    programRule: Ref;
     programRuleActionType:
     | "DISPLAYTEXT"
     | "DISPLAYKEYVALUEPAIR"
@@ -2487,12 +2476,7 @@ export type ProgramRuleAction = {
     | "HIDEOPTION"
     | "SHOWOPTIONGROUP"
     | "HIDEOPTIONGROUP";
-    programStage: ProgramStage;
-    programStageSection: ProgramStageSection;
-    publicAccess: string;
-    trackedEntityAttribute: TrackedEntityAttribute;
     translations: Translation[];
-    user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -2576,7 +2560,7 @@ export type MapView = {
     hideSubtitle: boolean;
     hideTitle: boolean;
     id: Id;
-    interpretations: Interpretation[];
+    interpretations: Ref[];
     itemOrganisationUnitGroups: Ref[];
     labelFontColor: string;
     labelFontSize: string;
@@ -2605,9 +2589,9 @@ export type MapView = {
     parentGraphMap: Map;
     parentLevel: number;
     periods: any[];
-    program: Program;
+    program: Ref;
     programIndicatorDimensions: TrackedEntityProgramIndicatorDimension[];
-    programStage: ProgramStage;
+    programStage: Ref;
     programStatus: "ACTIVE" | "COMPLETED" | "CANCELLED";
     publicAccess: string;
     radiusHigh: number;
@@ -2624,7 +2608,7 @@ export type MapView = {
     timeField: string;
     title: string;
     topLimit: number;
-    trackedEntityType: TrackedEntityType;
+    trackedEntityType: Ref;
     translations: Translation[];
     user: Ref;
     userAccesses: UserAccess[];
@@ -2658,7 +2642,7 @@ export type Chart = {
     categoryDimensions: CategoryDimension[];
     categoryOptionGroupSetDimensions: CategoryOptionGroupSetDimension[];
     code: Id;
-    colorSet: ColorSet;
+    colorSet: Ref;
     columns: any[];
     completedOnly: boolean;
     created: string;
@@ -2682,7 +2666,7 @@ export type Chart = {
     hideSubtitle: boolean;
     hideTitle: boolean;
     id: Id;
-    interpretations: Interpretation[];
+    interpretations: Ref[];
     itemOrganisationUnitGroups: Ref[];
     lastUpdated: string;
     lastUpdatedBy: Ref;
@@ -2786,7 +2770,7 @@ export type Report = {
     publicAccess: string;
     relativePeriods: any;
     reportParams: any;
-    reportTable: ReportTable;
+    reportTable: any;
     translations: Translation[];
     type: "JASPER_REPORT_TABLE" | "JASPER_JDBC" | "HTML";
     user: Ref;
@@ -2900,12 +2884,12 @@ export type Map = {
     favorite: boolean;
     favorites: string[];
     id: Id;
-    interpretations: Interpretation[];
+    interpretations: Ref[];
     lastUpdated: string;
     lastUpdatedBy: Ref;
     latitude: number;
     longitude: number;
-    mapViews: MapView[];
+    mapViews: Ref[];
     name: string;
     publicAccess: string;
     shortName: string;
@@ -2997,7 +2981,7 @@ export type Dashboard = {
 };
 
 export type OrganisationUnitGroupSetDimension = {
-    organisationUnitGroupSet: OrganisationUnitGroupSet;
+    organisationUnitGroupSet: Ref;
     organisationUnitGroups: Ref[];
 };
 
@@ -3017,12 +3001,12 @@ export type DataElementOperand = {
     | "NONE"
     | "CUSTOM"
     | "DEFAULT";
-    attributeOptionCombo: CategoryOptionCombo;
+    attributeOptionCombo: Ref;
     attributeValues: AttributeValue[];
-    categoryOptionCombo: CategoryOptionCombo;
+    categoryOptionCombo: Ref;
     code: Id;
     created: string;
-    dataElement: DataElement;
+    dataElement: Ref;
     description: string;
     dimensionItem: string;
     dimensionItemType:
@@ -3095,14 +3079,14 @@ export type Interpretation = {
 };
 
 export type CategoryOptionGroupSetDimension = {
-    categoryOptionGroupSet: CategoryOptionGroupSet;
+    categoryOptionGroupSet: Ref;
     categoryOptionGroups: Ref[];
 };
 
 export type TrackedEntityProgramIndicatorDimension = {
     filter: string;
     legendSet: Ref;
-    programIndicator: ProgramIndicator;
+    programIndicator: Ref;
 };
 
 export type Legend = {
@@ -3271,17 +3255,17 @@ export type UserGroupAccess = {
 };
 
 export type DataElementGroupSetDimension = {
-    dataElementGroupSet: DataElementGroupSet;
-    dataElementGroups: DataElementGroup[];
+    dataElementGroupSet: Ref;
+    dataElementGroups: Ref[];
 };
 
 export type CategoryDimension = {
-    category: Category;
+    category: Ref;
     categoryOptions: Ref[];
 };
 
 export type TrackedEntityDataElementDimension = {
-    dataElement: DataElement;
+    dataElement: Ref;
     filter: string;
     legendSet: Ref;
 };
