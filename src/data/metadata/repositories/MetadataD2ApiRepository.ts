@@ -6,11 +6,12 @@ import {
 
 import { AxiosError } from "axios";
 import Instance from "../../../domain/instance/Instance";
-import { mapPackageToD2Version } from "../mappers/D2VersionPackageMapper";
-import { metadataTransformationsToDhis2 } from "../mappers/PackageTransformations";
+
 import { D2Api, D2Model } from "../../../types/d2-api"
 import { MetadataPackage, MetadataFieldsPackage } from "../../../domain/metadata/entities";
 import _ from "lodash";
+import { metadataTransformationsToDhis2, metadataTransformationsFromDhis2 } from "../mappers/PackageTransformations";
+import { mapPackageToD2, mapD2PackageToDomain } from "../mappers/PackageMapper";
 
 class MetadataD2ApiRepository implements MetadataRepository {
     private currentD2Api: D2Api;
@@ -25,7 +26,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     /**
-     * Return specific fields of metadata dhis2 models according to ids filter
+     * Return raw specific fields of metadata dhis2 models according to ids filter
      * @param ids metadata ids to retrieve
      */
     async getMetadataFieldsByIds<T>(ids: string[], fields: string): Promise<MetadataFieldsPackage<T>> {
@@ -33,16 +34,17 @@ class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     /**
-     * Return metadata entitites according to ids filter
+     * Return metadata entitites according to ids filter. Realize mapping from d2 to domain
      * @param ids metadata ids to retrieve
      */
     async getMetadataByIds(ids: string[]): Promise<MetadataPackage> {
         const d2Metadata = await this.getMetadata<D2Model>(ids);
 
-        //Apply transformations
-        const metadata = d2Metadata as MetadataPackage;
+        const apiVersion = await this.getVersion();
 
-        return metadata;
+        const metadataPackage = mapD2PackageToDomain(apiVersion, d2Metadata, metadataTransformationsFromDhis2);
+
+        return metadataPackage;
     }
 
     async save(metadata: MetadataPackage,
@@ -61,7 +63,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
             };
 
             const apiVersion = await this.getVersion(targetInstance);
-            const versionedPayloadPackage = mapPackageToD2Version(apiVersion, metadata, metadataTransformationsToDhis2);
+            const versionedPayloadPackage = mapPackageToD2(apiVersion, metadata, metadataTransformationsToDhis2);
 
             console.debug("Versioned metadata package", versionedPayloadPackage);
 
