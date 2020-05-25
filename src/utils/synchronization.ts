@@ -80,6 +80,8 @@ export function cleanReferences(
     return _.intersection(_.keys(references), rules);
 }
 
+//TODO: when all request to metadata using metadataRepository.getMetadataByIds
+// this function should be removed
 export async function getMetadata(
     api: D2Api,
     elements: string[],
@@ -421,6 +423,8 @@ export const getDefaultIds = memoize(
     { serializer: (api: D2Api) => api.baseUrl }
 );
 
+// TODO: when all request to metadata using metadataRepository.getModelByType
+// this function should be removed
 export const getCategoryOptionCombos = memoize(
     async (api: D2Api) => {
         const { objects } = await api.models.categoryOptionCombos
@@ -507,6 +511,8 @@ export const getAggregatedOptions = async (
     return result;
 };
 
+// TODO: when all request to this use metadataRepository.getModelByType
+// this function should be removed
 export const getRootOrgUnit = memoize(
     (api: D2Api) => {
         return api.models.organisationUnits.get({
