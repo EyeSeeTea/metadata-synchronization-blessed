@@ -162,64 +162,6 @@ export const optionFields = {
     },
 };
 
-export function isD2Model(d2: D2, modelName: string): boolean {
-    return !!d2.models[modelName];
-}
-
-/**
- * Return expected model in plural to include as key in post metadata body
- */
-export function cleanToModelName(d2: D2, id: string, caller: string): string | null {
-    if (isD2Model(d2, id)) {
-        return d2.models[id].plural;
-    } else if (id === "attributeValues") {
-        return "attributes";
-    } else if (id === "commentOptionSet") {
-        return "optionSets";
-    } else if (id === "groupSets" && caller.endsWith("Group")) {
-        return caller + "Sets";
-    } else if (id === "workflow") {
-        return "dataApprovalWorkflow";
-    } else if (id === "notificationTemplates") {
-        return "programNotificationTemplates";
-    } else {
-        return null;
-    }
-}
-
-/**
- * Return expected posible children keys for metadata models
- */
-export function cleanToAPIChildReferenceName(d2: D2, key: string, parent: string): string[] {
-
-    if (key === "attributes") {
-        return ["attributeValues"];
-    } else if (key === "optionSets") {
-        return _.compact([
-            d2.models[key].name,
-            d2.models[key].plural,
-            parent === "dataElement" ? "commentOptionSet" : null,
-        ]);
-    } else if (key === parent + "Sets" && parent.endsWith("Group")) {
-        return ["groupSets"];
-    } else if (key === "dataApprovalWorkflow") {
-        return ["workflow"];
-    } else if (key === "programNotificationTemplates") {
-        return ["notificationTemplates"];
-    } else if (isD2Model(d2, key)) {
-        // Children reference name may be plural or singular
-        return [d2.models[key].name, d2.models[key].plural];
-    } else {
-        return [key];
-    }
-}
-
-export function getClassName(className: string): string | undefined {
-    return _(className)
-        .split(".")
-        .last();
-}
-
 export async function getCurrentUserOrganisationUnits(d2: D2): Promise<string[]> {
     const response: any = await d2.currentUser.getOrganisationUnits();
     const organisationUnitsIds: string[] = [...response.valuesContainerMap.keys()];

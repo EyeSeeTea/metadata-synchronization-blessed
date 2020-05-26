@@ -1,7 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { AxiosError } from "axios";
 import { D2Api, D2CategoryOptionCombo } from "../types/d2-api";
-import { isValidUid } from "d2/uid";
 import FileSaver from "file-saver";
 import _ from "lodash";
 import moment, { Moment } from "moment";
@@ -19,70 +18,12 @@ import {
     CategoryOptionAggregationBuilder,
     DataSyncAggregation,
     DataSynchronizationParams,
-    NestedRules,
     SynchronizationResult,
     SyncRuleType,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
 import { promiseMap } from "./common";
-import { cleanToAPIChildReferenceName, cleanToModelName, getClassName } from "./d2";
 import { AggregatedPackage, ProgramEvent, DataValue } from "../domain/synchronization/DataEntities";
-
-const blacklistedProperties = ["access"];
-const userProperties = ["user", "userAccesses", "userGroupAccesses"];
-
-export function buildNestedRules(rules: string[][] = []): NestedRules {
-    return _(rules)
-        .filter(path => path.length > 1)
-        .groupBy(_.first)
-        .mapValues(path => path.map(_.tail))
-        .value();
-}
-
-/**
- * Clean object to sync of dirty references
- * (blacklistedProperties, userProperties if required and references in exclude rules)
- */
-export function cleanObject(
-    d2: D2,
-    modelName: string,
-    element: any,
-    excludeRules: string[][] = [],
-    includeSharingSettings: boolean
-): any {
-    const leafRules: string[] = _(excludeRules)
-        .filter(path => path.length === 1)
-        .map(_.first)
-        .compact()
-        .value();
-
-    const cleanLeafRules = leafRules.reduce(
-        (accumulator: string[], rule: string) => [
-            ...accumulator,
-            ...cleanToAPIChildReferenceName(d2, rule, modelName),
-        ],
-        []
-    );
-
-    const propsToRemove = includeSharingSettings ? [] : userProperties;
-
-    return _.pick(
-        element,
-        _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove)
-    );
-}
-
-export function cleanReferences(
-    references: Record<string, string[]>,
-    includeRules: string[][] = []
-): string[] {
-    const rules = _(includeRules)
-        .map(_.first)
-        .compact()
-        .value();
-
-    return _.intersection(_.keys(references), rules);
-}
 
 //TODO: when all request to metadata using metadataRepository.getMetadataByIds
 // this function should be removed
@@ -131,73 +72,6 @@ function buildResponseError(error: AxiosError): MetadataImportResponse {
     }
 }
 
-export function getAllReferences(
-    d2: D2,
-    obj: any,
-    type: string,
-    parents: string[] = []
-): Record<string, string[]> {
-    let result: Record<string, string[]> = {};
-    _.forEach(obj, (value, key) => {
-        if (_.isObject(value) || _.isArray(value)) {
-            const recursive = getAllReferences(d2, value, type, [...parents, key]);
-            result = _.deepMerge(result, recursive);
-        } else if (isValidUid(value)) {
-            const metadataType = _(parents)
-                .map(k => cleanToModelName(d2, k, type))
-                .compact()
-                .first();
-            if (metadataType) {
-                result[metadataType] = result[metadataType] || [];
-                result[metadataType].push(value);
-            }
-        }
-    });
-    return result;
-}
-
-export function cleanMetadataImportResponse(
-    importResult: MetadataImportResponse,
-    instance: Instance,
-    type: SyncRuleType
-): SynchronizationResult {
-    const { status: importStatus, stats, message, typeReports = [] } = importResult;
-    const status = importStatus === "OK" ? "SUCCESS" : importStatus;
-    const typeStats: any[] = [];
-    const messages: any[] = [];
-
-    typeReports.forEach(report => {
-        const { klass, stats, objectReports = [] } = report;
-
-        typeStats.push({
-            ...stats,
-            type: getClassName(klass),
-        });
-
-        objectReports.forEach((detail: any) => {
-            const { uid, errorReports = [] } = detail;
-
-            messages.push(
-                ..._.take(errorReports, 1).map((error: any) => ({
-                    uid,
-                    type: getClassName(error.mainKlass),
-                    property: error.errorProperty,
-                    message: error.message,
-                }))
-            );
-        });
-    });
-
-    return {
-        status,
-        stats,
-        message,
-        instance: instance.toObject(),
-        report: { typeStats, messages },
-        date: new Date(),
-        type,
-    };
-}
 
 export function cleanDataImportResponse(
     importResult: DataImportResponse,

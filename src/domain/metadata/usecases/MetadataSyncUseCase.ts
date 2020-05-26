@@ -12,17 +12,11 @@ import { Ref } from "../../common/Entities";
 // and It should no have any dependency outside from the domain
 import { D2Api } from "../../../types/d2-api";
 import { D2 } from "../../../types/d2";
-import {
-    buildNestedRules,
-    cleanMetadataImportResponse,
-    cleanObject,
-    cleanReferences,
-    getAllReferences,
-} from "../../../utils/synchronization";
 import Instance from "../../../models/instance";
 import { d2ModelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
+import { buildNestedRules, cleanObject, getAllReferences, cleanReferences, cleanMetadataImportResponse } from "../utils";
 
 export class MetadataSyncUseCase extends GenericSync {
     public readonly type = "metadata";
@@ -130,6 +124,10 @@ export class MetadataSyncUseCase extends GenericSync {
     });
 
     public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
+        //TODO: remove instance from abstract method in base base class 
+        // when aggregated and events does not use 
+        console.log(instance.url);
+
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
@@ -137,7 +135,7 @@ export class MetadataSyncUseCase extends GenericSync {
         console.debug("Metadata package", payloadPackage);
 
         const response = await this.metadataRepository.save(payloadPackage, syncParams, instanceEntity);
-        const syncResult = cleanMetadataImportResponse(response, instance, this.type);
+        const syncResult = cleanMetadataImportResponse(response, instanceEntity, this.type);
         return [syncResult];
     }
 

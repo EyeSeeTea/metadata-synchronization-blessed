@@ -1,8 +1,5 @@
 import { MetadataRepository } from "../../../domain/metadata/MetadataRepositoriy";
-import {
-    MetadataImportResponse,
-    MetadataImportParams
-} from "../../../domain/metadata/Types";
+
 
 import { AxiosError } from "axios";
 import Instance from "../../../domain/instance/Instance";
@@ -12,6 +9,8 @@ import { MetadataPackage, MetadataFieldsPackage, MetadataPackageSchema, Metadata
 import _ from "lodash";
 import { metadataTransformationsToDhis2, metadataTransformationsFromDhis2 } from "../mappers/PackageTransformations";
 import { mapPackageToD2, mapD2PackageToDomain } from "../mappers/PackageMapper";
+import { MetadataImportParams } from "../../../domain/metadata/types";
+import { MetadataImportResponse } from "../../../domain/metadata/types";
 
 class MetadataD2ApiRepository implements MetadataRepository {
     private currentD2Api: D2Api;
@@ -29,8 +28,8 @@ class MetadataD2ApiRepository implements MetadataRepository {
      * Return raw specific fields of metadata dhis2 models according to ids filter
      * @param ids metadata ids to retrieve
      */
-    async getMetadataFieldsByIds<T>(ids: string[], fields: string): Promise<MetadataFieldsPackage<T>> {
-        return this.getMetadata<T>(ids, fields);
+    async getMetadataFieldsByIds<T>(ids: string[], fields: string, targetInstance?: Instance): Promise<MetadataFieldsPackage<T>> {
+        return this.getMetadata<T>(ids, fields, targetInstance);
     }
 
     /**
@@ -138,13 +137,14 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
     private async getMetadata<T>(
         elements: string[],
-        fields = ":all"
+        fields = ":all",
+        targetInstance?: Instance
     ): Promise<Record<string, T[]>> {
         const promises = [];
         for (let i = 0; i < elements.length; i += 100) {
             const requestElements = elements.slice(i, i + 100).toString();
             promises.push(
-                this.currentD2Api
+                this.getApi(targetInstance)
                     .get("/metadata", {
                         fields,
                         filter: "id:in:[" + requestElements + "]",

@@ -1,16 +1,15 @@
 import memoize from "nano-memoize";
 import Instance from "../../../models/instance";
 import InstanceEntity from "../../instance/Instance";
-import {
-    cleanMetadataImportResponse,
-    getMetadata
-} from "../../../utils/synchronization";
+
 import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic";
 import { MetadataRepository } from "../MetadataRepositoriy";
 import { D2 } from "../../../types/d2";
 import { D2Api } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
+import { cleanMetadataImportResponse } from "../utils";
+import { getMetadata } from "../../../utils/synchronization";
 
 export class DeletedMetadataSyncUseCase extends GenericSync {
     public readonly type = "deleted";
@@ -30,8 +29,13 @@ export class DeletedMetadataSyncUseCase extends GenericSync {
     });
 
     public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
+        //TODO: remove instance from abstract method in base base class 
+        // when aggregated and events does not use 
+        console.log(instance.url);
+
         const { metadataIds, syncParams = {} } = this.builder;
 
+        debugger;
         const payloadPackage = await getMetadata(instance.getApi(), metadataIds, "id");
 
         console.debug("Metadata package", payloadPackage);
@@ -41,7 +45,7 @@ export class DeletedMetadataSyncUseCase extends GenericSync {
             importStrategy: "DELETE",
         }, instanceEntity);
 
-        const syncResult = cleanMetadataImportResponse(response, instance, this.type);
+        const syncResult = cleanMetadataImportResponse(response, instanceEntity, this.type);
         return [syncResult];
     }
 
