@@ -25,7 +25,7 @@ import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { AggregatedSync } from "../../logic/sync/aggregated";
 import { EventsSync } from "../../logic/sync/events";
 import { SyncronizationClass } from "../../logic/sync/generic";
-import { MetadataSyncUseCase } from "../../data/metadata/usecases/MetadataSyncUseCase";
+import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
 import Instance from "../../models/instance";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";

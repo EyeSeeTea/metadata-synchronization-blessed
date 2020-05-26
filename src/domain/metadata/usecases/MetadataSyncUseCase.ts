@@ -1,12 +1,12 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
 
-import InstanceEntity from "../../../domain/instance/Instance";
+import InstanceEntity from "../../instance/Instance";
 import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic";
-import MetadataD2ApiRepository from "../repositories/MetadataD2ApiRepository";
-import { MetadataRepository } from "../../../domain/metadata/MetadataRepositoriy";
-import { MetadataPackage, MetadataPackageSchema } from "../../../domain/metadata/entities";
-import { Ref } from "../../../domain/common/Entities";
+import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
+import { MetadataRepository } from "../MetadataRepositoriy";
+import { MetadataPackage, MetadataPackageSchema } from "../entities";
+import { Ref } from "../../common/Entities";
 
 //TODO: Uncouple this depdendencies. This class should be moved to domain
 // and It should no have any dependency outside from the domain

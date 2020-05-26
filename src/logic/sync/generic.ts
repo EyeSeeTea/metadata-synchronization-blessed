@@ -21,9 +21,9 @@ import {
 import { promiseMap } from "../../utils/common";
 import { getMetadata } from "../../utils/synchronization";
 import { AggregatedSync } from "./aggregated";
-import { DeletedMetadataSyncUseCase } from "../../data/metadata/usecases/DeletedMetadataSyncUseCase";
+import { DeletedMetadataSyncUseCase } from "../../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { EventsSync } from "./events";
-import { MetadataSyncUseCase } from "../../data/metadata/usecases/MetadataSyncUseCase";
+import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
 import { AggregatedPackage, EventsPackage } from "../../domain/synchronization/DataEntities";
 import InstanceRepository from "../../domain/instance/InstanceRepository";
 import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";

@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { AggregatedSync } from "../../../logic/sync/aggregated";
 import { EventsSync } from "../../../logic/sync/events";
-import { MetadataSyncUseCase } from "../../../data/metadata/usecases/MetadataSyncUseCase";
+import { MetadataSyncUseCase } from "../../../domain/metadata/usecases/MetadataSyncUseCase";
 import {
     availablePeriods,
     cleanOrgUnitPaths,

@@ -10,10 +10,10 @@ import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { AggregatedSync } from "../../logic/sync/aggregated";
-import { DeletedMetadataSyncUseCase } from "../../data/metadata/usecases/DeletedMetadataSyncUseCase";
+import { DeletedMetadataSyncUseCase } from "../../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { EventsSync } from "../../logic/sync/events";
 import { SyncronizationClass } from "../../logic/sync/generic";
-import { MetadataSyncUseCase } from "../../data/metadata/usecases/MetadataSyncUseCase";
+import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
 import { D2Model } from "../../models/dhis/default";
 import { metadataModels } from "../../models/dhis/factory";
 import {
