@@ -34,12 +34,12 @@ class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     /**
-     * Return metadata entitites according to ids filter. Realize mapping from d2 to domain
+     * Return metadata entities by type. Realize mapping from d2 to domain
      * TODO: this method is not used for the moment, only is created as template 
      * - create object options in domain with (order, filters, paging ....)
      * - Create domain pager?
      */
-    async getModelByType(type: keyof MetadataPackageSchema): Promise<MetadataEntity[]> {
+    async getMetadataByType(type: keyof MetadataPackageSchema): Promise<MetadataEntity[]> {
         const apiModel = this.getApiModel(type);
 
         const responseData = await apiModel.get({
@@ -51,11 +51,11 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
         const metadataPackage = mapD2PackageToDomain(apiVersion, responseData, metadataTransformationsFromDhis2);
 
-        return metadataPackage["objects"];
+        return metadataPackage[type];
     }
 
     /**
-     * Return metadata entitites according to ids filter. Realize mapping from d2 to domain
+     * Return metadata entities according to ids filter. Realize mapping from d2 to domain
      * @param ids metadata ids to retrieve
      */
     async getMetadataByIds(ids: string[]): Promise<MetadataPackage> {
@@ -65,7 +65,6 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
         const metadataPackage = mapD2PackageToDomain(apiVersion, d2Metadata, metadataTransformationsFromDhis2);
 
-        debugger;
         return metadataPackage;
     }
 

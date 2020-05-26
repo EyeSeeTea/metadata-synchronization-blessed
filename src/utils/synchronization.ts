@@ -39,6 +39,10 @@ export function buildNestedRules(rules: string[][] = []): NestedRules {
         .value();
 }
 
+/**
+ * Clean object to sync of dirty references
+ * (blacklistedProperties, userProperties if required and references in exclude rules)
+ */
 export function cleanObject(
     d2: D2,
     modelName: string,

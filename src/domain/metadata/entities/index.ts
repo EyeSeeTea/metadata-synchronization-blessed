@@ -1119,7 +1119,7 @@ export type DataElementGroup = {
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
-    groupSets: DataElementGroupSet[];
+    groupSets: Ref[];
     id: Id;
     lastUpdated: string;
     lastUpdatedBy: Ref;
@@ -1507,7 +1507,7 @@ export type Section = {
 export type DataApprovalLevel = {
     access: Access;
     attributeValues: AttributeValue[];
-    categoryOptionGroupSet: CategoryOptionGroupSet;
+    categoryOptionGroupSet: Ref;
     code: Id;
     created: string;
     displayName: string;
@@ -2574,7 +2574,7 @@ export type MapView = {
     method: number;
     name: string;
     opacity: number;
-    organisationUnitGroupSet: OrganisationUnitGroupSet;
+    organisationUnitGroupSet: Ref;
     organisationUnitGroupSetDimensions: OrganisationUnitGroupSetDimension[];
     organisationUnitLevels: number[];
     organisationUnitSelectionMode:
@@ -3530,7 +3530,10 @@ export type MetadataEntity =
     | Dashboard
     | MessageConversation;
 
+export type MetadataKey = "userRoles" | "attributes" | ""
 
+//TODO: Add as value schemas by type
+// currently this schemas are models with include/exclude rules, collectionName...
 export type MetadataPackageSchema = {
     userRoles: UserRole[];
     attributes: Attribute[];
@@ -3595,8 +3598,4 @@ export type MetadataPackageSchema = {
 }
 
 export type MetadataFieldsPackage<T> = Record<keyof MetadataPackageSchema, T[]>;
-
 export type MetadataPackage = Record<string, MetadataEntity[]>;
-
-//TODO Try this
-//export type MetadataPackage = Record<keyof MetadataPackageSchema, MetadataEntity[]>;
