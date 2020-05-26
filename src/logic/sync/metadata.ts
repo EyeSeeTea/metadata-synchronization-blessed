@@ -37,6 +37,7 @@ export class MetadataSync extends GenericSync {
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
             const { type, ids, excludeRules, includeRules, includeSharingSettings } = builder;
             const model = d2ModelFactory(this.api, type).getD2Model(this.d2);
+            const collectionName = model.plural as keyof MetadataPackageSchema;
             const result: MetadataPackage = {};
 
             // Each level of recursion traverse the exclude/include rules with nested values
@@ -45,7 +46,7 @@ export class MetadataSync extends GenericSync {
 
             // Get all the required metadata
             const syncMetadata = await this.metadataRepository.getMetadataByIds(ids);
-            const elements = syncMetadata[model.plural as keyof MetadataPackageSchema] || [];
+            const elements = syncMetadata[collectionName] || [];
 
             for (const element of elements) {
                 // Store metadata object in result
@@ -57,8 +58,8 @@ export class MetadataSync extends GenericSync {
                     includeSharingSettings
                 );
 
-                result[model.plural] = result[model.plural] || [];
-                result[model.plural].push(object);
+                result[collectionName] = result[collectionName] || [];
+                result[collectionName]?.push(object);
 
                 // Get all the referenced metadata
                 const references = getAllReferences(this.d2, object, model.name);
@@ -105,7 +106,7 @@ export class MetadataSync extends GenericSync {
 
             return this.exportMetadata({
                 type: metadatatype,
-                ids: metadata[metadatatype].map((e) => e.id),
+                ids: metadata[metadatatype]?.map((e) => e.id) || [],
                 excludeRules: useDefaultIncludeExclude
                     ? myClass.getExcludeRules()
                     : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),

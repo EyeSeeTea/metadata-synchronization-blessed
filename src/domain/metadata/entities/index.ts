@@ -3597,5 +3597,5 @@ export type MetadataPackageSchema = {
     messageConversations: MessageConversation[]
 }
 
-export type MetadataFieldsPackage<T> = Record<keyof MetadataPackageSchema, T[]>;
-export type MetadataPackage = Record<string, MetadataEntity[]>;
+export type MetadataFieldsPackage<T> = Partial<Record<keyof MetadataPackageSchema, T[]>>;
+export type MetadataPackage = Partial<Record<keyof MetadataPackageSchema, MetadataEntity[]>>;

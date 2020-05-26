@@ -275,8 +275,10 @@ function renamePropInMetadataPackage(
         return { [newProp]: old, ...others };
     }
 
-    if (payload[type]) {
-        const renamedTypeItems = payload[type].map((typeItem: any) =>
+    const itemsByType = payload[type];
+
+    if (itemsByType) {
+        const renamedTypeItems = itemsByType.map((typeItem: any) =>
             renameProp(oldPropName, newPropName, typeItem))
 
         const mappedPayLoad = {

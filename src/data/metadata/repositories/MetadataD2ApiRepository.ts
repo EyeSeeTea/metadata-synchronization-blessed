@@ -51,7 +51,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
         const metadataPackage = mapD2PackageToDomain(apiVersion, responseData, metadataTransformationsFromDhis2);
 
-        return metadataPackage[type];
+        return metadataPackage[type] || [];
     }
 
     /**
