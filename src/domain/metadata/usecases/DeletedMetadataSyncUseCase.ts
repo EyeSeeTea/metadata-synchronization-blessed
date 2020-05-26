@@ -9,7 +9,7 @@ import { D2Api } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 import { cleanMetadataImportResponse } from "../utils";
-import { getMetadata } from "../../../utils/synchronization";
+import { Ref } from "../../common/Entities";
 
 export class DeletedMetadataSyncUseCase extends GenericSync {
     public readonly type = "deleted";
@@ -36,14 +36,11 @@ export class DeletedMetadataSyncUseCase extends GenericSync {
         const { metadataIds, syncParams = {} } = this.builder;
 
         debugger;
-        const payloadPackage = await getMetadata(instance.getApi(), metadataIds, "id");
+        const payloadPackage = await this.metadataRepository.getMetadataFieldsByIds<Ref>(metadataIds, "id", instanceEntity);
 
         console.debug("Metadata package", payloadPackage);
 
-        const response = await this.metadataRepository.save(payloadPackage, {
-            ...syncParams,
-            importStrategy: "DELETE",
-        }, instanceEntity);
+        const response = await this.metadataRepository.remove(payloadPackage, syncParams, instanceEntity);
 
         const syncResult = cleanMetadataImportResponse(response, instanceEntity, this.type);
         return [syncResult];

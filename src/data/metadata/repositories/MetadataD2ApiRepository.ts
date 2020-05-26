@@ -4,7 +4,7 @@ import { MetadataRepository } from "../../../domain/metadata/MetadataRepositoriy
 import { AxiosError } from "axios";
 import Instance from "../../../domain/instance/Instance";
 
-import { D2Api, D2Model, D2ModelSchemas, D2ApiDefinition, Model } from "../../../types/d2-api"
+import { D2Api, D2Model, D2ModelSchemas, D2ApiDefinition, Model, Id } from "../../../types/d2-api"
 import { MetadataPackage, MetadataFieldsPackage, MetadataPackageSchema, MetadataEntity } from "../../../domain/metadata/entities";
 import _ from "lodash";
 import { metadataTransformationsToDhis2, metadataTransformationsFromDhis2 } from "../mappers/PackageTransformations";
@@ -67,7 +67,34 @@ class MetadataD2ApiRepository implements MetadataRepository {
         return metadataPackage;
     }
 
+
     async save(metadata: MetadataPackage,
+        additionalParams?: MetadataImportParams,
+        targetInstance?: Instance): Promise<MetadataImportResponse> {
+
+        const apiVersion = await this.getVersion(targetInstance);
+        const versionedPayloadPackage = mapPackageToD2(apiVersion, metadata, metadataTransformationsToDhis2);
+
+        console.debug("Versioned metadata package", versionedPayloadPackage);
+
+        const response = await this.postMetadata(versionedPayloadPackage, additionalParams, targetInstance)
+
+        return response;
+    }
+
+    async remove(metadata: MetadataFieldsPackage<{ id: Id }>,
+        additionalParams?: MetadataImportParams,
+        targetInstance?: Instance): Promise<MetadataImportResponse> {
+
+        const response = await this.postMetadata(metadata, {
+            ...additionalParams,
+            importStrategy: "DELETE",
+        }, targetInstance);
+
+        return response;
+    }
+
+    private async postMetadata(payload: Partial<Record<string, unknown[]>>,
         additionalParams?: MetadataImportParams,
         targetInstance?: Instance): Promise<MetadataImportResponse> {
 
@@ -82,13 +109,8 @@ class MetadataD2ApiRepository implements MetadataRepository {
                 ...additionalParams,
             };
 
-            const apiVersion = await this.getVersion(targetInstance);
-            const versionedPayloadPackage = mapPackageToD2(apiVersion, metadata, metadataTransformationsToDhis2);
-
-            console.debug("Versioned metadata package", versionedPayloadPackage);
-
             const response = await this.getApi(targetInstance)
-                .post("/metadata", params, versionedPayloadPackage).getData();
+                .post("/metadata", params, payload).getData();
 
             return response as MetadataImportResponse;
         } catch (error) {

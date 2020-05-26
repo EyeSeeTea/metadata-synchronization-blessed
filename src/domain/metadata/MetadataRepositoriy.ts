@@ -13,4 +13,8 @@ export interface MetadataRepository {
     save(metadata: MetadataPackage,
         additionalParams?: MetadataImportParams,
         targetInstance?: Instance): Promise<MetadataImportResponse>;
+
+    remove(metadata: MetadataFieldsPackage<{ id: Id }>,
+        additionalParams?: MetadataImportParams,
+        targetInstance?: Instance): Promise<MetadataImportResponse>;
 }
