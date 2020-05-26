@@ -1,18 +1,18 @@
 import memoize from "nano-memoize";
-import Instance from "../../models/instance";
-import InstanceEntity from "../../domain/instance/Instance";
+import Instance from "../../../models/instance";
+import InstanceEntity from "../../../domain/instance/Instance";
 import {
     cleanMetadataImportResponse,
     getMetadata
-} from "../../utils/synchronization";
-import { GenericSync, SyncronizationPayload } from "./generic";
-import { MetadataRepository } from "../../domain/metadata/MetadataRepositoriy";
-import { D2 } from "../../types/d2";
-import { D2Api } from "../../types/d2-api";
-import { SynchronizationBuilder } from "../../types/synchronization";
-import MetadataD2ApiRepository from "../../data/metadata/repositories/MetadataD2ApiRepository";
+} from "../../../utils/synchronization";
+import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic";
+import { MetadataRepository } from "../../../domain/metadata/MetadataRepositoriy";
+import { D2 } from "../../../types/d2";
+import { D2Api } from "../../../types/d2-api";
+import { SynchronizationBuilder } from "../../../types/synchronization";
+import MetadataD2ApiRepository from "../repositories/MetadataD2ApiRepository";
 
-export class DeletedSync extends GenericSync {
+export class DeletedMetadataSyncUseCase extends GenericSync {
     public readonly type = "deleted";
 
     private metadataRepository: MetadataRepository

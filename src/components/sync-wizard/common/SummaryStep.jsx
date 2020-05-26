@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { AggregatedSync } from "../../../logic/sync/aggregated";
 import { EventsSync } from "../../../logic/sync/events";
-import { MetadataSync } from "../../../logic/sync/metadata";
+import { MetadataSyncUseCase } from "../../../data/metadata/usecases/MetadataSyncUseCase";
 import {
     availablePeriods,
     cleanOrgUnitPaths,
@@ -46,7 +46,7 @@ const useStyles = makeStyles({
 
 const config = {
     metadata: {
-        SyncClass: MetadataSync,
+        SyncClass: MetadataSyncUseCase,
     },
     aggregated: {
         SyncClass: AggregatedSync,

@@ -1,26 +1,30 @@
-import { D2ModelSchemas, D2Api } from "../../types/d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { d2ModelFactory } from "../../models/dhis/factory";
-import Instance from "../../models/instance";
-import InstanceEntity from "../../domain/instance/Instance";
-import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../types/synchronization";
-import { promiseMap } from "../../utils/common";
+
+import InstanceEntity from "../../../domain/instance/Instance";
+import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic";
+import MetadataD2ApiRepository from "../repositories/MetadataD2ApiRepository";
+import { MetadataRepository } from "../../../domain/metadata/MetadataRepositoriy";
+import { MetadataPackage, MetadataPackageSchema } from "../../../domain/metadata/entities";
+import { Ref } from "../../../domain/common/Entities";
+
+//TODO: Uncouple this depdendencies. This class should be moved to domain
+// and It should no have any dependency outside from the domain
+import { D2Api } from "../../../types/d2-api";
+import { D2 } from "../../../types/d2";
 import {
     buildNestedRules,
     cleanMetadataImportResponse,
     cleanObject,
     cleanReferences,
     getAllReferences,
-} from "../../utils/synchronization";
-import { GenericSync, SyncronizationPayload } from "./generic";
-import MetadataD2ApiRepository from "../../data/metadata/repositories/MetadataD2ApiRepository";
-import { MetadataRepository } from "../../domain/metadata/MetadataRepositoriy";
-import { D2 } from "../../types/d2";
-import { MetadataPackage, MetadataPackageSchema } from "../../domain/metadata/entities";
-import { Ref } from "../../domain/common/Entities";
+} from "../../../utils/synchronization";
+import Instance from "../../../models/instance";
+import { d2ModelFactory } from "../../../models/dhis/factory";
+import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../../types/synchronization";
+import { promiseMap } from "../../../utils/common";
 
-export class MetadataSync extends GenericSync {
+export class MetadataSyncUseCase extends GenericSync {
     public readonly type = "metadata";
     private metadataRepository: MetadataRepository
 
@@ -36,6 +40,8 @@ export class MetadataSync extends GenericSync {
         const visitedIds: Set<string> = new Set();
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
             const { type, ids, excludeRules, includeRules, includeSharingSettings } = builder;
+
+            //TODO: when metadata entities schema exists on domain, move this factory to domain
             const model = d2ModelFactory(this.api, type).getD2Model(this.d2);
             const collectionName = model.plural as keyof MetadataPackageSchema;
             const result: MetadataPackage = {};
@@ -66,7 +72,7 @@ export class MetadataSync extends GenericSync {
                 const includedReferences = cleanReferences(references, includeRules);
                 const promises = includedReferences
                     .map(type => ({
-                        type: type as keyof D2ModelSchemas,
+                        type: type as keyof MetadataPackageSchema,
                         ids: references[type].filter(id => !visitedIds.has(id)),
                         excludeRules: nestedExcludeRules[type],
                         includeRules: nestedIncludeRules[type],
