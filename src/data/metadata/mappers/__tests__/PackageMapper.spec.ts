@@ -1,7 +1,7 @@
 import { PackageTransformationStrategy, mapPackageToD2, mapD2PackageToDomain } from "../PackageMapper";
 import _ from "lodash";
 import { D2MetadataPackage } from "../../../synchronization/types";
-import { MetadataPackage, MetadataPackageSchema } from "../../../../domain/metadata/entities";
+import { MetadataPackage, MetadataEntities } from "../../../../domain/metadata/entities";
 
 describe("PackageMapper", () => {
     describe("mapPackageToD2", () => {
@@ -267,7 +267,7 @@ function givenAMetadataPackage(nameField: string = name): MetadataPackage {
 
 function renamePropInMetadataPackage(
     payload: MetadataPackage,
-    type: keyof MetadataPackageSchema,
+    type: keyof MetadataEntities,
     oldPropName: string,
     newPropName: string): D2MetadataPackage {
 

@@ -5,7 +5,7 @@ import { AxiosError } from "axios";
 import Instance from "../../../domain/instance/Instance";
 
 import { D2Api, D2Model, D2ModelSchemas, D2ApiDefinition, Model, Id } from "../../../types/d2-api"
-import { MetadataPackage, MetadataFieldsPackage, MetadataPackageSchema, MetadataEntity } from "../../../domain/metadata/entities";
+import { MetadataPackage, MetadataFieldsPackage, MetadataEntities, MetadataEntity } from "../../../domain/metadata/entities";
 import _ from "lodash";
 import { metadataTransformationsToDhis2, metadataTransformationsFromDhis2 } from "../mappers/PackageTransformations";
 import { mapPackageToD2, mapD2PackageToDomain } from "../mappers/PackageMapper";
@@ -38,7 +38,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
      * - create object options in domain with (order, filters, paging ....)
      * - Create domain pager?
      */
-    async getMetadataByType(type: keyof MetadataPackageSchema): Promise<MetadataEntity[]> {
+    async getMetadataByType(type: keyof MetadataEntities): Promise<MetadataEntity[]> {
         const apiModel = this.getApiModel(type);
 
         const responseData = await apiModel.get({

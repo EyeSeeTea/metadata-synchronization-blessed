@@ -14,6 +14,9 @@ export interface SearchFilter {
     operator: string;
 }
 
+
+// TODO: This concepts are our entity definition
+// and should be in domain
 export abstract class D2Model {
     // Metadata Type should be defined on subclasses
     protected static metadataType: string;

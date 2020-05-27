@@ -11,6 +11,9 @@ import {
 } from "../../utils/d2";
 import { D2Model, SearchFilter } from "./default";
 
+// TODO: This concepts are our entity definition
+// and should be in domain
+
 export class CategoryModel extends D2Model {
     protected static metadataType = "category";
     protected static collectionName = "categories" as const;

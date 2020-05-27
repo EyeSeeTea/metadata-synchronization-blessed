@@ -5,7 +5,7 @@ import InstanceEntity from "../../instance/Instance";
 import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic";
 import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 import { MetadataRepository } from "../MetadataRepositoriy";
-import { MetadataPackage, MetadataPackageSchema } from "../entities";
+import { MetadataPackage, MetadataEntities } from "../entities";
 import { Ref } from "../../common/Entities";
 
 //TODO: Uncouple this depdendencies. This class should be moved to domain
@@ -37,7 +37,7 @@ export class MetadataSyncUseCase extends GenericSync {
 
             //TODO: when metadata entities schema exists on domain, move this factory to domain
             const model = d2ModelFactory(this.api, type).getD2Model(this.d2);
-            const collectionName = model.plural as keyof MetadataPackageSchema;
+            const collectionName = model.plural as keyof MetadataEntities;
             const result: MetadataPackage = {};
 
             // Each level of recursion traverse the exclude/include rules with nested values
@@ -66,7 +66,7 @@ export class MetadataSyncUseCase extends GenericSync {
                 const includedReferences = cleanReferences(references, includeRules);
                 const promises = includedReferences
                     .map(type => ({
-                        type: type as keyof MetadataPackageSchema,
+                        type: type as keyof MetadataEntities,
                         ids: references[type].filter(id => !visitedIds.has(id)),
                         excludeRules: nestedExcludeRules[type],
                         includeRules: nestedIncludeRules[type],
@@ -102,7 +102,7 @@ export class MetadataSyncUseCase extends GenericSync {
             const myClass = d2ModelFactory(this.api, type);
             const metadataType = myClass.getMetadataType();
 
-            const metadatatype = type as keyof MetadataPackageSchema;
+            const metadatatype = type as keyof MetadataEntities;
 
             return this.exportMetadata({
                 type: metadatatype,

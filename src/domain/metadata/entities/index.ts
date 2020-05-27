@@ -3532,9 +3532,9 @@ export type MetadataEntity =
 
 export type MetadataKey = "userRoles" | "attributes" | ""
 
-//TODO: Add as value schemas by type
-// currently this schemas are models with include/exclude rules, collectionName...
-export type MetadataPackageSchema = {
+//TODO: Add as value entoty definitions
+// currently this concept are models with include/exclude rules, collectionName...
+export type MetadataEntities = {
     userRoles: UserRole[];
     attributes: Attribute[];
     users: Ref[];
@@ -3597,5 +3597,5 @@ export type MetadataPackageSchema = {
     messageConversations: MessageConversation[]
 }
 
-export type MetadataFieldsPackage<T> = Partial<Record<keyof MetadataPackageSchema, T[]>>;
-export type MetadataPackage = Partial<Record<keyof MetadataPackageSchema, MetadataEntity[]>>;
+export type MetadataFieldsPackage<T> = Partial<Record<keyof MetadataEntities, T[]>>;
+export type MetadataPackage = Partial<Record<keyof MetadataEntities, MetadataEntity[]>>;
