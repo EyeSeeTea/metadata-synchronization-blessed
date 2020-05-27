@@ -7,8 +7,15 @@ import MetadataD2ApiRepository from "../../../data/metadata/repositories/Metadat
 import { MetadataRepository } from "../MetadataRepositoriy";
 import { MetadataPackage, MetadataEntities } from "../entities";
 import { Ref } from "../../common/entities";
+import {
+    buildNestedRules,
+    cleanObject,
+    getAllReferences,
+    cleanReferences,
+    cleanMetadataImportResponse
+} from "../utils";
 
-//TODO: Uncouple this depdendencies. This class should be moved to domain
+//TODO: Uncouple this dependencies. This class should be moved to domain
 // and It should no have any dependency outside from the domain
 import { D2Api } from "../../../types/d2-api";
 import { D2 } from "../../../types/d2";
@@ -16,7 +23,7 @@ import Instance from "../../../models/instance";
 import { d2ModelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
-import { buildNestedRules, cleanObject, getAllReferences, cleanReferences, cleanMetadataImportResponse } from "../utils";
+
 
 export class MetadataSyncUseCase extends GenericSync {
     public readonly type = "metadata";

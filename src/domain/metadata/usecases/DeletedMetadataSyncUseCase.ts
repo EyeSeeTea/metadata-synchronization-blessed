@@ -1,15 +1,17 @@
 import memoize from "nano-memoize";
-import Instance from "../../../models/instance";
 import InstanceEntity from "../../instance/Instance";
-
-import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic";
 import { MetadataRepository } from "../MetadataRepositoriy";
-import { D2 } from "../../../types/d2";
-import { D2Api } from "../../../types/d2-api";
-import { SynchronizationBuilder } from "../../../types/synchronization";
 import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 import { cleanMetadataImportResponse } from "../utils";
 import { Ref } from "../../common/entities";
+
+//TODO: Uncouple this dependencies. This class should be moved to domain
+// and It should no have any dependency outside from the domain
+import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic";
+import Instance from "../../../models/instance";
+import { D2 } from "../../../types/d2";
+import { D2Api } from "../../../types/d2-api";
+import { SynchronizationBuilder } from "../../../types/synchronization";
 
 export class DeletedMetadataSyncUseCase extends GenericSync {
     public readonly type = "deleted";

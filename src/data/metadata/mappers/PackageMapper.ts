@@ -6,7 +6,7 @@ export interface PackageTransformationStrategy<Input, Output> {
 }
 
 /**
- * Apply consecutive transformations to domain package until last transformation found for dhsi2 version
+ * Apply consecutive transformations to domain package until bigger version transformation found for dhsi2 version
  * if exists transformations for versions 30,31,33 and version argument is 31 then
  * transformations 30 and 31 will be applied
  * @param version version until apply transformations
@@ -28,6 +28,15 @@ export function mapPackageToD2<Input, Output>(d2Version: number, payload: Input,
     }
 }
 
+/**
+ * Apply consecutive transformations to dhis2 package until lower version transformation found for dhsi2 version that 
+ * transform to domain metadata package
+ * if exists transformations for versions 30,31,33 and version argument is 31 then
+ * transformations 30 and 31 will be applied
+ * @param version version until apply transformations
+ * @param payload  payload to trasnform
+ * @param transformations list of possible transformations to apply
+ */
 export function mapD2PackageFromD2<Input, Output>(d2Version: number, payload: Input,
     transformations: PackageTransformationStrategy<unknown, Output>[] = []): Output {
     const orderedTransformations = _.sortBy(transformations, "version", "desc");
