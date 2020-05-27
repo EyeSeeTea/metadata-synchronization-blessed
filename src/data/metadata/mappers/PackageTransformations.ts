@@ -13,10 +13,20 @@ import { MetadataPackage } from "../../../domain/metadata/entities";
  *   -> [transformation dhis2 v32: dhis2 v31 -> dhis2 v32]
  */
 
-export const metadataTransformationsToDhis2: PackageTransformationStrategy<MetadataPackage, D2MetadataPackage>[] = [];
+// const exampleMetadataTransformationToDhis2 =                 {
+//     apiVersion: 30,
+//     transform: (payload: D2MetadataPackage) => {
+//         //apply transformations
+
+//         return payload;
+//     }
+// }
+
+export const metadataTransformationsToDhis2: PackageTransformationStrategy<MetadataPackage, D2MetadataPackage>[] = [
+    //exampleMetadataTransformationToDhis2
+];
 export const aggregatedTransformationsToDhis2: PackageTransformationStrategy<AggregatedPackage, D2AggregatedPackage>[] = [];
 export const eventsTransformationsToDhis2: PackageTransformationStrategy<EventsPackage, D2EventsPackage>[] = [];
-
 
 
 /**
@@ -28,5 +38,15 @@ export const eventsTransformationsToDhis2: PackageTransformationStrategy<EventsP
  *   -> [transformation dhis2 v30: dhis2 v30 -> domain]
  */
 
+// const exampleMetadataTransformationFromDhis2 =                 {
+//     apiVersion: 30,
+//     transform: (payload: D2MetadataPackage) => {
+//         //apply transformations
 
-export const metadataTransformationsFromDhis2: PackageTransformationStrategy<D2MetadataPackage, MetadataPackage>[] = [];
+//         return payload;
+//     }
+// }
+
+export const metadataTransformationsFromDhis2: PackageTransformationStrategy<D2MetadataPackage, MetadataPackage>[] = [
+    //exampleMetadataTransformationFromDhis2
+];

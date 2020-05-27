@@ -23,13 +23,12 @@ export function mapPackageToD2<Input, Output>(d2Version: number, payload: Input,
     if (transformationstoApply.length > 0) {
         return applyTransformations<Input, Output>(payload, transformations);
     } else {
-        console.log(`No transformations applied to metadata package to conver to dhis2 metadata package in version ${d2Version}`)
+        console.log(`No transformations applied from domain to dhis2 metadata package in version ${d2Version}`)
         return payload as unknown as Output;
     }
 }
 
-
-export function mapD2PackageToDomain<Input, Output>(d2Version: number, payload: Input,
+export function mapD2PackageFromD2<Input, Output>(d2Version: number, payload: Input,
     transformations: PackageTransformationStrategy<unknown, Output>[] = []): Output {
     const orderedTransformations = _.sortBy(transformations, "version", "desc");
 
@@ -39,7 +38,7 @@ export function mapD2PackageToDomain<Input, Output>(d2Version: number, payload: 
     if (transformationstoApply.length > 0) {
         return applyTransformations<Input, Output>(payload, transformations);
     } else {
-        console.log(`No transformations applied to retrieved dhis2 metadata package in version ${d2Version} to convert to metada package`)
+        console.log(`No transformations applied from dhis2 to domain metadata package in version ${d2Version}`)
         return payload as unknown as Output;
     }
 }

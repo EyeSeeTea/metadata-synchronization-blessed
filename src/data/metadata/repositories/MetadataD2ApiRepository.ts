@@ -8,7 +8,7 @@ import { D2Api, D2Model, D2ModelSchemas, D2ApiDefinition, Model, Id } from "../.
 import { MetadataPackage, MetadataFieldsPackage, MetadataEntities, MetadataEntity } from "../../../domain/metadata/entities";
 import _ from "lodash";
 import { metadataTransformationsToDhis2, metadataTransformationsFromDhis2 } from "../mappers/PackageTransformations";
-import { mapPackageToD2, mapD2PackageToDomain } from "../mappers/PackageMapper";
+import { mapPackageToD2, mapD2PackageFromD2 } from "../mappers/PackageMapper";
 import { MetadataImportParams } from "../../../domain/metadata/types";
 import { MetadataImportResponse } from "../../../domain/metadata/types";
 
@@ -48,7 +48,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
         const apiVersion = await this.getVersion();
 
-        const metadataPackage = mapD2PackageToDomain(apiVersion, responseData, metadataTransformationsFromDhis2);
+        const metadataPackage = mapD2PackageFromD2(apiVersion, responseData, metadataTransformationsFromDhis2);
 
         return metadataPackage[type] || [];
     }
@@ -62,7 +62,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
         const apiVersion = await this.getVersion();
 
-        const metadataPackage = mapD2PackageToDomain(apiVersion, d2Metadata, metadataTransformationsFromDhis2);
+        const metadataPackage = mapD2PackageFromD2(apiVersion, d2Metadata, metadataTransformationsFromDhis2);
 
         return metadataPackage;
     }

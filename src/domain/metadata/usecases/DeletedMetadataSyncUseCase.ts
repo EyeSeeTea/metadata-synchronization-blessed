@@ -35,7 +35,6 @@ export class DeletedMetadataSyncUseCase extends GenericSync {
 
         const { metadataIds, syncParams = {} } = this.builder;
 
-        debugger;
         const payloadPackage = await this.metadataRepository.getMetadataFieldsByIds<Ref>(metadataIds, "id", instanceEntity);
 
         console.debug("Metadata package", payloadPackage);

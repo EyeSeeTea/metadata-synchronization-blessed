@@ -1,4 +1,4 @@
-import { PackageTransformationStrategy, mapPackageToD2, mapD2PackageToDomain } from "../PackageMapper";
+import { PackageTransformationStrategy, mapPackageToD2, mapD2PackageFromD2 } from "../PackageMapper";
 import _ from "lodash";
 import { D2MetadataPackage } from "../../../synchronization/types";
 import { MetadataPackage, MetadataEntities } from "../../../../domain/metadata/entities";
@@ -101,7 +101,7 @@ describe("PackageMapper", () => {
             const transformations: PackageTransformationStrategy<MetadataPackage, D2MetadataPackage>[] = [];
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapD2PackageToDomain(33, payload, transformations)
+            const transformedPayload = mapD2PackageFromD2(33, payload, transformations)
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -116,7 +116,7 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapD2PackageToDomain(33, payload, transformations)
+            const transformedPayload = mapD2PackageFromD2(33, payload, transformations)
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -129,7 +129,7 @@ describe("PackageMapper", () => {
             ];
             const payload = givenAMetadataPackage("30Name");
 
-            const transformedPayload = mapD2PackageToDomain(33, payload, transformations);
+            const transformedPayload = mapD2PackageFromD2(33, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["name"])).toEqual(true);
@@ -144,7 +144,7 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage("30Name");
 
-            const transformedPayload = mapD2PackageToDomain(30, payload, transformations)
+            const transformedPayload = mapD2PackageFromD2(30, payload, transformations)
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["name"])).toEqual(true);
@@ -163,7 +163,7 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage("31Name");
 
-            const transformedPayload = mapD2PackageToDomain(31, payload, transformations)
+            const transformedPayload = mapD2PackageFromD2(31, payload, transformations)
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["name"])).toEqual(true);
@@ -182,7 +182,7 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage("31Name");
 
-            const transformedPayload = mapD2PackageToDomain(31, payload, transformations)
+            const transformedPayload = mapD2PackageFromD2(31, payload, transformations)
 
             const userRoles = transformedPayload["userRoles"];
 
