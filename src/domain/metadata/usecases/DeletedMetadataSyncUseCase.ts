@@ -6,7 +6,7 @@ import { cleanMetadataImportResponse } from "../utils";
 import { Ref } from "../../common/entities";
 
 //TODO: Uncouple this dependencies. This class should be moved to domain
-// and It should no have any dependency outside from the domain
+// and It should have not any dependency outside from the domain
 import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic";
 import Instance from "../../../models/instance";
 import { D2 } from "../../../types/d2";

@@ -16,7 +16,7 @@ import {
 } from "../utils";
 
 //TODO: Uncouple this dependencies. This class should be moved to domain
-// and It should no have any dependency outside from the domain
+// and It should have not any dependency outside from the domain
 import { D2Api } from "../../../types/d2-api";
 import { D2 } from "../../../types/d2";
 import Instance from "../../../models/instance";
