@@ -9,7 +9,7 @@ import { D2Api } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 import { cleanMetadataImportResponse } from "../utils";
-import { Ref } from "../../common/Entities";
+import { Ref } from "../../common/entities";
 
 export class DeletedMetadataSyncUseCase extends GenericSync {
     public readonly type = "deleted";

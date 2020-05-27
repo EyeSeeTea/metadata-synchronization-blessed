@@ -1,6 +1,6 @@
 import { MetadataImportResponse, MetadataImportParams } from "./types";
 import Instance from "../instance/Instance";
-import { Id } from "../common/Entities";
+import { Id } from "../common/entities";
 import { MetadataPackage, MetadataFieldsPackage, MetadataEntities, MetadataEntity } from "./entities";
 
 export interface MetadataRepository {

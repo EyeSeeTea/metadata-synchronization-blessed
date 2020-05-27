@@ -6,7 +6,7 @@ import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic"
 import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 import { MetadataRepository } from "../MetadataRepositoriy";
 import { MetadataPackage, MetadataEntities } from "../entities";
-import { Ref } from "../../common/Entities";
+import { Ref } from "../../common/entities";
 
 //TODO: Uncouple this depdendencies. This class should be moved to domain
 // and It should no have any dependency outside from the domain

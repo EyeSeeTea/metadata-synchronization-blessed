@@ -1,4 +1,4 @@
-import { Access, Id, Translation, Style, Expression, Ref } from "../../common/Entities";
+import { Access, Id, Translation, Style, Expression, Ref } from "../../common/entities";
 
 export type AttributeValue = {
     attribute: Ref;
