@@ -5,7 +5,7 @@ import i18n from "@dhis2/d2-i18n";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 import { useAppContext } from "../../../contexts/ApiContext";
-import { useD2ApiData } from "d2-api";
+import { useD2ApiData } from "../../../contexts/UseD2ApiData";
 
 const CategoryOptionsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const { d2, api } = useAppContext();
