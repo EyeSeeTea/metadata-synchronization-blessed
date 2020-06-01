@@ -6,9 +6,9 @@ import { SyncReportTableFilters } from "../types/d2-ui-components";
 import {
     SynchronizationReport,
     SynchronizationReportStatus,
-    SynchronizationResult,
     SyncRuleType,
 } from "../types/synchronization";
+import { SynchronizationResult } from "../domain/synchronization/entities/SynchronizationResult";
 import {
     deleteData,
     deleteDataStore,

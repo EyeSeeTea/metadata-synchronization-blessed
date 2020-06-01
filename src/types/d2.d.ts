@@ -68,7 +68,6 @@ export interface DataImportParams {
     format?: "json" | "xml" | "csv" | "pdf" | "adx";
 }
 
-export type ImportStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
 export type ResponseImportStatus =
     | "PENDING"
     | "OK"
@@ -100,6 +99,11 @@ export interface DataImportResponse {
     response?: {
         responseType: "ImportSummaries";
         status: ResponseImportStatus;
+        imported: number;
+        updated: number;
+        deleted: number;
+        ignored: number;
+        total: number;
         importOptions?: DataImportParams;
         importSummaries: {
             responseType?: "ImportSummary";

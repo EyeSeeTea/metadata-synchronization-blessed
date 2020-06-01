@@ -1,6 +1,6 @@
 import { D2ModelSchemas, Ref } from "../types/d2-api";
 import SyncReport from "../models/syncReport";
-import { DataImportParams, ImportStatus, MetadataImportParams, MetadataImportStats } from "./d2";
+import { DataImportParams, MetadataImportParams } from "./d2";
 
 //TODO: Review this to move it to domain
 
@@ -37,23 +37,6 @@ export interface ExportBuilder {
     excludeRules: string[][];
     includeRules: string[][];
     includeSharingSettings: boolean;
-}
-
-export interface SynchronizationResult {
-    status: ImportStatus;
-    message?: string;
-    instance: {
-        id: string;
-        name?: string;
-        url?: string;
-    };
-    stats?: MetadataImportStats | DataImportStats;
-    report?: {
-        typeStats?: MetadataImportStats[];
-        messages: any[];
-    };
-    date: Date;
-    type: SyncRuleType;
 }
 
 export type SynchronizationReportStatus = "READY" | "RUNNING" | "FAILURE" | "DONE";

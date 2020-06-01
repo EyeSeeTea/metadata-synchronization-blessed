@@ -6,13 +6,12 @@ import i18n from "../../../locales";
 import Instance from "../../../models/instance";
 import SyncReport from "../../../models/syncReport";
 import SyncRule from "../../../models/syncRule";
-import { D2, ImportStatus } from "../../../types/d2";
+import { D2 } from "../../../types/d2";
 import {
     AggregatedDataStats,
     EventsDataStats,
     SynchronizationBuilder,
     SynchronizationReportStatus,
-    SynchronizationResult,
     SyncRuleType,
 } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
@@ -26,6 +25,7 @@ import InstanceRepository from "../../instance/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../../metadata/usecases/MetadataSyncUseCase";
+import { SynchronizationResult, SynchronizationStatus } from "../entities/SynchronizationResult";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase
@@ -107,7 +107,7 @@ export abstract class GenericSyncUseCase {
         syncReport.addSyncResult(
             ...targetInstances.map(instance => ({
                 instance: instance.toObject(),
-                status: "PENDING" as ImportStatus,
+                status: "PENDING" as SynchronizationStatus,
                 date: new Date(),
                 type: this.type,
             }))

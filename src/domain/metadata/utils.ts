@@ -1,11 +1,7 @@
-import { NestedRules, SynchronizationResult } from "../../types/synchronization";
+import { isValidUid } from "d2/uid";
 import _ from "lodash";
 import { D2 } from "../../types/d2";
-import { isValidUid } from "d2/uid";
-import { MetadataImportResponse } from "./types";
-import Instance from "../instance/Instance";
-
-//TODO: uncouple from outside domain
+import { NestedRules } from "../../types/synchronization";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -86,49 +82,6 @@ export function getAllReferences(
         }
     });
     return result;
-}
-
-export function cleanMetadataImportResponse(
-    importResult: MetadataImportResponse,
-    instance: Instance,
-    type: "metadata" | "deleted"
-): SynchronizationResult {
-    const { status: importStatus, stats, message, typeReports = [] } = importResult;
-    const status = importStatus === "OK" ? "SUCCESS" : importStatus;
-    const typeStats: any[] = [];
-    const messages: any[] = [];
-
-    typeReports.forEach(report => {
-        const { klass, stats, objectReports = [] } = report;
-
-        typeStats.push({
-            ...stats,
-            type: getClassName(klass),
-        });
-
-        objectReports.forEach((detail: any) => {
-            const { uid, errorReports = [] } = detail;
-
-            messages.push(
-                ..._.take(errorReports, 1).map((error: any) => ({
-                    uid,
-                    type: getClassName(error.mainKlass),
-                    property: error.errorProperty,
-                    message: error.message,
-                }))
-            );
-        });
-    });
-
-    return {
-        status,
-        stats,
-        message,
-        instance: instance.toObject(),
-        report: { typeStats, messages },
-        date: new Date(),
-        type,
-    };
 }
 
 export function isD2Model(d2: D2, modelName: string): boolean {

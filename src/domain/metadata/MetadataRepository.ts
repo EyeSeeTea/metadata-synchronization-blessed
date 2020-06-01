@@ -1,12 +1,13 @@
 import { Id } from "../common/entities/Schemas";
 import Instance from "../instance/Instance";
+import { SynchronizationResult } from "../synchronization/entities/SynchronizationResult";
 import {
     MetadataEntities,
     MetadataEntity,
     MetadataFieldsPackage,
     MetadataPackage,
 } from "./entities/MetadataEntities";
-import { MetadataImportParams, MetadataImportResponse } from "./types";
+import { MetadataImportParams } from "./types";
 
 export interface MetadataRepository {
     getMetadataFieldsByIds<T>(
@@ -23,13 +24,13 @@ export interface MetadataRepository {
         metadata: MetadataPackage,
         additionalParams?: MetadataImportParams,
         targetInstance?: Instance
-    ): Promise<MetadataImportResponse>;
+    ): Promise<SynchronizationResult>;
 
     remove(
         metadata: MetadataFieldsPackage<{ id: Id }>,
         additionalParams?: MetadataImportParams,
         targetInstance?: Instance
-    ): Promise<MetadataImportResponse>;
+    ): Promise<SynchronizationResult>;
 
     getDefaultIds(filter?: string): Promise<string[]>;
 }

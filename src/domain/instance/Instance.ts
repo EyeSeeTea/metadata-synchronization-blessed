@@ -1,5 +1,7 @@
 import _ from "lodash";
 
+export type PublicInstance = Omit<InstanceData, "password">;
+
 export interface InstanceData {
     id: string;
     name: string;
@@ -51,7 +53,7 @@ export default class Instance {
         return Number(apiVersion);
     }
 
-    public toObject(): Omit<InstanceData, "password"> {
+    public toObject(): PublicInstance {
         return _.omit(this.data, ["password"]);
     }
 }

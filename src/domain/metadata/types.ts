@@ -1,18 +1,15 @@
 export interface MetadataImportResponse {
-    status: ResponseImportStatus;
-    importParams?: MetadataImportParams;
+    status: "PENDING" | "OK" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
     typeReports?: any[];
-    stats?: MetadataImportStats;
+    stats?: {
+        created: number;
+        deleted: number;
+        ignored: number;
+        updated: number;
+        total: number;
+    };
     message?: string;
 }
-
-export type ResponseImportStatus =
-    | "PENDING"
-    | "OK"
-    | "SUCCESS"
-    | "WARNING"
-    | "ERROR"
-    | "NETWORK ERROR";
 
 export interface MetadataImportParams {
     atomicMode?: "ALL" | "NONE";
@@ -27,12 +24,4 @@ export interface MetadataImportParams {
     skipValidation?: boolean;
     userOverrideMode?: "NONE" | "CURRENT" | "SELECTED";
     username?: string;
-}
-
-export interface MetadataImportStats {
-    created: number;
-    deleted: number;
-    ignored: number;
-    updated: number;
-    total: number;
 }

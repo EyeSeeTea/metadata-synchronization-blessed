@@ -14,14 +14,9 @@ import {
     SyncronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
-import { MetadataRepository } from "../MetadataRepositoriy";
-import {
-    buildNestedRules,
-    cleanMetadataImportResponse,
-    cleanObject,
-    cleanReferences,
-    getAllReferences,
-} from "../utils";
+import { MetadataRepository } from "../MetadataRepository";
+import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
+import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
@@ -133,7 +128,10 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         return metadataWithoutDuplicates;
     });
 
-    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
+    public async postPayload(
+        instance: Instance,
+        instanceEntity: InstanceEntity
+    ): Promise<SynchronizationResult[]> {
         //TODO: remove instance from abstract method in base base class
         // when aggregated and events does not use
         console.log(instance.url);
@@ -144,12 +142,12 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         console.debug("Metadata package", payloadPackage);
 
-        const response = await this.metadataRepository.save(
+        const syncResult = await this.metadataRepository.save(
             payloadPackage,
             syncParams,
             instanceEntity
         );
-        const syncResult = cleanMetadataImportResponse(response, instanceEntity, this.type);
+
         return [syncResult];
     }
 

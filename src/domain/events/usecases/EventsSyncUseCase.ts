@@ -29,7 +29,7 @@ import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
 import { EventsRepository } from "../repositories/EventsRepository";
-import { MetadataRepository } from "../../metadata/MetadataRepositoriy";
+import { MetadataRepository } from "../../metadata/MetadataRepository";
 import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 
 export class EventsSyncUseCase extends GenericSyncUseCase {

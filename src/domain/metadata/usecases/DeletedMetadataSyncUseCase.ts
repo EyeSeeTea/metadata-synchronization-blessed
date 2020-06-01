@@ -10,8 +10,7 @@ import {
     GenericSyncUseCase,
     SyncronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
-import { MetadataRepository } from "../MetadataRepositoriy";
-import { cleanMetadataImportResponse } from "../utils";
+import { MetadataRepository } from "../MetadataRepository";
 
 export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "deleted";
@@ -45,13 +44,12 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
 
         console.debug("Metadata package", payloadPackage);
 
-        const response = await this.metadataRepository.remove(
+        const syncResult = await this.metadataRepository.remove(
             payloadPackage,
             syncParams,
             instanceEntity
         );
 
-        const syncResult = cleanMetadataImportResponse(response, instanceEntity, this.type);
         return [syncResult];
     }
 

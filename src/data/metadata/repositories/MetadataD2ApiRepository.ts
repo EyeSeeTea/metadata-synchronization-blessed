@@ -7,9 +7,19 @@ import {
     MetadataFieldsPackage,
     MetadataPackage,
 } from "../../../domain/metadata/entities/MetadataEntities";
-import { MetadataRepository } from "../../../domain/metadata/MetadataRepositoriy";
+import { MetadataRepository } from "../../../domain/metadata/MetadataRepository";
 import { MetadataImportParams, MetadataImportResponse } from "../../../domain/metadata/types";
-import { D2Api, D2ApiDefinition, D2Model, D2ModelSchemas, Id, Model } from "../../../types/d2-api";
+import { getClassName } from "../../../domain/metadata/utils";
+import { SynchronizationResult } from "../../../domain/synchronization/entities/SynchronizationResult";
+import {
+    D2Api,
+    D2ApiDefinition,
+    D2Model,
+    D2ModelSchemas,
+    Id,
+    Model,
+    MetadataResponse,
+} from "../../../types/d2-api";
 import { mapD2PackageFromD2, mapPackageToD2 } from "../mappers/PackageMapper";
 import {
     metadataTransformationsFromDhis2,
@@ -87,9 +97,9 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
     public async save(
         metadata: MetadataPackage,
-        additionalParams?: MetadataImportParams,
-        targetInstance?: Instance
-    ): Promise<MetadataImportResponse> {
+        additionalParams: MetadataImportParams,
+        targetInstance: Instance
+    ): Promise<SynchronizationResult> {
         const apiVersion = await this.getVersion(targetInstance);
         const versionedPayloadPackage = mapPackageToD2(
             apiVersion,
@@ -105,14 +115,14 @@ class MetadataD2ApiRepository implements MetadataRepository {
             targetInstance
         );
 
-        return response;
+        return this.cleanMetadataImportResponse(response, targetInstance, "metadata");
     }
 
     public async remove(
         metadata: MetadataFieldsPackage<{ id: Id }>,
-        additionalParams?: MetadataImportParams,
-        targetInstance?: Instance
-    ): Promise<MetadataImportResponse> {
+        additionalParams: MetadataImportParams,
+        targetInstance: Instance
+    ): Promise<SynchronizationResult> {
         const response = await this.postMetadata(
             metadata,
             {
@@ -122,7 +132,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
             targetInstance
         );
 
-        return response;
+        return this.cleanMetadataImportResponse(response, targetInstance, "deleted");
     }
 
     public async getDefaultIds(filter?: string): Promise<string[]> {
@@ -145,6 +155,49 @@ class MetadataD2ApiRepository implements MetadataRepository {
             .value();
     }
 
+    private cleanMetadataImportResponse(
+        importResult: MetadataImportResponse,
+        instance: Instance,
+        type: "metadata" | "deleted"
+    ): SynchronizationResult {
+        const { status: importStatus, stats, message, typeReports = [] } = importResult;
+        const status = importStatus === "OK" ? "SUCCESS" : importStatus;
+        const typeStats: any[] = [];
+        const messages: any[] = [];
+
+        typeReports.forEach(report => {
+            const { klass, stats, objectReports = [] } = report;
+
+            typeStats.push({
+                ...stats,
+                type: getClassName(klass),
+            });
+
+            objectReports.forEach((detail: any) => {
+                const { uid, errorReports = [] } = detail;
+
+                messages.push(
+                    ..._.take(errorReports, 1).map((error: any) => ({
+                        uid,
+                        type: getClassName(error.mainKlass),
+                        property: error.errorProperty,
+                        message: error.message,
+                    }))
+                );
+            });
+        });
+
+        return {
+            status,
+            stats,
+            message,
+            instance: instance.toObject(),
+            errors: messages,
+            date: new Date(),
+            type,
+        };
+    }
+
     private async postMetadata(
         payload: Partial<Record<string, unknown[]>>,
         additionalParams?: MetadataImportParams,
@@ -162,10 +215,10 @@ class MetadataD2ApiRepository implements MetadataRepository {
             };
 
             const response = await this.getApi(targetInstance)
-                .post("/metadata", params, payload)
+                .post<MetadataResponse>("/metadata", params, payload)
                 .getData();
 
-            return response as MetadataImportResponse;
+            return response;
         } catch (error) {
             return this.buildResponseError(error);
         }

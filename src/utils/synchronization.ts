@@ -8,7 +8,11 @@ import Instance, { MetadataMapping, MetadataMappingDictionary } from "../models/
 import SyncRule from "../models/syncRule";
 import { D2, DataImportResponse } from "../types/d2";
 import { D2Api, D2CategoryOptionCombo } from "../types/d2-api";
-import { SynchronizationResult, SyncRuleType } from "../types/synchronization";
+import { SyncRuleType } from "../types/synchronization";
+import {
+    SynchronizationResult,
+    SynchronizationStats,
+} from "../domain/synchronization/entities/SynchronizationResult";
 import "../utils/lodash-mixins";
 
 //TODO: when all request to metadata using metadataRepository.getMetadataByIds
@@ -44,29 +48,37 @@ export function cleanDataImportResponse(
 ): SynchronizationResult {
     const { status: importStatus, message, importCount, response, conflicts } = importResult;
     const status = importStatus === "OK" ? "SUCCESS" : importStatus;
-    const eventsStats = _.pick(response, ["imported", "deleted", "ignored", "updated", "total"]);
     const aggregatedMessages = conflicts?.map(({ object, value }) => ({
-        uid: object,
+        id: object,
         message: value,
     }));
+
     const eventsMessages = _.flatten(
         response?.importSummaries?.map(
-            ({ reference, description, conflicts }) =>
+            ({ reference = "", description = "", conflicts }) =>
                 conflicts?.map(({ object, value }) => ({
-                    uid: reference,
+                    id: reference,
                     message: _([description, object, value])
                         .compact()
                         .join(" "),
-                })) ?? { uid: reference, message: description }
+                })) ?? { id: reference, message: description }
         )
     );
+
+    const stats: SynchronizationStats = {
+        created: importCount?.imported ?? response?.imported ?? 0,
+        deleted: importCount?.deleted ?? response?.deleted ?? 0,
+        updated: importCount?.updated ?? response?.updated ?? 0,
+        ignored: importCount?.ignored ?? response?.ignored ?? 0,
+        total: 0,
+    };
 
     return {
         status,
         message,
-        stats: importCount || eventsStats,
+        stats,
         instance: instance.toObject(),
-        report: { messages: aggregatedMessages ?? eventsMessages ?? [] },
+        errors: aggregatedMessages ?? eventsMessages ?? [],
         date: new Date(),
         type,
     };
