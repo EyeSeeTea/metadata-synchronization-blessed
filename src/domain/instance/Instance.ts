@@ -45,8 +45,10 @@ export default class Instance {
         return this.data.version;
     }
 
-    public get apiVersion(): number | undefined {
-        return this.version ? +this.version?.split(".")[1] : undefined;
+    public get apiVersion(): number {
+        const apiVersion = _.get(this.version?.split("."), 1);
+        if (!apiVersion) throw new Error("Invalid api version");
+        return Number(apiVersion);
     }
 
     public toObject(): Omit<InstanceData, "password"> {
