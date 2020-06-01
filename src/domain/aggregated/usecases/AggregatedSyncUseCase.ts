@@ -21,7 +21,8 @@ import {
     cleanObjectDefault,
     cleanOrgUnitPath,
 } from "../../synchronization/utils";
-import { AggregatedPackage, DataValue } from "../entities/Aggregated";
+import { AggregatedPackage } from "../entities/AggregatedPackage";
+import { DataValue } from "../entities/DataValue";
 import { AggregatedRepository } from "../repositories/AggregatedRepository";
 import { MetadataRepository } from "../../metadata/MetadataRepositoriy";
 import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";

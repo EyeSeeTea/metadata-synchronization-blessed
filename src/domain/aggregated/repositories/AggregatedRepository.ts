@@ -1,7 +1,7 @@
 import { MetadataMappingDictionary } from "../../../models/instance";
 import { D2CategoryOptionCombo } from "../../../types/d2-api";
 import { CategoryOptionAggregationBuilder } from "../../../types/synchronization";
-import { AggregatedPackage } from "../entities/Aggregated";
+import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { DataSynchronizationParams } from "../types";
 import { DataImportParams, DataImportResponse } from "../../../types/d2";
 

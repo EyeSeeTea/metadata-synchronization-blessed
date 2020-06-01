@@ -1,6 +1,6 @@
 import _ from "lodash";
-import { DataValue } from "../aggregated/entities/Aggregated";
-import { ProgramEvent } from "../events/entities/Events";
+import { DataValue } from "../aggregated/entities/DataValue";
+import { ProgramEvent } from "../events/entities/ProgramEvent";
 
 export function buildMetadataDictionary(metadataPackage: Record<string, any[]>) {
     return _(metadataPackage)

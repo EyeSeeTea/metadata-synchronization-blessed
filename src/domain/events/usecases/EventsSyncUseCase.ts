@@ -16,7 +16,7 @@ import {
     mapOptionValue,
     mapProgramDataElement,
 } from "../../../utils/synchronization";
-import { DataValue } from "../../aggregated/entities/Aggregated";
+import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedRepository } from "../../aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import InstanceEntity from "../../instance/Instance";
@@ -25,7 +25,9 @@ import {
     SyncronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
-import { EventsPackage, ProgramEvent, ProgramEventDataValue } from "../entities/Events";
+import { EventsPackage } from "../entities/EventsPackage";
+import { ProgramEvent } from "../entities/ProgramEvent";
+import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
 import { EventsRepository } from "../repositories/EventsRepository";
 import { MetadataRepository } from "../../metadata/MetadataRepositoriy";
 import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";

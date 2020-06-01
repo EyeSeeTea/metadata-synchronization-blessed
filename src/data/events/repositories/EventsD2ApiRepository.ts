@@ -2,7 +2,7 @@ import { AxiosError } from "axios";
 import _ from "lodash";
 import { DataSynchronizationParams } from "../../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../../domain/aggregated/utils";
-import { ProgramEvent } from "../../../domain/events/entities/Events";
+import { ProgramEvent } from "../../../domain/events/entities/ProgramEvent";
 import { EventsRepository } from "../../../domain/events/repositories/EventsRepository";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../../domain/synchronization/utils";
 import { DataImportParams, DataImportResponse, MetadataImportResponse } from "../../../types/d2";

@@ -17,9 +17,9 @@ import {
 } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { getMetadata } from "../../../utils/synchronization";
-import { AggregatedPackage } from "../../aggregated/entities/Aggregated";
+import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
-import { EventsPackage } from "../../events/entities/Events";
+import { EventsPackage } from "../../events/entities/EventsPackage";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import InstanceEntity from "../../instance/Instance";
 import InstanceRepository from "../../instance/InstanceRepository";

@@ -4,7 +4,7 @@ import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../../contexts/ApiContext";
-import { ProgramEvent } from "../../../domain/events/entities/Events";
+import { ProgramEvent } from "../../../domain/events/entities/ProgramEvent";
 import { D2 } from "../../../types/d2";
 import { D2Program } from "../../../types/d2-api";
 import Dropdown from "../../dropdown/Dropdown";

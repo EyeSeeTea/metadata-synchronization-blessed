@@ -11,7 +11,3 @@ export interface DataValue {
     followUp: boolean;
     comment?: string;
 }
-
-export interface AggregatedPackage {
-    dataValues: DataValue[];
-}

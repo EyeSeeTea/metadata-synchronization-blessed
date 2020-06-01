@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import _ from "lodash";
 import { Moment } from "moment";
-import { AggregatedPackage } from "../../../domain/aggregated/entities/Aggregated";
+import { AggregatedPackage } from "../../../domain/aggregated/entities/AggregatedPackage";
 import { AggregatedRepository } from "../../../domain/aggregated/repositories/AggregatedRepository";
 import { DataSyncAggregation, DataSynchronizationParams } from "../../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../../domain/aggregated/utils";

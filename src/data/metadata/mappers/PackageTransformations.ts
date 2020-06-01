@@ -1,5 +1,5 @@
-import { AggregatedPackage } from "../../../domain/aggregated/entities/Aggregated";
-import { EventsPackage } from "../../../domain/events/entities/Events";
+import { AggregatedPackage } from "../../../domain/aggregated/entities/AggregatedPackage";
+import { EventsPackage } from "../../../domain/events/entities/EventsPackage";
 import { MetadataPackage } from "../../../domain/metadata/entities/MetadataEntities";
 import {
     D2AggregatedPackage,
