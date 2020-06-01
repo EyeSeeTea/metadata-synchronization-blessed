@@ -6,7 +6,6 @@ import Cryptr from "cryptr";
 
 const instancesDataStoreKey = "instances";
 
-
 export default class InstanceD2ApiRepository implements InstanceRepository {
     private d2Api: D2Api;
 
@@ -29,8 +28,8 @@ export default class InstanceD2ApiRepository implements InstanceRepository {
 
         const instanceDataWithRawPassword = {
             ...instanceData,
-            password: this.decryptPassword(instanceData.password)
-        }
+            password: this.decryptPassword(instanceData.password),
+        };
 
         const version = await this.getVersion(instanceDataWithRawPassword);
 
@@ -40,7 +39,7 @@ export default class InstanceD2ApiRepository implements InstanceRepository {
     private async getVersion(instanceData: InstanceData): Promise<string> {
         const api = new D2ApiDefault({
             baseUrl: instanceData.url,
-            auth: { username: instanceData.username, password: instanceData.password }
+            auth: { username: instanceData.username, password: instanceData.password },
         });
 
         const systemInfo = await api.system.info.getData();

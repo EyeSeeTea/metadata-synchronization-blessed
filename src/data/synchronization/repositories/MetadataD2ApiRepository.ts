@@ -2,7 +2,7 @@ import { MetadataRepository } from "../../../domain/synchronization/MetadataRepo
 import {
     MetadataPackage,
     MetadataImportResponse,
-    MetadataImportParams
+    MetadataImportParams,
 } from "../../../domain/synchronization/MetadataEntities";
 import { D2Api, D2ApiDefault } from "d2-api";
 import { AxiosError } from "axios";
@@ -22,10 +22,11 @@ class MetadataD2ApiRepository implements MetadataRepository {
         this.currentD2Api = d2Api;
     }
 
-    async save(metadata: MetadataPackage,
+    async save(
+        metadata: MetadataPackage,
         additionalParams?: MetadataImportParams,
-        targetInstance?: Instance): Promise<MetadataImportResponse> {
-
+        targetInstance?: Instance
+    ): Promise<MetadataImportResponse> {
         try {
             const params = {
                 importMode: "COMMIT",
@@ -38,12 +39,17 @@ class MetadataD2ApiRepository implements MetadataRepository {
             };
 
             const apiVersion = await this.getVersion(targetInstance);
-            const versionedPayloadPackage = mapPackageToD2Version(apiVersion, metadata, metadataTransformationsToDhis2);
+            const versionedPayloadPackage = mapPackageToD2Version(
+                apiVersion,
+                metadata,
+                metadataTransformationsToDhis2
+            );
 
             console.debug("Versioned metadata package", versionedPayloadPackage);
 
             const response = await this.getApi(targetInstance)
-                .post("/metadata", params, versionedPayloadPackage).getData();
+                .post("/metadata", params, versionedPayloadPackage)
+                .getData();
 
             return response as MetadataImportResponse;
         } catch (error) {
@@ -52,10 +58,12 @@ class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     private getApi(targetInstance?: Instance): D2Api {
-        return targetInstance ? new D2ApiDefault({
-            baseUrl: targetInstance.url,
-            auth: { username: targetInstance.username, password: targetInstance.password }
-        }) : this.currentD2Api;
+        return targetInstance
+            ? new D2ApiDefault({
+                  baseUrl: targetInstance.url,
+                  auth: { username: targetInstance.username, password: targetInstance.password },
+              })
+            : this.currentD2Api;
     }
 
     private async getVersion(targetInstance?: Instance): Promise<number> {
@@ -89,7 +97,6 @@ class MetadataD2ApiRepository implements MetadataRepository {
             return { status: "NETWORK ERROR" };
         }
     }
-
 }
 
 export default MetadataD2ApiRepository;

@@ -150,11 +150,21 @@ export class AggregatedSync extends GenericSync {
         const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
 
         if (!instanceEntity.apiVersion) {
-            throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
+            throw new Error(
+                "Necessary api version of receiver instance to apply transformations to package is undefined"
+            );
         }
 
-        const versionedPayloadPackage = mapPackageToD2Version(instanceEntity.apiVersion, mappedPayloadPackage, aggregatedTransformationsToDhis2);
-        console.debug("Aggregated package", { payloadPackage, mappedPayloadPackage, versionedPayloadPackage });
+        const versionedPayloadPackage = mapPackageToD2Version(
+            instanceEntity.apiVersion,
+            mappedPayloadPackage,
+            aggregatedTransformationsToDhis2
+        );
+        console.debug("Aggregated package", {
+            payloadPackage,
+            mappedPayloadPackage,
+            versionedPayloadPackage,
+        });
 
         const response = await postAggregatedData(instance, versionedPayloadPackage, dataParams);
         return [cleanDataImportResponse(response, instance, this.type)];

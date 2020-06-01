@@ -1,4 +1,3 @@
-
 export interface InstanceData {
     id: string;
     name: string;
@@ -6,7 +5,7 @@ export interface InstanceData {
     username: string;
     password: string;
     description?: string;
-    version?: string
+    version?: string;
 }
 
 export default class Instance {
@@ -45,6 +44,6 @@ export default class Instance {
     }
 
     public get apiVersion(): number | undefined {
-        return this.version ? +this.version?.split(".")[1] : undefined
+        return this.version ? +this.version?.split(".")[1] : undefined;
     }
 }

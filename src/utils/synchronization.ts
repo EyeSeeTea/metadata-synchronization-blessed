@@ -9,12 +9,7 @@ import memoize from "nano-memoize";
 import { SyncronizationClass } from "../logic/sync/generic";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../models/instance";
 import SyncRule from "../models/syncRule";
-import {
-    D2,
-    DataImportParams,
-    DataImportResponse,
-    MetadataImportResponse,
-} from "../types/d2";
+import { D2, DataImportParams, DataImportResponse, MetadataImportResponse } from "../types/d2";
 import {
     CategoryOptionAggregationBuilder,
     DataSyncAggregation,
@@ -407,8 +402,8 @@ export const getDefaultIds = memoize(
                 fields: "id",
             })
             .getData()) as {
-                [key: string]: { id: string }[];
-            };
+            [key: string]: { id: string }[];
+        };
 
         const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
 

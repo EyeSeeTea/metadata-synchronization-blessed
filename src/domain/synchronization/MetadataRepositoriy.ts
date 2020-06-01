@@ -2,7 +2,9 @@ import { MetadataImportResponse, MetadataPackage, MetadataImportParams } from ".
 import Instance from "../instance/Instance";
 
 export interface MetadataRepository {
-    save(metadata: MetadataPackage,
+    save(
+        metadata: MetadataPackage,
         additionalParams?: MetadataImportParams,
-        targetInstance?: Instance): Promise<MetadataImportResponse>;
+        targetInstance?: Instance
+    ): Promise<MetadataImportResponse>;
 }

@@ -2,7 +2,7 @@ import _ from "lodash";
 
 export interface PackageTransformationStrategy<Input, Output> {
     apiVersion: number;
-    transform(payload: Input): Output
+    transform(payload: Input): Output;
 }
 
 /**
@@ -13,20 +13,27 @@ export interface PackageTransformationStrategy<Input, Output> {
  * @param payload  payload to trasnform
  * @param transformations list of possible transformations to apply
  */
-export function mapPackageToD2Version<Input, Output>(d2Version: number, payload: Input,
-    transformations: PackageTransformationStrategy<unknown, Output>[] = []): Output {
-    const orderedTransformations = _.sortBy(transformations, 'version');
+export function mapPackageToD2Version<Input, Output>(
+    d2Version: number,
+    payload: Input,
+    transformations: PackageTransformationStrategy<unknown, Output>[] = []
+): Output {
+    const orderedTransformations = _.sortBy(transformations, "version");
 
     const transformationstoApply = orderedTransformations.filter(
-        transformation => transformation.apiVersion <= d2Version);
+        transformation => transformation.apiVersion <= d2Version
+    );
 
     if (transformationstoApply.length > 0) {
         return transformations.reduce(
-            (transformedPayload: Output, transformation: PackageTransformationStrategy<unknown, Output>) =>
-                transformation.transform(transformedPayload), {} as Output);
+            (
+                transformedPayload: Output,
+                transformation: PackageTransformationStrategy<unknown, Output>
+            ) => transformation.transform(transformedPayload),
+            {} as Output
+        );
     } else {
-        console.log(`No transformations applied to package for dhis2 web api version ${d2Version}`)
-        return payload as unknown as Output;
+        console.log(`No transformations applied to package for dhis2 web api version ${d2Version}`);
+        return (payload as unknown) as Output;
     }
 }
-

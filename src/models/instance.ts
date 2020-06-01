@@ -245,39 +245,39 @@ export default class Instance {
             name: _.compact([
                 !name.trim()
                     ? {
-                        key: "cannot_be_blank",
-                        namespace: { field: "name" },
-                    }
+                          key: "cannot_be_blank",
+                          namespace: { field: "name" },
+                      }
                     : null,
             ]),
             url: _.compact([
                 !url
                     ? {
-                        key: "cannot_be_blank",
-                        namespace: { field: "url" },
-                    }
+                          key: "cannot_be_blank",
+                          namespace: { field: "url" },
+                      }
                     : null,
             ]),
             username: _.compact([
                 !username
                     ? {
-                        key: "cannot_be_blank",
-                        namespace: { field: "username" },
-                    }
+                          key: "cannot_be_blank",
+                          namespace: { field: "username" },
+                      }
                     : null,
                 (await this.validateUrlUsernameCombo(api))
                     ? {
-                        key: "url_username_combo_already_exists",
-                        namespace: { field: "username", other: "url" },
-                    }
+                          key: "url_username_combo_already_exists",
+                          namespace: { field: "username", other: "url" },
+                      }
                     : null,
             ]),
             password: _.compact([
                 !password && !this.id
                     ? {
-                        key: "cannot_be_blank",
-                        namespace: { field: "password" },
-                    }
+                          key: "cannot_be_blank",
+                          namespace: { field: "password" },
+                      }
                     : null,
             ]),
         });
@@ -295,9 +295,9 @@ export default class Instance {
             return response.data.version
                 ? { status: true }
                 : {
-                    status: false,
-                    error: new Error(i18n.t("Not a valid DHIS2 instance")),
-                };
+                      status: false,
+                      error: new Error(i18n.t("Not a valid DHIS2 instance")),
+                  };
         } catch (error) {
             if (error.response) {
                 switch (error.response.status) {

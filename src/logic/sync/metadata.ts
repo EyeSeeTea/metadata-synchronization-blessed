@@ -22,10 +22,10 @@ import { D2 } from "../../types/d2";
 
 export class MetadataSync extends GenericSync {
     public readonly type = "metadata";
-    private metadataRepository: MetadataRepository
+    private metadataRepository: MetadataRepository;
 
     constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
-        super(d2, api, builder)
+        super(d2, api, builder);
 
         //TODO: composition root - This dependency should be injected by constructor when we have
         // composition root
@@ -122,7 +122,11 @@ export class MetadataSync extends GenericSync {
 
         console.debug("Metadata package", payloadPackage);
 
-        const response = await this.metadataRepository.save(payloadPackage, syncParams, instanceEntity);
+        const response = await this.metadataRepository.save(
+            payloadPackage,
+            syncParams,
+            instanceEntity
+        );
         const syncResult = cleanMetadataImportResponse(response, instance, this.type);
         return [syncResult];
     }

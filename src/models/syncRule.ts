@@ -671,98 +671,98 @@ export default class SyncRule {
             name: _.compact([
                 !this.name.trim()
                     ? {
-                        key: "cannot_be_blank",
-                        namespace: { field: "name" },
-                    }
+                          key: "cannot_be_blank",
+                          namespace: { field: "name" },
+                      }
                     : null,
             ]),
             metadataIds: _.compact([
                 this.metadataIds.length === 0
                     ? {
-                        key: "cannot_be_empty",
-                        namespace: { element: "metadata element" },
-                    }
+                          key: "cannot_be_empty",
+                          namespace: { element: "metadata element" },
+                      }
                     : null,
             ]),
             dataSyncOrganisationUnits: _.compact([
                 this.type !== "metadata" &&
-                    this.type !== "deleted" &&
-                    this.dataSyncOrgUnitPaths.length === 0
+                this.type !== "deleted" &&
+                this.dataSyncOrgUnitPaths.length === 0
                     ? {
-                        key: "cannot_be_empty",
-                        namespace: { element: "organisation unit" },
-                    }
+                          key: "cannot_be_empty",
+                          namespace: { element: "organisation unit" },
+                      }
                     : null,
             ]),
             dataSyncStartDate: _.compact([
                 this.dataSyncPeriod === "FIXED" && !this.dataSyncStartDate
                     ? {
-                        key: "cannot_be_empty",
-                        namespace: { element: "start date" },
-                    }
+                          key: "cannot_be_empty",
+                          namespace: { element: "start date" },
+                      }
                     : null,
             ]),
             dataSyncEndDate: _.compact([
                 this.dataSyncPeriod === "FIXED" && !this.dataSyncEndDate
                     ? {
-                        key: "cannot_be_empty",
-                        namespace: { element: "end date" },
-                    }
+                          key: "cannot_be_empty",
+                          namespace: { element: "end date" },
+                      }
                     : null,
                 this.dataSyncPeriod === "FIXED" &&
-                    this.dataSyncEndDate &&
-                    this.dataSyncStartDate &&
-                    moment(this.dataSyncEndDate).isBefore(this.dataSyncStartDate)
+                this.dataSyncEndDate &&
+                this.dataSyncStartDate &&
+                moment(this.dataSyncEndDate).isBefore(this.dataSyncStartDate)
                     ? {
-                        key: "invalid_period",
-                        namespace: {},
-                    }
+                          key: "invalid_period",
+                          namespace: {},
+                      }
                     : null,
             ]),
             dataSyncEvents: _.compact([
                 this.type === "events" &&
-                    !this.dataSyncAllEvents &&
-                    this.dataSyncEvents.length === 0
+                !this.dataSyncAllEvents &&
+                this.dataSyncEvents.length === 0
                     ? {
-                        key: "cannot_be_empty",
-                        namespace: { element: "event" },
-                    }
+                          key: "cannot_be_empty",
+                          namespace: { element: "event" },
+                      }
                     : null,
             ]),
             dataSyncAggregation: _.compact([
                 this.type !== "metadata" &&
-                    this.type !== "deleted" &&
-                    this.dataSyncEnableAggregation &&
-                    !this.dataSyncAggregationType
+                this.type !== "deleted" &&
+                this.dataSyncEnableAggregation &&
+                !this.dataSyncAggregationType
                     ? {
-                        key: "cannot_be_empty",
-                        namespace: { element: "aggregation type" },
-                    }
+                          key: "cannot_be_empty",
+                          namespace: { element: "aggregation type" },
+                      }
                     : null,
             ]),
             metadataIncludeExclude: [],
             targetInstances: _.compact([
                 this.targetInstances.length === 0
                     ? {
-                        key: "cannot_be_empty",
-                        namespace: { element: "instance" },
-                    }
+                          key: "cannot_be_empty",
+                          namespace: { element: "instance" },
+                      }
                     : null,
             ]),
             frequency: _.compact([
                 this.frequency && !isValidCronExpression(this.frequency)
                     ? {
-                        key: "cron_expression_must_be_valid",
-                        namespace: { expression: "frequency" },
-                    }
+                          key: "cron_expression_must_be_valid",
+                          namespace: { expression: "frequency" },
+                      }
                     : null,
             ]),
             enabled: _.compact([
                 this.enabled && !isValidCronExpression(this.frequency)
                     ? {
-                        key: "cannot_enable_without_valid",
-                        namespace: { expression: "frequency" },
-                    }
+                          key: "cannot_enable_without_valid",
+                          namespace: { expression: "frequency" },
+                      }
                     : null,
             ]),
         });
