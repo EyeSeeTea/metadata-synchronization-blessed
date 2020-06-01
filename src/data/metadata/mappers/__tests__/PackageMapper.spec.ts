@@ -1,11 +1,14 @@
-import {
-    PackageTransformationStrategy,
-    mapPackageToD2,
-    mapD2PackageFromD2,
-} from "../PackageMapper";
 import _ from "lodash";
+import {
+    MetadataEntities,
+    MetadataPackage,
+} from "../../../../domain/metadata/entities/MetadataEntities";
 import { D2MetadataPackage } from "../../../synchronization/types";
-import { MetadataPackage, MetadataEntities } from "../../../../domain/metadata/entities";
+import {
+    mapD2PackageFromD2,
+    mapPackageToD2,
+    PackageTransformationStrategy,
+} from "../PackageMapper";
 
 describe("PackageMapper", () => {
     describe("mapPackageToD2", () => {

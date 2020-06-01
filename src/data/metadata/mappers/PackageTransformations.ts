@@ -1,11 +1,11 @@
-import { PackageTransformationStrategy } from "./PackageMapper";
+import { MetadataPackage } from "../../../domain/metadata/entities/MetadataEntities";
+import { AggregatedPackage, EventsPackage } from "../../../domain/synchronization/DataEntities";
 import {
-    D2MetadataPackage,
     D2AggregatedPackage,
     D2EventsPackage,
+    D2MetadataPackage,
 } from "../../synchronization/types";
-import { AggregatedPackage, EventsPackage } from "../../../domain/synchronization/DataEntities";
-import { MetadataPackage } from "../../../domain/metadata/entities";
+import { PackageTransformationStrategy } from "./PackageMapper";
 
 /**
  * Transformations from domain to dhis2 will be apply consecutively.
@@ -16,7 +16,7 @@ import { MetadataPackage } from "../../../domain/metadata/entities";
  *   -> [transformation dhis2 v32: dhis2 v31 -> dhis2 v32]
  */
 
-// const exampleMetadataTransformationToDhis2 =                 {
+// const exampleMetadataTransformationToDhis2 = {
 //     apiVersion: 30,
 //     transform: (payload: D2MetadataPackage) => {
 //         //apply transformations

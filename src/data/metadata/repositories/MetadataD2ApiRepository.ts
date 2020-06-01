@@ -1,23 +1,20 @@
-import { MetadataRepository } from "../../../domain/metadata/MetadataRepositoriy";
-
 import { AxiosError } from "axios";
+import _ from "lodash";
 import Instance from "../../../domain/instance/Instance";
-
-import { D2Api, D2Model, D2ModelSchemas, D2ApiDefinition, Model, Id } from "../../../types/d2-api";
 import {
-    MetadataPackage,
-    MetadataFieldsPackage,
     MetadataEntities,
     MetadataEntity,
-} from "../../../domain/metadata/entities";
-import _ from "lodash";
+    MetadataFieldsPackage,
+    MetadataPackage,
+} from "../../../domain/metadata/entities/MetadataEntities";
+import { MetadataRepository } from "../../../domain/metadata/MetadataRepositoriy";
+import { MetadataImportParams, MetadataImportResponse } from "../../../domain/metadata/types";
+import { D2Api, D2ApiDefinition, D2Model, D2ModelSchemas, Id, Model } from "../../../types/d2-api";
+import { mapD2PackageFromD2, mapPackageToD2 } from "../mappers/PackageMapper";
 import {
-    metadataTransformationsToDhis2,
     metadataTransformationsFromDhis2,
+    metadataTransformationsToDhis2,
 } from "../mappers/PackageTransformations";
-import { mapPackageToD2, mapD2PackageFromD2 } from "../mappers/PackageMapper";
-import { MetadataImportParams } from "../../../domain/metadata/types";
-import { MetadataImportResponse } from "../../../domain/metadata/types";
 
 class MetadataD2ApiRepository implements MetadataRepository {
     private currentD2Api: D2Api;

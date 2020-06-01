@@ -3,7 +3,7 @@ import InstanceEntity from "../../instance/Instance";
 import { MetadataRepository } from "../MetadataRepositoriy";
 import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 import { cleanMetadataImportResponse } from "../utils";
-import { Ref } from "../../common/entities";
+import { Ref } from "../../common/entities/Schemas";
 
 //TODO: Uncouple this dependencies. This class should be moved to domain
 // and It should have not any dependency outside from the domain

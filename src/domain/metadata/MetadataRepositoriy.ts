@@ -1,12 +1,12 @@
-import { MetadataImportResponse, MetadataImportParams } from "./types";
+import { Id } from "../common/entities/Schemas";
 import Instance from "../instance/Instance";
-import { Id } from "../common/entities";
 import {
-    MetadataPackage,
-    MetadataFieldsPackage,
     MetadataEntities,
     MetadataEntity,
-} from "./entities";
+    MetadataFieldsPackage,
+    MetadataPackage,
+} from "./entities/MetadataEntities";
+import { MetadataImportParams, MetadataImportResponse } from "./types";
 
 export interface MetadataRepository {
     getMetadataFieldsByIds<T>(

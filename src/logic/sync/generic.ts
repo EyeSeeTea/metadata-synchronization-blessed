@@ -1,15 +1,18 @@
 import i18n from "@dhis2/d2-i18n";
-import { D2Api } from "../../types/d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
-
-import Instance from "../../models/instance";
-
+import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";
 import InstanceEntity from "../../domain/instance/Instance";
-
+import InstanceRepository from "../../domain/instance/InstanceRepository";
+import { MetadataPackage } from "../../domain/metadata/entities/MetadataEntities";
+import { DeletedMetadataSyncUseCase } from "../../domain/metadata/usecases/DeletedMetadataSyncUseCase";
+import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
+import { AggregatedPackage, EventsPackage } from "../../domain/synchronization/DataEntities";
+import Instance from "../../models/instance";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2, ImportStatus } from "../../types/d2";
+import { D2Api } from "../../types/d2-api";
 import {
     AggregatedDataStats,
     EventsDataStats,
@@ -21,13 +24,7 @@ import {
 import { promiseMap } from "../../utils/common";
 import { getMetadata } from "../../utils/synchronization";
 import { AggregatedSync } from "./aggregated";
-import { DeletedMetadataSyncUseCase } from "../../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { EventsSync } from "./events";
-import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
-import { AggregatedPackage, EventsPackage } from "../../domain/synchronization/DataEntities";
-import InstanceRepository from "../../domain/instance/InstanceRepository";
-import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";
-import { MetadataPackage } from "../../domain/metadata/entities";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase

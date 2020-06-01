@@ -1,4 +1,4 @@
-import { MetadataEntities } from "../../domain/metadata/entities";
+import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
 
 export type D2MetadataPackage = Partial<Record<keyof MetadataEntities, any[]>>;
 

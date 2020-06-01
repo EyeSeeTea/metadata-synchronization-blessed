@@ -5,8 +5,8 @@ import InstanceEntity from "../../instance/Instance";
 import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic";
 import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 import { MetadataRepository } from "../MetadataRepositoriy";
-import { MetadataPackage, MetadataEntities } from "../entities";
-import { Ref } from "../../common/entities";
+import { MetadataPackage, MetadataEntities } from "../entities/MetadataEntities";
+import { Ref } from "../../common/entities/Schemas";
 import {
     buildNestedRules,
     cleanObject,
