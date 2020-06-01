@@ -70,9 +70,9 @@ export default class DeletedObject {
             .filter(object =>
                 search
                     ? _(object)
-                        .keys()
-                        .filter(k => typeof object[k] === "string")
-                        .some(k => object[k].toLowerCase().includes(search.toLowerCase()))
+                          .keys()
+                          .filter(k => typeof object[k] === "string")
+                          .some(k => object[k].toLowerCase().includes(search.toLowerCase()))
                     : true
             )
             .filter(object =>

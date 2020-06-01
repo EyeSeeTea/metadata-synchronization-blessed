@@ -58,11 +58,11 @@ export async function getPaginatedData(
 
     const filteredData = search
         ? _.filter(rawData, o =>
-            _(o)
-                .keys()
-                .filter(k => typeof o[k] === "string")
-                .some(k => o[k].toLowerCase().includes(search.toLowerCase()))
-        )
+              _(o)
+                  .keys()
+                  .filter(k => typeof o[k] === "string")
+                  .some(k => o[k].toLowerCase().includes(search.toLowerCase()))
+          )
         : rawData;
 
     const [field, direction] = sorting;

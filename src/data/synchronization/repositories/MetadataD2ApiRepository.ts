@@ -9,7 +9,7 @@ import { AxiosError } from "axios";
 import Instance from "../../../domain/instance/Instance";
 import { mapPackageToD2Version } from "../mappers/D2VersionPackageMapper";
 import { metadataTransformationsToDhis2 } from "../mappers/PackageTransformations";
-import { D2Api } from "../../../types/d2-api"
+import { D2Api } from "../../../types/d2-api";
 
 class MetadataD2ApiRepository implements MetadataRepository {
     private currentD2Api: D2Api;
@@ -59,10 +59,12 @@ class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     private getApi(targetInstance?: Instance): D2Api {
-        return targetInstance ? new D2Api({
-            baseUrl: targetInstance.url,
-            auth: { username: targetInstance.username, password: targetInstance.password },
-        }) : this.currentD2Api;
+        return targetInstance
+            ? new D2Api({
+                  baseUrl: targetInstance.url,
+                  auth: { username: targetInstance.username, password: targetInstance.password },
+              })
+            : this.currentD2Api;
     }
 
     private async getVersion(targetInstance?: Instance): Promise<number> {
