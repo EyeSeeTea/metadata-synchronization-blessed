@@ -5,7 +5,8 @@ import { EventProgramModel } from "../../models/dhis/mapping";
 import { CategoryOptionModel, OptionModel, ProgramStageModel } from "../../models/dhis/metadata";
 import { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
 import { MetadataType } from "../../utils/d2";
-import { cleanOrgUnitPath, getDefaultIds } from "../../utils/synchronization";
+import { cleanOrgUnitPath } from "../../domain/synchronization/utils";
+import MetadataD2ApiRepository from "../../data/metadata/repositories/MetadataD2ApiRepository";
 
 export const EXCLUDED_KEY = "DISABLED";
 
@@ -399,7 +400,10 @@ export const getValidIds = async (
     const options = getOptions(combinedMetadata[0]);
     const programStages = getProgramStages(combinedMetadata[0]);
     const programStageDataElements = getProgramStageDataElements(combinedMetadata[0]);
-    const defaultValues = await getDefaultIds(api);
+
+    // TODO: Composition root + use case
+    const metadataRepository = new MetadataD2ApiRepository(api);
+    const defaultValues = await metadataRepository.getDefaultIds();
 
     return _.union(categoryOptions, options, programStages, programStageDataElements)
         .map(({ id }) => id)

@@ -19,7 +19,8 @@ export default class InstanceD2ApiRepository implements InstanceRepository {
         // that this dependency should be current instance instead of D2Api
         this.d2Api = d2Api;
     }
-    async getById(id: string): Promise<Instance> {
+
+    public async getById(id: string): Promise<Instance> {
         const instanceData = await getDataById<InstanceData>(this.d2Api, instancesDataStoreKey, id);
 
         if (!instanceData) {

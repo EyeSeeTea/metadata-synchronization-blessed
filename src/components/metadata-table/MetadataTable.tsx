@@ -1,7 +1,6 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
-import { D2Api } from "../../types/d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -17,16 +16,18 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
+import memoize from "nano-memoize";
 import React, { ChangeEvent, ReactNode, useEffect, useMemo, useState } from "react";
+import { useAppContext } from "../../contexts/ApiContext";
+import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import i18n from "../../locales";
 import { D2Model } from "../../models/dhis/default";
 import { DataElementModel } from "../../models/dhis/metadata";
 import { D2 } from "../../types/d2";
+import { D2Api } from "../../types/d2-api";
 import { d2BaseModelFields, MetadataType } from "../../utils/d2";
-import { cleanOrgUnitPaths, getRootOrgUnit } from "../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";
 import { getAllIdentifiers, getFilterData, getOrgUnitSubtree, getRows } from "./utils";
-import { useAppContext } from "../../contexts/ApiContext";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     api?: D2Api;
@@ -560,5 +561,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         />
     );
 };
+
+// TODO: when all request to this use metadataRepository.getModelByType
+// this function should be removed
+export const getRootOrgUnit = memoize(
+    (api: D2Api) => {
+        return api.models.organisationUnits.get({
+            filter: { level: { eq: "1" } },
+            fields: { $owner: true },
+        });
+    },
+    { serializer: (api: D2Api) => api.baseUrl }
+);
 
 export default MetadataTable;

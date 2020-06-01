@@ -1,13 +1,15 @@
 import cronstrue from "cronstrue";
-import { D2Api, Ref } from "../types/d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import moment from "moment";
-import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import {
     DataSyncAggregation,
     DataSynchronizationParams,
     DataSyncPeriod,
+} from "../domain/aggregated/types";
+import { D2Api, Ref } from "../types/d2-api";
+import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import {
     ExcludeIncludeRules,
     MetadataIncludeExcludeRules,
     MetadataSynchronizationParams,

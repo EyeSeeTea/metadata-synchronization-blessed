@@ -1,38 +1,52 @@
-import { D2CategoryOptionCombo, D2Program } from "../../types/d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import InstanceEntity from "../../domain/instance/Instance";
+import { AggregatedD2ApiRepository } from "../../../data/aggregated/repositories/AggregatedD2ApiRepository";
+import { EventsD2ApiRepository } from "../../../data/events/repositories/EventsD2ApiRepository";
+import { mapPackageToD2 } from "../../../data/metadata/mappers/PackageMapper";
+import { eventsTransformationsToDhis2 } from "../../../data/metadata/mappers/PackageTransformations";
+import Instance, { MetadataMappingDictionary } from "../../../models/instance";
+import { D2 } from "../../../types/d2";
+import { D2Api, D2CategoryOptionCombo, D2Program } from "../../../types/d2-api";
+import { SynchronizationBuilder } from "../../../types/synchronization";
 import {
-    DataValue,
-    EventsPackage,
-    ProgramEvent,
-    ProgramEventDataValue,
-} from "../../domain/synchronization/DataEntities";
-import {
-    buildMetadataDictionary,
     cleanDataImportResponse,
-    cleanOrgUnitPath,
-    getAnalyticsData,
     getCategoryOptionCombos,
-    getDefaultIds,
-    getEventsData,
     mapCategoryOptionCombo,
     mapOptionValue,
     mapProgramDataElement,
-    postAggregatedData,
-    postEventsData,
-} from "../../utils/synchronization";
-import { AggregatedSync } from "./aggregated";
-import { GenericSync, SyncronizationPayload } from "./generic";
-import { mapPackageToD2 } from "../../data/metadata/mappers/PackageMapper";
-import { eventsTransformationsToDhis2 } from "../../data/metadata/mappers/PackageTransformations";
+} from "../../../utils/synchronization";
+import { DataValue } from "../../aggregated/entities/Aggregated";
+import { AggregatedRepository } from "../../aggregated/repositories/AggregatedRepository";
+import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
+import InstanceEntity from "../../instance/Instance";
+import {
+    GenericSyncUseCase,
+    SyncronizationPayload,
+} from "../../synchronization/usecases/GenericSyncUseCase";
+import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
+import { EventsPackage, ProgramEvent, ProgramEventDataValue } from "../entities/Events";
+import { EventsRepository } from "../repositories/EventsRepository";
+import { MetadataRepository } from "../../metadata/MetadataRepositoriy";
+import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 
-export class EventsSync extends GenericSync {
+export class EventsSyncUseCase extends GenericSyncUseCase {
     public readonly type = "events";
     public readonly fields =
         "id,name,programStages[programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
+    private eventsRepository: EventsRepository;
+    private aggregatedRepository: AggregatedRepository;
+    private metadataRepository: MetadataRepository;
+
+    constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
+        super(d2, api, builder);
+
+        //TODO: composition root - This dependency should be injected by constructor when we have
+        // composition root
+        this.eventsRepository = new EventsD2ApiRepository(api);
+        this.aggregatedRepository = new AggregatedD2ApiRepository(api);
+        this.metadataRepository = new MetadataD2ApiRepository(api);
+    }
 
     public buildPayload = memoize(async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
@@ -40,8 +54,7 @@ export class EventsSync extends GenericSync {
         const { programs = [], programIndicators = [] } = await this.extractMetadata();
 
         const events = (
-            await getEventsData(
-                this.api,
+            await this.eventsRepository.getEvents(
                 dataParams,
                 programs.map(({ id }) => id)
             )
@@ -58,8 +71,7 @@ export class EventsSync extends GenericSync {
         );
 
         const { dataValues: candidateDataValues = [] } = enableAggregation
-            ? await getAnalyticsData({
-                  api: this.api,
+            ? await this.aggregatedRepository.getAnalytics({
                   dataParams,
                   dimensionIds: [...directIndicators, ...indicatorsByProgram],
                   includeCategories: false,
@@ -105,7 +117,7 @@ export class EventsSync extends GenericSync {
         );
         console.debug("Events package", { events, payload, versionedPayloadPackage });
 
-        const response = await postEventsData(instance, payload, dataParams);
+        const response = await this.eventsRepository.save(payload, dataParams);
 
         return cleanDataImportResponse(response, instance, this.type);
     }
@@ -115,10 +127,10 @@ export class EventsSync extends GenericSync {
         const { enableAggregation } = dataParams;
         if (!enableAggregation) return undefined;
 
-        const aggregatedSync = new AggregatedSync(this.d2, this.api, this.builder);
+        const aggregatedSync = new AggregatedSyncUseCase(this.d2, this.api, this.builder);
         const payload = await aggregatedSync.mapPayload(instance, { dataValues });
         console.debug("Program indicator package", { dataValues, payload });
-        const response = await postAggregatedData(instance, payload, dataParams);
+        const response = await this.aggregatedRepository.save(payload, dataParams);
 
         return cleanDataImportResponse(response, instance, aggregatedSync.type);
     }
@@ -146,7 +158,9 @@ export class EventsSync extends GenericSync {
         const { events: oldEvents } = payload;
         const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
-        const defaultCategoryOptionCombos = await getDefaultIds(this.api, "categoryOptionCombos");
+        const defaultCategoryOptionCombos = await this.metadataRepository.getDefaultIds(
+            "categoryOptionCombos"
+        );
 
         const events = oldEvents
             .map(dataValue =>

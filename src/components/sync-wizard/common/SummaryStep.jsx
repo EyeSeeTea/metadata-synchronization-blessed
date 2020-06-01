@@ -5,21 +5,16 @@ import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { AggregatedSync } from "../../../logic/sync/aggregated";
-import { EventsSync } from "../../../logic/sync/events";
+import { useAppContext } from "../../../contexts/ApiContext";
+import { AggregatedSyncUseCase } from "../../../domain/aggregated/usecases/AggregatedSyncUseCase";
+import { EventsSyncUseCase } from "../../../domain/events/usecases/EventsSyncUseCase";
 import { MetadataSyncUseCase } from "../../../domain/metadata/usecases/MetadataSyncUseCase";
-import {
-    availablePeriods,
-    cleanOrgUnitPaths,
-    getMetadata,
-    requestJSONDownload,
-} from "../../../utils/synchronization";
+import { availablePeriods, getMetadata, requestJSONDownload } from "../../../utils/synchronization";
 import { getValidationMessages } from "../../../utils/validations";
 import { aggregationItems } from "../data/AggregationStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
 import { getInstanceOptions } from "./InstanceSelectionStep";
-import { useAppContext } from "../../../contexts/ApiContext";
-// import Instance from "../../../models/instance";
+import { cleanOrgUnitPaths } from "../../../domain/synchronization/utils";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -49,10 +44,10 @@ const config = {
         SyncClass: MetadataSyncUseCase,
     },
     aggregated: {
-        SyncClass: AggregatedSync,
+        SyncClass: AggregatedSyncUseCase,
     },
     events: {
-        SyncClass: EventsSync,
+        SyncClass: EventsSyncUseCase,
     },
 };
 

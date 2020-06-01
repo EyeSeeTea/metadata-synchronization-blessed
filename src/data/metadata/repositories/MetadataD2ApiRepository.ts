@@ -32,7 +32,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
      * Return raw specific fields of metadata dhis2 models according to ids filter
      * @param ids metadata ids to retrieve
      */
-    async getMetadataFieldsByIds<T>(
+    public async getMetadataFieldsByIds<T>(
         ids: string[],
         fields: string,
         targetInstance?: Instance
@@ -46,7 +46,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
      * - create object options in domain with (order, filters, paging ....)
      * - Create domain pager?
      */
-    async getMetadataByType(type: keyof MetadataEntities): Promise<MetadataEntity[]> {
+    public async getMetadataByType(type: keyof MetadataEntities): Promise<MetadataEntity[]> {
         const apiModel = this.getApiModel(type);
 
         const responseData = await apiModel
@@ -71,7 +71,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
      * Return metadata entities according to ids filter. Realize mapping from d2 to domain
      * @param ids metadata ids to retrieve
      */
-    async getMetadataByIds(ids: string[]): Promise<MetadataPackage> {
+    public async getMetadataByIds(ids: string[]): Promise<MetadataPackage> {
         const d2Metadata = await this.getMetadata<D2Model>(ids);
 
         const apiVersion = await this.getVersion();
@@ -85,7 +85,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
         return metadataPackage;
     }
 
-    async save(
+    public async save(
         metadata: MetadataPackage,
         additionalParams?: MetadataImportParams,
         targetInstance?: Instance
@@ -108,7 +108,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
         return response;
     }
 
-    async remove(
+    public async remove(
         metadata: MetadataFieldsPackage<{ id: Id }>,
         additionalParams?: MetadataImportParams,
         targetInstance?: Instance
@@ -123,6 +123,26 @@ class MetadataD2ApiRepository implements MetadataRepository {
         );
 
         return response;
+    }
+
+    public async getDefaultIds(filter?: string): Promise<string[]> {
+        const response = (await this.currentD2Api
+            .get("/metadata", {
+                filter: "code:eq:default",
+                fields: "id",
+            })
+            .getData()) as {
+            [key: string]: { id: string }[];
+        };
+
+        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
+
+        return _(metadata)
+            .omit(["system"])
+            .values()
+            .flatten()
+            .map(({ id }) => id)
+            .value();
     }
 
     private async postMetadata(

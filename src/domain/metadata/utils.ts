@@ -1,9 +1,9 @@
-import { NestedRules, SynchronizationResult } from "../../../types/synchronization";
+import { NestedRules, SynchronizationResult } from "../../types/synchronization";
 import _ from "lodash";
-import { D2 } from "../../../types/d2";
+import { D2 } from "../../types/d2";
 import { isValidUid } from "d2/uid";
-import { MetadataImportResponse } from "../types";
-import Instance from "../../instance/Instance";
+import { MetadataImportResponse } from "./types";
+import Instance from "../instance/Instance";
 
 //TODO: uncouple from outside domain
 

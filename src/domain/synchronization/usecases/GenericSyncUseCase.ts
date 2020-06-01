@@ -1,18 +1,12 @@
-import i18n from "@dhis2/d2-i18n";
+import { D2Api } from "d2-api/2.30";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";
-import InstanceEntity from "../../domain/instance/Instance";
-import InstanceRepository from "../../domain/instance/InstanceRepository";
-import { MetadataPackage } from "../../domain/metadata/entities/MetadataEntities";
-import { DeletedMetadataSyncUseCase } from "../../domain/metadata/usecases/DeletedMetadataSyncUseCase";
-import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
-import { AggregatedPackage, EventsPackage } from "../../domain/synchronization/DataEntities";
-import Instance from "../../models/instance";
-import SyncReport from "../../models/syncReport";
-import SyncRule from "../../models/syncRule";
-import { D2, ImportStatus } from "../../types/d2";
-import { D2Api } from "../../types/d2-api";
+import InstanceD2ApiRepository from "../../../data/instance/InstanceD2ApiRepository";
+import i18n from "../../../locales";
+import Instance from "../../../models/instance";
+import SyncReport from "../../../models/syncReport";
+import SyncRule from "../../../models/syncRule";
+import { D2, ImportStatus } from "../../../types/d2";
 import {
     AggregatedDataStats,
     EventsDataStats,
@@ -20,20 +14,27 @@ import {
     SynchronizationReportStatus,
     SynchronizationResult,
     SyncRuleType,
-} from "../../types/synchronization";
-import { promiseMap } from "../../utils/common";
-import { getMetadata } from "../../utils/synchronization";
-import { AggregatedSync } from "./aggregated";
-import { EventsSync } from "./events";
+} from "../../../types/synchronization";
+import { promiseMap } from "../../../utils/common";
+import { getMetadata } from "../../../utils/synchronization";
+import { AggregatedPackage } from "../../aggregated/entities/Aggregated";
+import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
+import { EventsPackage } from "../../events/entities/Events";
+import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
+import InstanceEntity from "../../instance/Instance";
+import InstanceRepository from "../../instance/InstanceRepository";
+import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
+import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetadataSyncUseCase";
+import { MetadataSyncUseCase } from "../../metadata/usecases/MetadataSyncUseCase";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase
-    | typeof AggregatedSync
-    | typeof EventsSync
+    | typeof AggregatedSyncUseCase
+    | typeof EventsSyncUseCase
     | typeof DeletedMetadataSyncUseCase;
 export type SyncronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
-export abstract class GenericSync {
+export abstract class GenericSyncUseCase {
     protected readonly d2: D2;
     protected readonly api: D2Api;
     protected readonly builder: SynchronizationBuilder;

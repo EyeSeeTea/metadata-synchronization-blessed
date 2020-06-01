@@ -9,11 +9,12 @@ import PageHeader from "../../components/page-header/PageHeader";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import { AggregatedSync } from "../../logic/sync/aggregated";
+import { useAppContext } from "../../contexts/ApiContext";
+import { AggregatedSyncUseCase } from "../../domain/aggregated/usecases/AggregatedSyncUseCase";
+import { EventsSyncUseCase } from "../../domain/events/usecases/EventsSyncUseCase";
 import { DeletedMetadataSyncUseCase } from "../../domain/metadata/usecases/DeletedMetadataSyncUseCase";
-import { EventsSync } from "../../logic/sync/events";
-import { SyncronizationClass } from "../../logic/sync/generic";
 import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
+import { SyncronizationClass } from "../../domain/synchronization/usecases/GenericSyncUseCase";
 import { D2Model } from "../../models/dhis/default";
 import { metadataModels } from "../../models/dhis/factory";
 import {
@@ -30,7 +31,6 @@ import { D2 } from "../../types/d2";
 import { SyncRuleType } from "../../types/synchronization";
 import { MetadataType } from "../../utils/d2";
 import { isAppConfigurator } from "../../utils/permissions";
-import { useAppContext } from "../../contexts/ApiContext";
 
 const config: Record<
     SyncRuleType,
@@ -57,13 +57,13 @@ const config: Record<
             IndicatorMappedModel,
         ],
         childrenKeys: ["dataElements", "dataElementGroups"],
-        SyncClass: AggregatedSync,
+        SyncClass: AggregatedSyncUseCase,
     },
     events: {
         title: i18n.t("Events Synchronization"),
         models: [EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel],
         childrenKeys: ["dataElements", "programIndicators"],
-        SyncClass: EventsSync,
+        SyncClass: EventsSyncUseCase,
     },
     deleted: {
         title: i18n.t("Deleted Objects Synchronization"),

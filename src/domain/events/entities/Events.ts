@@ -1,7 +1,3 @@
-export interface AggregatedPackage {
-    dataValues: DataValue[];
-}
-
 export interface EventsPackage {
     events: ProgramEvent[];
 }
@@ -32,18 +28,4 @@ export interface ProgramEventDataValue {
     dataElement: string;
     value: any;
     providedElsewhere: boolean;
-}
-
-export interface DataValue {
-    dataElement: string;
-    period: string;
-    orgUnit: string;
-    categoryOptionCombo: string;
-    attributeOptionCombo?: string;
-    value: string;
-    storedBy: string;
-    created: string;
-    lastUpdated: string;
-    followUp: boolean;
-    comment?: string;
 }

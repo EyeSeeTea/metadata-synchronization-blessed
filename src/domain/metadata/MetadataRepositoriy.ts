@@ -30,4 +30,6 @@ export interface MetadataRepository {
         additionalParams?: MetadataImportParams,
         targetInstance?: Instance
     ): Promise<MetadataImportResponse>;
+
+    getDefaultIds(filter?: string): Promise<string[]>;
 }

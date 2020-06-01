@@ -29,20 +29,6 @@ export interface MetadataSynchronizationParams extends MetadataImportParams {
     metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
 }
 
-export interface DataSynchronizationParams extends DataImportParams {
-    attributeCategoryOptions?: string[];
-    allAttributeCategoryOptions?: boolean;
-    orgUnitPaths?: string[];
-    period?: DataSyncPeriod;
-    startDate?: Date;
-    endDate?: Date;
-    events?: string[];
-    allEvents?: boolean;
-    generateNewUid?: boolean;
-    enableAggregation?: boolean;
-    aggregationType?: DataSyncAggregation;
-}
-
 export type SynchronizationParams = MetadataSynchronizationParams | DataSynchronizationParams;
 
 export interface ExportBuilder {
@@ -138,24 +124,6 @@ export interface SharingSetting {
     id: string;
     name: string;
 }
-
-export type DataSyncPeriod =
-    | "ALL"
-    | "FIXED"
-    | "TODAY"
-    | "YESTERDAY"
-    | "LAST_7_DAYS"
-    | "LAST_14_DAYS"
-    | "THIS_WEEK"
-    | "LAST_WEEK"
-    | "THIS_MONTH"
-    | "LAST_MONTH"
-    | "THIS_QUARTER"
-    | "LAST_QUARTER"
-    | "THIS_YEAR"
-    | "LAST_YEAR";
-
-export type DataSyncAggregation = "DAILY" | "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY";
 
 export interface CategoryOptionAggregationBuilder {
     dataElement: string;

@@ -1,32 +1,46 @@
-import { D2CategoryOptionCombo } from "../../types/d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import InstanceEntity from "../../domain/instance/Instance";
-import { AggregatedPackage, DataValue } from "../../domain/synchronization/DataEntities";
+import { AggregatedD2ApiRepository } from "../../../data/aggregated/repositories/AggregatedD2ApiRepository";
+import { mapPackageToD2 } from "../../../data/metadata/mappers/PackageMapper";
+import { aggregatedTransformationsToDhis2 } from "../../../data/metadata/mappers/PackageTransformations";
+import Instance, { MetadataMappingDictionary } from "../../../models/instance";
+import { D2 } from "../../../types/d2";
+import { D2Api, D2CategoryOptionCombo } from "../../../types/d2-api";
+import { SynchronizationBuilder } from "../../../types/synchronization";
+import { promiseMap } from "../../../utils/common";
 import {
-    buildMetadataDictionary,
     cleanDataImportResponse,
-    cleanObjectDefault,
-    cleanOrgUnitPath,
-    getAggregatedData,
-    getAggregatedOptions,
-    getAnalyticsData,
     getCategoryOptionCombos,
-    getDefaultIds,
     mapCategoryOptionCombo,
     mapOptionValue,
-    postAggregatedData,
-} from "../../utils/synchronization";
-import { GenericSync } from "./generic";
-import { promiseMap } from "../../utils/common";
-import { mapPackageToD2 } from "../../data/metadata/mappers/PackageMapper";
-import { aggregatedTransformationsToDhis2 } from "../../data/metadata/mappers/PackageTransformations";
+} from "../../../utils/synchronization";
+import InstanceEntity from "../../instance/Instance";
+import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
+import {
+    buildMetadataDictionary,
+    cleanObjectDefault,
+    cleanOrgUnitPath,
+} from "../../synchronization/utils";
+import { AggregatedPackage, DataValue } from "../entities/Aggregated";
+import { AggregatedRepository } from "../repositories/AggregatedRepository";
+import { MetadataRepository } from "../../metadata/MetadataRepositoriy";
+import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 
-export class AggregatedSync extends GenericSync {
+export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public readonly type = "aggregated";
     public readonly fields =
         "id,dataElements[id,name],dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
+    private aggregatedRepository: AggregatedRepository;
+    private metadataRepository: MetadataRepository;
+
+    constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
+        super(d2, api, builder);
+
+        //TODO: composition root - This dependency should be injected by constructor when we have
+        // composition root
+        this.aggregatedRepository = new AggregatedD2ApiRepository(api);
+        this.metadataRepository = new MetadataD2ApiRepository(api);
+    }
 
     public buildPayload = memoize(async () => {
         const { dataParams: { enableAggregation = false } = {} } = this.builder;
@@ -54,8 +68,7 @@ export class AggregatedSync extends GenericSync {
         );
 
         // Retrieve direct data values from dataSets and dataElementGroups
-        const { dataValues: directDataValues = [] } = await getAggregatedData(
-            this.api,
+        const { dataValues: directDataValues = [] } = await this.aggregatedRepository.getAggregated(
             dataParams,
             dataSetIds,
             _([...dataElementGroupIds, ...dataElementGroupSetIds])
@@ -65,8 +78,9 @@ export class AggregatedSync extends GenericSync {
         );
 
         // Retrieve candidate data values from dataElements
-        const { dataValues: candidateDataValues = [] } = await getAggregatedData(
-            this.api,
+        const {
+            dataValues: candidateDataValues = [],
+        } = await this.aggregatedRepository.getAggregated(
             dataParams,
             dataElements.map(de => de.dataSetElements.map((dse: any) => dse.dataSet?.id)),
             dataElements.map(de => de.dataElementGroups.map((deg: any) => deg.id))
@@ -117,20 +131,20 @@ export class AggregatedSync extends GenericSync {
             )
         );
 
-        const { dataValues: dataElementValues = [] } = await getAnalyticsData({
-            api: this.api,
-            dataParams,
-            dimensionIds: [
-                ...dataElementIds,
-                ...dataSetIds,
-                ...dataElementGroupIds,
-                ...dataElementGroupSetIds,
-            ],
-            includeCategories: true,
-        });
+        const { dataValues: dataElementValues = [] } = await this.aggregatedRepository.getAnalytics(
+            {
+                dataParams,
+                dimensionIds: [
+                    ...dataElementIds,
+                    ...dataSetIds,
+                    ...dataElementGroupIds,
+                    ...dataElementGroupSetIds,
+                ],
+                includeCategories: true,
+            }
+        );
 
-        const { dataValues: indicatorValues = [] } = await getAnalyticsData({
-            api: this.api,
+        const { dataValues: indicatorValues = [] } = await this.aggregatedRepository.getAnalytics({
             dataParams,
             dimensionIds: indicatorIds,
             includeCategories: false,
@@ -166,7 +180,7 @@ export class AggregatedSync extends GenericSync {
             versionedPayloadPackage,
         });
 
-        const response = await postAggregatedData(instance, versionedPayloadPackage, dataParams);
+        const response = await this.aggregatedRepository.save(versionedPayloadPackage, dataParams);
         return [cleanDataImportResponse(response, instance, this.type)];
     }
 
@@ -192,7 +206,7 @@ export class AggregatedSync extends GenericSync {
         const { dataValues: oldDataValues } = payload;
         const { metadataMapping: mapping } = instance;
 
-        const defaultIds = await getDefaultIds(this.api);
+        const defaultIds = await this.metadataRepository.getDefaultIds();
         const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
         const instanceAggregatedValues = await this.buildInstanceAggregation(
@@ -287,10 +301,9 @@ export class AggregatedSync extends GenericSync {
         if (!enableAggregation) return [];
 
         const result = await promiseMap(
-            await getAggregatedOptions(this.api, mapping, categoryOptionCombos),
+            await this.aggregatedRepository.getOptions(mapping, categoryOptionCombos),
             async ({ dataElement, categoryOptions, category, mappedOptionCombo }) => {
-                const { dataValues } = await getAnalyticsData({
-                    api: this.api,
+                const { dataValues } = await this.aggregatedRepository.getAnalytics({
                     dataParams,
                     dimensionIds: [dataElement],
                     includeCategories: false,
