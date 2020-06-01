@@ -1,10 +1,7 @@
 import memoize from "nano-memoize";
 import Instance from "../../models/instance";
 import InstanceEntity from "../../domain/instance/Instance";
-import {
-    cleanMetadataImportResponse,
-    getMetadata
-} from "../../utils/synchronization";
+import { cleanMetadataImportResponse, getMetadata } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
 import { MetadataRepository } from "../../domain/synchronization/MetadataRepositoriy";
 import { D2 } from "../../types/d2";
@@ -15,10 +12,10 @@ import MetadataD2ApiRepository from "../../data/synchronization/repositories/Met
 export class DeletedSync extends GenericSync {
     public readonly type = "deleted";
 
-    private metadataRepository: MetadataRepository
+    private metadataRepository: MetadataRepository;
 
     constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
-        super(d2, api, builder)
+        super(d2, api, builder);
 
         //TODO: composition root - This dependency should be injected by constructor when we have
         // composition root
@@ -36,10 +33,14 @@ export class DeletedSync extends GenericSync {
 
         console.debug("Metadata package", payloadPackage);
 
-        const response = await this.metadataRepository.save(payloadPackage, {
-            ...syncParams,
-            importStrategy: "DELETE",
-        }, instanceEntity);
+        const response = await this.metadataRepository.save(
+            payloadPackage,
+            {
+                ...syncParams,
+                importStrategy: "DELETE",
+            },
+            instanceEntity
+        );
 
         const syncResult = cleanMetadataImportResponse(response, instance, this.type);
         return [syncResult];
