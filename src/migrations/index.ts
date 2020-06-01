@@ -1,4 +1,3 @@
-import { D2Api } from "../types/d2-api";
 import _ from "lodash";
 import {
     dataStoreNamespace,
@@ -6,8 +5,9 @@ import {
     getDataStore,
     saveDataStore,
 } from "../models/dataStore";
-import { Config, Debug, Migration, RunnerOptions } from "../types/migrations";
+import { D2Api } from "../types/d2-api";
 import { promiseMap } from "../utils/common";
+import { Config, Debug, Migration, RunnerOptions } from "./types";
 import { getMigrationsForWebpack } from "./utils";
 
 export class MigrationsRunner {
