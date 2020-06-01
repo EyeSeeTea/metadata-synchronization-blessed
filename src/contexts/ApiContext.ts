@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { D2Api } from "../types/d2-api"
+import { D2Api } from "../types/d2-api";
 
 export interface AppContext {
     api: D2Api;

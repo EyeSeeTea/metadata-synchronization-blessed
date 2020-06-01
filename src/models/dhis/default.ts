@@ -46,7 +46,10 @@ export abstract class D2Model {
 
     public static getApiModel(api: D2Api): InstanceType<typeof Model> {
         const modelCollection = api.models as {
-            [ModelKey in keyof D2ApiDefinition["schemas"]]: Model<D2ApiDefinition, D2ApiDefinition["schemas"][ModelKey]>;
+            [ModelKey in keyof D2ApiDefinition["schemas"]]: Model<
+                D2ApiDefinition,
+                D2ApiDefinition["schemas"][ModelKey]
+            >;
         };
         return modelCollection[this.collectionName];
     }

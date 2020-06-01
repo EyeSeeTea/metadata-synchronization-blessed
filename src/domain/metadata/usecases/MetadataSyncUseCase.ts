@@ -27,10 +27,10 @@ import { promiseMap } from "../../../utils/common";
 
 export class MetadataSyncUseCase extends GenericSync {
     public readonly type = "metadata";
-    private metadataRepository: MetadataRepository
+    private metadataRepository: MetadataRepository;
 
     constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
-        super(d2, api, builder)
+        super(d2, api, builder);
 
         //TODO: composition root - This dependency should be injected by constructor when we have
         // composition root
@@ -141,7 +141,11 @@ export class MetadataSyncUseCase extends GenericSync {
 
         console.debug("Metadata package", payloadPackage);
 
-        const response = await this.metadataRepository.save(payloadPackage, syncParams, instanceEntity);
+        const response = await this.metadataRepository.save(
+            payloadPackage,
+            syncParams,
+            instanceEntity
+        );
         const syncResult = cleanMetadataImportResponse(response, instanceEntity, this.type);
         return [syncResult];
     }

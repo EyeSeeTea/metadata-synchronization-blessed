@@ -59,11 +59,11 @@ export class EventsSync extends GenericSync {
 
         const { dataValues: candidateDataValues = [] } = enableAggregation
             ? await getAnalyticsData({
-                api: this.api,
-                dataParams,
-                dimensionIds: [...directIndicators, ...indicatorsByProgram],
-                includeCategories: false,
-            })
+                  api: this.api,
+                  dataParams,
+                  dimensionIds: [...directIndicators, ...indicatorsByProgram],
+                  includeCategories: false,
+              })
             : {};
 
         const dataValues = _.reject(candidateDataValues, ({ dataElement }) =>
@@ -83,16 +83,26 @@ export class EventsSync extends GenericSync {
         return _.compact([eventsResponse, indicatorsResponse]);
     }
 
-    private async postEventsPayload(instance: Instance, instanceEntity: InstanceEntity, events: ProgramEvent[]) {
+    private async postEventsPayload(
+        instance: Instance,
+        instanceEntity: InstanceEntity,
+        events: ProgramEvent[]
+    ) {
         const { dataParams = {} } = this.builder;
 
         const payload = await this.mapPayload(instance, { events });
 
         if (!instanceEntity.apiVersion) {
-            throw new Error("Necessary api version of receiver instance to apply transformations to package is undefined")
+            throw new Error(
+                "Necessary api version of receiver instance to apply transformations to package is undefined"
+            );
         }
 
-        const versionedPayloadPackage = mapPackageToD2(instanceEntity.apiVersion, payload, eventsTransformationsToDhis2);
+        const versionedPayloadPackage = mapPackageToD2(
+            instanceEntity.apiVersion,
+            payload,
+            eventsTransformationsToDhis2
+        );
         console.debug("Events package", { events, payload, versionedPayloadPackage });
 
         const response = await postEventsData(instance, payload, dataParams);

@@ -53,8 +53,6 @@ export interface ExportBuilder {
     includeSharingSettings: boolean;
 }
 
-
-
 export interface SynchronizationResult {
     status: ImportStatus;
     message?: string;

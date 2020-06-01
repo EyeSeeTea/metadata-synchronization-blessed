@@ -50,7 +50,7 @@ export abstract class GenericSync {
         this.api = api;
         this.builder = builder;
 
-        //TODO: composition root - This dependency should be injected by constructor when we have 
+        //TODO: composition root - This dependency should be injected by constructor when we have
         // composition root
         this.instanceRepository = new InstanceD2ApiRepository(api);
     }
@@ -64,7 +64,10 @@ export abstract class GenericSync {
     // We start to use domain concepts:
     // for the moment old model instance and domain entity instance are going to live together for a while on sync classes.
     // Little by little through refactors the old instance model should disappear
-    public abstract async postPayload(instance: Instance, instanceEntity: InstanceEntity): Promise<SynchronizationResult[]>;
+    public abstract async postPayload(
+        instance: Instance,
+        instanceEntity: InstanceEntity
+    ): Promise<SynchronizationResult[]>;
     public abstract async buildDataStats(): Promise<
         AggregatedDataStats[] | EventsDataStats[] | undefined
     >;
