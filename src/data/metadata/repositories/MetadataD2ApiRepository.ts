@@ -1,13 +1,20 @@
 import { MetadataRepository } from "../../../domain/metadata/MetadataRepositoriy";
 
-
 import { AxiosError } from "axios";
 import Instance from "../../../domain/instance/Instance";
 
-import { D2Api, D2Model, D2ModelSchemas, D2ApiDefinition, Model, Id } from "../../../types/d2-api"
-import { MetadataPackage, MetadataFieldsPackage, MetadataEntities, MetadataEntity } from "../../../domain/metadata/entities";
+import { D2Api, D2Model, D2ModelSchemas, D2ApiDefinition, Model, Id } from "../../../types/d2-api";
+import {
+    MetadataPackage,
+    MetadataFieldsPackage,
+    MetadataEntities,
+    MetadataEntity,
+} from "../../../domain/metadata/entities";
 import _ from "lodash";
-import { metadataTransformationsToDhis2, metadataTransformationsFromDhis2 } from "../mappers/PackageTransformations";
+import {
+    metadataTransformationsToDhis2,
+    metadataTransformationsFromDhis2,
+} from "../mappers/PackageTransformations";
 import { mapPackageToD2, mapD2PackageFromD2 } from "../mappers/PackageMapper";
 import { MetadataImportParams } from "../../../domain/metadata/types";
 import { MetadataImportResponse } from "../../../domain/metadata/types";
@@ -28,27 +35,37 @@ class MetadataD2ApiRepository implements MetadataRepository {
      * Return raw specific fields of metadata dhis2 models according to ids filter
      * @param ids metadata ids to retrieve
      */
-    async getMetadataFieldsByIds<T>(ids: string[], fields: string, targetInstance?: Instance): Promise<MetadataFieldsPackage<T>> {
+    async getMetadataFieldsByIds<T>(
+        ids: string[],
+        fields: string,
+        targetInstance?: Instance
+    ): Promise<MetadataFieldsPackage<T>> {
         return this.getMetadata<T>(ids, fields, targetInstance);
     }
 
     /**
      * Return metadata entities by type. Realize mapping from d2 to domain
-     * TODO: this method is not used for the moment, only is created as template 
+     * TODO: this method is not used for the moment, only is created as template
      * - create object options in domain with (order, filters, paging ....)
      * - Create domain pager?
      */
     async getMetadataByType(type: keyof MetadataEntities): Promise<MetadataEntity[]> {
         const apiModel = this.getApiModel(type);
 
-        const responseData = await apiModel.get({
-            paging: false,
-            fields: { $owner: true },
-        }).getData();
+        const responseData = await apiModel
+            .get({
+                paging: false,
+                fields: { $owner: true },
+            })
+            .getData();
 
         const apiVersion = await this.getVersion();
 
-        const metadataPackage = mapD2PackageFromD2(apiVersion, responseData, metadataTransformationsFromDhis2);
+        const metadataPackage = mapD2PackageFromD2(
+            apiVersion,
+            responseData,
+            metadataTransformationsFromDhis2
+        );
 
         return metadataPackage[type] || [];
     }
@@ -62,42 +79,60 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
         const apiVersion = await this.getVersion();
 
-        const metadataPackage = mapD2PackageFromD2(apiVersion, d2Metadata, metadataTransformationsFromDhis2);
+        const metadataPackage = mapD2PackageFromD2(
+            apiVersion,
+            d2Metadata,
+            metadataTransformationsFromDhis2
+        );
 
         return metadataPackage;
     }
 
-
-    async save(metadata: MetadataPackage,
+    async save(
+        metadata: MetadataPackage,
         additionalParams?: MetadataImportParams,
-        targetInstance?: Instance): Promise<MetadataImportResponse> {
-
+        targetInstance?: Instance
+    ): Promise<MetadataImportResponse> {
         const apiVersion = await this.getVersion(targetInstance);
-        const versionedPayloadPackage = mapPackageToD2(apiVersion, metadata, metadataTransformationsToDhis2);
+        const versionedPayloadPackage = mapPackageToD2(
+            apiVersion,
+            metadata,
+            metadataTransformationsToDhis2
+        );
 
         console.debug("Versioned metadata package", versionedPayloadPackage);
 
-        const response = await this.postMetadata(versionedPayloadPackage, additionalParams, targetInstance)
+        const response = await this.postMetadata(
+            versionedPayloadPackage,
+            additionalParams,
+            targetInstance
+        );
 
         return response;
     }
 
-    async remove(metadata: MetadataFieldsPackage<{ id: Id }>,
+    async remove(
+        metadata: MetadataFieldsPackage<{ id: Id }>,
         additionalParams?: MetadataImportParams,
-        targetInstance?: Instance): Promise<MetadataImportResponse> {
-
-        const response = await this.postMetadata(metadata, {
-            ...additionalParams,
-            importStrategy: "DELETE",
-        }, targetInstance);
+        targetInstance?: Instance
+    ): Promise<MetadataImportResponse> {
+        const response = await this.postMetadata(
+            metadata,
+            {
+                ...additionalParams,
+                importStrategy: "DELETE",
+            },
+            targetInstance
+        );
 
         return response;
     }
 
-    private async postMetadata(payload: Partial<Record<string, unknown[]>>,
+    private async postMetadata(
+        payload: Partial<Record<string, unknown[]>>,
         additionalParams?: MetadataImportParams,
-        targetInstance?: Instance): Promise<MetadataImportResponse> {
-
+        targetInstance?: Instance
+    ): Promise<MetadataImportResponse> {
         try {
             const params = {
                 importMode: "COMMIT",
@@ -110,7 +145,8 @@ class MetadataD2ApiRepository implements MetadataRepository {
             };
 
             const response = await this.getApi(targetInstance)
-                .post("/metadata", params, payload).getData();
+                .post("/metadata", params, payload)
+                .getData();
 
             return response as MetadataImportResponse;
         } catch (error) {
@@ -119,10 +155,12 @@ class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     private getApi(targetInstance?: Instance): D2Api {
-        return targetInstance ? new D2Api({
-            baseUrl: targetInstance.url,
-            auth: { username: targetInstance.username, password: targetInstance.password }
-        }) : this.currentD2Api;
+        return targetInstance
+            ? new D2Api({
+                  baseUrl: targetInstance.url,
+                  auth: { username: targetInstance.username, password: targetInstance.password },
+              })
+            : this.currentD2Api;
     }
 
     private async getVersion(targetInstance?: Instance): Promise<number> {
@@ -183,7 +221,10 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
     private getApiModel(type: keyof D2ModelSchemas): InstanceType<typeof Model> {
         const modelCollection = this.currentD2Api.models as {
-            [ModelKey in keyof D2ApiDefinition["schemas"]]: Model<D2ApiDefinition, D2ApiDefinition["schemas"][ModelKey]>;
+            [ModelKey in keyof D2ApiDefinition["schemas"]]: Model<
+                D2ApiDefinition,
+                D2ApiDefinition["schemas"][ModelKey]
+            >;
         };
         return modelCollection[type];
     }

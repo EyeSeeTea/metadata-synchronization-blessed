@@ -1,4 +1,8 @@
-import { PackageTransformationStrategy, mapPackageToD2, mapD2PackageFromD2 } from "../PackageMapper";
+import {
+    PackageTransformationStrategy,
+    mapPackageToD2,
+    mapD2PackageFromD2,
+} from "../PackageMapper";
 import _ from "lodash";
 import { D2MetadataPackage } from "../../../synchronization/types";
 import { MetadataPackage, MetadataEntities } from "../../../../domain/metadata/entities";
@@ -6,10 +10,13 @@ import { MetadataPackage, MetadataEntities } from "../../../../domain/metadata/e
 describe("PackageMapper", () => {
     describe("mapPackageToD2", () => {
         it("should no apply any transformation if not exist transformations", () => {
-            const transformations: PackageTransformationStrategy<MetadataPackage, D2MetadataPackage>[] = [];
+            const transformations: PackageTransformationStrategy<
+                MetadataPackage,
+                D2MetadataPackage
+            >[] = [];
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapPackageToD2(33, payload, transformations)
+            const transformedPayload = mapPackageToD2(33, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -18,13 +25,13 @@ describe("PackageMapper", () => {
                 {
                     apiVersion: 34,
                     transform: (payload: D2MetadataPackage) =>
-                        renamePropInMetadataPackage(payload, "userRoles", "name", "34Name")
-                }
+                        renamePropInMetadataPackage(payload, "userRoles", "name", "34Name"),
+                },
             ];
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapPackageToD2(33, payload, transformations)
+            const transformedPayload = mapPackageToD2(33, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -32,8 +39,9 @@ describe("PackageMapper", () => {
             const transformations = [
                 {
                     apiVersion: 30,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "name", "30Name")
-                }
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "name", "30Name"),
+                },
             ];
             const payload = givenAMetadataPackage();
 
@@ -46,13 +54,14 @@ describe("PackageMapper", () => {
             const transformations = [
                 {
                     apiVersion: 33,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "name", "33Name")
-                }
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "name", "33Name"),
+                },
             ];
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapPackageToD2(33, payload, transformations)
+            const transformedPayload = mapPackageToD2(33, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["33Name"])).toEqual(true);
@@ -61,17 +70,19 @@ describe("PackageMapper", () => {
             const transformations = [
                 {
                     apiVersion: 32,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "name", "32Name")
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "name", "32Name"),
                 },
                 {
                     apiVersion: 33,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "32Name", "33Name")
-                }
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "32Name", "33Name"),
+                },
             ];
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapPackageToD2(33, payload, transformations)
+            const transformedPayload = mapPackageToD2(33, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["33Name"])).toEqual(true);
@@ -80,17 +91,19 @@ describe("PackageMapper", () => {
             const transformations = [
                 {
                     apiVersion: 33,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "name", "32Name")
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "name", "32Name"),
                 },
                 {
                     apiVersion: 32,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "32Name", "33Name")
-                }
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "32Name", "33Name"),
+                },
             ];
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapPackageToD2(33, payload, transformations)
+            const transformedPayload = mapPackageToD2(33, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["33Name"])).toEqual(true);
@@ -98,10 +111,13 @@ describe("PackageMapper", () => {
     });
     describe("mapD2PackageToDomain", () => {
         it("should no apply any transformation if not exist transformations", () => {
-            const transformations: PackageTransformationStrategy<MetadataPackage, D2MetadataPackage>[] = [];
+            const transformations: PackageTransformationStrategy<
+                MetadataPackage,
+                D2MetadataPackage
+            >[] = [];
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapD2PackageFromD2(33, payload, transformations)
+            const transformedPayload = mapD2PackageFromD2(33, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -110,13 +126,13 @@ describe("PackageMapper", () => {
                 {
                     apiVersion: 34,
                     transform: (payload: D2MetadataPackage) =>
-                        renamePropInMetadataPackage(payload, "userRoles", "34Name", "33Name")
-                }
+                        renamePropInMetadataPackage(payload, "userRoles", "34Name", "33Name"),
+                },
             ];
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapD2PackageFromD2(33, payload, transformations)
+            const transformedPayload = mapD2PackageFromD2(33, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -124,8 +140,9 @@ describe("PackageMapper", () => {
             const transformations = [
                 {
                     apiVersion: 30,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "30Name", "name")
-                }
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "30Name", "name"),
+                },
             ];
             const payload = givenAMetadataPackage("30Name");
 
@@ -138,13 +155,14 @@ describe("PackageMapper", () => {
             const transformations = [
                 {
                     apiVersion: 30,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "30Name", "name")
-                }
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "30Name", "name"),
+                },
             ];
 
             const payload = givenAMetadataPackage("30Name");
 
-            const transformedPayload = mapD2PackageFromD2(30, payload, transformations)
+            const transformedPayload = mapD2PackageFromD2(30, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["name"])).toEqual(true);
@@ -153,17 +171,19 @@ describe("PackageMapper", () => {
             const transformations = [
                 {
                     apiVersion: 31,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "31Name", "30Name")
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "31Name", "30Name"),
                 },
                 {
                     apiVersion: 30,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "30Name", "name")
-                }
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "30Name", "name"),
+                },
             ];
 
             const payload = givenAMetadataPackage("31Name");
 
-            const transformedPayload = mapD2PackageFromD2(31, payload, transformations)
+            const transformedPayload = mapD2PackageFromD2(31, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["name"])).toEqual(true);
@@ -172,17 +192,19 @@ describe("PackageMapper", () => {
             const transformations = [
                 {
                     apiVersion: 30,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "30Name", "name")
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "30Name", "name"),
                 },
                 {
                     apiVersion: 31,
-                    transform: (payload: D2MetadataPackage) => renamePropInMetadataPackage(payload, "userRoles", "31Name", "30Name")
-                }
+                    transform: (payload: D2MetadataPackage) =>
+                        renamePropInMetadataPackage(payload, "userRoles", "31Name", "30Name"),
+                },
             ];
 
             const payload = givenAMetadataPackage("31Name");
 
-            const transformedPayload = mapD2PackageFromD2(31, payload, transformations)
+            const transformedPayload = mapD2PackageFromD2(31, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
 
@@ -191,20 +213,19 @@ describe("PackageMapper", () => {
     });
 });
 
-
-export { };
+export {};
 
 function givenAMetadataPackage(nameField: string = name): MetadataPackage {
     const metadataPackage = {
-        "userRoles": [
+        userRoles: [
             {
                 access: {
-                    "read": true,
-                    "update": true,
-                    "externalize": true,
-                    "delete": true,
-                    "write": true,
-                    "manage": true
+                    read: true,
+                    update: true,
+                    externalize: true,
+                    delete: true,
+                    write: true,
+                    manage: true,
                 },
                 attributeValues: [],
                 authorities: [],
@@ -228,12 +249,12 @@ function givenAMetadataPackage(nameField: string = name): MetadataPackage {
             },
             {
                 access: {
-                    "read": true,
-                    "update": true,
-                    "externalize": true,
-                    "delete": true,
-                    "write": true,
-                    "manage": true
+                    read: true,
+                    update: true,
+                    externalize: true,
+                    delete: true,
+                    write: true,
+                    manage: true,
                 },
                 attributeValues: [],
                 authorities: [],
@@ -254,12 +275,12 @@ function givenAMetadataPackage(nameField: string = name): MetadataPackage {
                 userAccesses: [],
                 userGroupAccesses: [],
                 users: [],
-            }
+            },
         ],
-    }
+    };
 
     if (nameField !== "name") {
-        renamePropInMetadataPackage(metadataPackage, "userRoles", "name", nameField)
+        renamePropInMetadataPackage(metadataPackage, "userRoles", "name", nameField);
     }
 
     return metadataPackage;
@@ -269,17 +290,18 @@ function renamePropInMetadataPackage(
     payload: MetadataPackage,
     type: keyof MetadataEntities,
     oldPropName: string,
-    newPropName: string): D2MetadataPackage {
-
+    newPropName: string
+): D2MetadataPackage {
     const renameProp = (oldProp: string, newProp: string, { [oldProp]: old, ...others }) => {
         return { [newProp]: old, ...others };
-    }
+    };
 
     const itemsByType = payload[type];
 
     if (itemsByType) {
         const renamedTypeItems = itemsByType.map((typeItem: any) =>
-            renameProp(oldPropName, newPropName, typeItem))
+            renameProp(oldPropName, newPropName, typeItem)
+        );
 
         const mappedPayLoad = {
             ...payload,

@@ -11,7 +11,6 @@ export interface InstanceData {
 }
 
 export default class Instance {
-
     private data: InstanceData;
 
     constructor(data: InstanceData) {

@@ -12,7 +12,7 @@ import {
     cleanObject,
     getAllReferences,
     cleanReferences,
-    cleanMetadataImportResponse
+    cleanMetadataImportResponse,
 } from "../utils";
 
 //TODO: Uncouple this dependencies. This class should be moved to domain
@@ -23,7 +23,6 @@ import Instance from "../../../models/instance";
 import { d2ModelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
-
 
 export class MetadataSyncUseCase extends GenericSync {
     public readonly type = "metadata";
@@ -103,7 +102,10 @@ export class MetadataSyncUseCase extends GenericSync {
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
 
-        const metadata = await this.metadataRepository.getMetadataFieldsByIds<Ref>(metadataIds, "id");
+        const metadata = await this.metadataRepository.getMetadataFieldsByIds<Ref>(
+            metadataIds,
+            "id"
+        );
 
         const exportResults = await promiseMap(_.keys(metadata), type => {
             const myClass = d2ModelFactory(this.api, type);
@@ -113,7 +115,7 @@ export class MetadataSyncUseCase extends GenericSync {
 
             return this.exportMetadata({
                 type: metadatatype,
-                ids: metadata[metadatatype]?.map((e) => e.id) || [],
+                ids: metadata[metadatatype]?.map(e => e.id) || [],
                 excludeRules: useDefaultIncludeExclude
                     ? myClass.getExcludeRules()
                     : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
@@ -125,14 +127,16 @@ export class MetadataSyncUseCase extends GenericSync {
         });
 
         const metadataPackage: MetadataPackage = _.deepMerge({}, ...exportResults);
-        const metadataWithoutDuplicates: MetadataPackage = _.mapValues(metadataPackage, elements => _.uniqBy(elements, "id"));
+        const metadataWithoutDuplicates: MetadataPackage = _.mapValues(metadataPackage, elements =>
+            _.uniqBy(elements, "id")
+        );
 
         return metadataWithoutDuplicates;
     });
 
     public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
-        //TODO: remove instance from abstract method in base base class 
-        // when aggregated and events does not use 
+        //TODO: remove instance from abstract method in base base class
+        // when aggregated and events does not use
         console.log(instance.url);
 
         const { syncParams = {} } = this.builder;

@@ -160,7 +160,6 @@ export function cleanToModelName(d2: D2, id: string, caller: string): string | n
  * Return expected posible children keys for metadata models
  */
 export function cleanToAPIChildReferenceName(d2: D2, key: string, parent: string): string[] {
-
     if (key === "attributes") {
         return ["attributeValues"];
     } else if (key === "optionSets") {

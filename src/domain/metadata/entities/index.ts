@@ -64,31 +64,31 @@ export type Attribute = {
     validationRuleAttribute: boolean;
     validationRuleGroupAttribute: boolean;
     valueType:
-    | "TEXT"
-    | "LONG_TEXT"
-    | "LETTER"
-    | "PHONE_NUMBER"
-    | "EMAIL"
-    | "BOOLEAN"
-    | "TRUE_ONLY"
-    | "DATE"
-    | "DATETIME"
-    | "TIME"
-    | "NUMBER"
-    | "UNIT_INTERVAL"
-    | "PERCENTAGE"
-    | "INTEGER"
-    | "INTEGER_POSITIVE"
-    | "INTEGER_NEGATIVE"
-    | "INTEGER_ZERO_OR_POSITIVE"
-    | "TRACKER_ASSOCIATE"
-    | "USERNAME"
-    | "COORDINATE"
-    | "ORGANISATION_UNIT"
-    | "AGE"
-    | "URL"
-    | "FILE_RESOURCE"
-    | "IMAGE";
+        | "TEXT"
+        | "LONG_TEXT"
+        | "LETTER"
+        | "PHONE_NUMBER"
+        | "EMAIL"
+        | "BOOLEAN"
+        | "TRUE_ONLY"
+        | "DATE"
+        | "DATETIME"
+        | "TIME"
+        | "NUMBER"
+        | "UNIT_INTERVAL"
+        | "PERCENTAGE"
+        | "INTEGER"
+        | "INTEGER_POSITIVE"
+        | "INTEGER_NEGATIVE"
+        | "INTEGER_ZERO_OR_POSITIVE"
+        | "TRACKER_ASSOCIATE"
+        | "USERNAME"
+        | "COORDINATE"
+        | "ORGANISATION_UNIT"
+        | "AGE"
+        | "URL"
+        | "FILE_RESOURCE"
+        | "IMAGE";
 };
 
 export type UserRole = {
@@ -222,70 +222,70 @@ export type OptionSet = {
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
-    | "TEXT"
-    | "LONG_TEXT"
-    | "LETTER"
-    | "PHONE_NUMBER"
-    | "EMAIL"
-    | "BOOLEAN"
-    | "TRUE_ONLY"
-    | "DATE"
-    | "DATETIME"
-    | "TIME"
-    | "NUMBER"
-    | "UNIT_INTERVAL"
-    | "PERCENTAGE"
-    | "INTEGER"
-    | "INTEGER_POSITIVE"
-    | "INTEGER_NEGATIVE"
-    | "INTEGER_ZERO_OR_POSITIVE"
-    | "TRACKER_ASSOCIATE"
-    | "USERNAME"
-    | "COORDINATE"
-    | "ORGANISATION_UNIT"
-    | "AGE"
-    | "URL"
-    | "FILE_RESOURCE"
-    | "IMAGE";
+        | "TEXT"
+        | "LONG_TEXT"
+        | "LETTER"
+        | "PHONE_NUMBER"
+        | "EMAIL"
+        | "BOOLEAN"
+        | "TRUE_ONLY"
+        | "DATE"
+        | "DATETIME"
+        | "TIME"
+        | "NUMBER"
+        | "UNIT_INTERVAL"
+        | "PERCENTAGE"
+        | "INTEGER"
+        | "INTEGER_POSITIVE"
+        | "INTEGER_NEGATIVE"
+        | "INTEGER_ZERO_OR_POSITIVE"
+        | "TRACKER_ASSOCIATE"
+        | "USERNAME"
+        | "COORDINATE"
+        | "ORGANISATION_UNIT"
+        | "AGE"
+        | "URL"
+        | "FILE_RESOURCE"
+        | "IMAGE";
     version: number;
 };
 
 export type OptionGroup = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -310,19 +310,19 @@ export type OptionGroup = {
 export type OptionGroupSet = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     allItems: boolean;
     attributeValues: AttributeValue[];
     code: Id;
@@ -331,24 +331,24 @@ export type OptionGroupSet = {
     description: string;
     dimension: string;
     dimensionType:
-    | "DATA_X"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "DATA_COLLAPSED"
-    | "CATEGORY_OPTION_COMBO"
-    | "ATTRIBUTE_OPTION_COMBO"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION_GROUP_SET"
-    | "DATA_ELEMENT_GROUP_SET"
-    | "ORGANISATION_UNIT_GROUP_SET"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY"
-    | "OPTION_GROUP_SET"
-    | "VALIDATION_RULE"
-    | "STATIC"
-    | "ORGANISATION_UNIT_LEVEL";
+        | "DATA_X"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "DATA_COLLAPSED"
+        | "CATEGORY_OPTION_COMBO"
+        | "ATTRIBUTE_OPTION_COMBO"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION_GROUP_SET"
+        | "DATA_ELEMENT_GROUP_SET"
+        | "ORGANISATION_UNIT_GROUP_SET"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY"
+        | "OPTION_GROUP_SET"
+        | "VALIDATION_RULE"
+        | "STATIC"
+        | "ORGANISATION_UNIT_LEVEL";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -419,19 +419,19 @@ export type OrganisationUnit = {
     access: Access;
     address: string;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     ancestors: Ref[];
     attributeValues: AttributeValue[];
     children: Ref[];
@@ -445,20 +445,20 @@ export type OrganisationUnit = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -518,19 +518,19 @@ export type OrganisationUnitLevel = {
 export type OrganisationUnitGroup = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeValues: AttributeValue[];
     code: Id;
     color: string;
@@ -539,20 +539,20 @@ export type OrganisationUnitGroup = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -580,19 +580,19 @@ export type OrganisationUnitGroup = {
 export type OrganisationUnitGroupSet = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     allItems: boolean;
     attributeValues: AttributeValue[];
     code: Id;
@@ -602,24 +602,24 @@ export type OrganisationUnitGroupSet = {
     description: string;
     dimension: string;
     dimensionType:
-    | "DATA_X"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "DATA_COLLAPSED"
-    | "CATEGORY_OPTION_COMBO"
-    | "ATTRIBUTE_OPTION_COMBO"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION_GROUP_SET"
-    | "DATA_ELEMENT_GROUP_SET"
-    | "ORGANISATION_UNIT_GROUP_SET"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY"
-    | "OPTION_GROUP_SET"
-    | "VALIDATION_RULE"
-    | "STATIC"
-    | "ORGANISATION_UNIT_LEVEL";
+        | "DATA_X"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "DATA_COLLAPSED"
+        | "CATEGORY_OPTION_COMBO"
+        | "ATTRIBUTE_OPTION_COMBO"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION_GROUP_SET"
+        | "DATA_ELEMENT_GROUP_SET"
+        | "ORGANISATION_UNIT_GROUP_SET"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY"
+        | "OPTION_GROUP_SET"
+        | "VALIDATION_RULE"
+        | "STATIC"
+        | "ORGANISATION_UNIT_LEVEL";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -646,19 +646,19 @@ export type OrganisationUnitGroupSet = {
 export type CategoryOption = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeValues: AttributeValue[];
     categories: Ref[];
     categoryOptionCombos: Ref[];
@@ -668,20 +668,20 @@ export type CategoryOption = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -710,19 +710,19 @@ export type CategoryOption = {
 export type CategoryOptionGroup = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeValues: AttributeValue[];
     categoryOptions: Ref[];
     code: Id;
@@ -731,20 +731,20 @@ export type CategoryOptionGroup = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -769,19 +769,19 @@ export type CategoryOptionGroup = {
 export type CategoryOptionGroupSet = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     allItems: boolean;
     attributeValues: AttributeValue[];
     categoryOptionGroups: Ref[];
@@ -792,24 +792,24 @@ export type CategoryOptionGroupSet = {
     description: string;
     dimension: string;
     dimensionType:
-    | "DATA_X"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "DATA_COLLAPSED"
-    | "CATEGORY_OPTION_COMBO"
-    | "ATTRIBUTE_OPTION_COMBO"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION_GROUP_SET"
-    | "DATA_ELEMENT_GROUP_SET"
-    | "ORGANISATION_UNIT_GROUP_SET"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY"
-    | "OPTION_GROUP_SET"
-    | "VALIDATION_RULE"
-    | "STATIC"
-    | "ORGANISATION_UNIT_LEVEL";
+        | "DATA_X"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "DATA_COLLAPSED"
+        | "CATEGORY_OPTION_COMBO"
+        | "ATTRIBUTE_OPTION_COMBO"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION_GROUP_SET"
+        | "DATA_ELEMENT_GROUP_SET"
+        | "ORGANISATION_UNIT_GROUP_SET"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY"
+        | "OPTION_GROUP_SET"
+        | "VALIDATION_RULE"
+        | "STATIC"
+        | "ORGANISATION_UNIT_LEVEL";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -834,19 +834,19 @@ export type CategoryOptionGroupSet = {
 export type Category = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     allItems: boolean;
     attributeValues: AttributeValue[];
     categoryCombos: Ref[];
@@ -858,24 +858,24 @@ export type Category = {
     description: string;
     dimension: string;
     dimensionType:
-    | "DATA_X"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "DATA_COLLAPSED"
-    | "CATEGORY_OPTION_COMBO"
-    | "ATTRIBUTE_OPTION_COMBO"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION_GROUP_SET"
-    | "DATA_ELEMENT_GROUP_SET"
-    | "ORGANISATION_UNIT_GROUP_SET"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY"
-    | "OPTION_GROUP_SET"
-    | "VALIDATION_RULE"
-    | "STATIC"
-    | "ORGANISATION_UNIT_LEVEL";
+        | "DATA_X"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "DATA_COLLAPSED"
+        | "CATEGORY_OPTION_COMBO"
+        | "ATTRIBUTE_OPTION_COMBO"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION_GROUP_SET"
+        | "DATA_ELEMENT_GROUP_SET"
+        | "ORGANISATION_UNIT_GROUP_SET"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY"
+        | "OPTION_GROUP_SET"
+        | "VALIDATION_RULE"
+        | "STATIC"
+        | "ORGANISATION_UNIT_LEVEL";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -925,19 +925,19 @@ export type CategoryCombo = {
 export type CategoryOptionCombo = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeValues: AttributeValue[];
     categoryCombo: Ref;
     categoryOptions: Ref[];
@@ -946,20 +946,20 @@ export type CategoryOptionCombo = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -985,19 +985,19 @@ export type DataElement = {
     access: Access;
     aggregationLevels: number[];
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeValues: AttributeValue[];
     categoryCombo: Ref;
     code: Id;
@@ -1008,20 +1008,20 @@ export type DataElement = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayFormName: string;
     displayName: string;
@@ -1048,50 +1048,50 @@ export type DataElement = {
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
-    | "TEXT"
-    | "LONG_TEXT"
-    | "LETTER"
-    | "PHONE_NUMBER"
-    | "EMAIL"
-    | "BOOLEAN"
-    | "TRUE_ONLY"
-    | "DATE"
-    | "DATETIME"
-    | "TIME"
-    | "NUMBER"
-    | "UNIT_INTERVAL"
-    | "PERCENTAGE"
-    | "INTEGER"
-    | "INTEGER_POSITIVE"
-    | "INTEGER_NEGATIVE"
-    | "INTEGER_ZERO_OR_POSITIVE"
-    | "TRACKER_ASSOCIATE"
-    | "USERNAME"
-    | "COORDINATE"
-    | "ORGANISATION_UNIT"
-    | "AGE"
-    | "URL"
-    | "FILE_RESOURCE"
-    | "IMAGE";
+        | "TEXT"
+        | "LONG_TEXT"
+        | "LETTER"
+        | "PHONE_NUMBER"
+        | "EMAIL"
+        | "BOOLEAN"
+        | "TRUE_ONLY"
+        | "DATE"
+        | "DATETIME"
+        | "TIME"
+        | "NUMBER"
+        | "UNIT_INTERVAL"
+        | "PERCENTAGE"
+        | "INTEGER"
+        | "INTEGER_POSITIVE"
+        | "INTEGER_NEGATIVE"
+        | "INTEGER_ZERO_OR_POSITIVE"
+        | "TRACKER_ASSOCIATE"
+        | "USERNAME"
+        | "COORDINATE"
+        | "ORGANISATION_UNIT"
+        | "AGE"
+        | "URL"
+        | "FILE_RESOURCE"
+        | "IMAGE";
     zeroIsSignificant: boolean;
 };
 
 export type DataElementGroup = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
@@ -1099,20 +1099,20 @@ export type DataElementGroup = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -1137,19 +1137,19 @@ export type DataElementGroup = {
 export type DataElementGroupSet = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     allItems: boolean;
     attributeValues: AttributeValue[];
     code: Id;
@@ -1160,24 +1160,24 @@ export type DataElementGroupSet = {
     description: string;
     dimension: string;
     dimensionType:
-    | "DATA_X"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "DATA_COLLAPSED"
-    | "CATEGORY_OPTION_COMBO"
-    | "ATTRIBUTE_OPTION_COMBO"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION_GROUP_SET"
-    | "DATA_ELEMENT_GROUP_SET"
-    | "ORGANISATION_UNIT_GROUP_SET"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY"
-    | "OPTION_GROUP_SET"
-    | "VALIDATION_RULE"
-    | "STATIC"
-    | "ORGANISATION_UNIT_LEVEL";
+        | "DATA_X"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "DATA_COLLAPSED"
+        | "CATEGORY_OPTION_COMBO"
+        | "ATTRIBUTE_OPTION_COMBO"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION_GROUP_SET"
+        | "DATA_ELEMENT_GROUP_SET"
+        | "ORGANISATION_UNIT_GROUP_SET"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY"
+        | "OPTION_GROUP_SET"
+        | "VALIDATION_RULE"
+        | "STATIC"
+        | "ORGANISATION_UNIT_LEVEL";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -1226,19 +1226,19 @@ export type Indicator = {
     aggregateExportAttributeOptionCombo: string;
     aggregateExportCategoryOptionCombo: string;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     annualized: boolean;
     attributeValues: AttributeValue[];
     code: Id;
@@ -1250,20 +1250,20 @@ export type Indicator = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -1362,19 +1362,19 @@ export type DataEntryForm = {
 export type DataSet = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeValues: AttributeValue[];
     categoryCombo: Ref;
     code: Id;
@@ -1388,20 +1388,20 @@ export type DataSet = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -1557,39 +1557,39 @@ export type ValidationRule = {
     aggregateExportAttributeOptionCombo: string;
     aggregateExportCategoryOptionCombo: string;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -1607,14 +1607,14 @@ export type ValidationRule = {
     name: string;
     notificationTemplates: Ref[];
     operator:
-    | "equal_to"
-    | "not_equal_to"
-    | "greater_than"
-    | "greater_than_or_equal_to"
-    | "less_than"
-    | "less_than_or_equal_to"
-    | "compulsory_pair"
-    | "exclusive_pair";
+        | "equal_to"
+        | "not_equal_to"
+        | "greater_than"
+        | "greater_than_or_equal_to"
+        | "less_than"
+        | "less_than_or_equal_to"
+        | "compulsory_pair"
+        | "exclusive_pair";
     organisationUnitLevels: number[];
     periodType: string;
     publicAccess: string;
@@ -1680,19 +1680,19 @@ export type ValidationNotificationTemplate = {
 export type TrackedEntityAttribute = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeValues: AttributeValue[];
     code: Id;
     confidential: boolean;
@@ -1700,20 +1700,20 @@ export type TrackedEntityAttribute = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayInListNoProgram: boolean;
     displayName: string;
@@ -1749,31 +1749,31 @@ export type TrackedEntityAttribute = {
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
-    | "TEXT"
-    | "LONG_TEXT"
-    | "LETTER"
-    | "PHONE_NUMBER"
-    | "EMAIL"
-    | "BOOLEAN"
-    | "TRUE_ONLY"
-    | "DATE"
-    | "DATETIME"
-    | "TIME"
-    | "NUMBER"
-    | "UNIT_INTERVAL"
-    | "PERCENTAGE"
-    | "INTEGER"
-    | "INTEGER_POSITIVE"
-    | "INTEGER_NEGATIVE"
-    | "INTEGER_ZERO_OR_POSITIVE"
-    | "TRACKER_ASSOCIATE"
-    | "USERNAME"
-    | "COORDINATE"
-    | "ORGANISATION_UNIT"
-    | "AGE"
-    | "URL"
-    | "FILE_RESOURCE"
-    | "IMAGE";
+        | "TEXT"
+        | "LONG_TEXT"
+        | "LETTER"
+        | "PHONE_NUMBER"
+        | "EMAIL"
+        | "BOOLEAN"
+        | "TRUE_ONLY"
+        | "DATE"
+        | "DATETIME"
+        | "TIME"
+        | "NUMBER"
+        | "UNIT_INTERVAL"
+        | "PERCENTAGE"
+        | "INTEGER"
+        | "INTEGER_POSITIVE"
+        | "INTEGER_NEGATIVE"
+        | "INTEGER_ZERO_OR_POSITIVE"
+        | "TRACKER_ASSOCIATE"
+        | "USERNAME"
+        | "COORDINATE"
+        | "ORGANISATION_UNIT"
+        | "AGE"
+        | "URL"
+        | "FILE_RESOURCE"
+        | "IMAGE";
 };
 
 export type RelationshipType = {
@@ -1854,31 +1854,31 @@ export type TrackedEntityTypeAttribute = {
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
-    | "TEXT"
-    | "LONG_TEXT"
-    | "LETTER"
-    | "PHONE_NUMBER"
-    | "EMAIL"
-    | "BOOLEAN"
-    | "TRUE_ONLY"
-    | "DATE"
-    | "DATETIME"
-    | "TIME"
-    | "NUMBER"
-    | "UNIT_INTERVAL"
-    | "PERCENTAGE"
-    | "INTEGER"
-    | "INTEGER_POSITIVE"
-    | "INTEGER_NEGATIVE"
-    | "INTEGER_ZERO_OR_POSITIVE"
-    | "TRACKER_ASSOCIATE"
-    | "USERNAME"
-    | "COORDINATE"
-    | "ORGANISATION_UNIT"
-    | "AGE"
-    | "URL"
-    | "FILE_RESOURCE"
-    | "IMAGE";
+        | "TEXT"
+        | "LONG_TEXT"
+        | "LETTER"
+        | "PHONE_NUMBER"
+        | "EMAIL"
+        | "BOOLEAN"
+        | "TRUE_ONLY"
+        | "DATE"
+        | "DATETIME"
+        | "TIME"
+        | "NUMBER"
+        | "UNIT_INTERVAL"
+        | "PERCENTAGE"
+        | "INTEGER"
+        | "INTEGER_POSITIVE"
+        | "INTEGER_NEGATIVE"
+        | "INTEGER_ZERO_OR_POSITIVE"
+        | "TRACKER_ASSOCIATE"
+        | "USERNAME"
+        | "COORDINATE"
+        | "ORGANISATION_UNIT"
+        | "AGE"
+        | "URL"
+        | "FILE_RESOURCE"
+        | "IMAGE";
 };
 
 export type ProgramTrackedEntityAttributeGroup = {
@@ -1923,19 +1923,19 @@ export type ProgramNotificationTemplate = {
     messageTemplate: string;
     name: string;
     notificationRecipient:
-    | "TRACKED_ENTITY_INSTANCE"
-    | "ORGANISATION_UNIT_CONTACT"
-    | "USERS_AT_ORGANISATION_UNIT"
-    | "USER_GROUP"
-    | "PROGRAM_ATTRIBUTE"
-    | "DATA_ELEMENT";
+        | "TRACKED_ENTITY_INSTANCE"
+        | "ORGANISATION_UNIT_CONTACT"
+        | "USERS_AT_ORGANISATION_UNIT"
+        | "USER_GROUP"
+        | "PROGRAM_ATTRIBUTE"
+        | "DATA_ELEMENT";
     notificationTrigger:
-    | "ENROLLMENT"
-    | "COMPLETION"
-    | "PROGRAM_RULE"
-    | "SCHEDULED_DAYS_DUE_DATE"
-    | "SCHEDULED_DAYS_INCIDENT_DATE"
-    | "SCHEDULED_DAYS_ENROLLMENT_DATE";
+        | "ENROLLMENT"
+        | "COMPLETION"
+        | "PROGRAM_RULE"
+        | "SCHEDULED_DAYS_DUE_DATE"
+        | "SCHEDULED_DAYS_INCIDENT_DATE"
+        | "SCHEDULED_DAYS_ENROLLMENT_DATE";
     notifyParentOrganisationUnitOnly: boolean;
     notifyUsersInHierarchyOnly: boolean;
     publicAccess: string;
@@ -2090,19 +2090,19 @@ export type Program = {
 export type EventChart = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeDimensions: any[];
     attributeValueDimension: any;
     attributeValues: AttributeValue[];
@@ -2184,15 +2184,15 @@ export type EventChart = {
     topLimit: number;
     translations: Translation[];
     type:
-    | "COLUMN"
-    | "STACKED_COLUMN"
-    | "BAR"
-    | "STACKED_BAR"
-    | "LINE"
-    | "AREA"
-    | "PIE"
-    | "RADAR"
-    | "GAUGE";
+        | "COLUMN"
+        | "STACKED_COLUMN"
+        | "BAR"
+        | "STACKED_BAR"
+        | "LINE"
+        | "AREA"
+        | "PIE"
+        | "RADAR"
+        | "GAUGE";
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
@@ -2205,19 +2205,19 @@ export type EventChart = {
 export type EventReport = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeDimensions: any[];
     attributeValueDimension: any;
     attributeValues: AttributeValue[];
@@ -2329,19 +2329,19 @@ export type ProgramIndicator = {
     aggregateExportAttributeOptionCombo: string;
     aggregateExportCategoryOptionCombo: string;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     analyticsPeriodBoundaries: AnalyticsPeriodBoundary[];
     analyticsType: "EVENT" | "ENROLLMENT";
     attributeValues: AttributeValue[];
@@ -2351,20 +2351,20 @@ export type ProgramIndicator = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayInForm: boolean;
     displayName: string;
@@ -2408,12 +2408,12 @@ export type ProgramRuleVariable = {
     name: string;
     program: Ref;
     programRuleVariableSourceType:
-    | "DATAELEMENT_NEWEST_EVENT_PROGRAM_STAGE"
-    | "DATAELEMENT_NEWEST_EVENT_PROGRAM"
-    | "DATAELEMENT_CURRENT_EVENT"
-    | "DATAELEMENT_PREVIOUS_EVENT"
-    | "CALCULATED_VALUE"
-    | "TEI_ATTRIBUTE";
+        | "DATAELEMENT_NEWEST_EVENT_PROGRAM_STAGE"
+        | "DATAELEMENT_NEWEST_EVENT_PROGRAM"
+        | "DATAELEMENT_CURRENT_EVENT"
+        | "DATAELEMENT_PREVIOUS_EVENT"
+        | "CALCULATED_VALUE"
+        | "TEI_ATTRIBUTE";
     programStage: Ref;
     publicAccess: string;
     trackedEntityAttribute: TrackedEntityAttribute;
@@ -2459,23 +2459,23 @@ export type ProgramRuleAction = {
     lastUpdatedBy: Ref;
     programRule: Ref;
     programRuleActionType:
-    | "DISPLAYTEXT"
-    | "DISPLAYKEYVALUEPAIR"
-    | "HIDEFIELD"
-    | "HIDESECTION"
-    | "HIDEPROGRAMSTAGE"
-    | "ASSIGN"
-    | "SHOWWARNING"
-    | "WARNINGONCOMPLETE"
-    | "SHOWERROR"
-    | "ERRORONCOMPLETE"
-    | "CREATEEVENT"
-    | "SETMANDATORYFIELD"
-    | "SENDMESSAGE"
-    | "SCHEDULEMESSAGE"
-    | "HIDEOPTION"
-    | "SHOWOPTIONGROUP"
-    | "HIDEOPTIONGROUP";
+        | "DISPLAYTEXT"
+        | "DISPLAYKEYVALUEPAIR"
+        | "HIDEFIELD"
+        | "HIDESECTION"
+        | "HIDEPROGRAMSTAGE"
+        | "ASSIGN"
+        | "SHOWWARNING"
+        | "WARNINGONCOMPLETE"
+        | "SHOWERROR"
+        | "ERRORONCOMPLETE"
+        | "CREATEEVENT"
+        | "SETMANDATORYFIELD"
+        | "SENDMESSAGE"
+        | "SCHEDULEMESSAGE"
+        | "HIDEOPTION"
+        | "SHOWOPTIONGROUP"
+        | "HIDEOPTIONGROUP";
     translations: Translation[];
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
@@ -2510,19 +2510,19 @@ export type ProgramRule = {
 export type MapView = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     areaRadius: number;
     attributeDimensions: any[];
     attributeValues: AttributeValue[];
@@ -2578,12 +2578,12 @@ export type MapView = {
     organisationUnitGroupSetDimensions: OrganisationUnitGroupSetDimension[];
     organisationUnitLevels: number[];
     organisationUnitSelectionMode:
-    | "SELECTED"
-    | "CHILDREN"
-    | "DESCENDANTS"
-    | "ACCESSIBLE"
-    | "CAPTURE"
-    | "ALL";
+        | "SELECTED"
+        | "CHILDREN"
+        | "DESCENDANTS"
+        | "ACCESSIBLE"
+        | "CAPTURE"
+        | "ALL";
     organisationUnits: Ref[];
     parentGraph: string;
     parentGraphMap: Map;
@@ -2621,19 +2621,19 @@ export type MapView = {
 export type Chart = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeDimensions: any[];
     attributeValues: AttributeValue[];
     baseLineLabel: string;
@@ -2704,15 +2704,15 @@ export type Chart = {
     topLimit: number;
     translations: Translation[];
     type:
-    | "COLUMN"
-    | "STACKED_COLUMN"
-    | "BAR"
-    | "STACKED_BAR"
-    | "LINE"
-    | "AREA"
-    | "PIE"
-    | "RADAR"
-    | "GAUGE";
+        | "COLUMN"
+        | "STACKED_COLUMN"
+        | "BAR"
+        | "STACKED_BAR"
+        | "LINE"
+        | "AREA"
+        | "PIE"
+        | "RADAR"
+        | "GAUGE";
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
@@ -2749,13 +2749,13 @@ export type Report = {
     access: Access;
     attributeValues: AttributeValue[];
     cacheStrategy:
-    | "NO_CACHE"
-    | "CACHE_15_MINUTES"
-    | "CACHE_30_MINUTES"
-    | "CACHE_1_HOUR"
-    | "CACHE_6AM_TOMORROW"
-    | "CACHE_TWO_WEEKS"
-    | "RESPECT_SYSTEM_SETTING";
+        | "NO_CACHE"
+        | "CACHE_15_MINUTES"
+        | "CACHE_30_MINUTES"
+        | "CACHE_1_HOUR"
+        | "CACHE_6AM_TOMORROW"
+        | "CACHE_TWO_WEEKS"
+        | "RESPECT_SYSTEM_SETTING";
     code: Id;
     created: string;
     designContent: string;
@@ -2781,19 +2781,19 @@ export type Report = {
 export type ReportTable = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeDimensions: any[];
     attributeValues: AttributeValue[];
     categoryDimensions: CategoryDimension[];
@@ -2934,17 +2934,17 @@ export type DashboardItem = {
     text: string;
     translations: Translation[];
     type:
-    | "CHART"
-    | "EVENT_CHART"
-    | "MAP"
-    | "REPORT_TABLE"
-    | "EVENT_REPORT"
-    | "USERS"
-    | "REPORTS"
-    | "RESOURCES"
-    | "TEXT"
-    | "MESSAGES"
-    | "APP";
+        | "CHART"
+        | "EVENT_CHART"
+        | "MAP"
+        | "REPORT_TABLE"
+        | "EVENT_REPORT"
+        | "USERS"
+        | "REPORTS"
+        | "RESOURCES"
+        | "TEXT"
+        | "MESSAGES"
+        | "APP";
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
@@ -2988,19 +2988,19 @@ export type OrganisationUnitGroupSetDimension = {
 export type DataElementOperand = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeOptionCombo: Ref;
     attributeValues: AttributeValue[];
     categoryOptionCombo: Ref;
@@ -3010,20 +3010,20 @@ export type DataElementOperand = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -3138,10 +3138,10 @@ export type InterpretationComment = {
 export type AnalyticsPeriodBoundary = {
     access: Access;
     analyticsPeriodBoundaryType:
-    | "BEFORE_START_OF_REPORTING_PERIOD"
-    | "BEFORE_END_OF_REPORTING_PERIOD"
-    | "AFTER_START_OF_REPORTING_PERIOD"
-    | "AFTER_END_OF_REPORTING_PERIOD";
+        | "BEFORE_START_OF_REPORTING_PERIOD"
+        | "BEFORE_END_OF_REPORTING_PERIOD"
+        | "AFTER_START_OF_REPORTING_PERIOD"
+        | "AFTER_END_OF_REPORTING_PERIOD";
     attributeValues: AttributeValue[];
     boundaryTarget: string;
     code: Id;
@@ -3166,19 +3166,19 @@ export type AnalyticsPeriodBoundary = {
 export type ProgramDataElementDimensionItem = {
     access: Access;
     aggregationType:
-    | "SUM"
-    | "AVERAGE"
-    | "AVERAGE_SUM_ORG_UNIT"
-    | "LAST"
-    | "LAST_AVERAGE_ORG_UNIT"
-    | "COUNT"
-    | "STDDEV"
-    | "VARIANCE"
-    | "MIN"
-    | "MAX"
-    | "NONE"
-    | "CUSTOM"
-    | "DEFAULT";
+        | "SUM"
+        | "AVERAGE"
+        | "AVERAGE_SUM_ORG_UNIT"
+        | "LAST"
+        | "LAST_AVERAGE_ORG_UNIT"
+        | "COUNT"
+        | "STDDEV"
+        | "VARIANCE"
+        | "MIN"
+        | "MAX"
+        | "NONE"
+        | "CUSTOM"
+        | "DEFAULT";
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
@@ -3186,20 +3186,20 @@ export type ProgramDataElementDimensionItem = {
     description: string;
     dimensionItem: string;
     dimensionItemType:
-    | "DATA_ELEMENT"
-    | "DATA_ELEMENT_OPERAND"
-    | "INDICATOR"
-    | "REPORTING_RATE"
-    | "PROGRAM_DATA_ELEMENT"
-    | "PROGRAM_ATTRIBUTE"
-    | "PROGRAM_INDICATOR"
-    | "PERIOD"
-    | "ORGANISATION_UNIT"
-    | "CATEGORY_OPTION"
-    | "OPTION_GROUP"
-    | "DATA_ELEMENT_GROUP"
-    | "ORGANISATION_UNIT_GROUP"
-    | "CATEGORY_OPTION_GROUP";
+        | "DATA_ELEMENT"
+        | "DATA_ELEMENT_OPERAND"
+        | "INDICATOR"
+        | "REPORTING_RATE"
+        | "PROGRAM_DATA_ELEMENT"
+        | "PROGRAM_ATTRIBUTE"
+        | "PROGRAM_INDICATOR"
+        | "PERIOD"
+        | "ORGANISATION_UNIT"
+        | "CATEGORY_OPTION"
+        | "OPTION_GROUP"
+        | "DATA_ELEMENT_GROUP"
+        | "ORGANISATION_UNIT_GROUP"
+        | "CATEGORY_OPTION_GROUP";
     displayDescription: string;
     displayName: string;
     displayShortName: string;
@@ -3220,31 +3220,31 @@ export type ProgramDataElementDimensionItem = {
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
-    | "TEXT"
-    | "LONG_TEXT"
-    | "LETTER"
-    | "PHONE_NUMBER"
-    | "EMAIL"
-    | "BOOLEAN"
-    | "TRUE_ONLY"
-    | "DATE"
-    | "DATETIME"
-    | "TIME"
-    | "NUMBER"
-    | "UNIT_INTERVAL"
-    | "PERCENTAGE"
-    | "INTEGER"
-    | "INTEGER_POSITIVE"
-    | "INTEGER_NEGATIVE"
-    | "INTEGER_ZERO_OR_POSITIVE"
-    | "TRACKER_ASSOCIATE"
-    | "USERNAME"
-    | "COORDINATE"
-    | "ORGANISATION_UNIT"
-    | "AGE"
-    | "URL"
-    | "FILE_RESOURCE"
-    | "IMAGE";
+        | "TEXT"
+        | "LONG_TEXT"
+        | "LETTER"
+        | "PHONE_NUMBER"
+        | "EMAIL"
+        | "BOOLEAN"
+        | "TRUE_ONLY"
+        | "DATE"
+        | "DATETIME"
+        | "TIME"
+        | "NUMBER"
+        | "UNIT_INTERVAL"
+        | "PERCENTAGE"
+        | "INTEGER"
+        | "INTEGER_POSITIVE"
+        | "INTEGER_NEGATIVE"
+        | "INTEGER_ZERO_OR_POSITIVE"
+        | "TRACKER_ASSOCIATE"
+        | "USERNAME"
+        | "COORDINATE"
+        | "ORGANISATION_UNIT"
+        | "AGE"
+        | "URL"
+        | "FILE_RESOURCE"
+        | "IMAGE";
 };
 
 export type UserGroupAccess = {
@@ -3428,31 +3428,31 @@ export type ProgramTrackedEntityAttribute = {
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
-    | "TEXT"
-    | "LONG_TEXT"
-    | "LETTER"
-    | "PHONE_NUMBER"
-    | "EMAIL"
-    | "BOOLEAN"
-    | "TRUE_ONLY"
-    | "DATE"
-    | "DATETIME"
-    | "TIME"
-    | "NUMBER"
-    | "UNIT_INTERVAL"
-    | "PERCENTAGE"
-    | "INTEGER"
-    | "INTEGER_POSITIVE"
-    | "INTEGER_NEGATIVE"
-    | "INTEGER_ZERO_OR_POSITIVE"
-    | "TRACKER_ASSOCIATE"
-    | "USERNAME"
-    | "COORDINATE"
-    | "ORGANISATION_UNIT"
-    | "AGE"
-    | "URL"
-    | "FILE_RESOURCE"
-    | "IMAGE";
+        | "TEXT"
+        | "LONG_TEXT"
+        | "LETTER"
+        | "PHONE_NUMBER"
+        | "EMAIL"
+        | "BOOLEAN"
+        | "TRUE_ONLY"
+        | "DATE"
+        | "DATETIME"
+        | "TIME"
+        | "NUMBER"
+        | "UNIT_INTERVAL"
+        | "PERCENTAGE"
+        | "INTEGER"
+        | "INTEGER_POSITIVE"
+        | "INTEGER_NEGATIVE"
+        | "INTEGER_ZERO_OR_POSITIVE"
+        | "TRACKER_ASSOCIATE"
+        | "USERNAME"
+        | "COORDINATE"
+        | "ORGANISATION_UNIT"
+        | "AGE"
+        | "URL"
+        | "FILE_RESOURCE"
+        | "IMAGE";
 };
 
 export type DataSetElement = {
@@ -3530,7 +3530,7 @@ export type MetadataEntity =
     | Dashboard
     | MessageConversation;
 
-export type MetadataKey = "userRoles" | "attributes" | ""
+export type MetadataKey = "userRoles" | "attributes" | "";
 
 //TODO: Add as value entoty definitions
 // currently this concept are models with include/exclude rules, collectionName...
@@ -3540,62 +3540,62 @@ export type MetadataEntities = {
     users: Ref[];
     userGroups: UserGroup[];
     options: Ref[];
-    optionSets: OptionSet[]
-    optionGroupSets: OptionGroupSet[]
-    optionGroups: OptionGroup[]
-    legendSets: LegendSet[]
-    colorSets: ColorSet[]
-    organisationUnits: Ref[]
-    organisationUnitLevels: OrganisationUnitLevel[]
-    organisationUnitGroups: OrganisationUnitGroup[]
-    organisationUnitGroupSets: OrganisationUnitGroupSet[]
-    categoryOptions: CategoryOption[]
-    categoryOptionGroups: CategoryOptionGroup[]
-    categoryOptionGroupSets: CategoryOptionGroupSet[]
-    categories: Category[]
-    categoryCombos: CategoryCombo[]
-    categoryOptionCombos: CategoryOptionCombo[]
-    dataElements: DataElement[]
-    dataElementGroups: DataElementGroup[]
-    dataElementGroupSets: DataElementGroupSet[]
-    indicatorTypes: IndicatorType[]
-    indicators: Indicator[]
-    indicatorGroups: IndicatorGroup[]
-    indicatorGroupSets: IndicatorGroupSet[]
-    dataEntryForms: DataEntryForm[]
-    dataSets: DataSet[]
-    dataSetNotificationTemplates: DataSetNotificationTemplate[]
-    sections: Section[]
-    dataApprovalLevels: DataApprovalLevel[]
-    dataApprovalWorkflows: DataApprovalWorkflow[]
-    validationRules: ValidationRule[]
-    validationRuleGroups: ValidationRuleGroup[]
-    validationNotificationTemplates: ValidationNotificationTemplate[]
-    trackedEntityAttributes: TrackedEntityAttribute[]
-    relationshipTypes: RelationshipType[]
-    trackedEntityTypes: TrackedEntityType[]
-    programTrackedEntityAttributeGroups: ProgramTrackedEntityAttributeGroup[]
-    programStageSections: ProgramStageSection[]
-    programNotificationTemplates: ProgramNotificationTemplate[]
-    programStages: ProgramStage[]
-    programs: Program[]
-    eventCharts: EventChart[]
-    eventReports: EventReport[]
-    programSections: ProgramSection[]
-    programIndicators: ProgramIndicator[]
-    programRuleVariables: ProgramRuleVariable[]
-    programIndicatorGroups: ProgramIndicatorGroup[]
-    programRuleActions: ProgramRuleAction[]
-    programRules: ProgramRule[]
-    mapViews: MapView[]
-    reports: Report[]
-    reportTables: ReportTable[]
-    maps: Map[]
-    charts: Chart[]
-    documents: Document[]
-    dashboards: Dashboard[]
-    messageConversations: MessageConversation[]
-}
+    optionSets: OptionSet[];
+    optionGroupSets: OptionGroupSet[];
+    optionGroups: OptionGroup[];
+    legendSets: LegendSet[];
+    colorSets: ColorSet[];
+    organisationUnits: Ref[];
+    organisationUnitLevels: OrganisationUnitLevel[];
+    organisationUnitGroups: OrganisationUnitGroup[];
+    organisationUnitGroupSets: OrganisationUnitGroupSet[];
+    categoryOptions: CategoryOption[];
+    categoryOptionGroups: CategoryOptionGroup[];
+    categoryOptionGroupSets: CategoryOptionGroupSet[];
+    categories: Category[];
+    categoryCombos: CategoryCombo[];
+    categoryOptionCombos: CategoryOptionCombo[];
+    dataElements: DataElement[];
+    dataElementGroups: DataElementGroup[];
+    dataElementGroupSets: DataElementGroupSet[];
+    indicatorTypes: IndicatorType[];
+    indicators: Indicator[];
+    indicatorGroups: IndicatorGroup[];
+    indicatorGroupSets: IndicatorGroupSet[];
+    dataEntryForms: DataEntryForm[];
+    dataSets: DataSet[];
+    dataSetNotificationTemplates: DataSetNotificationTemplate[];
+    sections: Section[];
+    dataApprovalLevels: DataApprovalLevel[];
+    dataApprovalWorkflows: DataApprovalWorkflow[];
+    validationRules: ValidationRule[];
+    validationRuleGroups: ValidationRuleGroup[];
+    validationNotificationTemplates: ValidationNotificationTemplate[];
+    trackedEntityAttributes: TrackedEntityAttribute[];
+    relationshipTypes: RelationshipType[];
+    trackedEntityTypes: TrackedEntityType[];
+    programTrackedEntityAttributeGroups: ProgramTrackedEntityAttributeGroup[];
+    programStageSections: ProgramStageSection[];
+    programNotificationTemplates: ProgramNotificationTemplate[];
+    programStages: ProgramStage[];
+    programs: Program[];
+    eventCharts: EventChart[];
+    eventReports: EventReport[];
+    programSections: ProgramSection[];
+    programIndicators: ProgramIndicator[];
+    programRuleVariables: ProgramRuleVariable[];
+    programIndicatorGroups: ProgramIndicatorGroup[];
+    programRuleActions: ProgramRuleAction[];
+    programRules: ProgramRule[];
+    mapViews: MapView[];
+    reports: Report[];
+    reportTables: ReportTable[];
+    maps: Map[];
+    charts: Chart[];
+    documents: Document[];
+    dashboards: Dashboard[];
+    messageConversations: MessageConversation[];
+};
 
 export type MetadataFieldsPackage<T> = Partial<Record<keyof MetadataEntities, T[]>>;
 export type MetadataPackage = Partial<Record<keyof MetadataEntities, MetadataEntity[]>>;

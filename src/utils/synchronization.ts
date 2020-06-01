@@ -67,7 +67,6 @@ function buildResponseError(error: AxiosError): MetadataImportResponse {
     }
 }
 
-
 export function cleanDataImportResponse(
     importResult: DataImportResponse,
     instance: Instance,

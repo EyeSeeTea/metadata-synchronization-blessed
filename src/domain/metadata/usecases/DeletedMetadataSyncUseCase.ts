@@ -16,10 +16,10 @@ import { SynchronizationBuilder } from "../../../types/synchronization";
 export class DeletedMetadataSyncUseCase extends GenericSync {
     public readonly type = "deleted";
 
-    private metadataRepository: MetadataRepository
+    private metadataRepository: MetadataRepository;
 
     constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
-        super(d2, api, builder)
+        super(d2, api, builder);
 
         //TODO: composition root - This dependency should be injected by constructor when we have
         // composition root
@@ -31,17 +31,25 @@ export class DeletedMetadataSyncUseCase extends GenericSync {
     });
 
     public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
-        //TODO: remove instance from abstract method in base base class 
-        // when aggregated and events does not use 
+        //TODO: remove instance from abstract method in base base class
+        // when aggregated and events does not use
         console.log(instance.url);
 
         const { metadataIds, syncParams = {} } = this.builder;
 
-        const payloadPackage = await this.metadataRepository.getMetadataFieldsByIds<Ref>(metadataIds, "id", instanceEntity);
+        const payloadPackage = await this.metadataRepository.getMetadataFieldsByIds<Ref>(
+            metadataIds,
+            "id",
+            instanceEntity
+        );
 
         console.debug("Metadata package", payloadPackage);
 
-        const response = await this.metadataRepository.remove(payloadPackage, syncParams, instanceEntity);
+        const response = await this.metadataRepository.remove(
+            payloadPackage,
+            syncParams,
+            instanceEntity
+        );
 
         const syncResult = cleanMetadataImportResponse(response, instanceEntity, this.type);
         return [syncResult];

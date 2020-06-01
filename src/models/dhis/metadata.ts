@@ -27,11 +27,7 @@ export class CategoryModel extends D2Model {
         "categoryCombos.categories.categoryOptions.attributes",
     ];
 
-    protected static includeRules = [
-        "attributes",
-        "categoryOptions",
-        "categoryOptions.attributes"
-    ];
+    protected static includeRules = ["attributes", "categoryOptions", "categoryOptions.attributes"];
 }
 
 export class CategoryComboModel extends D2Model {
@@ -44,7 +40,7 @@ export class CategoryComboModel extends D2Model {
         "categoryOptionCombos",
         "categories.attributes",
         "categories.categoryOptions",
-        "categories.categoryOptions.attributes"
+        "categories.categoryOptions.attributes",
     ];
 }
 
@@ -62,11 +58,9 @@ export class CategoryOptionModel extends D2Model {
         "categoryOptionGroups.categoryOptions",
         "categoryOptionGroups.categoryOptions.attributes",
         "categoryOptionGroups.categoryOptionGroupSets",
-        "categoryOptionGroups.categoryOptionGroupSets.attributes"
+        "categoryOptionGroups.categoryOptionGroupSets.attributes",
     ];
-    protected static includeRules = [
-        "attributes"
-    ];
+    protected static includeRules = ["attributes"];
 }
 
 export class CategoryOptionComboModel extends D2Model {
@@ -86,10 +80,9 @@ export class CategoryOptionComboModel extends D2Model {
         "categoryCombos.categories",
         "categoryCombos.categories.attributes",
         "categoryOptions",
-        "categoryOptions.attributes"
+        "categoryOptions.attributes",
     ];
 }
-
 
 export class CategoryOptionGroupModel extends D2Model {
     protected static metadataType = "categoryOptionGroup";
@@ -97,12 +90,9 @@ export class CategoryOptionGroupModel extends D2Model {
 
     protected static excludeRules = [
         "categoryOptionGroupSets",
-        "categoryOptionGroupSets.attributes"];
-    protected static includeRules = [
-        "attributes",
-        "categoryOptions",
-        "categoryOptions.attributes"
+        "categoryOptionGroupSets.attributes",
     ];
+    protected static includeRules = ["attributes", "categoryOptions", "categoryOptions.attributes"];
 }
 
 export class CategoryOptionGroupSetModel extends D2Model {
@@ -475,7 +465,7 @@ export class ProgramModel extends D2Model {
         "trackedEntityTypes.trackedEntityAttributes.legendSets",
         "trackedEntityAttributes",
         "trackedEntityAttributes.legendSets",
-        "programNotificationTemplates"
+        "programNotificationTemplates",
     ];
 }
 
@@ -518,12 +508,8 @@ export class ProgramStageSectionModel extends D2Model {
     protected static metadataType = "programStageSection";
     protected static collectionName = "programStageSections" as const;
 
-    protected static excludeRules = [
-
-    ];
-    protected static includeRules = [
-        "attributes"
-    ];
+    protected static excludeRules = [];
+    protected static includeRules = ["attributes"];
 }
 
 export class ProgramIndicatorModel extends D2Model {
@@ -597,7 +583,12 @@ export class UserModel extends D2Model {
     protected static collectionName = "users" as const;
 
     protected static excludeRules = ["userRoles.users", "userGroups.users"];
-    protected static includeRules = ["attributes", "userRoles", "userGroups", "userGroups.attributes"];
+    protected static includeRules = [
+        "attributes",
+        "userRoles",
+        "userGroups",
+        "userGroups.attributes",
+    ];
 }
 
 export class UserGroupModel extends D2Model {
