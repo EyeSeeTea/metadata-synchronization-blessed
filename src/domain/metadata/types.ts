@@ -1,16 +1,3 @@
-export interface MetadataImportResponse {
-    status: "PENDING" | "OK" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
-    typeReports?: any[];
-    stats?: {
-        created: number;
-        deleted: number;
-        ignored: number;
-        updated: number;
-        total: number;
-    };
-    message?: string;
-}
-
 export interface MetadataImportParams {
     atomicMode?: "ALL" | "NONE";
     flushMode?: "AUTO" | "OBJECT";

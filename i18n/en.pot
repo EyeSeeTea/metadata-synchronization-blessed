@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-05-07T07:31:26.588Z\n"
-"PO-Revision-Date: 2020-05-07T07:31:26.588Z\n"
+"POT-Creation-Date: 2020-06-02T10:07:30.808Z\n"
+"PO-Revision-Date: 2020-06-02T10:07:30.808Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -320,16 +320,16 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-msgid "Created"
+msgid "Imported"
+msgstr ""
+
+msgid "Updated"
 msgstr ""
 
 msgid "Deleted"
 msgstr ""
 
 msgid "Ignored"
-msgstr ""
-
-msgid "Updated"
 msgstr ""
 
 msgid "Total"
@@ -653,6 +653,9 @@ msgid "Event date"
 msgstr ""
 
 msgid "Stored by"
+msgstr ""
+
+msgid "Created"
 msgstr ""
 
 msgid "Due date"

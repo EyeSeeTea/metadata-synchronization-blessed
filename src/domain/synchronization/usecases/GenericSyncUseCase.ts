@@ -131,9 +131,9 @@ export abstract class GenericSyncUseCase {
 
                 console.debug("Finished importing data on instance", instance.toObject());
             } catch (error) {
-                console.error("err", error);
                 syncReport.addSyncResult({
                     status: "ERROR",
+                    message: error.message,
                     instance: instance.toObject(),
                     date: new Date(),
                     type: this.type,

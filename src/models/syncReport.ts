@@ -25,7 +25,7 @@ type Optional<T, K extends keyof T> = Omit<T, K> & { [P in Extract<keyof T, K>]?
 
 export default class SyncReport {
     private results: SynchronizationResult[] | null;
-    private readonly syncReport: SynchronizationReport;
+    public readonly syncReport: SynchronizationReport;
 
     constructor(syncReport: Optional<SynchronizationReport, "id">) {
         this.results = null;

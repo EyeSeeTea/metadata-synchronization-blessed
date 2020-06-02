@@ -1,18 +1,16 @@
-import { AxiosError } from "axios";
 import _ from "lodash";
 import { DataSynchronizationParams } from "../../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../../domain/aggregated/utils";
 import { ProgramEvent } from "../../../domain/events/entities/ProgramEvent";
 import { EventsRepository } from "../../../domain/events/repositories/EventsRepository";
-import { cleanObjectDefault, cleanOrgUnitPaths } from "../../../domain/synchronization/utils";
-import { DataImportParams, DataImportResponse, MetadataImportResponse } from "../../../types/d2";
-import { D2Api } from "../../../types/d2-api";
-import Instance from "../../../models/instance";
-import { SyncRuleType } from "../../../types/synchronization";
 import {
     SynchronizationResult,
     SynchronizationStats,
 } from "../../../domain/synchronization/entities/SynchronizationResult";
+import { cleanObjectDefault, cleanOrgUnitPaths } from "../../../domain/synchronization/utils";
+import Instance from "../../../models/instance";
+import { DataImportParams } from "../../../types/d2";
+import { D2Api } from "../../../types/d2-api";
 
 export class EventsD2ApiRepository implements EventsRepository {
     private currentD2Api: D2Api;
@@ -59,99 +57,73 @@ export class EventsD2ApiRepository implements EventsRepository {
     public async save(
         data: object,
         additionalParams: DataImportParams | undefined,
-        targetInstance: Instance
+        instance: Instance
     ): Promise<SynchronizationResult> {
-        try {
-            const response = await this.currentD2Api
-                .post<DataImportResponse>(
-                    "/events",
-                    {
-                        idScheme: "UID",
-                        dataElementIdScheme: "UID",
-                        orgUnitIdScheme: "UID",
-                        eventIdScheme: "UID",
-                        preheatCache: false,
-                        skipExistingCheck: false,
-                        format: "json",
-                        async: false,
-                        dryRun: false,
-                        ...additionalParams,
-                    },
-                    data
-                )
-                .getData();
-
-            return this.cleanDataImportResponse(response, targetInstance, "events");
-        } catch (error) {
-            return this.cleanDataImportResponse(
-                this.buildResponseError(error),
-                targetInstance,
-                "events"
-            );
-        }
-    }
-
-    private buildResponseError(error: AxiosError): MetadataImportResponse {
-        if (error.response && error.response.data) {
-            const {
-                httpStatus = "Unknown",
-                httpStatusCode = 400,
-                message = "Request failed unexpectedly",
-            } = error.response.data;
-            return {
-                ...error.response.data,
-                message: `Error ${httpStatusCode} (${httpStatus}): ${message}`,
-            };
-        } else if (error.response) {
-            const { status, statusText } = error.response;
-            console.error(status, statusText, error);
-            return { status: "ERROR", message: `Unknown error: ${status} ${statusText}` };
-        } else {
-            console.error(error);
-            return { status: "NETWORK ERROR" };
-        }
-    }
-
-    private cleanDataImportResponse(
-        importResult: DataImportResponse,
-        instance: Instance,
-        type: SyncRuleType
-    ): SynchronizationResult {
-        const { status: importStatus, message, importCount, response, conflicts } = importResult;
-        const status = importStatus === "OK" ? "SUCCESS" : importStatus;
-        const aggregatedMessages = conflicts?.map(({ object, value }) => ({
-            id: object,
-            message: value,
-        }));
-
-        const eventsMessages = _.flatten(
-            response?.importSummaries?.map(
-                ({ reference = "", description = "", conflicts }) =>
-                    conflicts?.map(({ object, value }) => ({
-                        id: reference,
-                        message: _([description, object, value])
-                            .compact()
-                            .join(" "),
-                    })) ?? { id: reference, message: description }
+        const { status, message, response } = await this.currentD2Api
+            .post<EventsPostResponse>(
+                "/events",
+                {
+                    idScheme: "UID",
+                    dataElementIdScheme: "UID",
+                    orgUnitIdScheme: "UID",
+                    eventIdScheme: "UID",
+                    preheatCache: false,
+                    skipExistingCheck: false,
+                    format: "json",
+                    async: false,
+                    dryRun: false,
+                    ...additionalParams,
+                },
+                data
             )
+            .getData();
+
+        const errors = response.importSummaries.flatMap(
+            ({ reference = "", description = "", conflicts = [] }) =>
+                conflicts.map(({ object, value }) => ({
+                    id: reference,
+                    message: _([description, object, value])
+                        .compact()
+                        .join(" "),
+                }))
         );
 
-        const stats: SynchronizationStats = {
-            created: importCount?.imported ?? response?.imported ?? 0,
-            deleted: importCount?.deleted ?? response?.deleted ?? 0,
-            updated: importCount?.updated ?? response?.updated ?? 0,
-            ignored: importCount?.ignored ?? response?.ignored ?? 0,
-            total: 0,
-        };
+        const stats: SynchronizationStats = _.pick(response, [
+            "imported",
+            "updated",
+            "ignored",
+            "deleted",
+            "total",
+        ]);
 
         return {
             status,
             message,
             stats,
             instance: instance.toObject(),
-            errors: aggregatedMessages ?? eventsMessages ?? [],
+            errors,
             date: new Date(),
-            type,
+            type: "events",
         };
     }
+}
+
+interface EventsPostResponse {
+    status: "SUCCESS" | "ERROR";
+    message?: string;
+    response: {
+        imported: number;
+        updated: number;
+        deleted: number;
+        ignored: number;
+        total: number;
+        importSummaries: {
+            description?: string;
+            reference: string;
+            conflicts?: {
+                object: string;
+                value: string;
+            }[];
+        }[];
+    };
 }

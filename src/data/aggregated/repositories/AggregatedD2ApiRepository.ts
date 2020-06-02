@@ -1,20 +1,16 @@
-import { AxiosError } from "axios";
 import _ from "lodash";
 import { Moment } from "moment";
 import { AggregatedPackage } from "../../../domain/aggregated/entities/AggregatedPackage";
 import { AggregatedRepository } from "../../../domain/aggregated/repositories/AggregatedRepository";
 import { DataSyncAggregation, DataSynchronizationParams } from "../../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../../domain/aggregated/utils";
+import { SynchronizationResult } from "../../../domain/synchronization/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../../domain/synchronization/utils";
 import Instance, { MetadataMappingDictionary } from "../../../models/instance";
-import { DataImportParams, MetadataImportResponse, DataImportResponse } from "../../../types/d2";
-import { D2Api, D2CategoryOptionCombo } from "../../../types/d2-api";
-import { CategoryOptionAggregationBuilder, SyncRuleType } from "../../../types/synchronization";
+import { DataImportParams } from "../../../types/d2";
+import { D2Api, D2CategoryOptionCombo, DataValueSetsPostResponse } from "../../../types/d2-api";
+import { CategoryOptionAggregationBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
-import {
-    SynchronizationResult,
-    SynchronizationStats,
-} from "../../../domain/synchronization/entities/SynchronizationResult";
 
 export class AggregatedD2ApiRepository implements AggregatedRepository {
     private currentD2Api: D2Api;
@@ -176,36 +172,42 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
     public async save(
         data: object,
         additionalParams: DataImportParams | undefined,
-        targetInstance: Instance
+        instance: Instance
     ): Promise<SynchronizationResult> {
-        try {
-            const response = await this.currentD2Api
-                .post<DataImportResponse>(
-                    "/dataValueSets",
-                    {
-                        idScheme: "UID",
-                        dataElementIdScheme: "UID",
-                        orgUnitIdScheme: "UID",
-                        eventIdScheme: "UID",
-                        preheatCache: false,
-                        skipExistingCheck: false,
-                        format: "json",
-                        async: false,
-                        dryRun: false,
-                        ...additionalParams,
-                    },
-                    data
-                )
-                .getData();
+        const { status, description, importCount, conflicts } = await this.currentD2Api
+            .post<DataValueSetsPostResponse>(
+                "/dataValueSets",
+                {
+                    idScheme: "UID",
+                    dataElementIdScheme: "UID",
+                    orgUnitIdScheme: "UID",
+                    eventIdScheme: "UID",
+                    preheatCache: false,
+                    skipExistingCheck: false,
+                    format: "json",
+                    async: false,
+                    dryRun: false,
+                    ...additionalParams,
+                },
+                data
+            )
+            .getData();
 
-            return this.cleanDataImportResponse(response, targetInstance, "aggregated");
-        } catch (error) {
-            return this.cleanDataImportResponse(
-                this.buildResponseError(error),
-                targetInstance,
-                "aggregated"
-            );
-        }
+        const errors =
+            conflicts?.map(({ object, value }) => ({
+                id: object,
+                message: value,
+            })) ?? [];
+
+        return {
+            status,
+            message: description,
+            stats: importCount,
+            instance: instance.toObject(),
+            errors,
+            date: new Date(),
+            type: "aggregated",
+        };
     }
 
     private buildPeriodsForAggregation = (
@@ -226,70 +228,6 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
 
         return periods;
     };
-
-    private buildResponseError(error: AxiosError): MetadataImportResponse {
-        if (error.response && error.response.data) {
-            const {
-                httpStatus = "Unknown",
-                httpStatusCode = 400,
-                message = "Request failed unexpectedly",
-            } = error.response.data;
-            return {
-                ...error.response.data,
-                message: `Error ${httpStatusCode} (${httpStatus}): ${message}`,
-            };
-        } else if (error.response) {
-            const { status, statusText } = error.response;
-            console.error(status, statusText, error);
-            return { status: "ERROR", message: `Unknown error: ${status} ${statusText}` };
-        } else {
-            console.error(error);
-            return { status: "NETWORK ERROR" };
-        }
-    }
-
-    private cleanDataImportResponse(
-        importResult: DataImportResponse,
-        instance: Instance,
-        type: SyncRuleType
-    ): SynchronizationResult {
-        const { status: importStatus, message, importCount, response, conflicts } = importResult;
-        const status = importStatus === "OK" ? "SUCCESS" : importStatus;
-        const aggregatedMessages = conflicts?.map(({ object, value }) => ({
-            id: object,
-            message: value,
-        }));
-
-        const eventsMessages = _.flatten(
-            response?.importSummaries?.map(
-                ({ reference = "", description = "", conflicts }) =>
-                    conflicts?.map(({ object, value }) => ({
-                        id: reference,
-                        message: _([description, object, value])
-                            .compact()
-                            .join(" "),
-                    })) ?? { id: reference, message: description }
-            )
-        );
-
-        const stats: SynchronizationStats = {
-            created: importCount?.imported ?? response?.imported ?? 0,
-            deleted: importCount?.deleted ?? response?.deleted ?? 0,
-            updated: importCount?.updated ?? response?.updated ?? 0,
-            ignored: importCount?.ignored ?? response?.ignored ?? 0,
-            total: 0,
-        };
-
-        return {
-            status,
-            message,
-            stats,
-            instance: instance.toObject(),
-            errors: aggregatedMessages ?? eventsMessages ?? [],
-            date: new Date(),
-            type,
-        };
-    }
 }
 
 const aggregations = {

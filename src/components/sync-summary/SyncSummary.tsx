@@ -19,6 +19,13 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
 import { useAppContext } from "../../contexts/ApiContext";
+import {
+    ErrorMessage,
+    SynchronizationResult,
+    TypeStats,
+} from "../../domain/synchronization/entities/SynchronizationResult";
+import SyncReport from "../../models/syncReport";
+import { SyncRuleType } from "../../types/synchronization";
 
 const useStyles = makeStyles(theme => ({
     expansionPanelHeading1: {
@@ -42,7 +49,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export const formatStatusTag = value => {
+export const formatStatusTag = (value: string) => {
     const text = _.startCase(_.toLower(value));
     const color =
         value === "ERROR" || value === "FAILURE" || value === "NETWORK ERROR"
@@ -54,29 +61,35 @@ export const formatStatusTag = value => {
     return <b style={{ color }}>{text}</b>;
 };
 
-const buildSummaryTable = stats => {
+const buildSummaryTable = (stats: TypeStats[]) => {
     return (
         <Table>
             <TableHead>
                 <TableRow>
                     <TableCell>{i18n.t("Type")}</TableCell>
-                    <TableCell>{i18n.t("Created")}</TableCell>
+                    <TableCell>{i18n.t("Imported")}</TableCell>
+                    <TableCell>{i18n.t("Updated")}</TableCell>
                     <TableCell>{i18n.t("Deleted")}</TableCell>
                     <TableCell>{i18n.t("Ignored")}</TableCell>
-                    <TableCell>{i18n.t("Updated")}</TableCell>
                     <TableCell>{i18n.t("Total")}</TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
-                {stats.map(({ type, imported, created, deleted, ignored, updated, total }, i) => (
+                {stats.map(({ type, stats }, i) => (
                     <TableRow key={`row-${i}`}>
                         <TableCell>{type}</TableCell>
-                        <TableCell>{created ?? imported ?? 0}</TableCell>
-                        <TableCell>{deleted}</TableCell>
-                        <TableCell>{ignored}</TableCell>
-                        <TableCell>{updated}</TableCell>
+                        <TableCell>{stats.imported}</TableCell>
+                        <TableCell>{stats.updated}</TableCell>
+                        <TableCell>{stats.deleted}</TableCell>
+                        <TableCell>{stats.ignored}</TableCell>
                         <TableCell>
-                            {total || _.sum([created, imported, deleted, ignored, updated])}
+                            {stats.total ||
+                                _.sum([
+                                    stats.imported,
+                                    stats.deleted,
+                                    stats.ignored,
+                                    stats.updated,
+                                ])}
                         </TableCell>
                     </TableRow>
                 ))}
@@ -85,7 +98,7 @@ const buildSummaryTable = stats => {
     );
 };
 
-const buildDataStatsTable = (type, stats, classes) => {
+const buildDataStatsTable = (type: SyncRuleType, stats: any[], classes: any) => {
     const elementName = type === "aggregated" ? i18n.t("Data element") : i18n.t("Program");
 
     return (
@@ -121,7 +134,7 @@ const buildDataStatsTable = (type, stats, classes) => {
     );
 };
 
-const buildMessageTable = messages => {
+const buildMessageTable = (messages: ErrorMessage[]) => {
     return (
         <Table>
             <TableHead>
@@ -133,9 +146,9 @@ const buildMessageTable = messages => {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {messages.map(({ uid, type, property, message }, i) => (
+                {messages.map(({ id, type, property, message }, i) => (
                     <TableRow key={`row-${i}`}>
-                        <TableCell>{uid}</TableCell>
+                        <TableCell>{id}</TableCell>
                         <TableCell>{type}</TableCell>
                         <TableCell>{property}</TableCell>
                         <TableCell>{message}</TableCell>
@@ -146,7 +159,7 @@ const buildMessageTable = messages => {
     );
 };
 
-const getTypeName = (reportType, syncType) => {
+const getTypeName = (reportType: SyncRuleType, syncType: string) => {
     switch (reportType) {
         case "aggregated":
             return syncType === "events" ? i18n.t("Program Indicators") : i18n.t("Aggregated");
@@ -161,10 +174,15 @@ const getTypeName = (reportType, syncType) => {
     }
 };
 
-const SyncSummary = ({ response, onClose }) => {
+interface SyncSummaryProps {
+    response: SyncReport;
+    onClose: () => void;
+}
+
+const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
     const { api } = useAppContext();
     const classes = useStyles();
-    const [results, setResults] = useState([]);
+    const [results, setResults] = useState<SynchronizationResult[]>([]);
 
     useEffect(() => {
         response.loadSyncResults(api).then(setResults);
@@ -181,55 +199,63 @@ const SyncSummary = ({ response, onClose }) => {
             fullWidth={true}
         >
             <DialogContent>
-                {results.map(({ instance, status, report, stats, message, type }, i) => (
-                    <ExpansionPanel
-                        defaultExpanded={results.length === 1}
-                        className={classes.expansionPanel}
-                        key={`row-${i}`}
-                    >
-                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                            <Typography className={classes.expansionPanelHeading1}>
-                                {`${i18n.t("Destination instance")}: ${
-                                    instance.name
-                                } - ${getTypeName(type, response.syncReport.type)}`}
-                            </Typography>
-                            <Typography className={classes.expansionPanelHeading2}>
-                                {`${i18n.t("Status")}: `}
-                                {formatStatusTag(status)}
-                            </Typography>
-                        </ExpansionPanelSummary>
+                {results.map(
+                    ({ instance, status, typeStats = [], stats, message, errors, type }, i) => (
+                        <ExpansionPanel
+                            defaultExpanded={results.length === 1}
+                            className={classes.expansionPanel}
+                            key={`row-${i}`}
+                        >
+                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography className={classes.expansionPanelHeading1}>
+                                    {`${i18n.t("Destination instance")}: ${
+                                        instance.name
+                                    } - ${getTypeName(type, response.syncReport.type)}`}
+                                </Typography>
+                                <Typography className={classes.expansionPanelHeading2}>
+                                    {`${i18n.t("Status")}: `}
+                                    {formatStatusTag(status)}
+                                </Typography>
+                            </ExpansionPanelSummary>
 
-                        <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                            <Typography variant="overline">{i18n.t("Summary")}</Typography>
-                        </ExpansionPanelDetails>
-
-                        {message && (
                             <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                                <Typography variant="body2">{message}</Typography>
+                                <Typography variant="overline">{i18n.t("Summary")}</Typography>
                             </ExpansionPanelDetails>
-                        )}
 
-                        {report && (
-                            <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                                {buildSummaryTable([
-                                    ...(report.typeStats || []),
-                                    { type: i18n.t("Total"), ...stats },
-                                ])}
-                            </ExpansionPanelDetails>
-                        )}
+                            {message && (
+                                <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+                                    <Typography variant="body2">{message}</Typography>
+                                </ExpansionPanelDetails>
+                            )}
 
-                        {report && report.messages.length > 0 && (
-                            <div>
+                            {stats && (
                                 <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                                    <Typography variant="overline">{i18n.t("Messages")}</Typography>
+                                    {buildSummaryTable([
+                                        ...typeStats,
+                                        { type: i18n.t("Total"), stats },
+                                    ])}
                                 </ExpansionPanelDetails>
-                                <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                                    {buildMessageTable(_.take(report.messages, 10))}
-                                </ExpansionPanelDetails>
-                            </div>
-                        )}
-                    </ExpansionPanel>
-                ))}
+                            )}
+
+                            {errors && errors.length > 0 && (
+                                <div>
+                                    <ExpansionPanelDetails
+                                        className={classes.expansionPanelDetails}
+                                    >
+                                        <Typography variant="overline">
+                                            {i18n.t("Messages")}
+                                        </Typography>
+                                    </ExpansionPanelDetails>
+                                    <ExpansionPanelDetails
+                                        className={classes.expansionPanelDetails}
+                                    >
+                                        {buildMessageTable(_.take(errors, 10))}
+                                    </ExpansionPanelDetails>
+                                </div>
+                            )}
+                        </ExpansionPanel>
+                    )
+                )}
 
                 {response.syncReport.dataStats && (
                     <ExpansionPanel>

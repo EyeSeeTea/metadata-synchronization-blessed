@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import _ from "lodash";
 import Instance from "../../../domain/instance/Instance";
 import {
@@ -8,7 +7,7 @@ import {
     MetadataPackage,
 } from "../../../domain/metadata/entities/MetadataEntities";
 import { MetadataRepository } from "../../../domain/metadata/MetadataRepository";
-import { MetadataImportParams, MetadataImportResponse } from "../../../domain/metadata/types";
+import { MetadataImportParams } from "../../../domain/metadata/types";
 import { getClassName } from "../../../domain/metadata/utils";
 import { SynchronizationResult } from "../../../domain/synchronization/entities/SynchronizationResult";
 import {
@@ -19,6 +18,7 @@ import {
     Id,
     MetadataResponse,
     Model,
+    Stats,
 } from "../../../types/d2-api";
 import { mapD2PackageFromD2, mapPackageToD2 } from "../mappers/PackageMapper";
 import {
@@ -136,41 +136,31 @@ class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     private cleanMetadataImportResponse(
-        importResult: MetadataImportResponse,
+        importResult: MetadataResponse,
         instance: Instance,
         type: "metadata" | "deleted"
     ): SynchronizationResult {
-        const { status: importStatus, stats, message, typeReports = [] } = importResult;
-        const status = importStatus === "OK" ? "SUCCESS" : importStatus;
-        const typeStats: any[] = [];
-        const messages: any[] = [];
+        const { status, stats, typeReports = [] } = importResult;
+        const typeStats = typeReports.flatMap(({ klass, stats }) => ({
+            stats: formatStats(stats),
+            type: getClassName(klass),
+        }));
 
-        typeReports.forEach(report => {
-            const { klass, stats, objectReports = [] } = report;
-
-            typeStats.push({
-                ...stats,
-                type: getClassName(klass),
-            });
-
-            objectReports.forEach((detail: any) => {
-                const { uid, errorReports = [] } = detail;
-
-                messages.push(
-                    ..._.take(errorReports, 1).map((error: any) => ({
-                        uid,
-                        type: getClassName(error.mainKlass),
-                        property: error.errorProperty,
-                        message: error.message,
-                    }))
-                );
-            });
-        });
+        const messages = typeReports.flatMap(({ objectReports = [] }) =>
+            objectReports.flatMap(({ uid: id, errorReports = [] }) =>
+                _.take(errorReports, 1).map(({ mainKlass, errorProperty, message }) => ({
+                    id,
+                    type: getClassName(mainKlass),
+                    property: errorProperty,
+                    message: message,
+                }))
+            )
+        );
 
         return {
-            status,
-            stats,
-            message,
+            status: status === "OK" ? "SUCCESS" : status,
+            stats: formatStats(stats),
+            typeStats,
             instance: instance.toObject(),
             errors: messages,
             date: new Date(),
@@ -182,26 +172,24 @@ class MetadataD2ApiRepository implements MetadataRepository {
         payload: Partial<Record<string, unknown[]>>,
         additionalParams?: MetadataImportParams,
         targetInstance?: Instance
-    ): Promise<MetadataImportResponse> {
-        try {
-            const params = {
-                importMode: "COMMIT",
-                identifier: "UID",
-                importReportMode: "FULL",
-                importStrategy: "CREATE_AND_UPDATE",
-                mergeMode: "MERGE",
-                atomicMode: "ALL",
-                ...additionalParams,
-            };
+    ): Promise<MetadataResponse> {
+        const response = await this.getApi(targetInstance)
+            .post<MetadataResponse>(
+                "/metadata",
+                {
+                    importMode: "COMMIT",
+                    identifier: "UID",
+                    importReportMode: "FULL",
+                    importStrategy: "CREATE_AND_UPDATE",
+                    mergeMode: "MERGE",
+                    atomicMode: "ALL",
+                    ...additionalParams,
+                },
+                payload
+            )
+            .getData();
 
-            const response = await this.getApi(targetInstance)
-                .post<MetadataResponse>("/metadata", params, payload)
-                .getData();
-
-            return response;
-        } catch (error) {
-            return this.buildResponseError(error);
-        }
+        return response;
     }
 
     private getApi(targetInstance?: Instance): D2Api {
@@ -221,27 +209,6 @@ class MetadataD2ApiRepository implements MetadataRepository {
             return targetInstance.apiVersion;
         } else {
             throw Error("Necessary api version to apply transformations to package is undefined");
-        }
-    }
-
-    private buildResponseError(error: AxiosError): MetadataImportResponse {
-        if (error.response && error.response.data) {
-            const {
-                httpStatus = "Unknown",
-                httpStatusCode = 400,
-                message = "Request failed unexpectedly",
-            } = error.response.data;
-            return {
-                ...error.response.data,
-                message: `Error ${httpStatusCode} (${httpStatus}): ${message}`,
-            };
-        } else if (error.response) {
-            const { status, statusText } = error.response;
-            console.error(status, statusText, error);
-            return { status: "ERROR", message: `Unknown error: ${status} ${statusText}` };
-        } else {
-            console.error(error);
-            return { status: "NETWORK ERROR" };
         }
     }
 
@@ -279,5 +246,10 @@ class MetadataD2ApiRepository implements MetadataRepository {
         return modelCollection[type];
     }
 }
+
+const formatStats = (stats: Stats) => ({
+    ..._.omit(stats, ["created"]),
+    imported: stats.created,
+});
 
 export default MetadataD2ApiRepository;
