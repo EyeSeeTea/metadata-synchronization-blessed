@@ -1,13 +1,15 @@
-import { D2Api } from "../../types/d2-api";
-import InstanceRepository from "../../domain/instance/InstanceRepository";
-import Instance, { InstanceData } from "../../domain/instance/Instance";
-import { getDataById } from "../../models/dataStore";
 import Cryptr from "cryptr";
+import _ from "lodash";
+import Instance, { InstanceData } from "../../domain/instance/Instance";
+import InstanceRepository from "../../domain/instance/InstanceRepository";
+import { getDataById } from "../../models/dataStore";
+import { D2Api } from "../../types/d2-api";
+import { cache } from "../../utils/cache";
 
 const instancesDataStoreKey = "instances";
 
 export default class InstanceD2ApiRepository implements InstanceRepository {
-    private d2Api: D2Api;
+    private api: D2Api;
 
     //TODO: composition root - This dependency should be injected by constructor when we have
     // composition root. Currently the unique solution is to have this static field
@@ -17,11 +19,11 @@ export default class InstanceD2ApiRepository implements InstanceRepository {
     constructor(d2Api: D2Api) {
         //TODO: composition root - when we have composition root evaluate if has sense
         // that this dependency should be current instance instead of D2Api
-        this.d2Api = d2Api;
+        this.api = d2Api;
     }
 
     public async getById(id: string): Promise<Instance> {
-        const instanceData = await getDataById<InstanceData>(this.d2Api, instancesDataStoreKey, id);
+        const instanceData = await getDataById<InstanceData>(this.api, instancesDataStoreKey, id);
 
         if (!instanceData) {
             throw Error(`Instance with id ${id} not found`);
@@ -35,6 +37,27 @@ export default class InstanceD2ApiRepository implements InstanceRepository {
         const version = await this.getVersion(instanceDataWithRawPassword);
 
         return new Instance({ ...instanceDataWithRawPassword, version });
+    }
+
+    @cache()
+    public async getDefaultIds(filter?: string): Promise<string[]> {
+        const response = (await this.api
+            .get("/metadata", {
+                filter: "code:eq:default",
+                fields: "id",
+            })
+            .getData()) as {
+            [key: string]: { id: string }[];
+        };
+
+        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
+
+        return _(metadata)
+            .omit(["system"])
+            .values()
+            .flatten()
+            .map(({ id }) => id)
+            .value();
     }
 
     private async getVersion(instanceData: InstanceData): Promise<string> {

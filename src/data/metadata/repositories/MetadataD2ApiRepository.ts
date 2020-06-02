@@ -17,8 +17,8 @@ import {
     D2Model,
     D2ModelSchemas,
     Id,
-    Model,
     MetadataResponse,
+    Model,
 } from "../../../types/d2-api";
 import { mapD2PackageFromD2, mapPackageToD2 } from "../mappers/PackageMapper";
 import {
@@ -135,26 +135,6 @@ class MetadataD2ApiRepository implements MetadataRepository {
         return this.cleanMetadataImportResponse(response, targetInstance, "deleted");
     }
 
-    public async getDefaultIds(filter?: string): Promise<string[]> {
-        const response = (await this.currentD2Api
-            .get("/metadata", {
-                filter: "code:eq:default",
-                fields: "id",
-            })
-            .getData()) as {
-            [key: string]: { id: string }[];
-        };
-
-        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
-
-        return _(metadata)
-            .omit(["system"])
-            .values()
-            .flatten()
-            .map(({ id }) => id)
-            .value();
-    }
-
     private cleanMetadataImportResponse(
         importResult: MetadataImportResponse,
         instance: Instance,
@@ -236,7 +216,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
     private async getVersion(targetInstance?: Instance): Promise<number> {
         if (!targetInstance) {
             const version = await this.currentD2Api.getVersion();
-            return +version.split(".")[1];
+            return Number(version.split(".")[1]);
         } else if (targetInstance.apiVersion) {
             return targetInstance.apiVersion;
         } else {

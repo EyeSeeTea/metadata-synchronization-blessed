@@ -1,12 +1,12 @@
-import { D2Api } from "../../types/d2-api";
 import _ from "lodash";
+import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";
+import { cleanOrgUnitPath } from "../../domain/synchronization/utils";
 import { D2Model } from "../../models/dhis/default";
 import { EventProgramModel } from "../../models/dhis/mapping";
 import { CategoryOptionModel, OptionModel, ProgramStageModel } from "../../models/dhis/metadata";
 import { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
+import { D2Api } from "../../types/d2-api";
 import { MetadataType } from "../../utils/d2";
-import { cleanOrgUnitPath } from "../../domain/synchronization/utils";
-import MetadataD2ApiRepository from "../../data/metadata/repositories/MetadataD2ApiRepository";
 
 export const EXCLUDED_KEY = "DISABLED";
 
@@ -402,8 +402,8 @@ export const getValidIds = async (
     const programStageDataElements = getProgramStageDataElements(combinedMetadata[0]);
 
     // TODO: Composition root + use case
-    const metadataRepository = new MetadataD2ApiRepository(api);
-    const defaultValues = await metadataRepository.getDefaultIds();
+    const instanceRepository = new InstanceD2ApiRepository(api);
+    const defaultValues = await instanceRepository.getDefaultIds();
 
     return _.union(categoryOptions, options, programStages, programStageDataElements)
         .map(({ id }) => id)

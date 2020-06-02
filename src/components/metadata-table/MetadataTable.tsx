@@ -564,7 +564,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
 // TODO: when all request to this use metadataRepository.getModelByType
 // this function should be removed
-export const getRootOrgUnit = memoize(
+const getRootOrgUnit = memoize(
     (api: D2Api) => {
         return api.models.organisationUnits.get({
             filter: { level: { eq: "1" } },

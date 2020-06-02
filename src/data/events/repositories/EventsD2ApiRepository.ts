@@ -7,6 +7,12 @@ import { EventsRepository } from "../../../domain/events/repositories/EventsRepo
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../../domain/synchronization/utils";
 import { DataImportParams, DataImportResponse, MetadataImportResponse } from "../../../types/d2";
 import { D2Api } from "../../../types/d2-api";
+import Instance from "../../../models/instance";
+import { SyncRuleType } from "../../../types/synchronization";
+import {
+    SynchronizationResult,
+    SynchronizationStats,
+} from "../../../domain/synchronization/entities/SynchronizationResult";
 
 export class EventsD2ApiRepository implements EventsRepository {
     private currentD2Api: D2Api;
@@ -52,11 +58,12 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     public async save(
         data: object,
-        additionalParams?: DataImportParams
-    ): Promise<DataImportResponse> {
+        additionalParams: DataImportParams | undefined,
+        targetInstance: Instance
+    ): Promise<SynchronizationResult> {
         try {
             const response = await this.currentD2Api
-                .post(
+                .post<DataImportResponse>(
                     "/events",
                     {
                         idScheme: "UID",
@@ -74,9 +81,13 @@ export class EventsD2ApiRepository implements EventsRepository {
                 )
                 .getData();
 
-            return response as DataImportResponse;
+            return this.cleanDataImportResponse(response, targetInstance, "events");
         } catch (error) {
-            return this.buildResponseError(error);
+            return this.cleanDataImportResponse(
+                this.buildResponseError(error),
+                targetInstance,
+                "events"
+            );
         }
     }
 
@@ -99,5 +110,48 @@ export class EventsD2ApiRepository implements EventsRepository {
             console.error(error);
             return { status: "NETWORK ERROR" };
         }
+    }
+
+    private cleanDataImportResponse(
+        importResult: DataImportResponse,
+        instance: Instance,
+        type: SyncRuleType
+    ): SynchronizationResult {
+        const { status: importStatus, message, importCount, response, conflicts } = importResult;
+        const status = importStatus === "OK" ? "SUCCESS" : importStatus;
+        const aggregatedMessages = conflicts?.map(({ object, value }) => ({
+            id: object,
+            message: value,
+        }));
+
+        const eventsMessages = _.flatten(
+            response?.importSummaries?.map(
+                ({ reference = "", description = "", conflicts }) =>
+                    conflicts?.map(({ object, value }) => ({
+                        id: reference,
+                        message: _([description, object, value])
+                            .compact()
+                            .join(" "),
+                    })) ?? { id: reference, message: description }
+            )
+        );
+
+        const stats: SynchronizationStats = {
+            created: importCount?.imported ?? response?.imported ?? 0,
+            deleted: importCount?.deleted ?? response?.deleted ?? 0,
+            updated: importCount?.updated ?? response?.updated ?? 0,
+            ignored: importCount?.ignored ?? response?.ignored ?? 0,
+            total: 0,
+        };
+
+        return {
+            status,
+            message,
+            stats,
+            instance: instance.toObject(),
+            errors: aggregatedMessages ?? eventsMessages ?? [],
+            date: new Date(),
+            type,
+        };
     }
 }

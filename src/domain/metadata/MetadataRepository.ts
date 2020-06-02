@@ -31,6 +31,4 @@ export interface MetadataRepository {
         additionalParams?: MetadataImportParams,
         targetInstance?: Instance
     ): Promise<SynchronizationResult>;
-
-    getDefaultIds(filter?: string): Promise<string[]>;
 }

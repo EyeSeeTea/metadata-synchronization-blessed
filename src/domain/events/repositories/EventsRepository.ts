@@ -1,6 +1,8 @@
+import Instance from "../../../models/instance";
+import { DataImportParams } from "../../../types/d2";
 import { DataSynchronizationParams } from "../../aggregated/types";
+import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { ProgramEvent } from "../entities/ProgramEvent";
-import { DataImportParams, DataImportResponse } from "../../../types/d2";
 
 export interface EventsRepository {
     getEvents(
@@ -9,5 +11,9 @@ export interface EventsRepository {
         defaults?: string[]
     ): Promise<ProgramEvent[]>;
 
-    save(data: object, additionalParams?: DataImportParams): Promise<DataImportResponse>;
+    save(
+        data: object,
+        additionalParams: DataImportParams | undefined,
+        targetInstance: Instance
+    ): Promise<SynchronizationResult>;
 }

@@ -9,7 +9,6 @@ import { D2Api, D2CategoryOptionCombo } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import {
-    cleanDataImportResponse,
     getCategoryOptionCombos,
     mapCategoryOptionCombo,
     mapOptionValue,
@@ -24,15 +23,12 @@ import {
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { DataValue } from "../entities/DataValue";
 import { AggregatedRepository } from "../repositories/AggregatedRepository";
-import { MetadataRepository } from "../../metadata/MetadataRepository";
-import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 
 export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public readonly type = "aggregated";
     public readonly fields =
         "id,dataElements[id,name],dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
     private aggregatedRepository: AggregatedRepository;
-    private metadataRepository: MetadataRepository;
 
     constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
         super(d2, api, builder);
@@ -40,7 +36,6 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         //TODO: composition root - This dependency should be injected by constructor when we have
         // composition root
         this.aggregatedRepository = new AggregatedD2ApiRepository(api);
-        this.metadataRepository = new MetadataD2ApiRepository(api);
     }
 
     public buildPayload = memoize(async () => {
@@ -181,8 +176,12 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
             versionedPayloadPackage,
         });
 
-        const response = await this.aggregatedRepository.save(versionedPayloadPackage, dataParams);
-        return [cleanDataImportResponse(response, instance, this.type)];
+        const syncResult = await this.aggregatedRepository.save(
+            versionedPayloadPackage,
+            dataParams,
+            instance
+        );
+        return [syncResult];
     }
 
     public async buildDataStats() {
@@ -207,7 +206,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         const { dataValues: oldDataValues } = payload;
         const { metadataMapping: mapping } = instance;
 
-        const defaultIds = await this.metadataRepository.getDefaultIds();
+        const defaultIds = await this.instanceRepository.getDefaultIds();
         const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
         const instanceAggregatedValues = await this.buildInstanceAggregation(

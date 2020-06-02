@@ -10,7 +10,6 @@ import { D2 } from "../../../types/d2";
 import { D2Api, D2CategoryOptionCombo, D2Program } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import {
-    cleanDataImportResponse,
     getCategoryOptionCombos,
     mapCategoryOptionCombo,
     mapOptionValue,
@@ -29,8 +28,6 @@ import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
 import { EventsRepository } from "../repositories/EventsRepository";
-import { MetadataRepository } from "../../metadata/MetadataRepository";
-import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
 
 export class EventsSyncUseCase extends GenericSyncUseCase {
     public readonly type = "events";
@@ -38,7 +35,6 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         "id,name,programStages[programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
     private eventsRepository: EventsRepository;
     private aggregatedRepository: AggregatedRepository;
-    private metadataRepository: MetadataRepository;
 
     constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
         super(d2, api, builder);
@@ -47,7 +43,6 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         // composition root
         this.eventsRepository = new EventsD2ApiRepository(api);
         this.aggregatedRepository = new AggregatedD2ApiRepository(api);
-        this.metadataRepository = new MetadataD2ApiRepository(api);
     }
 
     public buildPayload = memoize(async () => {
@@ -119,9 +114,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         );
         console.debug("Events package", { events, payload, versionedPayloadPackage });
 
-        const response = await this.eventsRepository.save(payload, dataParams);
-
-        return cleanDataImportResponse(response, instance, this.type);
+        return this.eventsRepository.save(payload, dataParams, instance);
     }
 
     private async postIndicatorPayload(instance: Instance, dataValues: DataValue[]) {
@@ -132,9 +125,8 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const aggregatedSync = new AggregatedSyncUseCase(this.d2, this.api, this.builder);
         const payload = await aggregatedSync.mapPayload(instance, { dataValues });
         console.debug("Program indicator package", { dataValues, payload });
-        const response = await this.aggregatedRepository.save(payload, dataParams);
 
-        return cleanDataImportResponse(response, instance, aggregatedSync.type);
+        return this.aggregatedRepository.save(payload, dataParams, instance);
     }
 
     public async buildDataStats() {
@@ -160,7 +152,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const { events: oldEvents } = payload;
         const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
         const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
-        const defaultCategoryOptionCombos = await this.metadataRepository.getDefaultIds(
+        const defaultCategoryOptionCombos = await this.instanceRepository.getDefaultIds(
             "categoryOptionCombos"
         );
 

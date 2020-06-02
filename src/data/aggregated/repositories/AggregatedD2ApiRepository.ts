@@ -6,11 +6,15 @@ import { AggregatedRepository } from "../../../domain/aggregated/repositories/Ag
 import { DataSyncAggregation, DataSynchronizationParams } from "../../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../../domain/aggregated/utils";
 import { cleanOrgUnitPaths } from "../../../domain/synchronization/utils";
-import { MetadataMappingDictionary } from "../../../models/instance";
+import Instance, { MetadataMappingDictionary } from "../../../models/instance";
 import { DataImportParams, MetadataImportResponse, DataImportResponse } from "../../../types/d2";
 import { D2Api, D2CategoryOptionCombo } from "../../../types/d2-api";
-import { CategoryOptionAggregationBuilder } from "../../../types/synchronization";
+import { CategoryOptionAggregationBuilder, SyncRuleType } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
+import {
+    SynchronizationResult,
+    SynchronizationStats,
+} from "../../../domain/synchronization/entities/SynchronizationResult";
 
 export class AggregatedD2ApiRepository implements AggregatedRepository {
     private currentD2Api: D2Api;
@@ -171,11 +175,12 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
 
     public async save(
         data: object,
-        additionalParams?: DataImportParams
-    ): Promise<DataImportResponse> {
+        additionalParams: DataImportParams | undefined,
+        targetInstance: Instance
+    ): Promise<SynchronizationResult> {
         try {
             const response = await this.currentD2Api
-                .post(
+                .post<DataImportResponse>(
                     "/dataValueSets",
                     {
                         idScheme: "UID",
@@ -193,9 +198,13 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                 )
                 .getData();
 
-            return response as DataImportResponse;
+            return this.cleanDataImportResponse(response, targetInstance, "aggregated");
         } catch (error) {
-            return this.buildResponseError(error);
+            return this.cleanDataImportResponse(
+                this.buildResponseError(error),
+                targetInstance,
+                "aggregated"
+            );
         }
     }
 
@@ -237,6 +246,49 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             console.error(error);
             return { status: "NETWORK ERROR" };
         }
+    }
+
+    private cleanDataImportResponse(
+        importResult: DataImportResponse,
+        instance: Instance,
+        type: SyncRuleType
+    ): SynchronizationResult {
+        const { status: importStatus, message, importCount, response, conflicts } = importResult;
+        const status = importStatus === "OK" ? "SUCCESS" : importStatus;
+        const aggregatedMessages = conflicts?.map(({ object, value }) => ({
+            id: object,
+            message: value,
+        }));
+
+        const eventsMessages = _.flatten(
+            response?.importSummaries?.map(
+                ({ reference = "", description = "", conflicts }) =>
+                    conflicts?.map(({ object, value }) => ({
+                        id: reference,
+                        message: _([description, object, value])
+                            .compact()
+                            .join(" "),
+                    })) ?? { id: reference, message: description }
+            )
+        );
+
+        const stats: SynchronizationStats = {
+            created: importCount?.imported ?? response?.imported ?? 0,
+            deleted: importCount?.deleted ?? response?.deleted ?? 0,
+            updated: importCount?.updated ?? response?.updated ?? 0,
+            ignored: importCount?.ignored ?? response?.ignored ?? 0,
+            total: 0,
+        };
+
+        return {
+            status,
+            message,
+            stats,
+            instance: instance.toObject(),
+            errors: aggregatedMessages ?? eventsMessages ?? [],
+            date: new Date(),
+            type,
+        };
     }
 }
 

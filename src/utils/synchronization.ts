@@ -4,15 +4,10 @@ import _ from "lodash";
 import moment from "moment";
 import memoize from "nano-memoize";
 import { SyncronizationClass } from "../domain/synchronization/usecases/GenericSyncUseCase";
-import Instance, { MetadataMapping, MetadataMappingDictionary } from "../models/instance";
+import { MetadataMapping, MetadataMappingDictionary } from "../models/instance";
 import SyncRule from "../models/syncRule";
-import { D2, DataImportResponse } from "../types/d2";
+import { D2 } from "../types/d2";
 import { D2Api, D2CategoryOptionCombo } from "../types/d2-api";
-import { SyncRuleType } from "../types/synchronization";
-import {
-    SynchronizationResult,
-    SynchronizationStats,
-} from "../domain/synchronization/entities/SynchronizationResult";
 import "../utils/lodash-mixins";
 
 //TODO: when all request to metadata using metadataRepository.getMetadataByIds
@@ -39,49 +34,6 @@ export async function getMetadata(
     const results = _.deepMerge({}, ...response);
     if (results.system) delete results.system;
     return results;
-}
-
-export function cleanDataImportResponse(
-    importResult: DataImportResponse,
-    instance: Instance,
-    type: SyncRuleType
-): SynchronizationResult {
-    const { status: importStatus, message, importCount, response, conflicts } = importResult;
-    const status = importStatus === "OK" ? "SUCCESS" : importStatus;
-    const aggregatedMessages = conflicts?.map(({ object, value }) => ({
-        id: object,
-        message: value,
-    }));
-
-    const eventsMessages = _.flatten(
-        response?.importSummaries?.map(
-            ({ reference = "", description = "", conflicts }) =>
-                conflicts?.map(({ object, value }) => ({
-                    id: reference,
-                    message: _([description, object, value])
-                        .compact()
-                        .join(" "),
-                })) ?? { id: reference, message: description }
-        )
-    );
-
-    const stats: SynchronizationStats = {
-        created: importCount?.imported ?? response?.imported ?? 0,
-        deleted: importCount?.deleted ?? response?.deleted ?? 0,
-        updated: importCount?.updated ?? response?.updated ?? 0,
-        ignored: importCount?.ignored ?? response?.ignored ?? 0,
-        total: 0,
-    };
-
-    return {
-        status,
-        message,
-        stats,
-        instance: instance.toObject(),
-        errors: aggregatedMessages ?? eventsMessages ?? [],
-        date: new Date(),
-        type,
-    };
 }
 
 export const availablePeriods: {
