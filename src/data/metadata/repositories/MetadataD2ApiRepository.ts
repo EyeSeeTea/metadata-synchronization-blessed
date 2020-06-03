@@ -142,7 +142,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
     ): SynchronizationResult {
         const { status, stats, typeReports = [] } = importResult;
         const typeStats = typeReports.flatMap(({ klass, stats }) => ({
-            stats: formatStats(stats),
+            ...formatStats(stats),
             type: getClassName(klass),
         }));
 

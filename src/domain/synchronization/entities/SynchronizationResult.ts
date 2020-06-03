@@ -4,16 +4,12 @@ import { PublicInstance } from "../../instance/Instance";
 export type SynchronizationStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
 
 export interface SynchronizationStats {
+    type?: string;
     imported: number;
     updated: number;
     ignored: number;
     deleted: number;
     total?: number;
-}
-
-export interface TypeStats {
-    type?: string;
-    stats: SynchronizationStats;
 }
 
 export interface ErrorMessage {
@@ -30,6 +26,6 @@ export interface SynchronizationResult {
     type: SyncRuleType;
     message?: string;
     stats?: SynchronizationStats;
-    typeStats?: TypeStats[];
+    typeStats?: SynchronizationStats[];
     errors?: ErrorMessage[];
 }

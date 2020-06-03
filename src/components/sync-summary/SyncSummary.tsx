@@ -22,7 +22,7 @@ import { useAppContext } from "../../contexts/ApiContext";
 import {
     ErrorMessage,
     SynchronizationResult,
-    TypeStats,
+    SynchronizationStats,
 } from "../../domain/synchronization/entities/SynchronizationResult";
 import SyncReport from "../../models/syncReport";
 import { SyncRuleType } from "../../types/synchronization";
@@ -61,7 +61,7 @@ export const formatStatusTag = (value: string) => {
     return <b style={{ color }}>{text}</b>;
 };
 
-const buildSummaryTable = (stats: TypeStats[]) => {
+const buildSummaryTable = (stats: SynchronizationStats[]) => {
     return (
         <Table>
             <TableHead>
@@ -75,21 +75,15 @@ const buildSummaryTable = (stats: TypeStats[]) => {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {stats.map(({ type, stats }, i) => (
+                {stats.map(({ type, imported, updated, deleted, ignored, total }, i) => (
                     <TableRow key={`row-${i}`}>
                         <TableCell>{type}</TableCell>
-                        <TableCell>{stats.imported}</TableCell>
-                        <TableCell>{stats.updated}</TableCell>
-                        <TableCell>{stats.deleted}</TableCell>
-                        <TableCell>{stats.ignored}</TableCell>
+                        <TableCell>{imported}</TableCell>
+                        <TableCell>{updated}</TableCell>
+                        <TableCell>{deleted}</TableCell>
+                        <TableCell>{ignored}</TableCell>
                         <TableCell>
-                            {stats.total ||
-                                _.sum([
-                                    stats.imported,
-                                    stats.deleted,
-                                    stats.ignored,
-                                    stats.updated,
-                                ])}
+                            {total || _.sum([imported, deleted, ignored, updated])}
                         </TableCell>
                     </TableRow>
                 ))}
@@ -232,7 +226,7 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
                                 <ExpansionPanelDetails className={classes.expansionPanelDetails}>
                                     {buildSummaryTable([
                                         ...typeStats,
-                                        { type: i18n.t("Total"), stats },
+                                        { ...stats, type: i18n.t("Total") },
                                     ])}
                                 </ExpansionPanelDetails>
                             )}
