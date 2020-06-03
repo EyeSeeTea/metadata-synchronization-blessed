@@ -1,25 +1,25 @@
 import _ from "lodash";
+import { Transformation } from "../../../domain/common/entities/Transformation";
 import {
     MetadataEntities,
     MetadataPackage,
-} from "../../../../domain/metadata/entities/MetadataEntities";
-import { D2MetadataPackage } from "../../../synchronization/types";
-import {
-    mapD2PackageFromD2,
-    mapPackageToD2,
-    PackageTransformationStrategy,
-} from "../PackageMapper";
+} from "../../../domain/metadata/entities/MetadataEntities";
+import { TransformationD2ApiRepository } from "../TransformationD2ApiRepository";
+import { D2MetadataPackage } from "../types";
 
-describe("PackageMapper", () => {
-    describe("mapPackageToD2", () => {
+const transformationRepository = new TransformationD2ApiRepository();
+
+describe("TransformationD2ApiRepository", () => {
+    describe("mapPackageTo", () => {
         it("should no apply any transformation if not exist transformations", () => {
-            const transformations: PackageTransformationStrategy<
-                MetadataPackage,
-                D2MetadataPackage
-            >[] = [];
+            const transformations: Transformation<MetadataPackage, D2MetadataPackage>[] = [];
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapPackageToD2(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(
+                33,
+                payload,
+                transformations
+            );
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -34,7 +34,11 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapPackageToD2(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(
+                33,
+                payload,
+                transformations
+            );
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -48,7 +52,11 @@ describe("PackageMapper", () => {
             ];
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapPackageToD2(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(
+                33,
+                payload,
+                transformations
+            );
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["30Name"])).toEqual(true);
@@ -64,7 +72,11 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapPackageToD2(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(
+                33,
+                payload,
+                transformations
+            );
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["33Name"])).toEqual(true);
@@ -85,7 +97,11 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapPackageToD2(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(
+                33,
+                payload,
+                transformations
+            );
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["33Name"])).toEqual(true);
@@ -106,21 +122,26 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapPackageToD2(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(
+                33,
+                payload,
+                transformations
+            );
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["33Name"])).toEqual(true);
         });
     });
-    describe("mapD2PackageToDomain", () => {
+    describe("mapPackageFrom", () => {
         it("should no apply any transformation if not exist transformations", () => {
-            const transformations: PackageTransformationStrategy<
-                MetadataPackage,
-                D2MetadataPackage
-            >[] = [];
+            const transformations: Transformation<MetadataPackage, D2MetadataPackage>[] = [];
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapD2PackageFromD2(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(
+                33,
+                payload,
+                transformations
+            );
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -135,7 +156,11 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = mapD2PackageFromD2(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(
+                33,
+                payload,
+                transformations
+            );
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -149,7 +174,11 @@ describe("PackageMapper", () => {
             ];
             const payload = givenAMetadataPackage("30Name");
 
-            const transformedPayload = mapD2PackageFromD2(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(
+                33,
+                payload,
+                transformations
+            );
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["name"])).toEqual(true);
@@ -165,7 +194,11 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage("30Name");
 
-            const transformedPayload = mapD2PackageFromD2(30, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(
+                30,
+                payload,
+                transformations
+            );
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["name"])).toEqual(true);
@@ -186,7 +219,11 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage("31Name");
 
-            const transformedPayload = mapD2PackageFromD2(31, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(
+                31,
+                payload,
+                transformations
+            );
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["name"])).toEqual(true);
@@ -207,7 +244,11 @@ describe("PackageMapper", () => {
 
             const payload = givenAMetadataPackage("31Name");
 
-            const transformedPayload = mapD2PackageFromD2(31, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(
+                31,
+                payload,
+                transformations
+            );
 
             const userRoles = transformedPayload["userRoles"];
 

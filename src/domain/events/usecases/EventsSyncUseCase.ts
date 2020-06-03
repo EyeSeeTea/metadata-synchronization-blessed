@@ -1,10 +1,10 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { AggregatedD2ApiRepository } from "../../../data/aggregated/repositories/AggregatedD2ApiRepository";
-import { EventsD2ApiRepository } from "../../../data/events/repositories/EventsD2ApiRepository";
-import { mapPackageToD2 } from "../../../data/metadata/mappers/PackageMapper";
-import { eventsTransformationsToDhis2 } from "../../../data/metadata/mappers/PackageTransformations";
+import { AggregatedD2ApiRepository } from "../../../data/aggregated/AggregatedD2ApiRepository";
+import { EventsD2ApiRepository } from "../../../data/events/EventsD2ApiRepository";
+import { eventsTransformationsToDhis2 } from "../../../data/transformations/PackageTransformations";
+import { TransformationD2ApiRepository } from "../../../data/transformations/TransformationD2ApiRepository";
 import Instance, { MetadataMappingDictionary } from "../../../models/instance";
 import { D2 } from "../../../types/d2";
 import { D2Api, D2CategoryOptionCombo, D2Program } from "../../../types/d2-api";
@@ -18,6 +18,7 @@ import {
 import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedRepository } from "../../aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
+import { TransformationRepository } from "../../common/repositories/TransformationRepository";
 import InstanceEntity from "../../instance/Instance";
 import {
     GenericSyncUseCase,
@@ -35,6 +36,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         "id,name,programStages[programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
     private eventsRepository: EventsRepository;
     private aggregatedRepository: AggregatedRepository;
+    private transformationRepository: TransformationRepository;
 
     constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
         super(d2, api, builder);
@@ -43,6 +45,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         // composition root
         this.eventsRepository = new EventsD2ApiRepository(api);
         this.aggregatedRepository = new AggregatedD2ApiRepository(api);
+        this.transformationRepository = new TransformationD2ApiRepository();
     }
 
     public buildPayload = memoize(async () => {
@@ -107,7 +110,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             );
         }
 
-        const versionedPayloadPackage = mapPackageToD2(
+        const versionedPayloadPackage = this.transformationRepository.mapPackageTo(
             instanceEntity.apiVersion,
             payload,
             eventsTransformationsToDhis2

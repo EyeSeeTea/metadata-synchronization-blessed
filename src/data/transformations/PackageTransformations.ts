@@ -1,12 +1,8 @@
-import { AggregatedPackage } from "../../../domain/aggregated/entities/AggregatedPackage";
-import { EventsPackage } from "../../../domain/events/entities/EventsPackage";
-import { MetadataPackage } from "../../../domain/metadata/entities/MetadataEntities";
-import {
-    D2AggregatedPackage,
-    D2EventsPackage,
-    D2MetadataPackage,
-} from "../../synchronization/types";
-import { PackageTransformationStrategy } from "./PackageMapper";
+import { AggregatedPackage } from "../../domain/aggregated/entities/AggregatedPackage";
+import { EventsPackage } from "../../domain/events/entities/EventsPackage";
+import { MetadataPackage } from "../../domain/metadata/entities/MetadataEntities";
+import { D2AggregatedPackage, D2EventsPackage, D2MetadataPackage } from "./types";
+import { Transformation } from "../../domain/common/entities/Transformation";
 
 /**
  * Transformations from domain to dhis2 will be apply consecutively.
@@ -26,20 +22,17 @@ import { PackageTransformationStrategy } from "./PackageMapper";
 //     }
 // }
 
-export const metadataTransformationsToDhis2: PackageTransformationStrategy<
+export const metadataTransformationsToDhis2: Transformation<
     MetadataPackage,
     D2MetadataPackage
 >[] = [
     //exampleMetadataTransformationToDhis2
 ];
-export const aggregatedTransformationsToDhis2: PackageTransformationStrategy<
+export const aggregatedTransformationsToDhis2: Transformation<
     AggregatedPackage,
     D2AggregatedPackage
 >[] = [];
-export const eventsTransformationsToDhis2: PackageTransformationStrategy<
-    EventsPackage,
-    D2EventsPackage
->[] = [];
+export const eventsTransformationsToDhis2: Transformation<EventsPackage, D2EventsPackage>[] = [];
 
 /**
  * Transformations from dhis2 to domain will be apply consecutively.
@@ -59,7 +52,7 @@ export const eventsTransformationsToDhis2: PackageTransformationStrategy<
 //     }
 // }
 
-export const metadataTransformationsFromDhis2: PackageTransformationStrategy<
+export const metadataTransformationsFromDhis2: Transformation<
     D2MetadataPackage,
     MetadataPackage
 >[] = [

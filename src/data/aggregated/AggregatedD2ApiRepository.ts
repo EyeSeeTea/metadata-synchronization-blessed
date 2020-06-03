@@ -1,16 +1,16 @@
 import _ from "lodash";
 import { Moment } from "moment";
-import { AggregatedPackage } from "../../../domain/aggregated/entities/AggregatedPackage";
-import { MappedCategoryOption } from "../../../domain/aggregated/entities/MappedCategoryOption";
-import { AggregatedRepository } from "../../../domain/aggregated/repositories/AggregatedRepository";
-import { DataSyncAggregation, DataSynchronizationParams } from "../../../domain/aggregated/types";
-import { buildPeriodFromParams } from "../../../domain/aggregated/utils";
-import { SynchronizationResult } from "../../../domain/synchronization/entities/SynchronizationResult";
-import { cleanOrgUnitPaths } from "../../../domain/synchronization/utils";
-import Instance, { MetadataMappingDictionary } from "../../../models/instance";
-import { DataImportParams } from "../../../types/d2";
-import { D2Api, D2CategoryOptionCombo, DataValueSetsPostResponse } from "../../../types/d2-api";
-import { promiseMap } from "../../../utils/common";
+import { AggregatedPackage } from "../../domain/aggregated/entities/AggregatedPackage";
+import { MappedCategoryOption } from "../../domain/aggregated/entities/MappedCategoryOption";
+import { AggregatedRepository } from "../../domain/aggregated/repositories/AggregatedRepository";
+import { DataSyncAggregation, DataSynchronizationParams } from "../../domain/aggregated/types";
+import { buildPeriodFromParams } from "../../domain/aggregated/utils";
+import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
+import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
+import Instance, { MetadataMappingDictionary } from "../../models/instance";
+import { DataImportParams } from "../../types/d2";
+import { D2Api, D2CategoryOptionCombo, DataValueSetsPostResponse } from "../../types/d2-api";
+import { promiseMap } from "../../utils/common";
 
 export class AggregatedD2ApiRepository implements AggregatedRepository {
     private currentD2Api: D2Api;

@@ -1,8 +1,8 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { AggregatedD2ApiRepository } from "../../../data/aggregated/repositories/AggregatedD2ApiRepository";
-import { mapPackageToD2 } from "../../../data/metadata/mappers/PackageMapper";
-import { aggregatedTransformationsToDhis2 } from "../../../data/metadata/mappers/PackageTransformations";
+import { AggregatedD2ApiRepository } from "../../../data/aggregated/AggregatedD2ApiRepository";
+import { aggregatedTransformationsToDhis2 } from "../../../data/transformations/PackageTransformations";
+import { TransformationD2ApiRepository } from "../../../data/transformations/TransformationD2ApiRepository";
 import Instance, { MetadataMappingDictionary } from "../../../models/instance";
 import { D2 } from "../../../types/d2";
 import { D2Api, D2CategoryOptionCombo } from "../../../types/d2-api";
@@ -13,6 +13,7 @@ import {
     mapCategoryOptionCombo,
     mapOptionValue,
 } from "../../../utils/synchronization";
+import { TransformationRepository } from "../../common/repositories/TransformationRepository";
 import InstanceEntity from "../../instance/Instance";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import {
@@ -29,6 +30,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public readonly fields =
         "id,dataElements[id,name],dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
     private aggregatedRepository: AggregatedRepository;
+    private transformationRepository: TransformationRepository;
 
     constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
         super(d2, api, builder);
@@ -36,6 +38,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         //TODO: composition root - This dependency should be injected by constructor when we have
         // composition root
         this.aggregatedRepository = new AggregatedD2ApiRepository(api);
+        this.transformationRepository = new TransformationD2ApiRepository();
     }
 
     public buildPayload = memoize(async () => {
@@ -165,7 +168,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
             );
         }
 
-        const versionedPayloadPackage = mapPackageToD2(
+        const versionedPayloadPackage = this.transformationRepository.mapPackageTo(
             instanceEntity.apiVersion,
             mappedPayloadPackage,
             aggregatedTransformationsToDhis2

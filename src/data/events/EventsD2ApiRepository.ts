@@ -1,16 +1,16 @@
 import _ from "lodash";
-import { DataSynchronizationParams } from "../../../domain/aggregated/types";
-import { buildPeriodFromParams } from "../../../domain/aggregated/utils";
-import { ProgramEvent } from "../../../domain/events/entities/ProgramEvent";
-import { EventsRepository } from "../../../domain/events/repositories/EventsRepository";
+import { DataSynchronizationParams } from "../../domain/aggregated/types";
+import { buildPeriodFromParams } from "../../domain/aggregated/utils";
+import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
+import { EventsRepository } from "../../domain/events/repositories/EventsRepository";
 import {
     SynchronizationResult,
     SynchronizationStats,
-} from "../../../domain/synchronization/entities/SynchronizationResult";
-import { cleanObjectDefault, cleanOrgUnitPaths } from "../../../domain/synchronization/utils";
-import Instance from "../../../models/instance";
-import { DataImportParams } from "../../../types/d2";
-import { D2Api } from "../../../types/d2-api";
+} from "../../domain/synchronization/entities/SynchronizationResult";
+import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
+import Instance from "../../models/instance";
+import { DataImportParams } from "../../types/d2";
+import { D2Api } from "../../types/d2-api";
 
 export class EventsD2ApiRepository implements EventsRepository {
     private currentD2Api: D2Api;

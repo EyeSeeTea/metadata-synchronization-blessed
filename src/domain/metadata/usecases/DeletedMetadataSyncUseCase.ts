@@ -1,5 +1,5 @@
 import memoize from "nano-memoize";
-import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
+import MetadataD2ApiRepository from "../../../data/metadata/MetadataD2ApiRepository";
 import Instance from "../../../models/instance";
 import { D2 } from "../../../types/d2";
 import { D2Api } from "../../../types/d2-api";
@@ -10,7 +10,7 @@ import {
     GenericSyncUseCase,
     SyncronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
-import { MetadataRepository } from "../MetadataRepository";
+import { MetadataRepository } from "../repositories/MetadataRepository";
 
 export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "deleted";

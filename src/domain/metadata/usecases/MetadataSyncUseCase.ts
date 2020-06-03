@@ -1,6 +1,6 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
+import MetadataD2ApiRepository from "../../../data/metadata/MetadataD2ApiRepository";
 import { d2ModelFactory } from "../../../models/dhis/factory";
 import Instance from "../../../models/instance";
 import { D2 } from "../../../types/d2";
@@ -9,14 +9,14 @@ import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../../typ
 import { promiseMap } from "../../../utils/common";
 import { Ref } from "../../common/entities/Schemas";
 import InstanceEntity from "../../instance/Instance";
+import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import {
     GenericSyncUseCase,
     SyncronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
-import { MetadataRepository } from "../MetadataRepository";
+import { MetadataRepository } from "../repositories/MetadataRepository";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
-import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";

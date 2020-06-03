@@ -1,13 +1,13 @@
-import { Id } from "../common/entities/Schemas";
-import Instance from "../instance/Instance";
-import { SynchronizationResult } from "../synchronization/entities/SynchronizationResult";
+import { Id } from "../../common/entities/Schemas";
+import Instance from "../../instance/Instance";
+import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import {
     MetadataEntities,
     MetadataEntity,
     MetadataFieldsPackage,
     MetadataPackage,
-} from "./entities/MetadataEntities";
-import { MetadataImportParams } from "./types";
+} from "../entities/MetadataEntities";
+import { MetadataImportParams } from "../types";
 
 export interface MetadataRepository {
     getMetadataFieldsByIds<T>(

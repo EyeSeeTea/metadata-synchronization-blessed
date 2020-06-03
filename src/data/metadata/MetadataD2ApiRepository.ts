@@ -1,15 +1,16 @@
 import _ from "lodash";
-import Instance from "../../../domain/instance/Instance";
+import { TransformationRepository } from "../../domain/common/repositories/TransformationRepository";
+import Instance from "../../domain/instance/Instance";
 import {
     MetadataEntities,
     MetadataEntity,
     MetadataFieldsPackage,
     MetadataPackage,
-} from "../../../domain/metadata/entities/MetadataEntities";
-import { MetadataRepository } from "../../../domain/metadata/MetadataRepository";
-import { MetadataImportParams } from "../../../domain/metadata/types";
-import { getClassName } from "../../../domain/metadata/utils";
-import { SynchronizationResult } from "../../../domain/synchronization/entities/SynchronizationResult";
+} from "../../domain/metadata/entities/MetadataEntities";
+import { MetadataRepository } from "../../domain/metadata/repositories/MetadataRepository";
+import { MetadataImportParams } from "../../domain/metadata/types";
+import { getClassName } from "../../domain/metadata/utils";
+import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
 import {
     D2Api,
     D2ApiDefinition,
@@ -19,23 +20,25 @@ import {
     MetadataResponse,
     Model,
     Stats,
-} from "../../../types/d2-api";
-import { mapD2PackageFromD2, mapPackageToD2 } from "../mappers/PackageMapper";
+} from "../../types/d2-api";
 import {
     metadataTransformationsFromDhis2,
     metadataTransformationsToDhis2,
-} from "../mappers/PackageTransformations";
+} from "../transformations/PackageTransformations";
+import { TransformationD2ApiRepository } from "../transformations/TransformationD2ApiRepository";
 
 class MetadataD2ApiRepository implements MetadataRepository {
-    private currentD2Api: D2Api;
+    private api: D2Api;
+    private transformationRepository: TransformationRepository;
 
-    constructor(d2Api: D2Api) {
+    constructor(api: D2Api) {
         //TODO: composition root - when we have composition root I think may has sense
         // that dependency should be currentInstance instead of d2Api because so
         // all necessary instance data (url, usr, pwd, version) for current server is loaded once to start app.
         // For the moment I have not make this change becuase we should realize a request to current server
         // for every metadata sync execution where this class is created to retrieve current version
-        this.currentD2Api = d2Api;
+        this.api = api;
+        this.transformationRepository = new TransformationD2ApiRepository();
     }
 
     /**
@@ -68,7 +71,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
         const apiVersion = await this.getVersion();
 
-        const metadataPackage = mapD2PackageFromD2(
+        const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
             responseData,
             metadataTransformationsFromDhis2
@@ -86,7 +89,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
 
         const apiVersion = await this.getVersion();
 
-        const metadataPackage = mapD2PackageFromD2(
+        const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
             d2Metadata,
             metadataTransformationsFromDhis2
@@ -101,7 +104,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
         targetInstance: Instance
     ): Promise<SynchronizationResult> {
         const apiVersion = await this.getVersion(targetInstance);
-        const versionedPayloadPackage = mapPackageToD2(
+        const versionedPayloadPackage = this.transformationRepository.mapPackageTo(
             apiVersion,
             metadata,
             metadataTransformationsToDhis2
@@ -198,12 +201,12 @@ class MetadataD2ApiRepository implements MetadataRepository {
                   baseUrl: targetInstance.url,
                   auth: { username: targetInstance.username, password: targetInstance.password },
               })
-            : this.currentD2Api;
+            : this.api;
     }
 
     private async getVersion(targetInstance?: Instance): Promise<number> {
         if (!targetInstance) {
-            const version = await this.currentD2Api.getVersion();
+            const version = await this.api.getVersion();
             return Number(version.split(".")[1]);
         } else if (targetInstance.apiVersion) {
             return targetInstance.apiVersion;
@@ -237,7 +240,7 @@ class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     private getApiModel(type: keyof D2ModelSchemas): InstanceType<typeof Model> {
-        const modelCollection = this.currentD2Api.models as {
+        const modelCollection = this.api.models as {
             [ModelKey in keyof D2ApiDefinition["schemas"]]: Model<
                 D2ApiDefinition,
                 D2ApiDefinition["schemas"][ModelKey]

@@ -12,7 +12,7 @@ import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 import { EventsSyncUseCase } from "../../../domain/events/usecases/EventsSyncUseCase";
 import { EventsRepository } from "../../../domain/events/repositories/EventsRepository";
-import { EventsD2ApiRepository } from "../../../data/events/repositories/EventsD2ApiRepository";
+import { EventsD2ApiRepository } from "../../../data/events/EventsD2ApiRepository";
 
 interface ProgramEventObject extends ProgramEvent {
     [key: string]: any;
