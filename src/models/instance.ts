@@ -1,14 +1,22 @@
 import i18n from "@dhis2/d2-i18n";
 import axios, { AxiosBasicCredentials } from "axios";
 import Cryptr from "cryptr";
-import { D2Api } from "../types/d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
+import { Validation } from "../domain/common/entities/Validations";
 import { Response } from "../types/d2";
+import { D2Api } from "../types/d2-api";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { Validation } from "../types/validations";
-import { getDataStore, deleteData, saveData, saveDataStore, deleteDataStore } from "./dataStore";
-import { getData, getDataById, getPaginatedData } from "./dataStore";
+import {
+    deleteData,
+    deleteDataStore,
+    getData,
+    getDataById,
+    getDataStore,
+    getPaginatedData,
+    saveData,
+    saveDataStore,
+} from "./dataStore";
 
 const instancesDataStoreKey = "instances";
 

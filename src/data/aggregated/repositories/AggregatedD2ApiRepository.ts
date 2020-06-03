@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { Moment } from "moment";
 import { AggregatedPackage } from "../../../domain/aggregated/entities/AggregatedPackage";
+import { MappedCategoryOption } from "../../../domain/aggregated/entities/MappedCategoryOption";
 import { AggregatedRepository } from "../../../domain/aggregated/repositories/AggregatedRepository";
 import { DataSyncAggregation, DataSynchronizationParams } from "../../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../../domain/aggregated/utils";
@@ -9,7 +10,6 @@ import { cleanOrgUnitPaths } from "../../../domain/synchronization/utils";
 import Instance, { MetadataMappingDictionary } from "../../../models/instance";
 import { DataImportParams } from "../../../types/d2";
 import { D2Api, D2CategoryOptionCombo, DataValueSetsPostResponse } from "../../../types/d2-api";
-import { CategoryOptionAggregationBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 
 export class AggregatedD2ApiRepository implements AggregatedRepository {
@@ -114,7 +114,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
     public async getOptions(
         { aggregatedDataElements }: MetadataMappingDictionary,
         categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
-    ): Promise<CategoryOptionAggregationBuilder[]> {
+    ): Promise<MappedCategoryOption[]> {
         const dimensions = await this.getDimensions();
         const findOptionCombo = (mappedOption: string, mappedCombo?: string) =>
             categoryOptionCombos.find(
@@ -148,7 +148,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                     .value();
                 result.push(...builders);
             },
-            [] as Omit<CategoryOptionAggregationBuilder, "category">[]
+            [] as Omit<MappedCategoryOption, "category">[]
         );
 
         const result = _.flatten(

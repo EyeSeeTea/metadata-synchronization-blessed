@@ -7,13 +7,7 @@ import Instance from "../../../models/instance";
 import SyncReport from "../../../models/syncReport";
 import SyncRule from "../../../models/syncRule";
 import { D2 } from "../../../types/d2";
-import {
-    AggregatedDataStats,
-    EventsDataStats,
-    SynchronizationBuilder,
-    SynchronizationReportStatus,
-    SyncRuleType,
-} from "../../../types/synchronization";
+import { SynchronizationBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { getMetadata } from "../../../utils/synchronization";
 import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";
@@ -25,7 +19,13 @@ import InstanceRepository from "../../instance/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../../metadata/usecases/MetadataSyncUseCase";
+import {
+    AggregatedDataStats,
+    EventsDataStats,
+    SynchronizationReportStatus,
+} from "../entities/SynchronizationReport";
 import { SynchronizationResult, SynchronizationStatus } from "../entities/SynchronizationResult";
+import { SyncRuleType } from "../entities/SynchronizationRule";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase

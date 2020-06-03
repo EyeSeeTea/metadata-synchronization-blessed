@@ -14,6 +14,7 @@ import { AggregatedSyncUseCase } from "../../domain/aggregated/usecases/Aggregat
 import { EventsSyncUseCase } from "../../domain/events/usecases/EventsSyncUseCase";
 import { DeletedMetadataSyncUseCase } from "../../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
+import { SyncRuleType } from "../../domain/synchronization/entities/SynchronizationRule";
 import { SyncronizationClass } from "../../domain/synchronization/usecases/GenericSyncUseCase";
 import { D2Model } from "../../models/dhis/default";
 import { metadataModels } from "../../models/dhis/factory";
@@ -28,7 +29,6 @@ import { DataElementGroupModel, DataElementGroupSetModel } from "../../models/dh
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
-import { SyncRuleType } from "../../types/synchronization";
 import { MetadataType } from "../../utils/d2";
 import { isAppConfigurator } from "../../utils/permissions";
 

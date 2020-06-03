@@ -7,18 +7,20 @@ import {
     DataSynchronizationParams,
     DataSyncPeriod,
 } from "../domain/aggregated/types";
+import { SharingSetting } from "../domain/common/entities/SharingSetting";
+import { Validation } from "../domain/common/entities/Validations";
+import {
+    SynchronizationRule,
+    SyncRuleType,
+} from "../domain/synchronization/entities/SynchronizationRule";
 import { D2Api, Ref } from "../types/d2-api";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import {
     ExcludeIncludeRules,
     MetadataIncludeExcludeRules,
     MetadataSynchronizationParams,
-    SharingSetting,
     SynchronizationBuilder,
-    SynchronizationRule,
-    SyncRuleType,
 } from "../types/synchronization";
-import { Validation } from "../types/validations";
 import { extractChildrenFromRules, extractParentsFromRule } from "../utils/metadataIncludeExclude";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
 import isValidCronExpression from "../utils/validCronExpression";

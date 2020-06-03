@@ -1,9 +1,9 @@
 import Instance, { MetadataMappingDictionary } from "../../../models/instance";
 import { DataImportParams } from "../../../types/d2";
 import { D2CategoryOptionCombo } from "../../../types/d2-api";
-import { CategoryOptionAggregationBuilder } from "../../../types/synchronization";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
+import { MappedCategoryOption } from "../entities/MappedCategoryOption";
 import { DataSynchronizationParams } from "../types";
 
 export interface AggregatedRepository {
@@ -23,7 +23,7 @@ export interface AggregatedRepository {
     getOptions(
         { aggregatedDataElements }: MetadataMappingDictionary,
         categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
-    ): Promise<CategoryOptionAggregationBuilder[]>;
+    ): Promise<MappedCategoryOption[]>;
 
     getDimensions(): Promise<string[]>;
 

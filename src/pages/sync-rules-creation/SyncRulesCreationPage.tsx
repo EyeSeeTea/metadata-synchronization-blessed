@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncWizard from "../../components/sync-wizard/SyncWizard";
-import i18n from "../../locales";
-import SyncRule from "../../models/syncRule";
-import { SyncRuleType } from "../../types/synchronization";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { useAppContext } from "../../contexts/ApiContext";
+import { SyncRuleType } from "../../domain/synchronization/entities/SynchronizationRule";
+import i18n from "../../locales";
+import SyncRule from "../../models/syncRule";
 
 interface SyncRulesCreationParams {
     id: string;

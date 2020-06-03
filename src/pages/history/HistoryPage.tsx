@@ -21,15 +21,15 @@ import PageHeader from "../../components/page-header/PageHeader";
 import SyncSummary, { formatStatusTag } from "../../components/sync-summary/SyncSummary";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
-import {
-    SynchronizationReport,
-    SynchronizationRule,
-    SyncRuleType,
-} from "../../types/synchronization";
 import { getValueForCollection } from "../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../utils/permissions";
 import { Typography } from "@material-ui/core";
 import { useAppContext } from "../../contexts/ApiContext";
+import {
+    SyncRuleType,
+    SynchronizationRule,
+} from "../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationReport } from "../../domain/synchronization/entities/SynchronizationReport";
 
 const config = {
     metadata: {

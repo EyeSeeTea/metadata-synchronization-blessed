@@ -1,5 +1,5 @@
-import { SyncRuleType } from "../../../types/synchronization";
 import { PublicInstance } from "../../instance/Instance";
+import { SyncRuleType } from "./SynchronizationRule";
 
 export type SynchronizationStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
 

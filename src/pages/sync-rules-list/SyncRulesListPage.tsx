@@ -26,12 +26,12 @@ import { useAppContext } from "../../contexts/ApiContext";
 import { AggregatedSyncUseCase } from "../../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { EventsSyncUseCase } from "../../domain/events/usecases/EventsSyncUseCase";
 import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
+import { SyncRuleType } from "../../domain/synchronization/entities/SynchronizationRule";
 import { SyncronizationClass } from "../../domain/synchronization/usecases/GenericSyncUseCase";
 import Instance from "../../models/instance";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
-import { SyncRuleType } from "../../types/synchronization";
 import { getValueForCollection } from "../../utils/d2-ui-components";
 import {
     getUserInfo,

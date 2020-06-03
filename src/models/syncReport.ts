@@ -1,14 +1,14 @@
-import { D2Api } from "../types/d2-api";
 import { TableInitialState, TablePagination } from "d2-ui-components";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
-import { SyncReportTableFilters } from "../types/d2-ui-components";
 import {
     SynchronizationReport,
     SynchronizationReportStatus,
-    SyncRuleType,
-} from "../types/synchronization";
+} from "../domain/synchronization/entities/SynchronizationReport";
 import { SynchronizationResult } from "../domain/synchronization/entities/SynchronizationResult";
+import { SyncRuleType } from "../domain/synchronization/entities/SynchronizationRule";
+import { D2Api } from "../types/d2-api";
+import { SyncReportTableFilters } from "../types/d2-ui-components";
 import {
     deleteData,
     deleteDataStore,

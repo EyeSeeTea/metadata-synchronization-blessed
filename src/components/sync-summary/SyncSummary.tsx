@@ -24,8 +24,8 @@ import {
     SynchronizationResult,
     SynchronizationStats,
 } from "../../domain/synchronization/entities/SynchronizationResult";
+import { SyncRuleType } from "../../domain/synchronization/entities/SynchronizationRule";
 import SyncReport from "../../models/syncReport";
-import { SyncRuleType } from "../../types/synchronization";
 
 const useStyles = makeStyles(theme => ({
     expansionPanelHeading1: {
