@@ -9,7 +9,7 @@ import { D2MetadataPackage } from "../types";
 
 const transformationRepository = new TransformationD2ApiRepository();
 
-describe("TransformationD2ApiRepository", () => {
+describe("Metadata transformations - D2Api", () => {
     describe("mapPackageTo", () => {
         it("should no apply any transformation if not exist transformations", () => {
             const transformations: Transformation<MetadataPackage, D2MetadataPackage>[] = [];
@@ -111,12 +111,12 @@ describe("TransformationD2ApiRepository", () => {
                 {
                     apiVersion: 33,
                     transform: (payload: D2MetadataPackage) =>
-                        renamePropInMetadataPackage(payload, "userRoles", "name", "32Name"),
+                        renamePropInMetadataPackage(payload, "userRoles", "32Name", "33Name"),
                 },
                 {
                     apiVersion: 32,
                     transform: (payload: D2MetadataPackage) =>
-                        renamePropInMetadataPackage(payload, "userRoles", "32Name", "33Name"),
+                        renamePropInMetadataPackage(payload, "userRoles", "name", "32Name"),
                 },
             ];
 
@@ -259,7 +259,7 @@ describe("TransformationD2ApiRepository", () => {
 
 export {};
 
-function givenAMetadataPackage(nameField: string = name): MetadataPackage {
+function givenAMetadataPackage(nameField: string = "name"): MetadataPackage {
     const metadataPackage = {
         userRoles: [
             {

@@ -16,14 +16,12 @@ export class TransformationD2ApiRepository implements TransformationRepository {
         payload: Input,
         transformations: Transformation<unknown, Output>[] = []
     ): Output {
-        const orderedTransformations = _.sortBy(transformations, "version");
-
-        const transformationstoApply = orderedTransformations.filter(
+        const transformationstoApply = _.orderBy(transformations, ["apiVersion"]).filter(
             transformation => transformation.apiVersion <= d2Version
         );
 
         if (transformationstoApply.length > 0) {
-            return this.applyTransformations<Input, Output>(payload, transformations);
+            return this.applyTransformations<Input, Output>(payload, transformationstoApply);
         } else {
             console.log(
                 `No transformations applied from domain to dhis2 metadata package in version ${d2Version}`
@@ -46,14 +44,12 @@ export class TransformationD2ApiRepository implements TransformationRepository {
         payload: Input,
         transformations: Transformation<unknown, Output>[] = []
     ): Output {
-        const orderedTransformations = _.sortBy(transformations, "version", "desc");
-
-        const transformationstoApply = orderedTransformations.filter(
+        const transformationstoApply = _.orderBy(transformations, ["apiVersion"], ["desc"]).filter(
             transformation => transformation.apiVersion <= d2Version
         );
 
         if (transformationstoApply.length > 0) {
-            return this.applyTransformations<Input, Output>(payload, transformations);
+            return this.applyTransformations<Input, Output>(payload, transformationstoApply);
         } else {
             console.log(
                 `No transformations applied from dhis2 to domain metadata package in version ${d2Version}`
