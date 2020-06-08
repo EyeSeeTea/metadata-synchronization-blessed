@@ -94,7 +94,7 @@ export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
     const notifications = await getDataStore<SynchronizationReport[]>(api, "notifications", []);
 
     for (const notification of notificationKeys) {
-        const { type = "unknown" } = notifications.find(({ id }) => id === notification) ?? {};
+        const { type = "metadata" } = notifications.find(({ id }) => id === notification) ?? {};
         debug(`Updating ${type} notification ${notification}`);
 
         const oldNotification = await getDataStore<SynchronizationResultOld[]>(
@@ -103,7 +103,6 @@ export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
             []
         );
 
-        //@ts-ignore
         const newNotification: SynchronizationResultNew[] = oldNotification.map(
             ({
                 stats: { created = 0, imported = 0, ...stats } = {
@@ -115,7 +114,7 @@ export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
                 report: { typeStats = [], messages = [] } = {},
                 ...rest
             }) => ({
-                type: type,
+                type,
                 ...rest,
                 stats: {
                     ...stats,
