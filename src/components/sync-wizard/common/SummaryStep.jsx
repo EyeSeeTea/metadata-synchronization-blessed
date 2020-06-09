@@ -5,7 +5,7 @@ import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useAppContext } from "../../../contexts/ApiContext";
+import { useAppContext } from "../../../contexts/AppContext";
 import { AggregatedSyncUseCase } from "../../../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { EventsSyncUseCase } from "../../../domain/events/usecases/EventsSyncUseCase";
 import { MetadataSyncUseCase } from "../../../domain/metadata/usecases/MetadataSyncUseCase";

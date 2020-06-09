@@ -1,10 +1,7 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { AggregatedD2ApiRepository } from "../../../data/aggregated/AggregatedD2ApiRepository";
-import { EventsD2ApiRepository } from "../../../data/events/EventsD2ApiRepository";
 import { eventsTransformationsToDhis2 } from "../../../data/transformations/PackageTransformations";
-import { TransformationD2ApiRepository } from "../../../data/transformations/TransformationD2ApiRepository";
 import Instance, { MetadataMappingDictionary } from "../../../models/instance";
 import { D2 } from "../../../types/d2";
 import { D2Api, D2CategoryOptionCombo, D2Program } from "../../../types/d2-api";
@@ -20,6 +17,7 @@ import { AggregatedRepository } from "../../aggregated/repositories/AggregatedRe
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { TransformationRepository } from "../../common/repositories/TransformationRepository";
 import InstanceEntity from "../../instance/Instance";
+import InstanceRepository from "../../instance/InstanceRepository";
 import {
     GenericSyncUseCase,
     SyncronizationPayload,
@@ -34,18 +32,17 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
     public readonly type = "events";
     public readonly fields =
         "id,name,programStages[programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
-    private eventsRepository: EventsRepository;
-    private aggregatedRepository: AggregatedRepository;
-    private transformationRepository: TransformationRepository;
 
-    constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
-        super(d2, api, builder);
-
-        //TODO: composition root - This dependency should be injected by constructor when we have
-        // composition root
-        this.eventsRepository = new EventsD2ApiRepository(api);
-        this.aggregatedRepository = new AggregatedD2ApiRepository(api);
-        this.transformationRepository = new TransformationD2ApiRepository();
+    constructor(
+        d2: D2,
+        api: D2Api,
+        builder: SynchronizationBuilder,
+        instance: InstanceRepository,
+        private eventsRepository: EventsRepository,
+        private aggregatedRepository: AggregatedRepository,
+        private transformationRepository: TransformationRepository
+    ) {
+        super(d2, api, builder, instance);
     }
 
     public buildPayload = memoize(async () => {
@@ -125,7 +122,15 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const { enableAggregation } = dataParams;
         if (!enableAggregation) return undefined;
 
-        const aggregatedSync = new AggregatedSyncUseCase(this.d2, this.api, this.builder);
+        // TODO: This is an external action and should be called by user
+        const aggregatedSync = new AggregatedSyncUseCase(
+            this.d2,
+            this.api,
+            this.builder,
+            this.instanceRepository,
+            this.aggregatedRepository,
+            this.transformationRepository
+        );
         const payload = await aggregatedSync.mapPayload(instance, { dataValues });
         console.debug("Program indicator package", { dataValues, payload });
 

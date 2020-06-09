@@ -1,7 +1,6 @@
 import { D2Api } from "d2-api/2.30";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import InstanceD2ApiRepository from "../../../data/instance/InstanceD2ApiRepository";
 import i18n from "../../../locales";
 import Instance from "../../../models/instance";
 import SyncReport from "../../../models/syncReport";
@@ -35,23 +34,15 @@ export type SyncronizationClass =
 export type SyncronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
 export abstract class GenericSyncUseCase {
-    protected readonly d2: D2;
-    protected readonly api: D2Api;
-    protected readonly builder: SynchronizationBuilder;
-    protected readonly instanceRepository: InstanceRepository;
-
     public abstract readonly type: SyncRuleType;
     public readonly fields: string = "id,name";
 
-    constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
-        this.d2 = d2;
-        this.api = api;
-        this.builder = builder;
-
-        //TODO: composition root - This dependency should be injected by constructor when we have
-        // composition root
-        this.instanceRepository = new InstanceD2ApiRepository(api);
-    }
+    constructor(
+        protected readonly d2: D2,
+        protected readonly api: D2Api,
+        protected readonly builder: SynchronizationBuilder,
+        protected readonly instanceRepository: InstanceRepository
+    ) {}
 
     public abstract async buildPayload(): Promise<SyncronizationPayload>;
     public abstract async mapPayload(

@@ -1,8 +1,6 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { AggregatedD2ApiRepository } from "../../../data/aggregated/AggregatedD2ApiRepository";
 import { aggregatedTransformationsToDhis2 } from "../../../data/transformations/PackageTransformations";
-import { TransformationD2ApiRepository } from "../../../data/transformations/TransformationD2ApiRepository";
 import Instance, { MetadataMappingDictionary } from "../../../models/instance";
 import { D2 } from "../../../types/d2";
 import { D2Api, D2CategoryOptionCombo } from "../../../types/d2-api";
@@ -15,6 +13,7 @@ import {
 } from "../../../utils/synchronization";
 import { TransformationRepository } from "../../common/repositories/TransformationRepository";
 import InstanceEntity from "../../instance/Instance";
+import InstanceRepository from "../../instance/InstanceRepository";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import {
     buildMetadataDictionary,
@@ -29,16 +28,16 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public readonly type = "aggregated";
     public readonly fields =
         "id,dataElements[id,name],dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
-    private aggregatedRepository: AggregatedRepository;
-    private transformationRepository: TransformationRepository;
 
-    constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
-        super(d2, api, builder);
-
-        //TODO: composition root - This dependency should be injected by constructor when we have
-        // composition root
-        this.aggregatedRepository = new AggregatedD2ApiRepository(api);
-        this.transformationRepository = new TransformationD2ApiRepository();
+    constructor(
+        d2: D2,
+        api: D2Api,
+        builder: SynchronizationBuilder,
+        instanceRepository: InstanceRepository,
+        private aggregatedRepository: AggregatedRepository,
+        private transformationRepository: TransformationRepository
+    ) {
+        super(d2, api, builder, instanceRepository);
     }
 
     public buildPayload = memoize(async () => {

@@ -3,10 +3,8 @@ import FileSaver from "file-saver";
 import _ from "lodash";
 import moment from "moment";
 import memoize from "nano-memoize";
-import { SyncronizationClass } from "../domain/synchronization/usecases/GenericSyncUseCase";
 import { MetadataMapping, MetadataMappingDictionary } from "../models/instance";
 import SyncRule from "../models/syncRule";
-import { D2 } from "../types/d2";
 import { D2Api, D2CategoryOptionCombo } from "../types/d2-api";
 import "../utils/lodash-mixins";
 
@@ -81,15 +79,7 @@ export const getCategoryOptionCombos = memoize(
     { serializer: (api: D2Api) => api.baseUrl }
 );
 
-export async function requestJSONDownload(
-    SyncClass: SyncronizationClass,
-    syncRule: SyncRule,
-    d2: D2,
-    api: D2Api
-) {
-    const sync = new SyncClass(d2, api, syncRule.toBuilder());
-    const payload = await sync.buildPayload();
-
+export function requestJSONDownload(payload: object, syncRule: SyncRule) {
     const json = JSON.stringify(payload, null, 4);
     const blob = new Blob([json], { type: "application/json" });
     const ruleName = _.kebabCase(_.toLower(syncRule.name));

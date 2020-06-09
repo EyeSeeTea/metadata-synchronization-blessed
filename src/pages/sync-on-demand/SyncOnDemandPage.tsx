@@ -9,13 +9,8 @@ import PageHeader from "../../components/page-header/PageHeader";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import { useAppContext } from "../../contexts/ApiContext";
-import { AggregatedSyncUseCase } from "../../domain/aggregated/usecases/AggregatedSyncUseCase";
-import { EventsSyncUseCase } from "../../domain/events/usecases/EventsSyncUseCase";
-import { DeletedMetadataSyncUseCase } from "../../domain/metadata/usecases/DeletedMetadataSyncUseCase";
-import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
+import { useAppContext } from "../../contexts/AppContext";
 import { SyncRuleType } from "../../domain/synchronization/entities/SynchronizationRule";
-import { SyncronizationClass } from "../../domain/synchronization/usecases/GenericSyncUseCase";
 import { D2Model } from "../../models/dhis/default";
 import { metadataModels } from "../../models/dhis/factory";
 import {
@@ -38,14 +33,12 @@ const config: Record<
         title: string;
         models: typeof D2Model[];
         childrenKeys: string[] | undefined;
-        SyncClass: SyncronizationClass;
     }
 > = {
     metadata: {
         title: i18n.t("Metadata Synchronization"),
         models: metadataModels,
         childrenKeys: undefined,
-        SyncClass: MetadataSyncUseCase,
     },
     aggregated: {
         title: i18n.t("Aggregated Data Synchronization"),
@@ -57,26 +50,23 @@ const config: Record<
             IndicatorMappedModel,
         ],
         childrenKeys: ["dataElements", "dataElementGroups"],
-        SyncClass: AggregatedSyncUseCase,
     },
     events: {
         title: i18n.t("Events Synchronization"),
         models: [EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel],
         childrenKeys: ["dataElements", "programIndicators"],
-        SyncClass: EventsSyncUseCase,
     },
     deleted: {
         title: i18n.t("Deleted Objects Synchronization"),
         models: [],
         childrenKeys: undefined,
-        SyncClass: DeletedMetadataSyncUseCase,
     },
 };
 
 const SyncOnDemandPage: React.FC = () => {
     const snackbar = useSnackbar();
     const loading = useLoading();
-    const { d2, api } = useAppContext();
+    const { d2, api, compositionRoot } = useAppContext();
     const history = useHistory();
     const { type } = useParams() as { type: SyncRuleType };
     const { title, models } = config[type];
@@ -122,11 +112,9 @@ const SyncOnDemandPage: React.FC = () => {
     };
 
     const handleSynchronization = async (syncRule: SyncRule) => {
-        const { SyncClass } = config[syncRule.type];
-
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
-        const sync = new SyncClass(d2 as D2, api, syncRule.toBuilder());
+        const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
         for await (const { message, syncReport, done } of sync.execute()) {
             if (message) loading.show(true, message);
             if (syncReport) await syncReport.save(api);

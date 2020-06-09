@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Instance from "../../../models/instance";
 import SyncParamsSelector from "../../sync-params-selector/SyncParamsSelector";
 import { SyncWizardStepProps } from "../Steps";
-import { useAppContext } from "../../../contexts/ApiContext";
+import { useAppContext } from "../../../contexts/AppContext";
 
 export const getInstanceOptions = async (api: D2Api) => {
     const { objects } = await Instance.list(api, {}, { paging: false });

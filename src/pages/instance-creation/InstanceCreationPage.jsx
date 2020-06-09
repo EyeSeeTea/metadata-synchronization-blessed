@@ -7,10 +7,10 @@ import PageHeader from "../../components/page-header/PageHeader";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import Instance from "../../models/instance";
 import GeneralInfoForm from "./GeneralInfoForm";
-import { ApiContext } from "../../contexts/ApiContext";
+import { AppContext } from "../../contexts/AppContext";
 
 class InstanceCreationPage extends React.Component {
-    static contextType = ApiContext;
+    static contextType = AppContext;
     static propTypes = {
         history: PropTypes.object.isRequired,
     };

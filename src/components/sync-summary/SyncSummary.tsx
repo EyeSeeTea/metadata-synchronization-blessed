@@ -18,7 +18,7 @@ import { ConfirmationDialog } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 import {
     ErrorMessage,
     SynchronizationResult,

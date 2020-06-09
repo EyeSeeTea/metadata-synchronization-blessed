@@ -25,21 +25,9 @@ import {
     metadataTransformationsFromDhis2,
     metadataTransformationsToDhis2,
 } from "../transformations/PackageTransformations";
-import { TransformationD2ApiRepository } from "../transformations/TransformationD2ApiRepository";
 
 class MetadataD2ApiRepository implements MetadataRepository {
-    private api: D2Api;
-    private transformationRepository: TransformationRepository;
-
-    constructor(api: D2Api) {
-        //TODO: composition root - when we have composition root I think may has sense
-        // that dependency should be currentInstance instead of d2Api because so
-        // all necessary instance data (url, usr, pwd, version) for current server is loaded once to start app.
-        // For the moment I have not make this change becuase we should realize a request to current server
-        // for every metadata sync execution where this class is created to retrieve current version
-        this.api = api;
-        this.transformationRepository = new TransformationD2ApiRepository();
-    }
+    constructor(private api: D2Api, private transformationRepository: TransformationRepository) {}
 
     /**
      * Return raw specific fields of metadata dhis2 models according to ids filter

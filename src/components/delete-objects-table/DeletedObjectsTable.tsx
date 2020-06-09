@@ -13,7 +13,7 @@ import DeletedObject from "../../models/deletedObjects";
 import SyncRule from "../../models/syncRule";
 import { MetadataType } from "../../utils/d2";
 import moment from "moment";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 const deletedObjectsColumns: TableColumn<MetadataType>[] = [
     { name: "id", text: i18n.t("Identifier"), sortable: true },

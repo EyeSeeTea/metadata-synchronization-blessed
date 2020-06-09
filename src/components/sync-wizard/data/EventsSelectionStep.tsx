@@ -3,32 +3,29 @@ import { Typography } from "@material-ui/core";
 import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { useAppContext } from "../../../contexts/ApiContext";
+import { Repository } from "../../../CompositionRoot";
+import { useAppContext } from "../../../contexts/AppContext";
 import { ProgramEvent } from "../../../domain/events/entities/ProgramEvent";
-import { D2 } from "../../../types/d2";
+import { EventsRepository } from "../../../domain/events/repositories/EventsRepository";
 import { D2Program } from "../../../types/d2-api";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
-import { EventsSyncUseCase } from "../../../domain/events/usecases/EventsSyncUseCase";
-import { EventsRepository } from "../../../domain/events/repositories/EventsRepository";
-import { EventsD2ApiRepository } from "../../../data/events/EventsD2ApiRepository";
 
 interface ProgramEventObject extends ProgramEvent {
     [key: string]: any;
 }
 
 export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
-    const { d2, api } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const [objects, setObjects] = useState<ProgramEvent[] | undefined>();
     const [programs, setPrograms] = useState<D2Program[]>([]);
     const [programFilter, changeProgramFilter] = useState<string>("");
     const [error, setError] = useState();
 
     useEffect(() => {
-        // TODO: Composition root missing
-        const eventsRepository: EventsRepository = new EventsD2ApiRepository(api);
-        eventsRepository
+        compositionRoot
+            .get<EventsRepository>(Repository.EventsRepository)
             .getEvents(
                 {
                     ...syncRule.dataParams,
@@ -38,12 +35,12 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
             )
             .then(setObjects)
             .catch(setError);
-    }, [api, syncRule, programs]);
+    }, [compositionRoot, syncRule, programs]);
 
     useEffect(() => {
-        const sync = new EventsSyncUseCase(d2 as D2, api, syncRule.toBuilder());
+        const sync = compositionRoot.sync.events(syncRule.toBuilder());
         sync.extractMetadata().then(({ programs = [] }) => setPrograms(programs));
-    }, [d2, api, syncRule]);
+    }, [syncRule, compositionRoot]);
 
     const buildAdditionalColumns = () => {
         const program = _.find(programs, { id: programFilter });

@@ -12,7 +12,7 @@ import InstanceMappingPage from "../instance-mapping/InstanceMappingPage";
 import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 function Root() {
     const { api } = useAppContext();

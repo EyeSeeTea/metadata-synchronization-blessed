@@ -401,8 +401,8 @@ export const getValidIds = async (
     const programStages = getProgramStages(combinedMetadata[0]);
     const programStageDataElements = getProgramStageDataElements(combinedMetadata[0]);
 
-    // TODO: Composition root + use case
-    const instanceRepository = new InstanceD2ApiRepository(api);
+    // @ts-ignore TODO: This call should be moved as part of a use-case (encryptionKey not used here)
+    const instanceRepository = new InstanceD2ApiRepository(api, null);
     const defaultValues = await instanceRepository.getDefaultIds();
 
     return _.union(categoryOptions, options, programStages, programStageDataElements)

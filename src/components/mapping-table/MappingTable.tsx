@@ -17,7 +17,7 @@ import MappingWizard, {
     prepareSteps,
 } from "../../components/mapping-wizard/MappingWizard";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 import { cleanOrgUnitPath } from "../../domain/synchronization/utils";
 import { D2Model } from "../../models/dhis/default";
 import { d2ModelFactory } from "../../models/dhis/factory";

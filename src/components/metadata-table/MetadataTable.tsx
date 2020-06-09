@@ -18,7 +18,7 @@ import _ from "lodash";
 import moment from "moment";
 import memoize from "nano-memoize";
 import React, { ChangeEvent, ReactNode, useEffect, useMemo, useState } from "react";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import i18n from "../../locales";
 import { D2Model } from "../../models/dhis/default";

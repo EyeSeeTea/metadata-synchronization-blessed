@@ -3,24 +3,24 @@ import i18n from "@dhis2/d2-i18n";
 import { HeaderBar } from "@dhis2/ui-widgets";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
-import { init } from "d2";
-import { D2Api } from "../../types/d2-api";
 import axiosRetry from "axios-retry";
+import { init } from "d2";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
 import _ from "lodash";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
+import Migrations from "../../components/migrations/Migrations";
 import Share from "../../components/share/Share";
+import { CompositionRoot } from "../../CompositionRoot";
+import { AppContext } from "../../contexts/AppContext";
+import { MigrationsRunner } from "../../migrations";
 import Instance from "../../models/instance";
+import { D2Api } from "../../types/d2-api";
 import { initializeAppRoles } from "../../utils/permissions";
 import "./App.css";
 import Root from "./Root";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
-import { MigrationsRunner } from "../../migrations";
-import Migrations from "../../components/migrations/Migrations";
-import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";
-import { ApiContext } from "../../contexts/ApiContext";
 
 const axiosMaxRetries = 3;
 
@@ -69,10 +69,16 @@ const App = () => {
                 credentials: "same-origin",
             }).then(res => res.json());
 
+            const encryptionKey = appConfig?.encryptionKey;
+            if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
+            Instance.setEncryptionKey(encryptionKey);
+
             const d2 = await init({ baseUrl: baseUrl + "/api" });
             const api = new D2Api({ baseUrl });
 
-            const appContext = { d2, api };
+            const compositionRoot = new CompositionRoot(api, d2, encryptionKey);
+
+            const appContext = { d2, api, compositionRoot };
             setAppContext(appContext);
 
             Object.assign({ d2, api });
@@ -81,11 +87,6 @@ const App = () => {
             Object.assign(window, { d2, api });
             setShowShareButton(_(appConfig).get("appearance.showShareButton") || false);
             initFeedbackTool(d2, appConfig);
-
-            if (appConfig && appConfig.encryptionKey) {
-                Instance.setEncryptionKey(appConfig.encryptionKey);
-                InstanceD2ApiRepository.encryptionKey = appConfig.encryptionKey;
-            }
 
             await initializeAppRoles(d2.Api.getApi().baseUrl);
             runMigrations(api).then(setMigrationsState);
@@ -127,9 +128,9 @@ const App = () => {
                                 <HeaderBar appName={i18n.t("MetaData Synchronization")} />
 
                                 <div id="app" className="content">
-                                    <ApiContext.Provider value={appContext}>
+                                    <AppContext.Provider value={appContext}>
                                         <Root />
-                                    </ApiContext.Provider>
+                                    </AppContext.Provider>
                                 </div>
 
                                 <Share visible={showShareButton} />
