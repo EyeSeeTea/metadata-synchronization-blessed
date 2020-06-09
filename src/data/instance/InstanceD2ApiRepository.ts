@@ -9,8 +9,7 @@ import { cache } from "../../utils/cache";
 const instancesDataStoreKey = "instances";
 
 export default class InstanceD2ApiRepository implements InstanceRepository {
-    constructor(private api: D2Api, private encryptionKey: string) {
-    }
+    constructor(private api: D2Api, private encryptionKey: string) {}
 
     public async getById(id: string): Promise<Instance> {
         const instanceData = await getDataById<InstanceData>(this.api, instancesDataStoreKey, id);

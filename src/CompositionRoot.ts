@@ -82,7 +82,10 @@ export class CompositionRoot {
     private initializeWebApp() {
         const transformation = new TransformationD2ApiRepository();
 
-        this.bind(Repository.InstanceRepository, new InstanceD2ApiRepository(this.d2Api, this.encryptionKey));
+        this.bind(
+            Repository.InstanceRepository,
+            new InstanceD2ApiRepository(this.d2Api, this.encryptionKey)
+        );
         this.bind(Repository.TransformationRepository, transformation);
         this.bind(Repository.AggregatedRepository, new AggregatedD2ApiRepository(this.d2Api));
         this.bind(Repository.EventsRepository, new EventsD2ApiRepository(this.d2Api));
