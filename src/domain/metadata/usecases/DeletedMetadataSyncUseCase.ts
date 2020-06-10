@@ -3,7 +3,7 @@ import Instance from "../../../models/instance";
 import { D2 } from "../../../types/d2";
 import { D2Api } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
-import { Ref } from "../../common/entities/Schemas";
+import { Ref } from "../../common/entities/Ref";
 import InstanceEntity from "../../instance/entities/Instance";
 import InstanceRepository from "../../instance/repositories/InstanceRepository";
 import {

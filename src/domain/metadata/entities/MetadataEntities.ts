@@ -1,4 +1,5 @@
-import { Access, Id, Translation, Style, Expression, Ref } from "../../common/entities/Schemas";
+import { Ref } from "../../common/entities/Ref";
+import { Access, Expression, Id, Style, Translation } from "../../common/entities/Schemas";
 
 export type AttributeValue = {
     attribute: Ref;
