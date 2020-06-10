@@ -59,7 +59,7 @@ const MenuCard: React.FC<MenuCardProps> = ({
     return (
         <Card className={classes.card}>
             <CardHeader
-                onClick={listAction ?? _.noop}
+                onClick={listAction ?? addAction ?? _.noop}
                 classes={{ root: classes.header, title: classes.headerText }}
                 title={name}
             />
