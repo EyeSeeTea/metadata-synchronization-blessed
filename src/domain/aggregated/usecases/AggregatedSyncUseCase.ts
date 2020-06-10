@@ -12,8 +12,8 @@ import {
     mapOptionValue,
 } from "../../../utils/synchronization";
 import { TransformationRepository } from "../../common/repositories/TransformationRepository";
-import InstanceEntity from "../../instance/Instance";
-import InstanceRepository from "../../instance/InstanceRepository";
+import InstanceEntity from "../../instance/entities/Instance";
+import InstanceRepository from "../../instance/repositories/InstanceRepository";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import {
     buildMetadataDictionary,

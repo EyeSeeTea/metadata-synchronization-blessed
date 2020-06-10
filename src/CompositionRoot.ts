@@ -15,7 +15,7 @@ import { MetadataSyncUseCase } from "./domain/metadata/usecases/MetadataSyncUseC
 import { D2 } from "./types/d2";
 import { SynchronizationBuilder } from "./types/synchronization";
 import { cache } from "./utils/cache";
-import InstanceRepository from "./domain/instance/InstanceRepository";
+import InstanceRepository from "./domain/instance/repositories/InstanceRepository";
 
 export const Repository = {
     AggregatedRepository: Symbol.for("aggregatedRepository"),

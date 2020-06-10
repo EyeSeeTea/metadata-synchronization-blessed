@@ -4,8 +4,8 @@ import { D2 } from "../../../types/d2";
 import { D2Api } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { Ref } from "../../common/entities/Schemas";
-import InstanceEntity from "../../instance/Instance";
-import InstanceRepository from "../../instance/InstanceRepository";
+import InstanceEntity from "../../instance/entities/Instance";
+import InstanceRepository from "../../instance/repositories/InstanceRepository";
 import {
     GenericSyncUseCase,
     SyncronizationPayload,

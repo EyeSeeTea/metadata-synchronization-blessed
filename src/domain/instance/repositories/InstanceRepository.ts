@@ -1,4 +1,4 @@
-import Instance from "./Instance";
+import Instance from "../entities/Instance";
 
 export default interface InstanceRepository {
     getById(id: string): Promise<Instance>;

@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { TransformationRepository } from "../../domain/common/repositories/TransformationRepository";
-import Instance from "../../domain/instance/Instance";
+import Instance from "../../domain/instance/entities/Instance";
 import {
     MetadataEntities,
     MetadataEntity,

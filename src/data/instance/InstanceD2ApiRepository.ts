@@ -1,7 +1,7 @@
 import Cryptr from "cryptr";
 import _ from "lodash";
-import Instance, { InstanceData } from "../../domain/instance/Instance";
-import InstanceRepository from "../../domain/instance/InstanceRepository";
+import Instance, { InstanceData } from "../../domain/instance/entities/Instance";
+import InstanceRepository from "../../domain/instance/repositories/InstanceRepository";
 import { getDataById } from "../../models/dataStore";
 import { D2Api } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
