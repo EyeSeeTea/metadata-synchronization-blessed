@@ -1,5 +1,5 @@
 import { Id } from "../../common/entities/Schemas";
-import Instance from "../../instance/entities/Instance";
+import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import {
     MetadataEntities,

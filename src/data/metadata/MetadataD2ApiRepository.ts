@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { TransformationRepository } from "../../domain/common/repositories/TransformationRepository";
-import Instance from "../../domain/instance/entities/Instance";
+import { Instance } from "../../domain/instance/entities/Instance";
 import {
     MetadataEntities,
     MetadataEntity,
@@ -26,7 +26,7 @@ import {
     metadataTransformationsToDhis2,
 } from "../transformations/PackageTransformations";
 
-class MetadataD2ApiRepository implements MetadataRepository {
+export class MetadataD2ApiRepository implements MetadataRepository {
     constructor(private api: D2Api, private transformationRepository: TransformationRepository) {}
 
     /**
@@ -242,5 +242,3 @@ const formatStats = (stats: Stats) => ({
     ..._.omit(stats, ["created"]),
     imported: stats.created,
 });
-
-export default MetadataD2ApiRepository;

@@ -16,8 +16,8 @@ import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedRepository } from "../../aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { TransformationRepository } from "../../common/repositories/TransformationRepository";
-import InstanceEntity from "../../instance/entities/Instance";
-import InstanceRepository from "../../instance/repositories/InstanceRepository";
+import { Instance as InstanceEntity } from "../../instance/entities/Instance";
+import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
 import {
     GenericSyncUseCase,
     SyncronizationPayload,

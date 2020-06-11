@@ -12,7 +12,7 @@ export interface InstanceData {
     version?: string;
 }
 
-export default class Instance {
+export class Instance {
     private data: InstanceData;
 
     constructor(data: InstanceData) {
