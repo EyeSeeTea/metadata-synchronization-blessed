@@ -7,13 +7,13 @@ import { StorageDataStoreRepository } from "./data/storage/StorageDataStoreRepos
 import { TransformationD2ApiRepository } from "./data/transformations/TransformationD2ApiRepository";
 import { AggregatedRepository } from "./domain/aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "./domain/aggregated/usecases/AggregatedSyncUseCase";
-import { TransformationRepository } from "./domain/common/repositories/TransformationRepository";
 import { EventsRepository } from "./domain/events/repositories/EventsRepository";
 import { EventsSyncUseCase } from "./domain/events/usecases/EventsSyncUseCase";
 import { InstanceRepository } from "./domain/instance/repositories/InstanceRepository";
 import { MetadataRepository } from "./domain/metadata/repositories/MetadataRepository";
 import { DeletedMetadataSyncUseCase } from "./domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "./domain/metadata/usecases/MetadataSyncUseCase";
+import { TransformationRepository } from "./domain/transformations/repositories/TransformationRepository";
 import { D2 } from "./types/d2";
 import { SynchronizationBuilder } from "./types/synchronization";
 import { cache } from "./utils/cache";

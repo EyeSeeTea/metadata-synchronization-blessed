@@ -1,4 +1,4 @@
-import { StorageRepository } from "../../domain/common/repositories/StorageRepository";
+import { StorageRepository } from "../../domain/storage/repositories/StorageRepository";
 import { D2Api, DataStore } from "../../types/d2-api";
 
 const dataStoreNamespace = "metadata-synchronization";

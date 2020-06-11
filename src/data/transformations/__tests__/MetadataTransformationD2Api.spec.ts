@@ -1,9 +1,9 @@
 import _ from "lodash";
-import { Transformation } from "../../../domain/common/entities/Transformation";
 import {
     MetadataEntities,
     MetadataPackage,
 } from "../../../domain/metadata/entities/MetadataEntities";
+import { Transformation } from "../../../domain/transformations/entities/Transformation";
 import { TransformationD2ApiRepository } from "../TransformationD2ApiRepository";
 import { D2MetadataPackage } from "../types";
 

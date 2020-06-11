@@ -1,5 +1,5 @@
 import { generateUid } from "d2/uid";
-import { StorageRepository } from "../../domain/common/repositories/StorageRepository";
+import { StorageRepository } from "../../domain/storage/repositories/StorageRepository";
 import { D2Api } from "../../types/d2-api";
 
 interface Constant {

@@ -1,8 +1,8 @@
 import { AggregatedPackage } from "../../domain/aggregated/entities/AggregatedPackage";
 import { EventsPackage } from "../../domain/events/entities/EventsPackage";
 import { MetadataPackage } from "../../domain/metadata/entities/MetadataEntities";
+import { Transformation } from "../../domain/transformations/entities/Transformation";
 import { D2AggregatedPackage, D2EventsPackage, D2MetadataPackage } from "./types";
-import { Transformation } from "../../domain/common/entities/Transformation";
 
 /**
  * Transformations from domain to dhis2 will be apply consecutively.

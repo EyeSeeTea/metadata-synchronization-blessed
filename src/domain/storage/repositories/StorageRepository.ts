@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Ref } from "../entities/Ref";
+import { Ref } from "../../common/entities/Ref";
 
 export abstract class StorageRepository {
     // Object operations

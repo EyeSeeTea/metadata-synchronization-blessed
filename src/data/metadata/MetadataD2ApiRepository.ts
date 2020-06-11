@@ -1,5 +1,4 @@
 import _ from "lodash";
-import { TransformationRepository } from "../../domain/common/repositories/TransformationRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
     MetadataEntities,
@@ -11,6 +10,7 @@ import { MetadataRepository } from "../../domain/metadata/repositories/MetadataR
 import { MetadataImportParams } from "../../domain/metadata/types";
 import { getClassName } from "../../domain/metadata/utils";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
+import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import {
     D2Api,
     D2ApiDefinition,
