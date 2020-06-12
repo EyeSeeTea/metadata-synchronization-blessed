@@ -111,6 +111,26 @@ export const metadataSteps: SyncWizardStep[] = [
 
 export const deletedSteps: SyncWizardStep[] = [commonSteps.instanceSelection];
 
+export const moduleSteps: SyncWizardStep[] = [
+    commonSteps.generalInfo,
+    {
+        key: "metadata",
+        label: i18n.t("Metadata"),
+        component: MetadataSelectionStep,
+        validationKeys: ["metadataIds"],
+    },
+    {
+        key: "include-exclude-selection",
+        label: i18n.t("Include Exclude Selection"),
+        component: MetadataIncludeExcludeStep,
+        validationKeys: ["metadataIncludeExclude"],
+        description: undefined,
+        help: undefined,
+        showOnSyncDialog: true,
+    },
+    commonSteps.summary,
+];
+
 export const aggregatedSteps: SyncWizardStep[] = [
     commonSteps.generalInfo,
     {
