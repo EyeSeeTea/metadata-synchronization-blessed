@@ -115,7 +115,7 @@ export class CompositionRoot {
         this.bind(Repository.EventsRepository, events);
         this.bind(Repository.MetadataRepository, metadata);
 
-        const github = new GitHubOctokitRepository(storage);
+        const github = new GitHubOctokitRepository();
         this.bind(Repository.GitHubRepository, github);
     }
 }

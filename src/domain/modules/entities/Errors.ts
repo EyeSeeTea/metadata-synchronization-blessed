@@ -1,1 +1,1 @@
-export type GitHubError = "NOT_FOUND" | "BAD_CREDENTIALS" | "UNKNOWN";
+export type GitHubError = "NOT_FOUND" | "BAD_CREDENTIALS" | "WRITE_PERMISSIONS" | "UNKNOWN";
