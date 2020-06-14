@@ -6,5 +6,6 @@ import { StorePermissions } from "../entities/StorePermissions";
 export interface GitHubRepository {
     readFile<T>(store: Store, path: string): Promise<Either<GitHubError, T>>;
     writeFile(store: Store, path: string, content: unknown): Promise<Either<GitHubError, void>>;
+    deleteFile(store: Store, path: string): Promise<Either<GitHubError, void>>;
     validateStore(store: Store): Promise<Either<GitHubError, StorePermissions>>;
 }

@@ -57,6 +57,35 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
+    public async deleteFile(store: Store, path: string): Promise<Either<GitHubError, void>> {
+        try {
+            const { token, account, repository } = store;
+            const octokit = await this.getOctoKit(token);
+            const sha = await this.getFileSha(store, path);
+            if (!sha) return Either.error("NOT_FOUND");
+
+            await octokit.repos.deleteFile({
+                owner: account,
+                repo: repository,
+                path,
+                message: `Delete file ${path}`,
+                sha,
+                author: {
+                    name: "Test",
+                    email: "test@eyeseetea.com",
+                },
+                commiter: {
+                    name: "Test",
+                    email: "test@eyeseetea.com",
+                },
+            });
+
+            return Either.success(undefined);
+        } catch (error) {
+            return Either.error(this.validateError(error));
+        }
+    }
+
     public async validateStore(store: Store): Promise<Either<GitHubError, StorePermissions>> {
         try {
             const { token, account, repository } = store;
@@ -106,8 +135,8 @@ export class GitHubOctokitRepository implements GitHubRepository {
 
     private async getFileSha(store: Store, path: string): Promise<string | undefined> {
         try {
-        const { sha } = await this.getFile(store, path);
-        return sha;
+            const { sha } = await this.getFile(store, path);
+            return sha;
         } catch (error) {
             return undefined;
         }
