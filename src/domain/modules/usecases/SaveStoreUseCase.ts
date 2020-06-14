@@ -10,13 +10,13 @@ export class SaveStoreUseCase {
         private storageRepository: StorageRepository
     ) {}
 
-    public async execute(store: Store, validate = true): Promise<Either<void, GitHubError>> {
+    public async execute(store: Store, validate = true): Promise<Either<GitHubError, void>> {
         if (validate) {
             const validation = await this.githubRepository.validateStore(store);
-            if (validation.isFailure()) return Either.Failure(validation.error ?? "UNKNOWN");
+            if (validation.isError()) return Either.error(validation.value.error ?? "UNKNOWN");
         }
 
         await this.storageRepository.saveObject("GITHUB_SETTINGS", store);
-        return Either.Success(undefined);
+        return Either.success(undefined);
     }
 }

@@ -39,16 +39,15 @@ const ModulesConfigPage: React.FC = () => {
         history.push("/");
     }, [history]);
 
-    const validateError = useCallback((error?: GitHubError): string | undefined => {
+    const validateError = useCallback((error?: GitHubError): string => {
         switch (error) {
             case "BAD_CREDENTIALS":
                 return i18n.t("The token is invalid");
             case "NOT_FOUND":
                 return i18n.t("Repository not found");
             case "UNKNOWN":
-                return i18n.t("Unknown error");
             default:
-                return undefined;
+                return i18n.t("Unknown error");
         }
     }, []);
 
@@ -57,12 +56,14 @@ const ModulesConfigPage: React.FC = () => {
 
         if (state.token && state.account && state.repository) {
             const validation = await compositionRoot.modules.validateStore.execute(state as Store);
-            const error = validateError(validation.error);
-
-            snackbar.openSnackbar(
-                error ? "error" : "success",
-                error ?? i18n.t("Connected successfully")
-            );
+            validation.match({
+                error: error => {
+                    snackbar.error(validateError(error));
+                },
+                success: () => {
+                    snackbar.success(i18n.t("Connected successfully"));
+                },
+            });
         } else {
             snackbar.warning(i18n.t("You need to provide all fields"));
         }
@@ -71,33 +72,33 @@ const ModulesConfigPage: React.FC = () => {
     }, [compositionRoot, state, validateError, snackbar, loading]);
 
     const save = useCallback(async () => {
-        loading.show(true, i18n.t("Savid store connection"));
+        loading.show(true, i18n.t("Saving store connection"));
 
         if (state.token && state.account && state.repository) {
             const validation = await compositionRoot.modules.saveStore.execute(state as Store);
-            const error = validateError(validation.error);
-            loading.reset();
+            validation.match({
+                error: error => {
+                    updateDialog({
+                        title: validateError(error),
+                        description: i18n.t(
+                            "There are issues with the connection details you provided.\nDo you want to proceed?"
+                        ),
+                        onCancel: () => {
+                            updateDialog(null);
+                        },
+                        onSave: async () => {
+                            await compositionRoot.modules.saveStore.execute(state as Store, false);
+                            updateDialog(null);
+                            close();
+                        },
+                        cancelText: i18n.t("Cancel"),
+                        saveText: i18n.t("Proceed"),
+                    });
+                },
+                success: close,
+            });
 
-            if (error) {
-                updateDialog({
-                    title: i18n.t("Could not validate connection"),
-                    description: i18n.t(
-                        "There are issues with the connection details you provided.\nDo you want to proceed?"
-                    ),
-                    onCancel: () => {
-                        updateDialog(null);
-                    },
-                    onSave: async () => {
-                        await compositionRoot.modules.saveStore.execute(state as Store, false);
-                        updateDialog(null);
-                        close();
-                    },
-                    cancelText: i18n.t("Cancel"),
-                    saveText: i18n.t("Proceed"),
-                });
-            } else {
-                close();
-            }
+            loading.reset();
         } else {
             snackbar.warning(i18n.t("You need to provide all fields"));
             loading.reset();

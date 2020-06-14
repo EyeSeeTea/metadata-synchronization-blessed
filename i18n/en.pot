@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-12T09:25:10.413Z\n"
-"PO-Revision-Date: 2020-06-12T09:25:10.413Z\n"
+"POT-Creation-Date: 2020-06-14T17:31:34.384Z\n"
+"PO-Revision-Date: 2020-06-14T17:31:34.384Z\n"
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -996,10 +996,7 @@ msgstr ""
 msgid "You need to provide all fields"
 msgstr ""
 
-msgid "Savid store connection"
-msgstr ""
-
-msgid "Could not validate connection"
+msgid "Saving store connection"
 msgstr ""
 
 msgid ""

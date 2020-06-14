@@ -4,6 +4,6 @@ import { Store } from "../entities/Store";
 import { StorePermissions } from "../entities/StorePermissions";
 
 export interface GitHubRepository {
-    validateStore(store: Store): Promise<Either<StorePermissions, GitHubError>>;
+    validateStore(store: Store): Promise<Either<GitHubError, StorePermissions>>;
     resetCredentials(): void;
 }

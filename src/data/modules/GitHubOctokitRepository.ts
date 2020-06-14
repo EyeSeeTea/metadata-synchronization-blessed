@@ -15,7 +15,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
         token,
         account,
         repository,
-    }: Store): Promise<Either<StorePermissions, GitHubError>> {
+    }: Store): Promise<Either<GitHubError, StorePermissions>> {
         try {
             const octokit = await this.getOctoKit(token);
 
@@ -27,13 +27,13 @@ export class GitHubOctokitRepository implements GitHubRepository {
             const { data: repos } = await octokit.repos.listForAuthenticatedUser();
             const { permissions } = _.find(repos, { full_name: `${account}/${repository}` }) ?? {};
 
-            return Either.Success({ read: branches.length > 0, write: !!permissions?.push });
+            return Either.success({ read: branches.length > 0, write: !!permissions?.push });
         } catch (error) {
             switch (error.message) {
                 case "Not Found":
-                    return Either.Failure("NOT_FOUND");
+                    return Either.error("NOT_FOUND");
                 case "Bad credentials":
-                    return Either.Failure("BAD_CREDENTIALS");
+                    return Either.error("BAD_CREDENTIALS");
                 default:
                     throw error;
             }
@@ -42,6 +42,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
 
     public resetCredentials(): void {
         clear(this.getOctoKit);
+        clear(this.getCurrentUser);
     }
 
     @cache()
