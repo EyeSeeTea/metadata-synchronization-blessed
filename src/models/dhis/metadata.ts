@@ -126,8 +126,10 @@ export class DashboardModel extends D2Model {
         "pivotTables",
         "eventReports",
         "maps",
+        "maps.mapViews",
         "reports",
         "reportTables",
+        "reportTables.legendSets",
     ];
 }
 
