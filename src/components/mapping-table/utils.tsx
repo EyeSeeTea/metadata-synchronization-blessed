@@ -166,20 +166,22 @@ export const autoMap = async ({
                 code: { eq: selectedItem.code },
             },
             rootJunction: "OR",
+            paging: false,
         })
         .getData()) as { objects: CombinedMetadata[] };
 
     const candidateWithSameId = _.find(objects, ["id", selectedItem.id]);
     const candidateWithSameCode = _.find(objects, ["code", selectedItem.code]);
     const candidateWithSameName = _.find(objects, ["name", selectedItem.name]);
-    const candidates = _([
+    const matches = _.compact([
         candidateWithSameId,
         candidateWithSameCode,
         candidateWithSameName,
-        ...objects,
-    ])
-        .compact()
-        .uniq()
+    ]).filter(({ id }) => filter?.includes(id) ?? true);
+
+    const candidates = _(matches)
+        .concat(matches.length === 0 ? objects : [])
+        .uniqBy("id")
         .filter(({ id }) => filter?.includes(id) ?? true)
         .value();
 
