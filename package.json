@@ -48,10 +48,11 @@
   "scripts": {
     "prestart": "yarn localize && d2-manifest package.json manifest.webapp",
     "start": "react-scripts start",
+    "start-widget": "REACT_APP_DASHBOARD_WIDGET=true PORT=8082 yarn start",
     "prebuild": "rm -rf build/ && yarn localize && yarn test",
     "build": "react-scripts build && cp -r i18n icon.png build",
     "build-webapp": "yarn build && yarn manifest && rm -f $npm_package_name.zip && cd build && zip -r ../$npm_package_name.zip *",
-    "build-widget": "DASHBOARD_WIDGET=true yarn build && yarn manifest-widget && rm -f $npm_package_name-widget.zip && cd build && zip -r ../$npm_package_name-widget.zip *",
+    "build-widget": "REACT_APP_DASHBOARD_WIDGET=true yarn build && yarn manifest-widget && rm -f $npm_package_name-widget.zip && cd build && zip -r ../$npm_package_name-widget.zip *",
     "test": "jest",
     "lint": "eslint src cypress",
     "eject": "react-scripts eject",

@@ -1,9 +1,7 @@
-import React from "react";
-import axios from "axios";
-import ReactDOM from "react-dom";
 import { Provider } from "@dhis2/app-runtime";
-
-import App from "./pages/app/App";
+import axios from "axios";
+import React from "react";
+import ReactDOM from "react-dom";
 import "./locales";
 
 async function getBaseUrl() {
@@ -17,12 +15,23 @@ async function getBaseUrl() {
     }
 }
 
+// Presentation layer is loaded with code-splitting for performance
+async function getPresentation() {
+    if (process.env.REACT_APP_DASHBOARD_WIDGET) {
+        return () => <h1>Hello World, widget!</h1>;
+    } else {
+        const App = await import("./pages/app/App");
+        return App;
+    }
+}
+
 async function main() {
     const config = {
         baseUrl: await getBaseUrl(),
         apiVersion: "30",
     };
     try {
+        const App = await getPresentation();
         ReactDOM.render(
             <Provider config={config}>
                 <App />
