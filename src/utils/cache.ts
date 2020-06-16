@@ -1,5 +1,5 @@
 type ArgumentsCache = Map<string, unknown>;
-type FunctionCache = Map<unknown, ArgumentsCache>
+type FunctionCache = Map<unknown, ArgumentsCache>;
 type MethodCache = Map<Function, FunctionCache>;
 
 // Cache that stores a map of serialized arguments with their results under function descriptors

@@ -5,8 +5,38 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-14T17:31:34.384Z\n"
-"PO-Revision-Date: 2020-06-14T17:31:34.384Z\n"
+"POT-Creation-Date: 2020-06-16T10:58:36.357Z\n"
+"PO-Revision-Date: 2020-06-16T10:58:36.357Z\n"
+
+msgid "Preparing synchronization"
+msgstr ""
+
+msgid "Importing data in instance {{instance}}"
+msgstr ""
+
+msgid "Program with Data Elements"
+msgstr ""
+
+msgid "Program with Indicators"
+msgstr ""
+
+msgid "Not a valid DHIS2 instance"
+msgstr ""
+
+msgid "Wrong username/password"
+msgstr ""
+
+msgid "Wrong URL endpoint"
+msgstr ""
+
+msgid "Error {{status}}"
+msgstr ""
+
+msgid "Network error {{error}}, check if server is up and CORS is enabled"
+msgstr ""
+
+msgid "MetaData Synchronization"
+msgstr ""
 
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
@@ -671,36 +701,6 @@ msgid "You do not have assigned any organisation unit"
 msgstr ""
 
 msgid "Use default configuration"
-msgstr ""
-
-msgid "Preparing synchronization"
-msgstr ""
-
-msgid "Importing data in instance {{instance}}"
-msgstr ""
-
-msgid "Program with Data Elements"
-msgstr ""
-
-msgid "Program with Indicators"
-msgstr ""
-
-msgid "Not a valid DHIS2 instance"
-msgstr ""
-
-msgid "Wrong username/password"
-msgstr ""
-
-msgid "Wrong URL endpoint"
-msgstr ""
-
-msgid "Error {{status}}"
-msgstr ""
-
-msgid "Network error {{error}}, check if server is up and CORS is enabled"
-msgstr ""
-
-msgid "MetaData Synchronization"
 msgstr ""
 
 msgid "Metadata Synchronization History"
