@@ -1,4 +1,5 @@
 import { Either } from "../../common/entities/Either";
+import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
 import { GitHubError } from "../entities/Errors";
 import { Store } from "../entities/Store";
@@ -16,7 +17,7 @@ export class SaveStoreUseCase {
             if (validation.isError()) return Either.error(validation.value.error ?? "UNKNOWN");
         }
 
-        await this.storageRepository.saveObject("GITHUB_SETTINGS", store);
+        await this.storageRepository.saveObject(Namespace.STORE, store);
         return Either.success(undefined);
     }
 }
