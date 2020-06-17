@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-17T06:02:01.211Z\n"
-"PO-Revision-Date: 2020-06-17T06:02:01.211Z\n"
+"POT-Creation-Date: 2020-06-17T06:48:38.465Z\n"
+"PO-Revision-Date: 2020-06-17T06:48:38.465Z\n"
 
 msgid "Preparing synchronization"
 msgstr ""
@@ -35,6 +35,15 @@ msgstr ""
 msgid "Network error {{error}}, check if server is up and CORS is enabled"
 msgstr ""
 
+msgid "Name"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
 msgid "MetaData Synchronization"
 msgstr ""
 
@@ -57,9 +66,6 @@ msgid "Deleted date"
 msgstr ""
 
 msgid "Deleted by"
-msgstr ""
-
-msgid "Details"
 msgstr ""
 
 msgid "Search deleted objects"
@@ -504,13 +510,7 @@ msgstr ""
 msgid "Programs"
 msgstr ""
 
-msgid "Name"
-msgstr ""
-
 msgid "Field cannot be blank"
-msgstr ""
-
-msgid "Description"
 msgstr ""
 
 msgid "Selected {{difference}} elements"

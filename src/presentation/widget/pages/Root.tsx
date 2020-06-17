@@ -27,7 +27,7 @@ const loadWidget = async (widget: string) => {
 function Root() {
     const { widget } = useWidget();
     const [Component, setComponent] = useState<ReactNode>(null);
-    
+
     useEffect(() => {
         loadWidget(widget).then(setComponent);
     }, [widget]);

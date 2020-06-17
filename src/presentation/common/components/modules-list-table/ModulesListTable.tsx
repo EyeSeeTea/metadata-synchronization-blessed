@@ -19,7 +19,5 @@ export const ModulesListTable: React.FC = () => {
         },
     ];
 
-    return (
-        <ObjectsTable<Module> rows={[]} columns={columns} details={details} actions={actions} />
-    );
+    return <ObjectsTable<Module> rows={[]} columns={columns} details={details} actions={actions} />;
 };
