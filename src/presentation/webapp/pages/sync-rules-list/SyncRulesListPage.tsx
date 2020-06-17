@@ -37,7 +37,7 @@ import {
     UserInfo,
 } from "../../../../utils/permissions";
 import { requestJSONDownload } from "../../../../utils/synchronization";
-import { getValidationMessages } from "../../../../utils/validations";
+import { getValidationMessages } from "../../../../utils/old-validations";
 
 const config: {
     [key: string]: {

@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { ModulesListTable } from "../../../common/components/modules-list-table/ModulesListTable";
 import PageHeader from "../../components/page-header/PageHeader";
 
-const ModulesListPage: React.FC = () => {
+const ModuleListPage: React.FC = () => {
     const history = useHistory();
 
     const backHome = () => {
@@ -24,4 +24,4 @@ const ModulesListPage: React.FC = () => {
     );
 };
 
-export default ModulesListPage;
+export default ModuleListPage;

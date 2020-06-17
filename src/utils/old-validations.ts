@@ -4,6 +4,15 @@ import Instance from "../models/instance";
 import SyncRule from "../models/syncRule";
 import { D2Api } from "../types/d2-api";
 
+// TODO: This should be migrated to use the new ValidationError[]
+export interface OldValidation {
+    [key: string]: {
+        key: string;
+        namespace: object;
+    }[];
+}
+
+// TODO: This should be migrated to use the new ValidationError[]
 const translations: { [key: string]: (namespace: object) => string } = {
     cannot_be_blank: (namespace: object) => i18n.t("Field {{field}} cannot be blank", namespace),
     url_username_combo_already_exists: () =>
@@ -17,6 +26,7 @@ const translations: { [key: string]: (namespace: object) => string } = {
     invalid_period: () => i18n.t("Start and end dates are not a valid period"),
 };
 
+// TODO: This should be migrated to use the new ValidationError[]
 export async function getValidationMessages(
     api: D2Api,
     model: SyncRule | Instance,

@@ -10,8 +10,8 @@ import InstanceCreationPage from "./instance-creation/InstanceCreationPage";
 import InstanceListPage from "./instance-list/InstanceListPage";
 import InstanceMappingLandingPage from "./instance-mapping/InstanceMappingLandingPage";
 import InstanceMappingPage from "./instance-mapping/InstanceMappingPage";
-import ModulesCreationPage from "./modules-creation/ModulesCreationPage";
-import ModulesListPage from "./modules-list/ModulesListPage";
+import ModuleCreationPage from "./modules-creation/ModuleCreationPage";
+import ModuleListPage from "./module-list/ModuleListPage";
 import StoreConfigPage from "./store-config/StoreConfigPage";
 import SyncOnDemandPage from "./sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "./sync-rules-creation/SyncRulesCreationPage";
@@ -75,7 +75,7 @@ function Root() {
                     authorize={props =>
                         permissions.verifyUserHasAccessToSyncRule(api, props.match.params.id)
                     }
-                    render={props => <ModulesCreationPage {...props} />}
+                    render={props => <ModuleCreationPage {...props} />}
                 />
 
                 <RouteWithSession
@@ -83,10 +83,7 @@ function Root() {
                     render={props => <StoreConfigPage {...props} />}
                 />
 
-                <RouteWithSession
-                    path="/modules"
-                    render={props => <ModulesListPage {...props} />}
-                />
+                <RouteWithSession path="/modules" render={props => <ModuleListPage {...props} />} />
 
                 <RouteWithSession render={() => <HomePage />} />
             </Switch>

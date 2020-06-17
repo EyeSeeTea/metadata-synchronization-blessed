@@ -3,10 +3,10 @@ import axios, { AxiosBasicCredentials } from "axios";
 import Cryptr from "cryptr";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
-import { Validation } from "../domain/common/entities/Validations";
 import { Response } from "../types/d2";
 import { D2Api } from "../types/d2-api";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
+import { OldValidation } from "../utils/old-validations";
 import {
     deleteData,
     deleteDataStore,
@@ -246,7 +246,7 @@ export default class Instance {
             : !_.isEmpty(invalidCombinations);
     }
 
-    public async validate(api: D2Api): Promise<Validation> {
+    public async validate(api: D2Api): Promise<OldValidation> {
         const { name, url, username, password } = this.data;
 
         return _.pickBy({

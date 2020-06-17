@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-17T06:48:38.465Z\n"
-"PO-Revision-Date: 2020-06-17T06:48:38.465Z\n"
+"POT-Creation-Date: 2020-06-17T10:06:12.698Z\n"
+"PO-Revision-Date: 2020-06-17T10:06:12.698Z\n"
 
 msgid "Preparing synchronization"
 msgstr ""
@@ -42,6 +42,15 @@ msgid "Description"
 msgstr ""
 
 msgid "Details"
+msgstr ""
+
+msgid "Field {{field}} cannot be blank"
+msgstr ""
+
+msgid "You need to select at least one {{field}}"
+msgstr ""
+
+msgid "Unknown error {{error}} on {{field}}"
 msgstr ""
 
 msgid "MetaData Synchronization"
@@ -978,6 +987,21 @@ msgstr ""
 msgid "Global mapping"
 msgstr ""
 
+msgid "Modules"
+msgstr ""
+
+msgid "New module"
+msgstr ""
+
+msgid "Edit module"
+msgstr ""
+
+msgid "Cancel module creation"
+msgstr ""
+
+msgid "Cancel module editing"
+msgstr ""
+
 msgid "The token is invalid"
 msgstr ""
 
@@ -1014,21 +1038,6 @@ msgid "GitHub repository (*)"
 msgstr ""
 
 msgid "GitHub access token (*)"
-msgstr ""
-
-msgid "New module"
-msgstr ""
-
-msgid "Edit module"
-msgstr ""
-
-msgid "Cancel module creation"
-msgstr ""
-
-msgid "Cancel module editing"
-msgstr ""
-
-msgid "Modules"
 msgstr ""
 
 msgid "Metadata Synchronization"
@@ -1143,6 +1152,21 @@ msgstr ""
 msgid "Program Rule"
 msgstr ""
 
+msgid "This URL and username combination already exists"
+msgstr ""
+
+msgid "You need to select at least one {{element}}"
+msgstr ""
+
+msgid "Cron expression {{expression}} must be valid"
+msgstr ""
+
+msgid "To enable a rule you need to enter a valid {{expression}}"
+msgstr ""
+
+msgid "Start and end dates are not a valid period"
+msgstr ""
+
 msgid "All periods"
 msgstr ""
 
@@ -1186,22 +1210,4 @@ msgid "Last year"
 msgstr ""
 
 msgid "Last 5 years"
-msgstr ""
-
-msgid "Field {{field}} cannot be blank"
-msgstr ""
-
-msgid "This URL and username combination already exists"
-msgstr ""
-
-msgid "You need to select at least one {{element}}"
-msgstr ""
-
-msgid "Cron expression {{expression}} must be valid"
-msgstr ""
-
-msgid "To enable a rule you need to enter a valid {{expression}}"
-msgstr ""
-
-msgid "Start and end dates are not a valid period"
 msgstr ""
