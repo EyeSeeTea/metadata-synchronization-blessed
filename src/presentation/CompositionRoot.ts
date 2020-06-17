@@ -16,6 +16,7 @@ import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedM
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import { GitHubRepository } from "../domain/modules/repositories/GitHubRepository";
 import { GetStoreUseCase } from "../domain/modules/usecases/GetStoreUseCase";
+import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
 import { SaveStoreUseCase } from "../domain/modules/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/modules/usecases/ValidateStoreUseCase";
 import { StorageRepository } from "../domain/storage/repositories/StorageRepository";
@@ -89,14 +90,23 @@ export class CompositionRoot {
     }
 
     @cache()
-    public get modules() {
+    public get store() {
         const github = this.get<GitHubRepository>(Repository.GitHubRepository);
         const storage = this.get<StorageRepository>(Repository.StorageRepository);
 
         return {
-            getStore: new GetStoreUseCase(storage),
-            saveStore: new SaveStoreUseCase(github, storage),
-            validateStore: new ValidateStoreUseCase(github),
+            get: new GetStoreUseCase(storage),
+            update: new SaveStoreUseCase(github, storage),
+            validate: new ValidateStoreUseCase(github),
+        };
+    }
+
+    @cache()
+    public get modules() {
+        const storage = this.get<StorageRepository>(Repository.StorageRepository);
+
+        return {
+            list: new ListModulesUseCase(storage),
         };
     }
 

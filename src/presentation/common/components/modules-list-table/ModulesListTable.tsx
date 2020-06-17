@@ -1,9 +1,17 @@
 import i18n from "@dhis2/d2-i18n";
 import { ObjectsTable, ObjectsTableDetailField, TableAction, TableColumn } from "d2-ui-components";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Module } from "../../../../domain/modules/entities/Module";
+import { useAppContext } from "../../contexts/AppContext";
 
-export const ModulesListTable: React.FC = () => {
+interface ModulesListTableProps {
+    onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
+}
+
+export const ModulesListTable: React.FC<ModulesListTableProps> = ({ onActionButtonClick }) => {
+    const { compositionRoot } = useAppContext();
+    const [rows, setRows] = useState<Module[]>([]);
+
     const columns: TableColumn<Module>[] = [{ name: "name", text: i18n.t("Name"), sortable: true }];
 
     const details: ObjectsTableDetailField<Module>[] = [
@@ -19,5 +27,17 @@ export const ModulesListTable: React.FC = () => {
         },
     ];
 
-    return <ObjectsTable<Module> rows={[]} columns={columns} details={details} actions={actions} />;
+    useEffect(() => {
+        compositionRoot.modules.list.execute().then(setRows);
+    }, [compositionRoot]);
+
+    return (
+        <ObjectsTable<Module>
+            rows={rows}
+            columns={columns}
+            details={details}
+            actions={actions}
+            onActionButtonClick={onActionButtonClick}
+        />
+    );
 };

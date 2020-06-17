@@ -11,11 +11,15 @@ const ModulesListPage: React.FC = () => {
         history.push("/");
     };
 
+    const createModule = () => {
+        history.push(`/modules/new`);
+    };
+
     return (
         <React.Fragment>
             <PageHeader title={i18n.t("Modules")} onBackClick={backHome} />
 
-            <ModulesListTable />
+            <ModulesListTable onActionButtonClick={createModule} />
         </React.Fragment>
     );
 };

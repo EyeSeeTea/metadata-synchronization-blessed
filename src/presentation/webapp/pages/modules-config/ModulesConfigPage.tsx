@@ -25,7 +25,7 @@ const ModulesConfigPage: React.FC = () => {
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
 
     useEffect(() => {
-        compositionRoot.modules.getStore.execute().then(setState);
+        compositionRoot.store.get.execute().then(setState);
     }, [compositionRoot]);
 
     const onChangeField = (field: keyof Store) => {
@@ -55,7 +55,7 @@ const ModulesConfigPage: React.FC = () => {
         loading.show(true, i18n.t("Testing GitHub connection"));
 
         if (state.token && state.account && state.repository) {
-            const validation = await compositionRoot.modules.validateStore.execute(state as Store);
+            const validation = await compositionRoot.store.validate.execute(state as Store);
             validation.match({
                 error: error => {
                     snackbar.error(validateError(error));
@@ -75,7 +75,7 @@ const ModulesConfigPage: React.FC = () => {
         loading.show(true, i18n.t("Saving store connection"));
 
         if (state.token && state.account && state.repository) {
-            const validation = await compositionRoot.modules.saveStore.execute(state as Store);
+            const validation = await compositionRoot.store.update.execute(state as Store);
             validation.match({
                 error: error => {
                     updateDialog({
@@ -87,7 +87,7 @@ const ModulesConfigPage: React.FC = () => {
                             updateDialog(null);
                         },
                         onSave: async () => {
-                            await compositionRoot.modules.saveStore.execute(state as Store, false);
+                            await compositionRoot.store.update.execute(state as Store, false);
                             updateDialog(null);
                             close();
                         },
