@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-16T10:58:36.357Z\n"
-"PO-Revision-Date: 2020-06-16T10:58:36.357Z\n"
+"POT-Creation-Date: 2020-06-17T06:02:01.211Z\n"
+"PO-Revision-Date: 2020-06-17T06:02:01.211Z\n"
 
 msgid "Preparing synchronization"
 msgstr ""
@@ -1115,6 +1115,12 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Unknown DHIS2 error"
+msgstr ""
+
+msgid "Widget cannot be used until an administrator opens the application"
+msgstr ""
 
 msgid "Running analytics for instance {{name}}"
 msgstr ""
