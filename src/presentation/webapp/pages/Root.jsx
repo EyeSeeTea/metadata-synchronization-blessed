@@ -10,9 +10,9 @@ import InstanceCreationPage from "./instance-creation/InstanceCreationPage";
 import InstanceListPage from "./instance-list/InstanceListPage";
 import InstanceMappingLandingPage from "./instance-mapping/InstanceMappingLandingPage";
 import InstanceMappingPage from "./instance-mapping/InstanceMappingPage";
-import ModulesConfigPage from "./modules-config/ModulesConfigPage";
 import ModulesCreationPage from "./modules-creation/ModulesCreationPage";
 import ModulesListPage from "./modules-list/ModulesListPage";
+import StoreConfigPage from "./store-config/StoreConfigPage";
 import SyncOnDemandPage from "./sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "./sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "./sync-rules-list/SyncRulesListPage";
@@ -80,7 +80,7 @@ function Root() {
 
                 <RouteWithSession
                     path="/modules/config"
-                    render={props => <ModulesConfigPage {...props} />}
+                    render={props => <StoreConfigPage {...props} />}
                 />
 
                 <RouteWithSession
