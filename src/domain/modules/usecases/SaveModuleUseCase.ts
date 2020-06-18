@@ -1,9 +1,10 @@
+import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
 import { Module } from "../entities/Module";
 
-export class SaveStoreUseCase {
+export class SaveModuleUseCase implements UseCase {
     constructor(private storageRepository: StorageRepository) {}
 
     public async execute(module: Module): Promise<ValidationError[]> {

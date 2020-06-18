@@ -1,11 +1,12 @@
 import { Either } from "../../common/entities/Either";
+import { UseCase } from "../../common/entities/UseCase";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
 import { GitHubError } from "../entities/Errors";
 import { Store } from "../entities/Store";
 import { GitHubRepository } from "../repositories/GitHubRepository";
 
-export class SaveStoreUseCase {
+export class SaveStoreUseCase implements UseCase {
     constructor(
         private githubRepository: GitHubRepository,
         private storageRepository: StorageRepository

@@ -5,8 +5,14 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-17T10:06:12.698Z\n"
-"PO-Revision-Date: 2020-06-17T10:06:12.698Z\n"
+"POT-Creation-Date: 2020-06-18T10:49:52.837Z\n"
+"PO-Revision-Date: 2020-06-18T10:49:52.837Z\n"
+
+msgid "Field {{field}} cannot be blank"
+msgstr ""
+
+msgid "You need to select at least one {{field}}"
+msgstr ""
 
 msgid "Preparing synchronization"
 msgstr ""
@@ -42,15 +48,6 @@ msgid "Description"
 msgstr ""
 
 msgid "Details"
-msgstr ""
-
-msgid "Field {{field}} cannot be blank"
-msgstr ""
-
-msgid "You need to select at least one {{field}}"
-msgstr ""
-
-msgid "Unknown error {{error}} on {{field}}"
 msgstr ""
 
 msgid "MetaData Synchronization"
@@ -284,6 +281,45 @@ msgid ""
 "update the app."
 msgstr ""
 
+msgid "General info"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Include Exclude Selection"
+msgstr ""
+
+msgid "Name (*)"
+msgstr ""
+
+msgid "Selected {{difference}} elements"
+msgstr ""
+
+msgid "Removed {{difference}} elements"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Download JSON"
+msgstr ""
+
+msgid "Selected metadata"
+msgstr ""
+
+msgid "Metadata exclusions"
+msgstr ""
+
+msgid "Use default configuration"
+msgstr ""
+
 msgid "Help"
 msgstr ""
 
@@ -407,9 +443,6 @@ msgstr ""
 msgid "Events"
 msgstr ""
 
-msgid "Metadata"
-msgstr ""
-
 msgid "Unknown"
 msgstr ""
 
@@ -422,9 +455,6 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-msgid "Summary"
-msgstr ""
-
 msgid "Messages"
 msgstr ""
 
@@ -432,9 +462,6 @@ msgid "Data Statistics"
 msgstr ""
 
 msgid "JSON Response"
-msgstr ""
-
-msgid "General info"
 msgstr ""
 
 msgid "Instance Selection"
@@ -495,9 +522,6 @@ msgstr ""
 msgid "Aggregation"
 msgstr ""
 
-msgid "Include Exclude Selection"
-msgstr ""
-
 msgid "Data elements"
 msgstr ""
 
@@ -520,12 +544,6 @@ msgid "Programs"
 msgstr ""
 
 msgid "Field cannot be blank"
-msgstr ""
-
-msgid "Selected {{difference}} elements"
-msgstr ""
-
-msgid "Removed {{difference}} elements"
 msgstr ""
 
 msgid "Every day"
@@ -635,16 +653,7 @@ msgstr ""
 msgid "Frequency"
 msgstr ""
 
-msgid "Cancel"
-msgstr ""
-
 msgid "Save as sync Rule"
-msgstr ""
-
-msgid "Save"
-msgstr ""
-
-msgid "Download JSON"
 msgstr ""
 
 msgid "Daily"
@@ -707,9 +716,6 @@ msgid "Sync all events"
 msgstr ""
 
 msgid "You do not have assigned any organisation unit"
-msgstr ""
-
-msgid "Use default configuration"
 msgstr ""
 
 msgid "Metadata Synchronization History"

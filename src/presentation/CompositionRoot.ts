@@ -4,10 +4,12 @@ import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
 import { GitHubOctokitRepository } from "../data/modules/GitHubOctokitRepository";
+import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StorageDataStoreRepository } from "../data/storage/StorageDataStoreRepository";
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
 import { AggregatedRepository } from "../domain/aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
+import { UseCase } from "../domain/common/entities/UseCase";
 import { EventsRepository } from "../domain/events/repositories/EventsRepository";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { InstanceRepository } from "../domain/instance/repositories/InstanceRepository";
@@ -17,9 +19,12 @@ import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUse
 import { GitHubRepository } from "../domain/modules/repositories/GitHubRepository";
 import { GetStoreUseCase } from "../domain/modules/usecases/GetStoreUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
+import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
 import { SaveStoreUseCase } from "../domain/modules/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/modules/usecases/ValidateStoreUseCase";
+import { DownloadRepository } from "../domain/storage/repositories/DownloadRepository";
 import { StorageRepository } from "../domain/storage/repositories/StorageRepository";
+import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { TransformationRepository } from "../domain/transformations/repositories/TransformationRepository";
 import { D2 } from "../types/d2";
 import { SynchronizationBuilder } from "../types/synchronization";
@@ -32,6 +37,7 @@ export const Repository = {
     InstanceRepository: Symbol.for("instanceRepository"),
     TransformationRepository: Symbol.for("transformationsRepository"),
     StorageRepository: Symbol.for("storageRepository"),
+    DownloadRepository: Symbol.for("downloadRepository"),
     GitHubRepository: Symbol.for("githubRepository"),
 };
 
@@ -94,27 +100,39 @@ export class CompositionRoot {
         const github = this.get<GitHubRepository>(Repository.GitHubRepository);
         const storage = this.get<StorageRepository>(Repository.StorageRepository);
 
-        return {
+        return getExecute({
             get: new GetStoreUseCase(storage),
             update: new SaveStoreUseCase(github, storage),
             validate: new ValidateStoreUseCase(github),
-        };
+        });
     }
 
     @cache()
     public get modules() {
         const storage = this.get<StorageRepository>(Repository.StorageRepository);
 
-        return {
+        return getExecute({
             list: new ListModulesUseCase(storage),
-        };
+            save: new SaveModuleUseCase(storage),
+        });
+    }
+
+    @cache()
+    public get storage() {
+        const download = this.get<DownloadRepository>(Repository.DownloadRepository);
+
+        return getExecute({
+            downloadFile: new DownloadFileUseCase(download),
+        });
     }
 
     private initializeWebApp() {
         const storage = new StorageDataStoreRepository(this.d2Api);
+        const download = new DownloadWebRepository();
         const instance = new InstanceD2ApiRepository(this.d2Api, this.encryptionKey);
         const transformation = new TransformationD2ApiRepository();
         this.bind(Repository.StorageRepository, storage);
+        this.bind(Repository.DownloadRepository, download);
         this.bind(Repository.InstanceRepository, instance);
         this.bind(Repository.TransformationRepository, transformation);
 
@@ -128,4 +146,18 @@ export class CompositionRoot {
         const github = new GitHubOctokitRepository();
         this.bind(Repository.GitHubRepository, github);
     }
+}
+
+function getExecute<UseCases extends Record<Key, UseCase>, Key extends keyof UseCases>(
+    useCases: UseCases
+): { [K in Key]: UseCases[K]["execute"] } {
+    const keys = Object.keys(useCases) as Key[];
+    const initialOutput = {} as { [K in Key]: UseCases[K]["execute"] };
+
+    return keys.reduce((output, key) => {
+        const useCase = useCases[key];
+        const execute = useCase.execute.bind(useCase) as UseCases[typeof key]["execute"];
+        output[key] = execute;
+        return output;
+    }, initialOutput);
 }

@@ -28,7 +28,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({ onActionButt
     ];
 
     useEffect(() => {
-        compositionRoot.modules.list.execute().then(setRows);
+        compositionRoot.modules.list().then(setRows);
     }, [compositionRoot]);
 
     return (
