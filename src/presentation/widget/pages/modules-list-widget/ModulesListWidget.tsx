@@ -1,5 +1,5 @@
 import React from "react";
-import { ModulesListTable } from "../../../common/components/modules-list-table/ModulesListTable";
+import { ModulesListTable } from "../../../common/components/module-list-table/ModuleListTable";
 
 export const ModulesListWidget: React.FC = () => {
     return (

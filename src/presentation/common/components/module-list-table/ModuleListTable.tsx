@@ -8,7 +8,7 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, ReactNode } from "react";
 import { useHistory } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { useAppContext } from "../../contexts/AppContext";
@@ -18,11 +18,13 @@ type ModulesListPresentations = "app" | "widget";
 interface ModulesListTableProps {
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
     presentation?: ModulesListPresentations;
+    externalComponents?: ReactNode;
 }
 
 export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     onActionButtonClick,
     presentation = "app",
+    externalComponents,
 }) => {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
@@ -132,6 +134,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             actions={actions}
             onActionButtonClick={onActionButtonClick}
             forceSelectionColumn={true}
+            filterComponents={externalComponents}
         />
     );
 };

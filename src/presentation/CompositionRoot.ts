@@ -21,6 +21,7 @@ import { DownloadModuleUseCase } from "../domain/modules/usecases/DownloadModule
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { GetStoreUseCase } from "../domain/modules/usecases/GetStoreUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
+import { ListPackagesUseCase } from "../domain/modules/usecases/ListPackagesUseCase";
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
 import { SaveStoreUseCase } from "../domain/modules/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/modules/usecases/ValidateStoreUseCase";
@@ -119,6 +120,16 @@ export class CompositionRoot {
             save: new SaveModuleUseCase(storage),
             get: new GetModuleUseCase(storage),
             download: new DownloadModuleUseCase(download),
+        });
+    }
+
+    @cache()
+    public get packages() {
+        const storage = this.get<StorageRepository>(Repository.StorageRepository);
+        const github = this.get<GitHubRepository>(Repository.GitHubRepository);
+
+        return getExecute({
+            list: new ListPackagesUseCase(storage, github),
         });
     }
 

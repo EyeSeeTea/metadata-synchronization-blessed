@@ -1,7 +1,10 @@
 import { NamedRef } from "../../common/entities/NamedRef";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 
-export interface Snapshot extends NamedRef {
+export type PackageLocation = "github" | "dataStore";
+
+export interface Package extends NamedRef {
+    location: PackageLocation;
     module: string;
     revision: string;
     author: {

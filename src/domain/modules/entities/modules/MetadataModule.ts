@@ -131,7 +131,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
         return this.updateIncludeExcludeRules(type, excludeIncludeRules);
     }
 
-    protected moduleValidations: ModelValidation[] = [
+    protected moduleValidations = (): ModelValidation[] => [
         { property: "name", validation: "hasText" },
         {
             property: "metadataIds",

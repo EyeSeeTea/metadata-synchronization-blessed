@@ -1,7 +1,11 @@
 import qs from "qs";
 import React, { ReactNode, useEffect, useState } from "react";
 
-export function useWidget() {
+function useWidget(): { dashboardItemId: string; userOrgUnits: string[]; widget: string } {
+    if (!process.env.REACT_APP_DASHBOARD_WIDGET) {
+        throw new Error("Attempting to use useWidget on application");
+    }
+
     const { dashboardItemId = "DEVELOPMENT", userOrgUnit } = qs.parse(window.location.search);
 
     return {

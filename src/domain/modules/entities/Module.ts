@@ -39,7 +39,7 @@ export abstract class GenericModule implements BaseModule {
     }
 
     public validate(filter?: string[]): ValidationError[] {
-        return validateModel<GenericModule>(this, this.moduleValidations).filter(
+        return validateModel<GenericModule>(this, this.moduleValidations()).filter(
             ({ property }) => filter?.includes(property) ?? true
         );
     }
@@ -50,7 +50,8 @@ export abstract class GenericModule implements BaseModule {
 
     public abstract update(data?: Partial<Pick<GenericModule, keyof BaseModule>>): GenericModule;
     public abstract toSyncBuilder(): SynchronizationBuilder;
-    protected abstract moduleValidations: ModelValidation[];
+
+    protected abstract moduleValidations: () => ModelValidation[];
 
     protected static buildDefaultValues = (): Pick<GenericModule, keyof BaseModule> => {
         return {
