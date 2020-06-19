@@ -9,11 +9,16 @@ import { moduleSteps, ModuleWizardStepProps } from "./Steps";
 export interface ModuleWizardProps {
     onCancel: () => void;
     onClose: () => void;
+    editModule?: Module;
 }
 
-export const ModuleWizard: React.FC<ModuleWizardProps> = ({ onCancel, onClose }) => {
+export const ModuleWizard: React.FC<ModuleWizardProps> = ({
+    onCancel,
+    onClose,
+    editModule = MetadataModule.build(),
+}) => {
     const location = useLocation();
-    const [module, onChange] = useState<Module>(MetadataModule.build());
+    const [module, onChange] = useState<Module>(editModule);
 
     const props: ModuleWizardStepProps = { module, onChange, onCancel, onClose };
     const steps = moduleSteps.map(step => ({ ...step, props }));

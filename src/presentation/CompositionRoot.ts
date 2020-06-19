@@ -17,6 +17,7 @@ import { MetadataRepository } from "../domain/metadata/repositories/MetadataRepo
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import { GitHubRepository } from "../domain/modules/repositories/GitHubRepository";
+import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { GetStoreUseCase } from "../domain/modules/usecases/GetStoreUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
@@ -114,6 +115,7 @@ export class CompositionRoot {
         return getExecute({
             list: new ListModulesUseCase(storage),
             save: new SaveModuleUseCase(storage),
+            get: new GetModuleUseCase(storage),
         });
     }
 
