@@ -4,7 +4,7 @@ import { ModulesListTable } from "../../../common/components/modules-list-table/
 export const ModulesListWidget: React.FC = () => {
     return (
         <React.Fragment>
-            <ModulesListTable />
+            <ModulesListTable presentation={"widget"} />
         </React.Fragment>
     );
 };

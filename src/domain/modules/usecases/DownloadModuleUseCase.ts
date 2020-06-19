@@ -7,10 +7,10 @@ import { Module } from "../entities/Module";
 export class DownloadModuleUseCase implements UseCase {
     constructor(private downloadRepository: DownloadRepository) {}
 
-    public async execute(module: Module, payload: unknown) {
+    public async execute(module: Module) {
         const ruleName = _.kebabCase(_.toLower(module.name));
         const date = moment().format("YYYYMMDDHHmm");
         const name = `module-${ruleName}-${module.type}-${date}.json`;
-        return this.downloadRepository.downloadFile(name, payload);
+        return this.downloadRepository.downloadFile(name, module);
     }
 }

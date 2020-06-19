@@ -28,10 +28,8 @@ export const SummaryStep = ({ module, onCancel, onClose }: ModuleWizardStepProps
         setIsSaving(false);
     };
 
-    const downloadJSON = async () => {
-        const builder = module.toSyncBuilder();
-        const payload = await compositionRoot.sync[module.type](builder).buildPayload();
-        compositionRoot.modules.download(module, payload);
+    const downloadJSON = () => {
+        compositionRoot.modules.download(module);
     };
 
     return (
