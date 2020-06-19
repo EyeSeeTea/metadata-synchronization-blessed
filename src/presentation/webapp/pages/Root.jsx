@@ -70,11 +70,8 @@ function Root() {
                     render={props => <HistoryPage {...props} />}
                 />
 
-                <RouteWithSessionAndAuth
-                    path={"/modules/:action(new|edit)/:id?"}
-                    authorize={props =>
-                        permissions.verifyUserHasAccessToSyncRule(api, props.match.params.id)
-                    }
+                <RouteWithSession
+                    path={"/modules/:action(new|edit)"}
                     render={props => <ModuleCreationPage {...props} />}
                 />
 

@@ -4,7 +4,9 @@ import { NamedRef } from "../../common/entities/NamedRef";
 import { SharedObject } from "../../common/entities/SharedObject";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
+import { MetadataModule } from "./modules/MetadataModule";
 
+export type Module = MetadataModule;
 export type ModuleType = "metadata";
 
 export interface BaseModule extends SharedObject {
@@ -12,7 +14,7 @@ export interface BaseModule extends SharedObject {
     type: ModuleType;
 }
 
-export abstract class Module implements BaseModule {
+export abstract class GenericModule implements BaseModule {
     public readonly id: string;
     public readonly name: string;
     public readonly description: string;
@@ -24,7 +26,7 @@ export abstract class Module implements BaseModule {
     public readonly lastUpdatedBy: NamedRef;
     public abstract readonly type: ModuleType;
 
-    constructor(data: Pick<Module, keyof BaseModule>) {
+    constructor(data: Pick<GenericModule, keyof BaseModule>) {
         this.id = data.id;
         this.name = data.name;
         this.description = data.description;
@@ -37,16 +39,20 @@ export abstract class Module implements BaseModule {
     }
 
     public validate(filter?: string[]): ValidationError[] {
-        return validateModel<Module>(this, this.moduleValidations).filter(
+        return validateModel<GenericModule>(this, this.moduleValidations).filter(
             ({ property }) => filter?.includes(property) ?? true
         );
     }
 
-    public abstract update(data?: Partial<Pick<Module, keyof BaseModule>>): Module;
+    public replicate(): GenericModule {
+        return this.update({ name: `Copy of ${this.name}`, id: generateUid() });
+    }
+
+    public abstract update(data?: Partial<Pick<GenericModule, keyof BaseModule>>): GenericModule;
     public abstract toSyncBuilder(): SynchronizationBuilder;
     protected abstract moduleValidations: ModelValidation[];
 
-    protected static buildDefaultValues = (): Pick<Module, keyof BaseModule> => {
+    protected static buildDefaultValues = (): Pick<GenericModule, keyof BaseModule> => {
         return {
             id: generateUid(),
             name: "",

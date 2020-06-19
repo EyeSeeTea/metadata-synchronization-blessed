@@ -10,7 +10,7 @@ import {
     extractParentsFromRule,
 } from "../../../../utils/metadataIncludeExclude";
 import { ModelValidation } from "../../../common/entities/Validations";
-import { BaseModule, Module } from "../Module";
+import { BaseModule, GenericModule } from "../Module";
 
 interface BaseMetadataModule extends BaseModule {
     type: "metadata";
@@ -20,7 +20,7 @@ interface BaseMetadataModule extends BaseModule {
     metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
 }
 
-export class MetadataModule extends Module implements BaseMetadataModule {
+export class MetadataModule extends GenericModule implements BaseMetadataModule {
     public readonly metadataIds: string[];
     public readonly excludedIds: string[];
     public readonly useDefaultIncludeExclude: boolean;
@@ -142,7 +142,7 @@ export class MetadataModule extends Module implements BaseMetadataModule {
 
     protected static buildDefaultValues = (): Pick<MetadataModule, keyof BaseMetadataModule> => {
         return {
-            ...Module.buildDefaultValues(),
+            ...GenericModule.buildDefaultValues(),
             metadataIds: [],
             excludedIds: [],
             useDefaultIncludeExclude: true,

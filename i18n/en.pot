@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-19T07:46:06.535Z\n"
-"PO-Revision-Date: 2020-06-19T07:46:06.535Z\n"
+"POT-Creation-Date: 2020-06-19T09:33:48.265Z\n"
+"PO-Revision-Date: 2020-06-19T09:33:48.265Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -48,6 +48,12 @@ msgid "Description"
 msgstr ""
 
 msgid "Details"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Replicate"
 msgstr ""
 
 msgid "Download"
@@ -939,12 +945,6 @@ msgid "Successfully deleted {{count}} instances"
 msgid_plural "Successfully deleted {{count}} instances"
 msgstr[0] ""
 msgstr[1] ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "Replicate"
-msgstr ""
 
 msgid "Run analytics"
 msgstr ""

@@ -1,4 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
+import { Icon } from "@material-ui/core";
 import {
     ObjectsTable,
     ObjectsTableDetailField,
@@ -8,6 +9,7 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { useAppContext } from "../../contexts/AppContext";
 
@@ -24,19 +26,49 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
 }) => {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
+    const history = useHistory();
     const [rows, setRows] = useState<Module[]>([]);
-    console.log(presentation);
+
+    const editRule = useCallback(
+        (ids: string[]) => {
+            const module = _.find(rows, ({ id }) => id === ids[0]);
+            if (!module) snackbar.error("Invalid module");
+            else history.push({ pathname: `/modules/edit`, state: { module } });
+        },
+        [rows, history, snackbar]
+    );
 
     const downloadModule = useCallback(
-        async (modules: string[]) => {
-            const module = _.find(rows, ({ id }) => id === modules[0]);
+        async (ids: string[]) => {
+            const module = _.find(rows, ({ id }) => id === ids[0]);
             if (!module) snackbar.error("Invalid module");
             else compositionRoot.modules.download(module);
         },
         [compositionRoot, rows, snackbar]
     );
 
-    const columns: TableColumn<Module>[] = [{ name: "name", text: i18n.t("Name"), sortable: true }];
+    const replicateModule = useCallback(
+        async (ids: string[]) => {
+            const module = _.find(rows, ({ id }) => id === ids[0]);
+            if (!module) snackbar.error("Invalid module");
+            else
+                history.push({
+                    pathname: `/modules/new`,
+                    state: { module: module.replicate() },
+                });
+        },
+        [history, rows, snackbar]
+    );
+
+    const columns: TableColumn<Module>[] = [
+        { name: "name", text: i18n.t("Name"), sortable: true },
+        { name: "description", text: i18n.t("Description"), sortable: true },
+        {
+            name: "metadataIds",
+            text: "Selected metadata",
+            getValue: module => `${module.metadataIds.length} elements`,
+        },
+    ];
 
     const details: ObjectsTableDetailField<Module>[] = [
         { name: "name", text: i18n.t("Name") },
@@ -48,22 +80,43 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             name: "details",
             text: i18n.t("Details"),
             multiple: false,
+            isActive: () => presentation === "app",
+        },
+        {
+            name: "edit",
+            text: i18n.t("Edit"),
+            multiple: false,
+            isActive: () => presentation === "app",
+            onClick: editRule,
+            primary: presentation === "app",
+            icon: <Icon>edit</Icon>,
+        },
+        {
+            name: "replicate",
+            text: i18n.t("Replicate"),
+            multiple: false,
+            onClick: replicateModule,
+            icon: <Icon>content_copy</Icon>,
+            isActive: () => presentation === "app",
         },
         {
             name: "download",
             text: i18n.t("Download"),
             multiple: false,
             onClick: downloadModule,
+            icon: <Icon>cloud_download</Icon>,
         },
         {
             name: "package-data-store",
             text: i18n.t("Generate package from module (Data Store)"),
             multiple: false,
+            icon: <Icon>description</Icon>,
         },
         {
             name: "package-github",
             text: i18n.t("Generate package from module (GitHub)"),
             multiple: false,
+            icon: <Icon>description</Icon>,
         },
     ];
 
@@ -78,6 +131,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             details={details}
             actions={actions}
             onActionButtonClick={onActionButtonClick}
+            forceSelectionColumn={true}
         />
     );
 };
