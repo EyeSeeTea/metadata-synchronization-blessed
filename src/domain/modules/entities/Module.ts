@@ -1,4 +1,5 @@
 import { generateUid } from "d2/uid";
+import { SynchronizationBuilder } from "../../../types/synchronization";
 import { NamedRef } from "../../common/entities/NamedRef";
 import { SharedObject } from "../../common/entities/SharedObject";
 import { SharingSetting } from "../../common/entities/SharingSetting";
@@ -42,6 +43,7 @@ export abstract class Module implements BaseModule {
     }
 
     public abstract update(data?: Partial<Pick<Module, keyof BaseModule>>): Module;
+    public abstract toSyncBuilder(): SynchronizationBuilder;
     protected abstract moduleValidations: ModelValidation[];
 
     protected static buildDefaultValues = (): Pick<Module, keyof BaseModule> => {

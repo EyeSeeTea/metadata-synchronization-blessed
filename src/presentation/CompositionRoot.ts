@@ -17,6 +17,7 @@ import { MetadataRepository } from "../domain/metadata/repositories/MetadataRepo
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import { GitHubRepository } from "../domain/modules/repositories/GitHubRepository";
+import { DownloadModuleUseCase } from "../domain/modules/usecases/DownloadModuleUseCase";
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { GetStoreUseCase } from "../domain/modules/usecases/GetStoreUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
@@ -111,11 +112,13 @@ export class CompositionRoot {
     @cache()
     public get modules() {
         const storage = this.get<StorageRepository>(Repository.StorageRepository);
+        const download = this.get<DownloadRepository>(Repository.DownloadRepository);
 
         return getExecute({
             list: new ListModulesUseCase(storage),
             save: new SaveModuleUseCase(storage),
             get: new GetModuleUseCase(storage),
+            download: new DownloadModuleUseCase(download),
         });
     }
 

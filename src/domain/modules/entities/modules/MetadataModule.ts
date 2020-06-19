@@ -3,6 +3,7 @@ import { D2Model } from "../../../../models/dhis/default";
 import {
     ExcludeIncludeRules,
     MetadataIncludeExcludeRules,
+    SynchronizationBuilder,
 } from "../../../../types/synchronization";
 import {
     extractChildrenFromRules,
@@ -40,6 +41,19 @@ export class MetadataModule extends Module implements BaseMetadataModule {
 
     public update(data?: Partial<Pick<MetadataModule, keyof MetadataModule>>): MetadataModule {
         return MetadataModule.build({ ...this, ...data });
+    }
+
+    public toSyncBuilder(): SynchronizationBuilder {
+        return {
+            targetInstances: [],
+            metadataIds: this.metadataIds,
+            excludedIds: this.excludedIds,
+            syncParams: {
+                includeSharingSettings: false,
+                useDefaultIncludeExclude: this.useDefaultIncludeExclude,
+                metadataIncludeExcludeRules: this.metadataIncludeExcludeRules,
+            },
+        };
     }
 
     public markToUseDefaultIncludeExclude(): MetadataModule {

@@ -4,8 +4,8 @@ import { useSnackbar } from "d2-ui-components";
 import React, { ReactNode, useState } from "react";
 import { Module } from "../../../../../domain/modules/entities/Module";
 import { MetadataModule } from "../../../../../domain/modules/entities/modules/MetadataModule";
-import { ModuleWizardStepProps } from "../Steps";
 import { useAppContext } from "../../../../common/contexts/AppContext";
+import { ModuleWizardStepProps } from "../Steps";
 
 export const SummaryStep = ({ module, onCancel, onClose }: ModuleWizardStepProps) => {
     const classes = useStyles();
@@ -29,7 +29,9 @@ export const SummaryStep = ({ module, onCancel, onClose }: ModuleWizardStepProps
     };
 
     const downloadJSON = async () => {
-        snackbar.warning("Not implemented");
+        const builder = module.toSyncBuilder();
+        const payload = await compositionRoot.sync[module.type](builder).buildPayload();
+        compositionRoot.modules.download(module, payload);
     };
 
     return (
