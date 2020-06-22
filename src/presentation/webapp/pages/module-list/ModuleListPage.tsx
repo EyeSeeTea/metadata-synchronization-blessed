@@ -36,6 +36,7 @@ export const ModuleListPage: React.FC = () => {
                 value={tableOption}
                 onValueChange={setTableOption}
                 label={i18n.t("View")}
+                hideEmpty={true}
             />
         ),
         [tableOption, setTableOption]

@@ -14,11 +14,11 @@ import { useHistory } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { useAppContext } from "../../contexts/AppContext";
 
-type ModulesListPresentations = "app" | "widget";
+type ModulesListPresentation = "app" | "widget";
 
 interface ModulesListTableProps {
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
-    presentation?: ModulesListPresentations;
+    presentation?: ModulesListPresentation;
     externalComponents?: ReactNode;
 }
 

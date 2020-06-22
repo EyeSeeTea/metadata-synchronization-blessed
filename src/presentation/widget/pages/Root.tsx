@@ -1,5 +1,6 @@
 import qs from "qs";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { HashRouter } from "react-router-dom";
 
 function useWidget(): { dashboardItemId: string; userOrgUnits: string[]; widget: string } {
     if (!process.env.REACT_APP_DASHBOARD_WIDGET) {
@@ -15,28 +16,28 @@ function useWidget(): { dashboardItemId: string; userOrgUnits: string[]; widget:
     };
 }
 
-const loadWidget = async (widget: string) => {
+const loadWidget = async (widget: string): Promise<Function> => {
     switch (widget) {
         case "modules-list":
-            const { ModulesListWidget } = await import("./modules-list-widget/ModulesListWidget");
-            return ModulesListWidget;
+            const { ModuleListWidget } = await import("./module-list-widget/ModuleListWidget");
+            return ModuleListWidget;
         default:
             return () => {
                 const { dashboardItemId } = useWidget();
-                return <p>{`Hello World, I'm dashboard item ${dashboardItemId}!`}</p>;
+                return () => <p>{`Hello World, I'm dashboard item ${dashboardItemId}!`}</p>;
             };
     }
 };
 
 function Root() {
     const { widget } = useWidget();
-    const [Component, setComponent] = useState<ReactNode>(null);
+    const [Component, setComponent] = useState<Function>();
 
     useEffect(() => {
         loadWidget(widget).then(setComponent);
     }, [widget]);
 
-    return Component;
+    return Component ? <HashRouter><Component /></HashRouter> : null;
 }
 
 export default Root;
