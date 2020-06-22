@@ -4,6 +4,7 @@ import { Module } from "../../../../domain/modules/entities/Module";
 import { GeneralInfoStep } from "./common/GeneralInfoStep";
 import { MetadataSelectionStep } from "./common/MetadataSelectionStep";
 import { SummaryStep } from "./common/SummaryStep";
+import { AdvancedMetadataOptionsStep } from "./metadata/AdvancedMetadataOptionsStep";
 import { MetadataIncludeExcludeStep } from "./metadata/MetadataIncludeExcludeStep";
 
 export interface SyncWizardStep extends WizardStep {
@@ -36,7 +37,7 @@ const commonSteps: {
     },
 };
 
-export const moduleSteps: SyncWizardStep[] = [
+export const metadataModuleSteps: SyncWizardStep[] = [
     commonSteps.generalInfo,
     {
         key: "metadata",
@@ -49,9 +50,12 @@ export const moduleSteps: SyncWizardStep[] = [
         label: i18n.t("Include Exclude Selection"),
         component: MetadataIncludeExcludeStep,
         validationKeys: ["metadataIncludeExclude"],
-        description: undefined,
-        help: undefined,
-        showOnSyncDialog: true,
+    },
+    {
+        key: "advanced-metadata-options",
+        label: i18n.t("Advanced options"),
+        component: AdvancedMetadataOptionsStep,
+        validationKeys: [],
     },
     commonSteps.summary,
 ];

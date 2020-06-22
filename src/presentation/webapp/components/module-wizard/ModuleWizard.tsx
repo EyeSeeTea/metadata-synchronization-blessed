@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { MetadataModule } from "../../../../domain/modules/entities/modules/MetadataModule";
-import { moduleSteps, ModuleWizardStepProps } from "./Steps";
+import { metadataModuleSteps, ModuleWizardStepProps } from "./Steps";
 
 export interface ModuleWizardProps {
     onCancel: () => void;
@@ -21,7 +21,7 @@ export const ModuleWizard: React.FC<ModuleWizardProps> = ({
     const [module, onChange] = useState<Module>(editModule);
 
     const props: ModuleWizardStepProps = { module, onChange, onCancel, onClose };
-    const steps = moduleSteps.map(step => ({ ...step, props }));
+    const steps = metadataModuleSteps.map(step => ({ ...step, props }));
 
     const onStepChangeRequest = async (_currentStep: WizardStep, newStep: WizardStep) => {
         const index = _(steps).findIndex(step => step.key === newStep.key);

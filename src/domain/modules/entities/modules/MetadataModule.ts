@@ -16,6 +16,7 @@ interface BaseMetadataModule extends BaseModule {
     type: "metadata";
     metadataIds: string[];
     excludedIds: string[];
+    includeUserInformation: boolean;
     useDefaultIncludeExclude: boolean;
     metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
 }
@@ -23,6 +24,7 @@ interface BaseMetadataModule extends BaseModule {
 export class MetadataModule extends GenericModule implements BaseMetadataModule {
     public readonly metadataIds: string[];
     public readonly excludedIds: string[];
+    public readonly includeUserInformation: boolean;
     public readonly useDefaultIncludeExclude: boolean;
     public readonly metadataIncludeExcludeRules: MetadataIncludeExcludeRules;
     public readonly type = "metadata";
@@ -31,6 +33,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
         super(data);
         this.metadataIds = data.metadataIds;
         this.excludedIds = data.excludedIds;
+        this.includeUserInformation = data.includeUserInformation;
         this.useDefaultIncludeExclude = data.useDefaultIncludeExclude;
         this.metadataIncludeExcludeRules = data.metadataIncludeExcludeRules;
     }
@@ -49,7 +52,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             metadataIds: this.metadataIds,
             excludedIds: this.excludedIds,
             syncParams: {
-                includeSharingSettings: false,
+                includeSharingSettings: this.includeUserInformation,
                 useDefaultIncludeExclude: this.useDefaultIncludeExclude,
                 metadataIncludeExcludeRules: this.metadataIncludeExcludeRules,
             },
@@ -145,6 +148,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             ...GenericModule.buildDefaultValues(),
             metadataIds: [],
             excludedIds: [],
+            includeUserInformation: false,
             useDefaultIncludeExclude: true,
             metadataIncludeExcludeRules: {},
         };
