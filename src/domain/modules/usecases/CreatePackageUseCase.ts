@@ -17,6 +17,7 @@ export class CreatePackageUseCase implements UseCase {
 
     public async execute({ location, module, contents }: CreatePackageOptions): Promise<Package> {
         const user = await this.instanceRepository.getUser();
+        const version = await this.instanceRepository.getVersion();
         const payload: Package = {
             location,
             module: module.id,
@@ -25,6 +26,7 @@ export class CreatePackageUseCase implements UseCase {
             contents,
             name: `Package of ${module.name}`,
             author: user,
+            version,
         };
 
         switch (location) {

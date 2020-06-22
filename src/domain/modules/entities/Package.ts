@@ -7,6 +7,7 @@ export interface Package extends NamedRef {
     location: PackageLocation;
     module: string;
     revision: string;
+    version: string;
     author: {
         name: string;
         email: string;

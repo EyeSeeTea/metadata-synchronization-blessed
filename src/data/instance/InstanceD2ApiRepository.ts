@@ -20,21 +20,10 @@ export class InstanceD2ApiRepository implements InstanceRepository {
         return user;
     }
 
-    public async getById(id: string): Promise<Instance> {
-        const instanceData = await getDataById<InstanceData>(this.api, instancesDataStoreKey, id);
-
-        if (!instanceData) {
-            throw Error(`Instance with id ${id} not found`);
-        }
-
-        const instanceDataWithRawPassword = {
-            ...instanceData,
-            password: this.decryptPassword(instanceData.password),
-        };
-
-        const version = await this.getVersion(instanceDataWithRawPassword);
-
-        return new Instance({ ...instanceDataWithRawPassword, version });
+    @cache()
+    public async getVersion(): Promise<string> {
+        const systemInfo = await this.api.system.info.getData();
+        return systemInfo.version;
     }
 
     @cache()
@@ -58,7 +47,24 @@ export class InstanceD2ApiRepository implements InstanceRepository {
             .value();
     }
 
-    private async getVersion(instanceData: InstanceData): Promise<string> {
+    public async getById(id: string): Promise<Instance> {
+        const instanceData = await getDataById<InstanceData>(this.api, instancesDataStoreKey, id);
+
+        if (!instanceData) {
+            throw Error(`Instance with id ${id} not found`);
+        }
+
+        const instanceDataWithRawPassword = {
+            ...instanceData,
+            password: this.decryptPassword(instanceData.password),
+        };
+
+        const version = await this.testConnection(instanceDataWithRawPassword);
+
+        return new Instance({ ...instanceDataWithRawPassword, version });
+    }
+
+    private async testConnection(instanceData: InstanceData): Promise<string> {
         const api = new D2Api({
             baseUrl: instanceData.url,
             auth: { username: instanceData.username, password: instanceData.password },

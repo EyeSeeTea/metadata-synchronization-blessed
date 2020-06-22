@@ -67,6 +67,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 else return i18n.t("Unknown");
             },
         },
+        { name: "version", text: i18n.t("DHIS2 Version"), sortable: true },
         { name: "module", text: i18n.t("Module"), sortable: true },
     ];
 
