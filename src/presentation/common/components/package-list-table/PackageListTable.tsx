@@ -62,7 +62,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             text: i18n.t("Location"),
             sortable: true,
             getValue: ({ location }) => {
-                if (location === "dataStore") return i18n.t("Data Store");
+                if (location === "dataStore") return i18n.t("Local instance");
                 else if (location === "github") return i18n.t("GitHub");
                 else return i18n.t("Unknown");
             },
@@ -78,7 +78,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             name: "location",
             text: i18n.t("Location"),
             getValue: ({ location }) => {
-                if (location === "dataStore") return i18n.t("Data Store");
+                if (location === "dataStore") return i18n.t("Local instance");
                 else if (location === "github") return i18n.t("GitHub");
                 else return i18n.t("Unknown");
             },
@@ -92,7 +92,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             name: "details",
             text: i18n.t("Details"),
             multiple: false,
-            isActive: () => presentation === "app",
         },
         {
             name: "delete",
@@ -100,6 +99,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             multiple: false,
             onClick: deletePackage,
             icon: <Icon>delete</Icon>,
+            isActive: () => presentation === "app",
         },
         {
             name: "download",
@@ -107,6 +107,13 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             multiple: false,
             onClick: downloadPackage,
             icon: <Icon>cloud_download</Icon>,
+        },
+        {
+            name: "publish",
+            text: i18n.t("Publish"),
+            multiple: false,
+            onClick: downloadPackage,
+            icon: <Icon>publish</Icon>,
         },
     ];
 

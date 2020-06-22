@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-22T10:00:43.507Z\n"
-"PO-Revision-Date: 2020-06-22T10:00:43.507Z\n"
+"POT-Creation-Date: 2020-06-22T15:28:36.089Z\n"
+"PO-Revision-Date: 2020-06-22T15:28:36.089Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -71,13 +71,10 @@ msgstr ""
 msgid "Replicate"
 msgstr ""
 
-msgid "Download"
+msgid "Download snapshot package"
 msgstr ""
 
-msgid "Generate package from module (Data Store)"
-msgstr ""
-
-msgid "Generate package from module (GitHub)"
+msgid "Generate package from module"
 msgstr ""
 
 msgid "Invalid package"
@@ -86,7 +83,7 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-msgid "Data Store"
+msgid "Local instance"
 msgstr ""
 
 msgid "GitHub"
@@ -102,6 +99,15 @@ msgid "Module"
 msgstr ""
 
 msgid "ID"
+msgstr ""
+
+msgid "This instance"
+msgstr ""
+
+msgid "Download"
+msgstr ""
+
+msgid "Publish"
 msgstr ""
 
 msgid "MetaData Synchronization"
@@ -360,9 +366,6 @@ msgid "Cancel"
 msgstr ""
 
 msgid "Save"
-msgstr ""
-
-msgid "Download JSON"
 msgstr ""
 
 msgid "Selected metadata"
@@ -704,6 +707,9 @@ msgstr ""
 msgid "Save as sync Rule"
 msgstr ""
 
+msgid "Download JSON"
+msgstr ""
+
 msgid "Daily"
 msgstr ""
 
@@ -1032,10 +1038,13 @@ msgstr ""
 msgid "Global mapping"
 msgstr ""
 
-msgid "Modules"
+msgid "Packages"
 msgstr ""
 
-msgid "Packages"
+msgid "Instance"
+msgstr ""
+
+msgid "Modules"
 msgstr ""
 
 msgid "View"

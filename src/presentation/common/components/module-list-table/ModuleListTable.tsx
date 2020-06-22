@@ -141,6 +141,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             name: "delete",
             text: i18n.t("Delete"),
             multiple: false,
+            isActive: () => presentation === "app",
             onClick: deleteModule,
             icon: <Icon>delete</Icon>,
         },
@@ -154,23 +155,18 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
         },
         {
             name: "download",
-            text: i18n.t("Download"),
+            text: i18n.t("Download snapshot package"),
             multiple: false,
             onClick: downloadModule,
             icon: <Icon>cloud_download</Icon>,
         },
         {
             name: "package-data-store",
-            text: i18n.t("Generate package from module (Data Store)"),
+            text: i18n.t("Generate package from module"),
             multiple: false,
             icon: <Icon>description</Icon>,
+            isActive: () => presentation === "app",
             onClick: createPackage,
-        },
-        {
-            name: "package-github",
-            text: i18n.t("Generate package from module (GitHub)"),
-            multiple: false,
-            icon: <Icon>description</Icon>,
         },
     ];
 

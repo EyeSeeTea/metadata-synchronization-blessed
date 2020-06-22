@@ -1,4 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
+import _ from "lodash";
 import React, { useCallback, useMemo } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { ModulesListTable } from "../../../common/components/module-list-table/ModuleListTable";
@@ -28,16 +29,27 @@ export const ModuleListPage: React.FC = () => {
 
     const filters = useMemo(
         () => (
-            <Dropdown
-                items={[
-                    { id: "modules", name: i18n.t("Modules") },
-                    { id: "packages", name: i18n.t("Packages") },
-                ]}
-                value={tableOption}
-                onValueChange={setTableOption}
-                label={i18n.t("View")}
-                hideEmpty={true}
-            />
+            <React.Fragment>
+                <Dropdown
+                    items={[
+                        { id: "local", name: i18n.t("Local instance") },
+                    ]}
+                    value={"local"}
+                    onValueChange={_.noop}
+                    label={i18n.t("Instance")}
+                    hideEmpty={true}
+                />
+                <Dropdown
+                    items={[
+                        { id: "modules", name: i18n.t("Modules") },
+                        { id: "packages", name: i18n.t("Packages") },
+                    ]}
+                    value={tableOption}
+                    onValueChange={setTableOption}
+                    label={i18n.t("View")}
+                    hideEmpty={true}
+                />
+            </React.Fragment>
         ),
         [tableOption, setTableOption]
     );
