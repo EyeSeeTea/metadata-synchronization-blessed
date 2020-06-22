@@ -118,10 +118,11 @@ export class CompositionRoot {
     public get modules() {
         const storage = this.get<StorageRepository>(Repository.StorageRepository);
         const download = this.get<DownloadRepository>(Repository.DownloadRepository);
+        const instance = this.get<InstanceRepository>(Repository.InstanceRepository);
 
         return getExecute({
             list: new ListModulesUseCase(storage),
-            save: new SaveModuleUseCase(storage),
+            save: new SaveModuleUseCase(storage, instance),
             get: new GetModuleUseCase(storage),
             delete: new DeleteModuleUseCase(storage),
             download: new DownloadModuleUseCase(download),
@@ -133,10 +134,11 @@ export class CompositionRoot {
         const storage = this.get<StorageRepository>(Repository.StorageRepository);
         const github = this.get<GitHubRepository>(Repository.GitHubRepository);
         const download = this.get<DownloadRepository>(Repository.DownloadRepository);
+        const instance = this.get<InstanceRepository>(Repository.InstanceRepository);
 
         return getExecute({
             list: new ListPackagesUseCase(storage, github),
-            create: new CreatePackageUseCase(storage, github),
+            create: new CreatePackageUseCase(storage, github, instance),
             delete: new DeletePackageUseCase(storage, github),
             download: new DownloadPackageUseCase(download),
         });

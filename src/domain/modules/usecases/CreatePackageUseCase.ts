@@ -1,5 +1,6 @@
 import { generateUid } from "d2/uid";
 import { UseCase } from "../../common/entities/UseCase";
+import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
@@ -10,10 +11,12 @@ import { GitHubRepository } from "../repositories/GitHubRepository";
 export class CreatePackageUseCase implements UseCase {
     constructor(
         private storageRepository: StorageRepository,
-        private githubRepository: GitHubRepository
+        private githubRepository: GitHubRepository,
+        private instanceRepository: InstanceRepository
     ) {}
 
     public async execute({ location, module, contents }: CreatePackageOptions): Promise<Package> {
+        const user = await this.instanceRepository.getUser();
         const payload: Package = {
             location,
             module: module.id,
@@ -21,7 +24,7 @@ export class CreatePackageUseCase implements UseCase {
             id: generateUid(),
             contents,
             name: `Package of ${module.name}`,
-            author: { name: "Test", email: "test@eyeseetea.com" },
+            author: user,
         };
 
         switch (location) {

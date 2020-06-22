@@ -22,6 +22,7 @@ export abstract class GenericModule implements BaseModule {
     public readonly userAccesses: SharingSetting[];
     public readonly userGroupAccesses: SharingSetting[];
     public readonly user: NamedRef;
+    public readonly created: Date;
     public readonly lastUpdated: Date;
     public readonly lastUpdatedBy: NamedRef;
     public abstract readonly type: ModuleType;
@@ -34,6 +35,7 @@ export abstract class GenericModule implements BaseModule {
         this.userAccesses = data.userAccesses;
         this.userGroupAccesses = data.userGroupAccesses;
         this.user = data.user;
+        this.created = data.created;
         this.lastUpdated = data.lastUpdated;
         this.lastUpdatedBy = data.lastUpdatedBy;
     }
@@ -66,6 +68,7 @@ export abstract class GenericModule implements BaseModule {
                 id: "unknown",
                 name: "Unknown",
             },
+            created: new Date(),
             lastUpdated: new Date(),
             lastUpdatedBy: {
                 id: "unknown",

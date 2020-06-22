@@ -1,6 +1,7 @@
 import Cryptr from "cryptr";
 import _ from "lodash";
 import { Instance, InstanceData } from "../../domain/instance/entities/Instance";
+import { User } from "../../domain/instance/entities/User";
 import { InstanceRepository } from "../../domain/instance/repositories/InstanceRepository";
 import { getDataById } from "../../models/dataStore";
 import { D2Api } from "../../types/d2-api";
@@ -10,6 +11,14 @@ const instancesDataStoreKey = "instances";
 
 export class InstanceD2ApiRepository implements InstanceRepository {
     constructor(private api: D2Api, private encryptionKey: string) {}
+
+    @cache()
+    public async getUser(): Promise<User> {
+        const user = await this.api.currentUser
+            .get({ fields: { id: true, name: true, email: true } })
+            .getData();
+        return user;
+    }
 
     public async getById(id: string): Promise<Instance> {
         const instanceData = await getDataById<InstanceData>(this.api, instancesDataStoreKey, id);
