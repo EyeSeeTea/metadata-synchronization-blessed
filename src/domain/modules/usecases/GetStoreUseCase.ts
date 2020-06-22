@@ -7,7 +7,7 @@ export class GetStoreUseCase implements UseCase {
     constructor(private storageRepository: StorageRepository) {}
 
     public async execute(): Promise<Store> {
-        return await this.storageRepository.getObject<Store>(Namespace.STORE, {
+        return await this.storageRepository.getOrCreateObject<Store>(Namespace.STORE, {
             token: "",
             account: "",
             repository: "",

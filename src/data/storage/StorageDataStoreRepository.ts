@@ -11,8 +11,13 @@ export class StorageDataStoreRepository extends StorageRepository {
         this.dataStore = this.api.dataStore(dataStoreNamespace);
     }
 
-    public async getObject<T extends object>(key: string, defaultValue: T): Promise<T> {
+    public async getObject<T extends object>(key: string): Promise<T | undefined> {
         const value = await this.dataStore.get<T>(key).getData();
+        return value;
+    }
+
+    public async getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T> {
+        const value = await this.getObject<T>(key);
         if (!value) await this.saveObject(key, defaultValue);
         return value ?? defaultValue;
     }

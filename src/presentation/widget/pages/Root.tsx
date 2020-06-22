@@ -37,7 +37,11 @@ function Root() {
         loadWidget(widget).then(setComponent);
     }, [widget]);
 
-    return Component ? <HashRouter><Component /></HashRouter> : null;
+    return Component ? (
+        <HashRouter>
+            <Component />
+        </HashRouter>
+    ) : null;
 }
 
 export default Root;

@@ -39,7 +39,7 @@ export class CreatePackageUseCase implements UseCase {
     }
 
     private async createDataStorePackage(payload: Package) {
-        await this.storageRepository.saveObjectInCollection(Namespace.PACKAGES, payload);
+        await this.storageRepository.saveObjectInCollection(Namespace.PACKAGES, payload, ["contents"]);
     }
 
     private async createGitHubPackage(_payload: Package) {
