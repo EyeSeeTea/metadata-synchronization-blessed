@@ -20,6 +20,7 @@ import { GitHubRepository } from "../domain/modules/repositories/GitHubRepositor
 import { CreatePackageUseCase } from "../domain/modules/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/modules/usecases/DeletePackageUseCase";
 import { DownloadModuleUseCase } from "../domain/modules/usecases/DownloadModuleUseCase";
+import { DownloadPackageUseCase } from "../domain/modules/usecases/DownloadPackageUseCase";
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { GetStoreUseCase } from "../domain/modules/usecases/GetStoreUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
@@ -129,11 +130,13 @@ export class CompositionRoot {
     public get packages() {
         const storage = this.get<StorageRepository>(Repository.StorageRepository);
         const github = this.get<GitHubRepository>(Repository.GitHubRepository);
+        const download = this.get<DownloadRepository>(Repository.DownloadRepository);
 
         return getExecute({
             list: new ListPackagesUseCase(storage, github),
             create: new CreatePackageUseCase(storage, github),
             delete: new DeletePackageUseCase(storage, github),
+            download: new DownloadPackageUseCase(download),
         });
     }
 

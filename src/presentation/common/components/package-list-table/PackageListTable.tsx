@@ -1,16 +1,17 @@
 import i18n from "@dhis2/d2-i18n";
+import { Icon } from "@material-ui/core";
 import {
     ObjectsTable,
     ObjectsTableDetailField,
     TableAction,
     TableColumn,
-    useSnackbar,
     useLoading,
+    useSnackbar,
 } from "d2-ui-components";
-import React, { ReactNode, useEffect, useState, useCallback } from "react";
+import _ from "lodash";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Package } from "../../../../domain/modules/entities/Package";
 import { useAppContext } from "../../contexts/AppContext";
-import _ from "lodash";
 
 type PackagesListPresentations = "app" | "widget";
 
@@ -33,16 +34,25 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const deletePackage = useCallback(
         async (ids: string[]) => {
-            const module = _.find(rows, ({ id }) => id === ids[0]);
-            if (!module) snackbar.error("Invalid module");
+            const item = _.find(rows, ({ id }) => id === ids[0]);
+            if (!item) snackbar.error("Invalid module");
             else {
                 loading.show(true, "Deleting package");
-                await compositionRoot.packages.delete(module);
+                await compositionRoot.packages.delete(item);
                 loading.reset();
                 setResetKey(Math.random());
             }
         },
         [compositionRoot, rows, snackbar, loading, setResetKey]
+    );
+
+    const downloadModule = useCallback(
+        async (ids: string[]) => {
+            const item = _.find(rows, ({ id }) => id === ids[0]);
+            if (!item) snackbar.error("Invalid module");
+            else compositionRoot.packages.download(item);
+        },
+        [compositionRoot, rows, snackbar]
     );
 
     const columns: TableColumn<Package>[] = [
@@ -69,7 +79,20 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             multiple: false,
             isActive: () => presentation === "app",
         },
-        { name: "delete", text: i18n.t("Delete"), multiple: false, onClick: deletePackage },
+        {
+            name: "delete",
+            text: i18n.t("Delete"),
+            multiple: false,
+            onClick: deletePackage,
+            icon: <Icon>delete</Icon>,
+        },
+        {
+            name: "download",
+            text: i18n.t("Download"),
+            multiple: false,
+            onClick: downloadModule,
+            icon: <Icon>cloud_download</Icon>,
+        },
     ];
 
     useEffect(() => {
