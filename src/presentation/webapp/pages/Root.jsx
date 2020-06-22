@@ -80,7 +80,10 @@ function Root() {
                     render={props => <StoreConfigPage {...props} />}
                 />
 
-                <RouteWithSession path="/modules" render={props => <ModuleListPage {...props} />} />
+                <RouteWithSession
+                    path="/:list(modules|packages)"
+                    render={props => <ModuleListPage {...props} />}
+                />
 
                 <RouteWithSession render={() => <HomePage />} />
             </Switch>

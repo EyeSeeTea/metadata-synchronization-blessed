@@ -17,6 +17,8 @@ import { MetadataRepository } from "../domain/metadata/repositories/MetadataRepo
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import { GitHubRepository } from "../domain/modules/repositories/GitHubRepository";
+import { CreatePackageUseCase } from "../domain/modules/usecases/CreatePackageUseCase";
+import { DeletePackageUseCase } from "../domain/modules/usecases/DeletePackageUseCase";
 import { DownloadModuleUseCase } from "../domain/modules/usecases/DownloadModuleUseCase";
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { GetStoreUseCase } from "../domain/modules/usecases/GetStoreUseCase";
@@ -130,6 +132,8 @@ export class CompositionRoot {
 
         return getExecute({
             list: new ListPackagesUseCase(storage, github),
+            create: new CreatePackageUseCase(storage, github),
+            delete: new DeletePackageUseCase(storage, github),
         });
     }
 

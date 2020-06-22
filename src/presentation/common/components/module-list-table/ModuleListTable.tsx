@@ -5,10 +5,11 @@ import {
     ObjectsTableDetailField,
     TableAction,
     TableColumn,
+    useLoading,
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useCallback, useEffect, useState, ReactNode } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { useAppContext } from "../../contexts/AppContext";
@@ -28,6 +29,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
 }) => {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
+    const loading = useLoading();
     const history = useHistory();
     const [rows, setRows] = useState<Module[]>([]);
 
@@ -47,6 +49,26 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             else compositionRoot.modules.download(module);
         },
         [compositionRoot, rows, snackbar]
+    );
+
+    const createPackage = useCallback(
+        async (ids: string[]) => {
+            const module = _.find(rows, ({ id }) => id === ids[0]);
+            if (!module) snackbar.error("Invalid module");
+            else {
+                loading.show(true, i18n.t("Creating package for module {{name}}", module));
+                const builder = module.toSyncBuilder();
+                const contents = await compositionRoot.sync[module.type](builder).buildPayload();
+                await compositionRoot.packages.create({
+                    location: "dataStore",
+                    module,
+                    contents,
+                });
+                loading.reset();
+                snackbar.success(i18n.t("Successfully created package"));
+            }
+        },
+        [compositionRoot, rows, snackbar, loading]
     );
 
     const replicateModule = useCallback(
@@ -113,6 +135,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             text: i18n.t("Generate package from module (Data Store)"),
             multiple: false,
             icon: <Icon>description</Icon>,
+            onClick: createPackage,
         },
         {
             name: "package-github",

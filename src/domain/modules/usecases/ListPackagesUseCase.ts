@@ -1,4 +1,5 @@
 import { UseCase } from "../../common/entities/UseCase";
+import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
 import { Package, PackageLocation } from "../entities/Package";
 import { GitHubRepository } from "../repositories/GitHubRepository";
@@ -19,7 +20,7 @@ export class ListPackagesUseCase implements UseCase {
     private async loadDataStorePackages({ locations = ["dataStore"] }: ListPackagesFilters) {
         if (!locations.includes("dataStore")) return [];
 
-        return this.storageRepository.listObjectsInCollection<Package>("packages");
+        return this.storageRepository.listObjectsInCollection<Package>(Namespace.PACKAGES);
     }
 
     private async loadGitHubPackages({ locations = ["github"] }: ListPackagesFilters) {
