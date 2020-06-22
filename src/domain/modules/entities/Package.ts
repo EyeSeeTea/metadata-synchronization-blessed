@@ -3,6 +3,8 @@ import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 
 export type PackageLocation = "github" | "dataStore";
 
+export type BasePackage = Omit<Package, "contents">;
+
 export interface Package extends NamedRef {
     location: PackageLocation;
     module: string;

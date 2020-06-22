@@ -10,7 +10,7 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import { Package } from "../../../../domain/modules/entities/Package";
+import { BasePackage } from "../../../../domain/modules/entities/Package";
 import { useAppContext } from "../../contexts/AppContext";
 
 type PackagesListPresentations = "app" | "widget";
@@ -29,33 +29,33 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const loading = useLoading();
-    const [rows, setRows] = useState<Package[]>([]);
+    const [rows, setRows] = useState<BasePackage[]>([]);
     const [resetKey, setResetKey] = useState(Math.random());
 
     const deletePackage = useCallback(
         async (ids: string[]) => {
+            loading.show(true, "Deleting package");
             const item = _.find(rows, ({ id }) => id === ids[0]);
             if (!item) snackbar.error(i18n.t("Invalid package"));
-            else {
-                loading.show(true, "Deleting package");
-                await compositionRoot.packages.delete(item);
-                loading.reset();
-                setResetKey(Math.random());
-            }
+            else await compositionRoot.packages.delete(item.location, item.id);
+            loading.reset();
+            setResetKey(Math.random());
         },
         [compositionRoot, rows, snackbar, loading, setResetKey]
     );
 
     const downloadPackage = useCallback(
         async (ids: string[]) => {
-            const item = _.find(rows, ({ id }) => id === ids[0]);
-            if (!item) snackbar.error(i18n.t("Invalid package"));
-            else compositionRoot.packages.download(item);
+            try {
+                compositionRoot.packages.download(ids[0]);
+            } catch (error) {
+                snackbar.error(i18n.t("Invalid package"));
+            }
         },
-        [compositionRoot, rows, snackbar]
+        [compositionRoot, snackbar]
     );
 
-    const columns: TableColumn<Package>[] = [
+    const columns: TableColumn<BasePackage>[] = [
         { name: "name", text: i18n.t("Name"), sortable: true },
         {
             name: "location",
@@ -71,9 +71,11 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         { name: "module", text: i18n.t("Module"), sortable: true },
     ];
 
-    const details: ObjectsTableDetailField<Package>[] = [{ name: "name", text: i18n.t("Name") }];
+    const details: ObjectsTableDetailField<BasePackage>[] = [
+        { name: "name", text: i18n.t("Name") },
+    ];
 
-    const actions: TableAction<Package>[] = [
+    const actions: TableAction<BasePackage>[] = [
         {
             name: "details",
             text: i18n.t("Details"),
@@ -101,7 +103,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     }, [compositionRoot, resetKey]);
 
     return (
-        <ObjectsTable<Package>
+        <ObjectsTable<BasePackage>
             rows={rows}
             columns={columns}
             details={details}

@@ -140,7 +140,7 @@ export class CompositionRoot {
             list: new ListPackagesUseCase(storage, github),
             create: new CreatePackageUseCase(storage, github, instance),
             delete: new DeletePackageUseCase(storage, github),
-            download: new DownloadPackageUseCase(download),
+            download: new DownloadPackageUseCase(storage, download),
         });
     }
 

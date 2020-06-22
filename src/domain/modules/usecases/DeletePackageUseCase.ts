@@ -1,7 +1,7 @@
 import { UseCase } from "../../common/entities/UseCase";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
-import { Package } from "../entities/Package";
+import { PackageLocation } from "../entities/Package";
 import { GitHubRepository } from "../repositories/GitHubRepository";
 
 export class DeletePackageUseCase implements UseCase {
@@ -10,7 +10,7 @@ export class DeletePackageUseCase implements UseCase {
         private githubRepository: GitHubRepository
     ) {}
 
-    public async execute({ location, id }: Package): Promise<Boolean> {
+    public async execute(location: PackageLocation, id: string): Promise<Boolean> {
         try {
             switch (location) {
                 case "dataStore":
