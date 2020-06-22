@@ -21,7 +21,7 @@ export class SaveModuleUseCase implements UseCase {
                 lastUpdatedBy: user,
                 user: module.user.id ? module.user : user,
             });
-            
+
             await this.storageRepository.saveObjectInCollection<Module>(
                 Namespace.MODULES,
                 newModule
