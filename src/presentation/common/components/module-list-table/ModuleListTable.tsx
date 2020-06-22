@@ -104,7 +104,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             name: "details",
             text: i18n.t("Details"),
             multiple: false,
-            isActive: () => presentation === "app",
+            primary: presentation !== "app",
         },
         {
             name: "edit",

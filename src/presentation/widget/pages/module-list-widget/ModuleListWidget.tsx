@@ -25,9 +25,9 @@ export const ModuleListWidget: React.FC = React.memo(() => {
 
     return (
         <React.Fragment>
-            {tableOption === "modules" && <ModulesListTable externalComponents={filters} />}
+            {tableOption === "modules" && <ModulesListTable externalComponents={filters} presentation={"widget"} />}
 
-            {tableOption === "packages" && <PackagesListTable externalComponents={filters} />}
+            {tableOption === "packages" && <PackagesListTable externalComponents={filters} presentation={"widget"} />}
         </React.Fragment>
     );
 });
