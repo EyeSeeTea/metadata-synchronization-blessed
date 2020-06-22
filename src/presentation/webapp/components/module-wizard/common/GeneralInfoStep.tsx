@@ -39,6 +39,18 @@ export const GeneralInfoStep = ({ module, onChange }: ModuleWizardStepProps) => 
             <TextField
                 className={classes.row}
                 fullWidth={true}
+                label={i18n.t("Department")}
+                value={module.department ?? ""}
+                onChange={onChangeField("department")}
+                error={!!errors["department"]}
+                helperText={errors["department"]?.description}
+            />
+
+            <TextField
+                className={classes.row}
+                fullWidth={true}
+                multiline={true}
+                rows={4}
                 label={i18n.t("Description")}
                 value={module.description ?? ""}
                 onChange={onChangeField("description")}

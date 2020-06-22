@@ -101,7 +101,8 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
 
     const columns: TableColumn<Module>[] = [
         { name: "name", text: i18n.t("Name"), sortable: true },
-        { name: "description", text: i18n.t("Description"), sortable: true },
+        { name: "department", text: i18n.t("Department"), sortable: true },
+        { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
         {
             name: "metadataIds",
             text: "Selected metadata",
@@ -111,7 +112,13 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
 
     const details: ObjectsTableDetailField<Module>[] = [
         { name: "name", text: i18n.t("Name") },
+        { name: "department", text: i18n.t("Department") },
         { name: "description", text: i18n.t("Description") },
+        {
+            name: "metadataIds",
+            text: "Selected metadata",
+            getValue: module => `${module.metadataIds.length} elements`,
+        },
     ];
 
     const actions: TableAction<Module>[] = [

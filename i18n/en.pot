@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-22T09:22:54.333Z\n"
-"PO-Revision-Date: 2020-06-22T09:22:54.333Z\n"
+"POT-Creation-Date: 2020-06-22T09:31:38.918Z\n"
+"PO-Revision-Date: 2020-06-22T09:31:38.918Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -51,6 +51,9 @@ msgid "Successfully created package"
 msgstr ""
 
 msgid "Name"
+msgstr ""
+
+msgid "Department"
 msgstr ""
 
 msgid "Description"
@@ -341,6 +344,9 @@ msgstr ""
 msgid "Include Exclude Selection"
 msgstr ""
 
+msgid "Advanced options"
+msgstr ""
+
 msgid "Name (*)"
 msgstr ""
 
@@ -420,9 +426,6 @@ msgid "Enter names"
 msgstr ""
 
 msgid "Synchronize"
-msgstr ""
-
-msgid "Advanced options"
 msgstr ""
 
 msgid "Create and update"

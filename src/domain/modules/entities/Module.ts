@@ -11,6 +11,7 @@ export type ModuleType = "metadata";
 
 export interface BaseModule extends SharedObject {
     description: string;
+    department: string;
     type: ModuleType;
 }
 
@@ -18,6 +19,7 @@ export abstract class GenericModule implements BaseModule {
     public readonly id: string;
     public readonly name: string;
     public readonly description: string;
+    public readonly department: string;
     public readonly publicAccess: string;
     public readonly userAccesses: SharingSetting[];
     public readonly userGroupAccesses: SharingSetting[];
@@ -31,6 +33,7 @@ export abstract class GenericModule implements BaseModule {
         this.id = data.id;
         this.name = data.name;
         this.description = data.description;
+        this.department = data.department;
         this.publicAccess = data.publicAccess;
         this.userAccesses = data.userAccesses;
         this.userGroupAccesses = data.userGroupAccesses;
@@ -60,19 +63,20 @@ export abstract class GenericModule implements BaseModule {
             id: generateUid(),
             name: "",
             description: "",
+            department: "",
             type: "metadata",
             publicAccess: "--------",
             userAccesses: [],
             userGroupAccesses: [],
             user: {
-                id: "unknown",
-                name: "Unknown",
+                id: "",
+                name: "",
             },
             created: new Date(),
             lastUpdated: new Date(),
             lastUpdatedBy: {
-                id: "unknown",
-                name: "Unknown",
+                id: "",
+                name: "",
             },
         };
     };
