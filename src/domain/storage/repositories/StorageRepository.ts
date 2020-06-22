@@ -20,7 +20,7 @@ export abstract class StorageRepository {
         const baseElement = _.find(rawData, element => element.id === id);
         if (!baseElement) return undefined;
 
-        const advancedElement = this.getObject(`${key}-${id}`) ?? {};
+        const advancedElement = (await this.getObject(`${key}-${id}`)) ?? {};
         return { ...baseElement, ...advancedElement } as T;
     }
 

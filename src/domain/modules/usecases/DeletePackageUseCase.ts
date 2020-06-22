@@ -10,7 +10,7 @@ export class DeletePackageUseCase implements UseCase {
         private githubRepository: GitHubRepository
     ) {}
 
-    public async execute(location: PackageLocation, id: string): Promise<Boolean> {
+    public async execute(location: PackageLocation, id: string): Promise<boolean> {
         try {
             switch (location) {
                 case "dataStore":

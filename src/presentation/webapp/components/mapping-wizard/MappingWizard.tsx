@@ -60,7 +60,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     };
 
     const steps: MappingWizardStep[] =
-        prepareSteps(type, element).map(({ models, isVisible, ...step }) => ({
+        prepareSteps(type, element).map(({ models, ...step }) => ({
             ...step,
             props: {
                 models,

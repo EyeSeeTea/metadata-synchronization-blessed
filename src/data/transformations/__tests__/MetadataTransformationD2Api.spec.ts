@@ -259,7 +259,7 @@ describe("Metadata transformations - D2Api", () => {
 
 export {};
 
-function givenAMetadataPackage(nameField: string = "name"): MetadataPackage {
+function givenAMetadataPackage(nameField = "name"): MetadataPackage {
     const metadataPackage = {
         userRoles: [
             {

@@ -5,7 +5,7 @@ import { StorageRepository } from "../../storage/repositories/StorageRepository"
 export class DeleteModuleUseCase implements UseCase {
     constructor(private storageRepository: StorageRepository) {}
 
-    public async execute(id: string): Promise<Boolean> {
+    public async execute(id: string): Promise<boolean> {
         try {
             await this.storageRepository.removeObjectInCollection(Namespace.MODULES, id);
         } catch (error) {

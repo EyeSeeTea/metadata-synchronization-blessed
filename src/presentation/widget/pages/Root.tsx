@@ -18,14 +18,16 @@ function useWidget(): { dashboardItemId: string; userOrgUnits: string[]; widget:
 
 const loadWidget = async (widget: string): Promise<Function> => {
     switch (widget) {
-        case "modules-list":
+        case "modules-list": {
             const { ModuleListWidget } = await import("./module-list-widget/ModuleListWidget");
             return ModuleListWidget;
-        default:
+        }
+        default: {
             return () => {
                 const { dashboardItemId } = useWidget();
                 return () => <p>{`Hello World, I'm dashboard item ${dashboardItemId}!`}</p>;
             };
+        }
     }
 };
 

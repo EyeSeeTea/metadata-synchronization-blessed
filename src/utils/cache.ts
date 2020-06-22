@@ -1,3 +1,5 @@
+import { Dictionary } from "../types/utils";
+
 type ArgumentsCache = Map<string, unknown>;
 type FunctionCache = Map<unknown, ArgumentsCache>;
 type MethodCache = Map<Function, FunctionCache>;
@@ -57,7 +59,7 @@ export function memoize<Obj extends object | void, Args extends any[], U>(
 }
 
 // Function to clear memoized storage
-export const clear = (fn: Function, instance?: Object) => {
+export const clear = (fn: Function, instance?: Dictionary<PropertyDescriptor>) => {
     // Clear method entries
     const methodEntries = methodCache.get(fn);
     if (methodEntries) methodEntries?.get(instance)?.clear();

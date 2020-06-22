@@ -55,7 +55,7 @@
     "build-webapp": "yarn build && yarn manifest && rm -f $npm_package_name.zip && cd build && zip -r ../$npm_package_name.zip *",
     "build-widget": "REACT_APP_DASHBOARD_WIDGET=true yarn build && yarn manifest-widget && rm -f $npm_package_name-widget.zip && cd build && zip -r ../$npm_package_name-widget.zip *",
     "test": "jest",
-    "lint": "eslint src cypress",
+    "lint": "eslint \"{src,cypress}/**/*.{js,jsx,ts,tsx}\"",
     "eject": "react-scripts eject",
     "prettify": "prettier \"{src,config,cypress}/**/*.{js,jsx,ts,tsx,json,css}\" --write",
     "extract-pot": "d2-i18n-extract -p src/ -o i18n/",
