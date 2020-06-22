@@ -1,7 +1,7 @@
 html {
     background-color: #f3f3f3;
     font-family: Roboto, Arial, sans-serif;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 body {
