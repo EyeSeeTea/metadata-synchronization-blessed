@@ -28,10 +28,6 @@ export const SummaryStep = ({ module, onCancel, onClose }: ModuleWizardStepProps
         setIsSaving(false);
     };
 
-    const downloadJSON = () => {
-        compositionRoot.modules.download(module);
-    };
-
     return (
         <React.Fragment>
             <ul>{getEntries(module).map(LiEntry)}</ul>
@@ -43,11 +39,6 @@ export const SummaryStep = ({ module, onCancel, onClose }: ModuleWizardStepProps
                     </Button>
                     <Button className={classes.saveButton} onClick={save} variant="contained">
                         {i18n.t("Save")}
-                    </Button>
-                </div>
-                <div>
-                    <Button onClick={downloadJSON} variant="contained">
-                        {i18n.t("Download JSON")}
                     </Button>
                 </div>
             </div>
