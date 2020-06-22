@@ -32,36 +32,37 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     const loading = useLoading();
     const history = useHistory();
     const [rows, setRows] = useState<Module[]>([]);
+    const [resetKey, setResetKey] = useState(Math.random());
 
     const editRule = useCallback(
         (ids: string[]) => {
-            const module = _.find(rows, ({ id }) => id === ids[0]);
-            if (!module) snackbar.error("Invalid module");
-            else history.push({ pathname: `/modules/edit`, state: { module } });
+            const item = _.find(rows, ({ id }) => id === ids[0]);
+            if (!item) snackbar.error(i18n.t("Invalid module"));
+            else history.push({ pathname: `/modules/edit`, state: { module: item } });
         },
         [rows, history, snackbar]
     );
 
     const downloadModule = useCallback(
         async (ids: string[]) => {
-            const module = _.find(rows, ({ id }) => id === ids[0]);
-            if (!module) snackbar.error("Invalid module");
-            else compositionRoot.modules.download(module);
+            const item = _.find(rows, ({ id }) => id === ids[0]);
+            if (!item) snackbar.error(i18n.t("Invalid module"));
+            else compositionRoot.modules.download(item);
         },
         [compositionRoot, rows, snackbar]
     );
 
     const createPackage = useCallback(
         async (ids: string[]) => {
-            const module = _.find(rows, ({ id }) => id === ids[0]);
-            if (!module) snackbar.error("Invalid module");
+            const item = _.find(rows, ({ id }) => id === ids[0]);
+            if (!item) snackbar.error(i18n.t("Invalid module"));
             else {
-                loading.show(true, i18n.t("Creating package for module {{name}}", module));
-                const builder = module.toSyncBuilder();
-                const contents = await compositionRoot.sync[module.type](builder).buildPayload();
+                loading.show(true, i18n.t("Creating package for module {{name}}", item));
+                const builder = item.toSyncBuilder();
+                const contents = await compositionRoot.sync[item.type](builder).buildPayload();
                 await compositionRoot.packages.create({
                     location: "dataStore",
-                    module,
+                    module: item,
                     contents,
                 });
                 loading.reset();
@@ -73,15 +74,29 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
 
     const replicateModule = useCallback(
         async (ids: string[]) => {
-            const module = _.find(rows, ({ id }) => id === ids[0]);
-            if (!module) snackbar.error("Invalid module");
+            const item = _.find(rows, ({ id }) => id === ids[0]);
+            if (!item) snackbar.error(i18n.t("Invalid module"));
             else
                 history.push({
                     pathname: `/modules/new`,
-                    state: { module: module.replicate() },
+                    state: { module: item.replicate() },
                 });
         },
         [history, rows, snackbar]
+    );
+
+    const deleteModule = useCallback(
+        async (ids: string[]) => {
+            const item = _.find(rows, ({ id }) => id === ids[0]);
+            if (!item) snackbar.error(i18n.t("Invalid module"));
+            else {
+                loading.show(true, "Deleting package");
+                await compositionRoot.modules.delete(item.id);
+                loading.reset();
+                setResetKey(Math.random());
+            }
+        },
+        [compositionRoot, rows, snackbar, loading, setResetKey]
     );
 
     const columns: TableColumn<Module>[] = [
@@ -116,6 +131,13 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             icon: <Icon>edit</Icon>,
         },
         {
+            name: "delete",
+            text: i18n.t("Delete"),
+            multiple: false,
+            onClick: deleteModule,
+            icon: <Icon>delete</Icon>,
+        },
+        {
             name: "replicate",
             text: i18n.t("Replicate"),
             multiple: false,
@@ -147,7 +169,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
 
     useEffect(() => {
         compositionRoot.modules.list().then(setRows);
-    }, [compositionRoot]);
+    }, [compositionRoot, resetKey]);
 
     return (
         <ObjectsTable<Module>

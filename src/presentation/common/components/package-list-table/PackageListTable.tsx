@@ -35,7 +35,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const deletePackage = useCallback(
         async (ids: string[]) => {
             const item = _.find(rows, ({ id }) => id === ids[0]);
-            if (!item) snackbar.error("Invalid module");
+            if (!item) snackbar.error(i18n.t("Invalid package"));
             else {
                 loading.show(true, "Deleting package");
                 await compositionRoot.packages.delete(item);
@@ -46,10 +46,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         [compositionRoot, rows, snackbar, loading, setResetKey]
     );
 
-    const downloadModule = useCallback(
+    const downloadPackage = useCallback(
         async (ids: string[]) => {
             const item = _.find(rows, ({ id }) => id === ids[0]);
-            if (!item) snackbar.error("Invalid module");
+            if (!item) snackbar.error(i18n.t("Invalid package"));
             else compositionRoot.packages.download(item);
         },
         [compositionRoot, rows, snackbar]
@@ -90,7 +90,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             name: "download",
             text: i18n.t("Download"),
             multiple: false,
-            onClick: downloadModule,
+            onClick: downloadPackage,
             icon: <Icon>cloud_download</Icon>,
         },
     ];

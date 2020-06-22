@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-22T05:27:04.518Z\n"
-"PO-Revision-Date: 2020-06-22T05:27:04.518Z\n"
+"POT-Creation-Date: 2020-06-22T08:15:31.093Z\n"
+"PO-Revision-Date: 2020-06-22T08:15:31.093Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -41,6 +41,9 @@ msgstr ""
 msgid "Network error {{error}}, check if server is up and CORS is enabled"
 msgstr ""
 
+msgid "Invalid module"
+msgstr ""
+
 msgid "Creating package for module {{name}}"
 msgstr ""
 
@@ -59,6 +62,9 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
+msgid "Delete"
+msgstr ""
+
 msgid "Replicate"
 msgstr ""
 
@@ -69,6 +75,9 @@ msgid "Generate package from module (Data Store)"
 msgstr ""
 
 msgid "Generate package from module (GitHub)"
+msgstr ""
+
+msgid "Invalid package"
 msgstr ""
 
 msgid "Location"
@@ -84,9 +93,6 @@ msgid "Unknown"
 msgstr ""
 
 msgid "Module"
-msgstr ""
-
-msgid "Delete"
 msgstr ""
 
 msgid "MetaData Synchronization"
