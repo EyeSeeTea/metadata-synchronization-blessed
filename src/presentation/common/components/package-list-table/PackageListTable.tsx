@@ -72,7 +72,19 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     ];
 
     const details: ObjectsTableDetailField<BasePackage>[] = [
+        { name: "id", text: i18n.t("ID") },
         { name: "name", text: i18n.t("Name") },
+        {
+            name: "location",
+            text: i18n.t("Location"),
+            getValue: ({ location }) => {
+                if (location === "dataStore") return i18n.t("Data Store");
+                else if (location === "github") return i18n.t("GitHub");
+                else return i18n.t("Unknown");
+            },
+        },
+        { name: "version", text: i18n.t("DHIS2 Version") },
+        { name: "module", text: i18n.t("Module") },
     ];
 
     const actions: TableAction<BasePackage>[] = [
