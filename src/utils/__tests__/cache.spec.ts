@@ -22,6 +22,11 @@ class TestClass {
         return Math.random() * this.multiplier * int1 * int2;
     }
 
+    @cache({ maxArgs: 0 })
+    public getComplexMax(int: number): number {
+        return Math.random() * this.multiplier * int;
+    }
+
     public resetBasic(): void {
         clear(this.getBasic, this);
     }
@@ -141,6 +146,10 @@ describe("Cache decorator with clearing", () => {
         const test1 = new TestClass(100);
         const test2 = new TestClass(100);
         expect(test1.getComplex(10)).not.toEqual(test2.getComplex(10));
+    });
+
+    it("max args - should be the same number", () => {
+        expect(test.getComplexMax(100)).toEqual(test.getComplexMax(200));
     });
 });
 

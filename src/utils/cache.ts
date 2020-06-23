@@ -8,8 +8,12 @@ type MethodCache = Map<Function, FunctionCache>;
 const methodCache: MethodCache = new Map();
 const functionCache: FunctionCache = new Map();
 
+interface CacheOptions {
+    maxArgs?: number;
+}
+
 // Decorator to cache class properties and methods
-export const cache = () =>
+export const cache = (options: CacheOptions = {}): any =>
     function(_target: unknown, _key: string | symbol, descriptor: PropertyDescriptor) {
         const prop = descriptor.value ? "value" : "get";
         const originalFunction = descriptor[prop];
@@ -17,7 +21,9 @@ export const cache = () =>
 
         descriptor[prop] = function(...args: unknown[]) {
             // Serialize arguments to build a key
-            const key = JSON.stringify(args);
+            const { maxArgs = args.length } = options;
+            const position = Math.max(0, maxArgs);
+            const key = JSON.stringify(args.slice(0, position));
 
             // Create a new map if it's the first time the instance has been cached
             if (!map.has(this)) map.set(this, new Map());
@@ -59,7 +65,7 @@ export function memoize<Obj extends object | void, Args extends any[], U>(
 }
 
 // Function to clear memoized storage
-export const clear = (fn: Function, instance?: Dictionary<PropertyDescriptor>) => {
+export const clear = (fn: Function, instance?: Dictionary<any>) => {
     // Clear method entries
     const methodEntries = methodCache.get(fn);
     if (methodEntries) methodEntries?.get(instance)?.clear();
