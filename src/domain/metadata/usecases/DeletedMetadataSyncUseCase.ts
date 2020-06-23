@@ -28,11 +28,7 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
         return {};
     });
 
-    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
-        //TODO: remove instance from abstract method in base base class
-        // when aggregated and events does not use
-        console.log(instance.url);
-
+    public async postPayload(_instance: Instance, instanceEntity: InstanceEntity) {
         const { metadataIds, syncParams = {} } = this.builder;
 
         const payloadPackage = await this.metadataRepository.getMetadataFieldsByIds<Ref>(

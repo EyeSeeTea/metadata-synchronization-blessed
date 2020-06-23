@@ -129,13 +129,9 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     });
 
     public async postPayload(
-        instance: Instance,
+        _instance: Instance,
         instanceEntity: InstanceEntity
     ): Promise<SynchronizationResult[]> {
-        //TODO: remove instance from abstract method in base base class
-        // when aggregated and events does not use
-        console.log(instance.url);
-
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();

@@ -63,10 +63,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             else {
                 loading.show(true, i18n.t("Creating package for module {{name}}", item));
                 const builder = item.toSyncBuilder();
-                const contents = await compositionRoot
-                    .sync(instance)
-                    [item.type](builder)
-                    .buildPayload();
+                const contents = await compositionRoot.sync[item.type](builder).buildPayload();
 
                 await compositionRoot.packages(instance).create({
                     location: "dataStore",

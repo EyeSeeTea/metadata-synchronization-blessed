@@ -17,13 +17,13 @@ export const ModuleListPage: React.FC = () => {
     const { list: tableOption = "modules" } = useParams<{ list: "modules" | "packages" }>();
     const title = buildTitle(tableOption);
 
-    const backHome = () => {
+    const backHome = useCallback(() => {
         history.push("/");
-    };
+    }, [history]);
 
-    const createModule = () => {
+    const createModule = useCallback(() => {
         history.push(`/modules/new`);
-    };
+    }, [history]);
 
     const setTableOption = useCallback(
         (option: string) => {
@@ -78,7 +78,7 @@ export const ModuleListPage: React.FC = () => {
             {tableOption === "modules" && (
                 <ModulesListTable
                     externalComponents={filters}
-                    onActionButtonClick={createModule}
+                    onActionButtonClick={!selectedInstance ? createModule : undefined}
                     instance={selectedInstance}
                 />
             )}

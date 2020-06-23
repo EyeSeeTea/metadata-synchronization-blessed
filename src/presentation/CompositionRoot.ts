@@ -47,19 +47,19 @@ export class CompositionRoot {
     constructor(private instance: Instance, private d2: D2, private encryptionKey: string) {}
 
     @cache()
-    public sync(instance = this.instance) {
-        const instanceRepository = new InstanceD2ApiRepository(instance, this.encryptionKey);
+    public get sync() {
+        const instanceRepository = new InstanceD2ApiRepository(this.instance, this.encryptionKey);
         const transformation = new TransformationD2ApiRepository();
-        const aggregated = new AggregatedD2ApiRepository(instance);
-        const events = new EventsD2ApiRepository(instance);
-        const metadata = new MetadataD2ApiRepository(instance, transformation);
+        const aggregated = new AggregatedD2ApiRepository(this.instance);
+        const events = new EventsD2ApiRepository(this.instance);
+        const metadata = new MetadataD2ApiRepository(this.instance, transformation);
 
         // TODO: Sync builder should be part of an execute method
         return {
             aggregated: (builder: SynchronizationBuilder) =>
                 new AggregatedSyncUseCase(
                     this.d2,
-                    instance,
+                    this.instance,
                     builder,
                     instanceRepository,
                     aggregated,
@@ -68,7 +68,7 @@ export class CompositionRoot {
             events: (builder: SynchronizationBuilder) =>
                 new EventsSyncUseCase(
                     this.d2,
-                    instance,
+                    this.instance,
                     builder,
                     instanceRepository,
                     events,
@@ -76,11 +76,17 @@ export class CompositionRoot {
                     transformation
                 ),
             metadata: (builder: SynchronizationBuilder) =>
-                new MetadataSyncUseCase(this.d2, instance, builder, instanceRepository, metadata),
+                new MetadataSyncUseCase(
+                    this.d2,
+                    this.instance,
+                    builder,
+                    instanceRepository,
+                    metadata
+                ),
             deleted: (builder: SynchronizationBuilder) =>
                 new DeletedMetadataSyncUseCase(
                     this.d2,
-                    instance,
+                    this.instance,
                     builder,
                     instanceRepository,
                     metadata
@@ -89,9 +95,9 @@ export class CompositionRoot {
     }
 
     @cache()
-    public store(instance = this.instance) {
+    public store() {
         const github = new GitHubOctokitRepository();
-        const storage = new StorageDataStoreRepository(instance);
+        const storage = new StorageDataStoreRepository(this.instance);
 
         return getExecute({
             get: new GetStoreUseCase(storage),
@@ -101,11 +107,10 @@ export class CompositionRoot {
     }
 
     @cache()
-    public modules(instance = this.instance) {
-        console.log(instance);
-        const storage = new StorageDataStoreRepository(instance);
+    public modules(remoteInstance = this.instance) {
+        const storage = new StorageDataStoreRepository(remoteInstance);
         const download = new DownloadWebRepository();
-        const instanceRepository = new InstanceD2ApiRepository(instance, this.encryptionKey);
+        const instanceRepository = new InstanceD2ApiRepository(this.instance, this.encryptionKey);
 
         return getExecute({
             list: new ListModulesUseCase(storage),
@@ -117,11 +122,11 @@ export class CompositionRoot {
     }
 
     @cache()
-    public packages(instance = this.instance) {
-        const storage = new StorageDataStoreRepository(instance);
+    public packages(remoteInstance = this.instance) {
+        const storage = new StorageDataStoreRepository(remoteInstance);
         const github = new GitHubOctokitRepository();
         const download = new DownloadWebRepository();
-        const instanceRepository = new InstanceD2ApiRepository(instance, this.encryptionKey);
+        const instanceRepository = new InstanceD2ApiRepository(this.instance, this.encryptionKey);
 
         return getExecute({
             list: new ListPackagesUseCase(storage, github),
@@ -141,8 +146,8 @@ export class CompositionRoot {
     }
 
     @cache()
-    public instances(instance = this.instance) {
-        const storage = new StorageDataStoreRepository(instance);
+    public instances() {
+        const storage = new StorageDataStoreRepository(this.instance);
 
         return getExecute({
             list: new ListInstancesUseCase(storage, this.encryptionKey),
@@ -150,8 +155,8 @@ export class CompositionRoot {
     }
 
     @cache()
-    public events(instance = this.instance) {
-        const events = new EventsD2ApiRepository(instance);
+    public events() {
+        const events = new EventsD2ApiRepository(this.instance);
 
         return getExecute({
             list: new ListEventsUseCase(events),
