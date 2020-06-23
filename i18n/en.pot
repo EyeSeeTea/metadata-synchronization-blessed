@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-22T15:28:36.089Z\n"
-"PO-Revision-Date: 2020-06-22T15:28:36.089Z\n"
+"POT-Creation-Date: 2020-06-22T16:27:58.904Z\n"
+"PO-Revision-Date: 2020-06-22T16:27:58.904Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -99,9 +99,6 @@ msgid "Module"
 msgstr ""
 
 msgid "ID"
-msgstr ""
-
-msgid "This instance"
 msgstr ""
 
 msgid "Download"
@@ -1038,13 +1035,13 @@ msgstr ""
 msgid "Global mapping"
 msgstr ""
 
-msgid "Packages"
-msgstr ""
-
 msgid "Instance"
 msgstr ""
 
 msgid "Modules"
+msgstr ""
+
+msgid "Packages"
 msgstr ""
 
 msgid "View"

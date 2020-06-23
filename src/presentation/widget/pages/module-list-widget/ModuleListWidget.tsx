@@ -12,9 +12,7 @@ export const ModuleListWidget: React.FC = React.memo(() => {
         () => (
             <React.Fragment>
                 <Dropdown
-                    items={[
-                        { id: "local", name: i18n.t("Local instance") },
-                    ]}
+                    items={[{ id: "local", name: i18n.t("Local instance") }]}
                     value={"local"}
                     onValueChange={_.noop}
                     label={i18n.t("Instance")}
