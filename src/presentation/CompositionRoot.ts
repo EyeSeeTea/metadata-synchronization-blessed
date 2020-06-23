@@ -7,16 +7,12 @@ import { GitHubOctokitRepository } from "../data/modules/GitHubOctokitRepository
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StorageDataStoreRepository } from "../data/storage/StorageDataStoreRepository";
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
-import { AggregatedRepository } from "../domain/aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
-import { EventsRepository } from "../domain/events/repositories/EventsRepository";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
-import { InstanceRepository } from "../domain/instance/repositories/InstanceRepository";
-import { MetadataRepository } from "../domain/metadata/repositories/MetadataRepository";
+import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
-import { GitHubRepository } from "../domain/modules/repositories/GitHubRepository";
 import { CreatePackageUseCase } from "../domain/modules/usecases/CreatePackageUseCase";
 import { DeleteModuleUseCase } from "../domain/modules/usecases/DeleteModuleUseCase";
 import { DeletePackageUseCase } from "../domain/modules/usecases/DeletePackageUseCase";
@@ -29,10 +25,7 @@ import { ListPackagesUseCase } from "../domain/modules/usecases/ListPackagesUseC
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
 import { SaveStoreUseCase } from "../domain/modules/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/modules/usecases/ValidateStoreUseCase";
-import { DownloadRepository } from "../domain/storage/repositories/DownloadRepository";
-import { StorageRepository } from "../domain/storage/repositories/StorageRepository";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
-import { TransformationRepository } from "../domain/transformations/repositories/TransformationRepository";
 import { D2 } from "../types/d2";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
@@ -49,30 +42,16 @@ export const Repository = {
 };
 
 export class CompositionRoot {
-    private dependencies = new Map();
-
     // TODO: Remove d2 and d2Api explicit calls so we do not have to expose them
-    constructor(private d2Api: D2Api, private d2: D2, private encryptionKey: string) {
-        this.initializeWebApp();
-    }
-
-    public get<T>(key: PropertyKey): T {
-        return this.dependencies.get(key);
-    }
-
-    public bind<T>(key: PropertyKey, value: T) {
-        this.dependencies.set(key, value);
-    }
+    constructor(private d2Api: D2Api, private d2: D2, private encryptionKey: string) {}
 
     @cache()
     public get sync() {
-        const instance = this.get<InstanceRepository>(Repository.InstanceRepository);
-        const aggregated = this.get<AggregatedRepository>(Repository.AggregatedRepository);
-        const events = this.get<EventsRepository>(Repository.EventsRepository);
-        const metadata = this.get<MetadataRepository>(Repository.MetadataRepository);
-        const transformation = this.get<TransformationRepository>(
-            Repository.TransformationRepository
-        );
+        const instance = new InstanceD2ApiRepository(this.d2Api, this.encryptionKey);
+        const transformation = new TransformationD2ApiRepository();
+        const aggregated = new AggregatedD2ApiRepository(this.d2Api);
+        const events = new EventsD2ApiRepository(this.d2Api);
+        const metadata = new MetadataD2ApiRepository(this.d2Api, transformation);
 
         // TODO: Sync builder should be part of an execute method
         return {
@@ -104,8 +83,8 @@ export class CompositionRoot {
 
     @cache()
     public get store() {
-        const github = this.get<GitHubRepository>(Repository.GitHubRepository);
-        const storage = this.get<StorageRepository>(Repository.StorageRepository);
+        const github = new GitHubOctokitRepository();
+        const storage = new StorageDataStoreRepository(this.d2Api);
 
         return getExecute({
             get: new GetStoreUseCase(storage),
@@ -116,9 +95,9 @@ export class CompositionRoot {
 
     @cache()
     public get modules() {
-        const storage = this.get<StorageRepository>(Repository.StorageRepository);
-        const download = this.get<DownloadRepository>(Repository.DownloadRepository);
-        const instance = this.get<InstanceRepository>(Repository.InstanceRepository);
+        const storage = new StorageDataStoreRepository(this.d2Api);
+        const download = new DownloadWebRepository();
+        const instance = new InstanceD2ApiRepository(this.d2Api, this.encryptionKey);
 
         return getExecute({
             list: new ListModulesUseCase(storage),
@@ -131,10 +110,10 @@ export class CompositionRoot {
 
     @cache()
     public get packages() {
-        const storage = this.get<StorageRepository>(Repository.StorageRepository);
-        const github = this.get<GitHubRepository>(Repository.GitHubRepository);
-        const download = this.get<DownloadRepository>(Repository.DownloadRepository);
-        const instance = this.get<InstanceRepository>(Repository.InstanceRepository);
+        const storage = new StorageDataStoreRepository(this.d2Api);
+        const github = new GitHubOctokitRepository();
+        const download = new DownloadWebRepository();
+        const instance = new InstanceD2ApiRepository(this.d2Api, this.encryptionKey);
 
         return getExecute({
             list: new ListPackagesUseCase(storage, github),
@@ -146,32 +125,20 @@ export class CompositionRoot {
 
     @cache()
     public get storage() {
-        const download = this.get<DownloadRepository>(Repository.DownloadRepository);
+        const download = new DownloadWebRepository();
 
         return getExecute({
             downloadFile: new DownloadFileUseCase(download),
         });
     }
 
-    private initializeWebApp() {
-        const storage = new StorageDataStoreRepository(this.d2Api);
-        const download = new DownloadWebRepository();
-        const instance = new InstanceD2ApiRepository(this.d2Api, this.encryptionKey);
-        const transformation = new TransformationD2ApiRepository();
-        this.bind(Repository.StorageRepository, storage);
-        this.bind(Repository.DownloadRepository, download);
-        this.bind(Repository.InstanceRepository, instance);
-        this.bind(Repository.TransformationRepository, transformation);
-
-        const aggregated = new AggregatedD2ApiRepository(this.d2Api);
+    @cache()
+    public get events() {
         const events = new EventsD2ApiRepository(this.d2Api);
-        const metadata = new MetadataD2ApiRepository(this.d2Api, transformation);
-        this.bind(Repository.AggregatedRepository, aggregated);
-        this.bind(Repository.EventsRepository, events);
-        this.bind(Repository.MetadataRepository, metadata);
 
-        const github = new GitHubOctokitRepository();
-        this.bind(Repository.GitHubRepository, github);
+        return getExecute({
+            list: new ListEventsUseCase(events),
+        });
     }
 }
 
