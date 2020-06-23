@@ -18,6 +18,7 @@ module.exports = {
         "no-unused-expressions": "off",
         "no-useless-concat": "off",
         "no-useless-constructor": "off",
+        "no-unexpected-multiline": "off",
         "default-case": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/no-explicit-any": "off",
