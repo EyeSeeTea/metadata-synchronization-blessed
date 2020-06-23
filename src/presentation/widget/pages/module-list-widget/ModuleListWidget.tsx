@@ -1,22 +1,33 @@
 import i18n from "@dhis2/d2-i18n";
-import _ from "lodash";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import { ModulesListTable } from "../../../common/components/module-list-table/ModuleListTable";
 import { PackagesListTable } from "../../../common/components/package-list-table/PackageListTable";
+import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 
 export const ModuleListWidget: React.FC = React.memo(() => {
+    const { compositionRoot } = useAppContext();
     const [tableOption, setTableOption] = useState<string>("modules");
+    const [instances, setInstances] = useState<Instance[]>([]);
+    const [selectedInstance, setSelectedInstance] = useState<Instance>();
+
+    const updateSelectedInstance = useCallback(
+        (id: string) => {
+            setSelectedInstance(instances.find(instance => instance.id === id));
+        },
+        [instances]
+    );
 
     const filters = useMemo(
         () => (
             <React.Fragment>
                 <Dropdown
-                    items={[{ id: "local", name: i18n.t("Local instance") }]}
-                    value={"local"}
-                    onValueChange={_.noop}
+                    items={instances}
+                    value={selectedInstance?.id ?? ""}
+                    onValueChange={updateSelectedInstance}
                     label={i18n.t("Instance")}
-                    hideEmpty={true}
+                    emptyLabel={i18n.t("This instance")}
                 />
                 <Dropdown
                     items={[
@@ -30,18 +41,19 @@ export const ModuleListWidget: React.FC = React.memo(() => {
                 />
             </React.Fragment>
         ),
-        [tableOption, setTableOption]
+        [tableOption, setTableOption, instances, selectedInstance, updateSelectedInstance]
     );
 
-    return (
-        <React.Fragment>
-            {tableOption === "modules" && (
-                <ModulesListTable externalComponents={filters} presentation={"widget"} />
-            )}
+    useEffect(() => {
+        compositionRoot
+            .instances()
+            .list()
+            .then(setInstances);
+    }, [compositionRoot]);
 
-            {tableOption === "packages" && (
-                <PackagesListTable externalComponents={filters} presentation={"widget"} />
-            )}
-        </React.Fragment>
+    const Table = tableOption === "packages" ? PackagesListTable : ModulesListTable;
+
+    return (
+        <Table externalComponents={filters} presentation={"widget"} instance={selectedInstance} />
     );
 });

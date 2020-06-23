@@ -11,6 +11,7 @@ import { UseCase } from "../domain/common/entities/UseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
 import { Instance } from "../domain/instance/entities/Instance";
+import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import { CreatePackageUseCase } from "../domain/modules/usecases/CreatePackageUseCase";
@@ -101,6 +102,7 @@ export class CompositionRoot {
 
     @cache()
     public modules(instance = this.instance) {
+        console.log(instance);
         const storage = new StorageDataStoreRepository(instance);
         const download = new DownloadWebRepository();
         const instanceRepository = new InstanceD2ApiRepository(instance, this.encryptionKey);
@@ -135,6 +137,15 @@ export class CompositionRoot {
 
         return getExecute({
             downloadFile: new DownloadFileUseCase(download),
+        });
+    }
+
+    @cache()
+    public instances(instance = this.instance) {
+        const storage = new StorageDataStoreRepository(instance);
+
+        return getExecute({
+            list: new ListInstancesUseCase(storage, this.encryptionKey),
         });
     }
 

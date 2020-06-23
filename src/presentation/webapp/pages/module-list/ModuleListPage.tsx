@@ -1,14 +1,19 @@
 import i18n from "@dhis2/d2-i18n";
-import _ from "lodash";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import { ModulesListTable } from "../../../common/components/module-list-table/ModuleListTable";
 import { PackagesListTable } from "../../../common/components/package-list-table/PackageListTable";
+import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
 
 export const ModuleListPage: React.FC = () => {
+    const { compositionRoot } = useAppContext();
     const history = useHistory();
+    const [instances, setInstances] = useState<Instance[]>([]);
+    const [selectedInstance, setSelectedInstance] = useState<Instance>();
+
     const { list: tableOption = "modules" } = useParams<{ list: "modules" | "packages" }>();
     const title = buildTitle(tableOption);
 
@@ -27,13 +32,20 @@ export const ModuleListPage: React.FC = () => {
         [history]
     );
 
+    const updateSelectedInstance = useCallback(
+        (id: string) => {
+            setSelectedInstance(instances.find(instance => instance.id === id));
+        },
+        [instances]
+    );
+
     const filters = useMemo(
         () => (
             <React.Fragment>
                 <Dropdown
-                    items={[{ id: "local", name: i18n.t("Local instance") }]}
-                    value={"local"}
-                    onValueChange={_.noop}
+                    items={[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances]}
+                    value={selectedInstance?.id ?? "LOCAL"}
+                    onValueChange={updateSelectedInstance}
                     label={i18n.t("Instance")}
                     hideEmpty={true}
                 />
@@ -49,18 +61,31 @@ export const ModuleListPage: React.FC = () => {
                 />
             </React.Fragment>
         ),
-        [tableOption, setTableOption]
+        [tableOption, setTableOption, instances, selectedInstance, updateSelectedInstance]
     );
+
+    useEffect(() => {
+        compositionRoot
+            .instances()
+            .list()
+            .then(setInstances);
+    }, [compositionRoot]);
 
     return (
         <React.Fragment>
             <PageHeader title={title} onBackClick={backHome} />
 
             {tableOption === "modules" && (
-                <ModulesListTable externalComponents={filters} onActionButtonClick={createModule} />
+                <ModulesListTable
+                    externalComponents={filters}
+                    onActionButtonClick={createModule}
+                    instance={selectedInstance}
+                />
             )}
 
-            {tableOption === "packages" && <PackagesListTable externalComponents={filters} />}
+            {tableOption === "packages" && (
+                <PackagesListTable externalComponents={filters} instance={selectedInstance} />
+            )}
         </React.Fragment>
     );
 };

@@ -1,3 +1,4 @@
+import Cryptr from "cryptr";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
@@ -72,9 +73,9 @@ export class Instance {
         );
     }
 
-    public static build = (data: PartialBy<InstanceData, "id">): Instance => {
+    public static build(data: PartialBy<InstanceData, "id">): Instance {
         return new Instance({ id: generateUid(), ...data });
-    };
+    }
 
     private moduleValidations = (): ModelValidation[] => [
         { property: "name", validation: "hasText" },
@@ -82,4 +83,14 @@ export class Instance {
         { property: "username", validation: "hasText" },
         { property: "password", validation: "hasText" },
     ];
+
+    public decryptPassword(encryptionKey: string): Instance {
+        const password = this.password ? new Cryptr(encryptionKey).decrypt(this.password) : "";
+        return Instance.build({ ...this.data, password });
+    }
+
+    public encryptPassword(encryptionKey: string): Instance {
+        const password = this.password ? new Cryptr(encryptionKey).encrypt(this.password) : "";
+        return Instance.build({ ...this.data, password });
+    }
 }

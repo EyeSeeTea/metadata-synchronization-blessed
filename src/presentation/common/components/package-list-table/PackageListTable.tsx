@@ -10,18 +10,21 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import { BasePackage } from "../../../../domain/modules/entities/Package";
 import { useAppContext } from "../../contexts/AppContext";
 
 type PackagesListPresentations = "app" | "widget";
 
 interface PackagesListTableProps {
+    instance?: Instance;
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
     presentation?: PackagesListPresentations;
     externalComponents?: ReactNode;
 }
 
 export const PackagesListTable: React.FC<PackagesListTableProps> = ({
+    instance,
     onActionButtonClick,
     presentation = "app",
     externalComponents,
@@ -37,22 +40,22 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             loading.show(true, "Deleting package");
             const item = _.find(rows, ({ id }) => id === ids[0]);
             if (!item) snackbar.error(i18n.t("Invalid package"));
-            else await compositionRoot.packages().delete(item.location, item.id);
+            else await compositionRoot.packages(instance).delete(item.location, item.id);
             loading.reset();
             setResetKey(Math.random());
         },
-        [compositionRoot, rows, snackbar, loading, setResetKey]
+        [compositionRoot, instance, rows, snackbar, loading, setResetKey]
     );
 
     const downloadPackage = useCallback(
         async (ids: string[]) => {
             try {
-                compositionRoot.packages().download(ids[0]);
+                compositionRoot.packages(instance).download(ids[0]);
             } catch (error) {
                 snackbar.error(i18n.t("Invalid package"));
             }
         },
-        [compositionRoot, snackbar]
+        [compositionRoot, instance, snackbar]
     );
 
     const columns: TableColumn<BasePackage>[] = [
@@ -119,10 +122,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     useEffect(() => {
         compositionRoot
-            .packages()
+            .packages(instance)
             .list()
-            .then(setRows);
-    }, [compositionRoot, resetKey]);
+            .then(setRows)
+            .catch((error: Error) => {
+                snackbar.error(error.message);
+                setRows([]);
+            });
+    }, [compositionRoot, instance, resetKey, snackbar]);
 
     return (
         <ObjectsTable<BasePackage>

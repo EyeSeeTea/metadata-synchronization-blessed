@@ -11,18 +11,21 @@ import {
 import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { useAppContext } from "../../contexts/AppContext";
 
 type ModulesListPresentation = "app" | "widget";
 
 interface ModulesListTableProps {
+    instance?: Instance;
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
     presentation?: ModulesListPresentation;
     externalComponents?: ReactNode;
 }
 
 export const ModulesListTable: React.FC<ModulesListTableProps> = ({
+    instance,
     onActionButtonClick,
     presentation = "app",
     externalComponents,
@@ -33,6 +36,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     const history = useHistory();
     const [rows, setRows] = useState<Module[]>([]);
     const [resetKey, setResetKey] = useState(Math.random());
+    const [isTableLoading, setIsTableLoading] = useState(false);
 
     const editRule = useCallback(
         (ids: string[]) => {
@@ -47,9 +51,9 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
         async (ids: string[]) => {
             const item = _.find(rows, ({ id }) => id === ids[0]);
             if (!item) snackbar.error(i18n.t("Invalid module"));
-            else compositionRoot.modules().download(item);
+            else compositionRoot.modules(instance).download(item);
         },
-        [compositionRoot, rows, snackbar]
+        [compositionRoot, instance, rows, snackbar]
     );
 
     const createPackage = useCallback(
@@ -60,11 +64,11 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 loading.show(true, i18n.t("Creating package for module {{name}}", item));
                 const builder = item.toSyncBuilder();
                 const contents = await compositionRoot
-                    .sync()
+                    .sync(instance)
                     [item.type](builder)
                     .buildPayload();
 
-                await compositionRoot.packages().create({
+                await compositionRoot.packages(instance).create({
                     location: "dataStore",
                     module: item,
                     contents,
@@ -74,7 +78,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 snackbar.success(i18n.t("Successfully created package"));
             }
         },
-        [compositionRoot, rows, snackbar, loading]
+        [compositionRoot, instance, rows, snackbar, loading]
     );
 
     const replicateModule = useCallback(
@@ -96,12 +100,12 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             if (!item) snackbar.error(i18n.t("Invalid module"));
             else {
                 loading.show(true, "Deleting package");
-                await compositionRoot.modules().delete(item.id);
+                await compositionRoot.modules(instance).delete(item.id);
                 loading.reset();
                 setResetKey(Math.random());
             }
         },
-        [compositionRoot, rows, snackbar, loading, setResetKey]
+        [compositionRoot, instance, rows, snackbar, loading, setResetKey]
     );
 
     const columns: TableColumn<Module>[] = [
@@ -176,15 +180,25 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     ];
 
     useEffect(() => {
+        setIsTableLoading(true);
         compositionRoot
-            .modules()
+            .modules(instance)
             .list()
-            .then(setRows);
-    }, [compositionRoot, resetKey]);
+            .then(rows => {
+                setRows(rows);
+                setIsTableLoading(false);
+            })
+            .catch((error: Error) => {
+                snackbar.error(error.message);
+                setRows([]);
+                setIsTableLoading(false);
+            });
+    }, [compositionRoot, instance, resetKey, snackbar, setIsTableLoading]);
 
     return (
         <ObjectsTable<Module>
             rows={rows}
+            loading={isTableLoading}
             columns={columns}
             details={details}
             actions={actions}
