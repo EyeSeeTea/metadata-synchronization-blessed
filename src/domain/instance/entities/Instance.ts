@@ -1,6 +1,7 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
+import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
 
 export type PublicInstance = Omit<InstanceData, "password">;
 
@@ -65,7 +66,20 @@ export class Instance {
         return _.omit(this.data, ["password"]);
     }
 
+    public validate(filter?: string[]): ValidationError[] {
+        return validateModel<Instance>(this, this.moduleValidations()).filter(
+            ({ property }) => filter?.includes(property) ?? true
+        );
+    }
+
     public static build = (data: PartialBy<InstanceData, "id">): Instance => {
         return new Instance({ id: generateUid(), ...data });
     };
+
+    private moduleValidations = (): ModelValidation[] => [
+        { property: "name", validation: "hasText" },
+        { property: "url", validation: "hasText" },
+        { property: "username", validation: "hasText" },
+        { property: "password", validation: "hasText" },
+    ];
 }
