@@ -10,7 +10,11 @@ import { cache } from "../../utils/cache";
 const instancesDataStoreKey = "instances";
 
 export class InstanceD2ApiRepository implements InstanceRepository {
-    constructor(private api: D2Api, private encryptionKey: string) {}
+    private api: D2Api;
+
+    constructor(instance: Instance, private encryptionKey: string) {
+        this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
+    }
 
     @cache()
     public async getUser(): Promise<User> {
@@ -54,22 +58,21 @@ export class InstanceD2ApiRepository implements InstanceRepository {
             throw Error(`Instance with id ${id} not found`);
         }
 
-        const instanceDataWithRawPassword = {
-            ...instanceData,
-            password: this.decryptPassword(instanceData.password),
-        };
+        const instanceDataWithRawPassword = instanceData.password
+            ? {
+                  ...instanceData,
+                  password: this.decryptPassword(instanceData.password),
+              }
+            : instanceData;
 
         const version = await this.testConnection(instanceDataWithRawPassword);
 
         return new Instance({ ...instanceDataWithRawPassword, version });
     }
 
-    private async testConnection(instanceData: InstanceData): Promise<string> {
-        const api = new D2Api({
-            baseUrl: instanceData.url,
-            auth: { username: instanceData.username, password: instanceData.password },
-        });
-
+    private async testConnection({ url, username, password }: InstanceData): Promise<string> {
+        const auth = username && password ? { username, password } : undefined;
+        const api = new D2Api({ baseUrl: url, auth });
         const systemInfo = await api.system.info.getData();
 
         return systemInfo.version;

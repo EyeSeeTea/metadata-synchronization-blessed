@@ -1,4 +1,6 @@
+import { generateUid } from "d2/uid";
 import _ from "lodash";
+import { PartialBy } from "../../../types/utils";
 
 export type PublicInstance = Omit<InstanceData, "password">;
 
@@ -6,8 +8,8 @@ export interface InstanceData {
     id: string;
     name: string;
     url: string;
-    username: string;
-    password: string;
+    username?: string;
+    password?: string;
     description?: string;
     version?: string;
 }
@@ -31,12 +33,18 @@ export class Instance {
         return this.data.url;
     }
 
-    public get username(): string {
+    public get username(): string | undefined {
         return this.data.username;
     }
 
-    public get password(): string {
+    public get password(): string | undefined {
         return this.data.password;
+    }
+
+    public get auth(): { username: string; password: string } | undefined {
+        return this.username && this.password
+            ? { username: this.username, password: this.password }
+            : undefined;
     }
 
     public get description(): string {
@@ -56,4 +64,8 @@ export class Instance {
     public toObject(): PublicInstance {
         return _.omit(this.data, ["password"]);
     }
+
+    public static build = (data: PartialBy<InstanceData, "id">): Instance => {
+        return new Instance({ id: generateUid(), ...data });
+    };
 }

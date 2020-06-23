@@ -36,13 +36,16 @@ export type SyncronizationPayload = MetadataPackage | AggregatedPackage | Events
 export abstract class GenericSyncUseCase {
     public abstract readonly type: SyncRuleType;
     public readonly fields: string = "id,name";
+    protected readonly api: D2Api;
 
     constructor(
         protected readonly d2: D2,
-        protected readonly api: D2Api,
+        protected readonly instance: InstanceEntity,
         protected readonly builder: SynchronizationBuilder,
         protected readonly instanceRepository: InstanceRepository
-    ) {}
+    ) {
+        this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
+    }
 
     public abstract async buildPayload(): Promise<SyncronizationPayload>;
     public abstract async mapPayload(

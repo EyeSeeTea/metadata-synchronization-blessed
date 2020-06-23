@@ -1,13 +1,16 @@
+import { Instance } from "../../domain/instance/entities/Instance";
 import { StorageRepository } from "../../domain/storage/repositories/StorageRepository";
 import { D2Api, DataStore } from "../../types/d2-api";
 
 const dataStoreNamespace = "metadata-synchronization";
 
 export class StorageDataStoreRepository extends StorageRepository {
+    private api: D2Api;
     private dataStore: DataStore;
 
-    constructor(private api: D2Api) {
+    constructor(instance: Instance) {
         super();
+        this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
         this.dataStore = this.api.dataStore(dataStoreNamespace);
     }
 

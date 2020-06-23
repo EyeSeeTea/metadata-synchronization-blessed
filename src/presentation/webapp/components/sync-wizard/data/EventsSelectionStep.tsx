@@ -22,7 +22,8 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     const [error, setError] = useState();
 
     useEffect(() => {
-        compositionRoot.events
+        compositionRoot
+            .events()
             .list(
                 {
                     ...syncRule.dataParams,
@@ -35,7 +36,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     }, [compositionRoot, syncRule, programs]);
 
     useEffect(() => {
-        const sync = compositionRoot.sync.events(syncRule.toBuilder());
+        const sync = compositionRoot.sync().events(syncRule.toBuilder());
         sync.extractMetadata().then(({ programs = [] }) => setPrograms(programs));
     }, [syncRule, compositionRoot]);
 

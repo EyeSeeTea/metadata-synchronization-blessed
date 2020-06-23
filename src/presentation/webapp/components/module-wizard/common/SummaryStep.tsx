@@ -17,7 +17,7 @@ export const SummaryStep = ({ module, onCancel, onClose }: ModuleWizardStepProps
     const save = async () => {
         setIsSaving(true);
 
-        const errors = await compositionRoot.modules.save(module);
+        const errors = await compositionRoot.modules().save(module);
 
         if (errors.length > 0) {
             snackbar.error(errors.join("\n"));

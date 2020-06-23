@@ -3,6 +3,7 @@ import { DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
 import { EventsRepository } from "../../domain/events/repositories/EventsRepository";
+import { Instance as InstanceEntity } from "../../domain/instance/entities/Instance";
 import {
     SynchronizationResult,
     SynchronizationStats,
@@ -13,10 +14,10 @@ import { DataImportParams } from "../../types/d2";
 import { D2Api } from "../../types/d2-api";
 
 export class EventsD2ApiRepository implements EventsRepository {
-    private currentD2Api: D2Api;
+    private api: D2Api;
 
-    constructor(d2Api: D2Api) {
-        this.currentD2Api = d2Api;
+    constructor(instance: InstanceEntity) {
+        this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 
     public async getEvents(
@@ -34,7 +35,7 @@ export class EventsD2ApiRepository implements EventsRepository {
         const result = [];
 
         for (const program of programs) {
-            const { events: response } = (await this.currentD2Api
+            const { events: response } = (await this.api
                 .get("/events", {
                     paging: false,
                     program,
@@ -59,7 +60,7 @@ export class EventsD2ApiRepository implements EventsRepository {
         additionalParams: DataImportParams | undefined,
         instance: Instance
     ): Promise<SynchronizationResult> {
-        const { status, message, response } = await this.currentD2Api
+        const { status, message, response } = await this.api
             .post<EventsPostResponse>(
                 "/events",
                 {

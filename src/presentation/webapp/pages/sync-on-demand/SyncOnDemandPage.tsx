@@ -114,7 +114,7 @@ const SyncOnDemandPage: React.FC = () => {
     const handleSynchronization = async (syncRule: SyncRule) => {
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
-        const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
+        const sync = compositionRoot.sync()[syncRule.type](syncRule.toBuilder());
         for await (const { message, syncReport, done } of sync.execute()) {
             if (message) loading.show(true, message);
             if (syncReport) await syncReport.save(api);

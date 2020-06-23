@@ -47,7 +47,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
         async (ids: string[]) => {
             const item = _.find(rows, ({ id }) => id === ids[0]);
             if (!item) snackbar.error(i18n.t("Invalid module"));
-            else compositionRoot.modules.download(item);
+            else compositionRoot.modules().download(item);
         },
         [compositionRoot, rows, snackbar]
     );
@@ -59,12 +59,17 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             else {
                 loading.show(true, i18n.t("Creating package for module {{name}}", item));
                 const builder = item.toSyncBuilder();
-                const contents = await compositionRoot.sync[item.type](builder).buildPayload();
-                await compositionRoot.packages.create({
+                const contents = await compositionRoot
+                    .sync()
+                    [item.type](builder)
+                    .buildPayload();
+
+                await compositionRoot.packages().create({
                     location: "dataStore",
                     module: item,
                     contents,
                 });
+
                 loading.reset();
                 snackbar.success(i18n.t("Successfully created package"));
             }
@@ -91,7 +96,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             if (!item) snackbar.error(i18n.t("Invalid module"));
             else {
                 loading.show(true, "Deleting package");
-                await compositionRoot.modules.delete(item.id);
+                await compositionRoot.modules().delete(item.id);
                 loading.reset();
                 setResetKey(Math.random());
             }
@@ -171,7 +176,10 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     ];
 
     useEffect(() => {
-        compositionRoot.modules.list().then(setRows);
+        compositionRoot
+            .modules()
+            .list()
+            .then(setRows);
     }, [compositionRoot, resetKey]);
 
     return (

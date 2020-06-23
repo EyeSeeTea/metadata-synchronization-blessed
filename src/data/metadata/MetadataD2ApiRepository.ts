@@ -27,7 +27,11 @@ import {
 } from "../transformations/PackageTransformations";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
-    constructor(private api: D2Api, private transformationRepository: TransformationRepository) {}
+    private api: D2Api;
+
+    constructor(instance: Instance, private transformationRepository: TransformationRepository) {
+        this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
+    }
 
     /**
      * Return raw specific fields of metadata dhis2 models according to ids filter
@@ -184,12 +188,9 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     private getApi(targetInstance?: Instance): D2Api {
-        return targetInstance
-            ? new D2Api({
-                  baseUrl: targetInstance.url,
-                  auth: { username: targetInstance.username, password: targetInstance.password },
-              })
-            : this.api;
+        const { url, username, password } = targetInstance ?? {};
+        const auth = username && password ? { username, password } : undefined;
+        return targetInstance ? new D2Api({ baseUrl: url, auth }) : this.api;
     }
 
     private async getVersion(targetInstance?: Instance): Promise<number> {

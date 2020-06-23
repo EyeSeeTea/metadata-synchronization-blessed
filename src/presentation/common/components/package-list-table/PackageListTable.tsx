@@ -37,7 +37,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             loading.show(true, "Deleting package");
             const item = _.find(rows, ({ id }) => id === ids[0]);
             if (!item) snackbar.error(i18n.t("Invalid package"));
-            else await compositionRoot.packages.delete(item.location, item.id);
+            else await compositionRoot.packages().delete(item.location, item.id);
             loading.reset();
             setResetKey(Math.random());
         },
@@ -47,7 +47,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const downloadPackage = useCallback(
         async (ids: string[]) => {
             try {
-                compositionRoot.packages.download(ids[0]);
+                compositionRoot.packages().download(ids[0]);
             } catch (error) {
                 snackbar.error(i18n.t("Invalid package"));
             }
@@ -118,7 +118,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     ];
 
     useEffect(() => {
-        compositionRoot.packages.list().then(setRows);
+        compositionRoot
+            .packages()
+            .list()
+            .then(setRows);
     }, [compositionRoot, resetKey]);
 
     return (
