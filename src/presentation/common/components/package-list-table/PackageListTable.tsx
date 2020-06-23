@@ -115,8 +115,9 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             name: "publish",
             text: i18n.t("Publish"),
             multiple: false,
-            onClick: downloadPackage,
+            onClick: () => snackbar.warning("Not implemented yet"),
             icon: <Icon>publish</Icon>,
+            isActive: () => presentation !== "app" && !remoteInstance,
         },
     ];
 

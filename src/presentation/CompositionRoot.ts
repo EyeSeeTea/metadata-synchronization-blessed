@@ -44,10 +44,14 @@ export const Repository = {
 
 export class CompositionRoot {
     // TODO: Remove d2 and d2Api explicit calls so we do not have to expose them
-    constructor(private instance: Instance, private d2: D2, private encryptionKey: string) {}
+    constructor(
+        public readonly localInstance: Instance,
+        private d2: D2,
+        private encryptionKey: string
+    ) {}
 
     @cache()
-    public sync(remoteInstance = this.instance) {
+    public sync(remoteInstance = this.localInstance) {
         const instanceRepository = new InstanceD2ApiRepository(remoteInstance, this.encryptionKey);
         const transformation = new TransformationD2ApiRepository();
         const aggregated = new AggregatedD2ApiRepository(remoteInstance);
@@ -97,7 +101,7 @@ export class CompositionRoot {
     @cache()
     public store() {
         const github = new GitHubOctokitRepository();
-        const storage = new StorageDataStoreRepository(this.instance);
+        const storage = new StorageDataStoreRepository(this.localInstance);
 
         return getExecute({
             get: new GetStoreUseCase(storage),
@@ -107,10 +111,13 @@ export class CompositionRoot {
     }
 
     @cache()
-    public modules(remoteInstance = this.instance) {
+    public modules(remoteInstance = this.localInstance) {
         const storage = new StorageDataStoreRepository(remoteInstance);
         const download = new DownloadWebRepository();
-        const instanceRepository = new InstanceD2ApiRepository(this.instance, this.encryptionKey);
+        const instanceRepository = new InstanceD2ApiRepository(
+            this.localInstance,
+            this.encryptionKey
+        );
 
         return getExecute({
             list: new ListModulesUseCase(storage),
@@ -122,11 +129,14 @@ export class CompositionRoot {
     }
 
     @cache()
-    public packages(remoteInstance = this.instance) {
+    public packages(remoteInstance = this.localInstance) {
         const storage = new StorageDataStoreRepository(remoteInstance);
         const github = new GitHubOctokitRepository();
         const download = new DownloadWebRepository();
-        const instanceRepository = new InstanceD2ApiRepository(this.instance, this.encryptionKey);
+        const instanceRepository = new InstanceD2ApiRepository(
+            this.localInstance,
+            this.encryptionKey
+        );
 
         return getExecute({
             list: new ListPackagesUseCase(storage, github),
@@ -147,7 +157,7 @@ export class CompositionRoot {
 
     @cache()
     public instances() {
-        const storage = new StorageDataStoreRepository(this.instance);
+        const storage = new StorageDataStoreRepository(this.localInstance);
 
         return getExecute({
             list: new ListInstancesUseCase(storage, this.encryptionKey),
@@ -156,7 +166,7 @@ export class CompositionRoot {
 
     @cache()
     public events() {
-        const events = new EventsD2ApiRepository(this.instance);
+        const events = new EventsD2ApiRepository(this.localInstance);
 
         return getExecute({
             list: new ListEventsUseCase(events),

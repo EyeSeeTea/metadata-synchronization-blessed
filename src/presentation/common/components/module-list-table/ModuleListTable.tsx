@@ -64,7 +64,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 loading.show(true, i18n.t("Creating package for module {{name}}", item));
                 const builder = item.toSyncBuilder();
                 const contents = await compositionRoot
-                    .sync(remoteInstance)
+                    .sync()
                     [item.type](builder)
                     .buildPayload();
 
@@ -78,7 +78,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 snackbar.success(i18n.t("Successfully created package"));
             }
         },
-        [compositionRoot, remoteInstance, rows, snackbar, loading]
+        [compositionRoot, rows, snackbar, loading]
     );
 
     const replicateModule = useCallback(
@@ -174,7 +174,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             text: i18n.t("Generate package from module"),
             multiple: false,
             icon: <Icon>description</Icon>,
-            isActive: () => presentation === "app",
+            isActive: () => presentation === "app" && !remoteInstance,
             onClick: createPackage,
         },
     ];
