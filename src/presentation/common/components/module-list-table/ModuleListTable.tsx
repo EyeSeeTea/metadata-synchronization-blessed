@@ -18,14 +18,14 @@ import { useAppContext } from "../../contexts/AppContext";
 type ModulesListPresentation = "app" | "widget";
 
 interface ModulesListTableProps {
-    instance?: Instance;
+    remoteInstance?: Instance;
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
     presentation?: ModulesListPresentation;
     externalComponents?: ReactNode;
 }
 
 export const ModulesListTable: React.FC<ModulesListTableProps> = ({
-    instance,
+    remoteInstance,
     onActionButtonClick,
     presentation = "app",
     externalComponents,
@@ -51,9 +51,9 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
         async (ids: string[]) => {
             const item = _.find(rows, ({ id }) => id === ids[0]);
             if (!item) snackbar.error(i18n.t("Invalid module"));
-            else compositionRoot.modules(instance).download(item);
+            else compositionRoot.modules(remoteInstance).download(item);
         },
-        [compositionRoot, instance, rows, snackbar]
+        [compositionRoot, remoteInstance, rows, snackbar]
     );
 
     const createPackage = useCallback(
@@ -63,9 +63,12 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             else {
                 loading.show(true, i18n.t("Creating package for module {{name}}", item));
                 const builder = item.toSyncBuilder();
-                const contents = await compositionRoot.sync[item.type](builder).buildPayload();
+                const contents = await compositionRoot
+                    .sync(remoteInstance)
+                    [item.type](builder)
+                    .buildPayload();
 
-                await compositionRoot.packages(instance).create({
+                await compositionRoot.packages().create({
                     location: "dataStore",
                     module: item,
                     contents,
@@ -75,7 +78,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 snackbar.success(i18n.t("Successfully created package"));
             }
         },
-        [compositionRoot, instance, rows, snackbar, loading]
+        [compositionRoot, remoteInstance, rows, snackbar, loading]
     );
 
     const replicateModule = useCallback(
@@ -97,12 +100,12 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             if (!item) snackbar.error(i18n.t("Invalid module"));
             else {
                 loading.show(true, "Deleting package");
-                await compositionRoot.modules(instance).delete(item.id);
+                await compositionRoot.modules().delete(item.id);
                 loading.reset();
                 setResetKey(Math.random());
             }
         },
-        [compositionRoot, instance, rows, snackbar, loading, setResetKey]
+        [compositionRoot, rows, snackbar, loading, setResetKey]
     );
 
     const columns: TableColumn<Module>[] = [
@@ -132,22 +135,22 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             name: "details",
             text: i18n.t("Details"),
             multiple: false,
-            primary: presentation !== "app",
+            primary: presentation !== "app" && !remoteInstance,
         },
         {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            isActive: () => presentation === "app",
+            isActive: () => presentation === "app" && !remoteInstance,
             onClick: editRule,
-            primary: presentation === "app",
+            primary: presentation === "app" && !remoteInstance,
             icon: <Icon>edit</Icon>,
         },
         {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: false,
-            isActive: () => presentation === "app",
+            isActive: () => presentation === "app" && !remoteInstance,
             onClick: deleteModule,
             icon: <Icon>delete</Icon>,
         },
@@ -157,7 +160,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             multiple: false,
             onClick: replicateModule,
             icon: <Icon>content_copy</Icon>,
-            isActive: () => presentation === "app",
+            isActive: () => presentation === "app" && !remoteInstance,
         },
         {
             name: "download",
@@ -179,7 +182,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     useEffect(() => {
         setIsTableLoading(true);
         compositionRoot
-            .modules(instance)
+            .modules(remoteInstance)
             .list()
             .then(rows => {
                 setRows(rows);
@@ -190,7 +193,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 setRows([]);
                 setIsTableLoading(false);
             });
-    }, [compositionRoot, instance, resetKey, snackbar, setIsTableLoading]);
+    }, [compositionRoot, remoteInstance, resetKey, snackbar, setIsTableLoading]);
 
     return (
         <ObjectsTable<Module>

@@ -17,14 +17,14 @@ import { useAppContext } from "../../contexts/AppContext";
 type PackagesListPresentations = "app" | "widget";
 
 interface PackagesListTableProps {
-    instance?: Instance;
+    remoteInstance?: Instance;
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
     presentation?: PackagesListPresentations;
     externalComponents?: ReactNode;
 }
 
 export const PackagesListTable: React.FC<PackagesListTableProps> = ({
-    instance,
+    remoteInstance,
     onActionButtonClick,
     presentation = "app",
     externalComponents,
@@ -40,22 +40,22 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             loading.show(true, "Deleting package");
             const item = _.find(rows, ({ id }) => id === ids[0]);
             if (!item) snackbar.error(i18n.t("Invalid package"));
-            else await compositionRoot.packages(instance).delete(item.location, item.id);
+            else await compositionRoot.packages(remoteInstance).delete(item.location, item.id);
             loading.reset();
             setResetKey(Math.random());
         },
-        [compositionRoot, instance, rows, snackbar, loading, setResetKey]
+        [compositionRoot, remoteInstance, rows, snackbar, loading, setResetKey]
     );
 
     const downloadPackage = useCallback(
         async (ids: string[]) => {
             try {
-                compositionRoot.packages(instance).download(ids[0]);
+                compositionRoot.packages(remoteInstance).download(ids[0]);
             } catch (error) {
                 snackbar.error(i18n.t("Invalid package"));
             }
         },
-        [compositionRoot, instance, snackbar]
+        [compositionRoot, remoteInstance, snackbar]
     );
 
     const columns: TableColumn<BasePackage>[] = [
@@ -102,7 +102,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             multiple: false,
             onClick: deletePackage,
             icon: <Icon>delete</Icon>,
-            isActive: () => presentation === "app",
+            isActive: () => presentation !== "app" && !remoteInstance,
         },
         {
             name: "download",
@@ -122,14 +122,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     useEffect(() => {
         compositionRoot
-            .packages(instance)
+            .packages(remoteInstance)
             .list()
             .then(setRows)
             .catch((error: Error) => {
                 snackbar.error(error.message);
                 setRows([]);
             });
-    }, [compositionRoot, instance, resetKey, snackbar]);
+    }, [compositionRoot, remoteInstance, resetKey, snackbar]);
 
     return (
         <ObjectsTable<BasePackage>

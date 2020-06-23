@@ -47,19 +47,19 @@ export class CompositionRoot {
     constructor(private instance: Instance, private d2: D2, private encryptionKey: string) {}
 
     @cache()
-    public get sync() {
-        const instanceRepository = new InstanceD2ApiRepository(this.instance, this.encryptionKey);
+    public sync(remoteInstance = this.instance) {
+        const instanceRepository = new InstanceD2ApiRepository(remoteInstance, this.encryptionKey);
         const transformation = new TransformationD2ApiRepository();
-        const aggregated = new AggregatedD2ApiRepository(this.instance);
-        const events = new EventsD2ApiRepository(this.instance);
-        const metadata = new MetadataD2ApiRepository(this.instance, transformation);
+        const aggregated = new AggregatedD2ApiRepository(remoteInstance);
+        const events = new EventsD2ApiRepository(remoteInstance);
+        const metadata = new MetadataD2ApiRepository(remoteInstance, transformation);
 
         // TODO: Sync builder should be part of an execute method
         return {
             aggregated: (builder: SynchronizationBuilder) =>
                 new AggregatedSyncUseCase(
                     this.d2,
-                    this.instance,
+                    remoteInstance,
                     builder,
                     instanceRepository,
                     aggregated,
@@ -68,7 +68,7 @@ export class CompositionRoot {
             events: (builder: SynchronizationBuilder) =>
                 new EventsSyncUseCase(
                     this.d2,
-                    this.instance,
+                    remoteInstance,
                     builder,
                     instanceRepository,
                     events,
@@ -78,7 +78,7 @@ export class CompositionRoot {
             metadata: (builder: SynchronizationBuilder) =>
                 new MetadataSyncUseCase(
                     this.d2,
-                    this.instance,
+                    remoteInstance,
                     builder,
                     instanceRepository,
                     metadata
@@ -86,7 +86,7 @@ export class CompositionRoot {
             deleted: (builder: SynchronizationBuilder) =>
                 new DeletedMetadataSyncUseCase(
                     this.d2,
-                    this.instance,
+                    remoteInstance,
                     builder,
                     instanceRepository,
                     metadata

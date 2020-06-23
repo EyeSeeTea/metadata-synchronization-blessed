@@ -54,6 +54,10 @@ export const ModuleListWidget: React.FC = React.memo(() => {
     const Table = tableOption === "packages" ? PackagesListTable : ModulesListTable;
 
     return (
-        <Table externalComponents={filters} presentation={"widget"} instance={selectedInstance} />
+        <Table
+            externalComponents={filters}
+            presentation={"widget"}
+            remoteInstance={selectedInstance}
+        />
     );
 });

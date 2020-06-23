@@ -79,12 +79,12 @@ export const ModuleListPage: React.FC = () => {
                 <ModulesListTable
                     externalComponents={filters}
                     onActionButtonClick={!selectedInstance ? createModule : undefined}
-                    instance={selectedInstance}
+                    remoteInstance={selectedInstance}
                 />
             )}
 
             {tableOption === "packages" && (
-                <PackagesListTable externalComponents={filters} instance={selectedInstance} />
+                <PackagesListTable externalComponents={filters} remoteInstance={selectedInstance} />
             )}
         </React.Fragment>
     );
