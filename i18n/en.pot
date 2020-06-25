@@ -5,13 +5,16 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-25T05:15:35.356Z\n"
-"PO-Revision-Date: 2020-06-25T05:15:35.356Z\n"
+"POT-Creation-Date: 2020-06-25T06:32:15.741Z\n"
+"PO-Revision-Date: 2020-06-25T06:32:15.741Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
 
 msgid "You need to select at least one {{field}}"
+msgstr ""
+
+msgid "DHIS2 version"
 msgstr ""
 
 msgid "Preparing synchronization"
@@ -75,6 +78,15 @@ msgid "Download snapshot package"
 msgstr ""
 
 msgid "Generate package from module"
+msgstr ""
+
+msgid "Create package for {{name}}"
+msgstr ""
+
+msgid "Name (*)"
+msgstr ""
+
+msgid "Version"
 msgstr ""
 
 msgid "Invalid package"
@@ -348,9 +360,6 @@ msgid "Include Exclude Selection"
 msgstr ""
 
 msgid "Advanced options"
-msgstr ""
-
-msgid "Name (*)"
 msgstr ""
 
 msgid "Selected {{difference}} elements"

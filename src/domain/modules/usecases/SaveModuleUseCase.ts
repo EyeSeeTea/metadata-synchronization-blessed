@@ -23,10 +23,7 @@ export class SaveModuleUseCase implements UseCase {
                 user: module.user.id ? module.user : user,
             });
 
-            await this.storageRepository.saveObjectInCollection<Module>(
-                Namespace.MODULES,
-                newModule
-            );
+            await this.storageRepository.saveObjectInCollection(Namespace.MODULES, newModule);
         }
 
         return validations;

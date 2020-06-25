@@ -13,7 +13,9 @@ import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Module } from "../../../../domain/modules/entities/Module";
+import { Package } from "../../../../domain/modules/entities/Package";
 import { useAppContext } from "../../contexts/AppContext";
+import { NewPacakgeDialog } from "./NewPackageDialog";
 
 type ModulesListPresentation = "app" | "widget";
 
@@ -34,9 +36,11 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     const snackbar = useSnackbar();
     const loading = useLoading();
     const history = useHistory();
+
     const [rows, setRows] = useState<Module[]>([]);
     const [resetKey, setResetKey] = useState(Math.random());
     const [isTableLoading, setIsTableLoading] = useState(false);
+    const [newPackageModule, setNewPackageModule] = useState<Module>();
 
     const editRule = useCallback(
         (ids: string[]) => {
@@ -60,6 +64,15 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
         async (ids: string[]) => {
             const module = _.find(rows, ({ id }) => id === ids[0]);
             if (!module) snackbar.error(i18n.t("Invalid module"));
+            else setNewPackageModule(module);
+        },
+        [rows, snackbar]
+    );
+
+    const savePackage = useCallback(
+        async (item: Package) => {
+            const module = _.find(rows, ({ id }) => id === item.module.id);
+            if (!module) snackbar.error(i18n.t("Invalid module"));
             else {
                 loading.show(true, i18n.t("Creating package for module {{name}}", module));
                 const builder = module.toSyncBuilder();
@@ -68,17 +81,14 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                     [module.type](builder)
                     .buildPayload();
 
-                await compositionRoot.packages().create({
-                    name: `Package of ${module.name}`,
-                    description: "",
-                    version: "1",
-                    dhisVersion: "2.30",
-                    module,
-                    contents,
-                });
+                const newPackage = item.update({ contents });
+                const errors = await compositionRoot.packages().create(newPackage);
+                if (errors.length === 0) {
+                    setNewPackageModule(undefined);
+                    snackbar.success(i18n.t("Successfully created package"));
+                }
 
                 loading.reset();
-                snackbar.success(i18n.t("Successfully created package"));
             }
         },
         [compositionRoot, rows, snackbar, loading]
@@ -199,15 +209,25 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     }, [compositionRoot, remoteInstance, resetKey, snackbar, setIsTableLoading]);
 
     return (
-        <ObjectsTable<Module>
-            rows={rows}
-            loading={isTableLoading}
-            columns={columns}
-            details={details}
-            actions={actions}
-            onActionButtonClick={onActionButtonClick}
-            forceSelectionColumn={true}
-            filterComponents={externalComponents}
-        />
+        <React.Fragment>
+            {!!newPackageModule && (
+                <NewPacakgeDialog
+                    save={savePackage}
+                    close={() => setNewPackageModule(undefined)}
+                    module={newPackageModule}
+                />
+            )}
+
+            <ObjectsTable<Module>
+                rows={rows}
+                loading={isTableLoading}
+                columns={columns}
+                details={details}
+                actions={actions}
+                onActionButtonClick={onActionButtonClick}
+                forceSelectionColumn={true}
+                filterComponents={externalComponents}
+            />
+        </React.Fragment>
     );
 };

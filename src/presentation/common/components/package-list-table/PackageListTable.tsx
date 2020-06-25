@@ -11,10 +11,11 @@ import {
 import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import { BasePackage } from "../../../../domain/modules/entities/Package";
+import { Package } from "../../../../domain/modules/entities/Package";
 import { useAppContext } from "../../contexts/AppContext";
 
 type PackagesListPresentations = "app" | "widget";
+type ListPackage = Omit<Package, "contents">;
 
 interface PackagesListTableProps {
     remoteInstance?: Instance;
@@ -32,7 +33,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const loading = useLoading();
-    const [rows, setRows] = useState<BasePackage[]>([]);
+    const [rows, setRows] = useState<ListPackage[]>([]);
     const [resetKey, setResetKey] = useState(Math.random());
 
     const deletePackage = useCallback(
@@ -58,39 +59,20 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         [compositionRoot, remoteInstance, snackbar]
     );
 
-    const columns: TableColumn<BasePackage>[] = [
+    const columns: TableColumn<ListPackage>[] = [
         { name: "name", text: i18n.t("Name"), sortable: true },
-        /**{
-            name: "location",
-            text: i18n.t("Location"),
-            sortable: true,
-            getValue: ({ location }) => {
-                if (location === "dataStore") return i18n.t("Local instance");
-                else if (location === "github") return i18n.t("GitHub");
-                else return i18n.t("Unknown");
-            },
-        },**/
         { name: "version", text: i18n.t("DHIS2 Version"), sortable: true },
         { name: "module", text: i18n.t("Module"), sortable: true },
     ];
 
-    const details: ObjectsTableDetailField<BasePackage>[] = [
+    const details: ObjectsTableDetailField<ListPackage>[] = [
         { name: "id", text: i18n.t("ID") },
         { name: "name", text: i18n.t("Name") },
-        /**{
-            name: "location",
-            text: i18n.t("Location"),
-            getValue: ({ location }) => {
-                if (location === "dataStore") return i18n.t("Local instance");
-                else if (location === "github") return i18n.t("GitHub");
-                else return i18n.t("Unknown");
-            },
-        },**/
         { name: "version", text: i18n.t("DHIS2 Version") },
         { name: "module", text: i18n.t("Module") },
     ];
 
-    const actions: TableAction<BasePackage>[] = [
+    const actions: TableAction<ListPackage>[] = [
         {
             name: "details",
             text: i18n.t("Details"),
@@ -133,7 +115,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     }, [compositionRoot, remoteInstance, resetKey, snackbar]);
 
     return (
-        <ObjectsTable<BasePackage>
+        <ObjectsTable<ListPackage>
             rows={rows}
             columns={columns}
             details={details}
