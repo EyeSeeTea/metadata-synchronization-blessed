@@ -5,10 +5,11 @@ import {
     ObjectsTableDetailField,
     TableAction,
     TableColumn,
+    TableSelection,
+    TableState,
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
-import _ from "lodash";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Package } from "../../../../domain/modules/entities/Package";
@@ -35,17 +36,26 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const loading = useLoading();
     const [rows, setRows] = useState<ListPackage[]>([]);
     const [resetKey, setResetKey] = useState(Math.random());
+    const [selection, updateSelection] = useState<TableSelection[]>([]);
 
-    const deletePackage = useCallback(
+    const deletePackages = useCallback(
         async (ids: string[]) => {
-            loading.show(true, "Deleting package");
-            const item = _.find(rows, ({ id }) => id === ids[0]);
-            if (!item) snackbar.error(i18n.t("Invalid package"));
-            else await compositionRoot.packages(remoteInstance).delete(item.id);
+            loading.show(true, "Deleting packages");
+            for (const id of ids) {
+                await compositionRoot.packages(remoteInstance).delete(id);
+            }
             loading.reset();
             setResetKey(Math.random());
+            updateSelection([]);
         },
-        [compositionRoot, remoteInstance, rows, snackbar, loading, setResetKey]
+        [compositionRoot, remoteInstance, loading, setResetKey]
+    );
+
+    const updateTable = useCallback(
+        ({ selection }: TableState<ListPackage>) => {
+            updateSelection(selection);
+        },
+        [updateSelection]
     );
 
     const downloadPackage = useCallback(
@@ -61,14 +71,16 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const columns: TableColumn<ListPackage>[] = [
         { name: "name", text: i18n.t("Name"), sortable: true },
-        { name: "version", text: i18n.t("DHIS2 Version"), sortable: true },
+        { name: "version", text: i18n.t("Version"), sortable: true },
+        { name: "dhisVersion", text: i18n.t("DHIS2 Version"), sortable: true },
         { name: "module", text: i18n.t("Module"), sortable: true },
     ];
 
     const details: ObjectsTableDetailField<ListPackage>[] = [
         { name: "id", text: i18n.t("ID") },
         { name: "name", text: i18n.t("Name") },
-        { name: "version", text: i18n.t("DHIS2 Version") },
+        { name: "version", text: i18n.t("Version") },
+        { name: "dhisVersion", text: i18n.t("DHIS2 Version") },
         { name: "module", text: i18n.t("Module") },
     ];
 
@@ -81,10 +93,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         {
             name: "delete",
             text: i18n.t("Delete"),
-            multiple: false,
-            onClick: deletePackage,
+            multiple: true,
+            onClick: deletePackages,
             icon: <Icon>delete</Icon>,
-            isActive: () => presentation !== "app" && !remoteInstance,
+            isActive: () => presentation === "app" && !remoteInstance,
         },
         {
             name: "download",
@@ -99,7 +111,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             multiple: false,
             onClick: () => snackbar.warning("Not implemented yet"),
             icon: <Icon>publish</Icon>,
-            isActive: () => presentation !== "app" && !remoteInstance,
+            isActive: () => presentation === "app" && !remoteInstance,
         },
     ];
 
@@ -123,6 +135,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             onActionButtonClick={onActionButtonClick}
             forceSelectionColumn={true}
             filterComponents={externalComponents}
+            selection={selection}
+            onChange={updateTable}
         />
     );
 };
