@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-25T09:59:39.559Z\n"
-"PO-Revision-Date: 2020-06-25T09:59:39.559Z\n"
+"POT-Creation-Date: 2020-06-25T10:30:01.908Z\n"
+"PO-Revision-Date: 2020-06-25T10:30:01.908Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -50,10 +50,7 @@ msgstr ""
 msgid "Invalid module"
 msgstr ""
 
-msgid "Creating package for module {{name}}"
-msgstr ""
-
-msgid "Successfully created package"
+msgid "Creating {{dhisVersion}} package for module {{name}}"
 msgstr ""
 
 msgid "Name"
@@ -102,6 +99,9 @@ msgid "DHIS2 Version (*)"
 msgstr ""
 
 msgid "Invalid package"
+msgstr ""
+
+msgid "Version"
 msgstr ""
 
 msgid "DHIS2 Version"

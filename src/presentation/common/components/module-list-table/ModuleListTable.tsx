@@ -70,22 +70,28 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     );
 
     const savePackage = useCallback(
-        async (item: Package, _versions: string[]) => {
+        async (item: Package, versions: string[]) => {
+            setNewPackageModule(undefined);
             const module = _.find(rows, ({ id }) => id === item.module.id);
             if (!module) snackbar.error(i18n.t("Invalid module"));
             else {
-                loading.show(true, i18n.t("Creating package for module {{name}}", module));
-                const builder = module.toSyncBuilder();
-                const contents = await compositionRoot
-                    .sync()
-                    [module.type](builder)
-                    .buildPayload();
+                for (const dhisVersion of versions) {
+                    loading.show(
+                        true,
+                        i18n.t("Creating {{dhisVersion}} package for module {{name}}", {
+                            name: module.name,
+                            dhisVersion,
+                        })
+                    );
 
-                const newPackage = item.update({ contents });
-                const errors = await compositionRoot.packages().create(newPackage, module);
-                if (errors.length === 0) {
-                    setNewPackageModule(undefined);
-                    snackbar.success(i18n.t("Successfully created package"));
+                    const builder = module.toSyncBuilder();
+                    const contents = await compositionRoot
+                        .sync()
+                        [module.type](builder)
+                        .buildPayload();
+
+                    const newPackage = item.update({ contents, dhisVersion });
+                    await compositionRoot.packages().create(newPackage, module);
                 }
 
                 loading.reset();

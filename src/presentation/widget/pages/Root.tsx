@@ -1,13 +1,16 @@
 import qs from "qs";
 import React, { useEffect, useState } from "react";
 import { HashRouter } from "react-router-dom";
+import { Dictionary } from "../../../types/utils";
 
 function useWidget(): { dashboardItemId: string; userOrgUnits: string[]; widget: string } {
     if (!process.env.REACT_APP_DASHBOARD_WIDGET) {
         throw new Error("Attempting to use useWidget on application");
     }
 
-    const { dashboardItemId = "DEVELOPMENT", userOrgUnit } = qs.parse(window.location.search);
+    const { dashboardItemId = "DEVELOPMENT", userOrgUnit } = qs.parse(
+        window.location.search
+    ) as Dictionary<string>;
 
     return {
         dashboardItemId,
