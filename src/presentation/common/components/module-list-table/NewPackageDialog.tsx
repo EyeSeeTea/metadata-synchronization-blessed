@@ -1,12 +1,5 @@
-import {
-    FormControl,
-    FormHelperText,
-    InputLabel,
-    makeStyles,
-    MenuItem,
-    Select,
-    TextField,
-} from "@material-ui/core";
+import { makeStyles, TextField } from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import { ConfirmationDialog } from "d2-ui-components";
 import _, { Dictionary } from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
@@ -21,6 +14,7 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
     const { compositionRoot } = useAppContext();
     const classes = useStyles();
 
+    const [versions, updateVersions] = useState<string[]>([]);
     const [item, updateItem] = useState<Package>(
         Package.build({
             name: i18n.t("Package of {{name}}", module),
@@ -78,18 +72,18 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
         const errors = item.validate(undefined, module);
         const messages = _.keyBy(errors, "property");
 
-        if (errors.length === 0) save(item);
+        if (errors.length === 0) save(item, versions);
         else setErrors(messages);
-    }, [item, save, module]);
+    }, [item, save, module, versions]);
 
     useEffect(() => {
         compositionRoot
             .instances()
             .getVersion()
-            .then(dhisVersion => {
-                if (!item.dhisVersion) updateItem(item.update({ dhisVersion }));
+            .then(version => {
+                if (versions.length === 0) updateVersions([version]);
             });
-    }, [compositionRoot, item]);
+    }, [compositionRoot, versions, updateVersions]);
 
     return (
         <ConfirmationDialog
@@ -128,29 +122,17 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
                 />
             </div>
 
-            <FormControl className={classes.row} fullWidth={true}>
-                <InputLabel error={!!errors["dhisVersion"]}>
-                    {i18n.t("DHIS2 Version (*)")}
-                </InputLabel>
-
-                <Select
-                    value={item.dhisVersion}
-                    onChange={onChangeField("dhisVersion")}
-                    error={!!errors["dhisVersion"]}
-                >
-                    <MenuItem value={"2.30"}>2.30</MenuItem>
-                    <MenuItem value={"2.31"}>2.31</MenuItem>
-                    <MenuItem value={"2.32"}>2.32</MenuItem>
-                    <MenuItem value={"2.33"}>2.33</MenuItem>
-                    <MenuItem value={"2.34"}>2.34</MenuItem>
-                </Select>
-
-                {!!errors["dhisVersion"] && (
-                    <FormHelperText error={true}>
-                        {errors["dhisVersion"]?.description}
-                    </FormHelperText>
+            <Autocomplete
+                className={classes.row}
+                multiple
+                options={["2.30", "2.31", "2.32", "2.33", "2.34"]}
+                value={versions}
+                onChange={(_event, value) => updateVersions(value)}
+                renderTags={(values: string[]) => values.sort().join(", ")}
+                renderInput={params => (
+                    <TextField {...params} variant="standard" label={i18n.t("DHIS2 Version (*)")} />
                 )}
-            </FormControl>
+            />
 
             <TextField
                 className={classes.row}
@@ -169,7 +151,7 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
 
 export interface NewPacakgeDialogProps {
     module: Module;
-    save: (item: Package) => void;
+    save: (item: Package, versions: string[]) => void;
     close: () => void;
 }
 

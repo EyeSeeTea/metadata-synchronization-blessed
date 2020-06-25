@@ -70,7 +70,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     );
 
     const savePackage = useCallback(
-        async (item: Package) => {
+        async (item: Package, _versions: string[]) => {
             const module = _.find(rows, ({ id }) => id === item.module.id);
             if (!module) snackbar.error(i18n.t("Invalid module"));
             else {

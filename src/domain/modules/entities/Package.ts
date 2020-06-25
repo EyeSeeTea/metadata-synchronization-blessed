@@ -62,11 +62,6 @@ export class Package implements BasePackage {
             property: "version",
             validation: "hasText",
         },
-        {
-            property: "dhisVersion",
-            validation: "hasText",
-            alias: i18n.t("DHIS2 version"),
-        },
     ];
 
     protected static buildDefaultValues = (): Pick<Package, keyof BasePackage> => {
