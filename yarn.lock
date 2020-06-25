@@ -5059,10 +5059,10 @@ cypress@4.2.0:
     url "0.11.0"
     yauzl "2.10.0"
 
-d2-api@1.0.0-beta.1:
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-1.0.0-beta.1.tgz#3a79a5fd59ad4c00ffce52198b1706c4a5c03409"
-  integrity sha512-7CfEw0CgfeD8kMdNhpUMUxNtMoHtMqqthWiUDp6opnvVIW0CeaMZM5eMherraNUsPBQh8y3y4HMh5Pp2ud4Ptw==
+d2-api@1.0.0-beta.2:
+  version "1.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-1.0.0-beta.2.tgz#f146ea1abf40c73833fb0eda80cb2d845db7534f"
+  integrity sha512-k306KYuNvE9rFS7vPA54WcjWIsQrfAvyywNWGvM/ZUohXlpi95/ttzFCzWqrlbSFQKPwWZME18XpeSAKotYcsg==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@dhis2/d2-i18n" "^1.0.5"
@@ -13169,7 +13169,7 @@ request@^2.87.0, request@^2.88.0:
     tunnel-agent "^0.6.0"
     uuid "^3.3.2"
 
-"request@github:cypress-io/request#b5af0d1fa47eec97ba980cde90a13e69a2afcd16":
+request@cypress-io/request#b5af0d1fa47eec97ba980cde90a13e69a2afcd16:
   version "2.88.1"
   resolved "https://codeload.github.com/cypress-io/request/tar.gz/b5af0d1fa47eec97ba980cde90a13e69a2afcd16"
   dependencies:
