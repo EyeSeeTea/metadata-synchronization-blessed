@@ -58,19 +58,22 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
 
     const createPackage = useCallback(
         async (ids: string[]) => {
-            const item = _.find(rows, ({ id }) => id === ids[0]);
-            if (!item) snackbar.error(i18n.t("Invalid module"));
+            const module = _.find(rows, ({ id }) => id === ids[0]);
+            if (!module) snackbar.error(i18n.t("Invalid module"));
             else {
-                loading.show(true, i18n.t("Creating package for module {{name}}", item));
-                const builder = item.toSyncBuilder();
+                loading.show(true, i18n.t("Creating package for module {{name}}", module));
+                const builder = module.toSyncBuilder();
                 const contents = await compositionRoot
                     .sync()
-                    [item.type](builder)
+                    [module.type](builder)
                     .buildPayload();
 
                 await compositionRoot.packages().create({
-                    location: "dataStore",
-                    module: item,
+                    name: `Package of ${module.name}`,
+                    description: "",
+                    version: "1",
+                    dhisVersion: "2.30",
+                    module,
                     contents,
                 });
 

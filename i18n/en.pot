@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-23T08:24:49.172Z\n"
-"PO-Revision-Date: 2020-06-23T08:24:49.172Z\n"
+"POT-Creation-Date: 2020-06-25T05:15:35.356Z\n"
+"PO-Revision-Date: 2020-06-25T05:15:35.356Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -101,10 +101,10 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-msgid "Download"
+msgid "Download as JSON"
 msgstr ""
 
-msgid "Publish"
+msgid "Publish to Store"
 msgstr ""
 
 msgid "MetaData Synchronization"

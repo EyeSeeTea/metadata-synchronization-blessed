@@ -40,7 +40,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             loading.show(true, "Deleting package");
             const item = _.find(rows, ({ id }) => id === ids[0]);
             if (!item) snackbar.error(i18n.t("Invalid package"));
-            else await compositionRoot.packages(remoteInstance).delete(item.location, item.id);
+            else await compositionRoot.packages(remoteInstance).delete(item.id);
             loading.reset();
             setResetKey(Math.random());
         },
@@ -60,7 +60,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const columns: TableColumn<BasePackage>[] = [
         { name: "name", text: i18n.t("Name"), sortable: true },
-        {
+        /**{
             name: "location",
             text: i18n.t("Location"),
             sortable: true,
@@ -69,7 +69,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 else if (location === "github") return i18n.t("GitHub");
                 else return i18n.t("Unknown");
             },
-        },
+        },**/
         { name: "version", text: i18n.t("DHIS2 Version"), sortable: true },
         { name: "module", text: i18n.t("Module"), sortable: true },
     ];
@@ -77,7 +77,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const details: ObjectsTableDetailField<BasePackage>[] = [
         { name: "id", text: i18n.t("ID") },
         { name: "name", text: i18n.t("Name") },
-        {
+        /**{
             name: "location",
             text: i18n.t("Location"),
             getValue: ({ location }) => {
@@ -85,7 +85,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 else if (location === "github") return i18n.t("GitHub");
                 else return i18n.t("Unknown");
             },
-        },
+        },**/
         { name: "version", text: i18n.t("DHIS2 Version") },
         { name: "module", text: i18n.t("Module") },
     ];
@@ -106,14 +106,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         },
         {
             name: "download",
-            text: i18n.t("Download"),
+            text: i18n.t("Download as JSON"),
             multiple: false,
             onClick: downloadPackage,
             icon: <Icon>cloud_download</Icon>,
         },
         {
             name: "publish",
-            text: i18n.t("Publish"),
+            text: i18n.t("Publish to Store"),
             multiple: false,
             onClick: () => snackbar.warning("Not implemented yet"),
             icon: <Icon>publish</Icon>,

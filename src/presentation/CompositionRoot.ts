@@ -52,7 +52,7 @@ export class CompositionRoot {
 
     @cache()
     public sync(remoteInstance = this.localInstance) {
-        const instanceRepository = new InstanceD2ApiRepository(remoteInstance, this.encryptionKey);
+        const instance = new InstanceD2ApiRepository(remoteInstance, this.encryptionKey);
         const transformation = new TransformationD2ApiRepository();
         const aggregated = new AggregatedD2ApiRepository(remoteInstance);
         const events = new EventsD2ApiRepository(remoteInstance);
@@ -65,7 +65,7 @@ export class CompositionRoot {
                     this.d2,
                     remoteInstance,
                     builder,
-                    instanceRepository,
+                    instance,
                     aggregated,
                     transformation
                 ),
@@ -74,25 +74,19 @@ export class CompositionRoot {
                     this.d2,
                     remoteInstance,
                     builder,
-                    instanceRepository,
+                    instance,
                     events,
                     aggregated,
                     transformation
                 ),
             metadata: (builder: SynchronizationBuilder) =>
-                new MetadataSyncUseCase(
-                    this.d2,
-                    remoteInstance,
-                    builder,
-                    instanceRepository,
-                    metadata
-                ),
+                new MetadataSyncUseCase(this.d2, remoteInstance, builder, instance, metadata),
             deleted: (builder: SynchronizationBuilder) =>
                 new DeletedMetadataSyncUseCase(
                     this.d2,
                     remoteInstance,
                     builder,
-                    instanceRepository,
+                    instance,
                     metadata
                 ),
         };
@@ -114,14 +108,11 @@ export class CompositionRoot {
     public modules(remoteInstance = this.localInstance) {
         const storage = new StorageDataStoreRepository(remoteInstance);
         const download = new DownloadWebRepository();
-        const instanceRepository = new InstanceD2ApiRepository(
-            this.localInstance,
-            this.encryptionKey
-        );
+        const instance = new InstanceD2ApiRepository(this.localInstance, this.encryptionKey);
 
         return getExecute({
             list: new ListModulesUseCase(storage),
-            save: new SaveModuleUseCase(storage, instanceRepository),
+            save: new SaveModuleUseCase(storage, instance),
             get: new GetModuleUseCase(storage),
             delete: new DeleteModuleUseCase(storage),
             download: new DownloadModuleUseCase(download),
@@ -131,17 +122,13 @@ export class CompositionRoot {
     @cache()
     public packages(remoteInstance = this.localInstance) {
         const storage = new StorageDataStoreRepository(remoteInstance);
-        const github = new GitHubOctokitRepository();
         const download = new DownloadWebRepository();
-        const instanceRepository = new InstanceD2ApiRepository(
-            this.localInstance,
-            this.encryptionKey
-        );
+        const instance = new InstanceD2ApiRepository(this.localInstance, this.encryptionKey);
 
         return getExecute({
-            list: new ListPackagesUseCase(storage, github),
-            create: new CreatePackageUseCase(storage, github, instanceRepository),
-            delete: new DeletePackageUseCase(storage, github),
+            list: new ListPackagesUseCase(storage),
+            create: new CreatePackageUseCase(storage, instance),
+            delete: new DeletePackageUseCase(storage),
             download: new DownloadPackageUseCase(storage, download),
         });
     }

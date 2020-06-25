@@ -31,6 +31,11 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     }
 
     @cache()
+    public getBaseUrl(): string {
+        return this.api.baseUrl;
+    }
+
+    @cache()
     public async getDefaultIds(filter?: string): Promise<string[]> {
         const response = (await this.api
             .get("/metadata", {

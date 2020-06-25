@@ -1,7 +1,6 @@
 import { generateUid } from "d2/uid";
 import { SynchronizationBuilder } from "../../../types/synchronization";
-import { NamedRef } from "../../common/entities/NamedRef";
-import { SharedObject } from "../../common/entities/SharedObject";
+import { NamedRef, SharedRef } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
 import { MetadataModule } from "./modules/MetadataModule";
@@ -9,10 +8,11 @@ import { MetadataModule } from "./modules/MetadataModule";
 export type Module = MetadataModule;
 export type ModuleType = "metadata";
 
-export interface BaseModule extends SharedObject {
+export interface BaseModule extends SharedRef {
     description: string;
     department: string;
     type: ModuleType;
+    instance: string;
 }
 
 export abstract class GenericModule implements BaseModule {
@@ -28,12 +28,14 @@ export abstract class GenericModule implements BaseModule {
     public readonly lastUpdated: Date;
     public readonly lastUpdatedBy: NamedRef;
     public abstract readonly type: ModuleType;
+    public readonly instance: string;
 
     constructor(data: Pick<GenericModule, keyof BaseModule>) {
         this.id = data.id;
         this.name = data.name;
         this.description = data.description;
         this.department = data.department;
+        this.instance = data.instance;
         this.publicAccess = data.publicAccess;
         this.userAccesses = data.userAccesses;
         this.userGroupAccesses = data.userGroupAccesses;
@@ -65,6 +67,7 @@ export abstract class GenericModule implements BaseModule {
             description: "",
             department: "",
             type: "metadata",
+            instance: "",
             publicAccess: "--------",
             userAccesses: [],
             userGroupAccesses: [],

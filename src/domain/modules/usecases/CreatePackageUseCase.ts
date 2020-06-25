@@ -1,62 +1,48 @@
 import { generateUid } from "d2/uid";
 import { UseCase } from "../../common/entities/UseCase";
 import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
-import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
-import { Module } from "../entities/Module";
-import { Package, PackageLocation } from "../entities/Package";
-import { GitHubRepository } from "../repositories/GitHubRepository";
+import { Package } from "../entities/Package";
 
 export class CreatePackageUseCase implements UseCase {
     constructor(
         private storageRepository: StorageRepository,
-        private githubRepository: GitHubRepository,
         private instanceRepository: InstanceRepository
     ) {}
 
-    public async execute({ location, module, contents }: CreatePackageOptions): Promise<Package> {
+    public async execute({
+        name,
+        description,
+        module,
+        contents,
+        version,
+        dhisVersion,
+    }: CreatePackageOptions): Promise<Package> {
         const user = await this.instanceRepository.getUser();
-        const version = await this.instanceRepository.getVersion();
         const payload: Package = {
-            location,
-            module: module.id,
-            revision: "1",
+            module,
+            version,
             id: generateUid(),
             contents,
-            name: `Package of ${module.name}`,
-            author: user,
-            version,
+            description,
+            name,
+            dhisVersion,
+            created: new Date(),
+            lastUpdated: new Date(),
+            lastUpdatedBy: user,
+            user: user,
         };
 
-        switch (location) {
-            case "dataStore":
-                await this.createDataStorePackage(payload);
-                break;
-            case "github":
-                await this.createGitHubPackage(payload);
-                break;
-            default:
-                throw new Error("Unknown location to create package");
-        }
-
-        return payload;
-    }
-
-    private async createDataStorePackage(payload: Package) {
         await this.storageRepository.saveObjectInCollection(Namespace.PACKAGES, payload, [
             "contents",
         ]);
-    }
 
-    private async createGitHubPackage(_payload: Package) {
-        // TODO
-        console.log(this.githubRepository);
+        return payload;
     }
 }
 
-export interface CreatePackageOptions {
-    location: PackageLocation;
-    module: Module;
-    contents: MetadataPackage;
-}
+export type CreatePackageOptions = Pick<
+    Package,
+    "name" | "description" | "version" | "dhisVersion" | "module" | "contents"
+>;

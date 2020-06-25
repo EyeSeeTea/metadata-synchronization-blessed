@@ -1,18 +1,13 @@
-import { NamedRef } from "../../common/entities/NamedRef";
+import { DatedRef } from "../../common/entities/Ref";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-
-export type PackageLocation = "github" | "dataStore";
+import { Module } from "./Module";
 
 export type BasePackage = Omit<Package, "contents">;
 
-export interface Package extends NamedRef {
-    location: PackageLocation;
-    module: string;
-    revision: string;
+export interface Package extends DatedRef {
+    description: string;
     version: string;
-    author: {
-        name: string;
-        email: string;
-    };
+    dhisVersion: string;
+    module: Pick<Module, "id" | "name" | "instance">;
     contents: MetadataPackage;
 }
