@@ -9,14 +9,16 @@ import {
 } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
 import _, { Dictionary } from "lodash";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import semver from "semver";
 import { ValidationError } from "../../../../domain/common/entities/Validations";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/modules/entities/Package";
 import i18n from "../../../../locales";
+import { useAppContext } from "../../contexts/AppContext";
 
 export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save, close }) => {
+    const { compositionRoot } = useAppContext();
     const classes = useStyles();
 
     const [item, updateItem] = useState<Package>(
@@ -79,6 +81,15 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
         if (errors.length === 0) save(item);
         else setErrors(messages);
     }, [item, save, module]);
+
+    useEffect(() => {
+        compositionRoot
+            .instances()
+            .getVersion()
+            .then(dhisVersion => {
+                if (!item.dhisVersion) updateItem(item.update({ dhisVersion }));
+            });
+    }, [compositionRoot, item]);
 
     return (
         <ConfirmationDialog

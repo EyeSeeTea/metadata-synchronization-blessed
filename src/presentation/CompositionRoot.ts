@@ -11,6 +11,7 @@ import { UseCase } from "../domain/common/entities/UseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
 import { Instance } from "../domain/instance/entities/Instance";
+import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
@@ -144,10 +145,12 @@ export class CompositionRoot {
 
     @cache()
     public instances() {
+        const instance = new InstanceD2ApiRepository(this.localInstance, this.encryptionKey);
         const storage = new StorageDataStoreRepository(this.localInstance);
 
         return getExecute({
             list: new ListInstancesUseCase(storage, this.encryptionKey),
+            getVersion: new GetInstanceVersionUseCase(instance),
         });
     }
 
