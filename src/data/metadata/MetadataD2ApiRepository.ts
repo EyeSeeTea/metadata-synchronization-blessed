@@ -21,6 +21,7 @@ import {
     Model,
     Stats,
 } from "../../types/d2-api";
+import { cache } from "../../utils/cache";
 import {
     metadataTransformationsFromDhis2,
     metadataTransformationsToDhis2,
@@ -193,6 +194,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         return targetInstance ? new D2Api({ baseUrl: url, auth }) : this.api;
     }
 
+    @cache()
     private async getVersion(targetInstance?: Instance): Promise<number> {
         if (!targetInstance) {
             const version = await this.api.getVersion();
