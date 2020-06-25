@@ -1,3 +1,4 @@
+import { generateUid } from "d2/uid";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
 import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
@@ -18,6 +19,7 @@ export class CreatePackageUseCase implements UseCase {
         if (validations.length === 0) {
             const user = await this.instanceRepository.getUser();
             const newPackage = payload.update({
+                id: generateUid(),
                 lastUpdated: new Date(),
                 lastUpdatedBy: user,
                 user: payload.user.id ? payload.user : user,
