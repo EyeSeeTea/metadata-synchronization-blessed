@@ -1,5 +1,4 @@
 import _ from "lodash";
-import { InstanceD2ApiRepository } from "../../../../data/instance/InstanceD2ApiRepository";
 import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
 import { D2Model } from "../../../../models/dhis/default";
 import { EventProgramModel } from "../../../../models/dhis/mapping";
@@ -392,6 +391,26 @@ export const buildMapping = async ({
     };
 };
 
+const getDefaultIds = async (api: D2Api, filter?: string): Promise<string[]> => {
+    const response = (await api
+        .get("/metadata", {
+            filter: "code:eq:default",
+            fields: "id",
+        })
+        .getData()) as {
+        [key: string]: { id: string }[];
+    };
+
+    const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
+
+    return _(metadata)
+        .omit(["system"])
+        .values()
+        .flatten()
+        .map(({ id }) => id)
+        .value();
+};
+
 export const getValidIds = async (
     api: D2Api,
     model: typeof D2Model,
@@ -405,9 +424,7 @@ export const getValidIds = async (
     const programStages = getProgramStages(combinedMetadata[0]);
     const programStageDataElements = getProgramStageDataElements(combinedMetadata[0]);
 
-    // @ts-ignore TODO: This call should be moved as part of a use-case (encryptionKey not used here)
-    const instanceRepository = new InstanceD2ApiRepository(api, null);
-    const defaultValues = await instanceRepository.getDefaultIds();
+    const defaultValues = await getDefaultIds(api);
 
     return _.union(categoryOptions, options, programStages, programStageDataElements)
         .map(({ id }) => id)
