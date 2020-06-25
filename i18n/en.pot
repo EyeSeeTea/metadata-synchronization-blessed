@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-25T06:32:15.741Z\n"
-"PO-Revision-Date: 2020-06-25T06:32:15.741Z\n"
+"POT-Creation-Date: 2020-06-25T07:56:01.230Z\n"
+"PO-Revision-Date: 2020-06-25T07:56:01.230Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -80,28 +80,19 @@ msgstr ""
 msgid "Generate package from module"
 msgstr ""
 
-msgid "Create package for {{name}}"
+msgid "Generate package from {{name}}"
 msgstr ""
 
 msgid "Name (*)"
 msgstr ""
 
-msgid "Version"
+msgid "Version (*)"
+msgstr ""
+
+msgid "DHIS2 Version (*)"
 msgstr ""
 
 msgid "Invalid package"
-msgstr ""
-
-msgid "Location"
-msgstr ""
-
-msgid "Local instance"
-msgstr ""
-
-msgid "GitHub"
-msgstr ""
-
-msgid "Unknown"
 msgstr ""
 
 msgid "DHIS2 Version"
@@ -501,6 +492,9 @@ msgid "Aggregated"
 msgstr ""
 
 msgid "Events"
+msgstr ""
+
+msgid "Unknown"
 msgstr ""
 
 msgid "Synchronization Results"

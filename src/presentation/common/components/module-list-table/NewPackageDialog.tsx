@@ -1,4 +1,12 @@
-import { makeStyles, TextField } from "@material-ui/core";
+import {
+    FormControl,
+    InputLabel,
+    makeStyles,
+    MenuItem,
+    Select,
+    TextField,
+    FormHelperText,
+} from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
 import _, { Dictionary } from "lodash";
 import React, { useCallback, useState } from "react";
@@ -18,7 +26,7 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
 
     const onChangeField = useCallback(
         (field: keyof Package) => {
-            return (event: React.ChangeEvent<HTMLInputElement>) => {
+            return (event: React.ChangeEvent<{ value: unknown }>) => {
                 const newPackage = item.update({ [field]: event.target.value });
                 const errors = _.keyBy(newPackage.validate([field]), "property");
 
@@ -35,7 +43,7 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
 
         if (errors.length === 0) save(item);
         else setErrors(messages);
-    }, [item, save])
+    }, [item, save]);
 
     return (
         <ConfirmationDialog
@@ -64,6 +72,30 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
                 error={!!errors["version"]}
                 helperText={errors["version"]?.description}
             />
+
+            <FormControl className={classes.row} fullWidth={true}>
+                <InputLabel error={!!errors["dhisVersion"]}>
+                    {i18n.t("DHIS2 Version (*)")}
+                </InputLabel>
+
+                <Select
+                    value={item.dhisVersion}
+                    onChange={onChangeField("dhisVersion")}
+                    error={!!errors["dhisVersion"]}
+                >
+                    <MenuItem value={"2.30"}>2.30</MenuItem>
+                    <MenuItem value={"2.31"}>2.31</MenuItem>
+                    <MenuItem value={"2.32"}>2.32</MenuItem>
+                    <MenuItem value={"2.33"}>2.33</MenuItem>
+                    <MenuItem value={"2.34"}>2.34</MenuItem>
+                </Select>
+
+                {!!errors["dhisVersion"] && (
+                    <FormHelperText error={true}>
+                        {errors["dhisVersion"]?.description}
+                    </FormHelperText>
+                )}
+            </FormControl>
 
             <TextField
                 className={classes.row}
