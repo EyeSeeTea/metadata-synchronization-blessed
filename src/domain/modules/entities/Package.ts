@@ -1,4 +1,5 @@
 import { generateUid } from "d2/uid";
+import semver from "semver";
 import i18n from "../../../locales";
 import { DatedRef, NamedRef } from "../../common/entities/Ref";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
@@ -40,10 +41,11 @@ export class Package implements BasePackage {
         this.lastUpdatedBy = data.lastUpdatedBy;
     }
 
-    public validate(filter?: string[]): ValidationError[] {
-        return validateModel<Package>(this, this.moduleValidations()).filter(
-            ({ property }) => filter?.includes(property) ?? true
-        );
+    public validate(filter?: string[], module?: Module): ValidationError[] {
+        return [
+            ...validateModel<Package>(this, this.moduleValidations()),
+            ...this.validateVersion(module),
+        ].filter(({ property }) => filter?.includes(property) ?? true);
     }
 
     static build(data?: Partial<Pick<Package, keyof BasePackage>>): Package {
@@ -92,4 +94,30 @@ export class Package implements BasePackage {
             },
         };
     };
+
+    private validateVersion(module?: Module): ValidationError[] {
+        if (!module) return [];
+
+        const versionSemVer = semver.parse(this.version, true);
+
+        if (!versionSemVer)
+            return [
+                {
+                    property: "version",
+                    description: i18n.t("Version is not valid"),
+                    error: "version-not-valid",
+                },
+            ];
+
+        if (versionSemVer.compareMain(module.lastPackageVersion ?? "1.0.0") !== 1)
+            return [
+                {
+                    property: "version",
+                    description: i18n.t("Version is too small"),
+                    error: "version-too-small",
+                },
+            ];
+
+        return [];
+    }
 }

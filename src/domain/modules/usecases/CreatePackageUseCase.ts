@@ -3,6 +3,7 @@ import { ValidationError } from "../../common/entities/Validations";
 import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
+import { Module } from "../entities/Module";
 import { Package } from "../entities/Package";
 
 export class CreatePackageUseCase implements UseCase {
@@ -11,7 +12,7 @@ export class CreatePackageUseCase implements UseCase {
         private instanceRepository: InstanceRepository
     ) {}
 
-    public async execute(payload: Package): Promise<ValidationError[]> {
+    public async execute(payload: Package, module: Module): Promise<ValidationError[]> {
         const validations = payload.validate();
 
         if (validations.length === 0) {
@@ -25,6 +26,9 @@ export class CreatePackageUseCase implements UseCase {
             await this.storageRepository.saveObjectInCollection(Namespace.PACKAGES, newPackage, [
                 "contents",
             ]);
+
+            const newModule = module.update({ lastPackageVersion: newPackage.version });
+            await this.storageRepository.saveObjectInCollection(Namespace.MODULES, newModule);
         }
 
         return validations;

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-25T07:56:01.230Z\n"
-"PO-Revision-Date: 2020-06-25T07:56:01.230Z\n"
+"POT-Creation-Date: 2020-06-25T09:03:12.252Z\n"
+"PO-Revision-Date: 2020-06-25T09:03:12.252Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -15,6 +15,12 @@ msgid "You need to select at least one {{field}}"
 msgstr ""
 
 msgid "DHIS2 version"
+msgstr ""
+
+msgid "Version is not valid"
+msgstr ""
+
+msgid "Version is too small"
 msgstr ""
 
 msgid "Preparing synchronization"
@@ -80,13 +86,19 @@ msgstr ""
 msgid "Generate package from module"
 msgstr ""
 
+msgid "Package of {{name}}"
+msgstr ""
+
 msgid "Generate package from {{name}}"
 msgstr ""
 
 msgid "Name (*)"
 msgstr ""
 
-msgid "Version (*)"
+msgid "Version number (*)"
+msgstr ""
+
+msgid "Version tag"
 msgstr ""
 
 msgid "DHIS2 Version (*)"

@@ -13,6 +13,7 @@ export interface BaseModule extends SharedRef {
     department: string;
     type: ModuleType;
     instance: string;
+    lastPackageVersion: string;
 }
 
 export abstract class GenericModule implements BaseModule {
@@ -27,8 +28,9 @@ export abstract class GenericModule implements BaseModule {
     public readonly created: Date;
     public readonly lastUpdated: Date;
     public readonly lastUpdatedBy: NamedRef;
-    public abstract readonly type: ModuleType;
     public readonly instance: string;
+    public readonly lastPackageVersion: string;
+    public abstract readonly type: ModuleType;
 
     constructor(data: Pick<GenericModule, keyof BaseModule>) {
         this.id = data.id;
@@ -36,6 +38,7 @@ export abstract class GenericModule implements BaseModule {
         this.description = data.description;
         this.department = data.department;
         this.instance = data.instance;
+        this.lastPackageVersion = data.lastPackageVersion;
         this.publicAccess = data.publicAccess;
         this.userAccesses = data.userAccesses;
         this.userGroupAccesses = data.userGroupAccesses;
@@ -68,6 +71,7 @@ export abstract class GenericModule implements BaseModule {
             department: "",
             type: "metadata",
             instance: "",
+            lastPackageVersion: "1.0.0",
             publicAccess: "--------",
             userAccesses: [],
             userGroupAccesses: [],

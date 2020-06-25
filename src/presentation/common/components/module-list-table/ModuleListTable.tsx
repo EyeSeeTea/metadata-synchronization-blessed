@@ -82,13 +82,14 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                     .buildPayload();
 
                 const newPackage = item.update({ contents });
-                const errors = await compositionRoot.packages().create(newPackage);
+                const errors = await compositionRoot.packages().create(newPackage, module);
                 if (errors.length === 0) {
                     setNewPackageModule(undefined);
                     snackbar.success(i18n.t("Successfully created package"));
                 }
 
                 loading.reset();
+                setResetKey(Math.random());
             }
         },
         [compositionRoot, rows, snackbar, loading]
@@ -118,7 +119,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 setResetKey(Math.random());
             }
         },
-        [compositionRoot, rows, snackbar, loading, setResetKey]
+        [compositionRoot, rows, snackbar, loading]
     );
 
     const columns: TableColumn<Module>[] = [
