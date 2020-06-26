@@ -1149,7 +1149,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.2.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.0", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.2.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.0", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.6":
   version "7.10.3"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.10.3.tgz#670d002655a7c366540c67f6fd3342cd09500364"
   integrity sha512-RzGO0RLSdokm9Ipe/YD+7ww8X2Ro79qiXZF3HU9ljrM+qnJmH1Vqth+hbiQZy761LnMJTMitHDuKVYTk3k4dLw==
@@ -1276,7 +1276,7 @@
     moment "^2.22.1"
     rimraf "^2.6.2"
 
-"@dhis2/d2-i18n@1.0.6", "@dhis2/d2-i18n@^1.0.3", "@dhis2/d2-i18n@^1.0.5":
+"@dhis2/d2-i18n@1.0.6", "@dhis2/d2-i18n@^1.0.5":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@dhis2/d2-i18n/-/d2-i18n-1.0.6.tgz#2914be8acf296f3a6bf7b51c76c46da6a120b0ff"
   integrity sha512-7YdA4ppFosjuyf7ZMm47BrdsA5TWLM9lmS0lUPgjcCVeeWfUgagqzf4W5JGB9XQ3w1vzK+yy5zH2Ij8IgRAGhA==
@@ -1752,7 +1752,7 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
-"@material-ui/core@4.10.2", "@material-ui/core@^4.9.4":
+"@material-ui/core@4.10.2":
   version "4.10.2"
   resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.10.2.tgz#0ef78572132fcef1a25f6969bce0d34652d42e31"
   integrity sha512-Uf4iDLi9sW6HKbVQDyDZDr1nMR4RUAE7w/RIIJZGNVZResC0xwmpLRZMtaUdSO43N0R0yJehfxTi4Z461Cd49A==
@@ -1770,7 +1770,7 @@
     react-is "^16.8.0"
     react-transition-group "^4.4.0"
 
-"@material-ui/icons@4.9.1", "@material-ui/icons@^4.5.1":
+"@material-ui/icons@4.9.1":
   version "4.9.1"
   resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-4.9.1.tgz#fdeadf8cb3d89208945b33dbc50c7c616d0bd665"
   integrity sha512-GBitL3oBWO0hzBhvA9KxqcowRUsA0qzwKkURyC8nppnC3fw54KPKZ+d4V1Eeg/UnDRSzDaI9nGCdel/eh9AQMg==
@@ -1788,7 +1788,7 @@
     prop-types "^15.7.2"
     react-is "^16.8.0"
 
-"@material-ui/pickers@^3.2.7":
+"@material-ui/pickers@3.2.10":
   version "3.2.10"
   resolved "https://registry.yarnpkg.com/@material-ui/pickers/-/pickers-3.2.10.tgz#19df024895876eb0ec7cd239bbaea595f703f0ae"
   integrity sha512-B8G6Obn5S3RCl7hwahkQj9sKUapwXWFjiaz/Bsw1fhYFdNMnDUolRiWQSoKPb1/oKe37Dtfszoywi1Ynbo3y8w==
@@ -4488,7 +4488,7 @@ compression@^1.7.4:
     safe-buffer "5.1.2"
     vary "~1.1.2"
 
-compute-scroll-into-view@^1.0.9:
+compute-scroll-into-view@^1.0.13, compute-scroll-into-view@^1.0.9:
   version "1.0.14"
   resolved "https://registry.yarnpkg.com/compute-scroll-into-view/-/compute-scroll-into-view-1.0.14.tgz#80e3ebb25d6aa89f42e533956cb4b16a04cfe759"
   integrity sha512-mKDjINe3tc6hGelUMNDzuhorIUZ7kS7BwyY0r2wQd2HOH2tRuJykiC06iSEX8y1TuhNzvz4GcJnK16mM2J1NMQ==
@@ -5098,24 +5098,25 @@ d2-manifest@1.0.0:
     minimist "^1.1.0"
     readline-sync "^1.4.1"
 
-d2-ui-components@1.3.1-beta.3:
-  version "1.3.1-beta.3"
-  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-1.3.1-beta.3.tgz#128eb6b4540bac0c6acb5a014bfd12811c911e67"
-  integrity sha512-A/BfVnmrhixsJXSYGbhhv0L/lH4ZGnAGI9SIpeNQeA2ybfWz+fp7oBHmVIq7dZJM5ttg9vxLxvx1EWQRBH2uaA==
+d2-ui-components@1.4.3-beta.3:
+  version "1.4.3-beta.3"
+  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-1.4.3-beta.3.tgz#62d5594a4978fd7fdc03204ff448f5645ce63fd0"
+  integrity sha512-mFYXljNec6VpdiONevWqZebLIzY7Dd8OV772A2VeyvnDeHoC7i4FYTj8aLMb8T7bqpgd+TJ6Qj3j8Y3IcKKYTQ==
   dependencies:
     "@date-io/core" "^1.3.6"
     "@date-io/moment" "^1.0.2"
-    "@dhis2/d2-i18n" "^1.0.3"
+    "@dhis2/d2-i18n" "1.0.6"
     "@dhis2/d2-ui-core" "6.3.0"
-    "@material-ui/core" "^4.9.4"
-    "@material-ui/icons" "^4.5.1"
-    "@material-ui/pickers" "^3.2.7"
+    "@material-ui/icons" "4.9.1"
+    "@material-ui/pickers" "3.2.10"
     classnames "^2.2.6"
-    lodash "^4.17.11"
+    downshift "^5.4.2"
+    lodash "4.17.15"
     moment "^2.22.2"
-    nano-memoize "^1.1.5"
+    nano-memoize "1.1.10"
     node-sass "^4.12.0"
     react-linkify "^1.0.0-alpha"
+    rxjs-compat "6.5.4"
     throttle-debounce "^2.1.0"
 
 d2@31.8.1, d2@^31.8.1:
@@ -5565,6 +5566,16 @@ downshift@5.0.5:
     compute-scroll-into-view "^1.0.9"
     prop-types "^15.7.2"
     react-is "^16.9.0"
+
+downshift@^5.4.2:
+  version "5.4.5"
+  resolved "https://registry.yarnpkg.com/downshift/-/downshift-5.4.5.tgz#dc2a02fa87ef98dd1d676bd9dc07fe836059b1c6"
+  integrity sha512-Dd49NfQqbekoNm1rwyyb3Tn3Km4VbV+V/BS2c/hU6lStnYGmq7Zt9TqSx0tDINN0nxeuKqGb3Wz7s8Ry1Xs2Tg==
+  dependencies:
+    "@babel/runtime" "^7.9.6"
+    compute-scroll-into-view "^1.0.13"
+    prop-types "^15.7.2"
+    react-is "^16.13.1"
 
 duplexer@^0.1.1:
   version "0.1.1"
@@ -10548,11 +10559,6 @@ nano-memoize@1.1.10:
   resolved "https://registry.yarnpkg.com/nano-memoize/-/nano-memoize-1.1.10.tgz#ff38d9454812f7c5a5248b7115c838ab4da936c5"
   integrity sha512-eMG3EMNCZ64XP7EMrCr0dBVuQPj1htR7nx81/vGYWy1GP/Waw+CqwScswwooKUQD16KnuJI2zUZCwdwC1Lki3w==
 
-nano-memoize@^1.1.5:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/nano-memoize/-/nano-memoize-1.2.0.tgz#cb48f837901564b8beaec1aa2dbf07bfd0c5a7b9"
-  integrity sha512-iNWfHsFJSXsGVqMXKS5RqdaEnQsWaxEApRmP3WdldI3NFqZTkQfmaZ28+U60/cAjEBK5AjFZZg5KwH9vhv+nvA==
-
 nanomatch@^1.2.9:
   version "1.2.13"
   resolved "https://registry.yarnpkg.com/nanomatch/-/nanomatch-1.2.13.tgz#b87a8aa4fc0de8fe6be88895b38983ff265bd119"
@@ -12633,7 +12639,7 @@ react-event-listener@^0.6.2:
     prop-types "^15.6.0"
     warning "^4.0.1"
 
-react-is@^16.12.0, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6, react-is@^16.9.0:
+react-is@^16.12.0, react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6, react-is@^16.9.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
