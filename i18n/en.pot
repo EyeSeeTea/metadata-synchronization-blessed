@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-25T10:30:01.908Z\n"
-"PO-Revision-Date: 2020-06-25T10:30:01.908Z\n"
+"POT-Creation-Date: 2020-06-26T05:57:01.066Z\n"
+"PO-Revision-Date: 2020-06-26T05:57:01.066Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -48,6 +48,9 @@ msgid "Network error {{error}}, check if server is up and CORS is enabled"
 msgstr ""
 
 msgid "Invalid module"
+msgstr ""
+
+msgid "Downloading snapshot for module {{name}}"
 msgstr ""
 
 msgid "Creating {{dhisVersion}} package for module {{name}}"

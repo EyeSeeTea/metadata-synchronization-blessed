@@ -1,4 +1,5 @@
 import { generateUid } from "d2/uid";
+import _ from "lodash";
 import semver from "semver";
 import i18n from "../../../locales";
 import { DatedRef, NamedRef } from "../../common/entities/Ref";
@@ -33,12 +34,12 @@ export class Package implements BasePackage {
         this.description = data.description;
         this.version = data.version;
         this.dhisVersion = data.dhisVersion;
-        this.module = data.module;
+        this.module = _.pick(data.module, ["id", "name", "instance"]);
         this.contents = data.contents;
-        this.user = data.user;
+        this.user = _.pick(data.user, ["id", "name"]);
         this.created = data.created;
         this.lastUpdated = data.lastUpdated;
-        this.lastUpdatedBy = data.lastUpdatedBy;
+        this.lastUpdatedBy = _.pick(data.lastUpdatedBy, ["id", "name"]);
     }
 
     public validate(filter?: string[], module?: Module): ValidationError[] {

@@ -51,13 +51,24 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
         [rows, history, snackbar]
     );
 
-    const downloadModule = useCallback(
+    const downloadSnapshot = useCallback(
         async (ids: string[]) => {
-            const item = _.find(rows, ({ id }) => id === ids[0]);
-            if (!item) snackbar.error(i18n.t("Invalid module"));
-            else compositionRoot.modules(remoteInstance).download(item);
+            const module = _.find(rows, ({ id }) => id === ids[0]);
+            if (!module) snackbar.error(i18n.t("Invalid module"));
+            else {
+                loading.show(true, i18n.t("Downloading snapshot for module {{name}}", module));
+
+                const builder = module.toSyncBuilder();
+                const contents = await compositionRoot
+                    .sync(remoteInstance)
+                    [module.type](builder)
+                    .buildPayload();
+
+                await compositionRoot.modules(remoteInstance).download(module, contents);
+                loading.reset();
+            }
         },
-        [compositionRoot, remoteInstance, rows, snackbar]
+        [compositionRoot, remoteInstance, rows, snackbar, loading]
     );
 
     const createPackage = useCallback(
@@ -186,7 +197,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             name: "download",
             text: i18n.t("Download snapshot package"),
             multiple: false,
-            onClick: downloadModule,
+            onClick: downloadSnapshot,
             icon: <Icon>cloud_download</Icon>,
         },
         {

@@ -18,7 +18,7 @@ import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUse
 import { CreatePackageUseCase } from "../domain/modules/usecases/CreatePackageUseCase";
 import { DeleteModuleUseCase } from "../domain/modules/usecases/DeleteModuleUseCase";
 import { DeletePackageUseCase } from "../domain/modules/usecases/DeletePackageUseCase";
-import { DownloadModuleUseCase } from "../domain/modules/usecases/DownloadModuleUseCase";
+import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/DownloadModuleSnapshotUseCase";
 import { DownloadPackageUseCase } from "../domain/modules/usecases/DownloadPackageUseCase";
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { GetStoreUseCase } from "../domain/modules/usecases/GetStoreUseCase";
@@ -116,7 +116,7 @@ export class CompositionRoot {
             save: new SaveModuleUseCase(storage, instance),
             get: new GetModuleUseCase(storage),
             delete: new DeleteModuleUseCase(storage),
-            download: new DownloadModuleUseCase(download),
+            download: new DownloadModuleSnapshotUseCase(download, instance),
         });
     }
 
