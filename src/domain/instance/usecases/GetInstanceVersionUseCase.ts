@@ -5,6 +5,8 @@ export class GetInstanceVersionUseCase implements UseCase {
     constructor(private instanceRepository: InstanceRepository) {}
 
     public async execute(): Promise<string> {
-        return this.instanceRepository.getVersion();
+        const buildVersion = await this.instanceRepository.getVersion();
+        const [major, minor] = buildVersion.split(".");
+        return `${major}.${minor}`;
     }
 }
