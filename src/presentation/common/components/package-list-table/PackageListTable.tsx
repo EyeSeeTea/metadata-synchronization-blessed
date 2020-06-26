@@ -34,6 +34,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const loading = useLoading();
+
     const [rows, setRows] = useState<ListPackage[]>([]);
     const [resetKey, setResetKey] = useState(Math.random());
     const [selection, updateSelection] = useState<TableSelection[]>([]);
@@ -42,13 +43,13 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         async (ids: string[]) => {
             loading.show(true, "Deleting packages");
             for (const id of ids) {
-                await compositionRoot.packages(remoteInstance).delete(id);
+                await compositionRoot.packages().delete(id);
             }
             loading.reset();
             setResetKey(Math.random());
             updateSelection([]);
         },
-        [compositionRoot, remoteInstance, loading, setResetKey]
+        [compositionRoot, loading]
     );
 
     const updateTable = useCallback(

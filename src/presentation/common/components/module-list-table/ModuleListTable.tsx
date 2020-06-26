@@ -5,6 +5,8 @@ import {
     ObjectsTableDetailField,
     TableAction,
     TableColumn,
+    TableSelection,
+    TableState,
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
@@ -41,6 +43,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     const [resetKey, setResetKey] = useState(Math.random());
     const [isTableLoading, setIsTableLoading] = useState(false);
     const [newPackageModule, setNewPackageModule] = useState<Module>();
+    const [selection, updateSelection] = useState<TableSelection[]>([]);
 
     const editRule = useCallback(
         (ids: string[]) => {
@@ -127,16 +130,22 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
 
     const deleteModule = useCallback(
         async (ids: string[]) => {
-            const item = _.find(rows, ({ id }) => id === ids[0]);
-            if (!item) snackbar.error(i18n.t("Invalid module"));
-            else {
-                loading.show(true, "Deleting package");
-                await compositionRoot.modules().delete(item.id);
-                loading.reset();
-                setResetKey(Math.random());
+            loading.show(true, "Deleting modules");
+            for (const id of ids) {
+                await compositionRoot.modules().delete(id);
             }
+            loading.reset();
+            setResetKey(Math.random());
+            updateSelection([]);
         },
-        [compositionRoot, rows, snackbar, loading]
+        [compositionRoot, loading]
+    );
+
+    const updateTable = useCallback(
+        ({ selection }: TableState<Module>) => {
+            updateSelection(selection);
+        },
+        [updateSelection]
     );
 
     const columns: TableColumn<Module>[] = [
@@ -180,7 +189,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
         {
             name: "delete",
             text: i18n.t("Delete"),
-            multiple: false,
+            multiple: true,
             isActive: () => presentation === "app" && !remoteInstance,
             onClick: deleteModule,
             icon: <Icon>delete</Icon>,
@@ -245,6 +254,8 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 onActionButtonClick={onActionButtonClick}
                 forceSelectionColumn={true}
                 filterComponents={externalComponents}
+                selection={selection}
+                onChange={updateTable}
             />
         </React.Fragment>
     );
