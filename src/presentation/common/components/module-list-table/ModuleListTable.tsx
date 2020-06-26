@@ -26,6 +26,7 @@ interface ModulesListTableProps {
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
     presentation?: ModulesListPresentation;
     externalComponents?: ReactNode;
+    pageSizeOptions?: number[];
 }
 
 export const ModulesListTable: React.FC<ModulesListTableProps> = ({
@@ -33,6 +34,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     onActionButtonClick,
     presentation = "app",
     externalComponents,
+    pageSizeOptions,
 }) => {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
@@ -256,6 +258,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 filterComponents={externalComponents}
                 selection={selection}
                 onChange={updateTable}
+                pageSizeOptions={pageSizeOptions}
             />
         </React.Fragment>
     );

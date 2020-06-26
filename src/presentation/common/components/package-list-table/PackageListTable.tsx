@@ -23,6 +23,7 @@ interface PackagesListTableProps {
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
     presentation?: PackagesListPresentations;
     externalComponents?: ReactNode;
+    pageSizeOptions?: number[];
 }
 
 export const PackagesListTable: React.FC<PackagesListTableProps> = ({
@@ -30,6 +31,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     onActionButtonClick,
     presentation = "app",
     externalComponents,
+    pageSizeOptions,
 }) => {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
@@ -138,6 +140,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             filterComponents={externalComponents}
             selection={selection}
             onChange={updateTable}
+            pageSizeOptions={pageSizeOptions}
         />
     );
 };
