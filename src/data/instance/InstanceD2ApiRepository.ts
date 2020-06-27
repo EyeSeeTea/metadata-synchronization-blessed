@@ -3,6 +3,7 @@ import _ from "lodash";
 import { Instance, InstanceData } from "../../domain/instance/entities/Instance";
 import { User } from "../../domain/instance/entities/User";
 import { InstanceRepository } from "../../domain/instance/repositories/InstanceRepository";
+import { OrganisationUnit } from "../../domain/metadata/entities/MetadataEntities";
 import { getDataById } from "../../models/dataStore";
 import { D2Api } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
@@ -54,6 +55,20 @@ export class InstanceD2ApiRepository implements InstanceRepository {
             .flatten()
             .map(({ id }) => id)
             .value();
+    }
+
+    @cache()
+    public async getOrgUnitRoots(): Promise<
+        Pick<OrganisationUnit, "id" | "name" | "displayName" | "path">[]
+    > {
+        const { objects } = await this.api.models.organisationUnits
+            .get({
+                filter: { level: { eq: "1" } },
+                fields: { id: true, name: true, displayName: true, path: true },
+            })
+            .getData();
+
+        return objects;
     }
 
     public async getById(id: string): Promise<Instance> {

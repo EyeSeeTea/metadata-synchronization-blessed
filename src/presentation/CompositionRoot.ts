@@ -12,6 +12,7 @@ import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
 import { Instance } from "../domain/instance/entities/Instance";
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
+import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
@@ -144,13 +145,14 @@ export class CompositionRoot {
     }
 
     @cache()
-    public instances() {
-        const instance = new InstanceD2ApiRepository(this.localInstance, this.encryptionKey);
+    public instances(remoteInstance = this.localInstance) {
+        const instance = new InstanceD2ApiRepository(remoteInstance, this.encryptionKey);
         const storage = new StorageDataStoreRepository(this.localInstance);
 
         return getExecute({
             list: new ListInstancesUseCase(storage, this.encryptionKey),
             getVersion: new GetInstanceVersionUseCase(instance),
+            getOrgUnitRoots: new GetRootOrgUnitUseCase(instance),
         });
     }
 
