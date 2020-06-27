@@ -16,9 +16,8 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
-import memoize from "nano-memoize";
 import React, { ChangeEvent, ReactNode, useEffect, useMemo, useState } from "react";
-import { useAppContext } from "../../../common/contexts/AppContext";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import { cleanOrgUnitPaths } from "../../../../domain/synchronization/utils";
 import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
@@ -26,11 +25,13 @@ import { DataElementModel } from "../../../../models/dhis/metadata";
 import { D2 } from "../../../../types/d2";
 import { D2Api } from "../../../../types/d2-api";
 import { d2BaseModelFields, MetadataType } from "../../../../utils/d2";
+import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import { getAllIdentifiers, getFilterData, getOrgUnitSubtree, getRows } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
-    api?: D2Api;
+    api?: D2Api; // TODO: To be removed
+    remoteInstance?: Instance;
     filterRows?: string[];
     models: typeof D2Model[];
     selectedIds?: string[];
@@ -108,7 +109,8 @@ const uniqCombine = (items: any[]) =>
         .value();
 
 const MetadataTable: React.FC<MetadataTableProps> = ({
-    api: providedApi,
+    api: providedApi, // TODO: To be removed
+    remoteInstance,
     filterRows,
     models,
     selectedIds = [],
@@ -125,10 +127,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     showIndeterminateSelection = false,
     ...rest
 }) => {
-    const { d2, api: d2api } = useAppContext() as { d2: D2; api: D2Api };
+    const { compositionRoot } = useAppContext();
+    const classes = useStyles();
 
-    const api = providedApi ?? d2api;
-    const classes = useStyles({});
+    const { d2, api: d2api } = useAppContext() as { d2: D2; api: D2Api }; // TODO: To be removed
+    const api = providedApi ?? d2api; // TODO: To be removed
 
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const [ids, updateIds] = useState<string[]>([]);
@@ -340,6 +343,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         }
     };
 
+    // TODO: Move to derived state
     const apiModel = model.getApiModel(api);
     const apiQuery = useMemo(() => {
         const query: any = {
@@ -380,6 +384,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     }, [model, filters, filterRows]);
 
     useEffect(() => {
+        // TODO: Replace by ListMetadataUseCase (identifiers without paging)
         if (apiModel.modelName === "organisationUnits") return;
         const { cancel, response } = getAllIdentifiers(
             apiModel.modelName,
@@ -399,18 +404,16 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     }, [api, apiModel, apiQuery, search, model]);
 
     useEffect(() => {
-        if (apiModel.modelName !== "organisationUnits") return;
-
-        const { cancel, response } = getRootOrgUnit(api);
-
-        response.then(({ data }) => {
-            changeParentOrgUnitFilter(data.objects.map(({ path }) => path));
-        });
-
-        return cancel;
-    }, [api, apiModel.modelName]);
+        if (apiModel.modelName === "organisationUnits") {
+            compositionRoot
+                .instances(remoteInstance)
+                .getOrgUnitRoots()
+                .then(roots => changeParentOrgUnitFilter(roots.map(({ path }) => path)));
+        }
+    }, [compositionRoot, remoteInstance, apiModel.modelName]);
 
     useEffect(() => {
+        // TODO: Replace by ListMetadataUseCase (with filters and paging)
         if (apiModel.modelName === "organisationUnits" && !filters.parentOrgUnits) return;
 
         const { cancel, response } = getRows(
@@ -561,17 +564,5 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         />
     );
 };
-
-// TODO: when all request to this use metadataRepository.getModelByType
-// this function should be removed
-const getRootOrgUnit = memoize(
-    (api: D2Api) => {
-        return api.models.organisationUnits.get({
-            filter: { level: { eq: "1" } },
-            fields: { $owner: true },
-        });
-    },
-    { serializer: (api: D2Api) => api.baseUrl }
-);
 
 export default MetadataTable;
