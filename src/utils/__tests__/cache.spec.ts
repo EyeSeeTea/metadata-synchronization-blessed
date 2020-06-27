@@ -27,6 +27,11 @@ class TestClass {
         return Math.random() * this.multiplier * int;
     }
 
+    @cache()
+    public getObjectComparison(_foo: unknown): number {
+        return Math.random();
+    }
+
     public resetBasic(): void {
         clear(this.getBasic, this);
     }
@@ -150,6 +155,26 @@ describe("Cache decorator with clearing", () => {
 
     it("max args - should be the same number", () => {
         expect(test.getComplexMax(100)).toEqual(test.getComplexMax(200));
+    });
+
+    it("object - should be the same number", () => {
+        expect(test.getObjectComparison({ a: "test", b: 13 })).toEqual(
+            test.getObjectComparison({ a: "test", b: 13 })
+        );
+    });
+
+    it("object - should be the same number", () => {
+        expect(
+            test.getObjectComparison({ e: [2, 1], d: { b: 1, a: 2 }, c: false, a: "test", b: 13 })
+        ).toEqual(
+            test.getObjectComparison({ a: "test", b: 13, c: false, d: { a: 2, b: 1 }, e: [1, 2] })
+        );
+    });
+
+    it("object - should be a new number", () => {
+        expect(test.getObjectComparison({ a: "test", b: 13 })).not.toEqual(
+            test.getObjectComparison({ a: "test", b: 11 })
+        );
     });
 });
 
