@@ -238,7 +238,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeGroupFilter}
                         value={filters.group?.value ?? ""}
                         label={i18n.t("{{displayName}} Group", {
-                            displayName: model.getModelName(d2 as D2),
+                            displayName: model.getModelName(d2),
                         })}
                     />
                 </div>
@@ -251,7 +251,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeLevelFilter}
                         value={filters.level ?? ""}
                         label={i18n.t("{{displayName}} Level", {
-                            displayName: model.getModelName(d2 as D2),
+                            displayName: model.getModelName(d2),
                         })}
                     />
                 </div>
