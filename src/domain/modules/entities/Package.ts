@@ -98,25 +98,32 @@ export class Package implements BasePackage {
     private validateVersion(module?: Module): ValidationError[] {
         if (!module) return [];
 
-        const versionSemVer = semver.parse(this.version, true);
+        const versionSemVer = semver.parse(this.version.split("-")[0]);
+        const lastVersion = module.lastPackageVersion.split("-")[0];
+        const validExample = semver.inc(lastVersion, "patch") ?? "1.0.0";
 
         if (!versionSemVer)
             return [
                 {
                     property: "version",
-                    description: i18n.t("Version is not valid"),
+                    description: i18n.t("Version is not valid (ie. {{validExample}})", {
+                        validExample,
+                    }),
                     error: "version-not-valid",
                 },
             ];
 
-        if (versionSemVer.compareMain(module.lastPackageVersion ?? "1.0.0") !== 1)
+        if (module.lastPackageVersion && versionSemVer.compareMain(lastVersion) !== 1) {
             return [
                 {
                     property: "version",
-                    description: i18n.t("Version is too small"),
+                    description: i18n.t("Version is too small (next version is {{validExample}})", {
+                        validExample,
+                    }),
                     error: "version-too-small",
                 },
             ];
+        }
 
         return [];
     }

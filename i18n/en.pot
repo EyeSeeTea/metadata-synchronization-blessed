@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-29T09:58:34.873Z\n"
-"PO-Revision-Date: 2020-06-29T09:58:34.873Z\n"
+"POT-Creation-Date: 2020-06-29T11:09:56.987Z\n"
+"PO-Revision-Date: 2020-06-29T11:09:56.987Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -14,10 +14,10 @@ msgstr ""
 msgid "You need to select at least one {{field}}"
 msgstr ""
 
-msgid "Version is not valid"
+msgid "Version is not valid (ie. {{validExample}})"
 msgstr ""
 
-msgid "Version is too small"
+msgid "Version is too small (next version is {{validExample}})"
 msgstr ""
 
 msgid "Preparing synchronization"
