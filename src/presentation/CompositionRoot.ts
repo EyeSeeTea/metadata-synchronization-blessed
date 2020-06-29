@@ -15,6 +15,8 @@ import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstan
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
+import { ListAllMetadataUseCase } from "../domain/metadata/usecases/ListAllMetadataUseCase";
+import { ListMetadataUseCase } from "../domain/metadata/usecases/ListMetadataUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import { CreatePackageUseCase } from "../domain/modules/usecases/CreatePackageUseCase";
 import { DeleteModuleUseCase } from "../domain/modules/usecases/DeleteModuleUseCase";
@@ -92,6 +94,17 @@ export class CompositionRoot {
                     metadata
                 ),
         };
+    }
+
+    @cache()
+    public metadata(remoteInstance = this.localInstance) {
+        const transformation = new TransformationD2ApiRepository();
+        const metadata = new MetadataD2ApiRepository(remoteInstance, transformation);
+
+        return getExecute({
+            list: new ListMetadataUseCase(metadata),
+            listAll: new ListAllMetadataUseCase(metadata),
+        });
     }
 
     @cache()

@@ -1,4 +1,5 @@
 import _ from "lodash";
+import moment from "moment";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
     MetadataEntities,
@@ -6,10 +7,15 @@ import {
     MetadataFieldsPackage,
     MetadataPackage,
 } from "../../domain/metadata/entities/MetadataEntities";
-import { MetadataRepository } from "../../domain/metadata/repositories/MetadataRepository";
+import {
+    ListMetadataParams,
+    ListMetadataResponse,
+    MetadataRepository,
+} from "../../domain/metadata/repositories/MetadataRepository";
 import { MetadataImportParams } from "../../domain/metadata/types";
 import { getClassName } from "../../domain/metadata/utils";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
+import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import {
     D2Api,
@@ -21,6 +27,7 @@ import {
     Model,
     Stats,
 } from "../../types/d2-api";
+import { Dictionary } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import {
     metadataTransformationsFromDhis2,
@@ -46,31 +53,75 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         return this.getMetadata<T>(ids, fields, targetInstance);
     }
 
-    /**
-     * Return metadata entities by type. Realize mapping from d2 to domain
-     * TODO: this method is not used for the moment, only is created as template
-     * - create object options in domain with (order, filters, paging ....)
-     * - Create domain pager?
-     */
-    public async getMetadataByType(type: keyof MetadataEntities): Promise<MetadataEntity[]> {
-        const apiModel = this.getApiModel(type);
+    @cache()
+    public async listMetadata({
+        type,
+        fields = { $owner: true },
+        page,
+        pageSize,
+        ...params
+    }: ListMetadataParams): Promise<ListMetadataResponse> {
+        const filter = this.buildListFilters(params);
 
-        const responseData = await apiModel
-            .get({
-                paging: false,
-                fields: { $owner: true },
-            })
+        const { objects, pager } = await this.getApiModel(type)
+            .get({ paging: true, fields, filter, page, pageSize })
             .getData();
 
         const apiVersion = await this.getVersion();
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
-            responseData,
+            { [type]: objects },
             metadataTransformationsFromDhis2
         );
 
-        return metadataPackage[type] || [];
+        return { objects: metadataPackage[type as keyof MetadataEntities] ?? [], pager };
+    }
+
+    @cache()
+    public async listAllMetadata({
+        type,
+        fields = { $owner: true },
+        ...params
+    }: ListMetadataParams): Promise<MetadataEntity[]> {
+        const filter = this.buildListFilters(params);
+
+        const { objects } = await this.getApiModel(type)
+            .get({ paging: false, fields, filter })
+            .getData();
+
+        const apiVersion = await this.getVersion();
+
+        const metadataPackage = this.transformationRepository.mapPackageFrom(
+            apiVersion,
+            { [type]: objects },
+            metadataTransformationsFromDhis2
+        );
+
+        return metadataPackage[type as keyof MetadataEntities] ?? [];
+    }
+
+    private buildListFilters({
+        lastUpdated,
+        group,
+        level,
+        parents,
+        showOnlySelected,
+        selectedIds = [],
+        filterRows,
+        search,
+    }: Partial<ListMetadataParams>) {
+        const filter: Dictionary<unknown> = {};
+
+        if (lastUpdated) filter["lastUpdated"] = { ge: moment(lastUpdated).format("YYYY-MM-DD") };
+        if (group) filter[`${group.type}.id`] = { eq: group.value };
+        if (level) filter["level"] = { eq: level };
+        if (parents) filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
+        if (showOnlySelected) filter["id"] = { in: selectedIds };
+        if (filterRows) filter["id"] = { in: filterRows };
+        if (search) filter[search.field] = { [search.operator]: search.value };
+
+        return filter;
     }
 
     /**
