@@ -51,9 +51,9 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
 
     const updateVersionNumber = useCallback(
         (event: React.ChangeEvent<{ value: unknown }>) => {
-            const version = event.target.value as string;
+            const revision = event.target.value as string;
             const tag = item.version.split("-")[1];
-            const newVersion = [version, tag].join("-");
+            const newVersion = [revision, tag].join("-");
             updateModel("version", newVersion);
         },
         [item, updateModel]
@@ -61,9 +61,10 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
 
     const updateVersionTag = useCallback(
         (event: React.ChangeEvent<{ value: unknown }>) => {
-            const tag = event.target.value as string;
-            const newVersion = semver.parse([item.version.split("-")[0], tag].join("-"))?.format();
-            updateModel("version", newVersion ?? item.version);
+            const revision = item.version.split("-")[0];
+            const tag = event.target.value ? (event.target.value as string) : undefined;
+            const newVersion = semver.parse([revision, tag].join("-"))?.format();
+            updateModel("version", newVersion ?? revision);
         },
         [item, updateModel]
     );
