@@ -23,14 +23,13 @@ import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
 import { DataElementModel } from "../../../../models/dhis/metadata";
 import { D2 } from "../../../../types/d2";
-import { D2Api } from "../../../../types/d2-api";
 import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
-    api?: D2Api; // TODO: To be removed
+    remoteInstance?: Instance;
     filterRows?: string[];
     models: typeof D2Model[];
     selectedIds?: string[];
@@ -91,7 +90,7 @@ const uniqCombine = (items: any[]) =>
         .value();
 
 const MetadataTable: React.FC<MetadataTableProps> = ({
-    api: providedApi, // TODO: To be removed
+    remoteInstance,
     filterRows,
     models,
     selectedIds = [],
@@ -108,18 +107,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     showIndeterminateSelection = false,
     ...rest
 }) => {
-    const { compositionRoot } = useAppContext();
+    const { compositionRoot, d2 } = useAppContext();
     const classes = useStyles();
-
-    const { d2, api: d2api } = useAppContext() as { d2: D2; api: D2Api }; // TODO: To be removed
-    const api = providedApi ?? d2api; // TODO: To be removed
 
     const snackbar = useSnackbar();
 
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const [ids, updateIds] = useState<string[]>([]);
-    const [instances, setInstances] = useState<Instance[]>([]);
-    const [remoteInstance, setRemoteInstance] = useState<Instance>();
 
     const [selectedRows, setSelectedRows] = useState<string[]>(selectedIds);
     const [filters, updateFilters] = useState<ListMetadataParams>({
@@ -130,6 +124,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         pageSize: initialState.pagination.pageSize,
         filterRows,
     });
+
+    const api = compositionRoot.instances(remoteInstance).getApi();
 
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
     const [groupFilterData, setGroupFilterData] = useState<NamedRef[]>([]);
@@ -209,29 +205,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         notifyNewSelection([...oldSelection, ...newSelection], excludedIds);
     };
 
-    const updateSelectedInstance = useCallback(
-        (id: string) => {
-            setRemoteInstance(instances.find(instance => instance.id === id));
-        },
-        [instances]
-    );
-
     const filterComponents = (
         <React.Fragment key={"metadata-table-filters"}>
-            <Dropdown
-                items={[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances]}
-                value={remoteInstance?.id ?? "LOCAL"}
-                onValueChange={updateSelectedInstance}
-                label={i18n.t("Instance")}
-                hideEmpty={true}
-            />
-
             {models.length > 1 && (
                 <div className={classes.metadataFilter}>
                     <Dropdown
                         items={models.map(model => ({
                             id: model.getMetadataType(),
-                            name: model.getModelName(d2),
+                            name: model.getModelName(d2 as D2),
                         }))}
                         onValueChange={changeModelFilter}
                         value={model.getMetadataType()}
@@ -257,7 +238,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeGroupFilter}
                         value={filters.group?.value ?? ""}
                         label={i18n.t("{{displayName}} Group", {
-                            displayName: model.getModelName(d2),
+                            displayName: model.getModelName(d2 as D2),
                         })}
                     />
                 </div>
@@ -270,7 +251,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeLevelFilter}
                         value={filters.level ?? ""}
                         label={i18n.t("{{displayName}} Level", {
-                            displayName: model.getModelName(d2),
+                            displayName: model.getModelName(d2 as D2),
                         })}
                     />
                 </div>
@@ -414,13 +395,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             );
         }
     }, [d2, api, model]);
-
-    useEffect(() => {
-        compositionRoot
-            .instances()
-            .list()
-            .then(setInstances);
-    }, [compositionRoot]);
 
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;

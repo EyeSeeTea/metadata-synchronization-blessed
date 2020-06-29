@@ -11,6 +11,7 @@ import { UseCase } from "../domain/common/entities/UseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
 import { Instance } from "../domain/instance/entities/Instance";
+import { GetInstanceApiUseCase } from "../domain/instance/usecases/GetInstanceApiUseCase";
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
@@ -163,6 +164,7 @@ export class CompositionRoot {
         const storage = new StorageDataStoreRepository(this.localInstance);
 
         return getExecute({
+            getApi: new GetInstanceApiUseCase(instance),
             list: new ListInstancesUseCase(storage, this.encryptionKey),
             getVersion: new GetInstanceVersionUseCase(instance),
             getOrgUnitRoots: new GetRootOrgUnitUseCase(instance),

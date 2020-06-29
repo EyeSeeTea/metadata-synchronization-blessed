@@ -17,6 +17,10 @@ export class InstanceD2ApiRepository implements InstanceRepository {
         this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 
+    public getApi(): D2Api {
+        return this.api;
+    }
+
     @cache()
     public async getUser(): Promise<User> {
         const user = await this.api.currentUser

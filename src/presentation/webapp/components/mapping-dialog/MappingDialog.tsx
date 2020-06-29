@@ -5,13 +5,14 @@ import { makeStyles } from "@material-ui/styles";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
+import { Instance as InstanceEntity } from "../../../../domain/instance/entities/Instance";
 import { d2ModelFactory } from "../../../../models/dhis/factory";
 import Instance, { MetadataMappingDictionary } from "../../../../models/instance";
 import { D2 } from "../../../../types/d2";
 import { MetadataType } from "../../../../utils/d2";
+import { useAppContext } from "../../../common/contexts/AppContext";
 import { buildDataElementFilterForProgram, getValidIds } from "../mapping-table/utils";
 import MetadataTable from "../metadata-table/MetadataTable";
-import { useAppContext } from "../../../common/contexts/AppContext";
 
 export interface MappingDialogConfig {
     elements: string[];
@@ -111,7 +112,15 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const MetadataMapper = (
         <MetadataTable
             models={[model]}
-            api={api}
+            remoteInstance={
+                new InstanceEntity({
+                    id: instance.id,
+                    name: instance.name,
+                    url: instance.url,
+                    username: instance.username,
+                    password: instance.password,
+                })
+            }
             notifyNewSelection={onUpdateSelection}
             selectedIds={selected ? [selected] : undefined}
             hideSelectAll={true}
