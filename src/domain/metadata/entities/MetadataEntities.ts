@@ -3598,5 +3598,4 @@ export type MetadataEntities = {
     messageConversations: MessageConversation[];
 };
 
-export type MetadataFieldsPackage<T> = Partial<Record<keyof MetadataEntities, T[]>>;
-export type MetadataPackage = Partial<Record<keyof MetadataEntities, MetadataEntity[]>>;
+export type MetadataPackage<T = MetadataEntity> = Partial<Record<keyof MetadataEntities, T[]>>;

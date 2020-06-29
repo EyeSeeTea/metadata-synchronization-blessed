@@ -1,22 +1,17 @@
 import { D2ModelSchemas } from "../../../types/d2-api";
+import { Ref } from "../../common/entities/Ref";
 import { Id } from "../../common/entities/Schemas";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
-import {
-    MetadataEntity,
-    MetadataFieldsPackage,
-    MetadataPackage,
-} from "../entities/MetadataEntities";
+import { MetadataEntity, MetadataPackage } from "../entities/MetadataEntities";
 import { MetadataImportParams } from "../types";
 
 export interface MetadataRepository {
-    getMetadataFieldsByIds<T>(
+    getMetadataByIds<T>(
         ids: Id[],
-        fields: string,
+        fields?: string,
         targetInstance?: Instance
-    ): Promise<MetadataFieldsPackage<T>>;
-
-    getMetadataByIds(ids: Id[]): Promise<MetadataPackage>;
+    ): Promise<MetadataPackage<T>>;
 
     listMetadata(params: ListMetadataParams): Promise<ListMetadataResponse>;
     listAllMetadata(params: ListMetadataParams): Promise<MetadataEntity[]>;
@@ -28,7 +23,7 @@ export interface MetadataRepository {
     ): Promise<SynchronizationResult>;
 
     remove(
-        metadata: MetadataFieldsPackage<{ id: Id }>,
+        metadata: MetadataPackage<Ref>,
         additionalParams?: MetadataImportParams,
         targetInstance?: Instance
     ): Promise<SynchronizationResult>;

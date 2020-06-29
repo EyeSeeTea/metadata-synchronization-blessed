@@ -84,11 +84,11 @@ const getEntries = (module: Module): Entry[] => {
         case "metadata":
             return buildMetadataEntries(module as MetadataModule);
         default:
-            return buildEntries(module);
+            return buildCommonEntries(module);
     }
 };
 
-const buildEntries = ({ name, description }: Module): Entry[] => {
+const buildCommonEntries = ({ name, description }: Module): Entry[] => {
     return [
         { key: "name", label: i18n.t("Name"), value: name },
         {
@@ -101,7 +101,7 @@ const buildEntries = ({ name, description }: Module): Entry[] => {
 
 const buildMetadataEntries = (module: MetadataModule): Entry[] => {
     return [
-        ...buildEntries(module),
+        ...buildCommonEntries(module),
         {
             key: "metadata",
             label: i18n.t("Selected metadata"),

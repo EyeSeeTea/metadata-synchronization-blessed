@@ -1,10 +1,10 @@
 import _ from "lodash";
 import moment from "moment";
+import { Ref } from "../../domain/common/entities/Ref";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
     MetadataEntities,
     MetadataEntity,
-    MetadataFieldsPackage,
     MetadataPackage,
 } from "../../domain/metadata/entities/MetadataEntities";
 import {
@@ -22,7 +22,6 @@ import {
     D2ApiDefinition,
     D2Model,
     D2ModelSchemas,
-    Id,
     MetadataResponse,
     Model,
     Stats,
@@ -45,12 +44,22 @@ export class MetadataD2ApiRepository implements MetadataRepository {
      * Return raw specific fields of metadata dhis2 models according to ids filter
      * @param ids metadata ids to retrieve
      */
-    public async getMetadataFieldsByIds<T>(
+    public async getMetadataByIds<T>(
         ids: string[],
         fields: string,
         targetInstance?: Instance
-    ): Promise<MetadataFieldsPackage<T>> {
-        return this.getMetadata<T>(ids, fields, targetInstance);
+    ): Promise<MetadataPackage<T>> {
+        const d2Metadata = await this.getMetadata<D2Model>(ids, fields, targetInstance);
+
+        const apiVersion = await this.getVersion();
+
+        const metadataPackage = this.transformationRepository.mapPackageFrom(
+            apiVersion,
+            d2Metadata,
+            metadataTransformationsFromDhis2
+        );
+
+        return metadataPackage as T;
     }
 
     @cache()
@@ -124,24 +133,6 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         return filter;
     }
 
-    /**
-     * Return metadata entities according to ids filter. Realize mapping from d2 to domain
-     * @param ids metadata ids to retrieve
-     */
-    public async getMetadataByIds(ids: string[]): Promise<MetadataPackage> {
-        const d2Metadata = await this.getMetadata<D2Model>(ids);
-
-        const apiVersion = await this.getVersion();
-
-        const metadataPackage = this.transformationRepository.mapPackageFrom(
-            apiVersion,
-            d2Metadata,
-            metadataTransformationsFromDhis2
-        );
-
-        return metadataPackage;
-    }
-
     public async save(
         metadata: MetadataPackage,
         additionalParams: MetadataImportParams,
@@ -166,7 +157,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     public async remove(
-        metadata: MetadataFieldsPackage<{ id: Id }>,
+        metadata: MetadataPackage<Ref>,
         additionalParams: MetadataImportParams,
         targetInstance: Instance
     ): Promise<SynchronizationResult> {

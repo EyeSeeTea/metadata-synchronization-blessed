@@ -96,10 +96,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
 
-        const metadata = await this.metadataRepository.getMetadataFieldsByIds<Ref>(
-            metadataIds,
-            "id"
-        );
+        const metadata = await this.metadataRepository.getMetadataByIds<Ref>(metadataIds, "id");
 
         const exportResults = await promiseMap(_.keys(metadata), type => {
             const myClass = d2ModelFactory(this.api, type);

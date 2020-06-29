@@ -31,7 +31,7 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
     public async postPayload(_instance: Instance, instanceEntity: InstanceEntity) {
         const { metadataIds, syncParams = {} } = this.builder;
 
-        const payloadPackage = await this.metadataRepository.getMetadataFieldsByIds<Ref>(
+        const payloadPackage = await this.metadataRepository.getMetadataByIds<Ref>(
             metadataIds,
             "id",
             instanceEntity
