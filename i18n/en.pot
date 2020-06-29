@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-26T05:57:01.066Z\n"
-"PO-Revision-Date: 2020-06-26T05:57:01.066Z\n"
+"POT-Creation-Date: 2020-06-29T08:00:11.909Z\n"
+"PO-Revision-Date: 2020-06-29T08:00:11.909Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -292,6 +292,12 @@ msgid "Options"
 msgstr ""
 
 msgid "Program Stages"
+msgstr ""
+
+msgid "This instance"
+msgstr ""
+
+msgid "Instance"
 msgstr ""
 
 msgid "Last updated date"
@@ -1048,12 +1054,6 @@ msgid "Organisation unit mapping"
 msgstr ""
 
 msgid "Global mapping"
-msgstr ""
-
-msgid "This instance"
-msgstr ""
-
-msgid "Instance"
 msgstr ""
 
 msgid "Modules"

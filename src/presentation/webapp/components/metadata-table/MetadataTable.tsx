@@ -13,7 +13,7 @@ import {
     TableState,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { ChangeEvent, ReactNode, useEffect, useState } from "react";
+import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { ListMetadataParams } from "../../../../domain/metadata/repositories/MetadataRepository";
@@ -29,7 +29,6 @@ import { getFilterData, getOrgUnitSubtree } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     api?: D2Api; // TODO: To be removed
-    remoteInstance?: Instance;
     filterRows?: string[];
     models: typeof D2Model[];
     selectedIds?: string[];
@@ -91,7 +90,6 @@ const uniqCombine = (items: any[]) =>
 
 const MetadataTable: React.FC<MetadataTableProps> = ({
     api: providedApi, // TODO: To be removed
-    remoteInstance,
     filterRows,
     models,
     selectedIds = [],
@@ -116,11 +114,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const [ids, updateIds] = useState<string[]>([]);
+    const [instances, setInstances] = useState<Instance[]>([]);
+    const [remoteInstance, setRemoteInstance] = useState<Instance>();
 
+    const [selectedRows, setSelectedRows] = useState<string[]>(selectedIds);
     const [filters, updateFilters] = useState<ListMetadataParams>({
         type: model.getCollectionName(),
         showOnlySelected: initialShowOnlySelected,
-        selectedIds,
         order: initialState.sorting,
         page: initialState.pagination.page,
         pageSize: initialState.pagination.pageSize,
@@ -164,10 +164,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     };
 
     const changeOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
+        const showOnlySelected = event.target?.checked;
         updateFilters(state => ({
             ...state,
-            selectedIds,
-            showOnlySelected: event.target?.checked,
+            selectedIds: showOnlySelected ? selectedRows : undefined,
+            showOnlySelected,
         }));
     };
 
@@ -203,8 +204,23 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         notifyNewSelection([...oldSelection, ...newSelection], excludedIds);
     };
 
+    const updateSelectedInstance = useCallback(
+        (id: string) => {
+            setRemoteInstance(instances.find(instance => instance.id === id));
+        },
+        [instances]
+    );
+
     const filterComponents = (
         <React.Fragment key={"metadata-table-filters"}>
+            <Dropdown
+                items={[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances]}
+                value={remoteInstance?.id ?? "LOCAL"}
+                onValueChange={updateSelectedInstance}
+                label={i18n.t("Instance")}
+                hideEmpty={true}
+            />
+
             {models.length > 1 && (
                 <div className={classes.metadataFilter}>
                     <Dropdown
@@ -223,7 +239,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             <div className={classes.dateFilter}>
                 <DatePicker
                     placeholder={i18n.t("Last updated date")}
-                    value={filters.lastUpdated}
+                    value={filters.lastUpdated ?? null}
                     onChange={changeLastUpdatedFilter}
                     isFilter={true}
                 />
@@ -380,6 +396,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         }
     }, [d2, api, model]);
 
+    useEffect(() => {
+        compositionRoot
+            .instances()
+            .list()
+            .then(setInstances);
+    }, [compositionRoot]);
+
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;
 
@@ -404,9 +427,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .value();
 
         notifyNewSelection(included, excluded);
+        setSelectedRows(included);
         updateFilters(state => ({
             ...state,
-            selectedIds: included,
             order: sorting,
             page: pagination.page,
             pageSize: pagination.pageSize,
