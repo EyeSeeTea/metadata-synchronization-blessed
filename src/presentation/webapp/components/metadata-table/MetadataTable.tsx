@@ -124,6 +124,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         order: initialState.sorting,
         page: initialState.pagination.page,
         pageSize: initialState.pagination.pageSize,
+        filterRows,
     });
 
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
