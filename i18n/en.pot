@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-29T08:00:11.909Z\n"
-"PO-Revision-Date: 2020-06-29T08:00:11.909Z\n"
+"POT-Creation-Date: 2020-06-29T10:25:11.403Z\n"
+"PO-Revision-Date: 2020-06-29T10:25:11.403Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -77,7 +77,7 @@ msgstr ""
 msgid "Replicate"
 msgstr ""
 
-msgid "Download snapshot package"
+msgid "Download metadata package"
 msgstr ""
 
 msgid "Generate package from module"
@@ -292,12 +292,6 @@ msgid "Options"
 msgstr ""
 
 msgid "Program Stages"
-msgstr ""
-
-msgid "This instance"
-msgstr ""
-
-msgid "Instance"
 msgstr ""
 
 msgid "Last updated date"
@@ -1054,6 +1048,12 @@ msgid "Organisation unit mapping"
 msgstr ""
 
 msgid "Global mapping"
+msgstr ""
+
+msgid "This instance"
+msgstr ""
+
+msgid "Instance"
 msgstr ""
 
 msgid "Modules"

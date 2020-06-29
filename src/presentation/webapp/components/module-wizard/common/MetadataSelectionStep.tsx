@@ -3,13 +3,13 @@ import _ from "lodash";
 import React, { useCallback } from "react";
 import { MetadataModule } from "../../../../../domain/modules/entities/modules/MetadataModule";
 import i18n from "../../../../../locales";
-import { DataSetModel, ProgramModel } from "../../../../../models/dhis/metadata";
+import { DashboardModel, DataSetModel, ProgramModel } from "../../../../../models/dhis/metadata";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { ModuleWizardStepProps } from "../Steps";
 
 const config = {
     module: {
-        metadata: { models: [DataSetModel, ProgramModel], childrenKeys: [] },
+        metadata: { models: [DataSetModel, ProgramModel, DashboardModel], childrenKeys: [] },
     },
 };
 

@@ -206,7 +206,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
         },
         {
             name: "download",
-            text: i18n.t("Download snapshot package"),
+            text: i18n.t("Download metadata package"),
             multiple: false,
             onClick: downloadSnapshot,
             icon: <Icon>cloud_download</Icon>,

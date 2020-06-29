@@ -8,6 +8,7 @@ import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Module } from "./Module";
 
 export interface BasePackage extends DatedRef {
+    deleted?: boolean;
     description: string;
     version: string;
     dhisVersion: string;
@@ -18,6 +19,7 @@ export interface BasePackage extends DatedRef {
 export class Package implements BasePackage {
     public readonly id: string;
     public readonly name: string;
+    public readonly deleted: boolean;
     public readonly description: string;
     public readonly version: string;
     public readonly dhisVersion: string;
@@ -31,6 +33,7 @@ export class Package implements BasePackage {
     constructor(data: Pick<Package, keyof BasePackage>) {
         this.id = data.id;
         this.name = data.name;
+        this.deleted = data.deleted;
         this.description = data.description;
         this.version = data.version;
         this.dhisVersion = data.dhisVersion;
@@ -69,6 +72,7 @@ export class Package implements BasePackage {
         return {
             id: generateUid(),
             name: "",
+            deleted: false,
             description: "",
             version: "",
             dhisVersion: "",
