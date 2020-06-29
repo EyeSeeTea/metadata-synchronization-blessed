@@ -7,6 +7,10 @@ export class ListPackagesUseCase implements UseCase {
     constructor(private storageRepository: StorageRepository) {}
 
     public async execute(): Promise<Package[]> {
-        return await this.storageRepository.listObjectsInCollection<Package>(Namespace.PACKAGES);
+        const items = await this.storageRepository.listObjectsInCollection<Package>(
+            Namespace.PACKAGES
+        );
+
+        return items.filter(({ deleted }) => !deleted);
     }
 }
