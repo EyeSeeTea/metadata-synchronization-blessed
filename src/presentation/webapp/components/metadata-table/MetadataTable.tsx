@@ -1,5 +1,6 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
+import axios from "axios";
 import {
     DatePicker,
     ObjectsTable,
@@ -11,6 +12,7 @@ import {
     TablePagination,
     TableSelection,
     TableState,
+    useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
@@ -111,6 +113,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const { d2, api: d2api } = useAppContext() as { d2: D2; api: D2Api }; // TODO: To be removed
     const api = providedApi ?? d2api; // TODO: To be removed
+
+    const snackbar = useSnackbar();
 
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const [ids, updateIds] = useState<string[]>([]);
@@ -309,6 +313,18 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         </div>
     );
 
+    const handleError = useCallback(
+        (error: Error) => {
+            if (!axios.isCancel(error)) {
+                snackbar.error(error.message);
+                setRows([]);
+                setPager({});
+                setLoading(false);
+            }
+        },
+        [snackbar]
+    );
+
     const tableActions = [
         {
             name: "details",
@@ -353,8 +369,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         compositionRoot
             .instances(remoteInstance)
             .getOrgUnitRoots()
-            .then(roots => changeParentOrgUnitFilter(roots.map(({ path }) => path)));
-    }, [compositionRoot, remoteInstance, model]);
+            .then(roots => changeParentOrgUnitFilter(roots.map(({ path }) => path)))
+            .catch(handleError);
+    }, [compositionRoot, remoteInstance, model, handleError]);
 
     useEffect(() => {
         if (model.getCollectionName() === "organisationUnits" && !filters.parents) return;
@@ -370,8 +387,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 setRows(rows);
                 setPager(pager);
                 setLoading(false);
-            });
-    }, [compositionRoot, notifyRowsChange, remoteInstance, filters, model]);
+            })
+            .catch(handleError);
+    }, [compositionRoot, notifyRowsChange, remoteInstance, filters, model, handleError]);
 
     useEffect(() => {
         if (model && model.getGroupFilterName()) {
