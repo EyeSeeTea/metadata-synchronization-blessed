@@ -1,6 +1,14 @@
 import i18n from "@dhis2/d2-i18n";
-import { makeStyles, TextField } from "@material-ui/core";
-import React, { useCallback, useState } from "react";
+import {
+    FormControl,
+    InputLabel,
+    makeStyles,
+    MenuItem,
+    Select,
+    TextField,
+} from "@material-ui/core";
+import React, { useCallback, useEffect, useState } from "react";
+import { Instance } from "../../../../../domain/instance/entities/Instance";
 import SyncRule from "../../../../../models/syncRule";
 import { Dictionary } from "../../../../../types/utils";
 import { getValidationMessages } from "../../../../../utils/old-validations";
@@ -8,13 +16,15 @@ import { useAppContext } from "../../../../common/contexts/AppContext";
 import { SyncWizardStepProps } from "../Steps";
 
 export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => {
-    const { api } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const classes = useStyles();
+
     const [errors, setErrors] = useState<Dictionary<string>>({});
+    const [instances, setInstances] = useState<Instance[]>([]);
 
     const onChangeField = useCallback(
         (field: keyof SyncRule) => {
-            return async (event: React.ChangeEvent<HTMLInputElement>) => {
+            return async (event: React.ChangeEvent<{ value: unknown }>) => {
                 const newRule = syncRule.update({ [field]: event.target.value });
                 const messages = await getValidationMessages(api, newRule, [field]);
 
@@ -24,6 +34,13 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
         },
         [syncRule, onChange, api]
     );
+
+    useEffect(() => {
+        compositionRoot
+            .instances()
+            .list()
+            .then(setInstances);
+    }, [compositionRoot]);
 
     return (
         <React.Fragment>
@@ -46,6 +63,17 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
                 error={!!errors["code"]}
                 helperText={errors["code"]}
             />
+
+            <FormControl fullWidth={true}>
+                <InputLabel>{i18n.t("Source instance")}</InputLabel>
+                <Select value={syncRule.originInstance} onChange={onChangeField("originInstance")}>
+                    {[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances].map(
+                        ({ id, name }) => (
+                            <MenuItem value={id}>{name}</MenuItem>
+                        )
+                    )}
+                </Select>
+            </FormControl>
 
             <TextField
                 className={classes.row}
