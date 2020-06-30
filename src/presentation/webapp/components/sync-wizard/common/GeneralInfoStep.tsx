@@ -64,16 +64,23 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
                 helperText={errors["code"]}
             />
 
-            <FormControl fullWidth={true}>
-                <InputLabel>{i18n.t("Source instance")}</InputLabel>
-                <Select value={syncRule.originInstance} onChange={onChangeField("originInstance")}>
-                    {[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances].map(
-                        ({ id, name }) => (
-                            <MenuItem value={id}>{name}</MenuItem>
-                        )
-                    )}
-                </Select>
-            </FormControl>
+            {instances.length > 0 && (
+                <FormControl fullWidth={true}>
+                    <InputLabel>{i18n.t("Source instance")}</InputLabel>
+                    <Select
+                        value={syncRule.originInstance}
+                        onChange={onChangeField("originInstance")}
+                    >
+                        {[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances].map(
+                            ({ id, name }) => (
+                                <MenuItem key={id} value={id}>
+                                    {name}
+                                </MenuItem>
+                            )
+                        )}
+                    </Select>
+                </FormControl>
+            )}
 
             <TextField
                 className={classes.row}
