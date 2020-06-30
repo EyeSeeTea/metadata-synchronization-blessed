@@ -1,15 +1,9 @@
 import i18n from "@dhis2/d2-i18n";
+import { MenuItem, Select } from "@material-ui/core";
 import SyncIcon from "@material-ui/icons/Sync";
 import { useLoading, useSnackbar } from "d2-ui-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
-import MetadataTable from "../../components/metadata-table/MetadataTable";
-import PageHeader from "../../components/page-header/PageHeader";
-import SyncDialog from "../../components/sync-dialog/SyncDialog";
-import SyncSummary from "../../components/sync-summary/SyncSummary";
-import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import { useAppContext } from "../../../common/contexts/AppContext";
 import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
 import { D2Model } from "../../../../models/dhis/default";
 import { metadataModels } from "../../../../models/dhis/factory";
@@ -26,6 +20,14 @@ import SyncRule from "../../../../models/syncRule";
 import { D2 } from "../../../../types/d2";
 import { MetadataType } from "../../../../utils/d2";
 import { isAppConfigurator } from "../../../../utils/permissions";
+import { useAppContext } from "../../../common/contexts/AppContext";
+import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
+import MetadataTable from "../../components/metadata-table/MetadataTable";
+import PageHeader from "../../components/page-header/PageHeader";
+import SyncDialog from "../../components/sync-dialog/SyncDialog";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 
 const config: Record<
     SyncRuleType,
@@ -75,6 +77,8 @@ const ManualSyncPage: React.FC = () => {
     const [appConfigurator, updateAppConfigurator] = useState(false);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
+    const [instances, setInstances] = useState<Instance[]>([]);
+    const [selectedInstance, setSelectedInstance] = useState<Instance>();
 
     useEffect(() => {
         isAppConfigurator(api).then(updateAppConfigurator);
@@ -140,9 +144,37 @@ const ManualSyncPage: React.FC = () => {
         },
     ];
 
+    const updateSelectedInstance = useCallback(
+        (event: React.ChangeEvent<{ value: unknown }>) => {
+            const id = event.target.value;
+            setSelectedInstance(instances.find(instance => instance.id === id));
+        },
+        [instances]
+    );
+
+    useEffect(() => {
+        compositionRoot
+            .instances()
+            .list()
+            .then(setInstances);
+    }, [compositionRoot]);
+
     return (
         <TestWrapper>
-            <PageHeader onBackClick={goBack} title={title} />
+            <PageHeader onBackClick={goBack} title={title}>
+                <Select
+                    value={selectedInstance?.id ?? "LOCAL"}
+                    onChange={updateSelectedInstance}
+                    disableUnderline={true}
+                    style={{ minWidth: 120, paddingLeft: 25, paddingRight: 25 }}
+                >
+                    {[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances].map(
+                        ({ id, name }) => (
+                            <MenuItem value={id}>{name}</MenuItem>
+                        )
+                    )}
+                </Select>
+            </PageHeader>
 
             {type === "deleted" ? (
                 <DeletedObjectsTable
@@ -152,6 +184,7 @@ const ManualSyncPage: React.FC = () => {
                 />
             ) : (
                 <MetadataTable
+                    remoteInstance={selectedInstance}
                     models={models}
                     selectedIds={syncRule.metadataIds}
                     excludedIds={syncRule.excludedIds}
