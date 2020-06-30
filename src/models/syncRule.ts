@@ -752,7 +752,7 @@ export default class SyncRule {
             ]),
             metadataIncludeExclude: [],
             targetInstances: _.compact([
-                this.targetInstances.length === 0
+                this.originInstance === "LOCAL" && this.targetInstances.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "instance" },
