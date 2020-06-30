@@ -63,7 +63,7 @@ const config: Record<
     },
 };
 
-const SyncOnDemandPage: React.FC = () => {
+const ManualSyncPage: React.FC = () => {
     const snackbar = useSnackbar();
     const loading = useLoading();
     const { d2, api, compositionRoot } = useAppContext();
@@ -182,4 +182,4 @@ const SyncOnDemandPage: React.FC = () => {
     );
 };
 
-export default SyncOnDemandPage;
+export default ManualSyncPage;
