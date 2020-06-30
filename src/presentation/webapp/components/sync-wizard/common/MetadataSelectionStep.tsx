@@ -7,13 +7,13 @@ import { metadataModels } from "../../../../../models/dhis/factory";
 import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
-    EventProgramWithIndicatorsModel
+    EventProgramWithIndicatorsModel,
 } from "../../../../../models/dhis/mapping";
 import {
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,
-    IndicatorModel
+    IndicatorModel,
 } from "../../../../../models/dhis/metadata";
 import { getMetadata } from "../../../../../utils/synchronization";
 import { useAppContext } from "../../../../common/contexts/AppContext";

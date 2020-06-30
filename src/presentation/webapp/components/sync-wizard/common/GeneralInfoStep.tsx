@@ -35,6 +35,19 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
         [syncRule, onChange, api]
     );
 
+    const onChangeInstance = useCallback(
+        (event: React.ChangeEvent<{ value: unknown }>) => {
+            const newRule = syncRule
+                .update({ originInstance: event.target.value as string })
+                .updateTargetInstances([])
+                .updateMetadataIds([])
+                .updateExcludedIds([]);
+
+            onChange(newRule);
+        },
+        [syncRule, onChange]
+    );
+
     useEffect(() => {
         compositionRoot
             .instances()
@@ -67,10 +80,7 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
             {instances.length > 0 && (
                 <FormControl fullWidth={true}>
                     <InputLabel>{i18n.t("Source instance")}</InputLabel>
-                    <Select
-                        value={syncRule.originInstance}
-                        onChange={onChangeField("originInstance")}
-                    >
+                    <Select value={syncRule.originInstance} onChange={onChangeInstance}>
                         {[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances].map(
                             ({ id, name }) => (
                                 <MenuItem key={id} value={id}>
