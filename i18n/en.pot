@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-29T11:11:33.746Z\n"
-"PO-Revision-Date: 2020-06-29T11:11:33.746Z\n"
+"POT-Creation-Date: 2020-06-30T06:56:38.183Z\n"
+"PO-Revision-Date: 2020-06-30T06:56:38.183Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1050,6 +1050,24 @@ msgstr ""
 msgid "Global mapping"
 msgstr ""
 
+msgid "Metadata Synchronization"
+msgstr ""
+
+msgid "Aggregated Data Synchronization"
+msgstr ""
+
+msgid "Events Synchronization"
+msgstr ""
+
+msgid "Deleted Objects Synchronization"
+msgstr ""
+
+msgid "Please select at least one element from the table to synchronize"
+msgstr ""
+
+msgid "Unknown error with the request"
+msgstr ""
+
 msgid "This instance"
 msgstr ""
 
@@ -1113,24 +1131,6 @@ msgid "GitHub repository (*)"
 msgstr ""
 
 msgid "GitHub access token (*)"
-msgstr ""
-
-msgid "Metadata Synchronization"
-msgstr ""
-
-msgid "Aggregated Data Synchronization"
-msgstr ""
-
-msgid "Events Synchronization"
-msgstr ""
-
-msgid "Deleted Objects Synchronization"
-msgstr ""
-
-msgid "Please select at least one element from the table to synchronize"
-msgstr ""
-
-msgid "Unknown error with the request"
 msgstr ""
 
 msgid "New {{type}} synchronization rule"
