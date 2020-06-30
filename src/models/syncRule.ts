@@ -88,6 +88,7 @@ export default class SyncRule {
             "userAccesses",
             "userGroupAccesses",
             "type",
+            "originInstance",
         ]);
 
         if (!this.syncRule.id) this.syncRule.id = generateUid();
@@ -119,6 +120,10 @@ export default class SyncRule {
 
     public get description(): string | undefined {
         return this.syncRule.description;
+    }
+
+    public get originInstance(): string {
+        return this.syncRule.originInstance ?? "LOCAL";
     }
 
     public get builder(): SynchronizationBuilder {
@@ -248,6 +253,7 @@ export default class SyncRule {
             created: new Date(),
             description: "",
             type: type,
+            originInstance: "LOCAL",
             builder: defaultSynchronizationBuilder,
             enabled: false,
             lastUpdated: new Date(),

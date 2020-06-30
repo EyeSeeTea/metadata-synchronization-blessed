@@ -146,10 +146,11 @@ const ManualSyncPage: React.FC = () => {
 
     const updateSelectedInstance = useCallback(
         (event: React.ChangeEvent<{ value: unknown }>) => {
-            const id = event.target.value;
+            const id = event.target.value as string;
             setSelectedInstance(instances.find(instance => instance.id === id));
+            updateSyncRule(syncRule.update({ originInstance: id }));
         },
-        [instances]
+        [instances, syncRule]
     );
 
     useEffect(() => {
