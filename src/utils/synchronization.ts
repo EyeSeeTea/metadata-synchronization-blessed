@@ -3,9 +3,13 @@ import FileSaver from "file-saver";
 import _ from "lodash";
 import moment from "moment";
 import memoize from "nano-memoize";
-import { MetadataMapping, MetadataMappingDictionary } from "../models/instance";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../domain/instance/entities/MetadataMapping";
+import { CategoryOptionCombo } from "../domain/metadata/entities/MetadataEntities";
 import SyncRule from "../models/syncRule";
-import { D2Api, D2CategoryOptionCombo } from "../types/d2-api";
+import { D2Api } from "../types/d2-api";
 import "../utils/lodash-mixins";
 
 //TODO: when all request to metadata using metadataRepository.getMetadataByIds
@@ -91,8 +95,8 @@ export function requestJSONDownload(payload: object, syncRule: SyncRule) {
 export const mapCategoryOptionCombo = (
     optionCombo: string | undefined,
     mappings: MetadataMappingDictionary[],
-    originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
-    destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+    originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+    destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
 ): string | undefined => {
     if (!optionCombo) return undefined;
     for (const mapping of mappings) {

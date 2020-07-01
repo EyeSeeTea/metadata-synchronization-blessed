@@ -6,11 +6,13 @@ import { AggregatedRepository } from "../../domain/aggregated/repositories/Aggre
 import { DataSyncAggregation, DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Instance as InstanceEntity } from "../../domain/instance/entities/Instance";
+import { MetadataMappingDictionary } from "../../domain/instance/entities/MetadataMapping";
+import { CategoryOptionCombo } from "../../domain/metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
-import Instance, { MetadataMappingDictionary } from "../../models/instance";
+import Instance from "../../models/instance";
 import { DataImportParams } from "../../types/d2";
-import { D2Api, D2CategoryOptionCombo, DataValueSetsPostResponse } from "../../types/d2-api";
+import { D2Api, DataValueSetsPostResponse } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
 
 export class AggregatedD2ApiRepository implements AggregatedRepository {
@@ -114,7 +116,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
      */
     public async getOptions(
         { aggregatedDataElements }: MetadataMappingDictionary,
-        categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+        categoryOptionCombos: Partial<CategoryOptionCombo>[]
     ): Promise<MappedCategoryOption[]> {
         const dimensions = await this.getDimensions();
         const findOptionCombo = (mappedOption: string, mappedCombo?: string) =>

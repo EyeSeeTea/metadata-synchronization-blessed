@@ -3,6 +3,7 @@ import axios, { AxiosBasicCredentials } from "axios";
 import Cryptr from "cryptr";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
+import { MetadataMappingDictionary } from "../domain/instance/entities/MetadataMapping";
 import { Response } from "../types/d2";
 import { D2Api } from "../types/d2-api";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
@@ -21,24 +22,6 @@ import {
 const instancesDataStoreKey = "instances";
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
-export interface MetadataMapping {
-    mappedId?: string;
-    mappedName?: string;
-    mappedCode?: string;
-    mappedLevel?: number;
-    code?: string;
-    mapping?: MetadataMappingDictionary;
-    conflicts?: boolean;
-    global?: boolean;
-    [key: string]: unknown;
-}
-
-export interface MetadataMappingDictionary {
-    [model: string]: {
-        [id: string]: MetadataMapping;
-    };
-}
 
 export interface InstanceData {
     id: string;

@@ -2,9 +2,9 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { eventsTransformationsToDhis2 } from "../../../data/transformations/PackageTransformations";
-import Instance, { MetadataMappingDictionary } from "../../../models/instance";
+import Instance from "../../../models/instance";
 import { D2 } from "../../../types/d2";
-import { D2CategoryOptionCombo, D2Program } from "../../../types/d2-api";
+import { D2Program } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import {
     getCategoryOptionCombos,
@@ -16,7 +16,9 @@ import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedRepository } from "../../aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Instance as InstanceEntity } from "../../instance/entities/Instance";
+import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
 import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
+import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import {
     GenericSyncUseCase,
     SyncronizationPayload,
@@ -182,8 +184,8 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
     private buildMappedDataValue(
         { orgUnit, program, programStage, dataValues, attributeOptionCombo, ...rest }: ProgramEvent,
         globalMapping: MetadataMappingDictionary,
-        originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
-        destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
+        originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[],
         defaultCategoryOptionCombo: string
     ): ProgramEvent {
         const { organisationUnits = {}, eventPrograms = {} } = globalMapping;

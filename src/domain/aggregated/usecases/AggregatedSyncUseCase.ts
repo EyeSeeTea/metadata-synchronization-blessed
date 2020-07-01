@@ -1,9 +1,8 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { aggregatedTransformationsToDhis2 } from "../../../data/transformations/PackageTransformations";
-import Instance, { MetadataMappingDictionary } from "../../../models/instance";
+import Instance from "../../../models/instance";
 import { D2 } from "../../../types/d2";
-import { D2CategoryOptionCombo } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import {
@@ -12,7 +11,9 @@ import {
     mapOptionValue,
 } from "../../../utils/synchronization";
 import { Instance as InstanceEntity } from "../../instance/entities/Instance";
+import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
 import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
+import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import {
     buildMetadataDictionary,
@@ -246,8 +247,8 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
             ...rest
         }: DataValue,
         globalMapping: MetadataMappingDictionary,
-        originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
-        destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+        originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
     ): DataValue {
         const { organisationUnits = {}, aggregatedDataElements = {} } = globalMapping;
         const { mapping: innerMapping = {} } = aggregatedDataElements[dataElement] ?? {};
@@ -296,7 +297,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
 
     private async buildInstanceAggregation(
         mapping: MetadataMappingDictionary,
-        categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+        categoryOptionCombos: Partial<CategoryOptionCombo>[]
     ): Promise<DataValue[]> {
         const { dataParams = {} } = this.builder;
         const { enableAggregation = false } = dataParams;

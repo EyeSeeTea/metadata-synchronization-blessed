@@ -16,6 +16,8 @@ export interface BasePackage extends DatedRef {
     contents: MetadataPackage;
 }
 
+export type ListPackage = Omit<BasePackage, "contents">;
+
 export class Package implements BasePackage {
     public readonly id: string;
     public readonly name: string;
@@ -44,6 +46,8 @@ export class Package implements BasePackage {
         this.lastUpdated = data.lastUpdated;
         this.lastUpdatedBy = _.pick(data.lastUpdatedBy, ["id", "name"]);
     }
+
+    public static extendedFields: Array<keyof BasePackage> = ["contents"];
 
     public validate(filter?: string[], module?: Module): ValidationError[] {
         return [

@@ -11,18 +11,22 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
-import MappingDialog, { MappingDialogConfig } from "../mapping-dialog/MappingDialog";
-import MappingWizard, { MappingWizardConfig, prepareSteps } from "../mapping-wizard/MappingWizard";
-import MetadataTable from "../metadata-table/MetadataTable";
-import { useAppContext } from "../../../common/contexts/AppContext";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../../../../domain/instance/entities/MetadataMapping";
 import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
 import { D2Model } from "../../../../models/dhis/default";
 import { d2ModelFactory } from "../../../../models/dhis/factory";
 import { ProgramDataElementModel } from "../../../../models/dhis/mapping";
 import { DataElementModel, OrganisationUnitModel } from "../../../../models/dhis/metadata";
-import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../../../models/instance";
+import Instance from "../../../../models/instance";
 import { D2 } from "../../../../types/d2";
 import { MetadataType } from "../../../../utils/d2";
+import { useAppContext } from "../../../common/contexts/AppContext";
+import MappingDialog, { MappingDialogConfig } from "../mapping-dialog/MappingDialog";
+import MappingWizard, { MappingWizardConfig, prepareSteps } from "../mapping-wizard/MappingWizard";
+import MetadataTable from "../metadata-table/MetadataTable";
 import {
     autoMap,
     buildDataElementFilterForProgram,

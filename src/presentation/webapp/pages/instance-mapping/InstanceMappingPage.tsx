@@ -2,8 +2,10 @@ import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import MappingTable from "../../components/mapping-table/MappingTable";
-import PageHeader from "../../components/page-header/PageHeader";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../../../../domain/instance/entities/MetadataMapping";
 import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
@@ -15,8 +17,10 @@ import {
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
 } from "../../../../models/dhis/mapping";
-import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../../../models/instance";
+import Instance from "../../../../models/instance";
 import { useAppContext } from "../../../common/contexts/AppContext";
+import MappingTable from "../../components/mapping-table/MappingTable";
+import PageHeader from "../../components/page-header/PageHeader";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 

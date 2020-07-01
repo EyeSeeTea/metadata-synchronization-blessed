@@ -3,6 +3,7 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
+import { MetadataMappingDictionary } from "./MetadataMapping";
 
 export type PublicInstance = Omit<InstanceData, "password">;
 
@@ -10,6 +11,7 @@ export interface InstanceData {
     id: string;
     name: string;
     url: string;
+    metadataMapping?: MetadataMappingDictionary;
     username?: string;
     password?: string;
     description?: string;
@@ -51,6 +53,10 @@ export class Instance {
 
     public get description(): string {
         return this.data.description ?? "";
+    }
+
+    public get metadataMapping(): MetadataMappingDictionary {
+        return this.data.metadataMapping ?? {};
     }
 
     public get version(): string | undefined {
