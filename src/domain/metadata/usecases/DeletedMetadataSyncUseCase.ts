@@ -1,48 +1,31 @@
 import memoize from "nano-memoize";
-import Instance from "../../../models/instance";
-import { D2 } from "../../../types/d2";
-import { SynchronizationBuilder } from "../../../types/synchronization";
 import { Ref } from "../../common/entities/Ref";
-import { Instance as InstanceEntity } from "../../instance/entities/Instance";
-import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
+import { Instance } from "../../instance/entities/Instance";
 import {
     GenericSyncUseCase,
     SyncronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
-import { MetadataRepository } from "../repositories/MetadataRepository";
 
 export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "deleted";
-
-    constructor(
-        d2: D2,
-        instance: InstanceEntity,
-        builder: SynchronizationBuilder,
-        instanceRepository: InstanceRepository,
-        private metadataRepository: MetadataRepository
-    ) {
-        super(d2, instance, builder, instanceRepository);
-    }
 
     public buildPayload = memoize(async () => {
         return {};
     });
 
-    public async postPayload(_instance: Instance, instanceEntity: InstanceEntity) {
+    public async postPayload(instance: Instance) {
         const { metadataIds, syncParams = {} } = this.builder;
 
-        const payloadPackage = await this.metadataRepository.getMetadataByIds<Ref>(
+        const payloadPackage = await this.getMetadataRepository(instance).getMetadataByIds<Ref>(
             metadataIds,
-            "id",
-            instanceEntity
+            "id"
         );
 
         console.debug("Metadata package", payloadPackage);
 
-        const syncResult = await this.metadataRepository.remove(
+        const syncResult = await this.getMetadataRepository(instance).remove(
             payloadPackage,
-            syncParams,
-            instanceEntity
+            syncParams
         );
 
         return [syncResult];

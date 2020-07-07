@@ -1,11 +1,15 @@
-import Instance from "../../../models/instance";
 import { DataImportParams } from "../../../types/d2";
+import { Instance } from "../../instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { MappedCategoryOption } from "../entities/MappedCategoryOption";
 import { DataSynchronizationParams } from "../types";
+
+export interface AggregatedRepositoryConstructor {
+    new (instance: Instance): AggregatedRepository;
+}
 
 export interface AggregatedRepository {
     getAggregated(

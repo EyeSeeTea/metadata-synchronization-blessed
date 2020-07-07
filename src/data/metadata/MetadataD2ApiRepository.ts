@@ -36,7 +36,10 @@ import {
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
 
-    constructor(instance: Instance, private transformationRepository: TransformationRepository) {
+    constructor(
+        private instance: Instance,
+        private transformationRepository: TransformationRepository
+    ) {
         this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 
@@ -44,12 +47,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
      * Return raw specific fields of metadata dhis2 models according to ids filter
      * @param ids metadata ids to retrieve
      */
-    public async getMetadataByIds<T>(
-        ids: string[],
-        fields: string,
-        targetInstance?: Instance
-    ): Promise<MetadataPackage<T>> {
-        const d2Metadata = await this.getMetadata<D2Model>(ids, fields, targetInstance);
+    public async getMetadataByIds<T>(ids: string[], fields: string): Promise<MetadataPackage<T>> {
+        const d2Metadata = await this.getMetadata<D2Model>(ids, fields);
 
         const apiVersion = await this.getVersion();
 
@@ -135,10 +134,9 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     public async save(
         metadata: MetadataPackage,
-        additionalParams: MetadataImportParams,
-        targetInstance: Instance
+        additionalParams: MetadataImportParams
     ): Promise<SynchronizationResult> {
-        const apiVersion = await this.getVersion(targetInstance);
+        const apiVersion = await this.getVersion();
         const versionedPayloadPackage = this.transformationRepository.mapPackageTo(
             apiVersion,
             metadata,
@@ -147,35 +145,25 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
         console.debug("Versioned metadata package", versionedPayloadPackage);
 
-        const response = await this.postMetadata(
-            versionedPayloadPackage,
-            additionalParams,
-            targetInstance
-        );
+        const response = await this.postMetadata(versionedPayloadPackage, additionalParams);
 
-        return this.cleanMetadataImportResponse(response, targetInstance, "metadata");
+        return this.cleanMetadataImportResponse(response, "metadata");
     }
 
     public async remove(
         metadata: MetadataPackage<Ref>,
-        additionalParams: MetadataImportParams,
-        targetInstance: Instance
+        additionalParams: MetadataImportParams
     ): Promise<SynchronizationResult> {
-        const response = await this.postMetadata(
-            metadata,
-            {
-                ...additionalParams,
-                importStrategy: "DELETE",
-            },
-            targetInstance
-        );
+        const response = await this.postMetadata(metadata, {
+            ...additionalParams,
+            importStrategy: "DELETE",
+        });
 
-        return this.cleanMetadataImportResponse(response, targetInstance, "deleted");
+        return this.cleanMetadataImportResponse(response, "deleted");
     }
 
     private cleanMetadataImportResponse(
         importResult: MetadataResponse,
-        instance: Instance,
         type: "metadata" | "deleted"
     ): SynchronizationResult {
         const { status, stats, typeReports = [] } = importResult;
@@ -199,7 +187,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             status: status === "OK" ? "SUCCESS" : status,
             stats: formatStats(stats),
             typeStats,
-            instance: instance.toObject(),
+            instance: this.instance.toObject(),
             errors: messages,
             date: new Date(),
             type,
@@ -208,10 +196,9 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     private async postMetadata(
         payload: Partial<Record<string, unknown[]>>,
-        additionalParams?: MetadataImportParams,
-        targetInstance?: Instance
+        additionalParams?: MetadataImportParams
     ): Promise<MetadataResponse> {
-        const response = await this.getApi(targetInstance)
+        const response = await this.getApi()
             .post<MetadataResponse>(
                 "/metadata",
                 {

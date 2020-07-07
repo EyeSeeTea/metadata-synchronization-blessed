@@ -22,6 +22,11 @@ class TestClass {
         return Math.random() * this.multiplier * int1 * int2;
     }
 
+    @cache()
+    public static getMultipleStatic(int1: number, int2: number): number {
+        return Math.random() * int1 * int2;
+    }
+
     @cache({ maxArgs: 0 })
     public getComplexMax(int: number): number {
         return Math.random() * this.multiplier * int;
@@ -46,6 +51,10 @@ class TestClass {
 
     public resetMemoize(): void {
         clear(this.memoized, this);
+    }
+
+    public static resetStatic(): void {
+        clear(TestClass.getMultipleStatic, TestClass);
     }
 }
 
@@ -73,6 +82,10 @@ describe("Cache decorator with clearing", () => {
 
     it("multiple - should be the same number", () => {
         expect(test.getMultiple(10, 20)).toEqual(test.getMultiple(10, 20));
+    });
+
+    it("static - should be the same number", () => {
+        expect(TestClass.getMultipleStatic(10, 20)).toEqual(TestClass.getMultipleStatic(10, 20));
     });
 
     it("memoize - should be the same number", () => {
@@ -104,6 +117,12 @@ describe("Cache decorator with clearing", () => {
         expect(test.getMultiple(10, 20)).not.toEqual(number);
     });
 
+    it("static - should be a new number", () => {
+        const number = TestClass.getMultipleStatic(10, 20);
+        TestClass.resetStatic();
+        expect(TestClass.getMultipleStatic(10, 20)).not.toEqual(number);
+    });
+
     it("memoize - should be a new number", () => {
         const number = test.memoized({ value: 10 }, { value: 20 });
         test.resetMemoize();
@@ -123,6 +142,12 @@ describe("Cache decorator with clearing", () => {
 
     it("multiple - should be a different number", () => {
         expect(test.getMultiple(20, 30)).not.toEqual(test.getMultiple(10, 20));
+    });
+
+    it("static - should be a different number", () => {
+        expect(TestClass.getMultipleStatic(20, 30)).not.toEqual(
+            TestClass.getMultipleStatic(10, 20)
+        );
     });
 
     it("memoize - should be a different number", () => {

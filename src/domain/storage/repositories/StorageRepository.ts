@@ -1,5 +1,10 @@
 import _ from "lodash";
 import { Ref } from "../../common/entities/Ref";
+import { Instance } from "../../instance/entities/Instance";
+
+export interface StorageRepositoryConstructor {
+    new (instance: Instance): StorageRepository;
+}
 
 export abstract class StorageRepository {
     // Object operations

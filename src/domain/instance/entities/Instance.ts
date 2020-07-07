@@ -79,12 +79,24 @@ export class Instance {
         );
     }
 
+    public update(data?: Partial<Pick<Instance, keyof InstanceData>>): Instance {
+        return Instance.build({ ...this.data, ...data });
+    }
+
+    public replicate(): Instance {
+        return this.update({
+            name: `Copy of ${this.data.name}`,
+            id: generateUid(),
+        });
+    }
+
     public static build(data: PartialBy<InstanceData, "id">): Instance {
         return new Instance({ id: generateUid(), ...data });
     }
 
     private moduleValidations = (): ModelValidation[] => [
         { property: "name", validation: "hasText" },
+        { property: "url", validation: "isUrl" },
         { property: "url", validation: "hasText" },
         { property: "username", validation: "hasText" },
         { property: "password", validation: "hasText" },

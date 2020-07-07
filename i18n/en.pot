@@ -5,13 +5,37 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-30T09:53:31.616Z\n"
-"PO-Revision-Date: 2020-06-30T09:53:31.616Z\n"
+"POT-Creation-Date: 2020-07-07T10:39:07.318Z\n"
+"PO-Revision-Date: 2020-07-07T10:39:07.318Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
 
 msgid "You need to select at least one {{field}}"
+msgstr ""
+
+msgid "Field {{field}} needs to be a valid url"
+msgstr ""
+
+msgid "You need to provide a username and password combination"
+msgstr ""
+
+msgid "Not a valid DHIS2 instance"
+msgstr ""
+
+msgid "Wrong username/password"
+msgstr ""
+
+msgid "Wrong URL endpoint"
+msgstr ""
+
+msgid "Error {{status}}"
+msgstr ""
+
+msgid "Network error {{error}}, check if server is up and CORS is enabled"
+msgstr ""
+
+msgid "Unknown error"
 msgstr ""
 
 msgid "Version is not valid (ie. {{validExample}})"
@@ -30,21 +54,6 @@ msgid "Program with Data Elements"
 msgstr ""
 
 msgid "Program with Indicators"
-msgstr ""
-
-msgid "Not a valid DHIS2 instance"
-msgstr ""
-
-msgid "Wrong username/password"
-msgstr ""
-
-msgid "Wrong URL endpoint"
-msgstr ""
-
-msgid "Error {{status}}"
-msgstr ""
-
-msgid "Network error {{error}}, check if server is up and CORS is enabled"
 msgstr ""
 
 msgid "Invalid module"
@@ -938,31 +947,22 @@ msgstr ""
 msgid "Create, modify and delete modules from the application"
 msgstr ""
 
-msgid "Server name"
-msgstr ""
-
-msgid "Field cannot be blank"
-msgstr ""
-
-msgid "URL endpoint"
-msgstr ""
-
-msgid "Field should be an url"
-msgstr ""
-
-msgid "Username"
-msgstr ""
-
-msgid "Password"
-msgstr ""
-
 msgid "Please fix the issues before testing the connection"
 msgstr ""
 
 msgid "Connected successfully to instance"
 msgstr ""
 
-msgid "Please fix the issues before saving"
+msgid "Server name (*)"
+msgstr ""
+
+msgid "URL endpoint (*)"
+msgstr ""
+
+msgid "Username (*)"
+msgstr ""
+
+msgid "Password (*)"
 msgstr ""
 
 msgid "Test Connection"
@@ -999,6 +999,15 @@ msgid "Successfully deleted {{count}} instances"
 msgid_plural "Successfully deleted {{count}} instances"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Server name"
+msgstr ""
+
+msgid "URL endpoint"
+msgstr ""
+
+msgid "Username"
+msgstr ""
 
 msgid "Run analytics"
 msgstr ""
@@ -1102,9 +1111,6 @@ msgid "The token is invalid"
 msgstr ""
 
 msgid "Repository not found"
-msgstr ""
-
-msgid "Unknown error"
 msgstr ""
 
 msgid "Testing GitHub connection"

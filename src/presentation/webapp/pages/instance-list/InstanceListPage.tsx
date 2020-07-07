@@ -20,18 +20,18 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import PageHeader from "../../components/page-header/PageHeader";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import Instance, { InstanceData } from "../../../../models/instance";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { isAppConfigurator } from "../../../../utils/permissions";
 import { useAppContext } from "../../../common/contexts/AppContext";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 
 const InstanceListPage = () => {
-    const { api } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const history = useHistory();
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const [rows, setRows] = useState<InstanceData[]>([]);
+    const [rows, setRows] = useState<Instance[]>([]);
     const [search, changeSearch] = useState<string>("");
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [toDelete, deleteInstances] = useState<string[]>([]);
@@ -42,8 +42,11 @@ const InstanceListPage = () => {
     }, [api]);
 
     useEffect(() => {
-        Instance.list(api, { search }, {}).then(({ objects }) => setRows(objects));
-    }, [api, search, toDelete]);
+        compositionRoot
+            .instances()
+            .list({ search })
+            .then(setRows);
+    }, [compositionRoot, search, toDelete]);
 
     const createInstance = () => {
         history.push("/instances/new");
@@ -55,7 +58,7 @@ const InstanceListPage = () => {
     };
 
     const replicateInstance = async (ids: string[]) => {
-        const instance = await Instance.get(api, ids[0]);
+        const instance = await compositionRoot.instances().getById(ids[0]);
         if (!instance) return;
         history.push({
             pathname: "/instances/new",
@@ -64,20 +67,22 @@ const InstanceListPage = () => {
     };
 
     const testConnection = async (ids: string[]) => {
-        const instance = await Instance.get(api, ids[0]);
+        const instance = await compositionRoot.instances().getById(ids[0]);
         if (!instance) return;
-        const connectionErrors = await instance.check();
-        if (!connectionErrors || !connectionErrors.status) {
-            snackbar.error(connectionErrors?.error?.message ?? "Unknown error", {
-                autoHideDuration: null,
-            });
-        } else {
-            snackbar.success(i18n.t("Connected successfully to instance"));
-        }
+
+        const validation = await compositionRoot.instances().validate(instance);
+        validation.match({
+            success: () => {
+                snackbar.success(i18n.t("Connected successfully to instance"));
+            },
+            error: error => {
+                snackbar.error(error, { autoHideDuration: null });
+            },
+        });
     };
 
     const runAnalytics = async (ids: string[]) => {
-        const instance = await Instance.get(api, ids[0]);
+        const instance = await compositionRoot.instances().getById(ids[0]);
         if (!instance) return;
 
         for await (const message of executeAnalytics(instance)) {
@@ -98,8 +103,7 @@ const InstanceListPage = () => {
 
         const results = [];
         for (const id of toDelete) {
-            const instance = await Instance.get(api, id);
-            if (instance) results.push(await instance.remove(api));
+            results.push(await compositionRoot.instances().delete(id));
         }
 
         loading.reset();
@@ -108,7 +112,7 @@ const InstanceListPage = () => {
         );
         deleteInstances([]);
 
-        if (_.some(results, ["status", false])) {
+        if (_.some(results, [false])) {
             snackbar.error(i18n.t("Failed to delete some instances"));
         } else {
             snackbar.success(
@@ -126,25 +130,25 @@ const InstanceListPage = () => {
         history.push("/");
     };
 
-    const updateTable = (state: TableState<InstanceData>) => {
+    const updateTable = (state: TableState<Instance>) => {
         const { selection } = state;
         updateSelection(selection);
     };
 
-    const columns: TableColumn<InstanceData>[] = [
+    const columns: TableColumn<Instance>[] = [
         { name: "name" as const, text: i18n.t("Server name"), sortable: true },
         { name: "url" as const, text: i18n.t("URL endpoint"), sortable: false },
         { name: "username" as const, text: i18n.t("Username"), sortable: true },
     ];
 
-    const details: ObjectsTableDetailField<InstanceData>[] = [
+    const details: ObjectsTableDetailField<Instance>[] = [
         { name: "name" as const, text: i18n.t("Server name") },
         { name: "url" as const, text: i18n.t("URL endpoint") },
         { name: "username" as const, text: i18n.t("Username") },
         { name: "description" as const, text: i18n.t("Description") },
     ];
 
-    const actions: TableAction<InstanceData>[] = [
+    const actions: TableAction<Instance>[] = [
         {
             name: "details",
             text: i18n.t("Details"),
@@ -213,7 +217,7 @@ const InstanceListPage = () => {
 
             <PageHeader title={i18n.t("Destination Instance Settings")} onBackClick={backHome} />
 
-            <ObjectsTable<InstanceData>
+            <ObjectsTable<Instance>
                 rows={rows}
                 columns={columns}
                 details={details}

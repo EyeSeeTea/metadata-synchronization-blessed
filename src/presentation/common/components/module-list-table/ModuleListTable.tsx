@@ -64,10 +64,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 loading.show(true, i18n.t("Downloading snapshot for module {{name}}", module));
 
                 const builder = module.toSyncBuilder();
-                const contents = await compositionRoot
-                    .sync(remoteInstance)
-                    [module.type](builder)
-                    .buildPayload();
+                const contents = await compositionRoot.sync[module.type](builder).buildPayload();
 
                 await compositionRoot.modules(remoteInstance).download(module, contents);
                 loading.reset();
@@ -101,10 +98,9 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                     );
 
                     const builder = module.toSyncBuilder();
-                    const contents = await compositionRoot
-                        .sync()
-                        [module.type](builder)
-                        .buildPayload();
+                    const contents = await compositionRoot.sync[module.type](
+                        builder
+                    ).buildPayload();
 
                     const newPackage = item.update({ contents, dhisVersion });
                     await compositionRoot.packages().create(newPackage, module);

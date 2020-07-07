@@ -1,36 +1,29 @@
-import { D2Api } from "../../../../../types/d2-api";
 import { MultiSelector } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
-import Instance from "../../../../../models/instance";
+import { Instance } from "../../../../../domain/instance/entities/Instance";
+import { useAppContext } from "../../../../common/contexts/AppContext";
 import SyncParamsSelector from "../../sync-params-selector/SyncParamsSelector";
 import { SyncWizardStepProps } from "../Steps";
-import { useAppContext } from "../../../../common/contexts/AppContext";
 
-export const getInstanceOptions = async (api: D2Api) => {
-    const { objects } = await Instance.list(api, {}, { paging: false });
-    return objects.map(instance => ({
+export const buildInstanceOptions = (instances: Instance[]) => {
+    return instances.map(instance => ({
         value: instance.id,
         text: `${instance.name} (${instance.url} with user ${instance.username})`,
     }));
 };
 
-const getInstances = async (api: D2Api) => {
-    const { objects } = await Instance.list(api, {}, { paging: false });
-    return objects;
-};
-
 const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
-    const { d2, api } = useAppContext();
+    const { d2, compositionRoot } = useAppContext();
     const [selectedOptions, setSelectedOptions] = useState<string[]>(syncRule.targetInstances);
-    const [instanceOptions, setInstanceOptions] = useState<{ value: string; text: string }[]>([]);
     const [targetInstances, setTargetInstances] = useState<Instance[]>([]);
+    const instanceOptions = buildInstanceOptions(targetInstances);
 
     const includeCurrentUrlAndTypeIsEvents = (selectedinstanceIds: string[]) => {
         return (
             syncRule.type === "events" &&
             selectedinstanceIds
                 .map(id => targetInstances.find(instance => instance.id === id)?.url)
-                .includes(api.baseUrl)
+                .includes(compositionRoot.instances().getApi().baseUrl)
         );
     };
 
@@ -50,9 +43,11 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
     };
 
     useEffect(() => {
-        getInstanceOptions(api).then(setInstanceOptions);
-        getInstances(api).then(setTargetInstances);
-    }, [api]);
+        compositionRoot
+            .instances()
+            .list()
+            .then(setTargetInstances);
+    }, [compositionRoot]);
 
     return (
         <React.Fragment>

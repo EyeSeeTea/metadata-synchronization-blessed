@@ -5,20 +5,20 @@ import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useAppContext } from "../../../../common/contexts/AppContext";
 import { AggregatedSyncUseCase } from "../../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { EventsSyncUseCase } from "../../../../../domain/events/usecases/EventsSyncUseCase";
 import { MetadataSyncUseCase } from "../../../../../domain/metadata/usecases/MetadataSyncUseCase";
+import { cleanOrgUnitPaths } from "../../../../../domain/synchronization/utils";
+import { getValidationMessages } from "../../../../../utils/old-validations";
 import {
     availablePeriods,
     getMetadata,
     requestJSONDownload,
 } from "../../../../../utils/synchronization";
-import { getValidationMessages } from "../../../../../utils/old-validations";
+import { useAppContext } from "../../../../common/contexts/AppContext";
 import { aggregationItems } from "../data/AggregationStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
-import { getInstanceOptions } from "./InstanceSelectionStep";
-import { cleanOrgUnitPaths } from "../../../../../domain/synchronization/utils";
+import { buildInstanceOptions } from "./InstanceSelectionStep";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -56,7 +56,7 @@ const config = {
 };
 
 const SaveStep = ({ syncRule, onCancel }) => {
-    const { d2, api } = useAppContext();
+    const { d2, api, compositionRoot } = useAppContext();
 
     const snackbar = useSnackbar();
     const loading = useLoading();
@@ -66,8 +66,8 @@ const SaveStep = ({ syncRule, onCancel }) => {
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [metadata, updateMetadata] = useState({});
-    const [instanceOptions, setInstanceOptions] = useState([]);
-    //const [targetInstances, setTargetInstances] = useState([]);
+    const [targetInstances, setTargetInstances] = useState([]);
+    const instanceOptions = buildInstanceOptions(targetInstances);
 
     const openCancelDialog = () => setCancelDialogOpen(true);
 
@@ -108,8 +108,11 @@ const SaveStep = ({ syncRule, onCancel }) => {
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
         getMetadata(api, ids, "id,name").then(updateMetadata);
-        getInstanceOptions(api).then(setInstanceOptions);
-    }, [api, syncRule]);
+        compositionRoot
+            .instances()
+            .list()
+            .then(setTargetInstances);
+    }, [api, compositionRoot, syncRule]);
 
     // useEffect(() => {
     //     const getTargetInstances = async d2 =>

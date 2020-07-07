@@ -4,7 +4,7 @@ import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { ProgramEvent } from "../../../../../domain/events/entities/ProgramEvent";
-import { D2Program } from "../../../../../types/d2-api";
+import { DataElement, Program } from "../../../../../domain/metadata/entities/MetadataEntities";
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
@@ -14,10 +14,14 @@ interface ProgramEventObject extends ProgramEvent {
     [key: string]: any;
 }
 
+type CustomProgram = Program & {
+    programStages?: { programStageDataElements: { dataElement: DataElement }[] }[];
+};
+
 export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
     const { compositionRoot } = useAppContext();
     const [objects, setObjects] = useState<ProgramEvent[] | undefined>();
-    const [programs, setPrograms] = useState<D2Program[]>([]);
+    const [programs, setPrograms] = useState<CustomProgram[]>([]);
     const [programFilter, changeProgramFilter] = useState<string>("");
     const [error, setError] = useState();
 
@@ -36,8 +40,8 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     }, [compositionRoot, syncRule, programs]);
 
     useEffect(() => {
-        const sync = compositionRoot.sync().events(syncRule.toBuilder());
-        sync.extractMetadata().then(({ programs = [] }) => setPrograms(programs));
+        const sync = compositionRoot.sync.events(syncRule.toBuilder());
+        sync.extractMetadata<CustomProgram>().then(({ programs = [] }) => setPrograms(programs));
     }, [syncRule, compositionRoot]);
 
     const buildAdditionalColumns = () => {

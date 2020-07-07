@@ -3,29 +3,31 @@ import { Ref } from "../../common/entities/Ref";
 import { Id } from "../../common/entities/Schemas";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
+import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { MetadataEntity, MetadataPackage } from "../entities/MetadataEntities";
 import { MetadataImportParams } from "../types";
 
+export interface MetadataRepositoryConstructor {
+    new (
+        instance: Instance,
+        transformationRepository: TransformationRepository
+    ): MetadataRepository;
+}
+
 export interface MetadataRepository {
-    getMetadataByIds<T>(
-        ids: Id[],
-        fields?: string,
-        targetInstance?: Instance
-    ): Promise<MetadataPackage<T>>;
+    getMetadataByIds<T>(ids: Id[], fields?: string): Promise<MetadataPackage<T>>;
 
     listMetadata(params: ListMetadataParams): Promise<ListMetadataResponse>;
     listAllMetadata(params: ListMetadataParams): Promise<MetadataEntity[]>;
 
     save(
         metadata: MetadataPackage,
-        additionalParams?: MetadataImportParams,
-        targetInstance?: Instance
+        additionalParams?: MetadataImportParams
     ): Promise<SynchronizationResult>;
 
     remove(
         metadata: MetadataPackage<Ref>,
-        additionalParams?: MetadataImportParams,
-        targetInstance?: Instance
+        additionalParams?: MetadataImportParams
     ): Promise<SynchronizationResult>;
 }
 

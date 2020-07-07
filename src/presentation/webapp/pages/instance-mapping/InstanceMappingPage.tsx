@@ -17,10 +17,10 @@ import {
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
 } from "../../../../models/dhis/mapping";
-import Instance from "../../../../models/instance";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import MappingTable from "../../components/mapping-table/MappingTable";
 import PageHeader from "../../components/page-header/PageHeader";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
@@ -54,8 +54,8 @@ interface InstanceMappingParams {
 }
 
 export default function InstanceMappingPage() {
+    const { compositionRoot } = useAppContext();
     const history = useHistory();
-    const { api } = useAppContext();
 
     const { id, section } = useParams() as InstanceMappingParams;
     const { models, title: sectionTitle } = config[section];
@@ -63,18 +63,21 @@ export default function InstanceMappingPage() {
     const [instance, setInstance] = useState<Instance>();
 
     useEffect(() => {
-        Instance.get(api, id).then(setInstance);
-    }, [api, id]);
+        compositionRoot
+            .instances()
+            .getById(id)
+            .then(setInstance);
+    }, [compositionRoot, id]);
 
     const backHome = () => {
         history.push(`/instances/mapping/${id}`);
     };
 
-    const onChangeMapping = async (mapping: MetadataMappingDictionary) => {
+    const onChangeMapping = async (metadataMapping: MetadataMappingDictionary) => {
         if (!instance) return;
 
-        const newInstance = instance.setMetadataMapping(mapping);
-        await newInstance.save(api);
+        const newInstance = instance.update({ metadataMapping });
+        await compositionRoot.instances().save(newInstance);
         setInstance(newInstance);
     };
 

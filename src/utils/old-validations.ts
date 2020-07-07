@@ -1,6 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
-import Instance from "../models/instance";
 import SyncRule from "../models/syncRule";
 import { D2Api } from "../types/d2-api";
 
@@ -28,11 +27,11 @@ const translations: { [key: string]: (namespace: object) => string } = {
 
 // TODO: This should be migrated to use the new ValidationError[]
 export async function getValidationMessages(
-    api: D2Api,
-    model: SyncRule | Instance,
+    _api: D2Api,
+    model: SyncRule,
     validationKeys: string[] | null = null
 ) {
-    const validationObj = await model.validate(api);
+    const validationObj = await model.validate();
 
     return _(validationObj)
         .at(validationKeys || _.keys(validationObj))

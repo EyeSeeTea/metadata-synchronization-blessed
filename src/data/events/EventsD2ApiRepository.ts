@@ -3,20 +3,19 @@ import { DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
 import { EventsRepository } from "../../domain/events/repositories/EventsRepository";
-import { Instance as InstanceEntity } from "../../domain/instance/entities/Instance";
+import { Instance } from "../../domain/instance/entities/Instance";
 import {
     SynchronizationResult,
     SynchronizationStats,
 } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
-import Instance from "../../models/instance";
 import { DataImportParams } from "../../types/d2";
 import { D2Api } from "../../types/d2-api";
 
 export class EventsD2ApiRepository implements EventsRepository {
     private api: D2Api;
 
-    constructor(instance: InstanceEntity) {
+    constructor(instance: Instance) {
         this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 

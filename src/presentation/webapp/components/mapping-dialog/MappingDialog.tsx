@@ -5,11 +5,9 @@ import { makeStyles } from "@material-ui/styles";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { Instance as InstanceEntity } from "../../../../domain/instance/entities/Instance";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../../../domain/instance/entities/MetadataMapping";
 import { d2ModelFactory } from "../../../../models/dhis/factory";
-import Instance from "../../../../models/instance";
-import { D2 } from "../../../../types/d2";
 import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import { buildDataElementFilterForProgram, getValidIds } from "../mapping-table/utils";
@@ -43,7 +41,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     onUpdateMapping,
     onClose,
 }) => {
-    const d2 = useAppContext().d2 as D2;
+    const { d2, compositionRoot } = useAppContext();
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
     const [filterRows, setFilterRows] = useState<string[] | undefined>();
@@ -63,21 +61,25 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const defaultSelection = mappedId !== "DISABLED" ? mappedId : undefined;
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
-    const api = instance.getApi();
+    const api = compositionRoot.instances(instance).getApi();
     const model = d2ModelFactory(api, mappingType);
     const modelName = model.getModelName(d2);
 
     useEffect(() => {
         let mounted = true;
 
-        instance.check().then(({ status }) => {
-            if (mounted) setConnectionSuccess(status);
-        });
+        compositionRoot
+            .instances()
+            .validate(instance)
+            .then(result => {
+                const status = result.isError();
+                if (mounted) setConnectionSuccess(status);
+            });
 
         return () => {
             mounted = false;
         };
-    }, [instance]);
+    }, [instance, compositionRoot]);
 
     useEffect(() => {
         if (mappingPath) {
@@ -114,7 +116,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
         <MetadataTable
             models={[model]}
             remoteInstance={
-                new InstanceEntity({
+                new Instance({
                     id: instance.id,
                     name: instance.name,
                     url: instance.url,

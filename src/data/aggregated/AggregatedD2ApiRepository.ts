@@ -5,12 +5,11 @@ import { MappedCategoryOption } from "../../domain/aggregated/entities/MappedCat
 import { AggregatedRepository } from "../../domain/aggregated/repositories/AggregatedRepository";
 import { DataSyncAggregation, DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
-import { Instance as InstanceEntity } from "../../domain/instance/entities/Instance";
+import { Instance } from "../../domain/instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../domain/instance/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../domain/metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
-import Instance from "../../models/instance";
 import { DataImportParams } from "../../types/d2";
 import { D2Api, DataValueSetsPostResponse } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
@@ -18,7 +17,7 @@ import { promiseMap } from "../../utils/common";
 export class AggregatedD2ApiRepository implements AggregatedRepository {
     private api: D2Api;
 
-    constructor(instance: InstanceEntity) {
+    constructor(instance: Instance) {
         this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 

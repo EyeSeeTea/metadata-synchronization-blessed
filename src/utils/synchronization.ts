@@ -2,7 +2,6 @@ import i18n from "@dhis2/d2-i18n";
 import FileSaver from "file-saver";
 import _ from "lodash";
 import moment from "moment";
-import memoize from "nano-memoize";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
@@ -61,27 +60,6 @@ export const availablePeriods: {
     LAST_YEAR: { name: i18n.t("Last year"), start: [1, "year"] },
     LAST_FIVE_YEARS: { name: i18n.t("Last 5 years"), start: [5, "year"], end: [1, "year"] },
 };
-
-// TODO: when all request to metadata using metadataRepository.getModelByType
-// this function should be removed
-export const getCategoryOptionCombos = memoize(
-    async (api: D2Api) => {
-        const { objects } = await api.models.categoryOptionCombos
-            .get({
-                paging: false,
-                fields: {
-                    id: true,
-                    name: true,
-                    categoryCombo: true,
-                    categoryOptions: true,
-                },
-            })
-            .getData();
-
-        return objects;
-    },
-    { serializer: (api: D2Api) => api.baseUrl }
-);
 
 export function requestJSONDownload(payload: object, syncRule: SyncRule) {
     const json = JSON.stringify(payload, null, 4);
