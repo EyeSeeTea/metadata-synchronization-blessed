@@ -38,6 +38,7 @@ import { D2Model } from "./dhis/default";
 const dataStoreKey = "rules";
 
 const defaultSynchronizationBuilder: SynchronizationBuilder = {
+    originInstance: "LOCAL",
     targetInstances: [],
     metadataIds: [],
     excludedIds: [],
@@ -355,6 +356,7 @@ export default class SyncRule {
             "metadataIds",
             "excludedIds",
             "metadataTypes",
+            "originInstance",
             "targetInstances",
             "syncParams",
             "dataParams",

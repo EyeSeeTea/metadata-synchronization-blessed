@@ -17,7 +17,6 @@ export interface EventsRepository {
 
     save(
         data: object,
-        additionalParams: DataImportParams | undefined,
-        targetInstance: Instance
+        additionalParams: DataImportParams | undefined
     ): Promise<SynchronizationResult>;
 }

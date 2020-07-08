@@ -5,6 +5,7 @@ import { MetadataImportParams } from "./d2";
 //TODO: Review this to move it to domain
 
 export interface SynchronizationBuilder {
+    originInstance: string;
     targetInstances: string[];
     metadataIds: string[];
     excludedIds: string[];

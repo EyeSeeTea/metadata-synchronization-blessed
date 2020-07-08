@@ -15,18 +15,16 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
 
     public async postPayload(instance: Instance) {
         const { metadataIds, syncParams = {} } = this.builder;
+        const remoteMetadataRepository = await this.getMetadataRepository(instance);
 
-        const payloadPackage = await this.getMetadataRepository(instance).getMetadataByIds<Ref>(
+        const payloadPackage = await remoteMetadataRepository.getMetadataByIds<Ref>(
             metadataIds,
             "id"
         );
 
         console.debug("Metadata package", payloadPackage);
 
-        const syncResult = await this.getMetadataRepository(instance).remove(
-            payloadPackage,
-            syncParams
-        );
+        const syncResult = await remoteMetadataRepository.remove(payloadPackage, syncParams);
 
         return [syncResult];
     }

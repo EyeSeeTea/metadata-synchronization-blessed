@@ -15,7 +15,7 @@ import { D2Api } from "../../types/d2-api";
 export class EventsD2ApiRepository implements EventsRepository {
     private api: D2Api;
 
-    constructor(instance: Instance) {
+    constructor(private instance: Instance) {
         this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 
@@ -56,8 +56,7 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     public async save(
         data: object,
-        additionalParams: DataImportParams | undefined,
-        instance: Instance
+        additionalParams: DataImportParams | undefined
     ): Promise<SynchronizationResult> {
         const { status, message, response } = await this.api
             .post<EventsPostResponse>(
@@ -100,7 +99,7 @@ export class EventsD2ApiRepository implements EventsRepository {
             status,
             message,
             stats,
-            instance: instance.toObject(),
+            instance: this.instance.toObject(),
             errors,
             date: new Date(),
             type: "events",

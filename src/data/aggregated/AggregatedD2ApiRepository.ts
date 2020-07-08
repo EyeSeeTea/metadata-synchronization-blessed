@@ -17,7 +17,7 @@ import { promiseMap } from "../../utils/common";
 export class AggregatedD2ApiRepository implements AggregatedRepository {
     private api: D2Api;
 
-    constructor(instance: Instance) {
+    constructor(private instance: Instance) {
         this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 
@@ -173,8 +173,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
 
     public async save(
         data: object,
-        additionalParams: DataImportParams | undefined,
-        instance: Instance
+        additionalParams: DataImportParams | undefined
     ): Promise<SynchronizationResult> {
         const { status, description, importCount, conflicts } = await this.api
             .post<DataValueSetsPostResponse>(
@@ -205,7 +204,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             status,
             message: description,
             stats: importCount,
-            instance: instance.toObject(),
+            instance: this.instance.toObject(),
             errors,
             date: new Date(),
             type: "aggregated",

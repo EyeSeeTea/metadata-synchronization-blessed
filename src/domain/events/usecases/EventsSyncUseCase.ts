@@ -30,10 +30,13 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
     public buildPayload = memoize(async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
         const { enableAggregation = false } = dataParams;
+        const eventsRepository = await this.getEventsRepository();
+        const aggregatedRepository = await this.getAggregatedRepository();
+
         const { programs = [], programIndicators = [] } = await this.extractMetadata();
 
         const events = (
-            await this.getEventsRepository().getEvents(
+            await eventsRepository.getEvents(
                 dataParams,
                 programs.map(({ id }) => id)
             )
@@ -50,7 +53,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         );
 
         const { dataValues: candidateDataValues = [] } = enableAggregation
-            ? await this.getAggregatedRepository().getAnalytics({
+            ? await aggregatedRepository.getAnalytics({
                   dataParams,
                   dimensionIds: [...directIndicators, ...indicatorsByProgram],
                   includeCategories: false,
@@ -92,7 +95,8 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         );
         console.debug("Events package", { events, payload, versionedPayloadPackage });
 
-        return this.getEventsRepository().save(payload, dataParams, instance);
+        const eventsRepository = await this.getEventsRepository(instance);
+        return eventsRepository.save(payload, dataParams);
     }
 
     private async postIndicatorPayload(instance: Instance, dataValues: DataValue[]) {
@@ -111,7 +115,8 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const payload = await aggregatedSync.mapPayload(instance, { dataValues });
         console.debug("Program indicator package", { dataValues, payload });
 
-        return this.getAggregatedRepository().save(payload, dataParams, instance);
+        const aggregatedRepository = await this.getAggregatedRepository(instance);
+        return aggregatedRepository.save(payload, dataParams);
     }
 
     public async buildDataStats() {
@@ -135,11 +140,12 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         payload: EventsPackage
     ): Promise<SyncronizationPayload> {
         const { events: oldEvents } = payload;
-        const originCategoryOptionCombos = await this.getInstanceRepository().getCategoryOptionCombos();
-        const destinationCategoryOptionCombos = await this.getInstanceRepository(
-            instance
-        ).getCategoryOptionCombos();
-        const defaultCategoryOptionCombos = await this.getInstanceRepository().getDefaultIds(
+        const instanceRepository = await this.getInstanceRepository();
+        const remoteInstanceRepository = await this.getInstanceRepository(instance);
+
+        const originCategoryOptionCombos = await instanceRepository.getCategoryOptionCombos();
+        const destinationCategoryOptionCombos = await remoteInstanceRepository.getCategoryOptionCombos();
+        const defaultCategoryOptionCombos = await instanceRepository.getDefaultIds(
             "categoryOptionCombos"
         );
 

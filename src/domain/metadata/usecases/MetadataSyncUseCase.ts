@@ -31,7 +31,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             const nestedIncludeRules: NestedRules = buildNestedRules(includeRules);
 
             // Get all the required metadata
-            const syncMetadata = await this.getMetadataRepository().getMetadataByIds(ids);
+            const metadataRepository = await this.getMetadataRepository();
+            const syncMetadata = await metadataRepository.getMetadataByIds(ids);
             const elements = syncMetadata[collectionName] || [];
 
             for (const element of elements) {
@@ -82,10 +83,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
 
-        const metadata = await this.getMetadataRepository().getMetadataByIds<Ref>(
-            metadataIds,
-            "id"
-        );
+        const metadataRepository = await this.getMetadataRepository();
+        const metadata = await metadataRepository.getMetadataByIds<Ref>(metadataIds, "id");
 
         const exportResults = await promiseMap(_.keys(metadata), type => {
             const myClass = d2ModelFactory(this.api, type);
@@ -121,10 +120,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         console.debug("Metadata package", payloadPackage);
 
-        const syncResult = await this.getMetadataRepository(instance).save(
-            payloadPackage,
-            syncParams
-        );
+        const remoteMetadataRepository = await this.getMetadataRepository(instance);
+        const syncResult = await remoteMetadataRepository.save(payloadPackage, syncParams);
 
         return [syncResult];
     }
