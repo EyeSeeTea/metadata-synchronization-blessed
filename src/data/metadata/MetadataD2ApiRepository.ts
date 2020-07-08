@@ -48,9 +48,9 @@ export class MetadataD2ApiRepository implements MetadataRepository {
      * @param ids metadata ids to retrieve
      */
     public async getMetadataByIds<T>(ids: string[], fields: string): Promise<MetadataPackage<T>> {
-        const d2Metadata = await this.getMetadata<D2Model>(ids, fields);
+        const { apiVersion } = this.instance;
 
-        const apiVersion = await this.getVersion();
+        const d2Metadata = await this.getMetadata<D2Model>(ids, fields);
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -70,12 +70,11 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         ...params
     }: ListMetadataParams): Promise<ListMetadataResponse> {
         const filter = this.buildListFilters(params);
+        const { apiVersion } = this.instance;
 
         const { objects, pager } = await this.getApiModel(type)
             .get({ paging: true, fields, filter, page, pageSize })
             .getData();
-
-        const apiVersion = await this.getVersion();
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -93,12 +92,11 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         ...params
     }: ListMetadataParams): Promise<MetadataEntity[]> {
         const filter = this.buildListFilters(params);
+        const { apiVersion } = this.instance;
 
         const { objects } = await this.getApiModel(type)
             .get({ paging: false, fields, filter })
             .getData();
-
-        const apiVersion = await this.getVersion();
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -136,7 +134,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         metadata: MetadataPackage,
         additionalParams: MetadataImportParams
     ): Promise<SynchronizationResult> {
-        const apiVersion = await this.getVersion();
+        const { apiVersion } = this.instance;
         const versionedPayloadPackage = this.transformationRepository.mapPackageTo(
             apiVersion,
             metadata,
@@ -198,7 +196,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         payload: Partial<Record<string, unknown[]>>,
         additionalParams?: MetadataImportParams
     ): Promise<MetadataResponse> {
-        const response = await this.getApi()
+        const response = await this.api
             .post<MetadataResponse>(
                 "/metadata",
                 {
@@ -217,34 +215,15 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         return response;
     }
 
-    private getApi(targetInstance?: Instance): D2Api {
-        const { url, username, password } = targetInstance ?? {};
-        const auth = username && password ? { username, password } : undefined;
-        return targetInstance ? new D2Api({ baseUrl: url, auth }) : this.api;
-    }
-
-    @cache()
-    private async getVersion(targetInstance?: Instance): Promise<number> {
-        if (!targetInstance) {
-            const version = await this.api.getVersion();
-            return Number(version.split(".")[1]);
-        } else if (targetInstance.apiVersion) {
-            return targetInstance.apiVersion;
-        } else {
-            throw Error("Necessary api version to apply transformations to package is undefined");
-        }
-    }
-
     private async getMetadata<T>(
         elements: string[],
-        fields = ":all",
-        targetInstance?: Instance
+        fields = ":all"
     ): Promise<Record<string, T[]>> {
         const promises = [];
         for (let i = 0; i < elements.length; i += 100) {
             const requestElements = elements.slice(i, i + 100).toString();
             promises.push(
-                this.getApi(targetInstance)
+                this.api
                     .get("/metadata", {
                         fields,
                         filter: "id:in:[" + requestElements + "]",
