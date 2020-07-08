@@ -86,9 +86,12 @@ const ManualSyncPage: React.FC = () => {
 
     const goBack = () => history.goBack();
 
-    const updateSelection = (selection: string[], exclusion: string[]) => {
-        updateSyncRule(syncRule.updateMetadataIds(selection).updateExcludedIds(exclusion));
-    };
+    const updateSelection = useCallback(
+        (selection: string[], exclusion: string[]) => {
+            updateSyncRule(syncRule.updateMetadataIds(selection).updateExcludedIds(exclusion));
+        },
+        [syncRule]
+    );
 
     const openSynchronizationDialog = () => {
         if (syncRule.metadataIds.length > 0) {
@@ -149,8 +152,9 @@ const ManualSyncPage: React.FC = () => {
             const id = event.target.value as string;
             setSelectedInstance(instances.find(instance => instance.id === id));
             updateSyncRule(syncRule.update({ originInstance: id }));
+            updateSelection([], []);
         },
-        [instances, syncRule]
+        [instances, syncRule, updateSelection]
     );
 
     useEffect(() => {
