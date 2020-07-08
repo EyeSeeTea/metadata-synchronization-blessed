@@ -37,13 +37,16 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
 
     const onChangeInstance = useCallback(
         (event: React.ChangeEvent<{ value: unknown }>) => {
-            const newRule = syncRule
-                .update({ originInstance: event.target.value as string })
-                .updateTargetInstances([])
-                .updateMetadataIds([])
-                .updateExcludedIds([]);
+            const originInstance = event.target.value as string;
+            const targetInstances = originInstance === "LOCAL" ? ["LOCAL"] : [];
 
-            onChange(newRule);
+            onChange(
+                syncRule
+                    .update({ originInstance })
+                    .updateTargetInstances(targetInstances)
+                    .updateMetadataIds([])
+                    .updateExcludedIds([])
+            );
         },
         [syncRule, onChange]
     );
