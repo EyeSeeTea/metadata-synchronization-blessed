@@ -1,6 +1,6 @@
-import { Repositories } from "../../../presentation/CompositionRoot";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { Repositories } from "../../Repositories";
 import { Instance } from "../entities/Instance";
 import { InstanceRepositoryConstructor } from "../repositories/InstanceRepository";
 

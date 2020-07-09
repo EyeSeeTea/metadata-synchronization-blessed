@@ -19,6 +19,7 @@ import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstan
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
+import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { ListAllMetadataUseCase } from "../domain/metadata/usecases/ListAllMetadataUseCase";
 import { ListMetadataUseCase } from "../domain/metadata/usecases/ListMetadataUseCase";
@@ -35,22 +36,11 @@ import { ListPackagesUseCase } from "../domain/modules/usecases/ListPackagesUseC
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
 import { SaveStoreUseCase } from "../domain/modules/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/modules/usecases/ValidateStoreUseCase";
+import { Repositories } from "../domain/Repositories";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { D2 } from "../types/d2";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
-import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
-
-export const Repositories = {
-    InstanceRepository: "instanceRepository",
-    StorageRepository: "storageRepository",
-    DownloadRepository: "downloadRepository",
-    GitHubRepository: "githubRepository",
-    AggregatedRepository: "aggregatedRepository",
-    EventsRepository: "eventsRepository",
-    MetadataRepository: "metadataRepository",
-    TransformationRepository: "transformationsRepository",
-};
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
