@@ -1,5 +1,5 @@
 declare module "d2" {
-    export function init(config: { baseUrl: string; headers?: any }): unknown;
+    export function init(config: { baseUrl: string; headers?: any; schemas?: string[] }): unknown;
 }
 
 declare module "d2/uid" {

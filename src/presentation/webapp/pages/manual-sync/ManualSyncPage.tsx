@@ -182,7 +182,9 @@ const ManualSyncPage: React.FC = () => {
                 >
                     {[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances].map(
                         ({ id, name }) => (
-                            <MenuItem value={id}>{name}</MenuItem>
+                            <MenuItem key={id} value={id}>
+                                {name}
+                            </MenuItem>
                         )
                     )}
                 </Select>

@@ -115,15 +115,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const MetadataMapper = (
         <MetadataTable
             models={[model]}
-            remoteInstance={
-                new Instance({
-                    id: instance.id,
-                    name: instance.name,
-                    url: instance.url,
-                    username: instance.username,
-                    password: instance.password,
-                })
-            }
+            remoteInstance={instance}
             notifyNewSelection={onUpdateSelection}
             selectedIds={selected ? [selected] : undefined}
             hideSelectAll={true}
