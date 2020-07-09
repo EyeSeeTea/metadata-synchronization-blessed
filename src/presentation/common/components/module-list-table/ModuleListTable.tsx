@@ -36,7 +36,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     externalComponents,
     pageSizeOptions,
 }) => {
-    const { compositionRoot } = useAppContext();
+    const { compositionRoot, api } = useAppContext();
     const snackbar = useSnackbar();
     const loading = useLoading();
     const history = useHistory();
@@ -111,6 +111,27 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             }
         },
         [compositionRoot, rows, snackbar, loading]
+    );
+
+    const pullModule = useCallback(
+        async (ids: string[]) => {
+            const module = _.find(rows, ({ id }) => id === ids[0]);
+            if (!module) snackbar.error(i18n.t("Invalid module"));
+            else {
+                loading.show(true, i18n.t("Pulling metadata from module {{name}}", module));
+
+                const sync = compositionRoot.sync[module.type](module.toSyncBuilder());
+                for await (const { message, syncReport, done } of sync.execute()) {
+                    if (message) loading.show(true, message);
+                    if (syncReport) syncReport.save(api);
+                    if (done) {
+                        loading.reset();
+                        return;
+                    }
+                }
+            }
+        },
+        [compositionRoot, loading, rows, snackbar, api]
     );
 
     const replicateModule = useCallback(
@@ -214,6 +235,14 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             icon: <Icon>description</Icon>,
             isActive: () => presentation === "app" && !remoteInstance,
             onClick: createPackage,
+        },
+        {
+            name: "pull-metadata",
+            text: i18n.t("Pull metadata"),
+            multiple: false,
+            icon: <Icon>export</Icon>,
+            isActive: () => presentation === "app" && !!remoteInstance,
+            onClick: pullModule,
         },
     ];
 
