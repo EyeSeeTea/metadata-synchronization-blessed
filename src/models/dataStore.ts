@@ -1,57 +1,30 @@
+import { D2Api, Ref } from "d2-api";
 import _ from "lodash";
-import axios from "axios";
-
-import { D2, Response } from "../types/d2";
+import { Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
-import { getBaseUrl } from "../utils/d2";
 
-const dataStoreNamespace = "metadata-synchronization";
+export const dataStoreNamespace = "metadata-synchronization";
+export const dataStoreVersion = 1;
 
-export async function getDataStore(d2: D2, dataStoreKey: string, defaultValue: any): Promise<any> {
-    const baseUrl = getBaseUrl(d2);
-
-    try {
-        const response = await axios.get(
-            baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
-            { withCredentials: true }
-        );
-        return response.data;
-    } catch (error) {
-        if (error.response && error.response.status === 404) {
-            await axios.post(
-                baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`,
-                defaultValue,
-                { withCredentials: true }
-            );
-            return defaultValue;
-        } else {
-            throw error;
-        }
-    }
+export async function getDataStore<T extends object>(
+    api: D2Api,
+    dataStoreKey: string,
+    defaultValue: T
+): Promise<T> {
+    const dataStore = api.dataStore(dataStoreNamespace);
+    const value = await dataStore.get<T>(dataStoreKey).getData();
+    if (!value) await dataStore.save(dataStoreKey, defaultValue).getData();
+    return value ?? defaultValue;
 }
 
-export async function saveDataStore(d2: D2, dataStoreKey: string, value: any): Promise<void> {
-    const baseUrl = getBaseUrl(d2);
-    try {
-        await axios.put(baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`, value, {
-            withCredentials: true,
-        });
-    } catch (error) {
-        if (error.response && error.response.status === 404) {
-            await axios.post(baseUrl + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`, value, {
-                withCredentials: true,
-            });
-        } else {
-            throw error;
-        }
-    }
+export async function saveDataStore(api: D2Api, dataStoreKey: string, value: any): Promise<void> {
+    const dataStore = api.dataStore(dataStoreNamespace);
+    await dataStore.save(dataStoreKey, value).getData();
 }
 
-export async function deleteDataStore(d2: D2, dataStoreKey: string): Promise<void> {
+export async function deleteDataStore(api: D2Api, dataStoreKey: string): Promise<void> {
     try {
-        await axios.delete(getBaseUrl(d2) + `/dataStore/${dataStoreNamespace}/${dataStoreKey}`, {
-            withCredentials: true,
-        });
+        await api.delete(`/dataStore/${dataStoreNamespace}/${dataStoreKey}`).getData();
     } catch (error) {
         if (!error.response || error.response.status !== 404) {
             throw error;
@@ -59,25 +32,29 @@ export async function deleteDataStore(d2: D2, dataStoreKey: string): Promise<voi
     }
 }
 
-export async function getData(d2: D2, dataStoreKey: string): Promise<any> {
-    return getDataStore(d2, dataStoreKey, []);
+export async function getData(api: D2Api, dataStoreKey: string): Promise<any> {
+    return getDataStore(api, dataStoreKey, []);
 }
 
-export async function getDataById(d2: D2, dataStoreKey: string, id: string): Promise<any> {
-    const rawData = await getDataStore(d2, dataStoreKey, []);
+export async function getDataById<T extends Ref>(
+    api: D2Api,
+    dataStoreKey: string,
+    id: string
+): Promise<T | undefined> {
+    const rawData = await getDataStore<T[]>(api, dataStoreKey, []);
     return _.find(rawData, element => element.id === id);
 }
 
 export async function getPaginatedData(
-    d2: D2,
+    api: D2Api,
     dataStoreKey: string,
-    filters: TableFilters,
-    pagination: TablePagination
+    filters: TableFilters | null,
+    pagination: TablePagination | null
 ): Promise<TableList> {
     const { search = null } = filters || {};
     const { page = 1, pageSize = 20, paging = true, sorting = ["id", "asc"] } = pagination || {};
 
-    const rawData = await getDataStore(d2, dataStoreKey, []);
+    const rawData = await getDataStore<any>(api, dataStoreKey, []);
 
     const filteredData = search
         ? _.filter(rawData, o =>
@@ -104,11 +81,15 @@ export async function getPaginatedData(
     return { objects: paginatedData, pager: { page, pageCount, total } };
 }
 
-export async function saveData(d2: D2, dataStoreKey: string, data: any): Promise<Response> {
+export async function saveData(api: D2Api, dataStoreKey: string, data: any): Promise<Response> {
     try {
-        const dataArray = await getDataStore(d2, dataStoreKey, []);
-        const newDataArray = [...dataArray, data];
-        await saveDataStore(d2, dataStoreKey, newDataArray);
+        const dataArray = await getDataStore(api, dataStoreKey, []);
+        const newDataArray = _([...dataArray, data])
+            .reverse()
+            .uniqBy("id")
+            .reverse()
+            .value();
+        await saveDataStore(api, dataStoreKey, newDataArray);
         return { status: true };
     } catch (e) {
         console.error(e);
@@ -119,13 +100,13 @@ export async function saveData(d2: D2, dataStoreKey: string, data: any): Promise
     }
 }
 
-export async function deleteData(d2: D2, dataStoreKey: string, data: any): Promise<Response> {
+export async function deleteData(api: D2Api, dataStoreKey: string, data: any): Promise<Response> {
     try {
-        const dataArray = await getDataStore(d2, dataStoreKey, []);
+        const dataArray = await getDataStore(api, dataStoreKey, []);
         const newDataArray = dataArray.filter(
             (dataEl: { id: string }): boolean => dataEl.id !== data.id
         );
-        await saveDataStore(d2, dataStoreKey, newDataArray);
+        await saveDataStore(api, dataStoreKey, newDataArray);
         return { status: true };
     } catch (e) {
         console.error(e);

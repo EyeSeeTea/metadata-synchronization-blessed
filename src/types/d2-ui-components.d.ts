@@ -19,18 +19,17 @@ export interface TableFilters {
     metadataType?: string;
 }
 
-export interface OrganisationUnitTableFilters extends TableFilters {
-    levelFilter?: string;
-}
-
 export interface SyncReportTableFilters extends TableFilters {
+    type: string;
     statusFilter?: string;
+    syncRuleFilter?: string;
 }
 
 export interface SyncRuleTableFilters extends TableFilters {
     targetInstanceFilter?: string;
     enabledFilter?: string;
-    lastExecutedFilter?: Moment;
+    lastExecutedFilter?: Moment | null;
+    type?: SyncRuleType;
 }
 
 export interface TablePagination {
@@ -38,9 +37,4 @@ export interface TablePagination {
     pageSize?: number;
     sorting?: string[];
     paging?: boolean;
-}
-
-export interface TableLabel {
-    name: string;
-    text: string;
 }

@@ -1,17 +1,17 @@
-import { dataTest } from "../support/utils";
+import InstancePageObject from "../support/page-objects/common/InstancePageObject";
 
-context("Instance Configurator", function() {
+context("Destination Settings", function() {
+    const page = new InstancePageObject(cy);
+
     beforeEach(() => {
-        cy.login("admin");
-        cy.visit("/#/instance-configurator");
+        page.open();
     });
 
-    it("has the correct title", function() {
-        cy.get(dataTest("page-header-title")).contains("Instance Configuration");
+    it("should have the correct title", function() {
+        page.assertTitle(title => title.contains("Destination Instance Settings"));
     });
 
-    it("opens a new instance page", function() {
-        cy.get(dataTest("list-action-bar")).click();
-        cy.get(dataTest("page-header-title")).contains("New Instance");
+    it("should have the localhost instance", function() {
+        page.findInstance("this instance (8080)");
     });
 });
