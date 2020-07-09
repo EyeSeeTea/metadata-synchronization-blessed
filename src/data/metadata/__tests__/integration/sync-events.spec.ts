@@ -22,6 +22,10 @@ describe("Sync metadata", () => {
     let local: Server;
     let remote: Server;
 
+    beforeAll(() => {
+        jest.setTimeout(30000)
+    })
+
     beforeEach(() => {
         local = startDhis({ urlPrefix: "http://origin.test" });
         remote = startDhis({
