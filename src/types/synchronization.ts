@@ -1,6 +1,7 @@
+import { DataSynchronizationParams } from "../domain/aggregated/types";
 import SyncReport from "../models/syncReport";
-import { D2ModelSchemas } from "../types/d2-api";
 import { MetadataImportParams } from "./d2";
+import { D2ModelSchemas } from "./d2-api";
 
 //TODO: Review this to move it to domain
 

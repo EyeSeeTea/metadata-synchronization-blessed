@@ -1,3 +1,4 @@
+
 export interface ModelDefinition {
     apiEndpoint: string;
     attributeProperties: any;
@@ -12,14 +13,14 @@ export interface ModelDefinition {
     plural: string;
     translatable: boolean;
 
-    list(params?: Params): ModelCollection;
+    list(params?: unknown): unknown;
 
-    get(id: string, params?: Params): Promise<Model>;
+    get(id: string, params?: unknown): Promise<unknown>;
 }
 
 export interface D2 {
     Api: {
-        getApi(): D2Api;
+        getApi(): unknown;
     };
     models: {
         [metadataType: string]: ModelDefinition;
