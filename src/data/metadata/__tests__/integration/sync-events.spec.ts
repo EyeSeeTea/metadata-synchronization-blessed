@@ -3,13 +3,14 @@ import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
 import { startDhis } from "../../../../../config/dhisServer";
-import { AggregatedSyncUseCase } from "../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
+import { EventsSyncUseCase } from "../../../../domain/events/usecases/EventsSyncUseCase";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Repositories } from "../../../../domain/Repositories";
 import { D2 } from "../../../../types/d2";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
+import { EventsD2ApiRepository } from "../../../events/EventsD2ApiRepository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
@@ -51,23 +52,26 @@ describe("Sync metadata", () => {
         }));
 
         local.get("/metadata", async (_schema, request) => {
-            if (request.queryParams.filter === "id:in:[dataSet1]")
+            if (request.queryParams.filter === "id:in:[program1]")
                 return {
-                    dataSets: [
+                    programs: [
                         {
-                            name: "Test data set",
-                            id: "dataSet1",
-                            dataSetElements: [
+                            name: "Test program",
+                            id: "program1",
+                            programStages: [
                                 {
-                                    dataElement: {
-                                        name: "Test data element 1",
-                                        id: "id1",
-                                    },
-                                    dataSet: {
-                                        id: "dataSet1",
-                                    },
+                                    programStageDataElements: [
+                                        {
+                                            dataElement: {
+                                                name: "Test data element",
+                                                id: "id1",
+                                                displayFormName: "Test data element",
+                                            },
+                                        },
+                                    ],
                                 },
                             ],
+                            programIndicators: [],
                         },
                     ],
                 };
@@ -83,36 +87,69 @@ describe("Sync metadata", () => {
             console.log("Unknown metadata request", request.queryParams);
         });
 
-        local.get("/dataValueSets", async () => ({
-            dataValues: [
+        local.get("/dataValueSets", async () => ({ dataValues: [] }));
+        remote.get("/dataValueSets", async () => ({ dataValues: [] }));
+
+        local.get("/events", async () => ({
+            events: [
                 {
-                    dataElement: "id1",
-                    period: "20191231",
+                    storedBy: "widp.admin",
+                    dueDate: "2020-04-11T00:00:02.846",
+                    program: "program1",
+                    event: "test-event-1",
+                    programStage: "EGA9fqLFtxM",
                     orgUnit: "Global",
-                    categoryOptionCombo: "default4",
-                    attributeOptionCombo: "default4",
-                    value: "test-value-1",
-                    storedBy: "test-user",
-                    created: "2020-05-28T08:32:53.000+0000",
-                    lastUpdated: "2020-05-28T08:32:53.000+0000",
-                    followup: false,
+                    status: "ACTIVE",
+                    orgUnitName: "Global",
+                    eventDate: "2020-04-11T00:00:00.000",
+                    attributeCategoryOptions: "Y7fcspgsU43",
+                    lastUpdated: "2020-06-09T07:06:35.514",
+                    created: "2020-06-09T07:06:35.513",
+                    deleted: false,
+                    attributeOptionCombo: "Xr12mI7VPn3",
+                    dataValues: [
+                        {
+                            lastUpdated: "2020-06-09T07:06:35.515",
+                            storedBy: "widp.admin",
+                            created: "2020-06-09T07:06:35.515",
+                            dataElement: "id1",
+                            value: "true",
+                            providedElsewhere: false,
+                        },
+                    ],
+                    notes: [],
                 },
             ],
         }));
 
-        remote.get("/dataValueSets", async () => ({
-            dataValues: [
+        remote.get("/events", async () => ({
+            events: [
                 {
-                    dataElement: "id1",
-                    period: "20191231",
+                    storedBy: "widp.admin",
+                    dueDate: "2020-04-11T00:00:02.846",
+                    program: "program1",
+                    event: "test-event-2",
+                    programStage: "EGA9fqLFtxM",
                     orgUnit: "Global",
-                    categoryOptionCombo: "default4",
-                    attributeOptionCombo: "default4",
-                    value: "test-value-2",
-                    storedBy: "test-user",
-                    created: "2020-05-28T08:32:53.000+0000",
-                    lastUpdated: "2020-05-28T08:32:53.000+0000",
-                    followup: false,
+                    status: "ACTIVE",
+                    orgUnitName: "Global",
+                    eventDate: "2020-04-11T00:00:00.000",
+                    attributeCategoryOptions: "Y7fcspgsU43",
+                    lastUpdated: "2020-06-09T07:06:35.514",
+                    created: "2020-06-09T07:06:35.513",
+                    deleted: false,
+                    attributeOptionCombo: "Xr12mI7VPn3",
+                    dataValues: [
+                        {
+                            lastUpdated: "2020-06-09T07:06:35.515",
+                            storedBy: "widp.admin",
+                            created: "2020-06-09T07:06:35.515",
+                            dataElement: "id1",
+                            value: "true",
+                            providedElsewhere: false,
+                        },
+                    ],
+                    notes: [],
                 },
             ],
         }));
@@ -136,8 +173,8 @@ describe("Sync metadata", () => {
             },
         ]);
 
-        const addAggregatedToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
-            schema.db.dataValueSets.insert(JSON.parse(request.requestBody));
+        const addEventsToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
+            schema.db.events.insert(JSON.parse(request.requestBody));
 
             return {
                 responseType: "ImportSummary",
@@ -154,11 +191,11 @@ describe("Sync metadata", () => {
             };
         };
 
-        local.db.createCollection("dataValueSets", []);
-        local.post("/dataValueSets", addAggregatedToDb);
+        local.db.createCollection("events", []);
+        local.post("/events", addEventsToDb);
 
-        remote.db.createCollection("dataValueSets", []);
-        remote.post("/dataValueSets", addAggregatedToDb);
+        remote.db.createCollection("events", []);
+        remote.post("/events", addEventsToDb);
     });
 
     afterEach(() => {
@@ -178,11 +215,15 @@ describe("Sync metadata", () => {
         const builder: SynchronizationBuilder = {
             originInstance: "LOCAL",
             targetInstances: ["DESTINATION"],
-            metadataIds: ["dataSet1"],
+            metadataIds: ["program1"],
             excludedIds: [],
+            dataParams: {
+                allEvents: true,
+                orgUnitPaths: ["/Global"],
+            },
         };
 
-        const useCase = new AggregatedSyncUseCase(
+        const useCase = new EventsSyncUseCase(
             d2 as D2,
             builder,
             repositoryFactory,
@@ -191,15 +232,15 @@ describe("Sync metadata", () => {
         );
 
         const payload = await useCase.buildPayload();
-        expect(payload.dataValues?.find(({ value }) => value === "test-value-1")).toBeDefined();
+        expect(payload.events?.find(({ id }) => id === "test-event-1")).toBeDefined();
 
         for await (const { done } of useCase.execute()) {
             if (done) console.log("Done");
         }
 
-        const response = remote.db.dataValueSets.find(1);
-        expect(response.dataValues[0].value).toEqual("test-value-1");
-        expect(local.db.dataValueSets.find(1)).toBeNull();
+        const response = remote.db.events.find(1);
+        expect(response.events[0].id).toEqual("test-event-1");
+        expect(local.db.events.find(1)).toBeNull();
     });
 
     it("Remote server to local - same version", async () => {
@@ -214,11 +255,15 @@ describe("Sync metadata", () => {
         const builder: SynchronizationBuilder = {
             originInstance: "DESTINATION",
             targetInstances: ["LOCAL"],
-            metadataIds: ["dataSet1"],
+            metadataIds: ["program1"],
             excludedIds: [],
+            dataParams: {
+                allEvents: true,
+                orgUnitPaths: ["/Global"],
+            },
         };
 
-        const useCase = new AggregatedSyncUseCase(
+        const useCase = new EventsSyncUseCase(
             d2 as D2,
             builder,
             repositoryFactory,
@@ -227,15 +272,15 @@ describe("Sync metadata", () => {
         );
 
         const payload = await useCase.buildPayload();
-        expect(payload.dataValues?.find(({ value }) => value === "test-value-2")).toBeDefined();
+        expect(payload.events?.find(({ id }) => id === "test-event-2")).toBeDefined();
 
         for await (const { done } of useCase.execute()) {
             if (done) console.log("Done");
         }
 
-        const response = local.db.dataValueSets.find(1);
-        expect(response.dataValues[0].value).toEqual("test-value-2");
-        expect(remote.db.dataValueSets.find(1)).toBeNull();
+        const response = local.db.events.find(1);
+        expect(response.events[0].id).toEqual("test-event-2");
+        expect(remote.db.events.find(1)).toBeNull();
     });
 });
 
@@ -245,6 +290,7 @@ function buildRepositoryFactory() {
     repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreRepository);
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
     repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
+    repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
     repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
     return repositoryFactory;
 }
