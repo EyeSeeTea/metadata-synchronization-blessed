@@ -1,4 +1,5 @@
 import { Moment } from "moment";
+import { SyncRuleType } from "../domain/synchronization/entities/SynchronizationRule";
 
 export interface TableList {
     objects: any[];

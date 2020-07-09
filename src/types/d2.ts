@@ -12,14 +12,14 @@ export interface ModelDefinition {
     plural: string;
     translatable: boolean;
 
-    list(params?: unknown): unknown;
+    list(params?: any): any;
 
-    get(id: string, params?: unknown): Promise<unknown>;
+    get(id: string, params?: any): Promise<any>;
 }
 
 export interface D2 {
     Api: {
-        getApi(): unknown;
+        getApi(): any;
     };
     models: {
         [metadataType: string]: ModelDefinition;
