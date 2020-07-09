@@ -1,5 +1,7 @@
 import { init } from "d2";
-import { Server } from "miragejs";
+import { Request, Server } from "miragejs";
+import { AnyRegistry } from "miragejs/-types";
+import Schema from "miragejs/orm/schema";
 import { startDhis } from "../../../../../config/dhisServer";
 import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
@@ -15,21 +17,25 @@ import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
 const repositoryFactory = buildRepositoryFactory();
 
 describe("Sync metadata", () => {
-    let origin: Server;
-    let destination: Server;
+    let local: Server;
+    let remote: Server;
 
     beforeEach(() => {
-        origin = startDhis({ urlPrefix: "http://origin.test" });
-        destination = startDhis({
+        local = startDhis({ urlPrefix: "http://origin.test" });
+        remote = startDhis({
             urlPrefix: "http://destination.test",
-            pretender: origin.pretender,
+            pretender: local.pretender,
         });
 
-        origin.get("/metadata", async () => ({
-            dataElements: [{ id: "id1", name: "Test data element" }],
+        local.get("/metadata", async () => ({
+            dataElements: [{ id: "id1", name: "Test data element 1" }],
         }));
 
-        origin.get("/dataStore/metadata-synchronization/instances", async () => [
+        remote.get("/metadata", async () => ({
+            dataElements: [{ id: "id2", name: "Test data element 2" }],
+        }));
+
+        local.get("/dataStore/metadata-synchronization/instances", async () => [
             {
                 id: "DESTINATION",
                 name: "Destination test",
@@ -40,8 +46,7 @@ describe("Sync metadata", () => {
             },
         ]);
 
-        destination.db.createCollection("metadata");
-        destination.post("/metadata", async (schema, request) => {
+        const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
             schema.db.metadata.insert(JSON.parse(request.requestBody));
 
             return {
@@ -61,12 +66,18 @@ describe("Sync metadata", () => {
                     },
                 ],
             };
-        });
+        };
+
+        local.db.createCollection("metadata", []);
+        local.post("/metadata", addMetadataToDb);
+
+        remote.db.createCollection("metadata", []);
+        remote.post("/metadata", addMetadataToDb);
     });
 
     afterEach(() => {
-        origin.shutdown();
-        destination.shutdown();
+        local.shutdown();
+        remote.shutdown();
     });
 
     it("Local server to remote - same version", async () => {
@@ -96,11 +107,49 @@ describe("Sync metadata", () => {
         const payload = await useCase.buildPayload();
         expect(payload.dataElements?.find(({ id }) => id === "id1")).toBeDefined();
 
-        for await (const {} of useCase.execute()) {
+        for await (const { done } of useCase.execute()) {
+            if (done) console.log("Done");
         }
-        
-        const response = destination.db.metadata.find(1);
+
+        const response = remote.db.metadata.find(1);
         expect(response.dataElements[0].id).toEqual("id1");
+        expect(local.db.metadata.find(1)).toBeNull();
+    });
+
+    it("Remote server to local - same version", async () => {
+        const d2 = await init({ baseUrl: `http://origin.test/api` });
+
+        const localInstance = Instance.build({
+            url: "http://origin.test",
+            name: "Testing",
+            version: "2.30",
+        });
+
+        const builder: SynchronizationBuilder = {
+            originInstance: "DESTINATION",
+            targetInstances: ["LOCAL"],
+            metadataIds: ["id2"],
+            excludedIds: [],
+        };
+
+        const useCase = new MetadataSyncUseCase(
+            d2 as D2,
+            builder,
+            repositoryFactory,
+            localInstance,
+            ""
+        );
+
+        const payload = await useCase.buildPayload();
+        expect(payload.dataElements?.find(({ id }) => id === "id2")).toBeDefined();
+
+        for await (const { done } of useCase.execute()) {
+            if (done) console.log("Done");
+        }
+
+        const response = local.db.metadata.find(1);
+        expect(response.dataElements[0].id).toEqual("id2");
+        expect(remote.db.metadata.find(1)).toBeNull();
     });
 });
 
