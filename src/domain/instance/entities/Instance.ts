@@ -59,8 +59,8 @@ export class Instance {
         return this.data.metadataMapping ?? {};
     }
 
-    public get version(): string | undefined {
-        return this.data.version;
+    public get version(): string {
+        return this.data.version ?? "2.30";
     }
 
     public get apiVersion(): number {
