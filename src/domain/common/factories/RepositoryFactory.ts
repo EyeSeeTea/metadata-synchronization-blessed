@@ -15,8 +15,9 @@ export class RepositoryFactory {
         params: ConstructorParameters<Constructor>,
         tag?: Key
     ): InstanceType<Constructor> {
-        const Implementation = this.repositories.get(`${repository}-${tag ?? "default"}`);
-        if (!Implementation) throw new Error("Repository not found");
+        const repositoryName = `${repository}-${tag ?? "default"}`;
+        const Implementation = this.repositories.get(repositoryName);
+        if (!Implementation) throw new Error(`Repository ${repositoryName} not found`);
         return new Implementation(...params);
     }
 }

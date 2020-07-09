@@ -33,6 +33,20 @@ export function startDhis(
                         authorities: [],
                         properties: [],
                     },
+                    {
+                        klass: "org.hisp.dhis.dataset.DataSet",
+                        shareable: true,
+                        translatable: true,
+                        metadata: true,
+                        identifiableObject: true,
+                        apiEndpoint: "http://taris.sferadev.com:9005/api/dataSets",
+                        plural: "dataSets",
+                        displayName: "Data Set",
+                        name: "dataSet",
+                        singular: "dataSet",
+                        authorities: [],
+                        properties: [],
+                    },
                 ],
             }));
             this.get("/attributes", async () => ({ attributes: [] }));
