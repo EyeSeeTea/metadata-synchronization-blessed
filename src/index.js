@@ -41,31 +41,35 @@ const configI18n = ({ keyUiLocale }) => {
 
 async function main() {
     const baseUrl = await getBaseUrl();
-    const api = new D2Api({ baseUrl });
-    const userSettings = await api.get("/userSettings").getData();
-    configI18n(userSettings);
 
     try {
-        const App = await getPresentation();
-        ReactDOM.render(
-            <Provider config={{ baseUrl, apiVersion: "30" }}>
-                <App />
-            </Provider>,
-            document.getElementById("root")
-        );
+        const api = new D2Api({ baseUrl });
+        const userSettings = await api.get("/userSettings").getData();
+        if (typeof userSettings === "string") {
+            ReactDOM.render(
+                <div>
+                    <h3>
+                        <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
+                            Login
+                        </a>
+                        {` ${baseUrl}`}
+                    </h3>
+                </div>,
+                document.getElementById("root")
+            );
+        } else {
+            configI18n(userSettings);
+
+            const App = await getPresentation();
+            ReactDOM.render(
+                <Provider config={{ baseUrl, apiVersion: "30" }}>
+                    <App />
+                </Provider>,
+                document.getElementById("root")
+            );
+        }
     } catch (err) {
-        console.error(err);
-        const message = err.toString().match("Unable to get schemas") ? (
-            <h3 style={{ margin: 20 }}>
-                <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
-                    Login
-                </a>
-                {` ${baseUrl}`}
-            </h3>
-        ) : (
-            err.toString()
-        );
-        ReactDOM.render(<div>{message}</div>, document.getElementById("root"));
+        ReactDOM.render(<div>{err.toString()}</div>, document.getElementById("root"));
     }
 }
 
