@@ -1,5 +1,4 @@
-import { useConfig, useDataQuery } from "@dhis2/app-runtime";
-import i18n from "@dhis2/d2-i18n";
+import { useConfig } from "@dhis2/app-runtime";
 import { HeaderBar } from "@dhis2/ui-widgets";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
@@ -10,6 +9,7 @@ import _ from "lodash";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
+import i18n from "../../locales";
 import { MigrationsRunner } from "../../migrations";
 import { D2Api } from "../../types/d2-api";
 import { initializeAppRoles } from "../../utils/permissions";
@@ -28,12 +28,6 @@ const generateClassName = createGenerateClassName({
     productionPrefix: "c",
 });
 
-const isLangRTL = code => {
-    const langs = ["ar", "fa", "ur"];
-    const prefixed = langs.map(c => `${c}-`);
-    return _(langs).includes(code) || prefixed.filter(c => code && code.startsWith(c)).length > 0;
-};
-
 function initFeedbackTool(d2, appConfig) {
     const appKey = _(appConfig).get("appKey");
 
@@ -47,21 +41,11 @@ function initFeedbackTool(d2, appConfig) {
     }
 }
 
-const configI18n = ({ keyUiLocale: uiLocale }) => {
-    i18n.changeLanguage(uiLocale);
-    document.documentElement.setAttribute("dir", isLangRTL(uiLocale) ? "rtl" : "ltr");
-};
-
-const query = {
-    userSettings: { resource: "/userSettings" },
-};
-
 const App = () => {
     const { baseUrl } = useConfig();
     const [appContext, setAppContext] = useState(null);
     const [migrationsState, setMigrationsState] = useState({ type: "checking" });
     const [showShareButton, setShowShareButton] = useState(false);
-    const { loading, error, data } = useDataQuery(query);
 
     useEffect(() => {
         const run = async () => {
@@ -83,7 +67,6 @@ const App = () => {
 
             Object.assign({ d2, api });
 
-            configI18n(data.userSettings);
             Object.assign(window, { d2, api });
             setShowShareButton(_(appConfig).get("appearance.showShareButton") || false);
             initFeedbackTool(d2, appConfig);
@@ -92,32 +75,16 @@ const App = () => {
             runMigrations(api).then(setMigrationsState);
         };
 
-        if (data) run();
-    }, [data, baseUrl]);
+        run();
+    }, [baseUrl]);
 
-    if (error) {
-        return (
-            <h3>
-                <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
-                    Login
-                </a>
-                {` ${baseUrl}`}
-            </h3>
-        );
-    } else if (migrationsState.type === "pending") {
+    if (migrationsState.type === "pending") {
         return (
             <Migrations
                 runner={migrationsState.runner}
                 onFinish={() => setMigrationsState({ type: "checked" })}
             />
         );
-    } else if (
-        loading ||
-        !appContext?.d2 ||
-        !appContext?.api ||
-        migrationsState.type === "checking"
-    ) {
-        return <h3>Connecting to {baseUrl}...</h3>;
     } else if (migrationsState.type === "checked") {
         return (
             <StylesProvider generateClassName={generateClassName}>
@@ -140,7 +107,7 @@ const App = () => {
                 </MuiThemeProvider>
             </StylesProvider>
         );
-    }
+    } else return null;
 };
 
 async function runMigrations(api) {
