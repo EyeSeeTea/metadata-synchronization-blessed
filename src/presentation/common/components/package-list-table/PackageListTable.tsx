@@ -8,11 +8,14 @@ import {
     TableSelection,
     TableState,
     useLoading,
-    useSnackbar,
+    useSnackbar
 } from "d2-ui-components";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Package } from "../../../../domain/modules/entities/Package";
+import { SynchronizationResult } from "../../../../domain/synchronization/entities/SynchronizationResult";
+import SyncReport from "../../../../models/syncReport";
+import SyncSummary from "../../../webapp/components/sync-summary/SyncSummary";
 import { useAppContext } from "../../contexts/AppContext";
 
 type PackagesListPresentations = "app" | "widget";
@@ -40,6 +43,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const [rows, setRows] = useState<ListPackage[]>([]);
     const [resetKey, setResetKey] = useState(Math.random());
     const [selection, updateSelection] = useState<TableSelection[]>([]);
+    const [syncResult, setSyncResult] = useState<SynchronizationResult>();
 
     const deletePackages = useCallback(
         async (ids: string[]) => {
@@ -70,6 +74,29 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             }
         },
         [compositionRoot, remoteInstance, snackbar]
+    );
+
+    const importPackage = useCallback(
+        async (ids: string[]) => {
+            const result = await compositionRoot.packages(remoteInstance).get(ids[0]);
+            result.match({
+                success: async ({ name, contents }) => {
+                    try {
+                        loading.show(true, i18n.t("Importing package {{name}}", { name }));
+                        const result = await compositionRoot.metadata.import(contents);
+                        console.log(result);
+                        setSyncResult(result);
+                    } catch (error) {
+                        snackbar.error(error.message);
+                    }
+                    loading.reset();
+                },
+                error: async () => {
+                    snackbar.error(i18n.t("Couldn't load package"));
+                },
+            });
+        },
+        [compositionRoot, loading, remoteInstance, snackbar]
     );
 
     const columns: TableColumn<ListPackage>[] = [
@@ -116,6 +143,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             icon: <Icon>publish</Icon>,
             isActive: () => presentation === "app" && !remoteInstance,
         },
+        {
+            name: "import",
+            text: i18n.t("Import package"),
+            multiple: false,
+            onClick: importPackage,
+            icon: <Icon>arrow_downward</Icon>,
+            isActive: () => presentation === "app" && !remoteInstance,
+        },
     ];
 
     useEffect(() => {
@@ -129,18 +164,30 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             });
     }, [compositionRoot, remoteInstance, resetKey, snackbar]);
 
+    console.log(syncResult);
+
     return (
-        <ObjectsTable<ListPackage>
-            rows={rows}
-            columns={columns}
-            details={details}
-            actions={actions}
-            onActionButtonClick={onActionButtonClick}
-            forceSelectionColumn={true}
-            filterComponents={externalComponents}
-            selection={selection}
-            onChange={updateTable}
-            pageSizeOptions={pageSizeOptions}
-        />
+        <React.Fragment>
+            {!!syncResult && (
+                <SyncSummary
+                    response={SyncReport.create()}
+                    providedResults={[syncResult]}
+                    onClose={() => setSyncResult(undefined)}
+                />
+            )}
+
+            <ObjectsTable<ListPackage>
+                rows={rows}
+                columns={columns}
+                details={details}
+                actions={actions}
+                onActionButtonClick={onActionButtonClick}
+                forceSelectionColumn={true}
+                filterComponents={externalComponents}
+                selection={selection}
+                onChange={updateTable}
+                pageSizeOptions={pageSizeOptions}
+            />
+        </React.Fragment>
     );
 };

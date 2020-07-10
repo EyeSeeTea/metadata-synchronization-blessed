@@ -21,6 +21,7 @@ import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesU
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
+import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
 import { ListAllMetadataUseCase } from "../domain/metadata/usecases/ListAllMetadataUseCase";
 import { ListMetadataUseCase } from "../domain/metadata/usecases/ListMetadataUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
@@ -30,6 +31,7 @@ import { DeletePackageUseCase } from "../domain/modules/usecases/DeletePackageUs
 import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/DownloadModuleSnapshotUseCase";
 import { DownloadPackageUseCase } from "../domain/modules/usecases/DownloadPackageUseCase";
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
+import { GetPackageUseCase } from "../domain/modules/usecases/GetPackageUseCase";
 import { GetStoreUseCase } from "../domain/modules/usecases/GetStoreUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
 import { ListPackagesUseCase } from "../domain/modules/usecases/ListPackagesUseCase";
@@ -104,18 +106,16 @@ export class CompositionRoot {
     }
 
     @cache()
-    public metadata(remoteInstance = this.localInstance) {
-        const transformation = new TransformationD2ApiRepository();
-        const metadata = new MetadataD2ApiRepository(remoteInstance, transformation);
-
+    public get metadata() {
         return getExecute({
-            list: new ListMetadataUseCase(metadata),
-            listAll: new ListAllMetadataUseCase(metadata),
+            list: new ListMetadataUseCase(this.repositoryFactory, this.localInstance),
+            listAll: new ListAllMetadataUseCase(this.repositoryFactory, this.localInstance),
+            import: new ImportMetadataUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
     @cache()
-    public store() {
+    public get store() {
         const github = new GitHubOctokitRepository();
         const storage = new StorageDataStoreRepository(this.localInstance);
 
@@ -150,13 +150,14 @@ export class CompositionRoot {
         return getExecute({
             list: new ListPackagesUseCase(storage),
             create: new CreatePackageUseCase(storage, instance),
+            get: new GetPackageUseCase(storage),
             delete: new DeletePackageUseCase(storage),
             download: new DownloadPackageUseCase(storage, download),
         });
     }
 
     @cache()
-    public storage() {
+    public get storage() {
         const download = new DownloadWebRepository();
 
         return getExecute({
@@ -186,7 +187,7 @@ export class CompositionRoot {
     }
 
     @cache()
-    public events() {
+    public get events() {
         const events = new EventsD2ApiRepository(this.localInstance);
 
         return getExecute({

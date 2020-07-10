@@ -336,9 +336,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     useEffect(() => {
         if (model.getCollectionName() === "organisationUnits") return;
 
-        compositionRoot
-            .metadata(remoteInstance)
-            .listAll({ ...filters, fields: { id: true } })
+        compositionRoot.metadata
+            .listAll({ ...filters, fields: { id: true } }, remoteInstance)
             .then(objects => {
                 updateIds(objects.map(({ id }) => id));
             });
@@ -358,9 +357,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         if (model.getCollectionName() === "organisationUnits" && !filters.parents) return;
 
         setLoading(true);
-        compositionRoot
-            .metadata(remoteInstance)
-            .list({ ...filters, fields: model.getFields() })
+        compositionRoot.metadata
+            .list({ ...filters, fields: model.getFields() }, remoteInstance)
             .then(({ objects, pager }) => {
                 const rows = model.getApiModelTransform()((objects as unknown) as MetadataType[]);
                 notifyRowsChange(rows);

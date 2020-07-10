@@ -155,7 +155,8 @@ export abstract class GenericSyncUseCase {
             Namespace.INSTANCES
         );
 
-        const data = objects.find(data => data.id === id);
+        // TODO: Fix the url workaround for packages that might not hold a relation to a instance
+        const data = objects.find(data => data.id === id || data.url === id);
         if (!data) throw new Error("Instance not found");
 
         const instance = Instance.build(data).decryptPassword(this.encryptionKey);

@@ -26,8 +26,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     const [error, setError] = useState();
 
     useEffect(() => {
-        compositionRoot
-            .events()
+        compositionRoot.events
             .list(
                 {
                     ...syncRule.dataParams,

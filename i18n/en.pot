@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-09T08:44:55.256Z\n"
-"PO-Revision-Date: 2020-07-09T08:44:55.256Z\n"
+"POT-Creation-Date: 2020-07-10T06:53:30.625Z\n"
+"PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -119,6 +119,12 @@ msgstr ""
 msgid "Invalid package"
 msgstr ""
 
+msgid "Importing package {{name}}"
+msgstr ""
+
+msgid "Couldn't load package"
+msgstr ""
+
 msgid "Version"
 msgstr ""
 
@@ -135,6 +141,9 @@ msgid "Download as JSON"
 msgstr ""
 
 msgid "Publish to Store"
+msgstr ""
+
+msgid "Import package"
 msgstr ""
 
 msgid "MetaData Synchronization"

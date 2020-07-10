@@ -240,7 +240,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             name: "pull-metadata",
             text: i18n.t("Pull metadata"),
             multiple: false,
-            icon: <Icon>export</Icon>,
+            icon: <Icon>arrow_downward</Icon>,
             isActive: () => presentation === "app" && !!remoteInstance,
             onClick: pullModule,
         },
