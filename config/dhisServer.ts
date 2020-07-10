@@ -61,8 +61,8 @@ export function startDhis(
         },
     });
 
-    server.pretender.handledRequest = function() {};
-    server.pretender.unhandledRequest = function(verb, path) {
+    server.pretender.handledRequest = function () {};
+    server.pretender.unhandledRequest = function (verb, path) {
         console.log("Unknown request", verb, path);
     };
 

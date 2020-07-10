@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import { Typography } from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
 import { makeStyles } from "@material-ui/styles";
@@ -7,6 +6,7 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../../../domain/instance/entities/MetadataMapping";
+import i18n from "../../../../locales";
 import { d2ModelFactory } from "../../../../models/dhis/factory";
 import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../../common/contexts/AppContext";

@@ -1,8 +1,7 @@
-import React from "react";
-import i18n from "@dhis2/d2-i18n";
-import { ConfirmationDialog } from "d2-ui-components";
 import DialogContent from "@material-ui/core/DialogContent";
-
+import { ConfirmationDialog } from "d2-ui-components";
+import React from "react";
+import i18n from "../../../../locales";
 import Sharing from "./Sharing";
 
 const SharingDialog = ({

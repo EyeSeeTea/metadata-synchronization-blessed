@@ -1,12 +1,11 @@
+import Divider from "@material-ui/core/Divider";
+import { withStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
 import PropTypes from "prop-types";
 import React from "react";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
-import { withStyles } from "@material-ui/core/styles";
-import i18n from "@dhis2/d2-i18n";
-
+import i18n from "../../../../locales";
+import { ExternalAccess, GroupAccess, PublicAccess } from "./Access";
 import UserSearch from "./UserSearch";
-import { PublicAccess, ExternalAccess, GroupAccess } from "./Access";
 
 const styles = {
     title: {

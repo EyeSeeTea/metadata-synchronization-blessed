@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import { Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import {
     ConfirmationDialog,
@@ -17,6 +16,7 @@ import {
     MetadataMappingDictionary,
 } from "../../../../domain/instance/entities/MetadataMapping";
 import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
+import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
 import { d2ModelFactory } from "../../../../models/dhis/factory";
 import { ProgramDataElementModel } from "../../../../models/dhis/mapping";

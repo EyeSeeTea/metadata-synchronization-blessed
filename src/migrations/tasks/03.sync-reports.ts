@@ -82,10 +82,7 @@ interface SynchronizationResultNew {
 }
 
 export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
-    const dataStoreKeys = await api
-        .dataStore("metadata-synchronization")
-        .getKeys()
-        .getData();
+    const dataStoreKeys = await api.dataStore("metadata-synchronization").getKeys().getData();
 
     const notificationKeys = dataStoreKeys
         .filter(key => key.startsWith("notifications-"))

@@ -81,9 +81,7 @@ export class EventsD2ApiRepository implements EventsRepository {
             ({ reference = "", description = "", conflicts = [] }) =>
                 conflicts.map(({ object, value }) => ({
                     id: reference,
-                    message: _([description, object, value])
-                        .compact()
-                        .join(" "),
+                    message: _([description, object, value]).compact().join(" "),
                 }))
         );
 

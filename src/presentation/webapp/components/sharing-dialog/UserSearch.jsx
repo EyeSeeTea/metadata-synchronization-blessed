@@ -1,14 +1,13 @@
-import React, { Component } from "react";
+import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import { Subject } from "rxjs/Subject";
+import React, { Component } from "react";
 import { timer } from "rxjs/observable/timer";
 import { debounce } from "rxjs/operators";
-import { withStyles } from "@material-ui/core/styles";
-import i18n from "@dhis2/d2-i18n";
-
-import { accessObjectToString } from "./utils";
-import PermissionPicker from "./PermissionPicker";
+import { Subject } from "rxjs/Subject";
+import i18n from "../../../../locales";
 import AutoComplete from "./AutoComplete";
+import PermissionPicker from "./PermissionPicker";
+import { accessObjectToString } from "./utils";
 
 const styles = {
     container: {

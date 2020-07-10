@@ -1,6 +1,6 @@
-import i18n from "@dhis2/d2-i18n";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import i18n from "../../../../locales";
 import { ModulesListTable } from "../../../common/components/module-list-table/ModuleListTable";
 import { PackagesListTable } from "../../../common/components/package-list-table/PackageListTable";
 import { useAppContext } from "../../../common/contexts/AppContext";
@@ -45,10 +45,7 @@ export const ModuleListWidget: React.FC = React.memo(() => {
     );
 
     useEffect(() => {
-        compositionRoot
-            .instances()
-            .list()
-            .then(setInstances);
+        compositionRoot.instances().list().then(setInstances);
     }, [compositionRoot]);
 
     const Table = tableOption === "packages" ? PackagesListTable : ModulesListTable;

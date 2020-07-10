@@ -6,10 +6,7 @@ export function buildPeriodFromParams(params: DataSynchronizationParams): [Momen
     const {
         period,
         startDate = "1970-01-01",
-        endDate = moment()
-            .add(1, "years")
-            .endOf("year")
-            .format("YYYY-MM-DD"),
+        endDate = moment().add(1, "years").endOf("year").format("YYYY-MM-DD"),
     } = params;
 
     if (!period || period === "ALL" || period === "FIXED") {

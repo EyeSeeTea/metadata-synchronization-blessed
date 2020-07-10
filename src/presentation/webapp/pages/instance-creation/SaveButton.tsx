@@ -1,7 +1,7 @@
-import i18n from "@dhis2/d2-i18n";
 import { Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import React from "react";
+import i18n from "../../../../locales";
 
 const useStyles = makeStyles(() => ({
     button: {

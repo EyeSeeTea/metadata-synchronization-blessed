@@ -1,5 +1,5 @@
-import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
+import i18n from "../locales";
 import SyncRule from "../models/syncRule";
 import { D2Api } from "../types/d2-api";
 

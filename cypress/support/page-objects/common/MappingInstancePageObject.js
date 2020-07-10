@@ -39,10 +39,7 @@ export default class MappingInstancePageObject extends PageObject {
     }
 
     clickOption(option) {
-        this.cy
-            .get(".MuiList-root")
-            .contains(option)
-            .click();
+        this.cy.get(".MuiList-root").contains(option).click();
         return this;
     }
 
@@ -57,29 +54,16 @@ export default class MappingInstancePageObject extends PageObject {
     }
 
     clickOkOnDialog() {
-        this.cy
-            .get(".MuiDialogActions-root")
-            .contains("Ok")
-            .click();
+        this.cy.get(".MuiDialogActions-root").contains("Ok").click();
     }
 
     closeDialog() {
-        this.cy
-            .get(".MuiDialogActions-root")
-            .contains("Close")
-            .parent()
-            .find("Button")
-            .click();
+        this.cy.get(".MuiDialogActions-root").contains("Close").parent().find("Button").click();
         return this;
     }
 
     assertRowStatus(assert, row) {
-        assert(
-            cy
-                .get("table")
-                .contains(row)
-                .parent()
-        );
+        assert(cy.get("table").contains(row).parent());
         return this;
     }
 
@@ -89,12 +73,7 @@ export default class MappingInstancePageObject extends PageObject {
     }
 
     selectMappingObject(object) {
-        this.cy
-            .get(".MuiDialogContent-root >")
-            .contains(object)
-            .parent()
-            .find("input")
-            .click();
+        this.cy.get(".MuiDialogContent-root >").contains(object).parent().find("input").click();
         return this;
     }
 }

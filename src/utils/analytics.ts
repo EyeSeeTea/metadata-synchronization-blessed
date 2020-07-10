@@ -1,6 +1,6 @@
-import i18n from "@dhis2/d2-i18n";
-import { Instance } from "../domain/instance/entities/Instance";
 import { D2Api } from "d2-api/2.30";
+import { Instance } from "../domain/instance/entities/Instance";
+import i18n from "../locales";
 
 const timeout = (ms: number) => {
     return new Promise(resolve => setTimeout(resolve, ms));

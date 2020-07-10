@@ -1,14 +1,14 @@
-import i18n from "@dhis2/d2-i18n";
 import { Button, LinearProgress, makeStyles } from "@material-ui/core";
 import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { AggregatedSyncUseCase } from "../../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { EventsSyncUseCase } from "../../../../../domain/events/usecases/EventsSyncUseCase";
 import { MetadataSyncUseCase } from "../../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { cleanOrgUnitPaths } from "../../../../../domain/synchronization/utils";
+import i18n from "../../../../../locales";
 import { getValidationMessages } from "../../../../../utils/old-validations";
 import {
     availablePeriods,
@@ -16,7 +16,7 @@ import {
     requestJSONDownload,
 } from "../../../../../utils/synchronization";
 import { useAppContext } from "../../../../common/contexts/AppContext";
-import { aggregationItems } from "../data/AggregationStep";
+import { buildAggregationItems } from "../data/AggregationStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
 import { buildInstanceOptions } from "./InstanceSelectionStep";
 
@@ -108,10 +108,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
         getMetadata(api, ids, "id,name").then(updateMetadata);
-        compositionRoot
-            .instances()
-            .list()
-            .then(setTargetInstances);
+        compositionRoot.instances().list().then(setTargetInstances);
     }, [api, compositionRoot, syncRule]);
 
     // useEffect(() => {
@@ -160,6 +157,8 @@ const SaveStep = ({ syncRule, onCancel }) => {
     //         </LiEntry>
     //     );
     // };
+
+    const aggregationItems = useMemo(buildAggregationItems, []);
 
     return (
         <React.Fragment>
@@ -226,10 +225,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
                     >
                         <ul>
                             {syncRule.excludedIds.map(id => {
-                                const element = _(metadata)
-                                    .values()
-                                    .flatten()
-                                    .find({ id });
+                                const element = _(metadata).values().flatten().find({ id });
 
                                 return (
                                     <LiEntry

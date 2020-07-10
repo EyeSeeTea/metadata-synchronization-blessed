@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import { DialogContent } from "@material-ui/core";
 import { ConfirmationDialog, Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
@@ -8,9 +7,10 @@ import {
     MetadataMapping,
     MetadataMappingDictionary,
 } from "../../../../domain/instance/entities/MetadataMapping";
+import i18n from "../../../../locales";
 import { MetadataType } from "../../../../utils/d2";
 import { MappingTableProps } from "../mapping-table/MappingTable";
-import { modelSteps } from "./Steps";
+import { buildModelSteps } from "./Steps";
 
 export interface MappingWizardStep extends WizardStep {
     showOnSyncDialog?: boolean;
@@ -33,7 +33,7 @@ export interface MappingWizardProps {
 
 export const prepareSteps = (type: string | undefined, element: MetadataType) => {
     if (!type) return [];
-    return modelSteps[type]?.filter(({ isVisible = _.noop }) => isVisible(type, element)) ?? [];
+    return buildModelSteps(type).filter(({ isVisible = _.noop }) => isVisible(type, element));
 };
 
 const MappingWizard: React.FC<MappingWizardProps> = ({
@@ -51,11 +51,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
         {}
     );
 
-    const filterRows = _(mapping)
-        .mapValues(Object.keys)
-        .values()
-        .flatten()
-        .value();
+    const filterRows = _(mapping).mapValues(Object.keys).values().flatten().value();
 
     const onChangeMapping = async (subMapping: MetadataMappingDictionary) => {
         const newMapping = _.clone(instance.metadataMapping);

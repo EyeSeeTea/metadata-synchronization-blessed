@@ -1,8 +1,8 @@
-import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import i18n from "../../../../locales";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import { Card, Landing } from "../../components/landing/Landing";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
@@ -15,10 +15,7 @@ const InstanceMappingLandingPage: React.FC = () => {
     const [instance, setInstance] = useState<Instance | undefined>();
 
     useEffect(() => {
-        compositionRoot
-            .instances()
-            .getById(id)
-            .then(setInstance);
+        compositionRoot.instances().getById(id).then(setInstance);
     }, [compositionRoot, id]);
 
     const cards: Card[] = [

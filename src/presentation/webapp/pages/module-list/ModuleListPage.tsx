@@ -1,7 +1,7 @@
-import i18n from "@dhis2/d2-i18n";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import i18n from "../../../../locales";
 import { ModulesListTable } from "../../../common/components/module-list-table/ModuleListTable";
 import { PackagesListTable } from "../../../common/components/package-list-table/PackageListTable";
 import { useAppContext } from "../../../common/contexts/AppContext";
@@ -65,10 +65,7 @@ export const ModuleListPage: React.FC = () => {
     );
 
     useEffect(() => {
-        compositionRoot
-            .instances()
-            .list()
-            .then(setInstances);
+        compositionRoot.instances().list().then(setInstances);
     }, [compositionRoot]);
 
     return (

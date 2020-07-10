@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import { Icon } from "@material-ui/core";
 import {
     ObjectsTable,
@@ -16,6 +15,7 @@ import { useHistory } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/modules/entities/Package";
+import i18n from "../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPacakgeDialog } from "./NewPackageDialog";
 

@@ -1,7 +1,7 @@
 import MetadataSyncRuleDetailPageObject from "../support/page-objects/MetadataSyncRuleDetailPageObject";
 import { syncRuleFixture } from "../support/utils";
 
-context("Metadata sync rule edit", function() {
+context("Metadata sync rule edit", function () {
     const page = new MetadataSyncRuleDetailPageObject(cy);
 
     beforeEach(() => {

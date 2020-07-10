@@ -2,7 +2,7 @@ import ManualEventSyncPageObject from "../support/page-objects/ManualEventSyncPa
 /**
  * Database: d2-docker-eyeseetea-2-30-datasync-sender
  */
-context("Manual event sync", function() {
+context("Manual event sync", function () {
     const page = new ManualEventSyncPageObject(cy);
 
     const inputs = {
@@ -20,7 +20,7 @@ context("Manual event sync", function() {
         page.open();
     });
 
-    it("should have the correct title", function() {
+    it("should have the correct title", function () {
         page.assertTitle(title => title.contains("Events Synchronization"));
     });
 
@@ -75,7 +75,7 @@ context("Manual event sync", function() {
             .assertError(error => error.contains("You need to select at least one instance"));
     });
 
-    it("should show the event step error if user try click on next without event", function() {
+    it("should show the event step error if user try click on next without event", function () {
         page.search(inputs.program)
             .selectRow(inputs.program)
             .openSyncDialog()
@@ -96,7 +96,7 @@ context("Manual event sync", function() {
             .assertError(error => error.contains("You need to select at least one event"));
     });
 
-    it("should show the org unit step error if user try click on next without selecting the org unit", function() {
+    it("should show the org unit step error if user try click on next without selecting the org unit", function () {
         page.search(inputs.program)
             .selectRow(inputs.program)
             .openSyncDialog()

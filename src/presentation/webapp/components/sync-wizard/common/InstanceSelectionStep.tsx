@@ -43,10 +43,7 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
     };
 
     useEffect(() => {
-        compositionRoot
-            .instances()
-            .list()
-            .then(setTargetInstances);
+        compositionRoot.instances().list().then(setTargetInstances);
     }, [compositionRoot]);
 
     return (

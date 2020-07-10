@@ -1,4 +1,4 @@
-import i18n from "@dhis2/d2-i18n";
+import { Typography } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DescriptionIcon from "@material-ui/icons/Description";
 import {
@@ -16,20 +16,20 @@ import {
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
-import Dropdown from "../../components/dropdown/Dropdown";
-import PageHeader from "../../components/page-header/PageHeader";
-import SyncSummary, { formatStatusTag } from "../../components/sync-summary/SyncSummary";
+import { SynchronizationReport } from "../../../../domain/synchronization/entities/SynchronizationReport";
+import {
+    SynchronizationRule,
+    SyncRuleType,
+} from "../../../../domain/synchronization/entities/SynchronizationRule";
+import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
 import { getValueForCollection } from "../../../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../../../utils/permissions";
-import { Typography } from "@material-ui/core";
 import { useAppContext } from "../../../common/contexts/AppContext";
-import {
-    SyncRuleType,
-    SynchronizationRule,
-} from "../../../../domain/synchronization/entities/SynchronizationRule";
-import { SynchronizationReport } from "../../../../domain/synchronization/entities/SynchronizationReport";
+import Dropdown from "../../components/dropdown/Dropdown";
+import PageHeader from "../../components/page-header/PageHeader";
+import SyncSummary, { formatStatusTag } from "../../components/sync-summary/SyncSummary";
 
 const config = {
     metadata: {

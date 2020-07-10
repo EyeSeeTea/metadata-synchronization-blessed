@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import Icon from "@material-ui/core/Icon";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
@@ -18,12 +17,13 @@ import {
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import PageHeader from "../../components/page-header/PageHeader";
-import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import { Instance } from "../../../../domain/instance/entities/Instance";
+import i18n from "../../../../locales";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { isAppConfigurator } from "../../../../utils/permissions";
 import { useAppContext } from "../../../common/contexts/AppContext";
-import { Instance } from "../../../../domain/instance/entities/Instance";
+import PageHeader from "../../components/page-header/PageHeader";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 const InstanceListPage = () => {
     const { api, compositionRoot } = useAppContext();
@@ -42,10 +42,7 @@ const InstanceListPage = () => {
     }, [api]);
 
     useEffect(() => {
-        compositionRoot
-            .instances()
-            .list({ search })
-            .then(setRows);
+        compositionRoot.instances().list({ search }).then(setRows);
     }, [compositionRoot, search, toDelete]);
 
     const createInstance = () => {

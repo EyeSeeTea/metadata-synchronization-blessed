@@ -1,8 +1,8 @@
-import i18n from "@dhis2/d2-i18n";
 import { makeStyles } from "@material-ui/core";
 import { useSnackbar } from "d2-ui-components";
-import React from "react";
+import React, { useMemo } from "react";
 import { DataSyncAggregation } from "../../../../../domain/aggregated/types";
+import i18n from "../../../../../locales";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
@@ -21,7 +21,7 @@ const useStyles = makeStyles({
     },
 });
 
-export const aggregationItems = [
+export const buildAggregationItems = () => [
     { id: "DAILY", name: i18n.t("Daily"), format: "YYYYMMDD" },
     { id: "WEEKLY", name: i18n.t("Weekly"), format: "YYYY[W]W" },
     { id: "MONTHLY", name: i18n.t("Monthly"), format: "YYYYMM" },
@@ -55,6 +55,8 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
             syncRule.updateDataSyncEnableAggregation(true).updateDataSyncAggregationType(value)
         );
     };
+
+    const aggregationItems = useMemo(buildAggregationItems, []);
 
     return (
         <React.Fragment>

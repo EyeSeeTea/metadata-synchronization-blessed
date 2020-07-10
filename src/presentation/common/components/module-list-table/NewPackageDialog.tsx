@@ -20,10 +20,8 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
             name: i18n.t("Package of {{name}}", module),
             module: { id: module.id, name: module.name, instance: module.instance },
             version:
-                semver
-                    .parse(module.lastPackageVersion.split("-")[0])
-                    ?.inc("patch")
-                    .format() ?? "1.0.0",
+                semver.parse(module.lastPackageVersion.split("-")[0])?.inc("patch").format() ??
+                "1.0.0",
         })
     );
 

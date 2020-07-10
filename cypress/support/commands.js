@@ -101,51 +101,31 @@ Cypress.Commands.add("waitForStep", stepName => {
 
 Cypress.Commands.add("selectInMultiSelector", (selector, option) => {
     cy.get(selector + " > div select:first").select(option);
-    cy.contains("Selected")
-        .next("button")
-        .click();
+    cy.contains("Selected").next("button").click();
 });
 
 Cypress.Commands.add("unselectInMultiSelector", (containerSelector, option) => {
     const selector = containerSelector ? containerSelector + " > div select:last" : "select:last";
 
     cy.get(selector).select(option);
-    cy.contains("Selected")
-        .next("button")
-        .next("button")
-        .click();
+    cy.contains("Selected").next("button").next("button").click();
 });
 
 Cypress.Commands.add("selectInOrgUnitTree", label => {
-    cy.contains(label)
-        .find("input")
-        .click();
-    cy.contains(label)
-        .should("have.css", "color")
-        .and("equal", "rgb(255, 165, 0)");
+    cy.contains(label).find("input").click();
+    cy.contains(label).should("have.css", "color").and("equal", "rgb(255, 165, 0)");
 });
 
 Cypress.Commands.add("expandInOrgUnitTree", (container, orgUnit) => {
-    cy.get(container)
-        .contains(orgUnit)
-        .parent()
-        .parent()
-        .contains("▸")
-        .click();
+    cy.get(container).contains(orgUnit).parent().parent().contains("▸").click();
 });
 
 Cypress.Commands.add("selectRowInTableByText", text => {
-    cy.get("table")
-        .contains(text)
-        .click();
+    cy.get("table").contains(text).click();
 });
 
 Cypress.Commands.add("checkRowCheckboxByText", text => {
-    cy.get("table")
-        .contains(text)
-        .parent()
-        .find("input")
-        .click();
+    cy.get("table").contains(text).parent().find("input").click();
 });
 
 Cypress.Commands.add("selectFilterInTable", (filterLabel, filterValue) => {
@@ -155,12 +135,7 @@ Cypress.Commands.add("selectFilterInTable", (filterLabel, filterValue) => {
 Cypress.Commands.add("selectInDropdown", (containerSelector, label, option) => {
     const parent = containerSelector ? cy.get(containerSelector) : cy;
 
-    parent
-        .contains(label)
-        .parent()
-        .click();
+    parent.contains(label).parent().click();
 
-    cy.get('[role="listbox"]')
-        .contains(option)
-        .click();
+    cy.get('[role="listbox"]').contains(option).click();
 });

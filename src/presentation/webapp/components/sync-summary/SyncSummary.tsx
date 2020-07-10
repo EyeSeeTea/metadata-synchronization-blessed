@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import {
     DialogContent,
     ExpansionPanel,
@@ -18,14 +17,15 @@ import { ConfirmationDialog } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
-import { useAppContext } from "../../../common/contexts/AppContext";
 import {
     ErrorMessage,
     SynchronizationResult,
     SynchronizationStats,
 } from "../../../../domain/synchronization/entities/SynchronizationResult";
 import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
+import { useAppContext } from "../../../common/contexts/AppContext";
 
 const useStyles = makeStyles(theme => ({
     expansionPanelHeading1: {

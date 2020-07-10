@@ -8,9 +8,7 @@ context("Landing page", () => {
     });
 
     it("renders a table with all pages of the application", () => {
-        cy.get(dataTest("div-landing"))
-            .should("have.length", 1)
-            .should("be.visible");
+        cy.get(dataTest("div-landing")).should("have.length", 1).should("be.visible");
 
         cy.contains("Metadata Sync");
         cy.contains("Aggregated Data Sync");
@@ -33,70 +31,70 @@ context("Landing page", () => {
     });
 
     // Metadata
-    it("enters the Metadata manual sync page", function() {
+    it("enters the Metadata manual sync page", function () {
         cy.get(dataTest("Card-landing-metadata-manual-sync", "button[title='List']")).click();
         cy.get(dataTest("page-header-title")).contains("Metadata Synchronization");
     });
 
-    it("enters the Metadata sync rules page", function() {
+    it("enters the Metadata sync rules page", function () {
         cy.get(dataTest("Card-landing-metadata-sync-rules", "button[title='List']")).click();
         cy.get(dataTest("page-header-title")).contains("Metadata Synchronization Rules");
     });
 
-    it("enters the Metadata sync rules page", function() {
+    it("enters the Metadata sync rules page", function () {
         cy.get(dataTest("Card-landing-metadata-sync-rules", "button[title='Add']")).click();
         cy.get(dataTest("page-header-title")).contains("New metadata synchronization rule");
     });
 
-    it("enters the Metadata history page", function() {
+    it("enters the Metadata history page", function () {
         cy.get(dataTest("Card-landing-metadata-history", "button[title='List']")).click();
         cy.get(dataTest("page-header-title")).contains("Metadata Synchronization History");
     });
 
     // Aggregated Data
-    it("enters the Aggregated Data manual sync page", function() {
+    it("enters the Aggregated Data manual sync page", function () {
         cy.get(dataTest("Card-landing-aggregated-manual-sync", "button[title='List']")).click();
         cy.get(dataTest("page-header-title")).contains("Aggregated Data Synchronization");
     });
 
-    it("enters the Aggregated Data sync rules page", function() {
+    it("enters the Aggregated Data sync rules page", function () {
         cy.get(dataTest("Card-landing-aggregated-sync-rules", "button[title='List']")).click();
         cy.get(dataTest("page-header-title")).contains("Aggregated Data Synchronization Rules");
     });
 
-    it("enters the Aggregated Data sync rules page", function() {
+    it("enters the Aggregated Data sync rules page", function () {
         cy.get(dataTest("Card-landing-aggregated-sync-rules", "button[title='Add']")).click();
         cy.get(dataTest("page-header-title")).contains("New aggregated synchronization rule");
     });
 
-    it("enters the Aggregated Data history page", function() {
+    it("enters the Aggregated Data history page", function () {
         cy.get(dataTest("Card-landing-aggregated-history", "button[title='List']")).click();
         cy.get(dataTest("page-header-title")).contains("Aggregated Data Synchronization History");
     });
 
     // Events
-    it("enters the Events manual sync page", function() {
+    it("enters the Events manual sync page", function () {
         cy.get(dataTest("Card-landing-events-manual-sync", "button[title='List']")).click();
         cy.get(dataTest("page-header-title")).contains("Events Synchronization");
     });
 
-    it("enters the Events sync rules page", function() {
+    it("enters the Events sync rules page", function () {
         cy.get(dataTest("Card-landing-events-sync-rules", "button[title='List']")).click();
         cy.get(dataTest("page-header-title")).contains("Events Synchronization Rules");
     });
 
-    it("enters the Aggregated Data sync rules page", function() {
+    it("enters the Aggregated Data sync rules page", function () {
         cy.get(dataTest("Card-landing-events-sync-rules", "button[title='Add']")).click();
         cy.get(dataTest("page-header-title")).contains("New events synchronization rule");
     });
 
-    it("enters the Aggregated Data history page", function() {
+    it("enters the Aggregated Data history page", function () {
         cy.get(dataTest("Card-landing-events-history", "button[title='List']")).click();
         cy.get(dataTest("page-header-title")).contains("Events Synchronization History");
     });
 
     // Instance Settings
-    it("enters the Destination instance settings page", function() {
+    it("enters the Destination instance settings page", function () {
         cy.get(
             dataTest(
                 "Card-landing-configuration-destination-instance-settings",
@@ -106,7 +104,7 @@ context("Landing page", () => {
         cy.get(dataTest("page-header-title")).contains("Destination Instance Settings");
     });
 
-    it("enters the Destination instance creation page", function() {
+    it("enters the Destination instance creation page", function () {
         cy.get(
             dataTest(
                 "Card-landing-configuration-destination-instance-settings",

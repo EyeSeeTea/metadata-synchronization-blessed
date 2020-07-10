@@ -51,10 +51,7 @@ export function cleanReferences(
     references: Record<string, string[]>,
     includeRules: string[][] = []
 ): string[] {
-    const rules = _(includeRules)
-        .map(_.first)
-        .compact()
-        .value();
+    const rules = _(includeRules).map(_.first).compact().value();
 
     return _.intersection(_.keys(references), rules);
 }
@@ -136,7 +133,5 @@ export function cleanToAPIChildReferenceName(d2: D2, key: string, parent: string
 }
 
 export function getClassName(className: string): string | undefined {
-    return _(className)
-        .split(".")
-        .last();
+    return _(className).split(".").last();
 }

@@ -1,6 +1,6 @@
 import MappingGlobalPageObject from "../support/page-objects/MappingGlobalPageObject";
 
-context("Global mapping", function() {
+context("Global mapping", function () {
     const page = new MappingGlobalPageObject(cy);
 
     const inputs = {
@@ -14,13 +14,13 @@ context("Global mapping", function() {
         page.open(inputs.instance);
     });
 
-    it("should have the correct title", function() {
+    it("should have the correct title", function () {
         page.assertTitle(title =>
             title.contains("Global mapping - Destination instance this instance (8080)")
         );
     });
 
-    it("should set mapping element", function() {
+    it("should set mapping element", function () {
         page.checkCheckboxByText(inputs.alternativeObjectName);
 
         page.openSelectedRowMenu().clickOption("Set mapping");
@@ -36,7 +36,7 @@ context("Global mapping", function() {
         page.assertRowStatus(row => row.contains("Mapped"), inputs.alternativeObjectName);
     });
 
-    it("should auto-map element", function() {
+    it("should auto-map element", function () {
         page.checkCheckboxByText(inputs.objectName);
 
         page.openRowMenu().clickOption("Auto-map element");
@@ -51,7 +51,7 @@ context("Global mapping", function() {
         page.assertRowStatus(row => row.contains("Mapped"), inputs.objectName);
     });
 
-    it("should exclude element", function() {
+    it("should exclude element", function () {
         page.checkCheckboxByText(inputs.aexcludedObjectName);
         page.openSelectedRowMenu().clickOption("Exclude mapping");
         page.assertDialog(dialog =>
@@ -62,7 +62,7 @@ context("Global mapping", function() {
         page.assertRowStatus(row => row.contains("Excluded"), inputs.aexcludedObjectName);
     });
 
-    it("should validate mapping", function() {
+    it("should validate mapping", function () {
         page.checkCheckboxByText(inputs.alternativeObjectName);
         page.openSelectedRowMenu().clickOption("Auto-map element");
         page.closeDialog();
@@ -77,41 +77,41 @@ context("Global mapping", function() {
         page.assertRowStatus(row => row.contains("Mapped"), inputs.alternativeObjectName);
     });
 
-    it("should have row menu with details action", function() {
+    it("should have row menu with details action", function () {
         page.openRowMenu().assertOption(option => option.contains("Details"));
     });
 
-    it("should have row menu with set mapping action", function() {
+    it("should have row menu with set mapping action", function () {
         page.openRowMenu().assertOption(option => option.contains("Set mapping"));
     });
 
-    it("should have row menu with auto-map element action", function() {
+    it("should have row menu with auto-map element action", function () {
         page.openRowMenu().assertOption(option => option.contains("Auto-map element"));
     });
 
-    it("should have row menu with exclude mapping action", function() {
+    it("should have row menu with exclude mapping action", function () {
         page.openRowMenu().assertOption(option => option.contains("Exclude mapping"));
     });
 
-    it("should have row menu with Reset mapping to default values action", function() {
+    it("should have row menu with Reset mapping to default values action", function () {
         page.openRowMenu().assertOption(option =>
             option.contains("Reset mapping to default values")
         );
     });
 
-    it("should have general menu with Column settings action", function() {
+    it("should have general menu with Column settings action", function () {
         page.openGeneralMenu().assertOption(option => option.contains("Column settings"));
     });
 
-    it("should have general menu with validate mapping action", function() {
+    it("should have general menu with validate mapping action", function () {
         page.openGeneralMenu().assertOption(option => option.contains("Validate mapping"));
     });
 
-    it("should have general menu with reset mapping action", function() {
+    it("should have general menu with reset mapping action", function () {
         page.openGeneralMenu().assertOption(option => option.contains("Reset mapping"));
     });
 
-    it("should have general menu with exclude mapping action", function() {
+    it("should have general menu with exclude mapping action", function () {
         page.openGeneralMenu().assertOption(option => option.contains("Exclude mapping"));
     });
 });

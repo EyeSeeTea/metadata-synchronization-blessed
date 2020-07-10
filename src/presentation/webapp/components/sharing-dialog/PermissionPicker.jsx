@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import MenuList from "@material-ui/core/MenuList";
@@ -9,6 +8,7 @@ import NotInterestedIcon from "@material-ui/icons/NotInterested";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import PropTypes from "prop-types";
 import React, { Component, Fragment } from "react";
+import i18n from "../../../../locales";
 import PermissionOption from "./PermissionOption";
 
 const styles = {

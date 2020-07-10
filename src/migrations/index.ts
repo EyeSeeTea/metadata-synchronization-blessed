@@ -120,10 +120,7 @@ export class MigrationsRunner {
     }
 
     async getDataStoreKeys(): Promise<string[]> {
-        return this.api
-            .dataStore(dataStoreNamespace)
-            .getKeys()
-            .getData();
+        return this.api.dataStore(dataStoreNamespace).getKeys().getData();
     }
 
     async getBackupKeys() {

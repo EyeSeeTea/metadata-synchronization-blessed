@@ -1,8 +1,8 @@
-import i18n from "@dhis2/d2-i18n";
 import { FormControl, InputLabel, MenuItem, MuiThemeProvider, Select } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 import _ from "lodash";
 import React from "react";
+import i18n from "../../../../locales";
 
 export interface DropdownOption {
     id: string;

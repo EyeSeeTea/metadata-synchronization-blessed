@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import { makeStyles } from "@material-ui/core";
 import { DatePicker } from "d2-ui-components";
 import _ from "lodash";
@@ -7,6 +6,7 @@ import { DataSyncPeriod } from "../../../../../domain/aggregated/types";
 import { availablePeriods } from "../../../../../utils/synchronization";
 import Dropdown from "../../dropdown/Dropdown";
 import { SyncWizardStepProps } from "../Steps";
+import i18n from "../../../../../locales";
 
 const useStyles = makeStyles({
     dropdown: {

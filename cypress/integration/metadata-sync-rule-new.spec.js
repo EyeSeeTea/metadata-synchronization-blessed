@@ -1,6 +1,6 @@
 import MetadataSyncRuleDetailPageObject from "../support/page-objects/MetadataSyncRuleDetailPageObject";
 
-context("Metadata sync rule new", function() {
+context("Metadata sync rule new", function () {
     const page = new MetadataSyncRuleDetailPageObject(cy);
 
     const inputs = {

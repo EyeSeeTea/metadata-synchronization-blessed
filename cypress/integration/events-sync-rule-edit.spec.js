@@ -1,7 +1,7 @@
 import EventSyncRuleDetailPageObject from "../support/page-objects/EventSyncRuleDetailPageObject";
 import { syncRuleFixture } from "../support/utils";
 
-context("Event sync rule edit", function() {
+context("Event sync rule edit", function () {
     const page = new EventSyncRuleDetailPageObject(cy);
 
     beforeEach(() => {
