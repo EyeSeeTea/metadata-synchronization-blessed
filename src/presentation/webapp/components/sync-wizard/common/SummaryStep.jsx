@@ -258,8 +258,8 @@ const SaveStep = ({ syncRule, onCancel }) => {
                                         <ul>
                                             {syncRule.metadataIncludeExcludeRules[
                                                 key
-                                            ].includeRules.map(includeRule => (
-                                                <ul>
+                                            ].includeRules.map((includeRule, idx) => (
+                                                <ul key={`${key}-include-${idx}`}>
                                                     <LiEntry
                                                         label={
                                                             includeExcludeRulesFriendlyNames[
@@ -274,8 +274,8 @@ const SaveStep = ({ syncRule, onCancel }) => {
                                         <ul>
                                             {syncRule.metadataIncludeExcludeRules[
                                                 key
-                                            ].excludeRules.map(excludeRule => (
-                                                <ul>
+                                            ].excludeRules.map((excludeRule, idx) => (
+                                                <ul key={`${key}-exclude-${idx}`}>
                                                     <LiEntry
                                                         label={
                                                             includeExcludeRulesFriendlyNames[

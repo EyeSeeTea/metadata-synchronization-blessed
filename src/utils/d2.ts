@@ -5,7 +5,7 @@ import { D2Model } from "../models/dhis/default";
 import { D2 } from "../types/d2";
 import "../utils/lodash-mixins";
 
-const include = true as true;
+const include = true as const;
 
 export interface MetadataType {
     model: typeof D2Model;
