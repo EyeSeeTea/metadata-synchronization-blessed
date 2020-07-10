@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import { Icon } from "@material-ui/core";
 import {
     ObjectsTable,
@@ -8,12 +7,13 @@ import {
     TableSelection,
     TableState,
     useLoading,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Package } from "../../../../domain/modules/entities/Package";
 import { SynchronizationResult } from "../../../../domain/synchronization/entities/SynchronizationResult";
+import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import SyncSummary from "../../../webapp/components/sync-summary/SyncSummary";
 import { useAppContext } from "../../contexts/AppContext";
@@ -84,7 +84,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                     try {
                         loading.show(true, i18n.t("Importing package {{name}}", { name }));
                         const result = await compositionRoot.metadata.import(contents);
-                        console.log(result);
                         setSyncResult(result);
                     } catch (error) {
                         snackbar.error(error.message);
@@ -163,8 +162,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 setRows([]);
             });
     }, [compositionRoot, remoteInstance, resetKey, snackbar]);
-
-    console.log(syncResult);
 
     return (
         <React.Fragment>
