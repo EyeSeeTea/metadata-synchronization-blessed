@@ -182,7 +182,7 @@ export abstract class GenericSyncUseCase {
         const syncReport = await this.buildSyncReport();
         syncReport.addSyncResult(
             ...targetInstances.map(instance => ({
-                instance: instance.toObject(),
+                instance: instance.toPublicObject(),
                 status: "PENDING" as SynchronizationStatus,
                 date: new Date(),
                 type: this.type,
@@ -199,17 +199,17 @@ export abstract class GenericSyncUseCase {
             };
 
             try {
-                console.debug("Start import on destination instance", instance.toObject());
+                console.debug("Start import on destination instance", instance.toPublicObject());
 
                 const syncResults = await this.postPayload(instance);
                 syncReport.addSyncResult(...syncResults);
 
-                console.debug("Finished importing data on instance", instance.toObject());
+                console.debug("Finished importing data on instance", instance.toPublicObject());
             } catch (error) {
                 syncReport.addSyncResult({
                     status: "ERROR",
                     message: error.message,
-                    instance: instance.toObject(),
+                    instance: instance.toPublicObject(),
                     date: new Date(),
                     type: this.type,
                 });

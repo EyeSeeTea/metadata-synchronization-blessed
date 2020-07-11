@@ -99,7 +99,7 @@ export class EventsD2ApiRepository implements EventsRepository {
             status,
             message,
             stats,
-            instance: this.instance.toObject(),
+            instance: this.instance.toPublicObject(),
             errors,
             date: new Date(),
             type: "events",

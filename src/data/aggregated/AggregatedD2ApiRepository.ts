@@ -204,7 +204,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             status,
             message: description,
             stats: importCount,
-            instance: this.instance.toObject(),
+            instance: this.instance.toPublicObject(),
             errors,
             date: new Date(),
             type: "aggregated",

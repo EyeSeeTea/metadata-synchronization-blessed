@@ -70,7 +70,13 @@ export class Instance {
     }
 
     public toObject(): PublicInstance {
-        return _.omit(this.data, ["password"]);
+        return _.cloneDeep(this.data);
+    }
+
+    public toPublicObject(): PublicInstance {
+        return _(this.data)
+            .omit(["password"])
+            .cloneDeep();
     }
 
     public validate(filter?: string[]): ValidationError[] {
