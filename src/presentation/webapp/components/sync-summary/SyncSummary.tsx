@@ -174,13 +174,13 @@ interface SyncSummaryProps {
     providedResults?: SynchronizationResult[];
 }
 
-const SyncSummary = ({ response, onClose, providedResults = [] }: SyncSummaryProps) => {
+const SyncSummary = ({ response, onClose, providedResults }: SyncSummaryProps) => {
     const { api } = useAppContext();
     const classes = useStyles();
-    const [results, setResults] = useState<SynchronizationResult[]>(providedResults);
+    const [results, setResults] = useState<SynchronizationResult[]>(providedResults ?? []);
 
     useEffect(() => {
-        if (providedResults.length === 0) {
+        if (!providedResults || providedResults.length === 0) {
             response.loadSyncResults(api).then(setResults);
         }
     }, [api, response, providedResults]);

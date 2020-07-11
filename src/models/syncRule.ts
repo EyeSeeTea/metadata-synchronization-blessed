@@ -124,7 +124,7 @@ export default class SyncRule {
     }
 
     public get originInstance(): string {
-        return this.syncRule.originInstance ?? "LOCAL";
+        return this.syncRule.builder?.originInstance ?? "LOCAL";
     }
 
     public get builder(): SynchronizationBuilder {

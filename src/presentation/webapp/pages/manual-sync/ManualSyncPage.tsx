@@ -150,12 +150,12 @@ const ManualSyncPage: React.FC = () => {
     const updateSelectedInstance = useCallback(
         (event: React.ChangeEvent<{ value: unknown }>) => {
             const originInstance = event.target.value as string;
-            const targetInstances = originInstance === "LOCAL" ? ["LOCAL"] : [];
+            const targetInstances = originInstance === "LOCAL" ? [] : ["LOCAL"];
 
             setSelectedInstance(instances.find(instance => instance.id === originInstance));
             updateSyncRule(
                 syncRule
-                    .update({ originInstance })
+                    .updateBuilder({ originInstance })
                     .updateTargetInstances(targetInstances)
                     .updateMetadataIds([])
                     .updateExcludedIds([])
