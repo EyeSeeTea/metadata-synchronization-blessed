@@ -69,7 +69,7 @@ export class Instance {
         return Number(apiVersion);
     }
 
-    public toObject(): PublicInstance {
+    public toObject(): InstanceData {
         return _.cloneDeep(this.data);
     }
 
