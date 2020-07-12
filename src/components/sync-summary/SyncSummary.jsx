@@ -14,11 +14,11 @@ import {
     Typography,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useD2Api } from "d2-api";
 import { ConfirmationDialog } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
+import { useAppContext } from "../../contexts/ApiContext";
 
 const useStyles = makeStyles(theme => ({
     expansionPanelHeading1: {
@@ -162,7 +162,7 @@ const getTypeName = (reportType, syncType) => {
 };
 
 const SyncSummary = ({ response, onClose }) => {
-    const api = useD2Api();
+    const { api } = useAppContext();
     const classes = useStyles();
     const [results, setResults] = useState([]);
 

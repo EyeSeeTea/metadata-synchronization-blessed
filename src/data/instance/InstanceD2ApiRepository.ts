@@ -1,4 +1,4 @@
-import { D2Api, D2ApiDefault } from "d2-api";
+import { D2Api } from "../../types/d2-api";
 import InstanceRepository from "../../domain/instance/InstanceRepository";
 import Instance, { InstanceData } from "../../domain/instance/Instance";
 import { getDataById } from "../../models/dataStore";
@@ -37,7 +37,7 @@ export default class InstanceD2ApiRepository implements InstanceRepository {
     }
 
     private async getVersion(instanceData: InstanceData): Promise<string> {
-        const api = new D2ApiDefault({
+        const api = new D2Api({
             baseUrl: instanceData.url,
             auth: { username: instanceData.username, password: instanceData.password },
         });

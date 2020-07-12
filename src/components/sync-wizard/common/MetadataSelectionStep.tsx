@@ -1,5 +1,4 @@
 import i18n from "@dhis2/d2-i18n";
-import { useD2Api } from "d2-api";
 import { useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
@@ -18,6 +17,7 @@ import {
 import { getMetadata } from "../../../utils/synchronization";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { SyncWizardStepProps } from "../Steps";
+import { useAppContext } from "../../../contexts/ApiContext";
 
 const config = {
     metadata: {
@@ -45,7 +45,7 @@ const config = {
 };
 
 export default function MetadataSelectionStep(props: SyncWizardStepProps) {
-    const api = useD2Api();
+    const { api } = useAppContext();
     const { syncRule, onChange } = props;
     const { models, childrenKeys } = config[syncRule.type];
 

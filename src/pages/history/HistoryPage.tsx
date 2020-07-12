@@ -1,7 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DescriptionIcon from "@material-ui/icons/Description";
-import { useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
     ObjectsTable,
@@ -30,6 +29,7 @@ import {
 import { getValueForCollection } from "../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../utils/permissions";
 import { Typography } from "@material-ui/core";
+import { useAppContext } from "../../contexts/ApiContext";
 
 const config = {
     metadata: {
@@ -71,7 +71,7 @@ const initialState = {
 };
 
 const HistoryPage: React.FC = () => {
-    const api = useD2Api();
+    const { api } = useAppContext();
     const snackbar = useSnackbar();
     const loading = useLoading();
     const history = useHistory();

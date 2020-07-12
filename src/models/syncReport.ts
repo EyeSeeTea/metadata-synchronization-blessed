@@ -1,4 +1,4 @@
-import { D2Api } from "d2-api";
+import { D2Api } from "../types/d2-api";
 import { TableInitialState, TablePagination } from "d2-ui-components";
 import { generateUid } from "d2/uid";
 import _ from "lodash";

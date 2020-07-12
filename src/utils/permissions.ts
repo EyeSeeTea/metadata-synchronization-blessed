@@ -1,5 +1,5 @@
 import axios from "axios";
-import { D2Api } from "d2-api";
+import { D2Api } from "../types/d2-api";
 import memoize from "nano-memoize";
 import SyncRule from "../models/syncRule";
 

@@ -1,4 +1,4 @@
-import { D2ModelSchemas, D2Api } from "d2-api";
+import { D2ModelSchemas, D2Api } from "../../types/d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../models/dhis/factory";

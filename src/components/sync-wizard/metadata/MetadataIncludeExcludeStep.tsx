@@ -1,5 +1,4 @@
 import { makeStyles } from "@material-ui/core";
-import { useD2, useD2Api } from "d2-api/react/context";
 import { MultiSelector, withSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -13,6 +12,7 @@ import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 import includeExcludeRulesFriendlyNames from "./RulesFriendlyNames";
+import { useAppContext } from "../../../contexts/ApiContext";
 
 const useStyles = makeStyles({
     includeExcludeContainer: {
@@ -28,8 +28,7 @@ const useStyles = makeStyles({
 
 const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const classes = useStyles();
-    const d2 = useD2();
-    const api = useD2Api();
+    const { d2, api } = useAppContext();
 
     const [modelSelectItems, setModelSelectItems] = useState<DropdownOption[]>([]);
     const [models, setModels] = useState<typeof D2Model[]>([]);

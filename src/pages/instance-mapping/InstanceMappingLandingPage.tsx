@@ -1,14 +1,14 @@
 import i18n from "@dhis2/d2-i18n";
-import { useD2Api } from "d2-api";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Card, Landing } from "../../components/landing/Landing";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import Instance from "../../models/instance";
+import { useAppContext } from "../../contexts/ApiContext";
 
 const InstanceMappingLandingPage: React.FC = () => {
-    const api = useD2Api();
+    const { api } = useAppContext();
     const history = useHistory();
     const { id } = useParams() as { id: string };
 

@@ -1,4 +1,4 @@
-import { D2Api } from "d2-api";
+import { D2Api } from "../../types/d2-api";
 import _ from "lodash";
 import { D2Model } from "../../models/dhis/default";
 import { EventProgramModel } from "../../models/dhis/mapping";

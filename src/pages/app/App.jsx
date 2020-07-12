@@ -4,7 +4,7 @@ import { HeaderBar } from "@dhis2/ui-widgets";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 import { init } from "d2";
-import { ApiContext, D2ApiDefault } from "d2-api";
+import { D2Api } from "../../types/d2-api";
 import axiosRetry from "axios-retry";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
 import _ from "lodash";
@@ -20,6 +20,7 @@ import { muiTheme } from "./themes/dhis2.theme";
 import { MigrationsRunner } from "../../migrations";
 import Migrations from "../../components/migrations/Migrations";
 import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";
+import { ApiContext } from "../../contexts/ApiContext";
 
 const axiosMaxRetries = 3;
 
@@ -57,8 +58,7 @@ const query = {
 
 const App = () => {
     const { baseUrl } = useConfig();
-    const [d2, setD2] = useState(null);
-    const [api, setApi] = useState(null);
+    const [appContext, setAppContext] = useState(null);
     const [migrationsState, setMigrationsState] = useState({ type: "checking" });
     const [showShareButton, setShowShareButton] = useState(false);
     const { loading, error, data } = useDataQuery(query);
@@ -68,14 +68,16 @@ const App = () => {
             const appConfig = await fetch("app-config.json", {
                 credentials: "same-origin",
             }).then(res => res.json());
+
             const d2 = await init({ baseUrl: baseUrl + "/api" });
-            const api = new D2ApiDefault({ baseUrl });
+            const api = new D2Api({ baseUrl });
+
+            const appContext = { d2, api };
+            setAppContext(appContext);
 
             Object.assign({ d2, api });
 
             configI18n(data.userSettings);
-            setD2(d2);
-            setApi(api);
             Object.assign(window, { d2, api });
             setShowShareButton(_(appConfig).get("appearance.showShareButton") || false);
             initFeedbackTool(d2, appConfig);
@@ -86,7 +88,7 @@ const App = () => {
             }
 
             await initializeAppRoles(d2.Api.getApi().baseUrl);
-            runMigrations(baseUrl).then(setMigrationsState);
+            runMigrations(api).then(setMigrationsState);
         };
 
         if (data) run();
@@ -108,7 +110,12 @@ const App = () => {
                 onFinish={() => setMigrationsState({ type: "checked" })}
             />
         );
-    } else if (loading || !d2 || !api || migrationsState.type === "checking") {
+    } else if (
+        loading ||
+        !appContext?.d2 ||
+        !appContext?.api ||
+        migrationsState.type === "checking"
+    ) {
         return <h3>Connecting to {baseUrl}...</h3>;
     } else if (migrationsState.type === "checked") {
         return (
@@ -120,7 +127,7 @@ const App = () => {
                                 <HeaderBar appName={i18n.t("MetaData Synchronization")} />
 
                                 <div id="app" className="content">
-                                    <ApiContext.Provider value={{ d2, api }}>
+                                    <ApiContext.Provider value={appContext}>
                                         <Root />
                                     </ApiContext.Provider>
                                 </div>
@@ -135,8 +142,7 @@ const App = () => {
     }
 };
 
-async function runMigrations(baseUrl) {
-    const api = new D2ApiDefault({ baseUrl });
+async function runMigrations(api) {
     axiosRetry(api.connection, { retries: axiosMaxRetries });
     const runner = await MigrationsRunner.init({ api, debug: console.debug });
 

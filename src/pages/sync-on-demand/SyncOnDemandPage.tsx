@@ -1,6 +1,5 @@
 import i18n from "@dhis2/d2-i18n";
 import SyncIcon from "@material-ui/icons/Sync";
-import { useD2, useD2Api } from "d2-api";
 import { useLoading, useSnackbar } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -31,6 +30,7 @@ import { D2 } from "../../types/d2";
 import { SyncRuleType } from "../../types/synchronization";
 import { MetadataType } from "../../utils/d2";
 import { isAppConfigurator } from "../../utils/permissions";
+import { useAppContext } from "../../contexts/ApiContext";
 
 const config: Record<
     SyncRuleType,
@@ -76,8 +76,7 @@ const config: Record<
 const SyncOnDemandPage: React.FC = () => {
     const snackbar = useSnackbar();
     const loading = useLoading();
-    const d2 = useD2() as D2;
-    const api = useD2Api();
+    const { d2, api } = useAppContext();
     const history = useHistory();
     const { type } = useParams() as { type: SyncRuleType };
     const { title, models } = config[type];
@@ -127,7 +126,7 @@ const SyncOnDemandPage: React.FC = () => {
 
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
-        const sync = new SyncClass(d2, api, syncRule.toBuilder());
+        const sync = new SyncClass(d2 as D2, api, syncRule.toBuilder());
         for await (const { message, syncReport, done } of sync.execute()) {
             if (message) loading.show(true, message);
             if (syncReport) await syncReport.save(api);
@@ -148,7 +147,7 @@ const SyncOnDemandPage: React.FC = () => {
             text: i18n.t("Metadata type"),
             hidden: config[type].childrenKeys === undefined,
             getValue: (row: MetadataType) => {
-                return row.model.getModelName(d2);
+                return row.model.getModelName(d2 as D2);
             },
         },
     ];

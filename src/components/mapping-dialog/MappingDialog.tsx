@@ -2,7 +2,6 @@ import i18n from "@dhis2/d2-i18n";
 import { Typography } from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
 import { makeStyles } from "@material-ui/styles";
-import { useD2 } from "d2-api";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -12,6 +11,7 @@ import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { buildDataElementFilterForProgram, getValidIds } from "../mapping-table/utils";
 import MetadataTable from "../metadata-table/MetadataTable";
+import { useAppContext } from "../../contexts/ApiContext";
 
 export interface MappingDialogConfig {
     elements: string[];
@@ -41,7 +41,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     onUpdateMapping,
     onClose,
 }) => {
-    const d2 = useD2() as D2;
+    const d2 = useAppContext().d2 as D2;
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
     const [filterRows, setFilterRows] = useState<string[] | undefined>();

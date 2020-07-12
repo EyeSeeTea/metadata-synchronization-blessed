@@ -2,7 +2,7 @@ import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
 import Instance from "../models/instance";
 import SyncRule from "../models/syncRule";
-import { D2Api } from "d2-api";
+import { D2Api } from "../types/d2-api";
 
 const translations: { [key: string]: (namespace: object) => string } = {
     cannot_be_blank: (namespace: object) => i18n.t("Field {{field}} cannot be blank", namespace),

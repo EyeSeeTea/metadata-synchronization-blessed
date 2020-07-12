@@ -1,6 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { Typography } from "@material-ui/core";
-import { D2Program, useD2, useD2Api } from "d2-api";
+import { D2Program } from "../../../types/d2-api";
 import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -11,14 +11,14 @@ import { getEventsData } from "../../../utils/synchronization";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
+import { useAppContext } from "../../../contexts/ApiContext";
 
 interface ProgramEventObject extends ProgramEvent {
     [key: string]: any;
 }
 
 export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
-    const d2 = useD2();
-    const api = useD2Api();
+    const { d2, api } = useAppContext();
     const [objects, setObjects] = useState<ProgramEvent[] | undefined>();
     const [programs, setPrograms] = useState<D2Program[]>([]);
     const [programFilter, changeProgramFilter] = useState<string>("");

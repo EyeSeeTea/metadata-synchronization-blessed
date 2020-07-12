@@ -4,7 +4,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 import EditIcon from "@material-ui/icons/Edit";
 import SettingsInputAntenaIcon from "@material-ui/icons/SettingsInputAntenna";
-import { useD2Api } from "d2-api";
 import {
     ConfirmationDialog,
     ObjectsTable,
@@ -24,9 +23,10 @@ import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import Instance, { InstanceData } from "../../models/instance";
 import { executeAnalytics } from "../../utils/analytics";
 import { isAppConfigurator } from "../../utils/permissions";
+import { useAppContext } from "../../contexts/ApiContext";
 
 const InstanceListPage = () => {
-    const api = useD2Api();
+    const { api } = useAppContext();
     const history = useHistory();
     const snackbar = useSnackbar();
     const loading = useLoading();

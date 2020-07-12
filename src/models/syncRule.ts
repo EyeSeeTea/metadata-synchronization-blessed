@@ -1,5 +1,5 @@
 import cronstrue from "cronstrue";
-import { D2Api, Ref } from "d2-api";
+import { D2Api, Ref } from "../types/d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import moment from "moment";

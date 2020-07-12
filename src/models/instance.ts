@@ -1,7 +1,7 @@
 import i18n from "@dhis2/d2-i18n";
 import axios, { AxiosBasicCredentials } from "axios";
 import Cryptr from "cryptr";
-import { D2Api, D2ApiDefault } from "d2-api";
+import { D2Api } from "../types/d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { Response } from "../types/d2";
@@ -71,7 +71,7 @@ export default class Instance {
     constructor(data: InstanceData) {
         this.data = _.pick(data, _.keys(initialData) as Array<keyof InstanceData>);
         const { url: baseUrl, username, password } = data;
-        this.api = new D2ApiDefault({ baseUrl, auth: { username, password } });
+        this.api = new D2Api({ baseUrl, auth: { username, password } });
     }
 
     public replicate(): Instance {

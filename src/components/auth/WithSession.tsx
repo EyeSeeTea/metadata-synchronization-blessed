@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import i18n from "../../locales";
 import { Typography, CircularProgress, makeStyles } from "@material-ui/core";
-import { useD2Api } from "d2-api";
+import { useAppContext } from "../../contexts/ApiContext";
 
 const useStyles = makeStyles({
     loading: {
@@ -11,7 +11,7 @@ const useStyles = makeStyles({
 });
 
 const WithSession: React.FC = ({ children }) => {
-    const api = useD2Api();
+    const { api } = useAppContext();
     const classes = useStyles();
 
     const [isLoggedIn, setLoggedIn] = useState<boolean | undefined>(undefined);

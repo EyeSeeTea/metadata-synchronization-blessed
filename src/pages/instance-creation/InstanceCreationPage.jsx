@@ -1,5 +1,4 @@
 import i18n from "@dhis2/d2-i18n";
-import { ApiContext } from "d2-api";
 import { ConfirmationDialog } from "d2-ui-components";
 import PropTypes from "prop-types";
 import React from "react";
@@ -8,6 +7,7 @@ import PageHeader from "../../components/page-header/PageHeader";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import Instance from "../../models/instance";
 import GeneralInfoForm from "./GeneralInfoForm";
+import { ApiContext } from "../../contexts/ApiContext";
 
 class InstanceCreationPage extends React.Component {
     static contextType = ApiContext;

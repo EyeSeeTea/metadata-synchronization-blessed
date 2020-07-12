@@ -1,4 +1,4 @@
-import { D2Api, D2ModelSchemas, Model } from "d2-api";
+import { D2Api, D2ModelSchemas, Model, D2ApiDefinition } from "../../types/d2-api";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import _ from "lodash";
 import { D2, ModelDefinition } from "../../types/d2";
@@ -43,7 +43,10 @@ export abstract class D2Model {
 
     public static getApiModel(api: D2Api): InstanceType<typeof Model> {
         const modelCollection = api.models as {
-            [ModelName in keyof D2ModelSchemas]: Model<ModelName>;
+            [ModelKey in keyof D2ApiDefinition["schemas"]]: Model<
+                D2ApiDefinition,
+                D2ApiDefinition["schemas"][ModelKey]
+            >;
         };
         return modelCollection[this.collectionName];
     }
