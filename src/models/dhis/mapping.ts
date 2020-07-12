@@ -31,7 +31,19 @@ import {
 } from "./metadata";
 
 export class CategoryOptionMappedModel extends CategoryOptionModel {
+    protected static fields = categoryOptionFields;
     protected static mappingType = "categoryOptions";
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2CategoryOptionSchema, typeof categoryOptionFields>[]
+    ) => {
+        return _(objects)
+            .map(({ categories, id, ...rest }) => {
+                return categories.map(({ id: category }) => ({ id: `${category}-${id}`, ...rest }));
+            })
+            .flatten()
+            .value();
+    };
 }
 
 export class IndicatorMappedModel extends IndicatorModel {
