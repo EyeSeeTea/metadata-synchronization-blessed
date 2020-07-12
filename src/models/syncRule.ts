@@ -731,6 +731,7 @@ export default class SyncRule {
             ]),
             dataSyncAggregation: _.compact([
                 this.type !== "metadata" &&
+                this.type !== "deleted" &&
                 this.dataSyncEnableAggregation &&
                 !this.dataSyncAggregationType
                     ? {

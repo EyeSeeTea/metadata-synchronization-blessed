@@ -2,7 +2,8 @@ import { D2CategoryOptionCombo } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
-import { AggregatedPackage, DataValue } from "../../types/synchronization";
+import InstanceEntity from "../../domain/instance/Instance";
+import { AggregatedPackage, DataValue } from "../../domain/synchronization/DataEntities";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,
@@ -19,6 +20,8 @@ import {
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
 import { promiseMap } from "../../utils/common";
+import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
+import { aggregatedTransformationsToDhis2 } from "../../data/synchronization/mappers/PackageTransformations";
 
 export class AggregatedSync extends GenericSync {
     public readonly type = "aggregated";
@@ -140,14 +143,30 @@ export class AggregatedSync extends GenericSync {
         return { dataValues };
     };
 
-    public async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
         const { dataParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
         const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
-        console.debug("Aggregated package", { payloadPackage, mappedPayloadPackage });
 
-        const response = await postAggregatedData(instance, mappedPayloadPackage, dataParams);
+        if (!instanceEntity.apiVersion) {
+            throw new Error(
+                "Necessary api version of receiver instance to apply transformations to package is undefined"
+            );
+        }
+
+        const versionedPayloadPackage = mapPackageToD2Version(
+            instanceEntity.apiVersion,
+            mappedPayloadPackage,
+            aggregatedTransformationsToDhis2
+        );
+        console.debug("Aggregated package", {
+            payloadPackage,
+            mappedPayloadPackage,
+            versionedPayloadPackage,
+        });
+
+        const response = await postAggregatedData(instance, versionedPayloadPackage, dataParams);
         return [cleanDataImportResponse(response, instance, this.type)];
     }
 

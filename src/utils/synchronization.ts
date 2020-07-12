@@ -9,28 +9,20 @@ import memoize from "nano-memoize";
 import { SyncronizationClass } from "../logic/sync/generic";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../models/instance";
 import SyncRule from "../models/syncRule";
+import { D2, DataImportParams, DataImportResponse, MetadataImportResponse } from "../types/d2";
 import {
-    D2,
-    DataImportParams,
-    DataImportResponse,
-    MetadataImportParams,
-    MetadataImportResponse,
-} from "../types/d2";
-import {
-    AggregatedPackage,
     CategoryOptionAggregationBuilder,
     DataSyncAggregation,
     DataSynchronizationParams,
-    DataValue,
-    MetadataPackage,
     NestedRules,
-    ProgramEvent,
     SynchronizationResult,
     SyncRuleType,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
 import { promiseMap } from "./common";
 import { cleanToAPIChildReferenceName, cleanToModelName, getClassName } from "./d2";
+import { AggregatedPackage, ProgramEvent, DataValue } from "../domain/synchronization/DataEntities";
+import { MetadataPackage } from "../domain/synchronization/MetadataEntities";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -106,28 +98,6 @@ export async function getMetadata(
     const results = _.deepMerge({}, ...response);
     if (results.system) delete results.system;
     return results;
-}
-
-export async function postMetadata(
-    api: D2Api,
-    metadata: any,
-    additionalParams?: MetadataImportParams
-): Promise<MetadataImportResponse> {
-    try {
-        const params = {
-            importMode: "COMMIT",
-            identifier: "UID",
-            importReportMode: "FULL",
-            importStrategy: "CREATE_AND_UPDATE",
-            mergeMode: "MERGE",
-            atomicMode: "ALL",
-            ...additionalParams,
-        };
-        const response = await api.post("/metadata", params, metadata).getData();
-        return response as MetadataImportResponse;
-    } catch (error) {
-        return buildResponseError(error);
-    }
 }
 
 function buildResponseError(error: AxiosError): MetadataImportResponse {

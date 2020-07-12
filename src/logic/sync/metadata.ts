@@ -1,9 +1,10 @@
-import { D2ModelSchemas } from "d2-api";
+import { D2ModelSchemas, D2Api } from "d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../models/dhis/factory";
 import Instance from "../../models/instance";
-import { ExportBuilder, MetadataPackage, NestedRules } from "../../types/synchronization";
+import InstanceEntity from "../../domain/instance/Instance";
+import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../types/synchronization";
 import { promiseMap } from "../../utils/common";
 import {
     buildNestedRules,
@@ -12,12 +13,24 @@ import {
     cleanReferences,
     getAllReferences,
     getMetadata,
-    postMetadata,
 } from "../../utils/synchronization";
 import { GenericSync, SyncronizationPayload } from "./generic";
+import { MetadataPackage } from "../../domain/synchronization/MetadataEntities";
+import MetadataD2ApiRepository from "../../data/synchronization/repositories/MetadataD2ApiRepository";
+import { MetadataRepository } from "../../domain/synchronization/MetadataRepositoriy";
+import { D2 } from "../../types/d2";
 
 export class MetadataSync extends GenericSync {
     public readonly type = "metadata";
+    private metadataRepository: MetadataRepository;
+
+    constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
+        super(d2, api, builder);
+
+        //TODO: composition root - This dependency should be injected by constructor when we have
+        // composition root
+        this.metadataRepository = new MetadataD2ApiRepository(api);
+    }
 
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
         const visitedIds: Set<string> = new Set();
@@ -102,13 +115,18 @@ export class MetadataSync extends GenericSync {
         return _.mapValues(_.deepMerge({}, ...exportResults), elements => _.uniqBy(elements, "id"));
     });
 
-    public async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
+
         console.debug("Metadata package", payloadPackage);
 
-        const response = await postMetadata(instance.getApi(), payloadPackage, syncParams);
+        const response = await this.metadataRepository.save(
+            payloadPackage,
+            syncParams,
+            instanceEntity
+        );
         const syncResult = cleanMetadataImportResponse(response, instance, this.type);
         return [syncResult];
     }

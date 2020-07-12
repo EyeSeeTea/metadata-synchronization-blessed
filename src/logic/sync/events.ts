@@ -3,12 +3,13 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
+import InstanceEntity from "../../domain/instance/Instance";
 import {
     DataValue,
     EventsPackage,
     ProgramEvent,
     ProgramEventDataValue,
-} from "../../types/synchronization";
+} from "../../domain/synchronization/DataEntities";
 import {
     buildMetadataDictionary,
     cleanDataImportResponse,
@@ -25,6 +26,8 @@ import {
 } from "../../utils/synchronization";
 import { AggregatedSync } from "./aggregated";
 import { GenericSync, SyncronizationPayload } from "./generic";
+import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
+import { eventsTransformationsToDhis2 } from "../../data/synchronization/mappers/PackageTransformations";
 
 export class EventsSync extends GenericSync {
     public readonly type = "events";
@@ -70,20 +73,38 @@ export class EventsSync extends GenericSync {
         return { events, dataValues };
     });
 
-    public async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
         const { events, dataValues } = await this.buildPayload();
 
-        const eventsResponse = await this.postEventsPayload(instance, events);
+        const eventsResponse = await this.postEventsPayload(instance, instanceEntity, events);
+
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
         return _.compact([eventsResponse, indicatorsResponse]);
     }
 
-    private async postEventsPayload(instance: Instance, events: ProgramEvent[]) {
+    private async postEventsPayload(
+        instance: Instance,
+        instanceEntity: InstanceEntity,
+        events: ProgramEvent[]
+    ) {
         const { dataParams = {} } = this.builder;
 
         const payload = await this.mapPayload(instance, { events });
-        console.debug("Events package", { events, payload });
+
+        if (!instanceEntity.apiVersion) {
+            throw new Error(
+                "Necessary api version of receiver instance to apply transformations to package is undefined"
+            );
+        }
+
+        const versionedPayloadPackage = mapPackageToD2Version(
+            instanceEntity.apiVersion,
+            payload,
+            eventsTransformationsToDhis2
+        );
+        console.debug("Events package", { events, payload, versionedPayloadPackage });
+
         const response = await postEventsData(instance, payload, dataParams);
 
         return cleanDataImportResponse(response, instance, this.type);

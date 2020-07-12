@@ -19,6 +19,7 @@ import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
 import { MigrationsRunner } from "../../migrations";
 import Migrations from "../../components/migrations/Migrations";
+import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";
 
 const axiosMaxRetries = 3;
 
@@ -81,6 +82,7 @@ const App = () => {
 
             if (appConfig && appConfig.encryptionKey) {
                 Instance.setEncryptionKey(appConfig.encryptionKey);
+                InstanceD2ApiRepository.encryptionKey = appConfig.encryptionKey;
             }
 
             await initializeAppRoles(d2.Api.getApi().baseUrl);
