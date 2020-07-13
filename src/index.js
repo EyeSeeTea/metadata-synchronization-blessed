@@ -45,29 +45,31 @@ async function main() {
     try {
         const api = new D2Api({ baseUrl });
         const userSettings = await api.get("/userSettings").getData();
-        if (typeof userSettings === "string") {
-            ReactDOM.render(
-                <div>
-                    <h3>
-                        <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
-                            Login
-                        </a>
-                        {` ${baseUrl}`}
-                    </h3>
-                </div>,
-                document.getElementById("root")
-            );
-        } else {
-            configI18n(userSettings);
+        if (typeof userSettings === "string") throw new Error("User needs to log in");
+        configI18n(userSettings);
+    } catch (err) {
+        ReactDOM.render(
+            <div>
+                <h3>
+                    <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
+                        Login
+                    </a>
+                    {` ${baseUrl}`}
+                </h3>
+            </div>,
+            document.getElementById("root")
+        );
+        return;
+    }
 
-            const App = await getPresentation();
-            ReactDOM.render(
-                <Provider config={{ baseUrl, apiVersion: "30" }}>
-                    <App />
-                </Provider>,
-                document.getElementById("root")
-            );
-        }
+    try {
+        const App = await getPresentation();
+        ReactDOM.render(
+            <Provider config={{ baseUrl, apiVersion: "30" }}>
+                <App />
+            </Provider>,
+            document.getElementById("root")
+        );
     } catch (err) {
         ReactDOM.render(<div>{err.toString()}</div>, document.getElementById("root"));
     }
