@@ -304,12 +304,12 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
 
         const result = await promiseMap(
             await this.aggregatedRepository.getOptions(mapping, categoryOptionCombos),
-            async ({ dataElement, categoryOptions, category, mappedOptionCombo }) => {
+            async ({ dataElement, categoryOptions, mappedOptionCombo }) => {
                 const { dataValues } = await this.aggregatedRepository.getAnalytics({
                     dataParams,
                     dimensionIds: [dataElement],
                     includeCategories: false,
-                    filter: [`${category}:${categoryOptions.join(";")}`],
+                    filter: categoryOptions.map(id => id.replace("-", ":")),
                 });
 
                 return dataValues.map(dataValue => ({
