@@ -121,6 +121,7 @@ const GeneralInfoForm = ({ instance, onChange, cancelAction }: GeneralInfoFormPr
                 />
                 <TextField
                     className={classes.row}
+                    type="password"
                     fullWidth={true}
                     label={i18n.t("Password (*)")}
                     value={didPasswordChange ? instance.password : ""}

@@ -185,7 +185,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             status: status === "OK" ? "SUCCESS" : status,
             stats: formatStats(stats),
             typeStats,
-            instance: this.instance.toObject(),
+            instance: this.instance.toPublicObject(),
             errors: messages,
             date: new Date(),
             type,

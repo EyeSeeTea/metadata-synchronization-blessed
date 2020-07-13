@@ -5,11 +5,12 @@ import React, { useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
     MetadataMapping,
-    MetadataMappingDictionary,
+    MetadataMappingDictionary
 } from "../../../../domain/instance/entities/MetadataMapping";
 import i18n from "../../../../locales";
 import { MetadataType } from "../../../../utils/d2";
 import { MappingTableProps } from "../mapping-table/MappingTable";
+import { cleanNestedMappedId } from "../mapping-table/utils";
 import { buildModelSteps } from "./Steps";
 
 export interface MappingWizardStep extends WizardStep {
@@ -51,7 +52,17 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
         {}
     );
 
-    const filterRows = _(mapping).mapValues(Object.keys).values().flatten().value();
+    const mappingKeys = _(mapping)
+        .mapValues(Object.keys)
+        .values()
+        .flatten()
+        .value();
+
+    const filterRows = mappingKeys.map(cleanNestedMappedId);
+
+    const transformRows = (rows: MetadataType[]) => {
+        return rows.filter(({ id }) => mappingKeys.includes(id));
+    };
 
     const onChangeMapping = async (subMapping: MetadataMappingDictionary) => {
         const newMapping = _.clone(instance.metadataMapping);
@@ -70,6 +81,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
                 onApplyGlobalMapping,
                 instance,
                 filterRows,
+                transformRows,
                 mappingPath: [...mappingPath, mappedId],
                 isChildrenMapping: true,
             },

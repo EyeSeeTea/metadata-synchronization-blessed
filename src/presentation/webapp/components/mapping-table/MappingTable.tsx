@@ -67,6 +67,7 @@ export interface MappingTableProps {
     instance: Instance;
     models: typeof D2Model[];
     filterRows?: string[];
+    transformRows?: (rows: MetadataType[]) => MetadataType[];
     mapping: MetadataMappingDictionary;
     globalMapping: MetadataMappingDictionary;
     onChangeMapping(mapping: MetadataMappingDictionary): Promise<void>;
@@ -79,6 +80,7 @@ export default function MappingTable({
     instance,
     models,
     filterRows,
+    transformRows,
     mapping,
     globalMapping,
     onChangeMapping,
@@ -131,8 +133,10 @@ export default function MappingTable({
                             true,
                             i18n.t("Applying mapping update for element {{name}}", { name })
                         );
-                        const mappingType = row?.model.getMappingType();
-                        if (!row || !mappingType) {
+
+                        const rowModel = row?.model ?? model;
+                        const mappingType = rowModel.getMappingType();
+                        if (!rowModel || !mappingType) {
                             throw new Error("Attempting to apply mapping without a valid type");
                         }
 
@@ -142,14 +146,14 @@ export default function MappingTable({
                             const mapping = await buildMapping({
                                 api,
                                 instanceApi,
-                                originModel: row.model,
+                                originModel: rowModel,
                                 destinationModel,
                                 originalId: _.last(id.split("-")) ?? id,
                                 mappedId,
                             });
                             _.set(newMapping, [mappingType, id], {
                                 ...mapping,
-                                global: row.model.getIsGlobalMapping(),
+                                global: rowModel.getIsGlobalMapping(),
                                 ...overrides,
                             });
                         }
@@ -164,7 +168,17 @@ export default function MappingTable({
             }
             loading.reset();
         },
-        [api, instanceApi, snackbar, loading, mapping, isChildrenMapping, onChangeMapping, rows]
+        [
+            api,
+            instanceApi,
+            snackbar,
+            loading,
+            mapping,
+            isChildrenMapping,
+            onChangeMapping,
+            rows,
+            model,
+        ]
     );
 
     const makeMappingGlobal = useCallback(
@@ -849,6 +863,7 @@ export default function MappingTable({
             <MetadataTable
                 models={models}
                 filterRows={filterRows}
+                transformRows={transformRows}
                 additionalColumns={columns}
                 additionalActions={actions}
                 notifyNewModel={notifyNewModel}

@@ -69,8 +69,14 @@ export class Instance {
         return Number(apiVersion);
     }
 
-    public toObject(): PublicInstance {
-        return _.omit(this.data, ["password"]);
+    public toObject(): InstanceData {
+        return _.cloneDeep(this.data);
+    }
+
+    public toPublicObject(): PublicInstance {
+        return _(this.data)
+            .omit(["password"])
+            .cloneDeep();
     }
 
     public validate(filter?: string[]): ValidationError[] {
