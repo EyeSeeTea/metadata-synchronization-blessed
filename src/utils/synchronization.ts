@@ -316,31 +316,15 @@ export const getCategoryOptionCombos = memoize(
     { serializer: (api: D2Api) => api.baseUrl }
 );
 
-export const getAllDimensions = memoize(
-    async (api: D2Api) => {
-        const { dimensions } = await api
-            .get<{ dimensions: Array<{ id: string }> }>("/dimensions", {
-                paging: false,
-                fields: "id",
-            })
-            .getData();
-
-        return dimensions.map(({ id }) => id);
-    },
-    { serializer: (api: D2Api) => api.baseUrl }
-);
-
 /**
  * Given all the aggregatedDataElements compile a list of dataElements
  * that have aggregation for their category options
  * @param MetadataMappingDictionary
  */
-export const getAggregatedOptions = async (
-    api: D2Api,
+export const getAggregatedOptions = (
     { aggregatedDataElements }: MetadataMappingDictionary,
     categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
-): Promise<CategoryOptionAggregationBuilder[]> => {
-    const dimensions = await getAllDimensions(api);
+): CategoryOptionAggregationBuilder[] => {
     const findOptionCombo = (mappedOption: string, mappedCombo?: string) =>
         categoryOptionCombos.find(
             ({ categoryCombo, categoryOptions }) =>
@@ -348,7 +332,7 @@ export const getAggregatedOptions = async (
                 categoryOptions?.map(({ id }) => id).includes(mappedOption)
         )?.id ?? mappedOption;
 
-    const validOptions = _.transform(
+    return _.transform(
         aggregatedDataElements,
         (result, { mapping = {} }, dataElement) => {
             const { categoryOptions, categoryCombos } = mapping;
@@ -373,14 +357,8 @@ export const getAggregatedOptions = async (
                 .value();
             result.push(...builders);
         },
-        [] as Omit<CategoryOptionAggregationBuilder, "category">[]
+        [] as CategoryOptionAggregationBuilder[]
     );
-
-    const result = _.flatten(
-        dimensions.map(category => validOptions.map(item => ({ ...item, category })))
-    );
-
-    return result;
 };
 
 // TODO: when all request to this use metadataRepository.getModelByType

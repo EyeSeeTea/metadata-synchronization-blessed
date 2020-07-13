@@ -1,7 +1,6 @@
 import { Ref } from "../types/d2-api";
 import fs from "fs";
 import _ from "lodash";
-import path from "path";
 import { Migration } from "../types/migrations";
 
 export function getDuplicatedIds<Obj extends Ref>(objects: Obj[]): string[] {
@@ -14,8 +13,7 @@ export function getDuplicatedIds<Obj extends Ref>(objects: Obj[]): string[] {
 }
 
 export function getMigrationsForNode(): Migration[] {
-    const directory = path.join(__dirname, "tasks");
-    const keys = _.sortBy(fs.readdirSync(directory));
+    const keys = _.sortBy(fs.readdirSync("./src/migrations/tasks"));
 
     return keys.map(key => {
         const fn = require("./tasks/" + key).default;
