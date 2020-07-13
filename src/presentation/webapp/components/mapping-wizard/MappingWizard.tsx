@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
     MetadataMapping,
-    MetadataMappingDictionary
+    MetadataMappingDictionary,
 } from "../../../../domain/instance/entities/MetadataMapping";
 import i18n from "../../../../locales";
 import { MetadataType } from "../../../../utils/d2";
@@ -52,11 +52,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
         {}
     );
 
-    const mappingKeys = _(mapping)
-        .mapValues(Object.keys)
-        .values()
-        .flatten()
-        .value();
+    const mappingKeys = _(mapping).mapValues(Object.keys).values().flatten().value();
 
     const filterRows = mappingKeys.map(cleanNestedMappedId);
 
