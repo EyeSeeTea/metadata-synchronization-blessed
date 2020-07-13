@@ -32,6 +32,7 @@ import { getAllIdentifiers, getFilterData, getOrgUnitSubtree, getRows } from "./
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     api?: D2Api;
     filterRows?: string[];
+    transformRows?: (rows: MetadataType[]) => MetadataType[];
     models: typeof D2Model[];
     selectedIds?: string[];
     excludedIds?: string[];
@@ -110,6 +111,7 @@ const uniqCombine = (items: any[]) =>
 const MetadataTable: React.FC<MetadataTableProps> = ({
     api: providedApi,
     filterRows,
+    transformRows = rows => rows,
     models,
     selectedIds = [],
     excludedIds = [],
@@ -541,7 +543,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     return (
         <ObjectsTable<MetadataType>
-            rows={rows}
+            rows={transformRows(rows)}
             columns={columns}
             details={model.getDetails()}
             onChangeSearch={updateSearch}
