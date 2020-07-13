@@ -162,68 +162,6 @@ export const optionFields = {
     },
 };
 
-export function isD2Model(d2: D2, modelName: string): boolean {
-    return !!d2.models[modelName];
-}
-
-export function cleanToModelName(d2: D2, id: string, caller: string): string | null {
-    // TODO: Here we make some transformations from dhis2 children model name in the metadata response
-    // to exepcted children name for the app. On the future when we have the code more refactored
-    // towards clean architecture, this transformations should be realized in the data layer
-    // previously to return response to the sync use case
-    if (isD2Model(d2, id)) {
-        return d2.models[id].plural;
-    } else if (id === "attributeValues") {
-        return "attributes";
-    } else if (id === "commentOptionSet") {
-        return "optionSets";
-    } else if (id === "groupSets" && caller.endsWith("Group")) {
-        return caller + "Sets";
-    } else if (id === "workflow") {
-        return "dataApprovalWorkflow";
-    } else if (id === "notificationTemplates") {
-        return "programNotificationTemplates";
-    }
-    // This options are for organisationUnit rule in organisationUnit model and
-    // currently does not exits organisationUnit include rules for organisationUnit model
-    else if (_.includes(["parent", "children", "ancestors"], id)) {
-        return caller;
-    } else {
-        return null;
-    }
-}
-
-export function cleanToAPIChildReferenceName(d2: D2, key: string, parent: string): string[] {
-    if (key === "attributes") {
-        return ["attributeValues"];
-    } else if (key === "optionSets") {
-        return _.compact([
-            d2.models[key].name,
-            d2.models[key].plural,
-            parent === "dataElement" ? "commentOptionSet" : null,
-        ]);
-    } else if (key === parent + "Sets" && parent.endsWith("Group")) {
-        return ["groupSets"];
-    } else if (key === "dataApprovalWorkflow") {
-        return ["workflow"];
-    } else if (key === "programNotificationTemplates") {
-        return ["notificationTemplates"];
-    } else if (key === "organisationUnit") {
-        return ["parent", "children", "ancestors"];
-    } else if (isD2Model(d2, key)) {
-        // Children reference name may be plural or singular
-        return [d2.models[key].name, d2.models[key].plural];
-    } else {
-        return [key];
-    }
-}
-
-export function getClassName(className: string): string | undefined {
-    return _(className)
-        .split(".")
-        .last();
-}
-
 export async function getCurrentUserOrganisationUnits(d2: D2): Promise<string[]> {
     const response: any = await d2.currentUser.getOrganisationUnits();
     const organisationUnitsIds: string[] = [...response.valuesContainerMap.keys()];

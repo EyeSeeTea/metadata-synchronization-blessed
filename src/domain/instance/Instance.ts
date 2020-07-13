@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 export interface InstanceData {
     id: string;
     name: string;
@@ -45,5 +47,9 @@ export default class Instance {
 
     public get apiVersion(): number | undefined {
         return this.version ? +this.version?.split(".")[1] : undefined;
+    }
+
+    public toObject(): Omit<InstanceData, "password"> {
+        return _.omit(this.data, ["password"]);
     }
 }

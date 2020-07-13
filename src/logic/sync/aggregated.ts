@@ -20,8 +20,8 @@ import {
 } from "../../utils/synchronization";
 import { GenericSync } from "./generic";
 import { promiseMap } from "../../utils/common";
-import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
-import { aggregatedTransformationsToDhis2 } from "../../data/synchronization/mappers/PackageTransformations";
+import { mapPackageToD2 } from "../../data/metadata/mappers/PackageMapper";
+import { aggregatedTransformationsToDhis2 } from "../../data/metadata/mappers/PackageTransformations";
 
 export class AggregatedSync extends GenericSync {
     public readonly type = "aggregated";
@@ -155,7 +155,7 @@ export class AggregatedSync extends GenericSync {
             );
         }
 
-        const versionedPayloadPackage = mapPackageToD2Version(
+        const versionedPayloadPackage = mapPackageToD2(
             instanceEntity.apiVersion,
             mappedPayloadPackage,
             aggregatedTransformationsToDhis2

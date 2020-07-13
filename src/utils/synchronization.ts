@@ -1,7 +1,6 @@
 import i18n from "@dhis2/d2-i18n";
 import { AxiosError } from "axios";
 import { D2Api, D2CategoryOptionCombo } from "../types/d2-api";
-import { isValidUid } from "d2/uid";
 import FileSaver from "file-saver";
 import _ from "lodash";
 import moment, { Moment } from "moment";
@@ -14,73 +13,20 @@ import {
     CategoryOptionAggregationBuilder,
     DataSyncAggregation,
     DataSynchronizationParams,
-    NestedRules,
     SynchronizationResult,
     SyncRuleType,
 } from "../types/synchronization";
 import "../utils/lodash-mixins";
 import { promiseMap } from "./common";
-import { cleanToAPIChildReferenceName, cleanToModelName, getClassName } from "./d2";
 import { AggregatedPackage, ProgramEvent, DataValue } from "../domain/synchronization/DataEntities";
-import { MetadataPackage } from "../domain/synchronization/MetadataEntities";
 
-const blacklistedProperties = ["access"];
-const userProperties = ["user", "userAccesses", "userGroupAccesses"];
-
-export function buildNestedRules(rules: string[][] = []): NestedRules {
-    return _(rules)
-        .filter(path => path.length > 1)
-        .groupBy(_.first)
-        .mapValues(path => path.map(_.tail))
-        .value();
-}
-
-export function cleanObject(
-    d2: D2,
-    modelName: string,
-    element: any,
-    excludeRules: string[][] = [],
-    includeSharingSettings: boolean
-): any {
-    const leafRules: string[] = _(excludeRules)
-        .filter(path => path.length === 1)
-        .map(_.first)
-        .compact()
-        .value();
-
-    const cleanLeafRules = leafRules.reduce(
-        (accumulator: string[], rule: string) => [
-            ...accumulator,
-            ...cleanToAPIChildReferenceName(d2, rule, modelName),
-        ],
-        []
-    );
-
-    const propsToRemove = includeSharingSettings ? [] : userProperties;
-
-    return _.pick(
-        element,
-        _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove)
-    );
-}
-
-export function cleanReferences(
-    references: MetadataPackage,
-    includeRules: string[][] = []
-): string[] {
-    const rules = _(includeRules)
-        .map(_.first)
-        .compact()
-        .value();
-
-    return _.intersection(_.keys(references), rules);
-}
-
+//TODO: when all request to metadata using metadataRepository.getMetadataByIds
+// this function should be removed
 export async function getMetadata(
     api: D2Api,
     elements: string[],
     fields = ":all"
-): Promise<MetadataPackage> {
+): Promise<Record<string, any[]>> {
     const promises = [];
     for (let i = 0; i < elements.length; i += 100) {
         const requestElements = elements.slice(i, i + 100).toString();
@@ -119,74 +65,6 @@ function buildResponseError(error: AxiosError): MetadataImportResponse {
         console.error(error);
         return { status: "NETWORK ERROR" };
     }
-}
-
-export function getAllReferences(
-    d2: D2,
-    obj: any,
-    type: string,
-    parents: string[] = []
-): MetadataPackage {
-    let result: MetadataPackage = {};
-    _.forEach(obj, (value, key) => {
-        if (_.isObject(value) || _.isArray(value)) {
-            const recursive = getAllReferences(d2, value, type, [...parents, key]);
-            result = _.deepMerge(result, recursive);
-        } else if (isValidUid(value)) {
-            const metadataType = _(parents)
-                .map(k => cleanToModelName(d2, k, type))
-                .compact()
-                .first();
-            if (metadataType) {
-                result[metadataType] = result[metadataType] || [];
-                result[metadataType].push(value);
-            }
-        }
-    });
-    return result;
-}
-
-export function cleanMetadataImportResponse(
-    importResult: MetadataImportResponse,
-    instance: Instance,
-    type: SyncRuleType
-): SynchronizationResult {
-    const { status: importStatus, stats, message, typeReports = [] } = importResult;
-    const status = importStatus === "OK" ? "SUCCESS" : importStatus;
-    const typeStats: any[] = [];
-    const messages: any[] = [];
-
-    typeReports.forEach(report => {
-        const { klass, stats, objectReports = [] } = report;
-
-        typeStats.push({
-            ...stats,
-            type: getClassName(klass),
-        });
-
-        objectReports.forEach((detail: any) => {
-            const { uid, errorReports = [] } = detail;
-
-            messages.push(
-                ..._.take(errorReports, 1).map((error: any) => ({
-                    uid,
-                    type: getClassName(error.mainKlass),
-                    property: error.errorProperty,
-                    message: error.message,
-                }))
-            );
-        });
-    });
-
-    return {
-        status,
-        stats,
-        message,
-        instance: instance.toObject(),
-        report: { typeStats, messages },
-        date: new Date(),
-        type,
-    };
 }
 
 export function cleanDataImportResponse(
@@ -417,6 +295,8 @@ export const getDefaultIds = memoize(
     { serializer: (api: D2Api) => api.baseUrl }
 );
 
+// TODO: when all request to metadata using metadataRepository.getModelByType
+// this function should be removed
 export const getCategoryOptionCombos = memoize(
     async (api: D2Api) => {
         const { objects } = await api.models.categoryOptionCombos
@@ -481,6 +361,8 @@ export const getAggregatedOptions = (
     );
 };
 
+// TODO: when all request to this use metadataRepository.getModelByType
+// this function should be removed
 export const getRootOrgUnit = memoize(
     (api: D2Api) => {
         return api.models.organisationUnits.get({
@@ -599,7 +481,7 @@ export async function postEventsData(
     return postData(instance, "/events", data, _.pick(additionalParams, ["dryRun"]));
 }
 
-export function buildMetadataDictionary(metadataPackage: MetadataPackage) {
+export function buildMetadataDictionary(metadataPackage: Record<string, any[]>) {
     return _(metadataPackage)
         .values()
         .flatten()

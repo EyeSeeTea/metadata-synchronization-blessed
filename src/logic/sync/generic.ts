@@ -21,19 +21,19 @@ import {
 import { promiseMap } from "../../utils/common";
 import { getMetadata } from "../../utils/synchronization";
 import { AggregatedSync } from "./aggregated";
-import { DeletedSync } from "./deleted";
+import { DeletedMetadataSyncUseCase } from "../../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { EventsSync } from "./events";
-import { MetadataSync } from "./metadata";
-import { MetadataPackage } from "../../domain/synchronization/MetadataEntities";
+import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
 import { AggregatedPackage, EventsPackage } from "../../domain/synchronization/DataEntities";
 import InstanceRepository from "../../domain/instance/InstanceRepository";
 import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";
+import { MetadataPackage } from "../../domain/metadata/entities";
 
 export type SyncronizationClass =
-    | typeof MetadataSync
+    | typeof MetadataSyncUseCase
     | typeof AggregatedSync
     | typeof EventsSync
-    | typeof DeletedSync;
+    | typeof DeletedMetadataSyncUseCase;
 export type SyncronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
 export abstract class GenericSync {

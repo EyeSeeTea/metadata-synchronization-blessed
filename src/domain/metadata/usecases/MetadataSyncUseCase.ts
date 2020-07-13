@@ -1,26 +1,30 @@
-import { D2ModelSchemas, D2Api } from "../../types/d2-api";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { d2ModelFactory } from "../../models/dhis/factory";
-import Instance from "../../models/instance";
-import InstanceEntity from "../../domain/instance/Instance";
-import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../types/synchronization";
-import { promiseMap } from "../../utils/common";
+
+import InstanceEntity from "../../instance/Instance";
+import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic";
+import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
+import { MetadataRepository } from "../MetadataRepositoriy";
+import { MetadataPackage, MetadataEntities } from "../entities";
+import { Ref } from "../../common/entities";
 import {
     buildNestedRules,
-    cleanMetadataImportResponse,
     cleanObject,
-    cleanReferences,
     getAllReferences,
-    getMetadata,
-} from "../../utils/synchronization";
-import { GenericSync, SyncronizationPayload } from "./generic";
-import { MetadataPackage } from "../../domain/synchronization/MetadataEntities";
-import MetadataD2ApiRepository from "../../data/synchronization/repositories/MetadataD2ApiRepository";
-import { MetadataRepository } from "../../domain/synchronization/MetadataRepositoriy";
-import { D2 } from "../../types/d2";
+    cleanReferences,
+    cleanMetadataImportResponse,
+} from "../utils";
 
-export class MetadataSync extends GenericSync {
+//TODO: Uncouple this dependencies. This class should be moved to domain
+// and It should have not any dependency outside from the domain
+import { D2Api } from "../../../types/d2-api";
+import { D2 } from "../../../types/d2";
+import Instance from "../../../models/instance";
+import { d2ModelFactory } from "../../../models/dhis/factory";
+import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../../types/synchronization";
+import { promiseMap } from "../../../utils/common";
+
+export class MetadataSyncUseCase extends GenericSync {
     public readonly type = "metadata";
     private metadataRepository: MetadataRepository;
 
@@ -36,7 +40,10 @@ export class MetadataSync extends GenericSync {
         const visitedIds: Set<string> = new Set();
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
             const { type, ids, excludeRules, includeRules, includeSharingSettings } = builder;
+
+            //TODO: when metadata entities schema exists on domain, move this factory to domain
             const model = d2ModelFactory(this.api, type).getD2Model(this.d2);
+            const collectionName = model.plural as keyof MetadataEntities;
             const result: MetadataPackage = {};
 
             // Each level of recursion traverse the exclude/include rules with nested values
@@ -44,8 +51,8 @@ export class MetadataSync extends GenericSync {
             const nestedIncludeRules: NestedRules = buildNestedRules(includeRules);
 
             // Get all the required metadata
-            const syncMetadata = await getMetadata(this.api, ids);
-            const elements = syncMetadata[model.plural] || [];
+            const syncMetadata = await this.metadataRepository.getMetadataByIds(ids);
+            const elements = syncMetadata[collectionName] || [];
 
             for (const element of elements) {
                 // Store metadata object in result
@@ -56,15 +63,16 @@ export class MetadataSync extends GenericSync {
                     excludeRules,
                     includeSharingSettings
                 );
-                result[model.plural] = result[model.plural] || [];
-                result[model.plural].push(object);
+
+                result[collectionName] = result[collectionName] || [];
+                result[collectionName]?.push(object);
 
                 // Get all the referenced metadata
-                const references: MetadataPackage = getAllReferences(this.d2, object, model.name);
+                const references = getAllReferences(this.d2, object, model.name);
                 const includedReferences = cleanReferences(references, includeRules);
                 const promises = includedReferences
                     .map(type => ({
-                        type: type as keyof D2ModelSchemas,
+                        type: type as keyof MetadataEntities,
                         ids: references[type].filter(id => !visitedIds.has(id)),
                         excludeRules: nestedExcludeRules[type],
                         includeRules: nestedIncludeRules[type],
@@ -94,14 +102,20 @@ export class MetadataSync extends GenericSync {
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
 
-        const metadata = await getMetadata(this.api, metadataIds, "id");
+        const metadata = await this.metadataRepository.getMetadataFieldsByIds<Ref>(
+            metadataIds,
+            "id"
+        );
+
         const exportResults = await promiseMap(_.keys(metadata), type => {
             const myClass = d2ModelFactory(this.api, type);
             const metadataType = myClass.getMetadataType();
 
+            const metadatatype = type as keyof MetadataEntities;
+
             return this.exportMetadata({
-                type: type as keyof D2ModelSchemas,
-                ids: metadata[type].map(e => e.id),
+                type: metadatatype,
+                ids: metadata[metadatatype]?.map(e => e.id) || [],
                 excludeRules: useDefaultIncludeExclude
                     ? myClass.getExcludeRules()
                     : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
@@ -112,10 +126,19 @@ export class MetadataSync extends GenericSync {
             });
         });
 
-        return _.mapValues(_.deepMerge({}, ...exportResults), elements => _.uniqBy(elements, "id"));
+        const metadataPackage: MetadataPackage = _.deepMerge({}, ...exportResults);
+        const metadataWithoutDuplicates: MetadataPackage = _.mapValues(metadataPackage, elements =>
+            _.uniqBy(elements, "id")
+        );
+
+        return metadataWithoutDuplicates;
     });
 
     public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
+        //TODO: remove instance from abstract method in base base class
+        // when aggregated and events does not use
+        console.log(instance.url);
+
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
@@ -127,7 +150,7 @@ export class MetadataSync extends GenericSync {
             syncParams,
             instanceEntity
         );
-        const syncResult = cleanMetadataImportResponse(response, instance, this.type);
+        const syncResult = cleanMetadataImportResponse(response, instanceEntity, this.type);
         return [syncResult];
     }
 

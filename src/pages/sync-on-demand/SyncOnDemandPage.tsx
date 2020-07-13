@@ -10,10 +10,10 @@ import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { AggregatedSync } from "../../logic/sync/aggregated";
-import { DeletedSync } from "../../logic/sync/deleted";
+import { DeletedMetadataSyncUseCase } from "../../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { EventsSync } from "../../logic/sync/events";
 import { SyncronizationClass } from "../../logic/sync/generic";
-import { MetadataSync } from "../../logic/sync/metadata";
+import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
 import { D2Model } from "../../models/dhis/default";
 import { metadataModels } from "../../models/dhis/factory";
 import {
@@ -45,7 +45,7 @@ const config: Record<
         title: i18n.t("Metadata Synchronization"),
         models: metadataModels,
         childrenKeys: undefined,
-        SyncClass: MetadataSync,
+        SyncClass: MetadataSyncUseCase,
     },
     aggregated: {
         title: i18n.t("Aggregated Data Synchronization"),
@@ -69,7 +69,7 @@ const config: Record<
         title: i18n.t("Deleted Objects Synchronization"),
         models: [],
         childrenKeys: undefined,
-        SyncClass: DeletedSync,
+        SyncClass: DeletedMetadataSyncUseCase,
     },
 };
 

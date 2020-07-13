@@ -26,8 +26,8 @@ import {
 } from "../../utils/synchronization";
 import { AggregatedSync } from "./aggregated";
 import { GenericSync, SyncronizationPayload } from "./generic";
-import { mapPackageToD2Version } from "../../data/synchronization/mappers/D2VersionPackageMapper";
-import { eventsTransformationsToDhis2 } from "../../data/synchronization/mappers/PackageTransformations";
+import { mapPackageToD2 } from "../../data/metadata/mappers/PackageMapper";
+import { eventsTransformationsToDhis2 } from "../../data/metadata/mappers/PackageTransformations";
 
 export class EventsSync extends GenericSync {
     public readonly type = "events";
@@ -98,7 +98,7 @@ export class EventsSync extends GenericSync {
             );
         }
 
-        const versionedPayloadPackage = mapPackageToD2Version(
+        const versionedPayloadPackage = mapPackageToD2(
             instanceEntity.apiVersion,
             payload,
             eventsTransformationsToDhis2

@@ -50,7 +50,7 @@ export const metadataModels = [
     metadataClasses.UserGroupModel,
     metadataClasses.UserRoleModel,
     metadataClasses.TrackedEntityAttributeModel,
-    metadataClasses.TrackedEntityTypeModel
+    metadataClasses.TrackedEntityTypeModel,
 ];
 
 const findClasses = (key: string, value: string) => {

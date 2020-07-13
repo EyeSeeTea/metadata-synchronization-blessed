@@ -151,46 +151,60 @@ const includeExcludeRulesFriendlyNames: {
     "trackedEntityAttributes.legendSets": "Legends of tracked entity attributes",
     "users.userRoles": "User roles of users",
     "users.userGroups": "User groups of users",
-    "options": "Options",
+    options: "Options",
     "options.attributes": "Attributes of options",
     "optionSets.attributes": "Attributes of option sets",
     "trackedEntityAttributes.optionSets": "Option sets of tracked entity attributes",
-    "trackedEntityAttributes.optionSets.options": "Options of Option sets in tracked entity attributes",
-    "userRoles": "User roles",
+    "trackedEntityAttributes.optionSets.options":
+        "Options of Option sets in tracked entity attributes",
+    userRoles: "User roles",
     "userRoles.users": "Users in user roles",
-    "userGroups": "User groups",
+    userGroups: "User groups",
     "userGroups.users": "Users in user groups",
     "userGroups.attributes": "Attributes of user groups",
-    "categoryOptions": "Category options",
+    categoryOptions: "Category options",
     "categoryOptions.attributes": "Attributes of category options",
-    "categories": "Categories",
+    categories: "Categories",
     "categories.attributes": "Attributes of categories",
     "categories.categoryOptions": "Category options in categories",
     "categories.categoryOptions.attributes": "Attributes of Category options in categories",
-    "categoryOptionGroups": "Category option groups",
+    categoryOptionGroups: "Category option groups",
     "categoryOptionGroups.attributes": "Attributes of category option groups",
-    "categoryOptionGroups.categoryOptionGroupSets": "Category option group sets of category option groups",
-    "categoryOptionGroups.categoryOptionGroupSets.attributes": "Attributes of category option group sets of category option groups",
-    "categoryOptionGroupSets": "Category option group sets",
+    "categoryOptionGroups.categoryOptionGroupSets":
+        "Category option group sets of category option groups",
+    "categoryOptionGroups.categoryOptionGroupSets.attributes":
+        "Attributes of category option group sets of category option groups",
+    categoryOptionGroupSets: "Category option group sets",
     "categoryOptionGroupSets.attributes": "Attributes of category option group sets",
     "categoryCombos.categories.attributes": "Attributes of categories of category combinations",
-    "categoryCombos.categories.categoryOptions": "Category options in categories of category combinations",
-    "categoryCombos.categories.categoryOptions.attributes": "Attributes of category options in categories of category combinations",
+    "categoryCombos.categories.categoryOptions":
+        "Category options in categories of category combinations",
+    "categoryCombos.categories.categoryOptions.attributes":
+        "Attributes of category options in categories of category combinations",
     "categoryOptionGroups.categoryOptions": "Category options in category option groups",
-    "categoryOptionGroups.categoryOptions.attributes": "Attributes of category options in category option groups",
-    "programStageSections": "Program stage sections",
-    "dataElements.categoryCombos.categoryOptionCombos.categoryOptions.attributes": "Attributes of category options in category option combos of category combos of data elements",
+    "categoryOptionGroups.categoryOptions.attributes":
+        "Attributes of category options in category option groups",
+    programStageSections: "Program stage sections",
+    "dataElements.categoryCombos.categoryOptionCombos.categoryOptions.attributes":
+        "Attributes of category options in category option combos of category combos of data elements",
     "dataElements.categoryCombos.categories.attributes": "",
-    "programNotificationTemplates": "Program notification templates",
+    programNotificationTemplates: "Program notification templates",
     "dataElements.legendSets.attributes": "Attributes of legend sets of data elements",
     "dataElements.optionSets.attributes": "Attributes of option sets of data elements",
-    "dataElements.optionSets.options.attributes": "Attributes of options in option sets of data elements",
-    "categoryCombos.categoryOptionCombos.categoryOptions.attributes": "Attributes of category options in category option combos of category combos",
-    "programStages.dataElements.legendSets.attributes": "Attributes of legend sets of data elements in program stages",
-    "programStages.dataElements.optionSets.attributes": "Attributes of option sets of data elements in program stages",
-    "programStages.dataElements.optionSets.options.attributes": "Attributes of options in option sets of data elements  in program stages",
-    "categoryOptions.categories.categoryOptions": "Category options of categories in category options",
-    "categoryCombos.categories.categoryCombos": "Category combinations of categories in category combinations",
+    "dataElements.optionSets.options.attributes":
+        "Attributes of options in option sets of data elements",
+    "categoryCombos.categoryOptionCombos.categoryOptions.attributes":
+        "Attributes of category options in category option combos of category combos",
+    "programStages.dataElements.legendSets.attributes":
+        "Attributes of legend sets of data elements in program stages",
+    "programStages.dataElements.optionSets.attributes":
+        "Attributes of option sets of data elements in program stages",
+    "programStages.dataElements.optionSets.options.attributes":
+        "Attributes of options in option sets of data elements  in program stages",
+    "categoryOptions.categories.categoryOptions":
+        "Category options of categories in category options",
+    "categoryCombos.categories.categoryCombos":
+        "Category combinations of categories in category combinations",
     "categoryOptions.categoryOptionCombos": "Category option combinations of categories options",
 };
 

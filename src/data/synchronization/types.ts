@@ -1,10 +1,11 @@
-export interface D2MetadataPackage {
-    [metadataType: string]: any[];
-}
-export interface D2AggregatedPackage {
-    dataValues: any[];
-}
+import { MetadataEntities } from "../../domain/metadata/entities";
 
-export interface D2EventsPackage {
+export type D2MetadataPackage = Partial<Record<keyof MetadataEntities, any[]>>;
+
+export type D2AggregatedPackage = {
+    dataValues: any[];
+};
+
+export type D2EventsPackage = {
     events: any[];
-}
+};

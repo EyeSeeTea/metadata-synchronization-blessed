@@ -6,13 +6,13 @@ import i18n from "../../../locales";
 import { D2Model } from "../../../models/dhis/default";
 import { d2ModelFactory } from "../../../models/dhis/factory";
 import { D2, ModelDefinition } from "../../../types/d2";
-import { MetadataPackage } from "../../../domain/synchronization/MetadataEntities";
 import { getMetadata } from "../../../utils/synchronization";
 import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 import includeExcludeRulesFriendlyNames from "./RulesFriendlyNames";
 import { useAppContext } from "../../../contexts/ApiContext";
+import { MetadataPackage } from "../../../domain/metadata/entities";
 
 const useStyles = makeStyles({
     includeExcludeContainer: {

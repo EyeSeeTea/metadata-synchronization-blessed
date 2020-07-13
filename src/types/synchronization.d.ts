@@ -2,6 +2,8 @@ import { D2ModelSchemas, Ref } from "../types/d2-api";
 import SyncReport from "../models/syncReport";
 import { DataImportParams, ImportStatus, MetadataImportParams, MetadataImportStats } from "./d2";
 
+//TODO: Review this to move it to domain
+
 export interface SynchronizationBuilder {
     targetInstances: string[];
     metadataIds: string[];
