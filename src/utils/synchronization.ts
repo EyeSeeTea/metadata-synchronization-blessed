@@ -86,7 +86,7 @@ export const mapCategoryOptionCombo = (
         );
 
         // Candidates built from equal category options
-        const candidates = _.filter(destinationCategoryOptionCombos, o =>
+        const candidates = destinationCategoryOptionCombos.filter(o =>
             _.isEqual(
                 _.sortBy(o.categoryOptions, ["id"]),
                 _.sortBy(

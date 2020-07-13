@@ -75,10 +75,9 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
             ({ dataElement }) => !!_.find(dataElements, { id: dataElement })
         );
 
-        const dataValues = _([...directDataValues, ...indirectDataValues])
-            .uniqWith(_.isEqual)
-            .reject(({ dataElement }) => excludedIds.includes(dataElement))
-            .value();
+        const dataValues = [...directDataValues, ...indirectDataValues].filter(
+            ({ dataElement }) => !excludedIds.includes(dataElement)
+        );
 
         return { dataValues };
     };
@@ -129,8 +128,8 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
             includeCategories: false,
         });
 
-        const dataValues = _.reject([...dataElementValues, ...indicatorValues], ({ dataElement }) =>
-            excludedIds.includes(dataElement)
+        const dataValues = [...dataElementValues, ...indicatorValues].filter(
+            ({ dataElement }) => !excludedIds.includes(dataElement)
         );
 
         return { dataValues };
