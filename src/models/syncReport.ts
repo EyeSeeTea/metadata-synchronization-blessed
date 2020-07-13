@@ -1,14 +1,14 @@
-import { D2Api } from "../types/d2-api";
 import { TableInitialState, TablePagination } from "d2-ui-components";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
-import { SyncReportTableFilters } from "../types/d2-ui-components";
 import {
     SynchronizationReport,
     SynchronizationReportStatus,
-    SynchronizationResult,
-    SyncRuleType,
-} from "../types/synchronization";
+} from "../domain/synchronization/entities/SynchronizationReport";
+import { SynchronizationResult } from "../domain/synchronization/entities/SynchronizationResult";
+import { SyncRuleType } from "../domain/synchronization/entities/SynchronizationRule";
+import { D2Api } from "../types/d2-api";
+import { SyncReportTableFilters } from "../types/d2-ui-components";
 import {
     deleteData,
     deleteDataStore,
@@ -25,7 +25,7 @@ type Optional<T, K extends keyof T> = Omit<T, K> & { [P in Extract<keyof T, K>]?
 
 export default class SyncReport {
     private results: SynchronizationResult[] | null;
-    private readonly syncReport: SynchronizationReport;
+    public readonly syncReport: SynchronizationReport;
 
     constructor(syncReport: Optional<SynchronizationReport, "id">) {
         this.results = null;

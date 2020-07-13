@@ -1,5 +1,7 @@
 import _ from "lodash";
 
+export type PublicInstance = Omit<InstanceData, "password">;
+
 export interface InstanceData {
     id: string;
     name: string;
@@ -45,11 +47,13 @@ export default class Instance {
         return this.data.version;
     }
 
-    public get apiVersion(): number | undefined {
-        return this.version ? +this.version?.split(".")[1] : undefined;
+    public get apiVersion(): number {
+        const apiVersion = _.get(this.version?.split("."), 1);
+        if (!apiVersion) throw new Error("Invalid api version");
+        return Number(apiVersion);
     }
 
-    public toObject(): Omit<InstanceData, "password"> {
+    public toObject(): PublicInstance {
         return _.omit(this.data, ["password"]);
     }
 }

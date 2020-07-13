@@ -1,7 +1,7 @@
-import { Ref } from "../types/d2-api";
 import fs from "fs";
 import _ from "lodash";
-import { Migration } from "../types/migrations";
+import { Ref } from "../types/d2-api";
+import { Migration } from "./types";
 
 export function getDuplicatedIds<Obj extends Ref>(objects: Obj[]): string[] {
     return _(objects)

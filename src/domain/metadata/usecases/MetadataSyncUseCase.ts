@@ -1,30 +1,24 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-
-import InstanceEntity from "../../instance/Instance";
-import { GenericSync, SyncronizationPayload } from "../../../logic/sync/generic";
-import MetadataD2ApiRepository from "../../../data/metadata/repositories/MetadataD2ApiRepository";
-import { MetadataRepository } from "../MetadataRepositoriy";
-import { MetadataPackage, MetadataEntities } from "../entities";
-import { Ref } from "../../common/entities";
-import {
-    buildNestedRules,
-    cleanObject,
-    getAllReferences,
-    cleanReferences,
-    cleanMetadataImportResponse,
-} from "../utils";
-
-//TODO: Uncouple this dependencies. This class should be moved to domain
-// and It should have not any dependency outside from the domain
-import { D2Api } from "../../../types/d2-api";
-import { D2 } from "../../../types/d2";
-import Instance from "../../../models/instance";
+import MetadataD2ApiRepository from "../../../data/metadata/MetadataD2ApiRepository";
 import { d2ModelFactory } from "../../../models/dhis/factory";
+import Instance from "../../../models/instance";
+import { D2 } from "../../../types/d2";
+import { D2Api } from "../../../types/d2-api";
 import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
+import { Ref } from "../../common/entities/Schemas";
+import InstanceEntity from "../../instance/Instance";
+import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
+import {
+    GenericSyncUseCase,
+    SyncronizationPayload,
+} from "../../synchronization/usecases/GenericSyncUseCase";
+import { MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
+import { MetadataRepository } from "../repositories/MetadataRepository";
+import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
-export class MetadataSyncUseCase extends GenericSync {
+export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
     private metadataRepository: MetadataRepository;
 
@@ -134,7 +128,10 @@ export class MetadataSyncUseCase extends GenericSync {
         return metadataWithoutDuplicates;
     });
 
-    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
+    public async postPayload(
+        instance: Instance,
+        instanceEntity: InstanceEntity
+    ): Promise<SynchronizationResult[]> {
         //TODO: remove instance from abstract method in base base class
         // when aggregated and events does not use
         console.log(instance.url);
@@ -145,12 +142,12 @@ export class MetadataSyncUseCase extends GenericSync {
 
         console.debug("Metadata package", payloadPackage);
 
-        const response = await this.metadataRepository.save(
+        const syncResult = await this.metadataRepository.save(
             payloadPackage,
             syncParams,
             instanceEntity
         );
-        const syncResult = cleanMetadataImportResponse(response, instanceEntity, this.type);
+
         return [syncResult];
     }
 

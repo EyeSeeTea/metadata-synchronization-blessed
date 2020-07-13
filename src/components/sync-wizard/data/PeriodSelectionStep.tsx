@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core";
 import { DatePicker } from "d2-ui-components";
 import _ from "lodash";
 import React from "react";
-import { DataSyncPeriod } from "../../../types/synchronization";
+import { DataSyncPeriod } from "../../../domain/aggregated/types";
 import { availablePeriods } from "../../../utils/synchronization";
 import Dropdown from "../../dropdown/Dropdown";
 import { SyncWizardStepProps } from "../Steps";

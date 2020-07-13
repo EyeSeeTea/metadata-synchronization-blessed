@@ -4,7 +4,6 @@ import { Response } from "../types/d2";
 import { TableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 
 export const dataStoreNamespace = "metadata-synchronization";
-export const dataStoreVersion = 1;
 
 export async function getDataStore<T extends object>(
     api: D2Api,

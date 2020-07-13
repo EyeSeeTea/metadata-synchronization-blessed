@@ -2,7 +2,7 @@ import i18n from "@dhis2/d2-i18n";
 import { makeStyles } from "@material-ui/core";
 import { useSnackbar } from "d2-ui-components";
 import React from "react";
-import { DataSyncAggregation } from "../../../types/synchronization";
+import { DataSyncAggregation } from "../../../domain/aggregated/types";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";

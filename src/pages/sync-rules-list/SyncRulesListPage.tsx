@@ -5,13 +5,13 @@ import {
     DatePicker,
     ObjectsTable,
     ObjectsTableDetailField,
+    ReferenceObject,
     TableAction,
     TableColumn,
+    TableSelection,
+    TableState,
     useLoading,
     useSnackbar,
-    TableState,
-    ReferenceObject,
-    TableSelection,
 } from "d2-ui-components";
 import _ from "lodash";
 import { Moment } from "moment";
@@ -22,15 +22,16 @@ import PageHeader from "../../components/page-header/PageHeader";
 import SharingDialog from "../../components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import { AggregatedSync } from "../../logic/sync/aggregated";
-import { EventsSync } from "../../logic/sync/events";
-import { SyncronizationClass } from "../../logic/sync/generic";
+import { useAppContext } from "../../contexts/ApiContext";
+import { AggregatedSyncUseCase } from "../../domain/aggregated/usecases/AggregatedSyncUseCase";
+import { EventsSyncUseCase } from "../../domain/events/usecases/EventsSyncUseCase";
 import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
+import { SyncRuleType } from "../../domain/synchronization/entities/SynchronizationRule";
+import { SyncronizationClass } from "../../domain/synchronization/usecases/GenericSyncUseCase";
 import Instance from "../../models/instance";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
 import { D2 } from "../../types/d2";
-import { SyncRuleType } from "../../types/synchronization";
 import { getValueForCollection } from "../../utils/d2-ui-components";
 import {
     getUserInfo,
@@ -41,7 +42,6 @@ import {
 } from "../../utils/permissions";
 import { requestJSONDownload } from "../../utils/synchronization";
 import { getValidationMessages } from "../../utils/validations";
-import { useAppContext } from "../../contexts/ApiContext";
 
 const config: {
     [key: string]: {
@@ -55,11 +55,11 @@ const config: {
     },
     aggregated: {
         title: i18n.t("Aggregated Data Synchronization Rules"),
-        SyncClass: AggregatedSync,
+        SyncClass: AggregatedSyncUseCase,
     },
     events: {
         title: i18n.t("Events Synchronization Rules"),
-        SyncClass: EventsSync,
+        SyncClass: EventsSyncUseCase,
     },
 };
 

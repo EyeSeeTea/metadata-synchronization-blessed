@@ -1,17 +1,18 @@
 import axiosRetry from "axios-retry";
 import btoa from "btoa";
 import { init } from "d2";
-import { D2Api } from "../types/d2-api";
 import "dotenv/config";
 import fs from "fs";
 import _ from "lodash";
 import { configure, getLogger } from "log4js";
 import path from "path";
 import * as yargs from "yargs";
-import Scheduler from "./scheduler";
 import { MigrationsRunner } from "../migrations";
 import { getMigrationsForNode } from "../migrations/utils";
 import Instance from "../models/instance";
+import { D2 } from "../types/d2";
+import { D2Api } from "../types/d2-api";
+import Scheduler from "./scheduler";
 
 const development = process.env.NODE_ENV === "development";
 
@@ -66,7 +67,7 @@ const start = async (): Promise<void> => {
     getLogger("main").info(welcomeMessage);
 
     Instance.setEncryptionKey(encryptionKey);
-    new Scheduler(d2, api).initialize();
+    new Scheduler(d2 as D2, api).initialize();
 };
 
 start().catch(console.error);

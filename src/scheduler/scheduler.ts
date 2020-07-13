@@ -1,26 +1,29 @@
 import cronstrue from "cronstrue";
-import { D2Api } from "../types/d2-api";
 import _ from "lodash";
 import { getLogger } from "log4js";
 import schedule from "node-schedule";
+import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
+import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
+import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
+import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
+import {
+    SynchronizationRule,
+    SyncRuleType,
+} from "../domain/synchronization/entities/SynchronizationRule";
+import { SyncronizationClass } from "../domain/synchronization/usecases/GenericSyncUseCase";
 import SyncRule from "../models/syncRule";
 import { D2 } from "../types/d2";
-import { SynchronizationRule, SyncRuleType } from "../types/synchronization";
-import { AggregatedSync } from "../logic/sync/aggregated";
-import { EventsSync } from "../logic/sync/events";
-import { SyncronizationClass } from "../logic/sync/generic";
-import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
-import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
+import { D2Api } from "../types/d2-api";
 
 const config: Record<SyncRuleType, { SyncClass: SyncronizationClass }> = {
     metadata: {
         SyncClass: MetadataSyncUseCase,
     },
     aggregated: {
-        SyncClass: AggregatedSync,
+        SyncClass: AggregatedSyncUseCase,
     },
     events: {
-        SyncClass: EventsSync,
+        SyncClass: EventsSyncUseCase,
     },
     deleted: {
         SyncClass: DeletedMetadataSyncUseCase,
