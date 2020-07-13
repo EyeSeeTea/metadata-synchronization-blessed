@@ -1,5 +1,5 @@
 import cronstrue from "cronstrue";
-import { D2Api } from "d2-api";
+import { D2Api } from "../types/d2-api";
 import _ from "lodash";
 import { getLogger } from "log4js";
 import schedule from "node-schedule";
@@ -7,14 +7,14 @@ import SyncRule from "../models/syncRule";
 import { D2 } from "../types/d2";
 import { SynchronizationRule, SyncRuleType } from "../types/synchronization";
 import { AggregatedSync } from "../logic/sync/aggregated";
-import { DeletedSync } from "../logic/sync/deleted";
 import { EventsSync } from "../logic/sync/events";
 import { SyncronizationClass } from "../logic/sync/generic";
-import { MetadataSync } from "../logic/sync/metadata";
+import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
+import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 
 const config: Record<SyncRuleType, { SyncClass: SyncronizationClass }> = {
     metadata: {
-        SyncClass: MetadataSync,
+        SyncClass: MetadataSyncUseCase,
     },
     aggregated: {
         SyncClass: AggregatedSync,
@@ -23,7 +23,7 @@ const config: Record<SyncRuleType, { SyncClass: SyncronizationClass }> = {
         SyncClass: EventsSync,
     },
     deleted: {
-        SyncClass: DeletedSync,
+        SyncClass: DeletedMetadataSyncUseCase,
     },
 };
 

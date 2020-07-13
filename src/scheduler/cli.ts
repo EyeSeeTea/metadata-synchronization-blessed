@@ -1,7 +1,7 @@
 import axiosRetry from "axios-retry";
 import btoa from "btoa";
 import { init } from "d2";
-import { D2Api, D2ApiDefault } from "d2-api";
+import { D2Api } from "../types/d2-api";
 import "dotenv/config";
 import fs from "fs";
 import _ from "lodash";
@@ -57,7 +57,7 @@ const start = async (): Promise<void> => {
     if (!baseUrl || !username || !password) throw new Error("Couldn't connect to server");
 
     const authorization = `Basic ${btoa(username + ":" + password)}`;
-    const api = new D2ApiDefault({ baseUrl, auth: { username, password } });
+    const api = new D2Api({ baseUrl, auth: { username, password } });
     const d2 = await init({ baseUrl: `${baseUrl}/api`, headers: { authorization } });
     await checkMigrations(api);
 
