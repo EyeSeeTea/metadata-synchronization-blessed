@@ -7,7 +7,7 @@ import { StorageRepositoryConstructor } from "../../storage/repositories/Storage
 import { MetadataResponsible } from "../entities/MetadataResponsible";
 import { Either } from "../../common/entities/Either";
 
-export class ListResponsiblesUseCase implements UseCase {
+export class GetResponsibleUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(

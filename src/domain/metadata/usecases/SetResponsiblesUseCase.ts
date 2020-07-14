@@ -8,7 +8,7 @@ import { MetadataResponsible } from "../entities/MetadataResponsible";
 import { NamedRef } from "../../common/entities/Ref";
 import { MetadataEntities } from "../entities/MetadataEntities";
 
-export class ListResponsiblesUseCase implements UseCase {
+export class SetResponsiblesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(

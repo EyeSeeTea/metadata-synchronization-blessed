@@ -21,10 +21,14 @@ import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesU
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
+import { GetResponsibleUseCase } from "../domain/metadata/usecases/GetResponsibleUseCase";
 import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
 import { ListAllMetadataUseCase } from "../domain/metadata/usecases/ListAllMetadataUseCase";
 import { ListMetadataUseCase } from "../domain/metadata/usecases/ListMetadataUseCase";
+import { ListResponsiblesUseCase } from "../domain/metadata/usecases/ListResponsiblesUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
+import { RemoveResponsiblesUseCase } from "../domain/metadata/usecases/RemoveResponsibleUseCase";
+import { SetResponsiblesUseCase } from "../domain/metadata/usecases/SetResponsiblesUseCase";
 import { DeleteModuleUseCase } from "../domain/modules/usecases/DeleteModuleUseCase";
 import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/DownloadModuleSnapshotUseCase";
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
@@ -112,6 +116,16 @@ export class CompositionRoot {
             list: new ListMetadataUseCase(this.repositoryFactory, this.localInstance),
             listAll: new ListAllMetadataUseCase(this.repositoryFactory, this.localInstance),
             import: new ImportMetadataUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get responsibles() {
+        return getExecute({
+            get: new GetResponsibleUseCase(this.repositoryFactory, this.localInstance),
+            set: new SetResponsiblesUseCase(this.repositoryFactory, this.localInstance),
+            remove: new RemoveResponsiblesUseCase(this.repositoryFactory, this.localInstance),
+            list: new ListResponsiblesUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
