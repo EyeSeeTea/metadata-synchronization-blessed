@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-10T07:51:37.536Z\n"
-"PO-Revision-Date: 2020-07-10T07:51:37.536Z\n"
+"POT-Creation-Date: 2020-07-14T08:35:16.177Z\n"
+"PO-Revision-Date: 2020-07-14T08:35:16.177Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -334,6 +334,9 @@ msgid "Select with children subtree"
 msgstr ""
 
 msgid "Select"
+msgstr ""
+
+msgid "Set responsible user"
 msgstr ""
 
 msgid "Search by "

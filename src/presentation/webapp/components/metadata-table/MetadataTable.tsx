@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
+import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
 import {
@@ -44,6 +44,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
     notifyNewModel?(model: typeof D2Model): void;
     notifyRowsChange?(rows: MetadataType[]): void;
+    allowChangingResponsible?: boolean;
 }
 
 const useStyles = makeStyles({
@@ -102,6 +103,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     loading: providedLoading,
     initialShowOnlySelected = false,
     showIndeterminateSelection = false,
+    allowChangingResponsible = false,
     ...rest
 }) => {
     const { compositionRoot, d2 } = useAppContext();
@@ -331,6 +333,18 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             multiple: true,
             onClick: addToSelection,
             isActive: () => false,
+        },
+        {
+            name: "set-responsible",
+            text: i18n.t("Set responsible user"),
+            multiple: true,
+            icon: <Icon>supervisor_account</Icon>,
+            onClick: () => snackbar.warning("Not implemented"),
+            isActive: () =>
+                allowChangingResponsible &&
+                !remoteInstance &&
+                (model.getCollectionName() === "dataSets" ||
+                    model.getCollectionName() === "programs"),
         },
     ];
 
