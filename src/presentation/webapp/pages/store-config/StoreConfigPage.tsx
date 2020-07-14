@@ -70,9 +70,24 @@ const ModulesConfigPage: React.FC = () => {
         loading.reset();
     }, [compositionRoot, state, validateError, snackbar, loading]);
 
-    const clearFields = useCallback(() => {
-        setState({});
-    }, []);
+    const reset = useCallback(async () => {
+        updateDialog({
+            title: i18n.t("Reset store configuration"),
+            description: i18n.t(
+                "You will clear the existing configuration for all users in this instance.\nDo you want to proceed?"
+            ),
+            onCancel: () => {
+                updateDialog(null);
+            },
+            onSave: async () => {
+                await compositionRoot.store.update({} as Store, false);
+                updateDialog(null);
+                close();
+            },
+            cancelText: i18n.t("Cancel"),
+            saveText: i18n.t("Proceed"),
+        });
+    }, [compositionRoot, close]);
 
     const save = useCallback(async () => {
         loading.show(true, i18n.t("Saving store connection"));
@@ -187,10 +202,10 @@ const ModulesConfigPage: React.FC = () => {
                     <div className={classes.actionButtonsContainer}>
                         <Button
                             variant="contained"
-                            onClick={clearFields}
+                            onClick={reset}
                             className={classes.actionButton}
                         >
-                            {i18n.t("Clear")}
+                            {i18n.t("Reset")}
                         </Button>
                         <Button
                             variant="contained"

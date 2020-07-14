@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-14T11:24:34.964Z\n"
-"PO-Revision-Date: 2020-07-14T11:24:34.964Z\n"
+"POT-Creation-Date: 2020-07-14T11:29:27.939Z\n"
+"PO-Revision-Date: 2020-07-14T11:29:27.939Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1137,15 +1137,23 @@ msgstr ""
 msgid "Connected successfully"
 msgstr ""
 
+msgid "Reset store configuration"
+msgstr ""
+
+msgid ""
+"You will clear the existing configuration for all users in this instance.\n"
+"Do you want to proceed?"
+msgstr ""
+
+msgid "Proceed"
+msgstr ""
+
 msgid "Saving store connection"
 msgstr ""
 
 msgid ""
 "There are issues with the connection details you provided.\n"
 "Do you want to proceed?"
-msgstr ""
-
-msgid "Proceed"
 msgstr ""
 
 msgid "- Create a repository at https://github.com/new"
@@ -1166,7 +1174,7 @@ msgstr ""
 msgid "GitHub personal access token (*)"
 msgstr ""
 
-msgid "Clear"
+msgid "Reset"
 msgstr ""
 
 msgid "New {{type}} synchronization rule"
