@@ -6,7 +6,8 @@ import {
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import Linkify from "react-linkify";
 import { useHistory } from "react-router-dom";
 import { GitHubError } from "../../../../domain/packages/entities/Errors";
 import { Store } from "../../../../domain/packages/entities/Store";
@@ -71,7 +72,7 @@ const ModulesConfigPage: React.FC = () => {
 
     const clearFields = useCallback(() => {
         setState({});
-    }, [])
+    }, []);
 
     const save = useCallback(async () => {
         loading.show(true, i18n.t("Saving store connection"));
@@ -102,6 +103,38 @@ const ModulesConfigPage: React.FC = () => {
         loading.reset();
     }, [compositionRoot, state, validateError, close, loading]);
 
+    const helpContainer = useMemo(
+        () => (
+            <Linkify>
+                <p>{i18n.t("To connect with a module store you need to:")}</p>
+                <p>
+                    {i18n.t("- Create a repository at https://github.com/new", {
+                        nsSeparator: false,
+                    })}
+                </p>
+                <p>
+                    {i18n.t(
+                        "- Create a personal access token at https://github.com/settings/tokens/new",
+                        { nsSeparator: false }
+                    )}
+                </p>
+                <p>
+                    {i18n.t(
+                        "The personal access token requires either 'public_repo' or 'repo' scopes depending if the repository is public or private"
+                    )}
+                </p>
+                <div className={classes.center}>
+                    <img
+                        className={classes.helpImage}
+                        src="/img/help-store-github.png"
+                        alt={i18n.t("Create a personal access token on GitHub")}
+                    />
+                </div>
+            </Linkify>
+        ),
+        [classes]
+    );
+
     return (
         <React.Fragment>
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
@@ -109,6 +142,8 @@ const ModulesConfigPage: React.FC = () => {
             <PageHeader
                 title={i18n.t("Module store connection")}
                 onBackClick={close}
+                help={helpContainer}
+                helpSize={"lg"}
             />
 
             <Paper className={classes.paper}>
@@ -150,10 +185,18 @@ const ModulesConfigPage: React.FC = () => {
                         </Button>
                     </div>
                     <div className={classes.actionButtonsContainer}>
-                        <Button variant="contained" onClick={clearFields} className={classes.actionButton}>
+                        <Button
+                            variant="contained"
+                            onClick={clearFields}
+                            className={classes.actionButton}
+                        >
                             {i18n.t("Clear")}
                         </Button>
-                        <Button variant="contained" onClick={testConnection} className={classes.actionButton}>
+                        <Button
+                            variant="contained"
+                            onClick={testConnection}
+                            className={classes.actionButton}
+                        >
                             {i18n.t("Test Connection")}
                         </Button>
                     </div>
@@ -181,7 +224,7 @@ const useStyles = makeStyles({
         marginTop: 10,
     },
     actionButton: {
-        margin: 10
+        margin: 10,
     },
     saveButton: {
         margin: 10,
@@ -199,6 +242,12 @@ const useStyles = makeStyles({
         borderRadius: 0,
         marginRight: 20,
         marginLeft: 0,
+    },
+    helpImage: {
+        width: "75%",
+    },
+    center: {
+        textAlign: "center",
     },
 });
 

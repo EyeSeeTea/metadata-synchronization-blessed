@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-14T10:16:00.579Z\n"
-"PO-Revision-Date: 2020-07-14T10:16:00.579Z\n"
+"POT-Creation-Date: 2020-07-14T11:24:34.964Z\n"
+"PO-Revision-Date: 2020-07-14T11:24:34.964Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1122,6 +1122,9 @@ msgstr ""
 msgid "Cancel module editing"
 msgstr ""
 
+msgid "The token is empty"
+msgstr ""
+
 msgid "The token is invalid"
 msgstr ""
 
@@ -1132,9 +1135,6 @@ msgid "Testing GitHub connection"
 msgstr ""
 
 msgid "Connected successfully"
-msgstr ""
-
-msgid "You need to provide all fields"
 msgstr ""
 
 msgid "Saving store connection"
@@ -1148,6 +1148,15 @@ msgstr ""
 msgid "Proceed"
 msgstr ""
 
+msgid "- Create a repository at https://github.com/new"
+msgstr ""
+
+msgid "- Create a personal access token at https://github.com/settings/tokens/new"
+msgstr ""
+
+msgid "Create a personal access token on GitHub"
+msgstr ""
+
 msgid "GitHub account or organisation (*)"
 msgstr ""
 
@@ -1155,6 +1164,9 @@ msgid "GitHub repository (*)"
 msgstr ""
 
 msgid "GitHub personal access token (*)"
+msgstr ""
+
+msgid "Clear"
 msgstr ""
 
 msgid "New {{type}} synchronization rule"
@@ -1306,4 +1318,8 @@ msgid "Last year"
 msgstr ""
 
 msgid "Last 5 years"
+msgstr ""
+
+msgctxt "repo' or 'repo' scopes depending if the repository is public or private"
+msgid "The personal access token requires either 'public"
 msgstr ""

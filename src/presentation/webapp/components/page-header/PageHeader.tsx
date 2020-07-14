@@ -10,6 +10,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     title,
     onBackClick,
     help,
+    helpSize = "sm",
     children,
 }) => {
     return (
@@ -34,7 +35,15 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             >
                 {title}
             </Typography>
-            {help && renderHelpButton(help)}
+            {help && (
+                <DialogButton
+                    buttonComponent={Button}
+                    title={i18n.t("Help")}
+                    maxWidth={helpSize}
+                    fullWidth={true}
+                    contents={help}
+                />
+            )}
             {children}
         </div>
     );
@@ -45,6 +54,7 @@ export interface PageHeaderProps {
     title: string;
     onBackClick?: () => void;
     help?: ReactNode;
+    helpSize?: "xs" | "sm" | "md" | "lg" | "xl";
 }
 
 const styles = {
@@ -59,16 +69,6 @@ const Button = ({ onClick }: ButtonProps) => (
             <Icon color="primary">help</Icon>
         </IconButton>
     </Tooltip>
-);
-
-const renderHelpButton = (help: ReactNode) => (
-    <DialogButton
-        buttonComponent={Button}
-        title={i18n.t("Help")}
-        maxWidth={"sm"}
-        fullWidth={true}
-        contents={help}
-    />
 );
 
 export default PageHeader;
