@@ -124,7 +124,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 const sync = compositionRoot.sync[module.type](builder);
                 for await (const { message, syncReport, done } of sync.execute()) {
                     if (message) loading.show(true, message);
-                    if (syncReport) syncReport.save(api);
+                    if (syncReport) await syncReport.save(api);
                     if (done) {
                         loading.reset();
                         return;
