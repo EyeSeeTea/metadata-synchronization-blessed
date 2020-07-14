@@ -2314,6 +2314,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-linkify@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-linkify/-/react-linkify-1.0.0.tgz#72278026e9f945ddf895c1e9c094353d8a680812"
+  integrity sha512-2NKXPQGaHNfh/dCqkVC55k1tAhQyNoNZa31J50nIneMVwHqUI00FAP+Lyp8e0BarPf84kn4GRVAhtWX9XJBzSQ==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-router-dom@5.1.5":
   version "5.1.5"
   resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-5.1.5.tgz#7c334a2ea785dbad2b2dcdd83d2cf3d9973da090"
@@ -13081,7 +13088,7 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-linkify@^1.0.0-alpha:
+react-linkify@1.0.0-alpha, react-linkify@^1.0.0-alpha:
   version "1.0.0-alpha"
   resolved "https://registry.yarnpkg.com/react-linkify/-/react-linkify-1.0.0-alpha.tgz#b391c7b88e3443752fafe76a95ca4434e82e70d5"
   integrity sha512-7gcIUvJkAXXttt1fmBK9cwn+1jTa4hbKLGCZ9J1U6EOkyb2/+LKL1Z28d9rtDLMnpvImlNlLPdTPooorl5cpmg==
