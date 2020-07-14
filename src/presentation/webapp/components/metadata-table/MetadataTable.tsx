@@ -335,6 +335,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     ];
 
     useEffect(() => {
+        updateFilters(state => ({
+            ...state,
+            page: initialState.pagination.page,
+        }));
+    }, [remoteInstance]);
+
+    useEffect(() => {
         if (model.getCollectionName() === "organisationUnits") return;
 
         compositionRoot.metadata
