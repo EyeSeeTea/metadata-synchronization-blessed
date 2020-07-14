@@ -41,6 +41,8 @@ const ModulesConfigPage: React.FC = () => {
 
     const validateError = useCallback((error?: GitHubError): string => {
         switch (error) {
+            case "NO_TOKEN":
+                return i18n.t("The token is empty");
             case "BAD_CREDENTIALS":
                 return i18n.t("The token is invalid");
             case "NOT_FOUND":
@@ -54,19 +56,15 @@ const ModulesConfigPage: React.FC = () => {
     const testConnection = useCallback(async () => {
         loading.show(true, i18n.t("Testing GitHub connection"));
 
-        if (state.token && state.account && state.repository) {
-            const validation = await compositionRoot.store.validate(state as Store);
-            validation.match({
-                error: error => {
-                    snackbar.error(validateError(error));
-                },
-                success: () => {
-                    snackbar.success(i18n.t("Connected successfully"));
-                },
-            });
-        } else {
-            snackbar.warning(i18n.t("You need to provide all fields"));
-        }
+        const validation = await compositionRoot.store.validate(state as Store);
+        validation.match({
+            error: error => {
+                snackbar.error(validateError(error));
+            },
+            success: () => {
+                snackbar.success(i18n.t("Connected successfully"));
+            },
+        });
 
         loading.reset();
     }, [compositionRoot, state, validateError, snackbar, loading]);
@@ -74,42 +72,40 @@ const ModulesConfigPage: React.FC = () => {
     const save = useCallback(async () => {
         loading.show(true, i18n.t("Saving store connection"));
 
-        if (state.token && state.account && state.repository) {
-            const validation = await compositionRoot.store.update(state as Store);
-            validation.match({
-                error: error => {
-                    updateDialog({
-                        title: validateError(error),
-                        description: i18n.t(
-                            "There are issues with the connection details you provided.\nDo you want to proceed?"
-                        ),
-                        onCancel: () => {
-                            updateDialog(null);
-                        },
-                        onSave: async () => {
-                            await compositionRoot.store.update(state as Store, false);
-                            updateDialog(null);
-                            close();
-                        },
-                        cancelText: i18n.t("Cancel"),
-                        saveText: i18n.t("Proceed"),
-                    });
-                },
-                success: close,
-            });
+        const validation = await compositionRoot.store.update(state as Store);
+        validation.match({
+            error: error => {
+                updateDialog({
+                    title: validateError(error),
+                    description: i18n.t(
+                        "There are issues with the connection details you provided.\nDo you want to proceed?"
+                    ),
+                    onCancel: () => {
+                        updateDialog(null);
+                    },
+                    onSave: async () => {
+                        await compositionRoot.store.update(state as Store, false);
+                        updateDialog(null);
+                        close();
+                    },
+                    cancelText: i18n.t("Cancel"),
+                    saveText: i18n.t("Proceed"),
+                });
+            },
+            success: close,
+        });
 
-            loading.reset();
-        } else {
-            snackbar.warning(i18n.t("You need to provide all fields"));
-            loading.reset();
-        }
+        loading.reset();
     }, [compositionRoot, state, validateError, close, snackbar, loading]);
 
     return (
         <React.Fragment>
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
 
-            <PageHeader title={i18n.t("Module store connection")} onBackClick={close} />
+            <PageHeader
+                title={i18n.t("Module store connection")}
+                onBackClick={close}
+            />
 
             <Paper className={classes.paper}>
                 <TextField
@@ -131,7 +127,7 @@ const ModulesConfigPage: React.FC = () => {
                 <TextField
                     className={classes.row}
                     fullWidth={true}
-                    label={i18n.t("GitHub access token (*)")}
+                    label={i18n.t("GitHub personal access token (*)")}
                     value={state.token ?? ""}
                     onChange={onChangeField("token")}
                 />

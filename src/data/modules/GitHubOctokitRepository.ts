@@ -89,6 +89,8 @@ export class GitHubOctokitRepository implements GitHubRepository {
     public async validateStore(store: Store): Promise<Either<GitHubError, StorePermissions>> {
         try {
             const { token, account, repository } = store;
+            if (!token.trim()) return Either.error("NO_TOKEN");
+
             const octokit = await this.getOctoKit(token);
             const { login: username } = await this.getCurrentUser(store);
 
