@@ -2,7 +2,6 @@ import { Icon } from "@material-ui/core";
 import {
     ObjectsTable,
     ObjectsTableDetailField,
-    PaginationOptions,
     TableAction,
     TableColumn,
     TableSelection,
@@ -14,9 +13,9 @@ import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { Package } from "../../../../domain/modules/entities/Package";
 import i18n from "../../../../locales";
+import SyncReport from "../../../../models/syncReport";
 import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
 import { useAppContext } from "../../contexts/AppContext";
-import SyncReport from "../../../../models/syncReport";
 
 type ListPackage = Omit<Package, "contents">;
 

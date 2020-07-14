@@ -3,7 +3,6 @@ import { Icon } from "@material-ui/core";
 import {
     ObjectsTable,
     ObjectsTableDetailField,
-    PaginationOptions,
     TableAction,
     TableColumn,
     TableSelection,
