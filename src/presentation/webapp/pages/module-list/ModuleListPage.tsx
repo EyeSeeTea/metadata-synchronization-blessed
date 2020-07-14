@@ -1,18 +1,30 @@
 import i18n from "@dhis2/d2-i18n";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import SyncReport from "../../../../models/syncReport";
 import { ModulesListTable } from "../../../common/components/module-list-table/ModuleListTable";
 import { PackagesListTable } from "../../../common/components/package-list-table/PackageListTable";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
+
+export interface ModuleListPageProps {
+    remoteInstance?: Instance;
+    onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
+    presentation?: "app" | "widget";
+    externalComponents?: ReactNode;
+    pageSizeOptions?: number[];
+    openSyncSummary?: (result: SyncReport) => void;
+}
 
 export const ModuleListPage: React.FC = () => {
     const { compositionRoot } = useAppContext();
     const history = useHistory();
     const [instances, setInstances] = useState<Instance[]>([]);
     const [selectedInstance, setSelectedInstance] = useState<Instance>();
+    const [syncReport, setSyncReport] = useState<SyncReport>();
 
     const { list: tableOption = "modules" } = useParams<{ list: "modules" | "packages" }>();
     const title = buildTitle(tableOption);
@@ -75,16 +87,25 @@ export const ModuleListPage: React.FC = () => {
         <React.Fragment>
             <PageHeader title={title} onBackClick={backHome} />
 
+            {!!syncReport && (
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
+            )}
+
             {tableOption === "modules" && (
                 <ModulesListTable
                     externalComponents={filters}
                     onActionButtonClick={!selectedInstance ? createModule : undefined}
                     remoteInstance={selectedInstance}
+                    openSyncSummary={setSyncReport}
                 />
             )}
 
             {tableOption === "packages" && (
-                <PackagesListTable externalComponents={filters} remoteInstance={selectedInstance} />
+                <PackagesListTable
+                    externalComponents={filters}
+                    remoteInstance={selectedInstance}
+                    openSyncSummary={setSyncReport}
+                />
             )}
         </React.Fragment>
     );
