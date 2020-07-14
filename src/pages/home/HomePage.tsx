@@ -5,7 +5,7 @@ import { Landing } from "../../components/landing/Landing";
 import { MenuCardProps } from "../../components/landing/MenuCard";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { isAppConfigurator, shouldShowDeletedObjects } from "../../utils/permissions";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 const LandingPage: React.FC = () => {
     const { api } = useAppContext();

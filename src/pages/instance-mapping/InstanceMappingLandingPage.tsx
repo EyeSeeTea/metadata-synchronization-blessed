@@ -5,7 +5,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { Card, Landing } from "../../components/landing/Landing";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import Instance from "../../models/instance";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 const InstanceMappingLandingPage: React.FC = () => {
     const { api } = useAppContext();

@@ -1,6 +1,5 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import MetadataD2ApiRepository from "../../../data/metadata/MetadataD2ApiRepository";
 import { d2ModelFactory } from "../../../models/dhis/factory";
 import Instance from "../../../models/instance";
 import { D2 } from "../../../types/d2";
@@ -9,6 +8,7 @@ import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../../typ
 import { promiseMap } from "../../../utils/common";
 import { Ref } from "../../common/entities/Schemas";
 import InstanceEntity from "../../instance/Instance";
+import InstanceRepository from "../../instance/InstanceRepository";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import {
     GenericSyncUseCase,
@@ -20,14 +20,15 @@ import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
-    private metadataRepository: MetadataRepository;
 
-    constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
-        super(d2, api, builder);
-
-        //TODO: composition root - This dependency should be injected by constructor when we have
-        // composition root
-        this.metadataRepository = new MetadataD2ApiRepository(api);
+    constructor(
+        d2: D2,
+        api: D2Api,
+        builder: SynchronizationBuilder,
+        instance: InstanceRepository,
+        private metadataRepository: MetadataRepository
+    ) {
+        super(d2, api, builder, instance);
     }
 
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {

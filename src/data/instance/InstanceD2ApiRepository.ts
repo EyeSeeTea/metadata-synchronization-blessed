@@ -9,18 +9,7 @@ import { cache } from "../../utils/cache";
 const instancesDataStoreKey = "instances";
 
 export default class InstanceD2ApiRepository implements InstanceRepository {
-    private api: D2Api;
-
-    //TODO: composition root - This dependency should be injected by constructor when we have
-    // composition root. Currently the unique solution is to have this static field
-    // and assign the value from app.jsx that It's where encryptionKey is loaded usign appConfig.
-    public static encryptionKey: string;
-
-    constructor(d2Api: D2Api) {
-        //TODO: composition root - when we have composition root evaluate if has sense
-        // that this dependency should be current instance instead of D2Api
-        this.api = d2Api;
-    }
+    constructor(private api: D2Api, private encryptionKey: string) {}
 
     public async getById(id: string): Promise<Instance> {
         const instanceData = await getDataById<InstanceData>(this.api, instancesDataStoreKey, id);
@@ -74,7 +63,7 @@ export default class InstanceD2ApiRepository implements InstanceRepository {
     private decryptPassword(encryptedPassword: string): string {
         const rawPassword =
             encryptedPassword.length > 0
-                ? new Cryptr(InstanceD2ApiRepository.encryptionKey).decrypt(encryptedPassword)
+                ? new Cryptr(this.encryptionKey).decrypt(encryptedPassword)
                 : "";
         return rawPassword;
     }

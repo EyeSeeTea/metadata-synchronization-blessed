@@ -4,7 +4,7 @@ import { useHistory, useLocation, useParams } from "react-router-dom";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncWizard from "../../components/sync-wizard/SyncWizard";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 import { SyncRuleType } from "../../domain/synchronization/entities/SynchronizationRule";
 import i18n from "../../locales";
 import SyncRule from "../../models/syncRule";

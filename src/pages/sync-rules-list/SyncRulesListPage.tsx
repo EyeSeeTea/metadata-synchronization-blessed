@@ -22,12 +22,8 @@ import PageHeader from "../../components/page-header/PageHeader";
 import SharingDialog from "../../components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import { useAppContext } from "../../contexts/ApiContext";
-import { AggregatedSyncUseCase } from "../../domain/aggregated/usecases/AggregatedSyncUseCase";
-import { EventsSyncUseCase } from "../../domain/events/usecases/EventsSyncUseCase";
-import { MetadataSyncUseCase } from "../../domain/metadata/usecases/MetadataSyncUseCase";
+import { useAppContext } from "../../contexts/AppContext";
 import { SyncRuleType } from "../../domain/synchronization/entities/SynchronizationRule";
-import { SyncronizationClass } from "../../domain/synchronization/usecases/GenericSyncUseCase";
 import Instance from "../../models/instance";
 import SyncReport from "../../models/syncReport";
 import SyncRule from "../../models/syncRule";
@@ -46,20 +42,16 @@ import { getValidationMessages } from "../../utils/validations";
 const config: {
     [key: string]: {
         title: string;
-        SyncClass: SyncronizationClass;
     };
 } = {
     metadata: {
         title: i18n.t("Metadata Synchronization Rules"),
-        SyncClass: MetadataSyncUseCase,
     },
     aggregated: {
         title: i18n.t("Aggregated Data Synchronization Rules"),
-        SyncClass: AggregatedSyncUseCase,
     },
     events: {
         title: i18n.t("Events Synchronization Rules"),
-        SyncClass: EventsSyncUseCase,
     },
 };
 
@@ -69,7 +61,7 @@ const enabledFilterData = [
 ];
 
 const SyncRulesPage: React.FC = () => {
-    const { d2, api } = useAppContext();
+    const { d2, api, compositionRoot } = useAppContext();
     const loading = useLoading();
     const snackbar = useSnackbar();
     const history = useHistory();
@@ -188,8 +180,11 @@ const SyncRulesPage: React.FC = () => {
         if (!id) return;
         loading.show(true, "Generating JSON file");
         const rule = await SyncRule.get(api, id);
-        const { SyncClass } = config[rule.type];
-        await requestJSONDownload(SyncClass, rule, d2 as D2, api);
+
+        const sync = compositionRoot.sync[rule.type](rule.toBuilder());
+        const payload = await sync.buildPayload();
+
+        requestJSONDownload(payload, rule);
         loading.reset();
     };
 
@@ -269,9 +264,8 @@ const SyncRulesPage: React.FC = () => {
         const rule = await SyncRule.get(api, id);
 
         const { builder, id: syncRule, type = "metadata" } = rule;
-        const { SyncClass } = config[type];
 
-        const sync = new SyncClass(d2 as D2, api, { ...builder, syncRule });
+        const sync = compositionRoot.sync[type]({ ...builder, syncRule });
         for await (const { message, syncReport, done } of sync.execute()) {
             if (message) loading.show(true, message);
             if (syncReport) await syncReport.save(api);

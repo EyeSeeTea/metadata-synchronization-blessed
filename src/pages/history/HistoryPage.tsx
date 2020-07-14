@@ -24,7 +24,7 @@ import SyncRule from "../../models/syncRule";
 import { getValueForCollection } from "../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../utils/permissions";
 import { Typography } from "@material-ui/core";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 import {
     SyncRuleType,
     SynchronizationRule,

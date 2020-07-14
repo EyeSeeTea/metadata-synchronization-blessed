@@ -17,7 +17,7 @@ import {
 import { getMetadata } from "../../../utils/synchronization";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { SyncWizardStepProps } from "../Steps";
-import { useAppContext } from "../../../contexts/ApiContext";
+import { useAppContext } from "../../../contexts/AppContext";
 
 const config = {
     metadata: {

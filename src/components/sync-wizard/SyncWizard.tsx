@@ -7,7 +7,7 @@ import { promiseMap } from "../../utils/common";
 import { getMetadata } from "../../utils/synchronization";
 import { getValidationMessages } from "../../utils/validations";
 import { aggregatedSteps, deletedSteps, eventsSteps, metadataSteps } from "./Steps";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 interface SyncWizardProps {
     syncRule: SyncRule;

@@ -7,7 +7,7 @@ import i18n from "../../../locales";
 import { D2 } from "../../../types/d2";
 import { getCurrentUserOrganisationUnits } from "../../../utils/d2";
 import { SyncWizardStepProps } from "../Steps";
-import { useAppContext } from "../../../contexts/ApiContext";
+import { useAppContext } from "../../../contexts/AppContext";
 
 const useStyles = makeStyles({
     loading: {

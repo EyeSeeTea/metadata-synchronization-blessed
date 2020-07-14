@@ -23,7 +23,7 @@ import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import Instance, { InstanceData } from "../../models/instance";
 import { executeAnalytics } from "../../utils/analytics";
 import { isAppConfigurator } from "../../utils/permissions";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 const InstanceListPage = () => {
     const { api } = useAppContext();

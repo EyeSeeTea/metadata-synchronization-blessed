@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import i18n from "../../locales";
 import { Typography, CircularProgress, makeStyles } from "@material-ui/core";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 const useStyles = makeStyles({
     loading: {

@@ -16,7 +16,7 @@ import {
     OrganisationUnitMappedModel,
 } from "../../models/dhis/mapping";
 import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../models/instance";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 

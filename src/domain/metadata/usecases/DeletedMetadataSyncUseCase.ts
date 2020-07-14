@@ -1,11 +1,11 @@
 import memoize from "nano-memoize";
-import MetadataD2ApiRepository from "../../../data/metadata/MetadataD2ApiRepository";
 import Instance from "../../../models/instance";
 import { D2 } from "../../../types/d2";
 import { D2Api } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { Ref } from "../../common/entities/Schemas";
 import InstanceEntity from "../../instance/Instance";
+import InstanceRepository from "../../instance/InstanceRepository";
 import {
     GenericSyncUseCase,
     SyncronizationPayload,
@@ -15,14 +15,14 @@ import { MetadataRepository } from "../repositories/MetadataRepository";
 export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "deleted";
 
-    private metadataRepository: MetadataRepository;
-
-    constructor(d2: D2, api: D2Api, builder: SynchronizationBuilder) {
-        super(d2, api, builder);
-
-        //TODO: composition root - This dependency should be injected by constructor when we have
-        // composition root
-        this.metadataRepository = new MetadataD2ApiRepository(api);
+    constructor(
+        d2: D2,
+        api: D2Api,
+        builder: SynchronizationBuilder,
+        instance: InstanceRepository,
+        private metadataRepository: MetadataRepository
+    ) {
+        super(d2, api, builder, instance);
     }
 
     public buildPayload = memoize(async () => {

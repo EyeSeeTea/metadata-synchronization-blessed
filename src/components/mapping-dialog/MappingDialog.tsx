@@ -11,7 +11,7 @@ import { D2 } from "../../types/d2";
 import { MetadataType } from "../../utils/d2";
 import { buildDataElementFilterForProgram, getValidIds } from "../mapping-table/utils";
 import MetadataTable from "../metadata-table/MetadataTable";
-import { useAppContext } from "../../contexts/ApiContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 export interface MappingDialogConfig {
     elements: string[];
