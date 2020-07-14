@@ -120,7 +120,8 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             else {
                 loading.show(true, i18n.t("Pulling metadata from module {{name}}", module));
 
-                const sync = compositionRoot.sync[module.type](module.toSyncBuilder());
+                const builder = module.update({ instance: remoteInstance?.id }).toSyncBuilder();
+                const sync = compositionRoot.sync[module.type](builder);
                 for await (const { message, syncReport, done } of sync.execute()) {
                     if (message) loading.show(true, message);
                     if (syncReport) syncReport.save(api);
@@ -131,7 +132,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 }
             }
         },
-        [compositionRoot, loading, rows, snackbar, api]
+        [compositionRoot, remoteInstance, loading, rows, snackbar, api]
     );
 
     const replicateModule = useCallback(
