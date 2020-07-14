@@ -3,6 +3,7 @@ import { MultiSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { MetadataPackage } from "../../../../../domain/metadata/entities/MetadataEntities";
+import { includeExcludeRulesFriendlyNames } from "../../../../../domain/metadata/entities/MetadataFriendlyNames";
 import { MetadataModule } from "../../../../../domain/modules/entities/MetadataModule";
 import i18n from "../../../../../locales";
 import { D2Model } from "../../../../../models/dhis/default";
@@ -13,7 +14,6 @@ import { useAppContext } from "../../../../common/contexts/AppContext";
 import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { ModuleWizardStepProps } from "../Steps";
-import { includeExcludeRulesFriendlyNames } from "./RulesFriendlyNames";
 
 export const MetadataIncludeExcludeStep: React.FC<ModuleWizardStepProps<MetadataModule>> = ({
     module,

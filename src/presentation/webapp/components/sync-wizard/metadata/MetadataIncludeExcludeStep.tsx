@@ -2,17 +2,17 @@ import { makeStyles } from "@material-ui/core";
 import { MultiSelector, withSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { useAppContext } from "../../../../common/contexts/AppContext";
 import { MetadataPackage } from "../../../../../domain/metadata/entities/MetadataEntities";
+import { includeExcludeRulesFriendlyNames } from "../../../../../domain/metadata/entities/MetadataFriendlyNames";
 import i18n from "../../../../../locales";
 import { D2Model } from "../../../../../models/dhis/default";
 import { d2ModelFactory } from "../../../../../models/dhis/factory";
 import { D2, ModelDefinition } from "../../../../../types/d2";
 import { getMetadata } from "../../../../../utils/synchronization";
+import { useAppContext } from "../../../../common/contexts/AppContext";
 import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
-import includeExcludeRulesFriendlyNames from "./RulesFriendlyNames";
 
 const useStyles = makeStyles({
     includeExcludeContainer: {

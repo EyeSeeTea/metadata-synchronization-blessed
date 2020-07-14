@@ -6,6 +6,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { AggregatedSyncUseCase } from "../../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { EventsSyncUseCase } from "../../../../../domain/events/usecases/EventsSyncUseCase";
+import { includeExcludeRulesFriendlyNames } from "../../../../../domain/metadata/entities/MetadataFriendlyNames";
 import { MetadataSyncUseCase } from "../../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { cleanOrgUnitPaths } from "../../../../../domain/synchronization/utils";
 import i18n from "../../../../../locales";
@@ -17,7 +18,6 @@ import {
 } from "../../../../../utils/synchronization";
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import { buildAggregationItems } from "../data/AggregationStep";
-import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
 import { buildInstanceOptions } from "./InstanceSelectionStep";
 
 const LiEntry = ({ label, value, children }) => {
