@@ -69,6 +69,10 @@ const ModulesConfigPage: React.FC = () => {
         loading.reset();
     }, [compositionRoot, state, validateError, snackbar, loading]);
 
+    const clearFields = useCallback(() => {
+        setState({});
+    }, [])
+
     const save = useCallback(async () => {
         loading.show(true, i18n.t("Saving store connection"));
 
@@ -96,7 +100,7 @@ const ModulesConfigPage: React.FC = () => {
         });
 
         loading.reset();
-    }, [compositionRoot, state, validateError, close, snackbar, loading]);
+    }, [compositionRoot, state, validateError, close, loading]);
 
     return (
         <React.Fragment>
@@ -146,7 +150,10 @@ const ModulesConfigPage: React.FC = () => {
                         </Button>
                     </div>
                     <div className={classes.actionButtonsContainer}>
-                        <Button variant="contained" onClick={testConnection}>
+                        <Button variant="contained" onClick={clearFields} className={classes.actionButton}>
+                            {i18n.t("Clear")}
+                        </Button>
+                        <Button variant="contained" onClick={testConnection} className={classes.actionButton}>
                             {i18n.t("Test Connection")}
                         </Button>
                     </div>
@@ -172,6 +179,9 @@ const useStyles = makeStyles({
     },
     actionButtonsContainer: {
         marginTop: 10,
+    },
+    actionButton: {
+        margin: 10
     },
     saveButton: {
         margin: 10,
