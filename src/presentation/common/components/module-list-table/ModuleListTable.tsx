@@ -3,6 +3,7 @@ import { Icon } from "@material-ui/core";
 import {
     ObjectsTable,
     ObjectsTableDetailField,
+    PaginationOptions,
     TableAction,
     TableColumn,
     TableSelection,
@@ -26,7 +27,7 @@ interface ModulesListTableProps {
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
     presentation?: ModulesListPresentation;
     externalComponents?: ReactNode;
-    pageSizeOptions?: number[];
+    paginationOptions?: PaginationOptions;
 }
 
 export const ModulesListTable: React.FC<ModulesListTableProps> = ({
@@ -34,7 +35,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
     onActionButtonClick,
     presentation = "app",
     externalComponents,
-    pageSizeOptions,
+    paginationOptions,
 }) => {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
@@ -258,7 +259,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 filterComponents={externalComponents}
                 selection={selection}
                 onChange={updateTable}
-                pageSizeOptions={pageSizeOptions}
+                paginationOptions={paginationOptions}
             />
         </React.Fragment>
     );
