@@ -18,6 +18,7 @@ import _ from "lodash";
 import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { MetadataResponsible } from "../../../../domain/metadata/entities/MetadataResponsible";
 import { ListMetadataParams } from "../../../../domain/metadata/repositories/MetadataRepository";
 import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
@@ -113,6 +114,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const [ids, updateIds] = useState<string[]>([]);
+    const [, updateResponsibles] = useState<MetadataResponsible[]>([]);
 
     const [selectedRows, setSelectedRows] = useState<string[]>(selectedIds);
     const [filters, updateFilters] = useState<ListMetadataParams>({
@@ -340,11 +342,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             multiple: true,
             icon: <Icon>supervisor_account</Icon>,
             onClick: () => snackbar.warning("Not implemented"),
-            isActive: () =>
-                allowChangingResponsible &&
-                !remoteInstance &&
-                (model.getCollectionName() === "dataSets" ||
-                    model.getCollectionName() === "programs"),
+            isActive: () => {
+                const isValidModel =
+                    model.getCollectionName() === "dataSets" ||
+                    model.getCollectionName() === "programs";
+
+                return allowChangingResponsible && !remoteInstance && isValidModel;
+            },
         },
     ];
 
@@ -416,6 +420,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         }
     }, [d2, api, model]);
 
+    useEffect(() => {
+        compositionRoot.responsibles.list().then(updateResponsibles);
+    }, [compositionRoot]);
+
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;
 
@@ -473,8 +481,18 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
               .value()
         : [];
 
-    const columns = uniqCombine([...model.getColumns(), ...additionalColumns]);
-    const actions = uniqCombine([...tableActions, ...additionalActions]);
+    const columns: TableColumn<MetadataType>[] = uniqCombine([
+        ...model.getColumns(),
+        ...additionalColumns,
+        {
+            name: "responsible",
+        },
+    ]);
+
+    const actions: TableAction<MetadataType>[] = uniqCombine([
+        ...tableActions,
+        ...additionalActions,
+    ]);
 
     return (
         <ObjectsTable<MetadataType>
