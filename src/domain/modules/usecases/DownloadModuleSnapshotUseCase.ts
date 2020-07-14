@@ -5,7 +5,7 @@ import { InstanceRepository } from "../../instance/repositories/InstanceReposito
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
 import { Module } from "../entities/Module";
-import { Package } from "../entities/Package";
+import { Package } from "../../packages/entities/Package";
 
 export class DownloadModuleSnapshotUseCase implements UseCase {
     constructor(

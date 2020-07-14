@@ -11,7 +11,7 @@ import {
 } from "d2-ui-components";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import { Package } from "../../../../domain/modules/entities/Package";
+import { Package } from "../../../../domain/packages/entities/Package";
 import { SynchronizationResult } from "../../../../domain/synchronization/entities/SynchronizationResult";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";

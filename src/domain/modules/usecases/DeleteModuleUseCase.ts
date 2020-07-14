@@ -2,7 +2,7 @@ import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
-import { BasePackage, Package } from "../entities/Package";
+import { BasePackage, Package } from "../../packages/entities/Package";
 
 export class DeleteModuleUseCase implements UseCase {
     constructor(private storageRepository: StorageRepository) {}

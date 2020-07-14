@@ -1,16 +1,16 @@
 import _ from "lodash";
-import { D2Model } from "../../../../models/dhis/default";
+import { D2Model } from "../../../models/dhis/default";
 import {
     ExcludeIncludeRules,
     MetadataIncludeExcludeRules,
     SynchronizationBuilder,
-} from "../../../../types/synchronization";
+} from "../../../types/synchronization";
 import {
     extractChildrenFromRules,
     extractParentsFromRule,
-} from "../../../../utils/metadataIncludeExclude";
-import { ModelValidation } from "../../../common/entities/Validations";
-import { BaseModule, GenericModule } from "../Module";
+} from "../../../utils/metadataIncludeExclude";
+import { ModelValidation } from "../../common/entities/Validations";
+import { BaseModule, GenericModule } from "./Module";
 
 interface BaseMetadataModule extends BaseModule {
     type: "metadata";

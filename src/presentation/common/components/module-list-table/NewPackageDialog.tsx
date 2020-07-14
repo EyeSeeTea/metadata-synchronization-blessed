@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import semver from "semver";
 import { ValidationError } from "../../../../domain/common/entities/Validations";
 import { Module } from "../../../../domain/modules/entities/Module";
-import { Package } from "../../../../domain/modules/entities/Package";
+import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 

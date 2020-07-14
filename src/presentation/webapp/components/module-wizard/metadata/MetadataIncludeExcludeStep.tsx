@@ -3,7 +3,7 @@ import { MultiSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { MetadataPackage } from "../../../../../domain/metadata/entities/MetadataEntities";
-import { MetadataModule } from "../../../../../domain/modules/entities/modules/MetadataModule";
+import { MetadataModule } from "../../../../../domain/modules/entities/MetadataModule";
 import i18n from "../../../../../locales";
 import { D2Model } from "../../../../../models/dhis/default";
 import { d2ModelFactory } from "../../../../../models/dhis/factory";

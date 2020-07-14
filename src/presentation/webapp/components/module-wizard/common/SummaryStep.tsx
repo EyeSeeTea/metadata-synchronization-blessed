@@ -2,7 +2,7 @@ import { Button, LinearProgress, makeStyles } from "@material-ui/core";
 import { useSnackbar } from "d2-ui-components";
 import React, { ReactNode, useState } from "react";
 import { Module } from "../../../../../domain/modules/entities/Module";
-import { MetadataModule } from "../../../../../domain/modules/entities/modules/MetadataModule";
+import { MetadataModule } from "../../../../../domain/modules/entities/MetadataModule";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import { ModuleWizardStepProps } from "../Steps";

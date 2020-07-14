@@ -1,5 +1,5 @@
 import React from "react";
-import { MetadataModule } from "../../../../../domain/modules/entities/modules/MetadataModule";
+import { MetadataModule } from "../../../../../domain/modules/entities/MetadataModule";
 import i18n from "../../../../../locales";
 import { Toggle } from "../../toggle/Toggle";
 import { ModuleWizardStepProps } from "../Steps";

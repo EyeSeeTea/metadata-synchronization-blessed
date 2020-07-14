@@ -14,7 +14,7 @@ import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Module } from "../../../../domain/modules/entities/Module";
-import { Package } from "../../../../domain/modules/entities/Package";
+import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPacakgeDialog } from "./NewPackageDialog";
