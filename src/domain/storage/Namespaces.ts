@@ -6,4 +6,5 @@ export const Namespace = {
     NOTIFICATIONS: "notifications",
     CONFIG: "config",
     STORE: "store",
+    RESPONSIBLES: "responsibles",
 };
