@@ -9,10 +9,14 @@ import { NamedRef } from "../../common/entities/Ref";
 import { MetadataEntities } from "../entities/MetadataEntities";
 
 export class ListResponsiblesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory,
-        private localInstance: Instance) { }
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(id: string, entity: keyof MetadataEntities, user: NamedRef, instance = this.localInstance): Promise<void> {
+    public async execute(
+        id: string,
+        entity: keyof MetadataEntities,
+        user: NamedRef,
+        instance = this.localInstance
+    ): Promise<void> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [instance]

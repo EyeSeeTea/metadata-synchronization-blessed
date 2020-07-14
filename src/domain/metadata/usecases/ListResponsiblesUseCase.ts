@@ -7,8 +7,7 @@ import { StorageRepositoryConstructor } from "../../storage/repositories/Storage
 import { MetadataResponsible } from "../entities/MetadataResponsible";
 
 export class ListResponsiblesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory,
-        private localInstance: Instance) { }
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(instance = this.localInstance): Promise<MetadataResponsible[]> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(

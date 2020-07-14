@@ -6,8 +6,7 @@ import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 
 export class ListResponsiblesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory,
-        private localInstance: Instance) { }
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(id: string, instance = this.localInstance): Promise<void> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
@@ -15,9 +14,6 @@ export class ListResponsiblesUseCase implements UseCase {
             [instance]
         );
 
-        await storageRepository.removeObjectInCollection(
-            Namespace.RESPONSIBLES,
-            id
-        );
+        await storageRepository.removeObjectInCollection(Namespace.RESPONSIBLES, id);
     }
 }
