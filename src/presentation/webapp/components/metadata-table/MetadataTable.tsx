@@ -137,7 +137,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         const model = _.find(models, model => model.getMetadataType() === modelName) ?? models[0];
         updateModel(() => model);
         notifyNewModel(model);
-        updateFilters(state => ({ ...state, type: model.getCollectionName() }));
+        updateFilters(state => ({
+            ...state,
+            type: model.getCollectionName(),
+            page: initialState.pagination.page,
+        }));
     };
 
     const changeSearchFilter = (value: string) => {
