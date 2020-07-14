@@ -10,31 +10,22 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
+import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPacakgeDialog } from "./NewPackageDialog";
 
-type ModulesListPresentation = "app" | "widget";
-
-interface ModulesListTableProps {
-    remoteInstance?: Instance;
-    onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
-    presentation?: ModulesListPresentation;
-    externalComponents?: ReactNode;
-    pageSizeOptions?: number[];
-}
-
-export const ModulesListTable: React.FC<ModulesListTableProps> = ({
+export const ModulesListTable: React.FC<ModuleListPageProps> = ({
     remoteInstance,
     onActionButtonClick,
     presentation = "app",
     externalComponents,
     pageSizeOptions,
+    openSyncSummary = _.noop,
 }) => {
     const { compositionRoot, api } = useAppContext();
     const snackbar = useSnackbar();
@@ -124,15 +115,16 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 const sync = compositionRoot.sync[module.type](builder);
                 for await (const { message, syncReport, done } of sync.execute()) {
                     if (message) loading.show(true, message);
-                    if (syncReport) syncReport.save(api);
+                    if (syncReport) await syncReport.save(api);
                     if (done) {
                         loading.reset();
+                        openSyncSummary(syncReport);
                         return;
                     }
                 }
             }
         },
-        [compositionRoot, remoteInstance, loading, rows, snackbar, api]
+        [compositionRoot, openSyncSummary, remoteInstance, loading, rows, snackbar, api]
     );
 
     const replicateModule = useCallback(

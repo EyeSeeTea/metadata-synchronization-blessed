@@ -171,19 +171,16 @@ const getTypeName = (reportType: SyncRuleType, syncType: string) => {
 interface SyncSummaryProps {
     response: SyncReport;
     onClose: () => void;
-    providedResults?: SynchronizationResult[];
 }
 
-const SyncSummary = ({ response, onClose, providedResults }: SyncSummaryProps) => {
+const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
     const { api } = useAppContext();
     const classes = useStyles();
-    const [results, setResults] = useState<SynchronizationResult[]>(providedResults ?? []);
+    const [results, setResults] = useState<SynchronizationResult[]>([]);
 
     useEffect(() => {
-        if (!providedResults || providedResults.length === 0) {
-            response.loadSyncResults(api).then(setResults);
-        }
-    }, [api, response, providedResults]);
+        response.loadSyncResults(api).then(setResults);
+    }, [api, response]);
 
     if (results.length === 0) return null;
     return (

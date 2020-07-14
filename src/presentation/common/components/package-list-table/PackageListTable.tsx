@@ -9,41 +9,31 @@ import {
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import { Instance } from "../../../../domain/instance/entities/Instance";
+import _ from "lodash";
+import React, { useCallback, useEffect, useState } from "react";
 import { Package } from "../../../../domain/packages/entities/Package";
-import { SynchronizationResult } from "../../../../domain/synchronization/entities/SynchronizationResult";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
-import SyncSummary from "../../../webapp/components/sync-summary/SyncSummary";
+import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
 import { useAppContext } from "../../contexts/AppContext";
 
-type PackagesListPresentations = "app" | "widget";
 type ListPackage = Omit<Package, "contents">;
 
-interface PackagesListTableProps {
-    remoteInstance?: Instance;
-    onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
-    presentation?: PackagesListPresentations;
-    externalComponents?: ReactNode;
-    pageSizeOptions?: number[];
-}
-
-export const PackagesListTable: React.FC<PackagesListTableProps> = ({
+export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     remoteInstance,
     onActionButtonClick,
     presentation = "app",
     externalComponents,
     pageSizeOptions,
+    openSyncSummary = _.noop,
 }) => {
-    const { compositionRoot } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const loading = useLoading();
 
     const [rows, setRows] = useState<ListPackage[]>([]);
     const [resetKey, setResetKey] = useState(Math.random());
     const [selection, updateSelection] = useState<TableSelection[]>([]);
-    const [syncResult, setSyncResult] = useState<SynchronizationResult>();
 
     const deletePackages = useCallback(
         async (ids: string[]) => {
@@ -84,7 +74,17 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                     try {
                         loading.show(true, i18n.t("Importing package {{name}}", { name }));
                         const result = await compositionRoot.metadata.import(contents);
-                        setSyncResult(result);
+
+                        const report = SyncReport.create("metadata");
+                        report.setStatus(
+                            result.status === "ERROR" || result.status === "NETWORK ERROR"
+                                ? "FAILURE"
+                                : "DONE"
+                        );
+                        report.addSyncResult(result);
+                        await report.save(api);
+
+                        openSyncSummary(report);
                     } catch (error) {
                         snackbar.error(error.message);
                     }
@@ -95,7 +95,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 },
             });
         },
-        [compositionRoot, loading, remoteInstance, snackbar]
+        [compositionRoot, api, loading, remoteInstance, snackbar, openSyncSummary]
     );
 
     const columns: TableColumn<ListPackage>[] = [
@@ -148,7 +148,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             multiple: false,
             onClick: importPackage,
             icon: <Icon>arrow_downward</Icon>,
-            isActive: () => presentation === "app" && !remoteInstance,
+            isActive: () => presentation === "app" && !!remoteInstance,
         },
     ];
 
@@ -165,14 +165,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     return (
         <React.Fragment>
-            {!!syncResult && (
-                <SyncSummary
-                    response={SyncReport.create()}
-                    providedResults={[syncResult]}
-                    onClose={() => setSyncResult(undefined)}
-                />
-            )}
-
             <ObjectsTable<ListPackage>
                 rows={rows}
                 columns={columns}
