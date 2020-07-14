@@ -1,4 +1,4 @@
-import { PublicInstance } from "../../instance/Instance";
+import { PublicInstance } from "../../instance/entities/Instance";
 import { SyncRuleType } from "./SynchronizationRule";
 
 export type SynchronizationStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";

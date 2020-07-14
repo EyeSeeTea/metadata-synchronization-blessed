@@ -2,6 +2,7 @@ import React from "react";
 import { HashRouter, Switch } from "react-router-dom";
 import RouteWithSession from "../../components/auth/RouteWithSession";
 import RouteWithSessionAndAuth from "../../components/auth/RouteWithSessionAndAuth";
+import { useAppContext } from "../../contexts/AppContext";
 import * as permissions from "../../utils/permissions";
 import HistoryPage from "../history/HistoryPage";
 import HomePage from "../home/HomePage";
@@ -9,10 +10,12 @@ import InstanceCreationPage from "../instance-creation/InstanceCreationPage";
 import InstanceListPage from "../instance-list/InstanceListPage";
 import InstanceMappingLandingPage from "../instance-mapping/InstanceMappingLandingPage";
 import InstanceMappingPage from "../instance-mapping/InstanceMappingPage";
+import ModulesConfigPage from "../modules-config/ModulesConfigPage";
+import ModulesCreationPage from "../modules-creation/ModulesCreationPage";
+import ModulesListPage from "../modules-list/ModulesListPage";
 import SyncOnDemandPage from "../sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "../sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "../sync-rules-list/SyncRulesListPage";
-import { useAppContext } from "../../contexts/AppContext";
 
 function Root() {
     const { api } = useAppContext();
@@ -65,6 +68,24 @@ function Root() {
                 <RouteWithSession
                     path="/history/:type(metadata|aggregated|events)/:id?"
                     render={props => <HistoryPage {...props} />}
+                />
+
+                <RouteWithSessionAndAuth
+                    path={"/modules/:action(new|edit)/:id?"}
+                    authorize={props =>
+                        permissions.verifyUserHasAccessToSyncRule(api, props.match.params.id)
+                    }
+                    render={props => <ModulesCreationPage {...props} />}
+                />
+
+                <RouteWithSession
+                    path="/modules/config"
+                    render={props => <ModulesConfigPage {...props} />}
+                />
+
+                <RouteWithSession
+                    path="/modules"
+                    render={props => <ModulesListPage {...props} />}
                 />
 
                 <RouteWithSession render={() => <HomePage />} />

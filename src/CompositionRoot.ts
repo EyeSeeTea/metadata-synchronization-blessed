@@ -1,21 +1,28 @@
 import { D2Api } from "d2-api/2.30";
 import { AggregatedD2ApiRepository } from "./data/aggregated/AggregatedD2ApiRepository";
 import { EventsD2ApiRepository } from "./data/events/EventsD2ApiRepository";
-import InstanceD2ApiRepository from "./data/instance/InstanceD2ApiRepository";
-import MetadataD2ApiRepository from "./data/metadata/MetadataD2ApiRepository";
+import { InstanceD2ApiRepository } from "./data/instance/InstanceD2ApiRepository";
+import { MetadataD2ApiRepository } from "./data/metadata/MetadataD2ApiRepository";
+import { GitHubOctokitRepository } from "./data/modules/GitHubOctokitRepository";
+import { StorageDataStoreRepository } from "./data/storage/StorageDataStoreRepository";
 import { TransformationD2ApiRepository } from "./data/transformations/TransformationD2ApiRepository";
 import { AggregatedRepository } from "./domain/aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "./domain/aggregated/usecases/AggregatedSyncUseCase";
-import { TransformationRepository } from "./domain/common/repositories/TransformationRepository";
 import { EventsRepository } from "./domain/events/repositories/EventsRepository";
 import { EventsSyncUseCase } from "./domain/events/usecases/EventsSyncUseCase";
+import { InstanceRepository } from "./domain/instance/repositories/InstanceRepository";
 import { MetadataRepository } from "./domain/metadata/repositories/MetadataRepository";
 import { DeletedMetadataSyncUseCase } from "./domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "./domain/metadata/usecases/MetadataSyncUseCase";
+import { GitHubRepository } from "./domain/modules/repositories/GitHubRepository";
+import { GetStoreUseCase } from "./domain/modules/usecases/GetStoreUseCase";
+import { SaveStoreUseCase } from "./domain/modules/usecases/SaveStoreUseCase";
+import { ValidateStoreUseCase } from "./domain/modules/usecases/ValidateStoreUseCase";
+import { StorageRepository } from "./domain/storage/repositories/StorageRepository";
+import { TransformationRepository } from "./domain/transformations/repositories/TransformationRepository";
 import { D2 } from "./types/d2";
 import { SynchronizationBuilder } from "./types/synchronization";
 import { cache } from "./utils/cache";
-import InstanceRepository from "./domain/instance/InstanceRepository";
 
 export const Repository = {
     AggregatedRepository: Symbol.for("aggregatedRepository"),
@@ -23,6 +30,8 @@ export const Repository = {
     MetadataRepository: Symbol.for("metadataRepository"),
     InstanceRepository: Symbol.for("instanceRepository"),
     TransformationRepository: Symbol.for("transformationsRepository"),
+    StorageRepository: Symbol.for("storageRepository"),
+    GitHubRepository: Symbol.for("githubRepository"),
 };
 
 export class CompositionRoot {
@@ -79,19 +88,34 @@ export class CompositionRoot {
         };
     }
 
-    private initializeWebApp() {
-        const transformation = new TransformationD2ApiRepository();
+    @cache()
+    public get modules() {
+        const github = this.get<GitHubRepository>(Repository.GitHubRepository);
+        const storage = this.get<StorageRepository>(Repository.StorageRepository);
 
-        this.bind(
-            Repository.InstanceRepository,
-            new InstanceD2ApiRepository(this.d2Api, this.encryptionKey)
-        );
+        return {
+            getStore: new GetStoreUseCase(storage),
+            saveStore: new SaveStoreUseCase(github, storage),
+            validateStore: new ValidateStoreUseCase(github),
+        };
+    }
+
+    private initializeWebApp() {
+        const storage = new StorageDataStoreRepository(this.d2Api);
+        const instance = new InstanceD2ApiRepository(this.d2Api, this.encryptionKey);
+        const transformation = new TransformationD2ApiRepository();
+        this.bind(Repository.StorageRepository, storage);
+        this.bind(Repository.InstanceRepository, instance);
         this.bind(Repository.TransformationRepository, transformation);
-        this.bind(Repository.AggregatedRepository, new AggregatedD2ApiRepository(this.d2Api));
-        this.bind(Repository.EventsRepository, new EventsD2ApiRepository(this.d2Api));
-        this.bind(
-            Repository.MetadataRepository,
-            new MetadataD2ApiRepository(this.d2Api, transformation)
-        );
+
+        const aggregated = new AggregatedD2ApiRepository(this.d2Api);
+        const events = new EventsD2ApiRepository(this.d2Api);
+        const metadata = new MetadataD2ApiRepository(this.d2Api, transformation);
+        this.bind(Repository.AggregatedRepository, aggregated);
+        this.bind(Repository.EventsRepository, events);
+        this.bind(Repository.MetadataRepository, metadata);
+
+        const github = new GitHubOctokitRepository();
+        this.bind(Repository.GitHubRepository, github);
     }
 }

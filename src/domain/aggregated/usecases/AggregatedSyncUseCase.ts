@@ -11,15 +11,15 @@ import {
     mapCategoryOptionCombo,
     mapOptionValue,
 } from "../../../utils/synchronization";
-import { TransformationRepository } from "../../common/repositories/TransformationRepository";
-import InstanceEntity from "../../instance/Instance";
-import InstanceRepository from "../../instance/InstanceRepository";
+import { Instance as InstanceEntity } from "../../instance/entities/Instance";
+import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import {
     buildMetadataDictionary,
     cleanObjectDefault,
     cleanOrgUnitPath,
 } from "../../synchronization/utils";
+import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { DataValue } from "../entities/DataValue";
 import { AggregatedRepository } from "../repositories/AggregatedRepository";

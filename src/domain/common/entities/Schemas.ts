@@ -1,9 +1,5 @@
 export type Id = string;
 
-export interface Ref {
-    id: Id;
-}
-
 export interface Access {
     read: boolean;
     update: boolean;

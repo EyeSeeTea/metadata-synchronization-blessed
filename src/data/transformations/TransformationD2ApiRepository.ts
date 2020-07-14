@@ -1,6 +1,6 @@
-import { TransformationRepository } from "../../domain/common/repositories/TransformationRepository";
-import { Transformation } from "../../domain/common/entities/Transformation";
 import _ from "lodash";
+import { Transformation } from "../../domain/transformations/entities/Transformation";
+import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 
 export class TransformationD2ApiRepository implements TransformationRepository {
     /**

@@ -142,6 +142,19 @@ const LandingPage: React.FC = () => {
                     addAction: appConfigurator ? () => history.push("/instances/new") : undefined,
                     listAction: () => history.push("/instances"),
                 },
+                {
+                    name: i18n.t("Module store connection"),
+                    description: i18n.t(
+                        "Configurate connection and credentials to retrieve modules from the store."
+                    ),
+                    addAction: appConfigurator ? () => history.push("/modules/config") : undefined,
+                },
+                {
+                    name: i18n.t("Available modules"),
+                    description: i18n.t("Create, modify and delete modules from the application"),
+                    addAction: appConfigurator ? () => history.push("/modules/new") : undefined,
+                    listAction: appConfigurator ? () => history.push("/modules") : undefined,
+                },
             ],
         },
     ];

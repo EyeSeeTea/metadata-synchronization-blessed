@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { AggregatedPackage } from "../../../domain/aggregated/entities/AggregatedPackage";
-import { Transformation } from "../../../domain/common/entities/Transformation";
+import { Transformation } from "../../../domain/transformations/entities/Transformation";
 import { TransformationD2ApiRepository } from "../TransformationD2ApiRepository";
 import { D2AggregatedPackage } from "../types";
 

@@ -15,14 +15,14 @@ import {
 import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedRepository } from "../../aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
-import { TransformationRepository } from "../../common/repositories/TransformationRepository";
-import InstanceEntity from "../../instance/Instance";
-import InstanceRepository from "../../instance/InstanceRepository";
+import { Instance as InstanceEntity } from "../../instance/entities/Instance";
+import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
 import {
     GenericSyncUseCase,
     SyncronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
+import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";

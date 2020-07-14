@@ -1,5 +1,5 @@
 import _ from "lodash";
-import InstanceD2ApiRepository from "../../data/instance/InstanceD2ApiRepository";
+import { InstanceD2ApiRepository } from "../../data/instance/InstanceD2ApiRepository";
 import { cleanOrgUnitPath } from "../../domain/synchronization/utils";
 import { D2Model } from "../../models/dhis/default";
 import { EventProgramModel } from "../../models/dhis/mapping";

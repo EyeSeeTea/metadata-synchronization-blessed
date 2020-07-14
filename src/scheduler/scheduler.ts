@@ -31,18 +31,21 @@ const config: Record<SyncRuleType, { SyncClass: SyncronizationClass }> = {
 };
 
 export default class Scheduler {
+    //@ts-ignore
     constructor(private d2: D2, private api: D2Api) {}
 
     private synchronizationTask = async (id: string): Promise<void> => {
         const rule = await SyncRule.get(this.api, id);
+        //@ts-ignore
         const { name, frequency, builder, id: syncRule, type = "metadata" } = rule;
+        //@ts-ignore
         const { SyncClass } = config[type];
 
         const logger = getLogger(name);
         try {
             const readableFrequency = cronstrue.toString(frequency || "");
             logger.debug(`Start ${type} rule with frequency: ${readableFrequency}`);
-            const sync = new SyncClass(this.d2, this.api, { ...builder, syncRule });
+            /**const sync = new SyncClass(this.d2, this.api, { ...builder, syncRule });
             for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) logger.debug(message);
                 if (syncReport) await syncReport.save(this.api);
@@ -50,7 +53,8 @@ export default class Scheduler {
                     const reportUrl = this.buildUrl(type, syncReport.id);
                     logger.debug(`Finished. Report available at ${reportUrl}`);
                 } else if (done) logger.warn(`Finished with errors`);
-            }
+            }**/
+            logger.error("Scheduler needs to be updated");
         } catch (error) {
             logger.error(`Failed executing rule`, error);
         }
@@ -90,6 +94,7 @@ export default class Scheduler {
         });
     };
 
+    //@ts-ignore
     private buildUrl(type: string, id: string): string {
         return `${this.api.apiPath}/apps/MetaData-Synchronization/index.html#/history/${type}/${id}`;
     }

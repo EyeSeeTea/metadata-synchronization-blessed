@@ -1,6 +1,5 @@
 import _ from "lodash";
-import { TransformationRepository } from "../../domain/common/repositories/TransformationRepository";
-import Instance from "../../domain/instance/Instance";
+import { Instance } from "../../domain/instance/entities/Instance";
 import {
     MetadataEntities,
     MetadataEntity,
@@ -11,6 +10,7 @@ import { MetadataRepository } from "../../domain/metadata/repositories/MetadataR
 import { MetadataImportParams } from "../../domain/metadata/types";
 import { getClassName } from "../../domain/metadata/utils";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
+import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import {
     D2Api,
     D2ApiDefinition,
@@ -26,7 +26,7 @@ import {
     metadataTransformationsToDhis2,
 } from "../transformations/PackageTransformations";
 
-class MetadataD2ApiRepository implements MetadataRepository {
+export class MetadataD2ApiRepository implements MetadataRepository {
     constructor(private api: D2Api, private transformationRepository: TransformationRepository) {}
 
     /**
@@ -242,5 +242,3 @@ const formatStats = (stats: Stats) => ({
     ..._.omit(stats, ["created"]),
     imported: stats.created,
 });
-
-export default MetadataD2ApiRepository;
