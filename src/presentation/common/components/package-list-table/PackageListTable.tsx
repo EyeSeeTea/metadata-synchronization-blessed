@@ -24,8 +24,8 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     onActionButtonClick,
     presentation = "app",
     externalComponents,
-    pageSizeOptions,
     openSyncSummary = _.noop,
+    paginationOptions,
 }) => {
     const { api, compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
@@ -164,19 +164,17 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     }, [compositionRoot, remoteInstance, resetKey, snackbar]);
 
     return (
-        <React.Fragment>
-            <ObjectsTable<ListPackage>
-                rows={rows}
-                columns={columns}
-                details={details}
-                actions={actions}
-                onActionButtonClick={onActionButtonClick}
-                forceSelectionColumn={true}
-                filterComponents={externalComponents}
-                selection={selection}
-                onChange={updateTable}
-                pageSizeOptions={pageSizeOptions}
-            />
-        </React.Fragment>
+        <ObjectsTable<ListPackage>
+            rows={rows}
+            columns={columns}
+            details={details}
+            actions={actions}
+            onActionButtonClick={onActionButtonClick}
+            forceSelectionColumn={true}
+            filterComponents={externalComponents}
+            selection={selection}
+            onChange={updateTable}
+            paginationOptions={paginationOptions}
+        />
     );
 };

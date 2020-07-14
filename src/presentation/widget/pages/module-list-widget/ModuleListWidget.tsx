@@ -55,7 +55,7 @@ export const ModuleListWidget: React.FC = React.memo(() => {
             externalComponents={filters}
             presentation={"widget"}
             remoteInstance={selectedInstance}
-            pageSizeOptions={[10]}
+            paginationOptions={{ pageSizeOptions: [10], pageSizeInitialValue: 10 }}
         />
     );
 });
