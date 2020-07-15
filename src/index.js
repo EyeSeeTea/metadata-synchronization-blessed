@@ -20,7 +20,7 @@ async function getPresentation() {
     if (process.env.REACT_APP_DASHBOARD_WIDGET) {
         return () => <h1>Hello World, widget!</h1>;
     } else {
-        const { default: App } = await import("./pages/app/App");
+        const { default: App } = await import("./presentation/webapp/WebApp");
         return App;
     }
 }

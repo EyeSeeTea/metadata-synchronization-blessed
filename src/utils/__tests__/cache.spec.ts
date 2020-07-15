@@ -1,39 +1,41 @@
 import { cache, clear, memoize } from "../cache";
 
 class TestClass {
+    constructor(private multiplier = 1) {}
+
     public memoized = memoize((x: { value: number }, y: { value: number }) => {
-        return Math.random() + x.value + y.value;
+        return Math.random() * this.multiplier + x.value + y.value;
     });
 
     @cache()
     public getBasic(): number {
-        return Math.random();
+        return Math.random() * this.multiplier;
     }
 
     @cache()
     public getComplex(int: number): number {
-        return Math.random() * int;
+        return Math.random() * this.multiplier * int;
     }
 
     @cache()
     public getMultiple(int1: number, int2: number): number {
-        return Math.random() * int1 * int2;
+        return Math.random() * this.multiplier * int1 * int2;
     }
 
     public resetBasic(): void {
-        clear(this.getBasic);
+        clear(this.getBasic, this);
     }
 
     public resetComplex(): void {
-        clear(this.getComplex);
+        clear(this.getComplex, this);
     }
 
     public resetMultiple(): void {
-        clear(this.getMultiple);
+        clear(this.getMultiple, this);
     }
 
     public resetMemoize(): void {
-        clear(this.memoized);
+        clear(this.memoized, this);
     }
 }
 
@@ -122,6 +124,23 @@ describe("Cache decorator with clearing", () => {
     it("function - should be a different number", () => {
         const memoizedFunction = memoize(baseFunction);
         expect(memoizedFunction(10)).not.toEqual(memoizedFunction(20));
+    });
+
+    it("multiple functions - should be a different number", () => {
+        const memoizedFunction1 = memoize(baseFunction);
+        const memoizedFunction2 = memoize(baseFunction);
+        expect(memoizedFunction1(10)).not.toEqual(memoizedFunction2(20));
+    });
+
+    it("multiple class instances - should be a different number", () => {
+        const test2 = new TestClass(100);
+        expect(test.getComplex(10)).not.toEqual(test2.getComplex(10));
+    });
+
+    it("different class instances - should be a different number", () => {
+        const test1 = new TestClass(100);
+        const test2 = new TestClass(100);
+        expect(test1.getComplex(10)).not.toEqual(test2.getComplex(10));
     });
 });
 
