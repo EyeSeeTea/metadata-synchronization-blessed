@@ -1,21 +1,16 @@
-import { SharingSetting } from "../../common/entities/SharingSetting";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { MetadataEntities } from "../entities/MetadataEntities";
 import { MetadataResponsible } from "../entities/MetadataResponsible";
 
 export class SetResponsiblesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(
-        id: string,
-        entity: keyof MetadataEntities,
-        userAccesses: SharingSetting[],
-        userGroupAccesses: SharingSetting[],
+        responsible: MetadataResponsible,
         instance = this.localInstance
     ): Promise<void> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
@@ -23,12 +18,13 @@ export class SetResponsiblesUseCase implements UseCase {
             [instance]
         );
 
+        const { id, userAccesses, userGroupAccesses } = responsible;
         if (userAccesses.length === 0 && userGroupAccesses.length === 0) {
             await storageRepository.removeObjectInCollection(Namespace.RESPONSIBLES, id);
         } else {
             await storageRepository.saveObjectInCollection<MetadataResponsible>(
                 Namespace.RESPONSIBLES,
-                { id, userAccesses, userGroupAccesses, entity }
+                responsible
             );
         }
     }

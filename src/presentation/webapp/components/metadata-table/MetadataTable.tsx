@@ -535,21 +535,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         if (!sharingSettingsObject) return;
 
         const newSharingsObject = { ...sharingSettingsObject.object, ...update };
-
-        await compositionRoot.responsibles.set(
-            newSharingsObject.id,
-            model.getCollectionName(),
-            newSharingsObject.userAccesses ?? [],
-            newSharingsObject.userGroupAccesses ?? []
-        );
+        const { id, userAccesses = [], userGroupAccesses = [] } = newSharingsObject;
+        const newResponsible = {
+            id,
+            userAccesses,
+            userGroupAccesses,
+            entity: model.getCollectionName(),
+        };
 
         setSharingSettingsObject({ meta: {}, object: newSharingsObject });
-
-        updateResponsibles(responsibles =>
-            responsibles.map(item => {
-                return item.id === newSharingsObject.id ? { ...item, ...newSharingsObject } : item;
-            })
-        );
+        await compositionRoot.responsibles.set(newResponsible);
+        updateResponsibles(responsibles => _.uniq([newResponsible, ...responsibles]));
     };
 
     return (
