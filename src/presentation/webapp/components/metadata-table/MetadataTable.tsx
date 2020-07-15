@@ -85,7 +85,9 @@ const initialState = {
     },
 };
 
-const uniqCombine = (items: any[]) => _(items).reverse().uniqBy("name").reverse().value();
+const uniqCombine = (items: any[]) => {
+    return _(items).compact().reverse().uniqBy("name").reverse().value();
+};
 
 const MetadataTable: React.FC<MetadataTableProps> = ({
     remoteInstance,
@@ -114,7 +116,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const [ids, updateIds] = useState<string[]>([]);
-    const [, updateResponsibles] = useState<MetadataResponsible[]>([]);
+    const [responsibles, updateResponsibles] = useState<MetadataResponsible[]>([]);
 
     const [selectedRows, setSelectedRows] = useState<string[]>(selectedIds);
     const [filters, updateFilters] = useState<ListMetadataParams>({
@@ -135,6 +137,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [pager, setPager] = useState<Partial<TablePagination>>({});
     const [loading, setLoading] = useState<boolean>(true);
+
+    const showResponsibles =
+        model.getCollectionName() === "dataSets" || model.getCollectionName() === "programs";
 
     const changeModelFilter = (modelName: string) => {
         if (models.length === 0) throw new Error("You need to provide at least one model");
@@ -343,11 +348,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             icon: <Icon>supervisor_account</Icon>,
             onClick: () => snackbar.warning("Not implemented"),
             isActive: () => {
-                const isValidModel =
-                    model.getCollectionName() === "dataSets" ||
-                    model.getCollectionName() === "programs";
-
-                return allowChangingResponsible && !remoteInstance && isValidModel;
+                return allowChangingResponsible && !remoteInstance && showResponsibles;
             },
         },
     ];
@@ -421,8 +422,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     }, [d2, api, model]);
 
     useEffect(() => {
-        compositionRoot.responsibles.list().then(updateResponsibles);
-    }, [compositionRoot]);
+        compositionRoot.responsibles.list(remoteInstance).then(updateResponsibles);
+    }, [compositionRoot, remoteInstance]);
 
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;
@@ -484,9 +485,16 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const columns: TableColumn<MetadataType>[] = uniqCombine([
         ...model.getColumns(),
         ...additionalColumns,
-        {
-            name: "responsible",
-        },
+        showResponsibles
+            ? {
+                  name: "responsible",
+                  text: i18n.t("Responsible"),
+                  getValue: (row: MetadataType) => {
+                      const responsible = responsibles.find(({ id }) => row.id === id);
+                      return responsible?.user.name ?? "-";
+                  },
+              }
+            : undefined,
     ]);
 
     const actions: TableAction<MetadataType>[] = uniqCombine([
