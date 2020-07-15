@@ -507,7 +507,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             ? {
                   name: "responsible",
                   text: i18n.t("Responsible"),
-                  hidden: !remoteInstance,
                   getValue: (row: MetadataType) => {
                       const { userAccesses = [], userGroupAccesses = [] } =
                           responsibles.find(({ id }) => row.id === id) ?? {};
