@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import i18n from "../../../../locales";
@@ -120,14 +121,20 @@ const LandingPage: React.FC = () => {
         {
             title: "Other",
             key: "other",
-            isVisible: showDeletedObjects,
-            children: [
+            children: _.compact([
+                showDeletedObjects
+                    ? {
+                          name: i18n.t("Deleted objects"),
+                          description: i18n.t("Manually synchronise deleted objects."),
+                          listAction: () => history.push("/sync/deleted"),
+                      }
+                    : undefined,
                 {
-                    name: i18n.t("Deleted objects"),
-                    description: i18n.t("Manually synchronise deleted objects."),
-                    listAction: () => history.push("/sync/deleted"),
+                    name: i18n.t("Metadata responsibles"),
+                    description: i18n.t("List and remove responsibles for data sets and programs"),
+                    listAction: () => history.push("/responsibles"),
                 },
-            ],
+            ]),
         },
         {
             title: "Configuration",

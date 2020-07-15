@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-15T08:29:22.719Z\n"
-"PO-Revision-Date: 2020-07-15T08:29:22.719Z\n"
+"POT-Creation-Date: 2020-07-15T09:01:13.622Z\n"
+"PO-Revision-Date: 2020-07-15T09:01:13.622Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -910,6 +910,12 @@ msgid "Deleted objects"
 msgstr ""
 
 msgid "Manually synchronise deleted objects."
+msgstr ""
+
+msgid "Metadata responsibles"
+msgstr ""
+
+msgid "List and remove responsibles for data sets and programs"
 msgstr ""
 
 msgid "Destination instance settings"

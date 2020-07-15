@@ -13,6 +13,7 @@ import InstanceMappingPage from "./instance-mapping/InstanceMappingPage";
 import ManualSyncPage from "./manual-sync/ManualSyncPage";
 import ModuleListPage from "./module-list/ModuleListPage";
 import ModuleCreationPage from "./modules-creation/ModuleCreationPage";
+import ResponsiblesListPage from "./responsibles-list/ResponsiblesListPage";
 import StoreConfigPage from "./store-config/StoreConfigPage";
 import SyncRulesCreationPage from "./sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "./sync-rules-list/SyncRulesListPage";
@@ -83,6 +84,11 @@ function Root() {
                 <RouteWithSession
                     path="/:list(modules|packages)"
                     render={props => <ModuleListPage {...props} />}
+                />
+
+                <RouteWithSession
+                    path="/responsibles"
+                    render={props => <ResponsiblesListPage {...props} />}
                 />
 
                 <RouteWithSession render={() => <HomePage />} />
