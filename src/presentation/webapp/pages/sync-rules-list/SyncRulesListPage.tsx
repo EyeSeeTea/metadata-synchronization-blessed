@@ -491,8 +491,10 @@ const SyncRulesPage: React.FC = () => {
                 <SharingDialog
                     isOpen={true}
                     showOptions={{
+                        title: false,
                         dataSharing: false,
                     }}
+                    title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
                     meta={sharingSettingsObject}
                     onCancel={() => setSharingSettingsObject(null)}
                     onChange={onSharingChanged}
