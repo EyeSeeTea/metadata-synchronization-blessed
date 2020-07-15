@@ -1,12 +1,12 @@
+import { SharingSetting } from "../../common/entities/SharingSetting";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { MetadataResponsible } from "../entities/MetadataResponsible";
-import { NamedRef } from "../../common/entities/Ref";
 import { MetadataEntities } from "../entities/MetadataEntities";
+import { MetadataResponsible } from "../entities/MetadataResponsible";
 
 export class SetResponsiblesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -14,7 +14,8 @@ export class SetResponsiblesUseCase implements UseCase {
     public async execute(
         id: string,
         entity: keyof MetadataEntities,
-        user: NamedRef,
+        userAccesses: SharingSetting[],
+        userGroupAccesses: SharingSetting[],
         instance = this.localInstance
     ): Promise<void> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
@@ -24,7 +25,7 @@ export class SetResponsiblesUseCase implements UseCase {
 
         await storageRepository.saveObjectInCollection<MetadataResponsible>(
             Namespace.RESPONSIBLES,
-            { id, user, entity }
+            { id, userAccesses, userGroupAccesses, entity }
         );
     }
 }

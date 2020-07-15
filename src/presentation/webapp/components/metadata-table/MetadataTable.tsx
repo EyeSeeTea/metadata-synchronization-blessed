@@ -3,10 +3,13 @@ import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
 import {
     DatePicker,
+    MetaObject,
     ObjectsTable,
     ObjectsTableProps,
     OrgUnitsSelector,
     ReferenceObject,
+    SearchResult,
+    ShareUpdate,
     TableAction,
     TableColumn,
     TablePagination,
@@ -27,6 +30,7 @@ import { D2 } from "../../../../types/d2";
 import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
+import { SharingDialog } from "../sharing-dialog/SharingDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
@@ -117,6 +121,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const [ids, updateIds] = useState<string[]>([]);
     const [responsibles, updateResponsibles] = useState<MetadataResponsible[]>([]);
+    const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject>();
 
     const [selectedRows, setSelectedRows] = useState<string[]>(selectedIds);
     const [filters, updateFilters] = useState<ListMetadataParams>({
@@ -213,6 +218,19 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         const newSelection = _.difference(ids, selectedIds);
 
         notifyNewSelection([...oldSelection, ...newSelection], excludedIds);
+    };
+
+    const openResponsibleDialog = (ids: string[]) => {
+        const { id, name } = rows.find(({ id }) => ids[0] === id) ?? {};
+        if (!id || !name) return;
+
+        const { userAccesses = [], userGroupAccesses = [] } =
+            responsibles.find(item => item.id === id) ?? {};
+
+        setSharingSettingsObject({
+            object: { id, name, userAccesses, userGroupAccesses },
+            meta: {},
+        });
     };
 
     const filterComponents = (
@@ -343,10 +361,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         },
         {
             name: "set-responsible",
-            text: i18n.t("Set responsible user"),
+            text: i18n.t("Set responsible users"),
             multiple: true,
             icon: <Icon>supervisor_account</Icon>,
-            onClick: () => snackbar.warning("Not implemented"),
+            onClick: openResponsibleDialog,
             isActive: () => {
                 return allowChangingResponsible && !remoteInstance && showResponsibles;
             },
@@ -490,8 +508,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                   name: "responsible",
                   text: i18n.t("Responsible"),
                   getValue: (row: MetadataType) => {
-                      const responsible = responsibles.find(({ id }) => row.id === id);
-                      return responsible?.user.name ?? "-";
+                      const { userAccesses = [], userGroupAccesses = [] } =
+                          responsibles.find(({ id }) => row.id === id) ?? {};
+
+                      const results = [...userAccesses, ...userGroupAccesses].map(
+                          ({ name }) => name
+                      );
+
+                      return results.length === 0 ? "-" : results.join(", ");
                   },
               }
             : undefined,
@@ -502,26 +526,72 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         ...additionalActions,
     ]);
 
+    const onSearchRequest = async (key: string) =>
+        api
+            .get<SearchResult>("/sharing/search", { key })
+            .getData();
+
+    const onSharingChanged = async (update: ShareUpdate) => {
+        if (!sharingSettingsObject) return;
+
+        const newSharingsObject = { ...sharingSettingsObject.object, ...update };
+
+        await compositionRoot.responsibles.set(
+            newSharingsObject.id,
+            model.getCollectionName(),
+            newSharingsObject.userAccesses ?? [],
+            newSharingsObject.userGroupAccesses ?? []
+        );
+
+        setSharingSettingsObject({ meta: {}, object: newSharingsObject });
+
+        updateResponsibles(responsibles =>
+            responsibles.map(item => {
+                return item.id === newSharingsObject.id ? { ...item, ...newSharingsObject } : item;
+            })
+        );
+    };
+
     return (
-        <ObjectsTable<MetadataType>
-            rows={transformRows(rows)}
-            columns={columns}
-            details={model.getDetails()}
-            onChangeSearch={changeSearchFilter}
-            initialState={initialState}
-            searchBoxLabel={i18n.t(`Search by `) + model.getSearchFilter().field}
-            pagination={pager}
-            onChange={handleTableChange}
-            ids={ids}
-            loading={providedLoading || loading}
-            selection={[...selection, ...childrenSelection]}
-            childrenKeys={childrenKeys}
-            filterComponents={filterComponents}
-            forceSelectionColumn={true}
-            actions={actions}
-            sideComponents={sideComponents}
-            {...rest}
-        />
+        <React.Fragment>
+            {!!sharingSettingsObject && (
+                <SharingDialog
+                    isOpen={true}
+                    showOptions={{
+                        title: false,
+                        dataSharing: false,
+                        publicSharing: false,
+                        externalSharing: false,
+                        permissionPicker: false,
+                    }}
+                    title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
+                    meta={sharingSettingsObject}
+                    onCancel={() => setSharingSettingsObject(undefined)}
+                    onChange={onSharingChanged}
+                    onSearch={onSearchRequest}
+                />
+            )}
+
+            <ObjectsTable<MetadataType>
+                rows={transformRows(rows)}
+                columns={columns}
+                details={model.getDetails()}
+                onChangeSearch={changeSearchFilter}
+                initialState={initialState}
+                searchBoxLabel={i18n.t(`Search by `) + model.getSearchFilter().field}
+                pagination={pager}
+                onChange={handleTableChange}
+                ids={ids}
+                loading={providedLoading || loading}
+                selection={[...selection, ...childrenSelection]}
+                childrenKeys={childrenKeys}
+                filterComponents={filterComponents}
+                forceSelectionColumn={true}
+                actions={actions}
+                sideComponents={sideComponents}
+                {...rest}
+            />
+        </React.Fragment>
     );
 };
 

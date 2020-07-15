@@ -1,7 +1,8 @@
-import { D2Api, D2ModelSchemas, Model, D2ApiDefinition } from "../../types/d2-api";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import _ from "lodash";
+import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
 import { D2, ModelDefinition } from "../../types/d2";
+import { D2Api, D2ApiDefinition, Model } from "../../types/d2-api";
 import {
     d2BaseModelColumns,
     d2BaseModelDetails,
@@ -19,9 +20,9 @@ export interface SearchFilter {
 export abstract class D2Model {
     // Metadata Type should be defined on subclasses
     protected static metadataType: string;
-    protected static collectionName: keyof D2ModelSchemas;
-    protected static groupFilterName: keyof D2ModelSchemas;
-    protected static levelFilterName: keyof D2ModelSchemas;
+    protected static collectionName: keyof MetadataEntities;
+    protected static groupFilterName: keyof MetadataEntities;
+    protected static levelFilterName: keyof MetadataEntities;
     protected static modelName: string | undefined;
 
     protected static excludeRules: string[] = [];
@@ -74,7 +75,7 @@ export abstract class D2Model {
         return this.metadataType;
     }
 
-    public static getCollectionName(): keyof D2ModelSchemas {
+    public static getCollectionName(): keyof MetadataEntities {
         return this.collectionName;
     }
 
@@ -110,11 +111,11 @@ export abstract class D2Model {
         return this.initialSorting;
     }
 
-    public static getGroupFilterName(): keyof D2ModelSchemas {
+    public static getGroupFilterName(): keyof MetadataEntities {
         return this.groupFilterName;
     }
 
-    public static getLevelFilterName(): keyof D2ModelSchemas {
+    public static getLevelFilterName(): keyof MetadataEntities {
         return this.levelFilterName;
     }
 
@@ -130,6 +131,6 @@ export abstract class D2Model {
 export function defaultModel(pascalCaseModelName: string): any {
     return class DefaultModel extends D2Model {
         protected static metadataType = pascalCaseModelName;
-        protected static collectionName = pascalCaseModelName as keyof D2ModelSchemas;
+        protected static collectionName = pascalCaseModelName as keyof MetadataEntities;
     };
 }

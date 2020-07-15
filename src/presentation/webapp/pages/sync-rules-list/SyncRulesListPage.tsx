@@ -407,7 +407,7 @@ const SyncRulesPage: React.FC = () => {
             .getData();
 
     const onSharingChanged = async (updatedAttributes: ShareUpdate) => {
-        if (!sharingSettingsObject) throw new Error("Unable to update sharing settings");
+        if (!sharingSettingsObject) return;
 
         const newSharingSettings = {
             meta: sharingSettingsObject.meta,

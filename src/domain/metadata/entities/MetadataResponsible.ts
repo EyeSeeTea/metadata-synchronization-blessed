@@ -1,9 +1,7 @@
-import { NamedRef } from "../../common/entities/Ref";
-import { Id } from "../../common/entities/Schemas";
+import { SharedRef } from "../../common/entities/Ref";
 import { MetadataEntities } from "./MetadataEntities";
 
-export interface MetadataResponsible {
-    id: Id;
+export interface MetadataResponsible
+    extends Pick<SharedRef, "id" | "userAccesses" | "userGroupAccesses"> {
     entity: keyof MetadataEntities;
-    user: NamedRef;
 }
