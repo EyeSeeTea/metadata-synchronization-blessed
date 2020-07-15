@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-15T07:14:26.918Z\n"
-"PO-Revision-Date: 2020-07-15T07:14:26.918Z\n"
+"POT-Creation-Date: 2020-07-15T07:30:27.684Z\n"
+"PO-Revision-Date: 2020-07-15T07:30:27.684Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -340,6 +340,9 @@ msgid "Set responsible user"
 msgstr ""
 
 msgid "Responsible"
+msgstr ""
+
+msgid "Sharing settings for {{name}}"
 msgstr ""
 
 msgid "Search by "
@@ -1210,9 +1213,6 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
-
-msgid "Sharing settings for {{name}}"
-msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
 msgstr ""
