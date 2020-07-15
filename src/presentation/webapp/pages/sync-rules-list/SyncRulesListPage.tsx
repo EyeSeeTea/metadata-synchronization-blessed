@@ -35,7 +35,7 @@ import { requestJSONDownload } from "../../../../utils/synchronization";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
-import SharingDialog from "../../components/sharing-dialog/SharingDialog";
+import { SharingDialog } from "../../components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
@@ -490,11 +490,13 @@ const SyncRulesPage: React.FC = () => {
             {!!sharingSettingsObject && (
                 <SharingDialog
                     isOpen={true}
-                    isDataShareable={false}
-                    sharedObject={sharingSettingsObject}
+                    showOptions={{
+                        dataSharing: false,
+                    }}
+                    meta={sharingSettingsObject}
                     onCancel={() => setSharingSettingsObject(null)}
-                    onSharingChanged={onSharingChanged}
-                    onSearchRequest={onSearchRequest}
+                    onChange={onSharingChanged}
+                    onSearch={onSearchRequest}
                 />
             )}
         </TestWrapper>

@@ -1,17 +1,14 @@
 import DialogContent from "@material-ui/core/DialogContent";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog, Sharing, SharingProps } from "d2-ui-components";
 import React from "react";
 import i18n from "../../../../locales";
-import Sharing from "./Sharing";
 
-const SharingDialog = ({
-    isOpen,
-    isDataShareable,
-    sharedObject,
-    onCancel,
-    onSharingChanged,
-    onSearchRequest,
-}) => {
+export interface SharingDialogProps extends SharingProps {
+    isOpen: boolean;
+    onCancel: () => void;
+}
+
+export const SharingDialog: React.FC<SharingDialogProps> = ({ isOpen, onCancel, ...rest }) => {
     return (
         <React.Fragment>
             <ConfirmationDialog
@@ -24,18 +21,9 @@ const SharingDialog = ({
                 disableEnforceFocus
             >
                 <DialogContent>
-                    {sharedObject && (
-                        <Sharing
-                            sharedObject={sharedObject}
-                            dataShareable={isDataShareable}
-                            onChange={onSharingChanged}
-                            onSearch={onSearchRequest}
-                        />
-                    )}
+                    <Sharing {...rest} />
                 </DialogContent>
             </ConfirmationDialog>
         </React.Fragment>
     );
 };
-
-export default SharingDialog;
