@@ -5,8 +5,20 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-16T10:58:36.357Z\n"
-"PO-Revision-Date: 2020-06-16T10:58:36.357Z\n"
+"POT-Creation-Date: 2020-06-29T11:09:56.987Z\n"
+"PO-Revision-Date: 2020-06-29T11:09:56.987Z\n"
+
+msgid "Field {{field}} cannot be blank"
+msgstr ""
+
+msgid "You need to select at least one {{field}}"
+msgstr ""
+
+msgid "Version is not valid (ie. {{validExample}})"
+msgstr ""
+
+msgid "Version is too small (next version is {{validExample}})"
+msgstr ""
 
 msgid "Preparing synchronization"
 msgstr ""
@@ -35,6 +47,81 @@ msgstr ""
 msgid "Network error {{error}}, check if server is up and CORS is enabled"
 msgstr ""
 
+msgid "Invalid module"
+msgstr ""
+
+msgid "Downloading snapshot for module {{name}}"
+msgstr ""
+
+msgid "Creating {{dhisVersion}} package for module {{name}}"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Department"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Replicate"
+msgstr ""
+
+msgid "Download metadata package"
+msgstr ""
+
+msgid "Generate package from module"
+msgstr ""
+
+msgid "Package of {{name}}"
+msgstr ""
+
+msgid "Generate package from {{name}}"
+msgstr ""
+
+msgid "Name (*)"
+msgstr ""
+
+msgid "Version number (*)"
+msgstr ""
+
+msgid "Version tag"
+msgstr ""
+
+msgid "DHIS2 Version (*)"
+msgstr ""
+
+msgid "Invalid package"
+msgstr ""
+
+msgid "Version"
+msgstr ""
+
+msgid "DHIS2 Version"
+msgstr ""
+
+msgid "Module"
+msgstr ""
+
+msgid "ID"
+msgstr ""
+
+msgid "Download as JSON"
+msgstr ""
+
+msgid "Publish to Store"
+msgstr ""
+
 msgid "MetaData Synchronization"
 msgstr ""
 
@@ -57,9 +144,6 @@ msgid "Deleted date"
 msgstr ""
 
 msgid "Deleted by"
-msgstr ""
-
-msgid "Details"
 msgstr ""
 
 msgid "Search deleted objects"
@@ -148,9 +232,6 @@ msgid "You need to map this element before accessing its related metadata mappin
 msgstr ""
 
 msgid "Last updated"
-msgstr ""
-
-msgid "ID"
 msgstr ""
 
 msgid "Mapped ID"
@@ -269,6 +350,45 @@ msgid ""
 "update the app."
 msgstr ""
 
+msgid "General info"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Include Exclude Selection"
+msgstr ""
+
+msgid "Advanced options"
+msgstr ""
+
+msgid "Selected {{difference}} elements"
+msgstr ""
+
+msgid "Removed {{difference}} elements"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Selected metadata"
+msgstr ""
+
+msgid "Metadata exclusions"
+msgstr ""
+
+msgid "Include user information and sharing settings"
+msgstr ""
+
+msgid "Use default configuration"
+msgstr ""
+
 msgid "Help"
 msgstr ""
 
@@ -320,9 +440,6 @@ msgstr ""
 msgid "Synchronize"
 msgstr ""
 
-msgid "Advanced options"
-msgstr ""
-
 msgid "Create and update"
 msgstr ""
 
@@ -330,9 +447,6 @@ msgid "Create"
 msgstr ""
 
 msgid "Update"
-msgstr ""
-
-msgid "Include user information and sharing settings"
 msgstr ""
 
 msgid "Disable atomic verification"
@@ -392,9 +506,6 @@ msgstr ""
 msgid "Events"
 msgstr ""
 
-msgid "Metadata"
-msgstr ""
-
 msgid "Unknown"
 msgstr ""
 
@@ -407,9 +518,6 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-msgid "Summary"
-msgstr ""
-
 msgid "Messages"
 msgstr ""
 
@@ -417,9 +525,6 @@ msgid "Data Statistics"
 msgstr ""
 
 msgid "JSON Response"
-msgstr ""
-
-msgid "General info"
 msgstr ""
 
 msgid "Instance Selection"
@@ -480,9 +585,6 @@ msgstr ""
 msgid "Aggregation"
 msgstr ""
 
-msgid "Include Exclude Selection"
-msgstr ""
-
 msgid "Data elements"
 msgstr ""
 
@@ -504,19 +606,7 @@ msgstr ""
 msgid "Programs"
 msgstr ""
 
-msgid "Name"
-msgstr ""
-
 msgid "Field cannot be blank"
-msgstr ""
-
-msgid "Description"
-msgstr ""
-
-msgid "Selected {{difference}} elements"
-msgstr ""
-
-msgid "Removed {{difference}} elements"
 msgstr ""
 
 msgid "Every day"
@@ -626,13 +716,7 @@ msgstr ""
 msgid "Frequency"
 msgstr ""
 
-msgid "Cancel"
-msgstr ""
-
 msgid "Save as sync Rule"
-msgstr ""
-
-msgid "Save"
 msgstr ""
 
 msgid "Download JSON"
@@ -700,9 +784,6 @@ msgstr ""
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
-msgid "Use default configuration"
-msgstr ""
-
 msgid "Metadata Synchronization History"
 msgstr ""
 
@@ -743,9 +824,6 @@ msgid "Metadata Types"
 msgstr ""
 
 msgid "Edit {{name}}"
-msgstr ""
-
-msgid "Delete"
 msgstr ""
 
 msgid "View summary"
@@ -916,12 +994,6 @@ msgid_plural "Successfully deleted {{count}} instances"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Edit"
-msgstr ""
-
-msgid "Replicate"
-msgstr ""
-
 msgid "Run analytics"
 msgstr ""
 
@@ -978,6 +1050,33 @@ msgstr ""
 msgid "Global mapping"
 msgstr ""
 
+msgid "This instance"
+msgstr ""
+
+msgid "Instance"
+msgstr ""
+
+msgid "Modules"
+msgstr ""
+
+msgid "Packages"
+msgstr ""
+
+msgid "View"
+msgstr ""
+
+msgid "New module"
+msgstr ""
+
+msgid "Edit module"
+msgstr ""
+
+msgid "Cancel module creation"
+msgstr ""
+
+msgid "Cancel module editing"
+msgstr ""
+
 msgid "The token is invalid"
 msgstr ""
 
@@ -1014,21 +1113,6 @@ msgid "GitHub repository (*)"
 msgstr ""
 
 msgid "GitHub access token (*)"
-msgstr ""
-
-msgid "New module"
-msgstr ""
-
-msgid "Edit module"
-msgstr ""
-
-msgid "Cancel module creation"
-msgstr ""
-
-msgid "Cancel module editing"
-msgstr ""
-
-msgid "Modules"
 msgstr ""
 
 msgid "Metadata Synchronization"
@@ -1116,6 +1200,12 @@ msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Unknown DHIS2 error"
+msgstr ""
+
+msgid "Widget cannot be used until an administrator opens the application"
+msgstr ""
+
 msgid "Running analytics for instance {{name}}"
 msgstr ""
 
@@ -1135,6 +1225,21 @@ msgid "Action"
 msgstr ""
 
 msgid "Program Rule"
+msgstr ""
+
+msgid "This URL and username combination already exists"
+msgstr ""
+
+msgid "You need to select at least one {{element}}"
+msgstr ""
+
+msgid "Cron expression {{expression}} must be valid"
+msgstr ""
+
+msgid "To enable a rule you need to enter a valid {{expression}}"
+msgstr ""
+
+msgid "Start and end dates are not a valid period"
 msgstr ""
 
 msgid "All periods"
@@ -1180,22 +1285,4 @@ msgid "Last year"
 msgstr ""
 
 msgid "Last 5 years"
-msgstr ""
-
-msgid "Field {{field}} cannot be blank"
-msgstr ""
-
-msgid "This URL and username combination already exists"
-msgstr ""
-
-msgid "You need to select at least one {{element}}"
-msgstr ""
-
-msgid "Cron expression {{expression}} must be valid"
-msgstr ""
-
-msgid "To enable a rule you need to enter a valid {{expression}}"
-msgstr ""
-
-msgid "Start and end dates are not a valid period"
 msgstr ""

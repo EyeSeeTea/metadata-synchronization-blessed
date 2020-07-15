@@ -14,7 +14,7 @@ import {
     getMetadata,
     requestJSONDownload,
 } from "../../../../../utils/synchronization";
-import { getValidationMessages } from "../../../../../utils/validations";
+import { getValidationMessages } from "../../../../../utils/old-validations";
 import { aggregationItems } from "../data/AggregationStep";
 import includeExcludeRulesFriendlyNames from "../metadata/RulesFriendlyNames";
 import { getInstanceOptions } from "./InstanceSelectionStep";

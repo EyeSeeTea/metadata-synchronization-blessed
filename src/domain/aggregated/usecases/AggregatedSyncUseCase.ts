@@ -3,7 +3,7 @@ import memoize from "nano-memoize";
 import { aggregatedTransformationsToDhis2 } from "../../../data/transformations/PackageTransformations";
 import Instance, { MetadataMappingDictionary } from "../../../models/instance";
 import { D2 } from "../../../types/d2";
-import { D2Api, D2CategoryOptionCombo } from "../../../types/d2-api";
+import { D2CategoryOptionCombo } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import {
@@ -31,13 +31,13 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
 
     constructor(
         d2: D2,
-        api: D2Api,
+        instance: InstanceEntity,
         builder: SynchronizationBuilder,
         instanceRepository: InstanceRepository,
         private aggregatedRepository: AggregatedRepository,
         private transformationRepository: TransformationRepository
     ) {
-        super(d2, api, builder, instanceRepository);
+        super(d2, instance, builder, instanceRepository);
     }
 
     public buildPayload = memoize(async () => {

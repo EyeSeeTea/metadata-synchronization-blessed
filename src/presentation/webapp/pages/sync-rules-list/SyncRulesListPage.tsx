@@ -37,7 +37,7 @@ import {
     UserInfo,
 } from "../../../../utils/permissions";
 import { requestJSONDownload } from "../../../../utils/synchronization";
-import { getValidationMessages } from "../../../../utils/validations";
+import { getValidationMessages } from "../../../../utils/old-validations";
 
 const config: {
     [key: string]: {
@@ -181,7 +181,7 @@ const SyncRulesPage: React.FC = () => {
         loading.show(true, "Generating JSON file");
         const rule = await SyncRule.get(api, id);
 
-        const sync = compositionRoot.sync[rule.type](rule.toBuilder());
+        const sync = compositionRoot.sync()[rule.type](rule.toBuilder());
         const payload = await sync.buildPayload();
 
         requestJSONDownload(payload, rule);
@@ -265,7 +265,7 @@ const SyncRulesPage: React.FC = () => {
 
         const { builder, id: syncRule, type = "metadata" } = rule;
 
-        const sync = compositionRoot.sync[type]({ ...builder, syncRule });
+        const sync = compositionRoot.sync()[type]({ ...builder, syncRule });
         for await (const { message, syncReport, done } of sync.execute()) {
             if (message) loading.show(true, message);
             if (syncReport) await syncReport.save(api);

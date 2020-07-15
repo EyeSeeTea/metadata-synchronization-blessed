@@ -8,7 +8,6 @@ import {
     DataSyncPeriod,
 } from "../domain/aggregated/types";
 import { SharingSetting } from "../domain/common/entities/SharingSetting";
-import { Validation } from "../domain/common/entities/Validations";
 import {
     SynchronizationRule,
     SyncRuleType,
@@ -23,6 +22,7 @@ import {
 } from "../types/synchronization";
 import { extractChildrenFromRules, extractParentsFromRule } from "../utils/metadataIncludeExclude";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../utils/permissions";
+import { OldValidation } from "../utils/old-validations";
 import isValidCronExpression from "../utils/validCronExpression";
 import {
     deleteData,
@@ -670,7 +670,7 @@ export default class SyncRule {
         await deleteDataStore(api, detailsKey);
     }
 
-    public async validate(): Promise<Validation> {
+    public async validate(): Promise<OldValidation> {
         return _.pickBy({
             name: _.compact([
                 !this.name.trim()

@@ -4,7 +4,7 @@ import memoize from "nano-memoize";
 import { eventsTransformationsToDhis2 } from "../../../data/transformations/PackageTransformations";
 import Instance, { MetadataMappingDictionary } from "../../../models/instance";
 import { D2 } from "../../../types/d2";
-import { D2Api, D2CategoryOptionCombo, D2Program } from "../../../types/d2-api";
+import { D2CategoryOptionCombo, D2Program } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import {
     getCategoryOptionCombos,
@@ -35,14 +35,14 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
     constructor(
         d2: D2,
-        api: D2Api,
+        instance: InstanceEntity,
         builder: SynchronizationBuilder,
-        instance: InstanceRepository,
+        instanceRepository: InstanceRepository,
         private eventsRepository: EventsRepository,
         private aggregatedRepository: AggregatedRepository,
         private transformationRepository: TransformationRepository
     ) {
-        super(d2, api, builder, instance);
+        super(d2, instance, builder, instanceRepository);
     }
 
     public buildPayload = memoize(async () => {
@@ -125,7 +125,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         // TODO: This is an external action and should be called by user
         const aggregatedSync = new AggregatedSyncUseCase(
             this.d2,
-            this.api,
+            this.instance,
             this.builder,
             this.instanceRepository,
             this.aggregatedRepository,

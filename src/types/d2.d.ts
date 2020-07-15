@@ -1,5 +1,3 @@
-import { Dictionary } from "lodash";
-
 export interface ModelDefinition {
     apiEndpoint: string;
     attributeProperties: any;

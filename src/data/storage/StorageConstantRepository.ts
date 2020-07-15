@@ -37,12 +37,17 @@ export class StorageConstantRepository extends StorageRepository {
         return constants[0] ?? {};
     }
 
-    public async getObject<T extends object>(key: string, defaultValue: T): Promise<T> {
+    public async getObject<T extends object>(key: string): Promise<T | undefined> {
         const { description } = await this.getConstant(key);
-        if (!description) {
+        return description ? JSON.parse(description) : undefined;
+    }
+
+    public async getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T> {
+        const result = await this.getObject<T>(key);
+        if (!result) {
             await this.api.models.constants.post(this.buildDefault(key, defaultValue)).getData();
         }
-        return description ? JSON.parse(description) : defaultValue;
+        return result ?? defaultValue;
     }
 
     public async saveObject<T extends object>(key: string, value: T): Promise<void> {

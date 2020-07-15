@@ -1,7 +1,6 @@
 import memoize from "nano-memoize";
 import Instance from "../../../models/instance";
 import { D2 } from "../../../types/d2";
-import { D2Api } from "../../../types/d2-api";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { Ref } from "../../common/entities/Ref";
 import { Instance as InstanceEntity } from "../../instance/entities/Instance";
@@ -17,23 +16,19 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
 
     constructor(
         d2: D2,
-        api: D2Api,
+        instance: InstanceEntity,
         builder: SynchronizationBuilder,
-        instance: InstanceRepository,
+        instanceRepository: InstanceRepository,
         private metadataRepository: MetadataRepository
     ) {
-        super(d2, api, builder, instance);
+        super(d2, instance, builder, instanceRepository);
     }
 
     public buildPayload = memoize(async () => {
         return {};
     });
 
-    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
-        //TODO: remove instance from abstract method in base base class
-        // when aggregated and events does not use
-        console.log(instance.url);
-
+    public async postPayload(_instance: Instance, instanceEntity: InstanceEntity) {
         const { metadataIds, syncParams = {} } = this.builder;
 
         const payloadPackage = await this.metadataRepository.getMetadataFieldsByIds<Ref>(

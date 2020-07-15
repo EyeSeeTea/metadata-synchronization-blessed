@@ -10,7 +10,7 @@ import RaisedButton from "material-ui/RaisedButton/RaisedButton";
 import PropTypes from "prop-types";
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { getValidationMessages } from "../../../../utils/validations";
+import { getValidationMessages } from "../../../../utils/old-validations";
 import isFormValid from "./FieldValidator";
 import SaveButton from "./SaveButton";
 

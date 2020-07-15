@@ -3,7 +3,6 @@ import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../../models/dhis/factory";
 import Instance from "../../../models/instance";
 import { D2 } from "../../../types/d2";
-import { D2Api } from "../../../types/d2-api";
 import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { Ref } from "../../common/entities/Ref";
@@ -23,12 +22,12 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
     constructor(
         d2: D2,
-        api: D2Api,
+        instance: InstanceEntity,
         builder: SynchronizationBuilder,
-        instance: InstanceRepository,
+        instanceRepository: InstanceRepository,
         private metadataRepository: MetadataRepository
     ) {
-        super(d2, api, builder, instance);
+        super(d2, instance, builder, instanceRepository);
     }
 
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
@@ -130,13 +129,9 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     });
 
     public async postPayload(
-        instance: Instance,
+        _instance: Instance,
         instanceEntity: InstanceEntity
     ): Promise<SynchronizationResult[]> {
-        //TODO: remove instance from abstract method in base base class
-        // when aggregated and events does not use
-        console.log(instance.url);
-
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();

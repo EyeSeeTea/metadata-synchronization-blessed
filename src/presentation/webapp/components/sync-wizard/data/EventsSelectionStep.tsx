@@ -3,11 +3,9 @@ import { Typography } from "@material-ui/core";
 import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { Repository } from "../../../../CompositionRoot";
-import { useAppContext } from "../../../../common/contexts/AppContext";
 import { ProgramEvent } from "../../../../../domain/events/entities/ProgramEvent";
-import { EventsRepository } from "../../../../../domain/events/repositories/EventsRepository";
 import { D2Program } from "../../../../../types/d2-api";
+import { useAppContext } from "../../../../common/contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
@@ -25,8 +23,8 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
 
     useEffect(() => {
         compositionRoot
-            .get<EventsRepository>(Repository.EventsRepository)
-            .getEvents(
+            .events()
+            .list(
                 {
                     ...syncRule.dataParams,
                     allEvents: true,
@@ -38,7 +36,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     }, [compositionRoot, syncRule, programs]);
 
     useEffect(() => {
-        const sync = compositionRoot.sync.events(syncRule.toBuilder());
+        const sync = compositionRoot.sync().events(syncRule.toBuilder());
         sync.extractMetadata().then(({ programs = [] }) => setPrograms(programs));
     }, [syncRule, compositionRoot]);
 

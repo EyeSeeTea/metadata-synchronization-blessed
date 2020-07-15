@@ -5,6 +5,7 @@ import { MappedCategoryOption } from "../../domain/aggregated/entities/MappedCat
 import { AggregatedRepository } from "../../domain/aggregated/repositories/AggregatedRepository";
 import { DataSyncAggregation, DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
+import { Instance as InstanceEntity } from "../../domain/instance/entities/Instance";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import Instance, { MetadataMappingDictionary } from "../../models/instance";
@@ -13,10 +14,10 @@ import { D2Api, D2CategoryOptionCombo, DataValueSetsPostResponse } from "../../t
 import { promiseMap } from "../../utils/common";
 
 export class AggregatedD2ApiRepository implements AggregatedRepository {
-    private currentD2Api: D2Api;
+    private api: D2Api;
 
-    constructor(d2Api: D2Api) {
-        this.currentD2Api = d2Api;
+    constructor(instance: InstanceEntity) {
+        this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 
     public async getAggregated(
@@ -34,7 +35,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             ? attributeCategoryOptions
             : undefined;
 
-        return this.currentD2Api
+        return this.api
             .get<AggregatedPackage>("/dataValueSets", {
                 dataElementIdScheme: "UID",
                 orgUnitIdScheme: "UID",
@@ -78,7 +79,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             return { dataValues: [] };
         } else if (aggregationType) {
             const result = await promiseMap(_.chunk(periods, 500), period => {
-                return this.currentD2Api
+                return this.api
                     .get<AggregatedPackage>("/analytics/dataValueSet.json", {
                         dimension: _.compact([
                             `dx:${dimensionIds.join(";")}`,
@@ -159,7 +160,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
     }
 
     public async getDimensions(): Promise<string[]> {
-        const { dimensions } = await this.currentD2Api
+        const { dimensions } = await this.api
             .get<{ dimensions: Array<{ id: string }> }>("/dimensions", {
                 paging: false,
                 fields: "id",
@@ -174,7 +175,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         additionalParams: DataImportParams | undefined,
         instance: Instance
     ): Promise<SynchronizationResult> {
-        const { status, description, importCount, conflicts } = await this.currentD2Api
+        const { status, description, importCount, conflicts } = await this.api
             .post<DataValueSetsPostResponse>(
                 "/dataValueSets",
                 {

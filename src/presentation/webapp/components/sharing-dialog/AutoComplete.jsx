@@ -40,7 +40,7 @@ Suggestion.propTypes = {
     suggestion: PropTypes.shape({ displayName: PropTypes.string }).isRequired,
 };
 
-const styles = theme => ({
+const styles = () => ({
     root: {
         flexGrow: 1,
         height: 60,

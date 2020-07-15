@@ -18,7 +18,8 @@ async function getBaseUrl() {
 // Presentation layer is loaded with code-splitting for performance
 async function getPresentation() {
     if (process.env.REACT_APP_DASHBOARD_WIDGET) {
-        return () => <h1>Hello World, widget!</h1>;
+        const { default: App } = await import("./presentation/widget/WidgetApp");
+        return App;
     } else {
         const { default: App } = await import("./presentation/webapp/WebApp");
         return App;

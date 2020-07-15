@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import SyncRule from "../../../../models/syncRule";
 import { promiseMap } from "../../../../utils/common";
 import { getMetadata } from "../../../../utils/synchronization";
-import { getValidationMessages } from "../../../../utils/validations";
+import { getValidationMessages } from "../../../../utils/old-validations";
 import { aggregatedSteps, deletedSteps, eventsSteps, metadataSteps } from "./Steps";
 import { useAppContext } from "../../../common/contexts/AppContext";
 

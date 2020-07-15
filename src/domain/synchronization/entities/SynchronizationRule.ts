@@ -1,7 +1,7 @@
 import { SynchronizationBuilder } from "../../../types/synchronization";
-import { SharedObject } from "../../common/entities/SharedObject";
+import { SharedRef } from "../../common/entities/Ref";
 
-export interface SynchronizationRule extends SharedObject {
+export interface SynchronizationRule extends SharedRef {
     code?: string;
     created: Date;
     description?: string;

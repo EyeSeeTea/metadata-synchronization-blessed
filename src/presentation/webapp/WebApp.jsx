@@ -9,17 +9,18 @@ import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
 import _ from "lodash";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
+import { Instance as InstanceEntity } from "../../domain/instance/entities/Instance";
 import { MigrationsRunner } from "../../migrations";
 import Instance from "../../models/instance";
 import { D2Api } from "../../types/d2-api";
 import { initializeAppRoles } from "../../utils/permissions";
 import { AppContext } from "../common/contexts/AppContext";
+import muiThemeLegacy from "../common/themes/dhis2-legacy.theme";
+import { muiTheme } from "../common/themes/dhis2.theme";
 import { CompositionRoot } from "../CompositionRoot";
 import Migrations from "./components/migrations/Migrations";
 import Share from "./components/share/Share";
 import Root from "./pages/Root";
-import muiThemeLegacy from "./themes/dhis2-legacy.theme";
-import { muiTheme } from "./themes/dhis2.theme";
 import "./WebApp.css";
 
 const axiosMaxRetries = 3;
@@ -73,10 +74,11 @@ const App = () => {
             if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
             Instance.setEncryptionKey(encryptionKey);
 
-            const d2 = await init({ baseUrl: baseUrl + "/api" });
+            const d2 = await init({ baseUrl: `${baseUrl}/api` });
             const api = new D2Api({ baseUrl });
+            const instance = InstanceEntity.build({ name: "This instance", url: baseUrl });
 
-            const compositionRoot = new CompositionRoot(api, d2, encryptionKey);
+            const compositionRoot = new CompositionRoot(instance, d2, encryptionKey);
 
             const appContext = { d2, api, compositionRoot };
             setAppContext(appContext);
