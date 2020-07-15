@@ -23,9 +23,13 @@ export class SetResponsiblesUseCase implements UseCase {
             [instance]
         );
 
-        await storageRepository.saveObjectInCollection<MetadataResponsible>(
-            Namespace.RESPONSIBLES,
-            { id, userAccesses, userGroupAccesses, entity }
-        );
+        if (userAccesses.length === 0 && userGroupAccesses.length === 0) {
+            await storageRepository.removeObjectInCollection(Namespace.RESPONSIBLES, id);
+        } else {
+            await storageRepository.saveObjectInCollection<MetadataResponsible>(
+                Namespace.RESPONSIBLES,
+                { id, userAccesses, userGroupAccesses, entity }
+            );
+        }
     }
 }

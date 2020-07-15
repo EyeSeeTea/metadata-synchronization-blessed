@@ -27,7 +27,6 @@ import { ListAllMetadataUseCase } from "../domain/metadata/usecases/ListAllMetad
 import { ListMetadataUseCase } from "../domain/metadata/usecases/ListMetadataUseCase";
 import { ListResponsiblesUseCase } from "../domain/metadata/usecases/ListResponsiblesUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
-import { RemoveResponsiblesUseCase } from "../domain/metadata/usecases/RemoveResponsibleUseCase";
 import { SetResponsiblesUseCase } from "../domain/metadata/usecases/SetResponsiblesUseCase";
 import { DeleteModuleUseCase } from "../domain/modules/usecases/DeleteModuleUseCase";
 import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/DownloadModuleSnapshotUseCase";
@@ -124,7 +123,6 @@ export class CompositionRoot {
         return getExecute({
             get: new GetResponsibleUseCase(this.repositoryFactory, this.localInstance),
             set: new SetResponsiblesUseCase(this.repositoryFactory, this.localInstance),
-            remove: new RemoveResponsiblesUseCase(this.repositoryFactory, this.localInstance),
             list: new ListResponsiblesUseCase(this.repositoryFactory, this.localInstance),
         });
     }
