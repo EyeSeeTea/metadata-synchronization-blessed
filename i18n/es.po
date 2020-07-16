@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-07-15T09:01:13.622Z\n"
+"POT-Creation-Date: 2020-07-16T07:10:37.523Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -75,6 +75,21 @@ msgid "Department"
 msgstr ""
 
 msgid "Description"
+msgstr ""
+
+msgid "Last updated"
+msgstr ""
+
+msgid "Last updated by"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Created by"
+msgstr ""
+
+msgid "Selected metadata"
 msgstr ""
 
 msgid "Details"
@@ -256,9 +271,6 @@ msgid ""
 "You need to map this element before accessing its related metadata mapping"
 msgstr ""
 
-msgid "Last updated"
-msgstr ""
-
 msgid "Mapped ID"
 msgstr ""
 
@@ -409,9 +421,6 @@ msgid "Cancel"
 msgstr ""
 
 msgid "Save"
-msgstr ""
-
-msgid "Selected metadata"
 msgstr ""
 
 msgid "Metadata exclusions"
@@ -766,9 +775,6 @@ msgid "Event date"
 msgstr ""
 
 msgid "Stored by"
-msgstr ""
-
-msgid "Created"
 msgstr ""
 
 msgid "Due date"

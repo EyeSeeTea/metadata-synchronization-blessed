@@ -169,6 +169,10 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
             text: "Selected metadata",
             getValue: module => `${module.metadataIds.length} elements`,
         },
+        { name: "lastUpdated", text: i18n.t("Last updated"), hidden: true },
+        { name: "lastUpdatedBy", text: i18n.t("Last updated by"), hidden: true },
+        { name: "created", text: i18n.t("Created"), hidden: true },
+        { name: "user", text: i18n.t("Created by"), hidden: true },
     ];
 
     const details: ObjectsTableDetailField<Module>[] = [
@@ -177,9 +181,13 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
         { name: "description", text: i18n.t("Description") },
         {
             name: "metadataIds",
-            text: "Selected metadata",
+            text: i18n.t("Selected metadata"),
             getValue: module => `${module.metadataIds.length} elements`,
         },
+        { name: "lastUpdated", text: i18n.t("Last updated") },
+        { name: "lastUpdatedBy", text: i18n.t("Last updated by") },
+        { name: "created", text: i18n.t("Created") },
+        { name: "user", text: i18n.t("Created by") },
     ];
 
     const actions: TableAction<Module>[] = [
