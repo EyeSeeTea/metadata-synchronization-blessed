@@ -170,7 +170,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
             details={details}
             actions={actions}
             onActionButtonClick={onActionButtonClick}
-            forceSelectionColumn={true}
+            forceSelectionColumn={presentation === "app"}
             filterComponents={externalComponents}
             selection={selection}
             onChange={updateTable}
