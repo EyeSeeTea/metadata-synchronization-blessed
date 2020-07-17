@@ -26,7 +26,7 @@ import { TransformationRepositoryConstructor } from "../../transformations/repos
 import {
     AggregatedDataStats,
     EventsDataStats,
-    SynchronizationReportStatus
+    SynchronizationReportStatus,
 } from "../entities/SynchronizationReport";
 import { SynchronizationResult, SynchronizationStatus } from "../entities/SynchronizationResult";
 import { SyncRuleType } from "../entities/SynchronizationRule";

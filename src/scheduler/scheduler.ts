@@ -8,7 +8,7 @@ import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedM
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import {
     SynchronizationRule,
-    SyncRuleType
+    SyncRuleType,
 } from "../domain/synchronization/entities/SynchronizationRule";
 import { SyncronizationClass } from "../domain/synchronization/usecases/GenericSyncUseCase";
 import SyncRule from "../models/syncRule";

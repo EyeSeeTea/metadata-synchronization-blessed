@@ -127,8 +127,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
                         {syncRule.targetInstances.map(id => {
                             const instanceOption = instanceOptions.find(e => e.value === id);
                             return instanceOption ? (
-                                <LiEntry key={instanceOption.value} label={instanceOption.text}>
-                                </LiEntry>
+                                <LiEntry key={instanceOption.value} label={instanceOption.text} />
                             ) : null;
                         })}
                     </ul>

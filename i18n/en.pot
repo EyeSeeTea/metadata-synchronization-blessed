@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-16T07:10:37.523Z\n"
-"PO-Revision-Date: 2020-07-16T07:10:37.523Z\n"
+"POT-Creation-Date: 2020-07-17T07:23:03.837Z\n"
+"PO-Revision-Date: 2020-07-17T07:23:03.837Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -642,15 +642,6 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
-msgid "Metadata mapping"
-msgstr ""
-
-msgid "Source"
-msgstr ""
-
-msgid "Target"
-msgstr ""
-
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -962,6 +953,9 @@ msgstr ""
 msgid "Password (*)"
 msgstr ""
 
+msgid "Metadata mapping"
+msgstr ""
+
 msgid "Test Connection"
 msgstr ""
 
@@ -1102,6 +1096,9 @@ msgid "Cancel module creation"
 msgstr ""
 
 msgid "Cancel module editing"
+msgstr ""
+
+msgid "Model"
 msgstr ""
 
 msgid "The token is empty"
