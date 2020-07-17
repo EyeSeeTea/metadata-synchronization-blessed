@@ -9,7 +9,7 @@ import { useAppContext } from "../../../common/contexts/AppContext";
 import PageHeader from "../../components/page-header/PageHeader";
 
 export const ResponsiblesListPage: React.FC = () => {
-    const { compositionRoot } = useAppContext();
+    const { compositionRoot, api } = useAppContext();
     const history = useHistory();
     const [instances, setInstances] = useState<Instance[]>([]);
     const [selectedInstance, setSelectedInstance] = useState<Instance>();
@@ -35,7 +35,16 @@ export const ResponsiblesListPage: React.FC = () => {
         [instances]
     );
 
-    const columns: TableColumn<MetadataResponsible>[] = [{ name: "id", text: i18n.t("ID") }];
+    const columns: TableColumn<MetadataResponsible>[] = [
+        {
+            name: "entity",
+            text: i18n.t("Model"),
+            getValue: ({ entity }: MetadataResponsible) => {
+                return api.models[entity].schema.displayName;
+            },
+        },
+        { name: "id", text: i18n.t("ID") },
+    ];
 
     return (
         <React.Fragment>
