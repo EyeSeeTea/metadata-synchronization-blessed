@@ -78,7 +78,7 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
             />
 
             {instances.length > 0 && (
-                <FormControl fullWidth={true}>
+                <FormControl fullWidth={true} className={classes.row}>
                     <InputLabel>{i18n.t("Source instance")}</InputLabel>
                     <Select value={syncRule.originInstance} onChange={onChangeInstance}>
                         {[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances].map(
