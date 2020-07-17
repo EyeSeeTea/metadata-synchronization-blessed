@@ -29,7 +29,7 @@
         "cronstrue": "1.95.0",
         "cryptr": "4.0.2",
         "d2": "31.8.1",
-        "d2-api": "1.0.0",
+        "d2-api": "1.0.1-beta.1",
         "d2-manifest": "1.0.0",
         "d2-ui-components": "1.5.1-beta.5",
         "file-saver": "2.0.2",
