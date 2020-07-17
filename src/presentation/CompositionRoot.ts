@@ -43,7 +43,6 @@ import { SaveStoreUseCase } from "../domain/packages/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/packages/usecases/ValidateStoreUseCase";
 import { Repositories } from "../domain/Repositories";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
-import { D2 } from "../types/d2";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
 
@@ -53,7 +52,6 @@ export class CompositionRoot {
     // TODO: Remove d2 and d2Api explicit calls so we do not have to expose them
     constructor(
         public readonly localInstance: Instance,
-        private d2: D2,
         private encryptionKey: string
     ) {
         this.repositoryFactory = new RepositoryFactory();
@@ -76,7 +74,6 @@ export class CompositionRoot {
         return {
             aggregated: (builder: SynchronizationBuilder) =>
                 new AggregatedSyncUseCase(
-                    this.d2,
                     builder,
                     this.repositoryFactory,
                     this.localInstance,
@@ -84,7 +81,6 @@ export class CompositionRoot {
                 ),
             events: (builder: SynchronizationBuilder) =>
                 new EventsSyncUseCase(
-                    this.d2,
                     builder,
                     this.repositoryFactory,
                     this.localInstance,
@@ -92,7 +88,6 @@ export class CompositionRoot {
                 ),
             metadata: (builder: SynchronizationBuilder) =>
                 new MetadataSyncUseCase(
-                    this.d2,
                     builder,
                     this.repositoryFactory,
                     this.localInstance,
@@ -100,7 +95,6 @@ export class CompositionRoot {
                 ),
             deleted: (builder: SynchronizationBuilder) =>
                 new DeletedMetadataSyncUseCase(
-                    this.d2,
                     builder,
                     this.repositoryFactory,
                     this.localInstance,

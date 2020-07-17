@@ -1,6 +1,6 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { d2ModelFactory } from "../../../models/dhis/factory";
+import { modelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder, NestedRules } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { Ref } from "../../common/entities/Ref";
@@ -22,8 +22,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             const { type, ids, excludeRules, includeRules, includeSharingSettings } = builder;
 
             //TODO: when metadata entities schema exists on domain, move this factory to domain
-            const model = d2ModelFactory(this.api, type).getD2Model(this.d2);
-            const collectionName = model.plural as keyof MetadataEntities;
+            const collectionName = modelFactory(this.api, type).getCollectionName();
+            const schema = this.api.models[collectionName].schema;
             const result: MetadataPackage = {};
 
             // Each level of recursion traverse the exclude/include rules with nested values
@@ -38,8 +38,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             for (const element of elements) {
                 // Store metadata object in result
                 const object = cleanObject(
-                    this.d2,
-                    model.name,
+                    this.api,
+                    schema.name,
                     element,
                     excludeRules,
                     includeSharingSettings
@@ -49,7 +49,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 result[collectionName]?.push(object);
 
                 // Get all the referenced metadata
-                const references = getAllReferences(this.d2, object, model.name);
+                const references = getAllReferences(this.api, object, schema.name);
                 const includedReferences = cleanReferences(references, includeRules);
                 const promises = includedReferences
                     .map(type => ({
@@ -87,7 +87,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const metadata = await metadataRepository.getMetadataByIds<Ref>(metadataIds, "id");
 
         const exportResults = await promiseMap(_.keys(metadata), type => {
-            const myClass = d2ModelFactory(this.api, type);
+            const myClass = modelFactory(this.api, type);
             const metadataType = myClass.getMetadataType();
 
             const metadatatype = type as keyof MetadataEntities;

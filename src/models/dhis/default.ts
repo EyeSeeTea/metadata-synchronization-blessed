@@ -1,7 +1,6 @@
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import _ from "lodash";
 import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
-import { D2, ModelDefinition } from "../../types/d2";
 import { D2Api, D2ApiDefinition, Model } from "../../types/d2-api";
 import {
     d2BaseModelColumns,
@@ -40,10 +39,6 @@ export abstract class D2Model {
     protected static mappingType: string | undefined;
     protected static isGlobalMapping = false;
 
-    public static getD2Model(d2: D2): ModelDefinition {
-        return d2.models[this.collectionName];
-    }
-
     public static getApiModel(api: D2Api): InstanceType<typeof Model> {
         const modelCollection = api.models as {
             [ModelKey in keyof D2ApiDefinition["schemas"]]: Model<
@@ -54,8 +49,10 @@ export abstract class D2Model {
         return modelCollection[this.collectionName];
     }
 
-    public static getModelName(d2: unknown): string {
-        return this.modelName ?? this.getD2Model(d2 as D2)?.displayName ?? "Unknown model";
+    public static getModelName(api: D2Api): string {
+        return (
+            this.modelName ?? api.models[this.collectionName].schema.displayName ?? "Unknown model"
+        );
     }
 
     public static getApiModelTransform(): (objects: MetadataType[]) => MetadataType[] {

@@ -1,6 +1,3 @@
-import axiosRetry from "axios-retry";
-import btoa from "btoa";
-import { init } from "d2";
 import "dotenv/config";
 import fs from "fs";
 import _ from "lodash";
@@ -9,7 +6,6 @@ import path from "path";
 import * as yargs from "yargs";
 import { MigrationsRunner } from "../migrations";
 import { getMigrationsForNode } from "../migrations/utils";
-import { D2 } from "../types/d2";
 import { D2Api } from "../types/d2-api";
 import Scheduler from "./scheduler";
 
@@ -42,7 +38,6 @@ const { config } = yargs
     }).argv;
 
 const checkMigrations = async (api: D2Api) => {
-    axiosRetry(api.connection, { retries: 3 });
     const migrations = getMigrationsForNode();
     const debug = getLogger("migrations").debug;
     const runner = await MigrationsRunner.init({ api, debug, migrations });
@@ -53,13 +48,10 @@ const checkMigrations = async (api: D2Api) => {
 };
 
 const start = async (): Promise<void> => {
-    //@ts-ignore
-    const { encryptionKey = "", baseUrl, username, password } = config;
+    const { baseUrl, username, password } = config;
     if (!baseUrl || !username || !password) throw new Error("Couldn't connect to server");
 
-    const authorization = `Basic ${btoa(username + ":" + password)}`;
     const api = new D2Api({ baseUrl, auth: { username, password } });
-    const d2 = await init({ baseUrl: `${baseUrl}/api`, headers: { authorization } });
     await checkMigrations(api);
 
     const welcomeMessage = `Script initialized on ${baseUrl} with user ${username}`;
@@ -67,7 +59,7 @@ const start = async (): Promise<void> => {
     getLogger("main").info(welcomeMessage);
 
     // TODO: Create composition root and set encryption key
-    new Scheduler(d2 as D2, api).initialize();
+    new Scheduler(api).initialize();
 };
 
 start().catch(console.error);

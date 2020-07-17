@@ -1,5 +1,5 @@
 import memoize from "nano-memoize";
-import { d2ModelFactory } from "../../../../models/dhis/factory";
+import { modelFactory } from "../../../../models/dhis/factory";
 import { D2Api, D2ModelSchemas } from "../../../../types/d2-api";
 
 /**
@@ -8,7 +8,7 @@ import { D2Api, D2ModelSchemas } from "../../../../types/d2-api";
  */
 export const getFilterData = memoize(
     (modelName: keyof D2ModelSchemas, type: "group" | "level", _baseUrl: string, api: D2Api) =>
-        d2ModelFactory(api, modelName)
+        modelFactory(api, modelName)
             .getApiModel(api)
             .get({
                 paging: false,

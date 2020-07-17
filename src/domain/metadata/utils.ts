@@ -1,6 +1,6 @@
 import { isValidUid } from "d2/uid";
 import _ from "lodash";
-import { D2 } from "../../types/d2";
+import { D2Api, D2ModelSchemas } from "../../types/d2-api";
 import { NestedRules } from "../../types/synchronization";
 
 const blacklistedProperties = ["access"];
@@ -19,7 +19,7 @@ export function buildNestedRules(rules: string[][] = []): NestedRules {
  * (blacklistedProperties, userProperties if required and references in exclude rules)
  */
 export function cleanObject(
-    d2: D2,
+    api: D2Api,
     modelName: string,
     element: any,
     excludeRules: string[][] = [],
@@ -34,7 +34,7 @@ export function cleanObject(
     const cleanLeafRules = leafRules.reduce(
         (accumulator: string[], rule: string) => [
             ...accumulator,
-            ...cleanToAPIChildReferenceName(d2, rule, modelName),
+            ...cleanToAPIChildReferenceName(api, rule, modelName),
         ],
         []
     );
@@ -57,7 +57,7 @@ export function cleanReferences(
 }
 
 export function getAllReferences(
-    d2: D2,
+    api: D2Api,
     obj: any,
     type: string,
     parents: string[] = []
@@ -65,11 +65,11 @@ export function getAllReferences(
     let result: Record<string, string[]> = {};
     _.forEach(obj, (value, key) => {
         if (_.isObject(value) || _.isArray(value)) {
-            const recursive = getAllReferences(d2, value, type, [...parents, key]);
+            const recursive = getAllReferences(api, value, type, [...parents, key]);
             result = _.deepMerge(result, recursive);
         } else if (isValidUid(value)) {
             const metadataType = _(parents)
-                .map(k => cleanToModelName(d2, k, type))
+                .map(k => cleanToModelName(api, k, type))
                 .compact()
                 .first();
             if (metadataType) {
@@ -81,16 +81,16 @@ export function getAllReferences(
     return result;
 }
 
-export function isD2Model(d2: D2, modelName: string): boolean {
-    return !!d2.models[modelName];
+export function isD2Model(api: D2Api, modelName: string): boolean {
+    return !!api.models[modelName as keyof D2ModelSchemas];
 }
 
 /**
  * Return expected model in plural to include as key in post metadata body
  */
-export function cleanToModelName(d2: D2, id: string, caller: string): string | null {
-    if (isD2Model(d2, id)) {
-        return d2.models[id].plural;
+export function cleanToModelName(api: D2Api, id: string, caller: string): string | null {
+    if (isD2Model(api, id)) {
+        return api.models[id as keyof D2ModelSchemas].schema.plural;
     } else if (id === "attributeValues") {
         return "attributes";
     } else if (id === "commentOptionSet") {
@@ -109,13 +109,13 @@ export function cleanToModelName(d2: D2, id: string, caller: string): string | n
 /**
  * Return expected posible children keys for metadata models
  */
-export function cleanToAPIChildReferenceName(d2: D2, key: string, parent: string): string[] {
+export function cleanToAPIChildReferenceName(api: D2Api, key: string, parent: string): string[] {
     if (key === "attributes") {
         return ["attributeValues"];
     } else if (key === "optionSets") {
         return _.compact([
-            d2.models[key].name,
-            d2.models[key].plural,
+            api.models[key].schema.name,
+            api.models[key].schema.plural,
             parent === "dataElement" ? "commentOptionSet" : null,
         ]);
     } else if (key === parent + "Sets" && parent.endsWith("Group")) {
@@ -124,9 +124,12 @@ export function cleanToAPIChildReferenceName(d2: D2, key: string, parent: string
         return ["workflow"];
     } else if (key === "programNotificationTemplates") {
         return ["notificationTemplates"];
-    } else if (isD2Model(d2, key)) {
+    } else if (isD2Model(api, key)) {
         // Children reference name may be plural or singular
-        return [d2.models[key].name, d2.models[key].plural];
+        return [
+            api.models[key as keyof D2ModelSchemas].schema.name,
+            api.models[key as keyof D2ModelSchemas].schema.plural,
+        ];
     } else {
         return [key];
     }

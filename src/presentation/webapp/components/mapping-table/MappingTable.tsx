@@ -18,10 +18,9 @@ import {
 import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
 import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
-import { d2ModelFactory } from "../../../../models/dhis/factory";
+import { modelFactory } from "../../../../models/dhis/factory";
 import { ProgramDataElementModel } from "../../../../models/dhis/mapping";
 import { DataElementModel, OrganisationUnitModel } from "../../../../models/dhis/metadata";
-import { D2 } from "../../../../types/d2";
 import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import MappingDialog, { MappingDialogConfig } from "../mapping-dialog/MappingDialog";
@@ -88,7 +87,7 @@ export default function MappingTable({
     isChildrenMapping = false,
     mappingPath,
 }: MappingTableProps) {
-    const { api, d2, compositionRoot } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const classes = useStyles();
     const snackbar = useSnackbar();
     const loading = useLoading();
@@ -140,7 +139,7 @@ export default function MappingTable({
                             throw new Error("Attempting to apply mapping without a valid type");
                         }
 
-                        const destinationModel = d2ModelFactory(api, mappingType);
+                        const destinationModel = modelFactory(api, mappingType);
                         _.unset(newMapping, [mappingType, id]);
                         if (isChildrenMapping || mappedId) {
                             const mapping = await buildMapping({
@@ -269,7 +268,7 @@ export default function MappingTable({
                         );
 
                         const mappingType = row?.model.getMappingType();
-                        const destinationModel = d2ModelFactory(api, mappingType);
+                        const destinationModel = modelFactory(api, mappingType);
                         const candidates = await autoMap({
                             api,
                             instanceApi,
@@ -349,8 +348,8 @@ export default function MappingTable({
                     const row = _.find(rows, ["id", id]);
                     const rowType = row?.model.getCollectionName() ?? type;
                     const mappingType = row?.model.getMappingType() ?? type;
-                    const originModel = d2ModelFactory(api, rowType) ?? model;
-                    const destinationModel = d2ModelFactory(api, mappingType);
+                    const originModel = modelFactory(api, rowType) ?? model;
+                    const destinationModel = modelFactory(api, mappingType);
                     const innerMapping = await createValidations(mapping);
                     const { mappedName, mappedCode, mappedLevel } = await buildMapping({
                         api,
@@ -506,7 +505,7 @@ export default function MappingTable({
                     text: i18n.t("Metadata type"),
                     hidden: model.getChildrenKeys() === undefined,
                     getValue: (row: MetadataType) => {
-                        return row.model.getModelName(d2 as D2);
+                        return row.model.getModelName(api);
                     },
                 },
                 {
@@ -626,7 +625,7 @@ export default function MappingTable({
                 },
             ]),
         [
-            d2,
+            api,
             classes,
             model,
             openMappingDialog,

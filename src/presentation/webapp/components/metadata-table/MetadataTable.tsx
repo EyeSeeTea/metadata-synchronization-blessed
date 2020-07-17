@@ -26,7 +26,6 @@ import { ListMetadataParams } from "../../../../domain/metadata/repositories/Met
 import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
 import { DataElementModel } from "../../../../models/dhis/metadata";
-import { D2 } from "../../../../types/d2";
 import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
@@ -113,7 +112,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     allowChangingResponsible = false,
     ...rest
 }) => {
-    const { compositionRoot, d2 } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const classes = useStyles();
 
     const snackbar = useSnackbar();
@@ -240,7 +239,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                     <Dropdown
                         items={models.map(model => ({
                             id: model.getMetadataType(),
-                            name: model.getModelName(d2 as D2),
+                            name: model.getModelName(api),
                         }))}
                         onValueChange={changeModelFilter}
                         value={model.getMetadataType()}
@@ -266,7 +265,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeGroupFilter}
                         value={filters.group?.value ?? ""}
                         label={i18n.t("{{displayName}} Group", {
-                            displayName: model.getModelName(d2),
+                            displayName: model.getModelName(api),
                         })}
                     />
                 </div>
@@ -279,7 +278,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeLevelFilter}
                         value={filters.level ?? ""}
                         label={i18n.t("{{displayName}} Level", {
-                            displayName: model.getModelName(d2),
+                            displayName: model.getModelName(api),
                         })}
                     />
                 </div>
@@ -437,7 +436,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 }
             );
         }
-    }, [d2, api, model]);
+    }, [api, model]);
 
     useEffect(() => {
         compositionRoot.responsibles.list(remoteInstance).then(updateResponsibles);
