@@ -1,3 +1,4 @@
+import axiosRetry from "axios-retry";
 import "dotenv/config";
 import fs from "fs";
 import _ from "lodash";
@@ -38,6 +39,7 @@ const { config } = yargs
     }).argv;
 
 const checkMigrations = async (api: D2Api) => {
+    axiosRetry(api.connection, { retries: 3 });
     const migrations = getMigrationsForNode();
     const debug = getLogger("migrations").debug;
     const runner = await MigrationsRunner.init({ api, debug, migrations });

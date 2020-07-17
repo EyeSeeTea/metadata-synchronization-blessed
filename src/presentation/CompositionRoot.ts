@@ -49,7 +49,6 @@ import { cache } from "../utils/cache";
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
 
-    // TODO: Remove d2 and d2Api explicit calls so we do not have to expose them
     constructor(public readonly localInstance: Instance, private encryptionKey: string) {
         this.repositoryFactory = new RepositoryFactory();
         this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
