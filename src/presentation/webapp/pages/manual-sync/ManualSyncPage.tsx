@@ -204,7 +204,7 @@ const ManualSyncPage: React.FC = () => {
                     childrenKeys={config[type].childrenKeys}
                     showIndeterminateSelection={true}
                     additionalColumns={additionalColumns}
-                    allowChangingResponsible={true}
+                    allowChangingResponsible={type === "metadata"}
                 />
             )}
 
