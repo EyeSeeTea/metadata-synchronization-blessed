@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-07-17T06:40:55.341Z\n"
+"POT-Creation-Date: 2020-07-17T08:18:23.841Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -355,9 +355,6 @@ msgstr ""
 msgid "Responsible"
 msgstr ""
 
-msgid "Sharing settings for {{name}}"
-msgstr ""
-
 msgid "Search by "
 msgstr ""
 
@@ -436,6 +433,9 @@ msgid "Back"
 msgstr ""
 
 msgid "Help"
+msgstr ""
+
+msgid "Sharing settings for {{name}}"
 msgstr ""
 
 msgid "Sharing settings"

@@ -8,8 +8,6 @@ import {
     ObjectsTableProps,
     OrgUnitsSelector,
     ReferenceObject,
-    SearchResult,
-    ShareUpdate,
     TableAction,
     TableColumn,
     TablePagination,
@@ -29,7 +27,7 @@ import { DataElementModel } from "../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
-import { SharingDialog } from "../sharing-dialog/SharingDialog";
+import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
@@ -361,7 +359,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         {
             name: "set-responsible",
             text: i18n.t("Set responsible users"),
-            multiple: true,
+            multiple: false,
             icon: <Icon>supervisor_account</Icon>,
             onClick: openResponsibleDialog,
             isActive: () => {
@@ -525,47 +523,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         ...additionalActions,
     ]);
 
-    const onSearchRequest = async (key: string) =>
-        api
-            .get<SearchResult>("/sharing/search", { key })
-            .getData();
-
-    const onSharingChanged = async (update: ShareUpdate) => {
-        if (!sharingSettingsObject) return;
-
-        const newSharingsObject = { ...sharingSettingsObject.object, ...update };
-        const { id, userAccesses = [], userGroupAccesses = [] } = newSharingsObject;
-        const newResponsible = {
-            id,
-            userAccesses,
-            userGroupAccesses,
-            entity: model.getCollectionName(),
-        };
-
-        setSharingSettingsObject({ meta: {}, object: newSharingsObject });
-        await compositionRoot.responsibles.set(newResponsible);
-        updateResponsibles(responsibles => _.uniq([newResponsible, ...responsibles]));
-    };
-
     return (
         <React.Fragment>
-            {!!sharingSettingsObject && (
-                <SharingDialog
-                    isOpen={true}
-                    showOptions={{
-                        title: false,
-                        dataSharing: false,
-                        publicSharing: false,
-                        externalSharing: false,
-                        permissionPicker: false,
-                    }}
-                    title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
-                    meta={sharingSettingsObject}
-                    onCancel={() => setSharingSettingsObject(undefined)}
-                    onChange={onSharingChanged}
-                    onSearch={onSearchRequest}
-                />
-            )}
+            <ResponsibleDialog
+                responsibles={responsibles}
+                updateResponsibles={updateResponsibles}
+                sharingSettingsObject={sharingSettingsObject}
+                setSharingSettingsObject={setSharingSettingsObject}
+            />
 
             <ObjectsTable<MetadataType>
                 rows={transformRows(rows)}
