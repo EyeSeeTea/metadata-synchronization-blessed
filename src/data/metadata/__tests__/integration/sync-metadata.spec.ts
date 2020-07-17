@@ -1,4 +1,3 @@
-import { init } from "d2";
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
@@ -7,7 +6,6 @@ import { RepositoryFactory } from "../../../../domain/common/factories/Repositor
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { Repositories } from "../../../../domain/Repositories";
-import { D2 } from "../../../../types/d2";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
@@ -85,8 +83,6 @@ describe("Sync metadata", () => {
     });
 
     it("Local server to remote - same version", async () => {
-        const d2 = await init({ baseUrl: `http://origin.test/api` });
-
         const localInstance = Instance.build({
             url: "http://origin.test",
             name: "Testing",
@@ -100,13 +96,7 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const useCase = new MetadataSyncUseCase(
-            d2 as D2,
-            builder,
-            repositoryFactory,
-            localInstance,
-            ""
-        );
+        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
 
         const payload = await useCase.buildPayload();
         expect(payload.dataElements?.find(({ id }) => id === "id1")).toBeDefined();
@@ -121,8 +111,6 @@ describe("Sync metadata", () => {
     });
 
     it("Remote server to local - same version", async () => {
-        const d2 = await init({ baseUrl: `http://origin.test/api` });
-
         const localInstance = Instance.build({
             url: "http://origin.test",
             name: "Testing",
@@ -136,13 +124,7 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const useCase = new MetadataSyncUseCase(
-            d2 as D2,
-            builder,
-            repositoryFactory,
-            localInstance,
-            ""
-        );
+        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
 
         const payload = await useCase.buildPayload();
         expect(payload.dataElements?.find(({ id }) => id === "id2")).toBeDefined();
