@@ -54,14 +54,18 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
             else {
                 loading.show(true, i18n.t("Downloading snapshot for module {{name}}", module));
 
-                const builder = module.toSyncBuilder();
-                const contents = await compositionRoot.sync[module.type](builder).buildPayload();
+                const originInstance = remoteInstance?.id ?? "LOCAL";
+                const contents = await compositionRoot.sync[module.type]({
+                    ...module.toSyncBuilder(),
+                    originInstance,
+                    targetInstances: [],
+                }).buildPayload();
 
                 await compositionRoot.modules.download(module, contents);
                 loading.reset();
             }
         },
-        [compositionRoot, rows, snackbar, loading]
+        [compositionRoot, remoteInstance, rows, snackbar, loading]
     );
 
     const createPackage = useCallback(
@@ -88,10 +92,12 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                         })
                     );
 
-                    const builder = module.toSyncBuilder();
-                    const contents = await compositionRoot.sync[module.type](
-                        builder
-                    ).buildPayload();
+                    const originInstance = remoteInstance?.id ?? "LOCAL";
+                    const contents = await compositionRoot.sync[module.type]({
+                        ...module.toSyncBuilder(),
+                        originInstance,
+                        targetInstances: [],
+                    }).buildPayload();
 
                     const newPackage = item.update({ contents, dhisVersion });
                     await compositionRoot.packages.create(newPackage, module);
@@ -101,7 +107,7 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                 setResetKey(Math.random());
             }
         },
-        [compositionRoot, rows, snackbar, loading]
+        [compositionRoot, remoteInstance, rows, snackbar, loading]
     );
 
     const pullModule = useCallback(
@@ -111,8 +117,13 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
             else {
                 loading.show(true, i18n.t("Pulling metadata from module {{name}}", module));
 
-                const builder = module.update({ instance: remoteInstance?.id }).toSyncBuilder();
-                const sync = compositionRoot.sync[module.type](builder);
+                const originInstance = remoteInstance?.id ?? "LOCAL";
+                const sync = compositionRoot.sync[module.type]({
+                    ...module.toSyncBuilder(),
+                    originInstance,
+                    targetInstances: ["LOCAL"],
+                });
+
                 for await (const { message, syncReport, done } of sync.execute()) {
                     if (message) loading.show(true, message);
                     if (syncReport) await syncReport.save(api);
