@@ -1,10 +1,9 @@
-import { D2ModelSchemas } from "../../../types/d2-api";
 import { Ref } from "../../common/entities/Ref";
 import { Id } from "../../common/entities/Schemas";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
-import { MetadataEntity, MetadataPackage } from "../entities/MetadataEntities";
+import { MetadataEntities, MetadataEntity, MetadataPackage } from "../entities/MetadataEntities";
 import { MetadataImportParams } from "../types";
 
 export interface MetadataRepositoryConstructor {
@@ -32,7 +31,7 @@ export interface MetadataRepository {
 }
 
 export interface ListMetadataParams {
-    type: keyof D2ModelSchemas;
+    type: keyof MetadataEntities;
     fields?: object;
     group?: { type: string; value: string };
     level?: string;

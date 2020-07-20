@@ -1,7 +1,8 @@
 import { isValidUid } from "d2/uid";
 import _ from "lodash";
-import { D2Api, D2ModelSchemas } from "../../types/d2-api";
+import { D2Api } from "../../types/d2-api";
 import { NestedRules } from "../../types/synchronization";
+import { MetadataEntities } from "./entities/MetadataEntities";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -82,7 +83,7 @@ export function getAllReferences(
 }
 
 export function isD2Model(api: D2Api, modelName: string): boolean {
-    return !!api.models[modelName as keyof D2ModelSchemas];
+    return !!api.models[modelName as keyof MetadataEntities];
 }
 
 /**
@@ -90,7 +91,7 @@ export function isD2Model(api: D2Api, modelName: string): boolean {
  */
 export function cleanToModelName(api: D2Api, id: string, caller: string): string | null {
     if (isD2Model(api, id)) {
-        return api.models[id as keyof D2ModelSchemas].schema.plural;
+        return api.models[id as keyof MetadataEntities].schema.plural;
     } else if (id === "attributeValues") {
         return "attributes";
     } else if (id === "commentOptionSet") {
@@ -127,8 +128,8 @@ export function cleanToAPIChildReferenceName(api: D2Api, key: string, parent: st
     } else if (isD2Model(api, key)) {
         // Children reference name may be plural or singular
         return [
-            api.models[key as keyof D2ModelSchemas].schema.name,
-            api.models[key as keyof D2ModelSchemas].schema.plural,
+            api.models[key as keyof MetadataEntities].schema.name,
+            api.models[key as keyof MetadataEntities].schema.plural,
         ];
     } else {
         return [key];

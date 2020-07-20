@@ -1,5 +1,6 @@
-import { D2Api, D2ModelSchemas } from "../../types/d2-api";
 import _ from "lodash";
+import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
+import { D2Api } from "../../types/d2-api";
 import { D2Model, defaultModel } from "./default";
 import * as mappingClasses from "./mapping";
 import * as metadataClasses from "./metadata";
@@ -66,7 +67,7 @@ export function modelFactory(api: D2Api, d2ModelName?: string): typeof D2Model {
     if (!d2ModelName) throw new Error("You must provide a non-null model name");
 
     // TODO: Improvement, use schemas to find properties
-    const { modelName = "default" } = api.models[d2ModelName as keyof D2ModelSchemas] ?? {};
+    const { modelName = "default" } = api.models[d2ModelName as keyof MetadataEntities] ?? {};
 
     const directClass = findClasses("metadataType", d2ModelName);
     const modelClass = findClasses("collectionName", modelName);

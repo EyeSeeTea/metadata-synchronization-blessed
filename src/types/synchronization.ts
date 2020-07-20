@@ -1,7 +1,7 @@
 import { DataSynchronizationParams } from "../domain/aggregated/types";
+import { MetadataEntities } from "../domain/metadata/entities/MetadataEntities";
 import SyncReport from "../models/syncReport";
 import { MetadataImportParams } from "./d2";
-import { D2ModelSchemas } from "./d2-api";
 
 //TODO: Review this to move it to domain
 
@@ -34,7 +34,7 @@ export interface MetadataSynchronizationParams extends MetadataImportParams {
 export type SynchronizationParams = MetadataSynchronizationParams | DataSynchronizationParams;
 
 export interface ExportBuilder {
-    type: keyof D2ModelSchemas;
+    type: keyof MetadataEntities;
     ids: string[];
     excludeRules: string[][];
     includeRules: string[][];

@@ -17,15 +17,7 @@ import { getClassName } from "../../domain/metadata/utils";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
-import {
-    D2Api,
-    D2ApiDefinition,
-    D2Model,
-    D2ModelSchemas,
-    MetadataResponse,
-    Model,
-    Stats,
-} from "../../types/d2-api";
+import { D2Api, D2Model, MetadataResponse, Model, Stats } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import {
@@ -238,14 +230,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         return results;
     }
 
-    private getApiModel(type: keyof D2ModelSchemas): InstanceType<typeof Model> {
-        const modelCollection = this.api.models as {
-            [ModelKey in keyof D2ApiDefinition["schemas"]]: Model<
-                D2ApiDefinition,
-                D2ApiDefinition["schemas"][ModelKey]
-            >;
-        };
-        return modelCollection[type];
+    private getApiModel(type: keyof MetadataEntities): InstanceType<typeof Model> {
+        return this.api.models[type];
     }
 }
 
