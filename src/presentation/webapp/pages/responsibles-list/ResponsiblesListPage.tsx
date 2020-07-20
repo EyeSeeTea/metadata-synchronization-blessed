@@ -22,7 +22,7 @@ export const ResponsiblesListPage: React.FC = () => {
     }, [history]);
 
     useEffect(() => {
-        compositionRoot.instances().list().then(setInstances);
+        compositionRoot.instances.list().then(setInstances);
     }, [compositionRoot]);
 
     useEffect(() => {

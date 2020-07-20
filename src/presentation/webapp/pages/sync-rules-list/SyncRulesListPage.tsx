@@ -111,7 +111,7 @@ const SyncRulesPage: React.FC = () => {
     const [appExecutor, setAppExecutor] = useState(false);
 
     useEffect(() => {
-        compositionRoot.instances().list().then(setAllInstances);
+        compositionRoot.instances.list().then(setAllInstances);
         getUserInfo(api).then(setUserInfo);
         isGlobalAdmin(api).then(setGlobalAdmin);
         isAppConfigurator(api).then(setAppConfigurator);

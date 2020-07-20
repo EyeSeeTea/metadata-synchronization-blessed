@@ -92,7 +92,7 @@ export default function MappingTable({
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const instanceApi = compositionRoot.instances(instance).getApi();
+    const instanceApi = compositionRoot.instances.getApi(instance);
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
 
     const [rows, setRows] = useState<MetadataType[]>([]);

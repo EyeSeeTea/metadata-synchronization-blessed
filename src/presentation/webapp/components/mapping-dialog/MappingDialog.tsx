@@ -61,19 +61,16 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const defaultSelection = mappedId !== "DISABLED" ? mappedId : undefined;
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
-    const api = compositionRoot.instances(instance).getApi();
+    const api = compositionRoot.instances.getApi(instance);
     const model = modelFactory(api, mappingType);
     const modelName = model.getModelName(api);
 
     useEffect(() => {
         let mounted = true;
 
-        compositionRoot
-            .instances()
-            .validate(instance)
-            .then(result => {
-                if (mounted) setConnectionSuccess(result.isSuccess());
-            });
+        compositionRoot.instances.validate(instance).then(result => {
+            if (mounted) setConnectionSuccess(result.isSuccess());
+        });
 
         return () => {
             mounted = false;

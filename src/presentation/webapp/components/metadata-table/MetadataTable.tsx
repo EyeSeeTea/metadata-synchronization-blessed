@@ -129,7 +129,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         pageSize: initialState.pagination.pageSize,
     });
 
-    const api = compositionRoot.instances(remoteInstance).getApi();
+    const api = compositionRoot.instances.getApi(remoteInstance);
 
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
     const [groupFilterData, setGroupFilterData] = useState<NamedRef[]>([]);
@@ -387,9 +387,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     useEffect(() => {
         if (model.getCollectionName() !== "organisationUnits") return;
 
-        compositionRoot
-            .instances(remoteInstance)
-            .getOrgUnitRoots()
+        compositionRoot.instances
+            .getOrgUnitRoots(remoteInstance)
             .then(roots => changeParentOrgUnitFilter(roots.map(({ path }) => path)))
             .catch(handleError);
     }, [compositionRoot, remoteInstance, model, handleError]);

@@ -7,10 +7,10 @@ import { InstanceRepositoryConstructor } from "../repositories/InstanceRepositor
 export class GetInstanceVersionUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(): Promise<string> {
+    public async execute(instance = this.localInstance): Promise<string> {
         const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
             Repositories.InstanceRepository,
-            [this.localInstance, ""]
+            [instance, ""]
         );
 
         const buildVersion = await instanceRepository.getVersion();

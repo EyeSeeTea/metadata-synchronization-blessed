@@ -20,8 +20,7 @@ const OrganisationUnitsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRul
     const [orgUnitRootIds, setOrgUnitRootIds] = useState<string[] | undefined>();
 
     useEffect(() => {
-        compositionRoot
-            .instances()
+        compositionRoot.instances
             .getOrgUnitRoots()
             .then(roots => roots.map(({ id }) => id))
             .then(setOrgUnitRootIds);

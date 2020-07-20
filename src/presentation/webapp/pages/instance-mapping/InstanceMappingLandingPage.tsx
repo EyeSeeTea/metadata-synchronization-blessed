@@ -15,7 +15,7 @@ const InstanceMappingLandingPage: React.FC = () => {
     const [instance, setInstance] = useState<Instance | undefined>();
 
     useEffect(() => {
-        compositionRoot.instances().getById(id).then(setInstance);
+        compositionRoot.instances.getById(id).then(setInstance);
     }, [compositionRoot, id]);
 
     const cards: Card[] = [

@@ -53,7 +53,7 @@ const GeneralInfoForm = ({ instance, onChange, cancelAction }: GeneralInfoFormPr
             return;
         }
 
-        const validation = await compositionRoot.instances().validate(instance);
+        const validation = await compositionRoot.instances.validate(instance);
         validation.match({
             success: () => {
                 snackbar.success(i18n.t("Connected successfully to instance"));
@@ -75,7 +75,7 @@ const GeneralInfoForm = ({ instance, onChange, cancelAction }: GeneralInfoFormPr
         }
 
         setIsSaving(true);
-        await compositionRoot.instances().save(instance);
+        await compositionRoot.instances.save(instance);
         setIsSaving(false);
         history.push("/instances");
     }, [compositionRoot, errors, history, instance, snackbar]);

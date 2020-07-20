@@ -1,10 +1,18 @@
 import { UseCase } from "../../common/entities/UseCase";
-import { InstanceRepository } from "../repositories/InstanceRepository";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { Repositories } from "../../Repositories";
+import { Instance } from "../entities/Instance";
+import { InstanceRepositoryConstructor } from "../repositories/InstanceRepository";
 
 export class GetRootOrgUnitUseCase implements UseCase {
-    constructor(private instanceRepository: InstanceRepository) {}
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute() {
-        return this.instanceRepository.getOrgUnitRoots();
+    public async execute(instance = this.localInstance) {
+        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
+            Repositories.InstanceRepository,
+            [instance, ""]
+        );
+
+        return instanceRepository.getOrgUnitRoots();
     }
 }

@@ -24,7 +24,7 @@ const InstanceCreationPage = () => {
         if (location.state?.instance) {
             setInstance(location.state?.instance);
         } else if (isEdit) {
-            compositionRoot.instances().getById(id).then(setInstance);
+            compositionRoot.instances.getById(id).then(setInstance);
         }
     }, [compositionRoot, id, isEdit, location]);
 

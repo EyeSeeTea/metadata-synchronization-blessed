@@ -169,23 +169,28 @@ export class CompositionRoot {
     }
 
     @cache()
-    public instances(remoteInstance = this.localInstance) {
-        const instance = new InstanceD2ApiRepository(remoteInstance);
-        const storage = new StorageDataStoreRepository(this.localInstance);
-
+    public get instances() {
         return getExecute({
-            getApi: new GetInstanceApiUseCase(instance),
-            list: new ListInstancesUseCase(storage, this.encryptionKey),
+            getApi: new GetInstanceApiUseCase(this.repositoryFactory, this.localInstance),
+            list: new ListInstancesUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
+            ),
             getById: new GetInstanceByIdUseCase(
                 this.repositoryFactory,
                 this.localInstance,
                 this.encryptionKey
             ),
-            save: new SaveInstanceUseCase(storage, this.encryptionKey),
-            delete: new DeleteInstanceUseCase(storage),
+            save: new SaveInstanceUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
+            ),
+            delete: new DeleteInstanceUseCase(this.repositoryFactory, this.localInstance),
             validate: new ValidateInstanceUseCase(this.repositoryFactory),
             getVersion: new GetInstanceVersionUseCase(this.repositoryFactory, this.localInstance),
-            getOrgUnitRoots: new GetRootOrgUnitUseCase(instance),
+            getOrgUnitRoots: new GetRootOrgUnitUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
