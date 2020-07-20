@@ -1,22 +1,21 @@
-import { Icon, MenuItem, Select } from "@material-ui/core";
-import { MetaObject, ObjectsTable, TableAction, TableColumn } from "d2-ui-components";
+import { MenuItem, Select } from "@material-ui/core";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataResponsible } from "../../../../domain/metadata/entities/MetadataResponsible";
 import i18n from "../../../../locales";
+import { DataSetModel, ProgramModel } from "../../../../models/dhis/metadata";
 import { useAppContext } from "../../../common/contexts/AppContext";
+import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
-import { ResponsibleDialog } from "../../components/responsible-dialog/ResponsibleDialog";
 
 export const ResponsiblesListPage: React.FC = () => {
-    const { compositionRoot, api } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const history = useHistory();
 
     const [instances, setInstances] = useState<Instance[]>([]);
     const [remoteInstance, setRemoteInstance] = useState<Instance>();
     const [responsibles, updateResponsibles] = useState<ExpandedMetadataResponsible[]>([]);
-    const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject>();
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -38,48 +37,6 @@ export const ResponsiblesListPage: React.FC = () => {
         [instances]
     );
 
-    const openResponsibleDialog = (ids: string[]) => {
-        const { id, name } = responsibles.find(({ id }) => ids[0] === id) ?? {};
-        if (!id || !name) return;
-
-        const { userAccesses = [], userGroupAccesses = [] } =
-            responsibles.find(item => item.id === id) ?? {};
-
-        setSharingSettingsObject({
-            object: { id, name, userAccesses, userGroupAccesses },
-            meta: {},
-        });
-    };
-
-    const columns: TableColumn<ExpandedMetadataResponsible>[] = [
-        {
-            name: "entity",
-            text: i18n.t("Model"),
-            getValue: ({ entity }: ExpandedMetadataResponsible) => {
-                return api.models[entity].schema.displayName;
-            },
-        },
-        { name: "name", text: i18n.t("Name") },
-        {
-            name: "responsible",
-            text: i18n.t("Responsible"),
-            getValue: ({ userAccesses, userGroupAccesses }: ExpandedMetadataResponsible) => {
-                return [...userAccesses, ...userGroupAccesses].map(({ name }) => name).join(", ");
-            },
-        },
-    ];
-
-    const actions: TableAction<ExpandedMetadataResponsible>[] = [
-        {
-            name: "set-responsible",
-            text: i18n.t("Set responsible users"),
-            multiple: false,
-            icon: <Icon>supervisor_account</Icon>,
-            onClick: openResponsibleDialog,
-            isActive: () => !remoteInstance,
-        },
-    ];
-
     return (
         <React.Fragment>
             <PageHeader onBackClick={backHome} title={i18n.t("Metadata responsibles")}>
@@ -99,17 +56,12 @@ export const ResponsiblesListPage: React.FC = () => {
                 </Select>
             </PageHeader>
 
-            <ResponsibleDialog
-                responsibles={responsibles}
-                updateResponsibles={updateResponsibles}
-                sharingSettingsObject={sharingSettingsObject}
-                setSharingSettingsObject={setSharingSettingsObject}
-            />
-
-            <ObjectsTable<ExpandedMetadataResponsible>
-                rows={responsibles}
-                columns={columns}
-                actions={actions}
+            <MetadataTable
+                remoteInstance={remoteInstance}
+                models={[DataSetModel, ProgramModel]}
+                allowChangingResponsible={true}
+                forceSelectionColumn={false}
+                filterRows={responsibles.map(({ id }) => id)}
             />
         </React.Fragment>
     );

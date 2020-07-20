@@ -127,7 +127,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         order: initialState.sorting,
         page: initialState.pagination.page,
         pageSize: initialState.pagination.pageSize,
-        filterRows,
     });
 
     const api = compositionRoot.instances(remoteInstance).getApi();
@@ -379,11 +378,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         if (model.getCollectionName() === "organisationUnits") return;
 
         compositionRoot.metadata
-            .listAll({ ...filters, fields: { id: true } }, remoteInstance)
+            .listAll({ ...filters, filterRows, fields: { id: true } }, remoteInstance)
             .then(objects => {
                 updateIds(objects.map(({ id }) => id));
             });
-    }, [filters, model, compositionRoot, remoteInstance]);
+    }, [filters, filterRows, model, compositionRoot, remoteInstance]);
 
     useEffect(() => {
         if (model.getCollectionName() !== "organisationUnits") return;
@@ -400,7 +399,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
         setLoading(true);
         compositionRoot.metadata
-            .list({ ...filters, fields: model.getFields() }, remoteInstance)
+            .list({ ...filters, filterRows, fields: model.getFields() }, remoteInstance)
             .then(({ objects, pager }) => {
                 const rows = model.getApiModelTransform()((objects as unknown) as MetadataType[]);
                 notifyRowsChange(rows);
@@ -410,7 +409,15 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 setLoading(false);
             })
             .catch(handleError);
-    }, [compositionRoot, notifyRowsChange, remoteInstance, filters, model, handleError]);
+    }, [
+        compositionRoot,
+        notifyRowsChange,
+        remoteInstance,
+        filters,
+        filterRows,
+        model,
+        handleError,
+    ]);
 
     useEffect(() => {
         if (model && model.getGroupFilterName()) {
