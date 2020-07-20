@@ -94,7 +94,7 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                     ).buildPayload();
 
                     const newPackage = item.update({ contents, dhisVersion });
-                    await compositionRoot.packages().create(newPackage, module);
+                    await compositionRoot.packages.create(newPackage, module);
                 }
 
                 loading.reset();

@@ -39,7 +39,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
         async (ids: string[]) => {
             loading.show(true, "Deleting packages");
             for (const id of ids) {
-                await compositionRoot.packages().delete(id);
+                await compositionRoot.packages.delete(id);
             }
             loading.reset();
             setResetKey(Math.random());
@@ -58,7 +58,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     const downloadPackage = useCallback(
         async (ids: string[]) => {
             try {
-                compositionRoot.packages(remoteInstance).download(ids[0]);
+                compositionRoot.packages.download(ids[0], remoteInstance);
             } catch (error) {
                 snackbar.error(i18n.t("Invalid package"));
             }
@@ -68,7 +68,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
 
     const importPackage = useCallback(
         async (ids: string[]) => {
-            const result = await compositionRoot.packages(remoteInstance).get(ids[0]);
+            const result = await compositionRoot.packages.get(ids[0], remoteInstance);
             result.match({
                 success: async ({ name, contents }) => {
                     try {
@@ -157,9 +157,8 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     ];
 
     useEffect(() => {
-        compositionRoot
-            .packages(remoteInstance)
-            .list()
+        compositionRoot.packages
+            .list(remoteInstance)
             .then(setRows)
             .catch((error: Error) => {
                 snackbar.error(error.message);
