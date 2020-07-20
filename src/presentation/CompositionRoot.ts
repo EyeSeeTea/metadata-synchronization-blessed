@@ -130,17 +130,13 @@ export class CompositionRoot {
     }
 
     @cache()
-    public modules(remoteInstance = this.localInstance) {
-        const storage = new StorageDataStoreRepository(remoteInstance);
-        const download = new DownloadWebRepository();
-        const instance = new InstanceD2ApiRepository(this.localInstance);
-
+    public get modules() {
         return getExecute({
-            list: new ListModulesUseCase(storage),
-            save: new SaveModuleUseCase(storage, instance),
-            get: new GetModuleUseCase(storage),
-            delete: new DeleteModuleUseCase(storage),
-            download: new DownloadModuleSnapshotUseCase(download, instance),
+            list: new ListModulesUseCase(this.repositoryFactory, this.localInstance),
+            save: new SaveModuleUseCase(this.repositoryFactory, this.localInstance),
+            get: new GetModuleUseCase(this.repositoryFactory, this.localInstance),
+            delete: new DeleteModuleUseCase(this.repositoryFactory, this.localInstance),
+            download: new DownloadModuleSnapshotUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

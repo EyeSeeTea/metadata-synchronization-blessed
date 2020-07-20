@@ -1,20 +1,30 @@
 import _ from "lodash";
 import moment from "moment";
 import { UseCase } from "../../common/entities/UseCase";
-import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { Instance } from "../../instance/entities/Instance";
+import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
-import { Module } from "../entities/Module";
 import { Package } from "../../packages/entities/Package";
+import { Repositories } from "../../Repositories";
+import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
+import { Module } from "../entities/Module";
 
 export class DownloadModuleSnapshotUseCase implements UseCase {
-    constructor(
-        private downloadRepository: DownloadRepository,
-        private instanceRepository: InstanceRepository
-    ) {}
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(module: Module, contents: MetadataPackage) {
-        const user = await this.instanceRepository.getUser();
+        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
+            Repositories.InstanceRepository,
+            [this.localInstance, ""]
+        );
+
+        const downloadRepository = this.repositoryFactory.get<DownloadRepositoryConstructor>(
+            Repositories.DownloadRepository,
+            []
+        );
+
+        const user = await instanceRepository.getUser();
         const item = Package.build({
             module,
             lastUpdatedBy: user,
@@ -25,6 +35,6 @@ export class DownloadModuleSnapshotUseCase implements UseCase {
         const date = moment().format("YYYYMMDDHHmm");
         const name = `snapshot-${ruleName}-${module.type}-${date}.json`;
         const payload = { package: item, ...contents };
-        return this.downloadRepository.downloadFile(name, payload);
+        return downloadRepository.downloadFile(name, payload);
     }
 }

@@ -57,11 +57,11 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                 const builder = module.toSyncBuilder();
                 const contents = await compositionRoot.sync[module.type](builder).buildPayload();
 
-                await compositionRoot.modules(remoteInstance).download(module, contents);
+                await compositionRoot.modules.download(module, contents);
                 loading.reset();
             }
         },
-        [compositionRoot, remoteInstance, rows, snackbar, loading]
+        [compositionRoot, rows, snackbar, loading]
     );
 
     const createPackage = useCallback(
@@ -144,7 +144,7 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
         async (ids: string[]) => {
             loading.show(true, "Deleting modules");
             for (const id of ids) {
-                await compositionRoot.modules().delete(id);
+                await compositionRoot.modules.delete(id);
             }
             loading.reset();
             setResetKey(Math.random());
@@ -249,9 +249,8 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
 
     useEffect(() => {
         setIsTableLoading(true);
-        compositionRoot
-            .modules(remoteInstance)
-            .list()
+        compositionRoot.modules
+            .list(remoteInstance)
             .then(rows => {
                 setRows(rows);
                 setIsTableLoading(false);

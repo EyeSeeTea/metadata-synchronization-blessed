@@ -13,19 +13,15 @@ import { Package } from "../entities/Package";
 export class CreatePackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(
-        payload: Package,
-        module: Module,
-        instance = this.localInstance
-    ): Promise<ValidationError[]> {
+    public async execute(payload: Package, module: Module): Promise<ValidationError[]> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
-            [instance]
+            [this.localInstance]
         );
 
         const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
             Repositories.InstanceRepository,
-            [instance, ""]
+            [this.localInstance, ""]
         );
 
         const validations = payload.validate();
