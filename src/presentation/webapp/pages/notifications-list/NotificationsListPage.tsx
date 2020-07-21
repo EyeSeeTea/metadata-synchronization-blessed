@@ -1,4 +1,4 @@
-import { ObjectsTable, TableColumn } from "d2-ui-components";
+import { ObjectsTable, TableColumn, RowConfig, TableAction, useSnackbar } from "d2-ui-components";
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Notification } from "../../../../domain/notifications/entities/Notification";
@@ -10,7 +10,7 @@ const notifications: PullRequestNotification[] = [
     {
         id: "1",
         type: "pull-request",
-        read: false,
+        read: true,
         owner: { id: "foo", name: "Alexis Rico" },
         created: new Date(),
         subject: "Foo",
@@ -33,6 +33,7 @@ const notifications: PullRequestNotification[] = [
 
 export const NotificationsListPage: React.FC = () => {
     const history = useHistory();
+    const snackbar = useSnackbar();
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -40,8 +41,72 @@ export const NotificationsListPage: React.FC = () => {
 
     const columns: TableColumn<AppNotification>[] = [
         {
+            name: "owner",
+            text: i18n.t("Sender"),
+            getValue: ({ owner }: AppNotification) => owner.name,
+        },
+        {
             name: "subject",
             text: i18n.t("Subject"),
+        },
+        {
+            name: "type",
+            text: i18n.t("Type"),
+            getValue: ({ type }: AppNotification) => {
+                switch (type) {
+                    case "message":
+                        return i18n.t("Message");
+                    case "pull-request":
+                        return i18n.t("Pull request");
+                    default:
+                        return i18n.t("Unknown");
+                }
+            },
+        },
+        {
+            name: "created",
+            text: i18n.t("Date"),
+        },
+    ];
+
+    const rowConfig = (row: AppNotification): RowConfig => {
+        return { style: row.read ? { backgroundColor: "#EEEEEE" } : {} };
+    };
+
+    const actions: TableAction<AppNotification>[] = [
+        {
+            name: "open",
+            text: i18n.t("Open"),
+            primary: true,
+            onClick: () => snackbar.warning("Not implemented"),
+        },
+        {
+            name: "mark-as-read",
+            text: i18n.t("Mark as read"),
+            multiple: true,
+            isActive: (rows: AppNotification[]) => rows.some(({ read }) => !read),
+            onClick: () => snackbar.warning("Not implemented"),
+        },
+        {
+            name: "mark-as-unread",
+            text: i18n.t("Mark as unread"),
+            multiple: true,
+            isActive: (rows: AppNotification[]) => rows.some(({ read }) => !!read),
+            onClick: () => snackbar.warning("Not implemented"),
+        },
+        {
+            name: "approve-pull-request",
+            text: i18n.t("Approve"),
+            isActive: (rows: PullRequestNotification[]) =>
+                rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
+            onClick: () => snackbar.warning("Not implemented"),
+        },
+        {
+            name: "reject-pull-request",
+            text: i18n.t("Reject"),
+            isActive: (rows: PullRequestNotification[]) =>
+                rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
+            onClick: () => snackbar.warning("Not implemented"),
         },
     ];
 
@@ -49,7 +114,12 @@ export const NotificationsListPage: React.FC = () => {
         <React.Fragment>
             <PageHeader onBackClick={backHome} title={i18n.t("Notifications")} />
 
-            <ObjectsTable<AppNotification> rows={notifications} columns={columns} />
+            <ObjectsTable<AppNotification>
+                rows={notifications}
+                columns={columns}
+                actions={actions}
+                rowConfig={rowConfig}
+            />
         </React.Fragment>
     );
 };
