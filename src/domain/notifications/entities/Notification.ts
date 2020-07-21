@@ -1,4 +1,4 @@
-import { Message } from "../../instance/entities/Message";
+import { InstanceMessage } from "../../instance/entities/Message";
 import { NamedRef } from "../../common/entities/Ref";
 
 interface BaseNotification {
@@ -7,4 +7,4 @@ interface BaseNotification {
     created: Date;
 }
 
-export type Notification = BaseNotification & Message;
+export type Notification = BaseNotification & InstanceMessage;
