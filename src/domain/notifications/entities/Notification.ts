@@ -1,7 +1,10 @@
+import { NamedRef, Ref } from "../../common/entities/Ref";
 import { InstanceMessage } from "../../instance/entities/Message";
-import { NamedRef } from "../../common/entities/Ref";
 
-interface BaseNotification {
+export type NotificationType = "message" | "pull-request";
+
+interface BaseNotification extends Ref {
+    type: NotificationType;
     read: boolean;
     owner: NamedRef;
     created: Date;
