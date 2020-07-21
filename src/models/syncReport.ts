@@ -1,6 +1,7 @@
 import { TableInitialState, TablePagination } from "d2-ui-components";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
+import { Namespace } from "../domain/storage/Namespaces";
 import {
     SynchronizationReport,
     SynchronizationReportStatus,
@@ -19,7 +20,7 @@ import {
     saveDataStore,
 } from "./dataStore";
 
-const dataStoreKey = "notifications";
+const dataStoreKey = Namespace.HISTORY;
 
 type Optional<T, K extends keyof T> = Omit<T, K> & { [P in Extract<keyof T, K>]?: T[P] };
 
