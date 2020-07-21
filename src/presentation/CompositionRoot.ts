@@ -33,6 +33,7 @@ import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/Downlo
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
+import { ListNotificationsUseCase } from "../domain/notifications/usecases/ListNotificationsUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
 import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPackageUseCase";
@@ -157,6 +158,13 @@ export class CompositionRoot {
 
         return getExecute({
             downloadFile: new DownloadFileUseCase(download),
+        });
+    }
+
+    @cache()
+    public get notifications() {
+        return getExecute({
+            list: new ListNotificationsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

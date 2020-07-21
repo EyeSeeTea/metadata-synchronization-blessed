@@ -1,39 +1,18 @@
-import { ObjectsTable, TableColumn, RowConfig, TableAction, useSnackbar } from "d2-ui-components";
-import React, { useCallback } from "react";
+import { ObjectsTable, RowConfig, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
+import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Notification } from "../../../../domain/notifications/entities/Notification";
 import { PullRequestNotification } from "../../../../domain/notifications/entities/PullRequestNotification";
 import i18n from "../../../../locales";
+import { useAppContext } from "../../../common/contexts/AppContext";
 import PageHeader from "../../components/page-header/PageHeader";
 
-const notifications: PullRequestNotification[] = [
-    {
-        id: "1",
-        type: "pull-request",
-        read: true,
-        owner: { id: "foo", name: "Alexis Rico" },
-        created: new Date(),
-        subject: "Foo",
-        text: "Bar",
-        users: [{ id: "foo" }],
-        request: { type: "metadata", status: "REJECTED", selectedIds: ["foo"] },
-    },
-    {
-        id: "2",
-        type: "pull-request",
-        read: false,
-        owner: { id: "foo", name: "Alexis Rico" },
-        created: new Date(),
-        subject: "Foo",
-        text: "Bar",
-        users: [{ id: "foo" }],
-        request: { type: "metadata", status: "PENDING", selectedIds: ["foo"] },
-    },
-];
-
 export const NotificationsListPage: React.FC = () => {
+    const { compositionRoot } = useAppContext();
     const history = useHistory();
     const snackbar = useSnackbar();
+
+    const [notifications, setNotifications] = useState<AppNotification[]>([]);
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -109,6 +88,10 @@ export const NotificationsListPage: React.FC = () => {
             onClick: () => snackbar.warning("Not implemented"),
         },
     ];
+
+    useEffect(() => {
+        compositionRoot.notifications.list().then(setNotifications);
+    }, [compositionRoot]);
 
     return (
         <React.Fragment>
