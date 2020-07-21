@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-20T06:29:54.001Z\n"
-"PO-Revision-Date: 2020-07-20T06:29:54.001Z\n"
+"POT-Creation-Date: 2020-07-21T14:46:37.594Z\n"
+"PO-Revision-Date: 2020-07-21T14:46:37.594Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -915,6 +915,12 @@ msgstr ""
 msgid "List and remove responsibles for data sets and programs"
 msgstr ""
 
+msgid "Notifications"
+msgstr ""
+
+msgid "List notifications"
+msgstr ""
+
 msgid "Destination instance settings"
 msgstr ""
 
@@ -1096,6 +1102,9 @@ msgid "Cancel module creation"
 msgstr ""
 
 msgid "Cancel module editing"
+msgstr ""
+
+msgid "Subject"
 msgstr ""
 
 msgid "The token is empty"

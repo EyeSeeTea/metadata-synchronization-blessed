@@ -134,6 +134,11 @@ const LandingPage: React.FC = () => {
                     description: i18n.t("List and remove responsibles for data sets and programs"),
                     listAction: () => history.push("/responsibles"),
                 },
+                {
+                    name: i18n.t("Notifications"),
+                    description: i18n.t("List notifications"),
+                    listAction: () => history.push("/notifications"),
+                },
             ]),
         },
         {
