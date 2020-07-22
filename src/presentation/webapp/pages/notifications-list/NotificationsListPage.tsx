@@ -1,22 +1,30 @@
-import { Icon } from "@material-ui/core";
+import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
 import { ObjectsTable, RowConfig, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { Notification } from "../../../../domain/notifications/entities/Notification";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../../common/contexts/AppContext";
+import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
 
 export const NotificationsListPage: React.FC = () => {
     const { compositionRoot } = useAppContext();
     const history = useHistory();
     const snackbar = useSnackbar();
+    const classes = useStyles();
 
     const [notifications, setNotifications] = useState<AppNotification[]>([]);
+    const [unreadOnly, setUnreadOnly] = useState<boolean>(false);
+    const [statusFilter, setStatusFilter] = useState<string>("");
 
     const backHome = useCallback(() => {
         history.push("/");
     }, [history]);
+
+    const changeUnreadCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUnreadOnly(event.target?.checked);
+    };
 
     const columns: TableColumn<AppNotification>[] = [
         {
@@ -35,7 +43,7 @@ export const NotificationsListPage: React.FC = () => {
         {
             name: "type",
             text: i18n.t("Type"),
-            getValue: ({ type }: AppNotification) => {
+            getValue: ({ type }) => {
                 switch (type) {
                     case "message":
                         return i18n.t("Message");
@@ -49,7 +57,7 @@ export const NotificationsListPage: React.FC = () => {
         {
             name: "status",
             text: i18n.t("Status"),
-            getValue: (notification: AppNotification) => {
+            getValue: notification => {
                 if (notification.type === "pull-request") {
                     switch (notification.request.status) {
                         case "PENDING":
@@ -78,7 +86,7 @@ export const NotificationsListPage: React.FC = () => {
             text: i18n.t("Open"),
             primary: true,
             onClick: () => snackbar.warning("Not implemented"),
-            icon: <Icon>open_in_new</Icon>
+            icon: <Icon>open_in_new</Icon>,
         },
         {
             name: "mark-as-read",
@@ -86,7 +94,7 @@ export const NotificationsListPage: React.FC = () => {
             multiple: true,
             isActive: (rows: AppNotification[]) => rows.some(({ read }) => !read),
             onClick: () => snackbar.warning("Not implemented"),
-            icon: <Icon>drafts</Icon>
+            icon: <Icon>drafts</Icon>,
         },
         {
             name: "mark-as-unread",
@@ -94,7 +102,7 @@ export const NotificationsListPage: React.FC = () => {
             multiple: true,
             isActive: (rows: AppNotification[]) => rows.some(({ read }) => !!read),
             onClick: () => snackbar.warning("Not implemented"),
-            icon: <Icon>markunread</Icon>
+            icon: <Icon>markunread</Icon>,
         },
         {
             name: "approve-pull-request",
@@ -102,7 +110,7 @@ export const NotificationsListPage: React.FC = () => {
             isActive: (rows: AppNotification[]) =>
                 rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
             onClick: () => snackbar.warning("Not implemented"),
-            icon: <Icon>check</Icon>
+            icon: <Icon>check</Icon>,
         },
         {
             name: "reject-pull-request",
@@ -110,9 +118,32 @@ export const NotificationsListPage: React.FC = () => {
             isActive: (rows: AppNotification[]) =>
                 rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
             onClick: () => snackbar.warning("Not implemented"),
-            icon: <Icon>close</Icon>
+            icon: <Icon>close</Icon>,
         },
     ];
+
+    const filterComponents = useMemo(
+        () => (
+            <React.Fragment key={"table-filters"}>
+                <Dropdown
+                    items={[
+                        { id: "PENDING", name: i18n.t("Pending") },
+                        { id: "APPROVED", name: i18n.t("Approved") },
+                        { id: "REJECTED", name: i18n.t("Rejected") },
+                    ]}
+                    onValueChange={setStatusFilter}
+                    value={statusFilter}
+                    label={i18n.t("Status")}
+                />
+                <FormControlLabel
+                    className={classes.checkbox}
+                    control={<Checkbox checked={unreadOnly} onChange={changeUnreadCheckbox} />}
+                    label={i18n.t("Unread messages")}
+                />
+            </React.Fragment>
+        ),
+        [classes, statusFilter, unreadOnly]
+    );
 
     useEffect(() => {
         compositionRoot.notifications
@@ -126,20 +157,37 @@ export const NotificationsListPage: React.FC = () => {
             .then(setNotifications);
     }, [compositionRoot]);
 
+    const rows = notifications
+        .filter(notification => !unreadOnly || !notification.read)
+        .filter(
+            notification =>
+                !statusFilter ||
+                (notification.type === "pull-request" &&
+                    notification.request.status === statusFilter)
+        );
+
     return (
         <React.Fragment>
             <PageHeader onBackClick={backHome} title={i18n.t("Notifications")} />
 
             <ObjectsTable<AppNotification>
-                rows={notifications}
+                rows={rows}
                 columns={columns}
                 actions={actions}
                 rowConfig={rowConfig}
                 searchBoxColumns={["sender", "subject", "text"]}
+                filterComponents={filterComponents}
             />
         </React.Fragment>
     );
 };
+
+const useStyles = makeStyles({
+    checkbox: {
+        paddingLeft: 10,
+        marginTop: 8,
+    },
+});
 
 type AppNotification = Notification & {
     sender: string;
