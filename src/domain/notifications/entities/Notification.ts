@@ -13,7 +13,7 @@ export interface BaseNotification extends Omit<InstanceMessage, "organisationUni
 }
 
 export interface MessageNotification extends BaseNotification {
-    type: "message"
+    type: "message";
 }
 
 export type Notification = MessageNotification | PullRequestNotification;

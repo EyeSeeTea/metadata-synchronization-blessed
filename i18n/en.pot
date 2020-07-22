@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-22T06:12:54.982Z\n"
-"PO-Revision-Date: 2020-07-22T06:12:54.982Z\n"
+"POT-Creation-Date: 2020-07-22T06:38:48.575Z\n"
+"PO-Revision-Date: 2020-07-22T06:38:48.575Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1114,6 +1114,15 @@ msgid "Contents"
 msgstr ""
 
 msgid "Pull request"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Approved"
+msgstr ""
+
+msgid "Rejected"
 msgstr ""
 
 msgid "Date"

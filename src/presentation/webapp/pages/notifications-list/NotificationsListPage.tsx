@@ -11,7 +11,7 @@ export const NotificationsListPage: React.FC = () => {
     const history = useHistory();
     const snackbar = useSnackbar();
 
-    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [notifications, setNotifications] = useState<AppNotification[]>([]);
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -19,9 +19,8 @@ export const NotificationsListPage: React.FC = () => {
 
     const columns: TableColumn<AppNotification>[] = [
         {
-            name: "owner",
+            name: "sender",
             text: i18n.t("Sender"),
-            getValue: ({ owner }: AppNotification) => owner.name,
         },
         {
             name: "subject",
@@ -51,13 +50,13 @@ export const NotificationsListPage: React.FC = () => {
             text: i18n.t("Status"),
             getValue: (notification: AppNotification) => {
                 if (notification.type === "pull-request") {
-                    switch (notification.request.status)  {
+                    switch (notification.request.status) {
                         case "PENDING":
-                            return i18n.t("Pending")
+                            return i18n.t("Pending");
                         case "APPROVED":
-                            return i18n.t("Approved")
+                            return i18n.t("Approved");
                         case "REJECTED":
-                            return i18n.t("Rejected")
+                            return i18n.t("Rejected");
                     }
                 } else return "-";
             },
@@ -110,7 +109,15 @@ export const NotificationsListPage: React.FC = () => {
     ];
 
     useEffect(() => {
-        compositionRoot.notifications.list().then(setNotifications);
+        compositionRoot.notifications
+            .list()
+            .then(notifications =>
+                notifications.map(notification => ({
+                    ...notification,
+                    sender: notification.owner.name,
+                }))
+            )
+            .then(setNotifications);
     }, [compositionRoot]);
 
     return (
@@ -122,13 +129,15 @@ export const NotificationsListPage: React.FC = () => {
                 columns={columns}
                 actions={actions}
                 rowConfig={rowConfig}
+                searchBoxColumns={["sender", "subject", "text"]}
             />
         </React.Fragment>
     );
 };
 
 type AppNotification = Notification & {
+    sender: string;
     [key: string]: any;
-}
+};
 
 export default NotificationsListPage;
