@@ -1,3 +1,4 @@
+import { Icon } from "@material-ui/core";
 import { ObjectsTable, RowConfig, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -77,6 +78,7 @@ export const NotificationsListPage: React.FC = () => {
             text: i18n.t("Open"),
             primary: true,
             onClick: () => snackbar.warning("Not implemented"),
+            icon: <Icon>open_in_new</Icon>
         },
         {
             name: "mark-as-read",
@@ -84,6 +86,7 @@ export const NotificationsListPage: React.FC = () => {
             multiple: true,
             isActive: (rows: AppNotification[]) => rows.some(({ read }) => !read),
             onClick: () => snackbar.warning("Not implemented"),
+            icon: <Icon>drafts</Icon>
         },
         {
             name: "mark-as-unread",
@@ -91,6 +94,7 @@ export const NotificationsListPage: React.FC = () => {
             multiple: true,
             isActive: (rows: AppNotification[]) => rows.some(({ read }) => !!read),
             onClick: () => snackbar.warning("Not implemented"),
+            icon: <Icon>markunread</Icon>
         },
         {
             name: "approve-pull-request",
@@ -98,6 +102,7 @@ export const NotificationsListPage: React.FC = () => {
             isActive: (rows: AppNotification[]) =>
                 rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
             onClick: () => snackbar.warning("Not implemented"),
+            icon: <Icon>check</Icon>
         },
         {
             name: "reject-pull-request",
@@ -105,6 +110,7 @@ export const NotificationsListPage: React.FC = () => {
             isActive: (rows: AppNotification[]) =>
                 rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
             onClick: () => snackbar.warning("Not implemented"),
+            icon: <Icon>close</Icon>
         },
     ];
 
