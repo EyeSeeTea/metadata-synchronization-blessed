@@ -182,12 +182,12 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const useCase = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
 
-        const payload = await useCase.buildPayload();
+        const payload = await sync.buildPayload();
         expect(payload.dataValues?.find(({ value }) => value === "test-value-1")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
+        for await (const { done } of sync.execute()) {
             if (done) console.log("Done");
         }
 
@@ -210,12 +210,12 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const useCase = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
 
-        const payload = await useCase.buildPayload();
+        const payload = await sync.buildPayload();
         expect(payload.dataValues?.find(({ value }) => value === "test-value-2")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
+        for await (const { done } of sync.execute()) {
             if (done) console.log("Done");
         }
 
