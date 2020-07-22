@@ -46,6 +46,7 @@ import { SaveStoreUseCase } from "../domain/packages/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/packages/usecases/ValidateStoreUseCase";
 import { Repositories } from "../domain/Repositories";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
+import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
 
@@ -71,6 +72,13 @@ export class CompositionRoot {
     public get sync() {
         // TODO: Sync builder should be part of an execute method
         return {
+            ...getExecute({
+                prepare: new PrepareSyncUseCase(
+                    this.repositoryFactory,
+                    this.localInstance,
+                    this.encryptionKey
+                ),
+            }),
             aggregated: (builder: SynchronizationBuilder) =>
                 new AggregatedSyncUseCase(
                     builder,

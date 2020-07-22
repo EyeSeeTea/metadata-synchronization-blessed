@@ -120,16 +120,25 @@ const ManualSyncPage: React.FC = () => {
     const handleSynchronization = async (syncRule: SyncRule) => {
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
-        const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
-        for await (const { message, syncReport, done } of sync.execute()) {
-            if (message) loading.show(true, message);
-            if (syncReport) await syncReport.save(api);
-            if (done) {
-                loading.reset();
-                finishSynchronization(syncReport);
-                return;
-            }
-        }
+        const result = await compositionRoot.sync.prepare(syncRule.type, syncRule.toBuilder());
+
+        await result.match({
+            success: async () => {
+                const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
+                for await (const { message, syncReport, done } of sync.execute()) {
+                    if (message) loading.show(true, message);
+                    if (syncReport) await syncReport.save(api);
+                    if (done) {
+                        loading.reset();
+                        finishSynchronization(syncReport);
+                        return;
+                    }
+                }
+            },
+            error: async code => {
+                snackbar.error(code);
+            },
+        });
 
         loading.reset();
         closeDialogs();

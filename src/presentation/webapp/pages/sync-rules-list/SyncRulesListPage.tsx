@@ -266,8 +266,9 @@ const SyncRulesPage: React.FC = () => {
     const executeRule = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
-        const rule = await SyncRule.get(api, id);
 
+        // TODO: Add check for pull request
+        const rule = await SyncRule.get(api, id);
         const { builder, id: syncRule, type = "metadata" } = rule;
 
         const sync = compositionRoot.sync[type]({ ...builder, syncRule });

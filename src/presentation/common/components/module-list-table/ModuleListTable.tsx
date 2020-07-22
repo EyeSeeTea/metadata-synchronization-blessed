@@ -124,6 +124,7 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                     targetInstances: ["LOCAL"],
                 });
 
+                // TODO: Add check for pull request
                 for await (const { message, syncReport, done } of sync.execute()) {
                     if (message) loading.show(true, message);
                     if (syncReport) await syncReport.save(api);
