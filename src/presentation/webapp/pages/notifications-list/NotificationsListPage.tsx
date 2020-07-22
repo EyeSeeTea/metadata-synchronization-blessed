@@ -228,6 +228,7 @@ export const NotificationsListPage: React.FC = () => {
                 rowConfig={rowConfig}
                 searchBoxColumns={["sender", "subject", "text"]}
                 filterComponents={filterComponents}
+                initialState={{ sorting: { field: "created", order: "desc" } }}
             />
         </React.Fragment>
     );
