@@ -113,7 +113,6 @@ const ManualSyncPage: React.FC = () => {
     };
 
     const closeDialogs = () => {
-        updateSyncRule(SyncRule.createOnDemand(type));
         setSyncDialogOpen(false);
     };
 
