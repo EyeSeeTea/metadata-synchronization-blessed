@@ -29,6 +29,11 @@ export const NotificationsListPage: React.FC = () => {
             text: i18n.t("Subject"),
         },
         {
+            name: "text",
+            text: i18n.t("Contents"),
+            hidden: true,
+        },
+        {
             name: "type",
             text: i18n.t("Type"),
             getValue: ({ type }: AppNotification) => {
