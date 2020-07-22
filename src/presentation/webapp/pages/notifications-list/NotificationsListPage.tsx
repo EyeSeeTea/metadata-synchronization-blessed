@@ -1,7 +1,8 @@
 import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
 import { ObjectsTable, RowConfig, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { Either } from "../../../../domain/common/entities/Either";
 import { Notification } from "../../../../domain/notifications/entities/Notification";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../../common/contexts/AppContext";
@@ -81,6 +82,28 @@ export const NotificationsListPage: React.FC = () => {
         return { style: row.read ? { backgroundColor: "#EEEEEE" } : {} };
     };
 
+    const validateAction = useCallback(
+        (result: Either<"NOT_FOUND" | "PERMISSIONS", void>) => {
+            result.match({
+                success: () => snackbar.success(i18n.t("Updated notification")),
+                error: code => {
+                    switch (code) {
+                        case "NOT_FOUND":
+                            snackbar.error(
+                                i18n.t("Could not apply action, notification not found")
+                            );
+                            return;
+                        case "PERMISSIONS":
+                            snackbar.error(
+                                i18n.t("You don't have permissions to edit this notification")
+                            );
+                    }
+                },
+            });
+        },
+        [snackbar]
+    );
+
     const actions: TableAction<AppNotification>[] = useMemo(
         () => [
             {
@@ -95,7 +118,11 @@ export const NotificationsListPage: React.FC = () => {
                 text: i18n.t("Mark as read"),
                 multiple: true,
                 isActive: (rows: AppNotification[]) => rows.some(({ read }) => !read),
-                onClick: () => snackbar.warning("Not implemented"),
+                onClick: async rows => {
+                    await compositionRoot.notifications.markReadNotifications(rows, true);
+
+                    setResetKey(Math.random());
+                },
                 icon: <Icon>drafts</Icon>,
             },
             {
@@ -103,7 +130,11 @@ export const NotificationsListPage: React.FC = () => {
                 text: i18n.t("Mark as unread"),
                 multiple: true,
                 isActive: (rows: AppNotification[]) => rows.some(({ read }) => !!read),
-                onClick: () => snackbar.warning("Not implemented"),
+                onClick: async rows => {
+                    await compositionRoot.notifications.markReadNotifications(rows, false);
+
+                    setResetKey(Math.random());
+                },
                 icon: <Icon>markunread</Icon>,
             },
             {
@@ -112,16 +143,12 @@ export const NotificationsListPage: React.FC = () => {
                 isActive: (rows: AppNotification[]) =>
                     rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
                 onClick: async rows => {
-                    const notification = notifications.find(({ id }) => rows[0] === id);
-                    if (!notification || notification.type !== "pull-request") {
-                        snackbar.error("Could not approve pull request");
-                        return;
-                    }
-
-                    await compositionRoot.notifications.updatePullRequestStatus(
+                    const result = await compositionRoot.notifications.updatePullRequestStatus(
                         rows[0],
                         "APPROVED"
                     );
+
+                    validateAction(result);
                     setResetKey(Math.random());
                 },
                 icon: <Icon>check</Icon>,
@@ -137,34 +164,13 @@ export const NotificationsListPage: React.FC = () => {
                         "REJECTED"
                     );
 
-                    result.match({
-                        success: () =>
-                            snackbar.success(i18n.t("Updated pull request notification")),
-                        error: code => {
-                            switch (code) {
-                                case "NOT_FOUND":
-                                    snackbar.error(
-                                        i18n.t("Could not find notification {{id}}", {
-                                            id: rows[0],
-                                        })
-                                    );
-                                    return;
-                                case "PERMISSIONS":
-                                    snackbar.error(
-                                        i18n.t(
-                                            "You don't have permissions to edit this notification"
-                                        )
-                                    );
-                            }
-                        },
-                    });
-
+                    validateAction(result);
                     setResetKey(Math.random());
                 },
                 icon: <Icon>close</Icon>,
             },
         ],
-        [snackbar, compositionRoot, notifications]
+        [snackbar, compositionRoot, validateAction]
     );
 
     const filterComponents = useMemo(
