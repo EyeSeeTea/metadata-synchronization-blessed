@@ -10,4 +10,4 @@ interface BaseNotification extends Ref {
     created: Date;
 }
 
-export type Notification = BaseNotification & InstanceMessage;
+export type Notification = BaseNotification & Omit<InstanceMessage, "organisationUnits">;
