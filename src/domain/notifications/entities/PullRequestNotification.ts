@@ -1,7 +1,7 @@
 import { PullRequestStatus, PullRequestType } from "../../synchronization/entities/PullRequest";
-import { Notification } from "./Notification";
+import { BaseNotification } from "./Notification";
 
-interface BasePullRequestNotification {
+export interface PullRequestNotification extends BaseNotification {
     type: "pull-request";
     request: {
         type: PullRequestType;
@@ -9,5 +9,3 @@ interface BasePullRequestNotification {
         selectedIds: string[];
     };
 }
-
-export type PullRequestNotification = BasePullRequestNotification & Notification;
