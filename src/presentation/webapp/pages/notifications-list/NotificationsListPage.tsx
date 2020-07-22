@@ -2,7 +2,6 @@ import { ObjectsTable, RowConfig, TableAction, TableColumn, useSnackbar } from "
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Notification } from "../../../../domain/notifications/entities/Notification";
-import { PullRequestNotification } from "../../../../domain/notifications/entities/PullRequestNotification";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import PageHeader from "../../components/page-header/PageHeader";
@@ -12,7 +11,7 @@ export const NotificationsListPage: React.FC = () => {
     const history = useHistory();
     const snackbar = useSnackbar();
 
-    const [notifications, setNotifications] = useState<AppNotification[]>([]);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -45,6 +44,22 @@ export const NotificationsListPage: React.FC = () => {
                     default:
                         return i18n.t("Unknown");
                 }
+            },
+        },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            getValue: (notification: AppNotification) => {
+                if (notification.type === "pull-request") {
+                    switch (notification.request.status)  {
+                        case "PENDING":
+                            return i18n.t("Pending")
+                        case "APPROVED":
+                            return i18n.t("Approved")
+                        case "REJECTED":
+                            return i18n.t("Rejected")
+                    }
+                } else return "-";
             },
         },
         {
@@ -81,14 +96,14 @@ export const NotificationsListPage: React.FC = () => {
         {
             name: "approve-pull-request",
             text: i18n.t("Approve"),
-            isActive: (rows: PullRequestNotification[]) =>
+            isActive: (rows: AppNotification[]) =>
                 rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
             onClick: () => snackbar.warning("Not implemented"),
         },
         {
             name: "reject-pull-request",
             text: i18n.t("Reject"),
-            isActive: (rows: PullRequestNotification[]) =>
+            isActive: (rows: AppNotification[]) =>
                 rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
             onClick: () => snackbar.warning("Not implemented"),
         },
@@ -112,6 +127,8 @@ export const NotificationsListPage: React.FC = () => {
     );
 };
 
-type AppNotification = Notification | PullRequestNotification;
+type AppNotification = Notification & {
+    [key: string]: any;
+}
 
 export default NotificationsListPage;
