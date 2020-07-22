@@ -118,22 +118,33 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                 loading.show(true, i18n.t("Pulling metadata from module {{name}}", module));
 
                 const originInstance = remoteInstance?.id ?? "LOCAL";
-                const sync = compositionRoot.sync[module.type]({
+                const builder = {
                     ...module.toSyncBuilder(),
                     originInstance,
                     targetInstances: ["LOCAL"],
+                };
+
+                const result = await compositionRoot.sync.prepare(module.type, builder);
+                const sync = compositionRoot.sync[module.type](builder);
+
+                await result.match({
+                    success: async () => {
+                        for await (const { message, syncReport, done } of sync.execute()) {
+                            if (message) loading.show(true, message);
+                            if (syncReport) await syncReport.save(api);
+                            if (done) {
+                                openSyncSummary(syncReport);
+                                return;
+                            }
+                        }
+                    },
+                    error: async code => {
+                        // TODO: Handle pull request exception
+                        snackbar.error(code);
+                    },
                 });
 
-                // TODO: Add check for pull request
-                for await (const { message, syncReport, done } of sync.execute()) {
-                    if (message) loading.show(true, message);
-                    if (syncReport) await syncReport.save(api);
-                    if (done) {
-                        loading.reset();
-                        openSyncSummary(syncReport);
-                        return;
-                    }
-                }
+                loading.reset();
             }
         },
         [compositionRoot, openSyncSummary, remoteInstance, loading, rows, snackbar, api]

@@ -270,13 +270,24 @@ const SyncRulesPage: React.FC = () => {
         // TODO: Add check for pull request
         const rule = await SyncRule.get(api, id);
         const { builder, id: syncRule, type = "metadata" } = rule;
+        loading.show(true, i18n.t("Synchronizing {{name}}", rule));
 
+        const result = await compositionRoot.sync.prepare(type, builder);
         const sync = compositionRoot.sync[type]({ ...builder, syncRule });
-        for await (const { message, syncReport, done } of sync.execute()) {
-            if (message) loading.show(true, message);
-            if (syncReport) await syncReport.save(api);
-            if (done && syncReport) setSyncReport(syncReport);
-        }
+
+        await result.match({
+            success: async () => {
+                for await (const { message, syncReport, done } of sync.execute()) {
+                    if (message) loading.show(true, message);
+                    if (syncReport) await syncReport.save(api);
+                    if (done && syncReport) setSyncReport(syncReport);
+                }
+            },
+            error: async code => {
+                // TODO: Handle pull request exception
+                snackbar.error(code);
+            },
+        });
 
         setRefreshKey(Math.random());
         loading.reset();
