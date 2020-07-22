@@ -23,16 +23,17 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
     @cache()
     public async getUser(): Promise<User> {
-        const user = await this.api.currentUser
-            .get({ fields: { id: true, name: true, email: true } })
+        const { userGroups, ...user } = await this.api.currentUser
+            .get({ fields: { id: true, name: true, email: true, userGroups: true } })
             .getData();
-        return user;
+
+        return { ...user, userGroups: userGroups.map(({ id }) => id) };
     }
 
     @cache()
     public async getVersion(): Promise<string> {
-        const systemInfo = await this.api.system.info.getData();
-        return systemInfo.version;
+        const { version } = await this.api.system.info.getData();
+        return version;
     }
 
     @cache()

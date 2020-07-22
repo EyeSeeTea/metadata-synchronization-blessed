@@ -5,6 +5,7 @@ import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { Notification } from "../entities/Notification";
+import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 
 export class ListNotificationsUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -15,10 +16,21 @@ export class ListNotificationsUseCase implements UseCase {
             [instance]
         );
 
+        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
+            Repositories.InstanceRepository,
+            [instance, ""]
+        );
+
         const items = await storageRepository.listObjectsInCollection<Notification>(
             Namespace.NOTIFICATIONS
         );
 
-        return items;
+        const { id, userGroups } = await instanceRepository.getUser();
+
+        return items.filter(
+            notification =>
+                notification.users?.find(user => user.id === id) ||
+                notification.userGroups?.find(({ id }) => userGroups.includes(id))
+        );
     }
 }
