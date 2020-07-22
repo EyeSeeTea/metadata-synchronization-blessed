@@ -17,6 +17,7 @@ export const NotificationsListPage: React.FC = () => {
     const [notifications, setNotifications] = useState<AppNotification[]>([]);
     const [unreadOnly, setUnreadOnly] = useState<boolean>(false);
     const [statusFilter, setStatusFilter] = useState<string>("");
+    const [resetKey, setResetKey] = useState(Math.random());
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -80,47 +81,91 @@ export const NotificationsListPage: React.FC = () => {
         return { style: row.read ? { backgroundColor: "#EEEEEE" } : {} };
     };
 
-    const actions: TableAction<AppNotification>[] = [
-        {
-            name: "open",
-            text: i18n.t("Open"),
-            primary: true,
-            onClick: () => snackbar.warning("Not implemented"),
-            icon: <Icon>open_in_new</Icon>,
-        },
-        {
-            name: "mark-as-read",
-            text: i18n.t("Mark as read"),
-            multiple: true,
-            isActive: (rows: AppNotification[]) => rows.some(({ read }) => !read),
-            onClick: () => snackbar.warning("Not implemented"),
-            icon: <Icon>drafts</Icon>,
-        },
-        {
-            name: "mark-as-unread",
-            text: i18n.t("Mark as unread"),
-            multiple: true,
-            isActive: (rows: AppNotification[]) => rows.some(({ read }) => !!read),
-            onClick: () => snackbar.warning("Not implemented"),
-            icon: <Icon>markunread</Icon>,
-        },
-        {
-            name: "approve-pull-request",
-            text: i18n.t("Approve"),
-            isActive: (rows: AppNotification[]) =>
-                rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
-            onClick: () => snackbar.warning("Not implemented"),
-            icon: <Icon>check</Icon>,
-        },
-        {
-            name: "reject-pull-request",
-            text: i18n.t("Reject"),
-            isActive: (rows: AppNotification[]) =>
-                rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
-            onClick: () => snackbar.warning("Not implemented"),
-            icon: <Icon>close</Icon>,
-        },
-    ];
+    const actions: TableAction<AppNotification>[] = useMemo(
+        () => [
+            {
+                name: "open",
+                text: i18n.t("Open"),
+                primary: true,
+                onClick: () => snackbar.warning("Not implemented"),
+                icon: <Icon>open_in_new</Icon>,
+            },
+            {
+                name: "mark-as-read",
+                text: i18n.t("Mark as read"),
+                multiple: true,
+                isActive: (rows: AppNotification[]) => rows.some(({ read }) => !read),
+                onClick: () => snackbar.warning("Not implemented"),
+                icon: <Icon>drafts</Icon>,
+            },
+            {
+                name: "mark-as-unread",
+                text: i18n.t("Mark as unread"),
+                multiple: true,
+                isActive: (rows: AppNotification[]) => rows.some(({ read }) => !!read),
+                onClick: () => snackbar.warning("Not implemented"),
+                icon: <Icon>markunread</Icon>,
+            },
+            {
+                name: "approve-pull-request",
+                text: i18n.t("Approve"),
+                isActive: (rows: AppNotification[]) =>
+                    rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
+                onClick: async rows => {
+                    const notification = notifications.find(({ id }) => rows[0] === id);
+                    if (!notification || notification.type !== "pull-request") {
+                        snackbar.error("Could not approve pull request");
+                        return;
+                    }
+
+                    await compositionRoot.notifications.updatePullRequestStatus(
+                        rows[0],
+                        "APPROVED"
+                    );
+                    setResetKey(Math.random());
+                },
+                icon: <Icon>check</Icon>,
+            },
+            {
+                name: "reject-pull-request",
+                text: i18n.t("Reject"),
+                isActive: (rows: AppNotification[]) =>
+                    rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
+                onClick: async rows => {
+                    const result = await compositionRoot.notifications.updatePullRequestStatus(
+                        rows[0],
+                        "REJECTED"
+                    );
+
+                    result.match({
+                        success: () =>
+                            snackbar.success(i18n.t("Updated pull request notification")),
+                        error: code => {
+                            switch (code) {
+                                case "NOT_FOUND":
+                                    snackbar.error(
+                                        i18n.t("Could not find notification {{id}}", {
+                                            id: rows[0],
+                                        })
+                                    );
+                                    return;
+                                case "PERMISSIONS":
+                                    snackbar.error(
+                                        i18n.t(
+                                            "You don't have permissions to edit this notification"
+                                        )
+                                    );
+                            }
+                        },
+                    });
+
+                    setResetKey(Math.random());
+                },
+                icon: <Icon>close</Icon>,
+            },
+        ],
+        [snackbar, compositionRoot, notifications]
+    );
 
     const filterComponents = useMemo(
         () => (
@@ -155,7 +200,7 @@ export const NotificationsListPage: React.FC = () => {
                 }))
             )
             .then(setNotifications);
-    }, [compositionRoot]);
+    }, [compositionRoot, resetKey]);
 
     const rows = notifications
         .filter(notification => !unreadOnly || !notification.read)

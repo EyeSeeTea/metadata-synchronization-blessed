@@ -34,6 +34,7 @@ import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
 import { ListNotificationsUseCase } from "../domain/notifications/usecases/ListNotificationsUseCase";
+import { UpdatePullRequestStatusUseCase } from "../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
 import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPackageUseCase";
@@ -165,6 +166,10 @@ export class CompositionRoot {
     public get notifications() {
         return getExecute({
             list: new ListNotificationsUseCase(this.repositoryFactory, this.localInstance),
+            updatePullRequestStatus: new UpdatePullRequestStatusUseCase(
+                this.repositoryFactory,
+                this.localInstance
+            ),
         });
     }
 

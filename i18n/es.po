@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-07-22T06:49:57.905Z\n"
+"POT-Creation-Date: 2020-07-22T07:23:38.305Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1144,6 +1144,15 @@ msgid "Approve"
 msgstr ""
 
 msgid "Reject"
+msgstr ""
+
+msgid "Updated pull request notification"
+msgstr ""
+
+msgid "Could not find notification {{id}}"
+msgstr ""
+
+msgid "You don't have permissions to edit this notification"
 msgstr ""
 
 msgid "Unread messages"
