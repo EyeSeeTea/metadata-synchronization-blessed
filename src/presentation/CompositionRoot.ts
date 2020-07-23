@@ -46,6 +46,7 @@ import { SaveStoreUseCase } from "../domain/packages/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/packages/usecases/ValidateStoreUseCase";
 import { Repositories } from "../domain/Repositories";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
+import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/CreatePullRequestUseCase";
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
@@ -77,6 +78,10 @@ export class CompositionRoot {
                     this.repositoryFactory,
                     this.localInstance,
                     this.encryptionKey
+                ),
+                createPullRequest: new CreatePullRequestUseCase(
+                    this.repositoryFactory,
+                    this.localInstance
                 ),
             }),
             aggregated: (builder: SynchronizationBuilder) =>

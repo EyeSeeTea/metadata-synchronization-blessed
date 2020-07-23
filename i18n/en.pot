@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-22T09:46:10.222Z\n"
-"PO-Revision-Date: 2020-07-22T09:46:10.222Z\n"
+"POT-Creation-Date: 2020-07-23T07:09:42.040Z\n"
+"PO-Revision-Date: 2020-07-23T07:09:42.040Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -432,6 +432,21 @@ msgid "Back"
 msgstr ""
 
 msgid "Help"
+msgstr ""
+
+msgid "You need to provide a subject"
+msgstr ""
+
+msgid "Create pull request on {{name}}"
+msgstr ""
+
+msgid "Open pull request"
+msgstr ""
+
+msgid "Subject"
+msgstr ""
+
+msgid "Field cannot be blank"
 msgstr ""
 
 msgid "Sharing settings for {{name}}"
@@ -1080,6 +1095,12 @@ msgstr ""
 msgid "Unknown error with the request"
 msgstr ""
 
+msgid "Unable to create pull request"
+msgstr ""
+
+msgid "Unknown synchronization error"
+msgstr ""
+
 msgid "Instance"
 msgstr ""
 
@@ -1105,9 +1126,6 @@ msgid "Cancel module editing"
 msgstr ""
 
 msgid "Sender"
-msgstr ""
-
-msgid "Subject"
 msgstr ""
 
 msgid "Contents"
@@ -1250,6 +1268,9 @@ msgid "Successfully deleted {{count}} rules"
 msgid_plural "Successfully deleted {{count}} rules"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Synchronizing {{name}}"
+msgstr ""
 
 msgid "Successfully updated sync rule"
 msgstr ""

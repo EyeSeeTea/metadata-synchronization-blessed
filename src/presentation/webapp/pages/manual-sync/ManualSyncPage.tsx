@@ -24,6 +24,10 @@ import { useAppContext } from "../../../common/contexts/AppContext";
 import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
+import {
+    PullRequestCreationDialog,
+    PullRequestCreation,
+} from "../../components/pull-request-creation-dialog/PullRequestCreationDialog";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
@@ -78,6 +82,7 @@ const ManualSyncPage: React.FC = () => {
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
     const [instances, setInstances] = useState<Instance[]>([]);
     const [selectedInstance, setSelectedInstance] = useState<Instance>();
+    const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
 
     useEffect(() => {
         isAppConfigurator(api).then(updateAppConfigurator);
@@ -134,8 +139,21 @@ const ManualSyncPage: React.FC = () => {
                 }
             },
             error: async code => {
-                // TODO: Handle pull request exception
-                snackbar.error(code);
+                switch (code) {
+                    case "PULL_REQUEST":
+                        if (!selectedInstance) {
+                            snackbar.error(i18n.t("Unable to create pull request"));
+                        } else {
+                            setPullRequestProps({
+                                instance: selectedInstance,
+                                builder: syncRule.toBuilder(),
+                                type: syncRule.type,
+                            });
+                        }
+                        break;
+                    default:
+                        snackbar.error(i18n.t("Unknown synchronization error"));
+                }
             },
         });
 
@@ -229,6 +247,13 @@ const ManualSyncPage: React.FC = () => {
 
             {!!syncReport && (
                 <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
+            )}
+
+            {!!pullRequestProps && (
+                <PullRequestCreationDialog
+                    {...pullRequestProps}
+                    onClose={() => setPullRequestProps(undefined)}
+                />
             )}
         </TestWrapper>
     );
