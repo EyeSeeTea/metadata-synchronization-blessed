@@ -267,7 +267,6 @@ const SyncRulesPage: React.FC = () => {
         const id = _.first(ids);
         if (!id) return;
 
-        // TODO: Add check for pull request
         const rule = await SyncRule.get(api, id);
         const { builder, id: syncRule, type = "metadata" } = rule;
         loading.show(true, i18n.t("Synchronizing {{name}}", rule));

@@ -1,5 +1,5 @@
 import { makeStyles, TextField } from "@material-ui/core";
-import { ConfirmationDialog, useSnackbar } from "d2-ui-components";
+import { ConfirmationDialog, useSnackbar, useLoading } from "d2-ui-components";
 import React, { useCallback, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
@@ -32,6 +32,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
     const { compositionRoot } = useAppContext();
     const classes = useStyles();
     const snackbar = useSnackbar();
+    const loading = useLoading();
 
     const [fields, updateFields] = useState<PullRequestFields>({});
 
@@ -42,6 +43,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
             return;
         }
 
+        loading.show(true, i18n.t("Creating pull request"));
         const sync = compositionRoot.sync[type](builder);
         const payload = await sync.buildPayload();
 
@@ -55,7 +57,8 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
         });
 
         onClose();
-    }, [compositionRoot, builder, fields, type, instance, onClose, snackbar]);
+        loading.reset();
+    }, [compositionRoot, builder, fields, type, instance, onClose, snackbar, loading]);
 
     const updateTextField = useCallback(
         (field: keyof PullRequestFields) => (event: React.ChangeEvent<{ value: unknown }>) => {

@@ -55,7 +55,7 @@ export class CreatePullRequestUseCase implements UseCase {
             type: "metadata",
             payload,
             notification: notification.id,
-        })
+        });
 
         await this.savePullRequest(pullRequest);
     }
@@ -70,10 +70,7 @@ export class CreatePullRequestUseCase implements UseCase {
         return { id, name };
     }
 
-    private async getResponsibles(
-        instance: Instance,
-        ids: string[]
-    ) {
+    private async getResponsibles(instance: Instance, ids: string[]) {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [instance]
@@ -89,13 +86,13 @@ export class CreatePullRequestUseCase implements UseCase {
             metadataResponsibles.flatMap(({ userAccesses }) => userAccesses),
             "id"
         );
-        
+
         const userGroups = _.uniqBy(
             metadataResponsibles.flatMap(({ userGroupAccesses }) => userGroupAccesses),
             "id"
         );
 
-        return { users, userGroups }
+        return { users, userGroups };
     }
 
     private async saveNotification(

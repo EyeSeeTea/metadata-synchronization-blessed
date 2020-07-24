@@ -16,9 +16,7 @@ export interface PullRequest extends Ref {
 }
 
 export class PullRequest implements PullRequest {
-    static create(
-        props: PartialBy<PullRequest, "id" | "status">
-    ): PullRequest {
+    static create(props: PartialBy<PullRequest, "id" | "status">): PullRequest {
         return {
             id: generateUid(),
             status: "PENDING",
