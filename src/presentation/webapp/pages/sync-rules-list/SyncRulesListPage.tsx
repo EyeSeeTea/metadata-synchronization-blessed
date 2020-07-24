@@ -284,8 +284,10 @@ const SyncRulesPage: React.FC = () => {
                 }
             },
             error: async code => {
-                // TODO: Handle pull request exception
-                snackbar.error(code);
+                switch (code) {
+                    default:
+                        snackbar.error(i18n.t("Unknown synchronization error"));
+                }
             },
         });
 
