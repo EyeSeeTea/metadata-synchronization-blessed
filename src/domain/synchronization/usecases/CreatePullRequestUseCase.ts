@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { NamedRef } from "../../common/entities/Ref";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
@@ -9,8 +10,7 @@ import { PullRequestNotification } from "../../notifications/entities/PullReques
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { PullRequestType } from "../entities/PullRequest";
-import _ from "lodash";
+import { PullRequest, PullRequestType } from "../entities/PullRequest";
 
 interface CreatePullRequestParams {
     instance: Instance;
@@ -33,15 +33,7 @@ export class CreatePullRequestUseCase implements UseCase {
         description = "",
     }: CreatePullRequestParams): Promise<void> {
         const owner = await this.getOwner();
-        const responsibles = await this.getResponsibles(instance, ids);
-        const users = _.uniqBy(
-            responsibles.flatMap(({ userAccesses }) => userAccesses),
-            "id"
-        );
-        const userGroups = _.uniqBy(
-            responsibles.flatMap(({ userGroupAccesses }) => userGroupAccesses),
-            "id"
-        );
+        const { users, userGroups } = await this.getResponsibles(instance, ids);
 
         const notification = PullRequestNotification.create({
             subject,
@@ -56,10 +48,16 @@ export class CreatePullRequestUseCase implements UseCase {
             userGroups,
         });
 
-        this.saveNotification(instance, notification);
+        await this.saveNotification(instance, notification);
 
-        // TODO: Create pull request on local instance
-        console.log("foo", notification, payload);
+        const pullRequest = PullRequest.create({
+            instance: instance.id,
+            type: "metadata",
+            payload,
+            notification: notification.id,
+        })
+
+        await this.savePullRequest(pullRequest);
     }
 
     private async getOwner(): Promise<NamedRef> {
@@ -75,7 +73,7 @@ export class CreatePullRequestUseCase implements UseCase {
     private async getResponsibles(
         instance: Instance,
         ids: string[]
-    ): Promise<MetadataResponsible[]> {
+    ) {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [instance]
@@ -85,7 +83,19 @@ export class CreatePullRequestUseCase implements UseCase {
             Namespace.RESPONSIBLES
         );
 
-        return responsibles.filter(({ id }) => ids.includes(id));
+        const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
+
+        const users = _.uniqBy(
+            metadataResponsibles.flatMap(({ userAccesses }) => userAccesses),
+            "id"
+        );
+        
+        const userGroups = _.uniqBy(
+            metadataResponsibles.flatMap(({ userGroupAccesses }) => userGroupAccesses),
+            "id"
+        );
+
+        return { users, userGroups }
     }
 
     private async saveNotification(
@@ -98,5 +108,14 @@ export class CreatePullRequestUseCase implements UseCase {
         );
 
         await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, notification);
+    }
+
+    private async savePullRequest(pullRequest: PullRequest) {
+        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
+            Repositories.StorageRepository,
+            [this.localInstance]
+        );
+
+        await storageRepository.saveObjectInCollection(Namespace.PULL_REQUEST, pullRequest);
     }
 }
