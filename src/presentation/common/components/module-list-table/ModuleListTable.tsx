@@ -15,6 +15,10 @@ import { useHistory } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
+import {
+    PullRequestCreation,
+    PullRequestCreationDialog,
+} from "../../../webapp/components/pull-request-creation-dialog/PullRequestCreationDialog";
 import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPacakgeDialog } from "./NewPackageDialog";
@@ -37,6 +41,7 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
     const [isTableLoading, setIsTableLoading] = useState(false);
     const [newPackageModule, setNewPackageModule] = useState<Module>();
     const [selection, updateSelection] = useState<TableSelection[]>([]);
+    const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
 
     const editRule = useCallback(
         (ids: string[]) => {
@@ -139,8 +144,21 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                         }
                     },
                     error: async code => {
-                        // TODO: Handle pull request exception
-                        snackbar.error(code);
+                        switch (code) {
+                            case "PULL_REQUEST":
+                                if (!remoteInstance) {
+                                    snackbar.error(i18n.t("Unable to create pull request"));
+                                } else {
+                                    setPullRequestProps({
+                                        instance: remoteInstance,
+                                        builder,
+                                        type: module.type,
+                                    });
+                                }
+                                break;
+                            default:
+                                snackbar.error(i18n.t("Unknown synchronization error"));
+                        }
                     },
                 });
 
@@ -292,6 +310,13 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                     save={savePackage}
                     close={() => setNewPackageModule(undefined)}
                     module={newPackageModule}
+                />
+            )}
+
+            {!!pullRequestProps && (
+                <PullRequestCreationDialog
+                    {...pullRequestProps}
+                    onClose={() => setPullRequestProps(undefined)}
                 />
             )}
 

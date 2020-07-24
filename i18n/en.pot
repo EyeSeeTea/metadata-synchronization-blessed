@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-23T07:09:42.040Z\n"
-"PO-Revision-Date: 2020-07-23T07:09:42.040Z\n"
+"POT-Creation-Date: 2020-07-24T07:25:28.807Z\n"
+"PO-Revision-Date: 2020-07-24T07:25:28.807Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -66,6 +66,12 @@ msgid "Creating {{dhisVersion}} package for module {{name}}"
 msgstr ""
 
 msgid "Pulling metadata from module {{name}}"
+msgstr ""
+
+msgid "Unable to create pull request"
+msgstr ""
+
+msgid "Unknown synchronization error"
 msgstr ""
 
 msgid "Name"
@@ -1093,12 +1099,6 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Unable to create pull request"
-msgstr ""
-
-msgid "Unknown synchronization error"
 msgstr ""
 
 msgid "Instance"
