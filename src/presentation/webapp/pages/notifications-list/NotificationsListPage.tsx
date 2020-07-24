@@ -3,10 +3,11 @@ import { ObjectsTable, RowConfig, TableAction, TableColumn, useSnackbar } from "
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Either } from "../../../../domain/common/entities/Either";
-import { Notification } from "../../../../domain/notifications/entities/Notification";
+import { AppNotification } from "../../../../domain/notifications/entities/Notification";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../../components/dropdown/Dropdown";
+import { NotificationViewerDialog } from "../../components/notification-viewer-dialog/NotificationViewerDialog";
 import PageHeader from "../../components/page-header/PageHeader";
 
 export const NotificationsListPage: React.FC = () => {
@@ -15,10 +16,11 @@ export const NotificationsListPage: React.FC = () => {
     const snackbar = useSnackbar();
     const classes = useStyles();
 
-    const [notifications, setNotifications] = useState<AppNotification[]>([]);
+    const [notifications, setNotifications] = useState<TableNotification[]>([]);
     const [unreadOnly, setUnreadOnly] = useState<boolean>(false);
     const [statusFilter, setStatusFilter] = useState<string>("");
     const [resetKey, setResetKey] = useState(Math.random());
+    const [detailsNotification, setDetailsNotification] = useState<AppNotification>();
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -28,7 +30,7 @@ export const NotificationsListPage: React.FC = () => {
         setUnreadOnly(event.target?.checked);
     };
 
-    const columns: TableColumn<AppNotification>[] = [
+    const columns: TableColumn<TableNotification>[] = [
         {
             name: "sender",
             text: i18n.t("Sender"),
@@ -78,7 +80,7 @@ export const NotificationsListPage: React.FC = () => {
         },
     ];
 
-    const rowConfig = (row: AppNotification): RowConfig => {
+    const rowConfig = (row: TableNotification): RowConfig => {
         return { style: row.read ? { backgroundColor: "#EEEEEE" } : {} };
     };
 
@@ -104,13 +106,16 @@ export const NotificationsListPage: React.FC = () => {
         [snackbar]
     );
 
-    const actions: TableAction<AppNotification>[] = useMemo(
+    const actions: TableAction<TableNotification>[] = useMemo(
         () => [
             {
                 name: "open",
                 text: i18n.t("Open"),
                 primary: true,
-                onClick: () => snackbar.warning("Not implemented"),
+                onClick: async rows => {
+                    const notification = notifications.find(({id}) => id  === rows[0]);
+                    setDetailsNotification(notification);
+                },
                 icon: <Icon>open_in_new</Icon>,
             },
             {
@@ -170,7 +175,7 @@ export const NotificationsListPage: React.FC = () => {
                 icon: <Icon>close</Icon>,
             },
         ],
-        [snackbar, compositionRoot, validateAction]
+        [compositionRoot, validateAction, notifications]
     );
 
     const filterComponents = useMemo(
@@ -221,7 +226,7 @@ export const NotificationsListPage: React.FC = () => {
         <React.Fragment>
             <PageHeader onBackClick={backHome} title={i18n.t("Notifications")} />
 
-            <ObjectsTable<AppNotification>
+            <ObjectsTable<TableNotification>
                 rows={rows}
                 columns={columns}
                 actions={actions}
@@ -230,6 +235,13 @@ export const NotificationsListPage: React.FC = () => {
                 filterComponents={filterComponents}
                 initialState={{ sorting: { field: "created", order: "desc" } }}
             />
+
+            {detailsNotification && (
+                <NotificationViewerDialog
+                    notification={detailsNotification}
+                    onClose={() => setDetailsNotification(undefined)}
+                />
+            )}
         </React.Fragment>
     );
 };
@@ -241,7 +253,7 @@ const useStyles = makeStyles({
     },
 });
 
-type AppNotification = Notification & {
+type TableNotification = AppNotification & {
     sender: string;
     [key: string]: any;
 };

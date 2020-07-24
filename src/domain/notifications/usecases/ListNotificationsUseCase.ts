@@ -1,16 +1,16 @@
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { Notification } from "../entities/Notification";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
+import { AppNotification } from "../entities/Notification";
 
 export class ListNotificationsUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(instance = this.localInstance): Promise<Notification[]> {
+    public async execute(instance = this.localInstance): Promise<AppNotification[]> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [instance]
@@ -21,7 +21,7 @@ export class ListNotificationsUseCase implements UseCase {
             [instance, ""]
         );
 
-        const items = await storageRepository.listObjectsInCollection<Notification>(
+        const items = await storageRepository.listObjectsInCollection<AppNotification>(
             Namespace.NOTIFICATIONS
         );
 

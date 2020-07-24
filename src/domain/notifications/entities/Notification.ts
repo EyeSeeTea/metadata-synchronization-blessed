@@ -16,4 +16,4 @@ export interface MessageNotification extends BaseNotification {
     type: "message";
 }
 
-export type Notification = MessageNotification | PullRequestNotification;
+export type AppNotification = MessageNotification | PullRequestNotification;

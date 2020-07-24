@@ -6,7 +6,7 @@ import { InstanceRepositoryConstructor } from "../../instance/repositories/Insta
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { Notification } from "../entities/Notification";
+import { AppNotification } from "../entities/Notification";
 
 export class MarkReadNotificationsUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -18,7 +18,7 @@ export class MarkReadNotificationsUseCase implements UseCase {
         );
 
         await promiseMap(ids, async id => {
-            const notification = await storageRepository.getObjectInCollection<Notification>(
+            const notification = await storageRepository.getObjectInCollection<AppNotification>(
                 Namespace.NOTIFICATIONS,
                 id
             );
@@ -35,7 +35,7 @@ export class MarkReadNotificationsUseCase implements UseCase {
         });
     }
 
-    private async hasPermissions(notification: Notification) {
+    private async hasPermissions(notification: AppNotification) {
         const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
             Repositories.InstanceRepository,
             [this.localInstance, ""]
