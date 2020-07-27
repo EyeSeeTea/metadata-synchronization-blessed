@@ -1,3 +1,4 @@
+import { D2SchemaProperties } from "d2-api/schemas";
 import { isValidUid } from "d2/uid";
 import _ from "lodash";
 import { D2Api } from "../../types/d2-api";
@@ -82,16 +83,25 @@ export function getAllReferences(
     return result;
 }
 
-export function isD2Model(api: D2Api, modelName: string): boolean {
-    return !!api.models[modelName as keyof MetadataEntities];
+export function getSchemaByName(api: D2Api, modelName: string): D2SchemaProperties | undefined {
+    const model = _.values(api.models).find(
+        ({ schema }) => schema.name === modelName || schema.plural === modelName
+    );
+    return model?.schema;
+}
+
+export function isValidModel(api: D2Api, modelName: string): boolean {
+    const { metadata = false } = getSchemaByName(api, modelName) ?? {};
+    return metadata;
 }
 
 /**
  * Return expected model in plural to include as key in post metadata body
  */
 export function cleanToModelName(api: D2Api, id: string, caller: string): string | null {
-    if (isD2Model(api, id)) {
-        return api.models[id as keyof MetadataEntities].schema.plural;
+    if (isValidModel(api, id)) {
+        const schema = getSchemaByName(api, id);
+        return schema?.plural ?? id;
     } else if (id === "attributeValues") {
         return "attributes";
     } else if (id === "commentOptionSet") {
@@ -125,7 +135,7 @@ export function cleanToAPIChildReferenceName(api: D2Api, key: string, parent: st
         return ["workflow"];
     } else if (key === "programNotificationTemplates") {
         return ["notificationTemplates"];
-    } else if (isD2Model(api, key)) {
+    } else if (isValidModel(api, key)) {
         // Children reference name may be plural or singular
         return [
             api.models[key as keyof MetadataEntities].schema.name,
