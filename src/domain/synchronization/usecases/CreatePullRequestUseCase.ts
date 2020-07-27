@@ -83,12 +83,12 @@ export class CreatePullRequestUseCase implements UseCase {
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 
         const users = _.uniqBy(
-            metadataResponsibles.flatMap(({ userAccesses }) => userAccesses),
+            metadataResponsibles.flatMap(({ users }) => users),
             "id"
         );
 
         const userGroups = _.uniqBy(
-            metadataResponsibles.flatMap(({ userGroupAccesses }) => userGroupAccesses),
+            metadataResponsibles.flatMap(({ userGroups }) => userGroups),
             "id"
         );
 
