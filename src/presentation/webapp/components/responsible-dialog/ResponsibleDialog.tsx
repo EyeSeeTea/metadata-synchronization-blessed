@@ -1,39 +1,50 @@
-import { MetaObject, SearchResult, ShareUpdate, useSnackbar } from "d2-ui-components";
+import { SearchResult, ShareUpdate } from "d2-ui-components";
 import _ from "lodash";
-import React from "react";
+import React, { useMemo } from "react";
+import { NamedRef } from "../../../../domain/common/entities/Ref";
+import { MetadataEntities } from "../../../../domain/metadata/entities/MetadataEntities";
 import { MetadataResponsible } from "../../../../domain/metadata/entities/MetadataResponsible";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import { SharingDialog } from "../../components/sharing-dialog/SharingDialog";
 
 export interface ResponsibleDialogProps {
+    entity: keyof MetadataEntities;
     responsibles: MetadataResponsible[];
+    sharingSettingsElement?: NamedRef;
     updateResponsibles: (responsibles: MetadataResponsible[]) => void;
-    sharingSettingsObject?: MetaObject;
-    setSharingSettingsObject: (object?: MetaObject) => void;
+    onClose: () => void;
 }
 
 export const ResponsibleDialog: React.FC<ResponsibleDialogProps> = ({
+    entity,
     responsibles,
+    sharingSettingsElement,
     updateResponsibles,
-    sharingSettingsObject,
-    setSharingSettingsObject,
+    onClose,
 }) => {
     const { compositionRoot, api } = useAppContext();
-    const snackbar = useSnackbar();
 
     const onSharingChanged = async (update: ShareUpdate) => {
-        if (!sharingSettingsObject) return;
+        if (!sharingSettingsElement) return;
 
-        const newSharingsObject = { ...sharingSettingsObject.object, ...update };
-        const oldResponsible = responsibles.find(({ id }) => newSharingsObject.id === id);
-        if (!oldResponsible) {
-            snackbar.error("Could not update sharing settings");
-            return;
-        }
+        const { users: oldUsers = [], userGroups: oldUserGroups = [] } =
+            responsibles.find(({ id }) => id === sharingSettingsElement.id) ?? {};
 
-        const newResponsible = { ...oldResponsible, ...update };
-        setSharingSettingsObject({ meta: {}, object: newSharingsObject });
+        const users =
+            update.userAccesses?.map(({ id, displayName }) => ({ id, name: displayName })) ??
+            oldUsers;
+        const userGroups =
+            update.userGroupAccesses?.map(({ id, displayName }) => ({ id, name: displayName })) ??
+            oldUserGroups;
+
+        const newResponsible: MetadataResponsible = {
+            ...sharingSettingsElement,
+            entity,
+            users,
+            userGroups,
+        };
+
         await compositionRoot.responsibles.set(newResponsible);
         updateResponsibles(_.uniqBy([newResponsible, ...responsibles], "id"));
     };
@@ -43,7 +54,27 @@ export const ResponsibleDialog: React.FC<ResponsibleDialogProps> = ({
             .get<SearchResult>("/sharing/search", { key })
             .getData();
 
-    if (!sharingSettingsObject) return null;
+    const sharingObject = useMemo(() => {
+        if (!sharingSettingsElement) return undefined;
+
+        const responsible = responsibles.find(({ id }) => id === sharingSettingsElement?.id);
+        const { users = [], userGroups = [] } = responsible ?? {};
+
+        return {
+            object: {
+                ...sharingSettingsElement,
+                userAccesses: users.map(({ id, name }) => ({ id, displayName: name, access: "" })),
+                userGroupAccesses: userGroups.map(({ id, name }) => ({
+                    id,
+                    displayName: name,
+                    access: "",
+                })),
+            },
+            meta: {},
+        };
+    }, [responsibles, sharingSettingsElement]);
+
+    if (!sharingObject) return null;
 
     return (
         <SharingDialog
@@ -55,9 +86,9 @@ export const ResponsibleDialog: React.FC<ResponsibleDialogProps> = ({
                 externalSharing: false,
                 permissionPicker: false,
             }}
-            title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
-            meta={sharingSettingsObject}
-            onCancel={() => setSharingSettingsObject(undefined)}
+            title={i18n.t("Sharing settings for {{name}}", sharingSettingsElement)}
+            meta={sharingObject}
+            onCancel={onClose}
             onChange={onSharingChanged}
             onSearch={onSearchRequest}
         />
