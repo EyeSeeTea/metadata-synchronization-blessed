@@ -35,6 +35,8 @@ export const NotificationViewerDialog: React.FC<NotificationViewerDialogProps> =
                 <MetadataTable
                     models={[DataSetModel, ProgramModel]}
                     filterRows={notification.request.selectedIds}
+                    forceSelectionColumn={false}
+                    showOnlySelectedFilter={false}
                 />
             )}
         </ConfirmationDialog>
