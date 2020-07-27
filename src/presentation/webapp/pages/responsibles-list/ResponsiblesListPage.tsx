@@ -68,7 +68,6 @@ export const ResponsiblesListPage: React.FC = () => {
 };
 
 interface ExpandedMetadataResponsible extends MetadataResponsible {
-    name?: string;
     responsible?: never;
 }
 
