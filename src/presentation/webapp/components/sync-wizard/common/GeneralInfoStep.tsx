@@ -42,7 +42,7 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
 
             onChange(
                 syncRule
-                    .update({ originInstance })
+                    .updateBuilder({ originInstance })
                     .updateTargetInstances(targetInstances)
                     .updateMetadataIds([])
                     .updateExcludedIds([])
