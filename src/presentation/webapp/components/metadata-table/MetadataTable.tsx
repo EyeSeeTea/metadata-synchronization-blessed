@@ -3,7 +3,6 @@ import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
 import {
     DatePicker,
-    MetaObject,
     ObjectsTable,
     ObjectsTableProps,
     OrgUnitsSelector,
@@ -118,7 +117,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const [ids, updateIds] = useState<string[]>([]);
     const [responsibles, updateResponsibles] = useState<MetadataResponsible[]>([]);
-    const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject>();
+    const [sharingSettingsElement, setSharingSettingsElement] = useState<NamedRef>();
 
     const [selectedRows, setSelectedRows] = useState<string[]>(selectedIds);
     const [filters, updateFilters] = useState<ListMetadataParams>({
@@ -220,13 +219,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         const { id, name } = rows.find(({ id }) => ids[0] === id) ?? {};
         if (!id || !name) return;
 
-        const { userAccesses = [], userGroupAccesses = [] } =
-            responsibles.find(item => item.id === id) ?? {};
-
-        setSharingSettingsObject({
-            object: { id, name, userAccesses, userGroupAccesses },
-            meta: {},
-        });
+        setSharingSettingsElement({ id, name });
     };
 
     const filterComponents = (
@@ -511,12 +504,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                   name: "responsible",
                   text: i18n.t("Responsible"),
                   getValue: (row: MetadataType) => {
-                      const { userAccesses = [], userGroupAccesses = [] } =
+                      const { users = [], userGroups = [] } =
                           responsibles.find(({ id }) => row.id === id) ?? {};
 
-                      const results = [...userAccesses, ...userGroupAccesses].map(
-                          ({ name }) => name
-                      );
+                      const results = [...users, ...userGroups].map(({ name }) => name);
 
                       return results.length === 0 ? "-" : results.join(", ");
                   },
@@ -532,10 +523,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     return (
         <React.Fragment>
             <ResponsibleDialog
+                entity={model.getCollectionName()}
                 responsibles={responsibles}
                 updateResponsibles={updateResponsibles}
-                sharingSettingsObject={sharingSettingsObject}
-                setSharingSettingsObject={setSharingSettingsObject}
+                sharingSettingsElement={sharingSettingsElement}
+                onClose={() => setSharingSettingsElement(undefined)}
             />
 
             <ObjectsTable<MetadataType>

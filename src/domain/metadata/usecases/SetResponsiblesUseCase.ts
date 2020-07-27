@@ -18,8 +18,8 @@ export class SetResponsiblesUseCase implements UseCase {
             [instance]
         );
 
-        const { id, userAccesses, userGroupAccesses } = responsible;
-        if (userAccesses.length === 0 && userGroupAccesses.length === 0) {
+        const { id, users, userGroups } = responsible;
+        if (users.length === 0 && userGroups.length === 0) {
             await storageRepository.removeObjectInCollection(Namespace.RESPONSIBLES, id);
         } else {
             await storageRepository.saveObjectInCollection<MetadataResponsible>(
