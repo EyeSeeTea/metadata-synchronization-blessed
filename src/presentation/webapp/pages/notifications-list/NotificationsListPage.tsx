@@ -41,7 +41,7 @@ export const NotificationsListPage: React.FC = () => {
         },
         {
             name: "text",
-            text: i18n.t("Contents"),
+            text: i18n.t("Description"),
             hidden: true,
         },
         {
