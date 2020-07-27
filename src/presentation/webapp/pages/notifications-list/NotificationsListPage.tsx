@@ -113,6 +113,9 @@ export const NotificationsListPage: React.FC = () => {
                 text: i18n.t("Open"),
                 primary: true,
                 onClick: async rows => {
+                    await compositionRoot.notifications.markReadNotifications(rows, true);
+                    setResetKey(Math.random());
+
                     const notification = notifications.find(({ id }) => id === rows[0]);
                     setDetailsNotification(notification);
                 },
