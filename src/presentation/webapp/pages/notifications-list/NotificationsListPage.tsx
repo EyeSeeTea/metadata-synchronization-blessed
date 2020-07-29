@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Either } from "../../../../domain/common/entities/Either";
 import { AppNotification } from "../../../../domain/notifications/entities/Notification";
+import { UpdatePullRequestStatusError } from "../../../../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../../components/dropdown/Dropdown";
@@ -85,7 +86,7 @@ export const NotificationsListPage: React.FC = () => {
     };
 
     const validateAction = useCallback(
-        (result: Either<"NOT_FOUND" | "PERMISSIONS", void>) => {
+        (result: Either<UpdatePullRequestStatusError, void>) => {
             result.match({
                 success: () => snackbar.success(i18n.t("Updated notification")),
                 error: code => {
@@ -99,6 +100,14 @@ export const NotificationsListPage: React.FC = () => {
                             snackbar.error(
                                 i18n.t("You don't have permissions to edit this notification")
                             );
+                            return;
+                        case "INVALID":
+                            snackbar.error(
+                                i18n.t("Could not apply action, notification is not valid")
+                            );
+                            return;
+                        default:
+                            snackbar.error(i18n.t("Unknown error"));
                     }
                 },
             });

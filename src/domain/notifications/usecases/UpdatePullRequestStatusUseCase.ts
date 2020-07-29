@@ -9,7 +9,7 @@ import { StorageRepositoryConstructor } from "../../storage/repositories/Storage
 import { PullRequestStatus } from "../../synchronization/entities/PullRequest";
 import { ReceivedPullRequestNotification } from "../entities/PullRequestNotification";
 
-type UpdateError = "NOT_FOUND" | "PERMISSIONS" | "INVALID";
+export type UpdatePullRequestStatusError = "NOT_FOUND" | "PERMISSIONS" | "INVALID";
 
 export class UpdatePullRequestStatusUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -17,7 +17,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
     public async execute(
         id: string,
         status: PullRequestStatus
-    ): Promise<Either<UpdateError, void>> {
+    ): Promise<Either<UpdatePullRequestStatusError, void>> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [this.localInstance]
