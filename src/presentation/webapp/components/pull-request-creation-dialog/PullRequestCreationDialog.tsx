@@ -11,7 +11,6 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import { PullRequestType } from "../../../../domain/synchronization/entities/PullRequest";
 import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
@@ -63,7 +62,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
 
         await compositionRoot.sync.createPullRequest({
             instance,
-            type: type as PullRequestType,
+            type,
             ids: builder.metadataIds,
             payload,
             subject,
@@ -113,7 +112,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
         <ConfirmationDialog
             isOpen={true}
             title={i18n.t("Create pull request on {{name}}", instance)}
-            maxWidth={"sm"}
+            maxWidth={"md"}
             fullWidth={true}
             onCancel={onClose}
             onSave={save}

@@ -8,16 +8,17 @@ import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import {
     PullRequestNotification,
+    ReceivedPullRequestNotification,
     SentPullRequestNotification,
 } from "../../notifications/entities/PullRequestNotification";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { PullRequest, PullRequestType } from "../entities/PullRequest";
+import { SynchronizationType } from "../entities/SynchronizationType";
 
 interface CreatePullRequestParams {
     instance: Instance;
-    type: PullRequestType;
+    type: SynchronizationType;
     ids: string[];
     payload: MetadataPackage;
     subject: string;
@@ -38,29 +39,30 @@ export class CreatePullRequestUseCase implements UseCase {
         const owner = await this.getOwner();
         const { users, userGroups } = await this.getResponsibles(instance, ids);
 
-        const notification = SentPullRequestNotification.create({
+        const receivedPullRequest = ReceivedPullRequestNotification.create({
             subject,
             text: description,
             owner,
-            request: {
-                type,
-                status: "PENDING",
-                selectedIds: ids,
-            },
             users,
             userGroups,
-        });
-
-        await this.saveNotification(instance, notification);
-
-        const pullRequest = PullRequest.create({
-            instance: instance.id,
-            type: "metadata",
             payload,
-            notification: notification.id,
+            instance: this.localInstance.toPublicObject(),
+            syncType: type,
+            selectedIds: ids,
         });
 
-        await this.savePullRequest(pullRequest);
+        const sentPullRequest = SentPullRequestNotification.create({
+            subject,
+            text: description,
+            owner,
+            instance: instance.toPublicObject(),
+            syncType: type,
+            selectedIds: ids,
+            remoteNotification: receivedPullRequest.id,
+        });
+
+        await this.saveNotification(instance, receivedPullRequest);
+        await this.saveNotification(this.localInstance, sentPullRequest);
     }
 
     private async getOwner(): Promise<NamedRef> {
@@ -108,14 +110,5 @@ export class CreatePullRequestUseCase implements UseCase {
         );
 
         await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, notification);
-    }
-
-    private async savePullRequest(pullRequest: PullRequest) {
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [this.localInstance]
-        );
-
-        await storageRepository.saveObjectInCollection(Namespace.PULL_REQUEST, pullRequest);
     }
 }

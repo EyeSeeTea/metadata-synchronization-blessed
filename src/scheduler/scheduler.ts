@@ -6,9 +6,7 @@ import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedS
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
-import {
-    SynchronizationRule,
-} from "../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationRule } from "../domain/synchronization/entities/SynchronizationRule";
 import { SynchronizationType } from "../domain/synchronization/entities/SynchronizationType";
 import { SyncronizationClass } from "../domain/synchronization/usecases/GenericSyncUseCase";
 import SyncRule from "../models/syncRule";

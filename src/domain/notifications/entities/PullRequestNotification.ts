@@ -1,55 +1,58 @@
 import { generateUid } from "d2/uid";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-import { PullRequestStatus, PullRequestType } from "../../synchronization/entities/PullRequest";
+import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { BaseNotification } from "./Notification";
 
-export type PullRequestNotificationOrigin = "sent" | "received";
+export type PullRequestStatus = "PENDING" | "APPROVED" | "REJECTED" | "IMPORTED";
 
 export interface PullRequestNotification extends BaseNotification {
-    type: "pull-request";
-    origin: PullRequestNotificationOrigin;
-    request: {
-        type: PullRequestType;
-        status: PullRequestStatus;
-        selectedIds: string[];
-    };
+    syncType: SynchronizationType;
+    selectedIds: string[];
+    status: PullRequestStatus;
 }
 
 export interface SentPullRequestNotification extends PullRequestNotification {
-    origin: "sent";
+    type: "sent-pull-request";
+    remoteNotification: string;
 }
 
 export interface ReceivedPullRequestNotification extends PullRequestNotification {
-    origin: "received";
+    type: "received-pull-request";
     payload: MetadataPackage;
 }
 
 export class SentPullRequestNotification implements SentPullRequestNotification {
     static create(
-        props: Omit<SentPullRequestNotification, "id" | "type" | "origin" | "read" | "created">
+        props: Omit<
+            SentPullRequestNotification,
+            "id" | "notification" | "type" | "read" | "created" | "status"
+        >
     ): SentPullRequestNotification {
         return {
             ...props,
             id: generateUid(),
-            type: "pull-request",
-            origin: "sent",
+            type: "sent-pull-request",
             read: false,
             created: new Date(),
+            status: "PENDING",
         };
     }
 }
 
 export class ReceivedPullRequestNotification implements ReceivedPullRequestNotification {
     static create(
-        props: Omit<ReceivedPullRequestNotification, "id" | "type" | "origin" | "read" | "created">
+        props: Omit<
+            ReceivedPullRequestNotification,
+            "id" | "notification" | "type" | "read" | "created" | "status"
+        >
     ): ReceivedPullRequestNotification {
         return {
             ...props,
             id: generateUid(),
-            type: "pull-request",
-            origin: "received",
+            type: "received-pull-request",
             read: false,
             created: new Date(),
+            status: "PENDING",
         };
     }
 }

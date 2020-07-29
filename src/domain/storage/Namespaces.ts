@@ -8,5 +8,4 @@ export const Namespace = {
     CONFIG: "config",
     STORE: "store",
     RESPONSIBLES: "responsibles",
-    PULL_REQUEST: "pull-request",
 };

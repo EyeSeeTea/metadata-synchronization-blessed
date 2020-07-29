@@ -31,10 +31,11 @@ export const NotificationViewerDialog: React.FC<NotificationViewerDialogProps> =
         >
             {notification.text && <p className={classes.row}>{notification.text}</p>}
 
-            {notification.type === "pull-request" && (
+            {(notification.type === "received-pull-request" ||
+                notification.type === "sent-pull-request") && (
                 <MetadataTable
                     models={[DataSetModel, ProgramModel]}
-                    filterRows={notification.request.selectedIds}
+                    filterRows={notification.selectedIds}
                     forceSelectionColumn={false}
                     showOnlySelectedFilter={false}
                 />

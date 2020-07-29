@@ -20,9 +20,7 @@ import { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import {
-    SynchronizationRule,
-} from "../../../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationRule } from "../../../../domain/synchronization/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";

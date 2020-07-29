@@ -52,8 +52,10 @@ export const NotificationsListPage: React.FC = () => {
                 switch (type) {
                     case "message":
                         return i18n.t("Message");
-                    case "pull-request":
-                        return i18n.t("Pull request");
+                    case "sent-pull-request":
+                        return i18n.t("Pull request (Sent)");
+                    case "received-pull-request":
+                        return i18n.t("Pull request (Received)");
                     default:
                         return i18n.t("Unknown");
                 }
@@ -63,7 +65,10 @@ export const NotificationsListPage: React.FC = () => {
             name: "status",
             text: i18n.t("Status"),
             getValue: notification => {
-                if (notification.type === "pull-request") {
+                if (
+                    notification.type === "sent-pull-request" ||
+                    notification.type === "received-pull-request"
+                ) {
                     switch (notification.request.status) {
                         case "PENDING":
                             return i18n.t("Pending");
@@ -158,7 +163,7 @@ export const NotificationsListPage: React.FC = () => {
                 name: "approve-pull-request",
                 text: i18n.t("Approve"),
                 isActive: (rows: AppNotification[]) =>
-                    rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
+                    rows[0].type === "received-pull-request" && rows[0].status === "PENDING",
                 onClick: async rows => {
                     const result = await compositionRoot.notifications.updatePullRequestStatus(
                         rows[0],
@@ -174,7 +179,7 @@ export const NotificationsListPage: React.FC = () => {
                 name: "reject-pull-request",
                 text: i18n.t("Reject"),
                 isActive: (rows: AppNotification[]) =>
-                    rows[0].type === "pull-request" && rows[0].request.status === "PENDING",
+                    rows[0].type === "received-pull-request" && rows[0].status === "PENDING",
                 onClick: async rows => {
                     const result = await compositionRoot.notifications.updatePullRequestStatus(
                         rows[0],
@@ -230,7 +235,8 @@ export const NotificationsListPage: React.FC = () => {
         .filter(
             notification =>
                 !statusFilter ||
-                (notification.type === "pull-request" &&
+                ((notification.type === "sent-pull-request" ||
+                    notification.type === "received-pull-request") &&
                     notification.request.status === statusFilter)
         );
 

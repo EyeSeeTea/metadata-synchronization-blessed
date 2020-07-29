@@ -6,8 +6,10 @@ import { InstanceRepositoryConstructor } from "../../instance/repositories/Insta
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { PullRequestStatus } from "../../synchronization/entities/PullRequest";
-import { ReceivedPullRequestNotification } from "../entities/PullRequestNotification";
+import {
+    PullRequestStatus,
+    ReceivedPullRequestNotification,
+} from "../entities/PullRequestNotification";
 
 export type UpdatePullRequestStatusError = "NOT_FOUND" | "PERMISSIONS" | "INVALID";
 
@@ -29,7 +31,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
 
         if (!notification) {
             return Either.error("NOT_FOUND");
-        } else if (notification.type !== "pull-request" || notification.origin !== "received") {
+        } else if (notification.type !== "received-pull-request") {
             return Either.error("INVALID");
         }
 
@@ -39,7 +41,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
         const newNotification: ReceivedPullRequestNotification = {
             ...notification,
             read: true,
-            request: { ...notification.request, status },
+            status,
         };
 
         await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
