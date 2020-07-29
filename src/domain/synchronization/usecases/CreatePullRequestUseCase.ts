@@ -6,7 +6,10 @@ import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
-import { PullRequestNotification } from "../../notifications/entities/PullRequestNotification";
+import {
+    PullRequestNotification,
+    SentPullRequestNotification,
+} from "../../notifications/entities/PullRequestNotification";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
@@ -35,7 +38,7 @@ export class CreatePullRequestUseCase implements UseCase {
         const owner = await this.getOwner();
         const { users, userGroups } = await this.getResponsibles(instance, ids);
 
-        const notification = PullRequestNotification.create({
+        const notification = SentPullRequestNotification.create({
             subject,
             text: description,
             owner,

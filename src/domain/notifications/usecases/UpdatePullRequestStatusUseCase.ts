@@ -7,9 +7,9 @@ import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { PullRequestStatus } from "../../synchronization/entities/PullRequest";
-import { PullRequestNotification } from "../entities/PullRequestNotification";
+import { ReceivedPullRequestNotification } from "../entities/PullRequestNotification";
 
-type UpdateError = "NOT_FOUND" | "PERMISSIONS";
+type UpdateError = "NOT_FOUND" | "PERMISSIONS" | "INVALID";
 
 export class UpdatePullRequestStatusUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -23,16 +23,20 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
             [this.localInstance]
         );
 
-        const notification = await storageRepository.getObjectInCollection<PullRequestNotification>(
-            Namespace.NOTIFICATIONS,
-            id
-        );
-        if (!notification) return Either.error("NOT_FOUND");
+        const notification = await storageRepository.getObjectInCollection<
+            ReceivedPullRequestNotification
+        >(Namespace.NOTIFICATIONS, id);
+
+        if (!notification) {
+            return Either.error("NOT_FOUND");
+        } else if (notification.type !== "pull-request" || notification.origin !== "received") {
+            return Either.error("INVALID");
+        }
 
         const hasPermissions = await this.hasPermissions(notification);
         if (!hasPermissions) return Either.error("PERMISSIONS");
 
-        const newNotification: PullRequestNotification = {
+        const newNotification: ReceivedPullRequestNotification = {
             ...notification,
             read: true,
             request: { ...notification.request, status },
@@ -43,7 +47,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
         return Either.success(undefined);
     }
 
-    private async hasPermissions(notification: PullRequestNotification) {
+    private async hasPermissions(notification: ReceivedPullRequestNotification) {
         const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
             Repositories.InstanceRepository,
             [this.localInstance, ""]
