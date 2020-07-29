@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-07-29T07:26:39.112Z\n"
+"POT-Creation-Date: 2020-07-29T07:45:55.908Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -465,7 +465,7 @@ msgstr ""
 msgid "Field cannot be blank"
 msgstr ""
 
-msgid "Remote instance notifications"
+msgid "Recipients"
 msgstr ""
 
 msgid "Sharing settings for {{name}}"
