@@ -21,7 +21,7 @@ import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesU
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
-import { GetResponsibleUseCase } from "../domain/metadata/usecases/GetResponsibleUseCase";
+import { GetResponsiblesUseCase } from "../domain/metadata/usecases/GetResponsiblesUseCase";
 import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
 import { ListAllMetadataUseCase } from "../domain/metadata/usecases/ListAllMetadataUseCase";
 import { ListMetadataUseCase } from "../domain/metadata/usecases/ListMetadataUseCase";
@@ -127,7 +127,7 @@ export class CompositionRoot {
     @cache()
     public get responsibles() {
         return getExecute({
-            get: new GetResponsibleUseCase(this.repositoryFactory, this.localInstance),
+            get: new GetResponsiblesUseCase(this.repositoryFactory, this.localInstance),
             set: new SetResponsiblesUseCase(this.repositoryFactory, this.localInstance),
             list: new ListResponsiblesUseCase(this.repositoryFactory, this.localInstance),
         });

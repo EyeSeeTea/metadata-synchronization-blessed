@@ -6,7 +6,7 @@ import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { MetadataResponsible } from "../entities/MetadataResponsible";
 
-export class GetResponsibleUseCase implements UseCase {
+export class GetResponsiblesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(
