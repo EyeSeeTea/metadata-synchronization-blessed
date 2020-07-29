@@ -22,7 +22,7 @@ import {
     SynchronizationResult,
     SynchronizationStats,
 } from "../../../../domain/synchronization/entities/SynchronizationResult";
-import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { useAppContext } from "../../../common/contexts/AppContext";
@@ -92,7 +92,7 @@ const buildSummaryTable = (stats: SynchronizationStats[]) => {
     );
 };
 
-const buildDataStatsTable = (type: SyncRuleType, stats: any[], classes: any) => {
+const buildDataStatsTable = (type: SynchronizationType, stats: any[], classes: any) => {
     const elementName = type === "aggregated" ? i18n.t("Data element") : i18n.t("Program");
 
     return (
@@ -153,7 +153,7 @@ const buildMessageTable = (messages: ErrorMessage[]) => {
     );
 };
 
-const getTypeName = (reportType: SyncRuleType, syncType: string) => {
+const getTypeName = (reportType: SynchronizationType, syncType: string) => {
     switch (reportType) {
         case "aggregated":
             return syncType === "events" ? i18n.t("Program Indicators") : i18n.t("Aggregated");

@@ -29,7 +29,7 @@ import {
     SynchronizationReportStatus,
 } from "../entities/SynchronizationReport";
 import { SynchronizationResult, SynchronizationStatus } from "../entities/SynchronizationResult";
-import { SyncRuleType } from "../entities/SynchronizationRule";
+import { SynchronizationType } from "../entities/SynchronizationType";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase
@@ -39,7 +39,7 @@ export type SyncronizationClass =
 export type SyncronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
 export abstract class GenericSyncUseCase {
-    public abstract readonly type: SyncRuleType;
+    public abstract readonly type: SynchronizationType;
     public readonly fields: string = "id,name";
     protected readonly api: D2Api;
 

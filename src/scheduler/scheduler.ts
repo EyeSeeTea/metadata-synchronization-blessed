@@ -8,13 +8,13 @@ import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedM
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import {
     SynchronizationRule,
-    SyncRuleType,
 } from "../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../domain/synchronization/entities/SynchronizationType";
 import { SyncronizationClass } from "../domain/synchronization/usecases/GenericSyncUseCase";
 import SyncRule from "../models/syncRule";
 import { D2Api } from "../types/d2-api";
 
-const config: Record<SyncRuleType, { SyncClass: SyncronizationClass }> = {
+const config: Record<SynchronizationType, { SyncClass: SyncronizationClass }> = {
     metadata: {
         SyncClass: MetadataSyncUseCase,
     },

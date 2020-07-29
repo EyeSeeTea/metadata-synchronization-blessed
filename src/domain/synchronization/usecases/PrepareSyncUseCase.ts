@@ -9,7 +9,7 @@ import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { SyncRuleType } from "../entities/SynchronizationRule";
+import { SynchronizationType } from "../entities/SynchronizationType";
 
 type SyncError = "PULL_REQUEST";
 
@@ -21,7 +21,7 @@ export class PrepareSyncUseCase implements UseCase {
     ) {}
 
     public async execute(
-        type: SyncRuleType,
+        type: SynchronizationType,
         { originInstance, metadataIds }: SynchronizationBuilder
     ): Promise<Either<SyncError, void>> {
         if (originInstance === "LOCAL" || type !== "metadata") return Either.success(undefined);

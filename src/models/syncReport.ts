@@ -7,7 +7,7 @@ import {
     SynchronizationReportStatus,
 } from "../domain/synchronization/entities/SynchronizationReport";
 import { SynchronizationResult } from "../domain/synchronization/entities/SynchronizationResult";
-import { SyncRuleType } from "../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../domain/synchronization/entities/SynchronizationType";
 import { D2Api } from "../types/d2-api";
 import { SyncReportTableFilters } from "../types/d2-ui-components";
 import {
@@ -47,7 +47,7 @@ export default class SyncReport {
         };
     }
 
-    public static create(type: SyncRuleType = "metadata"): SyncReport {
+    public static create(type: SynchronizationType = "metadata"): SyncReport {
         return new SyncReport({
             user: "",
             status: "READY" as SynchronizationReportStatus,

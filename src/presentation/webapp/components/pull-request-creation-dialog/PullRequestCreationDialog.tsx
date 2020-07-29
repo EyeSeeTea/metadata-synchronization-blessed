@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { PullRequestType } from "../../../../domain/synchronization/entities/PullRequest";
-import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
 import { useAppContext } from "../../../common/contexts/AppContext";
@@ -20,7 +20,7 @@ import { useAppContext } from "../../../common/contexts/AppContext";
 export interface PullRequestCreation {
     instance: Instance;
     builder: SynchronizationBuilder;
-    type: SyncRuleType;
+    type: SynchronizationType;
 }
 
 export interface PullRequestCreationDialogProps extends PullRequestCreation {

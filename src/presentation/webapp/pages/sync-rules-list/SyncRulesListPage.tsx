@@ -22,8 +22,8 @@ import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
     SynchronizationRule,
-    SyncRuleType,
 } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
@@ -70,7 +70,7 @@ const SyncRulesPage: React.FC = () => {
     const loading = useLoading();
     const snackbar = useSnackbar();
     const history = useHistory();
-    const { type } = useParams() as { type: SyncRuleType };
+    const { type } = useParams() as { type: SynchronizationType };
     const { title } = config[type];
 
     const [rows, setRows] = useState<SyncRule[]>([]);

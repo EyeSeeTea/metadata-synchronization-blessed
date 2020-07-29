@@ -4,7 +4,7 @@ import { useLoading, useSnackbar } from "d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
 import { metadataModels } from "../../../../models/dhis/factory";
@@ -33,7 +33,7 @@ import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 const config: Record<
-    SyncRuleType,
+    SynchronizationType,
     {
         title: string;
         models: typeof D2Model[];
@@ -73,7 +73,7 @@ const ManualSyncPage: React.FC = () => {
     const loading = useLoading();
     const { api, compositionRoot } = useAppContext();
     const history = useHistory();
-    const { type } = useParams() as { type: SyncRuleType };
+    const { type } = useParams() as { type: SynchronizationType };
     const { title, models } = config[type];
 
     const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand(type));
