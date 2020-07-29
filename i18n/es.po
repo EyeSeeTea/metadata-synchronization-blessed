@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-07-27T07:34:33.291Z\n"
+"POT-Creation-Date: 2020-07-29T07:26:39.112Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -463,6 +463,9 @@ msgid "Subject"
 msgstr ""
 
 msgid "Field cannot be blank"
+msgstr ""
+
+msgid "Remote instance notifications"
 msgstr ""
 
 msgid "Sharing settings for {{name}}"
@@ -1138,9 +1141,6 @@ msgid "Cancel module editing"
 msgstr ""
 
 msgid "Sender"
-msgstr ""
-
-msgid "Contents"
 msgstr ""
 
 msgid "Pull request"

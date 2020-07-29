@@ -1,12 +1,21 @@
 import { makeStyles, TextField } from "@material-ui/core";
-import { ConfirmationDialog, useSnackbar, useLoading } from "d2-ui-components";
-import React, { useCallback, useState } from "react";
+import {
+    ConfirmationDialog,
+    SearchResult,
+    ShareUpdate,
+    Sharing,
+    SharingRule,
+    useLoading,
+    useSnackbar,
+} from "d2-ui-components";
+import React, { useCallback, useEffect, useState } from "react";
+import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { PullRequestType } from "../../../../domain/synchronization/entities/PullRequest";
 import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
 import i18n from "../../../../locales";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
 import { useAppContext } from "../../../common/contexts/AppContext";
-import { PullRequestType } from "../../../../domain/synchronization/entities/PullRequest";
 
 export interface PullRequestCreation {
     instance: Instance;
@@ -35,6 +44,11 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
     const loading = useLoading();
 
     const [fields, updateFields] = useState<PullRequestFields>({});
+    const [responsibles, updateResponsibles] = useState<Set<string>>();
+    const [copyNotifications, updateCopyNotifications] = useState<{
+        users: SharingRule[];
+        userGroups: SharingRule[];
+    }>({ users: [], userGroups: [] });
 
     const save = useCallback(async () => {
         const { subject, description } = fields;
@@ -68,6 +82,33 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
         []
     );
 
+    const onSearchRequest = useCallback(
+        async (key: string) =>
+            compositionRoot.instances
+                .getApi(instance)
+                .get<SearchResult>("/sharing/search", { key })
+                .getData(),
+        [compositionRoot, instance]
+    );
+
+    const onSharingChanged = useCallback(async (updatedAttributes: ShareUpdate) => {
+        updateCopyNotifications(({ users, userGroups }) => {
+            const { userAccesses = users, userGroupAccesses = userGroups } = updatedAttributes;
+            return { users: userAccesses, userGroups: userGroupAccesses };
+        });
+    }, []);
+
+    useEffect(() => {
+        compositionRoot.responsibles.get(builder.metadataIds, instance).then(responsibles => {
+            const users = namedRefToSharing(responsibles.flatMap(({ users }) => users));
+            const userGroups = namedRefToSharing(
+                responsibles.flatMap(({ userGroups }) => userGroups)
+            );
+            updateResponsibles(new Set([...users, ...userGroups].map(({ id }) => id)));
+            updateCopyNotifications({ users, userGroups });
+        });
+    }, [compositionRoot, builder, instance]);
+
     return (
         <ConfirmationDialog
             isOpen={true}
@@ -87,7 +128,6 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
                 error={fields.subject === ""}
                 helperText={fields.subject === "" ? i18n.t("Field cannot be blank") : undefined}
             />
-
             <TextField
                 className={classes.row}
                 fullWidth={true}
@@ -96,6 +136,28 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
                 label={i18n.t("Description")}
                 value={fields.description ?? ""}
                 onChange={updateTextField("description")}
+            />
+            <Sharing
+                subtitle={i18n.t("Remote instance notifications")}
+                meta={{
+                    meta: {},
+                    object: {
+                        id: "",
+                        name: "",
+                        userAccesses: copyNotifications.users,
+                        userGroupAccesses: copyNotifications.userGroups,
+                    },
+                }}
+                unremovebleIds={responsibles}
+                onChange={onSharingChanged}
+                onSearch={onSearchRequest}
+                showOptions={{
+                    title: false,
+                    dataSharing: false,
+                    publicSharing: false,
+                    externalSharing: false,
+                    permissionPicker: false,
+                }}
             />
         </ConfirmationDialog>
     );
@@ -106,3 +168,7 @@ const useStyles = makeStyles({
         marginBottom: 25,
     },
 });
+
+function namedRefToSharing(namedRefs: NamedRef[]): SharingRule[] {
+    return namedRefs.map(({ id, name }) => ({ id, displayName: name, access: "------" }));
+}
