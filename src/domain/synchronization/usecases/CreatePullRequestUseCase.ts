@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { NamedRef } from "../../common/entities/Ref";
+import { NamedRef, Ref } from "../../common/entities/Ref";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
@@ -16,6 +16,11 @@ import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
+interface NotificationUsers {
+    users: Ref[];
+    userGroups: Ref[];
+}
+
 interface CreatePullRequestParams {
     instance: Instance;
     type: SynchronizationType;
@@ -23,6 +28,7 @@ interface CreatePullRequestParams {
     payload: MetadataPackage;
     subject: string;
     description?: string;
+    notificationUsers: NotificationUsers;
 }
 
 export class CreatePullRequestUseCase implements UseCase {
@@ -35,6 +41,7 @@ export class CreatePullRequestUseCase implements UseCase {
         payload,
         subject,
         description = "",
+        notificationUsers,
     }: CreatePullRequestParams): Promise<void> {
         const owner = await this.getOwner();
         const { users, userGroups } = await this.getResponsibles(instance, ids);
@@ -63,6 +70,8 @@ export class CreatePullRequestUseCase implements UseCase {
 
         await this.saveNotification(instance, receivedPullRequest);
         await this.saveNotification(this.localInstance, sentPullRequest);
+
+        await this.sendMessage(instance, receivedPullRequest, notificationUsers);
     }
 
     private async getOwner(): Promise<NamedRef> {
@@ -110,5 +119,29 @@ export class CreatePullRequestUseCase implements UseCase {
         );
 
         await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, notification);
+    }
+
+    private async sendMessage(
+        instance: Instance,
+        { subject, text, owner, instance: origin }: PullRequestNotification,
+        { users, userGroups }: NotificationUsers
+    ): Promise<void> {
+        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
+            Repositories.InstanceRepository,
+            [instance, ""]
+        );
+
+        const message = [
+            `Origin instance: ${origin.url}`,
+            `User: ${owner.name}`,
+            text
+        ]
+
+        await instanceRepository.sendMessage({
+            subject: `[MDSync] Received Pull Request: ${subject}`,
+            text: message.join("\n\n"),
+            users: users.map(({ id }) => ({ id })),
+            userGroups: userGroups.map(({ id }) => ({ id })),
+        });
     }
 }

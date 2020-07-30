@@ -44,7 +44,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
 
     const [fields, updateFields] = useState<PullRequestFields>({});
     const [responsibles, updateResponsibles] = useState<Set<string>>();
-    const [copyNotifications, updateCopyNotifications] = useState<{
+    const [notificationUsers, updateNotificationUsers] = useState<{
         users: SharingRule[];
         userGroups: SharingRule[];
     }>({ users: [], userGroups: [] });
@@ -67,11 +67,22 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
             payload,
             subject,
             description,
+            notificationUsers,
         });
 
         onClose();
         loading.reset();
-    }, [compositionRoot, builder, fields, type, instance, onClose, snackbar, loading]);
+    }, [
+        compositionRoot,
+        builder,
+        fields,
+        type,
+        instance,
+        notificationUsers,
+        onClose,
+        snackbar,
+        loading,
+    ]);
 
     const updateTextField = useCallback(
         (field: keyof PullRequestFields) => (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -91,7 +102,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
     );
 
     const onSharingChanged = useCallback(async (updatedAttributes: ShareUpdate) => {
-        updateCopyNotifications(({ users, userGroups }) => {
+        updateNotificationUsers(({ users, userGroups }) => {
             const { userAccesses = users, userGroupAccesses = userGroups } = updatedAttributes;
             return { users: userAccesses, userGroups: userGroupAccesses };
         });
@@ -104,7 +115,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
                 responsibles.flatMap(({ userGroups }) => userGroups)
             );
             updateResponsibles(new Set([...users, ...userGroups].map(({ id }) => id)));
-            updateCopyNotifications({ users, userGroups });
+            updateNotificationUsers({ users, userGroups });
         });
     }, [compositionRoot, builder, instance]);
 
@@ -143,8 +154,8 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
                     object: {
                         id: "",
                         name: "",
-                        userAccesses: copyNotifications.users,
-                        userGroupAccesses: copyNotifications.userGroups,
+                        userAccesses: notificationUsers.users,
+                        userGroupAccesses: notificationUsers.userGroups,
                     },
                 }}
                 unremovebleIds={responsibles}
