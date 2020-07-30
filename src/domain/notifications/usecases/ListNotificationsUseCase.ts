@@ -29,6 +29,7 @@ export class ListNotificationsUseCase implements UseCase {
 
         return items.filter(
             notification =>
+                notification.owner.id === id ||
                 notification.users?.find(user => user.id === id) ||
                 notification.userGroups?.find(({ id }) => userGroups.includes(id))
         );
