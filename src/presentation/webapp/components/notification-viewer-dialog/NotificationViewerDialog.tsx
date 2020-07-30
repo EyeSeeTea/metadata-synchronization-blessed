@@ -20,7 +20,7 @@ export const NotificationViewerDialog: React.FC<NotificationViewerDialogProps> =
     return (
         <ConfirmationDialog
             isOpen={true}
-            title={i18n.t("{{subject}} by {{name}}", {
+            title={i18n.t("[Pull Request by {{name}}] {{subject}}", {
                 subject: notification.subject,
                 name: notification.owner.name,
             })}
