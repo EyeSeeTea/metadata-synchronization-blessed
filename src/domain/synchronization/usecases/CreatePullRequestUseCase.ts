@@ -131,11 +131,7 @@ export class CreatePullRequestUseCase implements UseCase {
             [instance, ""]
         );
 
-        const message = [
-            `Origin instance: ${origin.url}`,
-            `User: ${owner.name}`,
-            text
-        ]
+        const message = [`Origin instance: ${origin.url}`, `User: ${owner.name}`, text];
 
         await instanceRepository.sendMessage({
             subject: `[MDSync] Received Pull Request: ${subject}`,

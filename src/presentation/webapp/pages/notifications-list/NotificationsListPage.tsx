@@ -69,7 +69,7 @@ export const NotificationsListPage: React.FC = () => {
                     notification.type === "sent-pull-request" ||
                     notification.type === "received-pull-request"
                 ) {
-                    switch (notification.request.status) {
+                    switch (notification.status) {
                         case "PENDING":
                             return i18n.t("Pending");
                         case "APPROVED":
@@ -237,7 +237,7 @@ export const NotificationsListPage: React.FC = () => {
                 !statusFilter ||
                 ((notification.type === "sent-pull-request" ||
                     notification.type === "received-pull-request") &&
-                    notification.request.status === statusFilter)
+                    notification.status === statusFilter)
         );
 
     return (
