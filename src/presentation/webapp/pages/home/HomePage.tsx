@@ -7,12 +7,15 @@ import { useAppContext } from "../../../common/contexts/AppContext";
 import { Landing } from "../../components/landing/Landing";
 import { MenuCardProps } from "../../components/landing/MenuCard";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import { Badge, Icon } from "@material-ui/core";
 
 const LandingPage: React.FC = () => {
     const { api } = useAppContext();
     const history = useHistory();
+
     const [showDeletedObjects, setShowDeletedObjects] = useState(false);
     const [appConfigurator, setAppConfigurator] = useState(false);
+    const [pendingNotifications] = useState(0);
 
     useEffect(() => {
         shouldShowDeletedObjects(api).then(setShowDeletedObjects);
@@ -137,6 +140,11 @@ const LandingPage: React.FC = () => {
                 {
                     name: i18n.t("Notifications"),
                     description: i18n.t("List notifications"),
+                    icon: pendingNotifications > 0 ? (
+                        <Badge badgeContent={pendingNotifications} color="secondary">
+                            <Icon>mail</Icon>
+                        </Badge>
+                    ) : undefined,
                     listAction: () => history.push("/notifications"),
                 },
             ]),

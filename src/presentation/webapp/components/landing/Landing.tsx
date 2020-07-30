@@ -1,4 +1,4 @@
-import { makeStyles, Icon, Badge } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import React from "react";
 import PageHeader from "../page-header/PageHeader";
 import MenuCard, { MenuCardProps } from "./MenuCard";
@@ -45,9 +45,6 @@ export const Landing: React.FC<LandingProps> = ({ title, cards, onBackClick }) =
                         isVisible && (
                             <div key={key}>
                                 {!!title && <h1 className={classes.title}>{title}</h1>}
-                                <Badge>
-                                    <Icon>mail</Icon>
-                                </Badge>
 
                                 {children.map(props => (
                                     <MenuCard key={props.name} {...props} />

@@ -7,7 +7,7 @@ import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
 import ViewListIcon from "@material-ui/icons/ViewList";
 import _ from "lodash";
-import React from "react";
+import React, { ReactNode } from "react";
 import i18n from "../../../../locales";
 
 export interface MenuCardProps {
@@ -16,6 +16,11 @@ export interface MenuCardProps {
     isVisible?: boolean;
     addAction?: () => void;
     listAction?: () => void;
+}
+
+export interface MenuCardTitleProps {
+    text: string;
+    icon?: ReactNode;
 }
 
 const useStyles = makeStyles({
@@ -43,6 +48,13 @@ const useStyles = makeStyles({
         fontSize: "15px",
         fontWeight: 500,
     },
+    cardTitle: {
+        display: "flex",
+    },
+    icon: {
+        marginLeft: "auto",
+        display: "inline",
+    },
 });
 
 const MenuCard: React.FC<MenuCardProps> = ({
@@ -61,7 +73,7 @@ const MenuCard: React.FC<MenuCardProps> = ({
             <CardHeader
                 onClick={listAction ?? addAction ?? _.noop}
                 classes={{ root: classes.header, title: classes.headerText }}
-                title={name}
+                title={<MenuCardTitle text={name} />}
             />
 
             <CardContent className={classes.content}>{description}</CardContent>
@@ -86,6 +98,17 @@ const MenuCard: React.FC<MenuCardProps> = ({
                 </div>
             </CardActions>
         </Card>
+    );
+};
+
+const MenuCardTitle: React.FC<MenuCardTitleProps> = ({ text, icon }) => {
+    const classes = useStyles();
+
+    return (
+        <span className={classes.cardTitle}>
+            {text}
+            {!!icon && <div className={classes.icon}>{icon}</div>}
+        </span>
     );
 };
 
