@@ -52,16 +52,18 @@ export class CreatePullRequestUseCase implements UseCase {
             owner,
             users,
             userGroups,
-            payload,
             instance: this.localInstance.toPublicObject(),
             syncType: type,
             selectedIds: ids,
+            payload,
         });
 
         const sentPullRequest = SentPullRequestNotification.create({
             subject,
             text: description,
             owner,
+            users,
+            userGroups,
             instance: instance.toPublicObject(),
             syncType: type,
             selectedIds: ids,
@@ -123,7 +125,14 @@ export class CreatePullRequestUseCase implements UseCase {
 
     private async sendMessage(
         instance: Instance,
-        { subject, text, owner, instance: origin }: PullRequestNotification,
+        {
+            subject,
+            text,
+            owner,
+            instance: origin,
+            users: responsibleUsers,
+            userGroups: responsibleUserGroups,
+        }: PullRequestNotification,
         { users, userGroups }: NotificationUsers
     ): Promise<void> {
         const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
@@ -131,7 +140,16 @@ export class CreatePullRequestUseCase implements UseCase {
             [instance, ""]
         );
 
-        const message = [`Origin instance: ${origin.url}`, `User: ${owner.name}`, text];
+        const responsibles = [...responsibleUsers, ...responsibleUserGroups].map(
+            ({ name }) => name
+        );
+
+        const message = [
+            `Origin instance: ${origin.url}`,
+            `User: ${owner.name}`,
+            `Responsibles: ${responsibles.join(", ")}`,
+            text,
+        ];
 
         await instanceRepository.sendMessage({
             subject: `[MDSync] Received Pull Request: ${subject}`,

@@ -1,6 +1,5 @@
 import { NamedRef } from "../../common/entities/Ref";
 import { PublicInstance } from "../../instance/entities/Instance";
-import { InstanceMessage } from "../../instance/entities/Message";
 import {
     ReceivedPullRequestNotification,
     SentPullRequestNotification,
@@ -8,13 +7,17 @@ import {
 
 export type NotificationType = "message" | "received-pull-request" | "sent-pull-request";
 
-export interface BaseNotification extends Omit<InstanceMessage, "organisationUnits"> {
+export interface BaseNotification {
     id: string;
+    subject: string;
+    text: string;
     type: NotificationType;
     read: boolean;
     instance: PublicInstance;
     owner: NamedRef;
     created: Date;
+    users: NamedRef[];
+    userGroups: NamedRef[];
 }
 
 export interface MessageNotification extends BaseNotification {
