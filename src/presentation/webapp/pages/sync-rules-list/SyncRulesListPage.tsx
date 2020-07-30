@@ -288,19 +288,22 @@ const SyncRulesPage: React.FC = () => {
             error: async code => {
                 switch (code) {
                     case "PULL_REQUEST":
-                        const remoteInstance = await compositionRoot.instances.getById(
+                        const result = await compositionRoot.instances.getById(
                             builder.originInstance
                         );
 
-                        if (!remoteInstance) {
-                            snackbar.error(i18n.t("Unable to create pull request"));
-                        } else {
-                            setPullRequestProps({
-                                instance: remoteInstance,
-                                builder,
-                                type,
-                            });
-                        }
+                        result.match({
+                            success: instance => {
+                                setPullRequestProps({
+                                    instance,
+                                    builder,
+                                    type,
+                                });
+                            },
+                            error: () => {
+                                snackbar.error(i18n.t("Unable to create pull request"));
+                            },
+                        });
                         break;
                     default:
                         snackbar.error(i18n.t("Unknown synchronization error"));

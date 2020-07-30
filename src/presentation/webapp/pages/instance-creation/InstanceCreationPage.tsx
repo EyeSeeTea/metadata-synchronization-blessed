@@ -15,6 +15,7 @@ const InstanceCreationPage = () => {
     const location = useLocation<{ instance?: Instance }>();
     const isEdit = action === "edit" && id;
 
+    const [error, setError] = useState<boolean>(false);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
     const [instance, setInstance] = useState<Instance>(
         Instance.build({ name: "", description: "", url: "" })
@@ -24,7 +25,14 @@ const InstanceCreationPage = () => {
         if (location.state?.instance) {
             setInstance(location.state?.instance);
         } else if (isEdit) {
-            compositionRoot.instances.getById(id).then(setInstance);
+            compositionRoot.instances.getById(id).then(result =>
+                result.match({
+                    success: setInstance,
+                    error: () => {
+                        setError(true);
+                    },
+                })
+            );
         }
     }, [compositionRoot, id, isEdit, location]);
 
@@ -48,6 +56,8 @@ const InstanceCreationPage = () => {
     const title = !isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
 
     const cancel = !isEdit ? i18n.t("Cancel Instance Creation") : i18n.t("Cancel Instance Editing");
+
+    if (error) return null;
 
     return (
         <TestWrapper>

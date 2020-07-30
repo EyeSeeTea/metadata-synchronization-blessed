@@ -63,7 +63,12 @@ export default function InstanceMappingPage() {
     const [instance, setInstance] = useState<Instance>();
 
     useEffect(() => {
-        compositionRoot.instances.getById(id).then(setInstance);
+        compositionRoot.instances.getById(id).then(result =>
+            result.match({
+                success: setInstance,
+                error: () => {},
+            })
+        );
     }, [compositionRoot, id]);
 
     const backHome = () => {
