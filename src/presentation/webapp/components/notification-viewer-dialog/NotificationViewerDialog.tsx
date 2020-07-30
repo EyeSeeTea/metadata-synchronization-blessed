@@ -3,8 +3,8 @@ import { ConfirmationDialog } from "d2-ui-components";
 import React from "react";
 import { AppNotification } from "../../../../domain/notifications/entities/Notification";
 import i18n from "../../../../locales";
+import { DashboardModel, DataSetModel, ProgramModel } from "../../../../models/dhis/metadata";
 import MetadataTable from "../metadata-table/MetadataTable";
-import { DataSetModel, ProgramModel } from "../../../../models/dhis/metadata";
 
 export interface NotificationViewerDialogProps {
     notification: AppNotification;
@@ -34,7 +34,7 @@ export const NotificationViewerDialog: React.FC<NotificationViewerDialogProps> =
             {(notification.type === "received-pull-request" ||
                 notification.type === "sent-pull-request") && (
                 <MetadataTable
-                    models={[DataSetModel, ProgramModel]}
+                    models={[DataSetModel, ProgramModel, DashboardModel]}
                     filterRows={notification.selectedIds}
                     forceSelectionColumn={false}
                     showOnlySelectedFilter={false}
