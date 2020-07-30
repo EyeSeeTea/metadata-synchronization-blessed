@@ -38,6 +38,10 @@ import { requestJSONDownload } from "../../../../utils/synchronization";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
+import {
+    PullRequestCreation,
+    PullRequestCreationDialog,
+} from "../../components/pull-request-creation-dialog/PullRequestCreationDialog";
 import { SharingDialog } from "../../components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
@@ -82,6 +86,7 @@ const SyncRulesPage: React.FC = () => {
     const [lastExecutedFilter, setLastExecutedFilter] = useState<Moment | null>(null);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
+    const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
 
     useEffect(() => {
         SyncRule.list(
@@ -282,6 +287,21 @@ const SyncRulesPage: React.FC = () => {
             },
             error: async code => {
                 switch (code) {
+                    case "PULL_REQUEST":
+                        const remoteInstance = await compositionRoot.instances.getById(
+                            builder.originInstance
+                        );
+
+                        if (!remoteInstance) {
+                            snackbar.error(i18n.t("Unable to create pull request"));
+                        } else {
+                            setPullRequestProps({
+                                instance: remoteInstance,
+                                builder,
+                                type,
+                            });
+                        }
+                        break;
                     default:
                         snackbar.error(i18n.t("Unknown synchronization error"));
                 }
@@ -514,6 +534,13 @@ const SyncRulesPage: React.FC = () => {
                     onCancel={() => setSharingSettingsObject(null)}
                     onChange={onSharingChanged}
                     onSearch={onSearchRequest}
+                />
+            )}
+
+            {!!pullRequestProps && (
+                <PullRequestCreationDialog
+                    {...pullRequestProps}
+                    onClose={() => setPullRequestProps(undefined)}
                 />
             )}
         </TestWrapper>

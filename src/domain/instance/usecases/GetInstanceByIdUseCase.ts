@@ -12,7 +12,7 @@ export class GetInstanceByIdUseCase implements UseCase {
         private encryptionKey: string
     ) {}
 
-    public async execute(id: string): Promise<Instance> {
+    public async execute(id: string): Promise<Instance | undefined> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [this.localInstance]
@@ -23,7 +23,7 @@ export class GetInstanceByIdUseCase implements UseCase {
         );
 
         const data = objects.find(data => data.id === id);
-        if (!data) throw new Error("Instance not found");
+        if (!data) return undefined;
 
         return Instance.build(data).decryptPassword(this.encryptionKey);
     }
