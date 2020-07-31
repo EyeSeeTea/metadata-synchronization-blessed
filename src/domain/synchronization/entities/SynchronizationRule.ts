@@ -10,7 +10,6 @@ export interface SynchronizationRule extends SharedRef {
     lastExecuted?: Date;
     frequency?: string;
     type: SyncRuleType;
-    originInstance: string;
 }
 
 export type SyncRuleType = "metadata" | "aggregated" | "events" | "deleted";

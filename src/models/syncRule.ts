@@ -89,7 +89,6 @@ export default class SyncRule {
             "userAccesses",
             "userGroupAccesses",
             "type",
-            "originInstance",
         ]);
 
         if (!this.syncRule.id) this.syncRule.id = generateUid();
@@ -254,7 +253,6 @@ export default class SyncRule {
             created: new Date(),
             description: "",
             type: type,
-            originInstance: "LOCAL",
             builder: defaultSynchronizationBuilder,
             enabled: false,
             lastUpdated: new Date(),

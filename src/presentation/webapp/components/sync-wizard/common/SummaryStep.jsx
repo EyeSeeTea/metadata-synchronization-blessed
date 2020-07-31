@@ -93,7 +93,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
         getMetadata(api, ids, "id,name").then(updateMetadata);
-        compositionRoot.instances().list().then(setTargetInstances);
+        compositionRoot.instances.list().then(setTargetInstances);
     }, [api, compositionRoot, syncRule]);
 
     const aggregationItems = useMemo(buildAggregationItems, []);
