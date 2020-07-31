@@ -49,7 +49,8 @@ export class ImportPullRequestUseCase implements UseCase {
         if (remoteNotification.type !== "received-pull-request")
             return Either.error("REMOTE_INVALID_NOTIFICATION");
         if (remoteNotification.status === "IMPORTED") return Either.error("ALREADY_IMPORTED");
-        if (remoteNotification.status !== "APPROVED") return Either.error("NOT_APPROVED");
+        if (remoteNotification.status === "PENDING" || remoteNotification.status === "REJECTED")
+            return Either.error("NOT_APPROVED");
 
         const result = await this.metadataRepository(this.localInstance).save(
             remoteNotification.payload
