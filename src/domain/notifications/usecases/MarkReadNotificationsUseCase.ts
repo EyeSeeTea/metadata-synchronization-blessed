@@ -17,21 +17,21 @@ export class MarkReadNotificationsUseCase implements UseCase {
             [this.localInstance]
         );
 
-        await promiseMap(ids, async id => {
-            const notification = await storageRepository.getObjectInCollection<AppNotification>(
-                Namespace.NOTIFICATIONS,
-                id
-            );
-            if (!notification) return;
+        const notifications = await storageRepository.getObject<AppNotification[]>(
+            Namespace.NOTIFICATIONS
+        );
+        if (!notifications) return;
 
+        const targetNotifications = notifications.filter(({ id }) => ids.includes(id));
+
+        await promiseMap(targetNotifications, async notification => {
             const hasPermissions = await this.hasPermissions(notification);
             if (!hasPermissions) return;
 
-            const newNotification = { ...notification, read };
-            await storageRepository.saveObjectInCollection(
-                Namespace.NOTIFICATIONS,
-                newNotification
-            );
+            await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, {
+                ...notification,
+                read,
+            });
         });
     }
 
@@ -44,6 +44,7 @@ export class MarkReadNotificationsUseCase implements UseCase {
         const { id, userGroups } = await instanceRepository.getUser();
 
         if (
+            notification.owner.id !== id &&
             !notification.users?.find(user => user.id === id) &&
             !notification.userGroups?.find(({ id }) => userGroups.includes(id))
         ) {

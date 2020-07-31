@@ -13,6 +13,7 @@ import i18n from "../../../../locales";
 export interface MenuCardProps {
     name: string;
     description?: string;
+    icon?: ReactNode;
     isVisible?: boolean;
     addAction?: () => void;
     listAction?: () => void;
@@ -59,6 +60,7 @@ const useStyles = makeStyles({
 
 const MenuCard: React.FC<MenuCardProps> = ({
     name,
+    icon,
     description,
     isVisible,
     addAction,
@@ -73,7 +75,7 @@ const MenuCard: React.FC<MenuCardProps> = ({
             <CardHeader
                 onClick={listAction ?? addAction ?? _.noop}
                 classes={{ root: classes.header, title: classes.headerText }}
-                title={<MenuCardTitle text={name} />}
+                title={<MenuCardTitle text={name} icon={icon} />}
             />
 
             <CardContent className={classes.content}>{description}</CardContent>

@@ -35,6 +35,7 @@ import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCas
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
 import { ListNotificationsUseCase } from "../domain/notifications/usecases/ListNotificationsUseCase";
 import { MarkReadNotificationsUseCase } from "../domain/notifications/usecases/MarkReadNotificationsUseCase";
+import { RefreshNotificationsUseCase } from "../domain/notifications/usecases/RefreshNotificationsUseCase";
 import { UpdatePullRequestStatusUseCase } from "../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
@@ -187,6 +188,11 @@ export class CompositionRoot {
             markReadNotifications: new MarkReadNotificationsUseCase(
                 this.repositoryFactory,
                 this.localInstance
+            ),
+            refresh: new RefreshNotificationsUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
             ),
         });
     }
