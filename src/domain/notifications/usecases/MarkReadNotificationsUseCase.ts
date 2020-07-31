@@ -17,7 +17,7 @@ export class MarkReadNotificationsUseCase implements UseCase {
             [this.localInstance]
         );
 
-        const notifications = await storageRepository.getObject<AppNotification[]>(
+        const notifications = await storageRepository.listObjectsInCollection<AppNotification>(
             Namespace.NOTIFICATIONS
         );
         if (!notifications) return;

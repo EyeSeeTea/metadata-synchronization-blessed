@@ -240,15 +240,10 @@ export const NotificationsListPage: React.FC = () => {
                 name: "refresh",
                 text: i18n.t("Refresh"),
                 icon: <Icon>refresh</Icon>,
-                onClick: async () => {
-                    loading.show();
-                    await compositionRoot.notifications.refresh();
-                    setResetKey(Math.random());
-                    loading.hide();
-                },
+                onClick: () => setResetKey(Math.random()),
             },
         ],
-        [compositionRoot, loading]
+        []
     );
 
     const rows = notifications
@@ -262,16 +257,17 @@ export const NotificationsListPage: React.FC = () => {
         );
 
     useEffect(() => {
-        compositionRoot.notifications
-            .list()
-            .then(notifications =>
-                notifications.map(notification => ({
-                    ...notification,
-                    sender: notification.owner.name,
-                }))
-            )
-            .then(setNotifications);
-    }, [compositionRoot, resetKey]);
+        loading.show();
+        compositionRoot.notifications.list().then(notifications => {
+            const appNotifications = notifications.map(notification => ({
+                ...notification,
+                sender: notification.owner.name,
+            }));
+
+            setNotifications(appNotifications);
+            loading.hide();
+        });
+    }, [compositionRoot, loading, resetKey]);
 
     return (
         <React.Fragment>

@@ -19,7 +19,10 @@ const LandingPage: React.FC = () => {
     useEffect(() => {
         shouldShowDeletedObjects(api).then(setShowDeletedObjects);
         isAppConfigurator(api).then(setAppConfigurator);
-        compositionRoot.notifications.refresh().then(setPendingNotifications);
+        compositionRoot.notifications.list().then(notifications => {
+            const unread = notifications.filter(({ read }) => !read).length;
+            setPendingNotifications(unread);
+        });
     }, [api, compositionRoot]);
 
     const cards: Card[] = useMemo(
