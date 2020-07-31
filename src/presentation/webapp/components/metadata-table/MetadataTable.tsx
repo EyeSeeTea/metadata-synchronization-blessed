@@ -46,6 +46,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     notifyNewModel?(model: typeof D2Model): void;
     notifyRowsChange?(rows: MetadataType[]): void;
     allowChangingResponsible?: boolean;
+    showOnlySelectedFilter?: boolean;
 }
 
 const useStyles = makeStyles({
@@ -107,6 +108,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     initialShowOnlySelected = false,
     showIndeterminateSelection = false,
     allowChangingResponsible = false,
+    showOnlySelectedFilter = true,
     ...rest
 }) => {
     const { compositionRoot } = useAppContext();
@@ -274,18 +276,20 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 </div>
             )}
 
-            <div className={classes.onlySelectedFilter}>
-                <FormControlLabel
-                    className={classes.checkbox}
-                    control={
-                        <Checkbox
-                            checked={filters.showOnlySelected}
-                            onChange={changeOnlySelectedFilter}
-                        />
-                    }
-                    label={i18n.t("Only selected items")}
-                />
-            </div>
+            {showOnlySelectedFilter && (
+                <div className={classes.onlySelectedFilter}>
+                    <FormControlLabel
+                        className={classes.checkbox}
+                        control={
+                            <Checkbox
+                                checked={filters.showOnlySelected}
+                                onChange={changeOnlySelectedFilter}
+                            />
+                        }
+                        label={i18n.t("Only selected items")}
+                    />
+                </div>
+            )}
 
             {additionalFilters}
         </React.Fragment>

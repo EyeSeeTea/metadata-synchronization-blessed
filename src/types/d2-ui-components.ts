@@ -1,5 +1,5 @@
 import { Moment } from "moment";
-import { SyncRuleType } from "../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../domain/synchronization/entities/SynchronizationType";
 
 export interface TableList {
     objects: any[];
@@ -30,7 +30,7 @@ export interface SyncRuleTableFilters extends TableFilters {
     targetInstanceFilter?: string;
     enabledFilter?: string;
     lastExecutedFilter?: Moment | null;
-    type?: SyncRuleType;
+    type?: SynchronizationType;
 }
 
 export interface TablePagination {

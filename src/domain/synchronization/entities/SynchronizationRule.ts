@@ -1,5 +1,6 @@
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { SharedRef } from "../../common/entities/Ref";
+import { SynchronizationType } from "./SynchronizationType";
 
 export interface SynchronizationRule extends SharedRef {
     code?: string;
@@ -9,7 +10,5 @@ export interface SynchronizationRule extends SharedRef {
     enabled: boolean;
     lastExecuted?: Date;
     frequency?: string;
-    type: SyncRuleType;
+    type: SynchronizationType;
 }
-
-export type SyncRuleType = "metadata" | "aggregated" | "events" | "deleted";

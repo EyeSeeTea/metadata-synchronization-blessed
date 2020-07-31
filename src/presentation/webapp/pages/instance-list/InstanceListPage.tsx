@@ -55,39 +55,55 @@ const InstanceListPage = () => {
     };
 
     const replicateInstance = async (ids: string[]) => {
-        const instance = await compositionRoot.instances.getById(ids[0]);
-        if (!instance) return;
-        history.push({
-            pathname: "/instances/new",
-            state: { instance: instance.replicate() },
+        const result = await compositionRoot.instances.getById(ids[0]);
+        result.match({
+            success: instance => {
+                history.push({
+                    pathname: "/instances/new",
+                    state: { instance: instance.replicate() },
+                });
+            },
+            error: () => {
+                snackbar.error(i18n.t("Instance not found"));
+            },
         });
     };
 
     const testConnection = async (ids: string[]) => {
-        const instance = await compositionRoot.instances.getById(ids[0]);
-        if (!instance) return;
-
-        const validation = await compositionRoot.instances.validate(instance);
-        validation.match({
-            success: () => {
-                snackbar.success(i18n.t("Connected successfully to instance"));
+        const result = await compositionRoot.instances.getById(ids[0]);
+        result.match({
+            success: async instance => {
+                const validation = await compositionRoot.instances.validate(instance);
+                validation.match({
+                    success: () => {
+                        snackbar.success(i18n.t("Connected successfully to instance"));
+                    },
+                    error: error => {
+                        snackbar.error(error, { autoHideDuration: null });
+                    },
+                });
             },
-            error: error => {
-                snackbar.error(error, { autoHideDuration: null });
+            error: () => {
+                snackbar.error(i18n.t("Instance not found"));
             },
         });
     };
 
     const runAnalytics = async (ids: string[]) => {
-        const instance = await compositionRoot.instances.getById(ids[0]);
-        if (!instance) return;
+        const result = await compositionRoot.instances.getById(ids[0]);
+        result.match({
+            success: async instance => {
+                for await (const message of executeAnalytics(instance)) {
+                    loading.show(true, message);
+                }
 
-        for await (const message of executeAnalytics(instance)) {
-            loading.show(true, message);
-        }
-
-        snackbar.info(i18n.t("Analytics execution finished on {{name}}", instance));
-        loading.reset();
+                snackbar.info(i18n.t("Analytics execution finished on {{name}}", instance));
+                loading.reset();
+            },
+            error: () => {
+                snackbar.error(i18n.t("Instance not found"));
+            },
+        });
     };
 
     const cancelDelete = () => {

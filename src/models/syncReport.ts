@@ -1,12 +1,13 @@
 import { TableInitialState, TablePagination } from "d2-ui-components";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
+import { Namespace } from "../domain/storage/Namespaces";
 import {
     SynchronizationReport,
     SynchronizationReportStatus,
 } from "../domain/synchronization/entities/SynchronizationReport";
 import { SynchronizationResult } from "../domain/synchronization/entities/SynchronizationResult";
-import { SyncRuleType } from "../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../domain/synchronization/entities/SynchronizationType";
 import { D2Api } from "../types/d2-api";
 import { SyncReportTableFilters } from "../types/d2-ui-components";
 import {
@@ -19,7 +20,7 @@ import {
     saveDataStore,
 } from "./dataStore";
 
-const dataStoreKey = "notifications";
+const dataStoreKey = Namespace.HISTORY;
 
 type Optional<T, K extends keyof T> = Omit<T, K> & { [P in Extract<keyof T, K>]?: T[P] };
 
@@ -46,7 +47,7 @@ export default class SyncReport {
         };
     }
 
-    public static create(type: SyncRuleType = "metadata"): SyncReport {
+    public static create(type: SynchronizationType = "metadata"): SyncReport {
         return new SyncReport({
             user: "",
             status: "READY" as SynchronizationReportStatus,

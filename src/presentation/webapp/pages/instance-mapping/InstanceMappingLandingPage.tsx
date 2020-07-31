@@ -12,10 +12,15 @@ const InstanceMappingLandingPage: React.FC = () => {
     const history = useHistory();
     const { id } = useParams() as { id: string };
 
-    const [instance, setInstance] = useState<Instance | undefined>();
+    const [instance, setInstance] = useState<Instance>();
 
     useEffect(() => {
-        compositionRoot.instances.getById(id).then(setInstance);
+        compositionRoot.instances.getById(id).then(result =>
+            result.match({
+                success: setInstance,
+                error: () => {},
+            })
+        );
     }, [compositionRoot, id]);
 
     const cards: Card[] = [

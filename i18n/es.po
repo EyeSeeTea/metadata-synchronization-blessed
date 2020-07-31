@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-07-30T09:03:01.753Z\n"
+"POT-Creation-Date: 2020-07-31T16:20:55.997Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -56,6 +56,15 @@ msgstr ""
 msgid "Program with Indicators"
 msgstr ""
 
+msgid "This instance"
+msgstr ""
+
+msgid "Store"
+msgstr ""
+
+msgid "Instance"
+msgstr ""
+
 msgid "Invalid module"
 msgstr ""
 
@@ -66,6 +75,12 @@ msgid "Creating {{dhisVersion}} package for module {{name}}"
 msgstr ""
 
 msgid "Pulling metadata from module {{name}}"
+msgstr ""
+
+msgid "Unable to create pull request"
+msgstr ""
+
+msgid "Unknown synchronization error"
 msgstr ""
 
 msgid "Name"
@@ -129,15 +144,6 @@ msgid "Version tag"
 msgstr ""
 
 msgid "DHIS2 Version (*)"
-msgstr ""
-
-msgid "This instance"
-msgstr ""
-
-msgid "Store"
-msgstr ""
-
-msgid "Instance"
 msgstr ""
 
 msgid "View"
@@ -405,6 +411,9 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
+msgid "Continue to app anyway"
+msgstr ""
+
 msgid ""
 "The database version (v{{instanceVersion}}) is greater than the app version "
 "(v{{appVersion}}), we cannot continue. Please contact the administrator to "
@@ -447,10 +456,34 @@ msgstr ""
 msgid "Use default configuration"
 msgstr ""
 
+msgid "[Pull Request by {{name}}] {{subject}}"
+msgstr ""
+
 msgid "Back"
 msgstr ""
 
 msgid "Help"
+msgstr ""
+
+msgid "You need to provide a subject"
+msgstr ""
+
+msgid "Creating pull request"
+msgstr ""
+
+msgid "Create pull request on {{name}}"
+msgstr ""
+
+msgid "Open pull request"
+msgstr ""
+
+msgid "Subject"
+msgstr ""
+
+msgid "Field cannot be blank"
+msgstr ""
+
+msgid "Recipients"
 msgstr ""
 
 msgid "Sharing settings for {{name}}"
@@ -629,6 +662,9 @@ msgid "Programs"
 msgstr ""
 
 msgid "Source instance"
+msgstr ""
+
+msgid "Instance not found"
 msgstr ""
 
 msgid "Every day"
@@ -932,6 +968,12 @@ msgstr ""
 msgid "List and remove responsibles for data sets and programs"
 msgstr ""
 
+msgid "Notifications"
+msgstr ""
+
+msgid "List notifications"
+msgstr ""
+
 msgid "Destination instance settings"
 msgstr ""
 
@@ -1104,6 +1146,90 @@ msgstr ""
 msgid "Cancel module editing"
 msgstr ""
 
+msgid "Sender"
+msgstr ""
+
+msgid "Pull request (Sent)"
+msgstr ""
+
+msgid "Pull request (Received)"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Approved"
+msgstr ""
+
+msgid "Rejected"
+msgstr ""
+
+msgid "Imported with errors"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Package has been already imported"
+msgstr ""
+
+msgid "Notification is invalid"
+msgstr ""
+
+msgid "Notification not found"
+msgstr ""
+
+msgid "Remote pull request has not been approved yet"
+msgstr ""
+
+msgid "Remote pull request is not valid"
+msgstr ""
+
+msgid "Remote pull request has been deleted"
+msgstr ""
+
+msgid "Updated notification"
+msgstr ""
+
+msgid "Could not apply action, notification not found"
+msgstr ""
+
+msgid "You don't have permissions to edit this notification"
+msgstr ""
+
+msgid "Could not apply action, notification is not valid"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "Mark as read"
+msgstr ""
+
+msgid "Mark as unread"
+msgstr ""
+
+msgid "Approve"
+msgstr ""
+
+msgid "Reject"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "Importing approved pull request"
+msgstr ""
+
+msgid "Deleting notifications"
+msgstr ""
+
+msgid "Unread messages"
+msgstr ""
+
+msgid "Refresh"
+msgstr ""
+
 msgid "The token is empty"
 msgstr ""
 
@@ -1200,6 +1326,9 @@ msgid "Successfully deleted {{count}} rules"
 msgid_plural "Successfully deleted {{count}} rules"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Synchronizing {{name}}"
+msgstr ""
 
 msgid "Successfully updated sync rule"
 msgstr ""

@@ -1,0 +1,421 @@
+import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
+import {
+    ObjectsTable,
+    RowConfig,
+    TableAction,
+    TableColumn,
+    TableGlobalAction,
+    TableSelection,
+    TableState,
+    useLoading,
+    useSnackbar,
+} from "d2-ui-components";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { Either } from "../../../../domain/common/entities/Either";
+import { AppNotification } from "../../../../domain/notifications/entities/Notification";
+import { ImportPullRequestError } from "../../../../domain/notifications/usecases/ImportPullRequestUseCase";
+import { UpdatePullRequestStatusError } from "../../../../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
+import { SynchronizationResult } from "../../../../domain/synchronization/entities/SynchronizationResult";
+import i18n from "../../../../locales";
+import SyncReport from "../../../../models/syncReport";
+import { useAppContext } from "../../../common/contexts/AppContext";
+import Dropdown from "../../components/dropdown/Dropdown";
+import { NotificationViewerDialog } from "../../components/notification-viewer-dialog/NotificationViewerDialog";
+import PageHeader from "../../components/page-header/PageHeader";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
+
+export const NotificationsListPage: React.FC = () => {
+    const { api, compositionRoot } = useAppContext();
+    const history = useHistory();
+    const snackbar = useSnackbar();
+    const loading = useLoading();
+    const classes = useStyles();
+
+    const [notifications, setNotifications] = useState<TableNotification[]>([]);
+    const [unreadOnly, setUnreadOnly] = useState<boolean>(false);
+    const [statusFilter, setStatusFilter] = useState<string>("");
+    const [resetKey, setResetKey] = useState(Math.random());
+    const [detailsNotification, setDetailsNotification] = useState<AppNotification>();
+    const [syncReport, setSyncReport] = useState<SyncReport>();
+    const [selection, updateSelection] = useState<TableSelection[]>([]);
+
+    const backHome = useCallback(() => {
+        history.push("/");
+    }, [history]);
+
+    const changeUnreadCheckbox = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        setUnreadOnly(event.target?.checked);
+    }, []);
+
+    const updateTable = useCallback(
+        ({ selection }: TableState<TableNotification>) => {
+            updateSelection(selection);
+        },
+        [updateSelection]
+    );
+
+    const columns: TableColumn<TableNotification>[] = [
+        {
+            name: "sender",
+            text: i18n.t("Sender"),
+        },
+        {
+            name: "recipients",
+            text: i18n.t("Recipients"),
+            getValue: ({ users = [], userGroups = [] }) => {
+                return [...users, ...userGroups].map(({ name }) => name).join(", ");
+            },
+        },
+        {
+            name: "subject",
+            text: i18n.t("Subject"),
+        },
+        {
+            name: "text",
+            text: i18n.t("Description"),
+            hidden: true,
+        },
+        {
+            name: "type",
+            text: i18n.t("Type"),
+            getValue: ({ type }) => {
+                switch (type) {
+                    case "message":
+                        return i18n.t("Message");
+                    case "sent-pull-request":
+                        return i18n.t("Pull request (Sent)");
+                    case "received-pull-request":
+                        return i18n.t("Pull request (Received)");
+                    default:
+                        return i18n.t("Unknown");
+                }
+            },
+        },
+        {
+            name: "status",
+            text: i18n.t("Status"),
+            getValue: notification => {
+                if (
+                    notification.type === "sent-pull-request" ||
+                    notification.type === "received-pull-request"
+                ) {
+                    switch (notification.status) {
+                        case "PENDING":
+                            return i18n.t("Pending");
+                        case "APPROVED":
+                            return i18n.t("Approved");
+                        case "REJECTED":
+                            return i18n.t("Rejected");
+                        case "IMPORTED":
+                            return i18n.t("Imported");
+                        case "IMPORTED_WITH_ERRORS":
+                            return i18n.t("Imported with errors");
+                        default:
+                            return "-";
+                    }
+                } else return "-";
+            },
+        },
+        {
+            name: "created",
+            text: i18n.t("Date"),
+        },
+    ];
+
+    const rowConfig = (row: TableNotification): RowConfig => {
+        return { style: row.read ? { backgroundColor: "#EEEEEE" } : {} };
+    };
+
+    const validateImportPullRequestAction = useCallback(
+        async (result: Either<ImportPullRequestError, SynchronizationResult>) => {
+            await result.match({
+                success: async result => {
+                    const report = SyncReport.create("metadata");
+                    report.setStatus(
+                        result.status === "ERROR" || result.status === "NETWORK ERROR"
+                            ? "FAILURE"
+                            : "DONE"
+                    );
+                    report.addSyncResult(result);
+                    await report.save(api);
+
+                    setSyncReport(report);
+                },
+                error: async code => {
+                    switch (code) {
+                        case "ALREADY_IMPORTED":
+                            snackbar.error(i18n.t("Package has been already imported"));
+                            break;
+                        case "INSTANCE_NOT_FOUND":
+                            snackbar.error(i18n.t("Instance not found"));
+                            break;
+                        case "INVALID_NOTIFICATION":
+                            snackbar.error(i18n.t("Notification is invalid"));
+                            break;
+                        case "NOTIFICATION_NOT_FOUND":
+                            snackbar.error(i18n.t("Notification not found"));
+                            break;
+                        case "NOT_APPROVED":
+                            snackbar.error(i18n.t("Remote pull request has not been approved yet"));
+                            break;
+                        case "REMOTE_INVALID_NOTIFICATION":
+                            snackbar.error(i18n.t("Remote pull request is not valid"));
+                            break;
+                        case "REMOTE_NOTIFICATION_NOT_FOUND":
+                            snackbar.error(i18n.t("Remote pull request has been deleted"));
+                            break;
+                        default:
+                            snackbar.error(i18n.t("Unknown error"));
+                            break;
+                    }
+                },
+            });
+        },
+        [snackbar, api]
+    );
+
+    const validateUpdateStatusAction = useCallback(
+        (result: Either<UpdatePullRequestStatusError, void>) => {
+            result.match({
+                success: () => snackbar.success(i18n.t("Updated notification")),
+                error: code => {
+                    switch (code) {
+                        case "NOT_FOUND":
+                            snackbar.error(
+                                i18n.t("Could not apply action, notification not found")
+                            );
+                            return;
+                        case "PERMISSIONS":
+                            snackbar.error(
+                                i18n.t("You don't have permissions to edit this notification")
+                            );
+                            return;
+                        case "INVALID":
+                            snackbar.error(
+                                i18n.t("Could not apply action, notification is not valid")
+                            );
+                            return;
+                        default:
+                            snackbar.error(i18n.t("Unknown error"));
+                    }
+                },
+            });
+        },
+        [snackbar]
+    );
+
+    const actions: TableAction<TableNotification>[] = useMemo(
+        () => [
+            {
+                name: "open",
+                text: i18n.t("Open"),
+                primary: true,
+                onClick: async rows => {
+                    await compositionRoot.notifications.markReadNotifications(rows, true);
+                    setResetKey(Math.random());
+
+                    const notification = notifications.find(({ id }) => id === rows[0]);
+                    setDetailsNotification(notification);
+                },
+                icon: <Icon>open_in_new</Icon>,
+            },
+            {
+                name: "mark-as-read",
+                text: i18n.t("Mark as read"),
+                multiple: true,
+                isActive: (rows: AppNotification[]) => rows.some(({ read }) => !read),
+                onClick: async rows => {
+                    await compositionRoot.notifications.markReadNotifications(rows, true);
+
+                    setResetKey(Math.random());
+                },
+                icon: <Icon>drafts</Icon>,
+            },
+            {
+                name: "mark-as-unread",
+                text: i18n.t("Mark as unread"),
+                multiple: true,
+                isActive: (rows: AppNotification[]) => rows.some(({ read }) => !!read),
+                onClick: async rows => {
+                    await compositionRoot.notifications.markReadNotifications(rows, false);
+
+                    setResetKey(Math.random());
+                },
+                icon: <Icon>markunread</Icon>,
+            },
+            {
+                name: "approve-pull-request",
+                text: i18n.t("Approve"),
+                isActive: (rows: AppNotification[]) =>
+                    rows[0].type === "received-pull-request" && rows[0].status === "PENDING",
+                onClick: async rows => {
+                    const result = await compositionRoot.notifications.updatePullRequestStatus(
+                        rows[0],
+                        "APPROVED"
+                    );
+
+                    validateUpdateStatusAction(result);
+                    setResetKey(Math.random());
+                },
+                icon: <Icon>check</Icon>,
+            },
+            {
+                name: "reject-pull-request",
+                text: i18n.t("Reject"),
+                isActive: (rows: AppNotification[]) =>
+                    rows[0].type === "received-pull-request" && rows[0].status === "PENDING",
+                onClick: async rows => {
+                    const result = await compositionRoot.notifications.updatePullRequestStatus(
+                        rows[0],
+                        "REJECTED"
+                    );
+
+                    validateUpdateStatusAction(result);
+                    setResetKey(Math.random());
+                },
+                icon: <Icon>close</Icon>,
+            },
+            {
+                name: "import-pull-request",
+                text: i18n.t("Import"),
+                isActive: (rows: AppNotification[]) =>
+                    rows[0].type === "sent-pull-request" &&
+                    (rows[0].status === "APPROVED" || rows[0].status === "IMPORTED_WITH_ERRORS"),
+                onClick: async rows => {
+                    loading.show(true, i18n.t("Importing approved pull request"));
+                    const result = await compositionRoot.notifications.importPullRequest(rows[0]);
+
+                    await validateImportPullRequestAction(result);
+                    setResetKey(Math.random());
+                    loading.reset();
+                },
+                icon: <Icon>arrow_downward</Icon>,
+            },
+            {
+                name: "delete",
+                text: i18n.t("Delete"),
+                multiple: true,
+                onClick: async rows => {
+                    loading.show(true, i18n.t("Deleting notifications"));
+                    await compositionRoot.notifications.delete(rows);
+                    setResetKey(Math.random());
+                    updateSelection([]);
+                    loading.reset();
+                },
+                icon: <Icon>delete</Icon>,
+            },
+        ],
+        [
+            compositionRoot,
+            validateUpdateStatusAction,
+            validateImportPullRequestAction,
+            notifications,
+            loading,
+        ]
+    );
+
+    const filterComponents = useMemo(
+        () => (
+            <React.Fragment key={"table-filters"}>
+                <Dropdown
+                    items={[
+                        { id: "PENDING", name: i18n.t("Pending") },
+                        { id: "APPROVED", name: i18n.t("Approved") },
+                        { id: "REJECTED", name: i18n.t("Rejected") },
+                        { id: "IMPORTED", name: i18n.t("Imported") },
+                        { id: "IMPORTED_WITH_ERRORS", name: i18n.t("Imported with errors") },
+                    ]}
+                    onValueChange={setStatusFilter}
+                    value={statusFilter}
+                    label={i18n.t("Status")}
+                />
+                <FormControlLabel
+                    className={classes.checkbox}
+                    control={<Checkbox checked={unreadOnly} onChange={changeUnreadCheckbox} />}
+                    label={i18n.t("Unread messages")}
+                />
+            </React.Fragment>
+        ),
+        [classes, statusFilter, unreadOnly, changeUnreadCheckbox]
+    );
+
+    const globalActions: TableGlobalAction[] = useMemo(
+        () => [
+            {
+                name: "refresh",
+                text: i18n.t("Refresh"),
+                icon: <Icon>refresh</Icon>,
+                onClick: () => setResetKey(Math.random()),
+            },
+        ],
+        []
+    );
+
+    const rows = notifications
+        .filter(notification => !unreadOnly || !notification.read)
+        .filter(
+            notification =>
+                !statusFilter ||
+                ((notification.type === "sent-pull-request" ||
+                    notification.type === "received-pull-request") &&
+                    notification.status === statusFilter)
+        );
+
+    useEffect(() => {
+        loading.show();
+        compositionRoot.notifications.list().then(notifications => {
+            const appNotifications = notifications.map(notification => ({
+                ...notification,
+                sender: notification.owner.name,
+            }));
+
+            setNotifications(appNotifications);
+            loading.reset();
+        });
+    }, [compositionRoot, loading, resetKey]);
+
+    return (
+        <React.Fragment>
+            <PageHeader onBackClick={backHome} title={i18n.t("Notifications")} />
+
+            <ObjectsTable<TableNotification>
+                rows={rows}
+                columns={columns}
+                actions={actions}
+                rowConfig={rowConfig}
+                searchBoxColumns={["sender", "subject", "text"]}
+                filterComponents={filterComponents}
+                globalActions={globalActions}
+                initialState={{ sorting: { field: "created", order: "desc" } }}
+                selection={selection}
+                onChange={updateTable}
+            />
+
+            {detailsNotification && (
+                <NotificationViewerDialog
+                    notification={detailsNotification}
+                    onClose={() => setDetailsNotification(undefined)}
+                />
+            )}
+
+            {!!syncReport && (
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
+            )}
+        </React.Fragment>
+    );
+};
+
+const useStyles = makeStyles({
+    checkbox: {
+        paddingLeft: 10,
+        marginTop: 8,
+    },
+});
+
+type TableNotification = AppNotification & {
+    sender: string;
+    [key: string]: any;
+};
+
+export default NotificationsListPage;
