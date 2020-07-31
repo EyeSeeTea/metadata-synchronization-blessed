@@ -4,7 +4,8 @@ import { HashRouter } from "react-router-dom";
 import { Dictionary } from "../../../types/utils";
 
 function useWidget(): { dashboardItemId: string; userOrgUnits: string[]; widget: string } {
-    if (!process.env.REACT_APP_DASHBOARD_WIDGET) {
+    const widget = process.env.REACT_APP_DASHBOARD_WIDGET;
+    if (!widget) {
         throw new Error("Attempting to use useWidget on application");
     }
 
@@ -15,7 +16,7 @@ function useWidget(): { dashboardItemId: string; userOrgUnits: string[]; widget:
     return {
         dashboardItemId,
         userOrgUnits: userOrgUnit?.split(",") ?? [],
-        widget: "modules-list",
+        widget,
     };
 }
 
@@ -24,6 +25,12 @@ const loadWidget = async (widget: string): Promise<Function> => {
         case "modules-list": {
             const { ModuleListWidget } = await import("./module-list-widget/ModuleListWidget");
             return ModuleListWidget;
+        }
+        case "package-exporter": {
+            const { PackageExporterWidget } = await import(
+                "./package-exporter-widget/PackageExporterWidget"
+            );
+            return PackageExporterWidget;
         }
         default: {
             return () => {

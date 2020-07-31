@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-20T06:29:54.001Z\n"
-"PO-Revision-Date: 2020-07-20T06:29:54.001Z\n"
+"POT-Creation-Date: 2020-07-31T11:28:58.457Z\n"
+"PO-Revision-Date: 2020-07-31T11:28:58.457Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -129,6 +129,24 @@ msgid "Version tag"
 msgstr ""
 
 msgid "DHIS2 Version (*)"
+msgstr ""
+
+msgid "This instance"
+msgstr ""
+
+msgid "Store"
+msgstr ""
+
+msgid "Instance"
+msgstr ""
+
+msgid "View"
+msgstr ""
+
+msgid "Modules"
+msgstr ""
+
+msgid "Packages"
 msgstr ""
 
 msgid "Invalid package"
@@ -612,9 +630,6 @@ msgstr ""
 msgid "Source instance"
 msgstr ""
 
-msgid "This instance"
-msgstr ""
-
 msgid "Every day"
 msgstr ""
 
@@ -1072,18 +1087,6 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Instance"
-msgstr ""
-
-msgid "Modules"
-msgstr ""
-
-msgid "Packages"
-msgstr ""
-
-msgid "View"
 msgstr ""
 
 msgid "New module"

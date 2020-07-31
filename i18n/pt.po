@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-07-20T06:29:27.821Z\n"
+"POT-Creation-Date: 2020-07-30T09:03:01.753Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -129,6 +129,24 @@ msgid "Version tag"
 msgstr ""
 
 msgid "DHIS2 Version (*)"
+msgstr ""
+
+msgid "This instance"
+msgstr ""
+
+msgid "Store"
+msgstr ""
+
+msgid "Instance"
+msgstr ""
+
+msgid "View"
+msgstr ""
+
+msgid "Modules"
+msgstr ""
+
+msgid "Packages"
 msgstr ""
 
 msgid "Invalid package"
@@ -613,9 +631,6 @@ msgstr ""
 msgid "Source instance"
 msgstr ""
 
-msgid "This instance"
-msgstr ""
-
 msgid "Every day"
 msgstr ""
 
@@ -1075,18 +1090,6 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Instance"
-msgstr ""
-
-msgid "Modules"
-msgstr ""
-
-msgid "Packages"
-msgstr ""
-
-msgid "View"
 msgstr ""
 
 msgid "New module"

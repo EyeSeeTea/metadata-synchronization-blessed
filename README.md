@@ -20,7 +20,7 @@ $ yarn migrate 'http://admin:PASSWORD@localhost:8080'
 
 ## Development
 
-Start development server with web app:
+Start the development server of the web app:
 
 ```
 $ yarn start
@@ -28,19 +28,13 @@ $ yarn start
 
 This will open the development server at port 8081 and will connect to DHIS 2 instance http://localhost:8080.
 
-Start development server with widget:
+Start the development server of a given widget:
 
 ```
-$ yarn start-widget
+$ REACT_APP_DHIS2_BASE_URL=http://localhost:8080 yarn start-widget -p 8082 modules-list|package-exporter
 ```
 
-This will open the development server at port 8082 and will connect to DHIS 2 instance http://localhost:8082.
-
-Use custom values passing environment variables:
-
-```
-$ PORT=8082 REACT_APP_DHIS2_BASE_URL="https://play.dhis2.org/dev" yarn start
-```
+This will open the development server for the given widget at port 8082 and will connect to DHIS 2 instance http://localhost:8080.
 
 ## Tests
 
@@ -71,13 +65,15 @@ Note tests only pass on the testing docker instance eyeseetea/dhis2-data:2.30-da
 ## Build
 
 To build the web app:
+
 ```
 $ yarn build-webapp
 ```
 
 To build the widget:
+
 ```
-$ yarn build-widget
+$ yarn build-widget modules-list|package-exporter
 ```
 
 ## i18n
