@@ -1,5 +1,13 @@
 import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
-import { ObjectsTable, RowConfig, TableAction, TableColumn, useSnackbar } from "d2-ui-components";
+import {
+    ObjectsTable,
+    RowConfig,
+    TableAction,
+    TableColumn,
+    TableGlobalAction,
+    useLoading,
+    useSnackbar,
+} from "d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Either } from "../../../../domain/common/entities/Either";
@@ -15,6 +23,7 @@ export const NotificationsListPage: React.FC = () => {
     const { compositionRoot } = useAppContext();
     const history = useHistory();
     const snackbar = useSnackbar();
+    const loading = useLoading();
     const classes = useStyles();
 
     const [notifications, setNotifications] = useState<TableNotification[]>([]);
@@ -225,6 +234,33 @@ export const NotificationsListPage: React.FC = () => {
         [classes, statusFilter, unreadOnly]
     );
 
+    const globalActions: TableGlobalAction[] = useMemo(
+        () => [
+            {
+                name: "refresh",
+                text: i18n.t("Refresh"),
+                icon: <Icon>refresh</Icon>,
+                onClick: async () => {
+                    loading.show();
+                    await compositionRoot.notifications.refresh();
+                    setResetKey(Math.random());
+                    loading.hide();
+                },
+            },
+        ],
+        [compositionRoot, loading]
+    );
+
+    const rows = notifications
+        .filter(notification => !unreadOnly || !notification.read)
+        .filter(
+            notification =>
+                !statusFilter ||
+                ((notification.type === "sent-pull-request" ||
+                    notification.type === "received-pull-request") &&
+                    notification.status === statusFilter)
+        );
+
     useEffect(() => {
         compositionRoot.notifications
             .list()
@@ -237,16 +273,6 @@ export const NotificationsListPage: React.FC = () => {
             .then(setNotifications);
     }, [compositionRoot, resetKey]);
 
-    const rows = notifications
-        .filter(notification => !unreadOnly || !notification.read)
-        .filter(
-            notification =>
-                !statusFilter ||
-                ((notification.type === "sent-pull-request" ||
-                    notification.type === "received-pull-request") &&
-                    notification.status === statusFilter)
-        );
-
     return (
         <React.Fragment>
             <PageHeader onBackClick={backHome} title={i18n.t("Notifications")} />
@@ -258,6 +284,7 @@ export const NotificationsListPage: React.FC = () => {
                 rowConfig={rowConfig}
                 searchBoxColumns={["sender", "subject", "text"]}
                 filterComponents={filterComponents}
+                globalActions={globalActions}
                 initialState={{ sorting: { field: "created", order: "desc" } }}
             />
 
