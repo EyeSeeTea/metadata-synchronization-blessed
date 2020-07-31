@@ -5,6 +5,8 @@ import {
     TableAction,
     TableColumn,
     TableGlobalAction,
+    TableSelection,
+    TableState,
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
@@ -36,14 +38,22 @@ export const NotificationsListPage: React.FC = () => {
     const [resetKey, setResetKey] = useState(Math.random());
     const [detailsNotification, setDetailsNotification] = useState<AppNotification>();
     const [syncReport, setSyncReport] = useState<SyncReport>();
+    const [selection, updateSelection] = useState<TableSelection[]>([]);
 
     const backHome = useCallback(() => {
         history.push("/");
     }, [history]);
 
-    const changeUnreadCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const changeUnreadCheckbox = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setUnreadOnly(event.target?.checked);
-    };
+    }, []);
+
+    const updateTable = useCallback(
+        ({ selection }: TableState<TableNotification>) => {
+            updateSelection(selection);
+        },
+        [updateSelection]
+    );
 
     const columns: TableColumn<TableNotification>[] = [
         {
@@ -138,7 +148,7 @@ export const NotificationsListPage: React.FC = () => {
                             snackbar.error(i18n.t("Package has been already imported"));
                             break;
                         case "INSTANCE_NOT_FOUND":
-                            snackbar.error(i18n.t("Could not connect with remote instance"));
+                            snackbar.error(i18n.t("Instance not found"));
                             break;
                         case "INVALID_NOTIFICATION":
                             snackbar.error(i18n.t("Notification is invalid"));
@@ -147,15 +157,13 @@ export const NotificationsListPage: React.FC = () => {
                             snackbar.error(i18n.t("Notification not found"));
                             break;
                         case "NOT_APPROVED":
-                            snackbar.error(
-                                i18n.t("Remote instance has not approved the pull request")
-                            );
+                            snackbar.error(i18n.t("Remote pull request has not been approved yet"));
                             break;
                         case "REMOTE_INVALID_NOTIFICATION":
-                            snackbar.error(i18n.t("Remote notification is invalid"));
+                            snackbar.error(i18n.t("Remote pull request is not valid"));
                             break;
                         case "REMOTE_NOTIFICATION_NOT_FOUND":
-                            snackbar.error(i18n.t("Remote notification not found"));
+                            snackbar.error(i18n.t("Remote pull request has been deleted"));
                             break;
                         default:
                             snackbar.error(i18n.t("Unknown error"));
@@ -284,6 +292,19 @@ export const NotificationsListPage: React.FC = () => {
                 },
                 icon: <Icon>arrow_downward</Icon>,
             },
+            {
+                name: "delete",
+                text: i18n.t("Delete"),
+                multiple: true,
+                onClick: async rows => {
+                    loading.show(true, i18n.t("Deleting notifications"));
+                    await compositionRoot.notifications.delete(rows);
+                    setResetKey(Math.random());
+                    updateSelection([]);
+                    loading.reset();
+                },
+                icon: <Icon>delete</Icon>,
+            },
         ],
         [
             compositionRoot,
@@ -316,7 +337,7 @@ export const NotificationsListPage: React.FC = () => {
                 />
             </React.Fragment>
         ),
-        [classes, statusFilter, unreadOnly]
+        [classes, statusFilter, unreadOnly, changeUnreadCheckbox]
     );
 
     const globalActions: TableGlobalAction[] = useMemo(
@@ -367,6 +388,8 @@ export const NotificationsListPage: React.FC = () => {
                 filterComponents={filterComponents}
                 globalActions={globalActions}
                 initialState={{ sorting: { field: "created", order: "desc" } }}
+                selection={selection}
+                onChange={updateTable}
             />
 
             {detailsNotification && (

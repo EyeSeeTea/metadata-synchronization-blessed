@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-07-31T07:57:39.501Z\n"
+"POT-Creation-Date: 2020-07-31T08:48:37.569Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1176,13 +1176,13 @@ msgstr ""
 msgid "Notification not found"
 msgstr ""
 
-msgid "Remote instance has not approved the pull request"
+msgid "Remote pull request has not been approved yet"
 msgstr ""
 
-msgid "Remote notification is invalid"
+msgid "Remote pull request is not valid"
 msgstr ""
 
-msgid "Remote notification not found"
+msgid "Remote pull request has been deleted"
 msgstr ""
 
 msgid "Updated notification"
@@ -1216,6 +1216,9 @@ msgid "Import"
 msgstr ""
 
 msgid "Importing approved pull request"
+msgstr ""
+
+msgid "Deleting notifications"
 msgstr ""
 
 msgid "Unread messages"

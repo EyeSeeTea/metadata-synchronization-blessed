@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-31T07:58:04.987Z\n"
-"PO-Revision-Date: 2020-07-31T07:58:04.987Z\n"
+"POT-Creation-Date: 2020-07-31T08:53:22.206Z\n"
+"PO-Revision-Date: 2020-07-31T08:53:22.206Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1173,13 +1173,13 @@ msgstr ""
 msgid "Notification not found"
 msgstr ""
 
-msgid "Remote instance has not approved the pull request"
+msgid "Remote pull request has not been approved yet"
 msgstr ""
 
-msgid "Remote notification is invalid"
+msgid "Remote pull request is not valid"
 msgstr ""
 
-msgid "Remote notification not found"
+msgid "Remote pull request has been deleted"
 msgstr ""
 
 msgid "Updated notification"
@@ -1213,6 +1213,9 @@ msgid "Import"
 msgstr ""
 
 msgid "Importing approved pull request"
+msgstr ""
+
+msgid "Deleting notifications"
 msgstr ""
 
 msgid "Unread messages"
