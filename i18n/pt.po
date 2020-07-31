@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-07-31T06:19:58.201Z\n"
+"POT-Creation-Date: 2020-07-31T07:57:39.501Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1161,7 +1161,28 @@ msgstr ""
 msgid "Rejected"
 msgstr ""
 
+msgid "Imported with errors"
+msgstr ""
+
 msgid "Date"
+msgstr ""
+
+msgid "Package has been already imported"
+msgstr ""
+
+msgid "Notification is invalid"
+msgstr ""
+
+msgid "Notification not found"
+msgstr ""
+
+msgid "Remote instance has not approved the pull request"
+msgstr ""
+
+msgid "Remote notification is invalid"
+msgstr ""
+
+msgid "Remote notification not found"
 msgstr ""
 
 msgid "Updated notification"
@@ -1189,6 +1210,12 @@ msgid "Approve"
 msgstr ""
 
 msgid "Reject"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "Importing approved pull request"
 msgstr ""
 
 msgid "Unread messages"

@@ -12,15 +12,19 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Either } from "../../../../domain/common/entities/Either";
 import { AppNotification } from "../../../../domain/notifications/entities/Notification";
+import { ImportPullRequestError } from "../../../../domain/notifications/usecases/ImportPullRequestUseCase";
 import { UpdatePullRequestStatusError } from "../../../../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
+import { SynchronizationResult } from "../../../../domain/synchronization/entities/SynchronizationResult";
 import i18n from "../../../../locales";
+import SyncReport from "../../../../models/syncReport";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../../components/dropdown/Dropdown";
 import { NotificationViewerDialog } from "../../components/notification-viewer-dialog/NotificationViewerDialog";
 import PageHeader from "../../components/page-header/PageHeader";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
 
 export const NotificationsListPage: React.FC = () => {
-    const { compositionRoot } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const history = useHistory();
     const snackbar = useSnackbar();
     const loading = useLoading();
@@ -31,6 +35,7 @@ export const NotificationsListPage: React.FC = () => {
     const [statusFilter, setStatusFilter] = useState<string>("");
     const [resetKey, setResetKey] = useState(Math.random());
     const [detailsNotification, setDetailsNotification] = useState<AppNotification>();
+    const [syncReport, setSyncReport] = useState<SyncReport>();
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -92,6 +97,12 @@ export const NotificationsListPage: React.FC = () => {
                             return i18n.t("Approved");
                         case "REJECTED":
                             return i18n.t("Rejected");
+                        case "IMPORTED":
+                            return i18n.t("Imported");
+                        case "IMPORTED_WITH_ERRORS":
+                            return i18n.t("Imported with errors");
+                        default:
+                            return "-";
                     }
                 } else return "-";
             },
@@ -106,7 +117,57 @@ export const NotificationsListPage: React.FC = () => {
         return { style: row.read ? { backgroundColor: "#EEEEEE" } : {} };
     };
 
-    const validateAction = useCallback(
+    const validateImportPullRequestAction = useCallback(
+        async (result: Either<ImportPullRequestError, SynchronizationResult>) => {
+            await result.match({
+                success: async result => {
+                    const report = SyncReport.create("metadata");
+                    report.setStatus(
+                        result.status === "ERROR" || result.status === "NETWORK ERROR"
+                            ? "FAILURE"
+                            : "DONE"
+                    );
+                    report.addSyncResult(result);
+                    await report.save(api);
+
+                    setSyncReport(report);
+                },
+                error: async code => {
+                    switch (code) {
+                        case "ALREADY_IMPORTED":
+                            snackbar.error(i18n.t("Package has been already imported"));
+                            break;
+                        case "INSTANCE_NOT_FOUND":
+                            snackbar.error(i18n.t("Could not connect with remote instance"));
+                            break;
+                        case "INVALID_NOTIFICATION":
+                            snackbar.error(i18n.t("Notification is invalid"));
+                            break;
+                        case "NOTIFICATION_NOT_FOUND":
+                            snackbar.error(i18n.t("Notification not found"));
+                            break;
+                        case "NOT_APPROVED":
+                            snackbar.error(
+                                i18n.t("Remote instance has not approved the pull request")
+                            );
+                            break;
+                        case "REMOTE_INVALID_NOTIFICATION":
+                            snackbar.error(i18n.t("Remote notification is invalid"));
+                            break;
+                        case "REMOTE_NOTIFICATION_NOT_FOUND":
+                            snackbar.error(i18n.t("Remote notification not found"));
+                            break;
+                        default:
+                            snackbar.error(i18n.t("Unknown error"));
+                            break;
+                    }
+                },
+            });
+        },
+        [snackbar, api]
+    );
+
+    const validateUpdateStatusAction = useCallback(
         (result: Either<UpdatePullRequestStatusError, void>) => {
             result.match({
                 success: () => snackbar.success(i18n.t("Updated notification")),
@@ -186,7 +247,7 @@ export const NotificationsListPage: React.FC = () => {
                         "APPROVED"
                     );
 
-                    validateAction(result);
+                    validateUpdateStatusAction(result);
                     setResetKey(Math.random());
                 },
                 icon: <Icon>check</Icon>,
@@ -202,13 +263,35 @@ export const NotificationsListPage: React.FC = () => {
                         "REJECTED"
                     );
 
-                    validateAction(result);
+                    validateUpdateStatusAction(result);
                     setResetKey(Math.random());
                 },
                 icon: <Icon>close</Icon>,
             },
+            {
+                name: "import-pull-request",
+                text: i18n.t("Import"),
+                isActive: (rows: AppNotification[]) =>
+                    rows[0].type === "sent-pull-request" &&
+                    (rows[0].status === "APPROVED" || rows[0].status === "IMPORTED_WITH_ERRORS"),
+                onClick: async rows => {
+                    loading.show(true, i18n.t("Importing approved pull request"));
+                    const result = await compositionRoot.notifications.importPullRequest(rows[0]);
+
+                    await validateImportPullRequestAction(result);
+                    setResetKey(Math.random());
+                    loading.reset();
+                },
+                icon: <Icon>arrow_downward</Icon>,
+            },
         ],
-        [compositionRoot, validateAction, notifications]
+        [
+            compositionRoot,
+            validateUpdateStatusAction,
+            validateImportPullRequestAction,
+            notifications,
+            loading,
+        ]
     );
 
     const filterComponents = useMemo(
@@ -219,6 +302,8 @@ export const NotificationsListPage: React.FC = () => {
                         { id: "PENDING", name: i18n.t("Pending") },
                         { id: "APPROVED", name: i18n.t("Approved") },
                         { id: "REJECTED", name: i18n.t("Rejected") },
+                        { id: "IMPORTED", name: i18n.t("Imported") },
+                        { id: "IMPORTED_WITH_ERRORS", name: i18n.t("Imported with errors") },
                     ]}
                     onValueChange={setStatusFilter}
                     value={statusFilter}
@@ -265,7 +350,7 @@ export const NotificationsListPage: React.FC = () => {
             }));
 
             setNotifications(appNotifications);
-            loading.hide();
+            loading.reset();
         });
     }, [compositionRoot, loading, resetKey]);
 
@@ -289,6 +374,10 @@ export const NotificationsListPage: React.FC = () => {
                     notification={detailsNotification}
                     onClose={() => setDetailsNotification(undefined)}
                 />
+            )}
+
+            {!!syncReport && (
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
             )}
         </React.Fragment>
     );

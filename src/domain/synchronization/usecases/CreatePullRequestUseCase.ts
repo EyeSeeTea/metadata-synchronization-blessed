@@ -6,8 +6,8 @@ import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
+import { AppNotification } from "../../notifications/entities/Notification";
 import {
-    PullRequestNotification,
     ReceivedPullRequestNotification,
     SentPullRequestNotification,
 } from "../../notifications/entities/PullRequestNotification";
@@ -113,14 +113,20 @@ export class CreatePullRequestUseCase implements UseCase {
 
     private async saveNotification(
         instance: Instance,
-        notification: PullRequestNotification
+        notification: AppNotification
     ): Promise<void> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [instance]
         );
 
-        await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, notification);
+        if (notification.type === "received-pull-request") {
+            await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, notification, [
+                "payload",
+            ]);
+        } else {
+            await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, notification);
+        }
     }
 
     private async sendMessage(
@@ -132,7 +138,7 @@ export class CreatePullRequestUseCase implements UseCase {
             instance: origin,
             users: responsibleUsers,
             userGroups: responsibleUserGroups,
-        }: PullRequestNotification,
+        }: AppNotification,
         { users, userGroups }: NotificationUsers
     ): Promise<void> {
         const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(

@@ -3,7 +3,12 @@ import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { BaseNotification } from "./Notification";
 
-export type PullRequestStatus = "PENDING" | "APPROVED" | "REJECTED" | "IMPORTED";
+export type PullRequestStatus =
+    | "PENDING"
+    | "APPROVED"
+    | "REJECTED"
+    | "IMPORTED"
+    | "IMPORTED_WITH_ERRORS";
 
 export interface PullRequestNotification extends BaseNotification {
     syncType: SynchronizationType;

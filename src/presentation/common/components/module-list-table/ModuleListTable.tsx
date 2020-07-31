@@ -305,6 +305,20 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
 
     return (
         <React.Fragment>
+            <ObjectsTable<Module>
+                rows={rows}
+                loading={isTableLoading}
+                columns={columns}
+                details={details}
+                actions={actions}
+                onActionButtonClick={onActionButtonClick}
+                forceSelectionColumn={presentation === "app"}
+                filterComponents={externalComponents}
+                selection={selection}
+                onChange={updateTable}
+                paginationOptions={paginationOptions}
+            />
+
             {!!newPackageModule && (
                 <NewPacakgeDialog
                     save={savePackage}
@@ -319,20 +333,6 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                     onClose={() => setPullRequestProps(undefined)}
                 />
             )}
-
-            <ObjectsTable<Module>
-                rows={rows}
-                loading={isTableLoading}
-                columns={columns}
-                details={details}
-                actions={actions}
-                onActionButtonClick={onActionButtonClick}
-                forceSelectionColumn={presentation === "app"}
-                filterComponents={externalComponents}
-                selection={selection}
-                onChange={updateTable}
-                paginationOptions={paginationOptions}
-            />
         </React.Fragment>
     );
 };

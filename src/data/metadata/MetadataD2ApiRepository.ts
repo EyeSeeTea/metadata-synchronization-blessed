@@ -135,9 +135,17 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
         console.debug("Versioned metadata package", versionedPayloadPackage);
 
-        const response = await this.postMetadata(versionedPayloadPackage, additionalParams);
-
-        return this.cleanMetadataImportResponse(response, "metadata");
+        try {
+            const response = await this.postMetadata(versionedPayloadPackage, additionalParams);
+            return this.cleanMetadataImportResponse(response, "metadata");
+        } catch (error) {
+            return {
+                status: "NETWORK ERROR",
+                instance: this.instance.toPublicObject(),
+                date: new Date(),
+                type: "metadata",
+            };
+        }
     }
 
     public async remove(
