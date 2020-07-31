@@ -1,4 +1,3 @@
-import { MenuItem, Select } from "@material-ui/core";
 import SyncIcon from "@material-ui/icons/Sync";
 import { useLoading, useSnackbar } from "d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
@@ -20,6 +19,7 @@ import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
 import { MetadataType } from "../../../../utils/d2";
 import { isAppConfigurator } from "../../../../utils/permissions";
+import { InstanceSelectionDropdown } from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
@@ -80,7 +80,6 @@ const ManualSyncPage: React.FC = () => {
     const [appConfigurator, updateAppConfigurator] = useState(false);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
-    const [instances, setInstances] = useState<Instance[]>([]);
     const [selectedInstance, setSelectedInstance] = useState<Instance>();
     const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
 
@@ -173,11 +172,11 @@ const ManualSyncPage: React.FC = () => {
     ];
 
     const updateSelectedInstance = useCallback(
-        (event: React.ChangeEvent<{ value: unknown }>) => {
-            const originInstance = event.target.value as string;
+        (instance?: Instance) => {
+            const originInstance = instance?.id ?? "LOCAL";
             const targetInstances = originInstance === "LOCAL" ? [] : ["LOCAL"];
 
-            setSelectedInstance(instances.find(instance => instance.id === originInstance));
+            setSelectedInstance(instance);
             updateSyncRule(
                 syncRule
                     .updateBuilder({ originInstance })
@@ -186,30 +185,18 @@ const ManualSyncPage: React.FC = () => {
                     .updateExcludedIds([])
             );
         },
-        [instances, syncRule]
+        [syncRule]
     );
-
-    useEffect(() => {
-        compositionRoot.instances.list().then(setInstances);
-    }, [compositionRoot]);
 
     return (
         <TestWrapper>
             <PageHeader onBackClick={goBack} title={title}>
-                <Select
-                    value={selectedInstance?.id ?? "LOCAL"}
-                    onChange={updateSelectedInstance}
-                    disableUnderline={true}
-                    style={{ minWidth: 120, paddingLeft: 25, paddingRight: 25 }}
-                >
-                    {[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances].map(
-                        ({ id, name }) => (
-                            <MenuItem key={id} value={id}>
-                                {name}
-                            </MenuItem>
-                        )
-                    )}
-                </Select>
+                <InstanceSelectionDropdown
+                    view="inline"
+                    showInstances={{ local: true, remote: true }}
+                    selectedInstance={selectedInstance?.id ?? "LOCAL"}
+                    onChangeSelected={updateSelectedInstance}
+                />
             </PageHeader>
 
             {type === "deleted" ? (

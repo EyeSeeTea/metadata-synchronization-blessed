@@ -1,26 +1,24 @@
 import {
-    FormControl,
-    InputLabel,
     makeStyles,
-    MenuItem,
-    Select,
-    TextField,
+
+
+    TextField
 } from "@material-ui/core";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../locales";
 import SyncRule from "../../../../../models/syncRule";
 import { Dictionary } from "../../../../../types/utils";
 import { getValidationMessages } from "../../../../../utils/old-validations";
+import { InstanceSelectionDropdown } from "../../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import { SyncWizardStepProps } from "../Steps";
 
 export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => {
-    const { api, compositionRoot } = useAppContext();
+    const { api } = useAppContext();
     const classes = useStyles();
 
     const [errors, setErrors] = useState<Dictionary<string>>({});
-    const [instances, setInstances] = useState<Instance[]>([]);
 
     const onChangeField = useCallback(
         (field: keyof SyncRule) => {
@@ -36,8 +34,8 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
     );
 
     const onChangeInstance = useCallback(
-        (event: React.ChangeEvent<{ value: unknown }>) => {
-            const originInstance = event.target.value as string;
+        (instance?: Instance) => {
+            const originInstance = instance?.id ?? "LOCAL";
             const targetInstances = originInstance === "LOCAL" ? ["LOCAL"] : [];
 
             onChange(
@@ -50,10 +48,6 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
         },
         [syncRule, onChange]
     );
-
-    useEffect(() => {
-        compositionRoot.instances.list().then(setInstances);
-    }, [compositionRoot]);
 
     return (
         <React.Fragment>
@@ -77,20 +71,15 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
                 helperText={errors["code"]}
             />
 
-            {instances.length > 0 && (
-                <FormControl fullWidth={true} className={classes.row}>
-                    <InputLabel>{i18n.t("Source instance")}</InputLabel>
-                    <Select value={syncRule.originInstance} onChange={onChangeInstance}>
-                        {[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances].map(
-                            ({ id, name }) => (
-                                <MenuItem key={id} value={id}>
-                                    {name}
-                                </MenuItem>
-                            )
-                        )}
-                    </Select>
-                </FormControl>
-            )}
+            <div className={classes.row}>
+                <InstanceSelectionDropdown
+                    showInstances={{ local: true, remote: true }}
+                    selectedInstance={syncRule.originInstance}
+                    onChangeSelected={onChangeInstance}
+                    view="full-width"
+                    title={i18n.t("Source instance")}
+                />
+            </div>
 
             <TextField
                 className={classes.row}
