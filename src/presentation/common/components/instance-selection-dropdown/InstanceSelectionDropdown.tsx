@@ -17,11 +17,17 @@ export interface InstanceSelectionDropdownProps {
     selectedInstance: string;
     onChangeSelected: (instance?: Instance) => void;
     view?: "dropdown" | "inline" | "full-width";
-    title?: string
+    title?: string;
 }
 
 export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps> = React.memo(
-    ({ showInstances, selectedInstance, onChangeSelected, view = "dropdown", title = i18n.t("Instances") }) => {
+    ({
+        showInstances,
+        selectedInstance,
+        onChangeSelected,
+        view = "dropdown",
+        title = i18n.t("Instances"),
+    }) => {
         const { compositionRoot } = useAppContext();
 
         const [instances, setInstances] = useState<Instance[]>([]);

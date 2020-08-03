@@ -1,9 +1,4 @@
-import {
-    makeStyles,
-
-
-    TextField
-} from "@material-ui/core";
+import { makeStyles, TextField } from "@material-ui/core";
 import React, { useCallback, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../locales";

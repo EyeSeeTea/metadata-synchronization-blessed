@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-31T16:29:06.156Z\n"
-"PO-Revision-Date: 2020-07-31T16:29:06.156Z\n"
+"POT-Creation-Date: 2020-08-03T09:51:00.244Z\n"
+"PO-Revision-Date: 2020-08-03T09:51:00.244Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -56,6 +56,9 @@ msgstr ""
 msgid "Program with Indicators"
 msgstr ""
 
+msgid "Instances"
+msgstr ""
+
 msgid "This instance"
 msgstr ""
 
@@ -63,9 +66,6 @@ msgid "Store"
 msgstr ""
 
 msgid "Instance"
-msgstr ""
-
-msgid "Source instance"
 msgstr ""
 
 msgid "Invalid module"
@@ -661,6 +661,9 @@ msgid ""
 msgstr ""
 
 msgid "Programs"
+msgstr ""
+
+msgid "Source instance"
 msgstr ""
 
 msgid "Instance not found"

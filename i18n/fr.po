@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-07-31T16:29:06.156Z\n"
+"POT-Creation-Date: 2020-08-03T09:42:45.916Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -56,6 +56,9 @@ msgstr ""
 msgid "Program with Indicators"
 msgstr ""
 
+msgid "Instances"
+msgstr ""
+
 msgid "This instance"
 msgstr ""
 
@@ -63,9 +66,6 @@ msgid "Store"
 msgstr ""
 
 msgid "Instance"
-msgstr ""
-
-msgid "Source instance"
 msgstr ""
 
 msgid "Invalid module"
@@ -662,6 +662,9 @@ msgid ""
 msgstr ""
 
 msgid "Programs"
+msgstr ""
+
+msgid "Source instance"
 msgstr ""
 
 msgid "Instance not found"
