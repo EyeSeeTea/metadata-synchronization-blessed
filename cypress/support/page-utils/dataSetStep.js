@@ -8,10 +8,7 @@ export function assertSelectedDatasetCountMessage(assert) {
 export function checkOnlySelectedItems() {
     activeRouteToWait();
 
-    cy.contains("Only selected items")
-        .parent()
-        .find("input")
-        .click();
+    cy.contains("Only selected items").parent().find("input").click();
 
     cy.wait(`@${routeName}`);
 

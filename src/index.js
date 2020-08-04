@@ -1,8 +1,10 @@
 import { Provider } from "@dhis2/app-runtime";
+import i18n from "@dhis2/d2-i18n";
 import axios from "axios";
+import { D2Api } from "d2-api/2.30";
+import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
-import "./locales";
 
 async function getBaseUrl() {
     if (process.env.NODE_ENV === "development") {
@@ -26,21 +28,49 @@ async function getPresentation() {
     }
 }
 
+const isLangRTL = code => {
+    const langs = ["ar", "fa", "ur"];
+    const prefixed = langs.map(c => `${c}-`);
+    return _(langs).includes(code) || prefixed.filter(c => code && code.startsWith(c)).length > 0;
+};
+
+const configI18n = ({ keyUiLocale }) => {
+    i18n.changeLanguage(keyUiLocale);
+    document.documentElement.setAttribute("dir", isLangRTL(keyUiLocale) ? "rtl" : "ltr");
+};
+
 async function main() {
-    const config = {
-        baseUrl: await getBaseUrl(),
-        apiVersion: "30",
-    };
+    const baseUrl = await getBaseUrl();
+
+    try {
+        const api = new D2Api({ baseUrl });
+        const userSettings = await api.get("/userSettings").getData();
+        if (typeof userSettings === "string") throw new Error("User needs to log in");
+        configI18n(userSettings);
+    } catch (err) {
+        ReactDOM.render(
+            <div>
+                <h3>
+                    <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
+                        Login
+                    </a>
+                    {` ${baseUrl}`}
+                </h3>
+            </div>,
+            document.getElementById("root")
+        );
+        return;
+    }
+
     try {
         const App = await getPresentation();
         ReactDOM.render(
-            <Provider config={config}>
+            <Provider config={{ baseUrl, apiVersion: "30" }}>
                 <App />
             </Provider>,
             document.getElementById("root")
         );
     } catch (err) {
-        console.error(err);
         ReactDOM.render(<div>{err.toString()}</div>, document.getElementById("root"));
     }
 }

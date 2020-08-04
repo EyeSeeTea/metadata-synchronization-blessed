@@ -1,7 +1,7 @@
 import AggregatedSyncRuleListPageObject from "../support/page-objects/AggregatedSyncRuleListPageObject";
 import { syncRuleFixture } from "../support/utils";
 
-context("Aggregated sync rules", function() {
+context("Aggregated sync rules", function () {
     const page = new AggregatedSyncRuleListPageObject(cy);
 
     beforeEach(() => {

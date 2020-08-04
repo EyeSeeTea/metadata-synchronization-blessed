@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import FileSaver from "file-saver";
 import _ from "lodash";
 import moment from "moment";
@@ -7,6 +6,7 @@ import {
     MetadataMappingDictionary,
 } from "../domain/instance/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../domain/metadata/entities/MetadataEntities";
+import i18n from "../locales";
 import SyncRule from "../models/syncRule";
 import { D2Api } from "../types/d2-api";
 import "../utils/lodash-mixins";
@@ -86,7 +86,7 @@ export const mapCategoryOptionCombo = (
         );
 
         // Candidates built from equal category options
-        const candidates = _.filter(destinationCategoryOptionCombos, o =>
+        const candidates = destinationCategoryOptionCombos.filter(o =>
             _.isEqual(
                 _.sortBy(o.categoryOptions, ["id"]),
                 _.sortBy(
@@ -123,9 +123,7 @@ export const mapOptionValue = (
 ): string => {
     for (const mapping of mappings) {
         const { options } = mapping;
-        const candidate = _(options)
-            .values()
-            .find(["code", value]);
+        const candidate = _(options).values().find(["code", value]);
 
         if (candidate?.mappedCode) return candidate?.mappedCode;
     }

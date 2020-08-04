@@ -5,7 +5,7 @@ import i18n from "../../../locales";
 import { DatedRef, NamedRef } from "../../common/entities/Ref";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-import { Module } from "./Module";
+import { Module } from "../../modules/entities/Module";
 
 export interface BasePackage extends DatedRef {
     deleted?: boolean;

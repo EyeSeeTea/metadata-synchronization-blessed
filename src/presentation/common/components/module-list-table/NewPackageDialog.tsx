@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import semver from "semver";
 import { ValidationError } from "../../../../domain/common/entities/Validations";
 import { Module } from "../../../../domain/modules/entities/Module";
-import { Package } from "../../../../domain/modules/entities/Package";
+import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 
@@ -20,10 +20,8 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
             name: i18n.t("Package of {{name}}", module),
             module: { id: module.id, name: module.name, instance: module.instance },
             version:
-                semver
-                    .parse(module.lastPackageVersion.split("-")[0])
-                    ?.inc("patch")
-                    .format() ?? "1.0.0",
+                semver.parse(module.lastPackageVersion.split("-")[0])?.inc("patch").format() ??
+                "1.0.0",
         })
     );
 

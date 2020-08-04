@@ -30,6 +30,7 @@ install:
     - git clone --single-branch --branch gh-pages "https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${FEEDBACK_REPO}" feedback-ci
     - yarn install --frozen-lockfile
     - yarn cy:verify
+    - yarn localize
     - yarn test
     - yarn start &
 script:

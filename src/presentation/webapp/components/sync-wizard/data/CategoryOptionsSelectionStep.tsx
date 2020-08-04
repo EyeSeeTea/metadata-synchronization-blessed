@@ -1,11 +1,11 @@
 import { MultiSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useMemo } from "react";
-import i18n from "@dhis2/d2-i18n";
-import { Toggle } from "../../toggle/Toggle";
-import { SyncWizardStepProps } from "../Steps";
+import i18n from "../../../../../locales";
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import { useD2ApiData } from "../../../../common/contexts/UseD2ApiData";
+import { Toggle } from "../../toggle/Toggle";
+import { SyncWizardStepProps } from "../Steps";
 
 const CategoryOptionsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const { d2, api } = useAppContext();

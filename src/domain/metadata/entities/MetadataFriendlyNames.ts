@@ -1,6 +1,6 @@
-const includeExcludeRulesFriendlyNames: {
-    [metadataType: string]: string;
-} = {
+import { Dictionary } from "../../../types/utils";
+
+export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     attributes: "Attributes",
     dataSets: "Data sets",
     categoryCombos: "Category combinations",
@@ -72,8 +72,10 @@ const includeExcludeRulesFriendlyNames: {
     pivotTables: "Pivot tables",
     eventReports: "Event reports",
     maps: "Maps",
+    "maps.mapViews": "Map views of maps",
     reports: "Reports",
     reportTables: "Report Tables",
+    "reportTables.legendSets": "Legend sets of map views",
     "indicators.dataSets": "Data sets of indicators",
     "indicators.programs": "Programs of indicators",
     "dataElements.dataSets": "Data sets of data elements",
@@ -207,5 +209,3 @@ const includeExcludeRulesFriendlyNames: {
         "Category combinations of categories in category combinations",
     "categoryOptions.categoryOptionCombos": "Category option combinations of categories options",
 };
-
-export default includeExcludeRulesFriendlyNames;

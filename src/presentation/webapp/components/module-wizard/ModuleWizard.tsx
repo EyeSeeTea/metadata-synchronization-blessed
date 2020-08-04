@@ -3,7 +3,7 @@ import _ from "lodash";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
-import { MetadataModule } from "../../../../domain/modules/entities/modules/MetadataModule";
+import { MetadataModule } from "../../../../domain/modules/entities/MetadataModule";
 import { metadataModuleSteps, ModuleWizardStepProps } from "./Steps";
 
 export interface ModuleWizardProps {

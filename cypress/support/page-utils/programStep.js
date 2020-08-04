@@ -14,10 +14,7 @@ export function activeRouteToWait() {
 export function checkOnlySelectedItems() {
     activeRouteToWait();
 
-    cy.contains("Only selected items")
-        .parent()
-        .find("input")
-        .click();
+    cy.contains("Only selected items").parent().find("input").click();
 
     cy.contains("items selected in all pages");
 }

@@ -1,9 +1,8 @@
-import i18n from "@dhis2/d2-i18n";
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
     DialogContent,
-    ExpansionPanel,
-    ExpansionPanelDetails,
-    ExpansionPanelSummary,
     makeStyles,
     Table,
     TableBody,
@@ -18,29 +17,30 @@ import { ConfirmationDialog } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
-import { useAppContext } from "../../../common/contexts/AppContext";
 import {
     ErrorMessage,
     SynchronizationResult,
     SynchronizationStats,
 } from "../../../../domain/synchronization/entities/SynchronizationResult";
 import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
+import { useAppContext } from "../../../common/contexts/AppContext";
 
 const useStyles = makeStyles(theme => ({
-    expansionPanelHeading1: {
+    accordionHeading1: {
         fontSize: theme.typography.pxToRem(15),
         flexBasis: "55%",
         flexShrink: 0,
     },
-    expansionPanelHeading2: {
+    accordionHeading2: {
         fontSize: theme.typography.pxToRem(15),
         color: theme.palette.text.secondary,
     },
-    expansionPanelDetails: {
+    accordionDetails: {
         padding: "4px 24px 4px",
     },
-    expansionPanel: {
+    accordion: {
         paddingBottom: "10px",
     },
     tooltip: {
@@ -195,95 +195,91 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
             <DialogContent>
                 {results.map(
                     ({ instance, status, typeStats = [], stats, message, errors, type }, i) => (
-                        <ExpansionPanel
+                        <Accordion
                             defaultExpanded={results.length === 1}
-                            className={classes.expansionPanel}
+                            className={classes.accordion}
                             key={`row-${i}`}
                         >
-                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography className={classes.expansionPanelHeading1}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography className={classes.accordionHeading1}>
                                     {`${i18n.t("Destination instance")}: ${
                                         instance.name
                                     } - ${getTypeName(type, response.syncReport.type)}`}
                                 </Typography>
-                                <Typography className={classes.expansionPanelHeading2}>
+                                <Typography className={classes.accordionHeading2}>
                                     {`${i18n.t("Status")}: `}
                                     {formatStatusTag(status)}
                                 </Typography>
-                            </ExpansionPanelSummary>
+                            </AccordionSummary>
 
-                            <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+                            <AccordionDetails className={classes.accordionDetails}>
                                 <Typography variant="overline">{i18n.t("Summary")}</Typography>
-                            </ExpansionPanelDetails>
+                            </AccordionDetails>
 
                             {message && (
-                                <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+                                <AccordionDetails className={classes.accordionDetails}>
                                     <Typography variant="body2">{message}</Typography>
-                                </ExpansionPanelDetails>
+                                </AccordionDetails>
                             )}
 
                             {stats && (
-                                <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+                                <AccordionDetails className={classes.accordionDetails}>
                                     {buildSummaryTable([
                                         ...typeStats,
                                         { ...stats, type: i18n.t("Total") },
                                     ])}
-                                </ExpansionPanelDetails>
+                                </AccordionDetails>
                             )}
 
                             {errors && errors.length > 0 && (
                                 <div>
-                                    <ExpansionPanelDetails
-                                        className={classes.expansionPanelDetails}
-                                    >
+                                    <AccordionDetails className={classes.accordionDetails}>
                                         <Typography variant="overline">
                                             {i18n.t("Messages")}
                                         </Typography>
-                                    </ExpansionPanelDetails>
-                                    <ExpansionPanelDetails
-                                        className={classes.expansionPanelDetails}
-                                    >
+                                    </AccordionDetails>
+                                    <AccordionDetails className={classes.accordionDetails}>
                                         {buildMessageTable(_.take(errors, 10))}
-                                    </ExpansionPanelDetails>
+                                    </AccordionDetails>
                                 </div>
                             )}
-                        </ExpansionPanel>
+                        </Accordion>
                     )
                 )}
 
                 {response.syncReport.dataStats && (
-                    <ExpansionPanel>
-                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                            <Typography className={classes.expansionPanelHeading1}>
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography className={classes.accordionHeading1}>
                                 {i18n.t("Data Statistics")}
                             </Typography>
-                        </ExpansionPanelSummary>
+                        </AccordionSummary>
 
-                        <ExpansionPanelDetails>
+                        <AccordionDetails>
                             {buildDataStatsTable(
                                 response.syncReport.type,
                                 response.syncReport.dataStats,
                                 classes
                             )}
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
+                        </AccordionDetails>
+                    </Accordion>
                 )}
 
-                <ExpansionPanel>
-                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography className={classes.expansionPanelHeading1}>
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography className={classes.accordionHeading1}>
                             {i18n.t("JSON Response")}
                         </Typography>
-                    </ExpansionPanelSummary>
+                    </AccordionSummary>
 
-                    <ExpansionPanelDetails>
+                    <AccordionDetails>
                         <ReactJson
                             src={{ ...response, results }}
                             collapsed={2}
                             enableClipboard={false}
                         />
-                    </ExpansionPanelDetails>
-                </ExpansionPanel>
+                    </AccordionDetails>
+                </Accordion>
             </DialogContent>
         </ConfirmationDialog>
     );

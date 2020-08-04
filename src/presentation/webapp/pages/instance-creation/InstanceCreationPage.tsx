@@ -1,8 +1,8 @@
-import i18n from "@dhis2/d2-i18n";
 import { ConfirmationDialog } from "d2-ui-components";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import i18n from "../../../../locales";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import PageHeader from "../../components/page-header/PageHeader";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
@@ -24,10 +24,7 @@ const InstanceCreationPage = () => {
         if (location.state?.instance) {
             setInstance(location.state?.instance);
         } else if (isEdit) {
-            compositionRoot
-                .instances()
-                .getById(id)
-                .then(setInstance);
+            compositionRoot.instances().getById(id).then(setInstance);
         }
     }, [compositionRoot, id, isEdit, location]);
 

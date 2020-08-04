@@ -14,18 +14,12 @@ class InstanceDetailPageObject extends InstancePageObject {
     }
 
     assertInputError(input) {
-        this.cy
-            .get(dataTest(input))
-            .parent()
-            .contains("Field cannot be blank");
+        this.cy.get(dataTest(input)).parent().contains("Field cannot be blank");
         return this;
     }
 
     assertInvalidUrlError() {
-        this.cy
-            .get(dataTest("url"))
-            .parent()
-            .contains("Field should be an url");
+        this.cy.get(dataTest("url")).parent().contains("Field should be an url");
         return this;
     }
 
@@ -35,30 +29,18 @@ class InstanceDetailPageObject extends InstancePageObject {
     }
 
     typeName(name) {
-        this.cy
-            .get(dataTest("name"))
-            .parent()
-            .type(name);
+        this.cy.get(dataTest("name")).parent().type(name);
         return this;
     }
 
     typeCreedentials(user, pass) {
-        this.cy
-            .get(dataTest("username"))
-            .parent()
-            .type(user);
-        this.cy
-            .get(dataTest("password"))
-            .parent()
-            .type(pass);
+        this.cy.get(dataTest("username")).parent().type(user);
+        this.cy.get(dataTest("password")).parent().type(pass);
         return this;
     }
 
     typeUrl(value) {
-        this.cy
-            .get(dataTest("url"))
-            .parent()
-            .type(value);
+        this.cy.get(dataTest("url")).parent().type(value);
         return this;
     }
 

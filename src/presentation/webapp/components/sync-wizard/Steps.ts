@@ -1,17 +1,17 @@
-import i18n from "@dhis2/d2-i18n";
 import { WizardStep } from "d2-ui-components";
+import i18n from "../../../../locales";
 import SyncRule from "../../../../models/syncRule";
 import GeneralInfoStep from "./common/GeneralInfoStep";
 import InstanceSelectionStep from "./common/InstanceSelectionStep";
 import MetadataSelectionStep from "./common/MetadataSelectionStep";
 import SchedulerStep from "./common/SchedulerStep";
 import SummaryStep from "./common/SummaryStep";
+import AggregationStep from "./data/AggregationStep";
 import CategoryOptionsSelectionStep from "./data/CategoryOptionsSelectionStep";
 import EventsSelectionStep from "./data/EventsSelectionStep";
 import OrganisationUnitsSelectionStep from "./data/OrganisationUnitsSelectionStep";
 import PeriodSelectionStep from "./data/PeriodSelectionStep";
 import MetadataIncludeExcludeStep from "./metadata/MetadataIncludeExcludeStep";
-import AggregationStep from "./data/AggregationStep";
 
 export interface SyncWizardStep extends WizardStep {
     validationKeys: string[];

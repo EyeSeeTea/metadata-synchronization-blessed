@@ -2,7 +2,7 @@ import { UseCase } from "../../common/entities/UseCase";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
 import { BaseModule, Module } from "../entities/Module";
-import { MetadataModule } from "../entities/modules/MetadataModule";
+import { MetadataModule } from "../entities/MetadataModule";
 
 export class ListModulesUseCase implements UseCase {
     constructor(private storageRepository: StorageRepository) {}

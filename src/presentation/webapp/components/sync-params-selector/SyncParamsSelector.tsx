@@ -1,6 +1,6 @@
-import i18n from "@dhis2/d2-i18n";
 import { makeStyles, Typography } from "@material-ui/core";
 import React from "react";
+import i18n from "../../../../locales";
 import SyncRule from "../../../../models/syncRule";
 import RadioButtonGroup from "../radio-button-group/RadioButtonGroup";
 import { Toggle } from "../toggle/Toggle";

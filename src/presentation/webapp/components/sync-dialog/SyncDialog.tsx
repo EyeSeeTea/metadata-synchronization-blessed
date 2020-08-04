@@ -1,7 +1,7 @@
-import i18n from "@dhis2/d2-i18n";
 import DialogContent from "@material-ui/core/DialogContent";
 import { ConfirmationDialog } from "d2-ui-components";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import i18n from "../../../../locales";
 import SyncRule from "../../../../models/syncRule";
 import SyncWizard from "../sync-wizard/SyncWizard";
 

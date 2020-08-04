@@ -1,11 +1,11 @@
-import i18n from "@dhis2/d2-i18n";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import i18n from "../../../../locales";
+import { isAppConfigurator, shouldShowDeletedObjects } from "../../../../utils/permissions";
+import { useAppContext } from "../../../common/contexts/AppContext";
 import { Landing } from "../../components/landing/Landing";
 import { MenuCardProps } from "../../components/landing/MenuCard";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import { isAppConfigurator, shouldShowDeletedObjects } from "../../../../utils/permissions";
-import { useAppContext } from "../../../common/contexts/AppContext";
 
 const LandingPage: React.FC = () => {
     const { api } = useAppContext();

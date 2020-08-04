@@ -2,10 +2,7 @@ import PageObject from "./PageObject";
 
 export default class SyncRuleListPageObject extends PageObject {
     assertRowsCount(expectedRowsCount) {
-        this.cy
-            .get("table>tbody")
-            .find("tr")
-            .should("have.length", expectedRowsCount);
+        this.cy.get("table>tbody").find("tr").should("have.length", expectedRowsCount);
         return this;
     }
 
@@ -15,10 +12,7 @@ export default class SyncRuleListPageObject extends PageObject {
             .find("tr")
             .eq(rowIndex)
             .within(() => {
-                this.cy
-                    .get("td")
-                    .eq(6)
-                    .click();
+                this.cy.get("td").eq(6).click();
             });
 
         return this;

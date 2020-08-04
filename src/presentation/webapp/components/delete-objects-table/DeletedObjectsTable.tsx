@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import SyncIcon from "@material-ui/icons/Sync";
 import {
     ObjectsTable,
@@ -14,31 +13,7 @@ import SyncRule from "../../../../models/syncRule";
 import { MetadataType } from "../../../../utils/d2";
 import moment from "moment";
 import { useAppContext } from "../../../common/contexts/AppContext";
-
-const deletedObjectsColumns: TableColumn<MetadataType>[] = [
-    { name: "id", text: i18n.t("Identifier"), sortable: true },
-    { name: "code", text: i18n.t("Code"), sortable: true },
-    { name: "klass", text: i18n.t("Metadata type"), sortable: true },
-    { name: "deletedAt", text: i18n.t("Deleted date"), sortable: true },
-    { name: "deletedBy", text: i18n.t("Deleted by"), sortable: true },
-];
-
-const deletedObjectsDetails: ObjectsTableDetailField<MetadataType>[] = [
-    { name: "id", text: i18n.t("Identifier") },
-    { name: "code", text: i18n.t("Code") },
-    { name: "klass", text: i18n.t("Metadata type") },
-    { name: "deletedAt", text: i18n.t("Deleted date") },
-    { name: "deletedBy", text: i18n.t("Deleted by") },
-];
-
-const deletedObjectsActions = [
-    {
-        name: "details",
-        text: i18n.t("Details"),
-        multiple: false,
-        type: "details",
-    },
-];
+import i18n from "../../../../locales";
 
 export interface DeletedObjectsTableProps {
     openSynchronizationDialog: () => void;
@@ -56,6 +31,31 @@ const DeletedObjectsTable: React.FC<DeletedObjectsTableProps> = ({
     const [deletedObjectsRows, setDeletedObjectsRows] = useState<MetadataType[]>([]);
     const [search, setSearch] = useState<string | undefined>(undefined);
     const [dateFilter, setDateFilter] = useState<Date | null>(null);
+
+    const deletedObjectsColumns: TableColumn<MetadataType>[] = [
+        { name: "id", text: i18n.t("Identifier"), sortable: true },
+        { name: "code", text: i18n.t("Code"), sortable: true },
+        { name: "klass", text: i18n.t("Metadata type"), sortable: true },
+        { name: "deletedAt", text: i18n.t("Deleted date"), sortable: true },
+        { name: "deletedBy", text: i18n.t("Deleted by"), sortable: true },
+    ];
+
+    const deletedObjectsDetails: ObjectsTableDetailField<MetadataType>[] = [
+        { name: "id", text: i18n.t("Identifier") },
+        { name: "code", text: i18n.t("Code") },
+        { name: "klass", text: i18n.t("Metadata type") },
+        { name: "deletedAt", text: i18n.t("Deleted date") },
+        { name: "deletedBy", text: i18n.t("Deleted by") },
+    ];
+
+    const deletedObjectsActions = [
+        {
+            name: "details",
+            text: i18n.t("Details"),
+            multiple: false,
+            type: "details",
+        },
+    ];
 
     useEffect(() => {
         DeletedObject.list(

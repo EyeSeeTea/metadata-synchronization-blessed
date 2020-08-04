@@ -1,6 +1,6 @@
-import i18n from "@dhis2/d2-i18n";
 import { WizardStep } from "d2-ui-components";
 import { Module } from "../../../../domain/modules/entities/Module";
+import i18n from "../../../../locales";
 import { GeneralInfoStep } from "./common/GeneralInfoStep";
 import { MetadataSelectionStep } from "./common/MetadataSelectionStep";
 import { SummaryStep } from "./common/SummaryStep";

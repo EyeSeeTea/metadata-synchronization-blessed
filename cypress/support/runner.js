@@ -35,7 +35,7 @@ const subfolder = pr ? `pr/${pr}` : `branch/${branch.split("/").join("-")}`;
 const pagesPath = `${process.env.TRAVIS_REPO_SLUG}/${subfolder}/${process.env.TRAVIS_COMMIT}`;
 const reportDir = `feedback-ci/${pagesPath}`;
 
-fs.writeFile("pages_path", pagesPath, function(err) {
+fs.writeFile("pages_path", pagesPath, function (err) {
     if (err) console.log(err);
 });
 

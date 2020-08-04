@@ -3,7 +3,7 @@ import { SynchronizationBuilder } from "../../../types/synchronization";
 import { NamedRef, SharedRef } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
-import { MetadataModule } from "./modules/MetadataModule";
+import { MetadataModule } from "./MetadataModule";
 
 export type Module = MetadataModule;
 export type ModuleType = "metadata";

@@ -8,11 +8,11 @@ import {
 } from "d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import PageHeader from "../../components/page-header/PageHeader";
-import { useAppContext } from "../../../common/contexts/AppContext";
-import { GitHubError } from "../../../../domain/modules/entities/Errors";
-import { Store } from "../../../../domain/modules/entities/Store";
+import { GitHubError } from "../../../../domain/packages/entities/Errors";
+import { Store } from "../../../../domain/packages/entities/Store";
 import i18n from "../../../../locales";
+import { useAppContext } from "../../../common/contexts/AppContext";
+import PageHeader from "../../components/page-header/PageHeader";
 
 const ModulesConfigPage: React.FC = () => {
     const { compositionRoot } = useAppContext();

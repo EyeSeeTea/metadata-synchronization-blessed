@@ -1,11 +1,12 @@
-import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
 } from "../../../../domain/instance/entities/MetadataMapping";
+import i18n from "../../../../locales";
 import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
@@ -20,7 +21,6 @@ import {
 import { useAppContext } from "../../../common/contexts/AppContext";
 import MappingTable from "../../components/mapping-table/MappingTable";
 import PageHeader from "../../components/page-header/PageHeader";
-import { Instance } from "../../../../domain/instance/entities/Instance";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
@@ -63,10 +63,7 @@ export default function InstanceMappingPage() {
     const [instance, setInstance] = useState<Instance>();
 
     useEffect(() => {
-        compositionRoot
-            .instances()
-            .getById(id)
-            .then(setInstance);
+        compositionRoot.instances().getById(id).then(setInstance);
     }, [compositionRoot, id]);
 
     const backHome = () => {

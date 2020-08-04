@@ -42,7 +42,7 @@ const stubRequest = (url, response, method = "GET") => {
         response: "",
         onRequest: xhr => {
             const originalOnLoad = xhr.xhr.onload;
-            xhr.xhr.onload = function() {
+            xhr.xhr.onload = function () {
                 Object.defineProperty(this, "response", {
                     writable: true,
                 });
@@ -131,9 +131,7 @@ Cypress.Commands.add("startServer", collection => {
 Cypress.Commands.add("saveFixtures", collection => {
     if (generateFixtures) {
         xhrManager.requests.forEach(req => {
-            cy.wrap(req, { log: false })
-                .its("response")
-                .should("not.be", null);
+            cy.wrap(req, { log: false }).its("response").should("not.be", null);
         });
         cy.writeFile(`cypress/fixtures/${collection}.json`, xhrManager, {
             timeout: 30000,

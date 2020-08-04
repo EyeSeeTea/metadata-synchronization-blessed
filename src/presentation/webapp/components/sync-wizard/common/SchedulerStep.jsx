@@ -1,11 +1,10 @@
-import React from "react";
-import PropTypes from "prop-types";
-import i18n from "@dhis2/d2-i18n";
-import { FormBuilder } from "@dhis2/d2-ui-forms";
 import { DropDown, TextField } from "@dhis2/d2-ui-core";
-
-import { Toggle } from "../../toggle/Toggle";
+import { FormBuilder } from "@dhis2/d2-ui-forms";
+import PropTypes from "prop-types";
+import React from "react";
+import i18n from "../../../../../locales";
 import isValidCronExpression from "../../../../../utils/validCronExpression";
+import { Toggle } from "../../toggle/Toggle";
 
 const cronExpressions = [
     { displayName: i18n.t("Every day"), id: "0 0 0 ? * *" },

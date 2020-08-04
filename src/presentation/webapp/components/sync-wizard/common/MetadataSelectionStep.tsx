@@ -1,8 +1,8 @@
-import i18n from "@dhis2/d2-i18n";
 import { useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
+import i18n from "../../../../../locales";
 import { metadataModels } from "../../../../../models/dhis/factory";
 import {
     AggregatedDataElementModel,

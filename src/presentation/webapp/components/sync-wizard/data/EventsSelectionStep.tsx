@@ -1,10 +1,10 @@
-import i18n from "@dhis2/d2-i18n";
 import { Typography } from "@material-ui/core";
 import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { ProgramEvent } from "../../../../../domain/events/entities/ProgramEvent";
 import { DataElement, Program } from "../../../../../domain/metadata/entities/MetadataEntities";
+import i18n from "../../../../../locales";
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";

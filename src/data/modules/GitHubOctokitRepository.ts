@@ -1,9 +1,9 @@
 import { Octokit } from "@octokit/rest";
 import { Either } from "../../domain/common/entities/Either";
-import { GitHubError } from "../../domain/modules/entities/Errors";
-import { Store } from "../../domain/modules/entities/Store";
-import { StorePermissions } from "../../domain/modules/entities/StorePermissions";
-import { GitHubRepository } from "../../domain/modules/repositories/GitHubRepository";
+import { GitHubError } from "../../domain/packages/entities/Errors";
+import { Store } from "../../domain/packages/entities/Store";
+import { StorePermissions } from "../../domain/packages/entities/StorePermissions";
+import { GitHubRepository } from "../../domain/packages/repositories/GitHubRepository";
 import { cache } from "../../utils/cache";
 
 export class GitHubOctokitRepository implements GitHubRepository {

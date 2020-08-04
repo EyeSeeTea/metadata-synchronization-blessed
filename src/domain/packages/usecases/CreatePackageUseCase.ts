@@ -4,7 +4,7 @@ import { ValidationError } from "../../common/entities/Validations";
 import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
-import { Module } from "../entities/Module";
+import { Module } from "../../modules/entities/Module";
 import { Package } from "../entities/Package";
 
 export class CreatePackageUseCase implements UseCase {

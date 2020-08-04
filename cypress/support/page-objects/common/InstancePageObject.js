@@ -15,9 +15,6 @@ export default class InstancePageObject extends PageObject {
     }
 
     openInstance(instance) {
-        return this.findInstance(instance)
-            .parent()
-            .find("button")
-            .click();
+        return this.findInstance(instance).parent().find("button").click();
     }
 }

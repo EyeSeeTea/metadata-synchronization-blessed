@@ -11,7 +11,7 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
-import { Package } from "../../../../domain/modules/entities/Package";
+import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";

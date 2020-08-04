@@ -1,21 +1,21 @@
 import InstanceDetailPageObject from "../support/page-objects/InstanceDetailPageObject";
 
-context("New Instance Settings", function() {
+context("New Instance Settings", function () {
     const page = new InstanceDetailPageObject(cy);
 
     beforeEach(() => {
         page.open();
     });
 
-    it("should have the correct title", function() {
+    it("should have the correct title", function () {
         page.assertTitle(title => title.contains("Destination Instance Settings"));
     });
 
-    it("should opens a new instance page", function() {
+    it("should opens a new instance page", function () {
         page.newInstance().assertTitle(title => title.contains("New Instance"));
     });
 
-    it("should show input errors when inputs are empty", function() {
+    it("should show input errors when inputs are empty", function () {
         page.newInstance()
             .save()
             .assertInputError("name")
@@ -25,7 +25,7 @@ context("New Instance Settings", function() {
             .assertError(error => error.contains("Please fix the issues before saving"));
     });
 
-    it("should show test connection error when server is empty", function() {
+    it("should show test connection error when server is empty", function () {
         page.newInstance()
             .testConnection()
             .assertError(error =>
@@ -33,7 +33,7 @@ context("New Instance Settings", function() {
             );
     });
 
-    it("should show url error when url is not valid", function() {
+    it("should show url error when url is not valid", function () {
         page.newInstance()
             .typeUrl("http")
             .unfocus()
@@ -44,7 +44,7 @@ context("New Instance Settings", function() {
             );
     });
 
-    it("should show URL and username combination already exists error when url/user is duplicated", function() {
+    it("should show URL and username combination already exists error when url/user is duplicated", function () {
         page.newInstance()
             .typeCreedentials("who", "test")
             .typeName("receiver")
@@ -53,7 +53,7 @@ context("New Instance Settings", function() {
             .assertError(error => error.contains("URL and username combination already exists"));
     });
 
-    it("should connect successfully to instance", function() {
+    it("should connect successfully to instance", function () {
         page.newInstance()
             .typeCreedentials("admin", "district")
             .typeName("test connect")
@@ -62,7 +62,7 @@ context("New Instance Settings", function() {
             .assertError(error => error.contains("Connected successfully to instance"));
     });
 
-    it("should save successfully new instance", function() {
+    it("should save successfully new instance", function () {
         page.newInstance()
             .typeCreedentials("admin_test", "district")
             .typeName("test_save")

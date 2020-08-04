@@ -64,11 +64,7 @@ interface CombinedMetadata {
 }
 
 export const cleanNestedMappedId = (id: string): string => {
-    return (
-        _(id)
-            .split("-")
-            .last() ?? ""
-    );
+    return _(id).split("-").last() ?? "";
 };
 
 const getFieldsByModel = (model: typeof D2Model) => {

@@ -15,12 +15,12 @@ interface CacheOptions {
 
 // Decorator to cache class properties and methods
 export const cache = (options: CacheOptions = {}): any =>
-    function(_target: unknown, _key: string | symbol, descriptor: PropertyDescriptor) {
+    function (_target: unknown, _key: string | symbol, descriptor: PropertyDescriptor) {
         const prop = descriptor.value ? "value" : "get";
         const originalFunction = descriptor[prop];
         const map: FunctionCache = new Map();
 
-        descriptor[prop] = function(...args: unknown[]) {
+        descriptor[prop] = function (...args: unknown[]) {
             // Serialize arguments to build a key
             const { maxArgs = args.length } = options;
             const position = Math.max(0, maxArgs);
@@ -51,7 +51,7 @@ export function memoize<Obj extends object | void, Args extends any[], U>(
 ) {
     const map: ArgumentsCache = new Map();
 
-    const result = function(this: Obj, ...args: Args) {
+    const result = function (this: Obj, ...args: Args) {
         const key = JSON.stringify(args);
         if (map.has(key)) return map.get(key);
 
@@ -96,16 +96,9 @@ export function defineLazyCachedProperty<Obj extends object, Key extends keyof O
 
 function sort(item: unknown): unknown {
     if (Array.isArray(item)) {
-        return _(item)
-            .map(sort)
-            .sort();
+        return _(item).map(sort).sort();
     } else if (typeof item === "object") {
-        return _(item)
-            .mapValues(sort)
-            .toPairs()
-            .sortBy(0)
-            .fromPairs()
-            .value();
+        return _(item).mapValues(sort).toPairs().sortBy(0).fromPairs().value();
     } else {
         return item;
     }

@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import { Button, Card, CardContent, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import { useSnackbar } from "d2-ui-components";
@@ -7,6 +6,7 @@ import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { ValidationError } from "../../../../domain/common/entities/Validations";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import i18n from "../../../../locales";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import SaveButton from "./SaveButton";
 

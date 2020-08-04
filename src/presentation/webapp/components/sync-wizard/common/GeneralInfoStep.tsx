@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import {
     FormControl,
     InputLabel,
@@ -9,6 +8,7 @@ import {
 } from "@material-ui/core";
 import React, { useCallback, useEffect, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
+import i18n from "../../../../../locales";
 import SyncRule from "../../../../../models/syncRule";
 import { Dictionary } from "../../../../../types/utils";
 import { getValidationMessages } from "../../../../../utils/old-validations";
@@ -52,10 +52,7 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
     );
 
     useEffect(() => {
-        compositionRoot
-            .instances()
-            .list()
-            .then(setInstances);
+        compositionRoot.instances().list().then(setInstances);
     }, [compositionRoot]);
 
     return (

@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import { Icon } from "@material-ui/core";
 import {
     ObjectsTable,
@@ -14,7 +13,8 @@ import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
-import { Package } from "../../../../domain/modules/entities/Package";
+import { Package } from "../../../../domain/packages/entities/Package";
+import i18n from "../../../../locales";
 import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPacakgeDialog } from "./NewPackageDialog";

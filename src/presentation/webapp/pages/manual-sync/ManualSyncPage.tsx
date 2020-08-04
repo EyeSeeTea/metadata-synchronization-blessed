@@ -1,10 +1,11 @@
-import i18n from "@dhis2/d2-i18n";
 import { MenuItem, Select } from "@material-ui/core";
 import SyncIcon from "@material-ui/icons/Sync";
 import { useLoading, useSnackbar } from "d2-ui-components";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
 import { metadataModels } from "../../../../models/dhis/factory";
 import {
@@ -27,7 +28,6 @@ import PageHeader from "../../components/page-header/PageHeader";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import { Instance } from "../../../../domain/instance/entities/Instance";
 
 const config: Record<
     SyncRuleType,
@@ -164,10 +164,7 @@ const ManualSyncPage: React.FC = () => {
     );
 
     useEffect(() => {
-        compositionRoot
-            .instances()
-            .list()
-            .then(setInstances);
+        compositionRoot.instances().list().then(setInstances);
     }, [compositionRoot]);
 
     return (

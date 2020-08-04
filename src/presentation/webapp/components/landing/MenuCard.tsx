@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import { makeStyles, Tooltip } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -9,6 +8,7 @@ import AddIcon from "@material-ui/icons/Add";
 import ViewListIcon from "@material-ui/icons/ViewList";
 import _ from "lodash";
 import React from "react";
+import i18n from "../../../../locales";
 
 export interface MenuCardProps {
     name: string;

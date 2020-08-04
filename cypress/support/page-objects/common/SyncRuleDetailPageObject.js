@@ -19,26 +19,17 @@ export default class SyncRuleDetailPageObject extends PageObject {
     }
 
     typeName(text) {
-        this.cy
-            .get(dataTest("name"))
-            .type(text)
-            .blur();
+        this.cy.get(dataTest("name")).type(text).blur();
         return this;
     }
 
     typeCode(text) {
-        this.cy
-            .get(dataTest("code"))
-            .type(text)
-            .blur();
+        this.cy.get(dataTest("code")).type(text).blur();
         return this;
     }
 
     typeDescription(text) {
-        this.cy
-            .get(dataTest("description"))
-            .type(text)
-            .blur();
+        this.cy.get(dataTest("description")).type(text).blur();
         return this;
     }
 

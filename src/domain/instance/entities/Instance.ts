@@ -74,9 +74,7 @@ export class Instance {
     }
 
     public toPublicObject(): PublicInstance {
-        return _(this.data)
-            .omit(["password"])
-            .cloneDeep();
+        return _(this.data).omit(["password"]).cloneDeep();
     }
 
     public validate(filter?: string[]): ValidationError[] {

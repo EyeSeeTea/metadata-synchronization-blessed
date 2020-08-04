@@ -83,12 +83,7 @@ const initialState = {
     },
 };
 
-const uniqCombine = (items: any[]) =>
-    _(items)
-        .reverse()
-        .uniqBy("name")
-        .reverse()
-        .value();
+const uniqCombine = (items: any[]) => _(items).reverse().uniqBy("name").reverse().value();
 
 const MetadataTable: React.FC<MetadataTableProps> = ({
     remoteInstance,

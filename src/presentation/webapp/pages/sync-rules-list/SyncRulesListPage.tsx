@@ -1,4 +1,3 @@
-import i18n from "@dhis2/d2-i18n";
 import { Icon } from "@material-ui/core";
 import {
     ConfirmationDialog,
@@ -19,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
 import { D2 } from "../../../../types/d2";
@@ -106,10 +106,7 @@ const SyncRulesPage: React.FC = () => {
     const [appExecutor, setAppExecutor] = useState(false);
 
     useEffect(() => {
-        compositionRoot
-            .instances()
-            .list()
-            .then(setAllInstances);
+        compositionRoot.instances().list().then(setAllInstances);
         getUserInfo(api).then(setUserInfo);
         isGlobalAdmin(api).then(setGlobalAdmin);
         isAppConfigurator(api).then(setAppConfigurator);

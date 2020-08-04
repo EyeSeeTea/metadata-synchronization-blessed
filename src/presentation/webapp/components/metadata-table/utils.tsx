@@ -15,12 +15,12 @@ export const getFilterData = memoize(
                 fields:
                     type === "group"
                         ? {
-                              id: true as true,
-                              name: true as true,
+                              id: true as const,
+                              name: true as const,
                           }
                         : {
-                              name: true as true,
-                              level: true as true,
+                              name: true as const,
+                              level: true as const,
                           },
                 order: type === "group" ? undefined : `level:iasc`,
             })
