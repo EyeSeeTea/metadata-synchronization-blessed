@@ -20,10 +20,7 @@ import { TransformationRepository } from "../../domain/transformations/repositor
 import { D2Api, D2Model, MetadataResponse, Model, Stats } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { cache } from "../../utils/cache";
-import {
-    metadataTransformationsFromDhis2,
-    metadataTransformationsToDhis2,
-} from "../transformations/PackageTransformations";
+import { metadataTransformations } from "../transformations/PackageTransformations";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
@@ -47,7 +44,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
             d2Metadata,
-            metadataTransformationsFromDhis2
+            metadataTransformations
         );
 
         return metadataPackage as T;
@@ -71,7 +68,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
             { [type]: objects },
-            metadataTransformationsFromDhis2
+            metadataTransformations
         );
 
         return { objects: metadataPackage[type as keyof MetadataEntities] ?? [], pager };
@@ -93,7 +90,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
             { [type]: objects },
-            metadataTransformationsFromDhis2
+            metadataTransformations
         );
 
         return metadataPackage[type as keyof MetadataEntities] ?? [];
@@ -130,7 +127,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const versionedPayloadPackage = this.transformationRepository.mapPackageTo(
             apiVersion,
             metadata,
-            metadataTransformationsToDhis2
+            metadataTransformations
         );
 
         console.debug("Versioned metadata package", versionedPayloadPackage);

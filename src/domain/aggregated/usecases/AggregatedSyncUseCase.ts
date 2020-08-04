@@ -1,6 +1,6 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { aggregatedTransformationsToDhis2 } from "../../../data/transformations/PackageTransformations";
+import { aggregatedTransformations } from "../../../data/transformations/PackageTransformations";
 import { promiseMap } from "../../../utils/common";
 import { mapCategoryOptionCombo, mapOptionValue } from "../../../utils/synchronization";
 import { Instance } from "../../instance/entities/Instance";
@@ -150,7 +150,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         const versionedPayloadPackage = this.getTransformationRepository().mapPackageTo(
             instance.apiVersion,
             mappedPayloadPackage,
-            aggregatedTransformationsToDhis2
+            aggregatedTransformations
         );
         console.debug("Aggregated package", {
             payloadPackage,

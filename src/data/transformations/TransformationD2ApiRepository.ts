@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { Transformation } from "../../domain/transformations/entities/Transformation";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
+import { API_VERSION } from "../../types/d2-api";
 
 export class TransformationD2ApiRepository implements TransformationRepository {
     /**
@@ -12,19 +13,19 @@ export class TransformationD2ApiRepository implements TransformationRepository {
      * @param transformations list of possible transformations to apply
      */
     public mapPackageTo<Input, Output>(
-        d2Version: number,
+        destination: number,
         payload: Input,
-        transformations: Transformation<unknown, Output>[] = []
+        transformations: Transformation[] = []
     ): Output {
         const transformationstoApply = _.orderBy(transformations, ["apiVersion"]).filter(
-            transformation => transformation.apiVersion <= d2Version
+            ({ apiVersion }) => apiVersion <= destination && apiVersion > API_VERSION
         );
 
         if (transformationstoApply.length > 0) {
             return this.applyTransformations<Input, Output>(payload, transformationstoApply);
         } else {
-            console.log(
-                `No transformations applied from domain to dhis2 metadata package in version ${d2Version}`
+            console.debug(
+                `No transformations applied from domain to dhis2 metadata package in version ${destination}`
             );
             return (payload as unknown) as Output;
         }
@@ -40,19 +41,19 @@ export class TransformationD2ApiRepository implements TransformationRepository {
      * @param transformations list of possible transformations to apply
      */
     public mapPackageFrom<Input, Output>(
-        d2Version: number,
+        origin: number,
         payload: Input,
-        transformations: Transformation<unknown, Output>[] = []
+        transformations: Transformation[] = []
     ): Output {
         const transformationstoApply = _.orderBy(transformations, ["apiVersion"], ["desc"]).filter(
-            transformation => transformation.apiVersion <= d2Version
+            ({ apiVersion }) => apiVersion <= origin && apiVersion > API_VERSION
         );
 
         if (transformationstoApply.length > 0) {
-            return this.applyTransformations<Input, Output>(payload, transformationstoApply);
+            return this.undoTransformations<Input, Output>(payload, transformationstoApply);
         } else {
-            console.log(
-                `No transformations applied from dhis2 to domain metadata package in version ${d2Version}`
+            console.debug(
+                `No transformations applied from dhis2 to domain metadata package in version ${origin}`
             );
             return (payload as unknown) as Output;
         }
@@ -60,11 +61,26 @@ export class TransformationD2ApiRepository implements TransformationRepository {
 
     private applyTransformations<Input, Output>(
         payload: Input,
-        transformations: Transformation<unknown, Output>[]
+        transformations: Transformation[]
     ): Output {
         return transformations.reduce(
-            (transformedPayload: Output, transformation: Transformation<unknown, Output>) =>
-                transformation.transform(transformedPayload),
+            (transformedPayload: Output, transformation: Transformation) =>
+                transformation.apply
+                    ? transformation.apply<unknown, Output>(transformedPayload)
+                    : transformedPayload,
+            (payload as unknown) as Output
+        );
+    }
+
+    private undoTransformations<Input, Output>(
+        payload: Input,
+        transformations: Transformation[]
+    ): Output {
+        return transformations.reduce(
+            (transformedPayload: Output, transformation: Transformation) =>
+                transformation.undo
+                    ? transformation.undo<unknown, Output>(transformedPayload)
+                    : transformedPayload,
             (payload as unknown) as Output
         );
     }

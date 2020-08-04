@@ -1,7 +1,7 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { eventsTransformationsToDhis2 } from "../../../data/transformations/PackageTransformations";
+import { eventsTransformations } from "../../../data/transformations/PackageTransformations";
 import { D2Program } from "../../../types/d2-api";
 import {
     mapCategoryOptionCombo,
@@ -91,7 +91,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const versionedPayloadPackage = this.getTransformationRepository().mapPackageTo(
             instance.apiVersion,
             payload,
-            eventsTransformationsToDhis2
+            eventsTransformations
         );
         console.debug("Events package", { events, payload, versionedPayloadPackage });
 

@@ -1,19 +1,20 @@
 import { Transformation } from "../entities/Transformation";
+import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 
 export interface TransformationRepositoryConstructor {
     new (): TransformationRepository;
 }
 
 export interface TransformationRepository {
-    mapPackageTo<Input, Output>(
+    mapPackageTo<Input = MetadataPackage, Output = MetadataPackage>(
         version: number,
         payload: Input,
-        transformations: Transformation<unknown, Output>[]
+        transformations: Transformation[]
     ): Output;
 
-    mapPackageFrom<Input, Output>(
+    mapPackageFrom<Input = MetadataPackage, Output = MetadataPackage>(
         version: number,
         payload: Input,
-        transformations: Transformation<unknown, Output>[]
+        transformations: Transformation[]
     ): Output;
 }

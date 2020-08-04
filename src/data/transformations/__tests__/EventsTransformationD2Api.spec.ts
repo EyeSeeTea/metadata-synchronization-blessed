@@ -24,7 +24,7 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 34,
-                    transform: (payload: D2EventsPackage) =>
+                    apply: (payload: D2EventsPackage) =>
                         renamePropInEventsPackage(payload, "value", "34Value"),
                 },
             ];
@@ -42,9 +42,9 @@ describe("Events transformations - D2Api", () => {
         it("should apply transformation if there are one lower version transformation than the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 30,
-                    transform: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "value", "30Value"),
+                    apiVersion: 31,
+                    apply: (payload: D2EventsPackage) =>
+                        renamePropInEventsPackage(payload, "value", "31Value"),
                 },
             ];
             const payload = givenAnEventsPackage();
@@ -58,7 +58,7 @@ describe("Events transformations - D2Api", () => {
             expect(
                 _.every(
                     _.flatten(transformedPayload.events.map(({ dataValues }) => dataValues)),
-                    dataValue => dataValue["30Value"]
+                    dataValue => dataValue["31Value"]
                 )
             ).toEqual(true);
         });
@@ -66,7 +66,7 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 33,
-                    transform: (payload: D2EventsPackage) =>
+                    apply: (payload: D2EventsPackage) =>
                         renamePropInEventsPackage(payload, "value", "33Value"),
                 },
             ];
@@ -90,12 +90,12 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 32,
-                    transform: (payload: D2EventsPackage) =>
+                    apply: (payload: D2EventsPackage) =>
                         renamePropInEventsPackage(payload, "value", "32Value"),
                 },
                 {
                     apiVersion: 33,
-                    transform: (payload: D2EventsPackage) =>
+                    apply: (payload: D2EventsPackage) =>
                         renamePropInEventsPackage(payload, "32Value", "33Value"),
                 },
             ];
@@ -119,12 +119,12 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 33,
-                    transform: (payload: D2EventsPackage) =>
+                    apply: (payload: D2EventsPackage) =>
                         renamePropInEventsPackage(payload, "32Value", "33Value"),
                 },
                 {
                     apiVersion: 32,
-                    transform: (payload: D2EventsPackage) =>
+                    apply: (payload: D2EventsPackage) =>
                         renamePropInEventsPackage(payload, "value", "32Value"),
                 },
             ];
@@ -162,7 +162,7 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 34,
-                    transform: (payload: D2EventsPackage) =>
+                    undo: (payload: D2EventsPackage) =>
                         renamePropInEventsPackage(payload, "34Value", "33Value"),
                 },
             ];
@@ -180,12 +180,12 @@ describe("Events transformations - D2Api", () => {
         it("should apply transformation if there are one lower version transformation than the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 30,
-                    transform: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "30Value", "value"),
+                    apiVersion: 31,
+                    undo: (payload: D2EventsPackage) =>
+                        renamePropInEventsPackage(payload, "31Value", "value"),
                 },
             ];
-            const payload = givenAnEventsPackage("30Value");
+            const payload = givenAnEventsPackage("31Value");
 
             const transformedPayload = transformationRepository.mapPackageFrom(
                 33,
@@ -203,16 +203,16 @@ describe("Events transformations - D2Api", () => {
         it("should apply transformation if there are one version transformation equal to the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 30,
-                    transform: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "30Value", "value"),
+                    apiVersion: 31,
+                    undo: (payload: D2EventsPackage) =>
+                        renamePropInEventsPackage(payload, "31Value", "value"),
                 },
             ];
 
-            const payload = givenAnEventsPackage("30Value");
+            const payload = givenAnEventsPackage("31Value");
 
             const transformedPayload = transformationRepository.mapPackageFrom(
-                30,
+                31,
                 payload,
                 transformations
             );
@@ -227,21 +227,21 @@ describe("Events transformations - D2Api", () => {
         it("should apply all transformations if there are two transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
-                    transform: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "31Value", "30Value"),
+                    apiVersion: 32,
+                    undo: (payload: D2EventsPackage) =>
+                        renamePropInEventsPackage(payload, "32Value", "31Value"),
                 },
                 {
-                    apiVersion: 30,
-                    transform: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "30Value", "value"),
+                    apiVersion: 31,
+                    undo: (payload: D2EventsPackage) =>
+                        renamePropInEventsPackage(payload, "31Value", "value"),
                 },
             ];
 
-            const payload = givenAnEventsPackage("31Value");
+            const payload = givenAnEventsPackage("32Value");
 
             const transformedPayload = transformationRepository.mapPackageFrom(
-                31,
+                32,
                 payload,
                 transformations
             );
@@ -256,21 +256,21 @@ describe("Events transformations - D2Api", () => {
         it("should apply all transformations in correct even if there are disordered transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 30,
-                    transform: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "30Value", "value"),
+                    apiVersion: 31,
+                    undo: (payload: D2EventsPackage) =>
+                        renamePropInEventsPackage(payload, "31Value", "value"),
                 },
                 {
-                    apiVersion: 31,
-                    transform: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "31Value", "30Value"),
+                    apiVersion: 32,
+                    undo: (payload: D2EventsPackage) =>
+                        renamePropInEventsPackage(payload, "32Value", "31Value"),
                 },
             ];
 
-            const payload = givenAnEventsPackage("31Value");
+            const payload = givenAnEventsPackage("32Value");
 
             const transformedPayload = transformationRepository.mapPackageFrom(
-                31,
+                32,
                 payload,
                 transformations
             );

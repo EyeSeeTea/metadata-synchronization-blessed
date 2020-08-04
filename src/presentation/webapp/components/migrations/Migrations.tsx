@@ -33,7 +33,7 @@ const Migrations: React.FC<MigrationsProps> = props => {
     if (state.type === "app-out-of-date") {
         return <MigrationsError runner={runner} onFinish={onFinish} />;
     }
-    
+
     return (
         <ConfirmationDialog
             isOpen={true}
