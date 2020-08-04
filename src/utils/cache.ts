@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { Dictionary } from "../types/utils";
 
 type ArgumentsCache = Map<string, unknown>;
@@ -23,7 +24,7 @@ export const cache = (options: CacheOptions = {}): any =>
             // Serialize arguments to build a key
             const { maxArgs = args.length } = options;
             const position = Math.max(0, maxArgs);
-            const key = JSON.stringify(args.slice(0, position));
+            const key = JSON.stringify(sort(args.slice(0, position)));
 
             // Create a new map if it's the first time the instance has been cached
             if (!map.has(this)) map.set(this, new Map());
@@ -91,4 +92,21 @@ export function defineLazyCachedProperty<Obj extends object, Key extends keyof O
         enumerable: true,
         configurable: true,
     });
+}
+
+function sort(item: unknown): unknown {
+    if (Array.isArray(item)) {
+        return _(item)
+            .map(sort)
+            .sort();
+    } else if (typeof item === "object") {
+        return _(item)
+            .mapValues(sort)
+            .toPairs()
+            .sortBy(0)
+            .fromPairs()
+            .value();
+    } else {
+        return item;
+    }
 }

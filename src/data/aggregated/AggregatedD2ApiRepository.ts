@@ -5,18 +5,19 @@ import { MappedCategoryOption } from "../../domain/aggregated/entities/MappedCat
 import { AggregatedRepository } from "../../domain/aggregated/repositories/AggregatedRepository";
 import { DataSyncAggregation, DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
-import { Instance as InstanceEntity } from "../../domain/instance/entities/Instance";
+import { Instance } from "../../domain/instance/entities/Instance";
+import { MetadataMappingDictionary } from "../../domain/instance/entities/MetadataMapping";
+import { CategoryOptionCombo } from "../../domain/metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
-import Instance, { MetadataMappingDictionary } from "../../models/instance";
 import { DataImportParams } from "../../types/d2";
-import { D2Api, D2CategoryOptionCombo, DataValueSetsPostResponse } from "../../types/d2-api";
+import { D2Api, DataValueSetsPostResponse } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
 
 export class AggregatedD2ApiRepository implements AggregatedRepository {
     private api: D2Api;
 
-    constructor(instance: InstanceEntity) {
+    constructor(private instance: Instance) {
         this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 
@@ -114,7 +115,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
      */
     public async getOptions(
         { aggregatedDataElements }: MetadataMappingDictionary,
-        categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+        categoryOptionCombos: Partial<CategoryOptionCombo>[]
     ): Promise<MappedCategoryOption[]> {
         const dimensions = await this.getDimensions();
         const findOptionCombo = (mappedOption: string, mappedCombo?: string) =>
@@ -172,8 +173,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
 
     public async save(
         data: object,
-        additionalParams: DataImportParams | undefined,
-        instance: Instance
+        additionalParams: DataImportParams | undefined
     ): Promise<SynchronizationResult> {
         const { status, description, importCount, conflicts } = await this.api
             .post<DataValueSetsPostResponse>(
@@ -204,7 +204,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             status,
             message: description,
             stats: importCount,
-            instance: instance.toObject(),
+            instance: this.instance.toPublicObject(),
             errors,
             date: new Date(),
             type: "aggregated",

@@ -22,9 +22,19 @@ class TestClass {
         return Math.random() * this.multiplier * int1 * int2;
     }
 
+    @cache()
+    public static getMultipleStatic(int1: number, int2: number): number {
+        return Math.random() * int1 * int2;
+    }
+
     @cache({ maxArgs: 0 })
     public getComplexMax(int: number): number {
         return Math.random() * this.multiplier * int;
+    }
+
+    @cache()
+    public getObjectComparison(_foo: unknown): number {
+        return Math.random();
     }
 
     public resetBasic(): void {
@@ -41,6 +51,10 @@ class TestClass {
 
     public resetMemoize(): void {
         clear(this.memoized, this);
+    }
+
+    public static resetStatic(): void {
+        clear(TestClass.getMultipleStatic, TestClass);
     }
 }
 
@@ -68,6 +82,10 @@ describe("Cache decorator with clearing", () => {
 
     it("multiple - should be the same number", () => {
         expect(test.getMultiple(10, 20)).toEqual(test.getMultiple(10, 20));
+    });
+
+    it("static - should be the same number", () => {
+        expect(TestClass.getMultipleStatic(10, 20)).toEqual(TestClass.getMultipleStatic(10, 20));
     });
 
     it("memoize - should be the same number", () => {
@@ -99,6 +117,12 @@ describe("Cache decorator with clearing", () => {
         expect(test.getMultiple(10, 20)).not.toEqual(number);
     });
 
+    it("static - should be a new number", () => {
+        const number = TestClass.getMultipleStatic(10, 20);
+        TestClass.resetStatic();
+        expect(TestClass.getMultipleStatic(10, 20)).not.toEqual(number);
+    });
+
     it("memoize - should be a new number", () => {
         const number = test.memoized({ value: 10 }, { value: 20 });
         test.resetMemoize();
@@ -118,6 +142,12 @@ describe("Cache decorator with clearing", () => {
 
     it("multiple - should be a different number", () => {
         expect(test.getMultiple(20, 30)).not.toEqual(test.getMultiple(10, 20));
+    });
+
+    it("static - should be a different number", () => {
+        expect(TestClass.getMultipleStatic(20, 30)).not.toEqual(
+            TestClass.getMultipleStatic(10, 20)
+        );
     });
 
     it("memoize - should be a different number", () => {
@@ -150,6 +180,26 @@ describe("Cache decorator with clearing", () => {
 
     it("max args - should be the same number", () => {
         expect(test.getComplexMax(100)).toEqual(test.getComplexMax(200));
+    });
+
+    it("object - should be the same number", () => {
+        expect(test.getObjectComparison({ a: "test", b: 13 })).toEqual(
+            test.getObjectComparison({ a: "test", b: 13 })
+        );
+    });
+
+    it("object - should be the same number", () => {
+        expect(
+            test.getObjectComparison({ e: [2, 1], d: { b: 1, a: 2 }, c: false, a: "test", b: 13 })
+        ).toEqual(
+            test.getObjectComparison({ a: "test", b: 13, c: false, d: { a: 2, b: 1 }, e: [1, 2] })
+        );
+    });
+
+    it("object - should be a new number", () => {
+        expect(test.getObjectComparison({ a: "test", b: 13 })).not.toEqual(
+            test.getObjectComparison({ a: "test", b: 11 })
+        );
     });
 });
 

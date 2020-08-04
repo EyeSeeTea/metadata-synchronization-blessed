@@ -17,18 +17,13 @@ import _ from "lodash";
 import { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import Dropdown from "../../components/dropdown/Dropdown";
-import PageHeader from "../../components/page-header/PageHeader";
-import SharingDialog from "../../components/sharing-dialog/SharingDialog";
-import SyncSummary from "../../components/sync-summary/SyncSummary";
-import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import { useAppContext } from "../../../common/contexts/AppContext";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
-import Instance from "../../../../models/instance";
 import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
 import { D2 } from "../../../../types/d2";
 import { getValueForCollection } from "../../../../utils/d2-ui-components";
+import { getValidationMessages } from "../../../../utils/old-validations";
 import {
     getUserInfo,
     isAppConfigurator,
@@ -37,7 +32,12 @@ import {
     UserInfo,
 } from "../../../../utils/permissions";
 import { requestJSONDownload } from "../../../../utils/synchronization";
-import { getValidationMessages } from "../../../../utils/old-validations";
+import { useAppContext } from "../../../common/contexts/AppContext";
+import Dropdown from "../../components/dropdown/Dropdown";
+import PageHeader from "../../components/page-header/PageHeader";
+import SharingDialog from "../../components/sharing-dialog/SharingDialog";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
 const config: {
     [key: string]: {
@@ -106,12 +106,15 @@ const SyncRulesPage: React.FC = () => {
     const [appExecutor, setAppExecutor] = useState(false);
 
     useEffect(() => {
-        Instance.list(api, null, null).then(({ objects }) => setAllInstances(objects));
+        compositionRoot
+            .instances()
+            .list()
+            .then(setAllInstances);
         getUserInfo(api).then(setUserInfo);
         isGlobalAdmin(api).then(setGlobalAdmin);
         isAppConfigurator(api).then(setAppConfigurator);
         isAppExecutor(api).then(setAppExecutor);
-    }, [api]);
+    }, [api, compositionRoot]);
 
     const getTargetInstances = (rule: SyncRule) => {
         return _(rule.targetInstances)
@@ -181,7 +184,7 @@ const SyncRulesPage: React.FC = () => {
         loading.show(true, "Generating JSON file");
         const rule = await SyncRule.get(api, id);
 
-        const sync = compositionRoot.sync()[rule.type](rule.toBuilder());
+        const sync = compositionRoot.sync[rule.type](rule.toBuilder());
         const payload = await sync.buildPayload();
 
         requestJSONDownload(payload, rule);
@@ -265,7 +268,7 @@ const SyncRulesPage: React.FC = () => {
 
         const { builder, id: syncRule, type = "metadata" } = rule;
 
-        const sync = compositionRoot.sync()[type]({ ...builder, syncRule });
+        const sync = compositionRoot.sync[type]({ ...builder, syncRule });
         for await (const { message, syncReport, done } of sync.execute()) {
             if (message) loading.show(true, message);
             if (syncReport) await syncReport.save(api);

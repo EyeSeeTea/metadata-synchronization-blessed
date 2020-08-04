@@ -3,6 +3,7 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
+import { MetadataMappingDictionary } from "./MetadataMapping";
 
 export type PublicInstance = Omit<InstanceData, "password">;
 
@@ -10,6 +11,7 @@ export interface InstanceData {
     id: string;
     name: string;
     url: string;
+    metadataMapping?: MetadataMappingDictionary;
     username?: string;
     password?: string;
     description?: string;
@@ -53,8 +55,12 @@ export class Instance {
         return this.data.description ?? "";
     }
 
-    public get version(): string | undefined {
-        return this.data.version;
+    public get metadataMapping(): MetadataMappingDictionary {
+        return this.data.metadataMapping ?? {};
+    }
+
+    public get version(): string {
+        return this.data.version ?? "2.30";
     }
 
     public get apiVersion(): number {
@@ -63,8 +69,14 @@ export class Instance {
         return Number(apiVersion);
     }
 
-    public toObject(): PublicInstance {
-        return _.omit(this.data, ["password"]);
+    public toObject(): InstanceData {
+        return _.cloneDeep(this.data);
+    }
+
+    public toPublicObject(): PublicInstance {
+        return _(this.data)
+            .omit(["password"])
+            .cloneDeep();
     }
 
     public validate(filter?: string[]): ValidationError[] {
@@ -73,12 +85,24 @@ export class Instance {
         );
     }
 
+    public update(data?: Partial<Pick<Instance, keyof InstanceData>>): Instance {
+        return Instance.build({ ...this.data, ...data });
+    }
+
+    public replicate(): Instance {
+        return this.update({
+            name: `Copy of ${this.data.name}`,
+            id: generateUid(),
+        });
+    }
+
     public static build(data: PartialBy<InstanceData, "id">): Instance {
         return new Instance({ id: generateUid(), ...data });
     }
 
     private moduleValidations = (): ModelValidation[] => [
         { property: "name", validation: "hasText" },
+        { property: "url", validation: "isUrl" },
         { property: "url", validation: "hasText" },
         { property: "username", validation: "hasText" },
         { property: "password", validation: "hasText" },

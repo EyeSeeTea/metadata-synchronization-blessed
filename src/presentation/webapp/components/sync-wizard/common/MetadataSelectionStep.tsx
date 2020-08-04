@@ -1,7 +1,8 @@
 import i18n from "@dhis2/d2-i18n";
 import { useSnackbar } from "d2-ui-components";
 import _ from "lodash";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { metadataModels } from "../../../../../models/dhis/factory";
 import {
     AggregatedDataElementModel,
@@ -15,9 +16,9 @@ import {
     IndicatorModel,
 } from "../../../../../models/dhis/metadata";
 import { getMetadata } from "../../../../../utils/synchronization";
+import { useAppContext } from "../../../../common/contexts/AppContext";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { SyncWizardStepProps } from "../Steps";
-import { useAppContext } from "../../../../common/contexts/AppContext";
 
 const config = {
     metadata: {
@@ -44,13 +45,15 @@ const config = {
     },
 };
 
-export default function MetadataSelectionStep(props: SyncWizardStepProps) {
-    const { api } = useAppContext();
-    const { syncRule, onChange } = props;
-    const { models, childrenKeys } = config[syncRule.type];
+export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
+    const { api, compositionRoot } = useAppContext();
+    const snackbar = useSnackbar();
 
     const [metadataIds, updateMetadataIds] = useState<string[]>([]);
-    const snackbar = useSnackbar();
+    const [remoteInstance, setRemoteInstance] = useState<Instance>();
+    const [loading, setLoading] = useState<boolean>(true);
+
+    const { models, childrenKeys } = config[syncRule.type];
 
     const changeSelection = (newMetadataIds: string[], newExclusionIds: string[]) => {
         const additions = _.difference(newMetadataIds, metadataIds);
@@ -89,6 +92,17 @@ export default function MetadataSelectionStep(props: SyncWizardStepProps) {
         updateMetadataIds(newMetadataIds);
     };
 
+    useEffect(() => {
+        compositionRoot
+            .instances()
+            .getById(syncRule.originInstance)
+            .then(setRemoteInstance)
+            .catch(() => setRemoteInstance(undefined))
+            .finally(() => setLoading(false));
+    }, [compositionRoot, syncRule]);
+
+    if (loading) return null;
+
     return (
         <MetadataTable
             models={models}
@@ -97,6 +111,7 @@ export default function MetadataSelectionStep(props: SyncWizardStepProps) {
             notifyNewSelection={changeSelection}
             childrenKeys={childrenKeys}
             showIndeterminateSelection={true}
+            remoteInstance={remoteInstance}
         />
     );
 }

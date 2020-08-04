@@ -2,21 +2,24 @@ import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import { Instance } from "../../../../domain/instance/entities/Instance";
+import { useAppContext } from "../../../common/contexts/AppContext";
 import { Card, Landing } from "../../components/landing/Landing";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import Instance from "../../../../models/instance";
-import { useAppContext } from "../../../common/contexts/AppContext";
 
 const InstanceMappingLandingPage: React.FC = () => {
-    const { api } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const history = useHistory();
     const { id } = useParams() as { id: string };
 
-    const [instance, setInstance] = useState<Instance>();
+    const [instance, setInstance] = useState<Instance | undefined>();
 
     useEffect(() => {
-        Instance.get(api, id).then(setInstance);
-    }, [api, id]);
+        compositionRoot
+            .instances()
+            .getById(id)
+            .then(setInstance);
+    }, [compositionRoot, id]);
 
     const cards: Card[] = [
         {

@@ -38,6 +38,7 @@ import { D2Model } from "./dhis/default";
 const dataStoreKey = "rules";
 
 const defaultSynchronizationBuilder: SynchronizationBuilder = {
+    originInstance: "LOCAL",
     targetInstances: [],
     metadataIds: [],
     excludedIds: [],
@@ -119,6 +120,10 @@ export default class SyncRule {
 
     public get description(): string | undefined {
         return this.syncRule.description;
+    }
+
+    public get originInstance(): string {
+        return this.syncRule.builder?.originInstance ?? "LOCAL";
     }
 
     public get builder(): SynchronizationBuilder {
@@ -349,6 +354,7 @@ export default class SyncRule {
             "metadataIds",
             "excludedIds",
             "metadataTypes",
+            "originInstance",
             "targetInstances",
             "syncParams",
             "dataParams",
@@ -746,7 +752,7 @@ export default class SyncRule {
             ]),
             metadataIncludeExclude: [],
             targetInstances: _.compact([
-                this.targetInstances.length === 0
+                this.originInstance === "LOCAL" && this.targetInstances.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "instance" },

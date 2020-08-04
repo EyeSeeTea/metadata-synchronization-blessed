@@ -1,34 +1,20 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { d2ModelFactory } from "../../../models/dhis/factory";
-import Instance from "../../../models/instance";
-import { D2 } from "../../../types/d2";
-import { ExportBuilder, NestedRules, SynchronizationBuilder } from "../../../types/synchronization";
+import { ExportBuilder, NestedRules } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { Ref } from "../../common/entities/Ref";
-import { Instance as InstanceEntity } from "../../instance/entities/Instance";
-import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
+import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import {
     GenericSyncUseCase,
     SyncronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
-import { MetadataRepository } from "../repositories/MetadataRepository";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
-
-    constructor(
-        d2: D2,
-        instance: InstanceEntity,
-        builder: SynchronizationBuilder,
-        instanceRepository: InstanceRepository,
-        private metadataRepository: MetadataRepository
-    ) {
-        super(d2, instance, builder, instanceRepository);
-    }
 
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
         const visitedIds: Set<string> = new Set();
@@ -45,7 +31,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             const nestedIncludeRules: NestedRules = buildNestedRules(includeRules);
 
             // Get all the required metadata
-            const syncMetadata = await this.metadataRepository.getMetadataByIds(ids);
+            const metadataRepository = await this.getMetadataRepository();
+            const syncMetadata = await metadataRepository.getMetadataByIds(ids);
             const elements = syncMetadata[collectionName] || [];
 
             for (const element of elements) {
@@ -96,10 +83,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
 
-        const metadata = await this.metadataRepository.getMetadataFieldsByIds<Ref>(
-            metadataIds,
-            "id"
-        );
+        const metadataRepository = await this.getMetadataRepository();
+        const metadata = await metadataRepository.getMetadataByIds<Ref>(metadataIds, "id");
 
         const exportResults = await promiseMap(_.keys(metadata), type => {
             const myClass = d2ModelFactory(this.api, type);
@@ -128,21 +113,15 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         return metadataWithoutDuplicates;
     });
 
-    public async postPayload(
-        _instance: Instance,
-        instanceEntity: InstanceEntity
-    ): Promise<SynchronizationResult[]> {
+    public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
 
         console.debug("Metadata package", payloadPackage);
 
-        const syncResult = await this.metadataRepository.save(
-            payloadPackage,
-            syncParams,
-            instanceEntity
-        );
+        const remoteMetadataRepository = await this.getMetadataRepository(instance);
+        const syncResult = await remoteMetadataRepository.save(payloadPackage, syncParams);
 
         return [syncResult];
     }

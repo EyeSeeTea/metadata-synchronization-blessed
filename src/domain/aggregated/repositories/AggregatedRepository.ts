@@ -1,10 +1,15 @@
-import Instance, { MetadataMappingDictionary } from "../../../models/instance";
 import { DataImportParams } from "../../../types/d2";
-import { D2CategoryOptionCombo } from "../../../types/d2-api";
+import { Instance } from "../../instance/entities/Instance";
+import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { MappedCategoryOption } from "../entities/MappedCategoryOption";
 import { DataSynchronizationParams } from "../types";
+
+export interface AggregatedRepositoryConstructor {
+    new (instance: Instance): AggregatedRepository;
+}
 
 export interface AggregatedRepository {
     getAggregated(
@@ -22,14 +27,13 @@ export interface AggregatedRepository {
 
     getOptions(
         { aggregatedDataElements }: MetadataMappingDictionary,
-        categoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+        categoryOptionCombos: Partial<CategoryOptionCombo>[]
     ): Promise<MappedCategoryOption[]>;
 
     getDimensions(): Promise<string[]>;
 
     save(
         data: object,
-        additionalParams: DataImportParams | undefined,
-        targetInstance: Instance
+        additionalParams: DataImportParams | undefined
     ): Promise<SynchronizationResult>;
 }

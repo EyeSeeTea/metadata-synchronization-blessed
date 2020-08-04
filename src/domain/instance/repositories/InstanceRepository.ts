@@ -1,10 +1,20 @@
+import { D2Api } from "../../../types/d2-api";
+import { CategoryOptionCombo, OrganisationUnit } from "../../metadata/entities/MetadataEntities";
 import { Instance } from "../entities/Instance";
 import { User } from "../entities/User";
 
+export interface InstanceRepositoryConstructor {
+    new (instance: Instance, encryptionKey: string): InstanceRepository;
+}
+
 export interface InstanceRepository {
+    getApi(): D2Api;
     getBaseUrl(): string;
     getUser(): Promise<User>;
     getVersion(): Promise<string>;
-    getById(id: string): Promise<Instance>;
     getDefaultIds(filter?: string): Promise<string[]>;
+    getCategoryOptionCombos(): Promise<
+        Pick<CategoryOptionCombo, "id" | "name" | "categoryCombo" | "categoryOptions">[]
+    >;
+    getOrgUnitRoots(): Promise<Pick<OrganisationUnit, "id" | "name" | "displayName" | "path">[]>;
 }

@@ -1,26 +1,32 @@
 import _ from "lodash";
+import moment from "moment";
+import { Ref } from "../../domain/common/entities/Ref";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
     MetadataEntities,
     MetadataEntity,
-    MetadataFieldsPackage,
     MetadataPackage,
 } from "../../domain/metadata/entities/MetadataEntities";
-import { MetadataRepository } from "../../domain/metadata/repositories/MetadataRepository";
+import {
+    ListMetadataParams,
+    ListMetadataResponse,
+    MetadataRepository,
+} from "../../domain/metadata/repositories/MetadataRepository";
 import { MetadataImportParams } from "../../domain/metadata/types";
 import { getClassName } from "../../domain/metadata/utils";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
+import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import {
     D2Api,
     D2ApiDefinition,
     D2Model,
     D2ModelSchemas,
-    Id,
     MetadataResponse,
     Model,
     Stats,
 } from "../../types/d2-api";
+import { Dictionary } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import {
     metadataTransformationsFromDhis2,
@@ -30,7 +36,10 @@ import {
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
 
-    constructor(instance: Instance, private transformationRepository: TransformationRepository) {
+    constructor(
+        private instance: Instance,
+        private transformationRepository: TransformationRepository
+    ) {
         this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 
@@ -38,49 +47,10 @@ export class MetadataD2ApiRepository implements MetadataRepository {
      * Return raw specific fields of metadata dhis2 models according to ids filter
      * @param ids metadata ids to retrieve
      */
-    public async getMetadataFieldsByIds<T>(
-        ids: string[],
-        fields: string,
-        targetInstance?: Instance
-    ): Promise<MetadataFieldsPackage<T>> {
-        return this.getMetadata<T>(ids, fields, targetInstance);
-    }
+    public async getMetadataByIds<T>(ids: string[], fields: string): Promise<MetadataPackage<T>> {
+        const { apiVersion } = this.instance;
 
-    /**
-     * Return metadata entities by type. Realize mapping from d2 to domain
-     * TODO: this method is not used for the moment, only is created as template
-     * - create object options in domain with (order, filters, paging ....)
-     * - Create domain pager?
-     */
-    public async getMetadataByType(type: keyof MetadataEntities): Promise<MetadataEntity[]> {
-        const apiModel = this.getApiModel(type);
-
-        const responseData = await apiModel
-            .get({
-                paging: false,
-                fields: { $owner: true },
-            })
-            .getData();
-
-        const apiVersion = await this.getVersion();
-
-        const metadataPackage = this.transformationRepository.mapPackageFrom(
-            apiVersion,
-            responseData,
-            metadataTransformationsFromDhis2
-        );
-
-        return metadataPackage[type] || [];
-    }
-
-    /**
-     * Return metadata entities according to ids filter. Realize mapping from d2 to domain
-     * @param ids metadata ids to retrieve
-     */
-    public async getMetadataByIds(ids: string[]): Promise<MetadataPackage> {
-        const d2Metadata = await this.getMetadata<D2Model>(ids);
-
-        const apiVersion = await this.getVersion();
+        const d2Metadata = await this.getMetadata<D2Model>(ids, fields);
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -88,15 +58,83 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             metadataTransformationsFromDhis2
         );
 
-        return metadataPackage;
+        return metadataPackage as T;
+    }
+
+    @cache()
+    public async listMetadata({
+        type,
+        fields = { $owner: true },
+        page,
+        pageSize,
+        ...params
+    }: ListMetadataParams): Promise<ListMetadataResponse> {
+        const filter = this.buildListFilters(params);
+        const { apiVersion } = this.instance;
+
+        const { objects, pager } = await this.getApiModel(type)
+            .get({ paging: true, fields, filter, page, pageSize })
+            .getData();
+
+        const metadataPackage = this.transformationRepository.mapPackageFrom(
+            apiVersion,
+            { [type]: objects },
+            metadataTransformationsFromDhis2
+        );
+
+        return { objects: metadataPackage[type as keyof MetadataEntities] ?? [], pager };
+    }
+
+    @cache()
+    public async listAllMetadata({
+        type,
+        fields = { $owner: true },
+        ...params
+    }: ListMetadataParams): Promise<MetadataEntity[]> {
+        const filter = this.buildListFilters(params);
+        const { apiVersion } = this.instance;
+
+        const { objects } = await this.getApiModel(type)
+            .get({ paging: false, fields, filter })
+            .getData();
+
+        const metadataPackage = this.transformationRepository.mapPackageFrom(
+            apiVersion,
+            { [type]: objects },
+            metadataTransformationsFromDhis2
+        );
+
+        return metadataPackage[type as keyof MetadataEntities] ?? [];
+    }
+
+    private buildListFilters({
+        lastUpdated,
+        group,
+        level,
+        parents,
+        showOnlySelected,
+        selectedIds = [],
+        filterRows,
+        search,
+    }: Partial<ListMetadataParams>) {
+        const filter: Dictionary<unknown> = {};
+
+        if (lastUpdated) filter["lastUpdated"] = { ge: moment(lastUpdated).format("YYYY-MM-DD") };
+        if (group) filter[`${group.type}.id`] = { eq: group.value };
+        if (level) filter["level"] = { eq: level };
+        if (parents) filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
+        if (showOnlySelected) filter["id"] = { in: selectedIds };
+        if (filterRows) filter["id"] = { in: filterRows };
+        if (search) filter[search.field] = { [search.operator]: search.value };
+
+        return filter;
     }
 
     public async save(
         metadata: MetadataPackage,
-        additionalParams: MetadataImportParams,
-        targetInstance: Instance
+        additionalParams: MetadataImportParams
     ): Promise<SynchronizationResult> {
-        const apiVersion = await this.getVersion(targetInstance);
+        const { apiVersion } = this.instance;
         const versionedPayloadPackage = this.transformationRepository.mapPackageTo(
             apiVersion,
             metadata,
@@ -105,35 +143,25 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
         console.debug("Versioned metadata package", versionedPayloadPackage);
 
-        const response = await this.postMetadata(
-            versionedPayloadPackage,
-            additionalParams,
-            targetInstance
-        );
+        const response = await this.postMetadata(versionedPayloadPackage, additionalParams);
 
-        return this.cleanMetadataImportResponse(response, targetInstance, "metadata");
+        return this.cleanMetadataImportResponse(response, "metadata");
     }
 
     public async remove(
-        metadata: MetadataFieldsPackage<{ id: Id }>,
-        additionalParams: MetadataImportParams,
-        targetInstance: Instance
+        metadata: MetadataPackage<Ref>,
+        additionalParams: MetadataImportParams
     ): Promise<SynchronizationResult> {
-        const response = await this.postMetadata(
-            metadata,
-            {
-                ...additionalParams,
-                importStrategy: "DELETE",
-            },
-            targetInstance
-        );
+        const response = await this.postMetadata(metadata, {
+            ...additionalParams,
+            importStrategy: "DELETE",
+        });
 
-        return this.cleanMetadataImportResponse(response, targetInstance, "deleted");
+        return this.cleanMetadataImportResponse(response, "deleted");
     }
 
     private cleanMetadataImportResponse(
         importResult: MetadataResponse,
-        instance: Instance,
         type: "metadata" | "deleted"
     ): SynchronizationResult {
         const { status, stats, typeReports = [] } = importResult;
@@ -157,7 +185,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             status: status === "OK" ? "SUCCESS" : status,
             stats: formatStats(stats),
             typeStats,
-            instance: instance.toObject(),
+            instance: this.instance.toPublicObject(),
             errors: messages,
             date: new Date(),
             type,
@@ -166,10 +194,9 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     private async postMetadata(
         payload: Partial<Record<string, unknown[]>>,
-        additionalParams?: MetadataImportParams,
-        targetInstance?: Instance
+        additionalParams?: MetadataImportParams
     ): Promise<MetadataResponse> {
-        const response = await this.getApi(targetInstance)
+        const response = await this.api
             .post<MetadataResponse>(
                 "/metadata",
                 {
@@ -188,34 +215,15 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         return response;
     }
 
-    private getApi(targetInstance?: Instance): D2Api {
-        const { url, username, password } = targetInstance ?? {};
-        const auth = username && password ? { username, password } : undefined;
-        return targetInstance ? new D2Api({ baseUrl: url, auth }) : this.api;
-    }
-
-    @cache()
-    private async getVersion(targetInstance?: Instance): Promise<number> {
-        if (!targetInstance) {
-            const version = await this.api.getVersion();
-            return Number(version.split(".")[1]);
-        } else if (targetInstance.apiVersion) {
-            return targetInstance.apiVersion;
-        } else {
-            throw Error("Necessary api version to apply transformations to package is undefined");
-        }
-    }
-
     private async getMetadata<T>(
         elements: string[],
-        fields = ":all",
-        targetInstance?: Instance
+        fields = ":all"
     ): Promise<Record<string, T[]>> {
         const promises = [];
         for (let i = 0; i < elements.length; i += 100) {
             const requestElements = elements.slice(i, i + 100).toString();
             promises.push(
-                this.getApi(targetInstance)
+                this.api
                     .get("/metadata", {
                         fields,
                         filter: "id:in:[" + requestElements + "]",

@@ -2,56 +2,41 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { eventsTransformationsToDhis2 } from "../../../data/transformations/PackageTransformations";
-import Instance, { MetadataMappingDictionary } from "../../../models/instance";
-import { D2 } from "../../../types/d2";
-import { D2CategoryOptionCombo, D2Program } from "../../../types/d2-api";
-import { SynchronizationBuilder } from "../../../types/synchronization";
+import { D2Program } from "../../../types/d2-api";
 import {
-    getCategoryOptionCombos,
     mapCategoryOptionCombo,
     mapOptionValue,
     mapProgramDataElement,
 } from "../../../utils/synchronization";
 import { DataValue } from "../../aggregated/entities/DataValue";
-import { AggregatedRepository } from "../../aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
-import { Instance as InstanceEntity } from "../../instance/entities/Instance";
-import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
+import { Instance } from "../../instance/entities/Instance";
+import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import {
     GenericSyncUseCase,
     SyncronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
-import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
-import { EventsRepository } from "../repositories/EventsRepository";
 
 export class EventsSyncUseCase extends GenericSyncUseCase {
     public readonly type = "events";
     public readonly fields =
         "id,name,programStages[programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
 
-    constructor(
-        d2: D2,
-        instance: InstanceEntity,
-        builder: SynchronizationBuilder,
-        instanceRepository: InstanceRepository,
-        private eventsRepository: EventsRepository,
-        private aggregatedRepository: AggregatedRepository,
-        private transformationRepository: TransformationRepository
-    ) {
-        super(d2, instance, builder, instanceRepository);
-    }
-
     public buildPayload = memoize(async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
         const { enableAggregation = false } = dataParams;
+        const eventsRepository = await this.getEventsRepository();
+        const aggregatedRepository = await this.getAggregatedRepository();
+
         const { programs = [], programIndicators = [] } = await this.extractMetadata();
 
         const events = (
-            await this.eventsRepository.getEvents(
+            await eventsRepository.getEvents(
                 dataParams,
                 programs.map(({ id }) => id)
             )
@@ -68,7 +53,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         );
 
         const { dataValues: candidateDataValues = [] } = enableAggregation
-            ? await this.aggregatedRepository.getAnalytics({
+            ? await aggregatedRepository.getAnalytics({
                   dataParams,
                   dimensionIds: [...directIndicators, ...indicatorsByProgram],
                   includeCategories: false,
@@ -82,39 +67,36 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         return { events, dataValues };
     });
 
-    public async postPayload(instance: Instance, instanceEntity: InstanceEntity) {
+    public async postPayload(instance: Instance) {
         const { events, dataValues } = await this.buildPayload();
 
-        const eventsResponse = await this.postEventsPayload(instance, instanceEntity, events);
+        const eventsResponse = await this.postEventsPayload(instance, events);
 
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
         return _.compact([eventsResponse, indicatorsResponse]);
     }
 
-    private async postEventsPayload(
-        instance: Instance,
-        instanceEntity: InstanceEntity,
-        events: ProgramEvent[]
-    ) {
+    private async postEventsPayload(instance: Instance, events: ProgramEvent[]) {
         const { dataParams = {} } = this.builder;
 
         const payload = await this.mapPayload(instance, { events });
 
-        if (!instanceEntity.apiVersion) {
+        if (!instance.apiVersion) {
             throw new Error(
                 "Necessary api version of receiver instance to apply transformations to package is undefined"
             );
         }
 
-        const versionedPayloadPackage = this.transformationRepository.mapPackageTo(
-            instanceEntity.apiVersion,
+        const versionedPayloadPackage = this.getTransformationRepository().mapPackageTo(
+            instance.apiVersion,
             payload,
             eventsTransformationsToDhis2
         );
         console.debug("Events package", { events, payload, versionedPayloadPackage });
 
-        return this.eventsRepository.save(payload, dataParams, instance);
+        const eventsRepository = await this.getEventsRepository(instance);
+        return eventsRepository.save(payload, dataParams);
     }
 
     private async postIndicatorPayload(instance: Instance, dataValues: DataValue[]) {
@@ -125,16 +107,16 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         // TODO: This is an external action and should be called by user
         const aggregatedSync = new AggregatedSyncUseCase(
             this.d2,
-            this.instance,
             this.builder,
-            this.instanceRepository,
-            this.aggregatedRepository,
-            this.transformationRepository
+            this.repositoryFactory,
+            this.localInstance,
+            this.encryptionKey
         );
         const payload = await aggregatedSync.mapPayload(instance, { dataValues });
         console.debug("Program indicator package", { dataValues, payload });
 
-        return this.aggregatedRepository.save(payload, dataParams, instance);
+        const aggregatedRepository = await this.getAggregatedRepository(instance);
+        return aggregatedRepository.save(payload, dataParams);
     }
 
     public async buildDataStats() {
@@ -158,9 +140,12 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         payload: EventsPackage
     ): Promise<SyncronizationPayload> {
         const { events: oldEvents } = payload;
-        const originCategoryOptionCombos = await getCategoryOptionCombos(this.api);
-        const destinationCategoryOptionCombos = await getCategoryOptionCombos(instance.getApi());
-        const defaultCategoryOptionCombos = await this.instanceRepository.getDefaultIds(
+        const instanceRepository = await this.getInstanceRepository();
+        const remoteInstanceRepository = await this.getInstanceRepository(instance);
+
+        const originCategoryOptionCombos = await instanceRepository.getCategoryOptionCombos();
+        const destinationCategoryOptionCombos = await remoteInstanceRepository.getCategoryOptionCombos();
+        const defaultCategoryOptionCombos = await instanceRepository.getDefaultIds(
             "categoryOptionCombos"
         );
 
@@ -182,8 +167,8 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
     private buildMappedDataValue(
         { orgUnit, program, programStage, dataValues, attributeOptionCombo, ...rest }: ProgramEvent,
         globalMapping: MetadataMappingDictionary,
-        originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
-        destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
+        originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[],
         defaultCategoryOptionCombo: string
     ): ProgramEvent {
         const { organisationUnits = {}, eventPrograms = {} } = globalMapping;

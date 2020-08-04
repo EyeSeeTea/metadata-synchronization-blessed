@@ -2,7 +2,7 @@ import _ from "lodash";
 import { DataValue } from "../aggregated/entities/DataValue";
 import { ProgramEvent } from "../events/entities/ProgramEvent";
 
-export function buildMetadataDictionary(metadataPackage: Record<string, any[]>) {
+export function buildMetadataDictionary(metadataPackage: Record<string, any[] | undefined>) {
     return _(metadataPackage)
         .values()
         .flatten()

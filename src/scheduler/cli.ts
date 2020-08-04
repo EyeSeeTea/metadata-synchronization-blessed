@@ -9,7 +9,6 @@ import path from "path";
 import * as yargs from "yargs";
 import { MigrationsRunner } from "../migrations";
 import { getMigrationsForNode } from "../migrations/utils";
-import Instance from "../models/instance";
 import { D2 } from "../types/d2";
 import { D2Api } from "../types/d2-api";
 import Scheduler from "./scheduler";
@@ -54,6 +53,7 @@ const checkMigrations = async (api: D2Api) => {
 };
 
 const start = async (): Promise<void> => {
+    //@ts-ignore
     const { encryptionKey = "", baseUrl, username, password } = config;
     if (!baseUrl || !username || !password) throw new Error("Couldn't connect to server");
 
@@ -66,7 +66,7 @@ const start = async (): Promise<void> => {
     getLogger("main").info("-".repeat(welcomeMessage.length));
     getLogger("main").info(welcomeMessage);
 
-    Instance.setEncryptionKey(encryptionKey);
+    // TODO: Create composition root and set encryption key
     new Scheduler(d2 as D2, api).initialize();
 };
 

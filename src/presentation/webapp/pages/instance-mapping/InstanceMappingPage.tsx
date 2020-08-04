@@ -2,8 +2,10 @@ import i18n from "@dhis2/d2-i18n";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import MappingTable from "../../components/mapping-table/MappingTable";
-import PageHeader from "../../components/page-header/PageHeader";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../../../../domain/instance/entities/MetadataMapping";
 import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
@@ -15,8 +17,10 @@ import {
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
 } from "../../../../models/dhis/mapping";
-import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../../../models/instance";
 import { useAppContext } from "../../../common/contexts/AppContext";
+import MappingTable from "../../components/mapping-table/MappingTable";
+import PageHeader from "../../components/page-header/PageHeader";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
@@ -50,8 +54,8 @@ interface InstanceMappingParams {
 }
 
 export default function InstanceMappingPage() {
+    const { compositionRoot } = useAppContext();
     const history = useHistory();
-    const { api } = useAppContext();
 
     const { id, section } = useParams() as InstanceMappingParams;
     const { models, title: sectionTitle } = config[section];
@@ -59,18 +63,21 @@ export default function InstanceMappingPage() {
     const [instance, setInstance] = useState<Instance>();
 
     useEffect(() => {
-        Instance.get(api, id).then(setInstance);
-    }, [api, id]);
+        compositionRoot
+            .instances()
+            .getById(id)
+            .then(setInstance);
+    }, [compositionRoot, id]);
 
     const backHome = () => {
         history.push(`/instances/mapping/${id}`);
     };
 
-    const onChangeMapping = async (mapping: MetadataMappingDictionary) => {
+    const onChangeMapping = async (metadataMapping: MetadataMappingDictionary) => {
         if (!instance) return;
 
-        const newInstance = instance.setMetadataMapping(mapping);
-        await newInstance.save(api);
+        const newInstance = instance.update({ metadataMapping });
+        await compositionRoot.instances().save(newInstance);
         setInstance(newInstance);
     };
 

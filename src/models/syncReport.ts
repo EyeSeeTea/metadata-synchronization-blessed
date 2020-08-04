@@ -48,7 +48,6 @@ export default class SyncReport {
 
     public static create(type: SyncRuleType = "metadata"): SyncReport {
         return new SyncReport({
-            id: "",
             user: "",
             status: "READY" as SynchronizationReportStatus,
             types: [],

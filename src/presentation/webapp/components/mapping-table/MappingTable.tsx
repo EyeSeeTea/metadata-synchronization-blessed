@@ -11,18 +11,22 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
-import MappingDialog, { MappingDialogConfig } from "../mapping-dialog/MappingDialog";
-import MappingWizard, { MappingWizardConfig, prepareSteps } from "../mapping-wizard/MappingWizard";
-import MetadataTable from "../metadata-table/MetadataTable";
-import { useAppContext } from "../../../common/contexts/AppContext";
+import { Instance } from "../../../../domain/instance/entities/Instance";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../../../../domain/instance/entities/MetadataMapping";
 import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
 import { D2Model } from "../../../../models/dhis/default";
 import { d2ModelFactory } from "../../../../models/dhis/factory";
 import { ProgramDataElementModel } from "../../../../models/dhis/mapping";
 import { DataElementModel, OrganisationUnitModel } from "../../../../models/dhis/metadata";
-import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../../../models/instance";
 import { D2 } from "../../../../types/d2";
 import { MetadataType } from "../../../../utils/d2";
+import { useAppContext } from "../../../common/contexts/AppContext";
+import MappingDialog, { MappingDialogConfig } from "../mapping-dialog/MappingDialog";
+import MappingWizard, { MappingWizardConfig, prepareSteps } from "../mapping-wizard/MappingWizard";
+import MetadataTable from "../metadata-table/MetadataTable";
 import {
     autoMap,
     buildDataElementFilterForProgram,
@@ -84,12 +88,12 @@ export default function MappingTable({
     isChildrenMapping = false,
     mappingPath,
 }: MappingTableProps) {
-    const { api, d2 } = useAppContext();
+    const { api, d2, compositionRoot } = useAppContext();
     const classes = useStyles();
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const instanceApi = instance.getApi();
+    const instanceApi = compositionRoot.instances(instance).getApi();
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
 
     const [rows, setRows] = useState<MetadataType[]>([]);

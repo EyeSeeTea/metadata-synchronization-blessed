@@ -5,13 +5,37 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-29T11:09:56.987Z\n"
-"PO-Revision-Date: 2020-06-29T11:09:56.987Z\n"
+"POT-Creation-Date: 2020-07-10T06:53:30.625Z\n"
+"PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
 
 msgid "You need to select at least one {{field}}"
+msgstr ""
+
+msgid "Field {{field}} needs to be a valid url"
+msgstr ""
+
+msgid "You need to provide a username and password combination"
+msgstr ""
+
+msgid "Not a valid DHIS2 instance"
+msgstr ""
+
+msgid "Wrong username/password"
+msgstr ""
+
+msgid "Wrong URL endpoint"
+msgstr ""
+
+msgid "Error {{status}}"
+msgstr ""
+
+msgid "Network error {{error}}, check if server is up and CORS is enabled"
+msgstr ""
+
+msgid "Unknown error"
 msgstr ""
 
 msgid "Version is not valid (ie. {{validExample}})"
@@ -32,21 +56,6 @@ msgstr ""
 msgid "Program with Indicators"
 msgstr ""
 
-msgid "Not a valid DHIS2 instance"
-msgstr ""
-
-msgid "Wrong username/password"
-msgstr ""
-
-msgid "Wrong URL endpoint"
-msgstr ""
-
-msgid "Error {{status}}"
-msgstr ""
-
-msgid "Network error {{error}}, check if server is up and CORS is enabled"
-msgstr ""
-
 msgid "Invalid module"
 msgstr ""
 
@@ -54,6 +63,9 @@ msgid "Downloading snapshot for module {{name}}"
 msgstr ""
 
 msgid "Creating {{dhisVersion}} package for module {{name}}"
+msgstr ""
+
+msgid "Pulling metadata from module {{name}}"
 msgstr ""
 
 msgid "Name"
@@ -83,6 +95,9 @@ msgstr ""
 msgid "Generate package from module"
 msgstr ""
 
+msgid "Pull metadata"
+msgstr ""
+
 msgid "Package of {{name}}"
 msgstr ""
 
@@ -104,6 +119,12 @@ msgstr ""
 msgid "Invalid package"
 msgstr ""
 
+msgid "Importing package {{name}}"
+msgstr ""
+
+msgid "Couldn't load package"
+msgstr ""
+
 msgid "Version"
 msgstr ""
 
@@ -120,6 +141,9 @@ msgid "Download as JSON"
 msgstr ""
 
 msgid "Publish to Store"
+msgstr ""
+
+msgid "Import package"
 msgstr ""
 
 msgid "MetaData Synchronization"
@@ -389,10 +413,10 @@ msgstr ""
 msgid "Use default configuration"
 msgstr ""
 
-msgid "Help"
+msgid "Back"
 msgstr ""
 
-msgid "Back"
+msgid "Help"
 msgstr ""
 
 msgid "External access"
@@ -606,7 +630,10 @@ msgstr ""
 msgid "Programs"
 msgstr ""
 
-msgid "Field cannot be blank"
+msgid "Source instance"
+msgstr ""
+
+msgid "This instance"
 msgstr ""
 
 msgid "Every day"
@@ -935,28 +962,22 @@ msgstr ""
 msgid "Create, modify and delete modules from the application"
 msgstr ""
 
-msgid "Server name"
-msgstr ""
-
-msgid "URL endpoint"
-msgstr ""
-
-msgid "Field should be an url"
-msgstr ""
-
-msgid "Username"
-msgstr ""
-
-msgid "Password"
-msgstr ""
-
 msgid "Please fix the issues before testing the connection"
 msgstr ""
 
 msgid "Connected successfully to instance"
 msgstr ""
 
-msgid "Please fix the issues before saving"
+msgid "Server name (*)"
+msgstr ""
+
+msgid "URL endpoint (*)"
+msgstr ""
+
+msgid "Username (*)"
+msgstr ""
+
+msgid "Password (*)"
 msgstr ""
 
 msgid "Test Connection"
@@ -993,6 +1014,15 @@ msgid "Successfully deleted {{count}} instances"
 msgid_plural "Successfully deleted {{count}} instances"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Server name"
+msgstr ""
+
+msgid "URL endpoint"
+msgstr ""
+
+msgid "Username"
+msgstr ""
 
 msgid "Run analytics"
 msgstr ""
@@ -1050,7 +1080,22 @@ msgstr ""
 msgid "Global mapping"
 msgstr ""
 
-msgid "This instance"
+msgid "Metadata Synchronization"
+msgstr ""
+
+msgid "Aggregated Data Synchronization"
+msgstr ""
+
+msgid "Events Synchronization"
+msgstr ""
+
+msgid "Deleted Objects Synchronization"
+msgstr ""
+
+msgid "Please select at least one element from the table to synchronize"
+msgstr ""
+
+msgid "Unknown error with the request"
 msgstr ""
 
 msgid "Instance"
@@ -1083,9 +1128,6 @@ msgstr ""
 msgid "Repository not found"
 msgstr ""
 
-msgid "Unknown error"
-msgstr ""
-
 msgid "Testing GitHub connection"
 msgstr ""
 
@@ -1113,24 +1155,6 @@ msgid "GitHub repository (*)"
 msgstr ""
 
 msgid "GitHub access token (*)"
-msgstr ""
-
-msgid "Metadata Synchronization"
-msgstr ""
-
-msgid "Aggregated Data Synchronization"
-msgstr ""
-
-msgid "Events Synchronization"
-msgstr ""
-
-msgid "Deleted Objects Synchronization"
-msgstr ""
-
-msgid "Please select at least one element from the table to synchronize"
-msgstr ""
-
-msgid "Unknown error with the request"
 msgstr ""
 
 msgid "New {{type}} synchronization rule"

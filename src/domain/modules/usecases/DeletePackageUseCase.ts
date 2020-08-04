@@ -1,7 +1,7 @@
 import { UseCase } from "../../common/entities/UseCase";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
-import { BasePackage } from "../entities/Package";
+import { BasePackage, Package } from "../entities/Package";
 
 export class DeletePackageUseCase implements UseCase {
     constructor(private storageRepository: StorageRepository) {}
@@ -18,7 +18,7 @@ export class DeletePackageUseCase implements UseCase {
             await this.storageRepository.saveObjectInCollection(
                 Namespace.PACKAGES,
                 { ...item, deleted: true, contents: {} },
-                ["contents"]
+                Package.extendedFields
             );
         } catch (error) {
             return false;

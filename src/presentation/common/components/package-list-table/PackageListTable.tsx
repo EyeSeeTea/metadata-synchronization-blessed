@@ -1,9 +1,7 @@
-import i18n from "@dhis2/d2-i18n";
 import { Icon } from "@material-ui/core";
 import {
     ObjectsTable,
     ObjectsTableDetailField,
-    PaginationOptions,
     TableAction,
     TableColumn,
     TableSelection,
@@ -11,30 +9,25 @@ import {
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import { Instance } from "../../../../domain/instance/entities/Instance";
+import _ from "lodash";
+import React, { useCallback, useEffect, useState } from "react";
 import { Package } from "../../../../domain/modules/entities/Package";
+import i18n from "../../../../locales";
+import SyncReport from "../../../../models/syncReport";
+import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
 import { useAppContext } from "../../contexts/AppContext";
 
-type PackagesListPresentations = "app" | "widget";
 type ListPackage = Omit<Package, "contents">;
 
-interface PackagesListTableProps {
-    remoteInstance?: Instance;
-    onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
-    presentation?: PackagesListPresentations;
-    externalComponents?: ReactNode;
-    paginationOptions?: PaginationOptions;
-}
-
-export const PackagesListTable: React.FC<PackagesListTableProps> = ({
+export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     remoteInstance,
     onActionButtonClick,
     presentation = "app",
     externalComponents,
+    openSyncSummary = _.noop,
     paginationOptions,
 }) => {
-    const { compositionRoot } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const loading = useLoading();
 
@@ -71,6 +64,38 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             }
         },
         [compositionRoot, remoteInstance, snackbar]
+    );
+
+    const importPackage = useCallback(
+        async (ids: string[]) => {
+            const result = await compositionRoot.packages(remoteInstance).get(ids[0]);
+            result.match({
+                success: async ({ name, contents }) => {
+                    try {
+                        loading.show(true, i18n.t("Importing package {{name}}", { name }));
+                        const result = await compositionRoot.metadata.import(contents);
+
+                        const report = SyncReport.create("metadata");
+                        report.setStatus(
+                            result.status === "ERROR" || result.status === "NETWORK ERROR"
+                                ? "FAILURE"
+                                : "DONE"
+                        );
+                        report.addSyncResult(result);
+                        await report.save(api);
+
+                        openSyncSummary(report);
+                    } catch (error) {
+                        snackbar.error(error.message);
+                    }
+                    loading.reset();
+                },
+                error: async () => {
+                    snackbar.error(i18n.t("Couldn't load package"));
+                },
+            });
+        },
+        [compositionRoot, api, loading, remoteInstance, snackbar, openSyncSummary]
     );
 
     const columns: TableColumn<ListPackage>[] = [
@@ -116,6 +141,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             onClick: () => snackbar.warning("Not implemented yet"),
             icon: <Icon>publish</Icon>,
             isActive: () => presentation === "app" && !remoteInstance,
+        },
+        {
+            name: "import",
+            text: i18n.t("Import package"),
+            multiple: false,
+            onClick: importPackage,
+            icon: <Icon>arrow_downward</Icon>,
+            isActive: () => presentation === "app" && !!remoteInstance,
         },
     ];
 

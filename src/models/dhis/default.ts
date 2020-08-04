@@ -53,8 +53,8 @@ export abstract class D2Model {
         return modelCollection[this.collectionName];
     }
 
-    public static getModelName(d2: D2): string {
-        return this.modelName ?? this.getD2Model(d2)?.displayName ?? "Unknown model";
+    public static getModelName(d2: unknown): string {
+        return this.modelName ?? this.getD2Model(d2 as D2)?.displayName ?? "Unknown model";
     }
 
     public static getApiModelTransform(): (objects: MetadataType[]) => MetadataType[] {

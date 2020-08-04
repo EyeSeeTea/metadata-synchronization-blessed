@@ -3,7 +3,11 @@ import { DialogContent } from "@material-ui/core";
 import { ConfirmationDialog, Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
-import Instance, { MetadataMapping, MetadataMappingDictionary } from "../../../../models/instance";
+import { Instance } from "../../../../domain/instance/entities/Instance";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../../../../domain/instance/entities/MetadataMapping";
 import { MetadataType } from "../../../../utils/d2";
 import { MappingTableProps } from "../mapping-table/MappingTable";
 import { cleanNestedMappedId } from "../mapping-table/utils";

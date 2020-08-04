@@ -1,15 +1,9 @@
 import i18n from "@dhis2/d2-i18n";
+import { MenuItem, Select } from "@material-ui/core";
 import SyncIcon from "@material-ui/icons/Sync";
 import { useLoading, useSnackbar } from "d2-ui-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
-import MetadataTable from "../../components/metadata-table/MetadataTable";
-import PageHeader from "../../components/page-header/PageHeader";
-import SyncDialog from "../../components/sync-dialog/SyncDialog";
-import SyncSummary from "../../components/sync-summary/SyncSummary";
-import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
-import { useAppContext } from "../../../common/contexts/AppContext";
 import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
 import { D2Model } from "../../../../models/dhis/default";
 import { metadataModels } from "../../../../models/dhis/factory";
@@ -26,6 +20,14 @@ import SyncRule from "../../../../models/syncRule";
 import { D2 } from "../../../../types/d2";
 import { MetadataType } from "../../../../utils/d2";
 import { isAppConfigurator } from "../../../../utils/permissions";
+import { useAppContext } from "../../../common/contexts/AppContext";
+import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
+import MetadataTable from "../../components/metadata-table/MetadataTable";
+import PageHeader from "../../components/page-header/PageHeader";
+import SyncDialog from "../../components/sync-dialog/SyncDialog";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
+import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 
 const config: Record<
     SyncRuleType,
@@ -63,7 +65,7 @@ const config: Record<
     },
 };
 
-const SyncOnDemandPage: React.FC = () => {
+const ManualSyncPage: React.FC = () => {
     const snackbar = useSnackbar();
     const loading = useLoading();
     const { d2, api, compositionRoot } = useAppContext();
@@ -75,6 +77,8 @@ const SyncOnDemandPage: React.FC = () => {
     const [appConfigurator, updateAppConfigurator] = useState(false);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
+    const [instances, setInstances] = useState<Instance[]>([]);
+    const [selectedInstance, setSelectedInstance] = useState<Instance>();
 
     useEffect(() => {
         isAppConfigurator(api).then(updateAppConfigurator);
@@ -82,9 +86,12 @@ const SyncOnDemandPage: React.FC = () => {
 
     const goBack = () => history.goBack();
 
-    const updateSelection = (selection: string[], exclusion: string[]) => {
-        updateSyncRule(syncRule.updateMetadataIds(selection).updateExcludedIds(exclusion));
-    };
+    const updateSelection = useCallback(
+        (selection: string[], exclusion: string[]) => {
+            updateSyncRule(syncRule.updateMetadataIds(selection).updateExcludedIds(exclusion));
+        },
+        [syncRule]
+    );
 
     const openSynchronizationDialog = () => {
         if (syncRule.metadataIds.length > 0) {
@@ -107,14 +114,13 @@ const SyncOnDemandPage: React.FC = () => {
     };
 
     const closeDialogs = () => {
-        updateSyncRule(SyncRule.createOnDemand(type));
         setSyncDialogOpen(false);
     };
 
     const handleSynchronization = async (syncRule: SyncRule) => {
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
-        const sync = compositionRoot.sync()[syncRule.type](syncRule.toBuilder());
+        const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
         for await (const { message, syncReport, done } of sync.execute()) {
             if (message) loading.show(true, message);
             if (syncReport) await syncReport.save(api);
@@ -140,9 +146,48 @@ const SyncOnDemandPage: React.FC = () => {
         },
     ];
 
+    const updateSelectedInstance = useCallback(
+        (event: React.ChangeEvent<{ value: unknown }>) => {
+            const originInstance = event.target.value as string;
+            const targetInstances = originInstance === "LOCAL" ? [] : ["LOCAL"];
+
+            setSelectedInstance(instances.find(instance => instance.id === originInstance));
+            updateSyncRule(
+                syncRule
+                    .updateBuilder({ originInstance })
+                    .updateTargetInstances(targetInstances)
+                    .updateMetadataIds([])
+                    .updateExcludedIds([])
+            );
+        },
+        [instances, syncRule]
+    );
+
+    useEffect(() => {
+        compositionRoot
+            .instances()
+            .list()
+            .then(setInstances);
+    }, [compositionRoot]);
+
     return (
         <TestWrapper>
-            <PageHeader onBackClick={goBack} title={title} />
+            <PageHeader onBackClick={goBack} title={title}>
+                <Select
+                    value={selectedInstance?.id ?? "LOCAL"}
+                    onChange={updateSelectedInstance}
+                    disableUnderline={true}
+                    style={{ minWidth: 120, paddingLeft: 25, paddingRight: 25 }}
+                >
+                    {[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances].map(
+                        ({ id, name }) => (
+                            <MenuItem key={id} value={id}>
+                                {name}
+                            </MenuItem>
+                        )
+                    )}
+                </Select>
+            </PageHeader>
 
             {type === "deleted" ? (
                 <DeletedObjectsTable
@@ -152,6 +197,7 @@ const SyncOnDemandPage: React.FC = () => {
                 />
             ) : (
                 <MetadataTable
+                    remoteInstance={selectedInstance}
                     models={models}
                     selectedIds={syncRule.metadataIds}
                     excludedIds={syncRule.excludedIds}
@@ -182,4 +228,4 @@ const SyncOnDemandPage: React.FC = () => {
     );
 };
 
-export default SyncOnDemandPage;
+export default ManualSyncPage;

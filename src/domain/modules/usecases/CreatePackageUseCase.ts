@@ -25,9 +25,11 @@ export class CreatePackageUseCase implements UseCase {
                 user: payload.user.id ? payload.user : user,
             });
 
-            await this.storageRepository.saveObjectInCollection(Namespace.PACKAGES, newPackage, [
-                "contents",
-            ]);
+            await this.storageRepository.saveObjectInCollection(
+                Namespace.PACKAGES,
+                newPackage,
+                Package.extendedFields
+            );
 
             const newModule = module.update({ lastPackageVersion: newPackage.version });
             await this.storageRepository.saveObjectInCollection(Namespace.MODULES, newModule);

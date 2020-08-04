@@ -10,10 +10,10 @@ import InstanceCreationPage from "./instance-creation/InstanceCreationPage";
 import InstanceListPage from "./instance-list/InstanceListPage";
 import InstanceMappingLandingPage from "./instance-mapping/InstanceMappingLandingPage";
 import InstanceMappingPage from "./instance-mapping/InstanceMappingPage";
-import ModuleCreationPage from "./modules-creation/ModuleCreationPage";
+import ManualSyncPage from "./manual-sync/ManualSyncPage";
 import ModuleListPage from "./module-list/ModuleListPage";
+import ModuleCreationPage from "./modules-creation/ModuleCreationPage";
 import StoreConfigPage from "./store-config/StoreConfigPage";
-import SyncOnDemandPage from "./sync-on-demand/SyncOnDemandPage";
 import SyncRulesCreationPage from "./sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "./sync-rules-list/SyncRulesListPage";
 
@@ -49,7 +49,7 @@ function Root() {
                         props.match.params.type !== "deleted" ||
                         permissions.shouldShowDeletedObjects(api)
                     }
-                    render={props => <SyncOnDemandPage {...props} />}
+                    render={props => <ManualSyncPage {...props} />}
                 />
 
                 <RouteWithSessionAndAuth

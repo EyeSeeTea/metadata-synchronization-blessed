@@ -16,6 +16,7 @@ import AggregationStep from "./data/AggregationStep";
 export interface SyncWizardStep extends WizardStep {
     validationKeys: string[];
     showOnSyncDialog?: boolean;
+    hidden?: (syncRule: SyncRule) => boolean;
 }
 
 export interface SyncWizardStepProps {
@@ -39,6 +40,7 @@ const commonSteps: {
         component: InstanceSelectionStep,
         validationKeys: ["targetInstances"],
         showOnSyncDialog: true,
+        hidden: syncRule => syncRule.originInstance !== "LOCAL",
     },
     scheduler: {
         key: "scheduler",

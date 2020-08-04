@@ -35,6 +35,7 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
 
     const steps = config[syncRule.type]
         .filter(({ showOnSyncDialog }) => !isDialog || showOnSyncDialog)
+        .filter(({ hidden }) => !hidden || !hidden(syncRule))
         .map(step => ({
             ...step,
             props: {

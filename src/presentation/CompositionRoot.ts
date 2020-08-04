@@ -8,12 +8,22 @@ import { StorageDataStoreRepository } from "../data/storage/StorageDataStoreRepo
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
+import { RepositoryFactory } from "../domain/common/factories/RepositoryFactory";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
 import { Instance } from "../domain/instance/entities/Instance";
+import { DeleteInstanceUseCase } from "../domain/instance/usecases/DeleteInstanceUseCase";
+import { GetInstanceApiUseCase } from "../domain/instance/usecases/GetInstanceApiUseCase";
+import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceByIdUseCase";
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
+import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
+import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
+import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
+import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
+import { ListAllMetadataUseCase } from "../domain/metadata/usecases/ListAllMetadataUseCase";
+import { ListMetadataUseCase } from "../domain/metadata/usecases/ListMetadataUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import { CreatePackageUseCase } from "../domain/modules/usecases/CreatePackageUseCase";
 import { DeleteModuleUseCase } from "../domain/modules/usecases/DeleteModuleUseCase";
@@ -21,80 +31,91 @@ import { DeletePackageUseCase } from "../domain/modules/usecases/DeletePackageUs
 import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/DownloadModuleSnapshotUseCase";
 import { DownloadPackageUseCase } from "../domain/modules/usecases/DownloadPackageUseCase";
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
+import { GetPackageUseCase } from "../domain/modules/usecases/GetPackageUseCase";
 import { GetStoreUseCase } from "../domain/modules/usecases/GetStoreUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
 import { ListPackagesUseCase } from "../domain/modules/usecases/ListPackagesUseCase";
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
 import { SaveStoreUseCase } from "../domain/modules/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/modules/usecases/ValidateStoreUseCase";
+import { Repositories } from "../domain/Repositories";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { D2 } from "../types/d2";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
 
-export const Repository = {
-    AggregatedRepository: Symbol.for("aggregatedRepository"),
-    EventsRepository: Symbol.for("eventsRepository"),
-    MetadataRepository: Symbol.for("metadataRepository"),
-    InstanceRepository: Symbol.for("instanceRepository"),
-    TransformationRepository: Symbol.for("transformationsRepository"),
-    StorageRepository: Symbol.for("storageRepository"),
-    DownloadRepository: Symbol.for("downloadRepository"),
-    GitHubRepository: Symbol.for("githubRepository"),
-};
-
 export class CompositionRoot {
+    private repositoryFactory: RepositoryFactory;
     // TODO: Remove d2 and d2Api explicit calls so we do not have to expose them
     constructor(
         public readonly localInstance: Instance,
         private d2: D2,
         private encryptionKey: string
-    ) {}
+    ) {
+        this.repositoryFactory = new RepositoryFactory();
+        this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreRepository);
+        this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);
+        this.repositoryFactory.bind(Repositories.GitHubRepository, GitHubOctokitRepository);
+        this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
+        this.repositoryFactory.bind(
+            Repositories.TransformationRepository,
+            TransformationD2ApiRepository
+        );
+    }
 
     @cache()
-    public sync(remoteInstance = this.localInstance) {
-        const instance = new InstanceD2ApiRepository(remoteInstance, this.encryptionKey);
-        const transformation = new TransformationD2ApiRepository();
-        const aggregated = new AggregatedD2ApiRepository(remoteInstance);
-        const events = new EventsD2ApiRepository(remoteInstance);
-        const metadata = new MetadataD2ApiRepository(remoteInstance, transformation);
-
+    public get sync() {
         // TODO: Sync builder should be part of an execute method
         return {
             aggregated: (builder: SynchronizationBuilder) =>
                 new AggregatedSyncUseCase(
                     this.d2,
-                    remoteInstance,
                     builder,
-                    instance,
-                    aggregated,
-                    transformation
+                    this.repositoryFactory,
+                    this.localInstance,
+                    this.encryptionKey
                 ),
             events: (builder: SynchronizationBuilder) =>
                 new EventsSyncUseCase(
                     this.d2,
-                    remoteInstance,
                     builder,
-                    instance,
-                    events,
-                    aggregated,
-                    transformation
+                    this.repositoryFactory,
+                    this.localInstance,
+                    this.encryptionKey
                 ),
             metadata: (builder: SynchronizationBuilder) =>
-                new MetadataSyncUseCase(this.d2, remoteInstance, builder, instance, metadata),
+                new MetadataSyncUseCase(
+                    this.d2,
+                    builder,
+                    this.repositoryFactory,
+                    this.localInstance,
+                    this.encryptionKey
+                ),
             deleted: (builder: SynchronizationBuilder) =>
                 new DeletedMetadataSyncUseCase(
                     this.d2,
-                    remoteInstance,
                     builder,
-                    instance,
-                    metadata
+                    this.repositoryFactory,
+                    this.localInstance,
+                    this.encryptionKey
                 ),
         };
     }
 
     @cache()
-    public store() {
+    public get metadata() {
+        return getExecute({
+            list: new ListMetadataUseCase(this.repositoryFactory, this.localInstance),
+            listAll: new ListAllMetadataUseCase(this.repositoryFactory, this.localInstance),
+            import: new ImportMetadataUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get store() {
         const github = new GitHubOctokitRepository();
         const storage = new StorageDataStoreRepository(this.localInstance);
 
@@ -109,7 +130,7 @@ export class CompositionRoot {
     public modules(remoteInstance = this.localInstance) {
         const storage = new StorageDataStoreRepository(remoteInstance);
         const download = new DownloadWebRepository();
-        const instance = new InstanceD2ApiRepository(this.localInstance, this.encryptionKey);
+        const instance = new InstanceD2ApiRepository(this.localInstance);
 
         return getExecute({
             list: new ListModulesUseCase(storage),
@@ -124,18 +145,19 @@ export class CompositionRoot {
     public packages(remoteInstance = this.localInstance) {
         const storage = new StorageDataStoreRepository(remoteInstance);
         const download = new DownloadWebRepository();
-        const instance = new InstanceD2ApiRepository(this.localInstance, this.encryptionKey);
+        const instance = new InstanceD2ApiRepository(this.localInstance);
 
         return getExecute({
             list: new ListPackagesUseCase(storage),
             create: new CreatePackageUseCase(storage, instance),
+            get: new GetPackageUseCase(storage),
             delete: new DeletePackageUseCase(storage),
             download: new DownloadPackageUseCase(storage, download),
         });
     }
 
     @cache()
-    public storage() {
+    public get storage() {
         const download = new DownloadWebRepository();
 
         return getExecute({
@@ -144,18 +166,28 @@ export class CompositionRoot {
     }
 
     @cache()
-    public instances() {
-        const instance = new InstanceD2ApiRepository(this.localInstance, this.encryptionKey);
+    public instances(remoteInstance = this.localInstance) {
+        const instance = new InstanceD2ApiRepository(remoteInstance);
         const storage = new StorageDataStoreRepository(this.localInstance);
 
         return getExecute({
+            getApi: new GetInstanceApiUseCase(instance),
             list: new ListInstancesUseCase(storage, this.encryptionKey),
-            getVersion: new GetInstanceVersionUseCase(instance),
+            getById: new GetInstanceByIdUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
+            ),
+            save: new SaveInstanceUseCase(storage, this.encryptionKey),
+            delete: new DeleteInstanceUseCase(storage),
+            validate: new ValidateInstanceUseCase(this.repositoryFactory),
+            getVersion: new GetInstanceVersionUseCase(this.repositoryFactory, this.localInstance),
+            getOrgUnitRoots: new GetRootOrgUnitUseCase(instance),
         });
     }
 
     @cache()
-    public events() {
+    public get events() {
         const events = new EventsD2ApiRepository(this.localInstance);
 
         return getExecute({

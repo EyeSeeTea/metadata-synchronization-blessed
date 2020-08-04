@@ -1,19 +1,23 @@
-import Cryptr from "cryptr";
 import _ from "lodash";
-import { Instance, InstanceData } from "../../domain/instance/entities/Instance";
+import { Instance } from "../../domain/instance/entities/Instance";
 import { User } from "../../domain/instance/entities/User";
 import { InstanceRepository } from "../../domain/instance/repositories/InstanceRepository";
-import { getDataById } from "../../models/dataStore";
+import {
+    CategoryOptionCombo,
+    OrganisationUnit,
+} from "../../domain/metadata/entities/MetadataEntities";
 import { D2Api } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
-
-const instancesDataStoreKey = "instances";
 
 export class InstanceD2ApiRepository implements InstanceRepository {
     private api: D2Api;
 
-    constructor(instance: Instance, private encryptionKey: string) {
+    constructor(instance: Instance) {
         this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
+    }
+
+    public getApi(): D2Api {
+        return this.api;
     }
 
     @cache()
@@ -56,38 +60,36 @@ export class InstanceD2ApiRepository implements InstanceRepository {
             .value();
     }
 
-    public async getById(id: string): Promise<Instance> {
-        const instanceData = await getDataById<InstanceData>(this.api, instancesDataStoreKey, id);
+    @cache()
+    public async getCategoryOptionCombos(): Promise<
+        Pick<CategoryOptionCombo, "id" | "name" | "categoryCombo" | "categoryOptions">[]
+    > {
+        const { objects } = await this.api.models.categoryOptionCombos
+            .get({
+                paging: false,
+                fields: {
+                    id: true,
+                    name: true,
+                    categoryCombo: true,
+                    categoryOptions: true,
+                },
+            })
+            .getData();
 
-        if (!instanceData) {
-            throw Error(`Instance with id ${id} not found`);
-        }
-
-        const instanceDataWithRawPassword = instanceData.password
-            ? {
-                  ...instanceData,
-                  password: this.decryptPassword(instanceData.password),
-              }
-            : instanceData;
-
-        const version = await this.testConnection(instanceDataWithRawPassword);
-
-        return new Instance({ ...instanceDataWithRawPassword, version });
+        return objects;
     }
 
-    private async testConnection({ url, username, password }: InstanceData): Promise<string> {
-        const auth = username && password ? { username, password } : undefined;
-        const api = new D2Api({ baseUrl: url, auth });
-        const systemInfo = await api.system.info.getData();
+    @cache()
+    public async getOrgUnitRoots(): Promise<
+        Pick<OrganisationUnit, "id" | "name" | "displayName" | "path">[]
+    > {
+        const { objects } = await this.api.models.organisationUnits
+            .get({
+                filter: { level: { eq: "1" } },
+                fields: { id: true, name: true, displayName: true, path: true },
+            })
+            .getData();
 
-        return systemInfo.version;
-    }
-
-    private decryptPassword(encryptedPassword: string): string {
-        const rawPassword =
-            encryptedPassword.length > 0
-                ? new Cryptr(this.encryptionKey).decrypt(encryptedPassword)
-                : "";
-        return rawPassword;
+        return objects;
     }
 }

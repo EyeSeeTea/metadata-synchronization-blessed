@@ -3,7 +3,6 @@ import { Icon } from "@material-ui/core";
 import {
     ObjectsTable,
     ObjectsTableDetailField,
-    PaginationOptions,
     TableAction,
     TableColumn,
     TableSelection,
@@ -12,32 +11,23 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/modules/entities/Package";
+import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPacakgeDialog } from "./NewPackageDialog";
 
-type ModulesListPresentation = "app" | "widget";
-
-interface ModulesListTableProps {
-    remoteInstance?: Instance;
-    onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
-    presentation?: ModulesListPresentation;
-    externalComponents?: ReactNode;
-    paginationOptions?: PaginationOptions;
-}
-
-export const ModulesListTable: React.FC<ModulesListTableProps> = ({
+export const ModulesListTable: React.FC<ModuleListPageProps> = ({
     remoteInstance,
     onActionButtonClick,
     presentation = "app",
     externalComponents,
+    openSyncSummary = _.noop,
     paginationOptions,
 }) => {
-    const { compositionRoot } = useAppContext();
+    const { compositionRoot, api } = useAppContext();
     const snackbar = useSnackbar();
     const loading = useLoading();
     const history = useHistory();
@@ -65,10 +55,7 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                 loading.show(true, i18n.t("Downloading snapshot for module {{name}}", module));
 
                 const builder = module.toSyncBuilder();
-                const contents = await compositionRoot
-                    .sync(remoteInstance)
-                    [module.type](builder)
-                    .buildPayload();
+                const contents = await compositionRoot.sync[module.type](builder).buildPayload();
 
                 await compositionRoot.modules(remoteInstance).download(module, contents);
                 loading.reset();
@@ -102,10 +89,9 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
                     );
 
                     const builder = module.toSyncBuilder();
-                    const contents = await compositionRoot
-                        .sync()
-                        [module.type](builder)
-                        .buildPayload();
+                    const contents = await compositionRoot.sync[module.type](
+                        builder
+                    ).buildPayload();
 
                     const newPackage = item.update({ contents, dhisVersion });
                     await compositionRoot.packages().create(newPackage, module);
@@ -116,6 +102,29 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             }
         },
         [compositionRoot, rows, snackbar, loading]
+    );
+
+    const pullModule = useCallback(
+        async (ids: string[]) => {
+            const module = _.find(rows, ({ id }) => id === ids[0]);
+            if (!module) snackbar.error(i18n.t("Invalid module"));
+            else {
+                loading.show(true, i18n.t("Pulling metadata from module {{name}}", module));
+
+                const builder = module.update({ instance: remoteInstance?.id }).toSyncBuilder();
+                const sync = compositionRoot.sync[module.type](builder);
+                for await (const { message, syncReport, done } of sync.execute()) {
+                    if (message) loading.show(true, message);
+                    if (syncReport) await syncReport.save(api);
+                    if (done) {
+                        loading.reset();
+                        openSyncSummary(syncReport);
+                        return;
+                    }
+                }
+            }
+        },
+        [compositionRoot, openSyncSummary, remoteInstance, loading, rows, snackbar, api]
     );
 
     const replicateModule = useCallback(
@@ -219,6 +228,14 @@ export const ModulesListTable: React.FC<ModulesListTableProps> = ({
             icon: <Icon>description</Icon>,
             isActive: () => presentation === "app" && !remoteInstance,
             onClick: createPackage,
+        },
+        {
+            name: "pull-metadata",
+            text: i18n.t("Pull metadata"),
+            multiple: false,
+            icon: <Icon>arrow_downward</Icon>,
+            isActive: () => presentation === "app" && !!remoteInstance,
+            onClick: pullModule,
         },
     ];
 

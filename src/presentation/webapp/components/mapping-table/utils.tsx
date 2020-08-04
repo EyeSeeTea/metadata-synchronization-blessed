@@ -7,9 +7,12 @@ import {
     OptionModel,
     ProgramStageModel,
 } from "../../../../models/dhis/metadata";
-import { MetadataMapping, MetadataMappingDictionary } from "../../../../models/instance";
 import { D2Api } from "../../../../types/d2-api";
 import { MetadataType } from "../../../../utils/d2";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../../../../domain/instance/entities/MetadataMapping";
 
 export const EXCLUDED_KEY = "DISABLED";
 

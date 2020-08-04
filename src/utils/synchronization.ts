@@ -2,10 +2,13 @@ import i18n from "@dhis2/d2-i18n";
 import FileSaver from "file-saver";
 import _ from "lodash";
 import moment from "moment";
-import memoize from "nano-memoize";
-import { MetadataMapping, MetadataMappingDictionary } from "../models/instance";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../domain/instance/entities/MetadataMapping";
+import { CategoryOptionCombo } from "../domain/metadata/entities/MetadataEntities";
 import SyncRule from "../models/syncRule";
-import { D2Api, D2CategoryOptionCombo } from "../types/d2-api";
+import { D2Api } from "../types/d2-api";
 import "../utils/lodash-mixins";
 
 //TODO: when all request to metadata using metadataRepository.getMetadataByIds
@@ -58,27 +61,6 @@ export const availablePeriods: {
     LAST_FIVE_YEARS: { name: i18n.t("Last 5 years"), start: [5, "year"], end: [1, "year"] },
 };
 
-// TODO: when all request to metadata using metadataRepository.getModelByType
-// this function should be removed
-export const getCategoryOptionCombos = memoize(
-    async (api: D2Api) => {
-        const { objects } = await api.models.categoryOptionCombos
-            .get({
-                paging: false,
-                fields: {
-                    id: true,
-                    name: true,
-                    categoryCombo: true,
-                    categoryOptions: true,
-                },
-            })
-            .getData();
-
-        return objects;
-    },
-    { serializer: (api: D2Api) => api.baseUrl }
-);
-
 export function requestJSONDownload(payload: object, syncRule: SyncRule) {
     const json = JSON.stringify(payload, null, 4);
     const blob = new Blob([json], { type: "application/json" });
@@ -91,8 +73,8 @@ export function requestJSONDownload(payload: object, syncRule: SyncRule) {
 export const mapCategoryOptionCombo = (
     optionCombo: string | undefined,
     mappings: MetadataMappingDictionary[],
-    originCategoryOptionCombos: Partial<D2CategoryOptionCombo>[],
-    destinationCategoryOptionCombos: Partial<D2CategoryOptionCombo>[]
+    originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+    destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
 ): string | undefined => {
     if (!optionCombo) return undefined;
     for (const mapping of mappings) {

@@ -48,7 +48,8 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
 
     public toSyncBuilder(): SynchronizationBuilder {
         return {
-            targetInstances: [],
+            originInstance: this.instance,
+            targetInstances: ["LOCAL"],
             metadataIds: this.metadataIds,
             excludedIds: this.excludedIds,
             syncParams: {
