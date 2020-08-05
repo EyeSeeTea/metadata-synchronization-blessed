@@ -1,9 +1,8 @@
 import _ from "lodash";
-import { MetadataPackage } from "../../../domain/metadata/entities/MetadataEntities";
+import { MetadataEntities, MetadataPackage } from "../../../domain/metadata/entities/MetadataEntities";
 import { Transformation } from "../../../domain/transformations/entities/Transformation";
 import { TransformationD2ApiRepository } from "../TransformationD2ApiRepository";
 import { D2MetadataPackage } from "../types";
-import { renamePropInMetadataPackage } from "./utils";
 
 const transformationRepository = new TransformationD2ApiRepository();
 
@@ -265,7 +264,7 @@ describe("Metadata transformations - D2Api", () => {
     });
 });
 
-export {};
+export { };
 
 function givenAMetadataPackage(nameField = "name"): MetadataPackage {
     const metadataPackage = {
@@ -336,4 +335,30 @@ function givenAMetadataPackage(nameField = "name"): MetadataPackage {
     }
 
     return metadataPackage;
+}
+
+export function renameProp(item: any, oldPath: string, newPath: string) {
+    const object = _.cloneDeep(item);
+
+    const value = _.get(object, oldPath);
+    _.unset(object, oldPath);
+    _.set(object, newPath, value);
+
+    return object;
+}
+
+export function renamePropInMetadataPackage(
+    payload: MetadataPackage,
+    type: keyof MetadataEntities,
+    oldPropName: string,
+    newPropName: string
+): D2MetadataPackage {
+    const itemsByType = payload[type];
+    if (!itemsByType) return payload;
+
+    const renamedTypeItems = itemsByType.map((item: unknown) =>
+        renameProp(item, oldPropName, newPropName)
+    );
+
+    return { ...payload, [type]: renamedTypeItems };
 }
