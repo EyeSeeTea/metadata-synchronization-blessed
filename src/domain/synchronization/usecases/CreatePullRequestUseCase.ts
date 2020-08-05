@@ -1,12 +1,12 @@
 import _ from "lodash";
-import { NamedRef, Ref } from "../../common/entities/Ref";
+import { NamedRef } from "../../common/entities/Ref";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
-import { AppNotification } from "../../notifications/entities/Notification";
+import { AppNotification, MessageNotification } from "../../notifications/entities/Notification";
 import {
     ReceivedPullRequestNotification,
     SentPullRequestNotification,
@@ -16,11 +16,6 @@ import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
-interface NotificationUsers {
-    users: Ref[];
-    userGroups: Ref[];
-}
-
 interface CreatePullRequestParams {
     instance: Instance;
     type: SynchronizationType;
@@ -28,7 +23,7 @@ interface CreatePullRequestParams {
     payload: MetadataPackage;
     subject: string;
     description?: string;
-    notificationUsers: NotificationUsers;
+    notificationUsers: Pick<MessageNotification, "users" | "userGroups">;
 }
 
 export class CreatePullRequestUseCase implements UseCase {
@@ -139,7 +134,7 @@ export class CreatePullRequestUseCase implements UseCase {
             users: responsibleUsers,
             userGroups: responsibleUserGroups,
         }: AppNotification,
-        { users, userGroups }: NotificationUsers
+        { users, userGroups }: Pick<MessageNotification, "users" | "userGroups">
     ): Promise<void> {
         const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
             Repositories.InstanceRepository,

@@ -2,6 +2,7 @@ import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
+import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import {
     MetadataRepository,
     MetadataRepositoryConstructor,
@@ -11,7 +12,7 @@ import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
-import { AppNotification } from "../entities/Notification";
+import { AppNotification, MessageNotification } from "../entities/Notification";
 import { PullRequestStatus } from "../entities/PullRequestNotification";
 
 export type ImportPullRequestError =
@@ -71,6 +72,13 @@ export class ImportPullRequestUseCase implements UseCase {
             ["payload"]
         );
 
+        await this.sendMessage(
+            remoteInstance,
+            remoteNotification,
+            { users: remoteNotification.users, userGroups: remoteNotification.userGroups },
+            status === "IMPORTED" ? "Pull request imported" : "Pull request could not be imported"
+        );
+
         return Either.success(result);
     }
 
@@ -111,5 +119,42 @@ export class ImportPullRequestUseCase implements UseCase {
             Namespace.NOTIFICATIONS,
             id
         );
+    }
+
+    private async sendMessage(
+        instance: Instance,
+        {
+            subject,
+            text,
+            owner,
+            instance: origin,
+            users: responsibleUsers,
+            userGroups: responsibleUserGroups,
+        }: AppNotification,
+        { users, userGroups }: Pick<MessageNotification, "users" | "userGroups">,
+        title: string = "Received Pull Request"
+    ): Promise<void> {
+        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
+            Repositories.InstanceRepository,
+            [instance, ""]
+        );
+
+        const responsibles = [...responsibleUsers, ...responsibleUserGroups].map(
+            ({ name }) => name
+        );
+
+        const message = [
+            `Origin instance: ${origin.url}`,
+            `User: ${owner.name}`,
+            `Responsibles: ${responsibles.join(", ")}`,
+            text,
+        ];
+
+        await instanceRepository.sendMessage({
+            subject: `[MDSync] ${title}: ${subject}`,
+            text: message.join("\n\n"),
+            users: users.map(({ id }) => ({ id })),
+            userGroups: userGroups.map(({ id }) => ({ id })),
+        });
     }
 }
