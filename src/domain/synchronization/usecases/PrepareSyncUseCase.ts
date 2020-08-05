@@ -41,7 +41,11 @@ export class PrepareSyncUseCase implements UseCase {
             _.every(protectedItems, ({ users, userGroups }) => {
                 const sameUser = users.map(({ id }) => id).includes(currentUser.id);
                 const sameGroup =
-                    _.intersectionBy(userGroups, currentUser.userGroups, "id").length > 0;
+                    _.intersection(
+                        userGroups.map(({ id }) => id),
+                        currentUser.userGroups
+                    ).length > 0;
+                    
                 return sameUser || sameGroup;
             })
         ) {
