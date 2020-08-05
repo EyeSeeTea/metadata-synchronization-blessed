@@ -124,14 +124,14 @@ const LandingPage: React.FC = () => {
                 title: "Other",
                 key: "other",
                 children: _.compact([
-                    showDeletedObjects
-                        ? {
-                              name: i18n.t("Deleted objects"),
-                              description: i18n.t("Manually synchronise deleted objects."),
-                              listAction: () => history.push("/sync/deleted"),
-                          }
-                        : undefined,
                     {
+                        isVisible: showDeletedObjects,
+                        name: i18n.t("Deleted objects"),
+                        description: i18n.t("Manually synchronise deleted objects."),
+                        listAction: () => history.push("/sync/deleted"),
+                    },
+                    {
+                        isVisible: appConfigurator,
                         name: i18n.t("Metadata responsibles"),
                         description: i18n.t(
                             "List and remove responsibles for data sets and programs"
