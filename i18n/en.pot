@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-31T08:53:22.206Z\n"
-"PO-Revision-Date: 2020-07-31T08:53:22.206Z\n"
+"POT-Creation-Date: 2020-08-05T08:31:28.978Z\n"
+"PO-Revision-Date: 2020-08-05T08:31:28.978Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1213,9 +1213,6 @@ msgid "Import"
 msgstr ""
 
 msgid "Importing approved pull request"
-msgstr ""
-
-msgid "Deleting notifications"
 msgstr ""
 
 msgid "Unread messages"

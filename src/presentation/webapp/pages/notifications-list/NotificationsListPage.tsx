@@ -5,8 +5,6 @@ import {
     TableAction,
     TableColumn,
     TableGlobalAction,
-    TableSelection,
-    TableState,
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
@@ -38,7 +36,6 @@ export const NotificationsListPage: React.FC = () => {
     const [resetKey, setResetKey] = useState(Math.random());
     const [detailsNotification, setDetailsNotification] = useState<AppNotification>();
     const [syncReport, setSyncReport] = useState<SyncReport>();
-    const [selection, updateSelection] = useState<TableSelection[]>([]);
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -47,13 +44,6 @@ export const NotificationsListPage: React.FC = () => {
     const changeUnreadCheckbox = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setUnreadOnly(event.target?.checked);
     }, []);
-
-    const updateTable = useCallback(
-        ({ selection }: TableState<TableNotification>) => {
-            updateSelection(selection);
-        },
-        [updateSelection]
-    );
 
     const columns: TableColumn<TableNotification>[] = [
         {
@@ -292,19 +282,6 @@ export const NotificationsListPage: React.FC = () => {
                 },
                 icon: <Icon>arrow_downward</Icon>,
             },
-            {
-                name: "delete",
-                text: i18n.t("Delete"),
-                multiple: true,
-                onClick: async rows => {
-                    loading.show(true, i18n.t("Deleting notifications"));
-                    await compositionRoot.notifications.delete(rows);
-                    setResetKey(Math.random());
-                    updateSelection([]);
-                    loading.reset();
-                },
-                icon: <Icon>delete</Icon>,
-            },
         ],
         [
             compositionRoot,
@@ -388,8 +365,6 @@ export const NotificationsListPage: React.FC = () => {
                 filterComponents={filterComponents}
                 globalActions={globalActions}
                 initialState={{ sorting: { field: "created", order: "desc" } }}
-                selection={selection}
-                onChange={updateTable}
             />
 
             {detailsNotification && (
