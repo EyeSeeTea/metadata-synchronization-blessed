@@ -3,7 +3,7 @@ import { MetadataPackage } from "../../../domain/metadata/entities/MetadataEntit
 import { Transformation } from "../../../domain/transformations/entities/Transformation";
 import { TransformationD2ApiRepository } from "../TransformationD2ApiRepository";
 import { D2MetadataPackage } from "../types";
-import { renamePropInMetadataPackage } from "../utils";
+import { renamePropInMetadataPackage } from "./utils";
 
 const transformationRepository = new TransformationD2ApiRepository();
 

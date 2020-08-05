@@ -1,6 +1,6 @@
 import _ from "lodash";
-import { MetadataEntities, MetadataPackage } from "../../domain/metadata/entities/MetadataEntities";
-import { D2MetadataPackage } from "./types";
+import { MetadataEntities, MetadataPackage } from "../../../domain/metadata/entities/MetadataEntities";
+import { D2MetadataPackage } from "../types";
 
 export function renameProp(item: any, oldPath: string, newPath: string) {
     const object = _.cloneDeep(item);
