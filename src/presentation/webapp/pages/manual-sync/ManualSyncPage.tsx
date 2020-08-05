@@ -151,6 +151,9 @@ const ManualSyncPage: React.FC = () => {
                             });
                         }
                         break;
+                    case "PULL_REQUEST_RESPONSIBLE":
+                        snackbar.error("TO BE IMPLEMENTED");
+                        break;
                     default:
                         snackbar.error(i18n.t("Unknown synchronization error"));
                 }
