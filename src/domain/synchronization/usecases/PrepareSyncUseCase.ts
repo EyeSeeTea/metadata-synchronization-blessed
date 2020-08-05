@@ -45,7 +45,7 @@ export class PrepareSyncUseCase implements UseCase {
                         userGroups.map(({ id }) => id),
                         currentUser.userGroups
                     ).length > 0;
-                    
+
                 return sameUser || sameGroup;
             })
         ) {

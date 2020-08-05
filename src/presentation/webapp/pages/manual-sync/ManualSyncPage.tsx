@@ -1,6 +1,11 @@
 import { MenuItem, Select } from "@material-ui/core";
 import SyncIcon from "@material-ui/icons/Sync";
-import { useLoading, useSnackbar } from "d2-ui-components";
+import {
+    ConfirmationDialog,
+    ConfirmationDialogProps,
+    useLoading,
+    useSnackbar,
+} from "d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
@@ -25,8 +30,8 @@ import DeletedObjectsTable from "../../components/delete-objects-table/DeletedOb
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
-    PullRequestCreationDialog,
     PullRequestCreation,
+    PullRequestCreationDialog,
 } from "../../components/pull-request-creation-dialog/PullRequestCreationDialog";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
@@ -83,6 +88,7 @@ const ManualSyncPage: React.FC = () => {
     const [instances, setInstances] = useState<Instance[]>([]);
     const [selectedInstance, setSelectedInstance] = useState<Instance>();
     const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
+    const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
 
     useEffect(() => {
         isAppConfigurator(api).then(updateAppConfigurator);
@@ -127,32 +133,59 @@ const ManualSyncPage: React.FC = () => {
         const result = await compositionRoot.sync.prepare(syncRule.type, syncRule.toBuilder());
         const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
 
+        const createPullRequest = () => {
+            if (!selectedInstance) {
+                snackbar.error(i18n.t("Unable to create pull request"));
+            } else {
+                setPullRequestProps({
+                    instance: selectedInstance,
+                    builder: syncRule.toBuilder(),
+                    type: syncRule.type,
+                });
+            }
+        };
+
+        const synchronize = async () => {
+            for await (const { message, syncReport, done } of sync.execute()) {
+                if (message) loading.show(true, message);
+                if (syncReport) await syncReport.save(api);
+                if (done) {
+                    finishSynchronization(syncReport);
+                    return;
+                }
+            }
+        };
+
         await result.match({
             success: async () => {
-                for await (const { message, syncReport, done } of sync.execute()) {
-                    if (message) loading.show(true, message);
-                    if (syncReport) await syncReport.save(api);
-                    if (done) {
-                        finishSynchronization(syncReport);
-                        return;
-                    }
-                }
+                await synchronize();
             },
             error: async code => {
                 switch (code) {
                     case "PULL_REQUEST":
-                        if (!selectedInstance) {
-                            snackbar.error(i18n.t("Unable to create pull request"));
-                        } else {
-                            setPullRequestProps({
-                                instance: selectedInstance,
-                                builder: syncRule.toBuilder(),
-                                type: syncRule.type,
-                            });
-                        }
+                        createPullRequest();
                         break;
                     case "PULL_REQUEST_RESPONSIBLE":
-                        snackbar.error("TO BE IMPLEMENTED");
+                        updateDialog({
+                            title: i18n.t("Pull metadata"),
+                            description: i18n.t(
+                                "You are one of the reponsibles for the selected items.\nDo you want to directly pull the metadata?"
+                            ),
+                            onCancel: () => {
+                                updateDialog(null);
+                            },
+                            onSave: async () => {
+                                updateDialog(null);
+                                await synchronize();
+                            },
+                            onInfoAction: () => {
+                                updateDialog(null);
+                                createPullRequest();
+                            },
+                            cancelText: i18n.t("Cancel"),
+                            saveText: i18n.t("Proceed"),
+                            infoActionText: i18n.t("Create pull request"),
+                        });
                         break;
                     default:
                         snackbar.error(i18n.t("Unknown synchronization error"));
@@ -258,6 +291,8 @@ const ManualSyncPage: React.FC = () => {
                     onClose={() => setPullRequestProps(undefined)}
                 />
             )}
+
+            {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
         </TestWrapper>
     );
 };

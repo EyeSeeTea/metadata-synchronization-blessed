@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-05T08:31:23.152Z\n"
+"POT-Creation-Date: 2020-08-05T10:25:54.355Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -71,6 +71,23 @@ msgstr ""
 msgid "Unable to create pull request"
 msgstr ""
 
+msgid "Pull metadata"
+msgstr ""
+
+msgid ""
+"You are one of the reponsibles for the selected items.\n"
+"Do you want to directly pull the metadata?"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Proceed"
+msgstr ""
+
+msgid "Create pull request"
+msgstr ""
+
 msgid "Unknown synchronization error"
 msgstr ""
 
@@ -114,9 +131,6 @@ msgid "Download metadata package"
 msgstr ""
 
 msgid "Generate package from module"
-msgstr ""
-
-msgid "Pull metadata"
 msgstr ""
 
 msgid "Package of {{name}}"
@@ -421,9 +435,6 @@ msgid "Selected {{difference}} elements"
 msgstr ""
 
 msgid "Removed {{difference}} elements"
-msgstr ""
-
-msgid "Cancel"
 msgstr ""
 
 msgid "Save"
@@ -1245,9 +1256,6 @@ msgstr ""
 msgid ""
 "You will clear the existing configuration for all users in this instance.\n"
 "Do you want to proceed?"
-msgstr ""
-
-msgid "Proceed"
 msgstr ""
 
 msgid "Saving store connection"

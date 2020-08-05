@@ -1,6 +1,7 @@
 import { Icon } from "@material-ui/core";
 import {
     ConfirmationDialog,
+    ConfirmationDialogProps,
     DatePicker,
     MetaObject,
     ObjectsTable,
@@ -87,6 +88,7 @@ const SyncRulesPage: React.FC = () => {
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
+    const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
 
     useEffect(() => {
         SyncRule.list(
@@ -277,36 +279,61 @@ const SyncRulesPage: React.FC = () => {
         const result = await compositionRoot.sync.prepare(type, builder);
         const sync = compositionRoot.sync[type]({ ...builder, syncRule });
 
+        const createPullRequest = async () => {
+            const result = await compositionRoot.instances.getById(builder.originInstance);
+
+            result.match({
+                success: instance => {
+                    setPullRequestProps({
+                        instance,
+                        builder,
+                        type,
+                    });
+                },
+                error: () => {
+                    snackbar.error(i18n.t("Unable to create pull request"));
+                },
+            });
+        };
+
+        const synchronize = async () => {
+            for await (const { message, syncReport, done } of sync.execute()) {
+                if (message) loading.show(true, message);
+                if (syncReport) await syncReport.save(api);
+                if (done && syncReport) setSyncReport(syncReport);
+            }
+        };
+
         await result.match({
             success: async () => {
-                for await (const { message, syncReport, done } of sync.execute()) {
-                    if (message) loading.show(true, message);
-                    if (syncReport) await syncReport.save(api);
-                    if (done && syncReport) setSyncReport(syncReport);
-                }
+                await synchronize();
             },
             error: async code => {
                 switch (code) {
                     case "PULL_REQUEST":
-                        const result = await compositionRoot.instances.getById(
-                            builder.originInstance
-                        );
-
-                        result.match({
-                            success: instance => {
-                                setPullRequestProps({
-                                    instance,
-                                    builder,
-                                    type,
-                                });
-                            },
-                            error: () => {
-                                snackbar.error(i18n.t("Unable to create pull request"));
-                            },
-                        });
+                        await createPullRequest();
                         break;
                     case "PULL_REQUEST_RESPONSIBLE":
-                        snackbar.error("TO BE IMPLEMENTED");
+                        updateDialog({
+                            title: i18n.t("Pull metadata"),
+                            description: i18n.t(
+                                "You are one of the reponsibles for the selected items.\nDo you want to directly pull the metadata?"
+                            ),
+                            onCancel: () => {
+                                updateDialog(null);
+                            },
+                            onSave: async () => {
+                                updateDialog(null);
+                                await synchronize();
+                            },
+                            onInfoAction: async () => {
+                                updateDialog(null);
+                                await createPullRequest();
+                            },
+                            cancelText: i18n.t("Cancel"),
+                            saveText: i18n.t("Proceed"),
+                            infoActionText: i18n.t("Create pull request"),
+                        });
                         break;
                     default:
                         snackbar.error(i18n.t("Unknown synchronization error"));
@@ -549,6 +576,8 @@ const SyncRulesPage: React.FC = () => {
                     onClose={() => setPullRequestProps(undefined)}
                 />
             )}
+
+            {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
         </TestWrapper>
     );
 };

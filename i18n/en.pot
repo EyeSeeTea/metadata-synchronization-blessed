@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-05T08:53:58.629Z\n"
-"PO-Revision-Date: 2020-08-05T08:53:58.629Z\n"
+"POT-Creation-Date: 2020-08-05T10:25:54.355Z\n"
+"PO-Revision-Date: 2020-08-05T10:25:54.355Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -71,6 +71,23 @@ msgstr ""
 msgid "Unable to create pull request"
 msgstr ""
 
+msgid "Pull metadata"
+msgstr ""
+
+msgid ""
+"You are one of the reponsibles for the selected items.\n"
+"Do you want to directly pull the metadata?"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Proceed"
+msgstr ""
+
+msgid "Create pull request"
+msgstr ""
+
 msgid "Unknown synchronization error"
 msgstr ""
 
@@ -114,9 +131,6 @@ msgid "Download metadata package"
 msgstr ""
 
 msgid "Generate package from module"
-msgstr ""
-
-msgid "Pull metadata"
 msgstr ""
 
 msgid "Package of {{name}}"
@@ -420,9 +434,6 @@ msgid "Selected {{difference}} elements"
 msgstr ""
 
 msgid "Removed {{difference}} elements"
-msgstr ""
-
-msgid "Cancel"
 msgstr ""
 
 msgid "Save"
@@ -1242,9 +1253,6 @@ msgstr ""
 msgid ""
 "You will clear the existing configuration for all users in this instance.\n"
 "Do you want to proceed?"
-msgstr ""
-
-msgid "Proceed"
 msgstr ""
 
 msgid "Saving store connection"
