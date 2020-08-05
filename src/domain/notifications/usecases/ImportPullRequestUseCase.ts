@@ -59,13 +59,15 @@ export class ImportPullRequestUseCase implements UseCase {
         const status: PullRequestStatus =
             result.status === "SUCCESS" ? "IMPORTED" : "IMPORTED_WITH_ERRORS";
 
+        const payload = status === "IMPORTED" ? {} : remoteNotification.payload;
+
         await this.storageRepository(
             this.localInstance
         ).saveObjectInCollection(Namespace.NOTIFICATIONS, { ...notification, read: true, status });
 
         await this.storageRepository(remoteInstance).saveObjectInCollection(
             Namespace.NOTIFICATIONS,
-            { ...remoteNotification, read: false, status },
+            { ...remoteNotification, read: false, status, payload },
             ["payload"]
         );
 
