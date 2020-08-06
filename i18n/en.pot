@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-05T10:25:54.355Z\n"
-"PO-Revision-Date: 2020-08-05T10:25:54.355Z\n"
+"POT-Creation-Date: 2020-08-06T10:00:44.596Z\n"
+"PO-Revision-Date: 2020-08-06T10:00:44.596Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1205,6 +1205,9 @@ msgstr ""
 msgid "Could not apply action, notification is not valid"
 msgstr ""
 
+msgid "Could not update remote instance, notification not found"
+msgstr ""
+
 msgid "Open"
 msgstr ""
 
@@ -1224,6 +1227,9 @@ msgid "Import"
 msgstr ""
 
 msgid "Importing approved pull request"
+msgstr ""
+
+msgid "Cancelling pull request"
 msgstr ""
 
 msgid "Unread messages"

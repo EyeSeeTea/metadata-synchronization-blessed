@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-05T10:25:54.355Z\n"
+"POT-Creation-Date: 2020-08-06T09:59:21.354Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1208,6 +1208,9 @@ msgstr ""
 msgid "Could not apply action, notification is not valid"
 msgstr ""
 
+msgid "Could not update remote instance, notification not found"
+msgstr ""
+
 msgid "Open"
 msgstr ""
 
@@ -1227,6 +1230,9 @@ msgid "Import"
 msgstr ""
 
 msgid "Importing approved pull request"
+msgstr ""
+
+msgid "Cancelling pull request"
 msgstr ""
 
 msgid "Unread messages"

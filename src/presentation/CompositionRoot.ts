@@ -51,6 +51,7 @@ import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/Cre
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
+import { CancelPullRequestUseCase } from "../domain/notifications/usecases/CancelPullRequestUseCase";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -194,6 +195,11 @@ export class CompositionRoot {
                 this.localInstance
             ),
             importPullRequest: new ImportPullRequestUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
+            ),
+            cancelPullRequest: new CancelPullRequestUseCase(
                 this.repositoryFactory,
                 this.localInstance,
                 this.encryptionKey

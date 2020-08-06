@@ -12,6 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Either } from "../../../../domain/common/entities/Either";
 import { AppNotification } from "../../../../domain/notifications/entities/Notification";
+import { CancelPullRequestError } from "../../../../domain/notifications/usecases/CancelPullRequestUseCase";
 import { ImportPullRequestError } from "../../../../domain/notifications/usecases/ImportPullRequestUseCase";
 import { UpdatePullRequestStatusError } from "../../../../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
 import { SynchronizationResult } from "../../../../domain/synchronization/entities/SynchronizationResult";
@@ -136,28 +137,28 @@ export const NotificationsListPage: React.FC = () => {
                     switch (code) {
                         case "ALREADY_IMPORTED":
                             snackbar.error(i18n.t("Package has been already imported"));
-                            break;
+                            return;
                         case "INSTANCE_NOT_FOUND":
                             snackbar.error(i18n.t("Instance not found"));
-                            break;
+                            return;
                         case "INVALID_NOTIFICATION":
                             snackbar.error(i18n.t("Notification is invalid"));
-                            break;
+                            return;
                         case "NOTIFICATION_NOT_FOUND":
                             snackbar.error(i18n.t("Notification not found"));
-                            break;
+                            return;
                         case "NOT_APPROVED":
                             snackbar.error(i18n.t("Remote pull request has not been approved yet"));
-                            break;
+                            return;
                         case "REMOTE_INVALID_NOTIFICATION":
                             snackbar.error(i18n.t("Remote pull request is not valid"));
-                            break;
+                            return;
                         case "REMOTE_NOTIFICATION_NOT_FOUND":
                             snackbar.error(i18n.t("Remote pull request has been deleted"));
-                            break;
+                            return;
                         default:
                             snackbar.error(i18n.t("Unknown error"));
-                            break;
+                            return;
                     }
                 },
             });
@@ -182,6 +183,40 @@ export const NotificationsListPage: React.FC = () => {
                             );
                             return;
                         case "INVALID":
+                            snackbar.error(
+                                i18n.t("Could not apply action, notification is not valid")
+                            );
+                            return;
+                        default:
+                            snackbar.error(i18n.t("Unknown error"));
+                    }
+                },
+            });
+        },
+        [snackbar]
+    );
+
+    const validateCancelPullRequestAction = useCallback(
+        (result: Either<CancelPullRequestError, void>) => {
+            result.match({
+                success: () => snackbar.success(i18n.t("Updated notification")),
+                error: code => {
+                    switch (code) {
+                        case "INSTANCE_NOT_FOUND":
+                            snackbar.error(i18n.t("Instance not found"));
+                            return;
+                        case "NOT_FOUND":
+                            snackbar.error(
+                                i18n.t("Could not apply action, notification not found")
+                            );
+                            return;
+                        case "REMOTE_NOT_FOUND":
+                            snackbar.warning(
+                                i18n.t("Could not update remote instance, notification not found")
+                            );
+                            return;
+                        case "INVALID":
+                        case "REMOTE_INVALID":
                             snackbar.error(
                                 i18n.t("Could not apply action, notification is not valid")
                             );
@@ -282,13 +317,29 @@ export const NotificationsListPage: React.FC = () => {
                 },
                 icon: <Icon>arrow_downward</Icon>,
             },
+            {
+                name: "cancel-pull-request",
+                text: i18n.t("Cancel"),
+                isActive: (rows: AppNotification[]) =>
+                    rows[0].type === "sent-pull-request" && rows[0].status !== "IMPORTED",
+                onClick: async rows => {
+                    loading.show(true, i18n.t("Cancelling pull request"));
+                    const result = await compositionRoot.notifications.cancelPullRequest(rows[0]);
+
+                    validateCancelPullRequestAction(result);
+                    setResetKey(Math.random());
+                    loading.reset();
+                },
+                icon: <Icon>cancel</Icon>,
+            },
         ],
         [
             compositionRoot,
-            validateUpdateStatusAction,
-            validateImportPullRequestAction,
             notifications,
             loading,
+            validateUpdateStatusAction,
+            validateImportPullRequestAction,
+            validateCancelPullRequestAction,
         ]
     );
 

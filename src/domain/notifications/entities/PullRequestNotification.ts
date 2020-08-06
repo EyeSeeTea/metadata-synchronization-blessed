@@ -9,7 +9,8 @@ export type PullRequestStatus =
     | "APPROVED"
     | "REJECTED"
     | "IMPORTED"
-    | "IMPORTED_WITH_ERRORS";
+    | "IMPORTED_WITH_ERRORS"
+    | "CANCELLED";
 
 export interface PullRequestNotification extends BaseNotification {
     syncType: SynchronizationType;
