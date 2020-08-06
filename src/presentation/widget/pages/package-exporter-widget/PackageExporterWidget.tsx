@@ -13,5 +13,11 @@ const showInstances = {
 };
 
 export const PackageExporterWidget: React.FC = React.memo(() => {
-    return <ModulePackageListTable showSelector={showSelector} showInstances={showInstances} />;
+    return (
+        <ModulePackageListTable
+            showSelector={showSelector}
+            showInstances={showInstances}
+            presentation={"widget"}
+        />
+    );
 });

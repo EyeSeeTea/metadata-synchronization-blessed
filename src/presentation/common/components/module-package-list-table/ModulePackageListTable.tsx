@@ -13,23 +13,32 @@ import { useViewSelector, ViewSelectorOptions } from "./useViewSelector";
 
 export interface ModulePackageListTableProps {
     onCreate?(): void;
-    onViewChange?(option: ViewOption): void;
-    viewValue?: ViewOption;
+    onViewChange?(option: ViewOptions): void;
+    viewValue?: ViewOptions;
     showSelector: ViewSelectorOptions;
     showInstances: InstanceSelectionOptions;
+    presentation: PresentationOptions;
 }
 
-export type ViewOption = "modules" | "packages";
+export type ViewOptions = "modules" | "packages";
+export type PresentationOptions = "app" | "widget";
 
 export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = React.memo(
-    ({ onCreate, onViewChange, showSelector, showInstances, viewValue: propsViewValue }) => {
+    ({
+        onCreate,
+        onViewChange,
+        showSelector,
+        showInstances,
+        viewValue: propsViewValue,
+        presentation,
+    }) => {
         const [selectedInstance, setSelectedInstance] = useState<Instance>();
 
         const viewSelector = useViewSelector(showSelector);
         const viewValue = propsViewValue ?? viewSelector.value;
 
         const setValue = useCallback(
-            (value: ViewOption) => {
+            (value: ViewOptions) => {
                 viewSelector.setValue(value);
                 if (onViewChange) onViewChange(value);
             },
@@ -64,7 +73,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
         return (
             <Table
                 externalComponents={filters}
-                presentation={"widget"}
+                presentation={presentation}
                 remoteInstance={selectedInstance}
                 paginationOptions={paginationOptions}
                 onActionButtonClick={

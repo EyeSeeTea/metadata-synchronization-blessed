@@ -8,13 +8,14 @@ import PageHeader from "../../components/page-header/PageHeader";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import {
     ModulePackageListTable,
-    ViewOption,
+    ViewOptions,
+    PresentationOptions,
 } from "../../../common/components/module-package-list-table/ModulePackageListTable";
 
 export interface ModuleListPageProps {
     remoteInstance?: Instance;
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
-    presentation?: "app" | "widget";
+    presentation: PresentationOptions;
     externalComponents?: ReactNode;
     pageSizeOptions?: number[];
     openSyncSummary?: (result: SyncReport) => void;
@@ -37,7 +38,7 @@ export const ModuleListPage: React.FC = () => {
     }, [history]);
 
     const setTableOption = useCallback(
-        (option: ViewOption) => {
+        (option: ViewOptions) => {
             history.push(`/${option}`);
         },
         [history]
@@ -54,6 +55,7 @@ export const ModuleListPage: React.FC = () => {
                 showInstances={showInstances}
                 onCreate={createModule}
                 onViewChange={setTableOption}
+                presentation={"app"}
             />
         </React.Fragment>
     );
