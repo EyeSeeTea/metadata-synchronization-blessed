@@ -33,7 +33,6 @@ import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/Downlo
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
-import { DeleteNotificationsUseCase } from "../domain/notifications/usecases/DeleteNotificationsUseCase";
 import { ImportPullRequestUseCase } from "../domain/notifications/usecases/ImportPullRequestUseCase";
 import { ListNotificationsUseCase } from "../domain/notifications/usecases/ListNotificationsUseCase";
 import { MarkReadNotificationsUseCase } from "../domain/notifications/usecases/MarkReadNotificationsUseCase";
@@ -52,6 +51,7 @@ import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/Cre
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
+import { CancelPullRequestUseCase } from "../domain/notifications/usecases/CancelPullRequestUseCase";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -199,7 +199,11 @@ export class CompositionRoot {
                 this.localInstance,
                 this.encryptionKey
             ),
-            delete: new DeleteNotificationsUseCase(this.repositoryFactory, this.localInstance),
+            cancelPullRequest: new CancelPullRequestUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
+            ),
         });
     }
 

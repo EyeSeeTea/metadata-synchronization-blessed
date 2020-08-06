@@ -11,7 +11,7 @@ import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
-type SyncError = "PULL_REQUEST";
+export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE";
 
 export class PrepareSyncUseCase implements UseCase {
     constructor(
@@ -23,15 +23,51 @@ export class PrepareSyncUseCase implements UseCase {
     public async execute(
         type: SynchronizationType,
         { originInstance, metadataIds }: SynchronizationBuilder
-    ): Promise<Either<SyncError, void>> {
+    ): Promise<Either<PrepareSyncError, void>> {
+        // If sync is not a metadata pull, allow sync
         if (originInstance === "LOCAL" || type !== "metadata") return Either.success(undefined);
 
         const responsibles = await this.getResponsiblesForInstance(originInstance);
-        const protectedItems = responsibles.map(({ id }) => id);
-        const areProtectedItemsIncluded = _.intersection(metadataIds, protectedItems).length > 0;
-        if (areProtectedItemsIncluded) return Either.error("PULL_REQUEST");
+        const protectedItems = _.intersectionWith(
+            responsibles,
+            metadataIds,
+            ({ id }, metadataId) => id === metadataId
+        );
 
+        // If current user is one of the responsibles, block sync but allow bypassing
+        const currentUser = await this.getCurrentUser();
+
+        if (
+            _.every(protectedItems, ({ users, userGroups }) => {
+                const sameUser = users.map(({ id }) => id).includes(currentUser.id);
+                const sameGroup =
+                    _.intersection(
+                        userGroups.map(({ id }) => id),
+                        currentUser.userGroups
+                    ).length > 0;
+
+                return sameUser || sameGroup;
+            })
+        ) {
+            return Either.error("PULL_REQUEST_RESPONSIBLE");
+        }
+
+        // If at least one of the items is protected, block sync
+        if (protectedItems.length > 0) {
+            return Either.error("PULL_REQUEST");
+        }
+
+        // If items selected are not protected, allow sync
         return Either.success(undefined);
+    }
+
+    private async getCurrentUser() {
+        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
+            Repositories.InstanceRepository,
+            [this.localInstance, ""]
+        );
+
+        return instanceRepository.getUser();
     }
 
     private async getResponsiblesForInstance(instanceId: string) {

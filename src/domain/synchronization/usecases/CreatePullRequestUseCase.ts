@@ -1,12 +1,13 @@
 import _ from "lodash";
-import { NamedRef, Ref } from "../../common/entities/Ref";
+import { cache } from "../../../utils/cache";
+import { NamedRef } from "../../common/entities/Ref";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
-import { AppNotification } from "../../notifications/entities/Notification";
+import { AppNotification, MessageNotification } from "../../notifications/entities/Notification";
 import {
     ReceivedPullRequestNotification,
     SentPullRequestNotification,
@@ -16,11 +17,6 @@ import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
-interface NotificationUsers {
-    users: Ref[];
-    userGroups: Ref[];
-}
-
 interface CreatePullRequestParams {
     instance: Instance;
     type: SynchronizationType;
@@ -28,7 +24,7 @@ interface CreatePullRequestParams {
     payload: MetadataPackage;
     subject: string;
     description?: string;
-    notificationUsers: NotificationUsers;
+    notificationUsers: Pick<MessageNotification, "users" | "userGroups">;
 }
 
 export class CreatePullRequestUseCase implements UseCase {
@@ -56,6 +52,7 @@ export class CreatePullRequestUseCase implements UseCase {
             syncType: type,
             selectedIds: ids,
             payload,
+            responsibles: { users, userGroups },
         });
 
         const sentPullRequest = SentPullRequestNotification.create({
@@ -70,31 +67,44 @@ export class CreatePullRequestUseCase implements UseCase {
             remoteNotification: receivedPullRequest.id,
         });
 
-        await this.saveNotification(instance, receivedPullRequest);
-        await this.saveNotification(this.localInstance, sentPullRequest);
+        await this.storageRepository(instance).saveObjectInCollection(
+            Namespace.NOTIFICATIONS,
+            receivedPullRequest
+        );
+
+        await this.storageRepository(this.localInstance).saveObjectInCollection(
+            Namespace.NOTIFICATIONS,
+            sentPullRequest
+        );
 
         await this.sendMessage(instance, receivedPullRequest, notificationUsers);
     }
 
-    private async getOwner(): Promise<NamedRef> {
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [this.localInstance, ""]
+    @cache()
+    private storageRepository(instance: Instance) {
+        return this.repositoryFactory.get<StorageRepositoryConstructor>(
+            Repositories.StorageRepository,
+            [instance]
         );
+    }
 
-        const { id, name } = await instanceRepository.getUser();
+    @cache()
+    private instanceRepository(instance: Instance) {
+        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
+            Repositories.InstanceRepository,
+            [instance, ""]
+        );
+    }
+
+    private async getOwner(): Promise<NamedRef> {
+        const { id, name } = await this.instanceRepository(this.localInstance).getUser();
         return { id, name };
     }
 
     private async getResponsibles(instance: Instance, ids: string[]) {
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-
-        const responsibles = await storageRepository.listObjectsInCollection<MetadataResponsible>(
-            Namespace.RESPONSIBLES
-        );
+        const responsibles = await this.storageRepository(instance).listObjectsInCollection<
+            MetadataResponsible
+        >(Namespace.RESPONSIBLES);
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 
@@ -111,24 +121,6 @@ export class CreatePullRequestUseCase implements UseCase {
         return { users, userGroups };
     }
 
-    private async saveNotification(
-        instance: Instance,
-        notification: AppNotification
-    ): Promise<void> {
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-
-        if (notification.type === "received-pull-request") {
-            await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, notification, [
-                "payload",
-            ]);
-        } else {
-            await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, notification);
-        }
-    }
-
     private async sendMessage(
         instance: Instance,
         {
@@ -139,13 +131,8 @@ export class CreatePullRequestUseCase implements UseCase {
             users: responsibleUsers,
             userGroups: responsibleUserGroups,
         }: AppNotification,
-        { users, userGroups }: NotificationUsers
+        { users, userGroups }: Pick<MessageNotification, "users" | "userGroups">
     ): Promise<void> {
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
-
         const responsibles = [...responsibleUsers, ...responsibleUserGroups].map(
             ({ name }) => name
         );
@@ -157,7 +144,7 @@ export class CreatePullRequestUseCase implements UseCase {
             text,
         ];
 
-        await instanceRepository.sendMessage({
+        await this.instanceRepository(instance).sendMessage({
             subject: `[MDSync] Received Pull Request: ${subject}`,
             text: message.join("\n\n"),
             users: users.map(({ id }) => ({ id })),

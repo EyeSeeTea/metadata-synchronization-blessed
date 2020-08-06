@@ -1,3 +1,4 @@
+import { PartialBy } from "../../../types/utils";
 import { NamedRef } from "../../common/entities/Ref";
 import { PublicInstance } from "../../instance/entities/Instance";
 import {
@@ -16,8 +17,8 @@ export interface BaseNotification {
     instance: PublicInstance;
     owner: NamedRef;
     created: Date;
-    users: NamedRef[];
-    userGroups: NamedRef[];
+    users: PartialBy<NamedRef, "name">[];
+    userGroups: PartialBy<NamedRef, "name">[];
 }
 
 export interface MessageNotification extends BaseNotification {

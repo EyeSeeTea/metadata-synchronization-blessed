@@ -47,8 +47,6 @@ export class Package implements BasePackage {
         this.lastUpdatedBy = _.pick(data.lastUpdatedBy, ["id", "name"]);
     }
 
-    public static extendedFields: Array<keyof BasePackage> = ["contents"];
-
     public validate(filter?: string[], module?: Module): ValidationError[] {
         return [
             ...validateModel<Package>(this, this.moduleValidations()),

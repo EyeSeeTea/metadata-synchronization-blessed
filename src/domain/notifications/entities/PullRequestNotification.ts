@@ -1,4 +1,5 @@
 import { generateUid } from "d2/uid";
+import { NamedRef } from "../../common/entities/Ref";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { BaseNotification } from "./Notification";
@@ -8,7 +9,8 @@ export type PullRequestStatus =
     | "APPROVED"
     | "REJECTED"
     | "IMPORTED"
-    | "IMPORTED_WITH_ERRORS";
+    | "IMPORTED_WITH_ERRORS"
+    | "CANCELLED";
 
 export interface PullRequestNotification extends BaseNotification {
     syncType: SynchronizationType;
@@ -24,6 +26,10 @@ export interface SentPullRequestNotification extends PullRequestNotification {
 export interface ReceivedPullRequestNotification extends PullRequestNotification {
     type: "received-pull-request";
     payload: MetadataPackage;
+    responsibles: {
+        users: NamedRef[];
+        userGroups: NamedRef[];
+    };
 }
 
 export class SentPullRequestNotification implements SentPullRequestNotification {

@@ -24,6 +24,7 @@ import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
 import { DataElementModel } from "../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../utils/d2";
+import { isAppConfigurator } from "../../../../utils/permissions";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
@@ -135,6 +136,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
     const [groupFilterData, setGroupFilterData] = useState<NamedRef[]>([]);
     const [levelFilterData, setLevelFilterData] = useState<NamedRef[]>([]);
+    const [appConfigurator, setAppConfigurator] = useState(false);
 
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [pager, setPager] = useState<Partial<TablePagination>>({});
@@ -359,7 +361,12 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             icon: <Icon>supervisor_account</Icon>,
             onClick: openResponsibleDialog,
             isActive: () => {
-                return allowChangingResponsible && !remoteInstance && showResponsibles;
+                return (
+                    allowChangingResponsible &&
+                    !remoteInstance &&
+                    showResponsibles &&
+                    appConfigurator
+                );
             },
         },
     ];
@@ -442,6 +449,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     useEffect(() => {
         compositionRoot.responsibles.list(remoteInstance).then(updateResponsibles);
     }, [compositionRoot, remoteInstance]);
+
+    useEffect(() => {
+        isAppConfigurator(api).then(setAppConfigurator);
+    }, [api]);
 
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;
