@@ -51,6 +51,7 @@ export class CreatePullRequestUseCase implements UseCase {
             syncType: type,
             selectedIds: ids,
             payload,
+            responsibles: { users, userGroups },
         });
 
         const sentPullRequest = SentPullRequestNotification.create({

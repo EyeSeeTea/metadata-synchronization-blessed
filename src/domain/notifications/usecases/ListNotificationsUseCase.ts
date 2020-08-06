@@ -55,11 +55,9 @@ export class ListNotificationsUseCase implements UseCase {
     }
 
     private async getInstanceNotifications(): Promise<AppNotification[]> {
-        const notifications = await this.storageRepository(
-            this.localInstance
-        ).listObjectsInCollection<AppNotification>(Namespace.NOTIFICATIONS);
-
-        return notifications ?? [];
+        return this.storageRepository(this.localInstance).listObjectsInCollection<AppNotification>(
+            Namespace.NOTIFICATIONS
+        );
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {

@@ -1,3 +1,4 @@
+import { cache } from "../../../utils/cache";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
@@ -9,23 +10,24 @@ import { MetadataResponsible } from "../entities/MetadataResponsible";
 export class SetResponsiblesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(
-        responsible: MetadataResponsible,
-        instance = this.localInstance
-    ): Promise<void> {
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-
+    public async execute(responsible: MetadataResponsible): Promise<void> {
         const { id, users, userGroups } = responsible;
+
         if (users.length === 0 && userGroups.length === 0) {
-            await storageRepository.removeObjectInCollection(Namespace.RESPONSIBLES, id);
+            await this.storageRepository.removeObjectInCollection(Namespace.RESPONSIBLES, id);
         } else {
-            await storageRepository.saveObjectInCollection<MetadataResponsible>(
+            await this.storageRepository.saveObjectInCollection(
                 Namespace.RESPONSIBLES,
                 responsible
             );
         }
+    }
+
+    @cache()
+    private get storageRepository() {
+        return this.repositoryFactory.get<StorageRepositoryConstructor>(
+            Repositories.StorageRepository,
+            [this.localInstance]
+        );
     }
 }
