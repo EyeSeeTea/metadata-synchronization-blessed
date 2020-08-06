@@ -4,7 +4,7 @@ import { Instance } from "../../instance/entities/Instance";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { BasePackage, Package } from "../entities/Package";
+import { BasePackage } from "../entities/Package";
 
 export class DeletePackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -23,11 +23,11 @@ export class DeletePackageUseCase implements UseCase {
 
             if (!item) return false;
 
-            await storageRepository.saveObjectInCollection(
-                Namespace.PACKAGES,
-                { ...item, deleted: true, contents: {} },
-                Package.extendedFields
-            );
+            await storageRepository.saveObjectInCollection(Namespace.PACKAGES, {
+                ...item,
+                deleted: true,
+                contents: {},
+            });
         } catch (error) {
             return false;
         }

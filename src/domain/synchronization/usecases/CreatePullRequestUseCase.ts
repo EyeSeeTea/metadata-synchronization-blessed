@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { cache } from "../../../utils/cache";
 import { NamedRef } from "../../common/entities/Ref";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
@@ -66,31 +67,44 @@ export class CreatePullRequestUseCase implements UseCase {
             remoteNotification: receivedPullRequest.id,
         });
 
-        await this.saveNotification(instance, receivedPullRequest);
-        await this.saveNotification(this.localInstance, sentPullRequest);
+        await this.storageRepository(instance).saveObjectInCollection(
+            Namespace.NOTIFICATIONS,
+            receivedPullRequest
+        );
+
+        await this.storageRepository(this.localInstance).saveObjectInCollection(
+            Namespace.NOTIFICATIONS,
+            sentPullRequest
+        );
 
         await this.sendMessage(instance, receivedPullRequest, notificationUsers);
     }
 
-    private async getOwner(): Promise<NamedRef> {
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [this.localInstance, ""]
+    @cache()
+    private storageRepository(instance: Instance) {
+        return this.repositoryFactory.get<StorageRepositoryConstructor>(
+            Repositories.StorageRepository,
+            [instance]
         );
+    }
 
-        const { id, name } = await instanceRepository.getUser();
+    @cache()
+    private instanceRepository(instance: Instance) {
+        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
+            Repositories.InstanceRepository,
+            [instance, ""]
+        );
+    }
+
+    private async getOwner(): Promise<NamedRef> {
+        const { id, name } = await this.instanceRepository(this.localInstance).getUser();
         return { id, name };
     }
 
     private async getResponsibles(instance: Instance, ids: string[]) {
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-
-        const responsibles = await storageRepository.listObjectsInCollection<MetadataResponsible>(
-            Namespace.RESPONSIBLES
-        );
+        const responsibles = await this.storageRepository(instance).listObjectsInCollection<
+            MetadataResponsible
+        >(Namespace.RESPONSIBLES);
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 
@@ -107,24 +121,6 @@ export class CreatePullRequestUseCase implements UseCase {
         return { users, userGroups };
     }
 
-    private async saveNotification(
-        instance: Instance,
-        notification: AppNotification
-    ): Promise<void> {
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-
-        if (notification.type === "received-pull-request") {
-            await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, notification, [
-                "payload",
-            ]);
-        } else {
-            await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, notification);
-        }
-    }
-
     private async sendMessage(
         instance: Instance,
         {
@@ -137,11 +133,6 @@ export class CreatePullRequestUseCase implements UseCase {
         }: AppNotification,
         { users, userGroups }: Pick<MessageNotification, "users" | "userGroups">
     ): Promise<void> {
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
-
         const responsibles = [...responsibleUsers, ...responsibleUserGroups].map(
             ({ name }) => name
         );
@@ -153,7 +144,7 @@ export class CreatePullRequestUseCase implements UseCase {
             text,
         ];
 
-        await instanceRepository.sendMessage({
+        await this.instanceRepository(instance).sendMessage({
             subject: `[MDSync] Received Pull Request: ${subject}`,
             text: message.join("\n\n"),
             users: users.map(({ id }) => ({ id })),

@@ -68,8 +68,7 @@ export class ImportPullRequestUseCase implements UseCase {
 
         await this.storageRepository(remoteInstance).saveObjectInCollection(
             Namespace.NOTIFICATIONS,
-            { ...remoteNotification, read: false, status, payload },
-            ["payload"]
+            { ...remoteNotification, read: false, status, payload }
         );
 
         await this.sendMessage(
