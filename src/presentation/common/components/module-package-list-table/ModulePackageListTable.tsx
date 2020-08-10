@@ -13,14 +13,14 @@ import { useViewSelector, ViewSelectorOptions } from "./useViewSelector";
 
 export interface ModulePackageListTableProps {
     onCreate?(): void;
-    onViewChange?(option: ViewOptions): void;
-    viewValue?: ViewOptions;
+    onViewChange?(option: ViewOption): void;
+    viewValue?: ViewOption;
     showSelector: ViewSelectorOptions;
     showInstances: InstanceSelectionOptions;
     presentation: PresentationOptions;
 }
 
-export type ViewOptions = "modules" | "packages";
+export type ViewOption = "modules" | "packages";
 export type PresentationOptions = "app" | "widget";
 
 export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = React.memo(
@@ -38,7 +38,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
         const viewValue = propsViewValue ?? viewSelector.value;
 
         const setValue = useCallback(
-            (value: ViewOptions) => {
+            (value: ViewOption) => {
                 viewSelector.setValue(value);
                 if (onViewChange) onViewChange(value);
             },
