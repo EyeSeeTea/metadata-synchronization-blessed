@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
@@ -23,9 +22,6 @@ export class GetResponsiblesUseCase implements UseCase {
             Namespace.RESPONSIBLES
         );
 
-        return _(items)
-            .filter(({ id }) => ids.includes(id))
-            .uniqBy("id")
-            .value();
+        return items.filter(({ id }) => ids.includes(id));
     }
 }
