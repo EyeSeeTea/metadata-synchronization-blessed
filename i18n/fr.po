@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-10T15:02:27.254Z\n"
+"POT-Creation-Date: 2020-08-10T15:10:44.957Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -669,10 +669,17 @@ msgstr ""
 msgid ""
 "If aggregation is enabled, the synchronization will use the Analytics "
 "endpoint and group data by organisation units children and the chosen time "
-"periods"
+"periods."
 msgstr ""
 
 msgid "Programs"
+msgstr ""
+
+msgid ""
+"If aggregation is enabled, the synchronization will use the Analytics "
+"endpoint and group data by organisation units children and the chosen time "
+"periods. Program indicators are only included during a synchronization if "
+"aggregation is enabled."
 msgstr ""
 
 msgid "Source instance"
@@ -810,9 +817,6 @@ msgid ""
 msgstr ""
 
 msgid "Enable data aggregation"
-msgstr ""
-
-msgid "Aggregate and sync program indicators"
 msgstr ""
 
 msgid "Aggregation type"
