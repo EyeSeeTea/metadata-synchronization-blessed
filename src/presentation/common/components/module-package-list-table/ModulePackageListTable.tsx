@@ -5,32 +5,29 @@ import i18n from "../../../../locales";
 import { ModulesListTable } from "../../../common/components/module-list-table/ModuleListTable";
 import { PackagesListTable } from "../../../common/components/package-list-table/PackageListTable";
 import Dropdown from "../../../webapp/components/dropdown/Dropdown";
-import {
-    InstanceSelectionDropdown,
-    InstanceSelectionOptions,
-} from "../instance-selection-dropdown/InstanceSelectionDropdown";
-import { useViewSelector, ViewSelectorOptions } from "./useViewSelector";
+import { InstanceSelectionConfig, InstanceSelectionDropdown } from "../instance-selection-dropdown/InstanceSelectionDropdown";
+import { useViewSelector, ViewSelectorConfig } from "./useViewSelector";
 
 export interface ModulePackageListTableProps {
     onCreate?(): void;
     onViewChange?(option: ViewOption): void;
     viewValue?: ViewOption;
-    showSelector: ViewSelectorOptions;
-    showInstances: InstanceSelectionOptions;
-    presentation: PresentationOptions;
+    presentation: PresentationOption;
+    showSelector: ViewSelectorConfig;
+    showInstances: InstanceSelectionConfig;
 }
 
 export type ViewOption = "modules" | "packages";
-export type PresentationOptions = "app" | "widget";
+export type PresentationOption = "app" | "widget";
 
 export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = React.memo(
     ({
         onCreate,
         onViewChange,
-        showSelector,
-        showInstances,
         viewValue: propsViewValue,
         presentation,
+        showSelector,
+        showInstances,
     }) => {
         const [selectedInstance, setSelectedInstance] = useState<Instance>();
 

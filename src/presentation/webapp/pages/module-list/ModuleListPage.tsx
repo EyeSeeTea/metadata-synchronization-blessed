@@ -4,18 +4,18 @@ import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
-import PageHeader from "../../components/page-header/PageHeader";
-import SyncSummary from "../../components/sync-summary/SyncSummary";
 import {
     ModulePackageListTable,
-    ViewOptions,
-    PresentationOptions,
+
+    PresentationOption, ViewOption
 } from "../../../common/components/module-package-list-table/ModulePackageListTable";
+import PageHeader from "../../components/page-header/PageHeader";
+import SyncSummary from "../../components/sync-summary/SyncSummary";
 
 export interface ModuleListPageProps {
     remoteInstance?: Instance;
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
-    presentation: PresentationOptions;
+    presentation: PresentationOption;
     externalComponents?: ReactNode;
     pageSizeOptions?: number[];
     openSyncSummary?: (result: SyncReport) => void;
@@ -38,7 +38,7 @@ export const ModuleListPage: React.FC = () => {
     }, [history]);
 
     const setTableOption = useCallback(
-        (option: ViewOptions) => {
+        (option: ViewOption) => {
             history.push(`/${option}`);
         },
         [history]

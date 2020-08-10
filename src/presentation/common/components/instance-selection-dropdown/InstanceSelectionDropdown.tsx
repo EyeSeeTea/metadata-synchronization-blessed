@@ -6,14 +6,14 @@ import i18n from "../../../../locales";
 import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 import { useAppContext } from "../../contexts/AppContext";
 
-export interface InstanceSelectionOptions {
+export interface InstanceSelectionConfig {
     local?: boolean;
     remote?: boolean;
     store?: boolean;
 }
 
 export interface InstanceSelectionDropdownProps {
-    showInstances: InstanceSelectionOptions;
+    showInstances: InstanceSelectionConfig;
     selectedInstance: string;
     onChangeSelected: (instance?: Instance) => void;
     view?: "dropdown" | "inline" | "full-width";

@@ -2,12 +2,12 @@ import _ from "lodash";
 import { useMemo, useState } from "react";
 import i18n from "../../../../locales";
 
-export interface ViewSelectorOptions {
+export interface ViewSelectorConfig {
     modules?: boolean;
     packages?: boolean;
 }
 
-export function useViewSelector({ modules = true, packages = true }: ViewSelectorOptions) {
+export function useViewSelector({ modules = true, packages = true }: ViewSelectorConfig) {
     const items = useMemo(
         () =>
             _.compact([
