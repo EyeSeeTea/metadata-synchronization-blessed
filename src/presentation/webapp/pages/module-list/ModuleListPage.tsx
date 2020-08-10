@@ -6,8 +6,8 @@ import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import {
     ModulePackageListTable,
-
-    PresentationOption, ViewOption
+    PresentationOption,
+    ViewOption,
 } from "../../../common/components/module-package-list-table/ModulePackageListTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncSummary from "../../components/sync-summary/SyncSummary";

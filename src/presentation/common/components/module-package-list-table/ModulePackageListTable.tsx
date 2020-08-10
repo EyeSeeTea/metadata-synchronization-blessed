@@ -5,7 +5,10 @@ import i18n from "../../../../locales";
 import { ModulesListTable } from "../../../common/components/module-list-table/ModuleListTable";
 import { PackagesListTable } from "../../../common/components/package-list-table/PackageListTable";
 import Dropdown from "../../../webapp/components/dropdown/Dropdown";
-import { InstanceSelectionConfig, InstanceSelectionDropdown } from "../instance-selection-dropdown/InstanceSelectionDropdown";
+import {
+    InstanceSelectionConfig,
+    InstanceSelectionDropdown,
+} from "../instance-selection-dropdown/InstanceSelectionDropdown";
 import { useViewSelector, ViewSelectorConfig } from "./useViewSelector";
 
 export interface ModulePackageListTableProps {
