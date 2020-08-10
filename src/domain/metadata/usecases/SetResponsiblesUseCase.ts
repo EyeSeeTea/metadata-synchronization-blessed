@@ -1,7 +1,10 @@
+import _ from "lodash";
 import { cache } from "../../../utils/cache";
+import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { ReceivedPullRequestNotification } from "../../notifications/entities/PullRequestNotification";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
@@ -21,6 +24,8 @@ export class SetResponsiblesUseCase implements UseCase {
                 responsible
             );
         }
+
+        await this.updatePendingPullRequests(responsible);
     }
 
     @cache()
@@ -29,5 +34,33 @@ export class SetResponsiblesUseCase implements UseCase {
             Repositories.StorageRepository,
             [this.localInstance]
         );
+    }
+
+    private async updatePendingPullRequests({
+        id,
+        users,
+        userGroups,
+    }: MetadataResponsible): Promise<void> {
+        const notifications = await this.storageRepository.listObjectsInCollection<
+            ReceivedPullRequestNotification
+        >(Namespace.NOTIFICATIONS);
+
+        const relatedPullRequests = notifications.filter(
+            ({ type, selectedIds }) => type === "received-pull-request" && selectedIds.includes(id)
+        );
+
+        await promiseMap(relatedPullRequests, async notification => {
+            const newNotification: ReceivedPullRequestNotification = {
+                ...notification,
+                read: false,
+                users: _.uniqBy([...notification.users, ...users], "id"),
+                userGroups: _.uniqBy([...notification.userGroups, ...userGroups], "id"),
+            };
+
+            await this.storageRepository.saveObjectInCollection(
+                Namespace.NOTIFICATIONS,
+                newNotification
+            );
+        });
     }
 }

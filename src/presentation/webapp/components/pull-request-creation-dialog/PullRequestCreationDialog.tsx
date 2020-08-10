@@ -67,7 +67,10 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
             payload,
             subject,
             description,
-            notificationUsers,
+            notificationUsers: {
+                users: sharingToNamedRef(notificationUsers.users),
+                userGroups: sharingToNamedRef(notificationUsers.userGroups),
+            },
         });
 
         onClose();
@@ -180,5 +183,9 @@ const useStyles = makeStyles({
 });
 
 function namedRefToSharing(namedRefs: NamedRef[]): SharingRule[] {
-    return namedRefs.map(({ id, name }) => ({ id, name, displayName: name, access: "------" }));
+    return namedRefs.map(({ id, name }) => ({ id, displayName: name, access: "------" }));
+}
+
+function sharingToNamedRef(sharings: SharingRule[]): NamedRef[] {
+    return sharings.map(({ id, displayName }) => ({ id, name: displayName }));
 }
