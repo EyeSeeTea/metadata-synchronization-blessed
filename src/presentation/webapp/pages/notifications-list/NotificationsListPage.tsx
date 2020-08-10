@@ -314,7 +314,9 @@ export const NotificationsListPage: React.FC = () => {
                 name: "cancel-pull-request",
                 text: i18n.t("Cancel"),
                 isActive: (rows: AppNotification[]) =>
-                    rows[0].type === "sent-pull-request" && rows[0].status !== "IMPORTED",
+                    rows[0].type === "sent-pull-request" &&
+                    rows[0].status !== "IMPORTED" &&
+                    rows[0].status !== "CANCELLED",
                 onClick: async rows => {
                     loading.show(true, i18n.t("Cancelling pull request"));
                     const result = await compositionRoot.notifications.cancelPullRequest(rows[0]);
