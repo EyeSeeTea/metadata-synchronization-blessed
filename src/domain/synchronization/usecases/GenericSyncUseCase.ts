@@ -189,7 +189,8 @@ export abstract class GenericSyncUseCase {
         yield { syncReport };
         for (const instance of targetInstances) {
             yield {
-                message: i18n.t("Importing data in instance {{instance}}", {
+                message: i18n.t("Importing {{type}} in instance {{instance}}", {
+                    type: this.type,
                     instance: instance.name,
                     interpolation: { escapeValue: false },
                 }),
@@ -201,7 +202,7 @@ export abstract class GenericSyncUseCase {
                 const syncResults = await this.postPayload(instance);
                 syncReport.addSyncResult(...syncResults);
 
-                console.debug("Finished importing data on instance", instance.toPublicObject());
+                console.debug("Finished import on instance", instance.toPublicObject());
             } catch (error) {
                 syncReport.addSyncResult({
                     status: "ERROR",
