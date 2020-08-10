@@ -1,8 +1,11 @@
+import _ from "lodash";
+import { cache } from "../../../utils/cache";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
+import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
@@ -20,12 +23,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
         id: string,
         status: PullRequestStatus
     ): Promise<Either<UpdatePullRequestStatusError, void>> {
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [this.localInstance]
-        );
-
-        const notification = await storageRepository.getObjectInCollection<
+        const notification = await this.storageRepository(this.localInstance).getObjectInCollection<
             ReceivedPullRequestNotification
         >(Namespace.NOTIFICATIONS, id);
 
@@ -35,7 +33,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
             return Either.error("INVALID");
         }
 
-        const hasPermissions = await this.hasPermissions(notification);
+        const hasPermissions = await this.hasPermissions(notification.selectedIds);
         if (!hasPermissions) return Either.error("PERMISSIONS");
 
         const newNotification: ReceivedPullRequestNotification = {
@@ -44,26 +42,61 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
             status,
         };
 
-        await storageRepository.saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
+        await this.storageRepository(this.localInstance).saveObjectInCollection(
+            Namespace.NOTIFICATIONS,
+            newNotification
+        );
 
         return Either.success(undefined);
     }
 
-    private async hasPermissions(notification: ReceivedPullRequestNotification) {
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [this.localInstance, ""]
+    @cache()
+    private storageRepository(instance: Instance) {
+        return this.repositoryFactory.get<StorageRepositoryConstructor>(
+            Repositories.StorageRepository,
+            [instance]
         );
+    }
 
-        const { id, userGroups } = await instanceRepository.getUser();
+    @cache()
+    private instanceRepository(instance: Instance) {
+        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
+            Repositories.InstanceRepository,
+            [instance, ""]
+        );
+    }
+
+    private async hasPermissions(ids: string[]) {
+        const responsibles = await this.getResponsibles(this.localInstance, ids);
+        const { id, userGroups } = await this.instanceRepository(this.localInstance).getUser();
 
         if (
-            !notification.responsibles.users?.find(user => user.id === id) &&
-            !notification.responsibles.userGroups?.find(({ id }) => userGroups.includes(id))
+            !responsibles.users?.find(user => user.id === id) &&
+            !responsibles.userGroups?.find(({ id }) => userGroups.includes(id))
         ) {
             return false;
         }
 
         return true;
+    }
+
+    private async getResponsibles(instance: Instance, ids: string[]) {
+        const responsibles = await this.storageRepository(instance).listObjectsInCollection<
+            MetadataResponsible
+        >(Namespace.RESPONSIBLES);
+
+        const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
+
+        const users = _.uniqBy(
+            metadataResponsibles.flatMap(({ users }) => users),
+            "id"
+        );
+
+        const userGroups = _.uniqBy(
+            metadataResponsibles.flatMap(({ userGroups }) => userGroups),
+            "id"
+        );
+
+        return { users, userGroups };
     }
 }
