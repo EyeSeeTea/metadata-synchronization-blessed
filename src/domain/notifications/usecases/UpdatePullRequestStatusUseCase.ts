@@ -58,8 +58,8 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
         const { id, userGroups } = await instanceRepository.getUser();
 
         if (
-            !notification.users?.find(user => user.id === id) &&
-            !notification.userGroups?.find(({ id }) => userGroups.includes(id))
+            !notification.responsibles.users?.find(user => user.id === id) &&
+            !notification.responsibles.userGroups?.find(({ id }) => userGroups.includes(id))
         ) {
             return false;
         }
