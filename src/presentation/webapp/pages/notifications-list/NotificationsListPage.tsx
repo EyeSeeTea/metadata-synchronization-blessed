@@ -91,21 +91,14 @@ export const NotificationsListPage: React.FC = () => {
                     notification.type === "sent-pull-request" ||
                     notification.type === "received-pull-request"
                 ) {
-                    switch (notification.status) {
-                        case "PENDING":
-                            return i18n.t("Pending");
-                        case "APPROVED":
-                            return i18n.t("Approved");
-                        case "REJECTED":
-                            return i18n.t("Rejected");
-                        case "IMPORTED":
-                            return i18n.t("Imported");
-                        case "IMPORTED_WITH_ERRORS":
-                            return i18n.t("Imported with errors");
-                        default:
-                            return "-";
-                    }
-                } else return "-";
+                    const status = notificationStatuses.find(
+                        ({ id }) => id === notification.status
+                    );
+
+                    return status?.name ?? "Unknown";
+                } else {
+                    return "-";
+                }
             },
         },
         {
@@ -343,17 +336,23 @@ export const NotificationsListPage: React.FC = () => {
         ]
     );
 
+    const notificationStatuses = useMemo(
+        () => [
+            { id: "PENDING", name: i18n.t("Pending") },
+            { id: "APPROVED", name: i18n.t("Approved") },
+            { id: "REJECTED", name: i18n.t("Rejected") },
+            { id: "IMPORTED", name: i18n.t("Imported") },
+            { id: "IMPORTED_WITH_ERRORS", name: i18n.t("Imported with errors") },
+            { id: "CANCELLED", name: i18n.t("Cancelled") },
+        ],
+        []
+    );
+
     const filterComponents = useMemo(
         () => (
             <React.Fragment key={"table-filters"}>
                 <Dropdown
-                    items={[
-                        { id: "PENDING", name: i18n.t("Pending") },
-                        { id: "APPROVED", name: i18n.t("Approved") },
-                        { id: "REJECTED", name: i18n.t("Rejected") },
-                        { id: "IMPORTED", name: i18n.t("Imported") },
-                        { id: "IMPORTED_WITH_ERRORS", name: i18n.t("Imported with errors") },
-                    ]}
+                    items={notificationStatuses}
                     onValueChange={setStatusFilter}
                     value={statusFilter}
                     label={i18n.t("Status")}
@@ -365,7 +364,7 @@ export const NotificationsListPage: React.FC = () => {
                 />
             </React.Fragment>
         ),
-        [classes, statusFilter, unreadOnly, changeUnreadCheckbox]
+        [classes, statusFilter, unreadOnly, changeUnreadCheckbox, notificationStatuses]
     );
 
     const globalActions: TableGlobalAction[] = useMemo(
