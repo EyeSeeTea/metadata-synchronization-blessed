@@ -34,6 +34,11 @@ export class PrepareSyncUseCase implements UseCase {
             ({ id }, metadataId) => id === metadataId
         );
 
+        // If there're no protected items continue sync
+        if (protectedItems.length === 0) {
+            return Either.success(undefined);
+        }
+
         // If current user is one of the responsibles, block sync but allow bypassing
         const currentUser = await this.getCurrentUser();
 
@@ -53,12 +58,7 @@ export class PrepareSyncUseCase implements UseCase {
         }
 
         // If at least one of the items is protected, block sync
-        if (protectedItems.length > 0) {
-            return Either.error("PULL_REQUEST");
-        }
-
-        // If items selected are not protected, allow sync
-        return Either.success(undefined);
+        return Either.error("PULL_REQUEST");
     }
 
     private async getCurrentUser() {
