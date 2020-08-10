@@ -180,5 +180,5 @@ const useStyles = makeStyles({
 });
 
 function namedRefToSharing(namedRefs: NamedRef[]): SharingRule[] {
-    return namedRefs.map(({ id, name }) => ({ id, displayName: name, access: "------" }));
+    return namedRefs.map(({ id, name }) => ({ id, name, displayName: name, access: "------" }));
 }

@@ -40,7 +40,8 @@ export class CreatePullRequestUseCase implements UseCase {
         notificationUsers,
     }: CreatePullRequestParams): Promise<void> {
         const owner = await this.getOwner();
-        const { users, userGroups } = await this.getResponsibles(instance, ids);
+        const { users, userGroups } = notificationUsers;
+        const responsibles = await this.getResponsibles(instance, ids);
 
         const receivedPullRequest = ReceivedPullRequestNotification.create({
             subject,
@@ -52,7 +53,7 @@ export class CreatePullRequestUseCase implements UseCase {
             syncType: type,
             selectedIds: ids,
             payload,
-            responsibles: { users, userGroups },
+            responsibles,
         });
 
         const sentPullRequest = SentPullRequestNotification.create({
