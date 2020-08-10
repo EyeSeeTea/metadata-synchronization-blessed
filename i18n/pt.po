@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-10T15:13:01.485Z\n"
+"POT-Creation-Date: 2020-08-10T15:15:04.253Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -47,7 +47,7 @@ msgstr ""
 msgid "Preparing synchronization"
 msgstr ""
 
-msgid "Importing {{type}} in instance {{instance}}"
+msgid "Start import in instance {{instance}}"
 msgstr ""
 
 msgid "Program with Data Elements"
