@@ -442,7 +442,7 @@ const useStyles = makeStyles({
 
 type TableNotification = AppNotification & {
     sender: string;
-    [key: string]: any;
+    [key: string]: unknown;
 };
 
 export default NotificationsListPage;
