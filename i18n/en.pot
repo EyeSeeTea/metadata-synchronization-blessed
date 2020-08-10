@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-10T07:16:05.883Z\n"
-"PO-Revision-Date: 2020-08-10T07:16:05.883Z\n"
+"POT-Creation-Date: 2020-08-10T15:02:27.254Z\n"
+"PO-Revision-Date: 2020-08-10T15:02:27.254Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -445,7 +445,7 @@ msgstr ""
 msgid "Metadata"
 msgstr ""
 
-msgid "Include Exclude Selection"
+msgid "Select dependencies"
 msgstr ""
 
 msgid "Advanced options"
@@ -466,7 +466,7 @@ msgstr ""
 msgid "Include user information and sharing settings"
 msgstr ""
 
-msgid "Use default configuration"
+msgid "Use default dependencies"
 msgstr ""
 
 msgid "[Pull Request by {{name}}] {{subject}}"
