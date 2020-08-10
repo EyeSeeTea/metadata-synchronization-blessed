@@ -131,7 +131,7 @@ export class ImportPullRequestUseCase implements UseCase {
             userGroups: responsibleUserGroups,
         }: AppNotification,
         { users, userGroups }: Pick<MessageNotification, "users" | "userGroups">,
-        title: string = "Received Pull Request"
+        title = "Received Pull Request"
     ): Promise<void> {
         const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
             Repositories.InstanceRepository,
