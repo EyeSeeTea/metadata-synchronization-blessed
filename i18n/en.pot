@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-06T10:00:44.596Z\n"
-"PO-Revision-Date: 2020-08-06T10:00:44.596Z\n"
+"POT-Creation-Date: 2020-08-10T06:31:04.965Z\n"
+"PO-Revision-Date: 2020-08-10T06:31:04.965Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1160,18 +1160,6 @@ msgstr ""
 msgid "Pull request (Received)"
 msgstr ""
 
-msgid "Pending"
-msgstr ""
-
-msgid "Approved"
-msgstr ""
-
-msgid "Rejected"
-msgstr ""
-
-msgid "Imported with errors"
-msgstr ""
-
 msgid "Date"
 msgstr ""
 
@@ -1230,6 +1218,21 @@ msgid "Importing approved pull request"
 msgstr ""
 
 msgid "Cancelling pull request"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Approved"
+msgstr ""
+
+msgid "Rejected"
+msgstr ""
+
+msgid "Imported with errors"
+msgstr ""
+
+msgid "Cancelled"
 msgstr ""
 
 msgid "Unread messages"

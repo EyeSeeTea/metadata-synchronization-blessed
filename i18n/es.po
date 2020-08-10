@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-06T09:59:21.354Z\n"
+"POT-Creation-Date: 2020-08-10T06:30:05.849Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1163,18 +1163,6 @@ msgstr ""
 msgid "Pull request (Received)"
 msgstr ""
 
-msgid "Pending"
-msgstr ""
-
-msgid "Approved"
-msgstr ""
-
-msgid "Rejected"
-msgstr ""
-
-msgid "Imported with errors"
-msgstr ""
-
 msgid "Date"
 msgstr ""
 
@@ -1233,6 +1221,21 @@ msgid "Importing approved pull request"
 msgstr ""
 
 msgid "Cancelling pull request"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Approved"
+msgstr ""
+
+msgid "Rejected"
+msgstr ""
+
+msgid "Imported with errors"
+msgstr ""
+
+msgid "Cancelled"
 msgstr ""
 
 msgid "Unread messages"
