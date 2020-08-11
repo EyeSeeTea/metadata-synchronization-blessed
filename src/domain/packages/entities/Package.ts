@@ -25,7 +25,7 @@ export class Package implements BasePackage {
     public readonly description: string;
     public readonly version: string;
     public readonly dhisVersion: string;
-    public readonly module: Pick<Module, "id" | "name" | "instance">;
+    public readonly module: Pick<Module, "id" | "name" | "instance" | "department">;
     public readonly contents: MetadataPackage;
     public readonly user: NamedRef;
     public readonly created: Date;
@@ -39,7 +39,7 @@ export class Package implements BasePackage {
         this.description = data.description;
         this.version = data.version;
         this.dhisVersion = data.dhisVersion;
-        this.module = _.pick(data.module, ["id", "name", "instance"]);
+        this.module = _.pick(data.module, ["id", "name", "instance", "department"]);
         this.contents = data.contents;
         this.user = _.pick(data.user, ["id", "name"]);
         this.created = data.created;
@@ -82,6 +82,7 @@ export class Package implements BasePackage {
                 id: "",
                 name: "",
                 instance: "",
+                department: "",
             },
             contents: {},
             user: {
