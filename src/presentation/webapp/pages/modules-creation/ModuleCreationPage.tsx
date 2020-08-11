@@ -6,6 +6,7 @@ import i18n from "../../../../locales";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import { ModuleWizard } from "../../components/module-wizard/ModuleWizard";
 import PageHeader from "../../components/page-header/PageHeader";
+import { MetadataModule } from "../../../../domain/modules/entities/MetadataModule";
 
 const ModuleCreationPage: React.FC = () => {
     const { compositionRoot } = useAppContext();
@@ -32,6 +33,8 @@ const ModuleCreationPage: React.FC = () => {
         if (!module && !!id) compositionRoot.modules.get(id).then(updateModule);
     }, [compositionRoot, module, id]);
 
+    const showWizard = !isEdit || !!module;
+
     return (
         <React.Fragment>
             <ConfirmationDialog
@@ -45,11 +48,11 @@ const ModuleCreationPage: React.FC = () => {
 
             <PageHeader title={title} onBackClick={openDialog} />
 
-            {module && (
+            {showWizard && (
                 <ModuleWizard
                     onCancel={openDialog}
                     onClose={onClose}
-                    module={module}
+                    module={module ?? MetadataModule.build()}
                     onChange={updateModule}
                 />
             )}
