@@ -17,6 +17,7 @@ import { GetInstanceApiUseCase } from "../domain/instance/usecases/GetInstanceAp
 import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceByIdUseCase";
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
+import { GetUserGroupsUseCase } from "../domain/instance/usecases/GetUserGroupsUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
@@ -33,6 +34,7 @@ import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/Downlo
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
+import { CancelPullRequestUseCase } from "../domain/notifications/usecases/CancelPullRequestUseCase";
 import { ImportPullRequestUseCase } from "../domain/notifications/usecases/ImportPullRequestUseCase";
 import { ListNotificationsUseCase } from "../domain/notifications/usecases/ListNotificationsUseCase";
 import { MarkReadNotificationsUseCase } from "../domain/notifications/usecases/MarkReadNotificationsUseCase";
@@ -51,7 +53,6 @@ import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/Cre
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
-import { CancelPullRequestUseCase } from "../domain/notifications/usecases/CancelPullRequestUseCase";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -230,6 +231,7 @@ export class CompositionRoot {
             validate: new ValidateInstanceUseCase(this.repositoryFactory),
             getVersion: new GetInstanceVersionUseCase(this.repositoryFactory, this.localInstance),
             getOrgUnitRoots: new GetRootOrgUnitUseCase(this.repositoryFactory, this.localInstance),
+            getUserGroups: new GetUserGroupsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

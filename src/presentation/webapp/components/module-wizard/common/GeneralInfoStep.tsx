@@ -1,15 +1,21 @@
 import { makeStyles, TextField } from "@material-ui/core";
 import _ from "lodash";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { ValidationError } from "../../../../../domain/common/entities/Validations";
 import { Module } from "../../../../../domain/modules/entities/Module";
 import i18n from "../../../../../locales";
 import { Dictionary } from "../../../../../types/utils";
+import { useAppContext } from "../../../../common/contexts/AppContext";
+import Dropdown from "../../dropdown/Dropdown";
 import { ModuleWizardStepProps } from "../Steps";
 
 export const GeneralInfoStep = ({ module, onChange }: ModuleWizardStepProps) => {
+    const { compositionRoot } = useAppContext();
     const classes = useStyles();
+
     const [errors, setErrors] = useState<Dictionary<ValidationError>>({});
+    const [userGroups, setUserGroups] = useState<NamedRef[]>([])
 
     const onChangeField = useCallback(
         (field: keyof Module) => {
@@ -23,6 +29,10 @@ export const GeneralInfoStep = ({ module, onChange }: ModuleWizardStepProps) => 
         },
         [module, onChange]
     );
+
+    useEffect(() => {
+        compositionRoot.instances.getUserGroups().then(setUserGroups);
+    }, [compositionRoot])
 
     return (
         <React.Fragment>
@@ -45,6 +55,9 @@ export const GeneralInfoStep = ({ module, onChange }: ModuleWizardStepProps) => 
                 error={!!errors["department"]}
                 helperText={errors["department"]?.description}
             />
+
+            <Dropdown items={userGroups} value={module.department ?? ""} label={i18n.t("Department")} view={"full-width"}
+ />
 
             <TextField
                 className={classes.row}

@@ -9,6 +9,8 @@ export interface DropdownOption {
     name: string;
 }
 
+export type DropdownViewOption = "filter" | "inline" | "full-width"
+
 interface DropdownProps {
     items: DropdownOption[];
     value: string;
@@ -17,9 +19,10 @@ interface DropdownProps {
     onValueChange?(value: string): void;
     hideEmpty?: boolean;
     emptyLabel?: string;
+    view?: DropdownViewOption;
 }
 
-const getMaterialTheme = () =>
+const getFilterTheme = () =>
     createMuiTheme({
         overrides: {
             MuiFormLabel: {
@@ -55,14 +58,21 @@ const Dropdown: React.FC<DropdownProps> = ({
     label,
     hideEmpty = false,
     emptyLabel,
+    view = "filter"
 }) => {
-    const materialTheme = getMaterialTheme();
+    const filterTheme = getFilterTheme();
+    const theme = view === "filter" ? filterTheme : {};
+
+    const inlineStyles = { minWidth: 120, paddingLeft: 25, paddingRight: 25 }
+    const styles = view === "inline" ? inlineStyles : {};
+
     return (
-        <MuiThemeProvider theme={materialTheme}>
-            <FormControl>
-                <InputLabel>{label}</InputLabel>
+        <MuiThemeProvider theme={theme}>
+            <FormControl fullWidth={view === "full-width"}>
+                {view !== "inline" && <InputLabel>{label}</InputLabel>}
                 <Select
                     key={`dropdown-select-${label}`}
+                    disableUnderline={view === "inline"}
                     value={value}
                     onChange={e => {
                         onChange(e);
@@ -75,6 +85,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                             horizontal: "left",
                         },
                     }}
+                    style={styles}
                 >
                     {!hideEmpty && (
                         <MenuItem value={""}>{emptyLabel ?? i18n.t("<No value>")}</MenuItem>
