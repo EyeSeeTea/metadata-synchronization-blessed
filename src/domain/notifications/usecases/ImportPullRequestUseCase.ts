@@ -14,6 +14,7 @@ import { SynchronizationResult } from "../../synchronization/entities/Synchroniz
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { AppNotification, MessageNotification } from "../entities/Notification";
 import { PullRequestStatus } from "../entities/PullRequestNotification";
+import { cache } from "../../../utils/cache";
 
 export type ImportPullRequestError =
     | "INSTANCE_NOT_FOUND"
@@ -81,6 +82,7 @@ export class ImportPullRequestUseCase implements UseCase {
         return Either.success(result);
     }
 
+    @cache()
     private storageRepository(instance: Instance) {
         return this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
@@ -88,6 +90,7 @@ export class ImportPullRequestUseCase implements UseCase {
         );
     }
 
+    @cache()
     private metadataRepository(instance: Instance): MetadataRepository {
         const transformationRepository = this.repositoryFactory.get<
             TransformationRepositoryConstructor
