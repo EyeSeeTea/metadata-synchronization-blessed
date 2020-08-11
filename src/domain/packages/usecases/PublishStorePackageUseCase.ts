@@ -10,7 +10,7 @@ import { BasePackage } from "../entities/Package";
 import { Store } from "../entities/Store";
 import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
 
-export type PublishStorePackageError = "STORE_NOT_FOUND" | "PACKAGE_NOT_FOUND" | "MODULE_NOT_FOUND";
+export type PublishStorePackageError = "STORE_NOT_FOUND" | "PACKAGE_NOT_FOUND" | "GITHUB_ERROR";
 
 export class PublishStorePackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -37,7 +37,7 @@ export class PublishStorePackageUseCase implements UseCase {
             contents
         );
 
-        console.log("DEBUG", validation);
+        if (validation.isError()) return Either.error("GITHUB_ERROR");
 
         return Either.success(undefined);
     }

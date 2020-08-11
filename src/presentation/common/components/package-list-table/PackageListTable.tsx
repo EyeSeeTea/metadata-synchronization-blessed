@@ -66,6 +66,29 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
         [compositionRoot, remoteInstance, snackbar]
     );
 
+    const publishPackage = useCallback(
+        async (ids: string[]) => {
+            const validation = await compositionRoot.packages.publish(ids[0]);
+            validation.match({
+                success: () => snackbar.success(i18n.t("Package published to store")),
+                error: code => {
+                    switch (code) {
+                        case "STORE_NOT_FOUND":
+                            snackbar.error("Store is not properly configured");
+                            return;
+                        case "PACKAGE_NOT_FOUND":
+                            snackbar.error("Could not read package");
+                            return;
+                        case "GITHUB_ERROR":
+                            snackbar.error("Error creating file on GitHub");
+                            return;
+                    }
+                },
+            });
+        },
+        [compositionRoot, snackbar]
+    );
+
     const importPackage = useCallback(
         async (ids: string[]) => {
             const result = await compositionRoot.packages.get(ids[0], remoteInstance);
@@ -144,7 +167,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
             name: "publish",
             text: i18n.t("Publish to Store"),
             multiple: false,
-            onClick: () => snackbar.warning("Not implemented yet"),
+            onClick: publishPackage,
             icon: <Icon>publish</Icon>,
             isActive: () => presentation === "app" && !remoteInstance,
         },
