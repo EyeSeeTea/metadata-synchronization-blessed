@@ -12,7 +12,7 @@ export interface BasePackage extends DatedRef {
     description: string;
     version: string;
     dhisVersion: string;
-    module: Pick<Module, "id" | "name" | "instance">;
+    module: Pick<Module, "id" | "name" | "instance" | "department">;
     contents: MetadataPackage;
 }
 
