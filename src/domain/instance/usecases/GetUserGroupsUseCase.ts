@@ -5,7 +5,7 @@ import { Instance } from "../entities/Instance";
 import { InstanceRepositoryConstructor } from "../repositories/InstanceRepository";
 
 export class GetUserGroupsUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) { }
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(instance = this.localInstance) {
         const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(

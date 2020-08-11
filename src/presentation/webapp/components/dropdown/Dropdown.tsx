@@ -9,7 +9,7 @@ export interface DropdownOption {
     name: string;
 }
 
-export type DropdownViewOption = "filter" | "inline" | "full-width"
+export type DropdownViewOption = "filter" | "inline" | "full-width";
 
 interface DropdownProps {
     items: DropdownOption[];
@@ -58,12 +58,12 @@ const Dropdown: React.FC<DropdownProps> = ({
     label,
     hideEmpty = false,
     emptyLabel,
-    view = "filter"
+    view = "filter",
 }) => {
     const filterTheme = getFilterTheme();
     const theme = view === "filter" ? filterTheme : {};
 
-    const inlineStyles = { minWidth: 120, paddingLeft: 25, paddingRight: 25 }
+    const inlineStyles = { minWidth: 120, paddingLeft: 25, paddingRight: 25 };
     const styles = view === "inline" ? inlineStyles : {};
 
     return (

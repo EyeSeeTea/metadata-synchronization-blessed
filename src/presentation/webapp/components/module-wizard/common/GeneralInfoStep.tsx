@@ -15,7 +15,7 @@ export const GeneralInfoStep = ({ module, onChange }: ModuleWizardStepProps) => 
     const classes = useStyles();
 
     const [errors, setErrors] = useState<Dictionary<ValidationError>>({});
-    const [userGroups, setUserGroups] = useState<NamedRef[]>([])
+    const [userGroups, setUserGroups] = useState<NamedRef[]>([]);
 
     const onChangeField = useCallback(
         (field: keyof Module) => {
@@ -30,9 +30,17 @@ export const GeneralInfoStep = ({ module, onChange }: ModuleWizardStepProps) => 
         [module, onChange]
     );
 
+    const onChangeDepartment = useCallback(
+        (id: string) => {
+            const department = userGroups.find(group => group.id === id);
+            onChange(module.update({ department }));
+        },
+        [module, onChange, userGroups]
+    );
+
     useEffect(() => {
         compositionRoot.instances.getUserGroups().then(setUserGroups);
-    }, [compositionRoot])
+    }, [compositionRoot]);
 
     return (
         <React.Fragment>
@@ -46,18 +54,13 @@ export const GeneralInfoStep = ({ module, onChange }: ModuleWizardStepProps) => 
                 helperText={errors["name"]?.description}
             />
 
-            <TextField
-                className={classes.row}
-                fullWidth={true}
+            <Dropdown
+                items={userGroups}
                 label={i18n.t("Department")}
-                value={module.department ?? ""}
-                onChange={onChangeField("department")}
-                error={!!errors["department"]}
-                helperText={errors["department"]?.description}
+                value={module.department?.id ?? ""}
+                onValueChange={onChangeDepartment}
+                view={"full-width"}
             />
-
-            <Dropdown items={userGroups} value={module.department ?? ""} label={i18n.t("Department")} view={"full-width"}
- />
 
             <TextField
                 className={classes.row}

@@ -32,7 +32,7 @@ export class PublishStorePackageUseCase implements UseCase {
 
         const validation = await this.gitRepository().writeFile(
             store,
-            module.department,
+            module.department.name,
             path,
             contents
         );

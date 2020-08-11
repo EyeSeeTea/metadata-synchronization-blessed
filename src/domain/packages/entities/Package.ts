@@ -82,7 +82,10 @@ export class Package implements BasePackage {
                 id: "",
                 name: "",
                 instance: "",
-                department: "",
+                department: {
+                    id: "",
+                    name: "",
+                },
             },
             contents: {},
             user: {
