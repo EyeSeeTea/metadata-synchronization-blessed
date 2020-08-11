@@ -21,6 +21,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
 
     public async writeFile(
         store: Store,
+        branch: string,
         path: string,
         content: unknown
     ): Promise<Either<GitHubError, void>> {
@@ -31,6 +32,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
             await octokit.repos.createOrUpdateFileContents({
                 owner: account,
                 repo: repository,
+                branch,
                 path,
                 message: `Updating file ${path}`,
                 content: Buffer.from(JSON.stringify(content)).toString("base64"),
