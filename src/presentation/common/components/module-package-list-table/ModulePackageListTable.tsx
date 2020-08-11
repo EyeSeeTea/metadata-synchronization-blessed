@@ -34,8 +34,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
     }) => {
         const [selectedInstance, setSelectedInstance] = useState<Instance>();
 
-        const viewSelector = useViewSelector(showSelector);
-        const viewValue = propsViewValue ?? viewSelector.value;
+        const viewSelector = useViewSelector(showSelector, propsViewValue);
 
         const setValue = useCallback(
             (value: ViewOption) => {
@@ -54,10 +53,10 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
                         onChangeSelected={setSelectedInstance}
                     />
 
-                    {viewSelector.items.length > 1 && viewValue && (
+                    {viewSelector.items.length > 1 && viewSelector.value && (
                         <Dropdown
                             items={viewSelector.items}
-                            value={viewValue}
+                            value={viewSelector.value}
                             onValueChange={setValue}
                             label={i18n.t("View")}
                             hideEmpty={true}
@@ -65,7 +64,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
                     )}
                 </React.Fragment>
             ),
-            [showInstances, selectedInstance, setValue, viewSelector, viewValue]
+            [showInstances, selectedInstance, setValue, viewSelector]
         );
 
         const Table = viewSelector.value === "packages" ? PackagesListTable : ModulesListTable;

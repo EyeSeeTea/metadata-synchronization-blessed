@@ -26,7 +26,7 @@ export const ModuleListPage: React.FC = () => {
     const history = useHistory();
     const [syncReport, setSyncReport] = useState<SyncReport>();
 
-    const { list: tableOption = "modules" } = useParams<{ list: "modules" | "packages" }>();
+    const { list: tableOption = "modules" } = useParams<{ list: ViewOption }>();
     const title = buildTitle(tableOption);
 
     const backHome = useCallback(() => {
@@ -47,16 +47,19 @@ export const ModuleListPage: React.FC = () => {
     return (
         <React.Fragment>
             <PageHeader title={title} onBackClick={backHome} />
-            {!!syncReport && (
-                <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
-            )}
+
             <ModulePackageListTable
                 showSelector={showSelector}
                 showInstances={showInstances}
                 onCreate={createModule}
+                viewValue={tableOption}
                 onViewChange={setTableOption}
                 presentation={"app"}
             />
+
+            {!!syncReport && (
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
+            )}
         </React.Fragment>
     );
 };
