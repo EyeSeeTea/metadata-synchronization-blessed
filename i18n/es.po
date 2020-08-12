@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-10T15:15:04.253Z\n"
+"POT-Creation-Date: 2020-08-12T05:44:50.053Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,9 +63,6 @@ msgid "This instance"
 msgstr ""
 
 msgid "Store"
-msgstr ""
-
-msgid "Instance"
 msgstr ""
 
 msgid "Invalid module"
@@ -173,6 +170,9 @@ msgid "Packages"
 msgstr "Paquetes"
 
 msgid "Invalid package"
+msgstr ""
+
+msgid "Package published to store"
 msgstr ""
 
 msgid "Importing package {{name}}"
