@@ -68,10 +68,15 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
 
     const publishPackage = useCallback(
         async (ids: string[]) => {
+            loading.show(true, i18n.t("Publishing package to Store"));
             const validation = await compositionRoot.packages.publish(ids[0]);
             validation.match({
-                success: () => snackbar.success(i18n.t("Package published to store")),
+                success: () => {
+                    loading.reset();
+                    snackbar.success(i18n.t("Package published to store"));
+                },
                 error: code => {
+                    loading.reset();
                     switch (code) {
                         case "BAD_CREDENTIALS":
                         case "NO_TOKEN":
@@ -96,7 +101,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
                 },
             });
         },
-        [compositionRoot, snackbar]
+        [compositionRoot, snackbar, loading]
     );
 
     const importPackage = useCallback(
