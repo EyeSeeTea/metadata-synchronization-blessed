@@ -35,7 +35,7 @@ export class PublishStorePackageUseCase implements UseCase {
             store,
             module.department.name,
             path,
-            contents
+            JSON.stringify(contents, null, 4)
         );
 
         if (validation.isError()) return Either.error(validation.value.error);

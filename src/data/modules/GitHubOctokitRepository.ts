@@ -23,13 +23,11 @@ export class GitHubOctokitRepository implements GitHubRepository {
         store: Store,
         branch: string,
         path: string,
-        content: unknown
+        content: string
     ): Promise<Either<GitHubError, void>> {
         try {
             const { token, account, repository } = store;
             const octokit = await this.getOctoKit(token);
-            const stringContents =
-                typeof content === "object" ? JSON.stringify(content, null, 4) : String(content);
 
             await octokit.repos.createOrUpdateFileContents({
                 owner: account,
@@ -37,7 +35,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
                 branch,
                 path,
                 message: `Updating file ${path}`,
-                content: Buffer.from(stringContents).toString("base64"),
+                content: Buffer.from(content).toString("base64"),
                 sha: await this.getFileSha(store, path),
                 author: {
                     name: "Test",

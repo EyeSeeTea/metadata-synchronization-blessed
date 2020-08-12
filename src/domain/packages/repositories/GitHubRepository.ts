@@ -13,7 +13,7 @@ export interface GitHubRepository {
         store: Store,
         branch: string,
         path: string,
-        content: unknown
+        content: string
     ): Promise<Either<GitHubError, void>>;
     deleteFile(store: Store, path: string): Promise<Either<GitHubError, void>>;
     validateStore(store: Store): Promise<Either<GitHubError, StorePermissions>>;
