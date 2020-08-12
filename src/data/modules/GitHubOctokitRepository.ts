@@ -32,7 +32,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
             await octokit.repos.createOrUpdateFileContents({
                 owner: account,
                 repo: repository,
-                branch,
+                branch: branch.replace(/\s/g, "-"),
                 path,
                 message: `Updating file ${path}`,
                 content: Buffer.from(content).toString("base64"),
