@@ -1,3 +1,4 @@
+import moment from "moment";
 import { cache } from "../../../utils/cache";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
@@ -27,15 +28,17 @@ export class PublishStorePackageUseCase implements UseCase {
         ).getObjectInCollection<BasePackage>(Namespace.PACKAGES, packageId);
         if (!storedPackage) return Either.error("PACKAGE_NOT_FOUND");
 
-        const { name, version, dhisVersion, user, created, module, contents } = storedPackage;
-        const fileName = [name, version, dhisVersion, user.name, created].join("-");
-        const path = `${module.name}/${fileName}`;
+        const { name, version, dhisVersion, created, module, contents } = storedPackage;
+        const payload = { package: storedPackage, ...contents };
+        const date = moment(created).format("YYYYMMDDHHmm");
+        const fileName = [name, version, dhisVersion, date].join("-");
+        const path = `${module.name}/${fileName}.json`;
 
         const validation = await this.gitRepository().writeFile(
             store,
             module.department.name,
             path,
-            JSON.stringify(contents, null, 4)
+            JSON.stringify(payload, null, 4)
         );
 
         if (validation.isError()) return Either.error(validation.value.error);
