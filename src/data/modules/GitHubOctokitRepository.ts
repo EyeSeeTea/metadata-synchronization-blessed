@@ -125,7 +125,16 @@ export class GitHubOctokitRepository implements GitHubRepository {
         return new Octokit({ auth: token });
     }
 
+    private validateComplexErrors(error: Error): GitHubError | undefined {
+        if (/Branch.*not found/.test(error.message)) {
+            return "BRANCH_NOT_FOUND";
+        }
+    }
+
     private validateError(error: Error): GitHubError {
+        const complexError = this.validateComplexErrors(error);
+        if (complexError) return complexError;
+
         switch (error.message) {
             case "Not Found":
                 return "NOT_FOUND";

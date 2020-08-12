@@ -6,11 +6,12 @@ import { Instance } from "../../instance/entities/Instance";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { GitHubError } from "../entities/Errors";
 import { BasePackage } from "../entities/Package";
 import { Store } from "../entities/Store";
 import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
 
-export type PublishStorePackageError = "STORE_NOT_FOUND" | "PACKAGE_NOT_FOUND" | "GITHUB_ERROR";
+export type PublishStorePackageError = GitHubError | "STORE_NOT_FOUND" | "PACKAGE_NOT_FOUND";
 
 export class PublishStorePackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -27,7 +28,7 @@ export class PublishStorePackageUseCase implements UseCase {
         if (!storedPackage) return Either.error("PACKAGE_NOT_FOUND");
 
         const { name, version, dhisVersion, user, created, module, contents } = storedPackage;
-        const fileName = [name, version, dhisVersion, user, created].join("-");
+        const fileName = [name, version, dhisVersion, user.name, created].join("-");
         const path = `${module.name}/${fileName}`;
 
         const validation = await this.gitRepository().writeFile(
@@ -37,7 +38,7 @@ export class PublishStorePackageUseCase implements UseCase {
             contents
         );
 
-        if (validation.isError()) return Either.error("GITHUB_ERROR");
+        if (validation.isError()) return Either.error(validation.value.error);
 
         return Either.success(undefined);
     }

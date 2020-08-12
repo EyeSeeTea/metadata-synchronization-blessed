@@ -73,15 +73,25 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
                 success: () => snackbar.success(i18n.t("Package published to store")),
                 error: code => {
                     switch (code) {
+                        case "BAD_CREDENTIALS":
+                        case "NO_TOKEN":
                         case "STORE_NOT_FOUND":
                             snackbar.error("Store is not properly configured");
                             return;
                         case "PACKAGE_NOT_FOUND":
                             snackbar.error("Could not read package");
                             return;
-                        case "GITHUB_ERROR":
-                            snackbar.error("Error creating file on GitHub");
+                        case "WRITE_PERMISSIONS":
+                            snackbar.error("You don't have permissions to create file on GitHub");
                             return;
+                        case "UNKNOWN":
+                            snackbar.error("Unknown error while creating file on GitHub");
+                            return;
+                        case "BRANCH_NOT_FOUND":
+                            snackbar.error("Branch not found");
+                            return;
+                        default:
+                            snackbar.error("Unknown error");
                     }
                 },
             });
