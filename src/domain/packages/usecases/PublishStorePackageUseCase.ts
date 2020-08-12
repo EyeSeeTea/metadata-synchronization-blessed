@@ -33,10 +33,11 @@ export class PublishStorePackageUseCase implements UseCase {
         const date = moment(created).format("YYYYMMDDHHmm");
         const fileName = [name, version, dhisVersion, date].join("-");
         const path = `${module.name}/${fileName}.json`;
+        const branch = module.department.name.replace(/\s/g, "-")
 
         const validation = await this.gitRepository().writeFile(
             store,
-            module.department.name,
+            branch,
             path,
             JSON.stringify(payload, null, 4)
         );

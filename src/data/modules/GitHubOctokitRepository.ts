@@ -7,9 +7,13 @@ import { GitHubRepository } from "../../domain/packages/repositories/GitHubRepos
 import { cache } from "../../utils/cache";
 
 export class GitHubOctokitRepository implements GitHubRepository {
-    public async readFile<T>(store: Store, path: string): Promise<Either<GitHubError, T>> {
+    public async readFile<T>(
+        store: Store,
+        branch: string,
+        path: string
+    ): Promise<Either<GitHubError, T>> {
         try {
-            const { encoding, content } = await this.getFile(store, path);
+            const { encoding, content } = await this.getFile(store, branch, path);
             if (encoding !== "base64") throw new Error("File encoding not supported");
             const result = Buffer.from(content, "base64").toString("utf8");
 
@@ -32,11 +36,11 @@ export class GitHubOctokitRepository implements GitHubRepository {
             await octokit.repos.createOrUpdateFileContents({
                 owner: account,
                 repo: repository,
-                branch: branch.replace(/\s/g, "-"),
+                branch,
                 path,
                 message: `Updating file ${path}`,
                 content: Buffer.from(content).toString("base64"),
-                sha: await this.getFileSha(store, path),
+                sha: await this.getFileSha(store, branch, path),
                 author: {
                     name: "Test",
                     email: "test@eyeseetea.com",
@@ -59,16 +63,21 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
-    public async deleteFile(store: Store, path: string): Promise<Either<GitHubError, void>> {
+    public async deleteFile(
+        store: Store,
+        branch: string,
+        path: string
+    ): Promise<Either<GitHubError, void>> {
         try {
             const { token, account, repository } = store;
             const octokit = await this.getOctoKit(token);
-            const sha = await this.getFileSha(store, path);
+            const sha = await this.getFileSha(store, branch, path);
             if (!sha) return Either.error("NOT_FOUND");
 
             await octokit.repos.deleteFile({
                 owner: account,
                 repo: repository,
+                branch,
                 path,
                 message: `Delete file ${path}`,
                 sha,
@@ -146,21 +155,26 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
-    private async getFileSha(store: Store, path: string): Promise<string | undefined> {
+    private async getFileSha(
+        store: Store,
+        branch: string,
+        path: string
+    ): Promise<string | undefined> {
         try {
-            const { sha } = await this.getFile(store, path);
+            const { sha } = await this.getFile(store, branch, path);
             return sha;
         } catch (error) {
             return undefined;
         }
     }
 
-    private async getFile({ token, account, repository }: Store, path: string) {
+    private async getFile({ token, account, repository }: Store, branch: string, path: string) {
         const octokit = await this.getOctoKit(token);
 
         const { data } = await octokit.repos.getContent({
             owner: account,
             repo: repository,
+            ref: branch,
             path,
         });
 
