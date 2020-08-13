@@ -51,6 +51,7 @@ Cypress.Commands.overwrite("get", async (originalFn, selector, options) => {
                 name: "Get",
                 displayName: "Get",
                 message: "Element is detached from DOM",
+                // eslint-disable-next-line no-loop-func
                 consoleProps: () => ({ selector, retries }),
             });
         }

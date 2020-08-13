@@ -42,6 +42,7 @@ export default class Scheduler {
         try {
             const readableFrequency = cronstrue.toString(frequency || "");
             logger.debug(`Start ${type} rule with frequency: ${readableFrequency}`);
+            console.log({ builder, syncRule, SyncClass });
             /**const sync = new SyncClass(this.d2, this.api, { ...builder, syncRule });
             for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) logger.debug(message);
