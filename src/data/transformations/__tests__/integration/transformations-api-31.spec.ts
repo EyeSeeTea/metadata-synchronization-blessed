@@ -124,7 +124,7 @@ describe("Sync metadata", () => {
         const builder: SynchronizationBuilder = {
             originInstance: "LOCAL",
             targetInstances: ["DESTINATION"],
-            metadataIds: ["id1"],
+            metadataIds: ["id2"],
             excludedIds: [],
         };
     
