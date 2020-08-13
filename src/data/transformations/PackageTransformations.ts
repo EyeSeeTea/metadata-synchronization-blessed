@@ -2,6 +2,20 @@ import { Transformation } from "../../domain/transformations/entities/Transforma
 
 export const metadataTransformations: Transformation[] = [
     {
+        name: "programs-params",
+        apiVersion: 31,
+        apply: ({ programs, ...rest }: any) => {
+            return {
+                programs: programs?.map(({ captureCoordinates, ...rest }: any) => {
+                    const featureType = captureCoordinates ? "POINT" : "NONE";
+                    return { featureType, ...rest };
+                }),
+                ...rest,
+            };
+        },
+        undo: metadata => metadata as any,
+    },
+    {
         name: "report-table-params",
         apiVersion: 34,
         apply: ({ reports, ...rest }: any) => {
