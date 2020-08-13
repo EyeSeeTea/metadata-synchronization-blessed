@@ -315,8 +315,9 @@ export const NotificationsListPage: React.FC = () => {
                 text: i18n.t("Cancel"),
                 isActive: (rows: AppNotification[]) =>
                     rows[0].type === "sent-pull-request" &&
-                    rows[0].status !== "IMPORTED" &&
-                    rows[0].status !== "CANCELLED",
+                    (rows[0].status === "PENDING" ||
+                        rows[0].status === "APPROVED" ||
+                        rows[0].status === "IMPORTED_WITH_ERRORS"),
                 onClick: async rows => {
                     loading.show(true, i18n.t("Cancelling pull request"));
                     const result = await compositionRoot.notifications.cancelPullRequest(rows[0]);
@@ -442,7 +443,7 @@ const useStyles = makeStyles({
 
 type TableNotification = AppNotification & {
     sender: string;
-    [key: string]: any;
+    [key: string]: unknown;
 };
 
 export default NotificationsListPage;

@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { cache } from "../../../utils/cache";
 import { NamedRef } from "../../common/entities/Ref";
 import { UseCase } from "../../common/entities/UseCase";
@@ -6,7 +5,6 @@ import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { AppNotification, MessageNotification } from "../../notifications/entities/Notification";
 import {
     ReceivedPullRequestNotification,
@@ -40,7 +38,7 @@ export class CreatePullRequestUseCase implements UseCase {
         notificationUsers,
     }: CreatePullRequestParams): Promise<void> {
         const owner = await this.getOwner();
-        const { users, userGroups } = await this.getResponsibles(instance, ids);
+        const { users, userGroups } = notificationUsers;
 
         const receivedPullRequest = ReceivedPullRequestNotification.create({
             subject,
@@ -52,7 +50,6 @@ export class CreatePullRequestUseCase implements UseCase {
             syncType: type,
             selectedIds: ids,
             payload,
-            responsibles: { users, userGroups },
         });
 
         const sentPullRequest = SentPullRequestNotification.create({
@@ -99,26 +96,6 @@ export class CreatePullRequestUseCase implements UseCase {
     private async getOwner(): Promise<NamedRef> {
         const { id, name } = await this.instanceRepository(this.localInstance).getUser();
         return { id, name };
-    }
-
-    private async getResponsibles(instance: Instance, ids: string[]) {
-        const responsibles = await this.storageRepository(instance).listObjectsInCollection<
-            MetadataResponsible
-        >(Namespace.RESPONSIBLES);
-
-        const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
-
-        const users = _.uniqBy(
-            metadataResponsibles.flatMap(({ users }) => users),
-            "id"
-        );
-
-        const userGroups = _.uniqBy(
-            metadataResponsibles.flatMap(({ userGroups }) => userGroups),
-            "id"
-        );
-
-        return { users, userGroups };
     }
 
     private async sendMessage(

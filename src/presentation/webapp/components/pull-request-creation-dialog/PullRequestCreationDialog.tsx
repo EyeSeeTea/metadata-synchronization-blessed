@@ -8,6 +8,7 @@ import {
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
+import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../domain/instance/entities/Instance";
@@ -67,7 +68,10 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
             payload,
             subject,
             description,
-            notificationUsers,
+            notificationUsers: {
+                users: sharingToNamedRef(notificationUsers.users),
+                userGroups: sharingToNamedRef(notificationUsers.userGroups),
+            },
         });
 
         onClose();
@@ -110,10 +114,15 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
 
     useEffect(() => {
         compositionRoot.responsibles.get(builder.metadataIds, instance).then(responsibles => {
-            const users = namedRefToSharing(responsibles.flatMap(({ users }) => users));
-            const userGroups = namedRefToSharing(
-                responsibles.flatMap(({ userGroups }) => userGroups)
+            const users = _.uniqBy(
+                namedRefToSharing(responsibles.flatMap(({ users }) => users)),
+                "id"
             );
+            const userGroups = _.uniqBy(
+                namedRefToSharing(responsibles.flatMap(({ userGroups }) => userGroups)),
+                "id"
+            );
+
             updateResponsibles(new Set([...users, ...userGroups].map(({ id }) => id)));
             updateNotificationUsers({ users, userGroups });
         });
@@ -181,4 +190,8 @@ const useStyles = makeStyles({
 
 function namedRefToSharing(namedRefs: NamedRef[]): SharingRule[] {
     return namedRefs.map(({ id, name }) => ({ id, displayName: name, access: "------" }));
+}
+
+function sharingToNamedRef(sharings: SharingRule[]): NamedRef[] {
+    return sharings.map(({ id, displayName }) => ({ id, name: displayName }));
 }
