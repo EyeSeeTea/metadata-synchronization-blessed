@@ -16,6 +16,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
+import {
+    PackagesDiffDialog,
+    PackageToDiff,
+} from "../../../webapp/components/packages-diff-dialog/PackagesDiffDialog";
 import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
 import { useAppContext } from "../../contexts/AppContext";
 
@@ -36,8 +40,11 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     const [rows, setRows] = useState<ListPackage[]>([]);
     const [resetKey, setResetKey] = useState(Math.random());
     const [selection, updateSelection] = useState<TableSelection[]>([]);
-    const [storePackages, setStorePackages] = useState<ListPackage[]>([]);
+    const [, setStorePackages] = useState<ListPackage[]>([]);
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
+    const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
+
+    const isRemoteInstance = !!remoteInstance;
 
     const deletePackages = useCallback(
         async (ids: string[]) => {
@@ -124,6 +131,17 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
         [compositionRoot, snackbar, loading]
     );
 
+    const openPackageDiffDialog = useCallback(
+        async (ids: string[]) => {
+            const packageId = ids[0];
+            const package_ = rows.find(row => row.id === packageId);
+            if (packageId && package_) setPackageToDiff({ id: packageId, name: package_.name });
+        },
+        [rows, setPackageToDiff]
+    );
+
+    const closePackageDiffDialog = useCallback(() => setPackageToDiff(null), [setPackageToDiff]);
+
     const importPackage = useCallback(
         async (ids: string[]) => {
             const result = await compositionRoot.packages.get(ids[0], remoteInstance);
@@ -189,7 +207,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
             multiple: true,
             onClick: deletePackages,
             icon: <Icon>delete</Icon>,
-            isActive: () => presentation === "app" && !remoteInstance,
+            isActive: () => presentation === "app" && !isRemoteInstance,
         },
         {
             name: "download",
@@ -204,7 +222,15 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
             multiple: false,
             onClick: publishPackage,
             icon: <Icon>publish</Icon>,
-            isActive: () => presentation === "app" && !remoteInstance,
+            isActive: () => presentation === "app" && !isRemoteInstance,
+        },
+        {
+            name: "compare-with-local",
+            text: i18n.t("Compare with local instance"),
+            multiple: false,
+            icon: <Icon>compare</Icon>,
+            isActive: () => presentation === "app" && isRemoteInstance,
+            onClick: openPackageDiffDialog,
         },
         {
             name: "import",
@@ -212,7 +238,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
             multiple: false,
             onClick: importPackage,
             icon: <Icon>arrow_downward</Icon>,
-            isActive: () => presentation === "app" && !!remoteInstance,
+            isActive: () => presentation === "app" && isRemoteInstance,
         },
     ];
 
@@ -251,6 +277,14 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
             />
 
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
+
+            {remoteInstance && packageToDiff && (
+                <PackagesDiffDialog
+                    onClose={closePackageDiffDialog}
+                    remotePackage={packageToDiff}
+                    remoteInstance={remoteInstance}
+                />
+            )}
         </React.Fragment>
     );
 };

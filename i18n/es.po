@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-13T09:27:04.606Z\n"
+"POT-Creation-Date: 2020-08-13T10:47:56.266Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -208,6 +208,9 @@ msgid "Download as JSON"
 msgstr ""
 
 msgid "Publish to Store"
+msgstr ""
+
+msgid "Compare with local instance"
 msgstr ""
 
 msgid "Import package"
@@ -487,6 +490,33 @@ msgstr ""
 msgid "[Pull Request by {{name}}] {{subject}}"
 msgstr ""
 
+msgid "Cannot get data from remote instance"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "objects"
+msgstr ""
+
+msgid "Unmodified"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "Updated"
+msgstr ""
+
+msgid "Comparing package contents"
+msgstr ""
+
+msgid "Changes found in remote package"
+msgstr ""
+
+msgid "No changes found in remote package"
+msgstr ""
+
 msgid "Back"
 msgstr ""
 
@@ -548,9 +578,6 @@ msgid "Type"
 msgstr ""
 
 msgid "Imported"
-msgstr ""
-
-msgid "Updated"
 msgstr ""
 
 msgid "Deleted"
@@ -789,9 +816,6 @@ msgid "Dry run"
 msgstr ""
 
 msgid "New and updates"
-msgstr ""
-
-msgid "New"
 msgstr ""
 
 msgid "Updates"
@@ -1236,9 +1260,6 @@ msgid "Approve"
 msgstr ""
 
 msgid "Reject"
-msgstr ""
-
-msgid "Import"
 msgstr ""
 
 msgid "Importing approved pull request"
