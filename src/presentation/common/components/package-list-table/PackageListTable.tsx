@@ -75,9 +75,10 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
 
     const openPackageDiffDialog = useCallback(
         async (ids: string[]) => {
-            const packageId = ids[0];
-            const package_ = rows.find(row => row.id === packageId);
-            if (packageId && package_) setPackageToDiff({ id: packageId, name: package_.name });
+            const packageId = _(ids).get(0, null);
+            const remotePackage = packageId ? rows.find(row => row.id === packageId) : undefined;
+            if (packageId && remotePackage)
+                setPackageToDiff({ id: packageId, name: remotePackage.name });
         },
         [rows, setPackageToDiff]
     );
