@@ -13,7 +13,16 @@ export const metadataTransformations: Transformation[] = [
                 ...rest,
             };
         },
-        undo: metadata => metadata as any,
+        undo: ({ programs, ...rest }: any) => {
+            return {
+                programs: programs?.map(({ featureType, ...rest }: any) => {
+                    const captureCoordinates = featureType === "NONE" ? false : true;
+                    debugger;
+                    return { captureCoordinates, featureType, ...rest };
+                }),
+                ...rest,
+            };
+        },
     },
     {
         name: "report-table-params",
