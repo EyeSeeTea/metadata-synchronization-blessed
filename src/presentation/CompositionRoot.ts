@@ -52,6 +52,7 @@ import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSy
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
 import { CancelPullRequestUseCase } from "../domain/notifications/usecases/CancelPullRequestUseCase";
+import { DiffPackageUseCase } from "../domain/packages/usecases/DiffPackageUseCase";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -166,6 +167,7 @@ export class CompositionRoot {
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),
             download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),
+            diff: new DiffPackageUseCase(this, this.repositoryFactory),
         });
     }
 

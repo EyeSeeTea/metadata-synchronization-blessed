@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-10T06:31:04.965Z\n"
-"PO-Revision-Date: 2020-08-10T06:31:04.965Z\n"
+"POT-Creation-Date: 2020-08-13T08:50:14.937Z\n"
+"PO-Revision-Date: 2020-08-13T08:50:14.937Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -176,6 +176,9 @@ msgid "Download as JSON"
 msgstr ""
 
 msgid "Publish to Store"
+msgstr ""
+
+msgid "Compare with local instance"
 msgstr ""
 
 msgid "Import package"
@@ -451,6 +454,33 @@ msgstr ""
 msgid "[Pull Request by {{name}}] {{subject}}"
 msgstr ""
 
+msgid "Cannot get data from remote instance"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "objects"
+msgstr ""
+
+msgid "Unmodified"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "Updated"
+msgstr ""
+
+msgid "Comparing package contents"
+msgstr ""
+
+msgid "Changes found in remote package"
+msgstr ""
+
+msgid "No changes found in remote package"
+msgstr ""
+
 msgid "Back"
 msgstr ""
 
@@ -512,9 +542,6 @@ msgid "Type"
 msgstr ""
 
 msgid "Imported"
-msgstr ""
-
-msgid "Updated"
 msgstr ""
 
 msgid "Deleted"
@@ -749,9 +776,6 @@ msgid "Dry run"
 msgstr ""
 
 msgid "New and updates"
-msgstr ""
-
-msgid "New"
 msgstr ""
 
 msgid "Updates"
@@ -1209,9 +1233,6 @@ msgid "Approve"
 msgstr ""
 
 msgid "Reject"
-msgstr ""
-
-msgid "Import"
 msgstr ""
 
 msgid "Importing approved pull request"
