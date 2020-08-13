@@ -1,3 +1,5 @@
+import { BaseModule } from "./../../modules/entities/Module";
+import { BasePackage } from "./../entities/Package";
 import { MetadataModule } from "./../../modules/entities/MetadataModule";
 import { CompositionRoot } from "./../../../presentation/CompositionRoot";
 import { Either } from "./../../common/entities/Either";
@@ -7,8 +9,6 @@ import { Instance } from "../../instance/entities/Instance";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { Package } from "../entities/Package";
-import { Module } from "../../modules/entities/Module";
 import { MetadataPackageDiff, getMetadataPackageDiff } from "../entities/MetadataPackageDiff";
 
 type DiffPackageUseCaseError = "PACKAGE_NOT_FOUND" | "MODULE_NOT_FOUND" | "NETWORK_ERROR";
@@ -28,27 +28,27 @@ export class DiffPackageUseCase implements UseCase {
             [remoteInstance]
         );
 
-        const package_ = await storageRepository.getObjectInCollection<Package>(
+        const remotePackage = await storageRepository.getObjectInCollection<BasePackage>(
             Namespace.PACKAGES,
             packageId
         );
 
-        if (!package_) return Either.error("PACKAGE_NOT_FOUND");
+        if (!remotePackage) return Either.error("PACKAGE_NOT_FOUND");
 
-        const module_ = await storageRepository.getObjectInCollection<Module>(
+        const remoteModule = await storageRepository.getObjectInCollection<BaseModule>(
             Namespace.MODULES,
-            package_.module.id
+            remotePackage.module.id
         );
 
-        if (!module_) return Either.error("MODULE_NOT_FOUND");
+        if (!remoteModule) return Either.error("MODULE_NOT_FOUND");
 
-        const moduleC = MetadataModule.build(module_);
+        const moduleC = MetadataModule.build(remoteModule);
         const localContents = await this.compositionRoot.sync[moduleC.type]({
             ...moduleC.toSyncBuilder(),
             originInstance: "LOCAL",
             targetInstances: [],
         }).buildPayload();
 
-        return Either.success(getMetadataPackageDiff(localContents, package_.contents));
+        return Either.success(getMetadataPackageDiff(localContents, remotePackage.contents));
     }
 }

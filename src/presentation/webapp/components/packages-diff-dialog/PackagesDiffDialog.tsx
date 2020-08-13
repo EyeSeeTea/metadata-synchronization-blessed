@@ -13,11 +13,12 @@ import {
 } from "../../../../domain/packages/entities/MetadataPackageDiff";
 import SyncSummary from "../sync-summary/SyncSummary";
 import { usePackageImporter, getTitle, getChange } from "./utils";
+import { NamedRef } from "../../../../domain/common/entities/Ref";
 
 export interface PackagesDiffDialogProps {
     onClose(): void;
     remoteInstance: Instance;
-    remotePackage: { id: string; name: string };
+    remotePackage: NamedRef;
 }
 
 export type PackageToDiff = { id: string; name: string };
@@ -42,7 +43,7 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
 
     const hasChanges = metadataDiff && metadataDiff.hasChanges;
     const packageName = `${remotePackage.name} (${remoteInstance.name})`;
-    const [importPackage, syncReport, closeSyncReport] = usePackageImporter(
+    const { importPackage, syncReport, closeSyncReport } = usePackageImporter(
         packageName,
         metadataDiff,
         onClose
