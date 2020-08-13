@@ -5,3 +5,5 @@ export type GitHubError =
     | "WRITE_PERMISSIONS"
     | "BRANCH_NOT_FOUND"
     | "UNKNOWN";
+
+export type GitHubListError = GitHubError | "LIST_TRUNCATED";

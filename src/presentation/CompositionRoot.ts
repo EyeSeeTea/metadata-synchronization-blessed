@@ -54,6 +54,7 @@ import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/Cre
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
+import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -164,6 +165,7 @@ export class CompositionRoot {
     public get packages() {
         return getExecute({
             list: new ListPackagesUseCase(this.repositoryFactory, this.localInstance),
+            listStore: new ListStorePackagesUseCase(this.repositoryFactory, this.localInstance),
             create: new CreatePackageUseCase(this.repositoryFactory, this.localInstance),
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),

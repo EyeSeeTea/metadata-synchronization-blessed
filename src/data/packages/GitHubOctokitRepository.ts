@@ -1,6 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import { Either } from "../../domain/common/entities/Either";
-import { GitHubError } from "../../domain/packages/entities/Errors";
+import { GitHubError, GitHubListError } from "../../domain/packages/entities/Errors";
+import { GithubFile } from "../../domain/packages/entities/GithubFile";
 import { Store } from "../../domain/packages/entities/Store";
 import { StorePermissions } from "../../domain/packages/entities/StorePermissions";
 import { GitHubRepository } from "../../domain/packages/repositories/GitHubRepository";
@@ -10,7 +11,31 @@ export class GitHubOctokitRepository implements GitHubRepository {
     public async listFiles(
         store: Store,
         branch: string
-    ): Promise<import("../../domain/packages/entities/GithubFile").GithubFile[]> {}
+    ): Promise<Either<GitHubListError, GithubFile[]>> {
+        const { token, account, repository } = store;
+        const octokit = await this.getOctoKit(token);
+
+        try {
+            const { data } = await octokit.git.getTree({
+                owner: account,
+                repo: repository,
+                tree_sha: branch,
+                recursive: "true",
+            });
+
+            if (data.truncated) return Either.error("LIST_TRUNCATED");
+
+            const items: GithubFile[] = data.tree.map(({ path, type, sha }) => ({
+                path,
+                type: type as "blob" | "tree",
+                sha,
+            }));
+
+            return Either.success(items);
+        } catch (error) {
+            return Either.error(this.validateError(error));
+        }
+    }
 
     public async readFile<T>(
         store: Store,
