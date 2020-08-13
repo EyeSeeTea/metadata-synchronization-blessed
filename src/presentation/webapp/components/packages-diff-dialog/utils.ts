@@ -66,5 +66,5 @@ export function usePackageImporter(
             .finally(() => loading.reset());
     }, [packageName, metadataDiff, compositionRoot, loading, snackbar, api]);
 
-    return [importPackage, syncReport, closeSyncReport] as const;
+    return { importPackage, syncReport, closeSyncReport };
 }
