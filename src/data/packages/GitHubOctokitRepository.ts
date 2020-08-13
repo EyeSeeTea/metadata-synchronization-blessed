@@ -7,6 +7,11 @@ import { GitHubRepository } from "../../domain/packages/repositories/GitHubRepos
 import { cache } from "../../utils/cache";
 
 export class GitHubOctokitRepository implements GitHubRepository {
+    public async listFiles(
+        store: Store,
+        branch: string
+    ): Promise<import("../../domain/packages/entities/GithubFile").GithubFile[]> {}
+
     public async readFile<T>(
         store: Store,
         branch: string,
