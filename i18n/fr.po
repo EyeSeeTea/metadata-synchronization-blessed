@@ -47,13 +47,25 @@ msgstr ""
 msgid "Preparing synchronization"
 msgstr ""
 
-msgid "Importing data in instance {{instance}}"
+msgid "Start import in instance {{instance}}"
 msgstr ""
 
 msgid "Program with Data Elements"
 msgstr ""
 
 msgid "Program with Indicators"
+msgstr ""
+
+msgid "Instances"
+msgstr ""
+
+msgid "This instance"
+msgstr ""
+
+msgid "Store"
+msgstr ""
+
+msgid "Instance"
 msgstr ""
 
 msgid "Invalid module"
@@ -149,6 +161,15 @@ msgid "Version tag"
 msgstr ""
 
 msgid "DHIS2 Version (*)"
+msgstr ""
+
+msgid "View"
+msgstr ""
+
+msgid "Modules"
+msgstr ""
+
+msgid "Packages"
 msgstr ""
 
 msgid "Invalid package"
@@ -428,7 +449,7 @@ msgstr ""
 msgid "Metadata"
 msgstr ""
 
-msgid "Include Exclude Selection"
+msgid "Select dependencies"
 msgstr ""
 
 msgid "Advanced options"
@@ -449,7 +470,7 @@ msgstr ""
 msgid "Include user information and sharing settings"
 msgstr ""
 
-msgid "Use default configuration"
+msgid "Use default dependencies"
 msgstr ""
 
 msgid "[Pull Request by {{name}}] {{subject}}"
@@ -675,16 +696,20 @@ msgstr ""
 msgid ""
 "If aggregation is enabled, the synchronization will use the Analytics "
 "endpoint and group data by organisation units children and the chosen time "
-"periods"
+"periods."
 msgstr ""
 
 msgid "Programs"
 msgstr ""
 
-msgid "Source instance"
+msgid ""
+"If aggregation is enabled, the synchronization will use the Analytics "
+"endpoint and group data by organisation units children and the chosen time "
+"periods. Program indicators are only included during a synchronization if "
+"aggregation is enabled."
 msgstr ""
 
-msgid "This instance"
+msgid "Source instance"
 msgstr ""
 
 msgid "Instance not found"
@@ -816,9 +841,6 @@ msgid ""
 msgstr ""
 
 msgid "Enable data aggregation"
-msgstr ""
-
-msgid "Aggregate and sync program indicators"
 msgstr ""
 
 msgid "Aggregation type"
@@ -1152,18 +1174,6 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Instance"
-msgstr ""
-
-msgid "Modules"
-msgstr ""
-
-msgid "Packages"
-msgstr ""
-
-msgid "View"
 msgstr ""
 
 msgid "New module"

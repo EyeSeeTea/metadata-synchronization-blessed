@@ -93,7 +93,9 @@ export default class SyncRule {
     }
 
     public replicate(): SyncRule {
-        return this.updateName(`Copy of ${this.syncRule.name}`).updateId(generateUid());
+        return this.updateName(`Copy of ${this.syncRule.name}`)
+            .update({ lastExecuted: undefined })
+            .updateId(generateUid());
     }
 
     public toObject(): SynchronizationRule {

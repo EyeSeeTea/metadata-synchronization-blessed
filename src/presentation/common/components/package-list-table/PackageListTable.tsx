@@ -118,16 +118,18 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
 
     const columns: TableColumn<ListPackage>[] = [
         { name: "name", text: i18n.t("Name"), sortable: true },
+        { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
         { name: "version", text: i18n.t("Version"), sortable: true },
         { name: "dhisVersion", text: i18n.t("DHIS2 Version"), sortable: true },
         { name: "module", text: i18n.t("Module"), sortable: true },
-        { name: "created", text: i18n.t("Created"), hidden: true },
-        { name: "user", text: i18n.t("Created by"), hidden: true },
+        { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
+        { name: "user", text: i18n.t("Created by"), sortable: true, hidden: true },
     ];
 
     const details: ObjectsTableDetailField<ListPackage>[] = [
         { name: "id", text: i18n.t("ID") },
         { name: "name", text: i18n.t("Name") },
+        { name: "description", text: i18n.t("Description") },
         { name: "version", text: i18n.t("Version") },
         { name: "dhisVersion", text: i18n.t("DHIS2 Version") },
         { name: "module", text: i18n.t("Module") },
