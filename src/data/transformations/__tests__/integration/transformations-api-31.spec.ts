@@ -24,21 +24,27 @@ describe("Sync metadata", () => {
 
     beforeEach(() => {
         local = startDhis({ urlPrefix: "http://origin.test" });
-        remote = startDhis({
-            urlPrefix: "http://destination.test",
-            pretender: local.pretender,
-        }, { version: "2.31" });
+        remote = startDhis(
+            {
+                urlPrefix: "http://destination.test",
+                pretender: local.pretender,
+            },
+            { version: "2.31" }
+        );
 
         local.get("/metadata", async () => ({
-            programs: [ {
-                id: "id1",
-                name: "Test tracker program",
-                captureCoordinates: true,
-            },{
-                id: "id2",
-                name: "Test tracker program",
-                captureCoordinates: false,
-            }],
+            programs: [
+                {
+                    id: "id1",
+                    name: "Test tracker program",
+                    captureCoordinates: true,
+                },
+                {
+                    id: "id2",
+                    name: "Test tracker program",
+                    captureCoordinates: false,
+                },
+            ],
         }));
 
         remote.get("/metadata", async () => ({}));
@@ -120,34 +126,34 @@ describe("Sync metadata", () => {
             name: "Testing",
             version: "2.30",
         });
-    
+
         const builder: SynchronizationBuilder = {
             originInstance: "LOCAL",
             targetInstances: ["DESTINATION"],
             metadataIds: ["id2"],
             excludedIds: [],
         };
-    
+
         const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
-    
+
         const payload = await useCase.buildPayload();
         expect(payload.programs?.find(({ id }) => id === "id2")).toBeDefined();
-    
+
         for await (const { done } of useCase.execute()) {
             if (done) console.log("Done");
         }
-    
+
         // Assert object has been created on remote
         const response = remote.db.metadata.find(1);
         expect(response.programs[1].id).toEqual("id2");
         expect(response.programs[1].name).toEqual("Test tracker program");
-    
+
         // Assert new properties have the correct values
         expect(response.programs[1].featureType).toEqual("NONE");
-    
+
         // Assert old properties are not anymore
         expect(response.programs[1].captureCoordinates).toBeUndefined();
-    
+
         // Assert we have not updated local metadata
         expect(local.db.metadata.find(1)).toBeNull();
     });
@@ -162,4 +168,4 @@ function buildRepositoryFactory() {
     return repositoryFactory;
 }
 
-export { };
+export {};
