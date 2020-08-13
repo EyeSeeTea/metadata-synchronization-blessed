@@ -1,5 +1,7 @@
 import { Icon } from "@material-ui/core";
 import {
+    ConfirmationDialog,
+    ConfirmationDialogProps,
     ObjectsTable,
     ObjectsTableDetailField,
     TableAction,
@@ -34,6 +36,8 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     const [rows, setRows] = useState<ListPackage[]>([]);
     const [resetKey, setResetKey] = useState(Math.random());
     const [selection, updateSelection] = useState<TableSelection[]>([]);
+    const [storePackages, setStorePackages] = useState<ListPackage[]>([]);
+    const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
 
     const deletePackages = useCallback(
         async (ids: string[]) => {
@@ -93,7 +97,23 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
                             snackbar.error("Unknown error while creating file on GitHub");
                             return;
                         case "BRANCH_NOT_FOUND":
-                            snackbar.error("Branch not found");
+                            updateDialog({
+                                title: i18n.t("Branch not found"),
+                                description: i18n.t(
+                                    "There are no branches for the department of this module. Do you want to create a new branch for this department?"
+                                ),
+                                onCancel: () => {
+                                    updateDialog(null);
+                                },
+                                onSave: async () => {
+                                    updateDialog(null);
+                                    loading.show(true, i18n.t("Publishing package to Store"));
+                                    await compositionRoot.packages.publish(ids[0], true);
+                                    loading.reset();
+                                },
+                                cancelText: i18n.t("Cancel"),
+                                saveText: i18n.t("Proceed"),
+                            });
                             return;
                         default:
                             snackbar.error("Unknown error");
@@ -206,18 +226,31 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
             });
     }, [compositionRoot, remoteInstance, resetKey, snackbar]);
 
+    useEffect(() => {
+        compositionRoot.packages.listStore().then(validation =>
+            validation.match({
+                success: setStorePackages,
+                error: () => snackbar.error(i18n.t("Can't connect to store")),
+            })
+        );
+    }, [compositionRoot, snackbar]);
+
     return (
-        <ObjectsTable<ListPackage>
-            rows={rows}
-            columns={columns}
-            details={details}
-            actions={actions}
-            onActionButtonClick={onActionButtonClick}
-            forceSelectionColumn={presentation === "app"}
-            filterComponents={externalComponents}
-            selection={selection}
-            onChange={updateTable}
-            paginationOptions={paginationOptions}
-        />
+        <React.Fragment>
+            <ObjectsTable<ListPackage>
+                rows={rows}
+                columns={columns}
+                details={details}
+                actions={actions}
+                onActionButtonClick={onActionButtonClick}
+                forceSelectionColumn={presentation === "app"}
+                filterComponents={externalComponents}
+                selection={selection}
+                onChange={updateTable}
+                paginationOptions={paginationOptions}
+            />
+
+            {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
+        </React.Fragment>
     );
 };

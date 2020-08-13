@@ -1,23 +1,23 @@
 import _ from "lodash";
 import moment from "moment";
 import { cache } from "../../../utils/cache";
+import { promiseMap } from "../../../utils/common";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
+import { MetadataModule } from "../../modules/entities/MetadataModule";
+import { BaseModule } from "../../modules/entities/Module";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { GitHubError, GitHubListError } from "../entities/Errors";
 import { Package } from "../entities/Package";
 import { Store } from "../entities/Store";
 import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
-import { BaseModule } from "../../modules/entities/Module";
-import { promiseMap } from "../../../utils/common";
-import { MetadataModule } from "../../modules/entities/MetadataModule";
-import { GitHubListError } from "../entities/Errors";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 
-export type ListStorePackagesError = any;
+export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
 
 export class ListStorePackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -29,12 +29,20 @@ export class ListStorePackagesUseCase implements UseCase {
         if (!store) return Either.error("STORE_NOT_FOUND");
 
         const userGroups = await this.instanceRepository(this.localInstance).getUserGroups();
+        const validation = await this.gitRepository().listBranches(store);
+        if (validation.isError()) return Either.error(validation.value.error);
 
-        const validation = await promiseMap(userGroups, userGroup =>
-            this.getPackages(store, userGroup.name)
+        const branches = validation.value.data?.flatMap(({ name }) => name) ?? [];
+        const matchingBranches = _.intersection(
+            userGroups.map(({ name }) => name.replace(/\s/g, "-")),
+            branches
         );
 
-        const packages = _.compact(validation.flatMap(({ value }) => value.data));
+        const rawPackages = await promiseMap(matchingBranches, userGroup =>
+            this.getPackages(store, userGroup)
+        );
+
+        const packages = _.compact(rawPackages.flatMap(({ value }) => value.data));
 
         return Either.success(packages);
     }

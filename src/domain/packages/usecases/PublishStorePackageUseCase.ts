@@ -17,7 +17,10 @@ export type PublishStorePackageError = GitHubError | "STORE_NOT_FOUND" | "PACKAG
 export class PublishStorePackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(packageId: string): Promise<Either<PublishStorePackageError, void>> {
+    public async execute(
+        packageId: string,
+        force = false
+    ): Promise<Either<PublishStorePackageError, void>> {
         const store = await this.storageRepository(this.localInstance).getObject<Store>(
             Namespace.STORE
         );
@@ -42,7 +45,13 @@ export class PublishStorePackageUseCase implements UseCase {
             JSON.stringify(payload, null, 4)
         );
 
-        if (validation.isError()) return Either.error(validation.value.error);
+        if (validation.isError()) {
+            if (force && validation.value.error === "BRANCH_NOT_FOUND") {
+                //await this.createBranch()
+            } else {
+                return Either.error(validation.value.error);
+            }
+        }
 
         return Either.success(undefined);
     }

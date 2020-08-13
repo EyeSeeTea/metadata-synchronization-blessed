@@ -1,5 +1,6 @@
 import { Either } from "../../common/entities/Either";
 import { GitHubError, GitHubListError } from "../entities/Errors";
+import { GithubBranch } from "../entities/GithubBranch";
 import { GithubFile } from "../entities/GithubFile";
 import { Store } from "../entities/Store";
 import { StorePermissions } from "../entities/StorePermissions";
@@ -18,5 +19,7 @@ export interface GitHubRepository {
         content: string
     ): Promise<Either<GitHubError, void>>;
     deleteFile(store: Store, branch: string, path: string): Promise<Either<GitHubError, void>>;
+    listBranches(store: Store): Promise<Either<GitHubError, GithubBranch[]>>;
+    createBranch(store: Store, branch: string): Promise<unknown>;
     validateStore(store: Store): Promise<Either<GitHubError, StorePermissions>>;
 }

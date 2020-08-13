@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-13T05:23:28.290Z\n"
-"PO-Revision-Date: 2020-08-13T05:23:28.290Z\n"
+"POT-Creation-Date: 2020-08-13T10:03:03.265Z\n"
+"PO-Revision-Date: 2020-08-13T10:03:03.265Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -178,6 +178,14 @@ msgstr ""
 msgid "Package published to store"
 msgstr ""
 
+msgid "Branch not found"
+msgstr ""
+
+msgid ""
+"There are no branches for the department of this module. Do you want to "
+"create a new branch for this department?"
+msgstr ""
+
 msgid "Importing package {{name}}"
 msgstr ""
 
@@ -203,6 +211,9 @@ msgid "Publish to Store"
 msgstr ""
 
 msgid "Import package"
+msgstr ""
+
+msgid "Can't connect to store"
 msgstr ""
 
 msgid "MetaData Synchronization"

@@ -1,6 +1,8 @@
 import { Octokit } from "@octokit/rest";
+import _ from "lodash";
 import { Either } from "../../domain/common/entities/Either";
 import { GitHubError, GitHubListError } from "../../domain/packages/entities/Errors";
+import { GithubBranch } from "../../domain/packages/entities/GithubBranch";
 import { GithubFile } from "../../domain/packages/entities/GithubFile";
 import { Store } from "../../domain/packages/entities/Store";
 import { StorePermissions } from "../../domain/packages/entities/StorePermissions";
@@ -12,10 +14,10 @@ export class GitHubOctokitRepository implements GitHubRepository {
         store: Store,
         branch: string
     ): Promise<Either<GitHubListError, GithubFile[]>> {
-        const { token, account, repository } = store;
-        const octokit = await this.getOctoKit(token);
-
         try {
+            const { token, account, repository } = store;
+            const octokit = await this.getOctoKit(token);
+
             const { data } = await octokit.git.getTree({
                 owner: account,
                 repo: repository,
@@ -120,6 +122,50 @@ export class GitHubOctokitRepository implements GitHubRepository {
                     email: "test@eyeseetea.com",
                 },
             });
+
+            return Either.success(undefined);
+        } catch (error) {
+            return Either.error(this.validateError(error));
+        }
+    }
+
+    public async listBranches(store: Store): Promise<Either<GitHubError, GithubBranch[]>> {
+        try {
+            const { token, account, repository } = store;
+            const octokit = await this.getOctoKit(token);
+
+            const { data } = await octokit.repos.listBranches({
+                owner: account,
+                repo: repository,
+            });
+
+            const items: GithubBranch[] = data.map(branch =>
+                _.pick(branch, ["name", "commit", "protected"])
+            );
+
+            return Either.success(items);
+        } catch (error) {
+            return Either.error(this.validateError(error));
+        }
+    }
+
+    public async createBranch(
+        { token, account, repository }: Store,
+        branch: string
+    ): Promise<unknown> {
+        try {
+            if (!token?.trim()) return Either.error("NO_TOKEN");
+
+            const octokit = await this.getOctoKit(token);
+
+            const { data } = await octokit.git.createRef({
+                owner: account,
+                repo: repository,
+                ref: `refs/heads/${branch}`,
+                sha: "", // TODO
+            });
+
+            console.log(data);
 
             return Either.success(undefined);
         } catch (error) {
