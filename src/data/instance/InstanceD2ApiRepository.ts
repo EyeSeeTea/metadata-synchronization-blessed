@@ -99,14 +99,11 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
     @cache()
     public async getUserGroups(): Promise<Pick<UserGroup, "id" | "name">[]> {
-        const { objects } = await this.api.models.userGroups
-            .get({
-                paging: false,
-                fields: { id: true, name: true },
-            })
+        const { userGroups } = await this.api.currentUser
+            .get({ fields: { userGroups: { id: true, name: true } } })
             .getData();
 
-        return objects;
+        return userGroups;
     }
 
     public async sendMessage(message: InstanceMessage): Promise<void> {
