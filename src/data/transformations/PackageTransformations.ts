@@ -17,7 +17,6 @@ export const metadataTransformations: Transformation[] = [
             return {
                 programs: programs?.map(({ featureType, ...rest }: any) => {
                     const captureCoordinates = featureType === "NONE" ? false : true;
-                    debugger;
                     return { captureCoordinates, featureType, ...rest };
                 }),
                 ...rest,
