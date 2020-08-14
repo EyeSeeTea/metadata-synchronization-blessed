@@ -24,8 +24,6 @@ import {
     metadataTransformationsFromDhis2,
     metadataTransformationsToDhis2,
 } from "../transformations/PackageTransformations";
-import { promiseMap } from "../../utils/common";
-import { paginate } from "../../utils/pagination";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
@@ -61,13 +59,14 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         fields = { $owner: true },
         page,
         pageSize,
-        order,
         ...params
     }: ListMetadataParams): Promise<ListMetadataResponse> {
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
-        const options = { type, fields, filter, order, page, pageSize };
-        const { objects, pager } = await this.getListPaginated(options);
+
+        const { objects, pager } = await this.getApiModel(type)
+            .get({ paging: true, fields, filter, page, pageSize })
+            .getData();
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -82,12 +81,14 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     public async listAllMetadata({
         type,
         fields = { $owner: true },
-        order,
         ...params
     }: ListMetadataParams): Promise<MetadataEntity[]> {
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
-        const objects = await this.getListAll({ type, fields, filter, order });
+
+        const { objects } = await this.getApiModel(type)
+            .get({ paging: false, fields, filter })
+            .getData();
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -96,60 +97,6 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         );
 
         return metadataPackage[type as keyof MetadataEntities] ?? [];
-    }
-
-    /*
-        Problem: When using a filter `{ id: { in: [id1, id2, ...] } }`, the request URL may result
-        in a HTTP 414 URI Too Long (typically, the limit is 8Kb).
-
-        Solution: Perform N sequential request and concatenate (+ sort) the objects manually.
-    */
-    private async getListGeneric(options: GetListAllOptions): Promise<GetListGenericResponse> {
-        const { type, fields, filter, order = defaultOrder } = options;
-        const idFilter = getIdFilter(filter, maxIds);
-
-        if (idFilter) {
-            const objectsLists = await promiseMap(_.chunk(idFilter.inIds, maxIds), async ids => {
-                const newFilter = { ...filter, id: { ...idFilter.value, in: ids } };
-                const { objects } = await this.getApiModel(type)
-                    .get({ paging: false, fields, filter: newFilter })
-                    .getData();
-                return objects;
-            });
-
-            const objects = _(objectsLists).flatten().orderBy([order.field], [order.order]).value();
-            return { useSingleApiRequest: false, objects };
-        } else {
-            const apiOrder = `${order.field}:${order.order}`;
-            return { useSingleApiRequest: true, order: apiOrder };
-        }
-    }
-
-    private async getListAll(options: GetListAllOptions) {
-        const { type, fields, filter, order = defaultOrder } = options;
-        const list = await this.getListGeneric({ type, fields, filter, order });
-
-        if (list.useSingleApiRequest) {
-            const { objects } = await this.getApiModel(type)
-                .get({ paging: false, fields, filter, order: list.order })
-                .getData();
-            return objects;
-        } else {
-            return list.objects;
-        }
-    }
-
-    private async getListPaginated(options: GetListPaginatedOptions) {
-        const { type, fields, filter, order = defaultOrder, page = 1, pageSize = 50 } = options;
-        const list = await this.getListGeneric({ type, fields, filter, order });
-
-        if (list.useSingleApiRequest) {
-            return this.getApiModel(type)
-                .get({ paging: true, fields, filter, page, pageSize, order: list.order })
-                .getData();
-        } else {
-            return paginate(list.objects, { page, pageSize });
-        }
     }
 
     private buildListFilters({
@@ -300,43 +247,3 @@ const formatStats = (stats: Stats) => ({
     ..._.omit(stats, ["created"]),
     imported: stats.created,
 });
-
-// (max_size=8000 - rest_url=1000) / (id_length=11 + comma_encoded=3)
-const maxIds = 500;
-
-const defaultOrder = { field: "id", order: "asc" } as const;
-
-interface GetListAllOptions {
-    type: ListMetadataParams["type"];
-    fields: object;
-    filter: Record<string, unknown>;
-    order?: ListMetadataParams["order"];
-}
-
-interface GetListPaginatedOptions extends GetListAllOptions {
-    page?: number;
-    pageSize?: number;
-}
-
-type GetListGenericResponse =
-    | { useSingleApiRequest: false; objects: unknown[] }
-    | { useSingleApiRequest: true; order: string };
-
-function getIdFilter(
-    filter: Record<string, unknown>,
-    maxIds: number
-): { inIds: string[]; value: object } | null {
-    const inIds = filter && filter["id"] ? (filter["id"] as { in?: string[] })["in"] : undefined;
-
-    if (
-        inIds &&
-        Array.isArray(inIds) &&
-        inIds.length > maxIds &&
-        typeof filter["id"] === "object" &&
-        filter["id"]
-    ) {
-        return { inIds, value: filter["id"] };
-    } else {
-        return null;
-    }
-}
