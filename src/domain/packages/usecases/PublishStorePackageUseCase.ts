@@ -31,12 +31,12 @@ export class PublishStorePackageUseCase implements UseCase {
         ).getObjectInCollection<BasePackage>(Namespace.PACKAGES, packageId);
         if (!storedPackage) return Either.error("PACKAGE_NOT_FOUND");
 
-        const { name, version, dhisVersion, created, module, contents } = storedPackage;
-        const payload = { package: storedPackage, ...contents };
-        const date = moment(created).format("YYYYMMDDHHmm");
-        const fileName = [name, version, dhisVersion, date].join("-");
-        const path = `${module.name}/${fileName}.json`;
-        const branch = module.department.name.replace(/\s/g, "-");
+        const { contents, ...item } = storedPackage;
+        const payload = { package: item, ...contents };
+        const date = moment(item.created).format("YYYYMMDDHHmm");
+        const fileName = [item.name, item.version, item.dhisVersion, date].join("-");
+        const path = `${item.module.name}/${fileName}.json`;
+        const branch = item.module.department.name.replace(/\s/g, "-");
 
         const validation = await this.gitRepository().writeFile(
             store,
