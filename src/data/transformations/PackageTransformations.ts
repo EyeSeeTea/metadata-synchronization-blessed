@@ -2,6 +2,31 @@ import { Transformation } from "../../domain/transformations/entities/Transforma
 
 export const metadataTransformations: Transformation[] = [
     {
+        name: "programStages-params",
+        apiVersion: 31,
+        apply: ({ programStages, ...rest }: any) => {
+            return {
+                programStages: programStages?.map(({ validCompleteOnly, ...rest }: any) => {
+                    const validationStrategy = validCompleteOnly
+                        ? "ON_UPDATE_AND_INSERT"
+                        : "ON_COMPLETE";
+                    return { validationStrategy, ...rest };
+                }),
+                ...rest,
+            };
+        },
+        undo: ({ programStages, ...rest }: any) => {
+            return {
+                programStages: programStages?.map(({ validationStrategy, ...rest }: any) => {
+                    const validCompleteOnly =
+                        validationStrategy === "ON_UPDATE_AND_INSERT" ? true : false;
+                    return { validCompleteOnly, ...rest };
+                }),
+                ...rest,
+            };
+        },
+    },
+    {
         name: "programs-params",
         apiVersion: 31,
         apply: ({ programs, ...rest }: any) => {
