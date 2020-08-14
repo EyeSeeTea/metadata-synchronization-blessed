@@ -45,6 +45,18 @@ describe("Sync metadata", () => {
                     captureCoordinates: false,
                 },
             ],
+            programStages: [
+                {
+                    id: "ps_id1",
+                    name: "Test programStage",
+                    validCompleteOnly: false,
+                },
+                {
+                    id: "ps_id2",
+                    name: "Test programStage",
+                    validCompleteOnly: true,
+                },
+            ],
         }));
 
         remote.get("/metadata", async () => ({}));
@@ -153,6 +165,83 @@ describe("Sync metadata", () => {
 
         // Assert old properties are not anymore
         expect(response.programs[1].captureCoordinates).toBeUndefined();
+
+        // Assert we have not updated local metadata
+        expect(local.db.metadata.find(1)).toBeNull();
+    });
+
+    it("Local server to remote - programStage validCompleteOnly false to validationStrategy -> ON_COMPLETE - API 30 to API 31", async () => {
+        const localInstance = Instance.build({
+            url: "http://origin.test",
+            name: "Testing",
+            version: "2.30",
+        });
+
+        const builder: SynchronizationBuilder = {
+            originInstance: "LOCAL",
+            targetInstances: ["DESTINATION"],
+            metadataIds: ["ps_id1"],
+            excludedIds: [],
+        };
+
+        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
+
+        const payload = await useCase.buildPayload();
+        expect(payload.programStages?.find(({ id }) => id === "ps_id1")).toBeDefined();
+
+        for await (const { done } of useCase.execute()) {
+            if (done) console.log("Done");
+        }
+
+        // Assert object has been created on remote
+        const response = remote.db.metadata.find(1);
+
+        expect(response.programStages[0].id).toEqual("ps_id1");
+        expect(response.programStages[0].name).toEqual("Test programStage");
+
+        // Assert new properties have the correct values
+        expect(response.programStages[0].validationStrategy).toEqual("ON_COMPLETE");
+
+        // Assert old properties are not anymore
+        expect(response.programStages[0].validCompleteOnly).toBeUndefined();
+
+        // Assert we have not updated local metadata
+        expect(local.db.metadata.find(1)).toBeNull();
+    });
+
+    it("Local server to remote - programStage validCompleteOnly true to validationStrategy -> ON_UPDATE_AND_INSERT - API 30 to API 31", async () => {
+        const localInstance = Instance.build({
+            url: "http://origin.test",
+            name: "Testing",
+            version: "2.30",
+        });
+
+        const builder: SynchronizationBuilder = {
+            originInstance: "LOCAL",
+            targetInstances: ["DESTINATION"],
+            metadataIds: ["ps_id2"],
+            excludedIds: [],
+        };
+
+        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
+
+        const payload = await useCase.buildPayload();
+        expect(payload.programStages?.find(({ id }) => id === "ps_id2")).toBeDefined();
+
+        for await (const { done } of useCase.execute()) {
+            if (done) console.log("Done");
+        }
+
+        // Assert object has been created on remote
+        const response = remote.db.metadata.find(1);
+        expect(response.programStages[1].id).toEqual("ps_id2");
+        expect(response.programStages[1].name).toEqual("Test programStage");
+
+        // Assert new properties have the correct values
+        expect(response.programStages[1].validationStrategy).toEqual("ON_UPDATE_AND_INSERT");
+
+        // Assert old properties are not anymore
+        expect(response.programStages[1].validCompleteOnly).toBeUndefined();
 
         // Assert we have not updated local metadata
         expect(local.db.metadata.find(1)).toBeNull();
