@@ -54,7 +54,7 @@ export class PublishStorePackageUseCase implements UseCase {
                     path,
                     JSON.stringify(payload, null, 4)
                 );
-                
+
                 if (validation.isError()) return Either.error(validation.value.error);
             } else {
                 return Either.error(validation.value.error);

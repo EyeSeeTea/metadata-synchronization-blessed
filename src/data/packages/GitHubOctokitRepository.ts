@@ -149,10 +149,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
-    public async createBranch(
-        store: Store,
-        branch: string
-    ): Promise<Either<GitHubError, void>> {
+    public async createBranch(store: Store, branch: string): Promise<Either<GitHubError, void>> {
         try {
             const { token, account, repository } = store;
             if (!token?.trim()) return Either.error("NO_TOKEN");
@@ -161,7 +158,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
             const { default_branch } = await this.getRepoInfo(store);
             const branches = await this.listBranches(store);
             const baseBranch = branches.value.data?.find(({ name }) => name === default_branch);
-            if (!baseBranch) return Either.error("BRANCH_NOT_FOUND")
+            if (!baseBranch) return Either.error("BRANCH_NOT_FOUND");
 
             await octokit.git.createRef({
                 owner: account,
