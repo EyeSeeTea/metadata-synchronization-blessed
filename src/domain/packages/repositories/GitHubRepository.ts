@@ -20,6 +20,6 @@ export interface GitHubRepository {
     ): Promise<Either<GitHubError, void>>;
     deleteFile(store: Store, branch: string, path: string): Promise<Either<GitHubError, void>>;
     listBranches(store: Store): Promise<Either<GitHubError, GithubBranch[]>>;
-    createBranch(store: Store, branch: string): Promise<unknown>;
+    createBranch(store: Store, branch: string): Promise<Either<GitHubError, void>>;
     validateStore(store: Store): Promise<Either<GitHubError, StorePermissions>>;
 }

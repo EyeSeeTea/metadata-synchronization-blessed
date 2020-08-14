@@ -42,8 +42,8 @@ export class Package implements BasePackage {
         this.module = _.pick(data.module, ["id", "name", "instance", "department"]);
         this.contents = data.contents;
         this.user = _.pick(data.user, ["id", "name"]);
-        this.created = data.created;
-        this.lastUpdated = data.lastUpdated;
+        this.created = new Date(data.created);
+        this.lastUpdated = new Date(data.lastUpdated);
         this.lastUpdatedBy = _.pick(data.lastUpdatedBy, ["id", "name"]);
     }
 

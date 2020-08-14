@@ -47,7 +47,15 @@ export class PublishStorePackageUseCase implements UseCase {
 
         if (validation.isError()) {
             if (force && validation.value.error === "BRANCH_NOT_FOUND") {
-                //await this.createBranch()
+                await this.gitRepository().createBranch(store, branch);
+                const validation = await this.gitRepository().writeFile(
+                    store,
+                    branch,
+                    path,
+                    JSON.stringify(payload, null, 4)
+                );
+                
+                if (validation.isError()) return Either.error(validation.value.error);
             } else {
                 return Either.error(validation.value.error);
             }

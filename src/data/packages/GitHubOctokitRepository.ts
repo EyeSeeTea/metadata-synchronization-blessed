@@ -150,22 +150,25 @@ export class GitHubOctokitRepository implements GitHubRepository {
     }
 
     public async createBranch(
-        { token, account, repository }: Store,
+        store: Store,
         branch: string
-    ): Promise<unknown> {
+    ): Promise<Either<GitHubError, void>> {
         try {
+            const { token, account, repository } = store;
             if (!token?.trim()) return Either.error("NO_TOKEN");
-
             const octokit = await this.getOctoKit(token);
 
-            const { data } = await octokit.git.createRef({
+            const { default_branch } = await this.getRepoInfo(store);
+            const branches = await this.listBranches(store);
+            const baseBranch = branches.value.data?.find(({ name }) => name === default_branch);
+            if (!baseBranch) return Either.error("BRANCH_NOT_FOUND")
+
+            await octokit.git.createRef({
                 owner: account,
                 repo: repository,
                 ref: `refs/heads/${branch}`,
-                sha: "", // TODO
+                sha: baseBranch.commit.sha,
             });
-
-            console.log(data);
 
             return Either.success(undefined);
         } catch (error) {
@@ -198,8 +201,17 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
+    private async getRepoInfo({ token, account, repository }: Store) {
+        const octokit = await this.getOctoKit(token);
+        const { data } = await octokit.repos.get({
+            owner: account,
+            repo: repository,
+        });
+        return data;
+    }
+
     @cache()
-    public async getCurrentUser({ token }: Store) {
+    private async getCurrentUser({ token }: Store) {
         const octokit = await this.getOctoKit(token);
         const { data } = await octokit.users.getAuthenticated();
         return data;
