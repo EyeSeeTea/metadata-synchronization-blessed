@@ -5,7 +5,7 @@ import i18n from "../../../../../locales";
 import SyncRule from "../../../../../models/syncRule";
 import { Dictionary } from "../../../../../types/utils";
 import { getValidationMessages } from "../../../../../utils/old-validations";
-import { InstanceSelectionDropdown } from "../../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
+import { InstanceSelectionDropdown, InstanceSelectionOption } from "../../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import { SyncWizardStepProps } from "../Steps";
 
@@ -29,7 +29,7 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
     );
 
     const onChangeInstance = useCallback(
-        (instance?: Instance) => {
+        (_type: InstanceSelectionOption, instance?: Instance) => {
             const originInstance = instance?.id ?? "LOCAL";
             const targetInstances = originInstance === "LOCAL" ? ["LOCAL"] : [];
 

@@ -27,6 +27,7 @@ type ListPackage = Omit<Package, "contents">;
 
 export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     remoteInstance,
+    showStore,
     onActionButtonClick,
     presentation = "app",
     externalComponents,
@@ -37,10 +38,12 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const [rows, setRows] = useState<ListPackage[]>([]);
+    const [instancePackages, setInstancePackages] = useState<ListPackage[]>([]);
+    const [storePackages, setStorePackages] = useState<ListPackage[]>([]);
+    const rows = showStore ? storePackages : instancePackages;
+
     const [resetKey, setResetKey] = useState(Math.random());
     const [selection, updateSelection] = useState<TableSelection[]>([]);
-    const [, setStorePackages] = useState<ListPackage[]>([]);
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
     const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
 
@@ -115,7 +118,20 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
                                 onSave: async () => {
                                     updateDialog(null);
                                     loading.show(true, i18n.t("Publishing package to Store"));
-                                    await compositionRoot.packages.publish(ids[0], true);
+                                    const validation = await compositionRoot.packages.publish(
+                                        ids[0],
+                                        true
+                                    );
+                                    validation.match({
+                                        success: () =>
+                                            snackbar.success(
+                                                i18n.t("Package published to store in a new branch")
+                                            ),
+                                        error: () =>
+                                            snackbar.error(
+                                                i18n.t("Couldn't create new branch on store")
+                                            ),
+                                    });
                                     loading.reset();
                                 },
                                 cancelText: i18n.t("Cancel"),
@@ -123,7 +139,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
                             });
                             return;
                         default:
-                            snackbar.error("Unknown error");
+                            snackbar.error(i18n.t("Unknown error"));
                     }
                 },
             });
@@ -246,10 +262,10 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     useEffect(() => {
         compositionRoot.packages
             .list(remoteInstance)
-            .then(setRows)
+            .then(setInstancePackages)
             .catch((error: Error) => {
                 snackbar.error(error.message);
-                setRows([]);
+                setInstancePackages([]);
             });
     }, [compositionRoot, remoteInstance, resetKey, snackbar]);
 

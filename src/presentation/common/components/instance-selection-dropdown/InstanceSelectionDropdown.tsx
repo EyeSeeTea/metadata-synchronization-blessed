@@ -5,16 +5,17 @@ import i18n from "../../../../locales";
 import Dropdown, { DropdownViewOption } from "../../../webapp/components/dropdown/Dropdown";
 import { useAppContext } from "../../contexts/AppContext";
 
-export interface InstanceSelectionConfig {
-    local?: boolean;
-    remote?: boolean;
-    store?: boolean;
-}
+export type InstanceSelectionOption = "local" | "remote" | "store";
+
+export type InstanceSelectionConfig = Partial<Record<InstanceSelectionOption, boolean>>;
 
 export interface InstanceSelectionDropdownProps {
     showInstances: InstanceSelectionConfig;
     selectedInstance: string;
-    onChangeSelected: (instance?: Instance) => void;
+    onChangeSelected: <T extends InstanceSelectionOption>(
+        type: T,
+        instance?: T extends "remote" ? Instance : never
+    ) => void;
     view?: DropdownViewOption;
     title?: string;
 }
@@ -33,7 +34,16 @@ export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps>
 
         const updateSelectedInstance = useCallback(
             (id: string) => {
-                onChangeSelected(instances.find(instance => instance.id === id));
+                if (id === "STORE") {
+                    onChangeSelected("store");
+                } else if (id === "LOCAL") {
+                    onChangeSelected("local");
+                } else {
+                    onChangeSelected(
+                        "remote",
+                        instances.find(instance => instance.id === id)
+                    );
+                }
             },
             [instances, onChangeSelected]
         );

@@ -8,6 +8,7 @@ import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 import {
     InstanceSelectionConfig,
     InstanceSelectionDropdown,
+    InstanceSelectionOption,
 } from "../instance-selection-dropdown/InstanceSelectionDropdown";
 import { useViewSelector, ViewSelectorConfig } from "./useViewSelector";
 
@@ -33,6 +34,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
         showInstances,
     }) => {
         const [selectedInstance, setSelectedInstance] = useState<Instance>();
+        const [showStore, setShowStore] = useState<boolean>(false);
 
         const viewSelector = useViewSelector(showSelector, propsViewValue);
 
@@ -44,13 +46,21 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
             [viewSelector, onViewChange]
         );
 
+        const updateSelectedInstance = useCallback(
+            (type: InstanceSelectionOption, instance?: Instance) => {
+                setShowStore(type === "store");
+                setSelectedInstance(instance);
+            },
+            []
+        );
+
         const filters = useMemo(
             () => (
                 <React.Fragment>
                     <InstanceSelectionDropdown
                         showInstances={showInstances}
-                        selectedInstance={selectedInstance?.id ?? "LOCAL"}
-                        onChangeSelected={setSelectedInstance}
+                        selectedInstance={showStore ? "STORE" : selectedInstance?.id ?? "LOCAL"}
+                        onChangeSelected={updateSelectedInstance}
                     />
 
                     {viewSelector.items.length > 1 && viewSelector.value && (
@@ -64,7 +74,14 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
                     )}
                 </React.Fragment>
             ),
-            [showInstances, selectedInstance, setValue, viewSelector]
+            [
+                showInstances,
+                selectedInstance,
+                setValue,
+                viewSelector,
+                updateSelectedInstance,
+                showStore,
+            ]
         );
 
         const Table = viewSelector.value === "packages" ? PackagesListTable : ModulesListTable;
@@ -73,6 +90,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
             <Table
                 externalComponents={filters}
                 presentation={presentation}
+                showStore={showStore}
                 remoteInstance={selectedInstance}
                 paginationOptions={paginationOptions}
                 onActionButtonClick={
