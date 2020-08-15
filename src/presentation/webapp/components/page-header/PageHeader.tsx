@@ -2,14 +2,15 @@ import { ButtonProps, Icon, IconButton, Tooltip } from "@material-ui/core";
 import { Variant } from "@material-ui/core/styles/createTypography";
 import Typography from "@material-ui/core/Typography";
 import { DialogButton } from "d2-ui-components";
-import React from "react";
+import React, { ReactNode } from "react";
 import i18n from "../../../../locales";
 
 const PageHeader: React.FC<PageHeaderProps> = ({
     variant = "h5",
     title,
     onBackClick,
-    helpText,
+    help,
+    helpSize = "sm",
     children,
 }) => {
     return (
@@ -34,7 +35,15 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             >
                 {title}
             </Typography>
-            {helpText && renderHelpButton(helpText)}
+            {help && (
+                <DialogButton
+                    buttonComponent={Button}
+                    title={i18n.t("Help")}
+                    maxWidth={helpSize}
+                    fullWidth={true}
+                    contents={help}
+                />
+            )}
             {children}
         </div>
     );
@@ -44,7 +53,8 @@ export interface PageHeaderProps {
     variant?: Variant;
     title: string;
     onBackClick?: () => void;
-    helpText?: string;
+    help?: ReactNode;
+    helpSize?: "xs" | "sm" | "md" | "lg" | "xl";
 }
 
 const styles = {
@@ -59,16 +69,6 @@ const Button = ({ onClick }: ButtonProps) => (
             <Icon color="primary">help</Icon>
         </IconButton>
     </Tooltip>
-);
-
-const renderHelpButton = (helpText: string) => (
-    <DialogButton
-        buttonComponent={Button}
-        title={i18n.t("Help")}
-        maxWidth={"sm"}
-        fullWidth={true}
-        contents={helpText}
-    />
 );
 
 export default PageHeader;

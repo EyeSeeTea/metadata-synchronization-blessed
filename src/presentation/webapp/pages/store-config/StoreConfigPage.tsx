@@ -6,7 +6,8 @@ import {
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import Linkify from "react-linkify";
 import { useHistory } from "react-router-dom";
 import { GitHubError } from "../../../../domain/packages/entities/Errors";
 import { Store } from "../../../../domain/packages/entities/Store";
@@ -41,6 +42,8 @@ const ModulesConfigPage: React.FC = () => {
 
     const validateError = useCallback((error?: GitHubError): string => {
         switch (error) {
+            case "NO_TOKEN":
+                return i18n.t("The token is empty");
             case "BAD_CREDENTIALS":
                 return i18n.t("The token is invalid");
             case "NOT_FOUND":
@@ -54,62 +57,109 @@ const ModulesConfigPage: React.FC = () => {
     const testConnection = useCallback(async () => {
         loading.show(true, i18n.t("Testing GitHub connection"));
 
-        if (state.token && state.account && state.repository) {
-            const validation = await compositionRoot.store.validate(state as Store);
-            validation.match({
-                error: error => {
-                    snackbar.error(validateError(error));
-                },
-                success: () => {
-                    snackbar.success(i18n.t("Connected successfully"));
-                },
-            });
-        } else {
-            snackbar.warning(i18n.t("You need to provide all fields"));
-        }
+        const validation = await compositionRoot.store.validate(state as Store);
+        validation.match({
+            error: error => {
+                snackbar.error(validateError(error));
+            },
+            success: () => {
+                snackbar.success(i18n.t("Connected successfully"));
+            },
+        });
 
         loading.reset();
     }, [compositionRoot, state, validateError, snackbar, loading]);
 
+    const reset = useCallback(async () => {
+        updateDialog({
+            title: i18n.t("Reset store configuration"),
+            description: i18n.t(
+                "You will clear the existing configuration for all users in this instance.\nDo you want to proceed?"
+            ),
+            onCancel: () => {
+                updateDialog(null);
+            },
+            onSave: async () => {
+                await compositionRoot.store.update({} as Store, false);
+                updateDialog(null);
+                close();
+            },
+            cancelText: i18n.t("Cancel"),
+            saveText: i18n.t("Proceed"),
+        });
+    }, [compositionRoot, close]);
+
     const save = useCallback(async () => {
         loading.show(true, i18n.t("Saving store connection"));
 
-        if (state.token && state.account && state.repository) {
-            const validation = await compositionRoot.store.update(state as Store);
-            validation.match({
-                error: error => {
-                    updateDialog({
-                        title: validateError(error),
-                        description: i18n.t(
-                            "There are issues with the connection details you provided.\nDo you want to proceed?"
-                        ),
-                        onCancel: () => {
-                            updateDialog(null);
-                        },
-                        onSave: async () => {
-                            await compositionRoot.store.update(state as Store, false);
-                            updateDialog(null);
-                            close();
-                        },
-                        cancelText: i18n.t("Cancel"),
-                        saveText: i18n.t("Proceed"),
-                    });
-                },
-                success: close,
-            });
+        const validation = await compositionRoot.store.update(state as Store);
+        validation.match({
+            error: error => {
+                updateDialog({
+                    title: validateError(error),
+                    description: i18n.t(
+                        "There are issues with the connection details you provided.\nDo you want to proceed?"
+                    ),
+                    onCancel: () => {
+                        updateDialog(null);
+                    },
+                    onSave: async () => {
+                        await compositionRoot.store.update(state as Store, false);
+                        updateDialog(null);
+                        close();
+                    },
+                    cancelText: i18n.t("Cancel"),
+                    saveText: i18n.t("Proceed"),
+                });
+            },
+            success: close,
+        });
 
-            loading.reset();
-        } else {
-            snackbar.warning(i18n.t("You need to provide all fields"));
-            loading.reset();
-        }
-    }, [compositionRoot, state, validateError, close, snackbar, loading]);
+        loading.reset();
+    }, [compositionRoot, state, validateError, close, loading]);
+
+    const helpContainer = useMemo(
+        () => (
+            <Linkify>
+                <p>{i18n.t("To connect with a module store you need to:")}</p>
+                <p>
+                    {i18n.t("- Create a repository at https://github.com/new", {
+                        nsSeparator: false,
+                    })}
+                </p>
+                <p>
+                    {i18n.t(
+                        "- Create a personal access token at https://github.com/settings/tokens/new",
+                        { nsSeparator: false }
+                    )}
+                </p>
+                <p>
+                    {i18n.t(
+                        "The personal access token requires either 'public_repo' or 'repo' scopes depending if the repository is public or private"
+                    )}
+                </p>
+                <div className={classes.center}>
+                    <img
+                        className={classes.helpImage}
+                        src="/img/help-store-github.png"
+                        alt={i18n.t("Create a personal access token on GitHub")}
+                    />
+                </div>
+            </Linkify>
+        ),
+        [classes]
+    );
 
     return (
         <React.Fragment>
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
 
-            <PageHeader title={i18n.t("Module store connection")} onBackClick={close} />
+            <PageHeader
+                title={i18n.t("Module store connection")}
+                onBackClick={close}
+                help={helpContainer}
+                helpSize={"lg"}
+            />
 
             <Paper className={classes.paper}>
                 <TextField
@@ -131,7 +181,7 @@ const ModulesConfigPage: React.FC = () => {
                 <TextField
                     className={classes.row}
                     fullWidth={true}
-                    label={i18n.t("GitHub access token (*)")}
+                    label={i18n.t("GitHub personal access token (*)")}
                     value={state.token ?? ""}
                     onChange={onChangeField("token")}
                 />
@@ -150,7 +200,18 @@ const ModulesConfigPage: React.FC = () => {
                         </Button>
                     </div>
                     <div className={classes.actionButtonsContainer}>
-                        <Button variant="contained" onClick={testConnection}>
+                        <Button
+                            variant="contained"
+                            onClick={reset}
+                            className={classes.actionButton}
+                        >
+                            {i18n.t("Reset")}
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={testConnection}
+                            className={classes.actionButton}
+                        >
                             {i18n.t("Test Connection")}
                         </Button>
                     </div>
@@ -177,6 +238,9 @@ const useStyles = makeStyles({
     actionButtonsContainer: {
         marginTop: 10,
     },
+    actionButton: {
+        margin: 10,
+    },
     saveButton: {
         margin: 10,
         backgroundColor: "#2b98f0",
@@ -193,6 +257,12 @@ const useStyles = makeStyles({
         borderRadius: 0,
         marginRight: 20,
         marginLeft: 0,
+    },
+    helpImage: {
+        width: "75%",
+    },
+    center: {
+        textAlign: "center",
     },
 });
 
