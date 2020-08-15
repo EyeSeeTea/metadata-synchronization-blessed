@@ -5,14 +5,14 @@ import PageHeader from "../../components/page-header/PageHeader";
 import SyncWizard from "../../components/sync-wizard/SyncWizard";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import { useAppContext } from "../../../common/contexts/AppContext";
-import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import SyncRule from "../../../../models/syncRule";
 
 interface SyncRulesCreationParams {
     id: string;
     action: "edit" | "new";
-    type: SyncRuleType;
+    type: SynchronizationType;
 }
 
 const SyncRulesCreation: React.FC = () => {

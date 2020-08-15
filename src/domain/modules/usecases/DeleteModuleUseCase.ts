@@ -39,8 +39,7 @@ export class DeleteModuleUseCase implements UseCase {
         await promiseMap(newPackages, async (item: BasePackage) => {
             await this.buildStorageRepository(instance).saveObjectInCollection(
                 Namespace.PACKAGES,
-                item,
-                Package.extendedFields
+                item
             );
         });
     }

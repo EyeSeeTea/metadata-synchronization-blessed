@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { Instance } from "../../domain/instance/entities/Instance";
-import { Message } from "../../domain/instance/entities/Message";
+import { InstanceMessage } from "../../domain/instance/entities/Message";
 import { User } from "../../domain/instance/entities/User";
 import { InstanceRepository } from "../../domain/instance/repositories/InstanceRepository";
 import {
@@ -23,16 +23,17 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
     @cache()
     public async getUser(): Promise<User> {
-        const user = await this.api.currentUser
-            .get({ fields: { id: true, name: true, email: true } })
+        const { userGroups, ...user } = await this.api.currentUser
+            .get({ fields: { id: true, name: true, email: true, userGroups: true } })
             .getData();
-        return user;
+
+        return { ...user, userGroups: userGroups.map(({ id }) => id) };
     }
 
     @cache()
     public async getVersion(): Promise<string> {
-        const systemInfo = await this.api.system.info.getData();
-        return systemInfo.version;
+        const { version } = await this.api.system.info.getData();
+        return version;
     }
 
     @cache()
@@ -94,7 +95,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
         return objects;
     }
 
-    public async sendMessage(message: Message): Promise<void> {
+    public async sendMessage(message: InstanceMessage): Promise<void> {
         //@ts-ignore https://github.com/EyeSeeTea/d2-api/pull/52
         await this.api.messageConversations.post(message).getData();
     }

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-27T07:32:59.493Z\n"
-"PO-Revision-Date: 2020-07-27T07:32:59.493Z\n"
+"POT-Creation-Date: 2020-08-10T07:16:05.883Z\n"
+"PO-Revision-Date: 2020-08-10T07:16:05.883Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -68,6 +68,29 @@ msgstr ""
 msgid "Pulling metadata from module {{name}}"
 msgstr ""
 
+msgid "Unable to create pull request"
+msgstr ""
+
+msgid "Pull metadata"
+msgstr ""
+
+msgid ""
+"You are one of the reponsibles for the selected items.\n"
+"Do you want to directly pull the metadata?"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Proceed"
+msgstr ""
+
+msgid "Create pull request"
+msgstr ""
+
+msgid "Unknown synchronization error"
+msgstr ""
+
 msgid "Name"
 msgstr ""
 
@@ -108,9 +131,6 @@ msgid "Download metadata package"
 msgstr ""
 
 msgid "Generate package from module"
-msgstr ""
-
-msgid "Pull metadata"
 msgstr ""
 
 msgid "Package of {{name}}"
@@ -416,9 +436,6 @@ msgstr ""
 msgid "Removed {{difference}} elements"
 msgstr ""
 
-msgid "Cancel"
-msgstr ""
-
 msgid "Save"
 msgstr ""
 
@@ -431,10 +448,34 @@ msgstr ""
 msgid "Use default configuration"
 msgstr ""
 
+msgid "[Pull Request by {{name}}] {{subject}}"
+msgstr ""
+
 msgid "Back"
 msgstr ""
 
 msgid "Help"
+msgstr ""
+
+msgid "You need to provide a subject"
+msgstr ""
+
+msgid "Creating pull request"
+msgstr ""
+
+msgid "Create pull request on {{name}}"
+msgstr ""
+
+msgid "Open pull request"
+msgstr ""
+
+msgid "Subject"
+msgstr ""
+
+msgid "Field cannot be blank"
+msgstr ""
+
+msgid "Recipients"
 msgstr ""
 
 msgid "Sharing settings for {{name}}"
@@ -616,6 +657,9 @@ msgid "Source instance"
 msgstr ""
 
 msgid "This instance"
+msgstr ""
+
+msgid "Instance not found"
 msgstr ""
 
 msgid "Every day"
@@ -918,6 +962,12 @@ msgstr ""
 msgid "List and remove responsibles for data sets and programs"
 msgstr ""
 
+msgid "Notifications"
+msgstr ""
+
+msgid "List notifications"
+msgstr ""
+
 msgid "Destination instance settings"
 msgstr ""
 
@@ -1101,6 +1151,96 @@ msgstr ""
 msgid "Cancel module editing"
 msgstr ""
 
+msgid "Sender"
+msgstr ""
+
+msgid "Pull request (Sent)"
+msgstr ""
+
+msgid "Pull request (Received)"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Package has been already imported"
+msgstr ""
+
+msgid "Notification is invalid"
+msgstr ""
+
+msgid "Notification not found"
+msgstr ""
+
+msgid "Remote pull request has not been approved yet"
+msgstr ""
+
+msgid "Remote pull request is not valid"
+msgstr ""
+
+msgid "Remote pull request has been deleted"
+msgstr ""
+
+msgid "Updated notification"
+msgstr ""
+
+msgid "Could not apply action, notification not found"
+msgstr ""
+
+msgid "You don't have permissions to edit this notification"
+msgstr ""
+
+msgid "Could not apply action, notification is not valid"
+msgstr ""
+
+msgid "Could not update remote instance, notification not found"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "Mark as read"
+msgstr ""
+
+msgid "Mark as unread"
+msgstr ""
+
+msgid "Approve"
+msgstr ""
+
+msgid "Reject"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "Importing approved pull request"
+msgstr ""
+
+msgid "Cancelling pull request"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Approved"
+msgstr ""
+
+msgid "Rejected"
+msgstr ""
+
+msgid "Imported with errors"
+msgstr ""
+
+msgid "Cancelled"
+msgstr ""
+
+msgid "Unread messages"
+msgstr ""
+
+msgid "Refresh"
+msgstr ""
+
 msgid "The token is empty"
 msgstr ""
 
@@ -1122,9 +1262,6 @@ msgstr ""
 msgid ""
 "You will clear the existing configuration for all users in this instance.\n"
 "Do you want to proceed?"
-msgstr ""
-
-msgid "Proceed"
 msgstr ""
 
 msgid "Saving store connection"
@@ -1196,6 +1333,9 @@ msgid "Successfully deleted {{count}} rules"
 msgid_plural "Successfully deleted {{count}} rules"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Synchronizing {{name}}"
+msgstr ""
 
 msgid "Successfully updated sync rule"
 msgstr ""

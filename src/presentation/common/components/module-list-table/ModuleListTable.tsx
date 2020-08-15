@@ -1,5 +1,7 @@
 import { Icon } from "@material-ui/core";
 import {
+    ConfirmationDialog,
+    ConfirmationDialogProps,
     ObjectsTable,
     ObjectsTableDetailField,
     TableAction,
@@ -15,6 +17,10 @@ import { useHistory } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
+import {
+    PullRequestCreation,
+    PullRequestCreationDialog,
+} from "../../../webapp/components/pull-request-creation-dialog/PullRequestCreationDialog";
 import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPacakgeDialog } from "./NewPackageDialog";
@@ -37,6 +43,8 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
     const [isTableLoading, setIsTableLoading] = useState(false);
     const [newPackageModule, setNewPackageModule] = useState<Module>();
     const [selection, updateSelection] = useState<TableSelection[]>([]);
+    const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
+    const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
 
     const editRule = useCallback(
         (ids: string[]) => {
@@ -118,21 +126,76 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                 loading.show(true, i18n.t("Pulling metadata from module {{name}}", module));
 
                 const originInstance = remoteInstance?.id ?? "LOCAL";
-                const sync = compositionRoot.sync[module.type]({
+                const builder = {
                     ...module.toSyncBuilder(),
                     originInstance,
                     targetInstances: ["LOCAL"],
+                };
+
+                const result = await compositionRoot.sync.prepare(module.type, builder);
+                const sync = compositionRoot.sync[module.type](builder);
+
+                const createPullRequest = () => {
+                    if (!remoteInstance) {
+                        snackbar.error(i18n.t("Unable to create pull request"));
+                    } else {
+                        setPullRequestProps({
+                            instance: remoteInstance,
+                            builder,
+                            type: module.type,
+                        });
+                    }
+                };
+
+                const synchronize = async () => {
+                    for await (const { message, syncReport, done } of sync.execute()) {
+                        if (message) loading.show(true, message);
+                        if (syncReport) await syncReport.save(api);
+                        if (done) {
+                            openSyncSummary(syncReport);
+                            return;
+                        }
+                    }
+                };
+
+                await result.match({
+                    success: async () => {
+                        await synchronize();
+                    },
+                    error: async code => {
+                        switch (code) {
+                            case "PULL_REQUEST":
+                                createPullRequest();
+                                break;
+                            case "PULL_REQUEST_RESPONSIBLE":
+                                updateDialog({
+                                    title: i18n.t("Pull metadata"),
+                                    description: i18n.t(
+                                        "You are one of the reponsibles for the selected items.\nDo you want to directly pull the metadata?"
+                                    ),
+                                    onCancel: () => {
+                                        updateDialog(null);
+                                    },
+                                    onSave: async () => {
+                                        updateDialog(null);
+                                        await synchronize();
+                                    },
+                                    onInfoAction: () => {
+                                        updateDialog(null);
+                                        createPullRequest();
+                                    },
+                                    cancelText: i18n.t("Cancel"),
+                                    saveText: i18n.t("Proceed"),
+                                    infoActionText: i18n.t("Create pull request"),
+                                });
+                                break;
+                            default:
+                                snackbar.error(i18n.t("Unknown synchronization error"));
+                        }
+                    },
                 });
 
-                for await (const { message, syncReport, done } of sync.execute()) {
-                    if (message) loading.show(true, message);
-                    if (syncReport) await syncReport.save(api);
-                    if (done) {
-                        loading.reset();
-                        openSyncSummary(syncReport);
-                        return;
-                    }
-                }
+                loading.reset();
             }
         },
         [compositionRoot, openSyncSummary, remoteInstance, loading, rows, snackbar, api]
@@ -275,14 +338,6 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
 
     return (
         <React.Fragment>
-            {!!newPackageModule && (
-                <NewPacakgeDialog
-                    save={savePackage}
-                    close={() => setNewPackageModule(undefined)}
-                    module={newPackageModule}
-                />
-            )}
-
             <ObjectsTable<Module>
                 rows={rows}
                 loading={isTableLoading}
@@ -296,6 +351,23 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                 onChange={updateTable}
                 paginationOptions={paginationOptions}
             />
+
+            {!!newPackageModule && (
+                <NewPacakgeDialog
+                    save={savePackage}
+                    close={() => setNewPackageModule(undefined)}
+                    module={newPackageModule}
+                />
+            )}
+
+            {!!pullRequestProps && (
+                <PullRequestCreationDialog
+                    {...pullRequestProps}
+                    onClose={() => setPullRequestProps(undefined)}
+                />
+            )}
+
+            {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
         </React.Fragment>
     );
 };

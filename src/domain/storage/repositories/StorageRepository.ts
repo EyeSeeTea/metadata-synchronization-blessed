@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
+import { Namespace, NamespaceProperties } from "../Namespaces";
 
 export interface StorageRepositoryConstructor {
     new (instance: Instance): StorageRepository;
@@ -29,13 +30,10 @@ export abstract class StorageRepository {
         return { ...baseElement, ...advancedElement } as T;
     }
 
-    public async saveObjectInCollection<T extends Ref>(
-        key: string,
-        element: T,
-        advancedProperties: Array<keyof T> = []
-    ): Promise<void> {
+    public async saveObjectInCollection<T extends Ref>(key: Namespace, element: T): Promise<void> {
         const oldData: Ref[] = (await this.getObject(key)) ?? [];
         const cleanData = oldData.filter(item => item.id !== element.id);
+        const advancedProperties = NamespaceProperties[key];
 
         // Save base element directly into collection: model
         const baseElement = _.omit(element, advancedProperties);

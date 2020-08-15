@@ -1,4 +1,4 @@
-import { SyncRuleType } from "./SynchronizationRule";
+import { SynchronizationType } from "./SynchronizationType";
 
 export interface SynchronizationReport {
     id: string;
@@ -8,7 +8,7 @@ export interface SynchronizationReport {
     types: string[];
     syncRule?: string;
     deletedSyncRuleLabel?: string;
-    type: SyncRuleType;
+    type: SynchronizationType;
     dataStats?: AggregatedDataStats[] | EventsDataStats[];
 }
 

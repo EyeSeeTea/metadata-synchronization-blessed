@@ -13,6 +13,7 @@ import InstanceMappingPage from "./instance-mapping/InstanceMappingPage";
 import ManualSyncPage from "./manual-sync/ManualSyncPage";
 import ModuleListPage from "./module-list/ModuleListPage";
 import ModuleCreationPage from "./modules-creation/ModuleCreationPage";
+import NotificationsListPage from "./notifications-list/NotificationsListPage";
 import ResponsiblesListPage from "./responsibles-list/ResponsiblesListPage";
 import StoreConfigPage from "./store-config/StoreConfigPage";
 import SyncRulesCreationPage from "./sync-rules-creation/SyncRulesCreationPage";
@@ -89,6 +90,11 @@ function Root() {
                 <RouteWithSession
                     path="/responsibles"
                     render={props => <ResponsiblesListPage {...props} />}
+                />
+
+                <RouteWithSession
+                    path="/notifications"
+                    render={props => <NotificationsListPage {...props} />}
                 />
 
                 <RouteWithSession render={() => <HomePage />} />

@@ -21,7 +21,7 @@ import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesU
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
-import { GetResponsibleUseCase } from "../domain/metadata/usecases/GetResponsibleUseCase";
+import { GetResponsiblesUseCase } from "../domain/metadata/usecases/GetResponsiblesUseCase";
 import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
 import { ListAllMetadataUseCase } from "../domain/metadata/usecases/ListAllMetadataUseCase";
 import { ListMetadataUseCase } from "../domain/metadata/usecases/ListMetadataUseCase";
@@ -33,6 +33,10 @@ import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/Downlo
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
+import { ImportPullRequestUseCase } from "../domain/notifications/usecases/ImportPullRequestUseCase";
+import { ListNotificationsUseCase } from "../domain/notifications/usecases/ListNotificationsUseCase";
+import { MarkReadNotificationsUseCase } from "../domain/notifications/usecases/MarkReadNotificationsUseCase";
+import { UpdatePullRequestStatusUseCase } from "../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
 import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPackageUseCase";
@@ -43,8 +47,11 @@ import { SaveStoreUseCase } from "../domain/packages/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/packages/usecases/ValidateStoreUseCase";
 import { Repositories } from "../domain/Repositories";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
+import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/CreatePullRequestUseCase";
+import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
+import { CancelPullRequestUseCase } from "../domain/notifications/usecases/CancelPullRequestUseCase";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -68,6 +75,17 @@ export class CompositionRoot {
     public get sync() {
         // TODO: Sync builder should be part of an execute method
         return {
+            ...getExecute({
+                prepare: new PrepareSyncUseCase(
+                    this.repositoryFactory,
+                    this.localInstance,
+                    this.encryptionKey
+                ),
+                createPullRequest: new CreatePullRequestUseCase(
+                    this.repositoryFactory,
+                    this.localInstance
+                ),
+            }),
             aggregated: (builder: SynchronizationBuilder) =>
                 new AggregatedSyncUseCase(
                     builder,
@@ -111,7 +129,7 @@ export class CompositionRoot {
     @cache()
     public get responsibles() {
         return getExecute({
-            get: new GetResponsibleUseCase(this.repositoryFactory, this.localInstance),
+            get: new GetResponsiblesUseCase(this.repositoryFactory, this.localInstance),
             set: new SetResponsiblesUseCase(this.repositoryFactory, this.localInstance),
             list: new ListResponsiblesUseCase(this.repositoryFactory, this.localInstance),
         });
@@ -157,6 +175,35 @@ export class CompositionRoot {
 
         return getExecute({
             downloadFile: new DownloadFileUseCase(download),
+        });
+    }
+
+    @cache()
+    public get notifications() {
+        return getExecute({
+            list: new ListNotificationsUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
+            ),
+            updatePullRequestStatus: new UpdatePullRequestStatusUseCase(
+                this.repositoryFactory,
+                this.localInstance
+            ),
+            markReadNotifications: new MarkReadNotificationsUseCase(
+                this.repositoryFactory,
+                this.localInstance
+            ),
+            importPullRequest: new ImportPullRequestUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
+            ),
+            cancelPullRequest: new CancelPullRequestUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
+            ),
         });
     }
 

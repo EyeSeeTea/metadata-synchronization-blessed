@@ -17,10 +17,8 @@ import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { SynchronizationReport } from "../../../../domain/synchronization/entities/SynchronizationReport";
-import {
-    SynchronizationRule,
-    SyncRuleType,
-} from "../../../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationRule } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
@@ -75,7 +73,7 @@ const HistoryPage: React.FC = () => {
     const snackbar = useSnackbar();
     const loading = useLoading();
     const history = useHistory();
-    const { id, type } = useParams() as { id: string; type: SyncRuleType };
+    const { id, type } = useParams() as { id: string; type: SynchronizationType };
     const { title } = config[type];
 
     const [syncRules, setSyncRules] = useState<SynchronizationRule[]>([]);
