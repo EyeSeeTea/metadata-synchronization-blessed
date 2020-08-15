@@ -14,7 +14,6 @@ export const metadataTransformations: Transformation[] = [
                                     ? "ON_COMPLETE"
                                     : "ON_UPDATE_AND_INSERT"
                                 : validationStrategy;
-                        debugger;
                         return { validationStrategy, ...rest };
                     }
                 ),
@@ -26,7 +25,6 @@ export const metadataTransformations: Transformation[] = [
                 programStages: programStages?.map(({ validationStrategy, ...rest }: any) => {
                     const validCompleteOnly =
                         validationStrategy === "ON_UPDATE_AND_INSERT" ? false : true;
-                    debugger;
                     return { validCompleteOnly, validationStrategy, ...rest };
                 }),
                 ...rest,
