@@ -1,4 +1,5 @@
 import { makeStyles } from "@material-ui/core";
+import { D2SchemaProperties } from "d2-api/schemas";
 import { MultiSelector, withSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -6,8 +7,7 @@ import { MetadataPackage } from "../../../../../domain/metadata/entities/Metadat
 import { includeExcludeRulesFriendlyNames } from "../../../../../domain/metadata/entities/MetadataFriendlyNames";
 import i18n from "../../../../../locales";
 import { D2Model } from "../../../../../models/dhis/default";
-import { d2ModelFactory } from "../../../../../models/dhis/factory";
-import { D2, ModelDefinition } from "../../../../../types/d2";
+import { modelFactory } from "../../../../../models/dhis/factory";
 import { getMetadata } from "../../../../../utils/synchronization";
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
@@ -37,14 +37,14 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
     useEffect(() => {
         getMetadata(api, syncRule.metadataIds, "id,name").then((metadata: MetadataPackage) => {
             const models = _.keys(metadata).map((type: string) => {
-                return d2ModelFactory(api, type);
+                return modelFactory(api, type);
             });
 
             const options = models
-                .map((model: typeof D2Model) => model.getD2Model(d2 as D2))
-                .map((model: ModelDefinition) => ({
-                    name: model.displayName,
-                    id: model.name,
+                .map((model: typeof D2Model) => api.models[model.getCollectionName()].schema)
+                .map((schema: D2SchemaProperties) => ({
+                    name: schema.displayName,
+                    id: schema.name,
                 }));
 
             setModels(models);

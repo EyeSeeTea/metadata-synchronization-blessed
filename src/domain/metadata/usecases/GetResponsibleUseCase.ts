@@ -4,27 +4,27 @@ import { Instance } from "../../instance/entities/Instance";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { MetadataModule } from "../entities/MetadataModule";
-import { BaseModule, Module } from "../entities/Module";
+import { MetadataResponsible } from "../entities/MetadataResponsible";
+import { Either } from "../../common/entities/Either";
 
-export class ListModulesUseCase implements UseCase {
+export class GetResponsibleUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(instance = this.localInstance): Promise<Module[]> {
+    public async execute(
+        id: string,
+        instance = this.localInstance
+    ): Promise<Either<"NOT_FOUND", MetadataResponsible>> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [instance]
         );
 
-        const data = await storageRepository.listObjectsInCollection<BaseModule>(Namespace.MODULES);
+        const item = await storageRepository.getObjectInCollection<MetadataResponsible>(
+            Namespace.RESPONSIBLES,
+            id
+        );
 
-        return data.map(module => {
-            switch (module.type) {
-                case "metadata":
-                    return MetadataModule.build(module);
-                default:
-                    throw new Error("Unknown module");
-            }
-        });
+        if (!item) return Either.error("NOT_FOUND");
+        else return Either.success(item);
     }
 }

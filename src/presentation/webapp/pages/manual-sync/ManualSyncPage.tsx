@@ -18,7 +18,6 @@ import {
 import { DataElementGroupModel, DataElementGroupSetModel } from "../../../../models/dhis/metadata";
 import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
-import { D2 } from "../../../../types/d2";
 import { MetadataType } from "../../../../utils/d2";
 import { isAppConfigurator } from "../../../../utils/permissions";
 import { useAppContext } from "../../../common/contexts/AppContext";
@@ -68,7 +67,7 @@ const config: Record<
 const ManualSyncPage: React.FC = () => {
     const snackbar = useSnackbar();
     const loading = useLoading();
-    const { d2, api, compositionRoot } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const history = useHistory();
     const { type } = useParams() as { type: SyncRuleType };
     const { title, models } = config[type];
@@ -141,7 +140,7 @@ const ManualSyncPage: React.FC = () => {
             text: i18n.t("Metadata type"),
             hidden: config[type].childrenKeys === undefined,
             getValue: (row: MetadataType) => {
-                return row.model.getModelName(d2 as D2);
+                return row.model.getModelName(api);
             },
         },
     ];
@@ -164,7 +163,7 @@ const ManualSyncPage: React.FC = () => {
     );
 
     useEffect(() => {
-        compositionRoot.instances().list().then(setInstances);
+        compositionRoot.instances.list().then(setInstances);
     }, [compositionRoot]);
 
     return (
@@ -204,6 +203,7 @@ const ManualSyncPage: React.FC = () => {
                     childrenKeys={config[type].childrenKeys}
                     showIndeterminateSelection={true}
                     additionalColumns={additionalColumns}
+                    allowChangingResponsible={type === "metadata"}
                 />
             )}
 

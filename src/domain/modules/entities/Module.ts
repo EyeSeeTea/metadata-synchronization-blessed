@@ -59,7 +59,10 @@ export abstract class GenericModule implements BaseModule {
     }
 
     public abstract update(data?: Partial<Pick<GenericModule, keyof BaseModule>>): GenericModule;
-    public abstract toSyncBuilder(): SynchronizationBuilder;
+    public abstract toSyncBuilder(): Omit<
+        SynchronizationBuilder,
+        "originInstance" | "targetInstances"
+    >;
 
     protected abstract moduleValidations: () => ModelValidation[];
 

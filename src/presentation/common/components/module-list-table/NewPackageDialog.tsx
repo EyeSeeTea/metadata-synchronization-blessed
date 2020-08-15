@@ -76,12 +76,9 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
     }, [item, save, module, versions]);
 
     useEffect(() => {
-        compositionRoot
-            .instances()
-            .getVersion()
-            .then(version => {
-                if (versions.length === 0) updateVersions([version]);
-            });
+        compositionRoot.instances.getVersion().then(version => {
+            if (versions.length === 0) updateVersions([version]);
+        });
     }, [compositionRoot, versions, updateVersions]);
 
     return (

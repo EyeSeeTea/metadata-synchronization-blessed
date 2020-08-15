@@ -1,4 +1,3 @@
-import { init } from "d2";
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
@@ -7,7 +6,6 @@ import { AggregatedSyncUseCase } from "../../../../domain/aggregated/usecases/Ag
 import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Repositories } from "../../../../domain/Repositories";
-import { D2 } from "../../../../types/d2";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
@@ -171,8 +169,6 @@ describe("Sync metadata", () => {
     });
 
     it("Local server to remote - same version", async () => {
-        const d2 = await init({ baseUrl: `http://origin.test/api` });
-
         const localInstance = Instance.build({
             url: "http://origin.test",
             name: "Testing",
@@ -186,13 +182,7 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const useCase = new AggregatedSyncUseCase(
-            d2 as D2,
-            builder,
-            repositoryFactory,
-            localInstance,
-            ""
-        );
+        const useCase = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
 
         const payload = await useCase.buildPayload();
         expect(payload.dataValues?.find(({ value }) => value === "test-value-1")).toBeDefined();
@@ -207,8 +197,6 @@ describe("Sync metadata", () => {
     });
 
     it("Remote server to local - same version", async () => {
-        const d2 = await init({ baseUrl: `http://origin.test/api` });
-
         const localInstance = Instance.build({
             url: "http://origin.test",
             name: "Testing",
@@ -222,13 +210,7 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const useCase = new AggregatedSyncUseCase(
-            d2 as D2,
-            builder,
-            repositoryFactory,
-            localInstance,
-            ""
-        );
+        const useCase = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
 
         const payload = await useCase.buildPayload();
         expect(payload.dataValues?.find(({ value }) => value === "test-value-2")).toBeDefined();

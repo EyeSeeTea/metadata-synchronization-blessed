@@ -42,7 +42,7 @@ const InstanceListPage = () => {
     }, [api]);
 
     useEffect(() => {
-        compositionRoot.instances().list({ search }).then(setRows);
+        compositionRoot.instances.list({ search }).then(setRows);
     }, [compositionRoot, search, toDelete]);
 
     const createInstance = () => {
@@ -55,7 +55,7 @@ const InstanceListPage = () => {
     };
 
     const replicateInstance = async (ids: string[]) => {
-        const instance = await compositionRoot.instances().getById(ids[0]);
+        const instance = await compositionRoot.instances.getById(ids[0]);
         if (!instance) return;
         history.push({
             pathname: "/instances/new",
@@ -64,10 +64,10 @@ const InstanceListPage = () => {
     };
 
     const testConnection = async (ids: string[]) => {
-        const instance = await compositionRoot.instances().getById(ids[0]);
+        const instance = await compositionRoot.instances.getById(ids[0]);
         if (!instance) return;
 
-        const validation = await compositionRoot.instances().validate(instance);
+        const validation = await compositionRoot.instances.validate(instance);
         validation.match({
             success: () => {
                 snackbar.success(i18n.t("Connected successfully to instance"));
@@ -79,7 +79,7 @@ const InstanceListPage = () => {
     };
 
     const runAnalytics = async (ids: string[]) => {
-        const instance = await compositionRoot.instances().getById(ids[0]);
+        const instance = await compositionRoot.instances.getById(ids[0]);
         if (!instance) return;
 
         for await (const message of executeAnalytics(instance)) {
@@ -100,7 +100,7 @@ const InstanceListPage = () => {
 
         const results = [];
         for (const id of toDelete) {
-            results.push(await compositionRoot.instances().delete(id));
+            results.push(await compositionRoot.instances.delete(id));
         }
 
         loading.reset();

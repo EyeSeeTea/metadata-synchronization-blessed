@@ -3,7 +3,6 @@ import _ from "lodash";
 import i18n from "../../../locales";
 import SyncReport from "../../../models/syncReport";
 import SyncRule from "../../../models/syncRule";
-import { D2 } from "../../../types/d2";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
@@ -45,7 +44,6 @@ export abstract class GenericSyncUseCase {
     protected readonly api: D2Api;
 
     constructor(
-        protected readonly d2: D2,
         protected readonly builder: SynchronizationBuilder,
         protected readonly repositoryFactory: RepositoryFactory,
         protected readonly localInstance: Instance,

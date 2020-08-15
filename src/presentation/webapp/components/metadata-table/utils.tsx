@@ -1,14 +1,15 @@
 import memoize from "nano-memoize";
-import { d2ModelFactory } from "../../../../models/dhis/factory";
-import { D2Api, D2ModelSchemas } from "../../../../types/d2-api";
+import { MetadataEntities } from "../../../../domain/metadata/entities/MetadataEntities";
+import { modelFactory } from "../../../../models/dhis/factory";
+import { D2Api } from "../../../../types/d2-api";
 
 /**
  * Load memoized filter data from an instance (This should be removed with a cache on d2-api)
  * Note: _baseUrl is used as cacheKey to avoid memoizing values between instances
  */
 export const getFilterData = memoize(
-    (modelName: keyof D2ModelSchemas, type: "group" | "level", _baseUrl: string, api: D2Api) =>
-        d2ModelFactory(api, modelName)
+    (modelName: keyof MetadataEntities, type: "group" | "level", _baseUrl: string, api: D2Api) =>
+        modelFactory(api, modelName)
             .getApiModel(api)
             .get({
                 paging: false,

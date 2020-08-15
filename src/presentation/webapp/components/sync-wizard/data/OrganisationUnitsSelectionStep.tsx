@@ -4,10 +4,8 @@ import { OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import i18n from "../../../../../locales";
-import { D2 } from "../../../../../types/d2";
-import { getCurrentUserOrganisationUnits } from "../../../../../utils/d2";
-import { SyncWizardStepProps } from "../Steps";
 import { useAppContext } from "../../../../common/contexts/AppContext";
+import { SyncWizardStepProps } from "../Steps";
 
 const useStyles = makeStyles({
     loading: {
@@ -17,13 +15,16 @@ const useStyles = makeStyles({
 });
 
 const OrganisationUnitsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
-    const { d2, api } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const classes = useStyles();
     const [orgUnitRootIds, setOrgUnitRootIds] = useState<string[] | undefined>();
 
     useEffect(() => {
-        getCurrentUserOrganisationUnits(d2 as D2).then(setOrgUnitRootIds);
-    }, [d2]);
+        compositionRoot.instances
+            .getOrgUnitRoots()
+            .then(roots => roots.map(({ id }) => id))
+            .then(setOrgUnitRootIds);
+    }, [compositionRoot]);
 
     const changeSelection = (orgUnitsPaths: string[]) => {
         onChange(syncRule.updateDataSyncOrgUnitPaths(orgUnitsPaths).updateDataSyncEvents([]));

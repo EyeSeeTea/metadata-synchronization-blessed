@@ -45,7 +45,7 @@ export const ModuleListWidget: React.FC = React.memo(() => {
     );
 
     useEffect(() => {
-        compositionRoot.instances().list().then(setInstances);
+        compositionRoot.instances.list().then(setInstances);
     }, [compositionRoot]);
 
     const Table = tableOption === "packages" ? PackagesListTable : ModulesListTable;

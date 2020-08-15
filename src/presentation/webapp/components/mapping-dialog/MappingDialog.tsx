@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../../../domain/instance/entities/MetadataMapping";
 import i18n from "../../../../locales";
-import { d2ModelFactory } from "../../../../models/dhis/factory";
+import { modelFactory } from "../../../../models/dhis/factory";
 import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import { buildDataElementFilterForProgram, getValidIds } from "../mapping-table/utils";
@@ -41,7 +41,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     onUpdateMapping,
     onClose,
 }) => {
-    const { d2, compositionRoot } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
     const [filterRows, setFilterRows] = useState<string[] | undefined>();
@@ -61,19 +61,16 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const defaultSelection = mappedId !== "DISABLED" ? mappedId : undefined;
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
-    const api = compositionRoot.instances(instance).getApi();
-    const model = d2ModelFactory(api, mappingType);
-    const modelName = model.getModelName(d2);
+    const api = compositionRoot.instances.getApi(instance);
+    const model = modelFactory(api, mappingType);
+    const modelName = model.getModelName(api);
 
     useEffect(() => {
         let mounted = true;
 
-        compositionRoot
-            .instances()
-            .validate(instance)
-            .then(result => {
-                if (mounted) setConnectionSuccess(result.isSuccess());
-            });
+        compositionRoot.instances.validate(instance).then(result => {
+            if (mounted) setConnectionSuccess(result.isSuccess());
+        });
 
         return () => {
             mounted = false;
@@ -82,7 +79,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 
     useEffect(() => {
         if (mappingPath) {
-            const parentModel = d2ModelFactory(api, mappingPath[0]);
+            const parentModel = modelFactory(api, mappingPath[0]);
             const parentMappedId = mappingPath[2];
             getValidIds(api, parentModel, parentMappedId).then(setFilterRows);
         } else if (mappingType === "programDataElements" && elements.length === 1) {

@@ -4,27 +4,28 @@ import { Instance } from "../../instance/entities/Instance";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { MetadataModule } from "../entities/MetadataModule";
-import { BaseModule, Module } from "../entities/Module";
+import { MetadataResponsible } from "../entities/MetadataResponsible";
 
-export class ListModulesUseCase implements UseCase {
+export class SetResponsiblesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(instance = this.localInstance): Promise<Module[]> {
+    public async execute(
+        responsible: MetadataResponsible,
+        instance = this.localInstance
+    ): Promise<void> {
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [instance]
         );
 
-        const data = await storageRepository.listObjectsInCollection<BaseModule>(Namespace.MODULES);
-
-        return data.map(module => {
-            switch (module.type) {
-                case "metadata":
-                    return MetadataModule.build(module);
-                default:
-                    throw new Error("Unknown module");
-            }
-        });
+        const { id, users, userGroups } = responsible;
+        if (users.length === 0 && userGroups.length === 0) {
+            await storageRepository.removeObjectInCollection(Namespace.RESPONSIBLES, id);
+        } else {
+            await storageRepository.saveObjectInCollection<MetadataResponsible>(
+                Namespace.RESPONSIBLES,
+                responsible
+            );
+        }
     }
 }

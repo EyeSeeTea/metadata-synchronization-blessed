@@ -106,7 +106,6 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         // TODO: This is an external action and should be called by user
         const aggregatedSync = new AggregatedSyncUseCase(
-            this.d2,
             this.builder,
             this.repositoryFactory,
             this.localInstance,

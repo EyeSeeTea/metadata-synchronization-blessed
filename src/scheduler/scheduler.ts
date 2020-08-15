@@ -12,7 +12,6 @@ import {
 } from "../domain/synchronization/entities/SynchronizationRule";
 import { SyncronizationClass } from "../domain/synchronization/usecases/GenericSyncUseCase";
 import SyncRule from "../models/syncRule";
-import { D2 } from "../types/d2";
 import { D2Api } from "../types/d2-api";
 
 const config: Record<SyncRuleType, { SyncClass: SyncronizationClass }> = {
@@ -32,7 +31,7 @@ const config: Record<SyncRuleType, { SyncClass: SyncronizationClass }> = {
 
 export default class Scheduler {
     //@ts-ignore
-    constructor(private d2: D2, private api: D2Api) {}
+    constructor(private api: D2Api) {}
 
     private synchronizationTask = async (id: string): Promise<void> => {
         const rule = await SyncRule.get(this.api, id);

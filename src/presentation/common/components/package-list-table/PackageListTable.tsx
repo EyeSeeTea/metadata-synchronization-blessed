@@ -39,7 +39,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
         async (ids: string[]) => {
             loading.show(true, "Deleting packages");
             for (const id of ids) {
-                await compositionRoot.packages().delete(id);
+                await compositionRoot.packages.delete(id);
             }
             loading.reset();
             setResetKey(Math.random());
@@ -58,7 +58,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     const downloadPackage = useCallback(
         async (ids: string[]) => {
             try {
-                compositionRoot.packages(remoteInstance).download(ids[0]);
+                compositionRoot.packages.download(ids[0], remoteInstance);
             } catch (error) {
                 snackbar.error(i18n.t("Invalid package"));
             }
@@ -68,7 +68,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
 
     const importPackage = useCallback(
         async (ids: string[]) => {
-            const result = await compositionRoot.packages(remoteInstance).get(ids[0]);
+            const result = await compositionRoot.packages.get(ids[0], remoteInstance);
             result.match({
                 success: async ({ name, contents }) => {
                     try {
@@ -103,6 +103,8 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
         { name: "version", text: i18n.t("Version"), sortable: true },
         { name: "dhisVersion", text: i18n.t("DHIS2 Version"), sortable: true },
         { name: "module", text: i18n.t("Module"), sortable: true },
+        { name: "created", text: i18n.t("Created"), hidden: true },
+        { name: "user", text: i18n.t("Created by"), hidden: true },
     ];
 
     const details: ObjectsTableDetailField<ListPackage>[] = [
@@ -111,6 +113,8 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
         { name: "version", text: i18n.t("Version") },
         { name: "dhisVersion", text: i18n.t("DHIS2 Version") },
         { name: "module", text: i18n.t("Module") },
+        { name: "created", text: i18n.t("Created") },
+        { name: "user", text: i18n.t("Created by") },
     ];
 
     const actions: TableAction<ListPackage>[] = [
@@ -153,9 +157,8 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     ];
 
     useEffect(() => {
-        compositionRoot
-            .packages(remoteInstance)
-            .list()
+        compositionRoot.packages
+            .list(remoteInstance)
             .then(setRows)
             .catch((error: Error) => {
                 snackbar.error(error.message);
@@ -170,7 +173,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
             details={details}
             actions={actions}
             onActionButtonClick={onActionButtonClick}
-            forceSelectionColumn={true}
+            forceSelectionColumn={presentation === "app"}
             filterComponents={externalComponents}
             selection={selection}
             onChange={updateTable}

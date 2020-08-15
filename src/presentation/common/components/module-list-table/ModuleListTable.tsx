@@ -54,10 +54,14 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
             else {
                 loading.show(true, i18n.t("Downloading snapshot for module {{name}}", module));
 
-                const builder = module.toSyncBuilder();
-                const contents = await compositionRoot.sync[module.type](builder).buildPayload();
+                const originInstance = remoteInstance?.id ?? "LOCAL";
+                const contents = await compositionRoot.sync[module.type]({
+                    ...module.toSyncBuilder(),
+                    originInstance,
+                    targetInstances: [],
+                }).buildPayload();
 
-                await compositionRoot.modules(remoteInstance).download(module, contents);
+                await compositionRoot.modules.download(module, contents);
                 loading.reset();
             }
         },
@@ -88,20 +92,22 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                         })
                     );
 
-                    const builder = module.toSyncBuilder();
-                    const contents = await compositionRoot.sync[module.type](
-                        builder
-                    ).buildPayload();
+                    const originInstance = remoteInstance?.id ?? "LOCAL";
+                    const contents = await compositionRoot.sync[module.type]({
+                        ...module.toSyncBuilder(),
+                        originInstance,
+                        targetInstances: [],
+                    }).buildPayload();
 
                     const newPackage = item.update({ contents, dhisVersion });
-                    await compositionRoot.packages().create(newPackage, module);
+                    await compositionRoot.packages.create(newPackage, module);
                 }
 
                 loading.reset();
                 setResetKey(Math.random());
             }
         },
-        [compositionRoot, rows, snackbar, loading]
+        [compositionRoot, remoteInstance, rows, snackbar, loading]
     );
 
     const pullModule = useCallback(
@@ -111,8 +117,13 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
             else {
                 loading.show(true, i18n.t("Pulling metadata from module {{name}}", module));
 
-                const builder = module.update({ instance: remoteInstance?.id }).toSyncBuilder();
-                const sync = compositionRoot.sync[module.type](builder);
+                const originInstance = remoteInstance?.id ?? "LOCAL";
+                const sync = compositionRoot.sync[module.type]({
+                    ...module.toSyncBuilder(),
+                    originInstance,
+                    targetInstances: ["LOCAL"],
+                });
+
                 for await (const { message, syncReport, done } of sync.execute()) {
                     if (message) loading.show(true, message);
                     if (syncReport) await syncReport.save(api);
@@ -144,7 +155,7 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
         async (ids: string[]) => {
             loading.show(true, "Deleting modules");
             for (const id of ids) {
-                await compositionRoot.modules().delete(id);
+                await compositionRoot.modules.delete(id);
             }
             loading.reset();
             setResetKey(Math.random());
@@ -169,6 +180,10 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
             text: "Selected metadata",
             getValue: module => `${module.metadataIds.length} elements`,
         },
+        { name: "lastUpdated", text: i18n.t("Last updated"), hidden: true },
+        { name: "lastUpdatedBy", text: i18n.t("Last updated by"), hidden: true },
+        { name: "created", text: i18n.t("Created"), hidden: true },
+        { name: "user", text: i18n.t("Created by"), hidden: true },
     ];
 
     const details: ObjectsTableDetailField<Module>[] = [
@@ -177,9 +192,13 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
         { name: "description", text: i18n.t("Description") },
         {
             name: "metadataIds",
-            text: "Selected metadata",
+            text: i18n.t("Selected metadata"),
             getValue: module => `${module.metadataIds.length} elements`,
         },
+        { name: "lastUpdated", text: i18n.t("Last updated") },
+        { name: "lastUpdatedBy", text: i18n.t("Last updated by") },
+        { name: "created", text: i18n.t("Created") },
+        { name: "user", text: i18n.t("Created by") },
     ];
 
     const actions: TableAction<Module>[] = [
@@ -241,9 +260,8 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
 
     useEffect(() => {
         setIsTableLoading(true);
-        compositionRoot
-            .modules(remoteInstance)
-            .list()
+        compositionRoot.modules
+            .list(remoteInstance)
             .then(rows => {
                 setRows(rows);
                 setIsTableLoading(false);
@@ -272,7 +290,7 @@ export const ModulesListTable: React.FC<ModuleListPageProps> = ({
                 details={details}
                 actions={actions}
                 onActionButtonClick={onActionButtonClick}
-                forceSelectionColumn={true}
+                forceSelectionColumn={presentation === "app"}
                 filterComponents={externalComponents}
                 selection={selection}
                 onChange={updateTable}

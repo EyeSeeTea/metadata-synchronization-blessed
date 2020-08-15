@@ -2,9 +2,12 @@ import { Icon } from "@material-ui/core";
 import {
     ConfirmationDialog,
     DatePicker,
+    MetaObject,
     ObjectsTable,
     ObjectsTableDetailField,
     ReferenceObject,
+    SearchResult,
+    ShareUpdate,
     TableAction,
     TableColumn,
     TableSelection,
@@ -17,11 +20,13 @@ import { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import { SyncRuleType } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import {
+    SynchronizationRule,
+    SyncRuleType,
+} from "../../../../domain/synchronization/entities/SynchronizationRule";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
-import { D2 } from "../../../../types/d2";
 import { getValueForCollection } from "../../../../utils/d2-ui-components";
 import { getValidationMessages } from "../../../../utils/old-validations";
 import {
@@ -35,7 +40,7 @@ import { requestJSONDownload } from "../../../../utils/synchronization";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
-import SharingDialog from "../../components/sharing-dialog/SharingDialog";
+import { SharingDialog } from "../../components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 
@@ -61,7 +66,7 @@ const enabledFilterData = [
 ];
 
 const SyncRulesPage: React.FC = () => {
-    const { d2, api, compositionRoot } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const loading = useLoading();
     const snackbar = useSnackbar();
     const history = useHistory();
@@ -78,7 +83,7 @@ const SyncRulesPage: React.FC = () => {
     const [enabledFilter, setEnabledFilter] = useState("");
     const [lastExecutedFilter, setLastExecutedFilter] = useState<Moment | null>(null);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
-    const [sharingSettingsObject, setSharingSettingsObject] = useState<any>(null);
+    const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
 
     useEffect(() => {
         SyncRule.list(
@@ -106,7 +111,7 @@ const SyncRulesPage: React.FC = () => {
     const [appExecutor, setAppExecutor] = useState(false);
 
     useEffect(() => {
-        compositionRoot.instances().list().then(setAllInstances);
+        compositionRoot.instances.list().then(setAllInstances);
         getUserInfo(api).then(setUserInfo);
         isGlobalAdmin(api).then(setGlobalAdmin);
         isAppConfigurator(api).then(setAppConfigurator);
@@ -396,14 +401,14 @@ const SyncRulesPage: React.FC = () => {
         },
     ];
 
-    const onSearchRequest = (key: string) =>
-        (d2 as D2).Api.getApi()
-            //@ts-ignore
-            .get("sharing/search", { key })
-            //@ts-ignore
-            .then(searchResult => searchResult);
+    const onSearchRequest = async (key: string) =>
+        api
+            .get<SearchResult>("/sharing/search", { key })
+            .getData();
 
-    const onSharingChanged = async (updatedAttributes: any, onSuccess?: Function) => {
+    const onSharingChanged = async (updatedAttributes: ShareUpdate) => {
+        if (!sharingSettingsObject) return;
+
         const newSharingSettings = {
             meta: sharingSettingsObject.meta,
             object: {
@@ -412,11 +417,10 @@ const SyncRulesPage: React.FC = () => {
             },
         };
 
-        const syncRule = SyncRule.build(newSharingSettings.object);
+        const syncRule = SyncRule.build(newSharingSettings.object as SynchronizationRule);
         await syncRule.save(api);
 
         setSharingSettingsObject(newSharingSettings);
-        if (onSuccess) onSuccess();
     };
 
     const renderCustomFilters = (
@@ -490,11 +494,15 @@ const SyncRulesPage: React.FC = () => {
             {!!sharingSettingsObject && (
                 <SharingDialog
                     isOpen={true}
-                    isDataShareable={false}
-                    sharedObject={sharingSettingsObject}
+                    showOptions={{
+                        title: false,
+                        dataSharing: false,
+                    }}
+                    title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
+                    meta={sharingSettingsObject}
                     onCancel={() => setSharingSettingsObject(null)}
-                    onSharingChanged={onSharingChanged}
-                    onSearchRequest={onSearchRequest}
+                    onChange={onSharingChanged}
+                    onSearch={onSearchRequest}
                 />
             )}
         </TestWrapper>

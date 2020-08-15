@@ -4,10 +4,7 @@ import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { AggregatedSyncUseCase } from "../../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
-import { EventsSyncUseCase } from "../../../../../domain/events/usecases/EventsSyncUseCase";
 import { includeExcludeRulesFriendlyNames } from "../../../../../domain/metadata/entities/MetadataFriendlyNames";
-import { MetadataSyncUseCase } from "../../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { cleanOrgUnitPaths } from "../../../../../domain/synchronization/utils";
 import i18n from "../../../../../locales";
 import { getValidationMessages } from "../../../../../utils/old-validations";
@@ -43,20 +40,8 @@ const useStyles = makeStyles({
     },
 });
 
-const config = {
-    metadata: {
-        SyncClass: MetadataSyncUseCase,
-    },
-    aggregated: {
-        SyncClass: AggregatedSyncUseCase,
-    },
-    events: {
-        SyncClass: EventsSyncUseCase,
-    },
-};
-
 const SaveStep = ({ syncRule, onCancel }) => {
-    const { d2, api, compositionRoot } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
 
     const snackbar = useSnackbar();
     const loading = useLoading();
@@ -93,10 +78,10 @@ const SaveStep = ({ syncRule, onCancel }) => {
     };
 
     const downloadJSON = async () => {
-        const { SyncClass } = config[syncRule.type];
-
         loading.show(true, "Generating JSON file");
-        requestJSONDownload(SyncClass, syncRule, d2, api);
+        const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
+        const payload = await sync.buildPayload();
+        requestJSONDownload(payload, syncRule);
         loading.reset();
     };
 
@@ -108,55 +93,8 @@ const SaveStep = ({ syncRule, onCancel }) => {
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
         getMetadata(api, ids, "id,name").then(updateMetadata);
-        compositionRoot.instances().list().then(setTargetInstances);
+        compositionRoot.instances.list().then(setTargetInstances);
     }, [api, compositionRoot, syncRule]);
-
-    // useEffect(() => {
-    //     const getTargetInstances = async d2 =>
-    //         _.compact(await Promise.all(syncRule.targetInstances.map(id => Instance.get(d2, id))));
-
-    //     getTargetInstances(d2).then(setTargetInstances);
-    // }, [d2, syncRule]);
-
-    // const renderMetadataMapping = instanceId => {
-    //     return (
-    //         <LiEntry label={i18n.t("Metadata mapping")}>
-    //             <ul>
-    //                 {targetInstances.length > 0
-    //                     ? Object.entries(
-    //                           targetInstances.find(instance => instance.id === instanceId)
-    //                               .metadataMapping
-    //                       ).map(([modelKey, value]) => (
-    //                           <LiEntry key={modelKey} label={modelKey}>
-    //                               <ul>
-    //                                   {Object.entries(value)
-    //                                       .filter(([key, value]) => {
-    //                                           //TODO: currently we only are filtering metadata mapping by existed models in metadada of sync rule
-    //                                           // (example: organisationUnits) we are not filtering metadata mapping by metadata related to data (aggregate, events)
-    //                                           // for example by dataElements, CategoryOption, this filter will be realize on the future in other issue.
-    //                                           // Then is possibble we need to use here other metadata array varibale to use for filters.
-    //                                           return (
-    //                                               !metadata[modelKey] ||
-    //                                               metadata[modelKey].some(
-    //                                                   metadataItem => metadataItem.id === key
-    //                                               )
-    //                                           );
-    //                                       })
-    //                                       .map(([key, value]) => (
-    //                                           <LiEntry
-    //                                               key={key}
-    //                                               label={`${i18n.t("Source")} ${key}`}
-    //                                               value={`${i18n.t("Target")} ${value.mappedId}`}
-    //                                           />
-    //                                       ))}
-    //                               </ul>
-    //                           </LiEntry>
-    //                       ))
-    //                     : null}
-    //             </ul>
-    //         </LiEntry>
-    //     );
-    // };
 
     const aggregationItems = useMemo(buildAggregationItems, []);
 
@@ -189,11 +127,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
                         {syncRule.targetInstances.map(id => {
                             const instanceOption = instanceOptions.find(e => e.value === id);
                             return instanceOption ? (
-                                <LiEntry key={instanceOption.value} label={instanceOption.text}>
-                                    {/* {syncRule.type !== "metadata" && (
-                                        <ul>{renderMetadataMapping(id)}</ul>
-                                    )}  */}
-                                </LiEntry>
+                                <LiEntry key={instanceOption.value} label={instanceOption.text} />
                             ) : null;
                         })}
                     </ul>
@@ -207,7 +141,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
                         items.length > 0 && (
                             <LiEntry
                                 key={metadataType}
-                                label={`${d2.models[metadataType].displayName} [${items.length}]`}
+                                label={`${api.models[metadataType].schema.displayName} [${items.length}]`}
                             >
                                 <ul>
                                     {items.map(({ id, name }) => (

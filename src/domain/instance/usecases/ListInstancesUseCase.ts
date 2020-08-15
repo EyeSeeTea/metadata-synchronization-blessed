@@ -1,18 +1,29 @@
-import { UseCase } from "../../common/entities/UseCase";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepository } from "../../storage/repositories/StorageRepository";
-import { Instance, InstanceData } from "../entities/Instance";
 import _ from "lodash";
+import { UseCase } from "../../common/entities/UseCase";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { Repositories } from "../../Repositories";
+import { Namespace } from "../../storage/Namespaces";
+import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { Instance, InstanceData } from "../entities/Instance";
 
 export interface ListInstancesUseCaseProps {
     search?: string;
 }
 
 export class ListInstancesUseCase implements UseCase {
-    constructor(private storageRepository: StorageRepository, private encryptionKey: string) {}
+    constructor(
+        private repositoryFactory: RepositoryFactory,
+        private localInstance: Instance,
+        private encryptionKey: string
+    ) {}
 
     public async execute({ search }: ListInstancesUseCaseProps = {}): Promise<Instance[]> {
-        const objects = await this.storageRepository.listObjectsInCollection<InstanceData>(
+        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
+            Repositories.StorageRepository,
+            [this.localInstance]
+        );
+
+        const objects = await storageRepository.listObjectsInCollection<InstanceData>(
             Namespace.INSTANCES
         );
 

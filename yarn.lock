@@ -5167,10 +5167,10 @@ cypress@4.10.0:
     url "0.11.0"
     yauzl "2.10.0"
 
-d2-api@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-1.0.0.tgz#0e3e66d638fa59198c533613f624e37a74f4c4c4"
-  integrity sha512-MC6YZLCzqcJvADkjZnQsKjmn3p4d2cyhLpBh7ut4d9ucTqione+fgx8h0Pu+f48XFAoKxM0PZ7N+lvUrd6mgTw==
+d2-api@1.0.1-beta.1:
+  version "1.0.1-beta.1"
+  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-1.0.1-beta.1.tgz#2ded4a9472c6abf10e927de7d407c31afad0f697"
+  integrity sha512-4jmE8LuIMzAUcLq/1uU9L2gSwi5otWIu1BkQe2hyC26mY6GmBLkJBngOBI6piIgdnOj3qplodvygdpmRjbjh4g==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@dhis2/d2-i18n" "^1.0.5"
@@ -5206,10 +5206,10 @@ d2-manifest@1.0.0:
     minimist "^1.1.0"
     readline-sync "^1.4.1"
 
-d2-ui-components@1.5.1-beta.2:
-  version "1.5.1-beta.2"
-  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-1.5.1-beta.2.tgz#6b2cc0e408645d2c312e57e526055f3069e55aea"
-  integrity sha512-L8Srunn7LZekvKWa0DWHb0wAsIdVcIQ5b2cSVQKir1zDfwmPhtOqYy8D7G2DJC504yz5jM6MUEK4Ma2tG09THg==
+d2-ui-components@1.6.1-beta.1:
+  version "1.6.1-beta.1"
+  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-1.6.1-beta.1.tgz#893b7f7a5c47213c4abebc58c21675fa0b9c7e8d"
+  integrity sha512-qPSYmKcFBv8zwrnRCL9nHo+tcvn1EUc316oZbdAIzXYPwRy5Noi8xOVPPSuZDXN3QY0gkcVhh/9yP/i0r575wA==
   dependencies:
     "@date-io/core" "^1.3.6"
     "@date-io/moment" "^1.0.2"
@@ -5219,7 +5219,7 @@ d2-ui-components@1.5.1-beta.2:
     "@material-ui/pickers" "3.2.10"
     classnames "^2.2.6"
     downshift "^5.4.2"
-    lodash "4.17.15"
+    lodash "4.17.19"
     moment "^2.22.2"
     nano-memoize "1.1.10"
     node-sass "^4.12.0"
@@ -5686,7 +5686,7 @@ dotenv@8.2.0, dotenv@^8.0.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
   integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
 
-downshift@5.4.6, downshift@^5.4.2:
+downshift@^5.4.2:
   version "5.4.6"
   resolved "https://registry.yarnpkg.com/downshift/-/downshift-5.4.6.tgz#916b6c079f3af273486a6b864b45459df991c1c6"
   integrity sha512-GtSCmZUQMulQQ0gX3N3jvUAABJNU8IfAMLzFLu0E2fcOTt98xropy0iriYW2PSClRUqJ4QwKAov7FDy9Gk9aOA==

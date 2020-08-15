@@ -122,12 +122,13 @@ export const verifyUserHasAccessToSyncRule = async (api: D2Api, syncRuleUId: str
     return appConfigurator && syncRuleVisibleToUser;
 };
 
+// TODO: Migrate to composition root set-up
 export const initializeAppRoles = async (baseUrl: string) => {
     for (const role in AppRoles) {
         const { name, description, initialize } = AppRoles[role];
         if (initialize) {
             const { userRoles } = (
-                await axios.get(baseUrl + "/metadata", {
+                await axios.get(baseUrl + "/api/metadata", {
                     withCredentials: true,
                     params: {
                         userRoles: true,
@@ -139,7 +140,7 @@ export const initializeAppRoles = async (baseUrl: string) => {
 
             if (!userRoles || userRoles.length === 0) {
                 await axios.post(
-                    baseUrl + "/metadata.json",
+                    baseUrl + "/api/metadata.json",
                     {
                         userRoles: [
                             {

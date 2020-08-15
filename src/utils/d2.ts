@@ -2,7 +2,6 @@ import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import _ from "lodash";
 import i18n from "../locales";
 import { D2Model } from "../models/dhis/default";
-import { D2 } from "../types/d2";
 import "../utils/lodash-mixins";
 
 const include = true as const;
@@ -161,9 +160,3 @@ export const optionFields = {
         displayName: include,
     },
 };
-
-export async function getCurrentUserOrganisationUnits(d2: D2): Promise<string[]> {
-    const response: any = await d2.currentUser.getOrganisationUnits();
-    const organisationUnitsIds: string[] = [...response.valuesContainerMap.keys()];
-    return organisationUnitsIds;
-}

@@ -23,7 +23,7 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
             syncRule.type === "events" &&
             selectedinstanceIds
                 .map(id => targetInstances.find(instance => instance.id === id)?.url)
-                .includes(compositionRoot.instances().getApi().baseUrl)
+                .includes(compositionRoot.instances.getApi().baseUrl)
         );
     };
 
@@ -43,7 +43,7 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
     };
 
     useEffect(() => {
-        compositionRoot.instances().list().then(setTargetInstances);
+        compositionRoot.instances.list().then(setTargetInstances);
     }, [compositionRoot]);
 
     return (

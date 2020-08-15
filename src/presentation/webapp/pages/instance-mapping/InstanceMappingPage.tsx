@@ -63,7 +63,7 @@ export default function InstanceMappingPage() {
     const [instance, setInstance] = useState<Instance>();
 
     useEffect(() => {
-        compositionRoot.instances().getById(id).then(setInstance);
+        compositionRoot.instances.getById(id).then(setInstance);
     }, [compositionRoot, id]);
 
     const backHome = () => {
@@ -74,7 +74,7 @@ export default function InstanceMappingPage() {
         if (!instance) return;
 
         const newInstance = instance.update({ metadataMapping });
-        await compositionRoot.instances().save(newInstance);
+        await compositionRoot.instances.save(newInstance);
         setInstance(newInstance);
     };
 

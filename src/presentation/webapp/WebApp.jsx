@@ -60,18 +60,16 @@ const App = () => {
             const api = new D2Api({ baseUrl });
             const instance = Instance.build({ name: "This instance", url: baseUrl });
 
-            const compositionRoot = new CompositionRoot(instance, d2, encryptionKey);
+            const compositionRoot = new CompositionRoot(instance, encryptionKey);
 
             const appContext = { d2, api, compositionRoot };
             setAppContext(appContext);
-
-            Object.assign({ d2, api });
 
             Object.assign(window, { d2, api });
             setShowShareButton(_(appConfig).get("appearance.showShareButton") || false);
             initFeedbackTool(d2, appConfig);
 
-            await initializeAppRoles(d2.Api.getApi().baseUrl);
+            await initializeAppRoles(baseUrl);
             runMigrations(api).then(setMigrationsState);
         };
 

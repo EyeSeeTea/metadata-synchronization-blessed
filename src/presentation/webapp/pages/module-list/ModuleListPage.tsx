@@ -79,7 +79,7 @@ export const ModuleListPage: React.FC = () => {
     );
 
     useEffect(() => {
-        compositionRoot.instances().list().then(setInstances);
+        compositionRoot.instances.list().then(setInstances);
     }, [compositionRoot]);
 
     return (

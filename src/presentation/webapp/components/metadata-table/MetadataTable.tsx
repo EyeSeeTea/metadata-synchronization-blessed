@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
+import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import axios from "axios";
 import {
@@ -18,14 +18,15 @@ import _ from "lodash";
 import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { MetadataResponsible } from "../../../../domain/metadata/entities/MetadataResponsible";
 import { ListMetadataParams } from "../../../../domain/metadata/repositories/MetadataRepository";
 import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
 import { DataElementModel } from "../../../../models/dhis/metadata";
-import { D2 } from "../../../../types/d2";
 import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
+import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
@@ -44,6 +45,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
     notifyNewModel?(model: typeof D2Model): void;
     notifyRowsChange?(rows: MetadataType[]): void;
+    allowChangingResponsible?: boolean;
 }
 
 const useStyles = makeStyles({
@@ -83,7 +85,9 @@ const initialState = {
     },
 };
 
-const uniqCombine = (items: any[]) => _(items).reverse().uniqBy("name").reverse().value();
+const uniqCombine = (items: any[]) => {
+    return _(items).compact().reverse().uniqBy("name").reverse().value();
+};
 
 const MetadataTable: React.FC<MetadataTableProps> = ({
     remoteInstance,
@@ -102,15 +106,18 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     loading: providedLoading,
     initialShowOnlySelected = false,
     showIndeterminateSelection = false,
+    allowChangingResponsible = false,
     ...rest
 }) => {
-    const { compositionRoot, d2 } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const classes = useStyles();
 
     const snackbar = useSnackbar();
 
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
     const [ids, updateIds] = useState<string[]>([]);
+    const [responsibles, updateResponsibles] = useState<MetadataResponsible[]>([]);
+    const [sharingSettingsElement, setSharingSettingsElement] = useState<NamedRef>();
 
     const [selectedRows, setSelectedRows] = useState<string[]>(selectedIds);
     const [filters, updateFilters] = useState<ListMetadataParams>({
@@ -119,10 +126,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         order: initialState.sorting,
         page: initialState.pagination.page,
         pageSize: initialState.pagination.pageSize,
-        filterRows,
     });
 
-    const api = compositionRoot.instances(remoteInstance).getApi();
+    const api = compositionRoot.instances.getApi(remoteInstance);
 
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
     const [groupFilterData, setGroupFilterData] = useState<NamedRef[]>([]);
@@ -132,12 +138,19 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [pager, setPager] = useState<Partial<TablePagination>>({});
     const [loading, setLoading] = useState<boolean>(true);
 
+    const showResponsibles =
+        model.getCollectionName() === "dataSets" || model.getCollectionName() === "programs";
+
     const changeModelFilter = (modelName: string) => {
         if (models.length === 0) throw new Error("You need to provide at least one model");
         const model = _.find(models, model => model.getMetadataType() === modelName) ?? models[0];
         updateModel(() => model);
         notifyNewModel(model);
-        updateFilters(state => ({ ...state, type: model.getCollectionName() }));
+        updateFilters(state => ({
+            ...state,
+            type: model.getCollectionName(),
+            page: initialState.pagination.page,
+        }));
     };
 
     const changeSearchFilter = (value: string) => {
@@ -202,6 +215,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         notifyNewSelection([...oldSelection, ...newSelection], excludedIds);
     };
 
+    const openResponsibleDialog = (ids: string[]) => {
+        const { id, name } = rows.find(({ id }) => ids[0] === id) ?? {};
+        if (!id || !name) return;
+
+        setSharingSettingsElement({ id, name });
+    };
+
     const filterComponents = (
         <React.Fragment key={"metadata-table-filters"}>
             {models.length > 1 && (
@@ -209,7 +229,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                     <Dropdown
                         items={models.map(model => ({
                             id: model.getMetadataType(),
-                            name: model.getModelName(d2 as D2),
+                            name: model.getModelName(api),
                         }))}
                         onValueChange={changeModelFilter}
                         value={model.getMetadataType()}
@@ -235,7 +255,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeGroupFilter}
                         value={filters.group?.value ?? ""}
                         label={i18n.t("{{displayName}} Group", {
-                            displayName: model.getModelName(d2),
+                            displayName: model.getModelName(api),
                         })}
                     />
                 </div>
@@ -248,7 +268,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeLevelFilter}
                         value={filters.level ?? ""}
                         label={i18n.t("{{displayName}} Level", {
-                            displayName: model.getModelName(d2),
+                            displayName: model.getModelName(api),
                         })}
                     />
                 </div>
@@ -328,24 +348,40 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             onClick: addToSelection,
             isActive: () => false,
         },
+        {
+            name: "set-responsible",
+            text: i18n.t("Set responsible users"),
+            multiple: false,
+            icon: <Icon>supervisor_account</Icon>,
+            onClick: openResponsibleDialog,
+            isActive: () => {
+                return allowChangingResponsible && !remoteInstance && showResponsibles;
+            },
+        },
     ];
+
+    useEffect(() => {
+        updateFilters(state => ({
+            ...state,
+            page: initialState.pagination.page,
+        }));
+    }, [remoteInstance]);
 
     useEffect(() => {
         if (model.getCollectionName() === "organisationUnits") return;
 
         compositionRoot.metadata
-            .listAll({ ...filters, fields: { id: true } }, remoteInstance)
+            .listAll({ ...filters, filterRows, fields: { id: true } }, remoteInstance)
             .then(objects => {
                 updateIds(objects.map(({ id }) => id));
             });
-    }, [filters, model, compositionRoot, remoteInstance]);
+    }, [filters, filterRows, model, compositionRoot, remoteInstance]);
 
     useEffect(() => {
         if (model.getCollectionName() !== "organisationUnits") return;
 
-        compositionRoot
-            .instances(remoteInstance)
-            .getOrgUnitRoots()
+        compositionRoot.instances
+            .getOrgUnitRoots(remoteInstance)
             .then(roots => changeParentOrgUnitFilter(roots.map(({ path }) => path)))
             .catch(handleError);
     }, [compositionRoot, remoteInstance, model, handleError]);
@@ -355,7 +391,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
         setLoading(true);
         compositionRoot.metadata
-            .list({ ...filters, fields: model.getFields() }, remoteInstance)
+            .list({ ...filters, filterRows, fields: model.getFields() }, remoteInstance)
             .then(({ objects, pager }) => {
                 const rows = model.getApiModelTransform()((objects as unknown) as MetadataType[]);
                 notifyRowsChange(rows);
@@ -365,7 +401,15 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 setLoading(false);
             })
             .catch(handleError);
-    }, [compositionRoot, notifyRowsChange, remoteInstance, filters, model, handleError]);
+    }, [
+        compositionRoot,
+        notifyRowsChange,
+        remoteInstance,
+        filters,
+        filterRows,
+        model,
+        handleError,
+    ]);
 
     useEffect(() => {
         if (model && model.getGroupFilterName()) {
@@ -389,7 +433,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 }
             );
         }
-    }, [d2, api, model]);
+    }, [api, model]);
+
+    useEffect(() => {
+        compositionRoot.responsibles.list(remoteInstance).then(updateResponsibles);
+    }, [compositionRoot, remoteInstance]);
 
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;
@@ -448,29 +496,60 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
               .value()
         : [];
 
-    const columns = uniqCombine([...model.getColumns(), ...additionalColumns]);
-    const actions = uniqCombine([...tableActions, ...additionalActions]);
+    const columns: TableColumn<MetadataType>[] = uniqCombine([
+        ...model.getColumns(),
+        ...additionalColumns,
+        showResponsibles
+            ? {
+                  name: "responsible",
+                  text: i18n.t("Responsible"),
+                  getValue: (row: MetadataType) => {
+                      const { users = [], userGroups = [] } =
+                          responsibles.find(({ id }) => row.id === id) ?? {};
+
+                      const results = [...users, ...userGroups].map(({ name }) => name);
+
+                      return results.length === 0 ? "-" : results.join(", ");
+                  },
+              }
+            : undefined,
+    ]);
+
+    const actions: TableAction<MetadataType>[] = uniqCombine([
+        ...tableActions,
+        ...additionalActions,
+    ]);
 
     return (
-        <ObjectsTable<MetadataType>
-            rows={transformRows(rows)}
-            columns={columns}
-            details={model.getDetails()}
-            onChangeSearch={changeSearchFilter}
-            initialState={initialState}
-            searchBoxLabel={i18n.t(`Search by `) + model.getSearchFilter().field}
-            pagination={pager}
-            onChange={handleTableChange}
-            ids={ids}
-            loading={providedLoading || loading}
-            selection={[...selection, ...childrenSelection]}
-            childrenKeys={childrenKeys}
-            filterComponents={filterComponents}
-            forceSelectionColumn={true}
-            actions={actions}
-            sideComponents={sideComponents}
-            {...rest}
-        />
+        <React.Fragment>
+            <ResponsibleDialog
+                entity={model.getCollectionName()}
+                responsibles={responsibles}
+                updateResponsibles={updateResponsibles}
+                sharingSettingsElement={sharingSettingsElement}
+                onClose={() => setSharingSettingsElement(undefined)}
+            />
+
+            <ObjectsTable<MetadataType>
+                rows={transformRows(rows)}
+                columns={columns}
+                details={model.getDetails()}
+                onChangeSearch={changeSearchFilter}
+                initialState={initialState}
+                searchBoxLabel={i18n.t(`Search by `) + model.getSearchFilter().field}
+                pagination={pager}
+                onChange={handleTableChange}
+                ids={ids}
+                loading={providedLoading || loading}
+                selection={[...selection, ...childrenSelection]}
+                childrenKeys={childrenKeys}
+                filterComponents={filterComponents}
+                forceSelectionColumn={true}
+                actions={actions}
+                sideComponents={sideComponents}
+                {...rest}
+            />
+        </React.Fragment>
     );
 };
 

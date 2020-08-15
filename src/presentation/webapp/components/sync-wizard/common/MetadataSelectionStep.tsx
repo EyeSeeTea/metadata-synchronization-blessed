@@ -93,8 +93,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
     };
 
     useEffect(() => {
-        compositionRoot
-            .instances()
+        compositionRoot.instances
             .getById(syncRule.originInstance)
             .then(setRemoteInstance)
             .catch(() => setRemoteInstance(undefined))

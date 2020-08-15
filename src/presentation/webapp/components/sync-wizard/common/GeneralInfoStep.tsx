@@ -52,7 +52,7 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
     );
 
     useEffect(() => {
-        compositionRoot.instances().list().then(setInstances);
+        compositionRoot.instances.list().then(setInstances);
     }, [compositionRoot]);
 
     return (
@@ -78,7 +78,7 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
             />
 
             {instances.length > 0 && (
-                <FormControl fullWidth={true}>
+                <FormControl fullWidth={true} className={classes.row}>
                     <InputLabel>{i18n.t("Source instance")}</InputLabel>
                     <Select value={syncRule.originInstance} onChange={onChangeInstance}>
                         {[{ id: "LOCAL", name: i18n.t("This instance") }, ...instances].map(

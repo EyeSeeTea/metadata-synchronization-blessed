@@ -1,7 +1,7 @@
-import { D2Api, D2ModelSchemas, Model, D2ApiDefinition } from "../../types/d2-api";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import _ from "lodash";
-import { D2, ModelDefinition } from "../../types/d2";
+import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
+import { D2Api, D2ApiDefinition, Model } from "../../types/d2-api";
 import {
     d2BaseModelColumns,
     d2BaseModelDetails,
@@ -19,9 +19,9 @@ export interface SearchFilter {
 export abstract class D2Model {
     // Metadata Type should be defined on subclasses
     protected static metadataType: string;
-    protected static collectionName: keyof D2ModelSchemas;
-    protected static groupFilterName: keyof D2ModelSchemas;
-    protected static levelFilterName: keyof D2ModelSchemas;
+    protected static collectionName: keyof MetadataEntities;
+    protected static groupFilterName: keyof MetadataEntities;
+    protected static levelFilterName: keyof MetadataEntities;
     protected static modelName: string | undefined;
 
     protected static excludeRules: string[] = [];
@@ -39,10 +39,6 @@ export abstract class D2Model {
     protected static mappingType: string | undefined;
     protected static isGlobalMapping = false;
 
-    public static getD2Model(d2: D2): ModelDefinition {
-        return d2.models[this.collectionName];
-    }
-
     public static getApiModel(api: D2Api): InstanceType<typeof Model> {
         const modelCollection = api.models as {
             [ModelKey in keyof D2ApiDefinition["schemas"]]: Model<
@@ -53,8 +49,10 @@ export abstract class D2Model {
         return modelCollection[this.collectionName];
     }
 
-    public static getModelName(d2: unknown): string {
-        return this.modelName ?? this.getD2Model(d2 as D2)?.displayName ?? "Unknown model";
+    public static getModelName(api: D2Api): string {
+        return (
+            this.modelName ?? api.models[this.collectionName].schema.displayName ?? "Unknown model"
+        );
     }
 
     public static getApiModelTransform(): (objects: MetadataType[]) => MetadataType[] {
@@ -74,7 +72,7 @@ export abstract class D2Model {
         return this.metadataType;
     }
 
-    public static getCollectionName(): keyof D2ModelSchemas {
+    public static getCollectionName(): keyof MetadataEntities {
         return this.collectionName;
     }
 
@@ -110,11 +108,11 @@ export abstract class D2Model {
         return this.initialSorting;
     }
 
-    public static getGroupFilterName(): keyof D2ModelSchemas {
+    public static getGroupFilterName(): keyof MetadataEntities {
         return this.groupFilterName;
     }
 
-    public static getLevelFilterName(): keyof D2ModelSchemas {
+    public static getLevelFilterName(): keyof MetadataEntities {
         return this.levelFilterName;
     }
 
@@ -130,6 +128,6 @@ export abstract class D2Model {
 export function defaultModel(pascalCaseModelName: string): any {
     return class DefaultModel extends D2Model {
         protected static metadataType = pascalCaseModelName;
-        protected static collectionName = pascalCaseModelName as keyof D2ModelSchemas;
+        protected static collectionName = pascalCaseModelName as keyof MetadataEntities;
     };
 }

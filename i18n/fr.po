@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-07-14T11:33:06.606Z\n"
+"POT-Creation-Date: 2020-07-20T06:29:27.821Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -75,6 +75,21 @@ msgid "Department"
 msgstr ""
 
 msgid "Description"
+msgstr ""
+
+msgid "Last updated"
+msgstr ""
+
+msgid "Last updated by"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Created by"
+msgstr ""
+
+msgid "Selected metadata"
 msgstr ""
 
 msgid "Details"
@@ -256,9 +271,6 @@ msgid ""
 "You need to map this element before accessing its related metadata mapping"
 msgstr ""
 
-msgid "Last updated"
-msgstr ""
-
 msgid "Mapped ID"
 msgstr ""
 
@@ -337,6 +349,12 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
+msgid "Set responsible users"
+msgstr ""
+
+msgid "Responsible"
+msgstr ""
+
 msgid "Search by "
 msgstr ""
 
@@ -402,9 +420,6 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-msgid "Selected metadata"
-msgstr ""
-
 msgid "Metadata exclusions"
 msgstr ""
 
@@ -420,46 +435,10 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-msgid "External access"
-msgstr ""
-
-msgid "Anyone can view without login"
-msgstr ""
-
-msgid "No access"
-msgstr ""
-
-msgid "Public access"
-msgstr ""
-
-msgid "METADATA"
-msgstr ""
-
-msgid "Can edit and view"
-msgstr ""
-
-msgid "Can view only"
-msgstr ""
-
-msgid "DATA"
-msgstr ""
-
-msgid "Can capture and view"
-msgstr ""
-
-msgid "Created by"
-msgstr ""
-
-msgid "Who has access"
+msgid "Sharing settings for {{name}}"
 msgstr ""
 
 msgid "Sharing settings"
-msgstr ""
-
-msgid "Add users and user groups"
-msgstr ""
-
-msgid "Enter names"
 msgstr ""
 
 msgid "Synchronize"
@@ -664,15 +643,6 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
-msgid "Metadata mapping"
-msgstr ""
-
-msgid "Source"
-msgstr ""
-
-msgid "Target"
-msgstr ""
-
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -796,9 +766,6 @@ msgid "Event date"
 msgstr ""
 
 msgid "Stored by"
-msgstr ""
-
-msgid "Created"
 msgstr ""
 
 msgid "Due date"
@@ -944,6 +911,12 @@ msgstr ""
 msgid "Manually synchronise deleted objects."
 msgstr ""
 
+msgid "Metadata responsibles"
+msgstr ""
+
+msgid "List and remove responsibles for data sets and programs"
+msgstr ""
+
 msgid "Destination instance settings"
 msgstr ""
 
@@ -981,6 +954,9 @@ msgid "Username (*)"
 msgstr ""
 
 msgid "Password (*)"
+msgstr ""
+
+msgid "Metadata mapping"
 msgstr ""
 
 msgid "Test Connection"

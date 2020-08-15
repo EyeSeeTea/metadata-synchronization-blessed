@@ -41,7 +41,7 @@ const App = () => {
             const api = new D2Api({ baseUrl });
             const instance = Instance.build({ name: "This instance", url: baseUrl });
 
-            const compositionRoot = new CompositionRoot(instance, d2, encryptionKey);
+            const compositionRoot = new CompositionRoot(instance, encryptionKey);
             setAppContext({ d2, api, compositionRoot });
 
             runMigrations(api).then(setMigrationsState);
