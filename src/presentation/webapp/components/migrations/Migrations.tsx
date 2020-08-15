@@ -1,8 +1,7 @@
+import { ConfirmationDialog } from "d2-ui-components";
 import React from "react";
 import i18n from "../../../../locales";
-import { ConfirmationDialog } from "d2-ui-components";
 import { MigrationsRunner } from "../../../../migrations";
-import { Dialog, DialogTitle, DialogContent } from "@material-ui/core";
 
 export interface MigrationsProps {
     runner: MigrationsRunner;
@@ -31,8 +30,10 @@ const Migrations: React.FC<MigrationsProps> = props => {
 
     const actionText = getActionText(state);
 
-    if (state.type === "app-out-of-date") return <MigrationsError runner={runner} />;
-
+    if (state.type === "app-out-of-date") {
+        return <MigrationsError runner={runner} onFinish={onFinish} />;
+    }
+    
     return (
         <ConfirmationDialog
             isOpen={true}
@@ -123,17 +124,25 @@ function getPendingMigrationsText(runner: MigrationsRunner): string {
     );
 }
 
-const MigrationsError: React.FC<{ runner: MigrationsRunner }> = ({ runner }) => (
-    <Dialog open={true}>
-        <DialogTitle>{i18n.t("Error")}</DialogTitle>
+const isDebug = process.env.NODE_ENV === "development";
 
-        <DialogContent style={{ paddingBottom: 30 }}>
-            {i18n.t(
-                "The database version (v{{instanceVersion}}) is greater than the app version (v{{appVersion}}), we cannot continue. Please contact the administrator to update the app.",
-                runner
-            )}
-        </DialogContent>
-    </Dialog>
+const MigrationsError: React.FC<{ runner: MigrationsRunner; onFinish: () => void }> = ({
+    runner,
+    onFinish,
+}) => (
+    <ConfirmationDialog
+        isOpen={true}
+        title={i18n.t("Error")}
+        onSave={isDebug ? onFinish : undefined}
+        saveText={i18n.t("Continue to app anyway")}
+        maxWidth="md"
+        fullWidth={true}
+    >
+        {i18n.t(
+            "The database version (v{{instanceVersion}}) is greater than the app version (v{{appVersion}}), we cannot continue. Please contact the administrator to update the app.",
+            runner
+        )}
+    </ConfirmationDialog>
 );
 
 export default Migrations;
