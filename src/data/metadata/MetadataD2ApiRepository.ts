@@ -309,7 +309,7 @@ const defaultOrder = { field: "id", order: "asc" } as const;
 interface GetListAllOptions {
     type: ListMetadataParams["type"];
     fields: object;
-    filter: Dictionary<FilterValueBase>,
+    filter: Dictionary<FilterValueBase>;
     order?: ListMetadataParams["order"];
 }
 
