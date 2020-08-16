@@ -184,6 +184,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             ...state,
             selectedIds: showOnlySelected ? selectedRows : undefined,
             showOnlySelected,
+            page: 1,
         }));
     };
 
