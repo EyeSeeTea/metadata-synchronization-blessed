@@ -1,3 +1,4 @@
+import { FilterValueBase } from "d2-api/api/common";
 import _ from "lodash";
 import moment from "moment";
 import { Ref } from "../../domain/common/entities/Ref";
@@ -20,12 +21,12 @@ import { TransformationRepository } from "../../domain/transformations/repositor
 import { D2Api, D2Model, MetadataResponse, Model, Stats } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { cache } from "../../utils/cache";
+import { promiseMap } from "../../utils/common";
+import { paginate } from "../../utils/pagination";
 import {
     metadataTransformationsFromDhis2,
     metadataTransformationsToDhis2,
 } from "../transformations/PackageTransformations";
-import { promiseMap } from "../../utils/common";
-import { paginate } from "../../utils/pagination";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
@@ -162,14 +163,14 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         filterRows,
         search,
     }: Partial<ListMetadataParams>) {
-        const filter: Dictionary<unknown> = {};
+        const filter: Dictionary<FilterValueBase> = {};
 
         if (lastUpdated) filter["lastUpdated"] = { ge: moment(lastUpdated).format("YYYY-MM-DD") };
         if (group) filter[`${group.type}.id`] = { eq: group.value };
         if (level) filter["level"] = { eq: level };
         if (parents) filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
-        if (showOnlySelected) filter["id"] = { in: selectedIds };
-        if (filterRows) filter["id"] = { in: filterRows };
+        if (showOnlySelected) filter["id"] = { in: selectedIds.concat(filter["id"]?.in ?? []) };
+        if (filterRows) filter["id"] = { in: filterRows.concat(filter["id"]?.in ?? []) };
         if (search) filter[search.field] = { [search.operator]: search.value };
 
         return filter;
