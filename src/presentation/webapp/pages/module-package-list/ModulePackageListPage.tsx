@@ -1,5 +1,5 @@
 import { PaginationOptions } from "d2-ui-components";
-import React, { ReactNode, useCallback, useState } from "react";
+import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import i18n from "../../../../locales";
@@ -44,6 +44,15 @@ export const ModulePackageListPage: React.FC = () => {
         [history]
     );
 
+    const showInstances = useMemo(
+        () => ({
+            local: true,
+            remote: true,
+            store: tableOption === "packages",
+        }),
+        [tableOption]
+    );
+
     return (
         <React.Fragment>
             <PageHeader title={title} onBackClick={backHome} />
@@ -64,17 +73,7 @@ export const ModulePackageListPage: React.FC = () => {
     );
 };
 
-const showSelector = {
-    modules: true,
-    packages: true,
-};
-
-const showInstances = {
-    local: true,
-    remote: true,
-    store: true,
-};
-
+const showSelector = { modules: true, packages: true };
 function buildTitle(tableOption: string) {
     switch (tableOption) {
         case "modules":
