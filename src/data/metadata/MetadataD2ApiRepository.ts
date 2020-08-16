@@ -108,9 +108,11 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     private async getListGeneric(options: GetListAllOptions): Promise<GetListGenericResponse> {
         const { type, fields, filter, order = defaultOrder } = options;
         const idFilter = getIdFilter(filter, maxIds);
+        console.log(idFilter)
 
         if (idFilter) {
             const objectsLists = await promiseMap(_.chunk(idFilter.inIds, maxIds), async ids => {
+                console.log("chunk", ids)
                 const newFilter = { ...filter, id: { ...idFilter.value, in: ids } };
                 const { objects } = await this.getApiModel(type)
                     .get({ paging: false, fields, filter: newFilter })
@@ -326,7 +328,7 @@ function getIdFilter(
     filter: Dictionary<FilterValueBase>,
     maxIds: number
 ): { inIds: string[]; value: object } | null {
-    const inIds = filter ? filter["id"] : undefined;
+    const inIds = filter?.id?.in;
 
     if (
         inIds &&
