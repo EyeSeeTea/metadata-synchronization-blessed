@@ -20,12 +20,12 @@ import {
     PackagesDiffDialog,
     PackageToDiff,
 } from "../../../webapp/components/packages-diff-dialog/PackagesDiffDialog";
-import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
+import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
 
 type ListPackage = Omit<Package, "contents">;
 
-export const PackagesListTable: React.FC<ModuleListPageProps> = ({
+export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,
     showStore,
     onActionButtonClick,

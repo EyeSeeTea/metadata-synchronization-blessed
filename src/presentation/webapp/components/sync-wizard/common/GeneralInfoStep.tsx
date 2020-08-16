@@ -5,7 +5,10 @@ import i18n from "../../../../../locales";
 import SyncRule from "../../../../../models/syncRule";
 import { Dictionary } from "../../../../../types/utils";
 import { getValidationMessages } from "../../../../../utils/old-validations";
-import { InstanceSelectionDropdown, InstanceSelectionOption } from "../../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
+import {
+    InstanceSelectionDropdown,
+    InstanceSelectionOption,
+} from "../../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import { SyncWizardStepProps } from "../Steps";
 

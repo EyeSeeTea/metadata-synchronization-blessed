@@ -1,5 +1,5 @@
 import { PaginationOptions } from "d2-ui-components";
-import React, { ReactNode, useCallback, useState } from "react";
+import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import i18n from "../../../../locales";
@@ -12,7 +12,7 @@ import {
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 
-export interface ModuleListPageProps {
+export interface ModulePackageListPageProps {
     remoteInstance?: Instance;
     showStore: boolean;
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
@@ -23,7 +23,7 @@ export interface ModuleListPageProps {
     paginationOptions?: PaginationOptions;
 }
 
-export const ModuleListPage: React.FC = () => {
+export const ModulePackageListPage: React.FC = () => {
     const history = useHistory();
     const [syncReport, setSyncReport] = useState<SyncReport>();
 
@@ -43,6 +43,15 @@ export const ModuleListPage: React.FC = () => {
             history.push(`/${option}`);
         },
         [history]
+    );
+
+    const showInstances = useMemo(
+        () => ({
+            local: true,
+            remote: true,
+            store: tableOption === "packages",
+        }),
+        [tableOption]
     );
 
     return (
@@ -65,17 +74,7 @@ export const ModuleListPage: React.FC = () => {
     );
 };
 
-const showSelector = {
-    modules: true,
-    packages: true,
-};
-
-const showInstances = {
-    local: true,
-    remote: true,
-    store: true,
-};
-
+const showSelector = { modules: true, packages: true };
 function buildTitle(tableOption: string) {
     switch (tableOption) {
         case "modules":
@@ -87,4 +86,4 @@ function buildTitle(tableOption: string) {
     }
 }
 
-export default ModuleListPage;
+export default ModulePackageListPage;

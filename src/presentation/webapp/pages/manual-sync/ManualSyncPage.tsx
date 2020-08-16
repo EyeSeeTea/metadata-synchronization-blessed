@@ -3,7 +3,7 @@ import {
     ConfirmationDialog,
     ConfirmationDialogProps,
     useLoading,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -17,21 +17,24 @@ import {
     DataSetWithDataElementsModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
-    IndicatorMappedModel
+    IndicatorMappedModel,
 } from "../../../../models/dhis/mapping";
 import { DataElementGroupModel, DataElementGroupSetModel } from "../../../../models/dhis/metadata";
 import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
 import { MetadataType } from "../../../../utils/d2";
 import { isAppConfigurator } from "../../../../utils/permissions";
-import { InstanceSelectionDropdown, InstanceSelectionOption } from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
+import {
+    InstanceSelectionDropdown,
+    InstanceSelectionOption,
+} from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
 import PageHeader from "../../components/page-header/PageHeader";
 import {
     PullRequestCreation,
-    PullRequestCreationDialog
+    PullRequestCreationDialog,
 } from "../../components/pull-request-creation-dialog/PullRequestCreationDialog";
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
