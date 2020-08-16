@@ -224,7 +224,7 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
             multiple: true,
             onClick: deletePackages,
             icon: <Icon>delete</Icon>,
-            isActive: () => presentation === "app" && !isRemoteInstance,
+            isActive: () => presentation === "app" && !isRemoteInstance && !showStore,
         },
         {
             name: "download",
@@ -239,14 +239,14 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
             multiple: false,
             onClick: publishPackage,
             icon: <Icon>publish</Icon>,
-            isActive: () => presentation === "app" && !isRemoteInstance,
+            isActive: () => presentation === "app" && !isRemoteInstance && !showStore,
         },
         {
             name: "compare-with-local",
             text: i18n.t("Compare with local instance"),
             multiple: false,
             icon: <Icon>compare</Icon>,
-            isActive: () => presentation === "app" && isRemoteInstance,
+            isActive: () => presentation === "app" && (isRemoteInstance || showStore),
             onClick: openPackageDiffDialog,
         },
         {
