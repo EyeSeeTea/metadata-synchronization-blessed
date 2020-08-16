@@ -309,7 +309,7 @@ const defaultOrder = { field: "id", order: "asc" } as const;
 interface GetListAllOptions {
     type: ListMetadataParams["type"];
     fields: object;
-    filter: Record<string, unknown>;
+    filter: Dictionary<FilterValueBase>,
     order?: ListMetadataParams["order"];
 }
 
@@ -323,10 +323,10 @@ type GetListGenericResponse =
     | { useSingleApiRequest: true; order: string };
 
 function getIdFilter(
-    filter: Record<string, unknown>,
+    filter: Dictionary<FilterValueBase>,
     maxIds: number
 ): { inIds: string[]; value: object } | null {
-    const inIds = filter && filter["id"] ? (filter["id"] as { in?: string[] })["in"] : undefined;
+    const inIds = filter ? filter["id"] : undefined;
 
     if (
         inIds &&
