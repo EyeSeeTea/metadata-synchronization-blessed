@@ -21,11 +21,11 @@ import {
     PullRequestCreation,
     PullRequestCreationDialog,
 } from "../../../webapp/components/pull-request-creation-dialog/PullRequestCreationDialog";
-import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
+import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPacakgeDialog } from "./NewPackageDialog";
 
-export const ModulesListTable: React.FC<ModuleListPageProps> = ({
+export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,
     onActionButtonClick,
     presentation = "app",

@@ -12,7 +12,7 @@ import {
 import PageHeader from "../../components/page-header/PageHeader";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 
-export interface ModuleListPageProps {
+export interface ModulePackageListPageProps {
     remoteInstance?: Instance;
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
     presentation: PresentationOption;
@@ -22,7 +22,7 @@ export interface ModuleListPageProps {
     paginationOptions?: PaginationOptions;
 }
 
-export const ModuleListPage: React.FC = () => {
+export const ModulePackageListPage: React.FC = () => {
     const history = useHistory();
     const [syncReport, setSyncReport] = useState<SyncReport>();
 
@@ -86,4 +86,4 @@ function buildTitle(tableOption: string) {
     }
 }
 
-export default ModuleListPage;
+export default ModulePackageListPage;
