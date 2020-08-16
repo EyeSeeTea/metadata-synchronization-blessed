@@ -14,12 +14,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
-import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
+import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
 
 type ListPackage = Omit<Package, "contents">;
 
-export const PackagesListTable: React.FC<ModuleListPageProps> = ({
+export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,
     onActionButtonClick,
     presentation = "app",
