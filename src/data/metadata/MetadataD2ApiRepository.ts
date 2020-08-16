@@ -301,8 +301,7 @@ const formatStats = (stats: Stats) => ({
     imported: stats.created,
 });
 
-// (max_size=8000 - rest_url=1000) / (id_length=11 + comma_encoded=3)
-const maxIds = 500;
+const maxIds = 300;
 
 const defaultOrder = { field: "id", order: "asc" } as const;
 
