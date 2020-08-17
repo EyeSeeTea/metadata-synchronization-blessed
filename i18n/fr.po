@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-14T09:54:52.362Z\n"
+"POT-Creation-Date: 2020-08-17T09:32:22.007Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -550,7 +550,7 @@ msgstr ""
 msgid "Recipients"
 msgstr ""
 
-msgid "Sharing settings for {{name}}"
+msgid "Responsibles for {{name}}"
 msgstr ""
 
 msgid "Sharing settings"
@@ -1417,6 +1417,9 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Sharing settings for {{name}}"
+msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
 msgstr ""
