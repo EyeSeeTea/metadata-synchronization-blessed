@@ -82,12 +82,12 @@ const ModulesConfigPage: React.FC = () => {
             onSave: async () => {
                 await compositionRoot.store.update({} as Store, false);
                 updateDialog(null);
-                close();
+                setState({} as Store)
             },
             cancelText: i18n.t("Cancel"),
             saveText: i18n.t("Proceed"),
         });
-    }, [compositionRoot, close]);
+    }, [compositionRoot]);
 
     const save = useCallback(async () => {
         loading.show(true, i18n.t("Saving store connection"));
