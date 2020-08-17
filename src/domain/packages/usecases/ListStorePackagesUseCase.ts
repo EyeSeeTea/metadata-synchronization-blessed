@@ -81,31 +81,30 @@ export class ListStorePackagesUseCase implements UseCase {
 
         const files = validation.value.data ?? [];
 
-        const packages = await promiseMap(files, async ({ path, type }) => {
+        const packages = await promiseMap(files, async ({ path, type, url }) => {
             if (type !== "blob") return undefined;
 
             const details = this.extractPackageDetailsFromPath(path);
             if (!details) return undefined;
 
             const { moduleName, name, version, dhisVersion, created } = details;
-            const module =
-                (await this.getModule(moduleName)) ??
-                MetadataModule.build({
-                    name: "Unknown module",
-                });
+            const module = await this.getModule(moduleName);
 
-            return Package.build({ name, version, dhisVersion, created, module });
+            return Package.build({ id: url, name, version, dhisVersion, created, module });
         });
 
         return Either.success(_.compact(packages));
     }
 
-    private async getModule(moduleName: string): Promise<BaseModule | undefined> {
+    private async getModule(moduleName: string): Promise<BaseModule> {
         const modules = await this.storageRepository(this.localInstance).listObjectsInCollection<
             BaseModule
         >(Namespace.MODULES);
 
-        return modules.find(({ name }) => name === moduleName);
+        return (
+            modules.find(({ name }) => name === moduleName) ??
+            MetadataModule.build({ name: "Unknown module" })
+        );
     }
 
     private extractPackageDetailsFromPath(path: string) {

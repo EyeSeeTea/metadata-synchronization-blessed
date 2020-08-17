@@ -12,6 +12,7 @@ export interface GitHubRepositoryConstructor {
 export interface GitHubRepository {
     listFiles(store: Store, branch: string): Promise<Either<GitHubListError, GithubFile[]>>;
     readFile<T>(store: Store, branch: string, path: string): Promise<Either<GitHubError, T>>;
+    readFileContents<T>(encoding: string, content: string): Either<GitHubError, T>;
     writeFile(
         store: Store,
         branch: string,

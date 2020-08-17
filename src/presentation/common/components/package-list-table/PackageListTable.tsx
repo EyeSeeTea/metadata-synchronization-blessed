@@ -72,12 +72,12 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     const downloadPackage = useCallback(
         async (ids: string[]) => {
             try {
-                compositionRoot.packages.download(ids[0], remoteInstance);
+                compositionRoot.packages.download(showStore, ids[0], remoteInstance);
             } catch (error) {
                 snackbar.error(i18n.t("Invalid package"));
             }
         },
-        [compositionRoot, remoteInstance, snackbar]
+        [compositionRoot, remoteInstance, snackbar, showStore]
     );
 
     const publishPackage = useCallback(
