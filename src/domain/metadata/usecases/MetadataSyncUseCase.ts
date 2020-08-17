@@ -6,10 +6,7 @@ import { promiseMap } from "../../../utils/common";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
-import {
-    GenericSyncUseCase,
-    SyncronizationPayload,
-} from "../../synchronization/usecases/GenericSyncUseCase";
+import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
@@ -117,11 +114,12 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const { syncParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
+        const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
 
-        console.debug("Metadata package", payloadPackage);
+        console.debug("Metadata package", { payloadPackage, mappedPayloadPackage });
 
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
-        const syncResult = await remoteMetadataRepository.save(payloadPackage, syncParams);
+        const syncResult = await remoteMetadataRepository.save(mappedPayloadPackage, syncParams);
 
         return [syncResult];
     }
@@ -132,8 +130,9 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
     public async mapPayload(
         _instance: Instance,
-        payload: SyncronizationPayload
-    ): Promise<SyncronizationPayload> {
+        payload: MetadataPackage
+    ): Promise<MetadataPackage> {
+        console.log("map", payload);
         return payload;
     }
 }
