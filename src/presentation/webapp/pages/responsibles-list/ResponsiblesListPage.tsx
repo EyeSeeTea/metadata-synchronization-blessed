@@ -51,6 +51,7 @@ export const ResponsiblesListPage: React.FC = () => {
                 allowChangingResponsible={true}
                 forceSelectionColumn={false}
                 filterRows={responsibles.map(({ id }) => id)}
+                showOnlySelectedFilter={false}
             />
         </React.Fragment>
     );
