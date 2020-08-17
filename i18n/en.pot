@@ -56,6 +56,18 @@ msgstr ""
 msgid "Program with Indicators"
 msgstr ""
 
+msgid "Instances"
+msgstr ""
+
+msgid "This instance"
+msgstr ""
+
+msgid "Store"
+msgstr ""
+
+msgid "Instance"
+msgstr ""
+
 msgid "Invalid module"
 msgstr ""
 
@@ -149,6 +161,15 @@ msgid "Version tag"
 msgstr ""
 
 msgid "DHIS2 Version (*)"
+msgstr ""
+
+msgid "View"
+msgstr ""
+
+msgid "Modules"
+msgstr ""
+
+msgid "Packages"
 msgstr ""
 
 msgid "Invalid package"
@@ -656,9 +677,6 @@ msgstr ""
 msgid "Source instance"
 msgstr ""
 
-msgid "This instance"
-msgstr ""
-
 msgid "Instance not found"
 msgstr ""
 
@@ -1125,18 +1143,6 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
-msgstr ""
-
-msgid "Instance"
-msgstr ""
-
-msgid "Modules"
-msgstr ""
-
-msgid "Packages"
-msgstr ""
-
-msgid "View"
 msgstr ""
 
 msgid "New module"
