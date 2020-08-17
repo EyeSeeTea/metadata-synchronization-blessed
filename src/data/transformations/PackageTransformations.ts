@@ -1,6 +1,56 @@
 import { Transformation } from "../../domain/transformations/entities/Transformation";
+import * as _ from "lodash";
 
 export const metadataTransformations: Transformation[] = [
+    {
+        name: "orgunits-params",
+        apiVersion: 32,
+        apply: ({ organisationUnits, ...rest }: any) => {
+            return {
+                organisationUnits: organisationUnits?.map(
+                    ({ featureType, coordinates, geometry, ...rest }: any) => {
+                        if (featureType && featureType !== "NONE" && coordinates) {
+                            try {
+                                geometry = {
+                                    type: _.startCase(featureType.toLowerCase()),
+                                    coordinates: JSON.parse(coordinates),
+                                };
+                            } catch (error) {
+                                console.log(
+                                    "Error during coordinates conversion OU: " + rest["id"]
+                                );
+                            }
+                        }
+                        return _.pickBy({ geometry, ...rest }, _.identity);
+                    }
+                ),
+                ...rest,
+            };
+        },
+        undo: ({ organisationUnits, ...rest }: any) => {
+            return {
+                organisationUnits: organisationUnits?.map(
+                    ({ geometry, featureType, coordinates, ...rest }: any) => {
+                        if (geometry && geometry.type && geometry.coordinates) {
+                            try {
+                                featureType = geometry.type.toUpperCase();
+                                coordinates = JSON.stringify(geometry.coordinates).replace(
+                                    /"/g,
+                                    ""
+                                );
+                            } catch (error) {
+                                console.log(
+                                    "Error during coordinates conversion OU: " + rest["id"]
+                                );
+                            }
+                        }
+                        return _.pickBy({ featureType, coordinates, ...rest }, _.identity);
+                    }
+                ),
+                ...rest,
+            };
+        },
+    },
     {
         name: "programStages-params",
         apiVersion: 31,
