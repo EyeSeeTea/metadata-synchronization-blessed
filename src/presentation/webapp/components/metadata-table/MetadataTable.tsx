@@ -4,6 +4,7 @@ import axios from "axios";
 import {
     DatePicker,
     ObjectsTable,
+    ObjectsTableDetailField,
     ObjectsTableProps,
     OrgUnitsSelector,
     ReferenceObject,
@@ -512,23 +513,29 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
               .value()
         : [];
 
+    const responsibleField = showResponsibles
+        ? {
+              name: "responsible",
+              text: i18n.t("Responsible"),
+              getValue: (row: MetadataType) => {
+                  const { users = [], userGroups = [] } =
+                      responsibles.find(({ id }) => row.id === id) ?? {};
+
+                  const results = [...users, ...userGroups].map(({ name }) => name);
+                  return results.length === 0 ? "-" : results.join(", ");
+              },
+          }
+        : undefined;
+
     const columns: TableColumn<MetadataType>[] = uniqCombine([
         ...model.getColumns(),
         ...additionalColumns,
-        showResponsibles
-            ? {
-                  name: "responsible",
-                  text: i18n.t("Responsible"),
-                  getValue: (row: MetadataType) => {
-                      const { users = [], userGroups = [] } =
-                          responsibles.find(({ id }) => row.id === id) ?? {};
+        { ...responsibleField, sortable: false },
+    ]);
 
-                      const results = [...users, ...userGroups].map(({ name }) => name);
-
-                      return results.length === 0 ? "-" : results.join(", ");
-                  },
-              }
-            : undefined,
+    const details: ObjectsTableDetailField<MetadataType>[] = uniqCombine([
+        ...model.getDetails(),
+        responsibleField,
     ]);
 
     const actions: TableAction<MetadataType>[] = uniqCombine([
@@ -549,7 +556,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             <ObjectsTable<MetadataType>
                 rows={transformRows(rows)}
                 columns={columns}
-                details={model.getDetails()}
+                details={details}
                 onChangeSearch={changeSearchFilter}
                 initialState={initialState}
                 searchBoxLabel={i18n.t(`Search by `) + model.getSearchFilter().field}

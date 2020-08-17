@@ -82,7 +82,7 @@ const ModulesConfigPage: React.FC = () => {
             onSave: async () => {
                 await compositionRoot.store.update({} as Store, false);
                 updateDialog(null);
-                setState({} as Store)
+                setState({} as Store);
             },
             cancelText: i18n.t("Cancel"),
             saveText: i18n.t("Proceed"),
