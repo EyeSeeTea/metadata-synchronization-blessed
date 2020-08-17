@@ -129,10 +129,41 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     }
 
     public async mapPayload(
-        _instance: Instance,
+        instance: Instance,
         payload: MetadataPackage
     ): Promise<MetadataPackage> {
-        console.log("map", payload);
-        return payload;
+        return _.mapValues(payload, (items, model) => {
+            const collectionName = modelFactory(this.api, model).getCollectionName();
+            const references = this.api.models[collectionName]?.schema.properties
+                .filter(
+                    ({ propertyType, itemPropertyType }) =>
+                        propertyType === "REFERENCE" || itemPropertyType === "REFERENCE"
+                )
+                .map(({ name }) => name);
+
+            console.log({ model, references, mapping: instance.metadataMapping });
+
+            return items?.map((object: any) => {
+                if (typeof object === "object" && object.id) {
+                    return _.mapValues(object, (value, key) => {
+                        if (references.includes(key)) {
+                            if (Array.isArray(value)) {
+                                return value.map(item => this.mapProperty(key, item));
+                            } else {
+                                return this.mapProperty(key, value);
+                            }
+                        } else {
+                            return value;
+                        }
+                    });
+                } else {
+                    return object;
+                }
+            });
+        });
+    }
+
+    private mapProperty(_key: string, value: Ref): Ref {
+        return value;
     }
 }
