@@ -23,9 +23,6 @@ export class TransformationD2ApiRepository implements TransformationRepository {
         if (transformationstoApply.length > 0) {
             return this.applyTransformations<Input, Output>(payload, transformationstoApply);
         } else {
-            console.log(
-                `No transformations applied from domain to dhis2 metadata package in version ${d2Version}`
-            );
             return (payload as unknown) as Output;
         }
     }
@@ -51,9 +48,6 @@ export class TransformationD2ApiRepository implements TransformationRepository {
         if (transformationstoApply.length > 0) {
             return this.applyTransformations<Input, Output>(payload, transformationstoApply);
         } else {
-            console.log(
-                `No transformations applied from dhis2 to domain metadata package in version ${d2Version}`
-            );
             return (payload as unknown) as Output;
         }
     }
