@@ -27,10 +27,11 @@ export class GitHubOctokitRepository implements GitHubRepository {
 
             if (data.truncated) return Either.error("LIST_TRUNCATED");
 
-            const items: GithubFile[] = data.tree.map(({ path, type, sha }) => ({
+            const items: GithubFile[] = data.tree.map(({ path, type, sha, url }) => ({
                 path,
                 type: type as "blob" | "tree",
                 sha,
+                url,
             }));
 
             return Either.success(items);
@@ -44,8 +45,12 @@ export class GitHubOctokitRepository implements GitHubRepository {
         branch: string,
         path: string
     ): Promise<Either<GitHubError, T>> {
+        const { encoding, content } = await this.getFile(store, branch, path);
+        return this.readFileContents(encoding, content);
+    }
+
+    public readFileContents<T>(encoding: string, content: string): Either<GitHubError, T> {
         try {
-            const { encoding, content } = await this.getFile(store, branch, path);
             if (encoding !== "base64") throw new Error("File encoding not supported");
             const result = Buffer.from(content, "base64").toString("utf8");
 
