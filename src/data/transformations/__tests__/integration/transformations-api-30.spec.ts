@@ -341,7 +341,7 @@ describe("Sync metadata", () => {
 
         // Assert new properties have the correct values
         expect(response.organisationUnits[0].featureType).toEqual("POINT");
-        expect(response.organisationUnits[0].coordinates).toEqual('[22.0123,-1.9012]');
+        expect(response.organisationUnits[0].coordinates).toEqual("[22.0123,-1.9012]");
 
         // Assert old properties are not anymore
         expect(response.organisationUnits[0].geometry).toBeUndefined();
