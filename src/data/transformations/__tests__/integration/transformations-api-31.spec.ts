@@ -2,15 +2,10 @@ import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
 import { startDhis } from "../../../../../config/dhisServer";
-import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
-import { Repositories } from "../../../../domain/Repositories";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
-import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
-import { MetadataD2ApiRepository } from "../../../metadata/MetadataD2ApiRepository";
-import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
-import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
+import { buildRepositoryFactory } from "./factories";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -247,14 +242,5 @@ describe("Sync metadata", () => {
         expect(local.db.metadata.find(1)).toBeNull();
     });
 });
-
-function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryFactory = new RepositoryFactory();
-    repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreRepository);
-    repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
-    repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
-    return repositoryFactory;
-}
 
 export {};

@@ -104,6 +104,22 @@ export const metadataTransformations: Transformation[] = [
         },
     },
     {
+        name: "charts-params",
+        apiVersion: 31,
+        undo: ({ charts, ...rest }: any) => {
+            const typeUndoMapping: _.Dictionary<string | undefined> = {
+                YEAR_OVER_YEAR_LINE: "LINE",
+                YEAR_OVER_YEAR_COLUMN: "COLUMN",
+            };
+            return {
+                ...rest,
+                charts: charts?.map((chart: { type: string }) => {
+                    return { ...chart, type: typeUndoMapping[chart.type] || chart.type };
+                }),
+            };
+        },
+    },
+    {
         name: "report-table-params",
         apiVersion: 34,
         apply: ({ reports, ...rest }: any) => {
