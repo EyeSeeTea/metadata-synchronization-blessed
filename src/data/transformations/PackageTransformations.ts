@@ -60,7 +60,9 @@ export const metadataTransformations: Transformation[] = [
                     ({ validCompleteOnly, validationStrategy, ...rest }: any) => {
                         validationStrategy =
                             typeof validationStrategy === "undefined"
-                                ? "ON_COMPLETE"
+                                ? validCompleteOnly
+                                    ? "ON_COMPLETE"
+                                    : "ON_COMPLETE"
                                 : validationStrategy;
                         return { validationStrategy, ...rest };
                     }
