@@ -172,7 +172,7 @@ export class CompositionRoot {
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),
             download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),
             publish: new PublishStorePackageUseCase(this.repositoryFactory, this.localInstance),
-            diff: new DiffPackageUseCase(this, this.repositoryFactory),
+            diff: new DiffPackageUseCase(this, this.repositoryFactory, this.localInstance),
         });
     }
 

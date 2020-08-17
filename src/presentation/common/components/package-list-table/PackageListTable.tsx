@@ -151,8 +151,9 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
         async (ids: string[]) => {
             const packageId = _(ids).get(0, null);
             const remotePackage = packageId ? rows.find(row => row.id === packageId) : undefined;
-            if (packageId && remotePackage)
+            if (packageId && remotePackage) {
                 setPackageToDiff({ id: packageId, name: remotePackage.name });
+            }
         },
         [rows, setPackageToDiff]
     );
@@ -295,10 +296,11 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
 
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
 
-            {remoteInstance && packageToDiff && (
+            {packageToDiff && (
                 <PackagesDiffDialog
                     onClose={closePackageDiffDialog}
                     remotePackage={packageToDiff}
+                    isStorePackage={showStore}
                     remoteInstance={remoteInstance}
                 />
             )}
