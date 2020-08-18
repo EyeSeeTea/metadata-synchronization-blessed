@@ -165,7 +165,7 @@ describe("Sync metadata", () => {
         expect(local.db.metadata.find(1)).toBeNull();
     });
 
-    it("Local server to remote - programStage validCompleteOnly false to validationStrategy -> ON_UPDATE_AND_INSERT - API 30 to API 31", async () => {
+    it("Local server to remote - programStage validCompleteOnly false to validationStrategy -> ON_COMPLETE - API 30 to API 31", async () => {
         const localInstance = Instance.build({
             url: "http://origin.test",
             name: "Testing",
@@ -195,7 +195,7 @@ describe("Sync metadata", () => {
         expect(response.programStages[0].name).toEqual("Test programStage");
 
         // Assert new properties have the correct values
-        expect(response.programStages[0].validationStrategy).toEqual("ON_UPDATE_AND_INSERT");
+        expect(response.programStages[0].validationStrategy).toEqual("ON_COMPLETE");
 
         // Assert old properties are not anymore
         expect(response.programStages[0].validCompleteOnly).toBeUndefined();
