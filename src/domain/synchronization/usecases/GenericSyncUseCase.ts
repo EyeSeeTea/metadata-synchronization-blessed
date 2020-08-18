@@ -149,11 +149,11 @@ export abstract class GenericSyncUseCase {
             [this.localInstance]
         );
 
-        const objects = await storageRepository.listObjectsInCollection<InstanceData>(
-            Namespace.INSTANCES
+        const data = await storageRepository.getObjectInCollection<InstanceData>(
+            Namespace.INSTANCES,
+            id
         );
 
-        const data = objects.find(data => data.id === id);
         if (!data) throw new Error("Instance not found");
 
         const instance = Instance.build(data).decryptPassword(this.encryptionKey);
