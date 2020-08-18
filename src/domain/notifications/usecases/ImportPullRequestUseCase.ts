@@ -134,6 +134,7 @@ export class ImportPullRequestUseCase implements UseCase {
     private async sendMessage(
         instance: Instance,
         {
+            id,
             subject,
             text,
             owner,
@@ -142,7 +143,7 @@ export class ImportPullRequestUseCase implements UseCase {
             userGroups: responsibleUserGroups,
         }: AppNotification,
         { users, userGroups }: Pick<MessageNotification, "users" | "userGroups">,
-        title = "Received Pull Request"
+        title: string
     ): Promise<void> {
         const recipients = [...users, ...userGroups].map(({ name }) => name);
         const responsibles = [...responsibleUsers, ...responsibleUserGroups].map(
@@ -155,6 +156,7 @@ export class ImportPullRequestUseCase implements UseCase {
             `Recipients: ${recipients.join(", ")} `,
             `Responsibles: ${responsibles.join(", ")}`,
             text,
+            `More details at: ${instance.url}/api/apps/MetaData-Synchronization/index.html#/notifications/${id}`
         ];
 
         await this.instanceRepository(instance).sendMessage({

@@ -101,6 +101,7 @@ export class CreatePullRequestUseCase implements UseCase {
     private async sendMessage(
         instance: Instance,
         {
+            id,
             subject,
             text,
             owner,
@@ -121,6 +122,7 @@ export class CreatePullRequestUseCase implements UseCase {
             `Recipients: ${recipients.join(", ")} `,
             `Responsibles: ${responsibles.join(", ")}`,
             text,
+            `More details at: ${instance.url}/api/apps/MetaData-Synchronization/index.html#/notifications/${id}`
         ];
 
         await this.instanceRepository(instance).sendMessage({
