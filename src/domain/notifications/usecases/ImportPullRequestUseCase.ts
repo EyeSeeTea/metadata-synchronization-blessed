@@ -1,20 +1,22 @@
+import _ from "lodash";
+import { cache } from "../../../utils/cache";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
+import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import {
     MetadataRepository,
-    MetadataRepositoryConstructor,
+    MetadataRepositoryConstructor
 } from "../../metadata/repositories/MetadataRepository";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
-import { AppNotification, MessageNotification } from "../entities/Notification";
-import { PullRequestStatus } from "../entities/PullRequestNotification";
-import { cache } from "../../../utils/cache";
+import { AppNotification } from "../entities/Notification";
+import { PullRequestStatus, ReceivedPullRequestNotification } from "../entities/PullRequestNotification";
 
 export type ImportPullRequestError =
     | "INSTANCE_NOT_FOUND"
@@ -75,7 +77,6 @@ export class ImportPullRequestUseCase implements UseCase {
         await this.sendMessage(
             remoteInstance,
             remoteNotification,
-            { users: remoteNotification.users, userGroups: remoteNotification.userGroups },
             status === "IMPORTED" ? "Pull request imported" : "Pull request could not be imported"
         );
 
@@ -139,16 +140,14 @@ export class ImportPullRequestUseCase implements UseCase {
             text,
             owner,
             instance: origin,
-            users: responsibleUsers,
-            userGroups: responsibleUserGroups,
-        }: AppNotification,
-        { users, userGroups }: Pick<MessageNotification, "users" | "userGroups">,
+            users,
+            userGroups,
+            selectedIds
+        }: ReceivedPullRequestNotification,
         title: string
     ): Promise<void> {
         const recipients = [...users, ...userGroups].map(({ name }) => name);
-        const responsibles = [...responsibleUsers, ...responsibleUserGroups].map(
-            ({ name }) => name
-        );
+        const responsibles = await this.getResponsibleNames(instance, selectedIds);
 
         const message = [
             `Origin instance: ${origin.url}`,
@@ -165,5 +164,25 @@ export class ImportPullRequestUseCase implements UseCase {
             users: users.map(({ id }) => ({ id })),
             userGroups: userGroups.map(({ id }) => ({ id })),
         });
+    }
+
+    private async getResponsibleNames(instance: Instance, ids: string[]) {
+        const responsibles = await this.storageRepository(instance).listObjectsInCollection<
+            MetadataResponsible
+        >(Namespace.RESPONSIBLES);
+
+        const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
+
+        const users = _.uniqBy(
+            metadataResponsibles.flatMap(({ users }) => users),
+            "id"
+        );
+
+        const userGroups = _.uniqBy(
+            metadataResponsibles.flatMap(({ userGroups }) => userGroups),
+            "id"
+        );
+
+        return [...users, ...userGroups].map(({ name }) => name);
     }
 }

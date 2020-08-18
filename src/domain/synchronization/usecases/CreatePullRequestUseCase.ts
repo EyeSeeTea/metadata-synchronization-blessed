@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { cache } from "../../../utils/cache";
 import { NamedRef } from "../../common/entities/Ref";
 import { UseCase } from "../../common/entities/UseCase";
@@ -5,10 +6,11 @@ import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-import { AppNotification, MessageNotification } from "../../notifications/entities/Notification";
+import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
+import { MessageNotification } from "../../notifications/entities/Notification";
 import {
     ReceivedPullRequestNotification,
-    SentPullRequestNotification,
+    SentPullRequestNotification
 } from "../../notifications/entities/PullRequestNotification";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
@@ -35,10 +37,9 @@ export class CreatePullRequestUseCase implements UseCase {
         payload,
         subject,
         description = "",
-        notificationUsers,
+        notificationUsers: { users, userGroups },
     }: CreatePullRequestParams): Promise<void> {
         const owner = await this.getOwner();
-        const { users, userGroups } = notificationUsers;
 
         const receivedPullRequest = ReceivedPullRequestNotification.create({
             subject,
@@ -74,7 +75,7 @@ export class CreatePullRequestUseCase implements UseCase {
             sentPullRequest
         );
 
-        await this.sendMessage(instance, receivedPullRequest, notificationUsers);
+        await this.sendMessage(instance, receivedPullRequest);
     }
 
     @cache()
@@ -106,15 +107,13 @@ export class CreatePullRequestUseCase implements UseCase {
             text,
             owner,
             instance: origin,
-            users: responsibleUsers,
-            userGroups: responsibleUserGroups,
-        }: AppNotification,
-        { users, userGroups }: Pick<MessageNotification, "users" | "userGroups">
+            users,
+            userGroups,
+            selectedIds
+        }: ReceivedPullRequestNotification,
     ): Promise<void> {
         const recipients = [...users, ...userGroups].map(({ name }) => name);
-        const responsibles = [...responsibleUsers, ...responsibleUserGroups].map(
-            ({ name }) => name
-        );
+        const responsibles = await this.getResponsibleNames(instance, selectedIds);
 
         const message = [
             `Origin instance: ${origin.url}`,
@@ -131,5 +130,25 @@ export class CreatePullRequestUseCase implements UseCase {
             users: users.map(({ id }) => ({ id })),
             userGroups: userGroups.map(({ id }) => ({ id })),
         });
+    }
+
+    private async getResponsibleNames(instance: Instance, ids: string[]) {
+        const responsibles = await this.storageRepository(instance).listObjectsInCollection<
+            MetadataResponsible
+        >(Namespace.RESPONSIBLES);
+
+        const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
+
+        const users = _.uniqBy(
+            metadataResponsibles.flatMap(({ users }) => users),
+            "id"
+        );
+
+        const userGroups = _.uniqBy(
+            metadataResponsibles.flatMap(({ userGroups }) => userGroups),
+            "id"
+        );
+
+        return [...users, ...userGroups].map(({ name }) => name);
     }
 }
