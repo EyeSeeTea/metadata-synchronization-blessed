@@ -1,4 +1,12 @@
-import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
+import {
+    Checkbox,
+    FormControlLabel,
+    Icon,
+    makeStyles,
+    Typography,
+    Tooltip,
+    IconButton,
+} from "@material-ui/core";
 import {
     ObjectsTable,
     RowConfig,
@@ -95,7 +103,27 @@ export const NotificationsListPage: React.FC = () => {
                         ({ id }) => id === notification.status
                     );
 
-                    return status?.name ?? "Unknown";
+                    const showWarning =
+                        notification.type === "sent-pull-request" &&
+                        notification.status === "APPROVED";
+
+                    return (
+                        <span>
+                            <Typography variant={"inherit"} gutterBottom>
+                                {status?.name ?? "Unknown"}
+                            </Typography>
+                            {showWarning && (
+                                <Tooltip
+                                    title={i18n.t("Pull request approved but not imported")}
+                                    placement="top"
+                                >
+                                    <IconButton className={classes.iconButton}>
+                                        <Icon color="error">warning</Icon>
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                        </span>
+                    );
                 } else {
                     return "-";
                 }
@@ -438,6 +466,11 @@ const useStyles = makeStyles({
     checkbox: {
         paddingLeft: 10,
         marginTop: 8,
+    },
+    iconButton: {
+        padding: 0,
+        paddingLeft: 8,
+        paddingRight: 8,
     },
 });
 
