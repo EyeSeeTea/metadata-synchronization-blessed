@@ -8,7 +8,7 @@ import { InstanceRepositoryConstructor } from "../../instance/repositories/Insta
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import {
     MetadataRepository,
-    MetadataRepositoryConstructor
+    MetadataRepositoryConstructor,
 } from "../../metadata/repositories/MetadataRepository";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
@@ -16,7 +16,10 @@ import { StorageRepositoryConstructor } from "../../storage/repositories/Storage
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { AppNotification } from "../entities/Notification";
-import { PullRequestStatus, ReceivedPullRequestNotification } from "../entities/PullRequestNotification";
+import {
+    PullRequestStatus,
+    ReceivedPullRequestNotification,
+} from "../entities/PullRequestNotification";
 
 export type ImportPullRequestError =
     | "INSTANCE_NOT_FOUND"
@@ -142,7 +145,7 @@ export class ImportPullRequestUseCase implements UseCase {
             instance: origin,
             users,
             userGroups,
-            selectedIds
+            selectedIds,
         }: ReceivedPullRequestNotification,
         title: string
     ): Promise<void> {
@@ -155,7 +158,7 @@ export class ImportPullRequestUseCase implements UseCase {
             `Recipients: ${recipients.join(", ")} `,
             `Responsibles: ${responsibles.join(", ")}`,
             text,
-            `More details at: ${instance.url}/api/apps/MetaData-Synchronization/index.html#/notifications/${id}`
+            `More details at: ${instance.url}/api/apps/MetaData-Synchronization/index.html#/notifications/${id}`,
         ];
 
         await this.instanceRepository(instance).sendMessage({

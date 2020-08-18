@@ -10,7 +10,7 @@ import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible
 import { MessageNotification } from "../../notifications/entities/Notification";
 import {
     ReceivedPullRequestNotification,
-    SentPullRequestNotification
+    SentPullRequestNotification,
 } from "../../notifications/entities/PullRequestNotification";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
@@ -109,8 +109,8 @@ export class CreatePullRequestUseCase implements UseCase {
             instance: origin,
             users,
             userGroups,
-            selectedIds
-        }: ReceivedPullRequestNotification,
+            selectedIds,
+        }: ReceivedPullRequestNotification
     ): Promise<void> {
         const recipients = [...users, ...userGroups].map(({ name }) => name);
         const responsibles = await this.getResponsibleNames(instance, selectedIds);
@@ -121,7 +121,7 @@ export class CreatePullRequestUseCase implements UseCase {
             `Recipients: ${recipients.join(", ")} `,
             `Responsibles: ${responsibles.join(", ")}`,
             text,
-            `More details at: ${instance.url}/api/apps/MetaData-Synchronization/index.html#/notifications/${id}`
+            `More details at: ${instance.url}/api/apps/MetaData-Synchronization/index.html#/notifications/${id}`,
         ];
 
         await this.instanceRepository(instance).sendMessage({
