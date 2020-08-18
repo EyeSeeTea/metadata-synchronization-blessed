@@ -21,11 +21,10 @@ export class GetInstanceByIdUseCase implements UseCase {
             [this.localInstance]
         );
 
-        const objects = await storageRepository.listObjectsInCollection<InstanceData>(
-            Namespace.INSTANCES
+        const data = await storageRepository.getObjectInCollection<InstanceData>(
+            Namespace.INSTANCES, id
         );
 
-        const data = objects.find(data => data.id === id);
         if (!data) return Either.error("NOT_FOUND");
 
         return Either.success(Instance.build(data).decryptPassword(this.encryptionKey));
