@@ -56,6 +56,13 @@ export const NotificationsListPage: React.FC = () => {
 
     const columns: TableColumn<TableNotification>[] = [
         {
+            name: "instance",
+            text: i18n.t("Origin Instance"),
+            getValue: ({ instance }) => {
+                return instance.url;
+            },
+        },
+        {
             name: "sender",
             text: i18n.t("Sender"),
         },
