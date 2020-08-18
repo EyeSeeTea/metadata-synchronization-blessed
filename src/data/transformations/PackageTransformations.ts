@@ -1,5 +1,6 @@
 import { Transformation } from "../../domain/transformations/entities/Transformation";
-import * as _ from "lodash";
+import _ from "lodash";
+import { Ref } from "../../types/d2-api";
 
 export const metadataTransformations: Transformation[] = [
     {
@@ -107,15 +108,42 @@ export const metadataTransformations: Transformation[] = [
         name: "charts-params",
         apiVersion: 31,
         undo: ({ charts, ...rest }: any) => {
-            const typeUndoMapping: _.Dictionary<string | undefined> = {
+            const typeUndoMapping: Mapping = {
                 YEAR_OVER_YEAR_LINE: "LINE",
                 YEAR_OVER_YEAR_COLUMN: "COLUMN",
             };
+
+            const relativePeriodsMapping: Mapping = {
+                THIS_YEAR: "thisYear",
+                LAST_YEAR: "lastYear",
+                LAST_5_YEARS: "last5Years",
+            };
+
             return {
                 ...rest,
-                charts: charts?.map((chart: { type: string }) => {
-                    return { ...chart, type: typeUndoMapping[chart.type] || chart.type };
-                }),
+                charts: charts?.map(
+                    (chart: Chart31): Chart30 => {
+                        const [years, relativeYearlySeries] = _.partition(chart.yearlySeries, s =>
+                            s.match(/^\d+/)
+                        );
+
+                        return {
+                            ..._.omit(chart, ["yearlySeries"]),
+                            type: typeUndoMapping[chart.type] || chart.type,
+                            relativePeriods: {
+                                ..._(chart.relativePeriods)
+                                    .mapValues(() => false)
+                                    .value(),
+                                ..._(relativeYearlySeries)
+                                    .filter(s => _.has(relativePeriodsMapping, s))
+                                    .map(s => [relativePeriodsMapping[s], true])
+                                    .fromPairs()
+                                    .value(),
+                            },
+                            periods: years.map(year => ({ id: year })),
+                        };
+                    }
+                ),
             };
         },
     },
@@ -176,6 +204,18 @@ export const metadataTransformations: Transformation[] = [
         },
     },
 ];
+
+type Mapping = _.Dictionary<string | undefined>;
+
+interface Chart30 {
+    type: string;
+    relativePeriods: _.Dictionary<boolean>;
+    periods: Ref[];
+}
+
+interface Chart31 extends Chart30 {
+    yearlySeries: string[];
+}
 
 export const aggregatedTransformations: Transformation[] = [];
 

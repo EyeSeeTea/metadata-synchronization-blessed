@@ -5,7 +5,7 @@ import { startDhis } from "../../../../../config/dhisServer";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
-import { buildRepositoryFactory } from "./factories";
+import { buildRepositoryFactory } from "./helpers";
 
 const repositoryFactory = buildRepositoryFactory();
 

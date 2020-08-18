@@ -3,12 +3,7 @@ import _ from "lodash";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
 import { startDhis } from "../../../../../config/dhisServer";
-import { Instance } from "../../../../domain/instance/entities/Instance";
-import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
-import { SynchronizationBuilder } from "../../../../types/synchronization";
-import { buildRepositoryFactory } from "./factories";
-
-const repositoryFactory = buildRepositoryFactory();
+import { executeMetadataSync } from "./helpers";
 
 describe("Sync metadata 31->30", () => {
     let local: Server;
@@ -30,10 +25,8 @@ describe("Sync metadata 31->30", () => {
                 {
                     id: "chart-line",
                     type: "LINE",
-                },
-                {
-                    id: "chart-over-line",
-                    type: "YEAR_OVER_YEAR_LINE",
+                    relativePeriods: { last12Weeks: true, last4Quarters: false },
+                    yearlySeries: ["2016", "THIS_YEAR", "LAST_YEAR", "2018", "LAST_5_YEARS"],
                 },
                 {
                     id: "chart-over-column",
@@ -77,36 +70,40 @@ describe("Sync metadata 31->30", () => {
         remote.shutdown();
     });
 
-    it("Local server to remote - chart TYPE - API 31 to API 30", async () => {
-        const localInstance = Instance.build({
-            url: local.urlPrefix,
-            name: "Testing",
-            version: "2.31",
+    it("Transforms charts of type chart-over-line/chart-over-column (2.31 -> 2.30)", async () => {
+        const { charts } = await executeMetadataSync(local, remote, ["charts"]);
+
+        expect(charts["chart-line"]?.type).toEqual("LINE");
+        expect(charts["chart-over-line"]?.type).toEqual("LINE");
+        expect(charts["chart-over-column"]?.type).toEqual("COLUMN");
+    });
+
+    it("Transforms charts yearly series to relative and absolute periods (2.31 -> 2.30)", async () => {
+        const { charts } = await executeMetadataSync(local, remote, ["charts"]);
+
+        const chartLine = charts["chart-line"];
+        expect(chartLine).toBeDefined();
+
+        expect(chartLine).not.toHaveProperty("yearlySeries");
+
+        expect(
+            chartLine.relativePeriods,
+            "to be set from yearlySeries for keys thisYear/lastYear/last5Years"
+        ).toMatchObject({
+            thisYear: true,
+            lastYear: true,
+            last5Years: true,
         });
 
-        const builder: SynchronizationBuilder = {
-            originInstance: "LOCAL",
-            targetInstances: ["DESTINATION"],
-            metadataIds: ["chart-line", "chart-over-line", "chart-over-column"],
-            excludedIds: [],
-        };
+        expect(chartLine.relativePeriods, "to be set to false for other values").toMatchObject({
+            last12Weeks: false,
+            last4Quarters: false,
+        });
 
-        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
-
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
-        }
-
-        const payloads = remote.db.metadata.where({});
-        expect(payloads).toHaveLength(1);
-        const payload = payloads[0];
-
-        const chartsById = _.keyBy(payload.charts || [], chart => chart.id);
-        expect(chartsById["chart-line"]?.type).toEqual("LINE");
-        expect(chartsById["chart-over-line"]?.type).toEqual("LINE");
-        expect(chartsById["chart-over-column"]?.type).toEqual("COLUMN");
-
-        expect(local.db.metadata.where({})).toHaveLength(0);
+        expect(chartLine.periods, "to contain the absolute years from yearlySeries").toEqual([
+            { id: "2016" },
+            { id: "2018" },
+        ]);
     });
 });
 
