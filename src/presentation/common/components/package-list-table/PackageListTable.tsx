@@ -16,6 +16,10 @@ import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
+import {
+    PackagesDiffDialog,
+    PackageToDiff,
+} from "../../../webapp/components/packages-diff-dialog/PackagesDiffDialog";
 
 type ListPackage = Omit<Package, "contents">;
 
@@ -34,6 +38,9 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     const [rows, setRows] = useState<ListPackage[]>([]);
     const [resetKey, setResetKey] = useState(Math.random());
     const [selection, updateSelection] = useState<TableSelection[]>([]);
+    const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
+
+    const isRemoteInstance = !!remoteInstance;
 
     const deletePackages = useCallback(
         async (ids: string[]) => {
@@ -65,6 +72,18 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
         },
         [compositionRoot, remoteInstance, snackbar]
     );
+
+    const openPackageDiffDialog = useCallback(
+        async (ids: string[]) => {
+            const packageId = _(ids).get(0, null);
+            const remotePackage = packageId ? rows.find(row => row.id === packageId) : undefined;
+            if (packageId && remotePackage)
+                setPackageToDiff({ id: packageId, name: remotePackage.name });
+        },
+        [rows, setPackageToDiff]
+    );
+
+    const closePackageDiffDialog = useCallback(() => setPackageToDiff(null), [setPackageToDiff]);
 
     const importPackage = useCallback(
         async (ids: string[]) => {
@@ -131,7 +150,7 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
             multiple: true,
             onClick: deletePackages,
             icon: <Icon>delete</Icon>,
-            isActive: () => presentation === "app" && !remoteInstance,
+            isActive: () => presentation === "app" && !isRemoteInstance,
         },
         {
             name: "download",
@@ -146,7 +165,15 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
             multiple: false,
             onClick: () => snackbar.warning("Not implemented yet"),
             icon: <Icon>publish</Icon>,
-            isActive: () => presentation === "app" && !remoteInstance,
+            isActive: () => presentation === "app" && !isRemoteInstance,
+        },
+        {
+            name: "compare-with-local",
+            text: i18n.t("Compare with local instance"),
+            multiple: false,
+            icon: <Icon>compare</Icon>,
+            isActive: () => presentation === "app" && isRemoteInstance,
+            onClick: openPackageDiffDialog,
         },
         {
             name: "import",
@@ -154,7 +181,7 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
             multiple: false,
             onClick: importPackage,
             icon: <Icon>arrow_downward</Icon>,
-            isActive: () => presentation === "app" && !!remoteInstance,
+            isActive: () => presentation === "app" && isRemoteInstance,
         },
     ];
 
@@ -169,17 +196,27 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     }, [compositionRoot, remoteInstance, resetKey, snackbar]);
 
     return (
-        <ObjectsTable<ListPackage>
-            rows={rows}
-            columns={columns}
-            details={details}
-            actions={actions}
-            onActionButtonClick={onActionButtonClick}
-            forceSelectionColumn={presentation === "app"}
-            filterComponents={externalComponents}
-            selection={selection}
-            onChange={updateTable}
-            paginationOptions={paginationOptions}
-        />
+        <React.Fragment>
+            <ObjectsTable<ListPackage>
+                rows={rows}
+                columns={columns}
+                details={details}
+                actions={actions}
+                onActionButtonClick={onActionButtonClick}
+                forceSelectionColumn={presentation === "app"}
+                filterComponents={externalComponents}
+                selection={selection}
+                onChange={updateTable}
+                paginationOptions={paginationOptions}
+            />
+
+            {remoteInstance && packageToDiff && (
+                <PackagesDiffDialog
+                    onClose={closePackageDiffDialog}
+                    remotePackage={packageToDiff}
+                    remoteInstance={remoteInstance}
+                />
+            )}
+        </React.Fragment>
     );
 };
