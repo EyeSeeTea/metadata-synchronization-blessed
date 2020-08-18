@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-17T09:32:43.152Z\n"
-"PO-Revision-Date: 2020-08-17T09:32:43.152Z\n"
+"POT-Creation-Date: 2020-08-18T07:08:58.434Z\n"
+"PO-Revision-Date: 2020-08-18T07:08:58.434Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -535,6 +535,12 @@ msgid "Creating pull request"
 msgstr ""
 
 msgid "Create pull request on {{name}}"
+msgstr ""
+
+msgid ""
+"There are responsibles for the selected metadata. You can still create a "
+"pull request and once approved by the responsible you will be able to "
+"finish the synchronization."
 msgstr ""
 
 msgid "Open pull request"
@@ -1205,6 +1211,9 @@ msgstr ""
 msgid "Cancel module editing"
 msgstr ""
 
+msgid "Origin Instance"
+msgstr ""
+
 msgid "Sender"
 msgstr ""
 
@@ -1212,6 +1221,9 @@ msgid "Pull request (Sent)"
 msgstr ""
 
 msgid "Pull request (Received)"
+msgstr ""
+
+msgid "Pull request approved but not imported"
 msgstr ""
 
 msgid "Date"

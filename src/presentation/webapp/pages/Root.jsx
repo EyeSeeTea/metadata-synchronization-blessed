@@ -93,7 +93,7 @@ function Root() {
                 />
 
                 <RouteWithSession
-                    path="/notifications"
+                    path="/notifications/:id?"
                     render={props => <NotificationsListPage {...props} />}
                 />
 
