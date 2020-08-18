@@ -236,7 +236,14 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
 
     const columns: TableColumn<Module>[] = [
         { name: "name", text: i18n.t("Name"), sortable: true },
-        { name: "department", text: i18n.t("Department"), sortable: true },
+        {
+            name: "department",
+            text: i18n.t("Department"),
+            sortable: true,
+            getValue: ({ department }) => {
+                return department.name;
+            },
+        },
         { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
         {
             name: "metadataIds",
@@ -251,7 +258,13 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
 
     const details: ObjectsTableDetailField<Module>[] = [
         { name: "name", text: i18n.t("Name") },
-        { name: "department", text: i18n.t("Department") },
+        {
+            name: "department",
+            text: i18n.t("Department"),
+            getValue: ({ department }) => {
+                return department.name;
+            },
+        },
         { name: "description", text: i18n.t("Description") },
         {
             name: "metadataIds",
