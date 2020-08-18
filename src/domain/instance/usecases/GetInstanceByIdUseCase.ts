@@ -22,7 +22,8 @@ export class GetInstanceByIdUseCase implements UseCase {
         );
 
         const data = await storageRepository.getObjectInCollection<InstanceData>(
-            Namespace.INSTANCES, id
+            Namespace.INSTANCES,
+            id
         );
 
         if (!data) return Either.error("NOT_FOUND");
