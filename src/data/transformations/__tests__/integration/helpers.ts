@@ -46,7 +46,8 @@ export async function executeMetadataSync(
 
     const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
 
-    for await (const {} of useCase.execute()) {
+    for await (const { done } of useCase.execute()) {
+        console.debug(done);
     }
 
     expect(local.db.metadata.where({})).toHaveLength(0);

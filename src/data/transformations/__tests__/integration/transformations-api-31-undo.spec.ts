@@ -1,5 +1,4 @@
 import { Request, Server } from "miragejs";
-import _ from "lodash";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
 import { startDhis } from "../../../../../config/dhisServer";
@@ -27,6 +26,10 @@ describe("Sync metadata 31->30", () => {
                     type: "LINE",
                     relativePeriods: { last12Weeks: true, last4Quarters: false },
                     yearlySeries: ["2016", "THIS_YEAR", "LAST_YEAR", "2018", "LAST_5_YEARS"],
+                },
+                {
+                    id: "chart-over-line",
+                    type: "YEAR_OVER_YEAR_LINE",
                 },
                 {
                     id: "chart-over-column",
