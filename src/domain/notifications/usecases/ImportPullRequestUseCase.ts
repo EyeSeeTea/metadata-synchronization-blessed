@@ -91,6 +91,14 @@ export class ImportPullRequestUseCase implements UseCase {
     }
 
     @cache()
+    private instanceRepository(instance: Instance) {
+        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
+            Repositories.InstanceRepository,
+            [instance, ""]
+        );
+    }
+
+    @cache()
     private metadataRepository(instance: Instance): MetadataRepository {
         const transformationRepository = this.repositoryFactory.get<
             TransformationRepositoryConstructor
@@ -136,23 +144,20 @@ export class ImportPullRequestUseCase implements UseCase {
         { users, userGroups }: Pick<MessageNotification, "users" | "userGroups">,
         title = "Received Pull Request"
     ): Promise<void> {
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
-
+        const recipients = [...users, ...userGroups].map(({ name }) => name);
         const responsibles = [...responsibleUsers, ...responsibleUserGroups].map(
             ({ name }) => name
         );
 
         const message = [
             `Origin instance: ${origin.url}`,
-            `User: ${owner.name}`,
+            `Created by: ${owner.name}`,
+            `Recipients: ${recipients.join(", ")} `,
             `Responsibles: ${responsibles.join(", ")}`,
             text,
         ];
 
-        await instanceRepository.sendMessage({
+        await this.instanceRepository(instance).sendMessage({
             subject: `[MDSync] ${title}: ${subject}`,
             text: message.join("\n\n"),
             users: users.map(({ id }) => ({ id })),

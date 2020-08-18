@@ -110,13 +110,15 @@ export class CreatePullRequestUseCase implements UseCase {
         }: AppNotification,
         { users, userGroups }: Pick<MessageNotification, "users" | "userGroups">
     ): Promise<void> {
+        const recipients = [...users, ...userGroups].map(({ name }) => name);
         const responsibles = [...responsibleUsers, ...responsibleUserGroups].map(
             ({ name }) => name
         );
 
         const message = [
             `Origin instance: ${origin.url}`,
-            `User: ${owner.name}`,
+            `Created by: ${owner.name}`,
+            `Recipients: ${recipients.join(", ")} `,
             `Responsibles: ${responsibles.join(", ")}`,
             text,
         ];
