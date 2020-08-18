@@ -50,7 +50,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
         (ids: string[]) => {
             const item = _.find(rows, ({ id }) => id === ids[0]);
             if (!item) snackbar.error(i18n.t("Invalid module"));
-            else history.push({ pathname: `/modules/edit`, state: { module: item } });
+            else history.push({ pathname: `/modules/edit/${item.id}`, state: { module: item } });
         },
         [rows, history, snackbar]
     );

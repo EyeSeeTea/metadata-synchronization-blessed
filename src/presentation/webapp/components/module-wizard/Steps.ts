@@ -46,8 +46,8 @@ export const metadataModuleSteps: SyncWizardStep[] = [
         validationKeys: ["metadataIds"],
     },
     {
-        key: "include-exclude-selection",
-        label: i18n.t("Include Exclude Selection"),
+        key: "dependencies-selection",
+        label: i18n.t("Select dependencies"),
         component: MetadataIncludeExcludeStep,
         validationKeys: ["metadataIncludeExclude"],
     },

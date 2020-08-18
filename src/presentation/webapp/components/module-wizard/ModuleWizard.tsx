@@ -1,24 +1,24 @@
 import { Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
-import React, { useState } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
-import { MetadataModule } from "../../../../domain/modules/entities/MetadataModule";
 import { metadataModuleSteps, ModuleWizardStepProps } from "./Steps";
 
 export interface ModuleWizardProps {
     onCancel: () => void;
     onClose: () => void;
-    editModule?: Module;
+    module: Module;
+    onChange: (module: Module) => void;
 }
 
 export const ModuleWizard: React.FC<ModuleWizardProps> = ({
     onCancel,
     onClose,
-    editModule = MetadataModule.build(),
+    module,
+    onChange,
 }) => {
     const location = useLocation();
-    const [module, onChange] = useState<Module>(editModule);
 
     const props: ModuleWizardStepProps = { module, onChange, onCancel, onClose };
     const steps = metadataModuleSteps.map(step => ({ ...step, props }));

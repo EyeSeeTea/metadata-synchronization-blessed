@@ -82,7 +82,7 @@ export const MetadataIncludeExcludeStep: React.FC<ModuleWizardStepProps<Metadata
     return (
         <React.Fragment>
             <Toggle
-                label={i18n.t("Use default configuration")}
+                label={i18n.t("Use default dependencies")}
                 value={module.useDefaultIncludeExclude}
                 onValueChange={changeUseDefaultIncludeExclude}
             />

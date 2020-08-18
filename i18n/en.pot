@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-10T07:16:05.883Z\n"
-"PO-Revision-Date: 2020-08-10T07:16:05.883Z\n"
+"POT-Creation-Date: 2020-08-10T15:15:04.253Z\n"
+"PO-Revision-Date: 2020-08-10T15:15:04.253Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -47,7 +47,7 @@ msgstr ""
 msgid "Preparing synchronization"
 msgstr ""
 
-msgid "Importing data in instance {{instance}}"
+msgid "Start import in instance {{instance}}"
 msgstr ""
 
 msgid "Program with Data Elements"
@@ -445,7 +445,7 @@ msgstr ""
 msgid "Metadata"
 msgstr ""
 
-msgid "Include Exclude Selection"
+msgid "Select dependencies"
 msgstr ""
 
 msgid "Advanced options"
@@ -466,7 +466,7 @@ msgstr ""
 msgid "Include user information and sharing settings"
 msgstr ""
 
-msgid "Use default configuration"
+msgid "Use default dependencies"
 msgstr ""
 
 msgid "[Pull Request by {{name}}] {{subject}}"
@@ -668,10 +668,17 @@ msgstr ""
 msgid ""
 "If aggregation is enabled, the synchronization will use the Analytics "
 "endpoint and group data by organisation units children and the chosen time "
-"periods"
+"periods."
 msgstr ""
 
 msgid "Programs"
+msgstr ""
+
+msgid ""
+"If aggregation is enabled, the synchronization will use the Analytics "
+"endpoint and group data by organisation units children and the chosen time "
+"periods. Program indicators are only included during a synchronization if "
+"aggregation is enabled."
 msgstr ""
 
 msgid "Source instance"
@@ -808,9 +815,6 @@ msgid ""
 msgstr ""
 
 msgid "Enable data aggregation"
-msgstr ""
-
-msgid "Aggregate and sync program indicators"
 msgstr ""
 
 msgid "Aggregation type"

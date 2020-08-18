@@ -73,7 +73,7 @@ function Root() {
                 />
 
                 <RouteWithSession
-                    path={"/modules/:action(new|edit)"}
+                    path={"/modules/:action(new|edit)/:id?"}
                     render={props => <ModuleCreationPage {...props} />}
                 />
 
