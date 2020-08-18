@@ -139,21 +139,25 @@ export const initializeAppRoles = async (baseUrl: string) => {
             ).data as { userRoles?: { id: string }[] };
 
             if (!userRoles || userRoles.length === 0) {
-                await axios.post(
-                    baseUrl + "/api/metadata.json",
-                    {
-                        userRoles: [
-                            {
-                                name,
-                                description,
-                                publicAccess: "--------",
-                            },
-                        ],
-                    },
-                    {
-                        withCredentials: true,
-                    }
-                );
+                try {
+                    await axios.post(
+                        baseUrl + "/api/metadata.json",
+                        {
+                            userRoles: [
+                                {
+                                    name,
+                                    description,
+                                    publicAccess: "--------",
+                                },
+                            ],
+                        },
+                        {
+                            withCredentials: true,
+                        }
+                    );
+                } catch (error) {
+                    console.error(error);
+                }
             }
         }
     }
