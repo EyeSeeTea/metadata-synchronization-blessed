@@ -24,24 +24,29 @@ describe("Sync metadata", () => {
 
     beforeEach(() => {
         local = startDhis({ urlPrefix: "http://origin.test" });
-        remote = startDhis({
-            urlPrefix: "http://destination.test",
-            pretender: local.pretender,
-        }, { version: "2.34" });
+        remote = startDhis(
+            {
+                urlPrefix: "http://destination.test",
+                pretender: local.pretender,
+            },
+            { version: "2.34" }
+        );
 
         local.get("/metadata", async () => ({
-            reports: [{
-                "id": "id1",
-                "name": "Test Severity Report",
-                "type": "HTML",
-                "cacheStrategy": "RESPECT_SYSTEM_SETTING",
-                "reportParams": {
-                    "paramGrandParentOrganisationUnit": false,
-                    "paramReportingPeriod": true,
-                    "paramOrganisationUnit": true,
-                    "paramParentOrganisationUnit": false
-                }
-            }],
+            reports: [
+                {
+                    id: "id1",
+                    name: "Test Severity Report",
+                    type: "HTML",
+                    cacheStrategy: "RESPECT_SYSTEM_SETTING",
+                    reportParams: {
+                        paramGrandParentOrganisationUnit: false,
+                        paramReportingPeriod: true,
+                        paramOrganisationUnit: true,
+                        paramParentOrganisationUnit: false,
+                    },
+                },
+            ],
         }));
 
         remote.get("/metadata", async () => ({}));
@@ -133,4 +138,4 @@ function buildRepositoryFactory() {
     return repositoryFactory;
 }
 
-export { };
+export {};

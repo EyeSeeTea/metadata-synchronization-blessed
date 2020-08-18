@@ -1,5 +1,8 @@
 import _ from "lodash";
-import { MetadataEntities, MetadataPackage } from "../../../domain/metadata/entities/MetadataEntities";
+import {
+    MetadataEntities,
+    MetadataPackage,
+} from "../../../domain/metadata/entities/MetadataEntities";
 import { Transformation } from "../../../domain/transformations/entities/Transformation";
 import { TransformationD2ApiRepository } from "../TransformationD2ApiRepository";
 import { D2MetadataPackage } from "../types";
@@ -264,7 +267,7 @@ describe("Metadata transformations - D2Api", () => {
     });
 });
 
-export { };
+export {};
 
 function givenAMetadataPackage(nameField = "name"): MetadataPackage {
     const metadataPackage = {
