@@ -2,10 +2,10 @@ import {
     Checkbox,
     FormControlLabel,
     Icon,
-    makeStyles,
-    Typography,
-    Tooltip,
     IconButton,
+    makeStyles,
+    Tooltip,
+    Typography,
 } from "@material-ui/core";
 import {
     ObjectsTable,
@@ -17,7 +17,7 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Either } from "../../../../domain/common/entities/Either";
 import { AppNotification } from "../../../../domain/notifications/entities/Notification";
 import { CancelPullRequestError } from "../../../../domain/notifications/usecases/CancelPullRequestUseCase";
@@ -38,6 +38,7 @@ export const NotificationsListPage: React.FC = () => {
     const snackbar = useSnackbar();
     const loading = useLoading();
     const classes = useStyles();
+    const { id } = useParams<{ id?: string }>();
 
     const [notifications, setNotifications] = useState<TableNotification[]>([]);
     const [unreadOnly, setUnreadOnly] = useState<boolean>(false);
@@ -439,6 +440,13 @@ export const NotificationsListPage: React.FC = () => {
             loading.reset();
         });
     }, [compositionRoot, loading, resetKey]);
+
+    useEffect(() => {
+        if (!id || notifications.length === 0) return;
+
+        const notification = notifications.find(row => row.id === id);
+        if (notification) setDetailsNotification(notification);
+    }, [id, notifications]);
 
     return (
         <React.Fragment>
