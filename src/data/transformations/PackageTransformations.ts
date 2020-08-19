@@ -1,6 +1,9 @@
 import { Transformation } from "../../domain/transformations/entities/Transformation";
 import _ from "lodash";
-import { Ref } from "../../types/d2-api";
+import { Mapping, isKeyOf } from "./__tests__/integration/helpers";
+
+import { D2DashboardItem as D2DashboardItem33 } from "d2-api/2.33";
+import { D2Visualization as D2Visualization34 } from "d2-api/2.34";
 
 export const metadataTransformations: Transformation[] = [
     {
@@ -121,28 +124,90 @@ export const metadataTransformations: Transformation[] = [
 
             return {
                 ...rest,
-                charts: charts?.map(
-                    (chart: Chart31): Chart30 => {
-                        const [years, relativeYearlySeries] = _.partition(chart.yearlySeries, s =>
-                            s.match(/^\d+/)
-                        );
+                charts: charts?.map((chart: any) => {
+                    const [years, relativeYearlySeries] = _.partition(chart.yearlySeries, s =>
+                        s.match(/^\d+/)
+                    );
 
+                    return {
+                        ..._.omit(chart, ["yearlySeries", "type"]),
+                        type: typeUndoMapping[chart.type] || chart.type,
+                        relativePeriods: {
+                            ..._(chart.relativePeriods)
+                                .mapValues(() => false)
+                                .value(),
+                            ..._(relativeYearlySeries)
+                                .filter(s => _.has(relativePeriodsMapping, s))
+                                .map(s => [relativePeriodsMapping[s], true])
+                                .fromPairs()
+                                .value(),
+                        },
+                        periods: years.map(year => ({ id: year })),
+                    };
+                }),
+            };
+        },
+    },
+    {
+        name: "dashboard-dashboardItems-visualization",
+        apiVersion: 34,
+        apply: ({ dashboards, ...rest }: any) => {
+            return {
+                ...rest,
+                dashboards: dashboards?.map((dashboard: any) => {
+                    const { dashboardItems } = dashboard;
+                    return {
+                        ...dashboard,
+                        dashboardItems: dashboardItems?.map((dashboardItem: any) => {
+                            const { type } = dashboardItem;
+                            if (!isKeyOf(itemsMapping, type)) return dashboardItem;
+                            const refField = itemsMapping[type];
+
+                            return {
+                                ..._.omit(dashboardItem, [refField]),
+                                type: "VISUALIZATION",
+                                visualization: dashboardItem[refField],
+                            };
+                        }),
+                    };
+                }),
+            };
+        },
+        undo: ({ dashboards, visualizations, ...rest }: any) => {
+            return {
+                ...rest,
+                dashboards: _.compact(
+                    dashboards?.map((dashboard: any) => {
+                        const { dashboardItems } = dashboard;
                         return {
-                            ..._.omit(chart, ["yearlySeries"]),
-                            type: typeUndoMapping[chart.type] || chart.type,
-                            relativePeriods: {
-                                ..._(chart.relativePeriods)
-                                    .mapValues(() => false)
-                                    .value(),
-                                ..._(relativeYearlySeries)
-                                    .filter(s => _.has(relativePeriodsMapping, s))
-                                    .map(s => [relativePeriodsMapping[s], true])
-                                    .fromPairs()
-                                    .value(),
-                            },
-                            periods: years.map(year => ({ id: year })),
+                            ...dashboard,
+                            dashboardItems: dashboardItems?.map((dashboardItem: any) => {
+                                const { type } = dashboardItem as { type: string };
+                                if (type !== "VISUALIZATION" || !dashboardItem.visualization)
+                                    return dashboardItem;
+                                if (!visualizations) {
+                                    console.debug("No visualization found");
+                                    return null;
+                                }
+
+                                const visualization = visualizations.find(
+                                    (v: { id: string }) => v.id === dashboardItem.visualization.id
+                                ) as { type: string } | undefined;
+                                if (
+                                    !visualization ||
+                                    !isKeyOf(visualizationTypeMapping, visualization.type)
+                                )
+                                    return dashboardItem;
+                                const modelInfo = visualizationTypeMapping[visualization.type];
+
+                                return {
+                                    ..._.omit(dashboardItem, ["visualization"]),
+                                    type: modelInfo.type,
+                                    [modelInfo.property]: dashboardItem.visualization,
+                                };
+                            }),
                         };
-                    }
+                    })
                 ),
             };
         },
@@ -205,17 +270,32 @@ export const metadataTransformations: Transformation[] = [
     },
 ];
 
-type Mapping = _.Dictionary<string | undefined>;
+const itemsMapping = {
+    CHART: "chart",
+    REPORT_TABLE: "reportTable",
+} as const;
 
-interface Chart30 {
-    type: string;
-    relativePeriods: _.Dictionary<boolean>;
-    periods: Ref[];
-}
+const chart = { type: "CHART", property: "chart" } as const;
+const reportTable = { type: "REPORT_TABLE", property: "reportTable" } as const;
 
-interface Chart31 extends Chart30 {
-    yearlySeries: string[];
-}
+const visualizationTypeMapping: Record<
+    D2Visualization34["type"],
+    { type: D2DashboardItem33["type"]; property: keyof D2DashboardItem33 }
+> = {
+    COLUMN: chart,
+    STACKED_COLUMN: chart,
+    BAR: chart,
+    STACKED_BAR: chart,
+    LINE: chart,
+    AREA: chart,
+    PIE: chart,
+    RADAR: chart,
+    GAUGE: chart,
+    YEAR_OVER_YEAR_LINE: chart,
+    YEAR_OVER_YEAR_COLUMN: chart,
+    SINGLE_VALUE: chart,
+    PIVOT_TABLE: reportTable,
+};
 
 export const aggregatedTransformations: Transformation[] = [];
 
