@@ -22,7 +22,7 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
             "id"
         );
 
-        console.debug("Metadata package", payloadPackage);
+        //console.debug("Metadata package", payloadPackage);
 
         const syncResult = await remoteMetadataRepository.remove(payloadPackage, syncParams);
 

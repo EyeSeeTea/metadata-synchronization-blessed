@@ -52,9 +52,11 @@ export class TransformationD2ApiRepository implements TransformationRepository {
         if (transformationstoApply.length > 0) {
             return this.undoTransformations<Input, Output>(payload, transformationstoApply);
         } else {
+            /*
             console.debug(
                 `No transformations applied from dhis2 to domain metadata package in version ${origin}`
             );
+            */
             return (payload as unknown) as Output;
         }
     }

@@ -130,7 +130,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             metadataTransformations
         );
 
-        console.debug("Versioned metadata package", versionedPayloadPackage);
+        //console.debug("Versioned metadata package", versionedPayloadPackage);
 
         const response = await this.postMetadata(versionedPayloadPackage, additionalParams);
 
