@@ -1,245 +1,160 @@
-import { Request, Server } from "miragejs";
-import { AnyRegistry } from "miragejs/-types";
-import Schema from "miragejs/orm/schema";
-import { startDhis } from "../../../../../config/dhisServer";
-import { Instance } from "../../../../domain/instance/entities/Instance";
-import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
-import { SynchronizationBuilder } from "../../../../types/synchronization";
-import { buildRepositoryFactory } from "./helpers";
+import { sync, SyncResult } from "./helpers";
 
-const repositoryFactory = buildRepositoryFactory();
+const metadata = {
+    programs: [
+        {
+            id: "id1",
+            name: "Test tracker program",
+            captureCoordinates: true,
+        },
+        {
+            id: "id2",
+            name: "Test tracker program",
+            captureCoordinates: false,
+        },
+    ],
+    programStages: [
+        {
+            id: "ps_id1",
+            name: "Test programStage",
+            validCompleteOnly: false,
+        },
+        {
+            id: "ps_id2",
+            name: "Test programStage",
+            validCompleteOnly: true,
+        },
+    ],
+};
 
-describe("Sync metadata", () => {
-    let local: Server;
-    let remote: Server;
+let payload: SyncResult;
 
-    beforeAll(() => {
-        jest.setTimeout(30000);
+describe("Transformations for 2.30 -> 2.31", () => {
+    beforeAll(async () => {
+        payload = await sync({
+            from: "2.30",
+            to: "2.31",
+            metadata,
+            models: ["programs", "programStages"],
+        });
     });
 
-    beforeEach(() => {
-        local = startDhis({ urlPrefix: "http://origin.test" });
-        remote = startDhis(
+    describe("programs", () => {
+        it("Local server to remote - program captureCoordinates true to featureType POINT - API 30 to API 31", async () => {
+            const program = payload.programs["id1"];
+            expect(program).toBeDefined();
+            expect(program.name).toEqual("Test tracker program");
+
+            // Assert new properties have the correct values
+            expect(program.featureType).toEqual("POINT");
+
+            // Assert old properties are not anymore
+            expect(program.captureCoordinates).toBeUndefined();
+        });
+
+        it("Local server to remote - program captureCoordinates false to featureType NONE - API 30 to API 31", async () => {
+            const program = payload.programs["id2"];
+            expect(program).toBeDefined();
+
+            expect(program.name).toEqual("Test tracker program");
+
+            // Assert new properties have the correct values
+            expect(program.featureType).toEqual("NONE");
+
+            // Assert old properties are not anymore
+            expect(program.captureCoordinates).toBeUndefined();
+        });
+
+        it("Local server to remote - programStage validCompleteOnly false to validationStrategy -> ON_COMPLETE - API 30 to API 31", async () => {
+            const programStage = payload.programStages["ps_id1"];
+            expect(programStage).toBeDefined();
+
+            expect(programStage.name).toEqual("Test programStage");
+
+            // Assert new properties have the correct values
+            expect(programStage.validationStrategy).toEqual("ON_COMPLETE");
+
+            // Assert old properties are not anymore
+            expect(programStage.validCompleteOnly).toBeUndefined();
+        });
+
+        it("Local server to remote - programStage validCompleteOnly true to validationStrategy -> ON_COMPLETE - API 30 to API 31", async () => {
+            const programStage = payload.programStages["ps_id2"];
+            expect(programStage).toBeDefined();
+
+            expect(programStage.name).toEqual("Test programStage");
+
+            // Assert new properties have the correct values
+            expect(programStage.validationStrategy).toEqual("ON_COMPLETE");
+
+            // Assert old properties are not anymore
+            expect(programStage.validCompleteOnly).toBeUndefined();
+        });
+    });
+});
+
+describe("Transformations for 2.31 -> 2.30", () => {
+    const metadata = {
+        charts: [
             {
-                urlPrefix: "http://destination.test",
-                pretender: local.pretender,
+                id: "chart-line",
+                type: "LINE",
+                relativePeriods: { last12Weeks: true, last4Quarters: false },
+                yearlySeries: ["2016", "THIS_YEAR", "LAST_YEAR", "2018", "LAST_5_YEARS"],
             },
-            { version: "2.31" }
-        );
-
-        local.get("/metadata", async () => ({
-            programs: [
-                {
-                    id: "id1",
-                    name: "Test tracker program",
-                    captureCoordinates: true,
-                },
-                {
-                    id: "id2",
-                    name: "Test tracker program",
-                    captureCoordinates: false,
-                },
-            ],
-            programStages: [
-                {
-                    id: "ps_id1",
-                    name: "Test programStage",
-                    validCompleteOnly: false,
-                },
-                {
-                    id: "ps_id2",
-                    name: "Test programStage",
-                    validCompleteOnly: true,
-                },
-            ],
-        }));
-
-        remote.get("/metadata", async () => ({}));
-
-        local.get("/dataStore/metadata-synchronization/instances", async () => [
             {
-                id: "DESTINATION",
-                name: "Destination test",
-                url: "http://destination.test",
-                username: "test",
-                password: "",
-                description: "",
+                id: "chart-over-line",
+                type: "YEAR_OVER_YEAR_LINE",
             },
+            {
+                id: "chart-over-column",
+                type: "YEAR_OVER_YEAR_COLUMN",
+            },
+        ],
+    };
+
+    beforeAll(async () => {
+        payload = await sync({
+            from: "2.31",
+            to: "2.30",
+            metadata,
+            models: ["charts"],
+        });
+    });
+
+    it("Transforms charts of type chart-over-line/chart-over-column", async () => {
+        const { charts } = payload;
+
+        expect(charts["chart-line"]?.type).toEqual("LINE");
+        expect(charts["chart-over-line"]?.type).toEqual("LINE");
+        expect(charts["chart-over-column"]?.type).toEqual("COLUMN");
+    });
+
+    it("Transforms charts yearly series to relative and absolute periods", async () => {
+        const { charts } = payload;
+        const chartLine = charts["chart-line"];
+        expect(chartLine).toBeDefined();
+
+        expect(chartLine).not.toHaveProperty("yearlySeries");
+
+        expect(
+            chartLine.relativePeriods,
+            "to be set from yearlySeries for keys thisYear/lastYear/last5Years"
+        ).toMatchObject({
+            thisYear: true,
+            lastYear: true,
+            last5Years: true,
+        });
+
+        expect(chartLine.relativePeriods, "to be set to false for other values").toMatchObject({
+            last12Weeks: false,
+            last4Quarters: false,
+        });
+
+        expect(chartLine.periods, "to contain the absolute years from yearlySeries").toEqual([
+            { id: "2016" },
+            { id: "2018" },
         ]);
-
-        const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
-            schema.db.metadata.insert(JSON.parse(request.requestBody));
-
-            return {
-                status: "OK",
-                stats: { created: 1, updated: 0, deleted: 0, ignored: 0, total: 1 },
-                typeReports: [],
-            };
-        };
-
-        local.db.createCollection("metadata", []);
-        local.post("/metadata", addMetadataToDb);
-
-        remote.db.createCollection("metadata", []);
-        remote.post("/metadata", addMetadataToDb);
-    });
-
-    afterEach(() => {
-        local.shutdown();
-        remote.shutdown();
-    });
-
-    it("Local server to remote - program captureCoordinates true to featureType POINT - API 30 to API 31", async () => {
-        const localInstance = Instance.build({
-            url: "http://origin.test",
-            name: "Testing",
-            version: "2.30",
-        });
-
-        const builder: SynchronizationBuilder = {
-            originInstance: "LOCAL",
-            targetInstances: ["DESTINATION"],
-            metadataIds: ["id1"],
-            excludedIds: [],
-        };
-
-        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
-
-        const payload = await useCase.buildPayload();
-        expect(payload.programs?.find(({ id }) => id === "id1")).toBeDefined();
-
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
-        }
-
-        // Assert object has been created on remote
-        const response = remote.db.metadata.find(1);
-        expect(response.programs[0].id).toEqual("id1");
-        expect(response.programs[0].name).toEqual("Test tracker program");
-
-        // Assert new properties have the correct values
-        expect(response.programs[0].featureType).toEqual("POINT");
-
-        // Assert old properties are not anymore
-        expect(response.programs[0].captureCoordinates).toBeUndefined();
-
-        // Assert we have not updated local metadata
-        expect(local.db.metadata.find(1)).toBeNull();
-    });
-
-    it("Local server to remote - program captureCoordinates false to featureType NONE - API 30 to API 31", async () => {
-        const localInstance = Instance.build({
-            url: "http://origin.test",
-            name: "Testing",
-            version: "2.30",
-        });
-
-        const builder: SynchronizationBuilder = {
-            originInstance: "LOCAL",
-            targetInstances: ["DESTINATION"],
-            metadataIds: ["id2"],
-            excludedIds: [],
-        };
-
-        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
-
-        const payload = await useCase.buildPayload();
-        expect(payload.programs?.find(({ id }) => id === "id2")).toBeDefined();
-
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
-        }
-
-        // Assert object has been created on remote
-        const response = remote.db.metadata.find(1);
-        expect(response.programs[1].id).toEqual("id2");
-        expect(response.programs[1].name).toEqual("Test tracker program");
-
-        // Assert new properties have the correct values
-        expect(response.programs[1].featureType).toEqual("NONE");
-
-        // Assert old properties are not anymore
-        expect(response.programs[1].captureCoordinates).toBeUndefined();
-
-        // Assert we have not updated local metadata
-        expect(local.db.metadata.find(1)).toBeNull();
-    });
-
-    it("Local server to remote - programStage validCompleteOnly false to validationStrategy -> ON_COMPLETE - API 30 to API 31", async () => {
-        const localInstance = Instance.build({
-            url: "http://origin.test",
-            name: "Testing",
-            version: "2.30",
-        });
-
-        const builder: SynchronizationBuilder = {
-            originInstance: "LOCAL",
-            targetInstances: ["DESTINATION"],
-            metadataIds: ["ps_id1"],
-            excludedIds: [],
-        };
-
-        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
-
-        const payload = await useCase.buildPayload();
-        expect(payload.programStages?.find(({ id }) => id === "ps_id1")).toBeDefined();
-
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
-        }
-
-        // Assert object has been created on remote
-        const response = remote.db.metadata.find(1);
-
-        expect(response.programStages[0].id).toEqual("ps_id1");
-        expect(response.programStages[0].name).toEqual("Test programStage");
-
-        // Assert new properties have the correct values
-        expect(response.programStages[0].validationStrategy).toEqual("ON_COMPLETE");
-
-        // Assert old properties are not anymore
-        expect(response.programStages[0].validCompleteOnly).toBeUndefined();
-
-        // Assert we have not updated local metadata
-        expect(local.db.metadata.find(1)).toBeNull();
-    });
-
-    it("Local server to remote - programStage validCompleteOnly true to validationStrategy -> ON_COMPLETE - API 30 to API 31", async () => {
-        const localInstance = Instance.build({
-            url: "http://origin.test",
-            name: "Testing",
-            version: "2.30",
-        });
-
-        const builder: SynchronizationBuilder = {
-            originInstance: "LOCAL",
-            targetInstances: ["DESTINATION"],
-            metadataIds: ["ps_id2"],
-            excludedIds: [],
-        };
-
-        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
-
-        const payload = await useCase.buildPayload();
-        expect(payload.programStages?.find(({ id }) => id === "ps_id2")).toBeDefined();
-
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
-        }
-
-        // Assert object has been created on remote
-        const response = remote.db.metadata.find(1);
-        expect(response.programStages[1].id).toEqual("ps_id2");
-        expect(response.programStages[1].name).toEqual("Test programStage");
-
-        // Assert new properties have the correct values
-        expect(response.programStages[1].validationStrategy).toEqual("ON_COMPLETE");
-
-        // Assert old properties are not anymore
-        expect(response.programStages[1].validCompleteOnly).toBeUndefined();
-
-        // Assert we have not updated local metadata
-        expect(local.db.metadata.find(1)).toBeNull();
     });
 });
 

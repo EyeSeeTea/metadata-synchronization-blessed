@@ -1,6 +1,7 @@
 import { SynchronizationBuilder } from "./../../../../types/synchronization";
 import _ from "lodash";
-import { Server } from "miragejs";
+import { Server, Request } from "miragejs";
+import Schema from "miragejs/orm/schema";
 
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
@@ -10,6 +11,8 @@ import { MetadataD2ApiRepository } from "../../../metadata/MetadataD2ApiReposito
 import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
+import { startDhis } from "../../../../../config/dhisServer";
+import { AnyRegistry } from "miragejs/-types";
 
 export function buildRepositoryFactory() {
     const repositoryFactory: RepositoryFactory = new RepositoryFactory();
@@ -24,17 +27,77 @@ type Id = string;
 type Model = string;
 type Object = any;
 
+export type Mapping = _.Dictionary<string | undefined>;
+
+export type SyncResult = Record<Model, Record<Id, Object>>;
+
+export async function sync({
+    from,
+    to,
+    metadata,
+    models,
+}: {
+    from: string;
+    to: string;
+    metadata: any;
+    models: string[];
+}): Promise<SyncResult> {
+    const local = startDhis({ urlPrefix: "http://origin.test" }, { version: from });
+    const remote = startDhis(
+        { urlPrefix: "http://destination.test", pretender: local.pretender },
+        { version: to }
+    );
+
+    local.get("/metadata", async () => metadata);
+    remote.get("/metadata", async () => ({}));
+
+    local.get("/dataStore/metadata-synchronization/instances", async () => [
+        {
+            id: "DESTINATION",
+            name: "Destination test",
+            url: "http://destination.test",
+            username: "test",
+            password: "",
+            description: "",
+        },
+    ]);
+
+    const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
+        schema.db.metadata.insert(JSON.parse(request.requestBody));
+
+        return {
+            status: "OK",
+            stats: { created: 0, updated: 0, deleted: 0, ignored: 0, total: 0 },
+            typeReports: [],
+        };
+    };
+
+    local.db.createCollection("metadata", []);
+    local.post("/metadata", addMetadataToDb);
+
+    remote.db.createCollection("metadata", []);
+    remote.post("/metadata", addMetadataToDb);
+
+    const response = await executeMetadataSync(from, local, remote, models);
+
+    local.shutdown();
+    remote.shutdown();
+
+    return response;
+}
+
 export async function executeMetadataSync(
+    fromVersion: string,
     local: Server,
     remote: Server,
     expectedModels: string[]
-): Promise<Record<Model, Record<Id, Object>>> {
+): Promise<SyncResult> {
     const repositoryFactory = buildRepositoryFactory();
 
     const localInstance = Instance.build({
         url: local.urlPrefix,
         name: "Testing",
-        version: "2.31",
+        version: fromVersion,
     });
 
     const builder: SynchronizationBuilder = {
@@ -47,7 +110,8 @@ export async function executeMetadataSync(
     const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
 
     for await (const { done } of useCase.execute()) {
-        console.debug(done);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        done;
     }
 
     expect(local.db.metadata.where({})).toHaveLength(0);
@@ -61,4 +125,8 @@ export async function executeMetadataSync(
     });
 
     return _.mapValues(payload, objects => _.keyBy(objects, obj => obj.id));
+}
+
+export function isKeyOf<T>(obj: T, key: keyof any): key is keyof T {
+    return _.has(obj, key);
 }
