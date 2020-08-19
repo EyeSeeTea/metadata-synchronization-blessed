@@ -5,6 +5,7 @@ import { ExportBuilder, NestedRules } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
+import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
@@ -12,10 +13,9 @@ import {
     buildNestedRules,
     cleanObject,
     cleanReferences,
-    getAllReferences,
     cleanToModelName,
+    getAllReferences,
 } from "../utils";
-import { MetadataMapping } from "../../instance/entities/MetadataMapping";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
@@ -137,11 +137,10 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     }
 
     public async mapPayload(
-        instance: Instance,
+        { metadataMapping: mapping }: Instance,
         payload: MetadataPackage
     ): Promise<MetadataPackage> {
         return _.mapValues(payload, (items, model) => {
-            const mapping = instance.metadataMapping;
             const collectionName = modelFactory(this.api, model).getCollectionName();
             const references = this.api.models[collectionName]?.schema.properties
                 .filter(
@@ -151,24 +150,21 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 .map(({ name }) => name);
 
             return items?.map((object: any) => {
-                if (typeof object === "object" && object.id) {
-                    const mappedObject = this.mapProperty({ key: model, value: object, mapping });
-                    return _.mapValues(mappedObject, (value, key) => {
-                        if (references.includes(key)) {
-                            if (Array.isArray(value)) {
-                                return value.map(item =>
-                                    this.mapProperty({ parent: model, key, value: item, mapping })
-                                );
-                            } else {
-                                return this.mapProperty({ parent: model, key, value, mapping });
-                            }
-                        } else {
-                            return value;
-                        }
-                    });
-                } else {
-                    return object;
-                }
+                if (typeof object !== "object") return object;
+
+                const mappedObject = this.mapProperty({ key: model, object, mapping });
+
+                return _.mapValues(mappedObject, (value, key) => {
+                    if (!references.includes(key)) return value;
+
+                    if (Array.isArray(value)) {
+                        return value.map(item =>
+                            this.mapProperty({ parent: model, key, object: item, mapping })
+                        );
+                    }
+
+                    return this.mapProperty({ parent: model, key, object: value, mapping });
+                });
             });
         });
     }
@@ -176,16 +172,19 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     private mapProperty<T extends Ref>({
         parent,
         key,
-        value,
+        object,
+        mapping,
     }: {
         parent?: string;
         key: string;
-        value: T;
-        mapping: MetadataMapping;
+        object: T;
+        mapping: MetadataMappingDictionary;
     }): T {
         const modelName = cleanToModelName(this.api, key, parent);
-        console.log({ key, parent, modelName, id: value.id });
+        if (!modelName) return object;
 
-        return value;
+        const { mappedId = object.id } = _.get(mapping, [modelName, object.id]) ?? {};
+
+        return { ...object, id: mappedId };
     }
 }
