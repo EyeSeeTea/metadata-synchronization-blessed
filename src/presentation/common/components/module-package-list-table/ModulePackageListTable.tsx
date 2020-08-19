@@ -2,6 +2,7 @@ import { PaginationOptions } from "d2-ui-components";
 import React, { useCallback, useMemo, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import i18n from "../../../../locales";
+import SyncReport from "../../../../models/syncReport";
 import { ModulesListTable } from "../../../common/components/module-list-table/ModuleListTable";
 import { PackagesListTable } from "../../../common/components/package-list-table/PackageListTable";
 import Dropdown from "../../../webapp/components/dropdown/Dropdown";
@@ -19,6 +20,7 @@ export interface ModulePackageListTableProps {
     presentation: PresentationOption;
     showSelector: ViewSelectorConfig;
     showInstances: InstanceSelectionConfig;
+    openSyncSummary?: (syncReport: SyncReport) => void;
 }
 
 export type ViewOption = "modules" | "packages";
@@ -32,6 +34,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
         presentation,
         showSelector,
         showInstances,
+        openSyncSummary,
     }) => {
         const [selectedInstance, setSelectedInstance] = useState<Instance>();
         const [showStore, setShowStore] = useState<boolean>(false);
@@ -93,6 +96,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
                 showStore={showStore}
                 remoteInstance={selectedInstance}
                 paginationOptions={paginationOptions}
+                openSyncSummary={openSyncSummary}
                 onActionButtonClick={
                     viewSelector.value === "modules" && !selectedInstance ? onCreate : undefined
                 }
