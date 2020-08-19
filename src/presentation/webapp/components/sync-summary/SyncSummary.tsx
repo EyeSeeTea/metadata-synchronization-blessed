@@ -29,6 +29,7 @@ import { useAppContext } from "../../../common/contexts/AppContext";
 
 const useStyles = makeStyles(theme => ({
     accordionHeading1: {
+        marginLeft: 30,
         fontSize: theme.typography.pxToRem(15),
         flexBasis: "55%",
         flexShrink: 0,
@@ -194,7 +195,10 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
         >
             <DialogContent>
                 {results.map(
-                    ({ instance, status, typeStats = [], stats, message, errors, type }, i) => (
+                    (
+                        { origin, instance, status, typeStats = [], stats, message, errors, type },
+                        i
+                    ) => (
                         <Accordion
                             defaultExpanded={results.length === 1}
                             className={classes.accordion}
@@ -202,9 +206,11 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
                         >
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography className={classes.accordionHeading1}>
-                                    {`${i18n.t("Destination instance")}: ${
-                                        instance.name
-                                    } - ${getTypeName(type, response.syncReport.type)}`}
+                                    {`Type: ${getTypeName(type, response.syncReport.type)}`}
+                                    <br />
+                                    {origin && `${i18n.t("Origin instance")}: ${origin.name}`}
+                                    {origin && <br />}
+                                    {`${i18n.t("Destination instance")}: ${instance.name}`}
                                 </Typography>
                                 <Typography className={classes.accordionHeading2}>
                                     {`${i18n.t("Status")}: `}

@@ -1,14 +1,14 @@
-import React from "react";
+import { useLoading, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
-
+import React from "react";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
     FieldUpdate,
     MetadataPackageDiff,
 } from "../../../../domain/packages/entities/MetadataPackageDiff";
 import i18n from "../../../../locales";
-import { useAppContext } from "../../../common/contexts/AppContext";
-import { useLoading, useSnackbar } from "d2-ui-components";
 import SyncReport from "../../../../models/syncReport";
+import { useAppContext } from "../../../common/contexts/AppContext";
 
 export function getChange(u: FieldUpdate): string {
     return `${u.field}: ${truncate(u.oldValue)} -> ${truncate(u.newValue)}`;
@@ -31,6 +31,7 @@ export function getTitle(packageName: string, metadataDiff: MetadataPackageDiff 
 }
 
 export function usePackageImporter(
+    instance: Instance | undefined,
     packageName: string,
     metadataDiff: MetadataPackageDiff | undefined,
     onClose: () => void
@@ -55,7 +56,7 @@ export function usePackageImporter(
             report.setStatus(
                 result.status === "ERROR" || result.status === "NETWORK ERROR" ? "FAILURE" : "DONE"
             );
-            report.addSyncResult(result);
+            report.addSyncResult({ ...result, origin: instance?.toPublicObject() });
             await report.save(api);
 
             setSyncReport(report);
@@ -64,7 +65,7 @@ export function usePackageImporter(
         import_()
             .catch(err => snackbar.error(err.message))
             .finally(() => loading.reset());
-    }, [packageName, metadataDiff, compositionRoot, loading, snackbar, api]);
+    }, [packageName, metadataDiff, compositionRoot, loading, snackbar, api, instance]);
 
     return { importPackage, syncReport, closeSyncReport };
 }
