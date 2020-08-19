@@ -6,6 +6,7 @@ import { InstanceRepository } from "../../domain/instance/repositories/InstanceR
 import {
     CategoryOptionCombo,
     OrganisationUnit,
+    UserGroup,
 } from "../../domain/metadata/entities/MetadataEntities";
 import { D2Api } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
@@ -87,12 +88,22 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     > {
         const { objects } = await this.api.models.organisationUnits
             .get({
+                paging: false,
                 filter: { level: { eq: "1" } },
                 fields: { id: true, name: true, displayName: true, path: true },
             })
             .getData();
 
         return objects;
+    }
+
+    @cache()
+    public async getUserGroups(): Promise<Pick<UserGroup, "id" | "name">[]> {
+        const { userGroups } = await this.api.currentUser
+            .get({ fields: { userGroups: { id: true, name: true } } })
+            .getData();
+
+        return userGroups;
     }
 
     public async sendMessage(message: InstanceMessage): Promise<void> {

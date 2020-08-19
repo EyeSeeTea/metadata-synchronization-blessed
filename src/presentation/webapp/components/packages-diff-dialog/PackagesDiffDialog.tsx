@@ -1,23 +1,24 @@
-import React from "react";
-import _ from "lodash";
-import { ConfirmationDialog } from "d2-ui-components/confirmation-dialog/ConfirmationDialog";
-import i18n from "../../../../locales";
-import { useAppContext } from "../../../common/contexts/AppContext";
-import { Instance } from "../../../../domain/instance/entities/Instance";
-import { useSnackbar } from "d2-ui-components";
 import { LinearProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
+import { useSnackbar } from "d2-ui-components";
+import { ConfirmationDialog } from "d2-ui-components/confirmation-dialog/ConfirmationDialog";
+import _ from "lodash";
+import React from "react";
+import { NamedRef } from "../../../../domain/common/entities/Ref";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
     MetadataPackageDiff,
     ModelDiff,
 } from "../../../../domain/packages/entities/MetadataPackageDiff";
+import i18n from "../../../../locales";
+import { useAppContext } from "../../../common/contexts/AppContext";
 import SyncSummary from "../sync-summary/SyncSummary";
-import { usePackageImporter, getTitle, getChange } from "./utils";
-import { NamedRef } from "../../../../domain/common/entities/Ref";
+import { getChange, getTitle, usePackageImporter } from "./utils";
 
 export interface PackagesDiffDialogProps {
     onClose(): void;
-    remoteInstance: Instance;
+    remoteInstance?: Instance;
+    isStorePackage: boolean;
     remotePackage: NamedRef;
 }
 
@@ -27,22 +28,24 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const [metadataDiff, setMetadataDiff] = React.useState<MetadataPackageDiff>();
-    const { remotePackage, remoteInstance, onClose } = props;
+    const { remotePackage, isStorePackage, remoteInstance, onClose } = props;
 
     React.useEffect(() => {
-        compositionRoot.packages.diff(remotePackage.id, remoteInstance).then(res => {
-            res.match({
-                error: msg => {
-                    snackbar.error(i18n.t("Cannot get data from remote instance") + ": " + msg);
-                    onClose();
-                },
-                success: setMetadataDiff,
+        compositionRoot.packages
+            .diff(isStorePackage, remotePackage.id, remoteInstance)
+            .then(res => {
+                res.match({
+                    error: msg => {
+                        snackbar.error(i18n.t("Cannot get data from remote instance") + ": " + msg);
+                        onClose();
+                    },
+                    success: setMetadataDiff,
+                });
             });
-        });
-    }, [compositionRoot, remotePackage, remoteInstance, onClose, snackbar]);
+    }, [compositionRoot, remotePackage, isStorePackage, remoteInstance, onClose, snackbar]);
 
     const hasChanges = metadataDiff && metadataDiff.hasChanges;
-    const packageName = `${remotePackage.name} (${remoteInstance.name})`;
+    const packageName = `${remotePackage.name} (${remoteInstance?.name ?? "Store"})`;
     const { importPackage, syncReport, closeSyncReport } = usePackageImporter(
         packageName,
         metadataDiff,
@@ -67,6 +70,7 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
                     <LinearProgress />
                 )}
             </ConfirmationDialog>
+
             {!!syncReport && <SyncSummary response={syncReport} onClose={closeSyncReport} />}
         </React.Fragment>
     );

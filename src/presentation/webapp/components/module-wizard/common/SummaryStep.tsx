@@ -134,6 +134,10 @@ const buildMetadataEntries = (module: MetadataModule): Entry[] => {
     return [
         ...buildCommonEntries(module),
         {
+            label: i18n.t("Department"),
+            value: module.department.name,
+        },
+        {
             label: i18n.t("Selected metadata"),
             value: `${module.metadataIds.length} elements`,
         },

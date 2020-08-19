@@ -1,6 +1,6 @@
-type EitherValue<Error, Data> =
-    | { type: "error"; error: Error; data?: never }
-    | { type: "success"; error?: never; data: Data };
+type EitherValueError<Error> = { type: "error"; error: Error; data?: never };
+type EitherValueSuccess<Data> = { type: "success"; error?: never; data: Data };
+type EitherValue<Error, Data> = EitherValueError<Error> | EitherValueSuccess<Data>;
 
 type MatchObject<Error, Data, Res> = {
     success: (data: Data) => Res;
@@ -19,11 +19,11 @@ export class Either<Error, Data> {
         }
     }
 
-    isError() {
+    isError(): this is this & { value: EitherValueError<Error> } {
         return this.value.type === "error";
     }
 
-    isSuccess(): boolean {
+    isSuccess(): this is this & { value: EitherValueSuccess<Data> } {
         return this.value.type === "success";
     }
 

@@ -10,7 +10,7 @@ export type ModuleType = "metadata";
 
 export interface BaseModule extends SharedRef {
     description: string;
-    department: string;
+    department: NamedRef;
     type: ModuleType;
     instance: string;
     lastPackageVersion: string;
@@ -20,7 +20,7 @@ export abstract class GenericModule implements BaseModule {
     public readonly id: string;
     public readonly name: string;
     public readonly description: string;
-    public readonly department: string;
+    public readonly department: NamedRef;
     public readonly publicAccess: string;
     public readonly userAccesses: SharingSetting[];
     public readonly userGroupAccesses: SharingSetting[];
@@ -71,7 +71,10 @@ export abstract class GenericModule implements BaseModule {
             id: generateUid(),
             name: "",
             description: "",
-            department: "",
+            department: {
+                id: "",
+                name: "",
+            },
             type: "metadata",
             instance: "",
             lastPackageVersion: "",

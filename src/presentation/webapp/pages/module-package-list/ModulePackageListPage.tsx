@@ -14,6 +14,7 @@ import SyncSummary from "../../components/sync-summary/SyncSummary";
 
 export interface ModulePackageListPageProps {
     remoteInstance?: Instance;
+    showStore: boolean;
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
     presentation: PresentationOption;
     externalComponents?: ReactNode;

@@ -1,13 +1,14 @@
 import { makeStyles, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { ConfirmationDialog } from "d2-ui-components";
-import _, { Dictionary } from "lodash";
+import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import semver from "semver";
 import { ValidationError } from "../../../../domain/common/entities/Validations";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
+import { Dictionary } from "../../../../types/utils";
 import { useAppContext } from "../../contexts/AppContext";
 
 export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save, close }) => {
@@ -18,7 +19,7 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
     const [item, updateItem] = useState<Package>(
         Package.build({
             name: i18n.t("Package of {{name}}", module),
-            module: { id: module.id, name: module.name, instance: module.instance },
+            module,
             version:
                 semver.parse(module.lastPackageVersion.split("-")[0])?.inc("patch").format() ??
                 "1.0.0",

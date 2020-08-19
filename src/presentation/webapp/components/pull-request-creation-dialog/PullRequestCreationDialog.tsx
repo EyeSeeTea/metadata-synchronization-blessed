@@ -132,6 +132,9 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
         <ConfirmationDialog
             isOpen={true}
             title={i18n.t("Create pull request on {{name}}", instance)}
+            description={i18n.t(
+                "There are responsibles for the selected metadata. You can still create a pull request and once approved by the responsible you will be able to finish the synchronization."
+            )}
             maxWidth={"md"}
             fullWidth={true}
             onCancel={onClose}

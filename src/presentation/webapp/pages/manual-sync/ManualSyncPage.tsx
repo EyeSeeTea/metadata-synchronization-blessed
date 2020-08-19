@@ -24,7 +24,10 @@ import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
 import { MetadataType } from "../../../../utils/d2";
 import { isAppConfigurator } from "../../../../utils/permissions";
-import { InstanceSelectionDropdown } from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
+import {
+    InstanceSelectionDropdown,
+    InstanceSelectionOption,
+} from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
@@ -208,7 +211,7 @@ const ManualSyncPage: React.FC = () => {
     ];
 
     const updateSelectedInstance = useCallback(
-        (instance?: Instance) => {
+        (_type: InstanceSelectionOption, instance?: Instance) => {
             const originInstance = instance?.id ?? "LOCAL";
             const targetInstances = originInstance === "LOCAL" ? [] : ["LOCAL"];
 
