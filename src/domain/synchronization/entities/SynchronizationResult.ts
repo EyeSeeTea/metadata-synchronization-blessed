@@ -21,6 +21,7 @@ export interface ErrorMessage {
 
 export interface SynchronizationResult {
     status: SynchronizationStatus;
+    origin?: PublicInstance;
     instance: PublicInstance;
     date: Date;
     type: SynchronizationType;

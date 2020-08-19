@@ -83,7 +83,7 @@ export class ImportPullRequestUseCase implements UseCase {
             status === "IMPORTED" ? "Pull request imported" : "Pull request could not be imported"
         );
 
-        return Either.success(result);
+        return Either.success({ ...result, origin: remoteInstance.toPublicObject() });
     }
 
     @cache()

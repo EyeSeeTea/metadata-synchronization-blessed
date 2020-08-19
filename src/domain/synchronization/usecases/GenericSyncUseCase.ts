@@ -168,6 +168,7 @@ export abstract class GenericSyncUseCase {
 
     public async *execute() {
         const { targetInstances: targetInstanceIds, syncRule } = this.builder;
+        const origin = await this.getOriginInstance();
         yield { message: i18n.t("Preparing synchronization") };
 
         // Build instance list
@@ -180,6 +181,7 @@ export abstract class GenericSyncUseCase {
         syncReport.addSyncResult(
             ...targetInstances.map(instance => ({
                 instance: instance.toPublicObject(),
+                origin: origin.toPublicObject(),
                 status: "PENDING" as SynchronizationStatus,
                 date: new Date(),
                 type: this.type,
@@ -207,6 +209,7 @@ export abstract class GenericSyncUseCase {
                     status: "ERROR",
                     message: error.message,
                     instance: instance.toPublicObject(),
+                    origin: origin.toPublicObject(),
                     date: new Date(),
                     type: this.type,
                 });
