@@ -65,6 +65,7 @@ export const ModulePackageListPage: React.FC = () => {
                 viewValue={tableOption}
                 onViewChange={setTableOption}
                 presentation={"app"}
+                openSyncSummary={setSyncReport}
             />
 
             {!!syncReport && (

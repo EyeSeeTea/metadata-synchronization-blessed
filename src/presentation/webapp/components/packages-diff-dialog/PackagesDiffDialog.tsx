@@ -47,6 +47,7 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
     const hasChanges = metadataDiff && metadataDiff.hasChanges;
     const packageName = `${remotePackage.name} (${remoteInstance?.name ?? "Store"})`;
     const { importPackage, syncReport, closeSyncReport } = usePackageImporter(
+        remoteInstance,
         packageName,
         metadataDiff,
         onClose

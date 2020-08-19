@@ -175,7 +175,10 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
                                 ? "FAILURE"
                                 : "DONE"
                         );
-                        report.addSyncResult(result);
+                        report.addSyncResult({
+                            ...result,
+                            origin: remoteInstance?.toPublicObject(),
+                        });
                         await report.save(api);
 
                         openSyncSummary(report);
