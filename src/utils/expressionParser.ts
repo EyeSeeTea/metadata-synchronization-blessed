@@ -64,9 +64,9 @@ export class ExpressionParser {
             if (expression === null) {
                 return "MALFORMED_EXPRESSION";
             } else if (this.isOperatorPosition(index) && expression.type !== "operator") {
-                return "MALFORMED_EXPRESSION";
+                return "OPERAND_WRONG_POSITION";
             } else if (!this.isOperatorPosition(index) && expression.type === "operator") {
-                return "MALFORMED_EXPRESSION";
+                return "OPERATOR_WRONG_POSITION";
             }
         }
 
@@ -253,7 +253,12 @@ export class ExpressionParser {
     }
 }
 
-export type ParserError = "MALFORMED_EXPRESSION" | "EMPTY_EXPRESION" | "NOT_BUILDABLE";
+export type ParserError =
+    | "MALFORMED_EXPRESSION"
+    | "EMPTY_EXPRESION"
+    | "NOT_BUILDABLE"
+    | "OPERATOR_WRONG_POSITION"
+    | "OPERAND_WRONG_POSITION";
 
 export type TokenType =
     | "number"
