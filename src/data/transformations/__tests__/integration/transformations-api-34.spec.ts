@@ -1,11 +1,10 @@
 import { sync } from "./helpers";
 
-describe("Sync metadata", () => {
-    beforeAll(() => {
-        jest.setTimeout(30000);
-    });
+import visualizations30 from "./data/visualizations-30.json";
+import visualizations34 from "./data/visualizations-34.json";
 
-    it("Transforms report params (2.33 -> 2.34)", async () => {
+describe("Transformation 2.30 -> 2.34", () => {
+    it("Transforms report params", async () => {
         const metadata = {
             reports: [
                 {
@@ -23,7 +22,7 @@ describe("Sync metadata", () => {
             ],
         };
 
-        const { reports } = await sync({ from: "2.33", to: "2.34", metadata, models: ["reports"] });
+        const { reports } = await sync({ from: "2.30", to: "2.34", metadata, models: ["reports"] });
         const report = reports["id1"];
         expect(report).toBeDefined();
 
@@ -45,7 +44,7 @@ describe("Sync metadata", () => {
         expect(reportParams.paramParentOrganisationUnit).toBeUndefined();
     });
 
-    it("Transforms dashboard items (2.33 -> 2.34)", async () => {
+    it("Transforms dashboard items", async () => {
         const metadata = {
             dashboards: [
                 {
@@ -62,7 +61,7 @@ describe("Sync metadata", () => {
         };
 
         const { dashboards } = await sync({
-            from: "2.33",
+            from: "2.30",
             to: "2.34",
             metadata,
             models: ["dashboards"],
@@ -80,7 +79,28 @@ describe("Sync metadata", () => {
         expect(item.chart, "is no longer set").toBeUndefined();
     });
 
-    it("Transforms dashboard items (2.34 -> 2.33)", async () => {
+    it("Transforms charts and report tables to visualizations", async () => {
+        const payload = await sync({
+            from: "2.30",
+            to: "2.34",
+            metadata: visualizations30,
+            models: ["visualizations"],
+        });
+
+        expect(
+            payload.visualizations["LW0O27b7TdD"],
+            "Chart to be transformed into a visualization"
+        ).toMatchObject(visualizations34.visualizations[0]);
+
+        expect(
+            payload.visualizations["qfMh2IjOxvw"],
+            "Report table to be transformed into a visualization"
+        ).toMatchObject(visualizations34.visualizations[1]);
+    });
+});
+
+describe("Transformation 2.34 -> 2.30", () => {
+    it("Transforms dashboard items", async () => {
         const metadata = {
             dashboards: [
                 {
@@ -95,6 +115,11 @@ describe("Sync metadata", () => {
                             id: "item2",
                             type: "VISUALIZATION",
                             visualization: { id: "reportTable1" },
+                        },
+                        {
+                            id: "item3",
+                            type: "MAP",
+                            map: { id: "map1" },
                         },
                     ],
                 },
@@ -113,14 +138,17 @@ describe("Sync metadata", () => {
 
         const { dashboards } = await sync({
             from: "2.34",
-            to: "2.33",
+            to: "2.30",
             metadata,
             models: ["dashboards"],
         });
+
         const dashboard = dashboards["dashboard1"];
         expect(dashboard).toBeDefined();
+        expect(dashboard?.dashboardItems).toHaveLength(3);
+        const [chartItem, reportTableItem, mapItem] = dashboard?.dashboardItems;
 
-        const [chartItem] = dashboard?.dashboardItems;
+        // Chart item
         expect(chartItem).toBeDefined();
 
         expect(chartItem.type).toEqual("CHART");
@@ -128,6 +156,43 @@ describe("Sync metadata", () => {
             id: "chart1",
         });
         expect(chartItem.visualization, "is no longer set").toBeUndefined();
+
+        // Report table item
+        expect(reportTableItem).toBeDefined();
+
+        expect(reportTableItem.type).toEqual("REPORT_TABLE");
+        expect(reportTableItem.reportTable, "to reference the report table").toEqual({
+            id: "reportTable1",
+        });
+        expect(reportTableItem.visualization, "is no longer set").toBeUndefined();
+
+        // Other item
+        expect(mapItem).toBeDefined();
+
+        expect(mapItem.type).toEqual("MAP");
+        expect(mapItem.map, "to reference the map").toEqual({
+            id: "map1",
+        });
+        expect(mapItem.visualization).toBeUndefined();
+    });
+
+    it("Transforms visualizations into charts and report tables", async () => {
+        const payload = await sync({
+            from: "2.34",
+            to: "2.30",
+            metadata: visualizations34,
+            models: ["charts", "reportTables"],
+        });
+
+        expect(
+            payload.charts["LW0O27b7TdD"],
+            "Chart to be transformed into a visualization"
+        ).toMatchObject(visualizations30.charts[0]);
+
+        expect(
+            payload.reportTables["qfMh2IjOxvw"],
+            "Report table to be transformed into a visualization"
+        ).toMatchObject(visualizations30.reportTables[0]);
     });
 });
 

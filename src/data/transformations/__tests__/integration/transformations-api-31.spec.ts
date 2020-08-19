@@ -135,8 +135,6 @@ describe("Transformations for 2.31 -> 2.30", () => {
         const chartLine = charts["chart-line"];
         expect(chartLine).toBeDefined();
 
-        expect(chartLine).not.toHaveProperty("yearlySeries");
-
         expect(
             chartLine.relativePeriods,
             "to be set from yearlySeries for keys thisYear/lastYear/last5Years"
@@ -147,7 +145,7 @@ describe("Transformations for 2.31 -> 2.30", () => {
         });
 
         expect(chartLine.relativePeriods, "to be set to false for other values").toMatchObject({
-            last12Weeks: false,
+            last12Weeks: true,
             last4Quarters: false,
         });
 
