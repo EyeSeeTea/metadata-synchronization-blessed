@@ -3,7 +3,6 @@ import _ from "lodash";
 import { Mapping, isKeyOf } from "./__tests__/integration/helpers";
 
 import { D2DashboardItem as D2DashboardItem33 } from "d2-api/2.33";
-import { D2Visualization as D2Visualization34 } from "d2-api/2.34";
 
 export const metadataTransformations: Transformation[] = [
     {
@@ -340,7 +339,7 @@ const chart = { type: "CHART", property: "chart" } as const;
 const reportTable = { type: "REPORT_TABLE", property: "reportTable" } as const;
 
 const visualizationTypeMapping: Record<
-    D2Visualization34["type"],
+    string,
     { type: D2DashboardItem33["type"]; property: keyof D2DashboardItem33 }
 > = {
     COLUMN: chart,
