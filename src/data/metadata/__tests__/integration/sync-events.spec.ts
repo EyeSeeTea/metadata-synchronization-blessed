@@ -1,7 +1,7 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { startDhis } from "../../../../../config/dhisServer";
+import { startDhis } from "../../../../utils/dhisServer";
 import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { EventsSyncUseCase } from "../../../../domain/events/usecases/EventsSyncUseCase";
 import { Instance } from "../../../../domain/instance/entities/Instance";

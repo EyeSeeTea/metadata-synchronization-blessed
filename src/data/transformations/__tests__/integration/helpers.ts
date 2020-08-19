@@ -11,8 +11,8 @@ import { MetadataD2ApiRepository } from "../../../metadata/MetadataD2ApiReposito
 import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
-import { startDhis } from "../../../../../config/dhisServer";
 import { AnyRegistry } from "miragejs/-types";
+import { startDhis } from "../../../../utils/dhisServer";
 
 export function buildRepositoryFactory() {
     const repositoryFactory: RepositoryFactory = new RepositoryFactory();
