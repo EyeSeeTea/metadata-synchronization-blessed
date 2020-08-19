@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { Either } from "../domain/common/entities/Either";
 
 export class ExpressionParser {
@@ -42,9 +43,11 @@ export class ExpressionParser {
         const error = this.validate(expressions);
         if (error) return Either.error(error);
 
-        // TODO
+        const formula = expressions.map(expression => this.buildExpression(expression)).join(" ");
+        const validation = this.parse(formula);
+        if (validation.isError()) return Either.error("NOT_BUILDABLE");
 
-        return Either.success("");
+        return Either.success(formula);
     }
 
     public static extractIds(formula: string): string[] {
@@ -52,12 +55,12 @@ export class ExpressionParser {
     }
 
     private static validate(expressions: Array<Expression | null>): ParserError | undefined {
-        const expressionsToValidate = expressions?.filter(
+        const expressionsWithoutParentheses = expressions?.filter(
             expression =>
                 expression?.type !== "parentheses" || !["(", ")"].includes(expression.operator)
         );
 
-        for (const [index, expression] of expressionsToValidate.entries()) {
+        for (const [index, expression] of expressionsWithoutParentheses.entries()) {
             if (expression === null) {
                 return "MALFORMED_EXPRESSION";
             } else if (this.isOperatorPosition(index) && expression.type !== "operator") {
@@ -203,13 +206,54 @@ export class ExpressionParser {
         return null;
     }
 
+    private static buildExpression(expression: Expression): string {
+        switch (expression.type) {
+            case "constant":
+                return `C{${expression.constant}}`;
+            case "dataElement":
+                if (expression.attributeOptionCombo && !expression.categoryOptionCombo) return "";
+                if (expression.attributeOptionCombo && !expression.dataElement) return "";
+                if (expression.categoryOptionCombo && !expression.dataElement) return "";
+
+                return `#{${_.compact(
+                    _.compact([
+                        expression.dataElement,
+                        expression.categoryOptionCombo,
+                        expression.attributeOptionCombo,
+                    ])
+                ).join(".")}}`;
+            case "indicator":
+                return `N{${expression.indicator}}`;
+            case "number":
+                return `${expression.value}`;
+            case "operator":
+                return expression.operator;
+            case "organisationUnitGroup":
+                return `OUG{${expression.organisationUnitGroup}}`;
+            case "parentheses":
+                return expression.operator;
+            case "programAttribute":
+                return `A{${_.compact([expression.program, expression.attribute]).join(".")}}`;
+            case "programDataElement":
+                return `D{${[expression.program, expression.dataElement].join(".")}}`;
+            case "programIndicator":
+                return `I{${expression.programIndicator}}`;
+            case "programVariable":
+                return `V{${expression.variable}}`;
+            case "reportingRate":
+                return `R{${[expression.dataSet, expression.metric].join(".")}}`;
+            default:
+                return "";
+        }
+    }
+
     // Operators are in odd positions
     private static isOperatorPosition(index: number) {
         return index % 2 !== 0;
     }
 }
 
-export type ParserError = "MALFORMED_EXPRESSION" | "EMPTY_EXPRESION";
+export type ParserError = "MALFORMED_EXPRESSION" | "EMPTY_EXPRESION" | "NOT_BUILDABLE";
 
 export type TokenType =
     | "number"

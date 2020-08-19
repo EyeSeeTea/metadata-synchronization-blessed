@@ -186,7 +186,7 @@ describe("Expression parser", () => {
         expect(validation.value.error).toEqual("EMPTY_EXPRESION");
     });
 
-    it("operation - example 1", () => {
+    it("parse - example 1", () => {
         const validation = ExpressionParser.parse(
             "#{P3jJH5Tu5VC.S34ULMcHMca} + C{Gfd3ppDfq8E} + OUG{CXw2yu5fodb}"
         );
@@ -207,7 +207,7 @@ describe("Expression parser", () => {
         ]);
     });
 
-    it("operation - example 2", () => {
+    it("parse - example 2", () => {
         const validation = ExpressionParser.parse("#{P3jJH5Tu5VC} + 2");
         expect(validation.value.data).toEqual([
             {
@@ -221,7 +221,7 @@ describe("Expression parser", () => {
         ]);
     });
 
-    it("operation - example 3", () => {
+    it("parse - example 3", () => {
         const validation = ExpressionParser.parse(
             "#{P3jJH5Tu5VC.S34ULMcHMca} + #{P3jJH5Tu5VC.*.j8vBiBqGf6O} + #{P3jJH5Tu5VC.S34ULMcHMca.*}"
         );
@@ -249,7 +249,7 @@ describe("Expression parser", () => {
         ]);
     });
 
-    it("operation - example 4", () => {
+    it("parse - example 4", () => {
         const validation = ExpressionParser.parse(
             "( D{eBAyeGv0exc.vV9UWAZohSf} * A{IpHINAT79UW.cejWyOfXge6} ) / D{eBAyeGv0exc.GieVkTxp4HH}"
         );
@@ -276,7 +276,7 @@ describe("Expression parser", () => {
         ]);
     });
 
-    it("operation - example 5", () => {
+    it("parse - example 5", () => {
         const validation = ExpressionParser.parse("I{EMOt6Fwhs1n} * 1000 / #{WUg3MYWQ7pt}");
         expect(validation.value.data).toEqual([
             { type: "programIndicator", programIndicator: "EMOt6Fwhs1n" },
@@ -292,7 +292,7 @@ describe("Expression parser", () => {
         ]);
     });
 
-    it("operation - example 6", () => {
+    it("parse - example 6", () => {
         const validation = ExpressionParser.parse(
             "R{BfMAe6Itzgt.REPORTING_RATE} * #{P3jJH5Tu5VC.S34ULMcHMca}"
         );
@@ -312,7 +312,7 @@ describe("Expression parser", () => {
         ]);
     });
 
-    it("operation - example 7", () => {
+    it("parse - example 7", () => {
         const validation = ExpressionParser.parse(
             "R{BfMAe6Itzgt.ACTUAL_REPORTS} / R{BfMAe6Itzgt.EXPECTED_REPORTS}"
         );
@@ -331,7 +331,7 @@ describe("Expression parser", () => {
         ]);
     });
 
-    it("operation - example 8", () => {
+    it("parse - example 8", () => {
         const validation = ExpressionParser.parse("N{Rigf2d2Zbjp} * #{P3jJH5Tu5VC.S34ULMcHMca}");
         expect(validation.value.data).toEqual([
             { type: "indicator", indicator: "Rigf2d2Zbjp" },
@@ -345,7 +345,7 @@ describe("Expression parser", () => {
         ]);
     });
 
-    it("operation - example 9", () => {
+    it("parse - example 9", () => {
         const validation = ExpressionParser.parse(
             "( 2 * #{P3jJH5Tu5VC.S34ULMcHMca} ) / ( #{FQ2o8UBlcrS.S34ULMcHMca} - 200 ) * 25"
         );
@@ -376,28 +376,252 @@ describe("Expression parser", () => {
         ]);
     });
 
-    it("operation - example 10", () => {
+    it("parse - example 10", () => {
         const validation = ExpressionParser.parse(
             "#{A03MvHHogjR.a3kGcGDCuk6} + A{OvY4VVhSDeJ} + V{incident_date} + C{bCqvfPR02Im}"
         );
         expect(validation.value.data).toEqual([
             {
-                type: 'dataElement',
-                dataElement: 'A03MvHHogjR',
-                categoryOptionCombo: 'a3kGcGDCuk6',
-                attributeOptionCombo: undefined
+                type: "dataElement",
+                dataElement: "A03MvHHogjR",
+                categoryOptionCombo: "a3kGcGDCuk6",
+                attributeOptionCombo: undefined,
             },
-            { type: 'operator', operator: '+' },
+            { type: "operator", operator: "+" },
             {
-                type: 'programAttribute',
+                type: "programAttribute",
                 program: undefined,
-                attribute: 'OvY4VVhSDeJ'
+                attribute: "OvY4VVhSDeJ",
             },
-            { type: 'operator', operator: '+' },
-            { type: 'programVariable', variable: 'incident_date' },
-            { type: 'operator', operator: '+' },
-            { type: 'constant', constant: 'bCqvfPR02Im' }
+            { type: "operator", operator: "+" },
+            { type: "programVariable", variable: "incident_date" },
+            { type: "operator", operator: "+" },
+            { type: "constant", constant: "bCqvfPR02Im" },
         ]);
+    });
+
+    it("build - example 1", () => {
+        const validation = ExpressionParser.build([
+            {
+                type: "dataElement",
+                dataElement: "P3jJH5Tu5VC",
+                categoryOptionCombo: "S34ULMcHMca",
+                attributeOptionCombo: undefined,
+            },
+            { type: "operator", operator: "+" },
+            { type: "constant", constant: "Gfd3ppDfq8E" },
+            { type: "operator", operator: "+" },
+            {
+                type: "organisationUnitGroup",
+                organisationUnitGroup: "CXw2yu5fodb",
+            },
+        ]);
+
+        expect(validation.value.data).toEqual(
+            "#{P3jJH5Tu5VC.S34ULMcHMca} + C{Gfd3ppDfq8E} + OUG{CXw2yu5fodb}"
+        );
+    });
+
+    it("build - example 2", () => {
+        const validation = ExpressionParser.build([
+            {
+                type: "dataElement",
+                dataElement: "P3jJH5Tu5VC",
+                categoryOptionCombo: undefined,
+                attributeOptionCombo: undefined,
+            },
+            { type: "operator", operator: "+" },
+            { type: "number", value: 2 },
+        ]);
+
+        expect(validation.value.data).toEqual("#{P3jJH5Tu5VC} + 2");
+    });
+
+    it("build - example 3", () => {
+        const validation = ExpressionParser.build([
+            {
+                type: "dataElement",
+                dataElement: "P3jJH5Tu5VC",
+                categoryOptionCombo: "S34ULMcHMca",
+                attributeOptionCombo: undefined,
+            },
+            { type: "operator", operator: "+" },
+            {
+                type: "dataElement",
+                dataElement: "P3jJH5Tu5VC",
+                categoryOptionCombo: "*",
+                attributeOptionCombo: "j8vBiBqGf6O",
+            },
+            { type: "operator", operator: "+" },
+            {
+                type: "dataElement",
+                dataElement: "P3jJH5Tu5VC",
+                categoryOptionCombo: "S34ULMcHMca",
+                attributeOptionCombo: "*",
+            },
+        ]);
+
+        expect(validation.value.data).toEqual(
+            "#{P3jJH5Tu5VC.S34ULMcHMca} + #{P3jJH5Tu5VC.*.j8vBiBqGf6O} + #{P3jJH5Tu5VC.S34ULMcHMca.*}"
+        );
+    });
+
+    it("build - example 4", () => {
+        const validation = ExpressionParser.build([
+            { type: "parentheses", operator: "(" },
+            {
+                type: "programDataElement",
+                program: "eBAyeGv0exc",
+                dataElement: "vV9UWAZohSf",
+            },
+            { type: "operator", operator: "*" },
+            {
+                type: "programAttribute",
+                program: "IpHINAT79UW",
+                attribute: "cejWyOfXge6",
+            },
+            { type: "parentheses", operator: ")" },
+            { type: "operator", operator: "/" },
+            {
+                type: "programDataElement",
+                program: "eBAyeGv0exc",
+                dataElement: "GieVkTxp4HH",
+            },
+        ]);
+
+        expect(validation.value.data).toEqual(
+            "( D{eBAyeGv0exc.vV9UWAZohSf} * A{IpHINAT79UW.cejWyOfXge6} ) / D{eBAyeGv0exc.GieVkTxp4HH}"
+        );
+    });
+
+    it("build - example 5", () => {
+        const validation = ExpressionParser.build([
+            { type: "programIndicator", programIndicator: "EMOt6Fwhs1n" },
+            { type: "operator", operator: "*" },
+            { type: "number", value: 1000 },
+            { type: "operator", operator: "/" },
+            {
+                type: "dataElement",
+                dataElement: "WUg3MYWQ7pt",
+                categoryOptionCombo: undefined,
+                attributeOptionCombo: undefined,
+            },
+        ]);
+
+        expect(validation.value.data).toEqual("I{EMOt6Fwhs1n} * 1000 / #{WUg3MYWQ7pt}");
+    });
+
+    it("build - example 6", () => {
+        const validation = ExpressionParser.build([
+            {
+                type: "reportingRate",
+                dataSet: "BfMAe6Itzgt",
+                metric: "REPORTING_RATE",
+            },
+            { type: "operator", operator: "*" },
+            {
+                type: "dataElement",
+                dataElement: "P3jJH5Tu5VC",
+                categoryOptionCombo: "S34ULMcHMca",
+                attributeOptionCombo: undefined,
+            },
+        ]);
+
+        expect(validation.value.data).toEqual(
+            "R{BfMAe6Itzgt.REPORTING_RATE} * #{P3jJH5Tu5VC.S34ULMcHMca}"
+        );
+    });
+
+    it("build - example 7", () => {
+        const validation = ExpressionParser.build([
+            {
+                type: "reportingRate",
+                dataSet: "BfMAe6Itzgt",
+                metric: "ACTUAL_REPORTS",
+            },
+            { type: "operator", operator: "/" },
+            {
+                type: "reportingRate",
+                dataSet: "BfMAe6Itzgt",
+                metric: "EXPECTED_REPORTS",
+            },
+        ]);
+
+        expect(validation.value.data).toEqual(
+            "R{BfMAe6Itzgt.ACTUAL_REPORTS} / R{BfMAe6Itzgt.EXPECTED_REPORTS}"
+        );
+    });
+
+    it("build - example 8", () => {
+        const validation = ExpressionParser.build([
+            { type: "indicator", indicator: "Rigf2d2Zbjp" },
+            { type: "operator", operator: "*" },
+            {
+                type: "dataElement",
+                dataElement: "P3jJH5Tu5VC",
+                categoryOptionCombo: "S34ULMcHMca",
+                attributeOptionCombo: undefined,
+            },
+        ]);
+
+        expect(validation.value.data).toEqual("N{Rigf2d2Zbjp} * #{P3jJH5Tu5VC.S34ULMcHMca}");
+    });
+
+    it("build - example 9", () => {
+        const validation = ExpressionParser.build([
+            { type: "parentheses", operator: "(" },
+            { type: "number", value: 2 },
+            { type: "operator", operator: "*" },
+            {
+                type: "dataElement",
+                dataElement: "P3jJH5Tu5VC",
+                categoryOptionCombo: "S34ULMcHMca",
+                attributeOptionCombo: undefined,
+            },
+            { type: "parentheses", operator: ")" },
+            { type: "operator", operator: "/" },
+            { type: "parentheses", operator: "(" },
+            {
+                type: "dataElement",
+                dataElement: "FQ2o8UBlcrS",
+                categoryOptionCombo: "S34ULMcHMca",
+                attributeOptionCombo: undefined,
+            },
+            { type: "operator", operator: "-" },
+            { type: "number", value: 200 },
+            { type: "parentheses", operator: ")" },
+            { type: "operator", operator: "*" },
+            { type: "number", value: 25 },
+        ]);
+
+        expect(validation.value.data).toEqual(
+            "( 2 * #{P3jJH5Tu5VC.S34ULMcHMca} ) / ( #{FQ2o8UBlcrS.S34ULMcHMca} - 200 ) * 25"
+        );
+    });
+
+    it("build - example 10", () => {
+        const validation = ExpressionParser.build([
+            {
+                type: "dataElement",
+                dataElement: "A03MvHHogjR",
+                categoryOptionCombo: "a3kGcGDCuk6",
+                attributeOptionCombo: undefined,
+            },
+            { type: "operator", operator: "+" },
+            {
+                type: "programAttribute",
+                program: undefined,
+                attribute: "OvY4VVhSDeJ",
+            },
+            { type: "operator", operator: "+" },
+            { type: "programVariable", variable: "incident_date" },
+            { type: "operator", operator: "+" },
+            { type: "constant", constant: "bCqvfPR02Im" },
+        ]);
+
+        expect(validation.value.data).toEqual(
+            "#{A03MvHHogjR.a3kGcGDCuk6} + A{OvY4VVhSDeJ} + V{incident_date} + C{bCqvfPR02Im}"
+        );
     });
 });
 
