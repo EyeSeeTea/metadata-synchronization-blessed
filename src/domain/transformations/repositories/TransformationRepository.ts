@@ -9,12 +9,12 @@ export interface TransformationRepository {
     mapPackageTo<Input = MetadataPackage, Output = MetadataPackage>(
         version: number,
         payload: Input,
-        transformations: Transformation<Input, Output>[]
+        transformations: Transformation[]
     ): Output;
 
     mapPackageFrom<Input = MetadataPackage, Output = MetadataPackage>(
         version: number,
         payload: Input,
-        transformations: Transformation<Input, Output>[]
+        transformations: Transformation[]
     ): Output;
 }

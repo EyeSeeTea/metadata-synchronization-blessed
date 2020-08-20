@@ -177,8 +177,7 @@ export const metadataTransformations: Transformation[] = [
                                 if (type !== "VISUALIZATION" || !dashboardItem.visualization)
                                     return dashboardItem;
                                 if (!visualizations) {
-                                    printDebug("No visualization found");
-                                    debugl;
+                                    debug("No visualization found");
                                 }
 
                                 const visualization = visualizations.find(
