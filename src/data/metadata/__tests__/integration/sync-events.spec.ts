@@ -6,7 +6,6 @@ import { EventsSyncUseCase } from "../../../../domain/events/usecases/EventsSync
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Repositories } from "../../../../domain/Repositories";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
-import { debug } from "../../../../utils/debug";
 import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
 import { EventsD2ApiRepository } from "../../../events/EventsD2ApiRepository";
@@ -231,8 +230,8 @@ describe("Sync metadata", () => {
         const payload = await sync.buildPayload();
         expect(payload.events?.find(({ id }) => id === "test-event-1")).toBeDefined();
 
-        for await (const { done } of sync.execute()) {
-            if (done) debug("Done");
+        for await (const _sync of sync.execute()) {
+            // no-op
         }
 
         const response = remote.db.events.find(1);
@@ -263,8 +262,8 @@ describe("Sync metadata", () => {
         const payload = await sync.buildPayload();
         expect(payload.events?.find(({ id }) => id === "test-event-2")).toBeDefined();
 
-        for await (const { done } of sync.execute()) {
-            if (done) debug("Done");
+        for await (const _sync of sync.execute()) {
+            // no-op
         }
 
         const response = local.db.events.find(1);

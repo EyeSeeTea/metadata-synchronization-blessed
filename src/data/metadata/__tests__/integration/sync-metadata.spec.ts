@@ -6,7 +6,6 @@ import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { Repositories } from "../../../../domain/Repositories";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
-import { debug } from "../../../../utils/debug";
 import { startDhis } from "../../../../utils/dhisServer";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
@@ -104,8 +103,8 @@ describe("Sync metadata", () => {
         const payload = await sync.buildPayload();
         expect(payload.dataElements?.find(({ id }) => id === "id1")).toBeDefined();
 
-        for await (const { done } of sync.execute()) {
-            if (done) debug("Done");
+        for await (const _sync of sync.execute()) {
+            // no-op
         }
 
         const response = remote.db.metadata.find(1);
@@ -132,8 +131,8 @@ describe("Sync metadata", () => {
         const payload = await sync.buildPayload();
         expect(payload.dataElements?.find(({ id }) => id === "id2")).toBeDefined();
 
-        for await (const { done } of sync.execute()) {
-            if (done) debug("Done");
+        for await (const _sync of sync.execute()) {
+            // no-op
         }
 
         const response = local.db.metadata.find(1);

@@ -6,7 +6,6 @@ import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { Repositories } from "../../../../domain/Repositories";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
-import { debug } from "../../../../utils/debug";
 import { startDhis } from "../../../../utils/dhisServer";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../../../metadata/MetadataD2ApiRepository";
@@ -121,8 +120,8 @@ describe("Sync metadata", () => {
         const payload = await useCase.buildPayload();
         expect(payload.organisationUnits?.find(({ id }) => id === "ou_id1")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
-            if (done) debug("Done");
+        for await (const _sync of useCase.execute()) {
+            // no-op
         }
 
         // Assert object has been created on remote
@@ -161,8 +160,8 @@ describe("Sync metadata", () => {
         const payload = await useCase.buildPayload();
         expect(payload.organisationUnits?.find(({ id }) => id === "ou_id2")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
-            if (done) debug("Done");
+        for await (const _sync of useCase.execute()) {
+            // no-op
         }
 
         // Assert object has been created on remote
@@ -203,8 +202,8 @@ describe("Sync metadata", () => {
         const payload = await useCase.buildPayload();
         expect(payload.organisationUnits?.find(({ id }) => id === "ou_id3")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
-            if (done) debug("Done");
+        for await (const _sync of useCase.execute()) {
+            // no-op
         }
 
         // Assert object has been created on remote
@@ -246,8 +245,8 @@ describe("Sync metadata", () => {
 
         await useCase.buildPayload();
 
-        for await (const { done } of useCase.execute()) {
-            if (done) debug("Done");
+        for await (const _sync of useCase.execute()) {
+            // no-op
         }
 
         const response = remote.db.metadata.find(1);

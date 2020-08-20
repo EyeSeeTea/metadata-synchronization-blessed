@@ -6,7 +6,6 @@ import { RepositoryFactory } from "../../../../domain/common/factories/Repositor
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Repositories } from "../../../../domain/Repositories";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
-import { debug } from "../../../../utils/debug";
 import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
@@ -190,8 +189,8 @@ describe("Sync metadata", () => {
         const payload = await sync.buildPayload();
         expect(payload.dataValues?.find(({ value }) => value === "test-value-1")).toBeDefined();
 
-        for await (const { done } of sync.execute()) {
-            if (done) debug("Done");
+        for await (const _sync of sync.execute()) {
+            // no-op
         }
 
         const response = remote.db.dataValueSets.find(1);
@@ -218,8 +217,8 @@ describe("Sync metadata", () => {
         const payload = await sync.buildPayload();
         expect(payload.dataValues?.find(({ value }) => value === "test-value-2")).toBeDefined();
 
-        for await (const { done } of sync.execute()) {
-            if (done) debug("Done");
+        for await (const _sync of sync.execute()) {
+            // no-op
         }
 
         const response = local.db.dataValueSets.find(1);
