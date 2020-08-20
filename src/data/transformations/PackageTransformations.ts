@@ -333,6 +333,50 @@ export const metadataTransformations: Transformation[] = [
             };
         },
     },
+    {
+        name: "maps with nested mapViews",
+        apiVersion: 32,
+        apply: ({ maps, mapViews, ...rest }: any) => {
+            const newMapViews = mapViews?.map((mapView: any) => {
+                return {
+                    categoryDimensions: [],
+                    filterDimensions: ["pe"],
+                    ...mapView,
+                };
+            });
+
+            const newMapViewsById = _.keyBy(newMapViews || [], mapView => mapView.id);
+
+            return {
+                ...rest,
+                mapViews: newMapViews,
+                maps: maps?.map((map: any) => {
+                    return {
+                        ...map,
+                        mapViews: _(map.mapViews || [])
+                            .map(mapViewRef => newMapViewsById[mapViewRef.id])
+                            .compact()
+                            .value(),
+                    };
+                }),
+            };
+        },
+    },
+    {
+        name: "mapViews params",
+        apiVersion: 33,
+        apply: ({ mapViews, ...rest }: any) => {
+            return {
+                ...rest,
+                mapViews: mapViews?.map((mapView: any) => {
+                    return {
+                        renderingStrategy: "SINGLE",
+                        ...mapView,
+                    };
+                }),
+            };
+        },
+    },
 ];
 
 const itemsMapping = {
