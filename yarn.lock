@@ -3346,7 +3346,7 @@ axios-retry@3.1.8:
   dependencies:
     is-retry-allowed "^1.1.0"
 
-axios@0.19.2, axios@^0.19.0:
+axios@0.19.2:
   version "0.19.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
   integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
@@ -5201,10 +5201,10 @@ cypress@4.10.0:
     url "0.11.0"
     yauzl "2.10.0"
 
-d2-api@1.0.1-beta.4:
-  version "1.0.1-beta.4"
-  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-1.0.1-beta.4.tgz#4c4b3c81b8d19ffad841a4d3aea94c7e4afb13f4"
-  integrity sha512-vc4YnEXEt3oN3/fnwflQjWYPHVzuMkXGGdANFRRfhS2eNW/Qytj9ZE6zRaOMKb2Oy/iJo1ZymL9bLVk5pPGoKg==
+d2-api@1.0.1-beta.5:
+  version "1.0.1-beta.5"
+  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-1.0.1-beta.5.tgz#d2ede7e7423eb2c3690b0acab244112f34ef1961"
+  integrity sha512-13MwZqxwSISdLlsaAGnxlmCLFLTpxHrcGBaHGgLfpB+xbHRY9Y1kPvNIb9vlolFF6EvLliQgB1oEClpqZferaw==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@dhis2/d2-i18n" "^1.0.5"
@@ -5212,7 +5212,7 @@ d2-api@1.0.1-beta.4:
     "@types/prettier" "^1.18.3"
     "@types/qs" "^6.5.3"
     argparse "^1.0.10"
-    axios "^0.19.0"
+    axios "0.19.2"
     axios-debug-log "^0.6.2"
     axios-mock-adapter "^1.17.0"
     btoa "^1.2.1"
