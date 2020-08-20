@@ -114,8 +114,8 @@ export const metadataTransformations: Transformation[] = [
                 ...rest,
                 charts: charts?.map((chart: any) => {
                     return {
+                        yearlySeries: [],
                         ...chart,
-                        yearlySeries: chart.yearlySeries || [],
                     };
                 }),
             };
@@ -229,7 +229,10 @@ export const metadataTransformations: Transformation[] = [
                         grandParentOrganisationUnit: false,
                     },
                     topLimit: 0,
-                    ..._.omit(chart, ["series", "category", "seriesItems"]),
+                    ...chart,
+                    series: undefined,
+                    category: undefined,
+                    seriesItems: undefined,
                     columnDimensions: _.compact([chart.series]),
                     rowDimensions: _.compact([chart.category]),
                     optionalAxes: (chart.seriesItems || []).map(({ series, axis }: any) => ({
@@ -241,17 +244,17 @@ export const metadataTransformations: Transformation[] = [
 
             const newReportTables = reportTables?.map((reportTable: any) => {
                 return {
-                    ...reportTable,
-                    reportParams: undefined,
-                    type: "PIVOT_TABLE",
-                    yearlySeries: reportTable.yearlySeries || [],
+                    yearlySeries: [],
                     percentStackedValues: false,
                     hideLegend: false,
-                    cumulative: undefined,
                     noSpaceBetweenColumns: false,
-                    cumulativeValues: reportTable.cumulative,
-                    optionalAxes: [],
                     showData: false,
+                    optionalAxes: [],
+                    ...reportTable,
+                    type: "PIVOT_TABLE",
+                    cumulative: undefined,
+                    cumulativeValues: reportTable.cumulative,
+                    reportParams: undefined,
                     reportingParams: getNewReportParams(reportTable.reportParams),
                 };
             });
@@ -272,7 +275,6 @@ export const metadataTransformations: Transformation[] = [
 
             const newCharts = charts.map((chart: any) => {
                 return {
-                    ...chart,
                     series: (chart.columnDimensions || [])[0],
                     category: (chart.rowDimensions || [])[0],
                     seriesItems: (chart.optionalAxes || []).map(
@@ -281,6 +283,7 @@ export const metadataTransformations: Transformation[] = [
                             axis,
                         })
                     ),
+                    ...chart,
                 };
             });
 
@@ -288,7 +291,9 @@ export const metadataTransformations: Transformation[] = [
                 return {
                     ...reportTable,
                     ...getPeriodDataFromYearlySeries(reportTable),
+                    cumulativeValues: undefined,
                     cumulative: reportTable.cumulativeValues,
+                    reportingParams: undefined,
                     reportParams: getOldReportParams(reportTable.reportingParams),
                 };
             });
@@ -393,8 +398,12 @@ function getOldReportParams(reportParams: any) {
     };
 }
 
+function isNumber(s: string): boolean {
+    return !!s.match(/^\d+/);
+}
+
 function getPeriodDataFromYearlySeries(object: any) {
-    const [years, relativeYearlySeries] = _.partition(object.yearlySeries, s => s.match(/^\d+/));
+    const [years, relativeYearlySeries] = _.partition(object.yearlySeries, isNumber);
 
     const relativePeriodsMapping: Mapping = {
         THIS_YEAR: "thisYear",
