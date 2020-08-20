@@ -1,3 +1,4 @@
+import { FilterValueBase } from "d2-api/api/common";
 import _ from "lodash";
 import moment from "moment";
 import { Ref } from "../../domain/common/entities/Ref";
@@ -21,6 +22,8 @@ import { D2Api, D2Model, MetadataResponse, Model, Stats } from "../../types/d2-a
 import { Dictionary } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import { metadataTransformations } from "../transformations/PackageTransformations";
+import { promiseMap } from "../../utils/common";
+import { paginate } from "../../utils/pagination";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
@@ -56,14 +59,13 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         fields = { $owner: true },
         page,
         pageSize,
+        order,
         ...params
     }: ListMetadataParams): Promise<ListMetadataResponse> {
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
-
-        const { objects, pager } = await this.getApiModel(type)
-            .get({ paging: true, fields, filter, page, pageSize })
-            .getData();
+        const options = { type, fields, filter, order, page, pageSize };
+        const { objects, pager } = await this.getListPaginated(options);
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -78,14 +80,12 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     public async listAllMetadata({
         type,
         fields = { $owner: true },
+        order,
         ...params
     }: ListMetadataParams): Promise<MetadataEntity[]> {
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
-
-        const { objects } = await this.getApiModel(type)
-            .get({ paging: false, fields, filter })
-            .getData();
+        const objects = await this.getListAll({ type, fields, filter, order });
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -94,6 +94,60 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         );
 
         return metadataPackage[type as keyof MetadataEntities] ?? [];
+    }
+
+    /*
+        Problem: When using a filter `{ id: { in: [id1, id2, ...] } }`, the request URL may result
+        in a HTTP 414 URI Too Long (typically, the limit is 8Kb).
+
+        Solution: Perform N sequential request and concatenate (+ sort) the objects manually.
+    */
+    private async getListGeneric(options: GetListAllOptions): Promise<GetListGenericResponse> {
+        const { type, fields, filter, order = defaultOrder } = options;
+        const idFilter = getIdFilter(filter, maxIds);
+
+        if (idFilter) {
+            const objectsLists = await promiseMap(_.chunk(idFilter.inIds, maxIds), async ids => {
+                const newFilter = { ...filter, id: { ...idFilter.value, in: ids } };
+                const { objects } = await this.getApiModel(type)
+                    .get({ paging: false, fields, filter: newFilter })
+                    .getData();
+                return objects;
+            });
+
+            const objects = _(objectsLists).flatten().orderBy([order.field], [order.order]).value();
+            return { useSingleApiRequest: false, objects };
+        } else {
+            const apiOrder = `${order.field}:${order.order}`;
+            return { useSingleApiRequest: true, order: apiOrder };
+        }
+    }
+
+    private async getListAll(options: GetListAllOptions) {
+        const { type, fields, filter, order = defaultOrder } = options;
+        const list = await this.getListGeneric({ type, fields, filter, order });
+
+        if (list.useSingleApiRequest) {
+            const { objects } = await this.getApiModel(type)
+                .get({ paging: false, fields, filter, order: list.order })
+                .getData();
+            return objects;
+        } else {
+            return list.objects;
+        }
+    }
+
+    private async getListPaginated(options: GetListPaginatedOptions) {
+        const { type, fields, filter, order = defaultOrder, page = 1, pageSize = 50 } = options;
+        const list = await this.getListGeneric({ type, fields, filter, order });
+
+        if (list.useSingleApiRequest) {
+            return this.getApiModel(type)
+                .get({ paging: true, fields, filter, page, pageSize, order: list.order })
+                .getData();
+        } else {
+            return paginate(list.objects, { page, pageSize });
+        }
     }
 
     private buildListFilters({
@@ -106,14 +160,14 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         filterRows,
         search,
     }: Partial<ListMetadataParams>) {
-        const filter: Dictionary<unknown> = {};
+        const filter: Dictionary<FilterValueBase> = {};
 
         if (lastUpdated) filter["lastUpdated"] = { ge: moment(lastUpdated).format("YYYY-MM-DD") };
         if (group) filter[`${group.type}.id`] = { eq: group.value };
         if (level) filter["level"] = { eq: level };
         if (parents) filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
-        if (showOnlySelected) filter["id"] = { in: selectedIds };
-        if (filterRows) filter["id"] = { in: filterRows };
+        if (showOnlySelected) filter["id"] = { in: selectedIds.concat(filter["id"]?.in ?? []) };
+        if (filterRows) filter["id"] = { in: filterRows.concat(filter["id"]?.in ?? []) };
         if (search) filter[search.field] = { [search.operator]: search.value };
 
         return filter;
@@ -132,9 +186,17 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
         //console.debug("Versioned metadata package", versionedPayloadPackage);
 
-        const response = await this.postMetadata(versionedPayloadPackage, additionalParams);
-
-        return this.cleanMetadataImportResponse(response, "metadata");
+        try {
+            const response = await this.postMetadata(versionedPayloadPackage, additionalParams);
+            return this.cleanMetadataImportResponse(response, "metadata");
+        } catch (error) {
+            return {
+                status: "NETWORK ERROR",
+                instance: this.instance.toPublicObject(),
+                date: new Date(),
+                type: "metadata",
+            };
+        }
     }
 
     public async remove(
@@ -236,3 +298,36 @@ const formatStats = (stats: Stats) => ({
     ..._.omit(stats, ["created"]),
     imported: stats.created,
 });
+
+const maxIds = 300;
+
+const defaultOrder = { field: "id", order: "asc" } as const;
+
+interface GetListAllOptions {
+    type: ListMetadataParams["type"];
+    fields: object;
+    filter: Dictionary<FilterValueBase>;
+    order?: ListMetadataParams["order"];
+}
+
+interface GetListPaginatedOptions extends GetListAllOptions {
+    page?: number;
+    pageSize?: number;
+}
+
+type GetListGenericResponse =
+    | { useSingleApiRequest: false; objects: unknown[] }
+    | { useSingleApiRequest: true; order: string };
+
+function getIdFilter(
+    filter: Dictionary<FilterValueBase>,
+    maxIds: number
+): { inIds: string[]; value: object } | null {
+    const inIds = filter?.id?.in;
+
+    if (inIds && inIds.length > maxIds) {
+        return { inIds, value: filter["id"] };
+    } else {
+        return null;
+    }
+}

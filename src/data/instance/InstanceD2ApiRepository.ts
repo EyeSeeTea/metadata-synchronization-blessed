@@ -1,11 +1,12 @@
 import _ from "lodash";
 import { Instance } from "../../domain/instance/entities/Instance";
-import { Message } from "../../domain/instance/entities/Message";
+import { InstanceMessage } from "../../domain/instance/entities/Message";
 import { User } from "../../domain/instance/entities/User";
 import { InstanceRepository } from "../../domain/instance/repositories/InstanceRepository";
 import {
     CategoryOptionCombo,
     OrganisationUnit,
+    UserGroup,
 } from "../../domain/metadata/entities/MetadataEntities";
 import { D2Api } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
@@ -23,16 +24,17 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
     @cache()
     public async getUser(): Promise<User> {
-        const user = await this.api.currentUser
-            .get({ fields: { id: true, name: true, email: true } })
+        const { userGroups, ...user } = await this.api.currentUser
+            .get({ fields: { id: true, name: true, email: true, userGroups: true } })
             .getData();
-        return user;
+
+        return { ...user, userGroups: userGroups.map(({ id }) => id) };
     }
 
     @cache()
     public async getVersion(): Promise<string> {
-        const systemInfo = await this.api.system.info.getData();
-        return systemInfo.version;
+        const { version } = await this.api.system.info.getData();
+        return version;
     }
 
     @cache()
@@ -86,6 +88,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     > {
         const { objects } = await this.api.models.organisationUnits
             .get({
+                paging: false,
                 filter: { level: { eq: "1" } },
                 fields: { id: true, name: true, displayName: true, path: true },
             })
@@ -94,7 +97,16 @@ export class InstanceD2ApiRepository implements InstanceRepository {
         return objects;
     }
 
-    public async sendMessage(message: Message): Promise<void> {
+    @cache()
+    public async getUserGroups(): Promise<Pick<UserGroup, "id" | "name">[]> {
+        const { userGroups } = await this.api.currentUser
+            .get({ fields: { userGroups: { id: true, name: true } } })
+            .getData();
+
+        return userGroups;
+    }
+
+    public async sendMessage(message: InstanceMessage): Promise<void> {
         //@ts-ignore https://github.com/EyeSeeTea/d2-api/pull/52
         await this.api.messageConversations.post(message).getData();
     }

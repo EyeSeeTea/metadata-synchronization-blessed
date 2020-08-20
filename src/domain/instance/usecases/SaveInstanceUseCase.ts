@@ -24,8 +24,7 @@ export class SaveInstanceUseCase implements UseCase {
         if (validations.length === 0) {
             await storageRepository.saveObjectInCollection(
                 Namespace.INSTANCES,
-                instance.encryptPassword(this.encryptionKey).toObject(),
-                ["metadataMapping"]
+                instance.encryptPassword(this.encryptionKey).toObject()
             );
         }
 

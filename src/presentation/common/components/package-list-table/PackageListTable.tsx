@@ -1,5 +1,7 @@
 import { Icon } from "@material-ui/core";
 import {
+    ConfirmationDialog,
+    ConfirmationDialogProps,
     ObjectsTable,
     ObjectsTableDetailField,
     TableAction,
@@ -14,13 +16,18 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
-import { ModuleListPageProps } from "../../../webapp/pages/module-list/ModuleListPage";
+import {
+    PackagesDiffDialog,
+    PackageToDiff,
+} from "../../../webapp/components/packages-diff-dialog/PackagesDiffDialog";
+import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
 
 type ListPackage = Omit<Package, "contents">;
 
-export const PackagesListTable: React.FC<ModuleListPageProps> = ({
+export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,
+    showStore,
     onActionButtonClick,
     presentation = "app",
     externalComponents,
@@ -31,9 +38,16 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const [rows, setRows] = useState<ListPackage[]>([]);
+    const [instancePackages, setInstancePackages] = useState<ListPackage[]>([]);
+    const [storePackages, setStorePackages] = useState<ListPackage[]>([]);
+    const rows = showStore ? storePackages : instancePackages;
+
     const [resetKey, setResetKey] = useState(Math.random());
     const [selection, updateSelection] = useState<TableSelection[]>([]);
+    const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
+    const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
+
+    const isRemoteInstance = !!remoteInstance;
 
     const deletePackages = useCallback(
         async (ids: string[]) => {
@@ -58,13 +72,93 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
     const downloadPackage = useCallback(
         async (ids: string[]) => {
             try {
-                compositionRoot.packages.download(ids[0], remoteInstance);
+                compositionRoot.packages.download(showStore, ids[0], remoteInstance);
             } catch (error) {
                 snackbar.error(i18n.t("Invalid package"));
             }
         },
-        [compositionRoot, remoteInstance, snackbar]
+        [compositionRoot, remoteInstance, snackbar, showStore]
     );
+
+    const publishPackage = useCallback(
+        async (ids: string[]) => {
+            loading.show(true, i18n.t("Publishing package to Store"));
+            const validation = await compositionRoot.packages.publish(ids[0]);
+            validation.match({
+                success: () => {
+                    loading.reset();
+                    snackbar.success(i18n.t("Package published to store"));
+                },
+                error: code => {
+                    loading.reset();
+                    switch (code) {
+                        case "BAD_CREDENTIALS":
+                        case "NO_TOKEN":
+                        case "STORE_NOT_FOUND":
+                            snackbar.error("Store is not properly configured");
+                            return;
+                        case "PACKAGE_NOT_FOUND":
+                            snackbar.error("Could not read package");
+                            return;
+                        case "WRITE_PERMISSIONS":
+                            snackbar.error("You don't have permissions to create file on GitHub");
+                            return;
+                        case "UNKNOWN":
+                            snackbar.error("Unknown error while creating file on GitHub");
+                            return;
+                        case "BRANCH_NOT_FOUND":
+                            updateDialog({
+                                title: i18n.t("Branch not found"),
+                                description: i18n.t(
+                                    "There are no branches for the department of this module. Do you want to create a new branch for this department?"
+                                ),
+                                onCancel: () => {
+                                    updateDialog(null);
+                                },
+                                onSave: async () => {
+                                    updateDialog(null);
+                                    loading.show(true, i18n.t("Publishing package to Store"));
+                                    const validation = await compositionRoot.packages.publish(
+                                        ids[0],
+                                        true
+                                    );
+                                    validation.match({
+                                        success: () =>
+                                            snackbar.success(
+                                                i18n.t("Package published to store in a new branch")
+                                            ),
+                                        error: () =>
+                                            snackbar.error(
+                                                i18n.t("Couldn't create new branch on store")
+                                            ),
+                                    });
+                                    loading.reset();
+                                },
+                                cancelText: i18n.t("Cancel"),
+                                saveText: i18n.t("Proceed"),
+                            });
+                            return;
+                        default:
+                            snackbar.error(i18n.t("Unknown error"));
+                    }
+                },
+            });
+        },
+        [compositionRoot, snackbar, loading]
+    );
+
+    const openPackageDiffDialog = useCallback(
+        async (ids: string[]) => {
+            const packageId = _(ids).get(0, null);
+            const remotePackage = packageId ? rows.find(row => row.id === packageId) : undefined;
+            if (packageId && remotePackage) {
+                setPackageToDiff({ id: packageId, name: remotePackage.name });
+            }
+        },
+        [rows, setPackageToDiff]
+    );
+
+    const closePackageDiffDialog = useCallback(() => setPackageToDiff(null), [setPackageToDiff]);
 
     const importPackage = useCallback(
         async (ids: string[]) => {
@@ -81,7 +175,10 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
                                 ? "FAILURE"
                                 : "DONE"
                         );
-                        report.addSyncResult(result);
+                        report.addSyncResult({
+                            ...result,
+                            origin: remoteInstance?.toPublicObject(),
+                        });
                         await report.save(api);
 
                         openSyncSummary(report);
@@ -100,16 +197,18 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
 
     const columns: TableColumn<ListPackage>[] = [
         { name: "name", text: i18n.t("Name"), sortable: true },
+        { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
         { name: "version", text: i18n.t("Version"), sortable: true },
         { name: "dhisVersion", text: i18n.t("DHIS2 Version"), sortable: true },
         { name: "module", text: i18n.t("Module"), sortable: true },
-        { name: "created", text: i18n.t("Created"), hidden: true },
-        { name: "user", text: i18n.t("Created by"), hidden: true },
+        { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
+        { name: "user", text: i18n.t("Created by"), sortable: true, hidden: true },
     ];
 
     const details: ObjectsTableDetailField<ListPackage>[] = [
         { name: "id", text: i18n.t("ID") },
         { name: "name", text: i18n.t("Name") },
+        { name: "description", text: i18n.t("Description") },
         { name: "version", text: i18n.t("Version") },
         { name: "dhisVersion", text: i18n.t("DHIS2 Version") },
         { name: "module", text: i18n.t("Module") },
@@ -129,7 +228,7 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
             multiple: true,
             onClick: deletePackages,
             icon: <Icon>delete</Icon>,
-            isActive: () => presentation === "app" && !remoteInstance,
+            isActive: () => presentation === "app" && !isRemoteInstance && !showStore,
         },
         {
             name: "download",
@@ -142,9 +241,17 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
             name: "publish",
             text: i18n.t("Publish to Store"),
             multiple: false,
-            onClick: () => snackbar.warning("Not implemented yet"),
+            onClick: publishPackage,
             icon: <Icon>publish</Icon>,
-            isActive: () => presentation === "app" && !remoteInstance,
+            isActive: () => presentation === "app" && !isRemoteInstance && !showStore,
+        },
+        {
+            name: "compare-with-local",
+            text: i18n.t("Compare with local instance"),
+            multiple: false,
+            icon: <Icon>compare</Icon>,
+            isActive: () => presentation === "app" && (isRemoteInstance || showStore),
+            onClick: openPackageDiffDialog,
         },
         {
             name: "import",
@@ -152,32 +259,54 @@ export const PackagesListTable: React.FC<ModuleListPageProps> = ({
             multiple: false,
             onClick: importPackage,
             icon: <Icon>arrow_downward</Icon>,
-            isActive: () => presentation === "app" && !!remoteInstance,
+            isActive: () => presentation === "app" && isRemoteInstance,
         },
     ];
 
     useEffect(() => {
         compositionRoot.packages
             .list(remoteInstance)
-            .then(setRows)
+            .then(setInstancePackages)
             .catch((error: Error) => {
                 snackbar.error(error.message);
-                setRows([]);
+                setInstancePackages([]);
             });
     }, [compositionRoot, remoteInstance, resetKey, snackbar]);
 
+    useEffect(() => {
+        compositionRoot.packages.listStore().then(validation =>
+            validation.match({
+                success: setStorePackages,
+                error: () => snackbar.error(i18n.t("Can't connect to store")),
+            })
+        );
+    }, [compositionRoot, snackbar]);
+
     return (
-        <ObjectsTable<ListPackage>
-            rows={rows}
-            columns={columns}
-            details={details}
-            actions={actions}
-            onActionButtonClick={onActionButtonClick}
-            forceSelectionColumn={presentation === "app"}
-            filterComponents={externalComponents}
-            selection={selection}
-            onChange={updateTable}
-            paginationOptions={paginationOptions}
-        />
+        <React.Fragment>
+            <ObjectsTable<ListPackage>
+                rows={rows}
+                columns={columns}
+                details={details}
+                actions={actions}
+                onActionButtonClick={onActionButtonClick}
+                forceSelectionColumn={presentation === "app"}
+                filterComponents={externalComponents}
+                selection={selection}
+                onChange={updateTable}
+                paginationOptions={paginationOptions}
+            />
+
+            {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
+
+            {packageToDiff && (
+                <PackagesDiffDialog
+                    onClose={closePackageDiffDialog}
+                    remotePackage={packageToDiff}
+                    isStorePackage={showStore}
+                    remoteInstance={remoteInstance}
+                />
+            )}
+        </React.Fragment>
     );
 };

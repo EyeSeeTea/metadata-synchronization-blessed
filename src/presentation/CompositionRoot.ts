@@ -2,7 +2,7 @@ import { AggregatedD2ApiRepository } from "../data/aggregated/AggregatedD2ApiRep
 import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
-import { GitHubOctokitRepository } from "../data/modules/GitHubOctokitRepository";
+import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StorageDataStoreRepository } from "../data/storage/StorageDataStoreRepository";
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
@@ -17,11 +17,12 @@ import { GetInstanceApiUseCase } from "../domain/instance/usecases/GetInstanceAp
 import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceByIdUseCase";
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
+import { GetUserGroupsUseCase } from "../domain/instance/usecases/GetUserGroupsUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
-import { GetResponsibleUseCase } from "../domain/metadata/usecases/GetResponsibleUseCase";
+import { GetResponsiblesUseCase } from "../domain/metadata/usecases/GetResponsiblesUseCase";
 import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
 import { ListAllMetadataUseCase } from "../domain/metadata/usecases/ListAllMetadataUseCase";
 import { ListMetadataUseCase } from "../domain/metadata/usecases/ListMetadataUseCase";
@@ -33,16 +34,26 @@ import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/Downlo
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
 import { ListModulesUseCase } from "../domain/modules/usecases/ListModulesUseCase";
 import { SaveModuleUseCase } from "../domain/modules/usecases/SaveModuleUseCase";
+import { CancelPullRequestUseCase } from "../domain/notifications/usecases/CancelPullRequestUseCase";
+import { ImportPullRequestUseCase } from "../domain/notifications/usecases/ImportPullRequestUseCase";
+import { ListNotificationsUseCase } from "../domain/notifications/usecases/ListNotificationsUseCase";
+import { MarkReadNotificationsUseCase } from "../domain/notifications/usecases/MarkReadNotificationsUseCase";
+import { UpdatePullRequestStatusUseCase } from "../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
+import { DiffPackageUseCase } from "../domain/packages/usecases/DiffPackageUseCase";
 import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPackageUseCase";
 import { GetPackageUseCase } from "../domain/packages/usecases/GetPackageUseCase";
 import { GetStoreUseCase } from "../domain/packages/usecases/GetStoreUseCase";
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
+import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
+import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
 import { SaveStoreUseCase } from "../domain/packages/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/packages/usecases/ValidateStoreUseCase";
 import { Repositories } from "../domain/Repositories";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
+import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/CreatePullRequestUseCase";
+import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
 
@@ -68,6 +79,17 @@ export class CompositionRoot {
     public get sync() {
         // TODO: Sync builder should be part of an execute method
         return {
+            ...getExecute({
+                prepare: new PrepareSyncUseCase(
+                    this.repositoryFactory,
+                    this.localInstance,
+                    this.encryptionKey
+                ),
+                createPullRequest: new CreatePullRequestUseCase(
+                    this.repositoryFactory,
+                    this.localInstance
+                ),
+            }),
             aggregated: (builder: SynchronizationBuilder) =>
                 new AggregatedSyncUseCase(
                     builder,
@@ -111,7 +133,7 @@ export class CompositionRoot {
     @cache()
     public get responsibles() {
         return getExecute({
-            get: new GetResponsibleUseCase(this.repositoryFactory, this.localInstance),
+            get: new GetResponsiblesUseCase(this.repositoryFactory, this.localInstance),
             set: new SetResponsiblesUseCase(this.repositoryFactory, this.localInstance),
             list: new ListResponsiblesUseCase(this.repositoryFactory, this.localInstance),
         });
@@ -144,10 +166,13 @@ export class CompositionRoot {
     public get packages() {
         return getExecute({
             list: new ListPackagesUseCase(this.repositoryFactory, this.localInstance),
+            listStore: new ListStorePackagesUseCase(this.repositoryFactory, this.localInstance),
             create: new CreatePackageUseCase(this.repositoryFactory, this.localInstance),
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),
             download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),
+            publish: new PublishStorePackageUseCase(this.repositoryFactory, this.localInstance),
+            diff: new DiffPackageUseCase(this, this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -157,6 +182,35 @@ export class CompositionRoot {
 
         return getExecute({
             downloadFile: new DownloadFileUseCase(download),
+        });
+    }
+
+    @cache()
+    public get notifications() {
+        return getExecute({
+            list: new ListNotificationsUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
+            ),
+            updatePullRequestStatus: new UpdatePullRequestStatusUseCase(
+                this.repositoryFactory,
+                this.localInstance
+            ),
+            markReadNotifications: new MarkReadNotificationsUseCase(
+                this.repositoryFactory,
+                this.localInstance
+            ),
+            importPullRequest: new ImportPullRequestUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
+            ),
+            cancelPullRequest: new CancelPullRequestUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.encryptionKey
+            ),
         });
     }
 
@@ -183,6 +237,7 @@ export class CompositionRoot {
             validate: new ValidateInstanceUseCase(this.repositoryFactory),
             getVersion: new GetInstanceVersionUseCase(this.repositoryFactory, this.localInstance),
             getOrgUnitRoots: new GetRootOrgUnitUseCase(this.repositoryFactory, this.localInstance),
+            getUserGroups: new GetUserGroupsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

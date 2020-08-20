@@ -1,7 +1,11 @@
 import { D2Api } from "../../../types/d2-api";
-import { CategoryOptionCombo, OrganisationUnit } from "../../metadata/entities/MetadataEntities";
+import {
+    CategoryOptionCombo,
+    OrganisationUnit,
+    UserGroup,
+} from "../../metadata/entities/MetadataEntities";
 import { Instance } from "../entities/Instance";
-import { Message } from "../entities/Message";
+import { InstanceMessage } from "../entities/Message";
 import { User } from "../entities/User";
 
 export interface InstanceRepositoryConstructor {
@@ -18,5 +22,6 @@ export interface InstanceRepository {
         Pick<CategoryOptionCombo, "id" | "name" | "categoryCombo" | "categoryOptions">[]
     >;
     getOrgUnitRoots(): Promise<Pick<OrganisationUnit, "id" | "name" | "displayName" | "path">[]>;
-    sendMessage(message: Message): Promise<void>;
+    getUserGroups(): Promise<Pick<UserGroup, "id" | "name">[]>;
+    sendMessage(message: InstanceMessage): Promise<void>;
 }

@@ -52,6 +52,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
     const [metadataIds, updateMetadataIds] = useState<string[]>([]);
     const [remoteInstance, setRemoteInstance] = useState<Instance>();
     const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<boolean>(false);
 
     const { models, childrenKeys } = config[syncRule.type];
 
@@ -93,14 +94,22 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
     };
 
     useEffect(() => {
-        compositionRoot.instances
-            .getById(syncRule.originInstance)
-            .then(setRemoteInstance)
-            .catch(() => setRemoteInstance(undefined))
-            .finally(() => setLoading(false));
-    }, [compositionRoot, syncRule]);
+        compositionRoot.instances.getById(syncRule.originInstance).then(result => {
+            result.match({
+                success: instance => {
+                    setRemoteInstance(instance);
+                    setLoading(false);
+                },
+                error: () => {
+                    snackbar.error(i18n.t("Instance not found"));
+                    setLoading(false);
+                    setError(true);
+                },
+            });
+        });
+    }, [compositionRoot, snackbar, syncRule]);
 
-    if (loading) return null;
+    if (loading || error) return null;
 
     return (
         <MetadataTable

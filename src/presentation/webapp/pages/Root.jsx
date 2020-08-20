@@ -11,8 +11,9 @@ import InstanceListPage from "./instance-list/InstanceListPage";
 import InstanceMappingLandingPage from "./instance-mapping/InstanceMappingLandingPage";
 import InstanceMappingPage from "./instance-mapping/InstanceMappingPage";
 import ManualSyncPage from "./manual-sync/ManualSyncPage";
-import ModuleListPage from "./module-list/ModuleListPage";
+import ModulePackageListPage from "./module-package-list/ModulePackageListPage";
 import ModuleCreationPage from "./modules-creation/ModuleCreationPage";
+import NotificationsListPage from "./notifications-list/NotificationsListPage";
 import ResponsiblesListPage from "./responsibles-list/ResponsiblesListPage";
 import StoreConfigPage from "./store-config/StoreConfigPage";
 import SyncRulesCreationPage from "./sync-rules-creation/SyncRulesCreationPage";
@@ -72,7 +73,7 @@ function Root() {
                 />
 
                 <RouteWithSession
-                    path={"/modules/:action(new|edit)"}
+                    path={"/modules/:action(new|edit)/:id?"}
                     render={props => <ModuleCreationPage {...props} />}
                 />
 
@@ -83,12 +84,17 @@ function Root() {
 
                 <RouteWithSession
                     path="/:list(modules|packages)"
-                    render={props => <ModuleListPage {...props} />}
+                    render={props => <ModulePackageListPage {...props} />}
                 />
 
                 <RouteWithSession
                     path="/responsibles"
                     render={props => <ResponsiblesListPage {...props} />}
+                />
+
+                <RouteWithSession
+                    path="/notifications/:id?"
+                    render={props => <NotificationsListPage {...props} />}
                 />
 
                 <RouteWithSession render={() => <HomePage />} />

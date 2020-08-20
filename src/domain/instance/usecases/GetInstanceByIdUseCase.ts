@@ -4,6 +4,7 @@ import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { Instance, InstanceData } from "../entities/Instance";
+import { Either } from "../../common/entities/Either";
 
 export class GetInstanceByIdUseCase implements UseCase {
     constructor(
@@ -12,7 +13,9 @@ export class GetInstanceByIdUseCase implements UseCase {
         private encryptionKey: string
     ) {}
 
-    public async execute(id: string): Promise<Instance> {
+    public async execute(id: string): Promise<Either<"NOT_FOUND", Instance>> {
+        if (id === "LOCAL") return Either.success(this.localInstance);
+
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [this.localInstance]
@@ -23,8 +26,8 @@ export class GetInstanceByIdUseCase implements UseCase {
         );
 
         const data = objects.find(data => data.id === id);
-        if (!data) throw new Error("Instance not found");
+        if (!data) return Either.error("NOT_FOUND");
 
-        return Instance.build(data).decryptPassword(this.encryptionKey);
+        return Either.success(Instance.build(data).decryptPassword(this.encryptionKey));
     }
 }

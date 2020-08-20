@@ -90,7 +90,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
     return (
         <React.Fragment>
             <Toggle
-                label={i18n.t("Use default configuration")}
+                label={i18n.t("Use default dependencies")}
                 value={syncRule.useDefaultIncludeExclude}
                 onValueChange={changeUseDefaultIncludeExclude}
             />

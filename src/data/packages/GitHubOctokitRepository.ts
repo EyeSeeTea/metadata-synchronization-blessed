@@ -1,15 +1,56 @@
 import { Octokit } from "@octokit/rest";
+import _ from "lodash";
 import { Either } from "../../domain/common/entities/Either";
-import { GitHubError } from "../../domain/packages/entities/Errors";
+import { GitHubError, GitHubListError } from "../../domain/packages/entities/Errors";
+import { GithubBranch } from "../../domain/packages/entities/GithubBranch";
+import { GithubFile } from "../../domain/packages/entities/GithubFile";
 import { Store } from "../../domain/packages/entities/Store";
 import { StorePermissions } from "../../domain/packages/entities/StorePermissions";
 import { GitHubRepository } from "../../domain/packages/repositories/GitHubRepository";
 import { cache } from "../../utils/cache";
 
 export class GitHubOctokitRepository implements GitHubRepository {
-    public async readFile<T>(store: Store, path: string): Promise<Either<GitHubError, T>> {
+    public async listFiles(
+        store: Store,
+        branch: string
+    ): Promise<Either<GitHubListError, GithubFile[]>> {
         try {
-            const { encoding, content } = await this.getFile(store, path);
+            const { token, account, repository } = store;
+            const octokit = await this.getOctoKit(token);
+
+            const { data } = await octokit.git.getTree({
+                owner: account,
+                repo: repository,
+                tree_sha: branch,
+                recursive: "true",
+            });
+
+            if (data.truncated) return Either.error("LIST_TRUNCATED");
+
+            const items: GithubFile[] = data.tree.map(({ path, type, sha, url }) => ({
+                path,
+                type: type as "blob" | "tree",
+                sha,
+                url,
+            }));
+
+            return Either.success(items);
+        } catch (error) {
+            return Either.error(this.validateError(error));
+        }
+    }
+
+    public async readFile<T>(
+        store: Store,
+        branch: string,
+        path: string
+    ): Promise<Either<GitHubError, T>> {
+        const { encoding, content } = await this.getFile(store, branch, path);
+        return this.readFileContents(encoding, content);
+    }
+
+    public readFileContents<T>(encoding: string, content: string): Either<GitHubError, T> {
+        try {
             if (encoding !== "base64") throw new Error("File encoding not supported");
             const result = Buffer.from(content, "base64").toString("utf8");
 
@@ -21,8 +62,9 @@ export class GitHubOctokitRepository implements GitHubRepository {
 
     public async writeFile(
         store: Store,
+        branch: string,
         path: string,
-        content: unknown
+        content: string
     ): Promise<Either<GitHubError, void>> {
         try {
             const { token, account, repository } = store;
@@ -31,10 +73,11 @@ export class GitHubOctokitRepository implements GitHubRepository {
             await octokit.repos.createOrUpdateFileContents({
                 owner: account,
                 repo: repository,
+                branch,
                 path,
                 message: `Updating file ${path}`,
-                content: Buffer.from(JSON.stringify(content)).toString("base64"),
-                sha: await this.getFileSha(store, path),
+                content: Buffer.from(content).toString("base64"),
+                sha: await this.getFileSha(store, branch, path),
                 author: {
                     name: "Test",
                     email: "test@eyeseetea.com",
@@ -57,16 +100,21 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
-    public async deleteFile(store: Store, path: string): Promise<Either<GitHubError, void>> {
+    public async deleteFile(
+        store: Store,
+        branch: string,
+        path: string
+    ): Promise<Either<GitHubError, void>> {
         try {
             const { token, account, repository } = store;
             const octokit = await this.getOctoKit(token);
-            const sha = await this.getFileSha(store, path);
+            const sha = await this.getFileSha(store, branch, path);
             if (!sha) return Either.error("NOT_FOUND");
 
             await octokit.repos.deleteFile({
                 owner: account,
                 repo: repository,
+                branch,
                 path,
                 message: `Delete file ${path}`,
                 sha,
@@ -78,6 +126,50 @@ export class GitHubOctokitRepository implements GitHubRepository {
                     name: "Test",
                     email: "test@eyeseetea.com",
                 },
+            });
+
+            return Either.success(undefined);
+        } catch (error) {
+            return Either.error(this.validateError(error));
+        }
+    }
+
+    public async listBranches(store: Store): Promise<Either<GitHubError, GithubBranch[]>> {
+        try {
+            const { token, account, repository } = store;
+            const octokit = await this.getOctoKit(token);
+
+            const { data } = await octokit.repos.listBranches({
+                owner: account,
+                repo: repository,
+            });
+
+            const items: GithubBranch[] = data.map(branch =>
+                _.pick(branch, ["name", "commit", "protected"])
+            );
+
+            return Either.success(items);
+        } catch (error) {
+            return Either.error(this.validateError(error));
+        }
+    }
+
+    public async createBranch(store: Store, branch: string): Promise<Either<GitHubError, void>> {
+        try {
+            const { token, account, repository } = store;
+            if (!token?.trim()) return Either.error("NO_TOKEN");
+            const octokit = await this.getOctoKit(token);
+
+            const { default_branch } = await this.getRepoInfo(store);
+            const branches = await this.listBranches(store);
+            const baseBranch = branches.value.data?.find(({ name }) => name === default_branch);
+            if (!baseBranch) return Either.error("BRANCH_NOT_FOUND");
+
+            await octokit.git.createRef({
+                owner: account,
+                repo: repository,
+                ref: `refs/heads/${branch}`,
+                sha: baseBranch.commit.sha,
             });
 
             return Either.success(undefined);
@@ -111,8 +203,17 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
+    private async getRepoInfo({ token, account, repository }: Store) {
+        const octokit = await this.getOctoKit(token);
+        const { data } = await octokit.repos.get({
+            owner: account,
+            repo: repository,
+        });
+        return data;
+    }
+
     @cache()
-    public async getCurrentUser({ token }: Store) {
+    private async getCurrentUser({ token }: Store) {
         const octokit = await this.getOctoKit(token);
         const { data } = await octokit.users.getAuthenticated();
         return data;
@@ -123,7 +224,16 @@ export class GitHubOctokitRepository implements GitHubRepository {
         return new Octokit({ auth: token });
     }
 
+    private validateComplexErrors(error: Error): GitHubError | undefined {
+        if (/Branch.*not found/.test(error.message)) {
+            return "BRANCH_NOT_FOUND";
+        }
+    }
+
     private validateError(error: Error): GitHubError {
+        const complexError = this.validateComplexErrors(error);
+        if (complexError) return complexError;
+
         switch (error.message) {
             case "Not Found":
                 return "NOT_FOUND";
@@ -135,21 +245,26 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
-    private async getFileSha(store: Store, path: string): Promise<string | undefined> {
+    private async getFileSha(
+        store: Store,
+        branch: string,
+        path: string
+    ): Promise<string | undefined> {
         try {
-            const { sha } = await this.getFile(store, path);
+            const { sha } = await this.getFile(store, branch, path);
             return sha;
         } catch (error) {
             return undefined;
         }
     }
 
-    private async getFile({ token, account, repository }: Store, path: string) {
+    private async getFile({ token, account, repository }: Store, branch: string, path: string) {
         const octokit = await this.getOctoKit(token);
 
         const { data } = await octokit.repos.getContent({
             owner: account,
             repo: repository,
+            ref: branch,
             path,
         });
 

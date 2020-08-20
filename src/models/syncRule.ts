@@ -8,10 +8,8 @@ import {
     DataSyncPeriod,
 } from "../domain/aggregated/types";
 import { SharingSetting } from "../domain/common/entities/SharingSetting";
-import {
-    SynchronizationRule,
-    SyncRuleType,
-} from "../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationRule } from "../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../domain/synchronization/entities/SynchronizationType";
 import { D2Api, Ref } from "../types/d2-api";
 import { SyncRuleTableFilters, TableList, TablePagination } from "../types/d2-ui-components";
 import {
@@ -95,7 +93,9 @@ export default class SyncRule {
     }
 
     public replicate(): SyncRule {
-        return this.updateName(`Copy of ${this.syncRule.name}`).updateId(generateUid());
+        return this.updateName(`Copy of ${this.syncRule.name}`)
+            .update({ lastExecuted: undefined })
+            .updateId(generateUid());
     }
 
     public toObject(): SynchronizationRule {
@@ -110,7 +110,7 @@ export default class SyncRule {
         return this.syncRule.name ?? "";
     }
 
-    public get type(): SyncRuleType {
+    public get type(): SynchronizationType {
         return this.syncRule.type || "metadata";
     }
 
@@ -245,7 +245,7 @@ export default class SyncRule {
         return this.syncRule.builder?.dataParams ?? {};
     }
 
-    public static create(type: SyncRuleType = "metadata"): SyncRule {
+    public static create(type: SynchronizationType = "metadata"): SyncRule {
         return new SyncRule({
             id: "",
             name: "",
@@ -270,7 +270,7 @@ export default class SyncRule {
         });
     }
 
-    public static createOnDemand(type: SyncRuleType = "metadata"): SyncRule {
+    public static createOnDemand(type: SynchronizationType = "metadata"): SyncRule {
         return SyncRule.create(type).updateName("__MANUAL__");
     }
 

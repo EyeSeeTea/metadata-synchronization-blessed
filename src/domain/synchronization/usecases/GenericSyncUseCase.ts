@@ -29,7 +29,7 @@ import {
     SynchronizationReportStatus,
 } from "../entities/SynchronizationReport";
 import { SynchronizationResult, SynchronizationStatus } from "../entities/SynchronizationResult";
-import { SyncRuleType } from "../entities/SynchronizationRule";
+import { SynchronizationType } from "../entities/SynchronizationType";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase
@@ -39,7 +39,7 @@ export type SyncronizationClass =
 export type SyncronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
 export abstract class GenericSyncUseCase {
-    public abstract readonly type: SyncRuleType;
+    public abstract readonly type: SynchronizationType;
     public readonly fields: string = "id,name";
     protected readonly api: D2Api;
 
@@ -168,6 +168,7 @@ export abstract class GenericSyncUseCase {
 
     public async *execute() {
         const { targetInstances: targetInstanceIds, syncRule } = this.builder;
+        const origin = await this.getOriginInstance();
         yield { message: i18n.t("Preparing synchronization") };
 
         // Build instance list
@@ -180,6 +181,7 @@ export abstract class GenericSyncUseCase {
         syncReport.addSyncResult(
             ...targetInstances.map(instance => ({
                 instance: instance.toPublicObject(),
+                origin: origin.toPublicObject(),
                 status: "PENDING" as SynchronizationStatus,
                 date: new Date(),
                 type: this.type,
@@ -189,7 +191,7 @@ export abstract class GenericSyncUseCase {
         yield { syncReport };
         for (const instance of targetInstances) {
             yield {
-                message: i18n.t("Importing data in instance {{instance}}", {
+                message: i18n.t("Start import in instance {{instance}}", {
                     instance: instance.name,
                     interpolation: { escapeValue: false },
                 }),
@@ -201,12 +203,13 @@ export abstract class GenericSyncUseCase {
                 const syncResults = await this.postPayload(instance);
                 syncReport.addSyncResult(...syncResults);
 
-                // console.debug("Finished importing data on instance", instance.toPublicObject());
+                console.debug("Finished import on instance", instance.toPublicObject());
             } catch (error) {
                 syncReport.addSyncResult({
                     status: "ERROR",
                     message: error.message,
                     instance: instance.toPublicObject(),
+                    origin: origin.toPublicObject(),
                     date: new Date(),
                     type: this.type,
                 });

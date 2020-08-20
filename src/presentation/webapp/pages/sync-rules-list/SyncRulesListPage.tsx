@@ -1,6 +1,7 @@
 import { Icon } from "@material-ui/core";
 import {
     ConfirmationDialog,
+    ConfirmationDialogProps,
     DatePicker,
     MetaObject,
     ObjectsTable,
@@ -20,10 +21,8 @@ import { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import {
-    SynchronizationRule,
-    SyncRuleType,
-} from "../../../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationRule } from "../../../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
@@ -40,6 +39,10 @@ import { requestJSONDownload } from "../../../../utils/synchronization";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../../components/dropdown/Dropdown";
 import PageHeader from "../../components/page-header/PageHeader";
+import {
+    PullRequestCreation,
+    PullRequestCreationDialog,
+} from "../../components/pull-request-creation-dialog/PullRequestCreationDialog";
 import { SharingDialog } from "../../components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
@@ -70,7 +73,7 @@ const SyncRulesPage: React.FC = () => {
     const loading = useLoading();
     const snackbar = useSnackbar();
     const history = useHistory();
-    const { type } = useParams() as { type: SyncRuleType };
+    const { type } = useParams() as { type: SynchronizationType };
     const { title } = config[type];
 
     const [rows, setRows] = useState<SyncRule[]>([]);
@@ -84,6 +87,8 @@ const SyncRulesPage: React.FC = () => {
     const [lastExecutedFilter, setLastExecutedFilter] = useState<Moment | null>(null);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
+    const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
+    const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
 
     useEffect(() => {
         SyncRule.list(
@@ -266,16 +271,75 @@ const SyncRulesPage: React.FC = () => {
     const executeRule = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
+
         const rule = await SyncRule.get(api, id);
-
         const { builder, id: syncRule, type = "metadata" } = rule;
+        loading.show(true, i18n.t("Synchronizing {{name}}", rule));
 
+        const result = await compositionRoot.sync.prepare(type, builder);
         const sync = compositionRoot.sync[type]({ ...builder, syncRule });
-        for await (const { message, syncReport, done } of sync.execute()) {
-            if (message) loading.show(true, message);
-            if (syncReport) await syncReport.save(api);
-            if (done && syncReport) setSyncReport(syncReport);
-        }
+
+        const createPullRequest = async () => {
+            const result = await compositionRoot.instances.getById(builder.originInstance);
+
+            result.match({
+                success: instance => {
+                    setPullRequestProps({
+                        instance,
+                        builder,
+                        type,
+                    });
+                },
+                error: () => {
+                    snackbar.error(i18n.t("Unable to create pull request"));
+                },
+            });
+        };
+
+        const synchronize = async () => {
+            for await (const { message, syncReport, done } of sync.execute()) {
+                if (message) loading.show(true, message);
+                if (syncReport) await syncReport.save(api);
+                if (done && syncReport) setSyncReport(syncReport);
+            }
+        };
+
+        await result.match({
+            success: async () => {
+                await synchronize();
+            },
+            error: async code => {
+                switch (code) {
+                    case "PULL_REQUEST":
+                        await createPullRequest();
+                        break;
+                    case "PULL_REQUEST_RESPONSIBLE":
+                        updateDialog({
+                            title: i18n.t("Pull metadata"),
+                            description: i18n.t(
+                                "You are one of the reponsibles for the selected items.\nDo you want to directly pull the metadata?"
+                            ),
+                            onCancel: () => {
+                                updateDialog(null);
+                            },
+                            onSave: async () => {
+                                updateDialog(null);
+                                await synchronize();
+                            },
+                            onInfoAction: async () => {
+                                updateDialog(null);
+                                await createPullRequest();
+                            },
+                            cancelText: i18n.t("Cancel"),
+                            saveText: i18n.t("Proceed"),
+                            infoActionText: i18n.t("Create pull request"),
+                        });
+                        break;
+                    default:
+                        snackbar.error(i18n.t("Unknown synchronization error"));
+                }
+            },
+        });
 
         setRefreshKey(Math.random());
         loading.reset();
@@ -505,6 +569,15 @@ const SyncRulesPage: React.FC = () => {
                     onSearch={onSearchRequest}
                 />
             )}
+
+            {!!pullRequestProps && (
+                <PullRequestCreationDialog
+                    {...pullRequestProps}
+                    onClose={() => setPullRequestProps(undefined)}
+                />
+            )}
+
+            {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
         </TestWrapper>
     );
 };

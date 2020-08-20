@@ -4,6 +4,7 @@ import axios from "axios";
 import {
     DatePicker,
     ObjectsTable,
+    ObjectsTableDetailField,
     ObjectsTableProps,
     OrgUnitsSelector,
     ReferenceObject,
@@ -24,6 +25,7 @@ import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
 import { DataElementModel } from "../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../utils/d2";
+import { isAppConfigurator } from "../../../../utils/permissions";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
@@ -46,6 +48,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     notifyNewModel?(model: typeof D2Model): void;
     notifyRowsChange?(rows: MetadataType[]): void;
     allowChangingResponsible?: boolean;
+    showOnlySelectedFilter?: boolean;
 }
 
 const useStyles = makeStyles({
@@ -107,6 +110,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     initialShowOnlySelected = false,
     showIndeterminateSelection = false,
     allowChangingResponsible = false,
+    showOnlySelectedFilter = true,
     ...rest
 }) => {
     const { compositionRoot } = useAppContext();
@@ -133,6 +137,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
     const [groupFilterData, setGroupFilterData] = useState<NamedRef[]>([]);
     const [levelFilterData, setLevelFilterData] = useState<NamedRef[]>([]);
+    const [appConfigurator, setAppConfigurator] = useState(false);
 
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [pager, setPager] = useState<Partial<TablePagination>>({});
@@ -180,6 +185,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             ...state,
             selectedIds: showOnlySelected ? selectedRows : undefined,
             showOnlySelected,
+            page: 1,
         }));
     };
 
@@ -274,18 +280,20 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 </div>
             )}
 
-            <div className={classes.onlySelectedFilter}>
-                <FormControlLabel
-                    className={classes.checkbox}
-                    control={
-                        <Checkbox
-                            checked={filters.showOnlySelected}
-                            onChange={changeOnlySelectedFilter}
-                        />
-                    }
-                    label={i18n.t("Only selected items")}
-                />
-            </div>
+            {showOnlySelectedFilter && (
+                <div className={classes.onlySelectedFilter}>
+                    <FormControlLabel
+                        className={classes.checkbox}
+                        control={
+                            <Checkbox
+                                checked={filters.showOnlySelected}
+                                onChange={changeOnlySelectedFilter}
+                            />
+                        }
+                        label={i18n.t("Only selected items")}
+                    />
+                </div>
+            )}
 
             {additionalFilters}
         </React.Fragment>
@@ -355,7 +363,12 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             icon: <Icon>supervisor_account</Icon>,
             onClick: openResponsibleDialog,
             isActive: () => {
-                return allowChangingResponsible && !remoteInstance && showResponsibles;
+                return (
+                    allowChangingResponsible &&
+                    !remoteInstance &&
+                    showResponsibles &&
+                    appConfigurator
+                );
             },
         },
     ];
@@ -439,6 +452,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         compositionRoot.responsibles.list(remoteInstance).then(updateResponsibles);
     }, [compositionRoot, remoteInstance]);
 
+    useEffect(() => {
+        isAppConfigurator(api).then(setAppConfigurator);
+    }, [api]);
+
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;
 
@@ -496,23 +513,29 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
               .value()
         : [];
 
+    const responsibleField = showResponsibles
+        ? {
+              name: "responsible",
+              text: i18n.t("Responsible"),
+              getValue: (row: MetadataType) => {
+                  const { users = [], userGroups = [] } =
+                      responsibles.find(({ id }) => row.id === id) ?? {};
+
+                  const results = [...users, ...userGroups].map(({ name }) => name);
+                  return results.length === 0 ? "-" : results.join(", ");
+              },
+          }
+        : undefined;
+
     const columns: TableColumn<MetadataType>[] = uniqCombine([
         ...model.getColumns(),
         ...additionalColumns,
-        showResponsibles
-            ? {
-                  name: "responsible",
-                  text: i18n.t("Responsible"),
-                  getValue: (row: MetadataType) => {
-                      const { users = [], userGroups = [] } =
-                          responsibles.find(({ id }) => row.id === id) ?? {};
+        { ...responsibleField, sortable: false },
+    ]);
 
-                      const results = [...users, ...userGroups].map(({ name }) => name);
-
-                      return results.length === 0 ? "-" : results.join(", ");
-                  },
-              }
-            : undefined,
+    const details: ObjectsTableDetailField<MetadataType>[] = uniqCombine([
+        ...model.getDetails(),
+        responsibleField,
     ]);
 
     const actions: TableAction<MetadataType>[] = uniqCombine([
@@ -533,7 +556,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             <ObjectsTable<MetadataType>
                 rows={transformRows(rows)}
                 columns={columns}
-                details={model.getDetails()}
+                details={details}
                 onChangeSearch={changeSearchFilter}
                 initialState={initialState}
                 searchBoxLabel={i18n.t(`Search by `) + model.getSearchFilter().field}

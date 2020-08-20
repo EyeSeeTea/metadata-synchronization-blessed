@@ -4,7 +4,7 @@ import { Instance } from "../../instance/entities/Instance";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { Package } from "../entities/Package";
+import { Package, BasePackage } from "../entities/Package";
 
 export class ListPackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -15,8 +15,10 @@ export class ListPackagesUseCase implements UseCase {
             [instance]
         );
 
-        const items = await storageRepository.listObjectsInCollection<Package>(Namespace.PACKAGES);
+        const items = await storageRepository.listObjectsInCollection<BasePackage>(
+            Namespace.PACKAGES
+        );
 
-        return items.filter(({ deleted }) => !deleted);
+        return items.filter(({ deleted }) => !deleted).map(data => Package.build(data));
     }
 }

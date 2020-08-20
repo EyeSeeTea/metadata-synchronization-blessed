@@ -1,5 +1,5 @@
 import { PublicInstance } from "../../instance/entities/Instance";
-import { SyncRuleType } from "./SynchronizationRule";
+import { SynchronizationType } from "./SynchronizationType";
 
 export type SynchronizationStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
 
@@ -21,9 +21,10 @@ export interface ErrorMessage {
 
 export interface SynchronizationResult {
     status: SynchronizationStatus;
+    origin?: PublicInstance;
     instance: PublicInstance;
     date: Date;
-    type: SyncRuleType;
+    type: SynchronizationType;
     message?: string;
     stats?: SynchronizationStats;
     typeStats?: SynchronizationStats[];

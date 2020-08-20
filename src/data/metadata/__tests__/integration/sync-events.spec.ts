@@ -223,12 +223,12 @@ describe("Sync metadata", () => {
             },
         };
 
-        const useCase = new EventsSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance, "");
 
-        const payload = await useCase.buildPayload();
+        const payload = await sync.buildPayload();
         expect(payload.events?.find(({ id }) => id === "test-event-1")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
+        for await (const { done } of sync.execute()) {
             if (done) console.log("Done");
         }
 
@@ -255,12 +255,12 @@ describe("Sync metadata", () => {
             },
         };
 
-        const useCase = new EventsSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance, "");
 
-        const payload = await useCase.buildPayload();
+        const payload = await sync.buildPayload();
         expect(payload.events?.find(({ id }) => id === "test-event-2")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
+        for await (const { done } of sync.execute()) {
             if (done) console.log("Done");
         }
 

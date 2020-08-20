@@ -98,12 +98,10 @@ export const metadataSteps: SyncWizardStep[] = [
         validationKeys: ["metadataIds"],
     },
     {
-        key: "include-exclude-selection",
-        label: i18n.t("Include Exclude Selection"),
+        key: "dependencies-selection",
+        label: i18n.t("Select dependencies"),
         component: MetadataIncludeExcludeStep,
         validationKeys: ["metadataIncludeExclude"],
-        description: undefined,
-        help: undefined,
         showOnSyncDialog: true,
     },
     commonSteps.instanceSelection,
@@ -146,7 +144,7 @@ export const aggregatedSteps: SyncWizardStep[] = [
     {
         ...commonSteps.aggregation,
         warning: i18n.t(
-            "If aggregation is enabled, the synchronization will use the Analytics endpoint and group data by organisation units children and the chosen time periods"
+            "If aggregation is enabled, the synchronization will use the Analytics endpoint and group data by organisation units children and the chosen time periods."
         ),
     },
     commonSteps.instanceSelection,
@@ -184,7 +182,12 @@ export const eventsSteps: SyncWizardStep[] = [
         validationKeys: ["dataSyncEvents"],
         showOnSyncDialog: true,
     },
-    commonSteps.aggregation,
+    {
+        ...commonSteps.aggregation,
+        warning: i18n.t(
+            "If aggregation is enabled, the synchronization will use the Analytics endpoint and group data by organisation units children and the chosen time periods. Program indicators are only included during a synchronization if aggregation is enabled."
+        ),
+    },
     commonSteps.instanceSelection,
     commonSteps.scheduler,
     commonSteps.summary,

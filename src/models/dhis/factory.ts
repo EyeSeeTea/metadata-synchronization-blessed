@@ -5,6 +5,8 @@ import { D2Model, defaultModel } from "./default";
 import * as mappingClasses from "./mapping";
 import * as metadataClasses from "./metadata";
 
+const isDebug = process.env.NODE_ENV === "development";
+
 export const metadataModels = [
     metadataClasses.CategoryModel,
     metadataClasses.CategoryComboModel,
@@ -74,7 +76,7 @@ export function modelFactory(api: D2Api, d2ModelName?: string): typeof D2Model {
     const modelClass = findClasses("collectionName", modelName);
 
     const result = directClass ?? modelClass;
-    if (!result) {
+    if (isDebug && !result) {
         console.error(
             `Could not find a model for ${d2ModelName}... This is probably a mistake in your app.`
         );
