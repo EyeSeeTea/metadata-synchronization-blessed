@@ -135,6 +135,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
 
     protected moduleValidations = (): ModelValidation[] => [
         { property: "name", validation: "hasText" },
+        { property: "department", validation: "validRef" },
         {
             property: "metadataIds",
             validation: "hasItems",
