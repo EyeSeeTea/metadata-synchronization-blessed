@@ -178,6 +178,7 @@ export const metadataTransformations: Transformation[] = [
                                     return dashboardItem;
                                 if (!visualizations) {
                                     debug("No visualization found");
+                                    return null;
                                 }
 
                                 const visualization = visualizations.find(
