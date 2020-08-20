@@ -1,12 +1,13 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { startDhis } from "../../../../utils/dhisServer";
 import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { EventsSyncUseCase } from "../../../../domain/events/usecases/EventsSyncUseCase";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Repositories } from "../../../../domain/Repositories";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
+import { debug } from "../../../../utils/debug";
+import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
 import { EventsD2ApiRepository } from "../../../events/EventsD2ApiRepository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
@@ -231,7 +232,7 @@ describe("Sync metadata", () => {
         expect(payload.events?.find(({ id }) => id === "test-event-1")).toBeDefined();
 
         for await (const { done } of sync.execute()) {
-            if (done) console.log("Done");
+            if (done) debug("Done");
         }
 
         const response = remote.db.events.find(1);
@@ -263,7 +264,7 @@ describe("Sync metadata", () => {
         expect(payload.events?.find(({ id }) => id === "test-event-2")).toBeDefined();
 
         for await (const { done } of sync.execute()) {
-            if (done) console.log("Done");
+            if (done) debug("Done");
         }
 
         const response = local.db.events.find(1);

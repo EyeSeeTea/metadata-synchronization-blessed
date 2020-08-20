@@ -17,6 +17,7 @@ import {
     cleanToModelName,
     getAllReferences,
 } from "../utils";
+import { debug } from "../../../utils/debug";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
@@ -126,7 +127,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             ? await this.mapPayload(instance, payloadPackage)
             : payloadPackage;
 
-        //console.debug("Metadata package", { payloadPackage, mappedPayloadPackage });
+        debug("Metadata package", { payloadPackage, mappedPayloadPackage });
 
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
         const syncResult = await remoteMetadataRepository.save(mappedPayloadPackage, syncParams);

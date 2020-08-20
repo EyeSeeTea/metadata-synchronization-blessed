@@ -5,6 +5,7 @@ import {
     GenericSyncUseCase,
     SyncronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
+import { debug } from "../../../utils/debug";
 
 export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "deleted";
@@ -22,7 +23,7 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
             "id"
         );
 
-        //console.debug("Metadata package", payloadPackage);
+        debug("Metadata package", payloadPackage);
 
         const syncResult = await remoteMetadataRepository.remove(payloadPackage, syncParams);
         const origin = await this.getOriginInstance();

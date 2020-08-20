@@ -21,6 +21,7 @@ import {
 } from "../../synchronization/utils";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { DataValue } from "../entities/DataValue";
+import { debug } from "../../../utils/debug";
 
 export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public readonly type = "aggregated";
@@ -152,7 +153,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
             mappedPayloadPackage,
             aggregatedTransformations
         );
-        console.debug("Aggregated package", {
+        debug("Aggregated package", {
             payloadPackage,
             mappedPayloadPackage,
             versionedPayloadPackage,

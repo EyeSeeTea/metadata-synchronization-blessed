@@ -1,12 +1,13 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { startDhis } from "../../../../utils/dhisServer";
 import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { Repositories } from "../../../../domain/Repositories";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
+import { debug } from "../../../../utils/debug";
+import { startDhis } from "../../../../utils/dhisServer";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
@@ -104,7 +105,7 @@ describe("Sync metadata", () => {
         expect(payload.dataElements?.find(({ id }) => id === "id1")).toBeDefined();
 
         for await (const { done } of sync.execute()) {
-            if (done) console.log("Done");
+            if (done) debug("Done");
         }
 
         const response = remote.db.metadata.find(1);
@@ -132,7 +133,7 @@ describe("Sync metadata", () => {
         expect(payload.dataElements?.find(({ id }) => id === "id2")).toBeDefined();
 
         for await (const { done } of sync.execute()) {
-            if (done) console.log("Done");
+            if (done) debug("Done");
         }
 
         const response = local.db.metadata.find(1);

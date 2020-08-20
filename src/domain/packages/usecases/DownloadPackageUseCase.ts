@@ -23,7 +23,6 @@ export class DownloadPackageUseCase implements UseCase {
         if (!element) throw new Error("Couldn't find package");
 
         const { contents, ...item } = element;
-        console.log({ element, contents, item });
         const ruleName = _.kebabCase(_.toLower(item.name));
         const date = moment().format("YYYYMMDDHHmm");
         const name = `package-${ruleName}-${date}.json`;

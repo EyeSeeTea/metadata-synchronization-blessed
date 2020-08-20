@@ -1,7 +1,6 @@
 import axiosRetry from "axios-retry";
 import "dotenv/config";
 import fs from "fs";
-import _ from "lodash";
 import { configure, getLogger } from "log4js";
 import path from "path";
 import * as yargs from "yargs";
@@ -11,9 +10,6 @@ import { D2Api } from "../types/d2-api";
 import Scheduler from "./scheduler";
 
 const development = process.env.NODE_ENV === "development";
-
-// Workaround: Hide DEBUG logs from appearing in console
-console.debug = _.noop;
 
 configure({
     appenders: {

@@ -1,12 +1,13 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedSyncUseCase } from "../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Repositories } from "../../../../domain/Repositories";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
+import { debug } from "../../../../utils/debug";
+import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
@@ -190,7 +191,7 @@ describe("Sync metadata", () => {
         expect(payload.dataValues?.find(({ value }) => value === "test-value-1")).toBeDefined();
 
         for await (const { done } of sync.execute()) {
-            if (done) console.log("Done");
+            if (done) debug("Done");
         }
 
         const response = remote.db.dataValueSets.find(1);
@@ -218,7 +219,7 @@ describe("Sync metadata", () => {
         expect(payload.dataValues?.find(({ value }) => value === "test-value-2")).toBeDefined();
 
         for await (const { done } of sync.execute()) {
-            if (done) console.log("Done");
+            if (done) debug("Done");
         }
 
         const response = local.db.dataValueSets.find(1);

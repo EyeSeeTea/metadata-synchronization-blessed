@@ -1,5 +1,6 @@
 import axiosRetry from "axios-retry";
 import { D2Api } from "../types/d2-api";
+import { debug } from "../utils/debug";
 import { MigrationsRunner } from "./index";
 import { getMigrationsForNode } from "./utils";
 
@@ -9,7 +10,7 @@ async function main() {
     const migrations = getMigrationsForNode();
     const api = new D2Api({ baseUrl: baseUrl });
     axiosRetry(api.connection, { retries: 3 });
-    const runner = await MigrationsRunner.init({ api, debug: console.debug, migrations });
+    const runner = await MigrationsRunner.init({ api, debug: debug, migrations });
     runner.execute();
 }
 

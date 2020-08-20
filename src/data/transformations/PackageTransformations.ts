@@ -1,8 +1,8 @@
-import { Transformation } from "../../domain/transformations/entities/Transformation";
-import _ from "lodash";
-import { Mapping, isKeyOf } from "./__tests__/integration/helpers";
-
 import { D2DashboardItem as D2DashboardItem33 } from "d2-api/2.33";
+import _ from "lodash";
+import { Transformation } from "../../domain/transformations/entities/Transformation";
+import { debug } from "../../utils/debug";
+import { isKeyOf, Mapping } from "./__tests__/integration/helpers";
 
 export const metadataTransformations: Transformation[] = [
     {
@@ -177,8 +177,8 @@ export const metadataTransformations: Transformation[] = [
                                 if (type !== "VISUALIZATION" || !dashboardItem.visualization)
                                     return dashboardItem;
                                 if (!visualizations) {
-                                    console.debug("No visualization found");
-                                    return null;
+                                    printDebug("No visualization found");
+                                    debugl;
                                 }
 
                                 const visualization = visualizations.find(
