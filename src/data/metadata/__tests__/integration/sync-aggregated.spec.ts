@@ -138,6 +138,8 @@ describe("Sync metadata", () => {
             },
         ]);
 
+        local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
+
         const addAggregatedToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
             schema.db.dataValueSets.insert(JSON.parse(request.requestBody));
 
