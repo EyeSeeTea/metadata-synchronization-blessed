@@ -98,6 +98,8 @@ describe("Sync metadata", () => {
             },
         ]);
 
+        local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
+
         const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
             schema.db.metadata.insert(JSON.parse(request.requestBody));
 
