@@ -15,7 +15,7 @@ import {
     cleanObject,
     cleanReferences,
     cleanToModelName,
-    getAllReferences
+    getAllReferences,
 } from "../utils";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
@@ -184,7 +184,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const modelName = cleanToModelName(this.api, key, parent);
         if (!modelName) return object;
 
-        const mappedId = _.get(mapping, [modelName, object.id])?.mappedId ?? object.id;
+        const mappedId = this.lookup(mapping, object.id);
 
         if (modelName === "indicators") {
             const indicator = (object as unknown) as Indicator;
@@ -202,7 +202,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             return _.mapValues(expression, (id, property) => {
                 const modelName = cleanToModelName(this.api, property);
                 if (!modelName || typeof id !== "string") return id;
-                return _.get(mapping, [modelName, id])?.mappedId ?? id;
+                return this.lookup(mapping, id);
             });
         });
 
@@ -210,5 +210,14 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         if (validation.isError()) return expression;
 
         return validation.value.data;
+    }
+
+    private lookup(mapping: MetadataMappingDictionary, id: string): string {
+        // We would normally use _.get(mapping, [modelName, id]) but modelName of mapping is custom
+        const mappingStore = _.values(mapping)
+            .map(item => _.mapValues(item, (value, id) => ({ id, ...value })))
+            .flatMap(_.values);
+
+        return mappingStore.find(item => item.id === id)?.mappedId ?? id;
     }
 }
