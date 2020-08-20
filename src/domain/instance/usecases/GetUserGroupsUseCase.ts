@@ -15,7 +15,6 @@ export class GetUserGroupsUseCase implements UseCase {
         );
 
         const userGroups = await instanceRepository.getUserGroups();
-
-        return _.sortBy(userGroups, "name")
+        return _.sortBy(userGroups, "name");
     }
 }

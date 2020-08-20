@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-19T05:57:27.323Z\n"
-"PO-Revision-Date: 2020-08-19T05:57:27.323Z\n"
+"POT-Creation-Date: 2020-08-20T07:13:57.270Z\n"
+"PO-Revision-Date: 2020-08-20T07:13:57.270Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -15,6 +15,9 @@ msgid "You need to select at least one {{field}}"
 msgstr ""
 
 msgid "Field {{field}} needs to be a valid url"
+msgstr ""
+
+msgid "Field {{field}} is not valid"
 msgstr ""
 
 msgid "You need to provide a username and password combination"

@@ -37,8 +37,7 @@ const availableValidations = {
     },
     validRef: {
         error: "invalid_url",
-        getDescription: (field: string) =>
-            i18n.t("Field {{field}} is not valid", { field }),
+        getDescription: (field: string) => i18n.t("Field {{field}} is not valid", { field }),
         check: (value?: Ref) => !value?.id,
     },
 };
