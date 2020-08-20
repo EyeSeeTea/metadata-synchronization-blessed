@@ -12,7 +12,11 @@ import { BasePackage } from "../entities/Package";
 import { Store } from "../entities/Store";
 import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
 
-export type PublishStorePackageError = GitHubError | "STORE_NOT_FOUND" | "PACKAGE_NOT_FOUND";
+export type PublishStorePackageError =
+    | GitHubError
+    | "STORE_NOT_FOUND"
+    | "PACKAGE_NOT_FOUND"
+    | "ALREADY_PUBLISHED";
 
 export class PublishStorePackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -37,6 +41,9 @@ export class PublishStorePackageUseCase implements UseCase {
         const fileName = [item.name, item.version, item.dhisVersion, date].join("-");
         const path = `${item.module.name}/${fileName}.json`;
         const branch = item.module.department.name.replace(/\s/g, "-");
+
+        const existingFileCheck = await this.gitRepository().readFile(store, branch, path);
+        if (existingFileCheck.isSuccess()) return Either.error("ALREADY_PUBLISHED");
 
         const validation = await this.gitRepository().writeFile(
             store,

@@ -1,12 +1,12 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { startDhis } from "../../../../utils/dhisServer";
 import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { Repositories } from "../../../../domain/Repositories";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
+import { startDhis } from "../../../../utils/dhisServer";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../../../metadata/MetadataD2ApiRepository";
 import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
@@ -98,6 +98,8 @@ describe("Sync metadata", () => {
             },
         ]);
 
+        local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
+
         const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
             schema.db.metadata.insert(JSON.parse(request.requestBody));
 
@@ -139,8 +141,8 @@ describe("Sync metadata", () => {
         const payload = await useCase.buildPayload();
         expect(payload.programs?.find(({ id }) => id === "id1")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
+        for await (const _sync of useCase.execute()) {
+            // no-op
         }
 
         // Assert object has been created on remote
@@ -177,8 +179,8 @@ describe("Sync metadata", () => {
         const payload = await useCase.buildPayload();
         expect(payload.programs?.find(({ id }) => id === "id2")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
+        for await (const _sync of useCase.execute()) {
+            // no-op
         }
 
         // Assert object has been created on remote
@@ -215,8 +217,8 @@ describe("Sync metadata", () => {
         const payload = await useCase.buildPayload();
         expect(payload.programs?.find(({ id }) => id === "id3")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
+        for await (const _sync of useCase.execute()) {
+            // no-op
         }
 
         // Assert object has been created on remote
@@ -253,8 +255,8 @@ describe("Sync metadata", () => {
         const payload = await useCase.buildPayload();
         expect(payload.programStages?.find(({ id }) => id === "ps_id1")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
+        for await (const _sync of useCase.execute()) {
+            // no-op
         }
 
         // Assert object has been created on remote
@@ -291,8 +293,8 @@ describe("Sync metadata", () => {
         const payload = await useCase.buildPayload();
         expect(payload.programStages?.find(({ id }) => id === "ps_id2")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
+        for await (const _sync of useCase.execute()) {
+            // no-op
         }
 
         // Assert object has been created on remote
@@ -329,8 +331,8 @@ describe("Sync metadata", () => {
         const payload = await useCase.buildPayload();
         expect(payload.organisationUnits?.find(({ id }) => id === "ou_id1")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
+        for await (const _sync of useCase.execute()) {
+            // no-op
         }
 
         // Assert object has been created on remote
@@ -369,8 +371,8 @@ describe("Sync metadata", () => {
         const payload = await useCase.buildPayload();
         expect(payload.organisationUnits?.find(({ id }) => id === "ou_id2")).toBeDefined();
 
-        for await (const { done } of useCase.execute()) {
-            if (done) console.log("Done");
+        for await (const _sync of useCase.execute()) {
+            // no-op
         }
 
         // Assert object has been created on remote

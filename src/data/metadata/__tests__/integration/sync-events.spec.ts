@@ -1,12 +1,12 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { startDhis } from "../../../../utils/dhisServer";
 import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { EventsSyncUseCase } from "../../../../domain/events/usecases/EventsSyncUseCase";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Repositories } from "../../../../domain/Repositories";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
+import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
 import { EventsD2ApiRepository } from "../../../events/EventsD2ApiRepository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
@@ -175,6 +175,8 @@ describe("Sync metadata", () => {
             },
         ]);
 
+        local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
+
         const addEventsToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
             schema.db.events.insert(JSON.parse(request.requestBody));
 
@@ -228,8 +230,8 @@ describe("Sync metadata", () => {
         const payload = await sync.buildPayload();
         expect(payload.events?.find(({ id }) => id === "test-event-1")).toBeDefined();
 
-        for await (const { done } of sync.execute()) {
-            if (done) console.log("Done");
+        for await (const _sync of sync.execute()) {
+            // no-op
         }
 
         const response = remote.db.events.find(1);
@@ -260,8 +262,8 @@ describe("Sync metadata", () => {
         const payload = await sync.buildPayload();
         expect(payload.events?.find(({ id }) => id === "test-event-2")).toBeDefined();
 
-        for await (const { done } of sync.execute()) {
-            if (done) console.log("Done");
+        for await (const _sync of sync.execute()) {
+            // no-op
         }
 
         const response = local.db.events.find(1);

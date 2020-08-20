@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-19T05:57:27.323Z\n"
+"POT-Creation-Date: 2020-08-20T07:22:23.568Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,6 +15,9 @@ msgid "You need to select at least one {{field}}"
 msgstr ""
 
 msgid "Field {{field}} needs to be a valid url"
+msgstr ""
+
+msgid "Field {{field}} is not valid"
 msgstr ""
 
 msgid "You need to provide a username and password combination"
@@ -176,6 +179,21 @@ msgid "Publishing package to Store"
 msgstr ""
 
 msgid "Package published to store"
+msgstr ""
+
+msgid "Store is not properly configured"
+msgstr ""
+
+msgid "Could not read package"
+msgstr ""
+
+msgid "You don't have permissions to create file on GitHub"
+msgstr ""
+
+msgid "Unknown error while creating file on GitHub"
+msgstr ""
+
+msgid "Package already published"
 msgstr ""
 
 msgid "Branch not found"

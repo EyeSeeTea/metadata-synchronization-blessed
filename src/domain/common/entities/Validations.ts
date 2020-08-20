@@ -1,5 +1,6 @@
 import _ from "lodash";
 import i18n from "../../../locales";
+import { Ref } from "./Ref";
 
 export interface ValidationError {
     property: string;
@@ -33,6 +34,11 @@ const availableValidations = {
         getDescription: (field: string) =>
             i18n.t("Field {{field}} needs to be a valid url", { field }),
         check: (value?: string) => !value?.trim() || !urlRegExp.test(value),
+    },
+    validRef: {
+        error: "invalid_url",
+        getDescription: (field: string) => i18n.t("Field {{field}} is not valid", { field }),
+        check: (value?: Ref) => !value?.id,
     },
 };
 

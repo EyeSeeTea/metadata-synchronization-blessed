@@ -3,6 +3,7 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import { eventsTransformations } from "../../../data/transformations/PackageTransformations";
 import { D2Program } from "../../../types/d2-api";
+import { debug } from "../../../utils/debug";
 import {
     mapCategoryOptionCombo,
     mapOptionValue,
@@ -97,7 +98,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             payload,
             eventsTransformations
         );
-        console.debug("Events package", { events, payload, versionedPayloadPackage });
+        debug("Events package", { events, payload, versionedPayloadPackage });
 
         const eventsRepository = await this.getEventsRepository(instance);
         const syncResult = await eventsRepository.save(payload, dataParams);
@@ -122,7 +123,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             this.encryptionKey
         );
         const payload = await aggregatedSync.mapPayload(instance, { dataValues });
-        console.debug("Program indicator package", { dataValues, payload });
+        debug("Program indicator package", { dataValues, payload });
 
         const aggregatedRepository = await this.getAggregatedRepository(instance);
         const syncResult = await aggregatedRepository.save(payload, dataParams);

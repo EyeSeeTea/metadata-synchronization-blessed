@@ -90,15 +90,32 @@ export function getSchemaByName(api: D2Api, modelName: string): D2SchemaProperti
     return model?.schema;
 }
 
+export function getSchemaByKlass(api: D2Api, klass: string): D2SchemaProperties | undefined {
+    const model = _.values(api.models).find(({ schema }) => schema.klass === klass);
+    return model?.schema;
+}
+
 export function isValidModel(api: D2Api, modelName: string): boolean {
     const { metadata = false } = getSchemaByName(api, modelName) ?? {};
     return metadata;
 }
 
+export function getSchemaByModelField(
+    api: D2Api,
+    field: string,
+    caller: string
+): D2SchemaProperties | undefined {
+    const callerSchema = getSchemaByName(api, caller);
+    const fieldProperty = callerSchema?.properties.find(({ fieldName }) => fieldName === field);
+    if (!fieldProperty) return undefined;
+
+    return getSchemaByKlass(api, fieldProperty.itemKlass ?? fieldProperty.klass);
+}
+
 /**
  * Return expected model in plural to include as key in post metadata body
  */
-export function cleanToModelName(api: D2Api, id: string, caller: string): string | null {
+export function cleanToModelName(api: D2Api, id: string, caller?: string): string | null {
     if (isValidModel(api, id)) {
         const schema = getSchemaByName(api, id);
         return schema?.plural ?? id;
@@ -106,12 +123,15 @@ export function cleanToModelName(api: D2Api, id: string, caller: string): string
         return "attributes";
     } else if (id === "commentOptionSet") {
         return "optionSets";
-    } else if (id === "groupSets" && caller.endsWith("Group")) {
+    } else if (id === "groupSets" && caller?.endsWith("Group")) {
         return caller + "Sets";
     } else if (id === "workflow") {
         return "dataApprovalWorkflow";
     } else if (id === "notificationTemplates") {
         return "programNotificationTemplates";
+    } else if (caller) {
+        const callerSchema = getSchemaByModelField(api, id, caller);
+        return callerSchema?.collectionName ?? null;
     } else {
         return null;
     }

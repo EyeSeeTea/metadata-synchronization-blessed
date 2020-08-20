@@ -30,6 +30,7 @@ import {
 } from "../entities/SynchronizationReport";
 import { SynchronizationResult, SynchronizationStatus } from "../entities/SynchronizationResult";
 import { SynchronizationType } from "../entities/SynchronizationType";
+import { debug } from "../../../utils/debug";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase
@@ -149,11 +150,11 @@ export abstract class GenericSyncUseCase {
             [this.localInstance]
         );
 
-        const objects = await storageRepository.listObjectsInCollection<InstanceData>(
-            Namespace.INSTANCES
+        const data = await storageRepository.getObjectInCollection<InstanceData>(
+            Namespace.INSTANCES,
+            id
         );
 
-        const data = objects.find(data => data.id === id);
         if (!data) throw new Error("Instance not found");
 
         const instance = Instance.build(data).decryptPassword(this.encryptionKey);
@@ -198,12 +199,12 @@ export abstract class GenericSyncUseCase {
             };
 
             try {
-                //console.debug("Start import on destination instance", instance.toPublicObject());
+                debug("Start import on destination instance", instance.toPublicObject());
 
                 const syncResults = await this.postPayload(instance);
                 syncReport.addSyncResult(...syncResults);
 
-                console.debug("Finished import on instance", instance.toPublicObject());
+                debug("Finished import on instance", instance.toPublicObject());
             } catch (error) {
                 syncReport.addSyncResult({
                     status: "ERROR",

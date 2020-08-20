@@ -21,9 +21,10 @@ import { TransformationRepository } from "../../domain/transformations/repositor
 import { D2Api, D2Model, MetadataResponse, Model, Stats } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { cache } from "../../utils/cache";
-import { metadataTransformations } from "../transformations/PackageTransformations";
 import { promiseMap } from "../../utils/common";
+import { debug } from "../../utils/debug";
 import { paginate } from "../../utils/pagination";
+import { metadataTransformations } from "../transformations/PackageTransformations";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
@@ -184,7 +185,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             metadataTransformations
         );
 
-        //console.debug("Versioned metadata package", versionedPayloadPackage);
+        debug("Versioned metadata package", versionedPayloadPackage);
 
         try {
             const response = await this.postMetadata(versionedPayloadPackage, additionalParams);

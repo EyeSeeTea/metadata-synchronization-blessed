@@ -51,6 +51,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             metadataIds: this.metadataIds,
             excludedIds: this.excludedIds,
             syncParams: {
+                enableMapping: true,
                 includeSharingSettings: this.includeUserInformation,
                 useDefaultIncludeExclude: this.useDefaultIncludeExclude,
                 metadataIncludeExcludeRules: this.metadataIncludeExcludeRules,
@@ -135,6 +136,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
 
     protected moduleValidations = (): ModelValidation[] => [
         { property: "name", validation: "hasText" },
+        { property: "department", validation: "validRef" },
         {
             property: "metadataIds",
             validation: "hasItems",

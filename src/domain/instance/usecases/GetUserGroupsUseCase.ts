@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Repositories } from "../../Repositories";
@@ -13,6 +14,7 @@ export class GetUserGroupsUseCase implements UseCase {
             [instance, ""]
         );
 
-        return instanceRepository.getUserGroups();
+        const userGroups = await instanceRepository.getUserGroups();
+        return _.sortBy(userGroups, "name");
     }
 }

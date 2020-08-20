@@ -3,15 +3,21 @@ import memoize from "nano-memoize";
 import { modelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder, NestedRules } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
+import { Expression, ExpressionParser } from "../../../utils/expressionParser";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
+import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
+import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
+import { Indicator, MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
 import {
-    GenericSyncUseCase,
-    SyncronizationPayload,
-} from "../../synchronization/usecases/GenericSyncUseCase";
-import { MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
-import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
+    buildNestedRules,
+    cleanObject,
+    cleanReferences,
+    cleanToModelName,
+    getAllReferences,
+} from "../utils";
+import { debug } from "../../../utils/debug";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
@@ -114,14 +120,17 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     });
 
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
-        const { syncParams = {} } = this.builder;
+        const { syncParams } = this.builder;
 
         const payloadPackage = await this.buildPayload();
+        const mappedPayloadPackage = syncParams?.enableMapping
+            ? await this.mapPayload(instance, payloadPackage)
+            : payloadPackage;
 
-        //console.debug("Metadata package", payloadPackage);
+        debug("Metadata package", { payloadPackage, mappedPayloadPackage });
 
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
-        const syncResult = await remoteMetadataRepository.save(payloadPackage, syncParams);
+        const syncResult = await remoteMetadataRepository.save(mappedPayloadPackage, syncParams);
         const origin = await this.getOriginInstance();
 
         return [{ ...syncResult, origin: origin.toPublicObject() }];
@@ -132,9 +141,86 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     }
 
     public async mapPayload(
-        _instance: Instance,
-        payload: SyncronizationPayload
-    ): Promise<SyncronizationPayload> {
-        return payload;
+        { metadataMapping: mapping }: Instance,
+        payload: MetadataPackage
+    ): Promise<MetadataPackage> {
+        return _.mapValues(payload, (items, model) => {
+            const collectionName = modelFactory(this.api, model).getCollectionName();
+            const references = this.api.models[collectionName]?.schema.properties
+                .filter(
+                    ({ propertyType, itemPropertyType }) =>
+                        propertyType === "REFERENCE" || itemPropertyType === "REFERENCE"
+                )
+                .map(({ name }) => name);
+
+            return items?.map((object: any) => {
+                if (typeof object !== "object") return object;
+
+                const mappedObject = this.mapProperty({ key: model, object, mapping });
+
+                return _.mapValues(mappedObject, (value, key) => {
+                    if (!references.includes(key)) return value;
+
+                    if (Array.isArray(value)) {
+                        return value.map(item =>
+                            this.mapProperty({ parent: model, key, object: item, mapping })
+                        );
+                    }
+
+                    return this.mapProperty({ parent: model, key, object: value, mapping });
+                });
+            });
+        });
+    }
+
+    private mapProperty<T extends Ref>({
+        parent,
+        key,
+        object,
+        mapping,
+    }: {
+        parent?: string;
+        key: string;
+        object: T;
+        mapping: MetadataMappingDictionary;
+    }): T {
+        const modelName = cleanToModelName(this.api, key, parent);
+        if (!modelName) return object;
+
+        const mappedId = this.lookup(mapping, object.id);
+
+        if (modelName === "indicators") {
+            const indicator = (object as unknown) as Indicator;
+            const numerator = this.mapExpression(indicator.numerator, mapping);
+            const denominator = this.mapExpression(indicator.denominator, mapping);
+            return { ...object, id: mappedId, numerator, denominator };
+        }
+
+        return { ...object, id: mappedId };
+    }
+
+    private mapExpression(expression: string, mapping: MetadataMappingDictionary) {
+        const config = ExpressionParser.parse(expression).value.data ?? [];
+        const mappedConfig = config.map(expression => {
+            return _.mapValues(expression, (id, property) => {
+                const modelName = cleanToModelName(this.api, property);
+                if (!modelName || typeof id !== "string") return id;
+                return this.lookup(mapping, id);
+            });
+        });
+
+        const validation = ExpressionParser.build(mappedConfig as Expression[]);
+        if (validation.isError()) return expression;
+
+        return validation.value.data;
+    }
+
+    private lookup(mapping: MetadataMappingDictionary, id: string): string {
+        // We would normally use _.get(mapping, [modelName, id]) but modelName of mapping is custom
+        const mappingStore = _.values(mapping)
+            .map(item => _.mapValues(item, (value, id) => ({ id, ...value })))
+            .flatMap(_.values);
+
+        return mappingStore.find(item => item.id === id)?.mappedId ?? id;
     }
 }

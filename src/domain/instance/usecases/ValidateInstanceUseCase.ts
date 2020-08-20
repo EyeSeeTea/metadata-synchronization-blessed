@@ -1,4 +1,5 @@
 import i18n from "../../../locales";
+import { debug } from "../../../utils/debug";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
@@ -48,7 +49,7 @@ export class ValidateInstanceUseCase implements UseCase {
                     })
                 );
             } else {
-                console.debug({ error });
+                debug({ error });
                 return Either.error(i18n.t("Unknown error"));
             }
         }

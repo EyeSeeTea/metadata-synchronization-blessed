@@ -51,6 +51,7 @@ const defaultSynchronizationBuilder: SynchronizationBuilder = {
     },
     syncParams: {
         importStrategy: "CREATE_AND_UPDATE",
+        enableMapping: false,
         includeSharingSettings: true,
         useDefaultIncludeExclude: true,
         atomicMode: "ALL",
@@ -233,12 +234,13 @@ export default class SyncRule {
     }
 
     public get syncParams(): MetadataSynchronizationParams {
-        return (
-            this.syncRule.builder?.syncParams ?? {
-                includeSharingSettings: true,
-                useDefaultIncludeExclude: true,
-            }
-        );
+        const params = this.syncRule.builder?.syncParams ?? {};
+        return {
+            enableMapping: false,
+            includeSharingSettings: true,
+            useDefaultIncludeExclude: true,
+            ...params,
+        };
     }
 
     public get dataParams(): DataSynchronizationParams {

@@ -26,7 +26,7 @@ const commonSteps: {
         key: "general-info",
         label: i18n.t("General info"),
         component: GeneralInfoStep,
-        validationKeys: ["name"],
+        validationKeys: ["name", "department"],
     },
     summary: {
         key: "summary",

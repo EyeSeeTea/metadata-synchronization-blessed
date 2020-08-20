@@ -10,6 +10,7 @@ import { Instance } from "../../domain/instance/entities/Instance";
 import i18n from "../../locales";
 import { MigrationsRunner } from "../../migrations";
 import { D2Api } from "../../types/d2-api";
+import { debug } from "../../utils/debug";
 import { AppContext } from "../common/contexts/AppContext";
 import muiThemeLegacy from "../common/themes/dhis2-legacy.theme";
 import { muiTheme } from "../common/themes/dhis2.theme";
@@ -79,7 +80,7 @@ const App = () => {
 
 async function runMigrations(api) {
     axiosRetry(api.connection, { retries: axiosMaxRetries });
-    const runner = await MigrationsRunner.init({ api, debug: console.debug });
+    const runner = await MigrationsRunner.init({ api, debug: debug });
 
     if (runner.hasPendingMigrations()) {
         return { type: "pending", runner };

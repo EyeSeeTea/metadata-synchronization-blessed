@@ -95,16 +95,21 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
                         case "BAD_CREDENTIALS":
                         case "NO_TOKEN":
                         case "STORE_NOT_FOUND":
-                            snackbar.error("Store is not properly configured");
+                            snackbar.error(i18n.t("Store is not properly configured"));
                             return;
                         case "PACKAGE_NOT_FOUND":
-                            snackbar.error("Could not read package");
+                            snackbar.error(i18n.t("Could not read package"));
                             return;
                         case "WRITE_PERMISSIONS":
-                            snackbar.error("You don't have permissions to create file on GitHub");
+                            snackbar.error(
+                                i18n.t("You don't have permissions to create file on GitHub")
+                            );
                             return;
                         case "UNKNOWN":
-                            snackbar.error("Unknown error while creating file on GitHub");
+                            snackbar.error(i18n.t("Unknown error while creating file on GitHub"));
+                            return;
+                        case "ALREADY_PUBLISHED":
+                            snackbar.warning(i18n.t("Package already published"));
                             return;
                         case "BRANCH_NOT_FOUND":
                             updateDialog({
@@ -221,6 +226,7 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
             name: "details",
             text: i18n.t("Details"),
             multiple: false,
+            primary: true,
         },
         {
             name: "delete",

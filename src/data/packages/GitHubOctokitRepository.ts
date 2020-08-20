@@ -45,8 +45,12 @@ export class GitHubOctokitRepository implements GitHubRepository {
         branch: string,
         path: string
     ): Promise<Either<GitHubError, T>> {
-        const { encoding, content } = await this.getFile(store, branch, path);
-        return this.readFileContents(encoding, content);
+        try {
+            const { encoding, content } = await this.getFile(store, branch, path);
+            return this.readFileContents(encoding, content);
+        } catch (error) {
+            return Either.error(this.validateError(error));
+        }
     }
 
     public readFileContents<T>(encoding: string, content: string): Either<GitHubError, T> {

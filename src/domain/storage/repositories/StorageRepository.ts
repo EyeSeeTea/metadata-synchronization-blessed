@@ -26,8 +26,13 @@ export abstract class StorageRepository {
         const baseElement = _.find(rawData, element => element.id === id);
         if (!baseElement) return undefined;
 
-        const advancedElement = (await this.getObject(`${key}-${id}`)) ?? {};
-        return { ...baseElement, ...advancedElement } as T;
+        const advancedProperties = NamespaceProperties[key];
+        if (advancedProperties.length > 0) {
+            const advancedElement = (await this.getObject(`${key}-${id}`)) ?? {};
+            return { ...baseElement, ...advancedElement } as T;
+        }
+
+        return baseElement;
     }
 
     public async saveObjectInCollection<T extends Ref>(key: Namespace, element: T): Promise<void> {
@@ -50,6 +55,10 @@ export abstract class StorageRepository {
         const oldData: Ref[] = (await this.getObject(key)) ?? [];
         const newData = _.reject(oldData, { id });
         await this.saveObject(key, newData);
-        await this.removeObject(`${key}-${id}`);
+
+        const advancedProperties = NamespaceProperties[key];
+        if (advancedProperties.length > 0) {
+            await this.removeObject(`${key}-${id}`);
+        }
     }
 }
