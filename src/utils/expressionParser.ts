@@ -57,7 +57,7 @@ export class ExpressionParser {
     private static validate(expressions: Array<Expression | null>): ParserError | undefined {
         const expressionsWithoutParentheses = expressions?.filter(
             expression =>
-                expression?.type !== "parentheses" || !["(", ")"].includes(expression.operator)
+                expression?.type !== "parentheses" || !["(", ")"].includes(expression.parentheses)
         );
 
         for (const [index, expression] of expressionsWithoutParentheses.entries()) {
@@ -87,7 +87,7 @@ export class ExpressionParser {
             if (["(", ")"].includes(expression)) {
                 return {
                     type: "parentheses",
-                    operator: expression as Parentheses,
+                    parentheses: expression as Parentheses,
                 };
             }
         }
@@ -231,7 +231,7 @@ export class ExpressionParser {
             case "organisationUnitGroup":
                 return `OUG{${expression.organisationUnitGroup}}`;
             case "parentheses":
-                return expression.operator;
+                return expression.parentheses;
             case "programAttribute":
                 return `A{${_.compact([expression.program, expression.attribute]).join(".")}}`;
             case "programDataElement":
@@ -316,7 +316,7 @@ export interface OperatorExpression extends BaseExpression {
 
 export interface ParenthesesExpression extends BaseExpression {
     type: "parentheses";
-    operator: Parentheses;
+    parentheses: Parentheses;
 }
 
 export interface DataElementExpression extends BaseExpression {

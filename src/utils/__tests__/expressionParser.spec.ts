@@ -254,7 +254,7 @@ describe("Expression parser", () => {
             "( D{eBAyeGv0exc.vV9UWAZohSf} * A{IpHINAT79UW.cejWyOfXge6} ) / D{eBAyeGv0exc.GieVkTxp4HH}"
         );
         expect(validation.value.data).toEqual([
-            { type: "parentheses", operator: "(" },
+            { type: "parentheses", parentheses: "(" },
             {
                 type: "programDataElement",
                 program: "eBAyeGv0exc",
@@ -266,7 +266,7 @@ describe("Expression parser", () => {
                 program: "IpHINAT79UW",
                 attribute: "cejWyOfXge6",
             },
-            { type: "parentheses", operator: ")" },
+            { type: "parentheses", parentheses: ")" },
             { type: "operator", operator: "/" },
             {
                 type: "programDataElement",
@@ -350,7 +350,7 @@ describe("Expression parser", () => {
             "( 2 * #{P3jJH5Tu5VC.S34ULMcHMca} ) / ( #{FQ2o8UBlcrS.S34ULMcHMca} - 200 ) * 25"
         );
         expect(validation.value.data).toEqual([
-            { type: "parentheses", operator: "(" },
+            { type: "parentheses", parentheses: "(" },
             { type: "number", value: 2 },
             { type: "operator", operator: "*" },
             {
@@ -359,9 +359,9 @@ describe("Expression parser", () => {
                 categoryOptionCombo: "S34ULMcHMca",
                 attributeOptionCombo: undefined,
             },
-            { type: "parentheses", operator: ")" },
+            { type: "parentheses", parentheses: ")" },
             { type: "operator", operator: "/" },
-            { type: "parentheses", operator: "(" },
+            { type: "parentheses", parentheses: "(" },
             {
                 type: "dataElement",
                 dataElement: "FQ2o8UBlcrS",
@@ -370,7 +370,7 @@ describe("Expression parser", () => {
             },
             { type: "operator", operator: "-" },
             { type: "number", value: 200 },
-            { type: "parentheses", operator: ")" },
+            { type: "parentheses", parentheses: ")" },
             { type: "operator", operator: "*" },
             { type: "number", value: 25 },
         ]);
@@ -468,7 +468,7 @@ describe("Expression parser", () => {
 
     it("build - example 4", () => {
         const validation = ExpressionParser.build([
-            { type: "parentheses", operator: "(" },
+            { type: "parentheses", parentheses: "(" },
             {
                 type: "programDataElement",
                 program: "eBAyeGv0exc",
@@ -480,7 +480,7 @@ describe("Expression parser", () => {
                 program: "IpHINAT79UW",
                 attribute: "cejWyOfXge6",
             },
-            { type: "parentheses", operator: ")" },
+            { type: "parentheses", parentheses: ")" },
             { type: "operator", operator: "/" },
             {
                 type: "programDataElement",
@@ -569,7 +569,7 @@ describe("Expression parser", () => {
 
     it("build - example 9", () => {
         const validation = ExpressionParser.build([
-            { type: "parentheses", operator: "(" },
+            { type: "parentheses", parentheses: "(" },
             { type: "number", value: 2 },
             { type: "operator", operator: "*" },
             {
@@ -578,9 +578,9 @@ describe("Expression parser", () => {
                 categoryOptionCombo: "S34ULMcHMca",
                 attributeOptionCombo: undefined,
             },
-            { type: "parentheses", operator: ")" },
+            { type: "parentheses", parentheses: ")" },
             { type: "operator", operator: "/" },
-            { type: "parentheses", operator: "(" },
+            { type: "parentheses", parentheses: "(" },
             {
                 type: "dataElement",
                 dataElement: "FQ2o8UBlcrS",
@@ -589,7 +589,7 @@ describe("Expression parser", () => {
             },
             { type: "operator", operator: "-" },
             { type: "number", value: 200 },
-            { type: "parentheses", operator: ")" },
+            { type: "parentheses", parentheses: ")" },
             { type: "operator", operator: "*" },
             { type: "number", value: 25 },
         ]);
