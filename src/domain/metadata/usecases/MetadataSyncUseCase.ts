@@ -118,7 +118,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         const payloadPackage = await this.buildPayload();
 
-        console.debug("Metadata package", payloadPackage);
+        //console.debug("Metadata package", payloadPackage);
 
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
         const syncResult = await remoteMetadataRepository.save(payloadPackage, syncParams);

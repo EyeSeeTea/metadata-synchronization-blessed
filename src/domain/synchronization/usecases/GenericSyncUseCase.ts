@@ -198,7 +198,7 @@ export abstract class GenericSyncUseCase {
             };
 
             try {
-                console.debug("Start import on destination instance", instance.toPublicObject());
+                //console.debug("Start import on destination instance", instance.toPublicObject());
 
                 const syncResults = await this.postPayload(instance);
                 syncReport.addSyncResult(...syncResults);

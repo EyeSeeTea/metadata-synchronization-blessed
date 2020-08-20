@@ -24,7 +24,7 @@ describe("Aggregated transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 34,
-                    transform: (payload: D2AggregatedPackage) =>
+                    apply: (payload: D2AggregatedPackage) =>
                         renamePropInAggregatedPackage(payload, "value", "34Value"),
                 },
             ];
@@ -42,9 +42,9 @@ describe("Aggregated transformations - D2Api", () => {
         it("should apply transformation if there are one lower version transformation than the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 30,
-                    transform: (payload: D2AggregatedPackage) =>
-                        renamePropInAggregatedPackage(payload, "value", "30Value"),
+                    apiVersion: 31,
+                    apply: (payload: D2AggregatedPackage) =>
+                        renamePropInAggregatedPackage(payload, "value", "31Value"),
                 },
             ];
             const payload = givenAnAggregatedPackage();
@@ -56,14 +56,14 @@ describe("Aggregated transformations - D2Api", () => {
             );
 
             expect(
-                _.every(transformedPayload.dataValues, dataValue => dataValue["30Value"])
+                _.every(transformedPayload.dataValues, dataValue => dataValue["31Value"])
             ).toEqual(true);
         });
         it("should apply transformation if there are one version transformation equal to the version argument", () => {
             const transformations = [
                 {
                     apiVersion: 33,
-                    transform: (payload: D2AggregatedPackage) =>
+                    apply: (payload: D2AggregatedPackage) =>
                         renamePropInAggregatedPackage(payload, "value", "33Value"),
                 },
             ];
@@ -84,12 +84,12 @@ describe("Aggregated transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 32,
-                    transform: (payload: D2AggregatedPackage) =>
+                    apply: (payload: D2AggregatedPackage) =>
                         renamePropInAggregatedPackage(payload, "value", "32Value"),
                 },
                 {
                     apiVersion: 33,
-                    transform: (payload: D2AggregatedPackage) =>
+                    apply: (payload: D2AggregatedPackage) =>
                         renamePropInAggregatedPackage(payload, "32Value", "33Value"),
                 },
             ];
@@ -110,12 +110,12 @@ describe("Aggregated transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 33,
-                    transform: (payload: D2AggregatedPackage) =>
+                    apply: (payload: D2AggregatedPackage) =>
                         renamePropInAggregatedPackage(payload, "32Value", "33Value"),
                 },
                 {
                     apiVersion: 32,
-                    transform: (payload: D2AggregatedPackage) =>
+                    apply: (payload: D2AggregatedPackage) =>
                         renamePropInAggregatedPackage(payload, "value", "32Value"),
                 },
             ];
@@ -168,12 +168,12 @@ describe("Aggregated transformations - D2Api", () => {
         it("should apply transformation if there are one lower version transformation than the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 30,
-                    transform: (payload: D2AggregatedPackage) =>
-                        renamePropInAggregatedPackage(payload, "30Value", "value"),
+                    apiVersion: 31,
+                    undo: (payload: D2AggregatedPackage) =>
+                        renamePropInAggregatedPackage(payload, "31Value", "value"),
                 },
             ];
-            const payload = givenAnAggregatedPackage("30Value");
+            const payload = givenAnAggregatedPackage("31Value");
 
             const transformedPayload = transformationRepository.mapPackageFrom(
                 33,
@@ -188,16 +188,16 @@ describe("Aggregated transformations - D2Api", () => {
         it("should apply transformation if there are one version transformation equal to the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 30,
-                    transform: (payload: D2AggregatedPackage) =>
-                        renamePropInAggregatedPackage(payload, "30Value", "value"),
+                    apiVersion: 31,
+                    undo: (payload: D2AggregatedPackage) =>
+                        renamePropInAggregatedPackage(payload, "31Value", "value"),
                 },
             ];
 
-            const payload = givenAnAggregatedPackage("30Value");
+            const payload = givenAnAggregatedPackage("31Value");
 
             const transformedPayload = transformationRepository.mapPackageFrom(
-                30,
+                31,
                 payload,
                 transformations
             );
@@ -209,21 +209,21 @@ describe("Aggregated transformations - D2Api", () => {
         it("should apply all transformations if there are two transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
-                    transform: (payload: D2AggregatedPackage) =>
-                        renamePropInAggregatedPackage(payload, "31Value", "30Value"),
+                    apiVersion: 32,
+                    undo: (payload: D2AggregatedPackage) =>
+                        renamePropInAggregatedPackage(payload, "32Value", "31Value"),
                 },
                 {
-                    apiVersion: 30,
-                    transform: (payload: D2AggregatedPackage) =>
-                        renamePropInAggregatedPackage(payload, "30Value", "value"),
+                    apiVersion: 31,
+                    undo: (payload: D2AggregatedPackage) =>
+                        renamePropInAggregatedPackage(payload, "31Value", "value"),
                 },
             ];
 
-            const payload = givenAnAggregatedPackage("31Value");
+            const payload = givenAnAggregatedPackage("32Value");
 
             const transformedPayload = transformationRepository.mapPackageFrom(
-                31,
+                32,
                 payload,
                 transformations
             );
@@ -235,21 +235,21 @@ describe("Aggregated transformations - D2Api", () => {
         it("should apply all transformations in correct even if there are disordered transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 30,
-                    transform: (payload: D2AggregatedPackage) =>
-                        renamePropInAggregatedPackage(payload, "30Value", "value"),
+                    apiVersion: 31,
+                    undo: (payload: D2AggregatedPackage) =>
+                        renamePropInAggregatedPackage(payload, "31Value", "value"),
                 },
                 {
-                    apiVersion: 31,
-                    transform: (payload: D2AggregatedPackage) =>
-                        renamePropInAggregatedPackage(payload, "31Value", "30Value"),
+                    apiVersion: 32,
+                    undo: (payload: D2AggregatedPackage) =>
+                        renamePropInAggregatedPackage(payload, "32Value", "31Value"),
                 },
             ];
 
-            const payload = givenAnAggregatedPackage("31Value");
+            const payload = givenAnAggregatedPackage("32Value");
 
             const transformedPayload = transformationRepository.mapPackageFrom(
-                31,
+                32,
                 payload,
                 transformations
             );
