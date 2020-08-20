@@ -3,18 +3,19 @@ import memoize from "nano-memoize";
 import { modelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder, NestedRules } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
+import { Expression, ExpressionParser } from "../../../utils/expressionParser";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
-import { MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
+import { Indicator, MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
 import {
     buildNestedRules,
     cleanObject,
     cleanReferences,
     cleanToModelName,
-    getAllReferences,
+    getAllReferences
 } from "../utils";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
@@ -183,8 +184,31 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const modelName = cleanToModelName(this.api, key, parent);
         if (!modelName) return object;
 
-        const { mappedId = object.id } = _.get(mapping, [modelName, object.id]) ?? {};
+        const mappedId = _.get(mapping, [modelName, object.id])?.mappedId ?? object.id;
+
+        if (modelName === "indicators") {
+            const indicator = (object as unknown) as Indicator;
+            const numerator = this.mapExpression(indicator.numerator, mapping);
+            const denominator = this.mapExpression(indicator.denominator, mapping);
+            return { ...object, id: mappedId, numerator, denominator };
+        }
 
         return { ...object, id: mappedId };
+    }
+
+    private mapExpression(expression: string, mapping: MetadataMappingDictionary) {
+        const config = ExpressionParser.parse(expression).value.data ?? [];
+        const mappedConfig = config.map(expression => {
+            return _.mapValues(expression, (id, property) => {
+                const modelName = cleanToModelName(this.api, property);
+                if (!modelName || typeof id !== "string") return id;
+                return _.get(mapping, [modelName, id])?.mappedId ?? id;
+            });
+        });
+
+        const validation = ExpressionParser.build(mappedConfig as Expression[]);
+        if (validation.isError()) return expression;
+
+        return validation.value.data;
     }
 }
