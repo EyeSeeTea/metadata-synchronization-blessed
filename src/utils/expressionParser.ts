@@ -6,8 +6,8 @@ export class ExpressionParser {
     private static isValidNumber = /^\d*\.?\d*?$/;
 
     // Detects operators in a expression (meant to be used with String.split)
-    private static splitter = /([+\-/\*()]|\[days\])(?![^{]*})/;
-    private static operators = /([+\-/\*])/;
+    private static splitter = /([+\-/*()]|\[days\])(?![^{]*})/;
+    private static operators = /([+\-/*])/;
     private static parentheses = /([()])/;
 
     // Looks up for all valid ids in a string (meant to be used with String.match)
