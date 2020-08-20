@@ -15,6 +15,7 @@ export const metadataModels = [
     metadataClasses.CategoryOptionGroupModel,
     metadataClasses.CategoryOptionGroupSetModel,
     metadataClasses.ChartModel,
+    metadataClasses.ReportTableModel,
     metadataClasses.DashboardModel,
     metadataClasses.DataElementModel,
     metadataClasses.DataElementGroupModel,

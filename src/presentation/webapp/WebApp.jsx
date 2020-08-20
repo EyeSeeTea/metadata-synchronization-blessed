@@ -58,7 +58,8 @@ const App = () => {
 
             const d2 = await init({ baseUrl: `${baseUrl}/api` });
             const api = new D2Api({ baseUrl });
-            const instance = Instance.build({ name: "This instance", url: baseUrl });
+            const version = await api.getVersion();
+            const instance = Instance.build({ name: "This instance", url: baseUrl, version });
 
             const compositionRoot = new CompositionRoot(instance, encryptionKey);
 

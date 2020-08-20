@@ -1,4 +1,6 @@
-export interface Transformation<Input, Output> {
+export interface Transformation {
+    name?: string;
     apiVersion: number;
-    transform(payload: Input): Output;
+    apply?<Input, Output>(payload: Input): Output;
+    undo?<Input, Output>(payload: Input): Output;
 }

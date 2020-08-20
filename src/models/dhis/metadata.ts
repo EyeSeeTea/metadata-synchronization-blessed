@@ -114,6 +114,11 @@ export class ChartModel extends D2Model {
     protected static collectionName = "charts" as const;
 }
 
+export class ReportTableModel extends D2Model {
+    protected static metadataType = "reportTable";
+    protected static collectionName = "reportTables" as const;
+}
+
 export class DashboardModel extends D2Model {
     protected static metadataType = "dashboard";
     protected static collectionName = "dashboards" as const;
