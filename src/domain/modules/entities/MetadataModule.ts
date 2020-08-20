@@ -51,6 +51,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             metadataIds: this.metadataIds,
             excludedIds: this.excludedIds,
             syncParams: {
+                enableMapping: true,
                 includeSharingSettings: this.includeUserInformation,
                 useDefaultIncludeExclude: this.useDefaultIncludeExclude,
                 metadataIncludeExcludeRules: this.metadataIncludeExcludeRules,

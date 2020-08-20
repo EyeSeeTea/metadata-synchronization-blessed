@@ -119,10 +119,12 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     });
 
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
-        const { syncParams = {} } = this.builder;
+        const { syncParams } = this.builder;
 
         const payloadPackage = await this.buildPayload();
-        const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
+        const mappedPayloadPackage = syncParams?.enableMapping
+            ? await this.mapPayload(instance, payloadPackage)
+            : payloadPackage;
 
         console.debug("Metadata package", { payloadPackage, mappedPayloadPackage });
 

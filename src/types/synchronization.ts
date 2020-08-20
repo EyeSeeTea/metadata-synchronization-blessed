@@ -26,6 +26,7 @@ export interface ExcludeIncludeRules {
 }
 
 export interface MetadataSynchronizationParams extends MetadataImportParams {
+    enableMapping: boolean;
     includeSharingSettings: boolean;
     useDefaultIncludeExclude: boolean;
     metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
