@@ -221,6 +221,7 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
             name: "details",
             text: i18n.t("Details"),
             multiple: false,
+            primary: true,
         },
         {
             name: "delete",
