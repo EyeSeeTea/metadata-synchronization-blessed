@@ -579,6 +579,4 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     );
 };
 
-(MetadataTable as any).whyDidYouRender = true;
-
 export default MetadataTable;
