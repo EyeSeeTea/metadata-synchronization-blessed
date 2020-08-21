@@ -1,78 +1,77 @@
+import { Provider } from "@dhis2/app-runtime";
+import i18n from "@dhis2/d2-i18n";
+import axios from "axios";
+import { D2Api } from "d2-api/2.30";
+import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
-import _ from "lodash";
-import axios from "axios";
-import { config, getManifest, getUserSettings, init } from "d2";
-import { HashRouter } from "react-router-dom";
-import i18n from "@dhis2/d2-i18n";
-import { DataProvider } from "@dhis2/app-runtime";
-import "font-awesome/css/font-awesome.min.css";
-
-import App from "./components/app/App";
-import "./locales";
-
-function isLangRTL(code) {
-    const langs = ["ar", "fa", "ur"];
-    const prefixed = langs.map(c => `${c}-`);
-    return _(langs).includes(code) || prefixed.filter(c => code && code.startsWith(c)).length > 0;
-}
-
-function configI18n(userSettings) {
-    const uiLocale = userSettings.keyUiLocale;
-
-    if (uiLocale && uiLocale !== "en") {
-        config.i18n.sources.add(`./i18n/i18n_module_${uiLocale}.properties`);
-    }
-
-    config.i18n.sources.add("./i18n/i18n_module_en.properties");
-    document.documentElement.setAttribute("dir", isLangRTL(uiLocale) ? "rtl" : "ltr");
-
-    i18n.changeLanguage(uiLocale);
-}
 
 async function getBaseUrl() {
     if (process.env.NODE_ENV === "development") {
-        const envVariable = "REACT_APP_DHIS2_BASE_URL";
-        const defaultServer = "http://localhost:8080";
-        const baseUrl = process.env[envVariable] || defaultServer;
+        const baseUrl = process.env.REACT_APP_DHIS2_BASE_URL || "http://localhost:8080";
         console.info(`[DEV] DHIS2 instance: ${baseUrl}`);
-        return baseUrl;
+        return baseUrl.replace(/\/*$/, "");
     } else {
-        const manifest = await getManifest("./manifest.webapp");
-        return manifest.getBaseUrl();
+        const { data: manifest } = await axios.get("manifest.webapp");
+        return manifest.activities.dhis.href;
     }
 }
 
+// Presentation layer is loaded with code-splitting for performance
+async function getPresentation() {
+    if (process.env.REACT_APP_DASHBOARD_WIDGET) {
+        const { default: App } = await import("./presentation/widget/WidgetApp");
+        return App;
+    } else {
+        const { default: App } = await import("./presentation/webapp/WebApp");
+        return App;
+    }
+}
+
+const isLangRTL = code => {
+    const langs = ["ar", "fa", "ur"];
+    const prefixed = langs.map(c => `${c}-`);
+    return _(langs).includes(code) || prefixed.filter(c => code && code.startsWith(c)).length > 0;
+};
+
+const configI18n = ({ keyUiLocale }) => {
+    i18n.changeLanguage(keyUiLocale);
+    document.documentElement.setAttribute("dir", isLangRTL(keyUiLocale) ? "rtl" : "ltr");
+};
+
 async function main() {
     const baseUrl = await getBaseUrl();
-    const apiUrl = baseUrl.replace(/\/*$/, "") + "/api";
+
     try {
-        const d2 = await init({ baseUrl: apiUrl });
-        window.d2 = d2; // Make d2 available in the console
-        const userSettings = await getUserSettings();
+        const api = new D2Api({ baseUrl });
+        const userSettings = await api.get("/userSettings").getData();
+        if (typeof userSettings === "string") throw new Error("User needs to log in");
         configI18n(userSettings);
-        const appConfig = await axios.get("app-config.json").then(res => res.data);
+    } catch (err) {
         ReactDOM.render(
-            <HashRouter>
-                <DataProvider baseUrl={baseUrl} apiVersion={d2.system.version.minor}>
-                    <App d2={d2} appConfig={appConfig} />
-                </DataProvider>
-            </HashRouter>,
+            <div>
+                <h3>
+                    <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
+                        Login
+                    </a>
+                    {` ${baseUrl}`}
+                </h3>
+            </div>,
+            document.getElementById("root")
+        );
+        return;
+    }
+
+    try {
+        const App = await getPresentation();
+        ReactDOM.render(
+            <Provider config={{ baseUrl, apiVersion: "30" }}>
+                <App />
+            </Provider>,
             document.getElementById("root")
         );
     } catch (err) {
-        console.error(err);
-        const message = err.toString().match("Unable to get schemas") ? (
-            <div>
-                <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
-                    Login
-                </a>{" "}
-                {baseUrl}
-            </div>
-        ) : (
-            err.toString()
-        );
-        ReactDOM.render(<div>{message}</div>, document.getElementById("root"));
+        ReactDOM.render(<div>{err.toString()}</div>, document.getElementById("root"));
     }
 }
 

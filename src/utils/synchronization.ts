@@ -1,168 +1,147 @@
-import axios, { AxiosBasicCredentials } from "axios";
+import FileSaver from "file-saver";
 import _ from "lodash";
+import moment from "moment";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../domain/instance/entities/MetadataMapping";
+import { CategoryOptionCombo } from "../domain/metadata/entities/MetadataEntities";
+import i18n from "../locales";
+import SyncRule from "../models/syncRule";
+import { D2Api } from "../types/d2-api";
 import "../utils/lodash-mixins";
 
-import Instance from "../models/instance";
-import { D2, MetadataImportParams, MetadataImportResponse } from "../types/d2";
-import { MetadataPackage, NestedRules, SynchronizationResult } from "../types/synchronization";
-import { cleanModelName, getClassName } from "./d2";
-import { isValidUid } from "d2/uid";
-
-const blacklistedProperties = ["user", "userAccesses", "userGroupAccesses"];
-
-export function buildNestedRules(rules: string[][] = []): NestedRules {
-    return _(rules)
-        .filter(path => path.length > 1)
-        .groupBy(_.first)
-        .mapValues(path => path.map(_.tail))
-        .value();
-}
-
-export function cleanObject(element: any, excludeRules: string[][] = []): any {
-    const leafRules = _(excludeRules)
-        .filter(path => path.length === 1)
-        .map(_.first)
-        .compact()
-        .value();
-
-    return _.pick(element, _.difference(_.keys(element), leafRules, blacklistedProperties));
-}
-
-export function cleanReferences(
-    references: MetadataPackage,
-    includeRules: string[][] = []
-): string[] {
-    const rules = _(includeRules)
-        .map(_.first)
-        .compact()
-        .value();
-
-    return _.intersection(_.keys(references), rules);
-}
-
+//TODO: when all request to metadata using metadataRepository.getMetadataByIds
+// this function should be removed
 export async function getMetadata(
-    baseUrl: string,
+    api: D2Api,
     elements: string[],
-    fields: string = ":all",
-    auth: AxiosBasicCredentials | undefined = undefined
-): Promise<MetadataPackage> {
+    fields = ":all"
+): Promise<Record<string, any[]>> {
     const promises = [];
     for (let i = 0; i < elements.length; i += 100) {
-        const requestUrl = baseUrl + "/metadata.json";
         const requestElements = elements.slice(i, i + 100).toString();
         promises.push(
-            axios.get(requestUrl, {
-                auth,
-                withCredentials: true,
-                params: {
-                    fields: fields,
+            api
+                .get("/metadata", {
+                    fields,
                     filter: "id:in:[" + requestElements + "]",
                     defaults: "EXCLUDE",
-                },
-            })
+                })
+                .getData()
         );
     }
     const response = await Promise.all(promises);
-    const results = _.deepMerge({}, ...response.map(result => result.data));
+    const results = _.deepMerge({}, ...response);
     if (results.system) delete results.system;
     return results;
 }
 
-export async function postMetadata(
-    instance: Instance,
-    metadata: object,
-    additionalParams?: MetadataImportParams
-): Promise<MetadataImportResponse> {
-    try {
-        const params: MetadataImportParams = {
-            importMode: "COMMIT",
-            identifier: "AUTO",
-            importReportMode: "FULL",
-            importStrategy: "CREATE_AND_UPDATE",
-            mergeMode: "REPLACE",
-            atomicMode: "NONE",
-            ...additionalParams,
-        };
-
-        const response = await axios.post(instance.url + "/api/metadata", metadata, {
-            auth: {
-                username: instance.username,
-                password: instance.password,
-            },
-            params,
-        });
-
-        return response.data;
-    } catch (error) {
-        if (error.response) {
-            return error.response;
-        } else {
-            console.error(error);
-            return { status: "NETWORK ERROR" };
-        }
-    }
-}
-
-export function getAllReferences(
-    d2: D2,
-    obj: any,
-    type: string,
-    parents: string[] = []
-): MetadataPackage {
-    let result: MetadataPackage = {};
-    _.forEach(obj, (value, key) => {
-        if (_.isObject(value) || _.isArray(value)) {
-            const recursive = getAllReferences(d2, value, type, [...parents, key]);
-            result = _.deepMerge(result, recursive);
-        } else if (isValidUid(value)) {
-            const metadataType = _(parents)
-                .map(k => cleanModelName(d2, k, type))
-                .compact()
-                .first();
-            if (metadataType) {
-                result[metadataType] = result[metadataType] || [];
-                result[metadataType].push(value);
-            }
-        }
-    });
-    return result;
-}
-
-export function cleanImportResponse(
-    importResult: MetadataImportResponse,
-    instance: Instance
-): SynchronizationResult {
-    const typeStats: any[] = [];
-    const messages: any[] = [];
-
-    if (importResult.typeReports) {
-        importResult.typeReports.forEach(report => {
-            const { klass, stats, objectReports = [] } = report;
-
-            typeStats.push({
-                ...stats,
-                type: getClassName(klass),
-            });
-
-            objectReports.forEach((detail: any) => {
-                const { uid, errorReports = [] } = detail;
-
-                messages.push(
-                    ..._.take(errorReports, 1).map((error: any) => ({
-                        uid,
-                        type: getClassName(error.mainKlass),
-                        property: error.errorProperty,
-                        message: error.message,
-                    }))
-                );
-            });
-        });
-    }
-
-    return {
-        ..._.pick(importResult, ["status", "stats"]),
-        instance: _.pick(instance, ["id", "name", "url", "username"]),
-        report: { typeStats, messages },
-        date: new Date(),
+export const availablePeriods: {
+    [id: string]: {
+        name: string;
+        start?: [number, string];
+        end?: [number, string];
     };
+} = {
+    ALL: { name: i18n.t("All periods") },
+    FIXED: { name: i18n.t("Fixed period") },
+    TODAY: { name: i18n.t("Today"), start: [0, "day"] },
+    YESTERDAY: { name: i18n.t("Yesterday"), start: [1, "day"] },
+    LAST_7_DAYS: { name: i18n.t("Last 7 days"), start: [7, "day"], end: [0, "day"] },
+    LAST_14_DAYS: { name: i18n.t("Last 14 days"), start: [14, "day"], end: [0, "day"] },
+    THIS_WEEK: { name: i18n.t("This week"), start: [0, "isoWeek"] },
+    LAST_WEEK: { name: i18n.t("Last week"), start: [1, "isoWeek"] },
+    THIS_MONTH: { name: i18n.t("This month"), start: [0, "month"] },
+    LAST_MONTH: { name: i18n.t("Last month"), start: [1, "month"] },
+    THIS_QUARTER: { name: i18n.t("This quarter"), start: [0, "quarter"] },
+    LAST_QUARTER: { name: i18n.t("Last quarter"), start: [1, "quarter"] },
+    THIS_YEAR: { name: i18n.t("This year"), start: [0, "year"] },
+    LAST_YEAR: { name: i18n.t("Last year"), start: [1, "year"] },
+    LAST_FIVE_YEARS: { name: i18n.t("Last 5 years"), start: [5, "year"], end: [1, "year"] },
+};
+
+export function requestJSONDownload(payload: object, syncRule: SyncRule) {
+    const json = JSON.stringify(payload, null, 4);
+    const blob = new Blob([json], { type: "application/json" });
+    const ruleName = _.kebabCase(_.toLower(syncRule.name));
+    const date = moment().format("YYYYMMDDHHmm");
+    const fileName = `${ruleName}-${syncRule.type}-sync-${date}.json`;
+    FileSaver.saveAs(blob, fileName);
 }
+
+export const mapCategoryOptionCombo = (
+    optionCombo: string | undefined,
+    mappings: MetadataMappingDictionary[],
+    originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+    destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
+): string | undefined => {
+    if (!optionCombo) return undefined;
+    for (const mapping of mappings) {
+        const { categoryOptions = {}, categoryCombos = {} } = mapping;
+        const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
+        const isDisabled = _.some(
+            origin?.categoryOptions?.map(({ id }) => categoryOptions[id]),
+            { mappedId: "DISABLED" }
+        );
+
+        // Candidates built from equal category options
+        const candidates = destinationCategoryOptionCombos.filter(o =>
+            _.isEqual(
+                _.sortBy(o.categoryOptions, ["id"]),
+                _.sortBy(
+                    origin?.categoryOptions?.map(({ id }) => ({
+                        id: categoryOptions[id]?.mappedId,
+                    })),
+                    ["id"]
+                )
+            )
+        );
+
+        // Exact object built from equal category options and combo
+        const exactObject = _.find(candidates, o =>
+            _.isEqual(o.categoryCombo, {
+                id:
+                    categoryCombos[origin?.categoryCombo?.id ?? ""]?.mappedId ??
+                    origin?.categoryCombo?.id,
+            })
+        );
+
+        // If there's only one candidate, ignore the category combo, else provide exact object
+        const candidate = candidates.length === 1 ? _.first(candidates) : exactObject;
+        const defaultValue = isDisabled ? "DISABLED" : undefined;
+        const result = candidate?.id ?? defaultValue;
+        if (result) return result;
+    }
+
+    return optionCombo;
+};
+
+export const mapOptionValue = (
+    value: string | undefined,
+    mappings: MetadataMappingDictionary[]
+): string => {
+    for (const mapping of mappings) {
+        const { options } = mapping;
+        const candidate = _(options).values().find(["code", value]);
+
+        if (candidate?.mappedCode) return candidate?.mappedCode;
+    }
+
+    return value ?? "";
+};
+
+export const mapProgramDataElement = (
+    program: string,
+    programStage: string,
+    dataElement: string,
+    mapping: MetadataMappingDictionary
+): MetadataMapping => {
+    const { programDataElements = {} } = mapping;
+    const complexId = `${program}-${programStage}-${dataElement}`;
+    const candidate = programDataElements[complexId]?.mappedId
+        ? programDataElements[complexId]
+        : programDataElements[dataElement];
+
+    return candidate ?? {};
+};
