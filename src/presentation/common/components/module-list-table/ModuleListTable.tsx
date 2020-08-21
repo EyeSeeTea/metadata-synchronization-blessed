@@ -100,15 +100,12 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                         })
                     );
 
-                    const originInstance = remoteInstance?.id ?? "LOCAL";
-                    const contents = await compositionRoot.sync[module.type]({
-                        ...module.toSyncBuilder(),
-                        originInstance,
-                        targetInstances: [],
-                    }).buildPayload();
-
-                    const newPackage = item.update({ contents, dhisVersion });
-                    await compositionRoot.packages.create(newPackage, module);
+                    await compositionRoot.packages.create(
+                        remoteInstance?.id ?? "LOCAL",
+                        item,
+                        module,
+                        dhisVersion
+                    );
                 }
 
                 loading.reset();
