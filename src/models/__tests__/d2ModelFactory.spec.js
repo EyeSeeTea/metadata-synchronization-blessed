@@ -1,13 +1,11 @@
-import { d2ModelFactory } from "../d2ModelFactory";
-import { DataElementGroupModel } from "../d2Model";
+import { modelFactory } from "../dhis/factory";
+import { DataElementGroupModel } from "../dhis/metadata";
 
 describe("d2ModelFactory", () => {
     describe("d2ModelFactory should return specific model", () => {
         it("DataElementGroup", async () => {
-            const d2Stub = { models: { dataElementGroups: { name: "dataElementGroup" } } };
-
-            const d2Model = d2ModelFactory(d2Stub, "dataElementGroups");
-
+            const apiStub = { models: { dataElementGroups: { modelName: "dataElementGroups" } } };
+            const d2Model = modelFactory(apiStub, "dataElementGroups");
             expect(d2Model).toEqual(DataElementGroupModel);
         });
     });
