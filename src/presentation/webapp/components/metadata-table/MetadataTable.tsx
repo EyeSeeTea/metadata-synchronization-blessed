@@ -124,13 +124,20 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [sharingSettingsElement, setSharingSettingsElement] = useState<NamedRef>();
 
     const [selectedRows, setSelectedRows] = useState<string[]>(selectedIds);
-    const [filters, updateFilters] = useState<ListMetadataParams>({
+    const [filters, setFilters] = useState<ListMetadataParams>({
         type: model.getCollectionName(),
         showOnlySelected: initialShowOnlySelected,
         order: initialState.sorting,
         page: initialState.pagination.page,
         pageSize: initialState.pagination.pageSize,
     });
+
+    const updateFilters = React.useCallback(
+        (partialFilters: Partial<ListMetadataParams>) => {
+            setFilters(state => ({ ...state, page: 1, ...partialFilters }));
+        },
+        [setFilters]
+    );
 
     const api = compositionRoot.instances.getApi(remoteInstance);
 
@@ -151,47 +158,45 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         const model = _.find(models, model => model.getMetadataType() === modelName) ?? models[0];
         updateModel(() => model);
         notifyNewModel(model);
-        updateFilters(state => ({
-            ...state,
-            type: model.getCollectionName(),
-            page: initialState.pagination.page,
-        }));
+        updateFilters({ type: model.getCollectionName() });
     };
 
     const changeSearchFilter = (value: string) => {
         const hasSearch = value.trim() !== "";
         const { field, operator } = model.getSearchFilter();
-        updateFilters(state => ({
-            ...state,
+        updateFilters({
             search: hasSearch ? { field, operator, value } : undefined,
-        }));
+        });
     };
 
     const changeLastUpdatedFilter = (date: Date | null) => {
-        updateFilters(state => ({ ...state, lastUpdated: date ?? undefined }));
+        updateFilters({ lastUpdated: date ?? undefined });
     };
 
     const changeGroupFilter = (value: string) => {
-        updateFilters(state => ({ ...state, group: { type: model.getGroupFilterName(), value } }));
+        updateFilters({
+            group: { type: model.getGroupFilterName(), value },
+        });
     };
 
     const changeLevelFilter = (level: string) => {
-        updateFilters(state => ({ ...state, level, parents: [] }));
+        updateFilters({ level, parents: [] });
     };
 
     const changeOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
         const showOnlySelected = event.target?.checked;
-        updateFilters(state => ({
-            ...state,
+        updateFilters({
             selectedIds: showOnlySelected ? selectedRows : undefined,
             showOnlySelected,
-            page: 1,
-        }));
+        });
     };
 
-    const changeParentOrgUnitFilter = (parents: string[]) => {
-        updateFilters(state => ({ ...state, parents, level: "" }));
-    };
+    const changeParentOrgUnitFilter = React.useCallback(
+        (parents: string[]) => {
+            updateFilters({ parents, level: "" });
+        },
+        [updateFilters]
+    );
 
     const selectOrgUnitChildren = async (selectedOUs: string[]) => {
         const ids = new Set<string>();
@@ -374,11 +379,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     ];
 
     useEffect(() => {
-        updateFilters(state => ({
-            ...state,
+        updateFilters({
             page: initialState.pagination.page,
-        }));
-    }, [remoteInstance]);
+        });
+    }, [updateFilters, remoteInstance]);
 
     useEffect(() => {
         if (model.getCollectionName() === "organisationUnits") return;
@@ -397,7 +401,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .getOrgUnitRoots(remoteInstance)
             .then(roots => changeParentOrgUnitFilter(roots.map(({ path }) => path)))
             .catch(handleError);
-    }, [compositionRoot, remoteInstance, model, handleError]);
+    }, [compositionRoot, remoteInstance, model, handleError, changeParentOrgUnitFilter]);
 
     useEffect(() => {
         if (model.getCollectionName() === "organisationUnits" && !filters.parents) return;
@@ -481,12 +485,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
         notifyNewSelection(included, excluded);
         setSelectedRows(included);
-        updateFilters(state => ({
-            ...state,
+        updateFilters({
             order: sorting,
             page: pagination.page,
             pageSize: pagination.pageSize,
-        }));
+        });
     };
 
     const exclusion = excludedIds.map(id => ({ id }));
@@ -575,5 +578,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         </React.Fragment>
     );
 };
+
+(MetadataTable as any).whyDidYouRender = true;
 
 export default MetadataTable;
