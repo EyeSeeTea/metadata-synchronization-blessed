@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-24T10:30:52.461Z\n"
+"POT-Creation-Date: 2020-08-24T11:24:38.280Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1085,10 +1085,10 @@ msgid ""
 "Configurate connection and credentials to retrieve modules from the store."
 msgstr ""
 
-msgid "Available modules"
+msgid "Create, modify and delete modules from the application"
 msgstr ""
 
-msgid "Create, modify and delete modules from the application"
+msgid "List and delete packages from the application"
 msgstr ""
 
 msgid "Configuration"
