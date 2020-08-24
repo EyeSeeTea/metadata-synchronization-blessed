@@ -118,6 +118,17 @@ const LandingPage: React.FC = () => {
                         ),
                         listAction: () => history.push("/history/metadata"),
                     },
+                    {
+                        name: i18n.t("Notifications"),
+                        description: i18n.t("List notifications"),
+                        icon:
+                            pendingNotifications > 0 ? (
+                                <Badge badgeContent={pendingNotifications} color="secondary">
+                                    <Icon>mail</Icon>
+                                </Badge>
+                            ) : undefined,
+                        listAction: () => history.push("/notifications"),
+                    },
                 ],
             },
             {
@@ -137,17 +148,6 @@ const LandingPage: React.FC = () => {
                             "List and remove responsibles for data sets and programs"
                         ),
                         listAction: () => history.push("/responsibles"),
-                    },
-                    {
-                        name: i18n.t("Notifications"),
-                        description: i18n.t("List notifications"),
-                        icon:
-                            pendingNotifications > 0 ? (
-                                <Badge badgeContent={pendingNotifications} color="secondary">
-                                    <Icon>mail</Icon>
-                                </Badge>
-                            ) : undefined,
-                        listAction: () => history.push("/notifications"),
                     },
                 ]),
             },
