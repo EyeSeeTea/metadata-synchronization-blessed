@@ -12,7 +12,7 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/packages/entities/Package";
@@ -26,6 +26,7 @@ import { useAppContext } from "../../contexts/AppContext";
 import { NewPacakgeDialog } from "./NewPackageDialog";
 import { ValidationError } from "../../../../domain/common/entities/Validations";
 import { getValidationsByVersionFeedback } from "./helpers";
+import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 
 export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,
@@ -357,17 +358,47 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             });
     }, [compositionRoot, remoteInstance, resetKey, snackbar, setIsTableLoading]);
 
+    const [departmentFilter, setDepartmentFilter] = useState("");
+
+    const departmentFilterItems = useMemo(() => {
+        return _(rows)
+            .map(({ department }) => department)
+            .uniqBy(({ id }) => id)
+            .sortBy(({ name }) => name)
+            .value();
+    }, [rows]);
+
+    const filterComponents = React.useMemo(() => {
+        const departmentFilterComponent = (
+            <Dropdown
+                key="filter-department"
+                items={departmentFilterItems}
+                onValueChange={setDepartmentFilter}
+                value={departmentFilter}
+                label={i18n.t("Department")}
+            />
+        );
+
+        return [externalComponents, departmentFilterComponent];
+    }, [externalComponents, departmentFilter, departmentFilterItems]);
+
+    const rowsFiltered = useMemo(() => {
+        return departmentFilter
+            ? rows.filter(({ department }) => department.id === departmentFilter)
+            : rows;
+    }, [departmentFilter, rows]);
+
     return (
         <React.Fragment>
             <ObjectsTable<Module>
-                rows={rows}
+                rows={rowsFiltered}
                 loading={isTableLoading}
                 columns={columns}
                 details={details}
                 actions={actions}
                 onActionButtonClick={onActionButtonClick}
                 forceSelectionColumn={presentation === "app"}
-                filterComponents={externalComponents}
+                filterComponents={filterComponents}
                 selection={selection}
                 onChange={updateTable}
                 paginationOptions={paginationOptions}
