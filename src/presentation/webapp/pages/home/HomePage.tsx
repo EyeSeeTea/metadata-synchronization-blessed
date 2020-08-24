@@ -157,12 +157,17 @@ const LandingPage: React.FC = () => {
                             : undefined,
                     },
                     {
-                        name: i18n.t("Available modules"),
+                        name: i18n.t("Modules"),
                         description: i18n.t(
                             "Create, modify and delete modules from the application"
                         ),
                         addAction: appConfigurator ? () => history.push("/modules/new") : undefined,
                         listAction: appConfigurator ? () => history.push("/modules") : undefined,
+                    },
+                    {
+                        name: i18n.t("Packages"),
+                        description: i18n.t("List and delete packages from the application"),
+                        listAction: appConfigurator ? () => history.push("/packages") : undefined,
                     },
                 ]),
             },
