@@ -12,7 +12,7 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
@@ -22,6 +22,7 @@ import {
 } from "../../../webapp/components/packages-diff-dialog/PackagesDiffDialog";
 import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
+import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 
 type ListPackage = Omit<Package, "contents">;
 
@@ -288,16 +289,44 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
         );
     }, [compositionRoot, snackbar]);
 
+    const [moduleFilter, setModuleFilter] = useState("");
+
+    const moduleFilterItems = useMemo(() => {
+        return _(instancePackages)
+            .map(instancePackage => instancePackage.module)
+            .uniqBy(({ id }) => id)
+            .sortBy(({ name }) => name)
+            .value();
+    }, [instancePackages]);
+
+    const filterComponents = useMemo(() => {
+        const moduleFilterComponent = (
+            <Dropdown
+                key="filter-module"
+                items={moduleFilterItems}
+                onValueChange={setModuleFilter}
+                value={moduleFilter}
+                label={i18n.t("Module")}
+            />
+        );
+
+        return [externalComponents, moduleFilterComponent];
+    }, [externalComponents, moduleFilter, moduleFilterItems]);
+
+    const rowsFiltered = useMemo(() => {
+        return moduleFilter ? rows.filter(row => row.module.id === moduleFilter) : rows;
+    }, [moduleFilter, rows]);
+
     return (
         <React.Fragment>
             <ObjectsTable<ListPackage>
-                rows={rows}
+                rows={rowsFiltered}
                 columns={columns}
                 details={details}
                 actions={actions}
                 onActionButtonClick={onActionButtonClick}
                 forceSelectionColumn={presentation === "app"}
-                filterComponents={externalComponents}
+                filterComponents={filterComponents}
                 selection={selection}
                 onChange={updateTable}
                 paginationOptions={paginationOptions}
