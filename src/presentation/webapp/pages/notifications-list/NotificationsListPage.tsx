@@ -65,11 +65,11 @@ export const NotificationsListPage: React.FC = () => {
         },
         {
             name: "sender",
-            text: i18n.t("Sender"),
+            text: i18n.t("Requestor"),
         },
         {
             name: "recipients",
-            text: i18n.t("Recipients"),
+            text: i18n.t("Custodians"),
             getValue: ({ users = [], userGroups = [] }) => {
                 return [...users, ...userGroups].map(({ name }) => name).join(", ");
             },

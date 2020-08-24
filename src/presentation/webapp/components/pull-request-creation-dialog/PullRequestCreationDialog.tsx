@@ -160,7 +160,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
                 onChange={updateTextField("description")}
             />
             <Sharing
-                subtitle={i18n.t("Recipients")}
+                subtitle={i18n.t("Custodians")}
                 meta={{
                     meta: {},
                     object: {
