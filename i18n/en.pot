@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-24T12:02:28.936Z\n"
-"PO-Revision-Date: 2020-08-24T12:02:28.936Z\n"
+"POT-Creation-Date: 2020-08-24T12:12:10.953Z\n"
+"PO-Revision-Date: 2020-08-24T12:12:10.953Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -161,6 +161,9 @@ msgid "Version tag"
 msgstr ""
 
 msgid "DHIS2 Version (*)"
+msgstr ""
+
+msgid "Module: {{module}}"
 msgstr ""
 
 msgid "{{n}} package(s) created successfully: {{list}}"

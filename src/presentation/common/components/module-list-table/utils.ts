@@ -1,9 +1,11 @@
+import { MetadataModule } from "./../../../../domain/modules/entities/MetadataModule";
 import _ from "lodash";
 import { ValidationError } from "../../../../domain/common/entities/Validations";
 import { SnackbarLevel } from "d2-ui-components";
 import i18n from "../../../../locales";
 
 export function getValidationsByVersionFeedback(
+    module: MetadataModule,
     validationsByVersion: _.Dictionary<ValidationError[]>
 ): [SnackbarLevel, string] {
     const successVersions = _(validationsByVersion)
@@ -17,6 +19,10 @@ export function getValidationsByVersionFeedback(
         .value();
 
     const msg = _.compact([
+        i18n.t("Module: {{module}}", {
+            module: module.name,
+            nsSeparator: false,
+        }),
         successVersions.length > 0
             ? i18n.t("{{n}} package(s) created successfully: {{list}}", {
                   n: successVersions.length,

@@ -25,7 +25,7 @@ import { ModulePackageListPageProps } from "../../../webapp/pages/module-package
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPacakgeDialog } from "./NewPackageDialog";
 import { ValidationError } from "../../../../domain/common/entities/Validations";
-import { getValidationsByVersionFeedback } from "./helpers";
+import { getValidationsByVersionFeedback } from "./utils";
 import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 
 export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
@@ -117,7 +117,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                     validationsByVersion[dhisVersion] = validations;
                 }
 
-                const [level, msg] = getValidationsByVersionFeedback(validationsByVersion);
+                const [level, msg] = getValidationsByVersionFeedback(module, validationsByVersion);
                 snackbar.openSnackbar(level, msg);
 
                 loading.reset();
