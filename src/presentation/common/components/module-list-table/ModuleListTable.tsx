@@ -24,6 +24,8 @@ import {
 import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPacakgeDialog } from "./NewPackageDialog";
+import { ValidationError } from "../../../../domain/common/entities/Validations";
+import { getValidationsByVersionFeedback } from "./helpers";
 
 export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,
@@ -91,6 +93,8 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             const module = _.find(rows, ({ id }) => id === item.module.id);
             if (!module) snackbar.error(i18n.t("Invalid module"));
             else {
+                let validationsByVersion: _.Dictionary<ValidationError[]> = {};
+
                 for (const dhisVersion of versions) {
                     loading.show(
                         true,
@@ -108,8 +112,12 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                     }).buildPayload();
 
                     const newPackage = item.update({ contents, dhisVersion });
-                    await compositionRoot.packages.create(newPackage, module);
+                    const validations = await compositionRoot.packages.create(newPackage, module);
+                    validationsByVersion[dhisVersion] = validations;
                 }
+
+                const [level, msg] = getValidationsByVersionFeedback(validationsByVersion);
+                snackbar.openSnackbar(level, msg);
 
                 loading.reset();
                 setResetKey(Math.random());
