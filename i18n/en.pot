@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-24T10:00:01.167Z\n"
-"PO-Revision-Date: 2020-08-24T10:00:01.167Z\n"
+"POT-Creation-Date: 2020-08-24T10:13:37.497Z\n"
+"PO-Revision-Date: 2020-08-24T10:13:37.497Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -439,7 +439,7 @@ msgstr ""
 msgid "Set responsible users"
 msgstr ""
 
-msgid "Responsible"
+msgid "Custodian"
 msgstr ""
 
 msgid "Search by "
@@ -579,7 +579,7 @@ msgstr ""
 msgid "Custodians"
 msgstr ""
 
-msgid "Responsibles for {{name}}"
+msgid "Custodians for {{name}}"
 msgstr ""
 
 msgid "Sharing settings"
@@ -1061,18 +1061,18 @@ msgstr ""
 msgid "Manually synchronise deleted objects."
 msgstr ""
 
-msgid "Metadata responsibles"
-msgstr ""
-
-msgid "List and remove responsibles for data sets and programs"
-msgstr ""
-
-msgid "Destination instance settings"
+msgid "Instance settings"
 msgstr ""
 
 msgid ""
 "Create, check connectivity, modify and delete DHIS2 destination instances. "
 "Map metadata objects between instances."
+msgstr ""
+
+msgid "Metadata custodians"
+msgstr ""
+
+msgid "List and remove custodians for data sets and programs"
 msgstr ""
 
 msgid "Module store connection"

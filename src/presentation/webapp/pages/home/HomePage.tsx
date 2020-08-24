@@ -141,14 +141,6 @@ const LandingPage: React.FC = () => {
                         description: i18n.t("Manually synchronise deleted objects."),
                         listAction: () => history.push("/sync/deleted"),
                     },
-                    {
-                        isVisible: appConfigurator,
-                        name: i18n.t("Metadata responsibles"),
-                        description: i18n.t(
-                            "List and remove responsibles for data sets and programs"
-                        ),
-                        listAction: () => history.push("/responsibles"),
-                    },
                 ]),
             },
             {
@@ -157,7 +149,7 @@ const LandingPage: React.FC = () => {
                 isVisible: appConfigurator,
                 children: [
                     {
-                        name: i18n.t("Destination instance settings"),
+                        name: i18n.t("Instance settings"),
                         description: i18n.t(
                             "Create, check connectivity, modify and delete DHIS2 destination instances. Map metadata objects between instances."
                         ),
@@ -165,6 +157,14 @@ const LandingPage: React.FC = () => {
                             ? () => history.push("/instances/new")
                             : undefined,
                         listAction: () => history.push("/instances"),
+                    },
+                    {
+                        isVisible: appConfigurator,
+                        name: i18n.t("Metadata custodians"),
+                        description: i18n.t(
+                            "List and remove custodians for data sets and programs"
+                        ),
+                        listAction: () => history.push("/custodians"),
                     },
                     {
                         name: i18n.t("Module store connection"),

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-24T10:00:01.167Z\n"
+"POT-Creation-Date: 2020-08-24T10:13:37.497Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -440,7 +440,7 @@ msgstr ""
 msgid "Set responsible users"
 msgstr ""
 
-msgid "Responsible"
+msgid "Custodian"
 msgstr ""
 
 msgid "Search by "
@@ -580,7 +580,7 @@ msgstr ""
 msgid "Custodians"
 msgstr ""
 
-msgid "Responsibles for {{name}}"
+msgid "Custodians for {{name}}"
 msgstr ""
 
 msgid "Sharing settings"
@@ -1063,18 +1063,18 @@ msgstr ""
 msgid "Manually synchronise deleted objects."
 msgstr ""
 
-msgid "Metadata responsibles"
-msgstr ""
-
-msgid "List and remove responsibles for data sets and programs"
-msgstr ""
-
-msgid "Destination instance settings"
+msgid "Instance settings"
 msgstr ""
 
 msgid ""
 "Create, check connectivity, modify and delete DHIS2 destination instances. "
 "Map metadata objects between instances."
+msgstr ""
+
+msgid "Metadata custodians"
+msgstr ""
+
+msgid "List and remove custodians for data sets and programs"
 msgstr ""
 
 msgid "Module store connection"
