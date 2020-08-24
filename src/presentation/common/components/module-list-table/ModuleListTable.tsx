@@ -93,7 +93,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             const module = _.find(rows, ({ id }) => id === item.module.id);
             if (!module) snackbar.error(i18n.t("Invalid module"));
             else {
-                let validationsByVersion: _.Dictionary<ValidationError[]> = {};
+                const validationsByVersion: _.Dictionary<ValidationError[]> = {};
 
                 for (const dhisVersion of versions) {
                     loading.show(
