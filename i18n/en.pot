@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-24T10:13:37.497Z\n"
-"PO-Revision-Date: 2020-08-24T10:13:37.497Z\n"
+"POT-Creation-Date: 2020-08-24T10:30:52.461Z\n"
+"PO-Revision-Date: 2020-08-24T10:30:52.461Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -991,6 +991,9 @@ msgid_plural "Are you sure you want to delete {{count}} history notifications?"
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Aggregated Data Sync"
+msgstr ""
+
 msgid "Manual sync"
 msgstr ""
 
@@ -1017,6 +1020,9 @@ msgid ""
 "and sync rules executions."
 msgstr ""
 
+msgid "Events Sync"
+msgstr ""
+
 msgid ""
 "Manually synchronise events by selecting the programs or events together "
 "with the organisation unit, period and category options."
@@ -1031,6 +1037,9 @@ msgstr ""
 msgid ""
 "View and analyse the status and results of the event manual syncs and sync "
 "rules executions."
+msgstr ""
+
+msgid "Metadata Sync"
 msgstr ""
 
 msgid ""
@@ -1055,10 +1064,31 @@ msgstr ""
 msgid "List notifications"
 msgstr ""
 
+msgid "Other"
+msgstr ""
+
 msgid "Deleted objects"
 msgstr ""
 
 msgid "Manually synchronise deleted objects."
+msgstr ""
+
+msgid "Metadata distribution"
+msgstr ""
+
+msgid "Module store connection"
+msgstr ""
+
+msgid "Configurate connection and credentials to retrieve modules from the store."
+msgstr ""
+
+msgid "Available modules"
+msgstr ""
+
+msgid "Create, modify and delete modules from the application"
+msgstr ""
+
+msgid "Configuration"
 msgstr ""
 
 msgid "Instance settings"
@@ -1073,18 +1103,6 @@ msgid "Metadata custodians"
 msgstr ""
 
 msgid "List and remove custodians for data sets and programs"
-msgstr ""
-
-msgid "Module store connection"
-msgstr ""
-
-msgid "Configurate connection and credentials to retrieve modules from the store."
-msgstr ""
-
-msgid "Available modules"
-msgstr ""
-
-msgid "Create, modify and delete modules from the application"
 msgstr ""
 
 msgid "Please fix the issues before testing the connection"

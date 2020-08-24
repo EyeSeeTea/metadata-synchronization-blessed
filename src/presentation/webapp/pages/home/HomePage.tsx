@@ -28,7 +28,7 @@ const LandingPage: React.FC = () => {
     const cards: Card[] = useMemo(
         () => [
             {
-                title: "Aggregated Data Sync",
+                title: i18n.t("Aggregated Data Sync"),
                 key: "aggregated",
                 children: [
                     {
@@ -59,7 +59,7 @@ const LandingPage: React.FC = () => {
                 ],
             },
             {
-                title: "Events Sync",
+                title: i18n.t("Events Sync"),
                 key: "events",
                 children: [
                     {
@@ -90,7 +90,7 @@ const LandingPage: React.FC = () => {
                 ],
             },
             {
-                title: "Metadata Sync",
+                title: i18n.t("Metadata Sync"),
                 key: "metadata",
                 children: [
                     {
@@ -132,7 +132,7 @@ const LandingPage: React.FC = () => {
                 ],
             },
             {
-                title: "Other",
+                title: i18n.t("Other"),
                 key: "other",
                 children: _.compact([
                     {
@@ -144,7 +144,30 @@ const LandingPage: React.FC = () => {
                 ]),
             },
             {
-                title: "Configuration",
+                title: i18n.t("Metadata distribution"),
+                key: "metadata-distribution",
+                children: _.compact([
+                    {
+                        name: i18n.t("Module store connection"),
+                        description: i18n.t(
+                            "Configurate connection and credentials to retrieve modules from the store."
+                        ),
+                        addAction: appConfigurator
+                            ? () => history.push("/modules/config")
+                            : undefined,
+                    },
+                    {
+                        name: i18n.t("Available modules"),
+                        description: i18n.t(
+                            "Create, modify and delete modules from the application"
+                        ),
+                        addAction: appConfigurator ? () => history.push("/modules/new") : undefined,
+                        listAction: appConfigurator ? () => history.push("/modules") : undefined,
+                    },
+                ]),
+            },
+            {
+                title: i18n.t("Configuration"),
                 key: "configuration",
                 isVisible: appConfigurator,
                 children: [
@@ -165,23 +188,6 @@ const LandingPage: React.FC = () => {
                             "List and remove custodians for data sets and programs"
                         ),
                         listAction: () => history.push("/custodians"),
-                    },
-                    {
-                        name: i18n.t("Module store connection"),
-                        description: i18n.t(
-                            "Configurate connection and credentials to retrieve modules from the store."
-                        ),
-                        addAction: appConfigurator
-                            ? () => history.push("/modules/config")
-                            : undefined,
-                    },
-                    {
-                        name: i18n.t("Available modules"),
-                        description: i18n.t(
-                            "Create, modify and delete modules from the application"
-                        ),
-                        addAction: appConfigurator ? () => history.push("/modules/new") : undefined,
-                        listAction: appConfigurator ? () => history.push("/modules") : undefined,
                     },
                 ],
             },
