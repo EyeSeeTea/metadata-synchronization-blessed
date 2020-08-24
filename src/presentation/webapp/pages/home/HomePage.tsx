@@ -42,7 +42,7 @@ const LandingPage: React.FC = () => {
                     {
                         name: i18n.t("Sync rules"),
                         description: i18n.t(
-                            "Create, modify, delete, execute and schedule sync rules for aggregated data by selecting the data sets, data elements or their groups and group sets together with the organisation unit, period and category options."
+                            "Create, modify, delete, execute and schedule rules to synchronize aggregated data periodically."
                         ),
                         addAction: appConfigurator
                             ? () => history.push("/sync-rules/aggregated/new")
@@ -52,7 +52,7 @@ const LandingPage: React.FC = () => {
                     {
                         name: i18n.t("History"),
                         description: i18n.t(
-                            "View and analyse the status and results of the aggregated data manual syncs and sync rules executions."
+                            "View and analyse the outcome of aggregated data manual syncs and executions of sync rules."
                         ),
                         listAction: () => history.push("/history/aggregated"),
                     },
@@ -66,14 +66,14 @@ const LandingPage: React.FC = () => {
                         isVisible: appConfigurator,
                         name: i18n.t("Manual sync"),
                         description: i18n.t(
-                            "Manually synchronise events by selecting the programs or events together with the organisation unit, period and category options."
+                            "Manually synchronise event data by selecting the programs or events together with the organisation unit, period and category options."
                         ),
                         listAction: () => history.push("/sync/events"),
                     },
                     {
                         name: i18n.t("Sync rules"),
                         description: i18n.t(
-                            "Create, modify, delete, execute and schedule sync rules for events by selecting the programs or events together with the organisation unit, period and category options."
+                            "Create, modify, delete, execute and schedule rules to synchronize event data periodically."
                         ),
                         addAction: appConfigurator
                             ? () => history.push("/sync-rules/events/new")
@@ -83,7 +83,7 @@ const LandingPage: React.FC = () => {
                     {
                         name: i18n.t("History"),
                         description: i18n.t(
-                            "View and analyse the status and results of the event manual syncs and sync rules executions."
+                            "View and analyse the outcome of aggregated data manual syncs and executions of sync rules."
                         ),
                         listAction: () => history.push("/history/events"),
                     },
@@ -97,14 +97,14 @@ const LandingPage: React.FC = () => {
                         isVisible: appConfigurator,
                         name: i18n.t("Manual sync"),
                         description: i18n.t(
-                            "Manually synchronise metadata like data elements, organisation units and program indicators and groups and group sets."
+                            "Manually synchronise metadata such as data elements, organisation units, options, indicators, program indicator, categories and their groups and group sets."
                         ),
                         listAction: () => history.push("/sync/metadata"),
                     },
                     {
                         name: i18n.t("Sync rules"),
                         description: i18n.t(
-                            "Create, modify, delete, execute and schedule sync rules for metadata like data elements, organisation units and program indicators and groups and group sets."
+                            "Create, modify, delete, execute and schedule rules to synchronize metadatadata periodically."
                         ),
                         addAction: appConfigurator
                             ? () => history.push("/sync-rules/metadata/new")
@@ -114,13 +114,15 @@ const LandingPage: React.FC = () => {
                     {
                         name: i18n.t("History"),
                         description: i18n.t(
-                            "View and analyse the status and results of the metadata manual syncs and sync rules executions."
+                            "View and analyse the outcome of aggregated data manual syncs and executions of sync rules."
                         ),
                         listAction: () => history.push("/history/metadata"),
                     },
                     {
                         name: i18n.t("Notifications"),
-                        description: i18n.t("List notifications"),
+                        description: i18n.t(
+                            "Read notifications regarding new versions of DHIS2 metadata packages."
+                        ),
                         icon:
                             pendingNotifications > 0 ? (
                                 <Badge badgeContent={pendingNotifications} color="secondary">
@@ -149,9 +151,7 @@ const LandingPage: React.FC = () => {
                 children: _.compact([
                     {
                         name: i18n.t("Module store connection"),
-                        description: i18n.t(
-                            "Configurate connection and credentials to retrieve modules from the store."
-                        ),
+                        description: i18n.t("Configure connections to metadata package stores."),
                         addAction: appConfigurator
                             ? () => history.push("/modules/config")
                             : undefined,
@@ -159,14 +159,16 @@ const LandingPage: React.FC = () => {
                     {
                         name: i18n.t("Modules"),
                         description: i18n.t(
-                            "Create, modify and delete modules from the application"
+                            "Create, edit and delete modules from this instance's metadata."
                         ),
                         addAction: appConfigurator ? () => history.push("/modules/new") : undefined,
                         listAction: appConfigurator ? () => history.push("/modules") : undefined,
                     },
                     {
                         name: i18n.t("Packages"),
-                        description: i18n.t("List and delete packages from the application"),
+                        description: i18n.t(
+                            "View, publish, download and delete metadata packages from this instance's metadata modules."
+                        ),
                         listAction: appConfigurator ? () => history.push("/packages") : undefined,
                     },
                 ]),
@@ -179,7 +181,7 @@ const LandingPage: React.FC = () => {
                     {
                         name: i18n.t("Instance settings"),
                         description: i18n.t(
-                            "Create, check connectivity, modify and delete DHIS2 destination instances. Map metadata objects between instances."
+                            "Configure, test and edit connections to other DHIS2 and map metadata objects between instances."
                         ),
                         addAction: appConfigurator
                             ? () => history.push("/instances/new")
@@ -190,7 +192,7 @@ const LandingPage: React.FC = () => {
                         isVisible: appConfigurator,
                         name: i18n.t("Metadata custodians"),
                         description: i18n.t(
-                            "List and remove custodians for data sets and programs"
+                            "Define who are the custodians of this instance metadata. Custodians approve metadata requests coming from other DHIS instances."
                         ),
                         listAction: () => history.push("/custodians"),
                     },
