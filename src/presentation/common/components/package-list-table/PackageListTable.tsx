@@ -291,6 +291,8 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
 
     const [moduleFilter, setModuleFilter] = useState("");
 
+    useEffect(() => setModuleFilter(""), [remoteInstance]);
+
     const moduleFilterItems = useMemo(() => {
         return _(instancePackages)
             .map(instancePackage => instancePackage.module)

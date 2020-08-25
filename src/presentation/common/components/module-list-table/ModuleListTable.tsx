@@ -360,6 +360,8 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
 
     const [departmentFilter, setDepartmentFilter] = useState("");
 
+    useEffect(() => setDepartmentFilter(""), [remoteInstance]);
+
     const departmentFilterItems = useMemo(() => {
         return _(rows)
             .map(({ department }) => department)
