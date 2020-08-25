@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-24T12:12:10.953Z\n"
-"PO-Revision-Date: 2020-08-24T12:12:10.953Z\n"
+"POT-Creation-Date: 2020-08-25T11:03:43.760Z\n"
+"PO-Revision-Date: 2020-08-25T11:03:43.760Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1035,6 +1035,11 @@ msgid ""
 "data periodically."
 msgstr ""
 
+msgid ""
+"View and analyse the outcome of events manual syncs and executions of sync "
+"rules."
+msgstr ""
+
 msgid "Metadata Sync"
 msgstr ""
 
@@ -1047,6 +1052,11 @@ msgstr ""
 msgid ""
 "Create, modify, delete, execute and schedule rules to synchronize "
 "metadatadata periodically."
+msgstr ""
+
+msgid ""
+"View and analyse the outcome of metadata manual syncs and executions of "
+"sync rules."
 msgstr ""
 
 msgid "Notifications"
@@ -1073,11 +1083,11 @@ msgstr ""
 msgid "Configure connections to metadata package stores."
 msgstr ""
 
-msgid "Create, edit and delete modules from this instance's metadata."
+msgid "Create, edit and delete modules from this instance metadata."
 msgstr ""
 
 msgid ""
-"View, publish, download and delete metadata packages from this instance's "
+"View, publish, download and delete metadata packages from this instance "
 "metadata modules."
 msgstr ""
 

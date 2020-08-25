@@ -83,7 +83,7 @@ const LandingPage: React.FC = () => {
                     {
                         name: i18n.t("History"),
                         description: i18n.t(
-                            "View and analyse the outcome of aggregated data manual syncs and executions of sync rules."
+                            "View and analyse the outcome of events manual syncs and executions of sync rules."
                         ),
                         listAction: () => history.push("/history/events"),
                     },
@@ -114,7 +114,7 @@ const LandingPage: React.FC = () => {
                     {
                         name: i18n.t("History"),
                         description: i18n.t(
-                            "View and analyse the outcome of aggregated data manual syncs and executions of sync rules."
+                            "View and analyse the outcome of metadata manual syncs and executions of sync rules."
                         ),
                         listAction: () => history.push("/history/metadata"),
                     },
@@ -159,7 +159,7 @@ const LandingPage: React.FC = () => {
                     {
                         name: i18n.t("Modules"),
                         description: i18n.t(
-                            "Create, edit and delete modules from this instance's metadata."
+                            "Create, edit and delete modules from this instance metadata."
                         ),
                         addAction: appConfigurator ? () => history.push("/modules/new") : undefined,
                         listAction: appConfigurator ? () => history.push("/modules") : undefined,
@@ -167,7 +167,7 @@ const LandingPage: React.FC = () => {
                     {
                         name: i18n.t("Packages"),
                         description: i18n.t(
-                            "View, publish, download and delete metadata packages from this instance's metadata modules."
+                            "View, publish, download and delete metadata packages from this instance metadata modules."
                         ),
                         listAction: appConfigurator ? () => history.push("/packages") : undefined,
                     },
