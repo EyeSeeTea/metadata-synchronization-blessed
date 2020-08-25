@@ -12,6 +12,9 @@ import {
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
     GlobalCategoryComboModel,
+    GlobalCategoryModel,
+    GlobalCategoryOptionGroupModel,
+    GlobalCategoryOptionGroupSetModel,
     GlobalCategoryOptionModel,
     GlobalDataElementModel,
     GlobalOptionModel,
@@ -40,10 +43,13 @@ const config = {
     global: {
         title: i18n.t("Global mapping"),
         models: [
-            GlobalCategoryOptionModel,
+            GlobalCategoryModel,
             GlobalCategoryComboModel,
-            GlobalOptionModel,
+            GlobalCategoryOptionModel,
+            GlobalCategoryOptionGroupModel,
+            GlobalCategoryOptionGroupSetModel,
             GlobalDataElementModel,
+            GlobalOptionModel,
         ],
     },
 };
