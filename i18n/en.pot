@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-25T11:05:13.370Z\n"
-"PO-Revision-Date: 2020-08-25T11:05:13.370Z\n"
+"POT-Creation-Date: 2020-08-25T11:28:32.569Z\n"
+"PO-Revision-Date: 2020-08-25T11:28:32.569Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1077,18 +1077,18 @@ msgstr ""
 msgid "Metadata distribution"
 msgstr ""
 
-msgid "Module store connection"
-msgstr ""
-
-msgid "Configure connections to metadata package stores."
-msgstr ""
-
 msgid "Create, edit and delete modules from this instance metadata."
 msgstr ""
 
 msgid ""
 "View, publish, download and delete metadata packages from this instance "
 "metadata modules."
+msgstr ""
+
+msgid "Module store connection"
+msgstr ""
+
+msgid "Configure connections to metadata package stores."
 msgstr ""
 
 msgid "Configuration"
