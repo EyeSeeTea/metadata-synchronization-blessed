@@ -150,13 +150,6 @@ const LandingPage: React.FC = () => {
                 key: "metadata-distribution",
                 children: _.compact([
                     {
-                        name: i18n.t("Module store connection"),
-                        description: i18n.t("Configure connections to metadata package stores."),
-                        addAction: appConfigurator
-                            ? () => history.push("/modules/config")
-                            : undefined,
-                    },
-                    {
                         name: i18n.t("Modules"),
                         description: i18n.t(
                             "Create, edit and delete modules from this instance metadata."
@@ -170,6 +163,13 @@ const LandingPage: React.FC = () => {
                             "View, publish, download and delete metadata packages from this instance metadata modules."
                         ),
                         listAction: appConfigurator ? () => history.push("/packages") : undefined,
+                    },
+                    {
+                        name: i18n.t("Module store connection"),
+                        description: i18n.t("Configure connections to metadata package stores."),
+                        addAction: appConfigurator
+                            ? () => history.push("/modules/config")
+                            : undefined,
                     },
                 ]),
             },
