@@ -23,7 +23,7 @@ import {
 } from "../../../webapp/components/pull-request-creation-dialog/PullRequestCreationDialog";
 import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
-import { NewPacakgeDialog } from "./NewPackageDialog";
+import { NewPackageDialog } from "./NewPackageDialog";
 
 export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,
@@ -366,7 +366,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             />
 
             {!!newPackageModule && (
-                <NewPacakgeDialog
+                <NewPackageDialog
                     save={savePackage}
                     close={() => setNewPackageModule(undefined)}
                     module={newPackageModule}
