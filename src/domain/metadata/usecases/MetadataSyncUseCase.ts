@@ -3,10 +3,14 @@ import memoize from "nano-memoize";
 import { modelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder, NestedRules } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
+import { debug } from "../../../utils/debug";
 import { Expression, ExpressionParser } from "../../../utils/expressionParser";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../../instance/entities/MetadataMapping";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { Indicator, MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
@@ -17,7 +21,6 @@ import {
     cleanToModelName,
     getAllReferences,
 } from "../utils";
-import { debug } from "../../../utils/debug";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
@@ -141,9 +144,11 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     }
 
     public async mapPayload(
-        { metadataMapping: mapping }: Instance,
+        instance: Instance,
         payload: MetadataPackage
     ): Promise<MetadataPackage> {
+        const mapping = await this.getMapping(instance);
+
         return _.mapValues(payload, (items, model) => {
             const collectionName = modelFactory(this.api, model).getCollectionName();
             const references = this.api.models[collectionName]?.schema.properties
@@ -199,9 +204,16 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         return { ...object, id: mappedId };
     }
 
-    private mapExpression(expression: string, mapping: MetadataMappingDictionary) {
+    private mapExpression(
+        expression: string,
+        mapping: MetadataMappingDictionary
+    ): string | undefined {
         const config = ExpressionParser.parse(expression).value.data ?? [];
         const mappedConfig = config.map(expression => {
+            const mappedExpression = this.transformExpression(mapping, expression);
+            if (mappedConfig) return mappedExpression;
+
+            // Best effort default lookup
             return _.mapValues(expression, (id, property) => {
                 const modelName = cleanToModelName(this.api, property);
                 if (!modelName || typeof id !== "string") return id;
@@ -215,9 +227,36 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         return validation.value.data;
     }
 
-    private lookup(mapping: MetadataMappingDictionary, id: string): string {
+    private transformExpression(
+        mapping: MetadataMappingDictionary,
+        expression: Expression
+    ): Expression | undefined {
+        switch (expression.type) {
+            case "dataElement":
+                const { mappedId: dataElement, mapping: innerMapping } =
+                    mapping["aggregatedDataElements"][expression.dataElement] ?? {};
+                if (!dataElement) return undefined;
+
+                return {
+                    type: "dataElement",
+                    dataElement,
+                    categoryOptionCombo: this.lookup(
+                        innerMapping ?? mapping,
+                        expression.categoryOptionCombo
+                    ),
+                    attributeOptionCombo: this.lookup(
+                        innerMapping ?? mapping,
+                        expression.categoryOptionCombo
+                    ),
+                };
+            default:
+                return undefined;
+        }
+    }
+
+    private lookup(mapping: MetadataMappingDictionary, id?: string): string | undefined {
         // We would normally use _.get(mapping, [modelName, id]) but modelName of mapping is custom
-        const mappingStore = _.values(mapping)
+        const mappingStore: MetadataMapping[] = _.values(mapping)
             .map(item => _.mapValues(item, (value, id) => ({ id, ...value })))
             .flatMap(_.values);
 
