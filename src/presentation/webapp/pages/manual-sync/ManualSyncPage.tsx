@@ -1,4 +1,5 @@
 import SyncIcon from "@material-ui/icons/Sync";
+import _ from "lodash";
 import {
     ConfirmationDialog,
     ConfirmationDialogProps,
@@ -24,10 +25,7 @@ import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
 import { MetadataType } from "../../../../utils/d2";
 import { isAppConfigurator } from "../../../../utils/permissions";
-import {
-    InstanceSelectionDropdown,
-    InstanceSelectionOption,
-} from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
+import { InstanceSelectionOption } from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
 import MetadataTable from "../../components/metadata-table/MetadataTable";
@@ -39,6 +37,8 @@ import {
 import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import InstancesSelectors from "./InstancesSelectors";
+import { Ref } from "../../../../types/d2-api";
 
 const config: Record<
     SynchronizationType,
@@ -88,9 +88,26 @@ const ManualSyncPage: React.FC = () => {
     const [appConfigurator, updateAppConfigurator] = useState(false);
     const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
-    const [selectedInstance, setSelectedInstance] = useState<Instance>();
+    const [sourceInstance, setSourceInstance] = useState<Instance>();
+    const [destinationInstance, setDestinationInstanceBase] = useState<Ref>();
     const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
+
+    const updateSyncRuleFromDialog = useCallback((newSyncRule: SyncRule) => {
+        const id = newSyncRule.targetInstances[0];
+        setDestinationInstanceBase(id ? { id } : undefined);
+        updateSyncRule(newSyncRule);
+    }, []);
+
+    const setDestinationInstance = useCallback((destinationInstance: Ref | undefined) => {
+        const newTargetInstances = _.compact([destinationInstance?.id || "LOCAL"]);
+        updateSyncRule(syncRule => syncRule.updateTargetInstances(newTargetInstances));
+        setDestinationInstanceBase(destinationInstance);
+    }, []);
+
+    useEffect(() => {
+        setDestinationInstance(undefined);
+    }, [sourceInstance, setDestinationInstance]);
 
     useEffect(() => {
         isAppConfigurator(api).then(updateAppConfigurator);
@@ -136,11 +153,11 @@ const ManualSyncPage: React.FC = () => {
         const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
 
         const createPullRequest = () => {
-            if (!selectedInstance) {
+            if (!sourceInstance) {
                 snackbar.error(i18n.t("Unable to create pull request"));
             } else {
                 setPullRequestProps({
-                    instance: selectedInstance,
+                    instance: sourceInstance,
                     builder: syncRule.toBuilder(),
                     type: syncRule.type,
                 });
@@ -210,12 +227,12 @@ const ManualSyncPage: React.FC = () => {
         },
     ];
 
-    const updateSelectedInstance = useCallback(
+    const updateSourceInstance = useCallback(
         (_type: InstanceSelectionOption, instance?: Instance) => {
             const originInstance = instance?.id ?? "LOCAL";
             const targetInstances = originInstance === "LOCAL" ? [] : ["LOCAL"];
 
-            setSelectedInstance(instance);
+            setSourceInstance(instance);
             updateSyncRule(
                 syncRule
                     .updateBuilder({ originInstance })
@@ -230,11 +247,11 @@ const ManualSyncPage: React.FC = () => {
     return (
         <TestWrapper>
             <PageHeader onBackClick={goBack} title={title}>
-                <InstanceSelectionDropdown
-                    view="inline"
-                    showInstances={{ local: true, remote: true }}
-                    selectedInstance={selectedInstance?.id ?? "LOCAL"}
-                    onChangeSelected={updateSelectedInstance}
+                <InstancesSelectors
+                    sourceInstance={sourceInstance}
+                    onChangeSource={updateSourceInstance}
+                    destinationInstance={destinationInstance}
+                    onChangeDestination={setDestinationInstance}
                 />
             </PageHeader>
 
@@ -246,7 +263,7 @@ const ManualSyncPage: React.FC = () => {
                 />
             ) : (
                 <MetadataTable
-                    remoteInstance={selectedInstance}
+                    remoteInstance={sourceInstance}
                     models={models}
                     selectedIds={syncRule.metadataIds}
                     excludedIds={syncRule.excludedIds}
@@ -265,7 +282,7 @@ const ManualSyncPage: React.FC = () => {
                     title={title}
                     syncRule={syncRule}
                     isOpen={true}
-                    onChange={updateSyncRule}
+                    onChange={updateSyncRuleFromDialog}
                     onClose={closeDialogs}
                     task={handleSynchronization}
                 />
