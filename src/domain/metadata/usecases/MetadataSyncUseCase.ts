@@ -5,6 +5,7 @@ import { ExportBuilder, NestedRules } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
 import { Expression, ExpressionParser } from "../../../utils/expressionParser";
+import { mapCategoryOptionCombo } from "../../../utils/synchronization";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
 import {
@@ -13,7 +14,12 @@ import {
 } from "../../instance/entities/MetadataMapping";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
-import { Indicator, MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
+import {
+    CategoryOptionCombo,
+    Indicator,
+    MetadataEntities,
+    MetadataPackage,
+} from "../entities/MetadataEntities";
 import {
     buildNestedRules,
     cleanObject,
@@ -147,6 +153,11 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         instance: Instance,
         payload: MetadataPackage
     ): Promise<MetadataPackage> {
+        const instanceRepository = await this.getInstanceRepository();
+        const remoteInstanceRepository = await this.getInstanceRepository(instance);
+
+        const originCategoryOptionCombos = await instanceRepository.getCategoryOptionCombos();
+        const destinationCategoryOptionCombos = await remoteInstanceRepository.getCategoryOptionCombos();
         const mapping = await this.getMapping(instance);
 
         return _.mapValues(payload, (items, model) => {
@@ -161,34 +172,52 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             return items?.map((object: any) => {
                 if (typeof object !== "object") return object;
 
-                const mappedObject = this.mapProperty({ key: model, object, mapping });
+                const mappedObject = this.mapProperty(
+                    { key: model, object },
+                    mapping,
+                    originCategoryOptionCombos,
+                    destinationCategoryOptionCombos
+                );
 
                 return _.mapValues(mappedObject, (value, key) => {
                     if (!references.includes(key)) return value;
 
                     if (Array.isArray(value)) {
                         return value.map(item =>
-                            this.mapProperty({ parent: model, key, object: item, mapping })
+                            this.mapProperty(
+                                { parent: model, key, object: item },
+                                mapping,
+                                originCategoryOptionCombos,
+                                destinationCategoryOptionCombos
+                            )
                         );
                     }
 
-                    return this.mapProperty({ parent: model, key, object: value, mapping });
+                    return this.mapProperty(
+                        { parent: model, key, object: value },
+                        mapping,
+                        originCategoryOptionCombos,
+                        destinationCategoryOptionCombos
+                    );
                 });
             });
         });
     }
 
-    private mapProperty<T extends Ref>({
-        parent,
-        key,
-        object,
-        mapping,
-    }: {
-        parent?: string;
-        key: string;
-        object: T;
-        mapping: MetadataMappingDictionary;
-    }): T {
+    private mapProperty<T extends Ref>(
+        {
+            parent,
+            key,
+            object,
+        }: {
+            parent?: string;
+            key: string;
+            object: T;
+        },
+        mapping: MetadataMappingDictionary,
+        originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
+    ): T {
         const modelName = cleanToModelName(this.api, key, parent);
         if (!modelName) return object;
 
@@ -196,8 +225,18 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         if (modelName === "indicators") {
             const indicator = (object as unknown) as Indicator;
-            const numerator = this.mapExpression(indicator.numerator, mapping);
-            const denominator = this.mapExpression(indicator.denominator, mapping);
+            const numerator = this.mapExpression(
+                indicator.numerator,
+                mapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            );
+            const denominator = this.mapExpression(
+                indicator.denominator,
+                mapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            );
             return { ...object, id: mappedId, numerator, denominator };
         }
 
@@ -206,11 +245,18 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
     private mapExpression(
         expression: string,
-        mapping: MetadataMappingDictionary
+        mapping: MetadataMappingDictionary,
+        originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
     ): string | undefined {
         const config = ExpressionParser.parse(expression).value.data ?? [];
         const mappedConfig = config.map(expression => {
-            const mappedExpression = this.transformExpression(mapping, expression);
+            const mappedExpression = this.transformExpression(
+                expression,
+                mapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            );
             if (mappedConfig) return mappedExpression;
 
             // Best effort default lookup
@@ -228,26 +274,34 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     }
 
     private transformExpression(
+        expression: Expression,
         mapping: MetadataMappingDictionary,
-        expression: Expression
+        originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
     ): Expression | undefined {
         switch (expression.type) {
             case "dataElement":
-                const { mappedId: dataElement, mapping: innerMapping } =
+                const { mappedId: dataElement, mapping: innerMapping = {} } =
                     mapping["aggregatedDataElements"][expression.dataElement] ?? {};
                 if (!dataElement) return undefined;
 
                 return {
                     type: "dataElement",
                     dataElement,
-                    categoryOptionCombo: this.lookup(
-                        innerMapping ?? mapping,
-                        expression.categoryOptionCombo
-                    ),
-                    attributeOptionCombo: this.lookup(
-                        innerMapping ?? mapping,
-                        expression.categoryOptionCombo
-                    ),
+                    categoryOptionCombo:
+                        mapCategoryOptionCombo(
+                            expression.categoryOptionCombo,
+                            [innerMapping, mapping],
+                            originCategoryOptionCombos,
+                            destinationCategoryOptionCombos
+                        ) ?? expression.categoryOptionCombo,
+                    attributeOptionCombo:
+                        mapCategoryOptionCombo(
+                            expression.attributeOptionCombo,
+                            [innerMapping, mapping],
+                            originCategoryOptionCombos,
+                            destinationCategoryOptionCombos
+                        ) ?? expression.attributeOptionCombo,
                 };
             default:
                 return undefined;
