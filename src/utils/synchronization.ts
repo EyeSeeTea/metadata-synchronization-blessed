@@ -81,7 +81,9 @@ export const mapCategoryOptionCombo = (
         const { categoryOptions = {}, categoryCombos = {} } = mapping;
         const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
         const isDisabled = _.some(
-            origin?.categoryOptions?.map(({ id }) => categoryOptions[id]),
+            origin?.categoryOptions?.map(({ id }) =>
+                _.keys(categoryOptions).find(candidate => _.last(candidate.split("-")) === id)
+            ),
             { mappedId: "DISABLED" }
         );
 
@@ -90,9 +92,17 @@ export const mapCategoryOptionCombo = (
             _.isEqual(
                 _.sortBy(o.categoryOptions, ["id"]),
                 _.sortBy(
-                    origin?.categoryOptions?.map(({ id }) => ({
-                        id: categoryOptions[id]?.mappedId,
-                    })),
+                    origin?.categoryOptions?.map(({ id }) => {
+                        const nestedId = _.keys(categoryOptions).find(
+                            candidate => _.last(candidate.split("-")) === id
+                        );
+
+                        return nestedId
+                            ? {
+                                  id: categoryOptions[nestedId]?.mappedId,
+                              }
+                            : undefined;
+                    }),
                     ["id"]
                 )
             )
