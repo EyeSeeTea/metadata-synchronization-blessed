@@ -257,7 +257,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 originCategoryOptionCombos,
                 destinationCategoryOptionCombos
             );
-            if (mappedConfig) return mappedExpression;
+            if (mappedExpression) return mappedExpression;
 
             // Best effort default lookup
             return _.mapValues(expression, (id, property) => {
@@ -285,23 +285,27 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     mapping["aggregatedDataElements"][expression.dataElement] ?? {};
                 if (!dataElement) return undefined;
 
+                const categoryOptionCombo =
+                    mapCategoryOptionCombo(
+                        expression.categoryOptionCombo,
+                        [innerMapping, mapping],
+                        originCategoryOptionCombos,
+                        destinationCategoryOptionCombos
+                    ) ?? expression.categoryOptionCombo;
+
+                const attributeOptionCombo =
+                    mapCategoryOptionCombo(
+                        expression.attributeOptionCombo,
+                        [innerMapping, mapping],
+                        originCategoryOptionCombos,
+                        destinationCategoryOptionCombos
+                    ) ?? expression.attributeOptionCombo;
+
                 return {
                     type: "dataElement",
                     dataElement,
-                    categoryOptionCombo:
-                        mapCategoryOptionCombo(
-                            expression.categoryOptionCombo,
-                            [innerMapping, mapping],
-                            originCategoryOptionCombos,
-                            destinationCategoryOptionCombos
-                        ) ?? expression.categoryOptionCombo,
-                    attributeOptionCombo:
-                        mapCategoryOptionCombo(
-                            expression.attributeOptionCombo,
-                            [innerMapping, mapping],
-                            originCategoryOptionCombos,
-                            destinationCategoryOptionCombos
-                        ) ?? expression.attributeOptionCombo,
+                    categoryOptionCombo,
+                    attributeOptionCombo,
                 };
             default:
                 return undefined;
