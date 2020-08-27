@@ -280,7 +280,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
     ): Expression | undefined {
         switch (expression.type) {
-            case "dataElement":
+            case "dataElement": {
                 const { mappedId: dataElement, mapping: innerMapping = {} } =
                     mapping["aggregatedDataElements"][expression.dataElement] ?? {};
                 if (!dataElement) return undefined;
@@ -307,6 +307,34 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     categoryOptionCombo,
                     attributeOptionCombo,
                 };
+            }
+            case "programDataElement": {
+                const { mappedId: program = expression.program } =
+                    mapping["eventPrograms"][expression.program] ?? {};
+
+                const dataElementId = _.keys(mapping["programDataElements"]).find(id => {
+                    const parts = id.split("-");
+                    const sameProgram = _.first(parts) === expression.program;
+                    const sameDataElement = _.last(parts) === expression.dataElement;
+                    return sameProgram && sameDataElement;
+                });
+
+                if (!dataElementId)
+                    return {
+                        type: "programDataElement",
+                        program,
+                        dataElement: expression.dataElement,
+                    };
+
+                const { mappedId: dataElement = expression.dataElement } =
+                    mapping["programDataElements"][dataElementId] ?? {};
+
+                return {
+                    type: "programDataElement",
+                    program,
+                    dataElement,
+                };
+            }
             default:
                 return undefined;
         }
