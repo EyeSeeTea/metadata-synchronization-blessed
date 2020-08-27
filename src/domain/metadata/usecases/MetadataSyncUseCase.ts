@@ -162,17 +162,15 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         return _.mapValues(payload, (items, model) => {
             const collectionName = modelFactory(this.api, model).getCollectionName();
-            const references = this.api.models[collectionName]?.schema.properties
-                .filter(
-                    ({ propertyType, itemPropertyType }) =>
-                        propertyType === "REFERENCE" || itemPropertyType === "REFERENCE"
-                )
-                .map(({ name }) => name);
+            const properties = _.keyBy(
+                this.api.models[collectionName]?.schema.properties,
+                "fieldName"
+            );
 
             return items?.map((object: any) => {
                 if (typeof object !== "object") return object;
 
-                const mappedObject = this.mapProperty(
+                const mappedObject = this.mapReference(
                     { key: model, object },
                     mapping,
                     originCategoryOptionCombos,
@@ -180,11 +178,20 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 );
 
                 return _.mapValues(mappedObject, (value, key) => {
-                    if (!references.includes(key)) return value;
+                    const { propertyType, itemPropertyType } = properties[key];
 
-                    if (Array.isArray(value)) {
+                    if (propertyType === "REFERENCE") {
+                        return this.mapReference(
+                            { parent: model, key, object: value },
+                            mapping,
+                            originCategoryOptionCombos,
+                            destinationCategoryOptionCombos
+                        );
+                    }
+
+                    if (itemPropertyType === "REFERENCE" && Array.isArray(value)) {
                         return value.map(item =>
-                            this.mapProperty(
+                            this.mapReference(
                                 { parent: model, key, object: item },
                                 mapping,
                                 originCategoryOptionCombos,
@@ -193,18 +200,31 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                         );
                     }
 
-                    return this.mapProperty(
-                        { parent: model, key, object: value },
-                        mapping,
-                        originCategoryOptionCombos,
-                        destinationCategoryOptionCombos
-                    );
+                    if (propertyType === "COMPLEX" || itemPropertyType === "COMPLEX") {
+                        return this.mapComplex(value, mapping);
+                    }
+
+                    return value;
                 });
             });
         });
     }
 
-    private mapProperty<T extends Ref>(
+    private mapComplex(object: any, mapping: MetadataMappingDictionary): any {
+        if (Array.isArray(object)) return object.map(item => this.mapComplex(item, mapping));
+
+        return _.mapValues(object, (value, key) => {
+            if (key === "id" && typeof value === "string") {
+                return this.lookup(mapping, value);
+            } else if (typeof value === "object") {
+                return this.mapComplex(value, mapping);
+            } else {
+                return value;
+            }
+        });
+    }
+
+    private mapReference<T extends Ref>(
         {
             parent,
             key,
