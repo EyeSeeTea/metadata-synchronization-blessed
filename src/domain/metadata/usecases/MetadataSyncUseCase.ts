@@ -178,7 +178,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 );
 
                 return _.mapValues(mappedObject, (value, key) => {
-                    const { propertyType, itemPropertyType } = properties[key];
+                    const { propertyType, itemPropertyType } = properties[key] ?? {};
 
                     if (propertyType === "REFERENCE") {
                         return this.mapReference(
@@ -244,7 +244,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const mappedId = this.lookup(mapping, object.id);
 
         if (modelName === "indicators") {
-            const indicator = (object as unknown) as Indicator;
+            const indicator = (object as unknown) as Partial<Indicator>;
             const numerator = this.mapExpression(
                 indicator.numerator,
                 mapping,
@@ -264,11 +264,13 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     }
 
     private mapExpression(
-        expression: string,
+        expression: string | undefined,
         mapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
     ): string | undefined {
+        if (!expression) return undefined;
+
         const config = ExpressionParser.parse(expression).value.data ?? [];
         const mappedConfig = config.map(expression => {
             const mappedExpression = this.transformExpression(
