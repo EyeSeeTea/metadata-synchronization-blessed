@@ -156,7 +156,7 @@ const ModulesConfigPage: React.FC = () => {
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
 
             <PageHeader
-                title={i18n.t("Module store connection")}
+                title={i18n.t("Package store connection")}
                 onBackClick={close}
                 help={helpContainer}
                 helpSize={"lg"}

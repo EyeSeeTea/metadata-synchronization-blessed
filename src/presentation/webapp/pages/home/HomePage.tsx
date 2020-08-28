@@ -165,7 +165,7 @@ const LandingPage: React.FC = () => {
                         listAction: appConfigurator ? () => history.push("/packages") : undefined,
                     },
                     {
-                        name: i18n.t("Module store connection"),
+                        name: i18n.t("Package store connection"),
                         description: i18n.t("Configure connections to metadata package stores."),
                         addAction: appConfigurator
                             ? () => history.push("/modules/config")
