@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-25T11:28:32.569Z\n"
-"PO-Revision-Date: 2020-08-25T11:28:32.569Z\n"
+"POT-Creation-Date: 2020-08-28T07:10:55.595Z\n"
+"PO-Revision-Date: 2020-08-28T07:10:55.595Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -559,6 +559,9 @@ msgid "You need to provide a subject"
 msgstr ""
 
 msgid "Creating pull request"
+msgstr ""
+
+msgid "Pull request created"
 msgstr ""
 
 msgid "Create pull request on {{name}}"

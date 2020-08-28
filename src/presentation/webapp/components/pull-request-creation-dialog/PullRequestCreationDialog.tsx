@@ -61,21 +61,29 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
         const sync = compositionRoot.sync[type](builder);
         const payload = await sync.buildPayload();
 
-        await compositionRoot.sync.createPullRequest({
-            instance,
-            type,
-            ids: builder.metadataIds,
-            payload,
-            subject,
-            description,
-            notificationUsers: {
-                users: sharingToNamedRef(notificationUsers.users),
-                userGroups: sharingToNamedRef(notificationUsers.userGroups),
-            },
-        });
-
-        onClose();
-        loading.reset();
+        await compositionRoot.sync
+            .createPullRequest({
+                instance,
+                type,
+                ids: builder.metadataIds,
+                payload,
+                subject,
+                description,
+                notificationUsers: {
+                    users: sharingToNamedRef(notificationUsers.users),
+                    userGroups: sharingToNamedRef(notificationUsers.userGroups),
+                },
+            })
+            .then(() => {
+                onClose();
+                snackbar.success(i18n.t("Pull request created"));
+            })
+            .catch(err => {
+                snackbar.error(err.message);
+            })
+            .finally(() => {
+                loading.reset();
+            });
     }, [
         compositionRoot,
         builder,

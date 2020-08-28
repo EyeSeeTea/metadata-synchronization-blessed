@@ -12,21 +12,21 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { ValidationError } from "../../../../domain/common/entities/Validations";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
+import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 import {
     PullRequestCreation,
     PullRequestCreationDialog,
 } from "../../../webapp/components/pull-request-creation-dialog/PullRequestCreationDialog";
 import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
-import { NewPacakgeDialog } from "./NewPackageDialog";
-import { ValidationError } from "../../../../domain/common/entities/Validations";
+import { NewPackageDialog } from "./NewPackageDialog";
 import { getValidationsByVersionFeedback } from "./utils";
-import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 
 export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,
@@ -407,7 +407,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             />
 
             {!!newPackageModule && (
-                <NewPacakgeDialog
+                <NewPackageDialog
                     save={savePackage}
                     close={() => setNewPackageModule(undefined)}
                     module={newPackageModule}
