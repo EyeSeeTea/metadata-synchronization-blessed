@@ -6,6 +6,7 @@ import { Module } from "../../../../domain/modules/entities/Module";
 import { metadataModuleSteps, ModuleWizardStepProps } from "./Steps";
 
 export interface ModuleWizardProps {
+    isEdit: boolean;
     onCancel: () => void;
     onClose: () => void;
     module: Module;
@@ -13,6 +14,7 @@ export interface ModuleWizardProps {
 }
 
 export const ModuleWizard: React.FC<ModuleWizardProps> = ({
+    isEdit,
     onCancel,
     onClose,
     module,
@@ -20,7 +22,7 @@ export const ModuleWizard: React.FC<ModuleWizardProps> = ({
 }) => {
     const location = useLocation();
 
-    const props: ModuleWizardStepProps = { module, onChange, onCancel, onClose };
+    const props: ModuleWizardStepProps = { module, onChange, onCancel, onClose, isEdit };
     const steps = metadataModuleSteps.map(step => ({ ...step, props }));
 
     const onStepChangeRequest = async (_currentStep: WizardStep, newStep: WizardStep) => {

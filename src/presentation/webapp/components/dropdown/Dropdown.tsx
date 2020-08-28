@@ -20,6 +20,7 @@ interface DropdownProps {
     hideEmpty?: boolean;
     emptyLabel?: string;
     view?: DropdownViewOption;
+    disabled?: boolean;
 }
 
 const getTheme = (view: DropdownViewOption) => {
@@ -76,6 +77,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     hideEmpty = false,
     emptyLabel,
     view = "filter",
+    disabled = false,
 }) => {
     const inlineStyles = { minWidth: 120, paddingLeft: 25, paddingRight: 25 };
     const styles = view === "inline" ? inlineStyles : {};
@@ -100,6 +102,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                         },
                     }}
                     style={styles}
+                    disabled={disabled}
                 >
                     {!hideEmpty && (
                         <MenuItem value={""}>{emptyLabel ?? i18n.t("<No value>")}</MenuItem>
