@@ -215,7 +215,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         return _.mapValues(object, (value, key) => {
             if (key === "id" && typeof value === "string") {
-                return this.lookup(mapping, value);
+                return this.lookup(mapping, value) ?? value;
             } else if (typeof value === "object") {
                 return this.mapComplex(value, mapping);
             } else {
@@ -241,7 +241,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const modelName = cleanToModelName(this.api, key, parent);
         if (!modelName) return object;
 
-        const mappedId = this.lookup(mapping, object.id);
+        const mappedId = this.lookup(mapping, object.id) ?? object.id;
 
         if (modelName === "indicators") {
             const indicator = (object as unknown) as Partial<Indicator>;
@@ -285,7 +285,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             return _.mapValues(expression, (id, property) => {
                 const modelName = cleanToModelName(this.api, property);
                 if (!modelName || typeof id !== "string") return id;
-                return this.lookup(mapping, id);
+                return this.lookup(mapping, id) ?? id;
             });
         });
 
@@ -368,6 +368,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             .map(item => _.mapValues(item, (value, id) => ({ id, ...value })))
             .flatMap(_.values);
 
-        return mappingStore.find(item => item.id === id)?.mappedId ?? id;
+        const { mappedId } = mappingStore.find(item => item.id === id) ?? {};
+        return mappedId !== "DISABLED" ? mappedId : undefined;
     }
 }
