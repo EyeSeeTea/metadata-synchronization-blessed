@@ -25,7 +25,10 @@ export class ListNotificationsUseCase implements UseCase {
         );
 
         const updatedNotifications = await promiseMap(sentPullRequestNotifications, notification =>
-            this.updateSentPullRequest(notification)
+            this.updateSentPullRequest(notification).catch(err => {
+                console.error(err);
+                return undefined;
+            })
         );
 
         return _([...updatedNotifications, ...notifications])
@@ -85,7 +88,8 @@ export class ListNotificationsUseCase implements UseCase {
         >(Namespace.NOTIFICATIONS, notification.remoteNotification);
 
         if (
-            remoteNotification?.type !== "received-pull-request" ||
+            !remoteNotification ||
+            remoteNotification.type !== "received-pull-request" ||
             remoteNotification.status === "PENDING"
         ) {
             return undefined;
