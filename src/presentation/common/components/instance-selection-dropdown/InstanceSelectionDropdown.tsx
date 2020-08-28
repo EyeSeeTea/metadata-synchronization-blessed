@@ -2,6 +2,7 @@ import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import i18n from "../../../../locales";
+import { Maybe } from "../../../../types/utils";
 import Dropdown, { DropdownViewOption } from "../../../webapp/components/dropdown/Dropdown";
 import { useAppContext } from "../../contexts/AppContext";
 
@@ -11,7 +12,7 @@ export type InstanceSelectionConfig = Partial<Record<InstanceSelectionOption, bo
 
 export interface InstanceSelectionDropdownProps {
     showInstances: InstanceSelectionConfig;
-    selectedInstance: string;
+    selectedInstance: Maybe<string>;
     onChangeSelected: <T extends InstanceSelectionOption>(
         type: T,
         instance?: T extends "remote" ? Instance : never
@@ -62,10 +63,18 @@ export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps>
             compositionRoot.instances.list().then(setInstances);
         }, [compositionRoot]);
 
+        useEffect(() => {
+            // Auto-select first instance
+            const firstInstanceItem = instanceItems[0];
+            if (_.isNil(selectedInstance) && firstInstanceItem) {
+                updateSelectedInstance(firstInstanceItem.id);
+            }
+        }, [instanceItems, selectedInstance, updateSelectedInstance]);
+
         return (
             <Dropdown
                 items={instanceItems}
-                value={selectedInstance}
+                value={selectedInstance ?? instanceItems[0]?.id ?? ""}
                 onValueChange={updateSelectedInstance}
                 label={title}
                 hideEmpty={true}

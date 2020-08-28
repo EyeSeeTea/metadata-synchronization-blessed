@@ -61,21 +61,29 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
         const sync = compositionRoot.sync[type](builder);
         const payload = await sync.buildPayload();
 
-        await compositionRoot.sync.createPullRequest({
-            instance,
-            type,
-            ids: builder.metadataIds,
-            payload,
-            subject,
-            description,
-            notificationUsers: {
-                users: sharingToNamedRef(notificationUsers.users),
-                userGroups: sharingToNamedRef(notificationUsers.userGroups),
-            },
-        });
-
-        onClose();
-        loading.reset();
+        await compositionRoot.sync
+            .createPullRequest({
+                instance,
+                type,
+                ids: builder.metadataIds,
+                payload,
+                subject,
+                description,
+                notificationUsers: {
+                    users: sharingToNamedRef(notificationUsers.users),
+                    userGroups: sharingToNamedRef(notificationUsers.userGroups),
+                },
+            })
+            .then(() => {
+                onClose();
+                snackbar.success(i18n.t("Pull request created"));
+            })
+            .catch(err => {
+                snackbar.error(err.message);
+            })
+            .finally(() => {
+                loading.reset();
+            });
     }, [
         compositionRoot,
         builder,
@@ -133,7 +141,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
             isOpen={true}
             title={i18n.t("Create pull request on {{name}}", instance)}
             description={i18n.t(
-                "There are responsibles for the selected metadata. You can still create a pull request and once approved by the responsible you will be able to finish the synchronization."
+                "There are custodians for the selected metadata. You can still create a pull request and once approved by the responsible you will be able to finish the synchronization."
             )}
             maxWidth={"md"}
             fullWidth={true}
@@ -160,7 +168,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
                 onChange={updateTextField("description")}
             />
             <Sharing
-                subtitle={i18n.t("Recipients")}
+                subtitle={i18n.t("Custodians")}
                 meta={{
                     meta: {},
                     object: {

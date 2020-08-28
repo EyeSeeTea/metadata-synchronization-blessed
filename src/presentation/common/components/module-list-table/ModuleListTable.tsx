@@ -9,21 +9,24 @@ import {
     TableSelection,
     TableState,
     useLoading,
-    useSnackbar,
+    useSnackbar
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { ValidationError } from "../../../../domain/common/entities/Validations";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
+import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 import {
     PullRequestCreation,
-    PullRequestCreationDialog,
+    PullRequestCreationDialog
 } from "../../../webapp/components/pull-request-creation-dialog/PullRequestCreationDialog";
 import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
-import { NewPacakgeDialog } from "./NewPackageDialog";
+import { NewPackageDialog } from "./NewPackageDialog";
+import { getValidationsByVersionFeedback } from "./utils";
 
 export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,
@@ -91,6 +94,8 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             const module = _.find(rows, ({ id }) => id === item.module.id);
             if (!module) snackbar.error(i18n.t("Invalid module"));
             else {
+                const validationsByVersion: _.Dictionary<ValidationError[]> = {};
+
                 for (const dhisVersion of versions) {
                     loading.show(
                         true,
@@ -100,13 +105,17 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                         })
                     );
 
-                    await compositionRoot.packages.create(
+                    const validations = await compositionRoot.packages.create(
                         remoteInstance?.id ?? "LOCAL",
                         item,
                         module,
                         dhisVersion
                     );
+                    validationsByVersion[dhisVersion] = validations;
                 }
+
+                const [level, msg] = getValidationsByVersionFeedback(module, validationsByVersion);
+                snackbar.openSnackbar(level, msg);
 
                 loading.reset();
                 setResetKey(Math.random());
@@ -346,24 +355,56 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             });
     }, [compositionRoot, remoteInstance, resetKey, snackbar, setIsTableLoading]);
 
+    const [departmentFilter, setDepartmentFilter] = useState("");
+
+    useEffect(() => setDepartmentFilter(""), [remoteInstance]);
+
+    const departmentFilterItems = useMemo(() => {
+        return _(rows)
+            .map(({ department }) => department)
+            .uniqBy(({ id }) => id)
+            .sortBy(({ name }) => name)
+            .value();
+    }, [rows]);
+
+    const filterComponents = React.useMemo(() => {
+        const departmentFilterComponent = (
+            <Dropdown
+                key="filter-department"
+                items={departmentFilterItems}
+                onValueChange={setDepartmentFilter}
+                value={departmentFilter}
+                label={i18n.t("Department")}
+            />
+        );
+
+        return [externalComponents, departmentFilterComponent];
+    }, [externalComponents, departmentFilter, departmentFilterItems]);
+
+    const rowsFiltered = useMemo(() => {
+        return departmentFilter
+            ? rows.filter(({ department }) => department.id === departmentFilter)
+            : rows;
+    }, [departmentFilter, rows]);
+
     return (
         <React.Fragment>
             <ObjectsTable<Module>
-                rows={rows}
+                rows={rowsFiltered}
                 loading={isTableLoading}
                 columns={columns}
                 details={details}
                 actions={actions}
                 onActionButtonClick={onActionButtonClick}
                 forceSelectionColumn={presentation === "app"}
-                filterComponents={externalComponents}
+                filterComponents={filterComponents}
                 selection={selection}
                 onChange={updateTable}
                 paginationOptions={paginationOptions}
             />
 
             {!!newPackageModule && (
-                <NewPacakgeDialog
+                <NewPackageDialog
                     save={savePackage}
                     close={() => setNewPackageModule(undefined)}
                     module={newPackageModule}

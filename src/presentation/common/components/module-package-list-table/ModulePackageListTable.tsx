@@ -59,7 +59,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
 
         const filters = useMemo(
             () => (
-                <React.Fragment>
+                <React.Fragment key="common-filters">
                     <InstanceSelectionDropdown
                         showInstances={showInstances}
                         selectedInstance={showStore ? "STORE" : selectedInstance?.id ?? "LOCAL"}
