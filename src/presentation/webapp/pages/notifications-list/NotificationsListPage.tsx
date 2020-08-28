@@ -144,7 +144,7 @@ export const NotificationsListPage: React.FC = () => {
     ];
 
     const rowConfig = (row: TableNotification): RowConfig => {
-        return { style: row.read ? { backgroundColor: "#EEEEEE" } : {} };
+        return { cellStyle: row.read ? { backgroundColor: "#EEEEEE" } : { fontWeight: "bold" } };
     };
 
     const validateImportPullRequestAction = useCallback(
