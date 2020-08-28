@@ -91,7 +91,7 @@ export default function InstanceMappingPage() {
         await onChangeMapping(newMapping);
     };
 
-    const instanceTitle = instance ? i18n.t("Destination instance {{name}}", instance) : undefined;
+    const instanceTitle = instance ? i18n.t("Between this instance and {{name}}", instance) : null;
     const title = _.compact([sectionTitle, instanceTitle]).join(" - ");
 
     return (

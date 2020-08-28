@@ -1,6 +1,9 @@
+import { makeStyles, Typography } from "@material-ui/core";
 import { MultiSelector } from "d2-ui-components";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
+import i18n from "../../../../../locales";
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import SyncParamsSelector from "../../sync-params-selector/SyncParamsSelector";
 import { SyncWizardStepProps } from "../Steps";
@@ -14,9 +17,13 @@ export const buildInstanceOptions = (instances: Instance[]) => {
 
 const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const { d2, compositionRoot } = useAppContext();
+    const classes = useStyles();
+
     const [selectedOptions, setSelectedOptions] = useState<string[]>(syncRule.targetInstances);
     const [targetInstances, setTargetInstances] = useState<Instance[]>([]);
+
     const instanceOptions = buildInstanceOptions(targetInstances);
+    const isDestinationRemote = !_.isEqual(syncRule.targetInstances, ["LOCAL"]);
 
     const includeCurrentUrlAndTypeIsEvents = (selectedinstanceIds: string[]) => {
         return (
@@ -48,13 +55,23 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
 
     return (
         <React.Fragment>
-            <MultiSelector
-                d2={d2}
-                height={300}
-                onChange={changeInstances}
-                options={instanceOptions}
-                selected={selectedOptions}
-            />
+            {isDestinationRemote ? (
+                <MultiSelector
+                    d2={d2}
+                    height={300}
+                    onChange={changeInstances}
+                    options={instanceOptions}
+                    selected={selectedOptions}
+                />
+            ) : (
+                <Typography
+                    className={classes.advancedOptionsTitle}
+                    variant="subtitle1"
+                    gutterBottom
+                >
+                    {i18n.t("Destination")}: {i18n.t("This instance")}
+                </Typography>
+            )}
 
             <SyncParamsSelector
                 syncRule={syncRule}
@@ -64,5 +81,11 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
         </React.Fragment>
     );
 };
+
+const useStyles = makeStyles({
+    advancedOptionsTitle: {
+        fontWeight: 500,
+    },
+});
 
 export default InstanceSelectionStep;

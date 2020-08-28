@@ -770,6 +770,9 @@ msgstr ""
 msgid "Source instance"
 msgstr ""
 
+msgid "Destination"
+msgstr ""
+
 msgid "Instance not found"
 msgstr ""
 
@@ -1219,7 +1222,7 @@ msgstr ""
 msgid "Instance mapping"
 msgstr ""
 
-msgid "Destination instance {{name}}"
+msgid "Between this instance and {{name}}"
 msgstr ""
 
 msgid "Aggregated mapping"
