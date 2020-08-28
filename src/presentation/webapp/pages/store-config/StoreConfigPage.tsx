@@ -14,6 +14,7 @@ import { Store } from "../../../../domain/packages/entities/Store";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import PageHeader from "../../components/page-header/PageHeader";
+import helpStoreGithub from "../../../../assets/img/help-store-github.png";
 
 const ModulesConfigPage: React.FC = () => {
     const { compositionRoot } = useAppContext();
@@ -141,7 +142,7 @@ const ModulesConfigPage: React.FC = () => {
                 <div className={classes.center}>
                     <img
                         className={classes.helpImage}
-                        src="/img/help-store-github.png"
+                        src={helpStoreGithub}
                         alt={i18n.t("Create a personal access token on GitHub")}
                     />
                 </div>
@@ -155,7 +156,7 @@ const ModulesConfigPage: React.FC = () => {
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
 
             <PageHeader
-                title={i18n.t("Module store connection")}
+                title={i18n.t("Package store connection")}
                 onBackClick={close}
                 help={helpContainer}
                 helpSize={"lg"}

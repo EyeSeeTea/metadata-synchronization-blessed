@@ -36,7 +36,7 @@ export const ResponsiblesListPage: React.FC = () => {
 
     return (
         <React.Fragment>
-            <PageHeader onBackClick={backHome} title={i18n.t("Metadata responsibles")}>
+            <PageHeader onBackClick={backHome} title={i18n.t("Metadata custodians")}>
                 <InstanceSelectionDropdown
                     view="inline"
                     showInstances={{ local: true, remote: true }}

@@ -22,33 +22,50 @@ interface DropdownProps {
     view?: DropdownViewOption;
 }
 
-const getFilterTheme = () =>
-    createMuiTheme({
-        overrides: {
-            MuiFormLabel: {
-                root: {
-                    color: "#aaaaaa",
-                    "&$focused": {
-                        color: "#aaaaaa",
+const getTheme = (view: DropdownViewOption) => {
+    switch (view) {
+        case "filter":
+            return createMuiTheme({
+                overrides: {
+                    MuiFormLabel: {
+                        root: {
+                            color: "#aaaaaa",
+                            "&$focused": {
+                                color: "#aaaaaa",
+                            },
+                            top: "-9px !important",
+                            marginLeft: 10,
+                        },
                     },
-                    top: "-9px !important",
-                    marginLeft: 10,
+                    MuiInput: {
+                        root: {
+                            marginLeft: 10,
+                        },
+                        formControl: {
+                            minWidth: 250,
+                            marginTop: "8px !important",
+                        },
+                        input: {
+                            color: "#565656",
+                        },
+                    },
                 },
-            },
-            MuiInput: {
-                root: {
-                    marginLeft: 10,
+            });
+        case "inline":
+            return createMuiTheme({
+                overrides: {
+                    MuiFormControl: {
+                        root: {
+                            verticalAlign: "middle",
+                            marginBottom: 5,
+                        },
+                    },
                 },
-                formControl: {
-                    minWidth: 250,
-                    marginTop: "8px !important",
-                },
-                input: {
-                    color: "#565656",
-                },
-            },
-        },
-    });
+            });
+        default:
+            return {};
+    }
+};
 
 const Dropdown: React.FC<DropdownProps> = ({
     items,
@@ -60,14 +77,11 @@ const Dropdown: React.FC<DropdownProps> = ({
     emptyLabel,
     view = "filter",
 }) => {
-    const filterTheme = getFilterTheme();
-    const theme = view === "filter" ? filterTheme : {};
-
     const inlineStyles = { minWidth: 120, paddingLeft: 25, paddingRight: 25 };
     const styles = view === "inline" ? inlineStyles : {};
 
     return (
-        <MuiThemeProvider theme={theme}>
+        <MuiThemeProvider theme={getTheme(view)}>
             <FormControl fullWidth={view === "full-width"}>
                 {view !== "inline" && <InputLabel>{label}</InputLabel>}
                 <Select

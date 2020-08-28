@@ -40,7 +40,6 @@ const commonSteps: {
         component: InstanceSelectionStep,
         validationKeys: ["targetInstances"],
         showOnSyncDialog: true,
-        hidden: syncRule => syncRule.originInstance !== "LOCAL",
     },
     scheduler: {
         key: "scheduler",
