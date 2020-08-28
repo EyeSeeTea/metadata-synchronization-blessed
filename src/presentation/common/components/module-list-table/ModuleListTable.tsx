@@ -9,19 +9,19 @@ import {
     TableSelection,
     TableState,
     useLoading,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { ValidationError } from "../../../../domain/common/entities/Validations";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
+import { promiseMap } from "../../../../utils/common";
 import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 import {
     PullRequestCreation,
-    PullRequestCreationDialog
+    PullRequestCreationDialog,
 } from "../../../webapp/components/pull-request-creation-dialog/PullRequestCreationDialog";
 import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
@@ -94,25 +94,26 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             const module = _.find(rows, ({ id }) => id === item.module.id);
             if (!module) snackbar.error(i18n.t("Invalid module"));
             else {
-                const validationsByVersion: _.Dictionary<ValidationError[]> = {};
+                const validationsByVersion = _.fromPairs(
+                    await promiseMap(versions, async dhisVersion => {
+                        loading.show(
+                            true,
+                            i18n.t("Creating {{dhisVersion}} package for module {{name}}", {
+                                name: module.name,
+                                dhisVersion,
+                            })
+                        );
 
-                for (const dhisVersion of versions) {
-                    loading.show(
-                        true,
-                        i18n.t("Creating {{dhisVersion}} package for module {{name}}", {
-                            name: module.name,
-                            dhisVersion,
-                        })
-                    );
+                        const validations = await compositionRoot.packages.create(
+                            remoteInstance?.id ?? "LOCAL",
+                            item,
+                            module,
+                            dhisVersion
+                        );
 
-                    const validations = await compositionRoot.packages.create(
-                        remoteInstance?.id ?? "LOCAL",
-                        item,
-                        module,
-                        dhisVersion
-                    );
-                    validationsByVersion[dhisVersion] = validations;
-                }
+                        return [dhisVersion, validations];
+                    })
+                );
 
                 const [level, msg] = getValidationsByVersionFeedback(module, validationsByVersion);
                 snackbar.openSnackbar(level, msg);
