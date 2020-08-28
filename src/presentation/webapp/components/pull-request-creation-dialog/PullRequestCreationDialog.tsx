@@ -140,7 +140,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
             isOpen={true}
             title={i18n.t("Create pull request on {{name}}", instance)}
             description={i18n.t(
-                "There are responsibles for the selected metadata. You can still create a pull request and once approved by the responsible you will be able to finish the synchronization."
+                "There are custodians for the selected metadata. You can still create a pull request and, once approved by a custodian, you will be able to finish the synchronization."
             )}
             maxWidth={"md"}
             fullWidth={true}
@@ -167,7 +167,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
                 onChange={updateTextField("description")}
             />
             <Sharing
-                subtitle={i18n.t("Recipients")}
+                subtitle={i18n.t("Custodians")}
                 meta={{
                     meta: {},
                     object: {
