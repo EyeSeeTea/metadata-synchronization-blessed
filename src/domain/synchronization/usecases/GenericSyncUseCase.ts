@@ -15,7 +15,10 @@ import { EventsPackage } from "../../events/entities/EventsPackage";
 import { EventsRepositoryConstructor } from "../../events/repositories/EventsRepository";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../../instance/entities/MetadataMapping";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataRepositoryConstructor } from "../../metadata/repositories/MetadataRepository";
@@ -134,7 +137,28 @@ export abstract class GenericSyncUseCase {
 
         // Otherwise use the origin (REMOTE) destination instance mapping
         const remoteInstance = await this.getOriginInstance();
-        return remoteInstance.metadataMapping;
+
+        // TODO: This should be revisited in the future, does not fully work with nested ids (programs)
+        const transformMapping = (
+            mapping: MetadataMappingDictionary
+        ): MetadataMappingDictionary => {
+            return _.mapValues(mapping, value => {
+                return _.transform(
+                    value,
+                    (acc, { mappedId, mapping, ...value }, id) => {
+                        if (!!mappedId && mappedId !== "DISABLED")
+                            acc[mappedId] = {
+                                mappedId: id,
+                                mapping: mapping ? transformMapping(mapping) : undefined,
+                                ...value,
+                            };
+                    },
+                    {} as { [id: string]: MetadataMapping }
+                );
+            });
+        };
+
+        return transformMapping(remoteInstance.metadataMapping);
     }
 
     private async buildSyncReport() {
