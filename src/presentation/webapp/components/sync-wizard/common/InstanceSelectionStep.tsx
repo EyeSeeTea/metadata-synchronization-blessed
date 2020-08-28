@@ -84,7 +84,6 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
 
 const useStyles = makeStyles({
     advancedOptionsTitle: {
-        marginTop: "40px",
         fontWeight: 500,
     },
 });
