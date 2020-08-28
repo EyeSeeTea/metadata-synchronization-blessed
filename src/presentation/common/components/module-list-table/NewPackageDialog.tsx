@@ -11,7 +11,7 @@ import i18n from "../../../../locales";
 import { Dictionary } from "../../../../types/utils";
 import { useAppContext } from "../../contexts/AppContext";
 
-export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save, close }) => {
+export const NewPackageDialog: React.FC<NewPackageDialogProps> = ({ module, save, close }) => {
     const { compositionRoot } = useAppContext();
     const classes = useStyles();
 
@@ -146,7 +146,7 @@ export const NewPacakgeDialog: React.FC<NewPacakgeDialogProps> = ({ module, save
     );
 };
 
-export interface NewPacakgeDialogProps {
+export interface NewPackageDialogProps {
     module: Module;
     save: (item: Package, versions: string[]) => void;
     close: () => void;

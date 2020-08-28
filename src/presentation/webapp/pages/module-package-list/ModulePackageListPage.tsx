@@ -75,7 +75,11 @@ export const ModulePackageListPage: React.FC = () => {
     );
 };
 
-const showSelector = { modules: true, packages: true };
+const showSelector = {
+    modules: false,
+    packages: false,
+};
+
 function buildTitle(tableOption: string) {
     switch (tableOption) {
         case "modules":

@@ -1,5 +1,5 @@
 import { ConfirmationDialog } from "d2-ui-components";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
 import i18n from "../../../../locales";
@@ -21,13 +21,13 @@ const ModuleCreationPage: React.FC = () => {
     const title = !isEdit ? i18n.t(`New module`) : i18n.t(`Edit module`);
     const cancel = !isEdit ? i18n.t(`Cancel module creation`) : i18n.t(`Cancel module editing`);
 
-    const closeDialog = () => updateDialogOpen(false);
-    const openDialog = () => updateDialogOpen(true);
+    const closeDialog = useCallback(() => updateDialogOpen(false), [updateDialogOpen]);
+    const openDialog = useCallback(() => updateDialogOpen(true), [updateDialogOpen]);
 
-    const onClose = () => {
+    const onClose = useCallback(() => {
         updateDialogOpen(false);
         history.push(`/modules`);
-    };
+    }, [updateDialogOpen, history]);
 
     useEffect(() => {
         if (!module && !!id) compositionRoot.modules.get(id).then(updateModule);

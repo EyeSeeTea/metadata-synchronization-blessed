@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-08-27T08:29:54.619Z\n"
+"POT-Creation-Date: 2020-08-28T07:25:40.689Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -161,6 +161,15 @@ msgid "Version tag"
 msgstr ""
 
 msgid "DHIS2 Version (*)"
+msgstr ""
+
+msgid "Module: {{module}}"
+msgstr ""
+
+msgid "{{n}} package(s) created successfully: {{list}}"
+msgstr ""
+
+msgid "{{n}} package(s) could not be created: {{list}}"
 msgstr ""
 
 msgid "View"
@@ -431,10 +440,10 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-msgid "Set responsible users"
+msgid "Set metadata custodian"
 msgstr ""
 
-msgid "Responsible"
+msgid "Custodian"
 msgstr ""
 
 msgid "Search by "
@@ -553,13 +562,16 @@ msgstr ""
 msgid "Creating pull request"
 msgstr ""
 
+msgid "Pull request created"
+msgstr ""
+
 msgid "Create pull request on {{name}}"
 msgstr ""
 
 msgid ""
-"There are responsibles for the selected metadata. You can still create a "
-"pull request and once approved by the responsible you will be able to finish "
-"the synchronization."
+"There are custodians for the selected metadata. You can still create a pull "
+"request and once approved by the responsible you will be able to finish the "
+"synchronization."
 msgstr ""
 
 msgid "Open pull request"
@@ -571,10 +583,10 @@ msgstr ""
 msgid "Field cannot be blank"
 msgstr ""
 
-msgid "Recipients"
+msgid "Custodians"
 msgstr ""
 
-msgid "Responsibles for {{name}}"
+msgid "Custodians for {{name}}"
 msgstr ""
 
 msgid "Sharing settings"
@@ -990,6 +1002,9 @@ msgid_plural "Are you sure you want to delete {{count}} history notifications?"
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Aggregated Data Sync"
+msgstr ""
+
 msgid "Manual sync"
 msgstr ""
 
@@ -1003,49 +1018,62 @@ msgid "Sync rules"
 msgstr ""
 
 msgid ""
-"Create, modify, delete, execute and schedule sync rules for aggregated data "
-"by selecting the data sets, data elements or their groups and group sets "
-"together with the organisation unit, period and category options."
+"Create, modify, delete, execute and schedule rules to synchronize aggregated "
+"data periodically."
 msgstr ""
 
 msgid "History"
 msgstr ""
 
 msgid ""
-"View and analyse the status and results of the aggregated data manual syncs "
-"and sync rules executions."
+"View and analyse the outcome of aggregated data manual syncs and executions "
+"of sync rules."
+msgstr ""
+
+msgid "Events Sync"
 msgstr ""
 
 msgid ""
-"Manually synchronise events by selecting the programs or events together "
+"Manually synchronise event data by selecting the programs or events together "
 "with the organisation unit, period and category options."
 msgstr ""
 
 msgid ""
-"Create, modify, delete, execute and schedule sync rules for events by "
-"selecting the programs or events together with the organisation unit, period "
-"and category options."
+"Create, modify, delete, execute and schedule rules to synchronize event data "
+"periodically."
 msgstr ""
 
 msgid ""
-"View and analyse the status and results of the event manual syncs and sync "
-"rules executions."
+"View and analyse the outcome of events manual syncs and executions of sync "
+"rules."
+msgstr ""
+
+msgid "Metadata Sync"
 msgstr ""
 
 msgid ""
-"Manually synchronise metadata like data elements, organisation units and "
-"program indicators and groups and group sets."
-msgstr ""
-
-msgid ""
-"Create, modify, delete, execute and schedule sync rules for metadata like "
-"data elements, organisation units and program indicators and groups and "
+"Manually synchronise metadata such as data elements, organisation units, "
+"options, indicators, program indicator, categories and their groups and "
 "group sets."
 msgstr ""
 
 msgid ""
-"View and analyse the status and results of the metadata manual syncs and "
-"sync rules executions."
+"Create, modify, delete, execute and schedule rules to synchronize metadata "
+"periodically."
+msgstr ""
+
+msgid ""
+"View and analyse the outcome of metadata manual syncs and executions of sync "
+"rules."
+msgstr ""
+
+msgid "Notifications"
+msgstr ""
+
+msgid "Read notifications regarding new versions of DHIS2 metadata packages."
+msgstr ""
+
+msgid "Other"
 msgstr ""
 
 msgid "Deleted objects"
@@ -1054,37 +1082,40 @@ msgstr ""
 msgid "Manually synchronise deleted objects."
 msgstr ""
 
-msgid "Metadata responsibles"
+msgid "Metadata distribution"
 msgstr ""
 
-msgid "List and remove responsibles for data sets and programs"
-msgstr ""
-
-msgid "Notifications"
-msgstr ""
-
-msgid "List notifications"
-msgstr ""
-
-msgid "Destination instance settings"
+msgid "Create, edit and delete modules from this instance metadata."
 msgstr ""
 
 msgid ""
-"Create, check connectivity, modify and delete DHIS2 destination instances. "
-"Map metadata objects between instances."
+"View, publish, download and delete metadata packages from this instance "
+"metadata modules."
 msgstr ""
 
-msgid "Module store connection"
+msgid "Package store connection"
+msgstr ""
+
+msgid "Configure connections to metadata package stores."
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Instance settings"
 msgstr ""
 
 msgid ""
-"Configurate connection and credentials to retrieve modules from the store."
+"Configure, test and edit connections to other DHIS2 and map metadata objects "
+"between instances."
 msgstr ""
 
-msgid "Available modules"
+msgid "Metadata custodians"
 msgstr ""
 
-msgid "Create, modify and delete modules from the application"
+msgid ""
+"Define who are the custodians of this instance metadata. Custodians approve "
+"metadata requests coming from other DHIS instances."
 msgstr ""
 
 msgid "Please fix the issues before testing the connection"
@@ -1193,7 +1224,7 @@ msgstr ""
 msgid "Instance mapping"
 msgstr ""
 
-msgid "Between this instance and {{instance}}"
+msgid "Between this instance and {{name}}"
 msgstr ""
 
 msgid "Aggregated mapping"
@@ -1241,7 +1272,7 @@ msgstr ""
 msgid "Origin Instance"
 msgstr ""
 
-msgid "Sender"
+msgid "Requestor"
 msgstr ""
 
 msgid "Pull request (Sent)"
