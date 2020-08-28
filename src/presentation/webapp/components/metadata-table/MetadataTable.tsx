@@ -363,7 +363,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         },
         {
             name: "set-responsible",
-            text: i18n.t("Set responsible users"),
+            text: i18n.t("Set metadata custodian"),
             multiple: false,
             icon: <Icon>supervisor_account</Icon>,
             onClick: openResponsibleDialog,
