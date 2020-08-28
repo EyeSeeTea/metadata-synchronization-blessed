@@ -52,30 +52,37 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
 
     const save = useCallback(async () => {
         const { subject, description } = fields;
+
         if (!subject) {
             snackbar.error(i18n.t("You need to provide a subject"));
             return;
         }
 
-        loading.show(true, i18n.t("Creating pull request"));
-        const sync = compositionRoot.sync[type](builder);
-        const payload = await sync.buildPayload();
+        try {
+            loading.show(true, i18n.t("Creating pull request"));
+            const sync = compositionRoot.sync[type](builder);
+            const payload = await sync.buildPayload();
 
-        await compositionRoot.sync.createPullRequest({
-            instance,
-            type,
-            ids: builder.metadataIds,
-            payload,
-            subject,
-            description,
-            notificationUsers: {
-                users: sharingToNamedRef(notificationUsers.users),
-                userGroups: sharingToNamedRef(notificationUsers.userGroups),
-            },
-        });
+            await compositionRoot.sync.createPullRequest({
+                instance,
+                type,
+                ids: builder.metadataIds,
+                payload,
+                subject,
+                description,
+                notificationUsers: {
+                    users: sharingToNamedRef(notificationUsers.users),
+                    userGroups: sharingToNamedRef(notificationUsers.userGroups),
+                },
+            });
 
-        onClose();
-        loading.reset();
+            onClose();
+            snackbar.success(i18n.t("Pull request created"));
+        } catch (err) {
+            snackbar.error(err.message);
+        } finally {
+            loading.reset();
+        }
     }, [
         compositionRoot,
         builder,
