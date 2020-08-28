@@ -66,7 +66,8 @@ const showOnlyLocalInstances = { local: true, remote: false };
 
 const useStyles = makeStyles({
     icon: {
-        marginBottom: "5px",
+        paddingLeft: 25,
+        marginBottom: 5,
         verticalAlign: "middle",
     },
 });
