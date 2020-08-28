@@ -132,7 +132,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         pageSize: initialState.pagination.pageSize,
     });
 
-    const updateFilters = React.useCallback(
+    const updateFilters = useCallback(
         (partialFilters: Partial<ListMetadataParams>) => {
             setFilters(state => ({ ...state, page: 1, ...partialFilters }));
         },
@@ -191,7 +191,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         });
     };
 
-    const changeParentOrgUnitFilter = React.useCallback(
+    const changeParentOrgUnitFilter = useCallback(
         (parents: string[]) => {
             updateFilters({ parents, level: "" });
         },
