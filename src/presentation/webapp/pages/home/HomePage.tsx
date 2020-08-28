@@ -104,7 +104,7 @@ const LandingPage: React.FC = () => {
                     {
                         name: i18n.t("Sync rules"),
                         description: i18n.t(
-                            "Create, modify, delete, execute and schedule rules to synchronize metadatadata periodically."
+                            "Create, modify, delete, execute and schedule rules to synchronize metadata periodically."
                         ),
                         addAction: appConfigurator
                             ? () => history.push("/sync-rules/metadata/new")
