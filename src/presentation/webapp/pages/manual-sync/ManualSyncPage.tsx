@@ -1,11 +1,11 @@
 import SyncIcon from "@material-ui/icons/Sync";
-import _ from "lodash";
 import {
     ConfirmationDialog,
     ConfirmationDialogProps,
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
+import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
@@ -23,6 +23,7 @@ import {
 import { DataElementGroupModel, DataElementGroupSetModel } from "../../../../models/dhis/metadata";
 import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
+import { Ref } from "../../../../types/d2-api";
 import { MetadataType } from "../../../../utils/d2";
 import { isAppConfigurator } from "../../../../utils/permissions";
 import { InstanceSelectionOption } from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
@@ -38,7 +39,6 @@ import SyncDialog from "../../components/sync-dialog/SyncDialog";
 import SyncSummary from "../../components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
 import InstancesSelectors from "./InstancesSelectors";
-import { Ref } from "../../../../types/d2-api";
 
 const config: Record<
     SynchronizationType,

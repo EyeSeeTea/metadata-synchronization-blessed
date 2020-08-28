@@ -1,11 +1,12 @@
-import React from "react";
+import { makeStyles } from "@material-ui/core";
 import ArrowRightIcon from "@material-ui/icons/ArrowRightAlt";
+import React from "react";
+import { Ref } from "../../../../types/d2-api";
+import { Maybe } from "../../../../types/utils";
 import {
     InstanceSelectionDropdown,
     InstanceSelectionDropdownProps,
 } from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
-import { Ref } from "../../../../types/d2-api";
-import { Maybe } from "../../../../types/utils";
 
 interface InstancesSelectorsProps {
     sourceInstance: Maybe<Ref>;
@@ -16,8 +17,13 @@ interface InstancesSelectorsProps {
 
 type ChangeDestination = InstanceSelectionDropdownProps["onChangeSelected"];
 
-const InstancesSelectors: React.FC<InstancesSelectorsProps> = props => {
-    const { sourceInstance, onChangeSource, destinationInstance, onChangeDestination } = props;
+const InstancesSelectors: React.FC<InstancesSelectorsProps> = ({
+    sourceInstance,
+    onChangeSource,
+    destinationInstance,
+    onChangeDestination,
+}) => {
+    const classes = useStyles();
 
     const sourceInstanceIsRemote = !!sourceInstance;
     const showRemoteInstances = sourceInstanceIsRemote
@@ -41,7 +47,7 @@ const InstancesSelectors: React.FC<InstancesSelectorsProps> = props => {
                 onChangeSelected={onChangeSource}
             />
 
-            <ArrowRightIcon />
+            <ArrowRightIcon className={classes.icon} />
 
             <InstanceSelectionDropdown
                 key={sourceSelectedInstance}
@@ -57,5 +63,12 @@ const InstancesSelectors: React.FC<InstancesSelectorsProps> = props => {
 const showAllInstances = { local: true, remote: true };
 const showOnlyRemoteInstances = { local: false, remote: true };
 const showOnlyLocalInstances = { local: true, remote: false };
+
+const useStyles = makeStyles({
+    icon: {
+        marginBottom: "5px",
+        verticalAlign: "middle",
+    },
+});
 
 export default React.memo(InstancesSelectors);

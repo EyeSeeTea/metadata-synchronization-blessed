@@ -2,9 +2,9 @@ import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import i18n from "../../../../locales";
+import { Maybe } from "../../../../types/utils";
 import Dropdown, { DropdownViewOption } from "../../../webapp/components/dropdown/Dropdown";
 import { useAppContext } from "../../contexts/AppContext";
-import { Maybe } from "../../../../types/utils";
 
 export type InstanceSelectionOption = "local" | "remote" | "store";
 
@@ -74,7 +74,7 @@ export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps>
         return (
             <Dropdown
                 items={instanceItems}
-                value={selectedInstance || instanceItems[0]?.id || ""}
+                value={selectedInstance ?? instanceItems[0]?.id ?? ""}
                 onValueChange={updateSelectedInstance}
                 label={title}
                 hideEmpty={true}

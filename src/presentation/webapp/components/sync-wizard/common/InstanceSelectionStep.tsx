@@ -1,12 +1,12 @@
-import { MultiSelector } from "d2-ui-components";
 import { makeStyles, Typography } from "@material-ui/core";
+import { MultiSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
+import i18n from "../../../../../locales";
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import SyncParamsSelector from "../../sync-params-selector/SyncParamsSelector";
 import { SyncWizardStepProps } from "../Steps";
-import i18n from "../../../../../locales";
 
 export const buildInstanceOptions = (instances: Instance[]) => {
     return instances.map(instance => ({
@@ -17,11 +17,13 @@ export const buildInstanceOptions = (instances: Instance[]) => {
 
 const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const { d2, compositionRoot } = useAppContext();
+    const classes = useStyles();
+
     const [selectedOptions, setSelectedOptions] = useState<string[]>(syncRule.targetInstances);
     const [targetInstances, setTargetInstances] = useState<Instance[]>([]);
+
     const instanceOptions = buildInstanceOptions(targetInstances);
     const isDestinationRemote = !_.isEqual(syncRule.targetInstances, ["LOCAL"]);
-    const classes = useStyles();
 
     const includeCurrentUrlAndTypeIsEvents = (selectedinstanceIds: string[]) => {
         return (
