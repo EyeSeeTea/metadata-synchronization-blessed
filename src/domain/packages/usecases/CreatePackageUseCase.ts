@@ -1,5 +1,8 @@
 import { generateUid } from "d2/uid";
-import _ from "lodash";
+import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
+import { CompositionRoot } from "../../../presentation/CompositionRoot";
+import { cache } from "../../../utils/cache";
+import { getMajorVersion } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
@@ -9,12 +12,8 @@ import { Module } from "../../modules/entities/Module";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { Package } from "../entities/Package";
-import { CompositionRoot } from "../../../presentation/CompositionRoot";
-import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
-import { cache } from "../../../utils/cache";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
-import { getMajorVersion } from "../../../utils/d2-utils";
+import { Package } from "../entities/Package";
 
 export class CreatePackageUseCase implements UseCase {
     constructor(
