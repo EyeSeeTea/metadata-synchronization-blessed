@@ -2,8 +2,11 @@ import { Icon } from "@material-ui/core";
 import {
     ConfirmationDialog,
     ConfirmationDialogProps,
+    MetaObject,
     ObjectsTable,
     ObjectsTableDetailField,
+    SearchResult,
+    ShareUpdate,
     TableAction,
     TableColumn,
     TableSelection,
@@ -23,6 +26,7 @@ import {
     PullRequestCreation,
     PullRequestCreationDialog,
 } from "../../../webapp/components/pull-request-creation-dialog/PullRequestCreationDialog";
+import { SharingDialog } from "../../../webapp/components/sharing-dialog/SharingDialog";
 import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPackageDialog } from "./NewPackageDialog";
@@ -42,14 +46,17 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     const history = useHistory();
 
     const [rows, setRows] = useState<Module[]>([]);
+    const [selection, updateSelection] = useState<TableSelection[]>([]);
+
     const [resetKey, setResetKey] = useState(Math.random());
     const [isTableLoading, setIsTableLoading] = useState(false);
     const [newPackageModule, setNewPackageModule] = useState<Module>();
-    const [selection, updateSelection] = useState<TableSelection[]>([]);
+    const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
+    const [departmentFilter, setDepartmentFilter] = useState("");
 
-    const editRule = useCallback(
+    const editModule = useCallback(
         (ids: string[]) => {
             const item = _.find(rows, ({ id }) => id === ids[0]);
             if (!item) snackbar.error(i18n.t("Invalid module"));
@@ -211,12 +218,15 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     const replicateModule = useCallback(
         async (ids: string[]) => {
             const item = _.find(rows, ({ id }) => id === ids[0]);
-            if (!item) snackbar.error(i18n.t("Invalid module"));
-            else
-                history.push({
-                    pathname: `/modules/new`,
-                    state: { module: item.replicate() },
-                });
+            if (!item) {
+                snackbar.error(i18n.t("Invalid module"));
+                return;
+            }
+
+            history.push({
+                pathname: `/modules/new`,
+                state: { module: item.replicate() },
+            });
         },
         [history, rows, snackbar]
     );
@@ -234,6 +244,22 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
         [compositionRoot, loading]
     );
 
+    const openSharingSettings = useCallback(
+        async (ids: string[]) => {
+            const item = _.find(rows, ({ id }) => id === ids[0]);
+            if (!item) {
+                snackbar.error(i18n.t("Invalid module"));
+                return;
+            }
+
+            setSharingSettingsObject({
+                object: item,
+                meta: { allowPublicAccess: true, allowExternalAccess: false },
+            });
+        },
+        [rows, snackbar]
+    );
+
     const updateTable = useCallback(
         ({ selection }: TableState<Module>) => {
             updateSelection(selection);
@@ -241,124 +267,132 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
         [updateSelection]
     );
 
-    const columns: TableColumn<Module>[] = [
-        { name: "name", text: i18n.t("Name"), sortable: true },
-        {
-            name: "department",
-            text: i18n.t("Department"),
-            sortable: true,
-            getValue: ({ department }) => {
-                return department.name;
+    const columns: TableColumn<Module>[] = useMemo(
+        () => [
+            { name: "name", text: i18n.t("Name"), sortable: true },
+            {
+                name: "department",
+                text: i18n.t("Department"),
+                sortable: true,
+                getValue: ({ department }) => {
+                    return department.name;
+                },
             },
-        },
-        { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
-        {
-            name: "metadataIds",
-            text: "Selected metadata",
-            getValue: module => `${module.metadataIds.length} elements`,
-        },
-        { name: "lastUpdated", text: i18n.t("Last updated"), hidden: true },
-        { name: "lastUpdatedBy", text: i18n.t("Last updated by"), hidden: true },
-        { name: "created", text: i18n.t("Created"), hidden: true },
-        { name: "user", text: i18n.t("Created by"), hidden: true },
-    ];
-
-    const details: ObjectsTableDetailField<Module>[] = [
-        { name: "name", text: i18n.t("Name") },
-        {
-            name: "department",
-            text: i18n.t("Department"),
-            getValue: ({ department }) => {
-                return department.name;
+            { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
+            {
+                name: "metadataIds",
+                text: "Selected metadata",
+                getValue: module => `${module.metadataIds.length} elements`,
             },
-        },
-        { name: "description", text: i18n.t("Description") },
-        {
-            name: "metadataIds",
-            text: i18n.t("Selected metadata"),
-            getValue: module => `${module.metadataIds.length} elements`,
-        },
-        { name: "lastUpdated", text: i18n.t("Last updated") },
-        { name: "lastUpdatedBy", text: i18n.t("Last updated by") },
-        { name: "created", text: i18n.t("Created") },
-        { name: "user", text: i18n.t("Created by") },
-    ];
+            { name: "lastUpdated", text: i18n.t("Last updated"), hidden: true },
+            { name: "lastUpdatedBy", text: i18n.t("Last updated by"), hidden: true },
+            { name: "created", text: i18n.t("Created"), hidden: true },
+            { name: "user", text: i18n.t("Created by"), hidden: true },
+        ],
+        []
+    );
 
-    const actions: TableAction<Module>[] = [
-        {
-            name: "details",
-            text: i18n.t("Details"),
-            multiple: false,
-            primary: presentation !== "app" && !remoteInstance,
-        },
-        {
-            name: "edit",
-            text: i18n.t("Edit"),
-            multiple: false,
-            isActive: () => presentation === "app" && !remoteInstance,
-            onClick: editRule,
-            primary: presentation === "app" && !remoteInstance,
-            icon: <Icon>edit</Icon>,
-        },
-        {
-            name: "delete",
-            text: i18n.t("Delete"),
-            multiple: true,
-            isActive: () => presentation === "app" && !remoteInstance,
-            onClick: deleteModule,
-            icon: <Icon>delete</Icon>,
-        },
-        {
-            name: "replicate",
-            text: i18n.t("Replicate"),
-            multiple: false,
-            onClick: replicateModule,
-            icon: <Icon>content_copy</Icon>,
-            isActive: () => presentation === "app" && !remoteInstance,
-        },
-        {
-            name: "download",
-            text: i18n.t("Download metadata package"),
-            multiple: false,
-            onClick: downloadSnapshot,
-            icon: <Icon>cloud_download</Icon>,
-        },
-        {
-            name: "package-data-store",
-            text: i18n.t("Generate package from module"),
-            multiple: false,
-            icon: <Icon>description</Icon>,
-            isActive: () => presentation === "app" && !remoteInstance,
-            onClick: createPackage,
-        },
-        {
-            name: "pull-metadata",
-            text: i18n.t("Pull metadata"),
-            multiple: false,
-            icon: <Icon>arrow_downward</Icon>,
-            isActive: () => presentation === "app" && !!remoteInstance,
-            onClick: pullModule,
-        },
-    ];
+    const details: ObjectsTableDetailField<Module>[] = useMemo(
+        () => [
+            { name: "name", text: i18n.t("Name") },
+            {
+                name: "department",
+                text: i18n.t("Department"),
+                getValue: ({ department }) => {
+                    return department.name;
+                },
+            },
+            { name: "description", text: i18n.t("Description") },
+            {
+                name: "metadataIds",
+                text: i18n.t("Selected metadata"),
+                getValue: module => `${module.metadataIds.length} elements`,
+            },
+            { name: "lastUpdated", text: i18n.t("Last updated") },
+            { name: "lastUpdatedBy", text: i18n.t("Last updated by") },
+            { name: "created", text: i18n.t("Created") },
+            { name: "user", text: i18n.t("Created by") },
+        ],
+        []
+    );
 
-    useEffect(() => {
-        setIsTableLoading(true);
-        compositionRoot.modules
-            .list(remoteInstance)
-            .then(rows => {
-                setRows(rows);
-                setIsTableLoading(false);
-            })
-            .catch((error: Error) => {
-                snackbar.error(error.message);
-                setRows([]);
-                setIsTableLoading(false);
-            });
-    }, [compositionRoot, remoteInstance, resetKey, snackbar, setIsTableLoading]);
-
-    const [departmentFilter, setDepartmentFilter] = useState("");
-
-    useEffect(() => setDepartmentFilter(""), [remoteInstance]);
+    const actions: TableAction<Module>[] = useMemo(
+        () => [
+            {
+                name: "details",
+                text: i18n.t("Details"),
+                multiple: false,
+                primary: presentation !== "app" && !remoteInstance,
+            },
+            {
+                name: "edit",
+                text: i18n.t("Edit"),
+                multiple: false,
+                isActive: () => presentation === "app" && !remoteInstance,
+                onClick: editModule,
+                primary: presentation === "app" && !remoteInstance,
+                icon: <Icon>edit</Icon>,
+            },
+            {
+                name: "delete",
+                text: i18n.t("Delete"),
+                multiple: true,
+                isActive: () => presentation === "app" && !remoteInstance,
+                onClick: deleteModule,
+                icon: <Icon>delete</Icon>,
+            },
+            {
+                name: "replicate",
+                text: i18n.t("Replicate"),
+                multiple: false,
+                onClick: replicateModule,
+                icon: <Icon>content_copy</Icon>,
+                isActive: () => presentation === "app" && !remoteInstance,
+            },
+            {
+                name: "download",
+                text: i18n.t("Download metadata package"),
+                multiple: false,
+                onClick: downloadSnapshot,
+                icon: <Icon>cloud_download</Icon>,
+            },
+            {
+                name: "package-data-store",
+                text: i18n.t("Generate package from module"),
+                multiple: false,
+                icon: <Icon>description</Icon>,
+                isActive: () => presentation === "app" && !remoteInstance,
+                onClick: createPackage,
+            },
+            {
+                name: "pull-metadata",
+                text: i18n.t("Pull metadata"),
+                multiple: false,
+                icon: <Icon>arrow_downward</Icon>,
+                isActive: () => presentation === "app" && !!remoteInstance,
+                onClick: pullModule,
+            },
+            {
+                name: "sharingSettings",
+                text: i18n.t("Sharing settings"),
+                multiple: false,
+                // TODO: isActive: verifyUserCanEditSharingSettings,
+                onClick: openSharingSettings,
+                icon: <Icon>share</Icon>,
+            },
+        ],
+        [
+            createPackage,
+            deleteModule,
+            downloadSnapshot,
+            editModule,
+            openSharingSettings,
+            presentation,
+            pullModule,
+            remoteInstance,
+            replicateModule,
+        ]
+    );
 
     const departmentFilterItems = useMemo(() => {
         return _(rows)
@@ -388,6 +422,46 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             : rows;
     }, [departmentFilter, rows]);
 
+    const onSearchRequest = async (key: string) =>
+        api
+            .get<SearchResult>("/sharing/search", { key })
+            .getData();
+
+    const onSharingChanged = async (updatedAttributes: ShareUpdate) => {
+        if (!sharingSettingsObject) return;
+
+        const newSharingSettings = {
+            meta: sharingSettingsObject.meta,
+            object: {
+                ...sharingSettingsObject.object,
+                ...updatedAttributes,
+            },
+        };
+
+        // TODO: Persist object
+
+        setSharingSettingsObject(newSharingSettings);
+    };
+
+    useEffect(() => {
+        setIsTableLoading(true);
+        compositionRoot.modules
+            .list(remoteInstance)
+            .then(rows => {
+                setRows(rows);
+                setIsTableLoading(false);
+            })
+            .catch((error: Error) => {
+                snackbar.error(error.message);
+                setRows([]);
+                setIsTableLoading(false);
+            });
+    }, [compositionRoot, remoteInstance, resetKey, snackbar, setIsTableLoading]);
+
+    useEffect(() => {
+        setDepartmentFilter("");
+    }, [remoteInstance]);
+
     return (
         <React.Fragment>
             <ObjectsTable<Module>
@@ -416,6 +490,21 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 <PullRequestCreationDialog
                     {...pullRequestProps}
                     onClose={() => setPullRequestProps(undefined)}
+                />
+            )}
+
+            {!!sharingSettingsObject && (
+                <SharingDialog
+                    isOpen={true}
+                    showOptions={{
+                        title: false,
+                        dataSharing: false,
+                    }}
+                    title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
+                    meta={sharingSettingsObject}
+                    onCancel={() => setSharingSettingsObject(null)}
+                    onChange={onSharingChanged}
+                    onSearch={onSearchRequest}
                 />
             )}
 
