@@ -78,7 +78,7 @@ export abstract class GenericModule implements BaseModule {
             type: "metadata",
             instance: "",
             lastPackageVersion: "",
-            publicAccess: "--------",
+            publicAccess: "rw------",
             userAccesses: [],
             userGroupAccesses: [],
             user: {
