@@ -246,14 +246,14 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
 
     const openSharingSettings = useCallback(
         async (ids: string[]) => {
-            const item = _.find(rows, ({ id }) => id === ids[0]);
-            if (!item) {
+            const module = _.find(rows, ({ id }) => id === ids[0]);
+            if (!module) {
                 snackbar.error(i18n.t("Invalid module"));
                 return;
             }
 
             setSharingSettingsObject({
-                object: item,
+                object: module,
                 meta: { allowPublicAccess: true, allowExternalAccess: false },
             });
         },
@@ -422,26 +422,28 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             : rows;
     }, [departmentFilter, rows]);
 
-    const onSearchRequest = async (key: string) =>
-        api
-            .get<SearchResult>("/sharing/search", { key })
-            .getData();
+    const onSearchRequest = useCallback(
+        async (key: string) =>
+            api
+                .get<SearchResult>("/sharing/search", { key })
+                .getData(),
+        [api]
+    );
 
-    const onSharingChanged = async (updatedAttributes: ShareUpdate) => {
-        if (!sharingSettingsObject) return;
+    const onSharingChanged = useCallback(
+        async (updatedAttributes: ShareUpdate) => {
+            if (!sharingSettingsObject) return;
 
-        const newSharingSettings = {
-            meta: sharingSettingsObject.meta,
-            object: {
-                ...sharingSettingsObject.object,
-                ...updatedAttributes,
-            },
-        };
+            const module = (sharingSettingsObject.object as Module).update(updatedAttributes);
 
-        // TODO: Persist object
-
-        setSharingSettingsObject(newSharingSettings);
-    };
+            await compositionRoot.modules.save(module);
+            setSharingSettingsObject({
+                meta: sharingSettingsObject.meta,
+                object: module,
+            });
+        },
+        [sharingSettingsObject, compositionRoot]
+    );
 
     useEffect(() => {
         setIsTableLoading(true);
