@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-28T07:25:40.689Z\n"
-"PO-Revision-Date: 2020-08-28T07:25:40.689Z\n"
+"POT-Creation-Date: 2020-08-31T07:36:10.258Z\n"
+"PO-Revision-Date: 2020-08-31T07:36:10.258Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -143,6 +143,12 @@ msgid "Download metadata package"
 msgstr ""
 
 msgid "Generate package from module"
+msgstr ""
+
+msgid "Sharing settings"
+msgstr ""
+
+msgid "Sharing settings for {{name}}"
 msgstr ""
 
 msgid "Package of {{name}}"
@@ -586,9 +592,6 @@ msgid "Custodians"
 msgstr ""
 
 msgid "Custodians for {{name}}"
-msgstr ""
-
-msgid "Sharing settings"
 msgstr ""
 
 msgid "Synchronize"
@@ -1481,9 +1484,6 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
-
-msgid "Sharing settings for {{name}}"
-msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
 msgstr ""
