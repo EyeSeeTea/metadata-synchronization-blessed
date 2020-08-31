@@ -1,4 +1,8 @@
 import { generateUid } from "d2/uid";
+import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
+import { CompositionRoot } from "../../../presentation/CompositionRoot";
+import { cache } from "../../../utils/cache";
+import { getMajorVersion } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
@@ -8,12 +12,39 @@ import { Module } from "../../modules/entities/Module";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { Package } from "../entities/Package";
 
 export class CreatePackageUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private compositionRoot: CompositionRoot,
+        private repositoryFactory: RepositoryFactory,
+        private localInstance: Instance
+    ) {}
 
-    public async execute(payload: Package, module: Module): Promise<ValidationError[]> {
+    public async execute(
+        originInstance: string,
+        sourcePackage: Package,
+        module: Module,
+        dhisVersion: string
+    ): Promise<ValidationError[]> {
+        const apiVersion = getMajorVersion(dhisVersion);
+        const transformationRepository = this.getTransformationRepository();
+
+        const basePayload = await this.compositionRoot.sync[module.type]({
+            ...module.toSyncBuilder(),
+            originInstance,
+            targetInstances: [],
+        }).buildPayload();
+
+        const versionedPayload = transformationRepository.mapPackageTo(
+            apiVersion,
+            basePayload,
+            metadataTransformations
+        );
+
+        const payload = sourcePackage.update({ contents: versionedPayload, dhisVersion });
+
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [this.localInstance]
@@ -42,5 +73,13 @@ export class CreatePackageUseCase implements UseCase {
         }
 
         return validations;
+    }
+
+    @cache()
+    protected getTransformationRepository() {
+        return this.repositoryFactory.get<TransformationRepositoryConstructor>(
+            Repositories.TransformationRepository,
+            []
+        );
     }
 }
