@@ -21,6 +21,7 @@ import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import { promiseMap } from "../../../../utils/common";
+import { getUserInfo, isGlobalAdmin, UserInfo } from "../../../../utils/permissions";
 import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 import {
     PullRequestCreation,
@@ -55,6 +56,9 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
     const [departmentFilter, setDepartmentFilter] = useState("");
+
+    const [globalAdmin, setGlobalAdmin] = useState(false);
+    const [userInfo, setUserInfo] = useState<UserInfo>();
 
     const editModule = useCallback(
         (ids: string[]) => {
@@ -267,6 +271,20 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
         [updateSelection]
     );
 
+    const verifyUserHasWritePermissions = useCallback(
+        (modules: Module[]) => {
+            if (globalAdmin) return true;
+
+            for (const module of modules) {
+                if (!!userInfo && !module.hasPermissions("write", userInfo.id, userInfo.userGroups))
+                    return false;
+            }
+
+            return true;
+        },
+        [globalAdmin, userInfo]
+    );
+
     const columns: TableColumn<Module>[] = useMemo(
         () => [
             { name: "name", text: i18n.t("Name"), sortable: true },
@@ -328,7 +346,10 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 name: "edit",
                 text: i18n.t("Edit"),
                 multiple: false,
-                isActive: () => presentation === "app" && !remoteInstance,
+                isActive: modules =>
+                    presentation === "app" &&
+                    !remoteInstance &&
+                    verifyUserHasWritePermissions(modules),
                 onClick: editModule,
                 primary: presentation === "app" && !remoteInstance,
                 icon: <Icon>edit</Icon>,
@@ -337,7 +358,10 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 name: "delete",
                 text: i18n.t("Delete"),
                 multiple: true,
-                isActive: () => presentation === "app" && !remoteInstance,
+                isActive: modules =>
+                    presentation === "app" &&
+                    !remoteInstance &&
+                    verifyUserHasWritePermissions(modules),
                 onClick: deleteModule,
                 icon: <Icon>delete</Icon>,
             },
@@ -376,7 +400,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 name: "sharingSettings",
                 text: i18n.t("Sharing settings"),
                 multiple: false,
-                // TODO: isActive: verifyUserCanEditSharingSettings,
+                isActive: verifyUserHasWritePermissions,
                 onClick: openSharingSettings,
                 icon: <Icon>share</Icon>,
             },
@@ -391,6 +415,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             pullModule,
             remoteInstance,
             replicateModule,
+            verifyUserHasWritePermissions,
         ]
     );
 
@@ -445,10 +470,15 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
         [sharingSettingsObject, compositionRoot]
     );
 
+    const closeSharingSettingsDialog = useCallback(() => {
+        setSharingSettingsObject(null);
+        setResetKey(Math.random());
+    }, []);
+
     useEffect(() => {
         setIsTableLoading(true);
         compositionRoot.modules
-            .list(remoteInstance)
+            .list(globalAdmin, remoteInstance)
             .then(rows => {
                 setRows(rows);
                 setIsTableLoading(false);
@@ -458,11 +488,16 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 setRows([]);
                 setIsTableLoading(false);
             });
-    }, [compositionRoot, remoteInstance, resetKey, snackbar, setIsTableLoading]);
+    }, [compositionRoot, remoteInstance, resetKey, snackbar, setIsTableLoading, globalAdmin]);
 
     useEffect(() => {
         setDepartmentFilter("");
     }, [remoteInstance]);
+
+    useEffect(() => {
+        isGlobalAdmin(api).then(setGlobalAdmin);
+        getUserInfo(api).then(setUserInfo);
+    }, [api]);
 
     return (
         <React.Fragment>
@@ -504,7 +539,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                     }}
                     title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
                     meta={sharingSettingsObject}
-                    onCancel={() => setSharingSettingsObject(null)}
+                    onCancel={closeSharingSettingsDialog}
                     onChange={onSharingChanged}
                     onSearch={onSearchRequest}
                 />
