@@ -16,7 +16,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
-import { isAppConfigurator } from "../../../../utils/permissions";
+import { isAppConfigurator, isGlobalAdmin } from "../../../../utils/permissions";
 import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 import {
     PackagesDiffDialog,
@@ -49,6 +49,8 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
     const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
     const [moduleFilter, setModuleFilter] = useState("");
+
+    const [globalAdmin, setGlobalAdmin] = useState(false);
     const [appConfigurator, setAppConfigurator] = useState(false);
 
     const isRemoteInstance = !!remoteInstance;
@@ -323,13 +325,13 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
 
     useEffect(() => {
         compositionRoot.packages
-            .list(remoteInstance)
+            .list(globalAdmin, remoteInstance)
             .then(setInstancePackages)
             .catch((error: Error) => {
                 snackbar.error(error.message);
                 setInstancePackages([]);
             });
-    }, [compositionRoot, remoteInstance, resetKey, snackbar]);
+    }, [compositionRoot, remoteInstance, resetKey, snackbar, globalAdmin]);
 
     useEffect(() => {
         compositionRoot.packages.listStore().then(validation =>
@@ -346,6 +348,7 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
 
     useEffect(() => {
         isAppConfigurator(api).then(setAppConfigurator);
+        isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
     return (

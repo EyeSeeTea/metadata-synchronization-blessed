@@ -12,7 +12,10 @@ import { BaseModule, Module } from "../entities/Module";
 export class ListModulesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(globalAdmin: boolean, instance = this.localInstance): Promise<Module[]> {
+    public async execute(
+        bypassSharingSettings = false,
+        instance = this.localInstance
+    ): Promise<Module[]> {
         const userGroups = await this.instanceRepository(this.localInstance).getUserGroups();
         const { id: userId } = await this.instanceRepository(this.localInstance).getUser();
 
@@ -29,7 +32,9 @@ export class ListModulesUseCase implements UseCase {
                         throw new Error("Unknown module");
                 }
             })
-            .filter(module => globalAdmin || module.hasPermissions("read", userId, userGroups));
+            .filter(
+                module => bypassSharingSettings || module.hasPermissions("read", userId, userGroups)
+            );
     }
 
     @cache()
