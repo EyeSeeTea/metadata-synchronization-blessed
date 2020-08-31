@@ -8,7 +8,7 @@ context("Destination Settings", function () {
     });
 
     it("should have the correct title", function () {
-        page.assertTitle(title => title.contains("Destination Instance Settings"));
+        page.assertTitle(title => title.contains("Instance Settings"));
     });
 
     it("should have the localhost instance", function () {

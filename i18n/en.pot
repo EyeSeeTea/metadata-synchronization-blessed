@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-31T07:36:10.258Z\n"
-"PO-Revision-Date: 2020-08-31T07:36:10.258Z\n"
+"POT-Creation-Date: 2020-08-31T10:20:47.391Z\n"
+"PO-Revision-Date: 2020-08-31T10:20:47.391Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -575,7 +575,7 @@ msgstr ""
 
 msgid ""
 "There are custodians for the selected metadata. You can still create a pull "
-"request and once approved by the responsible you will be able to finish the "
+"request and, once approved by a custodian, you will be able to finish the "
 "synchronization."
 msgstr ""
 
@@ -1195,7 +1195,7 @@ msgid_plural "Are you sure you want to delete {{count}} instances?"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Destination Instance Settings"
+msgid "Instance Settings"
 msgstr ""
 
 msgid ""

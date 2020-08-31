@@ -7,6 +7,7 @@ import {
     InstanceSelectionDropdown,
     InstanceSelectionDropdownProps,
 } from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
+import Typography from "@material-ui/core/Typography";
 
 interface InstancesSelectorsProps {
     sourceInstance: Maybe<Ref>;
@@ -39,7 +40,9 @@ const InstancesSelectors: React.FC<InstancesSelectorsProps> = ({
     );
 
     return (
-        <React.Fragment>
+        <div className={classes.instances}>
+            <Typography className={classes.label}>Origin</Typography>
+
             <InstanceSelectionDropdown
                 view="inline"
                 showInstances={showAllInstances}
@@ -49,6 +52,8 @@ const InstancesSelectors: React.FC<InstancesSelectorsProps> = ({
 
             <ArrowRightIcon className={classes.icon} />
 
+            <Typography className={classes.label}>Destination</Typography>
+
             <InstanceSelectionDropdown
                 key={sourceSelectedInstance}
                 view="inline"
@@ -56,7 +61,7 @@ const InstancesSelectors: React.FC<InstancesSelectorsProps> = ({
                 selectedInstance={destinationInstance?.id}
                 onChangeSelected={changeDestination}
             />
-        </React.Fragment>
+        </div>
     );
 };
 
@@ -66,8 +71,21 @@ const showOnlyLocalInstances = { local: true, remote: false };
 
 const useStyles = makeStyles({
     icon: {
-        marginBottom: "5px",
+        padding: "0px 25px",
+        marginBottom: 5,
         verticalAlign: "middle",
+    },
+    instances: {
+        float: "right",
+        padding: "0px 10px",
+        border: "1px solid",
+    },
+    label: {
+        display: "inline-block",
+        fontWeight: 400,
+        fontSize: "1rem",
+        marginTop: "4px",
+        verticalAlign: "top",
     },
 });
 
