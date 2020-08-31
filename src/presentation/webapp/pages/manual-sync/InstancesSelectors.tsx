@@ -41,12 +41,7 @@ const InstancesSelectors: React.FC<InstancesSelectorsProps> = ({
 
     return (
         <div className={classes.instances}>
-
-            <Typography
-                className={classes.label}
-            >
-                Origin
-            </Typography>
+            <Typography className={classes.label}>Origin</Typography>
 
             <InstanceSelectionDropdown
                 view="inline"
@@ -57,11 +52,7 @@ const InstancesSelectors: React.FC<InstancesSelectorsProps> = ({
 
             <ArrowRightIcon className={classes.icon} />
 
-            <Typography
-                className={classes.label}
-            >
-                Destination
-            </Typography>
+            <Typography className={classes.label}>Destination</Typography>
 
             <InstanceSelectionDropdown
                 key={sourceSelectedInstance}
@@ -87,7 +78,7 @@ const useStyles = makeStyles({
     instances: {
         float: "right",
         padding: "0px 10px",
-        border: "1px solid"
+        border: "1px solid",
     },
     label: {
         display: "inline-block",
