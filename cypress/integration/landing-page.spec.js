@@ -27,7 +27,7 @@ context("Landing page", () => {
         cy.get(dataTest("div-landing-events")).contains("Sync rules");
         cy.get(dataTest("div-landing-events")).contains("History");
 
-        cy.get(dataTest("div-landing-configuration")).contains("Destination instance settings");
+        cy.get(dataTest("div-landing-configuration")).contains("Instance settings");
     });
 
     // Metadata
@@ -94,14 +94,14 @@ context("Landing page", () => {
     });
 
     // Instance Settings
-    it("enters the Destination instance settings page", function () {
+    it("enters the instance settings page", function () {
         cy.get(
             dataTest(
                 "Card-landing-configuration-destination-instance-settings",
                 "button[title='List']"
             )
         ).click();
-        cy.get(dataTest("page-header-title")).contains("Destination Instance Settings");
+        cy.get(dataTest("page-header-title")).contains("Instance Settings");
     });
 
     it("enters the Destination instance creation page", function () {
