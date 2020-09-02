@@ -12,6 +12,7 @@ import EventsSelectionStep from "./data/EventsSelectionStep";
 import OrganisationUnitsSelectionStep from "./data/OrganisationUnitsSelectionStep";
 import PeriodSelectionStep from "./data/PeriodSelectionStep";
 import MetadataIncludeExcludeStep from "./metadata/MetadataIncludeExcludeStep";
+import MetadataFilterRulesStep from "./common/MetadataFilterRulesStep";
 
 export interface SyncWizardStep extends WizardStep {
     validationKeys: string[];
@@ -95,6 +96,12 @@ export const metadataSteps: SyncWizardStep[] = [
         label: i18n.t("Metadata"),
         component: MetadataSelectionStep,
         validationKeys: ["metadataIds"],
+    },
+    {
+        key: "filter-rules",
+        label: i18n.t("Filter rules"),
+        component: MetadataFilterRulesStep,
+        validationKeys: [],
     },
     {
         key: "dependencies-selection",

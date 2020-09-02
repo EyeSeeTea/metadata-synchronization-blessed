@@ -32,6 +32,7 @@ import {
     saveDataStore,
 } from "./dataStore";
 import { D2Model } from "./dhis/default";
+import { FilterRule } from "../domain/metadata/entities/FilterRule";
 
 const dataStoreKey = "rules";
 
@@ -39,6 +40,7 @@ const defaultSynchronizationBuilder: SynchronizationBuilder = {
     originInstance: "LOCAL",
     targetInstances: [],
     metadataIds: [],
+    filterRules: [],
     excludedIds: [],
     metadataTypes: [],
     dataParams: {
@@ -137,6 +139,10 @@ export default class SyncRule {
 
     public get excludedIds(): string[] {
         return this.syncRule.builder?.excludedIds ?? [];
+    }
+
+    public get filterRules(): FilterRule[] {
+        return this.syncRule.builder?.filterRules ?? [];
     }
 
     public get metadataTypes(): string[] {
@@ -354,6 +360,7 @@ export default class SyncRule {
     public toBuilder(): SynchronizationBuilder {
         return _.pick(this, [
             "metadataIds",
+            "filterRules",
             "excludedIds",
             "metadataTypes",
             "originInstance",
@@ -387,6 +394,10 @@ export default class SyncRule {
             .value();
 
         return SyncRule.build(data);
+    }
+
+    public updateFilterRules(filterRules: FilterRule[]): SyncRule {
+        return this.updateBuilder({ filterRules });
     }
 
     public markToUseDefaultIncludeExclude(): SyncRule {

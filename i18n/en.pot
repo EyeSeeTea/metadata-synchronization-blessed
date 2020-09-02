@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-31T10:20:47.391Z\n"
-"PO-Revision-Date: 2020-08-31T10:20:47.391Z\n"
+"POT-Creation-Date: 2020-09-02T14:11:16.018Z\n"
+"PO-Revision-Date: 2020-09-02T14:11:16.018Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -41,6 +41,42 @@ msgstr ""
 msgid "Unknown error"
 msgstr ""
 
+msgid "Created on"
+msgstr ""
+
+msgid "Last updated on"
+msgstr ""
+
+msgid "String matches"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Starts with"
+msgstr ""
+
+msgid "Contains"
+msgstr ""
+
+msgid "Ends with"
+msgstr ""
+
+msgid "From {{- startDate}} to {{- endDate}}"
+msgstr ""
+
+msgid "From {{- startDate}}"
+msgstr ""
+
+msgid "To {{- endDate}}"
+msgstr ""
+
+msgid "Select at least one date"
+msgstr ""
+
+msgid "String to match cannot be empty"
+msgstr ""
+
 msgid "Version is not valid (ie. {{validExample}})"
 msgstr ""
 
@@ -57,6 +93,51 @@ msgid "Program with Data Elements"
 msgstr ""
 
 msgid "Program with Indicators"
+msgstr ""
+
+msgid "Create new filter"
+msgstr ""
+
+msgid "Edit filter"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Update"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Filter type"
+msgstr ""
+
+msgid "Where"
+msgstr ""
+
+msgid "String to match in name / code / description (*)"
+msgstr ""
+
+msgid "Model"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Last updated"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Delete"
 msgstr ""
 
 msgid "Instances"
@@ -91,9 +172,6 @@ msgid ""
 "Do you want to directly pull the metadata?"
 msgstr ""
 
-msgid "Cancel"
-msgstr ""
-
 msgid "Proceed"
 msgstr ""
 
@@ -112,13 +190,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-msgid "Last updated"
-msgstr ""
-
 msgid "Last updated by"
-msgstr ""
-
-msgid "Created"
 msgstr ""
 
 msgid "Created by"
@@ -128,12 +200,6 @@ msgid "Selected metadata"
 msgstr ""
 
 msgid "Details"
-msgstr ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "Delete"
 msgstr ""
 
 msgid "Replicate"
@@ -271,9 +337,6 @@ msgid "Identifier"
 msgstr ""
 
 msgid "Code"
-msgstr ""
-
-msgid "Metadata type"
 msgstr ""
 
 msgid "Deleted date"
@@ -561,6 +624,15 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
+msgid "Period"
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
 msgid "You need to provide a subject"
 msgstr ""
 
@@ -600,12 +672,6 @@ msgstr ""
 msgid "Create and update"
 msgstr ""
 
-msgid "Create"
-msgstr ""
-
-msgid "Update"
-msgstr ""
-
 msgid "Disable atomic verification"
 msgstr ""
 
@@ -616,9 +682,6 @@ msgid "Generate new UID"
 msgstr ""
 
 msgid "Dry Run"
-msgstr ""
-
-msgid "Type"
 msgstr ""
 
 msgid "Imported"
@@ -742,13 +805,13 @@ msgstr ""
 msgid "Aggregation"
 msgstr ""
 
+msgid "Filter rules"
+msgstr ""
+
 msgid "Data elements"
 msgstr ""
 
 msgid "Organisation units"
-msgstr ""
-
-msgid "Period"
 msgstr ""
 
 msgid "Category options"
@@ -848,12 +911,6 @@ msgid "Category Option Combo"
 msgstr ""
 
 msgid "All attribute category options"
-msgstr ""
-
-msgid "Start date"
-msgstr ""
-
-msgid "End date"
 msgstr ""
 
 msgid "Strategy"
