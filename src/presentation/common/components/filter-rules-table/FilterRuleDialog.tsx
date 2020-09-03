@@ -1,4 +1,4 @@
-import { makeStyles, TextField } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import { ConfirmationDialog, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React from "react";
@@ -17,6 +17,7 @@ import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 import PeriodSelection from "../../../webapp/components/period-selection/PeriodSelection";
 import { useAppContext } from "../../contexts/AppContext";
 import { Section } from "./Section";
+import TextFieldOnBlur from "../../../webapp/components/text-field-on-blur/TextFieldOnBlur";
 
 export interface NewFilterRuleDialogProps {
     action: "new" | "edit";
@@ -106,15 +107,14 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
                     </div>
 
                     <div className={classes.textField}>
-                        <TextField
+                        <TextFieldOnBlur
                             className={classes.dropdown}
                             fullWidth={true}
-                            onChange={(ev: React.ChangeEvent<{ value: string }>) => {
-                                const value = ev.target.value;
+                            onChange={value =>
                                 setFilterRule(filterRule =>
                                     updateStringMatch(filterRule, { value })
-                                );
-                            }}
+                                )
+                            }
                             label={i18n.t("String to match in name / code / description (*)")}
                             value={filterRule.stringMatch?.value || ""}
                         />

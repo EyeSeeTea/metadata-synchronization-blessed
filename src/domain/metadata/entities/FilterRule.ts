@@ -69,13 +69,16 @@ export function updateFilterRule<Field extends keyof FilterRule>(
 }
 
 export function filterRuleToString(filterRule: FilterRule): string {
-    const main = i18n.t("Metadata type: {{model}}", { model: filterRule.metadataType });
+    const main = i18n.t("Metadata type: {{model}}", {
+        model: filterRule.metadataType,
+        nsSeparator: false,
+    });
     const parts = [
         filterRule.created && i18n.t("Created") + ": " + getDateFilterString(filterRule.created),
         filterRule.lastUpdated &&
             i18n.t("Last updated") + ": " + getDateFilterString(filterRule.lastUpdated),
         filterRule.stringMatch &&
-            i18n.t("Name/code/description" + "  " + getStringMatchString(filterRule.stringMatch)),
+            i18n.t("Name/code/description") + "  " + getStringMatchString(filterRule.stringMatch),
     ];
     return _([main, _.compact(parts).join(", ")])
         .compact()

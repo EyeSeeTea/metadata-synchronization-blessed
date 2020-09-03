@@ -143,8 +143,6 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
         [filterRules, onChange, closeFilterRuleDialog]
     );
 
-    console.log(filterRules);
-
     return (
         <React.Fragment>
             <ObjectsTable<FilterRuleRow>
