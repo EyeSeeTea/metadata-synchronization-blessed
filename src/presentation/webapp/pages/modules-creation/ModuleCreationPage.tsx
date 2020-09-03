@@ -50,6 +50,7 @@ const ModuleCreationPage: React.FC = () => {
 
             {showWizard && (
                 <ModuleWizard
+                    isEdit={isEdit}
                     onCancel={openDialog}
                     onClose={onClose}
                     module={module ?? MetadataModule.build()}

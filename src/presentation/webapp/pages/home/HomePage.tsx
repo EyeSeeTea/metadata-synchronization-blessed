@@ -3,7 +3,11 @@ import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import i18n from "../../../../locales";
-import { isAppConfigurator, shouldShowDeletedObjects } from "../../../../utils/permissions";
+import {
+    isAppConfigurator,
+    isAppExecutor,
+    shouldShowDeletedObjects,
+} from "../../../../utils/permissions";
 import { useAppContext } from "../../../common/contexts/AppContext";
 import { Card, Landing } from "../../components/landing/Landing";
 import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
@@ -14,11 +18,13 @@ const LandingPage: React.FC = () => {
 
     const [showDeletedObjects, setShowDeletedObjects] = useState(false);
     const [appConfigurator, setAppConfigurator] = useState(false);
+    const [appExecutor, setAppExecutor] = useState(false);
     const [pendingNotifications, setPendingNotifications] = useState(0);
 
     useEffect(() => {
         shouldShowDeletedObjects(api).then(setShowDeletedObjects);
         isAppConfigurator(api).then(setAppConfigurator);
+        isAppExecutor(api).then(setAppExecutor);
         compositionRoot.notifications.list().then(notifications => {
             const unread = notifications.filter(({ read }) => !read).length;
             setPendingNotifications(unread);
@@ -154,22 +160,23 @@ const LandingPage: React.FC = () => {
                         description: i18n.t(
                             "Create, edit and delete modules from this instance metadata."
                         ),
-                        addAction: appConfigurator ? () => history.push("/modules/new") : undefined,
-                        listAction: appConfigurator ? () => history.push("/modules") : undefined,
+                        isVisible: appConfigurator,
+                        addAction: () => history.push("/modules/new"),
+                        listAction: () => history.push("/modules"),
                     },
                     {
                         name: i18n.t("Packages"),
                         description: i18n.t(
                             "View, publish, download and delete metadata packages from this instance metadata modules."
                         ),
-                        listAction: appConfigurator ? () => history.push("/packages") : undefined,
+                        isVisible: appConfigurator || appExecutor,
+                        listAction: () => history.push("/packages"),
                     },
                     {
                         name: i18n.t("Package store connection"),
                         description: i18n.t("Configure connections to metadata package stores."),
-                        addAction: appConfigurator
-                            ? () => history.push("/modules/config")
-                            : undefined,
+                        isVisible: appConfigurator,
+                        addAction: () => history.push("/modules/config"),
                     },
                 ]),
             },
@@ -199,7 +206,7 @@ const LandingPage: React.FC = () => {
                 ],
             },
         ],
-        [appConfigurator, history, pendingNotifications, showDeletedObjects]
+        [appConfigurator, appExecutor, history, pendingNotifications, showDeletedObjects]
     );
 
     return (

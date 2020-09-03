@@ -12,17 +12,18 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
+import { isAppConfigurator, isGlobalAdmin } from "../../../../utils/permissions";
+import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 import {
     PackagesDiffDialog,
     PackageToDiff,
 } from "../../../webapp/components/packages-diff-dialog/PackagesDiffDialog";
 import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
-import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 
 type ListPackage = Omit<Package, "contents">;
 
@@ -47,6 +48,10 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
     const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
+    const [moduleFilter, setModuleFilter] = useState("");
+
+    const [globalAdmin, setGlobalAdmin] = useState(false);
+    const [appConfigurator, setAppConfigurator] = useState(false);
 
     const isRemoteInstance = !!remoteInstance;
 
@@ -201,97 +206,96 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
         [compositionRoot, api, loading, remoteInstance, snackbar, openSyncSummary]
     );
 
-    const columns: TableColumn<ListPackage>[] = [
-        { name: "name", text: i18n.t("Name"), sortable: true },
-        { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
-        { name: "version", text: i18n.t("Version"), sortable: true },
-        { name: "dhisVersion", text: i18n.t("DHIS2 Version"), sortable: true },
-        { name: "module", text: i18n.t("Module"), sortable: true },
-        { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
-        { name: "user", text: i18n.t("Created by"), sortable: true, hidden: true },
-    ];
+    const columns: TableColumn<ListPackage>[] = useMemo(
+        () => [
+            { name: "name", text: i18n.t("Name"), sortable: true },
+            { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
+            { name: "version", text: i18n.t("Version"), sortable: true },
+            { name: "dhisVersion", text: i18n.t("DHIS2 Version"), sortable: true },
+            { name: "module", text: i18n.t("Module"), sortable: true },
+            { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
+            { name: "user", text: i18n.t("Created by"), sortable: true, hidden: true },
+        ],
+        []
+    );
 
-    const details: ObjectsTableDetailField<ListPackage>[] = [
-        { name: "id", text: i18n.t("ID") },
-        { name: "name", text: i18n.t("Name") },
-        { name: "description", text: i18n.t("Description") },
-        { name: "version", text: i18n.t("Version") },
-        { name: "dhisVersion", text: i18n.t("DHIS2 Version") },
-        { name: "module", text: i18n.t("Module") },
-        { name: "created", text: i18n.t("Created") },
-        { name: "user", text: i18n.t("Created by") },
-    ];
+    const details: ObjectsTableDetailField<ListPackage>[] = useMemo(
+        () => [
+            { name: "id", text: i18n.t("ID") },
+            { name: "name", text: i18n.t("Name") },
+            { name: "description", text: i18n.t("Description") },
+            { name: "version", text: i18n.t("Version") },
+            { name: "dhisVersion", text: i18n.t("DHIS2 Version") },
+            { name: "module", text: i18n.t("Module") },
+            { name: "created", text: i18n.t("Created") },
+            { name: "user", text: i18n.t("Created by") },
+        ],
+        []
+    );
 
-    const actions: TableAction<ListPackage>[] = [
-        {
-            name: "details",
-            text: i18n.t("Details"),
-            multiple: false,
-            primary: true,
-        },
-        {
-            name: "delete",
-            text: i18n.t("Delete"),
-            multiple: true,
-            onClick: deletePackages,
-            icon: <Icon>delete</Icon>,
-            isActive: () => presentation === "app" && !isRemoteInstance && !showStore,
-        },
-        {
-            name: "download",
-            text: i18n.t("Download as JSON"),
-            multiple: false,
-            onClick: downloadPackage,
-            icon: <Icon>cloud_download</Icon>,
-        },
-        {
-            name: "publish",
-            text: i18n.t("Publish to Store"),
-            multiple: false,
-            onClick: publishPackage,
-            icon: <Icon>publish</Icon>,
-            isActive: () => presentation === "app" && !isRemoteInstance && !showStore,
-        },
-        {
-            name: "compare-with-local",
-            text: i18n.t("Compare with local instance"),
-            multiple: false,
-            icon: <Icon>compare</Icon>,
-            isActive: () => presentation === "app" && (isRemoteInstance || showStore),
-            onClick: openPackageDiffDialog,
-        },
-        {
-            name: "import",
-            text: i18n.t("Import package"),
-            multiple: false,
-            onClick: importPackage,
-            icon: <Icon>arrow_downward</Icon>,
-            isActive: () => presentation === "app" && isRemoteInstance,
-        },
-    ];
-
-    useEffect(() => {
-        compositionRoot.packages
-            .list(remoteInstance)
-            .then(setInstancePackages)
-            .catch((error: Error) => {
-                snackbar.error(error.message);
-                setInstancePackages([]);
-            });
-    }, [compositionRoot, remoteInstance, resetKey, snackbar]);
-
-    useEffect(() => {
-        compositionRoot.packages.listStore().then(validation =>
-            validation.match({
-                success: setStorePackages,
-                error: () => snackbar.error(i18n.t("Can't connect to store")),
-            })
-        );
-    }, [compositionRoot, snackbar]);
-
-    const [moduleFilter, setModuleFilter] = useState("");
-
-    useEffect(() => setModuleFilter(""), [remoteInstance]);
+    const actions: TableAction<ListPackage>[] = useMemo(
+        () => [
+            {
+                name: "details",
+                text: i18n.t("Details"),
+                multiple: false,
+                primary: true,
+            },
+            {
+                name: "delete",
+                text: i18n.t("Delete"),
+                multiple: true,
+                onClick: deletePackages,
+                icon: <Icon>delete</Icon>,
+                isActive: () =>
+                    presentation === "app" && !isRemoteInstance && !showStore && appConfigurator,
+            },
+            {
+                name: "download",
+                text: i18n.t("Download as JSON"),
+                multiple: false,
+                onClick: downloadPackage,
+                icon: <Icon>cloud_download</Icon>,
+            },
+            {
+                name: "publish",
+                text: i18n.t("Publish to Store"),
+                multiple: false,
+                onClick: publishPackage,
+                icon: <Icon>publish</Icon>,
+                isActive: () =>
+                    presentation === "app" && !isRemoteInstance && !showStore && appConfigurator,
+            },
+            {
+                name: "compare-with-local",
+                text: i18n.t("Compare with local instance"),
+                multiple: false,
+                icon: <Icon>compare</Icon>,
+                isActive: () =>
+                    presentation === "app" && (isRemoteInstance || showStore) && appConfigurator,
+                onClick: openPackageDiffDialog,
+            },
+            {
+                name: "import",
+                text: i18n.t("Import package"),
+                multiple: false,
+                onClick: importPackage,
+                icon: <Icon>arrow_downward</Icon>,
+                isActive: () => presentation === "app" && isRemoteInstance && appConfigurator,
+            },
+        ],
+        [
+            appConfigurator,
+            deletePackages,
+            downloadPackage,
+            importPackage,
+            isRemoteInstance,
+            openPackageDiffDialog,
+            presentation,
+            publishPackage,
+            showStore,
+        ]
+    );
 
     const moduleFilterItems = useMemo(() => {
         return _(instancePackages)
@@ -318,6 +322,34 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     const rowsFiltered = useMemo(() => {
         return moduleFilter ? rows.filter(row => row.module.id === moduleFilter) : rows;
     }, [moduleFilter, rows]);
+
+    useEffect(() => {
+        compositionRoot.packages
+            .list(globalAdmin, remoteInstance)
+            .then(setInstancePackages)
+            .catch((error: Error) => {
+                snackbar.error(error.message);
+                setInstancePackages([]);
+            });
+    }, [compositionRoot, remoteInstance, resetKey, snackbar, globalAdmin]);
+
+    useEffect(() => {
+        compositionRoot.packages.listStore().then(validation =>
+            validation.match({
+                success: setStorePackages,
+                error: () => snackbar.error(i18n.t("Can't connect to store")),
+            })
+        );
+    }, [compositionRoot, snackbar]);
+
+    useEffect(() => {
+        setModuleFilter("");
+    }, [remoteInstance]);
+
+    useEffect(() => {
+        isAppConfigurator(api).then(setAppConfigurator);
+        isGlobalAdmin(api).then(setGlobalAdmin);
+    }, [api]);
 
     return (
         <React.Fragment>
