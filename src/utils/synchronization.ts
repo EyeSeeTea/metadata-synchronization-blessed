@@ -43,7 +43,7 @@ export const availablePeriods = buildObject<{
     start?: [number, string];
     end?: [number, string];
 }>()({
-    ALL: { name: i18n.t("All periods") },
+    ALL: { name: i18n.t("All time") },
     FIXED: { name: i18n.t("Fixed period") },
     TODAY: { name: i18n.t("Today"), start: [0, "day"] },
     YESTERDAY: { name: i18n.t("Yesterday"), start: [1, "day"] },

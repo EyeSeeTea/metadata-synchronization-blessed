@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-09-03T08:50:36.744Z\n"
-"PO-Revision-Date: 2020-09-03T08:50:36.744Z\n"
+"POT-Creation-Date: 2020-09-03T13:04:32.420Z\n"
+"PO-Revision-Date: 2020-09-03T13:04:32.420Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -41,10 +41,13 @@ msgstr ""
 msgid "Unknown error"
 msgstr ""
 
-msgid "Created on"
+msgid "Id"
 msgstr ""
 
-msgid "Last updated on"
+msgid "Created"
+msgstr ""
+
+msgid "Last updated"
 msgstr ""
 
 msgid "String matches"
@@ -62,10 +65,10 @@ msgstr ""
 msgid "end with"
 msgstr ""
 
-msgid "Created"
+msgid "Metadata type: {{model}}"
 msgstr ""
 
-msgid "Last updated"
+msgid "Name/code/description"
 msgstr ""
 
 msgid "From {{- startDate}} to {{- endDate}}"
@@ -77,10 +80,10 @@ msgstr ""
 msgid "To {{- endDate}}"
 msgstr ""
 
-msgid "Select at least one date"
+msgid "You must select a metadata type"
 msgstr ""
 
-msgid "String to match cannot be empty"
+msgid "Select at least one date for fixed period on create"
 msgstr ""
 
 msgid "Version is not valid (ie. {{validExample}})"
@@ -116,22 +119,13 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-msgid "Filter type"
+msgid "Match string"
 msgstr ""
 
-msgid "Where"
+msgid "Where to match"
 msgstr ""
 
 msgid "String to match in name / code / description (*)"
-msgstr ""
-
-msgid "Model"
-msgstr ""
-
-msgid "Type"
-msgstr ""
-
-msgid "Value"
 msgstr ""
 
 msgid "Edit"
@@ -682,6 +676,9 @@ msgid "Generate new UID"
 msgstr ""
 
 msgid "Dry Run"
+msgstr ""
+
+msgid "Type"
 msgstr ""
 
 msgid "Imported"
@@ -1584,7 +1581,7 @@ msgstr ""
 msgid "Start and end dates are not a valid period"
 msgstr ""
 
-msgid "All periods"
+msgid "All time"
 msgstr ""
 
 msgid "Fixed period"
