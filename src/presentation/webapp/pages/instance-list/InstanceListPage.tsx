@@ -120,9 +120,7 @@ const InstanceListPage = () => {
         }
 
         loading.reset();
-        updateSelection((prevSelection: TableSelection[]) =>
-            _.differenceBy(prevSelection, toDelete, "id")
-        );
+        updateSelection([]);
         deleteInstances([]);
 
         if (_.some(results, [false])) {

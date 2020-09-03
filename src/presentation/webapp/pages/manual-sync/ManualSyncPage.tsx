@@ -117,9 +117,13 @@ const ManualSyncPage: React.FC = () => {
 
     const updateSelection = useCallback(
         (selection: string[], exclusion: string[]) => {
-            updateSyncRule(syncRule.updateMetadataIds(selection).updateExcludedIds(exclusion));
+            const syncRule = SyncRule.createOnDemand(type)
+                .updateMetadataIds(selection)
+                .updateExcludedIds(exclusion);
+
+            updateSyncRule(syncRule);
         },
-        [syncRule]
+        [type]
     );
 
     const openSynchronizationDialog = () => {
