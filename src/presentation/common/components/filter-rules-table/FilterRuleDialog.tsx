@@ -1,28 +1,22 @@
-import React from "react";
+import { makeStyles, TextField } from "@material-ui/core";
 import { ConfirmationDialog, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
+import React from "react";
 import {
     FilterRule,
-    FilterType,
-    getInitialFilterRule,
-    validateFilterRule,
-    filterTypeNames,
-    whereNames,
+    FilterRuleField,
     updateFilterRule,
-    FilterRuleStringMatch,
-    FilterRuleMetadataType,
-    FilterRuleCreated,
-    FilterRuleLastUpdated,
+    validateFilterRule,
+    whereNames,
+    FilterWhere,
+    updateStringMatch,
 } from "../../../../domain/metadata/entities/FilterRule";
 import i18n from "../../../../locales";
-import { isValueInUnionType } from "../../../../types/utils";
-import Dropdown from "../../../webapp/components/dropdown/Dropdown";
-import { matchByType } from "../../../../utils/unions-matching";
-import PeriodSelection from "../../../webapp/components/period-selection/PeriodSelection";
-import { PeriodType } from "../../../../utils/synchronization";
-import { TextField, makeStyles } from "@material-ui/core";
 import { metadataModels } from "../../../../models/dhis/factory";
+import Dropdown from "../../../webapp/components/dropdown/Dropdown";
+import PeriodSelection from "../../../webapp/components/period-selection/PeriodSelection";
 import { useAppContext } from "../../contexts/AppContext";
+import { Section } from "./Section";
 
 export interface NewFilterRuleDialogProps {
     action: "new" | "edit";
@@ -30,8 +24,6 @@ export interface NewFilterRuleDialogProps {
     onSave(filterRule: FilterRule): void;
     initialFilterRule: FilterRule;
 }
-
-const skipPeriods: Set<PeriodType> = new Set(["ALL"]);
 
 export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
     const { onClose, onSave, action, initialFilterRule } = props;
@@ -47,31 +39,9 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
         }));
     }, [api]);
 
-    const changeFilterType = React.useCallback(
-        (newFilterType: string) => {
-            const filterTypes = _.keys(filterTypeNames) as FilterType[];
-
-            if (isValueInUnionType(newFilterType, filterTypes)) {
-                setFilterRule(filterRule => getInitialFilterRule(newFilterType, filterRule.id));
-            }
-        },
-        [setFilterRule]
-    );
-
-    function updateField<FR extends FilterRule>(field: keyof FR) {
-        return function (value: FR[keyof FR]) {
-            setFilterRule(filterRule =>
-                updateFilterRule<FR, keyof FR>(filterRule as FR, field, value)
-            );
-        };
-    }
-
-    function updateFieldFromEvent<FR extends FilterRule>(field: keyof FR) {
-        return function (ev: React.ChangeEvent<{ value: FR[keyof FR] }>) {
-            const value = ev.target.value as FR[keyof FR];
-            setFilterRule((filterRule: FilterRule) => {
-                return updateFilterRule<FR, keyof FR>(filterRule as FR, field, value);
-            });
+    function updateField<Field extends FilterRuleField>(field: Field) {
+        return function (value: FilterRule[Field]) {
+            setFilterRule(filterRule => updateFilterRule<Field>(filterRule, field, value));
         };
     }
 
@@ -98,85 +68,70 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
             cancelText={i18n.t("Cancel")}
             saveText={saveText}
         >
-            <div className={classes.dropdown}>
-                <Dropdown
-                    items={filterTypeItems}
-                    onValueChange={changeFilterType}
-                    value={filterRule.type}
-                    label={i18n.t("Filter type")}
-                />
-            </div>
+            <React.Fragment>
+                <Section title={i18n.t("Metadata type")}>
+                    <Dropdown
+                        items={metadataTypeItems}
+                        onValueChange={updateField("metadataType")}
+                        value={filterRule.metadataType}
+                    />
+                </Section>
 
-            {matchByType(filterRule, {
-                created: rule => {
-                    return (
-                        <PeriodSelection
-                            objectWithPeriod={rule.value}
-                            skipPeriods={skipPeriods}
-                            onChange={updateField<FilterRuleCreated>("value")}
-                        />
-                    );
-                },
-                lastUpdated: rule => {
-                    return (
-                        <PeriodSelection
-                            objectWithPeriod={rule.value}
-                            skipPeriods={skipPeriods}
-                            onChange={updateField<FilterRuleLastUpdated>("value")}
-                        />
-                    );
-                },
-                stringMatch: rule => {
-                    return (
-                        <React.Fragment>
-                            <div>
-                                <Dropdown
-                                    items={whereItems}
-                                    onValueChange={updateField<FilterRuleStringMatch>("where")}
-                                    value={rule.where}
-                                    label={i18n.t("Where")}
-                                />
-                            </div>
+                <Section title={i18n.t("Created")}>
+                    <PeriodSelection
+                        objectWithPeriod={filterRule.created}
+                        onChange={updateField("created")}
+                    />
+                </Section>
 
-                            <div className={classes.textField}>
-                                <TextField
-                                    fullWidth={true}
-                                    onChange={updateFieldFromEvent<FilterRuleStringMatch>("value")}
-                                    label={i18n.t(
-                                        "String to match in name / code / description (*)"
-                                    )}
-                                    value={rule.value}
-                                />
-                            </div>
-                        </React.Fragment>
-                    );
-                },
-                metadataType: rule => {
-                    return (
-                        <div>
-                            <Dropdown
-                                items={metadataTypeItems}
-                                onValueChange={updateField<FilterRuleMetadataType>("value")}
-                                value={rule.value}
-                                label={i18n.t("Model")}
-                            />
-                        </div>
-                    );
-                },
-            })}
+                <Section title={i18n.t("Last updated")}>
+                    <PeriodSelection
+                        objectWithPeriod={filterRule.lastUpdated}
+                        onChange={updateField("lastUpdated")}
+                    />
+                </Section>
+
+                <Section title={i18n.t("Match string")}>
+                    <div className={classes.dropdown}>
+                        <Dropdown
+                            items={whereItems}
+                            onValueChange={(where: FilterWhere) =>
+                                setFilterRule(filterRule =>
+                                    updateStringMatch(filterRule, { where })
+                                )
+                            }
+                            value={filterRule.stringMatch?.where || ""}
+                            label={i18n.t("Where to match")}
+                        />
+                    </div>
+
+                    <div className={classes.textField}>
+                        <TextField
+                            className={classes.dropdown}
+                            fullWidth={true}
+                            onChange={(ev: React.ChangeEvent<{ value: string }>) => {
+                                const value = ev.target.value;
+                                setFilterRule(filterRule =>
+                                    updateStringMatch(filterRule, { value })
+                                );
+                            }}
+                            label={i18n.t("String to match in name / code / description (*)")}
+                            value={filterRule.stringMatch?.value || ""}
+                        />
+                    </div>
+                </Section>
+            </React.Fragment>
         </ConfirmationDialog>
     );
 };
 
 const useStyles = makeStyles({
     dropdown: {
-        marginBottom: 20,
+        marginTop: 20,
     },
     textField: {
         marginLeft: 10,
     },
 });
-
-const filterTypeItems = _.map(filterTypeNames, (name, key) => ({ id: key, name }));
 
 const whereItems = _.map(whereNames, (name, key) => ({ id: key, name }));

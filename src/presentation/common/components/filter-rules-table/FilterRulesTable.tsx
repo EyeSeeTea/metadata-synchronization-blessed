@@ -12,44 +12,16 @@ import React, { useCallback, useMemo, useState } from "react";
 import i18n from "../../../../locales";
 import {
     FilterRule,
-    getDateFilterString,
     getInitialFilterRule,
-    whereNames,
+    getDateFilterString,
+    getStringMatchString,
 } from "../../../../domain/metadata/entities/FilterRule";
 import { FilterRuleDialog, NewFilterRuleDialogProps } from "./FilterRuleDialog";
 import { updateObject as updateObjectInList } from "../../../../domain/common/entities/Ref";
+import { metadataModels } from "../../../../models/dhis/factory";
+import { useAppContext } from "../../contexts/AppContext";
 
-interface FilterRuleRow {
-    id: string;
-    type: FilterRule["type"];
-    created: string;
-    lastUpdated: string;
-    value: string;
-}
-
-function getFilterRuleRow(filterRule: FilterRule): FilterRuleRow {
-    const base = {
-        id: filterRule.id,
-        type: filterRule.type,
-        created: "",
-        lastUpdated: "",
-        value: "",
-    };
-
-    switch (filterRule.type) {
-        case "created":
-            return { ...base, created: getDateFilterString(filterRule.value) };
-        case "lastUpdated":
-            return { ...base, lastUpdated: getDateFilterString(filterRule.value) };
-        case "stringMatch": {
-            const where = whereNames[filterRule.where];
-            const strValue = _.truncate(filterRule.value, { length: 40 });
-            return { ...base, value: `${where} '${strValue}'` };
-        }
-        case "metadataType":
-            return { ...base, value: filterRule.value };
-    }
-}
+type FilterRuleRow = FilterRule;
 
 function useOpenState<Value>(initialValue?: Value) {
     const [value, setValue] = React.useState<Value | undefined>(initialValue);
@@ -69,8 +41,16 @@ type Action = { type: "new" | "edit"; filterRule: FilterRule };
 
 const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
     const { filterRules, onChange } = props;
+    const { api } = useAppContext();
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const newFilterRuleDialog = useOpenState<Action>();
+
+    const modelNames = React.useMemo(() => {
+        return _(metadataModels)
+            .map(model => [model.getMetadataType(), model.getModelName(api)] as [string, string])
+            .fromPairs()
+            .value();
+    }, [api]);
 
     const editRule = useCallback(
         (ids: string[]) => {
@@ -98,12 +78,28 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
 
     const columns: TableColumn<FilterRuleRow>[] = useMemo(
         () => [
-            { name: "type", text: i18n.t("Type"), sortable: true },
-            { name: "created", text: i18n.t("Created") },
-            { name: "lastUpdated", text: i18n.t("Last updated") },
-            { name: "value", text: i18n.t("Value") },
+            {
+                name: "metadataType",
+                text: i18n.t("Metadata type"),
+                getValue: rule => modelNames[rule.metadataType] || "-",
+            },
+            {
+                name: "created",
+                text: i18n.t("Created"),
+                getValue: rule => getDateFilterString(rule.created),
+            },
+            {
+                name: "lastUpdated",
+                text: i18n.t("Last updated"),
+                getValue: rule => getDateFilterString(rule.lastUpdated),
+            },
+            {
+                name: "stringMatch",
+                text: i18n.t("Name/code/description"),
+                getValue: rule => getStringMatchString(rule.stringMatch),
+            },
         ],
-        []
+        [modelNames]
     );
 
     const actions: TableAction<FilterRuleRow>[] = useMemo(
@@ -127,7 +123,7 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
     );
 
     const openNewDialog = React.useCallback(() => {
-        const newFilterRule = { type: "new" as const, filterRule: getInitialFilterRule("created") };
+        const newFilterRule = { type: "new" as const, filterRule: getInitialFilterRule() };
         newFilterRuleDialog.open(newFilterRule);
     }, [newFilterRuleDialog]);
 
@@ -136,10 +132,6 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
             {i18n.t("Create new filter")}
         </Button>
     );
-
-    const rows = React.useMemo(() => {
-        return filterRules.map(getFilterRuleRow);
-    }, [filterRules]);
 
     const { close: closeFilterRuleDialog } = newFilterRuleDialog;
     const save = React.useCallback<NewFilterRuleDialogProps["onSave"]>(
@@ -151,10 +143,12 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
         [filterRules, onChange, closeFilterRuleDialog]
     );
 
+    console.log(filterRules);
+
     return (
         <React.Fragment>
             <ObjectsTable<FilterRuleRow>
-                rows={rows}
+                rows={filterRules}
                 columns={columns}
                 actions={actions}
                 filterComponents={extraComponents}

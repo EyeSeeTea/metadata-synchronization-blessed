@@ -5,42 +5,36 @@ import i18n from "../../../locales";
 import { availablePeriods } from "../../../utils/synchronization";
 import { DataSyncPeriod } from "../../aggregated/types";
 import { ValidationError } from "../../common/entities/Validations";
-import { Ref } from "../../common/entities/Ref";
+import { Maybe } from "../../../types/utils";
 
-export interface FilterRuleCreated extends Ref {
-    type: "created";
-    value: DateFilter;
+export interface FilterRule {
+    id: string;
+    metadataType: string;
+    created: DateFilter;
+    lastUpdated: DateFilter;
+    stringMatch?: StringMatch;
 }
 
-export interface FilterRuleLastUpdated extends Ref {
-    type: "lastUpdated";
-    value: DateFilter;
-}
+export type FilterRuleField = keyof FilterRule;
 
-export interface FilterRuleStringMatch extends Ref {
-    type: "stringMatch";
+export const filterRuleFields: FilterRuleField[] = [
+    "metadataType",
+    "created",
+    "lastUpdated",
+    "stringMatch",
+];
+
+export interface StringMatch {
     where: FilterWhere;
     value: string;
 }
 
-export interface FilterRuleMetadataType extends Ref {
-    type: "metadataType";
-    value: string;
-}
-
-export type FilterRule =
-    | FilterRuleCreated
-    | FilterRuleLastUpdated
-    | FilterRuleStringMatch
-    | FilterRuleMetadataType;
-
 export type FilterWhere = "startWith" | "contain" | "endWith";
 
-export type FilterType = FilterRule["type"];
-
-export const filterTypeNames: Record<FilterType, string> = {
-    created: i18n.t("Created on"),
-    lastUpdated: i18n.t("Last updated on"),
+export const filterTypeNames: Record<keyof FilterRule, string> = {
+    id: i18n.t("Id"),
+    created: i18n.t("Created"),
+    lastUpdated: i18n.t("Last updated"),
     stringMatch: i18n.t("String matches"),
     metadataType: i18n.t("Metadata type"),
 };
@@ -51,18 +45,13 @@ export const whereNames: Record<FilterWhere, string> = {
     endWith: i18n.t("end with"),
 };
 
-export function getInitialFilterRule(type: FilterType, id?: string): FilterRule {
-    const base = { id: id || generateUid() };
-
-    switch (type) {
-        case "created":
-        case "lastUpdated":
-            return { ...base, type, value: { period: "FIXED" } };
-        case "stringMatch":
-            return { ...base, type, where: "contain", value: "" };
-        case "metadataType":
-            return { ...base, type, value: "" };
-    }
+export function getInitialFilterRule(): FilterRule {
+    return {
+        id: generateUid(),
+        metadataType: "",
+        created: { period: "ALL" },
+        lastUpdated: { period: "ALL" },
+    };
 }
 
 interface DateFilter {
@@ -71,27 +60,33 @@ interface DateFilter {
     endDate?: Date;
 }
 
-export function updateFilterRule<FR extends FilterRule, Field extends keyof FR>(
-    filterRule: FR,
+export function updateFilterRule<Field extends keyof FilterRule>(
+    filterRule: FilterRule,
     field: Field,
-    value: FR[Field]
-): FR {
+    value: FilterRule[Field]
+): FilterRule {
     return { ...filterRule, [field]: value };
 }
 
 export function filterRuleToString(filterRule: FilterRule): string {
-    switch (filterRule.type) {
-        case "created":
-            return i18n.t("Created") + ": " + getDateFilterString(filterRule.value);
-        case "lastUpdated":
-            return i18n.t("Last updated") + ": " + getDateFilterString(filterRule.value);
-        case "stringMatch":
-            const where = whereNames[filterRule.where];
-            const strValue = _.truncate(filterRule.value, { length: 40 });
-            return `Name/code/description ${where} '${strValue}'`;
-        case "metadataType":
-            return i18n.t("Metadata type") + ": " + filterRule.value;
-    }
+    const main = i18n.t("Metadata type: {{model}}", { model: filterRule.metadataType });
+    const parts = [
+        filterRule.created && i18n.t("Created") + ": " + getDateFilterString(filterRule.created),
+        filterRule.lastUpdated &&
+            i18n.t("Last updated") + ": " + getDateFilterString(filterRule.lastUpdated),
+        filterRule.stringMatch &&
+            i18n.t("Name/code/description" + "  " + getStringMatchString(filterRule.stringMatch)),
+    ];
+    return _([main, _.compact(parts).join(", ")])
+        .compact()
+        .join(" - ");
+}
+
+export function getStringMatchString(stringMatch: Maybe<StringMatch>): string {
+    if (!stringMatch) return "";
+    const where = whereNames[stringMatch.where];
+    const strValue = _.truncate(stringMatch.value, { length: 40 });
+    return `${where} '${strValue}'`;
 }
 
 export function getDateFilterString(dateFilter: DateFilter): string {
@@ -117,26 +112,43 @@ export function getDateFilterString(dateFilter: DateFilter): string {
     }
 }
 
+const initialStringMatch: StringMatch = { value: "", where: "contain" };
+
+export function updateStringMatch(
+    filterRule: FilterRule,
+    partial: Partial<StringMatch>
+): FilterRule {
+    return updateFilterRule(filterRule, "stringMatch", {
+        ...initialStringMatch,
+        ...filterRule.stringMatch,
+        ...partial,
+    });
+}
+
 export function validateFilterRule(filterRule: FilterRule): ValidationError[] {
-    switch (filterRule.type) {
-        case "created":
-        case "lastUpdated": {
-            const { value } = filterRule;
-            if (value.period === "FIXED" && !value.startDate && !value.endDate) {
-                const msg = i18n.t("Select at least one date");
-                return [{ property: "startDate", description: msg, error: "cannot_be_empty" }];
-            } else {
-                return [];
-            }
-        }
-        case "stringMatch":
-        case "metadataType": {
-            if (!filterRule.value.trim()) {
-                const msg = i18n.t("String to match cannot be empty");
-                return [{ property: "value", description: msg, error: "cannot_be_empty" }];
-            } else {
-                return [];
-            }
-        }
-    }
+    const validations = [
+        !filterRule.metadataType && {
+            property: "metadataType",
+            description: i18n.t("You must select a metadata type"),
+            error: "cannot_be_empty",
+        },
+
+        filterRule.created?.period === "FIXED" &&
+            !filterRule.created?.startDate &&
+            !filterRule.created?.endDate && {
+                property: "created",
+                description: i18n.t("Select at least one date for fixed period on create"),
+                error: "cannot_be_empty",
+            },
+
+        filterRule.lastUpdated?.period === "FIXED" &&
+            !filterRule.lastUpdated?.startDate &&
+            !filterRule.lastUpdated?.endDate && {
+                property: "created",
+                description: i18n.t("Select at least one date for fixed period on create"),
+                error: "cannot_be_empty",
+            },
+    ];
+
+    return _.compact(validations);
 }

@@ -15,6 +15,7 @@ export interface ObjectWithPeriod {
 }
 
 export interface PeriodSelectionProps {
+    periodTitle?: string;
     objectWithPeriod: ObjectWithPeriod;
     onChange?: (obj: ObjectWithPeriod) => void;
     onFieldChange?<Field extends keyof ObjectWithPeriod>(
@@ -48,6 +49,7 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
         onChange = _.noop as OnChange,
         onFieldChange = _.noop as OnFieldChange,
         skipPeriods = new Set(),
+        periodTitle = i18n.t("Period"),
     } = props;
     const { period, startDate, endDate } = objectWithPeriod;
     const classes = useStyles();
@@ -92,9 +94,9 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
         <React.Fragment>
             <div className={classes.dropdown}>
                 <Dropdown
-                    label={i18n.t("Period")}
+                    label={periodTitle}
                     items={periodItems}
-                    value={period}
+                    value={period || null}
                     onValueChange={updatePeriod}
                     hideEmpty={true}
                 />
