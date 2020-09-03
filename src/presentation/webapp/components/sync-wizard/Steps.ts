@@ -95,13 +95,13 @@ export const metadataSteps: SyncWizardStep[] = [
         key: "metadata",
         label: i18n.t("Metadata"),
         component: MetadataSelectionStep,
-        validationKeys: ["metadataIds"],
+        validationKeys: [],
     },
     {
         key: "filter-rules",
         label: i18n.t("Filter rules"),
         component: MetadataFilterRulesStep,
-        validationKeys: [],
+        validationKeys: ["metadata"],
     },
     {
         key: "dependencies-selection",

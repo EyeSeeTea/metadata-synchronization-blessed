@@ -72,7 +72,7 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const newFilterRuleDialog = useOpenState<Action>();
 
-    const edit = useCallback(
+    const editRule = useCallback(
         (ids: string[]) => {
             const filterRule = _.find(filterRules, ({ id }) => id === ids[0]);
             if (filterRule) newFilterRuleDialog.open({ type: "edit", filterRule });
@@ -80,9 +80,9 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
         [filterRules, newFilterRuleDialog]
     );
 
-    const remove = useCallback(
+    const deleteRule = useCallback(
         async (ids: string[]) => {
-            const newFilterRules = filterRules.filter(filterRule => ids.includes(filterRule.id));
+            const newFilterRules = filterRules.filter(filterRule => !ids.includes(filterRule.id));
             onChange(newFilterRules);
             updateSelection([]);
         },
@@ -112,18 +112,18 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
                 name: "edit",
                 text: i18n.t("Edit"),
                 multiple: false,
-                onClick: edit,
+                onClick: editRule,
                 icon: <Icon>edit</Icon>,
             },
             {
                 name: "delete",
                 text: i18n.t("Delete"),
                 multiple: true,
-                onClick: remove,
+                onClick: deleteRule,
                 icon: <Icon>delete</Icon>,
             },
         ],
-        [remove, edit]
+        [deleteRule, editRule]
     );
 
     const openNewDialog = React.useCallback(() => {

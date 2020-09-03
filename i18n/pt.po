@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-09-02T14:11:16.018Z\n"
+"POT-Creation-Date: 2020-09-03T08:50:36.744Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -53,13 +53,19 @@ msgstr ""
 msgid "Metadata type"
 msgstr ""
 
-msgid "Starts with"
+msgid "start with"
 msgstr ""
 
-msgid "Contains"
+msgid "contain"
 msgstr ""
 
-msgid "Ends with"
+msgid "end with"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Last updated"
 msgstr ""
 
 msgid "From {{- startDate}} to {{- endDate}}"
@@ -123,12 +129,6 @@ msgid "Model"
 msgstr ""
 
 msgid "Type"
-msgstr ""
-
-msgid "Created"
-msgstr ""
-
-msgid "Last updated"
 msgstr ""
 
 msgid "Value"
@@ -882,6 +882,9 @@ msgid "Yes"
 msgstr ""
 
 msgid "Target instances [{{total}}]"
+msgstr ""
+
+msgid "Filter rules [{{total}}]"
 msgstr ""
 
 msgid "Excluded elements"

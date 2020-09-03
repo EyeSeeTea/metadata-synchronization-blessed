@@ -1,4 +1,5 @@
 import { generateUid } from "d2/uid";
+import _ from "lodash";
 import moment from "moment";
 import i18n from "../../../locales";
 import { availablePeriods } from "../../../utils/synchronization";
@@ -33,7 +34,7 @@ export type FilterRule =
     | FilterRuleStringMatch
     | FilterRuleMetadataType;
 
-export type FilterWhere = "startsWith" | "contains" | "endsWith";
+export type FilterWhere = "startWith" | "contain" | "endWith";
 
 export type FilterType = FilterRule["type"];
 
@@ -45,9 +46,9 @@ export const filterTypeNames: Record<FilterType, string> = {
 };
 
 export const whereNames: Record<FilterWhere, string> = {
-    startsWith: i18n.t("Starts with"),
-    contains: i18n.t("Contains"),
-    endsWith: i18n.t("Ends with"),
+    startWith: i18n.t("start with"),
+    contain: i18n.t("contain"),
+    endWith: i18n.t("end with"),
 };
 
 export function getInitialFilterRule(type: FilterType, id?: string): FilterRule {
@@ -58,7 +59,7 @@ export function getInitialFilterRule(type: FilterType, id?: string): FilterRule 
         case "lastUpdated":
             return { ...base, type, value: { period: "FIXED" } };
         case "stringMatch":
-            return { ...base, type, where: "contains", value: "" };
+            return { ...base, type, where: "contain", value: "" };
         case "metadataType":
             return { ...base, type, value: "" };
     }
@@ -76,6 +77,21 @@ export function updateFilterRule<FR extends FilterRule, Field extends keyof FR>(
     value: FR[Field]
 ): FR {
     return { ...filterRule, [field]: value };
+}
+
+export function filterRuleToString(filterRule: FilterRule): string {
+    switch (filterRule.type) {
+        case "created":
+            return i18n.t("Created") + ": " + getDateFilterString(filterRule.value);
+        case "lastUpdated":
+            return i18n.t("Last updated") + ": " + getDateFilterString(filterRule.value);
+        case "stringMatch":
+            const where = whereNames[filterRule.where];
+            const strValue = _.truncate(filterRule.value, { length: 40 });
+            return `Name/code/description ${where} '${strValue}'`;
+        case "metadataType":
+            return i18n.t("Metadata type") + ": " + filterRule.value;
+    }
 }
 
 export function getDateFilterString(dateFilter: DateFilter): string {
@@ -102,34 +118,25 @@ export function getDateFilterString(dateFilter: DateFilter): string {
 }
 
 export function validateFilterRule(filterRule: FilterRule): ValidationError[] {
-    if (filterRule.type === "created" || filterRule.type === "lastUpdated") {
-        const { value } = filterRule;
-        if (value.period === "FIXED" && !value.startDate && !value.endDate) {
-            return [
-                {
-                    property: "startDate",
-                    description: i18n.t("Select at least one date"),
-                    error: "cannot_be_empty",
-                },
-            ];
-        } else {
-            return [];
+    switch (filterRule.type) {
+        case "created":
+        case "lastUpdated": {
+            const { value } = filterRule;
+            if (value.period === "FIXED" && !value.startDate && !value.endDate) {
+                const msg = i18n.t("Select at least one date");
+                return [{ property: "startDate", description: msg, error: "cannot_be_empty" }];
+            } else {
+                return [];
+            }
         }
-    } else if (filterRule.type === "stringMatch") {
-        if (!filterRule.value.trim()) {
-            return [
-                {
-                    property: "value",
-                    description: i18n.t("String to match cannot be empty"),
-                    error: "cannot_be_empty",
-                },
-            ];
-        } else {
-            return [];
+        case "stringMatch":
+        case "metadataType": {
+            if (!filterRule.value.trim()) {
+                const msg = i18n.t("String to match cannot be empty");
+                return [{ property: "value", description: msg, error: "cannot_be_empty" }];
+            } else {
+                return [];
+            }
         }
-    } else if (filterRule.type === "metadataType") {
-        return [];
-    } else {
-        return [];
     }
 }

@@ -689,6 +689,10 @@ export default class SyncRule {
         await deleteDataStore(api, detailsKey);
     }
 
+    private get usesFilterRules(): boolean {
+        return this.type === "metadata";
+    }
+
     public async validate(): Promise<OldValidation> {
         return _.pickBy({
             name: _.compact([
@@ -700,10 +704,20 @@ export default class SyncRule {
                     : null,
             ]),
             metadataIds: _.compact([
-                this.metadataIds.length === 0
+                !this.usesFilterRules && this.metadataIds.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "metadata element" },
+                      }
+                    : null,
+            ]),
+            metadata: _.compact([
+                this.usesFilterRules &&
+                this.metadataIds.length === 0 &&
+                this.filterRules.length === 0
+                    ? {
+                          key: "cannot_be_empty",
+                          namespace: { element: "metadata element or create a filter rule" },
                       }
                     : null,
             ]),

@@ -40,14 +40,6 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
     const snackbar = useSnackbar();
     const [filterRule, setFilterRule] = React.useState<FilterRule>(initialFilterRule);
 
-    const filterTypeItems = React.useMemo(() => {
-        return _.map(filterTypeNames, (name, key) => ({ id: key, name }));
-    }, []);
-
-    const whereItems = React.useMemo(() => {
-        return _.map(whereNames, (name, key) => ({ id: key, name }));
-    }, []);
-
     const metadataTypeItems = React.useMemo(() => {
         return metadataModels.map(model => ({
             id: model.getMetadataType(),
@@ -66,21 +58,19 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
         [setFilterRule]
     );
 
-    function updateField<FR extends FilterRule, Field extends keyof FR = keyof FR>(field: Field) {
-        return function (value: FR[Field]) {
+    function updateField<FR extends FilterRule>(field: keyof FR) {
+        return function (value: FR[keyof FR]) {
             setFilterRule(filterRule =>
-                updateFilterRule<FR, Field>(filterRule as FR, field, value)
+                updateFilterRule<FR, keyof FR>(filterRule as FR, field, value)
             );
         };
     }
 
-    function updateFieldFromEvent<FR extends FilterRule, Field extends keyof FR = keyof FR>(
-        field: Field
-    ) {
-        return function (ev: React.ChangeEvent<{ value: FR[Field] }>) {
-            const value = ev.target.value as FR[Field];
+    function updateFieldFromEvent<FR extends FilterRule>(field: keyof FR) {
+        return function (ev: React.ChangeEvent<{ value: FR[keyof FR] }>) {
+            const value = ev.target.value as FR[keyof FR];
             setFilterRule((filterRule: FilterRule) => {
-                return updateFilterRule<FR, Field>(filterRule as FR, field, value);
+                return updateFilterRule<FR, keyof FR>(filterRule as FR, field, value);
             });
         };
     }
@@ -187,14 +177,6 @@ const useStyles = makeStyles({
     },
 });
 
-/*
-interface FilterArgumentsProps {
-    filterRule: FilterRule;
-}
+const filterTypeItems = _.map(filterTypeNames, (name, key) => ({ id: key, name }));
 
-const FilterArguments: React.FC<FilterArgumentsProps> = props => {
-    const { filterRule } = props;
-    console.log(filterRule);
-    return <div>arguments</div>;
-};
-*/
+const whereItems = _.map(whereNames, (name, key) => ({ id: key, name }));
