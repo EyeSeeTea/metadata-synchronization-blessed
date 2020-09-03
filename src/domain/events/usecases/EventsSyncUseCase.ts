@@ -150,9 +150,8 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
     public async mapPayload(
         instance: Instance,
-        payload: EventsPackage
+        { events: oldEvents }: EventsPackage
     ): Promise<SyncronizationPayload> {
-        const { events: oldEvents } = payload;
         const instanceRepository = await this.getInstanceRepository();
         const remoteInstanceRepository = await this.getInstanceRepository(instance);
 
@@ -162,11 +161,12 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             "categoryOptionCombos"
         );
 
+        const mapping = await this.getMapping(instance);
         const events = oldEvents
             .map(dataValue =>
                 this.buildMappedDataValue(
                     dataValue,
-                    instance.metadataMapping,
+                    mapping,
                     originCategoryOptionCombos,
                     destinationCategoryOptionCombos,
                     defaultCategoryOptionCombos[0]

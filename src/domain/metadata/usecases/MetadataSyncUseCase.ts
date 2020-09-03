@@ -3,13 +3,23 @@ import memoize from "nano-memoize";
 import { modelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder, NestedRules } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
+import { debug } from "../../../utils/debug";
 import { Expression, ExpressionParser } from "../../../utils/expressionParser";
+import { mapCategoryOptionCombo } from "../../../utils/synchronization";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../../instance/entities/MetadataMapping";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
-import { Indicator, MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
+import {
+    CategoryOptionCombo,
+    Indicator,
+    MetadataEntities,
+    MetadataPackage,
+} from "../entities/MetadataEntities";
 import {
     buildNestedRules,
     cleanObject,
@@ -17,7 +27,6 @@ import {
     cleanToModelName,
     getAllReferences,
 } from "../utils";
-import { debug } from "../../../utils/debug";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
@@ -141,71 +150,142 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     }
 
     public async mapPayload(
-        { metadataMapping: mapping }: Instance,
+        instance: Instance,
         payload: MetadataPackage
     ): Promise<MetadataPackage> {
+        const instanceRepository = await this.getInstanceRepository();
+        const remoteInstanceRepository = await this.getInstanceRepository(instance);
+
+        const originCategoryOptionCombos = await instanceRepository.getCategoryOptionCombos();
+        const destinationCategoryOptionCombos = await remoteInstanceRepository.getCategoryOptionCombos();
+        const mapping = await this.getMapping(instance);
+
         return _.mapValues(payload, (items, model) => {
             const collectionName = modelFactory(this.api, model).getCollectionName();
-            const references = this.api.models[collectionName]?.schema.properties
-                .filter(
-                    ({ propertyType, itemPropertyType }) =>
-                        propertyType === "REFERENCE" || itemPropertyType === "REFERENCE"
-                )
-                .map(({ name }) => name);
+            const properties = _.keyBy(
+                this.api.models[collectionName]?.schema.properties,
+                "fieldName"
+            );
 
             return items?.map((object: any) => {
                 if (typeof object !== "object") return object;
 
-                const mappedObject = this.mapProperty({ key: model, object, mapping });
+                const mappedObject = this.mapReference(
+                    { key: model, object },
+                    mapping,
+                    originCategoryOptionCombos,
+                    destinationCategoryOptionCombos
+                );
 
                 return _.mapValues(mappedObject, (value, key) => {
-                    if (!references.includes(key)) return value;
+                    const { propertyType, itemPropertyType } = properties[key] ?? {};
 
-                    if (Array.isArray(value)) {
-                        return value.map(item =>
-                            this.mapProperty({ parent: model, key, object: item, mapping })
+                    if (propertyType === "REFERENCE") {
+                        return this.mapReference(
+                            { parent: model, key, object: value },
+                            mapping,
+                            originCategoryOptionCombos,
+                            destinationCategoryOptionCombos
                         );
                     }
 
-                    return this.mapProperty({ parent: model, key, object: value, mapping });
+                    if (itemPropertyType === "REFERENCE" && Array.isArray(value)) {
+                        return value.map(item =>
+                            this.mapReference(
+                                { parent: model, key, object: item },
+                                mapping,
+                                originCategoryOptionCombos,
+                                destinationCategoryOptionCombos
+                            )
+                        );
+                    }
+
+                    if (propertyType === "COMPLEX" || itemPropertyType === "COMPLEX") {
+                        return this.mapComplex(value, mapping);
+                    }
+
+                    return value;
                 });
             });
         });
     }
 
-    private mapProperty<T extends Ref>({
-        parent,
-        key,
-        object,
-        mapping,
-    }: {
-        parent?: string;
-        key: string;
-        object: T;
-        mapping: MetadataMappingDictionary;
-    }): T {
+    private mapComplex(object: any, mapping: MetadataMappingDictionary): any {
+        if (Array.isArray(object)) return object.map(item => this.mapComplex(item, mapping));
+
+        return _.mapValues(object, (value, key) => {
+            if (key === "id" && typeof value === "string") {
+                return this.lookup(mapping, value) ?? value;
+            } else if (typeof value === "object") {
+                return this.mapComplex(value, mapping);
+            } else {
+                return value;
+            }
+        });
+    }
+
+    private mapReference<T extends Ref>(
+        {
+            parent,
+            key,
+            object,
+        }: {
+            parent?: string;
+            key: string;
+            object: T;
+        },
+        mapping: MetadataMappingDictionary,
+        originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
+    ): T {
         const modelName = cleanToModelName(this.api, key, parent);
         if (!modelName) return object;
 
-        const mappedId = this.lookup(mapping, object.id);
+        const mappedId = this.lookup(mapping, object.id) ?? object.id;
 
         if (modelName === "indicators") {
-            const indicator = (object as unknown) as Indicator;
-            const numerator = this.mapExpression(indicator.numerator, mapping);
-            const denominator = this.mapExpression(indicator.denominator, mapping);
+            const indicator = (object as unknown) as Partial<Indicator>;
+            const numerator = this.mapExpression(
+                indicator.numerator,
+                mapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            );
+            const denominator = this.mapExpression(
+                indicator.denominator,
+                mapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            );
             return { ...object, id: mappedId, numerator, denominator };
         }
 
         return { ...object, id: mappedId };
     }
 
-    private mapExpression(expression: string, mapping: MetadataMappingDictionary) {
+    private mapExpression(
+        expression: string | undefined,
+        mapping: MetadataMappingDictionary,
+        originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
+    ): string | undefined {
+        if (!expression) return undefined;
+
         const config = ExpressionParser.parse(expression).value.data ?? [];
         const mappedConfig = config.map(expression => {
+            const mappedExpression = this.transformExpression(
+                expression,
+                mapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            );
+            if (mappedExpression) return mappedExpression;
+
+            // Best effort default lookup
             return _.mapValues(expression, (id, property) => {
                 const modelName = cleanToModelName(this.api, property);
                 if (!modelName || typeof id !== "string") return id;
-                return this.lookup(mapping, id);
+                return this.lookup(mapping, id) ?? id;
             });
         });
 
@@ -215,12 +295,80 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         return validation.value.data;
     }
 
-    private lookup(mapping: MetadataMappingDictionary, id: string): string {
+    private transformExpression(
+        expression: Expression,
+        mapping: MetadataMappingDictionary,
+        originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
+        destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
+    ): Expression | undefined {
+        switch (expression.type) {
+            case "dataElement": {
+                const { mappedId: dataElement, mapping: innerMapping = {} } =
+                    mapping["aggregatedDataElements"][expression.dataElement] ?? {};
+                if (!dataElement) return undefined;
+
+                const categoryOptionCombo =
+                    mapCategoryOptionCombo(
+                        expression.categoryOptionCombo,
+                        [innerMapping, mapping],
+                        originCategoryOptionCombos,
+                        destinationCategoryOptionCombos
+                    ) ?? expression.categoryOptionCombo;
+
+                const attributeOptionCombo =
+                    mapCategoryOptionCombo(
+                        expression.attributeOptionCombo,
+                        [innerMapping, mapping],
+                        originCategoryOptionCombos,
+                        destinationCategoryOptionCombos
+                    ) ?? expression.attributeOptionCombo;
+
+                return {
+                    type: "dataElement",
+                    dataElement,
+                    categoryOptionCombo,
+                    attributeOptionCombo,
+                };
+            }
+            case "programDataElement": {
+                const { mappedId: program = expression.program } =
+                    mapping["eventPrograms"][expression.program] ?? {};
+
+                const dataElementId = _.keys(mapping["programDataElements"]).find(id => {
+                    const parts = id.split("-");
+                    const sameProgram = _.first(parts) === expression.program;
+                    const sameDataElement = _.last(parts) === expression.dataElement;
+                    return sameProgram && sameDataElement;
+                });
+
+                if (!dataElementId)
+                    return {
+                        type: "programDataElement",
+                        program,
+                        dataElement: expression.dataElement,
+                    };
+
+                const { mappedId: dataElement = expression.dataElement } =
+                    mapping["programDataElements"][dataElementId] ?? {};
+
+                return {
+                    type: "programDataElement",
+                    program,
+                    dataElement,
+                };
+            }
+            default:
+                return undefined;
+        }
+    }
+
+    private lookup(mapping: MetadataMappingDictionary, id?: string): string | undefined {
         // We would normally use _.get(mapping, [modelName, id]) but modelName of mapping is custom
-        const mappingStore = _.values(mapping)
+        const mappingStore: MetadataMapping[] = _.values(mapping)
             .map(item => _.mapValues(item, (value, id) => ({ id, ...value })))
             .flatMap(_.values);
 
-        return mappingStore.find(item => item.id === id)?.mappedId ?? id;
+        const { mappedId } = mappingStore.find(item => item.id === id) ?? {};
+        return mappedId !== "DISABLED" ? mappedId : undefined;
     }
 }

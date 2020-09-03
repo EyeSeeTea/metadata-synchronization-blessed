@@ -183,16 +183,16 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
 
     public async mapPayload(
         instance: Instance,
-        payload: AggregatedPackage
+        { dataValues: oldDataValues }: AggregatedPackage
     ): Promise<AggregatedPackage> {
-        const { dataValues: oldDataValues } = payload;
-        const { metadataMapping: mapping } = instance;
         const instanceRepository = await this.getInstanceRepository();
         const remoteInstanceRepository = await this.getInstanceRepository(instance);
 
         const defaultIds = await instanceRepository.getDefaultIds();
         const originCategoryOptionCombos = await instanceRepository.getCategoryOptionCombos();
         const destinationCategoryOptionCombos = await remoteInstanceRepository.getCategoryOptionCombos();
+        const mapping = await this.getMapping(instance);
+
         const instanceAggregatedValues = await this.buildInstanceAggregation(
             mapping,
             destinationCategoryOptionCombos

@@ -6,6 +6,7 @@ import SyncRule from "../../../models/syncRule";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
+import { debug } from "../../../utils/debug";
 import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";
 import { AggregatedRepositoryConstructor } from "../../aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
@@ -14,6 +15,10 @@ import { EventsPackage } from "../../events/entities/EventsPackage";
 import { EventsRepositoryConstructor } from "../../events/repositories/EventsRepository";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+} from "../../instance/entities/MetadataMapping";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataRepositoryConstructor } from "../../metadata/repositories/MetadataRepository";
@@ -30,7 +35,6 @@ import {
 } from "../entities/SynchronizationReport";
 import { SynchronizationResult, SynchronizationStatus } from "../entities/SynchronizationResult";
 import { SynchronizationType } from "../entities/SynchronizationType";
-import { debug } from "../../../utils/debug";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase
@@ -122,6 +126,39 @@ export abstract class GenericSyncUseCase {
     protected async getOriginInstance(): Promise<Instance> {
         const { originInstance: originInstanceId } = this.builder;
         return this.getInstanceById(originInstanceId);
+    }
+
+    @cache()
+    protected async getMapping(instance: Instance): Promise<MetadataMappingDictionary> {
+        const { originInstance: originInstanceId } = this.builder;
+
+        // If sync is LOCAL -> REMOTE, use the destination instance mapping
+        if (originInstanceId === "LOCAL") return instance.metadataMapping;
+
+        // Otherwise use the origin (REMOTE) destination instance mapping
+        const remoteInstance = await this.getOriginInstance();
+
+        // TODO: This should be revisited in the future, does not fully work with nested ids (programs)
+        const transformMapping = (
+            mapping: MetadataMappingDictionary
+        ): MetadataMappingDictionary => {
+            return _.mapValues(mapping, value => {
+                return _.transform(
+                    value,
+                    (acc, { mappedId, mapping, ...value }, id) => {
+                        if (!!mappedId && mappedId !== "DISABLED")
+                            acc[mappedId] = {
+                                mappedId: id,
+                                mapping: mapping ? transformMapping(mapping) : undefined,
+                                ...value,
+                            };
+                    },
+                    {} as { [id: string]: MetadataMapping }
+                );
+            });
+        };
+
+        return transformMapping(remoteInstance.metadataMapping);
     }
 
     private async buildSyncReport() {

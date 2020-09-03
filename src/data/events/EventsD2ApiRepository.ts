@@ -77,13 +77,14 @@ export class EventsD2ApiRepository implements EventsRepository {
             )
             .getData();
 
-        const errors = response.importSummaries.flatMap(
-            ({ reference = "", description = "", conflicts = [] }) =>
-                conflicts.map(({ object, value }) => ({
-                    id: reference,
-                    message: _([description, object, value]).compact().join(" "),
-                }))
-        );
+        const errors =
+            response.importSummaries?.flatMap(
+                ({ reference = "", description = "", conflicts = [] }) =>
+                    conflicts.map(({ object, value }) => ({
+                        id: reference,
+                        message: _([description, object, value]).compact().join(" "),
+                    }))
+            ) ?? [];
 
         const stats: SynchronizationStats = _.pick(response, [
             "imported",
@@ -114,7 +115,7 @@ interface EventsPostResponse {
         deleted: number;
         ignored: number;
         total: number;
-        importSummaries: {
+        importSummaries?: {
             description?: string;
             reference: string;
             conflicts?: {
