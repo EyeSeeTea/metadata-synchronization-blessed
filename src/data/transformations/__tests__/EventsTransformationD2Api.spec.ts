@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import _ from "lodash";
 import { EventsPackage } from "../../../domain/events/entities/EventsPackage";
 import { Transformation } from "../../../domain/transformations/entities/Transformation";
