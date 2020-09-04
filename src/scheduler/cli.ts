@@ -4,8 +4,10 @@ import fs from "fs";
 import { configure, getLogger } from "log4js";
 import path from "path";
 import * as yargs from "yargs";
+import { Instance } from "../domain/instance/entities/Instance";
 import { MigrationsRunner } from "../migrations";
 import { getMigrationsForNode } from "../migrations/utils";
+import { CompositionRoot } from "../presentation/CompositionRoot";
 import { D2Api } from "../types/d2-api";
 import Scheduler from "./scheduler";
 
@@ -46,9 +48,11 @@ const checkMigrations = async (api: D2Api) => {
 };
 
 const start = async (): Promise<void> => {
-    const { baseUrl, username, password } = config;
-    if (!baseUrl || !username || !password) throw new Error("Couldn't connect to server");
-
+    const { baseUrl, username, password, encryptionKey } = config;
+    if (!baseUrl || !username || !password || !encryptionKey) {
+        throw new Error("Couldn't connect to server");
+    }
+    
     const api = new D2Api({ baseUrl, auth: { username, password } });
     await checkMigrations(api);
 
@@ -56,8 +60,10 @@ const start = async (): Promise<void> => {
     getLogger("main").info("-".repeat(welcomeMessage.length));
     getLogger("main").info(welcomeMessage);
 
-    // TODO: Create composition root and set encryption key
-    new Scheduler(api).initialize();
+    const version = await api.getVersion();
+    const instance = Instance.build({ name: "This instance", url: baseUrl, version });
+    const compositionRoot = new CompositionRoot(instance, encryptionKey);
+    new Scheduler(api, compositionRoot).initialize();
 };
 
 start().catch(console.error);
