@@ -14,7 +14,7 @@ export type DropdownViewOption = "filter" | "inline" | "full-width";
 interface DropdownProps {
     items: DropdownOption[];
     value: string;
-    label: string;
+    label?: string;
     onChange?: Function;
     onValueChange?(value: string): void;
     hideEmpty?: boolean;
@@ -85,7 +85,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     return (
         <MuiThemeProvider theme={getTheme(view)}>
             <FormControl fullWidth={view === "full-width"}>
-                {view !== "inline" && <InputLabel>{label}</InputLabel>}
+                {view !== "inline" && label && <InputLabel>{label}</InputLabel>}
                 <Select
                     key={`dropdown-select-${label}`}
                     disableUnderline={view === "inline"}

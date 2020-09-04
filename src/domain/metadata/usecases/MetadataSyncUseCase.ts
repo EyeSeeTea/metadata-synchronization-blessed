@@ -91,7 +91,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     }
 
     public buildPayload = memoize(async () => {
-        const { metadataIds, syncParams } = this.builder;
+        const { metadataIds, syncParams, filterRules = [] } = this.builder;
         const {
             includeSharingSettings = true,
             metadataIncludeExcludeRules = {},
@@ -99,17 +99,18 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         } = syncParams ?? {};
 
         const metadataRepository = await this.getMetadataRepository();
-        const metadata = await metadataRepository.getMetadataByIds<Ref>(metadataIds, "id");
+        const filterRulesIds = await metadataRepository.getByFilterRules(filterRules);
+        const allMetadataIds = _.union(metadataIds, filterRulesIds);
+        const metadata = await metadataRepository.getMetadataByIds<Ref>(allMetadataIds, "id");
 
         const exportResults = await promiseMap(_.keys(metadata), type => {
             const myClass = modelFactory(this.api, type);
             const metadataType = myClass.getMetadataType();
-
-            const metadatatype = type as keyof MetadataEntities;
+            const collectionName = myClass.getCollectionName();
 
             return this.exportMetadata({
-                type: metadatatype,
-                ids: metadata[metadatatype]?.map(e => e.id) || [],
+                type: collectionName,
+                ids: metadata[collectionName]?.map(e => e.id) || [],
                 excludeRules: useDefaultIncludeExclude
                     ? myClass.getExcludeRules()
                     : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
