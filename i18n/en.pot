@@ -564,6 +564,9 @@ msgstr ""
 msgid "Advanced options"
 msgstr ""
 
+msgid "Department (*)"
+msgstr ""
+
 msgid "Selected {{difference}} elements"
 msgstr ""
 

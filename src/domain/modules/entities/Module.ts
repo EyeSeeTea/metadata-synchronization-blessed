@@ -72,8 +72,6 @@ export abstract class GenericModule implements BaseModule {
         const isUserOwner = this.user.id === userId;
         const isPublic = publicAccess.substring(0, 2).includes(token);
 
-        const hasDepartmentAccess = !!_.find(userGroups, ({ id }) => id === this.department.id);
-
         const hasUserAccess = !!_(userAccesses)
             .filter(({ access }) => access.substring(0, 2).includes(token))
             .find(({ id }) => id === userId);
@@ -84,7 +82,7 @@ export abstract class GenericModule implements BaseModule {
                 .intersectionBy(userGroups, "id")
                 .value().length > 0;
 
-        return isUserOwner || isPublic || hasDepartmentAccess || hasUserAccess || hasGroupAccess;
+        return isUserOwner || isPublic || hasUserAccess || hasGroupAccess;
     }
 
     protected abstract moduleValidations: () => ModelValidation[];
