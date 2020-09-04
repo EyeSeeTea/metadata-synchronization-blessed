@@ -60,7 +60,7 @@
         "build-webapp": "yarn build && yarn manifest && rm -f $npm_package_name.zip && cd build && zip -r ../$npm_package_name.zip *",
         "build-widget": "yarn run-ts scripts/widget.ts build $npm_package_name",
         "run-ts": "ts-node -O '{\"module\":\"commonjs\"}'",
-        "build-scheduler": "ncc build src/scheduler/cli.ts -m",
+        "build-scheduler": "ncc build src/scheduler/cli.ts -m && cp dist/index.js $npm_package_name-server.js",
         "test": "jest",
         "lint": "eslint \"{src,cypress}/**/*.{js,jsx,ts,tsx}\"",
         "eject": "react-scripts eject",
