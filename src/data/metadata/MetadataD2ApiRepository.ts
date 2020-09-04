@@ -18,13 +18,21 @@ import { getClassName } from "../../domain/metadata/utils";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
-import { D2Api, D2Model, MetadataResponse, Model, Stats } from "../../types/d2-api";
-import { Dictionary } from "../../types/utils";
+import { D2Api, D2Model, MetadataResponse, Model, Stats, Id } from "../../types/d2-api";
+import { Dictionary, Maybe } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
 import { debug } from "../../utils/debug";
 import { paginate } from "../../utils/pagination";
 import { metadataTransformations } from "../transformations/PackageTransformations";
+import {
+    FilterRule,
+    DateFilter,
+    StringMatch,
+    FilterWhere,
+} from "../../domain/metadata/entities/FilterRule";
+import { modelFactory } from "../../models/dhis/factory";
+import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
@@ -210,6 +218,64 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         });
 
         return this.cleanMetadataImportResponse(response, "deleted");
+    }
+
+    public async getByFilterRules(filterRules: FilterRule[]): Promise<Id[]> {
+        const listOfIds = await promiseMap(filterRules, async filterRule => {
+            const myClass = modelFactory(this.api, filterRule.metadataType);
+            const collectionName = myClass.getCollectionName();
+            // Make one request per field and join results. It's the only way to make a
+            // OR text search on arbitrary (non-identifiable fields).
+            const stringMatchFields: Array<string | null> = filterRule.stringMatch
+                ? ["name", "code", "description"]
+                : [null];
+            const responses$ = stringMatchFields.map(async stringMatchField => {
+                const data = await this.api
+                    .get<Record<string, Maybe<Ref[]>>>(`/${collectionName}`, {
+                        paging: false,
+                        fields: "id",
+                        filter: this.getFiltersForFilterRule(filterRule, stringMatchField),
+                    })
+                    .getData();
+                return (data[collectionName] || []).map(ref => ref.id);
+            });
+            return _.union(...(await Promise.all(responses$)));
+        });
+
+        return _.union(...listOfIds);
+    }
+
+    private getFiltersForFilterRule(filterRule: FilterRule, stringMatchField: Maybe<string>) {
+        const { created, lastUpdated, stringMatch } = filterRule;
+
+        return _.concat(
+            stringMatchField ? this.getFiltersForStringMatch(stringMatchField, stringMatch) : [],
+            this.getFiltersForDateFilter("created", created),
+            this.getFiltersForDateFilter("lastUpdated", lastUpdated)
+        );
+    }
+
+    private getFiltersForStringMatch(field: string, stringMatch: Maybe<StringMatch>): string[] {
+        if (!stringMatch || !stringMatch.where || !stringMatch.value.trim()) return [];
+        const { where, value } = stringMatch;
+        const operatorByWhere: Record<FilterWhere, string> = {
+            startsWith: "$ilike",
+            contains: "ilike",
+            endsWith: "ilike$",
+        };
+        const operator = operatorByWhere[where];
+
+        return operator ? [`${field}:${operator}:${value}`] : [];
+    }
+
+    private getFiltersForDateFilter(field: string, dateFilter: DateFilter): string[] {
+        const [startDate, endDate] = buildPeriodFromParams(dateFilter);
+        const dayFormat = "YYYY-MM-DD";
+
+        return [
+            `${field}:ge:${startDate.startOf("day").format(dayFormat)}`,
+            `${field}:lt:${endDate.startOf("day").add(1, "day").format(dayFormat)}`,
+        ];
     }
 
     private cleanMetadataImportResponse(

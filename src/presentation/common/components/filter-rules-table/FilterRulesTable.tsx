@@ -96,7 +96,7 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
             {
                 name: "stringMatch",
                 text: i18n.t("Name/code/description"),
-                getValue: rule => getStringMatchString(rule.stringMatch),
+                getValue: rule => getStringMatchString(rule.stringMatch) || "-",
             },
         ],
         [modelNames]

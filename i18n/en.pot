@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-09-03T13:04:32.420Z\n"
-"PO-Revision-Date: 2020-09-03T13:04:32.420Z\n"
+"POT-Creation-Date: 2020-09-04T09:37:11.628Z\n"
+"PO-Revision-Date: 2020-09-04T09:37:11.628Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -119,13 +119,13 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-msgid "Match string"
+msgid "Match string (name, code, description)"
 msgstr ""
 
-msgid "Where to match"
+msgid "Condition"
 msgstr ""
 
-msgid "String to match in name / code / description (*)"
+msgid "String to match (*)"
 msgstr ""
 
 msgid "Edit"

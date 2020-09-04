@@ -5,6 +5,7 @@ import { SynchronizationResult } from "../../synchronization/entities/Synchroniz
 import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { MetadataEntities, MetadataEntity, MetadataPackage } from "../entities/MetadataEntities";
 import { MetadataImportParams } from "../types";
+import { FilterRule } from "../entities/FilterRule";
 
 export interface MetadataRepositoryConstructor {
     new (
@@ -15,6 +16,7 @@ export interface MetadataRepositoryConstructor {
 
 export interface MetadataRepository {
     getMetadataByIds<T>(ids: Id[], fields?: string): Promise<MetadataPackage<T>>;
+    getByFilterRules(filterRules: FilterRule[]): Promise<Id[]>;
 
     listMetadata(params: ListMetadataParams): Promise<ListMetadataResponse>;
     listAllMetadata(params: ListMetadataParams): Promise<MetadataEntity[]>;

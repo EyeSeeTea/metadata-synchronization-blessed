@@ -55,6 +55,11 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
         }
     }, [filterRule, onSave, snackbar]);
 
+    function updateStringMatchWhere(where: FilterWhere | "") {
+        const value = { where: where || null, ...(where ? {} : { value: "" }) };
+        setFilterRule(filterRule => updateStringMatch(filterRule, value));
+    }
+
     const title = action === "new" ? i18n.t("Create new filter") : i18n.t("Edit filter");
     const saveText = action === "new" ? i18n.t("Create") : i18n.t("Update");
 
@@ -92,17 +97,13 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
                     />
                 </Section>
 
-                <Section title={i18n.t("Match string")}>
+                <Section title={i18n.t("Match string (name, code, description)")}>
                     <div className={classes.dropdown}>
                         <Dropdown
                             items={whereItems}
-                            onValueChange={(where: FilterWhere) =>
-                                setFilterRule(filterRule =>
-                                    updateStringMatch(filterRule, { where })
-                                )
-                            }
+                            onValueChange={updateStringMatchWhere}
                             value={filterRule.stringMatch?.where || ""}
-                            label={i18n.t("Where to match")}
+                            label={i18n.t("Condition")}
                         />
                     </div>
 
@@ -115,7 +116,7 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
                                     updateStringMatch(filterRule, { value })
                                 )
                             }
-                            label={i18n.t("String to match in name / code / description (*)")}
+                            label={i18n.t("String to match (*)")}
                             value={filterRule.stringMatch?.value || ""}
                         />
                     </div>

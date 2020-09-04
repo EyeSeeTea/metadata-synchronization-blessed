@@ -5,14 +5,14 @@ import i18n from "../../../locales";
 import { availablePeriods } from "../../../utils/synchronization";
 import { DataSyncPeriod } from "../../aggregated/types";
 import { ValidationError } from "../../common/entities/Validations";
-import { Maybe } from "../../../types/utils";
+import { NonNullableValues } from "../../../types/utils";
 
 export interface FilterRule {
     id: string;
     metadataType: string;
     created: DateFilter;
     lastUpdated: DateFilter;
-    stringMatch?: StringMatch;
+    stringMatch: StringMatch;
 }
 
 export type FilterRuleField = keyof FilterRule;
@@ -25,11 +25,13 @@ export const filterRuleFields: FilterRuleField[] = [
 ];
 
 export interface StringMatch {
-    where: FilterWhere;
+    where: FilterWhere | null;
     value: string;
 }
 
-export type FilterWhere = "startWith" | "contain" | "endWith";
+type ValidStringMatch = NonNullableValues<StringMatch>;
+
+export type FilterWhere = "startsWith" | "contains" | "endsWith";
 
 export const filterTypeNames: Record<keyof FilterRule, string> = {
     id: i18n.t("Id"),
@@ -40,9 +42,9 @@ export const filterTypeNames: Record<keyof FilterRule, string> = {
 };
 
 export const whereNames: Record<FilterWhere, string> = {
-    startWith: i18n.t("start with"),
-    contain: i18n.t("contain"),
-    endWith: i18n.t("end with"),
+    startsWith: i18n.t("Starts with"),
+    contains: i18n.t("Contains"),
+    endsWith: i18n.t("Ends with"),
 };
 
 export function getInitialFilterRule(): FilterRule {
@@ -51,10 +53,11 @@ export function getInitialFilterRule(): FilterRule {
         metadataType: "",
         created: { period: "ALL" },
         lastUpdated: { period: "ALL" },
+        stringMatch: { where: null, value: "" },
     };
 }
 
-interface DateFilter {
+export interface DateFilter {
     period: DataSyncPeriod;
     startDate?: Date;
     endDate?: Date;
@@ -69,24 +72,28 @@ export function updateFilterRule<Field extends keyof FilterRule>(
 }
 
 export function filterRuleToString(filterRule: FilterRule): string {
+    const { created, lastUpdated, stringMatch } = filterRule;
     const main = i18n.t("Metadata type: {{model}}", {
         model: filterRule.metadataType,
         nsSeparator: false,
     });
+    const fields = i18n.t("Name/code/description");
     const parts = [
-        filterRule.created && i18n.t("Created") + ": " + getDateFilterString(filterRule.created),
-        filterRule.lastUpdated &&
-            i18n.t("Last updated") + ": " + getDateFilterString(filterRule.lastUpdated),
-        filterRule.stringMatch &&
-            i18n.t("Name/code/description") + "  " + getStringMatchString(filterRule.stringMatch),
+        created && i18n.t("Created") + ": " + getDateFilterString(created),
+        lastUpdated && i18n.t("Last updated") + ": " + getDateFilterString(lastUpdated),
+        stringMatchHasValue(stringMatch) && getStringMatchString(stringMatch) + " " + `(${fields})`,
     ];
     return _([main, _.compact(parts).join(", ")])
         .compact()
         .join(" - ");
 }
 
-export function getStringMatchString(stringMatch: Maybe<StringMatch>): string {
-    if (!stringMatch) return "";
+export function stringMatchHasValue(stringMatch: StringMatch): stringMatch is ValidStringMatch {
+    return stringMatch.where && stringMatch.value.trim() ? true : false;
+}
+
+export function getStringMatchString(stringMatch: StringMatch): string {
+    if (!stringMatchHasValue(stringMatch)) return "";
     const where = whereNames[stringMatch.where];
     const strValue = _.truncate(stringMatch.value, { length: 40 });
     return `${where} '${strValue}'`;
@@ -115,7 +122,7 @@ export function getDateFilterString(dateFilter: DateFilter): string {
     }
 }
 
-const initialStringMatch: StringMatch = { value: "", where: "contain" };
+const initialStringMatch: StringMatch = { value: "", where: "contains" };
 
 export function updateStringMatch(
     filterRule: FilterRule,
