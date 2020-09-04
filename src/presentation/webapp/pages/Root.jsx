@@ -88,7 +88,7 @@ function Root() {
                 />
 
                 <RouteWithSession
-                    path="/responsibles"
+                    path="/custodians"
                     render={props => <ResponsiblesListPage {...props} />}
                 />
 

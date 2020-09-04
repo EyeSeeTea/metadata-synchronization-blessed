@@ -120,9 +120,7 @@ const InstanceListPage = () => {
         }
 
         loading.reset();
-        updateSelection((prevSelection: TableSelection[]) =>
-            _.differenceBy(prevSelection, toDelete, "id")
-        );
+        updateSelection([]);
         deleteInstances([]);
 
         if (_.some(results, [false])) {
@@ -228,7 +226,7 @@ const InstanceListPage = () => {
                 saveText={i18n.t("Ok")}
             />
 
-            <PageHeader title={i18n.t("Destination Instance Settings")} onBackClick={backHome} />
+            <PageHeader title={i18n.t("Instance Settings")} onBackClick={backHome} />
 
             <ObjectsTable<Instance>
                 rows={rows}

@@ -5,14 +5,14 @@ import i18n from "../../../locales";
 import { DatedRef, NamedRef } from "../../common/entities/Ref";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-import { Module } from "../../modules/entities/Module";
+import { BaseModule, Module } from "../../modules/entities/Module";
 
 export interface BasePackage extends DatedRef {
     deleted?: boolean;
     description: string;
     version: string;
     dhisVersion: string;
-    module: Pick<Module, "id" | "name" | "instance" | "department">;
+    module: Pick<BaseModule, "id" | "name" | "instance" | "department">;
     contents: MetadataPackage;
 }
 
@@ -25,7 +25,7 @@ export class Package implements BasePackage {
     public readonly description: string;
     public readonly version: string;
     public readonly dhisVersion: string;
-    public readonly module: Pick<Module, "id" | "name" | "instance" | "department">;
+    public readonly module: Pick<BaseModule, "id" | "name" | "instance" | "department">;
     public readonly contents: MetadataPackage;
     public readonly user: NamedRef;
     public readonly created: Date;

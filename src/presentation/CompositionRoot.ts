@@ -167,7 +167,7 @@ export class CompositionRoot {
         return getExecute({
             list: new ListPackagesUseCase(this.repositoryFactory, this.localInstance),
             listStore: new ListStorePackagesUseCase(this.repositoryFactory, this.localInstance),
-            create: new CreatePackageUseCase(this.repositoryFactory, this.localInstance),
+            create: new CreatePackageUseCase(this, this.repositoryFactory, this.localInstance),
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),
             download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),

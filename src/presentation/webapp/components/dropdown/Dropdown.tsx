@@ -14,41 +14,59 @@ export type DropdownViewOption = "filter" | "inline" | "full-width";
 interface DropdownProps {
     items: DropdownOption[];
     value: string;
-    label: string;
+    label?: string;
     onChange?: Function;
     onValueChange?(value: string): void;
     hideEmpty?: boolean;
     emptyLabel?: string;
     view?: DropdownViewOption;
+    disabled?: boolean;
 }
 
-const getFilterTheme = () =>
-    createMuiTheme({
-        overrides: {
-            MuiFormLabel: {
-                root: {
-                    color: "#aaaaaa",
-                    "&$focused": {
-                        color: "#aaaaaa",
+const getTheme = (view: DropdownViewOption) => {
+    switch (view) {
+        case "filter":
+            return createMuiTheme({
+                overrides: {
+                    MuiFormLabel: {
+                        root: {
+                            color: "#aaaaaa",
+                            "&$focused": {
+                                color: "#aaaaaa",
+                            },
+                            top: "-9px !important",
+                            marginLeft: 10,
+                        },
                     },
-                    top: "-9px !important",
-                    marginLeft: 10,
+                    MuiInput: {
+                        root: {
+                            marginLeft: 10,
+                        },
+                        formControl: {
+                            minWidth: 250,
+                            marginTop: "8px !important",
+                        },
+                        input: {
+                            color: "#565656",
+                        },
+                    },
                 },
-            },
-            MuiInput: {
-                root: {
-                    marginLeft: 10,
+            });
+        case "inline":
+            return createMuiTheme({
+                overrides: {
+                    MuiFormControl: {
+                        root: {
+                            verticalAlign: "middle",
+                            marginBottom: 5,
+                        },
+                    },
                 },
-                formControl: {
-                    minWidth: 250,
-                    marginTop: "8px !important",
-                },
-                input: {
-                    color: "#565656",
-                },
-            },
-        },
-    });
+            });
+        default:
+            return {};
+    }
+};
 
 const Dropdown: React.FC<DropdownProps> = ({
     items,
@@ -59,17 +77,15 @@ const Dropdown: React.FC<DropdownProps> = ({
     hideEmpty = false,
     emptyLabel,
     view = "filter",
+    disabled = false,
 }) => {
-    const filterTheme = getFilterTheme();
-    const theme = view === "filter" ? filterTheme : {};
-
     const inlineStyles = { minWidth: 120, paddingLeft: 25, paddingRight: 25 };
     const styles = view === "inline" ? inlineStyles : {};
 
     return (
-        <MuiThemeProvider theme={theme}>
+        <MuiThemeProvider theme={getTheme(view)}>
             <FormControl fullWidth={view === "full-width"}>
-                {view !== "inline" && <InputLabel>{label}</InputLabel>}
+                {view !== "inline" && label && <InputLabel>{label}</InputLabel>}
                 <Select
                     key={`dropdown-select-${label}`}
                     disableUnderline={view === "inline"}
@@ -86,6 +102,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                         },
                     }}
                     style={styles}
+                    disabled={disabled}
                 >
                     {!hideEmpty && (
                         <MenuItem value={""}>{emptyLabel ?? i18n.t("<No value>")}</MenuItem>

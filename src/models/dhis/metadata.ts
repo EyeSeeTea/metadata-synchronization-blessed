@@ -446,6 +446,7 @@ export class ProgramModel extends D2Model {
         "dataApprovalWorkflow",
         "dataApprovalWorkflow.dataApprovalLevels",
         "programStages",
+        "programStages.dataEntryForms",
         "programStages.programStageSections",
         "programStages.attributes",
         "programStages.dataElements",

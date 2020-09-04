@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-20T07:22:23.568Z\n"
-"PO-Revision-Date: 2020-08-20T07:22:23.568Z\n"
+"POT-Creation-Date: 2020-09-04T10:20:10.237Z\n"
+"PO-Revision-Date: 2020-09-04T10:20:10.237Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -41,6 +41,51 @@ msgstr ""
 msgid "Unknown error"
 msgstr ""
 
+msgid "Id"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Last updated"
+msgstr ""
+
+msgid "String matches"
+msgstr ""
+
+msgid "Metadata type"
+msgstr ""
+
+msgid "Starts with"
+msgstr ""
+
+msgid "Contains"
+msgstr ""
+
+msgid "Ends with"
+msgstr ""
+
+msgid "Metadata type: {{model}}"
+msgstr ""
+
+msgid "Name/code/description"
+msgstr ""
+
+msgid "From {{- startDate}} to {{- endDate}}"
+msgstr ""
+
+msgid "From {{- startDate}}"
+msgstr ""
+
+msgid "To {{- endDate}}"
+msgstr ""
+
+msgid "You must select a metadata type"
+msgstr ""
+
+msgid "Select at least one date for fixed period on create"
+msgstr ""
+
 msgid "Version is not valid (ie. {{validExample}})"
 msgstr ""
 
@@ -57,6 +102,36 @@ msgid "Program with Data Elements"
 msgstr ""
 
 msgid "Program with Indicators"
+msgstr ""
+
+msgid "Create new filter"
+msgstr ""
+
+msgid "Edit filter"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Update"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Match string (name, code, description)"
+msgstr ""
+
+msgid "Condition"
+msgstr ""
+
+msgid "String to match (*)"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Delete"
 msgstr ""
 
 msgid "Instances"
@@ -91,9 +166,6 @@ msgid ""
 "Do you want to directly pull the metadata?"
 msgstr ""
 
-msgid "Cancel"
-msgstr ""
-
 msgid "Proceed"
 msgstr ""
 
@@ -112,13 +184,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-msgid "Last updated"
-msgstr ""
-
 msgid "Last updated by"
-msgstr ""
-
-msgid "Created"
 msgstr ""
 
 msgid "Created by"
@@ -130,12 +196,6 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-msgid "Edit"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
 msgid "Replicate"
 msgstr ""
 
@@ -143,6 +203,12 @@ msgid "Download metadata package"
 msgstr ""
 
 msgid "Generate package from module"
+msgstr ""
+
+msgid "Sharing settings"
+msgstr ""
+
+msgid "Sharing settings for {{name}}"
 msgstr ""
 
 msgid "Package of {{name}}"
@@ -161,6 +227,15 @@ msgid "Version tag"
 msgstr ""
 
 msgid "DHIS2 Version (*)"
+msgstr ""
+
+msgid "Module: {{module}}"
+msgstr ""
+
+msgid "{{n}} package(s) created successfully: {{list}}"
+msgstr ""
+
+msgid "{{n}} package(s) could not be created: {{list}}"
 msgstr ""
 
 msgid "View"
@@ -256,9 +331,6 @@ msgid "Identifier"
 msgstr ""
 
 msgid "Code"
-msgstr ""
-
-msgid "Metadata type"
 msgstr ""
 
 msgid "Deleted date"
@@ -430,10 +502,10 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-msgid "Set responsible users"
+msgid "Set metadata custodian"
 msgstr ""
 
-msgid "Responsible"
+msgid "Custodian"
 msgstr ""
 
 msgid "Search by "
@@ -492,6 +564,9 @@ msgstr ""
 msgid "Advanced options"
 msgstr ""
 
+msgid "Department (*)"
+msgstr ""
+
 msgid "Selected {{difference}} elements"
 msgstr ""
 
@@ -546,19 +621,31 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
+msgid "Period"
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
 msgid "You need to provide a subject"
 msgstr ""
 
 msgid "Creating pull request"
 msgstr ""
 
+msgid "Pull request created"
+msgstr ""
+
 msgid "Create pull request on {{name}}"
 msgstr ""
 
 msgid ""
-"There are responsibles for the selected metadata. You can still create a "
-"pull request and once approved by the responsible you will be able to "
-"finish the synchronization."
+"There are custodians for the selected metadata. You can still create a pull "
+"request and, once approved by a custodian, you will be able to finish the "
+"synchronization."
 msgstr ""
 
 msgid "Open pull request"
@@ -570,25 +657,16 @@ msgstr ""
 msgid "Field cannot be blank"
 msgstr ""
 
-msgid "Recipients"
+msgid "Custodians"
 msgstr ""
 
-msgid "Responsibles for {{name}}"
-msgstr ""
-
-msgid "Sharing settings"
+msgid "Custodians for {{name}}"
 msgstr ""
 
 msgid "Synchronize"
 msgstr ""
 
 msgid "Create and update"
-msgstr ""
-
-msgid "Create"
-msgstr ""
-
-msgid "Update"
 msgstr ""
 
 msgid "Disable atomic verification"
@@ -727,13 +805,13 @@ msgstr ""
 msgid "Aggregation"
 msgstr ""
 
+msgid "Filter rules"
+msgstr ""
+
 msgid "Data elements"
 msgstr ""
 
 msgid "Organisation units"
-msgstr ""
-
-msgid "Period"
 msgstr ""
 
 msgid "Category options"
@@ -756,6 +834,9 @@ msgid ""
 msgstr ""
 
 msgid "Source instance"
+msgstr ""
+
+msgid "Destination"
 msgstr ""
 
 msgid "Instance not found"
@@ -802,6 +883,9 @@ msgstr ""
 msgid "Target instances [{{total}}]"
 msgstr ""
 
+msgid "Filter rules [{{total}}]"
+msgstr ""
+
 msgid "Excluded elements"
 msgstr ""
 
@@ -830,12 +914,6 @@ msgid "Category Option Combo"
 msgstr ""
 
 msgid "All attribute category options"
-msgstr ""
-
-msgid "Start date"
-msgstr ""
-
-msgid "End date"
 msgstr ""
 
 msgid "Strategy"
@@ -985,6 +1063,9 @@ msgid_plural "Are you sure you want to delete {{count}} history notifications?"
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Aggregated Data Sync"
+msgstr ""
+
 msgid "Manual sync"
 msgstr ""
 
@@ -998,49 +1079,62 @@ msgid "Sync rules"
 msgstr ""
 
 msgid ""
-"Create, modify, delete, execute and schedule sync rules for aggregated data "
-"by selecting the data sets, data elements or their groups and group sets "
-"together with the organisation unit, period and category options."
+"Create, modify, delete, execute and schedule rules to synchronize "
+"aggregated data periodically."
 msgstr ""
 
 msgid "History"
 msgstr ""
 
 msgid ""
-"View and analyse the status and results of the aggregated data manual syncs "
-"and sync rules executions."
+"View and analyse the outcome of aggregated data manual syncs and executions "
+"of sync rules."
+msgstr ""
+
+msgid "Events Sync"
 msgstr ""
 
 msgid ""
-"Manually synchronise events by selecting the programs or events together "
-"with the organisation unit, period and category options."
+"Manually synchronise event data by selecting the programs or events "
+"together with the organisation unit, period and category options."
 msgstr ""
 
 msgid ""
-"Create, modify, delete, execute and schedule sync rules for events by "
-"selecting the programs or events together with the organisation unit, "
-"period and category options."
+"Create, modify, delete, execute and schedule rules to synchronize event "
+"data periodically."
 msgstr ""
 
 msgid ""
-"View and analyse the status and results of the event manual syncs and sync "
-"rules executions."
+"View and analyse the outcome of events manual syncs and executions of sync "
+"rules."
+msgstr ""
+
+msgid "Metadata Sync"
 msgstr ""
 
 msgid ""
-"Manually synchronise metadata like data elements, organisation units and "
-"program indicators and groups and group sets."
-msgstr ""
-
-msgid ""
-"Create, modify, delete, execute and schedule sync rules for metadata like "
-"data elements, organisation units and program indicators and groups and "
+"Manually synchronise metadata such as data elements, organisation units, "
+"options, indicators, program indicator, categories and their groups and "
 "group sets."
 msgstr ""
 
 msgid ""
-"View and analyse the status and results of the metadata manual syncs and "
-"sync rules executions."
+"Create, modify, delete, execute and schedule rules to synchronize metadata "
+"periodically."
+msgstr ""
+
+msgid ""
+"View and analyse the outcome of metadata manual syncs and executions of "
+"sync rules."
+msgstr ""
+
+msgid "Notifications"
+msgstr ""
+
+msgid "Read notifications regarding new versions of DHIS2 metadata packages."
+msgstr ""
+
+msgid "Other"
 msgstr ""
 
 msgid "Deleted objects"
@@ -1049,36 +1143,40 @@ msgstr ""
 msgid "Manually synchronise deleted objects."
 msgstr ""
 
-msgid "Metadata responsibles"
+msgid "Metadata distribution"
 msgstr ""
 
-msgid "List and remove responsibles for data sets and programs"
-msgstr ""
-
-msgid "Notifications"
-msgstr ""
-
-msgid "List notifications"
-msgstr ""
-
-msgid "Destination instance settings"
+msgid "Create, edit and delete modules from this instance metadata."
 msgstr ""
 
 msgid ""
-"Create, check connectivity, modify and delete DHIS2 destination instances. "
-"Map metadata objects between instances."
+"View, publish, download and delete metadata packages from this instance "
+"metadata modules."
 msgstr ""
 
-msgid "Module store connection"
+msgid "Package store connection"
 msgstr ""
 
-msgid "Configurate connection and credentials to retrieve modules from the store."
+msgid "Configure connections to metadata package stores."
 msgstr ""
 
-msgid "Available modules"
+msgid "Configuration"
 msgstr ""
 
-msgid "Create, modify and delete modules from the application"
+msgid "Instance settings"
+msgstr ""
+
+msgid ""
+"Configure, test and edit connections to other DHIS2 and map metadata "
+"objects between instances."
+msgstr ""
+
+msgid "Metadata custodians"
+msgstr ""
+
+msgid ""
+"Define who are the custodians of this instance metadata. Custodians approve "
+"metadata requests coming from other DHIS instances."
 msgstr ""
 
 msgid "Please fix the issues before testing the connection"
@@ -1157,7 +1255,7 @@ msgid_plural "Are you sure you want to delete {{count}} instances?"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Destination Instance Settings"
+msgid "Instance Settings"
 msgstr ""
 
 msgid ""
@@ -1187,7 +1285,7 @@ msgstr ""
 msgid "Instance mapping"
 msgstr ""
 
-msgid "Destination instance {{name}}"
+msgid "Between this instance and {{name}}"
 msgstr ""
 
 msgid "Aggregated mapping"
@@ -1235,7 +1333,7 @@ msgstr ""
 msgid "Origin Instance"
 msgstr ""
 
-msgid "Sender"
+msgid "Requestor"
 msgstr ""
 
 msgid "Pull request (Sent)"
@@ -1447,9 +1545,6 @@ msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Sharing settings for {{name}}"
-msgstr ""
-
 msgid "Widget cannot be used until an administrator opens the application"
 msgstr ""
 
@@ -1489,7 +1584,7 @@ msgstr ""
 msgid "Start and end dates are not a valid period"
 msgstr ""
 
-msgid "All periods"
+msgid "All time"
 msgstr ""
 
 msgid "Fixed period"

@@ -18,6 +18,8 @@ import {
 import {
     CategoryComboModel,
     CategoryModel,
+    CategoryOptionGroupModel,
+    CategoryOptionGroupSetModel,
     CategoryOptionModel,
     DataElementModel,
     DataSetModel,
@@ -185,6 +187,21 @@ export class GlobalCategoryOptionModel extends CategoryOptionModel {
 
 export class GlobalCategoryComboModel extends CategoryComboModel {
     protected static mappingType = "categoryCombos";
+    protected static isGlobalMapping = true;
+}
+
+export class GlobalCategoryOptionGroupModel extends CategoryOptionGroupModel {
+    protected static mappingType = "categoryOptionGroups";
+    protected static isGlobalMapping = true;
+}
+
+export class GlobalCategoryOptionGroupSetModel extends CategoryOptionGroupSetModel {
+    protected static mappingType = "categoryOptionGroupSets";
+    protected static isGlobalMapping = true;
+}
+
+export class GlobalCategoryModel extends CategoryModel {
+    protected static mappingType = "categories";
     protected static isGlobalMapping = true;
 }
 

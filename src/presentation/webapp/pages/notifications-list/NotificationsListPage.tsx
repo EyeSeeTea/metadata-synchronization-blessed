@@ -65,11 +65,11 @@ export const NotificationsListPage: React.FC = () => {
         },
         {
             name: "sender",
-            text: i18n.t("Sender"),
+            text: i18n.t("Requestor"),
         },
         {
             name: "recipients",
-            text: i18n.t("Recipients"),
+            text: i18n.t("Custodian"),
             getValue: ({ users = [], userGroups = [] }) => {
                 return [...users, ...userGroups].map(({ name }) => name).join(", ");
             },
@@ -144,7 +144,7 @@ export const NotificationsListPage: React.FC = () => {
     ];
 
     const rowConfig = (row: TableNotification): RowConfig => {
-        return { style: row.read ? { backgroundColor: "#EEEEEE" } : {} };
+        return { cellStyle: row.read ? { backgroundColor: "#EEEEEE" } : { fontWeight: "bold" } };
     };
 
     const validateImportPullRequestAction = useCallback(
@@ -430,16 +430,23 @@ export const NotificationsListPage: React.FC = () => {
 
     useEffect(() => {
         loading.show();
-        compositionRoot.notifications.list().then(notifications => {
-            const appNotifications = notifications.map(notification => ({
-                ...notification,
-                sender: notification.owner.name,
-            }));
+        compositionRoot.notifications
+            .list()
+            .then(notifications => {
+                const appNotifications = notifications.map(notification => ({
+                    ...notification,
+                    sender: notification.owner.name,
+                }));
 
-            setNotifications(appNotifications);
-            loading.reset();
-        });
-    }, [compositionRoot, loading, resetKey]);
+                setNotifications(appNotifications);
+            })
+            .catch(err => {
+                snackbar.error(err.message);
+            })
+            .finally(() => {
+                loading.reset();
+            });
+    }, [compositionRoot, loading, snackbar, resetKey]);
 
     useEffect(() => {
         if (!id || notifications.length === 0) return;

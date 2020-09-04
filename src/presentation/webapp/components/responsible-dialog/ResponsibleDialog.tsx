@@ -86,7 +86,7 @@ export const ResponsibleDialog: React.FC<ResponsibleDialogProps> = ({
                 externalSharing: false,
                 permissionPicker: false,
             }}
-            title={i18n.t("Responsibles for {{name}}", sharingSettingsElement)}
+            title={i18n.t("Custodians for {{name}}", sharingSettingsElement)}
             meta={sharingObject}
             onCancel={onClose}
             onChange={onSharingChanged}

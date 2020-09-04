@@ -10,6 +10,7 @@ import i18n from "../locales";
 import SyncRule from "../models/syncRule";
 import { D2Api } from "../types/d2-api";
 import "../utils/lodash-mixins";
+import { buildObject } from "../types/utils";
 
 //TODO: when all request to metadata using metadataRepository.getMetadataByIds
 // this function should be removed
@@ -37,14 +38,12 @@ export async function getMetadata(
     return results;
 }
 
-export const availablePeriods: {
-    [id: string]: {
-        name: string;
-        start?: [number, string];
-        end?: [number, string];
-    };
-} = {
-    ALL: { name: i18n.t("All periods") },
+export const availablePeriods = buildObject<{
+    name: string;
+    start?: [number, string];
+    end?: [number, string];
+}>()({
+    ALL: { name: i18n.t("All time") },
     FIXED: { name: i18n.t("Fixed period") },
     TODAY: { name: i18n.t("Today"), start: [0, "day"] },
     YESTERDAY: { name: i18n.t("Yesterday"), start: [1, "day"] },
@@ -59,7 +58,9 @@ export const availablePeriods: {
     THIS_YEAR: { name: i18n.t("This year"), start: [0, "year"] },
     LAST_YEAR: { name: i18n.t("Last year"), start: [1, "year"] },
     LAST_FIVE_YEARS: { name: i18n.t("Last 5 years"), start: [5, "year"], end: [1, "year"] },
-};
+});
+
+export type PeriodType = keyof typeof availablePeriods;
 
 export function requestJSONDownload(payload: object, syncRule: SyncRule) {
     const json = JSON.stringify(payload, null, 4);
@@ -81,7 +82,9 @@ export const mapCategoryOptionCombo = (
         const { categoryOptions = {}, categoryCombos = {} } = mapping;
         const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
         const isDisabled = _.some(
-            origin?.categoryOptions?.map(({ id }) => categoryOptions[id]),
+            origin?.categoryOptions?.map(({ id }) =>
+                _.keys(categoryOptions).find(candidate => _.last(candidate.split("-")) === id)
+            ),
             { mappedId: "DISABLED" }
         );
 
@@ -90,9 +93,17 @@ export const mapCategoryOptionCombo = (
             _.isEqual(
                 _.sortBy(o.categoryOptions, ["id"]),
                 _.sortBy(
-                    origin?.categoryOptions?.map(({ id }) => ({
-                        id: categoryOptions[id]?.mappedId,
-                    })),
+                    origin?.categoryOptions?.map(({ id }) => {
+                        const nestedId = _.keys(categoryOptions).find(
+                            candidate => _.last(candidate.split("-")) === id
+                        );
+
+                        return nestedId
+                            ? {
+                                  id: categoryOptions[nestedId]?.mappedId,
+                              }
+                            : undefined;
+                    }),
                     ["id"]
                 )
             )

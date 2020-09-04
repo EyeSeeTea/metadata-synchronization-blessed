@@ -10,7 +10,7 @@ import { useAppContext } from "../../../../common/contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";
 import { ModuleWizardStepProps } from "../Steps";
 
-export const GeneralInfoStep = ({ module, onChange }: ModuleWizardStepProps) => {
+export const GeneralInfoStep = ({ module, onChange, isEdit }: ModuleWizardStepProps) => {
     const { compositionRoot } = useAppContext();
     const classes = useStyles();
 
@@ -56,10 +56,11 @@ export const GeneralInfoStep = ({ module, onChange }: ModuleWizardStepProps) => 
 
             <Dropdown
                 items={userGroups}
-                label={i18n.t("Department")}
+                label={i18n.t("Department (*)")}
                 value={module.department?.id ?? ""}
                 onValueChange={onChangeDepartment}
                 view={"full-width"}
+                disabled={isEdit}
             />
 
             <TextField
