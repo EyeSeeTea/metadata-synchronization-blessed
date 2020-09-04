@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-08-31T10:20:47.391Z\n"
-"PO-Revision-Date: 2020-08-31T10:20:47.391Z\n"
+"POT-Creation-Date: 2020-09-04T06:17:00.013Z\n"
+"PO-Revision-Date: 2020-09-04T06:17:00.013Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -505,6 +505,9 @@ msgid "Select dependencies"
 msgstr ""
 
 msgid "Advanced options"
+msgstr ""
+
+msgid "Department (*)"
 msgstr ""
 
 msgid "Selected {{difference}} elements"

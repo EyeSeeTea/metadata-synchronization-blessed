@@ -56,7 +56,7 @@ export const GeneralInfoStep = ({ module, onChange, isEdit }: ModuleWizardStepPr
 
             <Dropdown
                 items={userGroups}
-                label={i18n.t("Department")}
+                label={i18n.t("Department (*)")}
                 value={module.department?.id ?? ""}
                 onValueChange={onChangeDepartment}
                 view={"full-width"}
