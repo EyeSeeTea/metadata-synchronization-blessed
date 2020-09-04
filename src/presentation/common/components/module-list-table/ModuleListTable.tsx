@@ -2,8 +2,11 @@ import { Icon } from "@material-ui/core";
 import {
     ConfirmationDialog,
     ConfirmationDialogProps,
+    MetaObject,
     ObjectsTable,
     ObjectsTableDetailField,
+    SearchResult,
+    ShareUpdate,
     TableAction,
     TableColumn,
     TableSelection,
@@ -12,18 +15,23 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
+import { promiseMap } from "../../../../utils/common";
+import { getUserInfo, isGlobalAdmin, UserInfo } from "../../../../utils/permissions";
+import Dropdown from "../../../webapp/components/dropdown/Dropdown";
 import {
     PullRequestCreation,
     PullRequestCreationDialog,
 } from "../../../webapp/components/pull-request-creation-dialog/PullRequestCreationDialog";
+import { SharingDialog } from "../../../webapp/components/sharing-dialog/SharingDialog";
 import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
-import { NewPacakgeDialog } from "./NewPackageDialog";
+import { NewPackageDialog } from "./NewPackageDialog";
+import { getValidationsByVersionFeedback } from "./utils";
 
 export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,
@@ -39,14 +47,20 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     const history = useHistory();
 
     const [rows, setRows] = useState<Module[]>([]);
+    const [selection, updateSelection] = useState<TableSelection[]>([]);
+
     const [resetKey, setResetKey] = useState(Math.random());
     const [isTableLoading, setIsTableLoading] = useState(false);
     const [newPackageModule, setNewPackageModule] = useState<Module>();
-    const [selection, updateSelection] = useState<TableSelection[]>([]);
+    const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
+    const [departmentFilter, setDepartmentFilter] = useState("");
 
-    const editRule = useCallback(
+    const [globalAdmin, setGlobalAdmin] = useState(false);
+    const [userInfo, setUserInfo] = useState<UserInfo>();
+
+    const editModule = useCallback(
         (ids: string[]) => {
             const item = _.find(rows, ({ id }) => id === ids[0]);
             if (!item) snackbar.error(i18n.t("Invalid module"));
@@ -91,25 +105,29 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             const module = _.find(rows, ({ id }) => id === item.module.id);
             if (!module) snackbar.error(i18n.t("Invalid module"));
             else {
-                for (const dhisVersion of versions) {
-                    loading.show(
-                        true,
-                        i18n.t("Creating {{dhisVersion}} package for module {{name}}", {
-                            name: module.name,
-                            dhisVersion,
-                        })
-                    );
+                const validationsByVersion = _.fromPairs(
+                    await promiseMap(versions, async dhisVersion => {
+                        loading.show(
+                            true,
+                            i18n.t("Creating {{dhisVersion}} package for module {{name}}", {
+                                name: module.name,
+                                dhisVersion,
+                            })
+                        );
 
-                    const originInstance = remoteInstance?.id ?? "LOCAL";
-                    const contents = await compositionRoot.sync[module.type]({
-                        ...module.toSyncBuilder(),
-                        originInstance,
-                        targetInstances: [],
-                    }).buildPayload();
+                        const validations = await compositionRoot.packages.create(
+                            remoteInstance?.id ?? "LOCAL",
+                            item,
+                            module,
+                            dhisVersion
+                        );
 
-                    const newPackage = item.update({ contents, dhisVersion });
-                    await compositionRoot.packages.create(newPackage, module);
-                }
+                        return [dhisVersion, validations];
+                    })
+                );
+
+                const [level, msg] = getValidationsByVersionFeedback(module, validationsByVersion);
+                snackbar.openSnackbar(level, msg);
 
                 loading.reset();
                 setResetKey(Math.random());
@@ -204,12 +222,15 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     const replicateModule = useCallback(
         async (ids: string[]) => {
             const item = _.find(rows, ({ id }) => id === ids[0]);
-            if (!item) snackbar.error(i18n.t("Invalid module"));
-            else
-                history.push({
-                    pathname: `/modules/new`,
-                    state: { module: item.replicate() },
-                });
+            if (!item) {
+                snackbar.error(i18n.t("Invalid module"));
+                return;
+            }
+
+            history.push({
+                pathname: `/modules/new`,
+                state: { module: item.replicate() },
+            });
         },
         [history, rows, snackbar]
     );
@@ -227,6 +248,22 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
         [compositionRoot, loading]
     );
 
+    const openSharingSettings = useCallback(
+        async (ids: string[]) => {
+            const module = _.find(rows, ({ id }) => id === ids[0]);
+            if (!module) {
+                snackbar.error(i18n.t("Invalid module"));
+                return;
+            }
+
+            setSharingSettingsObject({
+                object: module,
+                meta: { allowPublicAccess: true, allowExternalAccess: false },
+            });
+        },
+        [rows, snackbar]
+    );
+
     const updateTable = useCallback(
         ({ selection }: TableState<Module>) => {
             updateSelection(selection);
@@ -234,110 +271,214 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
         [updateSelection]
     );
 
-    const columns: TableColumn<Module>[] = [
-        { name: "name", text: i18n.t("Name"), sortable: true },
-        {
-            name: "department",
-            text: i18n.t("Department"),
-            sortable: true,
-            getValue: ({ department }) => {
-                return department.name;
-            },
-        },
-        { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
-        {
-            name: "metadataIds",
-            text: "Selected metadata",
-            getValue: module => `${module.metadataIds.length} elements`,
-        },
-        { name: "lastUpdated", text: i18n.t("Last updated"), hidden: true },
-        { name: "lastUpdatedBy", text: i18n.t("Last updated by"), hidden: true },
-        { name: "created", text: i18n.t("Created"), hidden: true },
-        { name: "user", text: i18n.t("Created by"), hidden: true },
-    ];
+    const verifyUserHasWritePermissions = useCallback(
+        (modules: Module[]) => {
+            if (globalAdmin) return true;
 
-    const details: ObjectsTableDetailField<Module>[] = [
-        { name: "name", text: i18n.t("Name") },
-        {
-            name: "department",
-            text: i18n.t("Department"),
-            getValue: ({ department }) => {
-                return department.name;
-            },
-        },
-        { name: "description", text: i18n.t("Description") },
-        {
-            name: "metadataIds",
-            text: i18n.t("Selected metadata"),
-            getValue: module => `${module.metadataIds.length} elements`,
-        },
-        { name: "lastUpdated", text: i18n.t("Last updated") },
-        { name: "lastUpdatedBy", text: i18n.t("Last updated by") },
-        { name: "created", text: i18n.t("Created") },
-        { name: "user", text: i18n.t("Created by") },
-    ];
+            for (const module of modules) {
+                if (!!userInfo && !module.hasPermissions("write", userInfo.id, userInfo.userGroups))
+                    return false;
+            }
 
-    const actions: TableAction<Module>[] = [
-        {
-            name: "details",
-            text: i18n.t("Details"),
-            multiple: false,
-            primary: presentation !== "app" && !remoteInstance,
+            return true;
         },
-        {
-            name: "edit",
-            text: i18n.t("Edit"),
-            multiple: false,
-            isActive: () => presentation === "app" && !remoteInstance,
-            onClick: editRule,
-            primary: presentation === "app" && !remoteInstance,
-            icon: <Icon>edit</Icon>,
+        [globalAdmin, userInfo]
+    );
+
+    const columns: TableColumn<Module>[] = useMemo(
+        () => [
+            { name: "name", text: i18n.t("Name"), sortable: true },
+            {
+                name: "department",
+                text: i18n.t("Department"),
+                sortable: true,
+                getValue: ({ department }) => {
+                    return department.name;
+                },
+            },
+            { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
+            {
+                name: "metadataIds",
+                text: "Selected metadata",
+                getValue: module => `${module.metadataIds.length} elements`,
+            },
+            { name: "lastUpdated", text: i18n.t("Last updated"), hidden: true },
+            { name: "lastUpdatedBy", text: i18n.t("Last updated by"), hidden: true },
+            { name: "created", text: i18n.t("Created"), hidden: true },
+            { name: "user", text: i18n.t("Created by"), hidden: true },
+        ],
+        []
+    );
+
+    const details: ObjectsTableDetailField<Module>[] = useMemo(
+        () => [
+            { name: "name", text: i18n.t("Name") },
+            {
+                name: "department",
+                text: i18n.t("Department"),
+                getValue: ({ department }) => {
+                    return department.name;
+                },
+            },
+            { name: "description", text: i18n.t("Description") },
+            {
+                name: "metadataIds",
+                text: i18n.t("Selected metadata"),
+                getValue: module => `${module.metadataIds.length} elements`,
+            },
+            { name: "lastUpdated", text: i18n.t("Last updated") },
+            { name: "lastUpdatedBy", text: i18n.t("Last updated by") },
+            { name: "created", text: i18n.t("Created") },
+            { name: "user", text: i18n.t("Created by") },
+        ],
+        []
+    );
+
+    const actions: TableAction<Module>[] = useMemo(
+        () => [
+            {
+                name: "details",
+                text: i18n.t("Details"),
+                multiple: false,
+                primary: presentation !== "app" && !remoteInstance,
+            },
+            {
+                name: "edit",
+                text: i18n.t("Edit"),
+                multiple: false,
+                isActive: modules =>
+                    presentation === "app" &&
+                    !remoteInstance &&
+                    verifyUserHasWritePermissions(modules),
+                onClick: editModule,
+                primary: presentation === "app" && !remoteInstance,
+                icon: <Icon>edit</Icon>,
+            },
+            {
+                name: "delete",
+                text: i18n.t("Delete"),
+                multiple: true,
+                isActive: modules =>
+                    presentation === "app" &&
+                    !remoteInstance &&
+                    verifyUserHasWritePermissions(modules),
+                onClick: deleteModule,
+                icon: <Icon>delete</Icon>,
+            },
+            {
+                name: "replicate",
+                text: i18n.t("Replicate"),
+                multiple: false,
+                onClick: replicateModule,
+                icon: <Icon>content_copy</Icon>,
+                isActive: () => presentation === "app" && !remoteInstance,
+            },
+            {
+                name: "download",
+                text: i18n.t("Download metadata package"),
+                multiple: false,
+                onClick: downloadSnapshot,
+                icon: <Icon>cloud_download</Icon>,
+            },
+            {
+                name: "package-data-store",
+                text: i18n.t("Generate package from module"),
+                multiple: false,
+                icon: <Icon>description</Icon>,
+                isActive: () => presentation === "app" && !remoteInstance,
+                onClick: createPackage,
+            },
+            {
+                name: "pull-metadata",
+                text: i18n.t("Pull metadata"),
+                multiple: false,
+                icon: <Icon>arrow_downward</Icon>,
+                isActive: () => presentation === "app" && !!remoteInstance,
+                onClick: pullModule,
+            },
+            {
+                name: "sharingSettings",
+                text: i18n.t("Sharing settings"),
+                multiple: false,
+                isActive: verifyUserHasWritePermissions,
+                onClick: openSharingSettings,
+                icon: <Icon>share</Icon>,
+            },
+        ],
+        [
+            createPackage,
+            deleteModule,
+            downloadSnapshot,
+            editModule,
+            openSharingSettings,
+            presentation,
+            pullModule,
+            remoteInstance,
+            replicateModule,
+            verifyUserHasWritePermissions,
+        ]
+    );
+
+    const departmentFilterItems = useMemo(() => {
+        return _(rows)
+            .map(({ department }) => department)
+            .uniqBy(({ id }) => id)
+            .sortBy(({ name }) => name)
+            .value();
+    }, [rows]);
+
+    const filterComponents = React.useMemo(() => {
+        const departmentFilterComponent = (
+            <Dropdown
+                key="filter-department"
+                items={departmentFilterItems}
+                onValueChange={setDepartmentFilter}
+                value={departmentFilter}
+                label={i18n.t("Department")}
+            />
+        );
+
+        return [externalComponents, departmentFilterComponent];
+    }, [externalComponents, departmentFilter, departmentFilterItems]);
+
+    const rowsFiltered = useMemo(() => {
+        return departmentFilter
+            ? rows.filter(({ department }) => department.id === departmentFilter)
+            : rows;
+    }, [departmentFilter, rows]);
+
+    const onSearchRequest = useCallback(
+        async (key: string) =>
+            api
+                .get<SearchResult>("/sharing/search", { key })
+                .getData(),
+        [api]
+    );
+
+    const onSharingChanged = useCallback(
+        async (updatedAttributes: ShareUpdate) => {
+            if (!sharingSettingsObject) return;
+
+            const module = (sharingSettingsObject.object as Module).update(updatedAttributes);
+
+            await compositionRoot.modules.save(module);
+            setSharingSettingsObject({
+                meta: sharingSettingsObject.meta,
+                object: module,
+            });
         },
-        {
-            name: "delete",
-            text: i18n.t("Delete"),
-            multiple: true,
-            isActive: () => presentation === "app" && !remoteInstance,
-            onClick: deleteModule,
-            icon: <Icon>delete</Icon>,
-        },
-        {
-            name: "replicate",
-            text: i18n.t("Replicate"),
-            multiple: false,
-            onClick: replicateModule,
-            icon: <Icon>content_copy</Icon>,
-            isActive: () => presentation === "app" && !remoteInstance,
-        },
-        {
-            name: "download",
-            text: i18n.t("Download metadata package"),
-            multiple: false,
-            onClick: downloadSnapshot,
-            icon: <Icon>cloud_download</Icon>,
-        },
-        {
-            name: "package-data-store",
-            text: i18n.t("Generate package from module"),
-            multiple: false,
-            icon: <Icon>description</Icon>,
-            isActive: () => presentation === "app" && !remoteInstance,
-            onClick: createPackage,
-        },
-        {
-            name: "pull-metadata",
-            text: i18n.t("Pull metadata"),
-            multiple: false,
-            icon: <Icon>arrow_downward</Icon>,
-            isActive: () => presentation === "app" && !!remoteInstance,
-            onClick: pullModule,
-        },
-    ];
+        [sharingSettingsObject, compositionRoot]
+    );
+
+    const closeSharingSettingsDialog = useCallback(() => {
+        setSharingSettingsObject(null);
+        setResetKey(Math.random());
+    }, []);
 
     useEffect(() => {
         setIsTableLoading(true);
         compositionRoot.modules
-            .list(remoteInstance)
+            .list(globalAdmin, remoteInstance)
             .then(rows => {
                 setRows(rows);
                 setIsTableLoading(false);
@@ -347,26 +488,35 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 setRows([]);
                 setIsTableLoading(false);
             });
-    }, [compositionRoot, remoteInstance, resetKey, snackbar, setIsTableLoading]);
+    }, [compositionRoot, remoteInstance, resetKey, snackbar, setIsTableLoading, globalAdmin]);
+
+    useEffect(() => {
+        setDepartmentFilter("");
+    }, [remoteInstance]);
+
+    useEffect(() => {
+        isGlobalAdmin(api).then(setGlobalAdmin);
+        getUserInfo(api).then(setUserInfo);
+    }, [api]);
 
     return (
         <React.Fragment>
             <ObjectsTable<Module>
-                rows={rows}
+                rows={rowsFiltered}
                 loading={isTableLoading}
                 columns={columns}
                 details={details}
                 actions={actions}
                 onActionButtonClick={onActionButtonClick}
                 forceSelectionColumn={presentation === "app"}
-                filterComponents={externalComponents}
+                filterComponents={filterComponents}
                 selection={selection}
                 onChange={updateTable}
                 paginationOptions={paginationOptions}
             />
 
             {!!newPackageModule && (
-                <NewPacakgeDialog
+                <NewPackageDialog
                     save={savePackage}
                     close={() => setNewPackageModule(undefined)}
                     module={newPackageModule}
@@ -377,6 +527,23 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 <PullRequestCreationDialog
                     {...pullRequestProps}
                     onClose={() => setPullRequestProps(undefined)}
+                />
+            )}
+
+            {!!sharingSettingsObject && (
+                <SharingDialog
+                    isOpen={true}
+                    showOptions={{
+                        title: false,
+                        dataSharing: false,
+                    }}
+                    title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
+                    meta={sharingSettingsObject}
+                    onCancel={closeSharingSettingsDialog}
+                    onChange={onSharingChanged}
+                    onSearch={onSearchRequest}
+                    //@ts-ignore FIXME: Update d2-ui-components to make object generic extending ShareableObject
+                    unremovebleIds={new Set([sharingSettingsObject.object.department.id])}
                 />
             )}
 

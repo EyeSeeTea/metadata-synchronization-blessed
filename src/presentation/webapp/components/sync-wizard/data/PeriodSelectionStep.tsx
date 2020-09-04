@@ -1,85 +1,59 @@
-import { makeStyles } from "@material-ui/core";
-import { DatePicker } from "d2-ui-components";
-import _ from "lodash";
 import React from "react";
 import { DataSyncPeriod } from "../../../../../domain/aggregated/types";
-import { availablePeriods } from "../../../../../utils/synchronization";
-import Dropdown from "../../dropdown/Dropdown";
 import { SyncWizardStepProps } from "../Steps";
-import i18n from "../../../../../locales";
-
-const useStyles = makeStyles({
-    dropdown: {
-        marginTop: 20,
-        marginLeft: -10,
-    },
-    fixedPeriod: {
-        marginTop: 5,
-        marginBottom: -20,
-    },
-    datePicker: {
-        marginTop: -10,
-    },
-});
+import PeriodSelection, { ObjectWithPeriod } from "../../period-selection/PeriodSelection";
 
 const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
-    const classes = useStyles();
-
-    const updatePeriod = (period: DataSyncPeriod) => {
-        onChange(
-            syncRule
-                .updateDataSyncPeriod(period)
-                .updateDataSyncStartDate(undefined)
-                .updateDataSyncEndDate(undefined)
-                .updateDataSyncEvents([])
-        );
-    };
-
-    const updateStartDate = (date: Date | null) => {
-        onChange(syncRule.updateDataSyncStartDate(date ?? undefined).updateDataSyncEvents([]));
-    };
-
-    const updateEndDate = (date: Date | null) => {
-        onChange(syncRule.updateDataSyncEndDate(date ?? undefined).updateDataSyncEvents([]));
-    };
-
-    const periodItems = _(availablePeriods)
-        .mapValues((value, key) => ({ ...value, id: key }))
-        .values()
-        .value();
-
-    return (
-        <React.Fragment>
-            <div className={classes.dropdown}>
-                <Dropdown
-                    label={i18n.t("Period")}
-                    items={periodItems}
-                    value={syncRule.dataSyncPeriod}
-                    onValueChange={updatePeriod}
-                    hideEmpty={true}
-                />
-            </div>
-
-            {syncRule.dataSyncPeriod === "FIXED" && (
-                <div className={classes.fixedPeriod}>
-                    <div className={classes.datePicker}>
-                        <DatePicker
-                            label={`${i18n.t("Start date")} (*)`}
-                            value={syncRule.dataSyncStartDate || null}
-                            onChange={updateStartDate}
-                        />
-                    </div>
-                    <div className={classes.datePicker}>
-                        <DatePicker
-                            label={`${i18n.t("End date")} (*)`}
-                            value={syncRule.dataSyncEndDate || null}
-                            onChange={updateEndDate}
-                        />
-                    </div>
-                </div>
-            )}
-        </React.Fragment>
+    const updatePeriod = React.useCallback(
+        (period: DataSyncPeriod) => {
+            onChange(
+                syncRule
+                    .updateDataSyncPeriod(period)
+                    .updateDataSyncStartDate(undefined)
+                    .updateDataSyncEndDate(undefined)
+                    .updateDataSyncEvents([])
+            );
+        },
+        [onChange, syncRule]
     );
+
+    const updateStartDate = React.useCallback(
+        (date: Date | null) => {
+            onChange(syncRule.updateDataSyncStartDate(date ?? undefined).updateDataSyncEvents([]));
+        },
+        [onChange, syncRule]
+    );
+
+    const updateEndDate = React.useCallback(
+        (date: Date | null) => {
+            onChange(syncRule.updateDataSyncEndDate(date ?? undefined).updateDataSyncEvents([]));
+        },
+        [onChange, syncRule]
+    );
+
+    const onFieldChange = React.useCallback(
+        (field: keyof ObjectWithPeriod, value: ObjectWithPeriod[keyof ObjectWithPeriod]) => {
+            switch (field) {
+                case "period":
+                    return updatePeriod(value as ObjectWithPeriod["period"]);
+                case "startDate":
+                    return updateStartDate((value as ObjectWithPeriod["startDate"]) || null);
+                case "endDate":
+                    return updateEndDate((value as ObjectWithPeriod["endDate"]) || null);
+            }
+        },
+        [updatePeriod, updateStartDate, updateEndDate]
+    );
+
+    const objectWithPeriod = React.useMemo(() => {
+        return {
+            period: syncRule.dataSyncPeriod,
+            startDate: syncRule.dataSyncStartDate || undefined,
+            endDate: syncRule.dataSyncEndDate || undefined,
+        };
+    }, [syncRule]);
+
+    return <PeriodSelection objectWithPeriod={objectWithPeriod} onFieldChange={onFieldChange} />;
 };
 
 export default PeriodSelectionStep;

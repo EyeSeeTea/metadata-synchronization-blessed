@@ -1,5 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import React from "react";
+import _ from "lodash";
 import PageHeader from "../page-header/PageHeader";
 import MenuCard, { MenuCardProps } from "./MenuCard";
 
@@ -42,7 +43,8 @@ export const Landing: React.FC<LandingProps> = ({ title, cards, onBackClick }) =
             <div className={classes.container} key="landing">
                 {cards.map(
                     ({ key, title, isVisible = true, children }) =>
-                        isVisible && (
+                        isVisible &&
+                        isAnyChildVisible(children) && (
                             <div key={key}>
                                 {!!title && <h1 className={classes.title}>{title}</h1>}
 
@@ -58,3 +60,7 @@ export const Landing: React.FC<LandingProps> = ({ title, cards, onBackClick }) =
         </React.Fragment>
     );
 };
+
+function isAnyChildVisible(children: MenuCardProps[]): boolean {
+    return _.some(children, ({ isVisible = true }) => isVisible);
+}

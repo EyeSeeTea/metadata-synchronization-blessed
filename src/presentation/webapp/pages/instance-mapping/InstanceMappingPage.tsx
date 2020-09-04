@@ -12,6 +12,9 @@ import {
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
     GlobalCategoryComboModel,
+    GlobalCategoryModel,
+    GlobalCategoryOptionGroupModel,
+    GlobalCategoryOptionGroupSetModel,
     GlobalCategoryOptionModel,
     GlobalDataElementModel,
     GlobalOptionModel,
@@ -40,10 +43,13 @@ const config = {
     global: {
         title: i18n.t("Global mapping"),
         models: [
-            GlobalCategoryOptionModel,
+            GlobalCategoryModel,
             GlobalCategoryComboModel,
-            GlobalOptionModel,
+            GlobalCategoryOptionModel,
+            GlobalCategoryOptionGroupModel,
+            GlobalCategoryOptionGroupSetModel,
             GlobalDataElementModel,
+            GlobalOptionModel,
         ],
     },
 };
@@ -91,7 +97,7 @@ export default function InstanceMappingPage() {
         await onChangeMapping(newMapping);
     };
 
-    const instanceTitle = instance ? i18n.t("Destination instance {{name}}", instance) : undefined;
+    const instanceTitle = instance ? i18n.t("Between this instance and {{name}}", instance) : null;
     const title = _.compact([sectionTitle, instanceTitle]).join(" - ");
 
     return (

@@ -16,6 +16,7 @@ import {
 import { useAppContext } from "../../../../common/contexts/AppContext";
 import { buildAggregationItems } from "../data/AggregationStep";
 import { buildInstanceOptions } from "./InstanceSelectionStep";
+import { filterRuleToString } from "../../../../../domain/metadata/entities/FilterRule";
 
 const LiEntry = ({ label, value, children }) => {
     return (
@@ -152,6 +153,25 @@ const SaveStep = ({ syncRule, onCancel }) => {
                         )
                     );
                 })}
+
+                {syncRule.filterRules.length > 0 && (
+                    <LiEntry
+                        label={i18n.t("Filter rules [{{total}}]", {
+                            total: syncRule.filterRules.length,
+                        })}
+                    >
+                        <ul>
+                            {_.sortBy(syncRule.filterRules, fr => fr.type).map(filterRule => {
+                                return (
+                                    <LiEntry
+                                        key={filterRule.id}
+                                        label={filterRuleToString(filterRule)}
+                                    />
+                                );
+                            })}
+                        </ul>
+                    </LiEntry>
+                )}
 
                 {syncRule.excludedIds.length > 0 && (
                     <LiEntry

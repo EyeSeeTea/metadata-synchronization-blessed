@@ -17,6 +17,7 @@ export interface ModuleWizardStepProps<T extends Module = Module> {
     onChange: (module: T) => void;
     onCancel: () => void;
     onClose: () => void;
+    isEdit: boolean;
 }
 
 const commonSteps: {

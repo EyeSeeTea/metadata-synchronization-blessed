@@ -32,6 +32,7 @@ import {
     saveDataStore,
 } from "./dataStore";
 import { D2Model } from "./dhis/default";
+import { FilterRule } from "../domain/metadata/entities/FilterRule";
 
 const dataStoreKey = "rules";
 
@@ -39,6 +40,7 @@ const defaultSynchronizationBuilder: SynchronizationBuilder = {
     originInstance: "LOCAL",
     targetInstances: [],
     metadataIds: [],
+    filterRules: [],
     excludedIds: [],
     metadataTypes: [],
     dataParams: {
@@ -137,6 +139,10 @@ export default class SyncRule {
 
     public get excludedIds(): string[] {
         return this.syncRule.builder?.excludedIds ?? [];
+    }
+
+    public get filterRules(): FilterRule[] {
+        return this.syncRule.builder?.filterRules ?? [];
     }
 
     public get metadataTypes(): string[] {
@@ -354,6 +360,7 @@ export default class SyncRule {
     public toBuilder(): SynchronizationBuilder {
         return _.pick(this, [
             "metadataIds",
+            "filterRules",
             "excludedIds",
             "metadataTypes",
             "originInstance",
@@ -387,6 +394,10 @@ export default class SyncRule {
             .value();
 
         return SyncRule.build(data);
+    }
+
+    public updateFilterRules(filterRules: FilterRule[]): SyncRule {
+        return this.updateBuilder({ filterRules });
     }
 
     public markToUseDefaultIncludeExclude(): SyncRule {
@@ -678,6 +689,10 @@ export default class SyncRule {
         await deleteDataStore(api, detailsKey);
     }
 
+    private get usesFilterRules(): boolean {
+        return this.type === "metadata";
+    }
+
     public async validate(): Promise<OldValidation> {
         return _.pickBy({
             name: _.compact([
@@ -689,10 +704,20 @@ export default class SyncRule {
                     : null,
             ]),
             metadataIds: _.compact([
-                this.metadataIds.length === 0
+                !this.usesFilterRules && this.metadataIds.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "metadata element" },
+                      }
+                    : null,
+            ]),
+            metadata: _.compact([
+                this.usesFilterRules &&
+                this.metadataIds.length === 0 &&
+                this.filterRules.length === 0
+                    ? {
+                          key: "cannot_be_empty",
+                          namespace: { element: "metadata element or create a filter rule" },
                       }
                     : null,
             ]),

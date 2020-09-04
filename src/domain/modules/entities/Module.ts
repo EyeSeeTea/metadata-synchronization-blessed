@@ -1,6 +1,7 @@
 import { generateUid } from "d2/uid";
+import _ from "lodash";
 import { SynchronizationBuilder } from "../../../types/synchronization";
-import { NamedRef, SharedRef } from "../../common/entities/Ref";
+import { NamedRef, Ref, SharedRef } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
 import { MetadataModule } from "./MetadataModule";
@@ -64,6 +65,26 @@ export abstract class GenericModule implements BaseModule {
         "originInstance" | "targetInstances"
     >;
 
+    public hasPermissions(permission: "read" | "write", userId: string, userGroups: Ref[]) {
+        const { publicAccess = "--------", userAccesses = [], userGroupAccesses = [] } = this;
+        const token = permission === "read" ? "r" : "w";
+
+        const isUserOwner = this.user.id === userId;
+        const isPublic = publicAccess.substring(0, 2).includes(token);
+
+        const hasUserAccess = !!_(userAccesses)
+            .filter(({ access }) => access.substring(0, 2).includes(token))
+            .find(({ id }) => id === userId);
+
+        const hasGroupAccess =
+            _(userGroupAccesses)
+                .filter(({ access }) => access.substring(0, 2).includes(token))
+                .intersectionBy(userGroups, "id")
+                .value().length > 0;
+
+        return isUserOwner || isPublic || hasUserAccess || hasGroupAccess;
+    }
+
     protected abstract moduleValidations: () => ModelValidation[];
 
     protected static buildDefaultValues = (): Pick<GenericModule, keyof BaseModule> => {
@@ -78,7 +99,7 @@ export abstract class GenericModule implements BaseModule {
             type: "metadata",
             instance: "",
             lastPackageVersion: "",
-            publicAccess: "--------",
+            publicAccess: "rw------",
             userAccesses: [],
             userGroupAccesses: [],
             user: {
