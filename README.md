@@ -18,6 +18,20 @@ When the app starts, it will check the data store version and open a dialog if a
 $ yarn migrate 'http://admin:PASSWORD@localhost:8080'
 ```
 
+## Scheduler
+
+The app provides a server-side scheduler script that runs synchronization rules in the background. It requires a `app-config.json` configuration file. If no configuration file is supplied the following is used as a placeholder:
+
+```json
+{
+    "encryptionKey": "encryptionKey",
+    "apiUrl": "https://play.dhis2.org/2.30/api",
+    "username": "admin",
+    "password": "district"
+}
+
+```
+
 ## Development
 
 ### Start the development server of the main application:
@@ -82,6 +96,12 @@ To build the widget:
 
 ```
 $ yarn build-widget modules-list|package-exporter
+```
+
+To build the scheduler:
+
+```
+$ yarn build-scheduler
 ```
 
 ## i18n
