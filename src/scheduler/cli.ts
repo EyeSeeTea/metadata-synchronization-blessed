@@ -52,7 +52,7 @@ const start = async (): Promise<void> => {
     if (!baseUrl || !username || !password || !encryptionKey) {
         throw new Error("Couldn't connect to server");
     }
-    
+
     const api = new D2Api({ baseUrl, auth: { username, password } });
     await checkMigrations(api);
 
