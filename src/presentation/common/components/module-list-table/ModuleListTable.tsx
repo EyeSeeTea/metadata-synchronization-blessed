@@ -542,6 +542,8 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                     onCancel={closeSharingSettingsDialog}
                     onChange={onSharingChanged}
                     onSearch={onSearchRequest}
+                    //@ts-ignore FIXME: Update d2-ui-components to make object generic extending ShareableObject
+                    unremovebleIds={new Set([sharingSettingsObject.object.department.id])}
                 />
             )}
 

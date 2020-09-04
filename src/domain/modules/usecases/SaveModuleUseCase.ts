@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
@@ -31,6 +32,17 @@ export class SaveModuleUseCase implements UseCase {
                 lastUpdated: new Date(),
                 lastUpdatedBy: user,
                 user: module.user.id ? module.user : user,
+                userGroupAccesses: _.unionBy(
+                    module.userGroupAccesses,
+                    [
+                        {
+                            ...module.department,
+                            displayName: module.department.name,
+                            access: "rw----",
+                        },
+                    ],
+                    "id"
+                ),
             });
 
             await storageRepository.saveObjectInCollection(Namespace.MODULES, newModule);
