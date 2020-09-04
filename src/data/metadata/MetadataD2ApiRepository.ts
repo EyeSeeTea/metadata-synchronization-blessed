@@ -30,6 +30,7 @@ import {
     DateFilter,
     StringMatch,
     FilterWhere,
+    stringMatchHasValue,
 } from "../../domain/metadata/entities/FilterRule";
 import { modelFactory } from "../../models/dhis/factory";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
@@ -224,9 +225,9 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const listOfIds = await promiseMap(filterRules, async filterRule => {
             const myClass = modelFactory(this.api, filterRule.metadataType);
             const collectionName = myClass.getCollectionName();
-            // Make one request per field and join results. It's the only way to make a
-            // OR text search on arbitrary (non-identifiable fields).
-            const stringMatchFields: Array<string | null> = filterRule.stringMatch
+            // Make one separate request per field and join results. That the only way to
+            // perform an OR text-search on arbitrary fields (identifiable: id, name, code).
+            const stringMatchFields: (string | null)[] = stringMatchHasValue(filterRule.stringMatch)
                 ? ["name", "code", "description"]
                 : [null];
             const responses$ = stringMatchFields.map(async stringMatchField => {

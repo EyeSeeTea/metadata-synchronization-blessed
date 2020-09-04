@@ -20,17 +20,7 @@ import { FilterRuleDialog, NewFilterRuleDialogProps } from "./FilterRuleDialog";
 import { updateObject as updateObjectInList } from "../../../../domain/common/entities/Ref";
 import { metadataModels } from "../../../../models/dhis/factory";
 import { useAppContext } from "../../contexts/AppContext";
-
-type FilterRuleRow = FilterRule;
-
-function useOpenState<Value>(initialValue?: Value) {
-    const [value, setValue] = React.useState<Value | undefined>(initialValue);
-    const open = React.useCallback((value: Value) => setValue(value), [setValue]);
-    const close = React.useCallback(() => setValue(undefined), [setValue]);
-    const isOpen = !!value;
-
-    return { isOpen, value, open, close };
-}
+import { useOpenState } from "../../hooks/useOpenState";
 
 export interface FilterRulesTableProps {
     filterRules: FilterRule[];
@@ -70,13 +60,13 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
     );
 
     const updateTable = useCallback(
-        ({ selection }: TableState<FilterRuleRow>) => {
+        ({ selection }: TableState<FilterRule>) => {
             updateSelection(selection);
         },
         [updateSelection]
     );
 
-    const columns: TableColumn<FilterRuleRow>[] = useMemo(
+    const columns: TableColumn<FilterRule>[] = useMemo(
         () => [
             {
                 name: "metadataType",
@@ -102,7 +92,7 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
         [modelNames]
     );
 
-    const actions: TableAction<FilterRuleRow>[] = useMemo(
+    const actions: TableAction<FilterRule>[] = useMemo(
         () => [
             {
                 name: "edit",
@@ -145,7 +135,7 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
 
     return (
         <React.Fragment>
-            <ObjectsTable<FilterRuleRow>
+            <ObjectsTable<FilterRule>
                 rows={filterRules}
                 columns={columns}
                 actions={actions}

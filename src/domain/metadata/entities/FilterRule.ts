@@ -63,6 +63,8 @@ export interface DateFilter {
     endDate?: Date;
 }
 
+/* Functions */
+
 export function updateFilterRule<Field extends keyof FilterRule>(
     filterRule: FilterRule,
     field: Field,

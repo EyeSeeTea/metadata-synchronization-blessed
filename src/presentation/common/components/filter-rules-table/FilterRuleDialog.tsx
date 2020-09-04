@@ -126,6 +126,8 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
     );
 };
 
+const whereItems = _.map(whereNames, (name, key) => ({ id: key, name }));
+
 const useStyles = makeStyles({
     dropdown: {
         marginTop: 20,
@@ -134,5 +136,3 @@ const useStyles = makeStyles({
         marginLeft: 10,
     },
 });
-
-const whereItems = _.map(whereNames, (name, key) => ({ id: key, name }));

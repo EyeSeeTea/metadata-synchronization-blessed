@@ -30,6 +30,7 @@ export const Section: React.FC<{ title: string }> = props => {
                 <Typography className={classes.title} color="textSecondary" gutterBottom>
                     {title}
                 </Typography>
+
                 {children}
             </CardContent>
         </Card>
