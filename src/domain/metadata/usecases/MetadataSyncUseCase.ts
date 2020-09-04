@@ -91,7 +91,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     }
 
     public buildPayload = memoize(async () => {
-        const { metadataIds, syncParams, filterRules } = this.builder;
+        const { metadataIds, syncParams, filterRules = [] } = this.builder;
         const {
             includeSharingSettings = true,
             metadataIncludeExcludeRules = {},

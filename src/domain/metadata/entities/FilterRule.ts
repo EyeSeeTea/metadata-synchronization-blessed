@@ -81,7 +81,7 @@ export function filterRuleToString(filterRule: FilterRule): string {
     const parts = [
         created && i18n.t("Created") + ": " + getDateFilterString(created),
         lastUpdated && i18n.t("Last updated") + ": " + getDateFilterString(lastUpdated),
-        stringMatchHasValue(stringMatch) && getStringMatchString(stringMatch) + " " + `(${fields})`,
+        stringMatchHasValue(stringMatch) && `${getStringMatchString(stringMatch)} (${fields})`,
     ];
     return _([main, _.compact(parts).join(", ")])
         .compact()

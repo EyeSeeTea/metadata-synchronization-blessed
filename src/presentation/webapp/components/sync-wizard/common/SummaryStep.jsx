@@ -154,22 +154,24 @@ const SaveStep = ({ syncRule, onCancel }) => {
                     );
                 })}
 
-                <LiEntry
-                    label={i18n.t("Filter rules [{{total}}]", {
-                        total: syncRule.filterRules.length,
-                    })}
-                >
-                    <ul>
-                        {_.sortBy(syncRule.filterRules, fr => fr.type).map(filterRule => {
-                            return (
-                                <LiEntry
-                                    key={filterRule.id}
-                                    label={filterRuleToString(filterRule)}
-                                />
-                            );
+                {syncRule.filterRules.length > 0 && (
+                    <LiEntry
+                        label={i18n.t("Filter rules [{{total}}]", {
+                            total: syncRule.filterRules.length,
                         })}
-                    </ul>
-                </LiEntry>
+                    >
+                        <ul>
+                            {_.sortBy(syncRule.filterRules, fr => fr.type).map(filterRule => {
+                                return (
+                                    <LiEntry
+                                        key={filterRule.id}
+                                        label={filterRuleToString(filterRule)}
+                                    />
+                                );
+                            })}
+                        </ul>
+                    </LiEntry>
+                )}
 
                 {syncRule.excludedIds.length > 0 && (
                     <LiEntry

@@ -10,7 +10,7 @@ export interface SynchronizationBuilder {
     originInstance: string;
     targetInstances: string[];
     metadataIds: string[];
-    filterRules: FilterRule[];
+    filterRules?: FilterRule[];
     excludedIds: string[];
     metadataTypes?: string[];
     syncRule?: string;
