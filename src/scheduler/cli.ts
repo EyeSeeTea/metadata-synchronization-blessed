@@ -6,7 +6,7 @@ import path from "path";
 import * as yargs from "yargs";
 import { Instance } from "../domain/instance/entities/Instance";
 import { MigrationsRunner } from "../migrations";
-import { getMigrationsForNode } from "../migrations/utils";
+import { migrationTasks } from "../migrations/tasks";
 import { CompositionRoot } from "../presentation/CompositionRoot";
 import { D2Api } from "../types/d2-api";
 import Scheduler from "./scheduler";
@@ -38,9 +38,8 @@ const { config } = yargs
 
 const checkMigrations = async (api: D2Api) => {
     axiosRetry(api.connection, { retries: 3 });
-    const migrations = getMigrationsForNode();
     const debug = getLogger("migrations").debug;
-    const runner = await MigrationsRunner.init({ api, debug, migrations });
+    const runner = await MigrationsRunner.init({ api, debug, migrations: migrationTasks });
     if (runner.hasPendingMigrations()) {
         getLogger("migrations").fatal("Scheduler is unable to continue due to database migrations");
         throw new Error("There are pending migrations to be applied to the data store");
