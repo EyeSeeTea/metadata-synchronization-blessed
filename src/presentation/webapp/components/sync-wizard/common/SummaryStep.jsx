@@ -66,7 +66,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
     const save = async () => {
         setIsSaving(true);
 
-        const errors = await getValidationMessages(api, syncRule);
+        const errors = getValidationMessages(syncRule);
         if (errors.length > 0) {
             snackbar.error(errors.join("\n"));
         } else {
