@@ -49,7 +49,8 @@ const checkMigrations = async (api: D2Api) => {
 const start = async (): Promise<void> => {
     const { baseUrl, username, password, encryptionKey } = config;
     if (!baseUrl || !username || !password || !encryptionKey) {
-        throw new Error("Couldn't connect to server");
+        getLogger("main").fatal("Missing fields from configuration file");
+        return;
     }
 
     const api = new D2Api({ baseUrl, auth: { username, password } });
@@ -60,7 +61,14 @@ const start = async (): Promise<void> => {
     getLogger("main").info(welcomeMessage);
 
     const version = await api.getVersion();
-    const instance = Instance.build({ name: "This instance", url: baseUrl, version });
+    const instance = Instance.build({
+        name: "This instance",
+        url: baseUrl,
+        username,
+        password,
+        version,
+    });
+
     const compositionRoot = new CompositionRoot(instance, encryptionKey);
     new Scheduler(api, compositionRoot).initialize();
 };
