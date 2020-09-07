@@ -20,7 +20,13 @@ $ yarn migrate 'http://admin:PASSWORD@localhost:8080'
 
 ## Scheduler
 
-The app provides a server-side scheduler script that runs synchronization rules in the background. It requires a `app-config.json` configuration file. If no configuration file is supplied the following is used as a placeholder:
+The app provides a server-side scheduler script that runs synchronization rules in the background. The script requires Node v10+ and can be executed like this:
+
+```
+$ node metadata-synchronization-server.js -c app-config.json
+```
+
+To connect to the destination instance, it requires a configuration file. If no configuration file is supplied the following is used as a placeholder:
 
 ```json
 {
@@ -29,7 +35,6 @@ The app provides a server-side scheduler script that runs synchronization rules 
     "username": "admin",
     "password": "district"
 }
-
 ```
 
 ## Development
