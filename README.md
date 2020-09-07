@@ -31,7 +31,7 @@ To connect to the destination instance, it requires a configuration file. If no 
 ```json
 {
     "encryptionKey": "encryptionKey",
-    "apiUrl": "https://play.dhis2.org/2.30/api",
+    "baseUrl": "https://play.dhis2.org/2.30",
     "username": "admin",
     "password": "district"
 }
