@@ -36,20 +36,27 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             ? attributeCategoryOptions
             : undefined;
 
-        return this.api
-            .get<AggregatedPackage>("/dataValueSets", {
-                dataElementIdScheme: "UID",
-                orgUnitIdScheme: "UID",
-                categoryOptionComboIdScheme: "UID",
-                includeDeleted: false,
-                startDate: startDate.format("YYYY-MM-DD"),
-                endDate: endDate.format("YYYY-MM-DD"),
-                attributeOptionCombo,
-                dataSet,
-                dataElementGroup,
-                orgUnit,
-            })
-            .getData();
+        try {
+            const response = await this.api
+                .get<AggregatedPackage>("/dataValueSets", {
+                    dataElementIdScheme: "UID",
+                    orgUnitIdScheme: "UID",
+                    categoryOptionComboIdScheme: "UID",
+                    includeDeleted: false,
+                    startDate: startDate.format("YYYY-MM-DD"),
+                    endDate: endDate.format("YYYY-MM-DD"),
+                    attributeOptionCombo,
+                    dataSet,
+                    dataElementGroup,
+                    orgUnit,
+                })
+                .getData();
+
+            return response;
+        } catch (error) {
+            console.error(error);
+            return { dataValues: [] };
+        }
     }
 
     public async getAnalytics({
