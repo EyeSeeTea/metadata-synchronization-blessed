@@ -2,6 +2,7 @@ import axios from "axios";
 import { D2Api } from "../types/d2-api";
 import memoize from "nano-memoize";
 import SyncRule from "../models/syncRule";
+import { Maybe } from "../types/utils";
 
 const AppRoles: {
     [key: string]: {
@@ -108,12 +109,13 @@ export const isAppExecutor = async (api: D2Api) => {
     return globalAdmin || !!userRoles.find((role: any) => role.name === name);
 };
 
-export const verifyUserHasAccessToSyncRule = async (api: D2Api, syncRuleUId: string) => {
+export const verifyUserHasAccessToSyncRule = async (api: D2Api, syncRuleUId: Maybe<string>) => {
     const globalAdmin = await isGlobalAdmin(api);
     if (globalAdmin) return true;
 
     const appConfigurator = await isAppConfigurator(api);
     const userInfo = await getUserInfo(api);
+    if (!syncRuleUId) return appConfigurator;
 
     const syncRule = await SyncRule.get(api, syncRuleUId);
 
