@@ -3,11 +3,10 @@ import _ from "lodash";
 import React, { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import SyncRule from "../../../../models/syncRule";
-import { promiseMap } from "../../../../utils/common";
-import { getMetadata } from "../../../../utils/synchronization";
 import { getValidationMessages } from "../../../../utils/old-validations";
-import { aggregatedSteps, deletedSteps, eventsSteps, metadataSteps } from "./Steps";
+import { getMetadata } from "../../../../utils/synchronization";
 import { useAppContext } from "../../../common/contexts/AppContext";
+import { aggregatedSteps, deletedSteps, eventsSteps, metadataSteps } from "./Steps";
 
 interface SyncWizardProps {
     syncRule: SyncRule;
@@ -47,8 +46,8 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
 
     const onStepChangeRequest = async (_currentStep: WizardStep, newStep: WizardStep) => {
         const index = _(steps).findIndex(step => step.key === newStep.key);
-        const validationMessages = await promiseMap(_.take(steps, index), ({ validationKeys }) =>
-            getValidationMessages(api, syncRule, validationKeys)
+        const validationMessages = _.take(steps, index).map(({ validationKeys }) =>
+            getValidationMessages(syncRule, validationKeys)
         );
 
         return _.flatten(validationMessages);

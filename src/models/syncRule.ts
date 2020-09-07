@@ -693,7 +693,7 @@ export default class SyncRule {
         return this.type === "metadata";
     }
 
-    public async validate(): Promise<OldValidation> {
+    public validate(): OldValidation {
         return _.pickBy({
             name: _.compact([
                 !this.name.trim()

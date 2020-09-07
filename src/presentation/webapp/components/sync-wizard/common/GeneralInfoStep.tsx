@@ -9,26 +9,24 @@ import {
     InstanceSelectionDropdown,
     InstanceSelectionOption,
 } from "../../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
-import { useAppContext } from "../../../../common/contexts/AppContext";
 import { SyncWizardStepProps } from "../Steps";
 
 export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => {
-    const { api } = useAppContext();
     const classes = useStyles();
 
     const [errors, setErrors] = useState<Dictionary<string>>({});
 
     const onChangeField = useCallback(
         (field: keyof SyncRule) => {
-            return async (event: React.ChangeEvent<{ value: unknown }>) => {
+            return (event: React.ChangeEvent<{ value: unknown }>) => {
                 const newRule = syncRule.update({ [field]: event.target.value });
-                const messages = await getValidationMessages(api, newRule, [field]);
+                const messages = getValidationMessages(newRule, [field]);
 
                 setErrors(errors => ({ ...errors, [field]: messages.join("\n") }));
                 onChange(newRule);
             };
         },
-        [syncRule, onChange, api]
+        [syncRule, onChange]
     );
 
     const onChangeInstance = useCallback(
