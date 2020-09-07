@@ -119,6 +119,8 @@ export function cleanToModelName(api: D2Api, id: string, caller?: string): strin
     if (isValidModel(api, id)) {
         const schema = getSchemaByName(api, id);
         return schema?.plural ?? id;
+    } else if (id === "dataSetElements") {
+        return "dataElements";
     } else if (id === "attributeValues") {
         return "attributes";
     } else if (id === "commentOptionSet") {
