@@ -1,6 +1,7 @@
 import cronstrue from "cronstrue";
 import _ from "lodash";
 import { getLogger } from "log4js";
+import moment from "moment";
 import schedule from "node-schedule";
 import { SynchronizationRule } from "../domain/synchronization/entities/SynchronizationRule";
 import SyncRule from "../models/syncRule";
@@ -78,7 +79,8 @@ export default class Scheduler {
                     frequency,
                     (): Promise<void> => this.synchronizationTask(id)
                 );
-                const nextDate = job.nextInvocation().toISOString();
+                // Format date to keep timezone offset
+                const nextDate = moment(job.nextInvocation().toISOString()).toISOString(true);
                 getLogger("scheduler").info(
                     `Scheduling new sync rule ${name} (${id}) at ${nextDate}`
                 );
