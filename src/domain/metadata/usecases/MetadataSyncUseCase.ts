@@ -10,7 +10,7 @@ import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
 import {
     MetadataMapping,
-    MetadataMappingDictionary
+    MetadataMappingDictionary,
 } from "../../instance/entities/MetadataMapping";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
@@ -19,14 +19,14 @@ import {
     Indicator,
     MetadataEntities,
     MetadataPackage,
-    ProgramIndicator
+    ProgramIndicator,
 } from "../entities/MetadataEntities";
 import {
     buildNestedRules,
     cleanObject,
     cleanReferences,
     cleanToModelName,
-    getAllReferences
+    getAllReferences,
 } from "../utils";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
