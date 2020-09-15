@@ -126,7 +126,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             _.uniqBy(elements, "id")
         );
 
-        debug("Metadata package", metadataWithoutDuplicates)
+        debug("Metadata package", metadataWithoutDuplicates);
         return metadataWithoutDuplicates;
     });
 
