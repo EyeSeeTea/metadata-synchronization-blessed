@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import i18n from "../../../../locales";
-import { useAppContext } from "../../../common/contexts/AppContext";
-import { Card, Landing } from "../../components/landing/Landing";
-import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../react/contexts/AppContext";
+import { Card, Landing } from "../../../react/components/landing/Landing";
+import { TestWrapper } from "../../../react/components/test-wrapper/TestWrapper";
 
 const InstanceMappingLandingPage: React.FC = () => {
     const { compositionRoot } = useAppContext();
