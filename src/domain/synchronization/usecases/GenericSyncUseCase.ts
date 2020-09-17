@@ -125,7 +125,9 @@ export abstract class GenericSyncUseCase {
     @cache()
     protected async getOriginInstance(): Promise<Instance> {
         const { originInstance: originInstanceId } = this.builder;
-        return this.getInstanceById(originInstanceId);
+        const instance = await this.getInstanceById(originInstanceId);
+        if (!instance) throw new Error("Unable to read origin instance");
+        return instance;
     }
 
     @cache()
@@ -179,7 +181,7 @@ export abstract class GenericSyncUseCase {
         });
     }
 
-    private async getInstanceById(id: string): Promise<Instance> {
+    private async getInstanceById(id: string): Promise<Instance | undefined> {
         if (id === "LOCAL") return this.localInstance;
 
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
@@ -192,7 +194,7 @@ export abstract class GenericSyncUseCase {
             id
         );
 
-        if (!data) throw new Error("Instance not found");
+        if (!data) return undefined;
 
         const instance = Instance.build(data).decryptPassword(this.encryptionKey);
         const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
@@ -200,8 +202,12 @@ export abstract class GenericSyncUseCase {
             [instance, ""]
         );
 
-        const version = await instanceRepository.getVersion();
-        return instance.update({ version });
+        try {
+            const version = await instanceRepository.getVersion();
+            return instance.update({ version });
+        } catch (error) {
+            return instance;
+        }
     }
 
     public async *execute() {

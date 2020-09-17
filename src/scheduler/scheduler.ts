@@ -43,6 +43,9 @@ export default class Scheduler {
                         case "PULL_REQUEST_RESPONSIBLE":
                             logger.error("Metadata has a custodian, unable to proceed with sync");
                             break;
+                        case "INSTANCE_NOT_FOUND":
+                            logger.error("Couldn't connect with instance");
+                            break;
                         default:
                             logger.error("Unknown synchronization error");
                     }

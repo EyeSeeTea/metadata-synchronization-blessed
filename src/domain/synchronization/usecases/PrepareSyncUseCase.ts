@@ -11,7 +11,7 @@ import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
-export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE";
+export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE" | "INSTANCE_NOT_FOUND";
 
 export class PrepareSyncUseCase implements UseCase {
     constructor(
@@ -28,8 +28,12 @@ export class PrepareSyncUseCase implements UseCase {
         if (originInstance === "LOCAL" || type !== "metadata") return Either.success(undefined);
 
         const responsibles = await this.getResponsiblesForInstance(originInstance);
+        if (responsibles.isError() || !responsibles.value.data) {
+            return Either.error("INSTANCE_NOT_FOUND");
+        }
+
         const protectedItems = _.intersectionWith(
-            responsibles,
+            responsibles.value.data,
             metadataIds,
             ({ id }, metadataId) => id === metadataId
         );
@@ -70,22 +74,26 @@ export class PrepareSyncUseCase implements UseCase {
         return instanceRepository.getUser();
     }
 
-    private async getResponsiblesForInstance(instanceId: string) {
+    private async getResponsiblesForInstance(
+        instanceId: string
+    ): Promise<Either<"INSTANCE_NOT_FOUND", MetadataResponsible[]>> {
         const instance = await this.getInstanceById(instanceId);
+        if (instance.isError() || !instance.value.data) return Either.error("INSTANCE_NOT_FOUND");
+
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
-            [instance]
+            [instance.value.data]
         );
 
         const responsibles = await storageRepository.listObjectsInCollection<MetadataResponsible>(
             Namespace.RESPONSIBLES
         );
 
-        return responsibles;
+        return Either.success(responsibles);
     }
 
-    private async getInstanceById(id: string): Promise<Instance> {
-        if (id === "LOCAL") return this.localInstance;
+    private async getInstanceById(id: string): Promise<Either<"INSTANCE_NOT_FOUND", Instance>> {
+        if (id === "LOCAL") return Either.success(this.localInstance);
 
         const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
@@ -97,7 +105,7 @@ export class PrepareSyncUseCase implements UseCase {
         );
 
         const data = objects.find(data => data.id === id);
-        if (!data) throw new Error("Instance not found");
+        if (!data) return Either.error("INSTANCE_NOT_FOUND");
 
         const instance = Instance.build(data).decryptPassword(this.encryptionKey);
         const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
@@ -106,6 +114,6 @@ export class PrepareSyncUseCase implements UseCase {
         );
 
         const version = await instanceRepository.getVersion();
-        return instance.update({ version });
+        return Either.success(instance.update({ version }));
     }
 }
