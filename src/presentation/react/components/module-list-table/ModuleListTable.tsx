@@ -207,6 +207,9 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                                     infoActionText: i18n.t("Create pull request"),
                                 });
                                 break;
+                            case "INSTANCE_NOT_FOUND":
+                                snackbar.warning(i18n.t("Couldn't connect with instance"));
+                                break;
                             default:
                                 snackbar.error(i18n.t("Unknown synchronization error"));
                         }

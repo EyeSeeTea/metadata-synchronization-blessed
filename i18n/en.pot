@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-09-16T06:14:34.901Z\n"
-"PO-Revision-Date: 2020-09-16T06:14:34.901Z\n"
+"POT-Creation-Date: 2020-09-17T07:43:07.429Z\n"
+"PO-Revision-Date: 2020-09-17T07:43:07.429Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -404,6 +404,9 @@ msgid "Proceed"
 msgstr ""
 
 msgid "Create pull request"
+msgstr ""
+
+msgid "Couldn't connect with instance"
 msgstr ""
 
 msgid "Unknown synchronization error"
