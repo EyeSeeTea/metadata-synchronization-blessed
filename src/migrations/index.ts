@@ -8,7 +8,7 @@ import {
 import { D2Api } from "../types/d2-api";
 import { promiseMap } from "../utils/common";
 import { Config, Debug, Migration, RunnerOptions } from "./types";
-import { getMigrationsForWebpack } from "./utils";
+import { migrationTasks } from "./tasks";
 
 export class MigrationsRunner {
     public migrations: Migration[];
@@ -17,7 +17,7 @@ export class MigrationsRunner {
     private backupPrefix = "backup-";
 
     constructor(private api: D2Api, private config: Config, private options: RunnerOptions) {
-        const { debug = _.identity, migrations = getMigrationsForWebpack() } = options;
+        const { debug = _.identity, migrations = migrationTasks } = options;
         this.appVersion = _.max(migrations.map(info => info.version)) || 0;
         this.debug = debug;
         this.migrations = this.getMigrationToApply(migrations, config);

@@ -18,6 +18,25 @@ When the app starts, it will check the data store version and open a dialog if a
 $ yarn migrate 'http://admin:PASSWORD@localhost:8080'
 ```
 
+## Scheduler
+
+The app provides a server-side scheduler script that runs synchronization rules in the background. The script requires Node v10+ and can be executed like this:
+
+```
+$ node metadata-synchronization-server.js -c app-config.json
+```
+
+To connect to the destination instance, it requires a configuration file. If no configuration file is supplied the following is used as a placeholder:
+
+```json
+{
+    "encryptionKey": "encryptionKey",
+    "baseUrl": "https://play.dhis2.org/2.30",
+    "username": "admin",
+    "password": "district"
+}
+```
+
 ## Development
 
 ### Start the development server of the main application:
@@ -82,6 +101,12 @@ To build the widget:
 
 ```
 $ yarn build-widget modules-list|package-exporter
+```
+
+To build the scheduler:
+
+```
+$ yarn build-scheduler
 ```
 
 ## i18n
