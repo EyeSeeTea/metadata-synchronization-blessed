@@ -6,15 +6,17 @@ export class ExpressionParser {
     private static isValidNumber = /^\d*\.?\d*?$/;
 
     // Detects operators in a expression (meant to be used with String.split)
-    private static splitter = /([+\-/*()]|\[days\])(?![^{]*})/;
-    private static operators = /([+\-/*])/;
-    private static parentheses = /([()])/;
+    private static splitter = /(\+|-|\*|\/|%|\(|\)|>|>=|<|<=|==|!=|NOT|AND|OR|\[days\])(?![^{]*})/;
+    private static operators = /(\+|-|\*|\/|%)/;
+    private static parentheses = /(\(|\))/;
+    private static logical = /(>|>=|<|<=|==|!=|NOT|AND|OR)/;
 
     // Looks up for all valid ids in a string (meant to be used with String.match)
     private static isValidUid = /[a-zA-Z]{1}[a-zA-Z0-9]{10}/g;
 
     // Extracts ids in named groups (meant to be used with String.match()?.groups)
     private static dataElementExp = /^#\{(?<dataElement>[a-zA-Z]{1}[a-zA-Z0-9]{10}).?(?<categoryOptionCombo>\*|[a-zA-Z]{1}[a-zA-Z0-9]{10})?.?(?<attributeOptionCombo>\*|[a-zA-Z]{1}[a-zA-Z0-9]{10})?\}$/;
+    private static programIndicatorDataElementExp = /^#\{(?<programStage>[a-zA-Z]{1}[a-zA-Z0-9]{10}).(?<dataElement>\*|[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
     private static programDataElementExp = /^D\{(?<program>[a-zA-Z]{1}[a-zA-Z0-9]{10}).(?<dataElement>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
     private static programAttributeExp = /^A\{(?<program>[a-zA-Z]{1}[a-zA-Z0-9]{10})?.?(?<attribute>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
     private static programIndicatorExp = /^I\{(?<programIndicator>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
@@ -24,12 +26,12 @@ export class ExpressionParser {
     private static indicatorExp = /^N\{(?<indicator>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
     private static orgUnitGroupExp = /^OUG\{(?<organisationUnitGroup>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
 
-    public static parse(formula: string): Either<ParserError, Expression[]> {
+    public static parse(type: ExpressionType, formula: string): Either<ParserError, Expression[]> {
         const results = formula
             .replace(/\s/g, "")
             .split(this.splitter)
             .filter(expression => expression !== "")
-            .map(expression => this.detectExpression(expression));
+            .map(expression => this.detectExpression(type, expression));
 
         if (results.length === 0) return Either.error("EMPTY_EXPRESION");
 
@@ -39,12 +41,15 @@ export class ExpressionParser {
         return Either.success(results as Expression[]);
     }
 
-    public static build(expressions: Expression[]): Either<ParserError, string> {
+    public static build(
+        type: ExpressionType,
+        expressions: Expression[]
+    ): Either<ParserError, string> {
         const error = this.validate(expressions);
         if (error) return Either.error(error);
 
         const formula = expressions.map(expression => this.buildExpression(expression)).join(" ");
-        const validation = this.parse(formula);
+        const validation = this.parse(type, formula);
         if (validation.isError()) return Either.error("NOT_BUILDABLE");
 
         return Either.success(formula);
@@ -63,9 +68,15 @@ export class ExpressionParser {
         for (const [index, expression] of expressionsWithoutParentheses.entries()) {
             if (expression === null) {
                 return "MALFORMED_EXPRESSION";
-            } else if (this.isOperatorPosition(index) && expression.type !== "operator") {
+            } else if (
+                this.isOperatorPosition(index) &&
+                !["operator", "logical"].includes(expression.type)
+            ) {
                 return "OPERAND_WRONG_POSITION";
-            } else if (!this.isOperatorPosition(index) && expression.type === "operator") {
+            } else if (
+                !this.isOperatorPosition(index) &&
+                ["operator", "logical"].includes(expression.type)
+            ) {
                 return "OPERATOR_WRONG_POSITION";
             }
         }
@@ -73,9 +84,9 @@ export class ExpressionParser {
         return undefined;
     }
 
-    private static detectExpression(expression: string): Expression | null {
+    private static detectExpression(type: ExpressionType, expression: string): Expression | null {
         if (expression.match(this.operators)) {
-            if (["+", "-", "/", "*"].includes(expression)) {
+            if (["+", "-", "*", "/", "%"].includes(expression)) {
                 return {
                     type: "operator",
                     operator: expression as Operator,
@@ -92,7 +103,26 @@ export class ExpressionParser {
             }
         }
 
-        if (expression.match(this.dataElementExp)) {
+        if (expression.match(this.logical)) {
+            if ([">", ">=", "<", "<=", "==", "!=", "NOT", "AND", "OR"].includes(expression)) {
+                return {
+                    type: "logical",
+                    logical: expression as Logical,
+                };
+            }
+        }
+
+        if (type === "programIndicator" && expression.match(this.programIndicatorDataElementExp)) {
+            const { groups = {} } = expression.match(this.programIndicatorDataElementExp) ?? {};
+            const { dataElement, programStage } = groups;
+            if (dataElement) {
+                return {
+                    type: "programIndicatorDataElement",
+                    dataElement,
+                    programStage,
+                };
+            }
+        } else if (expression.match(this.dataElementExp)) {
             const { groups = {} } = expression.match(this.dataElementExp) ?? {};
             const { dataElement, categoryOptionCombo, attributeOptionCombo } = groups;
             if (dataElement) {
@@ -222,6 +252,10 @@ export class ExpressionParser {
                         expression.attributeOptionCombo,
                     ])
                 ).join(".")}}`;
+            case "programIndicatorDataElement":
+                return `#{${_.compact(
+                    _.compact([expression.programStage, expression.dataElement])
+                ).join(".")}}`;
             case "indicator":
                 return `N{${expression.indicator}}`;
             case "number":
@@ -232,6 +266,8 @@ export class ExpressionParser {
                 return `OUG{${expression.organisationUnitGroup}}`;
             case "parentheses":
                 return expression.parentheses;
+            case "logical":
+                return expression.logical;
             case "programAttribute":
                 return `A{${_.compact([expression.program, expression.attribute]).join(".")}}`;
             case "programDataElement":
@@ -264,7 +300,9 @@ export type TokenType =
     | "number"
     | "operator"
     | "parentheses"
+    | "logical"
     | "dataElement"
+    | "programIndicatorDataElement"
     | "programDataElement"
     | "programAttribute"
     | "programIndicator"
@@ -274,8 +312,9 @@ export type TokenType =
     | "indicator"
     | "organisationUnitGroup";
 
-export type Operator = "+" | "-" | "*" | "/";
+export type Operator = "+" | "-" | "*" | "/" | "%";
 export type Parentheses = "(" | ")";
+export type Logical = ">" | ">=" | "<" | "<=" | "==" | "!=" | "NOT" | "AND" | "OR";
 
 export type ReportingRateMetric =
     | "REPORTING_RATE"
@@ -319,11 +358,22 @@ export interface ParenthesesExpression extends BaseExpression {
     parentheses: Parentheses;
 }
 
+export interface LogicalExpression extends BaseExpression {
+    type: "logical";
+    logical: Logical;
+}
+
 export interface DataElementExpression extends BaseExpression {
     type: "dataElement";
     dataElement: string;
     categoryOptionCombo?: string;
     attributeOptionCombo?: string;
+}
+
+export interface ProgramIndicatorDataElementExpression extends BaseExpression {
+    type: "programIndicatorDataElement";
+    dataElement: string;
+    programStage: string;
 }
 
 export interface ProgramDataElementExpression extends BaseExpression {
@@ -373,7 +423,9 @@ export type Expression =
     | NumberExpression
     | OperatorExpression
     | ParenthesesExpression
+    | LogicalExpression
     | DataElementExpression
+    | ProgramIndicatorDataElementExpression
     | ProgramDataElementExpression
     | ProgramAttributeExpression
     | ProgramIndicatorExpression
@@ -382,3 +434,5 @@ export type Expression =
     | ConstantExpression
     | IndicatorExpression
     | OrganisationUnitGroupExpression;
+
+export type ExpressionType = "indicator" | "programIndicator" | "predictor";
