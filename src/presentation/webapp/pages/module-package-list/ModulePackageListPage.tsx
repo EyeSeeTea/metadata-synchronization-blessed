@@ -8,9 +8,9 @@ import {
     ModulePackageListTable,
     PresentationOption,
     ViewOption,
-} from "../../../common/components/module-package-list-table/ModulePackageListTable";
-import PageHeader from "../../components/page-header/PageHeader";
-import SyncSummary from "../../components/sync-summary/SyncSummary";
+} from "../../../react/components/module-package-list-table/ModulePackageListTable";
+import PageHeader from "../../../react/components/page-header/PageHeader";
+import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
 
 export interface ModulePackageListPageProps {
     remoteInstance?: Instance;
