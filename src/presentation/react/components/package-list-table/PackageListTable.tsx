@@ -18,10 +18,7 @@ import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { isAppConfigurator, isGlobalAdmin } from "../../../../utils/permissions";
 import Dropdown from "../dropdown/Dropdown";
-import {
-    PackagesDiffDialog,
-    PackageToDiff,
-} from "../packages-diff-dialog/PackagesDiffDialog";
+import { PackagesDiffDialog, PackageToDiff } from "../packages-diff-dialog/PackagesDiffDialog";
 import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
 

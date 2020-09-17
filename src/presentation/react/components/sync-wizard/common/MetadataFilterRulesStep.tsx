@@ -1,8 +1,6 @@
 import React from "react";
 import { SyncWizardStepProps } from "../Steps";
-import FilterRulesTable, {
-    FilterRulesTableProps,
-} from "../../filter-rules-table/FilterRulesTable";
+import FilterRulesTable, { FilterRulesTableProps } from "../../filter-rules-table/FilterRulesTable";
 
 const MetadataFilterRulesStep: React.FC<SyncWizardStepProps> = props => {
     const { syncRule, onChange } = props;
