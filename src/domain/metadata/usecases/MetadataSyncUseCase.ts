@@ -4,7 +4,7 @@ import { modelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder, NestedRules } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
-import { Expression, ExpressionParser } from "../../../utils/expressionParser";
+import { Expression, ExpressionParser, ExpressionType } from "../../../utils/expressionParser";
 import { mapCategoryOptionCombo } from "../../../utils/synchronization";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
@@ -19,6 +19,7 @@ import {
     Indicator,
     MetadataEntities,
     MetadataPackage,
+    ProgramIndicator,
 } from "../entities/MetadataEntities";
 import {
     buildNestedRules,
@@ -126,7 +127,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             _.uniqBy(elements, "id")
         );
 
-        debug("Metadata package", metadataWithoutDuplicates)
+        debug("Metadata package", metadataWithoutDuplicates);
         return metadataWithoutDuplicates;
     });
 
@@ -248,24 +249,44 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         if (modelName === "indicators") {
             const indicator = (object as unknown) as Partial<Indicator>;
             const numerator = this.mapExpression(
+                "indicator",
                 indicator.numerator,
                 mapping,
                 originCategoryOptionCombos,
                 destinationCategoryOptionCombos
             );
             const denominator = this.mapExpression(
+                "indicator",
                 indicator.denominator,
                 mapping,
                 originCategoryOptionCombos,
                 destinationCategoryOptionCombos
             );
             return { ...object, id: mappedId, numerator, denominator };
+        } else if (modelName === "programIndicators") {
+            const indicator = (object as unknown) as Partial<ProgramIndicator>;
+            const expression = this.mapExpression(
+                "programIndicator",
+                indicator.expression,
+                mapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            );
+            const filter = this.mapExpression(
+                "programIndicator",
+                indicator.filter,
+                mapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            );
+            return { ...object, id: mappedId, expression, filter };
         }
 
         return { ...object, id: mappedId };
     }
 
     private mapExpression(
+        type: ExpressionType,
         expression: string | undefined,
         mapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
@@ -273,7 +294,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     ): string | undefined {
         if (!expression) return undefined;
 
-        const config = ExpressionParser.parse(expression).value.data ?? [];
+        const config = ExpressionParser.parse(type, expression).value.data ?? [];
         const mappedConfig = config.map(expression => {
             const mappedExpression = this.transformExpression(
                 expression,
@@ -291,7 +312,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             });
         });
 
-        const validation = ExpressionParser.build(mappedConfig as Expression[]);
+        const validation = ExpressionParser.build(type, mappedConfig as Expression[]);
         if (validation.isError()) return expression;
 
         return validation.value.data;

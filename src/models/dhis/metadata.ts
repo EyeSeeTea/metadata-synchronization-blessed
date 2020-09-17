@@ -525,7 +525,7 @@ export class ProgramIndicatorModel extends D2Model {
     protected static collectionName = "programIndicators" as const;
     protected static groupFilterName = "programIndicatorGroups" as const;
 
-    protected static excludeRules = ["programs"];
+    protected static excludeRules = [];
     protected static includeRules = [
         "attributes",
         "legendSets",

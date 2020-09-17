@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-09-04T09:58:21.898Z\n"
+"POT-Creation-Date: 2020-09-16T06:14:34.901Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -104,6 +104,33 @@ msgstr ""
 msgid "Program with Indicators"
 msgstr ""
 
+msgid "Unauthorized - You do not have permission to view this page."
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Identifier"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Deleted date"
+msgstr ""
+
+msgid "Deleted by"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Search deleted objects"
+msgstr ""
+
+msgid "<No value>"
+msgstr ""
+
 msgid "Create new filter"
 msgstr ""
 
@@ -141,208 +168,6 @@ msgid "This instance"
 msgstr ""
 
 msgid "Store"
-msgstr ""
-
-msgid "Invalid module"
-msgstr ""
-
-msgid "Downloading snapshot for module {{name}}"
-msgstr ""
-
-msgid "Creating {{dhisVersion}} package for module {{name}}"
-msgstr ""
-
-msgid "Pulling metadata from module {{name}}"
-msgstr ""
-
-msgid "Unable to create pull request"
-msgstr ""
-
-msgid "Pull metadata"
-msgstr ""
-
-msgid ""
-"You are one of the reponsibles for the selected items.\n"
-"Do you want to directly pull the metadata?"
-msgstr ""
-
-msgid "Proceed"
-msgstr ""
-
-msgid "Create pull request"
-msgstr ""
-
-msgid "Unknown synchronization error"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-msgid "Department"
-msgstr ""
-
-msgid "Description"
-msgstr ""
-
-msgid "Last updated by"
-msgstr ""
-
-msgid "Created by"
-msgstr ""
-
-msgid "Selected metadata"
-msgstr ""
-
-msgid "Details"
-msgstr ""
-
-msgid "Replicate"
-msgstr ""
-
-msgid "Download metadata package"
-msgstr ""
-
-msgid "Generate package from module"
-msgstr ""
-
-msgid "Sharing settings"
-msgstr ""
-
-msgid "Sharing settings for {{name}}"
-msgstr ""
-
-msgid "Package of {{name}}"
-msgstr ""
-
-msgid "Generate package from {{name}}"
-msgstr ""
-
-msgid "Name (*)"
-msgstr ""
-
-msgid "Version number (*)"
-msgstr ""
-
-msgid "Version tag"
-msgstr ""
-
-msgid "DHIS2 Version (*)"
-msgstr ""
-
-msgid "Module: {{module}}"
-msgstr ""
-
-msgid "{{n}} package(s) created successfully: {{list}}"
-msgstr ""
-
-msgid "{{n}} package(s) could not be created: {{list}}"
-msgstr ""
-
-msgid "View"
-msgstr ""
-
-msgid "Modules"
-msgstr ""
-
-msgid "Packages"
-msgstr "Paquetes"
-
-msgid "Invalid package"
-msgstr ""
-
-msgid "Publishing package to Store"
-msgstr ""
-
-msgid "Package published to store"
-msgstr ""
-
-msgid "Store is not properly configured"
-msgstr ""
-
-msgid "Could not read package"
-msgstr ""
-
-msgid "You don't have permissions to create file on GitHub"
-msgstr ""
-
-msgid "Unknown error while creating file on GitHub"
-msgstr ""
-
-msgid "Package already published"
-msgstr ""
-
-msgid "Branch not found"
-msgstr ""
-
-msgid ""
-"There are no branches for the department of this module. Do you want to "
-"create a new branch for this department?"
-msgstr ""
-
-msgid "Package published to store in a new branch"
-msgstr ""
-
-msgid "Couldn't create new branch on store"
-msgstr ""
-
-msgid "Importing package {{name}}"
-msgstr ""
-
-msgid "Couldn't load package"
-msgstr ""
-
-msgid "Version"
-msgstr ""
-
-msgid "DHIS2 Version"
-msgstr ""
-
-msgid "Module"
-msgstr ""
-
-msgid "ID"
-msgstr ""
-
-msgid "Download as JSON"
-msgstr ""
-
-msgid "Publish to Store"
-msgstr ""
-
-msgid "Compare with local instance"
-msgstr ""
-
-msgid "Import package"
-msgstr ""
-
-msgid "Can't connect to store"
-msgstr ""
-
-msgid "MetaData Synchronization"
-msgstr ""
-
-msgid "Unauthorized - You do not have permission to view this page."
-msgstr ""
-
-msgid "Login"
-msgstr ""
-
-msgid "Identifier"
-msgstr ""
-
-msgid "Code"
-msgstr ""
-
-msgid "Deleted date"
-msgstr ""
-
-msgid "Deleted by"
-msgstr ""
-
-msgid "Search deleted objects"
-msgstr ""
-
-msgid "<No value>"
 msgstr ""
 
 msgid "Add"
@@ -423,6 +248,9 @@ msgstr ""
 
 msgid ""
 "You need to map this element before accessing its related metadata mapping"
+msgstr ""
+
+msgid "ID"
 msgstr ""
 
 msgid "Mapped ID"
@@ -550,6 +378,107 @@ msgid ""
 "update the app."
 msgstr ""
 
+msgid "Invalid module"
+msgstr ""
+
+msgid "Downloading snapshot for module {{name}}"
+msgstr ""
+
+msgid "Creating {{dhisVersion}} package for module {{name}}"
+msgstr ""
+
+msgid "Pulling metadata from module {{name}}"
+msgstr ""
+
+msgid "Unable to create pull request"
+msgstr ""
+
+msgid "Pull metadata"
+msgstr ""
+
+msgid ""
+"You are one of the reponsibles for the selected items.\n"
+"Do you want to directly pull the metadata?"
+msgstr ""
+
+msgid "Proceed"
+msgstr ""
+
+msgid "Create pull request"
+msgstr ""
+
+msgid "Unknown synchronization error"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Department"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Last updated by"
+msgstr ""
+
+msgid "Created by"
+msgstr ""
+
+msgid "Selected metadata"
+msgstr ""
+
+msgid "Replicate"
+msgstr ""
+
+msgid "Download metadata package"
+msgstr ""
+
+msgid "Generate package from module"
+msgstr ""
+
+msgid "Sharing settings"
+msgstr ""
+
+msgid "Sharing settings for {{name}}"
+msgstr ""
+
+msgid "Package of {{name}}"
+msgstr ""
+
+msgid "Generate package from {{name}}"
+msgstr ""
+
+msgid "Name (*)"
+msgstr ""
+
+msgid "Version number (*)"
+msgstr ""
+
+msgid "Version tag"
+msgstr ""
+
+msgid "DHIS2 Version (*)"
+msgstr ""
+
+msgid "Module: {{module}}"
+msgstr ""
+
+msgid "{{n}} package(s) created successfully: {{list}}"
+msgstr ""
+
+msgid "{{n}} package(s) could not be created: {{list}}"
+msgstr ""
+
+msgid "View"
+msgstr ""
+
+msgid "Modules"
+msgstr ""
+
+msgid "Packages"
+msgstr "Paquetes"
+
 msgid "General info"
 msgstr ""
 
@@ -587,6 +516,74 @@ msgid "Use default dependencies"
 msgstr ""
 
 msgid "[Pull Request by {{name}}] {{subject}}"
+msgstr ""
+
+msgid "Invalid package"
+msgstr ""
+
+msgid "Publishing package to Store"
+msgstr ""
+
+msgid "Package published to store"
+msgstr ""
+
+msgid "Store is not properly configured"
+msgstr ""
+
+msgid "Could not read package"
+msgstr ""
+
+msgid "You don't have permissions to create file on GitHub"
+msgstr ""
+
+msgid "Unknown error while creating file on GitHub"
+msgstr ""
+
+msgid "Package already published"
+msgstr ""
+
+msgid "Branch not found"
+msgstr ""
+
+msgid ""
+"There are no branches for the department of this module. Do you want to "
+"create a new branch for this department?"
+msgstr ""
+
+msgid "Package published to store in a new branch"
+msgstr ""
+
+msgid "Couldn't create new branch on store"
+msgstr ""
+
+msgid "Importing package {{name}}"
+msgstr ""
+
+msgid "Couldn't load package"
+msgstr ""
+
+msgid "Version"
+msgstr ""
+
+msgid "DHIS2 Version"
+msgstr ""
+
+msgid "Module"
+msgstr ""
+
+msgid "Download as JSON"
+msgstr ""
+
+msgid "Publish to Store"
+msgstr ""
+
+msgid "Compare with local instance"
+msgstr ""
+
+msgid "Import package"
+msgstr ""
+
+msgid "Can't connect to store"
 msgstr ""
 
 msgid "Cannot get data from remote instance"
@@ -996,6 +993,9 @@ msgid "Sync all events"
 msgstr ""
 
 msgid "You do not have assigned any organisation unit"
+msgstr ""
+
+msgid "MetaData Synchronization"
 msgstr ""
 
 msgid "Metadata Synchronization History"

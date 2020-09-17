@@ -24,10 +24,10 @@ import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
 import { getValueForCollection } from "../../../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../../../utils/permissions";
-import { useAppContext } from "../../../common/contexts/AppContext";
-import Dropdown from "../../components/dropdown/Dropdown";
-import PageHeader from "../../components/page-header/PageHeader";
-import SyncSummary, { formatStatusTag } from "../../components/sync-summary/SyncSummary";
+import { useAppContext } from "../../../react/contexts/AppContext";
+import Dropdown from "../../../react/components/dropdown/Dropdown";
+import PageHeader from "../../../react/components/page-header/PageHeader";
+import SyncSummary, { formatStatusTag } from "../../../react/components/sync-summary/SyncSummary";
 
 const config = {
     metadata: {

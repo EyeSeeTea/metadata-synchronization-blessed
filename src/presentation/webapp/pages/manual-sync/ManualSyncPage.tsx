@@ -26,18 +26,18 @@ import SyncRule from "../../../../models/syncRule";
 import { Ref } from "../../../../types/d2-api";
 import { MetadataType } from "../../../../utils/d2";
 import { isAppConfigurator } from "../../../../utils/permissions";
-import { InstanceSelectionOption } from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
-import { useAppContext } from "../../../common/contexts/AppContext";
-import DeletedObjectsTable from "../../components/delete-objects-table/DeletedObjectsTable";
-import MetadataTable from "../../components/metadata-table/MetadataTable";
-import PageHeader from "../../components/page-header/PageHeader";
+import { InstanceSelectionOption } from "../../../react/components/instance-selection-dropdown/InstanceSelectionDropdown";
+import { useAppContext } from "../../../react/contexts/AppContext";
+import DeletedObjectsTable from "../../../react/components/delete-objects-table/DeletedObjectsTable";
+import MetadataTable from "../../../react/components/metadata-table/MetadataTable";
+import PageHeader from "../../../react/components/page-header/PageHeader";
 import {
     PullRequestCreation,
     PullRequestCreationDialog,
-} from "../../components/pull-request-creation-dialog/PullRequestCreationDialog";
-import SyncDialog from "../../components/sync-dialog/SyncDialog";
-import SyncSummary from "../../components/sync-summary/SyncSummary";
-import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+} from "../../../react/components/pull-request-creation-dialog/PullRequestCreationDialog";
+import SyncDialog from "../../../react/components/sync-dialog/SyncDialog";
+import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
+import { TestWrapper } from "../../../react/components/test-wrapper/TestWrapper";
 import InstancesSelectors from "./InstancesSelectors";
 
 const config: Record<
