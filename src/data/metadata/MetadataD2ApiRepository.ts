@@ -64,18 +64,14 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     @cache()
-    public async listMetadata({
-        type,
-        fields = { $owner: true },
-        page,
-        pageSize,
-        order,
-        ...params
-    }: ListMetadataParams): Promise<ListMetadataResponse> {
+    public async listMetadata(listParams: ListMetadataParams): Promise<ListMetadataResponse> {
+        const { type, fields = { $owner: true }, page, pageSize, order, ...params } = listParams;
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
         const options = { type, fields, filter, order, page, pageSize };
-        const { objects, pager } = await this.getListPaginated(options);
+        const { objects: baseObjects, pager } = await this.getListPaginated(options);
+        // Prepend parent objects (if option enabled) as virtual rows, keep pagination unmodified.
+        const objects = _.concat(await this.getParentObjects(listParams), baseObjects);
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -104,6 +100,20 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         );
 
         return metadataPackage[type as keyof MetadataEntities] ?? [];
+    }
+
+    private async getParentObjects(params: ListMetadataParams): Promise<unknown[]> {
+        if (params.includeParents && isNotEmpty(params.parents)) {
+            const parentIds = params.parents.map(ou => _(ou).split("/").last() || "");
+            const getParentsOptions = {
+                type: params.type,
+                fields: params.fields || { $owner: true },
+                filter: { id: { in: parentIds } },
+            };
+            return this.getListAll(getParentsOptions);
+        } else {
+            return [];
+        }
     }
 
     /*
