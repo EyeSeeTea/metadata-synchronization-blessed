@@ -19,7 +19,7 @@ import { SynchronizationResult } from "../../domain/synchronization/entities/Syn
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import { D2Api, D2Model, MetadataResponse, Model, Stats, Id } from "../../types/d2-api";
-import { Dictionary, Maybe } from "../../types/utils";
+import { Dictionary, Maybe, isNotEmpty } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
 import { debug } from "../../utils/debug";
@@ -175,7 +175,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         if (lastUpdated) filter["lastUpdated"] = { ge: moment(lastUpdated).format("YYYY-MM-DD") };
         if (group) filter[`${group.type}.id`] = { eq: group.value };
         if (level) filter["level"] = { eq: level };
-        if (parents) filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
+        if (isNotEmpty(parents)) filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
         if (showOnlySelected) filter["id"] = { in: selectedIds.concat(filter["id"]?.in ?? []) };
         if (filterRows) filter["id"] = { in: filterRows.concat(filter["id"]?.in ?? []) };
         if (search) filter[search.field] = { [search.operator]: search.value };
