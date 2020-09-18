@@ -19,7 +19,7 @@ import { SynchronizationResult } from "../../domain/synchronization/entities/Syn
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import { D2Api, D2Model, MetadataResponse, Model, Stats, Id } from "../../types/d2-api";
-import { Dictionary, Maybe } from "../../types/utils";
+import { Dictionary, Maybe, isNotEmpty } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
 import { debug } from "../../utils/debug";
@@ -64,18 +64,14 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     @cache()
-    public async listMetadata({
-        type,
-        fields = { $owner: true },
-        page,
-        pageSize,
-        order,
-        ...params
-    }: ListMetadataParams): Promise<ListMetadataResponse> {
+    public async listMetadata(listParams: ListMetadataParams): Promise<ListMetadataResponse> {
+        const { type, fields = { $owner: true }, page, pageSize, order, ...params } = listParams;
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
         const options = { type, fields, filter, order, page, pageSize };
-        const { objects, pager } = await this.getListPaginated(options);
+        const { objects: baseObjects, pager } = await this.getListPaginated(options);
+        // Prepend parent objects (if option enabled) as virtual rows, keep pagination unmodified.
+        const objects = _.concat(await this.getParentObjects(listParams), baseObjects);
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -104,6 +100,27 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         );
 
         return metadataPackage[type as keyof MetadataEntities] ?? [];
+    }
+
+    private async getParentObjects(params: ListMetadataParams): Promise<unknown[]> {
+        if (params.includeParents && isNotEmpty(params.parents)) {
+            const parentIds = params.parents.map(ou => _(ou).split("/").last() || "");
+            const originalFilter = this.buildListFilters(params);
+            const filterWithoutParentIds = _.omit(originalFilter, ["parent.id"]);
+            const getParentsOptions = {
+                type: params.type,
+                fields: params.fields || { $owner: true },
+                // The original filter must still be applied, but parent IDs must be added
+                // to filter["id"] (implicit AND operation) and filter["parent.id"] must be removed.
+                filter: {
+                    ...filterWithoutParentIds,
+                    id: _.compact([originalFilter.id, { in: parentIds }]),
+                },
+            };
+            return this.getListAll(getParentsOptions);
+        } else {
+            return [];
+        }
     }
 
     /*
@@ -175,7 +192,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         if (lastUpdated) filter["lastUpdated"] = { ge: moment(lastUpdated).format("YYYY-MM-DD") };
         if (group) filter[`${group.type}.id`] = { eq: group.value };
         if (level) filter["level"] = { eq: level };
-        if (parents) filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
+        if (isNotEmpty(parents)) filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
         if (showOnlySelected) filter["id"] = { in: selectedIds.concat(filter["id"]?.in ?? []) };
         if (filterRows) filter["id"] = { in: filterRows.concat(filter["id"]?.in ?? []) };
         if (search) filter[search.field] = { [search.operator]: search.value };
@@ -374,7 +391,7 @@ const defaultOrder = { field: "id", order: "asc" } as const;
 interface GetListAllOptions {
     type: ListMetadataParams["type"];
     fields: object;
-    filter: Dictionary<FilterValueBase>;
+    filter: Dictionary<FilterValueBase | FilterValueBase[]>;
     order?: ListMetadataParams["order"];
 }
 
@@ -388,10 +405,13 @@ type GetListGenericResponse =
     | { useSingleApiRequest: true; order: string };
 
 function getIdFilter(
-    filter: Dictionary<FilterValueBase>,
+    filter: GetListAllOptions["filter"],
     maxIds: number
 ): { inIds: string[]; value: object } | null {
-    const inIds = filter?.id?.in;
+    const filterIdOrList = filter?.id;
+    if (!filterIdOrList) return null;
+
+    const inIds = Array.isArray(filterIdOrList) ? filterIdOrList[0]?.in : filterIdOrList.in;
 
     if (inIds && inIds.length > maxIds) {
         return { inIds, value: filter["id"] };

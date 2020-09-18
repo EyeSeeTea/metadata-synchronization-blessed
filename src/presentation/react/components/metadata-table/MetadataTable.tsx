@@ -405,10 +405,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     useEffect(() => {
         if (model.getCollectionName() === "organisationUnits" && !filters.parents) return;
+        const fields = model.getFields();
 
         setLoading(true);
         compositionRoot.metadata
-            .list({ ...filters, filterRows, fields: model.getFields() }, remoteInstance)
+            .list({ ...filters, filterRows, fields, includeParents: true }, remoteInstance)
             .then(({ objects, pager }) => {
                 const rows = model.getApiModelTransform()((objects as unknown) as MetadataType[]);
                 notifyRowsChange(rows);
