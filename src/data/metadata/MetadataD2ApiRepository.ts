@@ -105,10 +105,17 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     private async getParentObjects(params: ListMetadataParams): Promise<unknown[]> {
         if (params.includeParents && isNotEmpty(params.parents)) {
             const parentIds = params.parents.map(ou => _(ou).split("/").last() || "");
+            const originalFilter = this.buildListFilters(params);
+            const filterWithoutParentIds = _.omit(originalFilter, ["parent.id"]);
             const getParentsOptions = {
                 type: params.type,
                 fields: params.fields || { $owner: true },
-                filter: { id: { in: parentIds } },
+                // The original filter must still be applied, but parent IDs must be added
+                // to filter["id"] (implicit AND operation) and filter["parent.id"] must be removed.
+                filter: {
+                    ...filterWithoutParentIds,
+                    id: _.compact([originalFilter.id, { in: parentIds }]),
+                },
             };
             return this.getListAll(getParentsOptions);
         } else {
@@ -384,7 +391,7 @@ const defaultOrder = { field: "id", order: "asc" } as const;
 interface GetListAllOptions {
     type: ListMetadataParams["type"];
     fields: object;
-    filter: Dictionary<FilterValueBase>;
+    filter: Dictionary<FilterValueBase | FilterValueBase[]>;
     order?: ListMetadataParams["order"];
 }
 
@@ -398,10 +405,13 @@ type GetListGenericResponse =
     | { useSingleApiRequest: true; order: string };
 
 function getIdFilter(
-    filter: Dictionary<FilterValueBase>,
+    filter: GetListAllOptions["filter"],
     maxIds: number
 ): { inIds: string[]; value: object } | null {
-    const inIds = filter?.id?.in;
+    const filterIdOrList = filter?.id;
+    if (!filterIdOrList) return null;
+
+    const inIds = Array.isArray(filterIdOrList) ? filterIdOrList[0]?.in : filterIdOrList.in;
 
     if (inIds && inIds.length > maxIds) {
         return { inIds, value: filter["id"] };
