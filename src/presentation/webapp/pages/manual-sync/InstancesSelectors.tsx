@@ -6,7 +6,7 @@ import { Maybe } from "../../../../types/utils";
 import {
     InstanceSelectionDropdown,
     InstanceSelectionDropdownProps,
-} from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
+} from "../../../react/components/instance-selection-dropdown/InstanceSelectionDropdown";
 import Typography from "@material-ui/core/Typography";
 
 interface InstancesSelectorsProps {

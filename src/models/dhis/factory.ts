@@ -1,11 +1,10 @@
 import _ from "lodash";
+import { debug } from "../../utils/debug";
 import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
 import { D2Api } from "../../types/d2-api";
 import { D2Model, defaultModel } from "./default";
 import * as mappingClasses from "./mapping";
 import * as metadataClasses from "./metadata";
-
-const isDebug = process.env.NODE_ENV === "development";
 
 export const metadataModels = [
     metadataClasses.CategoryModel,
@@ -76,10 +75,11 @@ export function modelFactory(api: D2Api, d2ModelName?: string): typeof D2Model {
     const modelClass = findClasses("collectionName", modelName);
 
     const result = directClass ?? modelClass;
-    if (isDebug && !result) {
-        console.error(
+    if (!result) {
+        debug(
             `Could not find a model for ${d2ModelName}... This is probably a mistake in your app.`
         );
     }
+
     return result ?? defaultModel(modelName);
 }

@@ -1,59 +1,56 @@
 import cronstrue from "cronstrue";
 import _ from "lodash";
 import { getLogger } from "log4js";
+import moment from "moment";
 import schedule from "node-schedule";
-import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
-import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
-import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
-import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import { SynchronizationRule } from "../domain/synchronization/entities/SynchronizationRule";
-import { SynchronizationType } from "../domain/synchronization/entities/SynchronizationType";
-import { SyncronizationClass } from "../domain/synchronization/usecases/GenericSyncUseCase";
 import SyncRule from "../models/syncRule";
+import { CompositionRoot } from "../presentation/CompositionRoot";
 import { D2Api } from "../types/d2-api";
-import { debug } from "../utils/debug";
-
-const config: Record<SynchronizationType, { SyncClass: SyncronizationClass }> = {
-    metadata: {
-        SyncClass: MetadataSyncUseCase,
-    },
-    aggregated: {
-        SyncClass: AggregatedSyncUseCase,
-    },
-    events: {
-        SyncClass: EventsSyncUseCase,
-    },
-    deleted: {
-        SyncClass: DeletedMetadataSyncUseCase,
-    },
-};
 
 export default class Scheduler {
-    //@ts-ignore
-    constructor(private api: D2Api) {}
+    constructor(private api: D2Api, private compositionRoot: CompositionRoot) {}
 
     private synchronizationTask = async (id: string): Promise<void> => {
         const rule = await SyncRule.get(this.api, id);
-        //@ts-ignore
         const { name, frequency, builder, id: syncRule, type = "metadata" } = rule;
-        //@ts-ignore
-        const { SyncClass } = config[type];
 
         const logger = getLogger(name);
         try {
             const readableFrequency = cronstrue.toString(frequency || "");
             logger.debug(`Start ${type} rule with frequency: ${readableFrequency}`);
-            debug({ builder, syncRule, SyncClass });
-            /**const sync = new SyncClass(this.d2, this.api, { ...builder, syncRule });
-            for await (const { message, syncReport, done } of sync.execute()) {
-                if (message) logger.debug(message);
-                if (syncReport) await syncReport.save(this.api);
-                if (done && syncReport && syncReport.id) {
-                    const reportUrl = this.buildUrl(type, syncReport.id);
-                    logger.debug(`Finished. Report available at ${reportUrl}`);
-                } else if (done) logger.warn(`Finished with errors`);
-            }**/
-            logger.error("Scheduler needs to be updated");
+            const result = await this.compositionRoot.sync.prepare(type, builder);
+            const sync = this.compositionRoot.sync[type]({ ...builder, syncRule });
+
+            const synchronize = async () => {
+                for await (const { message, syncReport, done } of sync.execute()) {
+                    if (message) logger.debug(message);
+                    if (syncReport) await syncReport.save(this.api);
+                    if (done && syncReport && syncReport.id) {
+                        const reportUrl = this.buildUrl(type, syncReport.id);
+                        logger.debug(`Finished. Report available at ${reportUrl}`);
+                    } else if (done) logger.warn(`Finished with errors`);
+                }
+            };
+
+            await result.match({
+                success: async () => {
+                    await synchronize();
+                },
+                error: async code => {
+                    switch (code) {
+                        case "PULL_REQUEST":
+                        case "PULL_REQUEST_RESPONSIBLE":
+                            logger.error("Metadata has a custodian, unable to proceed with sync");
+                            break;
+                        case "INSTANCE_NOT_FOUND":
+                            logger.error("Couldn't connect with instance");
+                            break;
+                        default:
+                            logger.error("Unknown synchronization error");
+                    }
+                },
+            });
         } catch (error) {
             logger.error(`Failed executing rule`, error);
         }
@@ -85,7 +82,8 @@ export default class Scheduler {
                     frequency,
                     (): Promise<void> => this.synchronizationTask(id)
                 );
-                const nextDate = job.nextInvocation().toISOString();
+                // Format date to keep timezone offset
+                const nextDate = moment(job.nextInvocation().toISOString()).toISOString(true);
                 getLogger("scheduler").info(
                     `Scheduling new sync rule ${name} (${id}) at ${nextDate}`
                 );
@@ -93,7 +91,6 @@ export default class Scheduler {
         });
     };
 
-    //@ts-ignore
     private buildUrl(type: string, id: string): string {
         return `${this.api.apiPath}/apps/MetaData-Synchronization/index.html#/history/${type}/${id}`;
     }

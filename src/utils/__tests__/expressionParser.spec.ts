@@ -2,7 +2,10 @@ import { ExpressionParser } from "../expressionParser";
 
 describe("Expression parser", () => {
     it("data element - should find all properties", () => {
-        const validation = ExpressionParser.parse("#{P3jJH5Tu5VC.S34ULMcHMca.Z3jxH5Tu5VC}");
+        const validation = ExpressionParser.parse(
+            "indicator",
+            "#{P3jJH5Tu5VC.S34ULMcHMca.Z3jxH5Tu5VC}"
+        );
         expect(validation.value.data).toEqual([
             {
                 type: "dataElement",
@@ -14,7 +17,7 @@ describe("Expression parser", () => {
     });
 
     it("data element - should find all mandatory properties", () => {
-        const validation = ExpressionParser.parse("#{P3jJH5Tu5VC}");
+        const validation = ExpressionParser.parse("indicator", "#{P3jJH5Tu5VC}");
         expect(validation.value.data).toEqual([
             {
                 type: "dataElement",
@@ -24,17 +27,17 @@ describe("Expression parser", () => {
     });
 
     it("data element - should give error", () => {
-        const validation = ExpressionParser.parse("#{}");
+        const validation = ExpressionParser.parse("indicator", "#{}");
         expect(validation.value.error).toEqual("MALFORMED_EXPRESSION");
     });
 
     it("data element - should give error", () => {
-        const validation = ExpressionParser.parse("#{invalidId}");
+        const validation = ExpressionParser.parse("indicator", "#{invalidId}");
         expect(validation.value.error).toEqual("MALFORMED_EXPRESSION");
     });
 
     it("program data element - should find all properties", () => {
-        const validation = ExpressionParser.parse("D{P3jJH5Tu5VC.S34ULMcHMca}");
+        const validation = ExpressionParser.parse("indicator", "D{P3jJH5Tu5VC.S34ULMcHMca}");
         expect(validation.value.data).toEqual([
             {
                 type: "programDataElement",
@@ -45,12 +48,12 @@ describe("Expression parser", () => {
     });
 
     it("program data element - should give error", () => {
-        const validation = ExpressionParser.parse("D{P3jJH5Tu5VC}");
+        const validation = ExpressionParser.parse("indicator", "D{P3jJH5Tu5VC}");
         expect(validation.value.error).toEqual("MALFORMED_EXPRESSION");
     });
 
     it("program attribute - should find all properties", () => {
-        const validation = ExpressionParser.parse("A{P3jJH5Tu5VC.S34ULMcHMca}");
+        const validation = ExpressionParser.parse("indicator", "A{P3jJH5Tu5VC.S34ULMcHMca}");
         expect(validation.value.data).toEqual([
             {
                 type: "programAttribute",
@@ -61,12 +64,12 @@ describe("Expression parser", () => {
     });
 
     it("program attribute - should give error", () => {
-        const validation = ExpressionParser.parse("A{}");
+        const validation = ExpressionParser.parse("indicator", "A{}");
         expect(validation.value.error).toEqual("MALFORMED_EXPRESSION");
     });
 
-    it("program attribute - should find all properties", () => {
-        const validation = ExpressionParser.parse("I{P3jJH5Tu5VC}");
+    it("program indicator - should find all properties", () => {
+        const validation = ExpressionParser.parse("indicator", "I{P3jJH5Tu5VC}");
         expect(validation.value.data).toEqual([
             {
                 type: "programIndicator",
@@ -75,13 +78,13 @@ describe("Expression parser", () => {
         ]);
     });
 
-    it("program attribute - should give error", () => {
-        const validation = ExpressionParser.parse("I{}");
+    it("program indicator - should give error", () => {
+        const validation = ExpressionParser.parse("indicator", "I{}");
         expect(validation.value.error).toEqual("MALFORMED_EXPRESSION");
     });
 
     it("reporting rate - should find all properties", () => {
-        const validation = ExpressionParser.parse("R{P3jJH5Tu5VC.REPORTING_RATE}");
+        const validation = ExpressionParser.parse("indicator", "R{P3jJH5Tu5VC.REPORTING_RATE}");
         expect(validation.value.data).toEqual([
             {
                 type: "reportingRate",
@@ -92,17 +95,17 @@ describe("Expression parser", () => {
     });
 
     it("reporting rate - should give error with invalid metric", () => {
-        const validation = ExpressionParser.parse("R{P3jJH5Tu5VC.INVALID}");
+        const validation = ExpressionParser.parse("indicator", "R{P3jJH5Tu5VC.INVALID}");
         expect(validation.value.error).toEqual("MALFORMED_EXPRESSION");
     });
 
     it("reporting rate - should give error", () => {
-        const validation = ExpressionParser.parse("R{P3jJH5Tu5VC}");
+        const validation = ExpressionParser.parse("indicator", "R{P3jJH5Tu5VC}");
         expect(validation.value.error).toEqual("MALFORMED_EXPRESSION");
     });
 
     it("constant - should find all properties", () => {
-        const validation = ExpressionParser.parse("C{P3jJH5Tu5VC}");
+        const validation = ExpressionParser.parse("indicator", "C{P3jJH5Tu5VC}");
         expect(validation.value.data).toEqual([
             {
                 type: "constant",
@@ -112,12 +115,12 @@ describe("Expression parser", () => {
     });
 
     it("constant - should give error", () => {
-        const validation = ExpressionParser.parse("C{}");
+        const validation = ExpressionParser.parse("indicator", "C{}");
         expect(validation.value.error).toEqual("MALFORMED_EXPRESSION");
     });
 
     it("indicator - should find all properties", () => {
-        const validation = ExpressionParser.parse("N{P3jJH5Tu5VC}");
+        const validation = ExpressionParser.parse("indicator", "N{P3jJH5Tu5VC}");
         expect(validation.value.data).toEqual([
             {
                 type: "indicator",
@@ -127,12 +130,12 @@ describe("Expression parser", () => {
     });
 
     it("indicator - should give error", () => {
-        const validation = ExpressionParser.parse("N{}");
+        const validation = ExpressionParser.parse("indicator", "N{}");
         expect(validation.value.error).toEqual("MALFORMED_EXPRESSION");
     });
 
     it("organisationUnitGroup - should find all properties", () => {
-        const validation = ExpressionParser.parse("OUG{P3jJH5Tu5VC}");
+        const validation = ExpressionParser.parse("indicator", "OUG{P3jJH5Tu5VC}");
         expect(validation.value.data).toEqual([
             {
                 type: "organisationUnitGroup",
@@ -142,12 +145,12 @@ describe("Expression parser", () => {
     });
 
     it("organisationUnitGroup - should give error", () => {
-        const validation = ExpressionParser.parse("OUG{}");
+        const validation = ExpressionParser.parse("indicator", "OUG{}");
         expect(validation.value.error).toEqual("MALFORMED_EXPRESSION");
     });
 
     it("number - parse correctly integer", () => {
-        const validation = ExpressionParser.parse("2");
+        const validation = ExpressionParser.parse("indicator", "2");
         expect(validation.value.data).toEqual([
             {
                 type: "number",
@@ -157,7 +160,7 @@ describe("Expression parser", () => {
     });
 
     it("number - parse correctly float", () => {
-        const validation = ExpressionParser.parse("2.34");
+        const validation = ExpressionParser.parse("indicator", "2.34");
         expect(validation.value.data).toEqual([
             {
                 type: "number",
@@ -167,7 +170,7 @@ describe("Expression parser", () => {
     });
 
     it("number - parse correctly float without first number", () => {
-        const validation = ExpressionParser.parse(".34");
+        const validation = ExpressionParser.parse("indicator", ".34");
         expect(validation.value.data).toEqual([
             {
                 type: "number",
@@ -177,17 +180,18 @@ describe("Expression parser", () => {
     });
 
     it("text - should give error", () => {
-        const validation = ExpressionParser.parse("test");
+        const validation = ExpressionParser.parse("indicator", "test");
         expect(validation.value.error).toEqual("MALFORMED_EXPRESSION");
     });
 
     it("empty - should give error", () => {
-        const validation = ExpressionParser.parse("");
+        const validation = ExpressionParser.parse("indicator", "");
         expect(validation.value.error).toEqual("EMPTY_EXPRESION");
     });
 
     it("parse - example 1", () => {
         const validation = ExpressionParser.parse(
+            "indicator",
             "#{P3jJH5Tu5VC.S34ULMcHMca} + C{Gfd3ppDfq8E} + OUG{CXw2yu5fodb}"
         );
         expect(validation.value.data).toEqual([
@@ -208,7 +212,7 @@ describe("Expression parser", () => {
     });
 
     it("parse - example 2", () => {
-        const validation = ExpressionParser.parse("#{P3jJH5Tu5VC} + 2");
+        const validation = ExpressionParser.parse("indicator", "#{P3jJH5Tu5VC} + 2");
         expect(validation.value.data).toEqual([
             {
                 type: "dataElement",
@@ -223,6 +227,7 @@ describe("Expression parser", () => {
 
     it("parse - example 3", () => {
         const validation = ExpressionParser.parse(
+            "indicator",
             "#{P3jJH5Tu5VC.S34ULMcHMca} + #{P3jJH5Tu5VC.*.j8vBiBqGf6O} + #{P3jJH5Tu5VC.S34ULMcHMca.*}"
         );
         expect(validation.value.data).toEqual([
@@ -251,6 +256,7 @@ describe("Expression parser", () => {
 
     it("parse - example 4", () => {
         const validation = ExpressionParser.parse(
+            "indicator",
             "( D{eBAyeGv0exc.vV9UWAZohSf} * A{IpHINAT79UW.cejWyOfXge6} ) / D{eBAyeGv0exc.GieVkTxp4HH}"
         );
         expect(validation.value.data).toEqual([
@@ -277,7 +283,10 @@ describe("Expression parser", () => {
     });
 
     it("parse - example 5", () => {
-        const validation = ExpressionParser.parse("I{EMOt6Fwhs1n} * 1000 / #{WUg3MYWQ7pt}");
+        const validation = ExpressionParser.parse(
+            "indicator",
+            "I{EMOt6Fwhs1n} * 1000 / #{WUg3MYWQ7pt}"
+        );
         expect(validation.value.data).toEqual([
             { type: "programIndicator", programIndicator: "EMOt6Fwhs1n" },
             { type: "operator", operator: "*" },
@@ -294,6 +303,7 @@ describe("Expression parser", () => {
 
     it("parse - example 6", () => {
         const validation = ExpressionParser.parse(
+            "indicator",
             "R{BfMAe6Itzgt.REPORTING_RATE} * #{P3jJH5Tu5VC.S34ULMcHMca}"
         );
         expect(validation.value.data).toEqual([
@@ -314,6 +324,7 @@ describe("Expression parser", () => {
 
     it("parse - example 7", () => {
         const validation = ExpressionParser.parse(
+            "indicator",
             "R{BfMAe6Itzgt.ACTUAL_REPORTS} / R{BfMAe6Itzgt.EXPECTED_REPORTS}"
         );
         expect(validation.value.data).toEqual([
@@ -332,7 +343,10 @@ describe("Expression parser", () => {
     });
 
     it("parse - example 8", () => {
-        const validation = ExpressionParser.parse("N{Rigf2d2Zbjp} * #{P3jJH5Tu5VC.S34ULMcHMca}");
+        const validation = ExpressionParser.parse(
+            "indicator",
+            "N{Rigf2d2Zbjp} * #{P3jJH5Tu5VC.S34ULMcHMca}"
+        );
         expect(validation.value.data).toEqual([
             { type: "indicator", indicator: "Rigf2d2Zbjp" },
             { type: "operator", operator: "*" },
@@ -347,6 +361,7 @@ describe("Expression parser", () => {
 
     it("parse - example 9", () => {
         const validation = ExpressionParser.parse(
+            "indicator",
             "( 2 * #{P3jJH5Tu5VC.S34ULMcHMca} ) / ( #{FQ2o8UBlcrS.S34ULMcHMca} - 200 ) * 25"
         );
         expect(validation.value.data).toEqual([
@@ -378,6 +393,7 @@ describe("Expression parser", () => {
 
     it("parse - example 10", () => {
         const validation = ExpressionParser.parse(
+            "indicator",
             "#{A03MvHHogjR.a3kGcGDCuk6} + A{OvY4VVhSDeJ} + V{incident_date} + C{bCqvfPR02Im}"
         );
         expect(validation.value.data).toEqual([
@@ -400,8 +416,43 @@ describe("Expression parser", () => {
         ]);
     });
 
+    it("parse - example 11", () => {
+        const validation = ExpressionParser.parse(
+            "programIndicator",
+            "#{A03MvHHogjR.a3kGcGDCuk6} + A{OvY4VVhSDeJ} + V{incident_date} + C{bCqvfPR02Im}"
+        );
+
+        expect(validation.value.data).toEqual([
+            {
+                type: "programIndicatorDataElement",
+                dataElement: "a3kGcGDCuk6",
+                programStage: "A03MvHHogjR",
+            },
+            { type: "operator", operator: "+" },
+            {
+                type: "programAttribute",
+                program: undefined,
+                attribute: "OvY4VVhSDeJ",
+            },
+            { type: "operator", operator: "+" },
+            { type: "programVariable", variable: "incident_date" },
+            { type: "operator", operator: "+" },
+            { type: "constant", constant: "bCqvfPR02Im" },
+        ]);
+    });
+
+    it("parse - example 12", () => {
+        const validation = ExpressionParser.parse("programIndicator", "C{qRquxuP5Zow} == 12");
+
+        expect(validation.value.data).toEqual([
+            { type: "constant", constant: "qRquxuP5Zow" },
+            { type: "logical", logical: "==" },
+            { type: "number", value: 12 },
+        ]);
+    });
+
     it("build - example 1", () => {
-        const validation = ExpressionParser.build([
+        const validation = ExpressionParser.build("indicator", [
             {
                 type: "dataElement",
                 dataElement: "P3jJH5Tu5VC",
@@ -423,7 +474,7 @@ describe("Expression parser", () => {
     });
 
     it("build - example 2", () => {
-        const validation = ExpressionParser.build([
+        const validation = ExpressionParser.build("indicator", [
             {
                 type: "dataElement",
                 dataElement: "P3jJH5Tu5VC",
@@ -438,7 +489,7 @@ describe("Expression parser", () => {
     });
 
     it("build - example 3", () => {
-        const validation = ExpressionParser.build([
+        const validation = ExpressionParser.build("indicator", [
             {
                 type: "dataElement",
                 dataElement: "P3jJH5Tu5VC",
@@ -467,7 +518,7 @@ describe("Expression parser", () => {
     });
 
     it("build - example 4", () => {
-        const validation = ExpressionParser.build([
+        const validation = ExpressionParser.build("indicator", [
             { type: "parentheses", parentheses: "(" },
             {
                 type: "programDataElement",
@@ -495,7 +546,7 @@ describe("Expression parser", () => {
     });
 
     it("build - example 5", () => {
-        const validation = ExpressionParser.build([
+        const validation = ExpressionParser.build("indicator", [
             { type: "programIndicator", programIndicator: "EMOt6Fwhs1n" },
             { type: "operator", operator: "*" },
             { type: "number", value: 1000 },
@@ -512,7 +563,7 @@ describe("Expression parser", () => {
     });
 
     it("build - example 6", () => {
-        const validation = ExpressionParser.build([
+        const validation = ExpressionParser.build("indicator", [
             {
                 type: "reportingRate",
                 dataSet: "BfMAe6Itzgt",
@@ -533,7 +584,7 @@ describe("Expression parser", () => {
     });
 
     it("build - example 7", () => {
-        const validation = ExpressionParser.build([
+        const validation = ExpressionParser.build("indicator", [
             {
                 type: "reportingRate",
                 dataSet: "BfMAe6Itzgt",
@@ -553,7 +604,7 @@ describe("Expression parser", () => {
     });
 
     it("build - example 8", () => {
-        const validation = ExpressionParser.build([
+        const validation = ExpressionParser.build("indicator", [
             { type: "indicator", indicator: "Rigf2d2Zbjp" },
             { type: "operator", operator: "*" },
             {
@@ -568,7 +619,7 @@ describe("Expression parser", () => {
     });
 
     it("build - example 9", () => {
-        const validation = ExpressionParser.build([
+        const validation = ExpressionParser.build("indicator", [
             { type: "parentheses", parentheses: "(" },
             { type: "number", value: 2 },
             { type: "operator", operator: "*" },
@@ -600,7 +651,7 @@ describe("Expression parser", () => {
     });
 
     it("build - example 10", () => {
-        const validation = ExpressionParser.build([
+        const validation = ExpressionParser.build("indicator", [
             {
                 type: "dataElement",
                 dataElement: "A03MvHHogjR",
@@ -622,6 +673,40 @@ describe("Expression parser", () => {
         expect(validation.value.data).toEqual(
             "#{A03MvHHogjR.a3kGcGDCuk6} + A{OvY4VVhSDeJ} + V{incident_date} + C{bCqvfPR02Im}"
         );
+    });
+
+    it("build - example 11", () => {
+        const validation = ExpressionParser.build("programIndicator", [
+            {
+                type: "programIndicatorDataElement",
+                dataElement: "a3kGcGDCuk6",
+                programStage: "A03MvHHogjR",
+            },
+            { type: "operator", operator: "+" },
+            {
+                type: "programAttribute",
+                program: undefined,
+                attribute: "OvY4VVhSDeJ",
+            },
+            { type: "operator", operator: "+" },
+            { type: "programVariable", variable: "incident_date" },
+            { type: "operator", operator: "+" },
+            { type: "constant", constant: "bCqvfPR02Im" },
+        ]);
+
+        expect(validation.value.data).toEqual(
+            "#{A03MvHHogjR.a3kGcGDCuk6} + A{OvY4VVhSDeJ} + V{incident_date} + C{bCqvfPR02Im}"
+        );
+    });
+
+    it("build - example 12", () => {
+        const validation = ExpressionParser.build("programIndicator", [
+            { type: "constant", constant: "qRquxuP5Zow" },
+            { type: "logical", logical: "==" },
+            { type: "number", value: 12 },
+        ]);
+
+        expect(validation.value.data).toEqual("C{qRquxuP5Zow} == 12");
     });
 });
 

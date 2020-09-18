@@ -7,10 +7,10 @@ import { DataSetModel, ProgramModel } from "../../../../models/dhis/metadata";
 import {
     InstanceSelectionDropdown,
     InstanceSelectionOption,
-} from "../../../common/components/instance-selection-dropdown/InstanceSelectionDropdown";
-import { useAppContext } from "../../../common/contexts/AppContext";
-import MetadataTable from "../../components/metadata-table/MetadataTable";
-import PageHeader from "../../components/page-header/PageHeader";
+} from "../../../react/components/instance-selection-dropdown/InstanceSelectionDropdown";
+import { useAppContext } from "../../../react/contexts/AppContext";
+import MetadataTable from "../../../react/components/metadata-table/MetadataTable";
+import PageHeader from "../../../react/components/page-header/PageHeader";
 
 export const ResponsiblesListPage: React.FC = () => {
     const { compositionRoot } = useAppContext();

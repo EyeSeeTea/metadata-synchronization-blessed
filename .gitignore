@@ -11,6 +11,7 @@ manifest.webapp
 /build
 /dist
 *.zip
+metadata-synchronization-server.js
 
 # misc
 .DS_Store

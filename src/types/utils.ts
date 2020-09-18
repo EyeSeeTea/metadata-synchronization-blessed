@@ -6,6 +6,8 @@ export type Dictionary<T> = Record<string, T>;
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
+export type NonEmptyArray<T> = T[] & { 0: T };
+
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
     {
         [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
@@ -17,4 +19,8 @@ export function isValueInUnionType<S, T extends S>(value: S, values: readonly T[
 
 export function buildObject<Value>() {
     return <T>(object: { [K in keyof T]: Value }) => object;
+}
+
+export function isNotEmpty<T>(xs: T[] | undefined): xs is NonEmptyArray<T> {
+    return xs ? xs.length > 0 : false;
 }

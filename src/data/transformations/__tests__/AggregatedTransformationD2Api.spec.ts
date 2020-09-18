@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import _ from "lodash";
 import { AggregatedPackage } from "../../../domain/aggregated/entities/AggregatedPackage";
 import { Transformation } from "../../../domain/transformations/entities/Transformation";

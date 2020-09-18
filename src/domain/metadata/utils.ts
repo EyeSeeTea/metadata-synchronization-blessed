@@ -121,6 +121,8 @@ export function cleanToModelName(api: D2Api, id: string, caller?: string): strin
         return schema?.plural ?? id;
     } else if (id === "dataSetElements") {
         return "dataElements";
+    } else if (id === "programStageDataElements") {
+        return "dataElements";
     } else if (id === "attributeValues") {
         return "attributes";
     } else if (id === "commentOptionSet") {

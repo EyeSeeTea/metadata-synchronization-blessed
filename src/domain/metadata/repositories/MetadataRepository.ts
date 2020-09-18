@@ -37,6 +37,7 @@ export interface ListMetadataParams {
     fields?: object;
     group?: { type: string; value: string };
     level?: string;
+    includeParents?: boolean;
     search?: { field: string; operator: string; value: string };
     order?: { field: string; order: "asc" | "desc" };
     page?: number;

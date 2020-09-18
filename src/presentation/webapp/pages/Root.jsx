@@ -1,9 +1,9 @@
 import React from "react";
 import { HashRouter, Switch } from "react-router-dom";
 import * as permissions from "../../../utils/permissions";
-import { useAppContext } from "../../common/contexts/AppContext";
-import RouteWithSession from "../components/auth/RouteWithSession";
-import RouteWithSessionAndAuth from "../components/auth/RouteWithSessionAndAuth";
+import RouteWithSession from "../../react/components/auth/RouteWithSession";
+import RouteWithSessionAndAuth from "../../react/components/auth/RouteWithSessionAndAuth";
+import { useAppContext } from "../../react/contexts/AppContext";
 import HistoryPage from "./history/HistoryPage";
 import HomePage from "./home/HomePage";
 import InstanceCreationPage from "./instance-creation/InstanceCreationPage";
