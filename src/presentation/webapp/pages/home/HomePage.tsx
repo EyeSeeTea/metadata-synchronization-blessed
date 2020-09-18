@@ -8,9 +8,9 @@ import {
     isAppExecutor,
     shouldShowDeletedObjects,
 } from "../../../../utils/permissions";
-import { useAppContext } from "../../../common/contexts/AppContext";
-import { Card, Landing } from "../../components/landing/Landing";
-import { TestWrapper } from "../../components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../react/contexts/AppContext";
+import { Card, Landing } from "../../../react/components/landing/Landing";
+import { TestWrapper } from "../../../react/components/test-wrapper/TestWrapper";
 
 const LandingPage: React.FC = () => {
     const { api, compositionRoot } = useAppContext();

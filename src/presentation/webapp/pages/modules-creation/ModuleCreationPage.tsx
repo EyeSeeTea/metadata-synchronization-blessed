@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Module } from "../../../../domain/modules/entities/Module";
 import i18n from "../../../../locales";
-import { useAppContext } from "../../../common/contexts/AppContext";
-import { ModuleWizard } from "../../components/module-wizard/ModuleWizard";
-import PageHeader from "../../components/page-header/PageHeader";
+import { useAppContext } from "../../../react/contexts/AppContext";
+import { ModuleWizard } from "../../../react/components/module-wizard/ModuleWizard";
+import PageHeader from "../../../react/components/page-header/PageHeader";
 import { MetadataModule } from "../../../../domain/modules/entities/MetadataModule";
 
 const ModuleCreationPage: React.FC = () => {
