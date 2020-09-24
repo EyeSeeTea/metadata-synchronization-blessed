@@ -10,7 +10,7 @@ import {
 } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { DataImportParams } from "../../types/d2";
-import { D2Api } from "../../types/d2-api";
+import { D2Api, Pager } from "../../types/d2-api";
 
 export class EventsD2ApiRepository implements EventsRepository {
     private api: D2Api;
@@ -19,12 +19,24 @@ export class EventsD2ApiRepository implements EventsRepository {
         this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 
+    /**
+     * Design choices and heads-up:
+     *  - The events endpoint does not support multiple values for a given filter
+     *    meaning you cannot query for multiple programs or multiple orgUnits in
+     *    the same API call. Instead you need to query one by one
+     *  - Querying one by one is not performant, instead we query for all events
+     *    available in the instance and manually filter them in this method
+     *  - For big databases querying for all events available in a given instance
+     *    with paging=false makes the instance to eventually go offline
+     *  - Instead of disabling paging we traverse all the events by paginating all
+     *    the available pages so that we can filter them afterwards
+     */
     public async getEvents(
         params: DataSynchronizationParams,
         programs: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        const { period, orgUnitPaths = [], events = [], allEvents } = params;
+        const { period, orgUnitPaths = [], events: filter = [], allEvents } = params;
         const [startDate, endDate] = buildPeriodFromParams(params);
 
         if (programs.length === 0) return [];
@@ -33,22 +45,32 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         const result = [];
 
-        for (const program of programs) {
-            const { events: response } = (await this.api
-                .get("/events", {
-                    paging: false,
+        const fetchApi = async (program: string, page: number) => {
+            return this.api
+                .get<EventExportResult>("/events", {
+                    pageSize: 250,
+                    totalPages: true,
+                    page,
                     program,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
                 })
-                .getData()) as { events: (ProgramEvent & { event: string })[] };
+                .getData();
+        };
 
-            result.push(...response);
+        for (const program of programs) {
+            const { events, pager } = await fetchApi(program, 1);
+            result.push(...events);
+
+            for (let page = 2; page <= pager.pageCount; page += 1) {
+                const { events } = await fetchApi(program, page);
+                result.push(...events);
+            }
         }
 
         return _(result)
             .filter(({ orgUnit }) => orgUnits.includes(orgUnit))
-            .filter(({ event }) => (allEvents ? true : events.includes(event)))
+            .filter(({ event }) => (allEvents ? true : filter.includes(event)))
             .map(object => ({ ...object, id: object.event }))
             .map(object => cleanObjectDefault(object, defaults))
             .value();
@@ -124,4 +146,9 @@ interface EventsPostResponse {
             }[];
         }[];
     };
+}
+
+interface EventExportResult {
+    events: Array<ProgramEvent & { event: string }>;
+    pager: Pager;
 }
