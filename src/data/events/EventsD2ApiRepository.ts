@@ -95,12 +95,12 @@ export class EventsD2ApiRepository implements EventsRepository {
         const result = [];
 
         for (const program of programs) {
-            for (const ids of _.chunk(filter)) {
+            for (const ids of _.chunk(filter, 300)) {
                 const { events } = await this.api
                     .get<EventExportResult>("/events", {
                         paging: false,
                         program,
-                        events: ids.join(";"),
+                        event: ids.join(";"),
                     })
                     .getData();
                 result.push(...events);
