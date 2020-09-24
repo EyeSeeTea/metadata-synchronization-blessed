@@ -19,6 +19,15 @@ export class EventsD2ApiRepository implements EventsRepository {
         this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
     }
 
+    public async getEvents(
+        params: DataSynchronizationParams,
+        programs: string[] = [],
+        defaults: string[] = []
+    ): Promise<ProgramEvent[]> {
+        if (params.allEvents) return this.getAllEvents(params, programs, defaults);
+        else return this.getSpecificEvents(params, programs, defaults);
+    }
+
     /**
      * Design choices and heads-up:
      *  - The events endpoint does not support multiple values for a given filter
@@ -31,18 +40,17 @@ export class EventsD2ApiRepository implements EventsRepository {
      *  - Instead of disabling paging we traverse all the events by paginating all
      *    the available pages so that we can filter them afterwards
      */
-    public async getEvents(
+    private async getAllEvents(
         params: DataSynchronizationParams,
         programs: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        const { period, orgUnitPaths = [], events: filter = [], allEvents } = params;
-        const [startDate, endDate] = buildPeriodFromParams(params);
-
         if (programs.length === 0) return [];
 
-        const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
+        const { period, orgUnitPaths = [] } = params;
+        const [startDate, endDate] = buildPeriodFromParams(params);
 
+        const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
         const result = [];
 
         const fetchApi = async (program: string, page: number) => {
@@ -70,7 +78,37 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         return _(result)
             .filter(({ orgUnit }) => orgUnits.includes(orgUnit))
-            .filter(({ event }) => (allEvents ? true : filter.includes(event)))
+            .map(object => ({ ...object, id: object.event }))
+            .map(object => cleanObjectDefault(object, defaults))
+            .value();
+    }
+
+    private async getSpecificEvents(
+        params: DataSynchronizationParams,
+        programs: string[] = [],
+        defaults: string[] = []
+    ): Promise<ProgramEvent[]> {
+        const { orgUnitPaths = [], events: filter = [] } = params;
+        if (programs.length === 0 || filter.length === 0) return [];
+
+        const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
+        const result = [];
+
+        for (const program of programs) {
+            for (const ids of _.chunk(filter)) {
+                const { events } = await this.api
+                    .get<EventExportResult>("/events", {
+                        paging: false,
+                        program,
+                        events: ids.join(";"),
+                    })
+                    .getData();
+                result.push(...events);
+            }
+        }
+
+        return _(result)
+            .filter(({ orgUnit }) => orgUnits.includes(orgUnit))
             .map(object => ({ ...object, id: object.event }))
             .map(object => cleanObjectDefault(object, defaults))
             .value();
