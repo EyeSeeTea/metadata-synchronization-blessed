@@ -1,10 +1,11 @@
 import { Typography } from "@material-ui/core";
 import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "d2-ui-components";
 import _ from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ProgramEvent } from "../../../../../domain/events/entities/ProgramEvent";
 import { DataElement, Program } from "../../../../../domain/metadata/entities/MetadataEntities";
 import i18n from "../../../../../locales";
+import SyncRule from "../../../../../models/syncRule";
 import { useAppContext } from "../../../contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
@@ -20,30 +21,127 @@ type CustomProgram = Program & {
 
 export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
     const { compositionRoot } = useAppContext();
+
+    const [memoizedSyncRule] = useState<SyncRule>(syncRule);
     const [objects, setObjects] = useState<ProgramEvent[] | undefined>();
     const [programs, setPrograms] = useState<CustomProgram[]>([]);
     const [programFilter, changeProgramFilter] = useState<string>("");
-    const [error, setError] = useState();
+    const [error, setError] = useState<unknown>();
 
     useEffect(() => {
+        const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
+        sync.extractMetadata<CustomProgram>().then(({ programs = [] }) => setPrograms(programs));
+    }, [memoizedSyncRule, compositionRoot]);
+
+    useEffect(() => {
+        if (programs.length === 0) return;
         compositionRoot.events
             .list(
                 {
-                    ...syncRule.dataParams,
+                    ...memoizedSyncRule.dataParams,
                     allEvents: true,
                 },
                 programs.map(({ id }) => id)
             )
             .then(setObjects)
             .catch(setError);
-    }, [compositionRoot, syncRule, programs]);
+    }, [compositionRoot, memoizedSyncRule, programs]);
 
-    useEffect(() => {
-        const sync = compositionRoot.sync.events(syncRule.toBuilder());
-        sync.extractMetadata<CustomProgram>().then(({ programs = [] }) => setPrograms(programs));
-    }, [syncRule, compositionRoot]);
+    const handleTableChange = useCallback(
+        (tableState: TableState<ProgramEvent>) => {
+            const { selection } = tableState;
+            onChange(syncRule.updateDataSyncEvents(selection.map(({ id }) => id)));
+        },
+        [onChange, syncRule]
+    );
 
-    const buildAdditionalColumns = () => {
+    const updateSyncAll = useCallback(
+        (value: boolean) => {
+            onChange(syncRule.updateDataSyncAllEvents(value).updateDataSyncEvents(undefined));
+        },
+        [onChange, syncRule]
+    );
+
+    const addToSelection = useCallback(
+        (ids: string[]) => {
+            const oldSelection = _.difference(syncRule.dataSyncEvents, ids);
+            const newSelection = _.difference(ids, syncRule.dataSyncEvents);
+
+            onChange(syncRule.updateDataSyncEvents([...oldSelection, ...newSelection]));
+        },
+        [onChange, syncRule]
+    );
+
+    const columns: TableColumn<ProgramEvent>[] = useMemo(
+        () => [
+            { name: "id" as const, text: i18n.t("UID"), sortable: true },
+            {
+                name: "program" as const,
+                text: i18n.t("Program"),
+                sortable: true,
+                getValue: ({ program }) => _.find(programs, { id: program })?.name ?? program,
+            },
+            { name: "orgUnitName" as const, text: i18n.t("Organisation unit"), sortable: true },
+            { name: "eventDate" as const, text: i18n.t("Event date"), sortable: true },
+            {
+                name: "lastUpdated" as const,
+                text: i18n.t("Last updated"),
+                sortable: true,
+                hidden: true,
+            },
+            { name: "status" as const, text: i18n.t("Status"), sortable: true },
+            { name: "storedBy" as const, text: i18n.t("Stored by"), sortable: true },
+        ],
+        [programs]
+    );
+
+    const details: ObjectsTableDetailField<ProgramEvent>[] = useMemo(
+        () => [
+            { name: "id" as const, text: i18n.t("UID") },
+            {
+                name: "program" as const,
+                text: i18n.t("Program"),
+                getValue: ({ program }) => _.find(programs, { id: program })?.name ?? program,
+            },
+            { name: "orgUnitName" as const, text: i18n.t("Organisation unit") },
+            { name: "created" as const, text: i18n.t("Created") },
+            { name: "lastUpdated" as const, text: i18n.t("Last updated") },
+            { name: "eventDate" as const, text: i18n.t("Event date") },
+            { name: "dueDate" as const, text: i18n.t("Due date") },
+            { name: "status" as const, text: i18n.t("Status") },
+            { name: "storedBy" as const, text: i18n.t("Stored by") },
+        ],
+        [programs]
+    );
+
+    const actions = useMemo(
+        () => [
+            {
+                name: "select",
+                text: i18n.t("Select"),
+                primary: true,
+                multiple: true,
+                onClick: addToSelection,
+                isActive: () => false,
+            },
+        ],
+        [addToSelection]
+    );
+
+    const filterComponents = useMemo(
+        () => (
+            <Dropdown
+                key={"program-filter"}
+                items={programs}
+                onValueChange={changeProgramFilter}
+                value={programFilter}
+                label={i18n.t("Program")}
+            />
+        ),
+        [programFilter, programs]
+    );
+
+    const additionalColumns = useMemo(() => {
         const program = _.find(programs, { id: programFilter });
         const dataElements = _(program?.programStages ?? [])
             .map(({ programStageDataElements }) =>
@@ -61,82 +159,8 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 return _.find(row.dataValues, { dataElement: id })?.value ?? "-";
             },
         }));
-    };
+    }, [programFilter, programs]);
 
-    const handleTableChange = (tableState: TableState<ProgramEvent>) => {
-        const { selection } = tableState;
-        onChange(syncRule.updateDataSyncEvents(selection.map(({ id }) => id)));
-    };
-
-    const updateSyncAll = (value: boolean) => {
-        onChange(syncRule.updateDataSyncAllEvents(value).updateDataSyncEvents(undefined));
-    };
-
-    const addToSelection = (ids: string[]) => {
-        const oldSelection = _.difference(syncRule.dataSyncEvents, ids);
-        const newSelection = _.difference(ids, syncRule.dataSyncEvents);
-
-        onChange(syncRule.updateDataSyncEvents([...oldSelection, ...newSelection]));
-    };
-
-    const columns: TableColumn<ProgramEvent>[] = [
-        { name: "id" as const, text: i18n.t("UID"), sortable: true },
-        {
-            name: "program" as const,
-            text: i18n.t("Program"),
-            sortable: true,
-            getValue: ({ program }) => _.find(programs, { id: program })?.name ?? program,
-        },
-        { name: "orgUnitName" as const, text: i18n.t("Organisation unit"), sortable: true },
-        { name: "eventDate" as const, text: i18n.t("Event date"), sortable: true },
-        {
-            name: "lastUpdated" as const,
-            text: i18n.t("Last updated"),
-            sortable: true,
-            hidden: true,
-        },
-        { name: "status" as const, text: i18n.t("Status"), sortable: true },
-        { name: "storedBy" as const, text: i18n.t("Stored by"), sortable: true },
-    ];
-
-    const details: ObjectsTableDetailField<ProgramEvent>[] = [
-        { name: "id" as const, text: i18n.t("UID") },
-        {
-            name: "program" as const,
-            text: i18n.t("Program"),
-            getValue: ({ program }) => _.find(programs, { id: program })?.name ?? program,
-        },
-        { name: "orgUnitName" as const, text: i18n.t("Organisation unit") },
-        { name: "created" as const, text: i18n.t("Created") },
-        { name: "lastUpdated" as const, text: i18n.t("Last updated") },
-        { name: "eventDate" as const, text: i18n.t("Event date") },
-        { name: "dueDate" as const, text: i18n.t("Due date") },
-        { name: "status" as const, text: i18n.t("Status") },
-        { name: "storedBy" as const, text: i18n.t("Stored by") },
-    ];
-
-    const actions = [
-        {
-            name: "select",
-            text: i18n.t("Select"),
-            primary: true,
-            multiple: true,
-            onClick: addToSelection,
-            isActive: () => false,
-        },
-    ];
-
-    const filterComponents = (
-        <Dropdown
-            key={"program-filter"}
-            items={programs}
-            onValueChange={changeProgramFilter}
-            value={programFilter}
-            label={i18n.t("Program")}
-        />
-    );
-
-    const additionalColumns = buildAdditionalColumns();
     const filteredObjects =
         objects?.filter(({ program }) => !programFilter || program === programFilter) ?? [];
 
@@ -148,6 +172,8 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
             </Typography>
         );
     }
+
+    console.log("loading", objects === undefined);
 
     return (
         <React.Fragment>
