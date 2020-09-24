@@ -29,6 +29,12 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     const [error, setError] = useState<unknown>();
 
     useEffect(() => {
+        const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
+        sync.extractMetadata<CustomProgram>().then(({ programs = [] }) => setPrograms(programs));
+    }, [memoizedSyncRule, compositionRoot]);
+
+    useEffect(() => {
+        if (programs.length === 0) return;
         compositionRoot.events
             .list(
                 {
@@ -40,11 +46,6 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
             .then(setObjects)
             .catch(setError);
     }, [compositionRoot, memoizedSyncRule, programs]);
-
-    useEffect(() => {
-        const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
-        sync.extractMetadata<CustomProgram>().then(({ programs = [] }) => setPrograms(programs));
-    }, [memoizedSyncRule, compositionRoot]);
 
     const handleTableChange = useCallback(
         (tableState: TableState<ProgramEvent>) => {
@@ -171,6 +172,8 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
             </Typography>
         );
     }
+
+    console.log("loading", objects === undefined);
 
     return (
         <React.Fragment>
