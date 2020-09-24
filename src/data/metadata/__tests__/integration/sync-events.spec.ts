@@ -93,6 +93,7 @@ describe("Sync metadata", () => {
         remote.get("/dataValueSets", async () => ({ dataValues: [] }));
 
         local.get("/events", async () => ({
+            pager: { page: 1, pageCount: 1, pageSize: 1, total: 1 },
             events: [
                 {
                     storedBy: "widp.admin",
@@ -125,6 +126,7 @@ describe("Sync metadata", () => {
         }));
 
         remote.get("/events", async () => ({
+            pager: { page: 1, pageCount: 1, pageSize: 1, total: 1 },
             events: [
                 {
                     storedBy: "widp.admin",
