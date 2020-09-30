@@ -35,6 +35,10 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
         );
     };
 
+    const changeOrgUnitReferences = (removeOrgUnitReferences: boolean) => {
+        onChange(syncRule.updateSyncParams({ ...syncParams, removeOrgUnitReferences }));
+    };
+
     const changeAtomic = (value: boolean) => {
         onChange(
             syncRule.updateSyncParams({
@@ -122,6 +126,16 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
                         label={i18n.t("Include user information and sharing settings")}
                         onValueChange={changeSharingSettings}
                         value={!!syncParams.includeSharingSettings}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "metadata" && (
+                <div>
+                    <Toggle
+                        label={i18n.t("Remove organisation unit references")}
+                        onValueChange={changeOrgUnitReferences}
+                        value={!!syncParams.removeOrgUnitReferences}
                     />
                 </div>
             )}

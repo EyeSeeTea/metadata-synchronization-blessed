@@ -12,6 +12,10 @@ export const AdvancedMetadataOptionsStep: React.FC<ModuleWizardStepProps<Metadat
         onChange(module.update({ includeUserInformation }));
     };
 
+    const changeOrgUnitReferences = (removeOrgUnitReferences: boolean) => {
+        onChange(module.update({ removeOrgUnitReferences }));
+    };
+
     return (
         <React.Fragment>
             <div>
@@ -19,6 +23,13 @@ export const AdvancedMetadataOptionsStep: React.FC<ModuleWizardStepProps<Metadat
                     label={i18n.t("Include user information and sharing settings")}
                     onValueChange={changeSharingSettings}
                     value={module.includeUserInformation}
+                />
+            </div>
+            <div>
+                <Toggle
+                    label={i18n.t("Remove organisation unit references")}
+                    onValueChange={changeOrgUnitReferences}
+                    value={module.removeOrgUnitReferences}
                 />
             </div>
         </React.Fragment>
