@@ -363,7 +363,7 @@ export class OptionModel extends D2Model {
     protected static metadataType = "option";
     protected static collectionName = "options" as const;
 
-    protected static excludeRules = ["optionSets.options"];
+    protected static excludeRules = [];
     protected static includeRules = ["attributes", "optionSets", "optionSets.attributes"];
 }
 
