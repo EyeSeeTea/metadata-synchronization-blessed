@@ -117,11 +117,13 @@ const ManualSyncPage: React.FC = () => {
 
     const updateSelection = useCallback(
         (selection: string[], exclusion: string[]) => {
-            const syncRule = SyncRule.createOnDemand(type)
-                .updateMetadataIds(selection)
-                .updateExcludedIds(exclusion);
-
-            updateSyncRule(syncRule);
+            updateSyncRule(({ originInstance, targetInstances }) =>
+                SyncRule.createOnDemand(type)
+                    .updateBuilder({ originInstance })
+                    .updateTargetInstances(targetInstances)
+                    .updateMetadataIds(selection)
+                    .updateExcludedIds(exclusion)
+            );
         },
         [type]
     );
