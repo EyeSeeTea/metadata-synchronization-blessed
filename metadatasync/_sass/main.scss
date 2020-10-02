@@ -27,7 +27,7 @@ $primary-invert: $pink-invert;
 $footer-background-color: $blue_OMS;
 $footer-color: #ffffff;
 
-section{
+html {
   scroll-behavior: smooth;
 }
 @import "../node_modules/bulma/bulma";
