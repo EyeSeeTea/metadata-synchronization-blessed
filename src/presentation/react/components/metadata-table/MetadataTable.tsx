@@ -1,6 +1,5 @@
 import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import axios from "axios";
 import {
     DatePicker,
     ObjectsTable,
@@ -30,6 +29,7 @@ import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
+import { isCancel } from "../../../../utils/common";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     remoteInstance?: Instance;
@@ -326,7 +326,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const handleError = useCallback(
         (error: Error) => {
-            if (!axios.isCancel(error)) {
+            if (!isCancel(error)) {
                 snackbar.error(error.message);
                 setRows([]);
                 setPager({});

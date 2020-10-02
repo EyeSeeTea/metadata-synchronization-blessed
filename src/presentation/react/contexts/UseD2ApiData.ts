@@ -1,6 +1,7 @@
-import axios, { Canceler } from "axios";
+import { Canceler } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { D2ApiResponse } from "../../../types/d2-api";
+import { isCancel } from "../../../utils/common";
 
 export type D2ApiDataHookQuery<Data> = Pick<D2ApiResponse<Data>, "cancel" | "getData">;
 
@@ -26,7 +27,7 @@ export const useD2ApiData = <T>(apiQuery?: D2ApiDataHookQuery<T>): D2ApiDataHook
                 setState({ loading: false, data });
             })
             .catch(error => {
-                if (!axios.isCancel(error)) {
+                if (isCancel(error)) {
                     setState({ loading: false, error });
                     console.error(error);
                 }

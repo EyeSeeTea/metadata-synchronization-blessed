@@ -1,7 +1,6 @@
 import { useConfig } from "@dhis2/app-runtime";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
-import axiosRetry from "axios-retry";
 import { init } from "d2";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
@@ -17,8 +16,6 @@ import { muiTheme } from "../react/themes/dhis2.theme";
 import { CompositionRoot } from "../CompositionRoot";
 import Root from "./pages/Root";
 import "./WidgetApp.css";
-
-const axiosMaxRetries = 3;
 
 const generateClassName = createGenerateClassName({
     productionPrefix: "c",
@@ -79,7 +76,6 @@ const App = () => {
 };
 
 async function runMigrations(api) {
-    axiosRetry(api.connection, { retries: axiosMaxRetries });
     const runner = await MigrationsRunner.init({ api, debug: debug });
 
     if (runner.hasPendingMigrations()) {
