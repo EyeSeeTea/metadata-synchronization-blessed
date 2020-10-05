@@ -43,6 +43,7 @@ export interface ExportBuilder {
     excludeRules: string[][];
     includeRules: string[][];
     includeSharingSettings: boolean;
+    removeOrgUnitReferences: boolean;
 }
 
 export interface NestedRules {
