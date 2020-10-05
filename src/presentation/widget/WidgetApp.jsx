@@ -36,7 +36,7 @@ const App = () => {
             if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
 
             const d2 = await init({ baseUrl: `${baseUrl}/api` });
-            const api = new D2Api({ baseUrl });
+            const api = new D2Api({ baseUrl, backend: "fetch" });
             const instance = Instance.build({ name: "This instance", url: baseUrl });
 
             const compositionRoot = new CompositionRoot(instance, encryptionKey);

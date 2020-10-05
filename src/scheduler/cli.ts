@@ -51,7 +51,7 @@ const start = async (): Promise<void> => {
         return;
     }
 
-    const api = new D2Api({ baseUrl, auth: { username, password } });
+    const api = new D2Api({ baseUrl, auth: { username, password }, backend: "fetch" });
     await checkMigrations(api);
 
     const welcomeMessage = `Script initialized on ${baseUrl} with user ${username}`;
