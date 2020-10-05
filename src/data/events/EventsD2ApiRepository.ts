@@ -6,7 +6,7 @@ import { EventsRepository } from "../../domain/events/repositories/EventsReposit
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
     SynchronizationResult,
-    SynchronizationStats
+    SynchronizationStats,
 } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { DataImportParams } from "../../types/d2";
