@@ -10,12 +10,13 @@ import {
 } from "../../domain/metadata/entities/MetadataEntities";
 import { D2Api } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
+import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 export class InstanceD2ApiRepository implements InstanceRepository {
     private api: D2Api;
 
     constructor(instance: Instance) {
-        this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
+        this.api = getD2APiFromInstance(instance);
     }
 
     public getApi(): D2Api {

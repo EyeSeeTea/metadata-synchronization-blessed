@@ -1,9 +1,9 @@
+import { useD2ApiData } from "d2-api";
 import { MultiSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useMemo } from "react";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../../contexts/AppContext";
-import { useD2ApiData } from "../../../contexts/UseD2ApiData";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 

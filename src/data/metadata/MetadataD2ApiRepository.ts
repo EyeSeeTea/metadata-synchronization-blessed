@@ -34,6 +34,7 @@ import {
 } from "../../domain/metadata/entities/FilterRule";
 import { modelFactory } from "../../models/dhis/factory";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
+import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
@@ -42,7 +43,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         private instance: Instance,
         private transformationRepository: TransformationRepository
     ) {
-        this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
+        this.api = getD2APiFromInstance(instance);
     }
 
     /**
