@@ -30,6 +30,7 @@ import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
+
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     remoteInstance?: Instance;
     filterRows?: string[];
