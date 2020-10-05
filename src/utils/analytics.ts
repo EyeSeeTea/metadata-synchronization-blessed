@@ -1,6 +1,6 @@
-import { D2Api } from "d2-api/2.30";
 import { Instance } from "../domain/instance/entities/Instance";
 import i18n from "../locales";
+import { getD2APiFromInstance } from "./d2-utils";
 
 const timeout = (ms: number) => {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -8,7 +8,7 @@ const timeout = (ms: number) => {
 
 export async function* executeAnalytics(instance: Instance) {
     yield i18n.t("Running analytics for instance {{name}}", instance);
-    const api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
+    const api = getD2APiFromInstance(instance);
 
     const { response } = await api.analytics.run().getData();
 
