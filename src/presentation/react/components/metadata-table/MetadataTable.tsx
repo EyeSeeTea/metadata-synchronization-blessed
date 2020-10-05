@@ -13,7 +13,7 @@ import {
     TablePagination,
     TableSelection,
     TableState,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
