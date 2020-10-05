@@ -193,32 +193,51 @@ export class EventsD2ApiRepository implements EventsRepository {
         data: object,
         additionalParams: DataImportParams | undefined
     ): Promise<SynchronizationResult> {
-        const { status, message, response } = await this.api
-            .post<EventsPostResponse>(
-                "/events",
-                {
-                    idScheme: "UID",
-                    dataElementIdScheme: "UID",
-                    orgUnitIdScheme: "UID",
-                    eventIdScheme: "UID",
-                    preheatCache: false,
-                    skipExistingCheck: false,
-                    format: "json",
-                    async: false,
-                    dryRun: false,
-                    ...additionalParams,
-                },
-                data
-            )
-            .getData();
+        try {
+            const response = await this.api
+                .post<EventsPostResponse>(
+                    "/events",
+                    {
+                        idScheme: "UID",
+                        dataElementIdScheme: "UID",
+                        orgUnitIdScheme: "UID",
+                        eventIdScheme: "UID",
+                        preheatCache: false,
+                        skipExistingCheck: false,
+                        format: "json",
+                        async: false,
+                        dryRun: false,
+                        ...additionalParams,
+                    },
+                    data
+                )
+                .getData();
+
+            return this.cleanEventsImportResponse(response);
+        } catch (error) {
+            if (error?.response?.data) {
+                return this.cleanEventsImportResponse(error.response.data);
+            }
+
+            return {
+                status: "NETWORK ERROR",
+                instance: this.instance.toPublicObject(),
+                date: new Date(),
+                type: "events",
+            };
+        }
+    }
+
+    private cleanEventsImportResponse(importResult: EventsPostResponse): SynchronizationResult {
+        const { status, message, response } = importResult;
 
         const errors =
             response.importSummaries?.flatMap(
-                ({ reference = "", description = "", conflicts = [] }) =>
-                    conflicts.map(({ object, value }) => ({
+                ({ reference = "", description = "", conflicts }) =>
+                    conflicts?.map(({ object, value }) => ({
                         id: reference,
                         message: _([description, object, value]).compact().join(" "),
-                    }))
+                    })) ?? [{ id: reference, message: description }]
             ) ?? [];
 
         const stats: SynchronizationStats = _.pick(response, [
