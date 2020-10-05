@@ -4843,13 +4843,6 @@ cronstrue@^1.81.0:
   resolved "https://registry.yarnpkg.com/cronstrue/-/cronstrue-1.96.0.tgz#10379b50e9a638965ea03bb9c854e9dadeaa79e3"
   integrity sha512-kNuuN0AXqspm+jlpwiecFSFBrG5dYBaL5EaW5MEjGAh4IFT/jbKwKCNhzWb8N5NulKQUHEDN7w98GjoAm6PmMg==
 
-cross-fetch@^3.0.6:
-  version "3.0.6"
-  resolved "https://registry.npmjs.org/cross-fetch/-/cross-fetch-3.0.6.tgz#3a4040bc8941e653e0e9cf17f29ebcd177d3365c"
-  integrity sha512-KBPUbqgFjzWlVcURG+Svp9TlhA5uliYtiNx/0r8nv0pdypeQCRJ9IaSIc3q/x3q8t3F75cHuwxVql1HFGHCNJQ==
-  dependencies:
-    node-fetch "2.6.1"
-
 cross-spawn@7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.1.tgz#0ab56286e0f7c24e153d04cc2aa027e43a9a5d14"
@@ -5208,10 +5201,10 @@ cypress@4.10.0:
     url "0.11.0"
     yauzl "2.10.0"
 
-d2-api@1.2.0-beta.1:
-  version "1.2.0-beta.1"
-  resolved "https://registry.npmjs.org/d2-api/-/d2-api-1.2.0-beta.1.tgz#080527a81693af2e026699ae4501af14c338de7b"
-  integrity sha512-8E6HKTSnYqv9WgkX4WEhH5R9aHi6t10A7b1SL4nL87aMDRDuw8PVCivbAovEK9MS3DQTp8AO6vAT2zI6tUQDzg==
+d2-api@1.2.0-beta.4:
+  version "1.2.0-beta.4"
+  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-1.2.0-beta.4.tgz#7c75b527e55c36c041aef24a79b71fa1e41264da"
+  integrity sha512-cvmmlVS1N07XrpPvA1+2URW88ojMuU15t1mHUz7WiWnM+uphzlKXF7/k/gxuodc5tNcG4hKTsTH2Xwp51QzIXA==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@dhis2/d2-i18n" "^1.0.5"
@@ -5225,7 +5218,6 @@ d2-api@1.2.0-beta.1:
     axios-mock-adapter "1.18.2"
     btoa "^1.2.1"
     cronstrue "^1.81.0"
-    cross-fetch "^3.0.6"
     cryptr "^4.0.2"
     d2 "^31.8.1"
     dotenv "^8.0.0"
@@ -10981,11 +10973,6 @@ no-case@^3.0.3:
   dependencies:
     lower-case "^2.0.1"
     tslib "^1.10.0"
-
-node-fetch@2.6.1:
-  version "2.6.1"
-  resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
-  integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
 node-fetch@^1.0.1:
   version "1.7.3"

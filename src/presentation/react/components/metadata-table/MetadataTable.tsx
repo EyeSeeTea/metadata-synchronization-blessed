@@ -1,5 +1,6 @@
 import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
+import { isCancel } from "d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -12,7 +13,7 @@ import {
     TablePagination,
     TableSelection,
     TableState,
-    useSnackbar,
+    useSnackbar
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
@@ -29,8 +30,6 @@ import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
-import { isCancel } from "../../../../utils/common";
-
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
     remoteInstance?: Instance;
     filterRows?: string[];
