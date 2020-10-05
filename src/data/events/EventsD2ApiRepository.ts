@@ -11,6 +11,7 @@ import {
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { DataImportParams } from "../../types/d2";
 import { D2Api, Pager } from "../../types/d2-api";
+import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 export class EventsD2ApiRepository implements EventsRepository {
@@ -25,8 +26,15 @@ export class EventsD2ApiRepository implements EventsRepository {
         programs: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        if (params.allEvents) return this.getAllEvents(params, programs, defaults);
-        else return this.getSpecificEvents(params, programs, defaults);
+        const { allEvents = false, orgUnitPaths = [] } = params;
+
+        if (!allEvents) {
+            return this.getSpecificEvents(params, programs, defaults);
+        } else if (allEvents && orgUnitPaths.length < 25) {
+            return this.getEventsByOrgUnit(params, programs, defaults);
+        } else {
+            return this.getAllEvents(params, programs, defaults);
+        }
     }
 
     /**
@@ -52,7 +60,6 @@ export class EventsD2ApiRepository implements EventsRepository {
         const [startDate, endDate] = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
-        const result = [];
 
         const fetchApi = async (program: string, page: number) => {
             return this.api
@@ -67,18 +74,85 @@ export class EventsD2ApiRepository implements EventsRepository {
                 .getData();
         };
 
-        for (const program of programs) {
+        const result = await promiseMap(programs, async program => {
             const { events, pager } = await fetchApi(program, 1);
-            result.push(...events);
 
-            for (let page = 2; page <= pager.pageCount; page += 1) {
-                const { events } = await fetchApi(program, page);
-                result.push(...events);
-            }
-        }
+            const paginatedEvents = await promiseMap(
+                _.range(2, pager.pageCount + 1),
+                async page => {
+                    const { events } = await fetchApi(program, page);
+                    return events;
+                }
+            );
+
+            return [...events, ..._.flatten(paginatedEvents)];
+        });
 
         return _(result)
+            .flatten()
             .filter(({ orgUnit }) => orgUnits.includes(orgUnit))
+            .map(object => ({ ...object, id: object.event }))
+            .map(object => cleanObjectDefault(object, defaults))
+            .value();
+    }
+
+    private async getEventsByOrgUnit(
+        params: DataSynchronizationParams,
+        programs: string[] = [],
+        defaults: string[] = []
+    ): Promise<ProgramEvent[]> {
+        if (programs.length === 0) return [];
+
+        const { period, orgUnitPaths = [] } = params;
+        const [startDate, endDate] = buildPeriodFromParams(params);
+
+        const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
+
+        const fetchApi = async (program: string, orgUnit: string, page: number) => {
+            return this.api
+                .get<EventExportResult>("/events", {
+                    pageSize: 250,
+                    totalPages: true,
+                    page,
+                    program,
+                    orgUnit,
+                    startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
+                    endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                })
+                .getData();
+        };
+
+        const result = await promiseMap(programs, async program => {
+            const filteredEvents = await promiseMap(orgUnits, async orgUnit => {
+                const { events, pager } = await fetchApi(program, orgUnit, 1);
+
+                const paginatedEvents = await promiseMap(
+                    _.range(2, pager.pageCount + 1),
+                    async page => {
+                        const { events } = await this.api
+                            .get<EventExportResult>("/events", {
+                                pageSize: 250,
+                                totalPages: true,
+                                page,
+                                program,
+                                startDate:
+                                    period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
+                                endDate:
+                                    period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                            })
+                            .getData();
+                        return events;
+                    }
+                );
+
+                return [...events, ..._.flatten(paginatedEvents)];
+            });
+
+            return _.flatten(filteredEvents);
+        });
+
+        return _(result)
+            .flatten()
             .map(object => ({ ...object, id: object.event }))
             .map(object => cleanObjectDefault(object, defaults))
             .value();
@@ -187,7 +261,8 @@ interface EventsPostResponse {
     };
 }
 
+type EventExportType = ProgramEvent & { event: string };
 interface EventExportResult {
-    events: Array<ProgramEvent & { event: string }>;
+    events: EventExportType[];
     pager: Pager;
 }
