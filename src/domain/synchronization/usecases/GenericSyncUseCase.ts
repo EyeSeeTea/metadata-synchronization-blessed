@@ -35,6 +35,7 @@ import {
 } from "../entities/SynchronizationReport";
 import { SynchronizationResult, SynchronizationStatus } from "../entities/SynchronizationResult";
 import { SynchronizationType } from "../entities/SynchronizationType";
+import { getD2APiFromInstance } from "../../../utils/d2-utils";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase
@@ -54,7 +55,7 @@ export abstract class GenericSyncUseCase {
         protected readonly localInstance: Instance,
         protected readonly encryptionKey: string
     ) {
-        this.api = new D2Api({ baseUrl: localInstance.url, auth: localInstance.auth });
+        this.api = getD2APiFromInstance(localInstance);
     }
 
     public abstract async buildPayload(): Promise<SyncronizationPayload>;

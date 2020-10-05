@@ -6,18 +6,19 @@ import { EventsRepository } from "../../domain/events/repositories/EventsReposit
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
     SynchronizationResult,
-    SynchronizationStats,
+    SynchronizationStats
 } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { DataImportParams } from "../../types/d2";
 import { D2Api, Pager } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
+import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 export class EventsD2ApiRepository implements EventsRepository {
     private api: D2Api;
 
     constructor(private instance: Instance) {
-        this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
+        this.api = getD2APiFromInstance(instance);
     }
 
     public async getEvents(
