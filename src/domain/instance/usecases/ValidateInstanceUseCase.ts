@@ -44,9 +44,7 @@ export class ValidateInstanceUseCase implements UseCase {
                 }
             } else if (error.request) {
                 return Either.error(
-                    i18n.t("Network error {{error}}, check if server is up and CORS is enabled", {
-                        error: error.toString(),
-                    })
+                    i18n.t("Network error, check if server is up and CORS is enabled")
                 );
             } else {
                 debug({ error });

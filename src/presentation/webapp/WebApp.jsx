@@ -2,7 +2,6 @@ import { useConfig } from "@dhis2/app-runtime";
 import { HeaderBar } from "@dhis2/ui-widgets";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
-import axiosRetry from "axios-retry";
 import { init } from "d2";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
 import _ from "lodash";
@@ -22,8 +21,6 @@ import Migrations from "../react/components/migrations/Migrations";
 import Share from "../react/components/share/Share";
 import Root from "./pages/Root";
 import "./WebApp.css";
-
-const axiosMaxRetries = 3;
 
 const generateClassName = createGenerateClassName({
     productionPrefix: "c",
@@ -58,7 +55,7 @@ const App = () => {
             if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
 
             const d2 = await init({ baseUrl: `${baseUrl}/api` });
-            const api = new D2Api({ baseUrl });
+            const api = new D2Api({ baseUrl, backend: "fetch" });
             const version = await api.getVersion();
             const instance = Instance.build({ name: "This instance", url: baseUrl, version });
 
@@ -111,7 +108,6 @@ const App = () => {
 };
 
 async function runMigrations(api) {
-    axiosRetry(api.connection, { retries: axiosMaxRetries });
     const runner = await MigrationsRunner.init({ api, debug: debug });
 
     if (runner.hasPendingMigrations()) {

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-09-18T10:25:12.901Z\n"
-"PO-Revision-Date: 2020-09-18T10:25:12.901Z\n"
+"POT-Creation-Date: 2020-10-06T10:10:16.836Z\n"
+"PO-Revision-Date: 2020-10-06T10:10:16.836Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -35,7 +35,7 @@ msgstr ""
 msgid "Error {{status}}"
 msgstr ""
 
-msgid "Network error {{error}}, check if server is up and CORS is enabled"
+msgid "Network error, check if server is up and CORS is enabled"
 msgstr ""
 
 msgid "Unknown error"
@@ -512,6 +512,9 @@ msgid "Metadata exclusions"
 msgstr ""
 
 msgid "Include user information and sharing settings"
+msgstr ""
+
+msgid "Remove organisation unit references"
 msgstr ""
 
 msgid "Use default dependencies"

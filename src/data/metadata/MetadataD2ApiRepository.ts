@@ -34,6 +34,7 @@ import {
 } from "../../domain/metadata/entities/FilterRule";
 import { modelFactory } from "../../models/dhis/factory";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
+import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
@@ -42,7 +43,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         private instance: Instance,
         private transformationRepository: TransformationRepository
     ) {
-        this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
+        this.api = getD2APiFromInstance(instance);
     }
 
     /**
@@ -217,6 +218,10 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             const response = await this.postMetadata(versionedPayloadPackage, additionalParams);
             return this.cleanMetadataImportResponse(response, "metadata");
         } catch (error) {
+            if (error?.response?.data) {
+                return this.cleanMetadataImportResponse(error.response.data, "metadata");
+            }
+
             return {
                 status: "NETWORK ERROR",
                 instance: this.instance.toPublicObject(),
@@ -230,12 +235,25 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         metadata: MetadataPackage<Ref>,
         additionalParams: MetadataImportParams
     ): Promise<SynchronizationResult> {
-        const response = await this.postMetadata(metadata, {
-            ...additionalParams,
-            importStrategy: "DELETE",
-        });
+        try {
+            const response = await this.postMetadata(metadata, {
+                ...additionalParams,
+                importStrategy: "DELETE",
+            });
 
-        return this.cleanMetadataImportResponse(response, "deleted");
+            return this.cleanMetadataImportResponse(response, "deleted");
+        } catch (error) {
+            if (error?.response?.data) {
+                return this.cleanMetadataImportResponse(error.response.data, "deleted");
+            }
+
+            return {
+                status: "NETWORK ERROR",
+                instance: this.instance.toPublicObject(),
+                date: new Date(),
+                type: "deleted",
+            };
+        }
     }
 
     public async getByFilterRules(filterRules: FilterRule[]): Promise<Id[]> {

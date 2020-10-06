@@ -32,7 +32,7 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
     const onChangeInstance = useCallback(
         (_type: InstanceSelectionOption, instance?: Instance) => {
             const originInstance = instance?.id ?? "LOCAL";
-            const targetInstances = originInstance === "LOCAL" ? ["LOCAL"] : [];
+            const targetInstances = originInstance === "LOCAL" ? [] : ["LOCAL"];
 
             onChange(
                 syncRule

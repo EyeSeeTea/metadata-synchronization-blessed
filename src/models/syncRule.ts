@@ -55,6 +55,7 @@ const defaultSynchronizationBuilder: SynchronizationBuilder = {
         importStrategy: "CREATE_AND_UPDATE",
         enableMapping: false,
         includeSharingSettings: true,
+        removeOrgUnitReferences: false,
         useDefaultIncludeExclude: true,
         atomicMode: "ALL",
         mergeMode: "MERGE",
@@ -244,6 +245,7 @@ export default class SyncRule {
         return {
             enableMapping: false,
             includeSharingSettings: true,
+            removeOrgUnitReferences: false,
             useDefaultIncludeExclude: true,
             ...params,
         };

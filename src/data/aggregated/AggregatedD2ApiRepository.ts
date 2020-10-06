@@ -13,12 +13,13 @@ import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { DataImportParams } from "../../types/d2";
 import { D2Api, DataValueSetsPostResponse } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
+import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 export class AggregatedD2ApiRepository implements AggregatedRepository {
     private api: D2Api;
 
     constructor(private instance: Instance) {
-        this.api = new D2Api({ baseUrl: instance.url, auth: instance.auth });
+        this.api = getD2APiFromInstance(instance);
     }
 
     public async getAggregated(
@@ -182,24 +183,45 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         data: object,
         additionalParams: DataImportParams | undefined
     ): Promise<SynchronizationResult> {
-        const { status, description, importCount, conflicts } = await this.api
-            .post<DataValueSetsPostResponse>(
-                "/dataValueSets",
-                {
-                    idScheme: "UID",
-                    dataElementIdScheme: "UID",
-                    orgUnitIdScheme: "UID",
-                    eventIdScheme: "UID",
-                    preheatCache: false,
-                    skipExistingCheck: false,
-                    format: "json",
-                    async: false,
-                    dryRun: false,
-                    ...additionalParams,
-                },
-                data
-            )
-            .getData();
+        try {
+            const response = await this.api
+                .post<DataValueSetsPostResponse>(
+                    "/dataValueSets",
+                    {
+                        idScheme: "UID",
+                        dataElementIdScheme: "UID",
+                        orgUnitIdScheme: "UID",
+                        eventIdScheme: "UID",
+                        preheatCache: false,
+                        skipExistingCheck: false,
+                        format: "json",
+                        async: false,
+                        dryRun: false,
+                        ...additionalParams,
+                    },
+                    data
+                )
+                .getData();
+
+            return this.cleanAggregatedImportResponse(response);
+        } catch (error) {
+            if (error?.response?.data) {
+                return this.cleanAggregatedImportResponse(error.response.data);
+            }
+
+            return {
+                status: "NETWORK ERROR",
+                instance: this.instance.toPublicObject(),
+                date: new Date(),
+                type: "aggregated",
+            };
+        }
+    }
+
+    private cleanAggregatedImportResponse(
+        importResult: DataValueSetsPostResponse
+    ): SynchronizationResult {
+        const { status, description, importCount, conflicts } = importResult;
 
         const errors =
             conflicts?.map(({ object, value }) => ({

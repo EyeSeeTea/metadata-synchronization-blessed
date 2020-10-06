@@ -35,7 +35,14 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
         const visitedIds: Set<string> = new Set();
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
-            const { type, ids, excludeRules, includeRules, includeSharingSettings } = builder;
+            const {
+                type,
+                ids,
+                excludeRules,
+                includeRules,
+                includeSharingSettings,
+                removeOrgUnitReferences,
+            } = builder;
 
             //TODO: when metadata entities schema exists on domain, move this factory to domain
             const collectionName = modelFactory(this.api, type).getCollectionName();
@@ -58,7 +65,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     schema.name,
                     element,
                     excludeRules,
-                    includeSharingSettings
+                    includeSharingSettings,
+                    removeOrgUnitReferences
                 );
 
                 result[collectionName] = result[collectionName] || [];
@@ -74,6 +82,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                         excludeRules: nestedExcludeRules[type],
                         includeRules: nestedIncludeRules[type],
                         includeSharingSettings,
+                        removeOrgUnitReferences,
                     }))
                     .map(newBuilder => {
                         newBuilder.ids.forEach(id => {
@@ -95,6 +104,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const { metadataIds, syncParams, filterRules = [] } = this.builder;
         const {
             includeSharingSettings = true,
+            removeOrgUnitReferences = false,
             metadataIncludeExcludeRules = {},
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
@@ -119,6 +129,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     ? myClass.getIncludeRules()
                     : metadataIncludeExcludeRules[metadataType].includeRules.map(_.toPath),
                 includeSharingSettings,
+                removeOrgUnitReferences,
             });
         });
 
