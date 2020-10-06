@@ -410,18 +410,12 @@ export default class SyncRule {
     }
 
     public markToNotUseDefaultIncludeExclude(models: Array<typeof D2Model>): SyncRule {
-        const parseRules = (rule: string[][]) =>
-            _(rule)
-                .map(array => (array.length > 0 ? array.join(".") : undefined))
-                .compact()
-                .value();
-
         const rules: MetadataIncludeExcludeRules = models.reduce(
             (accumulator: any, model: typeof D2Model) => ({
                 ...accumulator,
                 [model.getMetadataType()]: {
-                    includeRules: parseRules(model.getIncludeRules()),
-                    excludeRules: parseRules(model.getExcludeRules()),
+                    includeRules: model.getIncludeRules().map(array => array.join(".")),
+                    excludeRules: model.getExcludeRules().map(array => array.join(".")),
                 },
             }),
             {}
