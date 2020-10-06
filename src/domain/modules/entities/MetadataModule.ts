@@ -17,6 +17,7 @@ interface BaseMetadataModule extends BaseModule {
     metadataIds: string[];
     excludedIds: string[];
     includeUserInformation: boolean;
+    removeOrgUnitReferences: boolean;
     useDefaultIncludeExclude: boolean;
     metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
 }
@@ -25,6 +26,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
     public readonly metadataIds: string[];
     public readonly excludedIds: string[];
     public readonly includeUserInformation: boolean;
+    public readonly removeOrgUnitReferences: boolean;
     public readonly useDefaultIncludeExclude: boolean;
     public readonly metadataIncludeExcludeRules: MetadataIncludeExcludeRules;
     public readonly type = "metadata";
@@ -34,6 +36,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
         this.metadataIds = data.metadataIds;
         this.excludedIds = data.excludedIds;
         this.includeUserInformation = data.includeUserInformation;
+        this.removeOrgUnitReferences = data.removeOrgUnitReferences;
         this.useDefaultIncludeExclude = data.useDefaultIncludeExclude;
         this.metadataIncludeExcludeRules = data.metadataIncludeExcludeRules;
     }
@@ -53,6 +56,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             excludedIds: this.excludedIds,
             syncParams: {
                 enableMapping: true,
+                removeOrgUnitReferences: this.removeOrgUnitReferences,
                 includeSharingSettings: this.includeUserInformation,
                 useDefaultIncludeExclude: this.useDefaultIncludeExclude,
                 metadataIncludeExcludeRules: this.metadataIncludeExcludeRules,
@@ -150,6 +154,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             ...GenericModule.buildDefaultValues(),
             metadataIds: [],
             excludedIds: [],
+            removeOrgUnitReferences: false,
             includeUserInformation: false,
             useDefaultIncludeExclude: true,
             metadataIncludeExcludeRules: {},
