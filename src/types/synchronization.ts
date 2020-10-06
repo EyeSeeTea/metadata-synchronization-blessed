@@ -30,6 +30,7 @@ export interface ExcludeIncludeRules {
 export interface MetadataSynchronizationParams extends MetadataImportParams {
     enableMapping: boolean;
     includeSharingSettings: boolean;
+    removeOrgUnitReferences: boolean;
     useDefaultIncludeExclude: boolean;
     metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
 }
@@ -42,6 +43,7 @@ export interface ExportBuilder {
     excludeRules: string[][];
     includeRules: string[][];
     includeSharingSettings: boolean;
+    removeOrgUnitReferences: boolean;
 }
 
 export interface NestedRules {
