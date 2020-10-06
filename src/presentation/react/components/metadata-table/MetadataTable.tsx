@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import axios from "axios";
+import { isCancel } from "d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -326,7 +326,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const handleError = useCallback(
         (error: Error) => {
-            if (!axios.isCancel(error)) {
+            if (!isCancel(error)) {
                 snackbar.error(error.message);
                 setRows([]);
                 setPager({});

@@ -43,7 +43,7 @@ async function main() {
     const baseUrl = await getBaseUrl();
 
     try {
-        const api = new D2Api({ baseUrl });
+        const api = new D2Api({ baseUrl, backend: "fetch" });
         const userSettings = await api.get("/userSettings").getData();
         if (typeof userSettings === "string") throw new Error("User needs to log in");
         configI18n(userSettings);
