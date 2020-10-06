@@ -99,6 +99,22 @@ const SaveStep = ({ syncRule, onCancel }) => {
 
     const aggregationItems = useMemo(buildAggregationItems, []);
 
+    const destinationInstances = useMemo(
+        () =>
+            _.compact(
+                syncRule.targetInstances.map(id => {
+                    if (id === "LOCAL") return { value: id, text: "This instance" };
+                    return instanceOptions.find(e => e.value === id);
+                })
+            ),
+        [instanceOptions, syncRule.targetInstances]
+    );
+
+    const originInstance = useMemo(
+        () => instanceOptions.find(e => e.value === syncRule.originInstance),
+        [instanceOptions, syncRule.originInstance]
+    );
+
     return (
         <React.Fragment>
             <ConfirmationDialog
@@ -119,18 +135,19 @@ const SaveStep = ({ syncRule, onCancel }) => {
 
                 <LiEntry label={i18n.t("Description")} value={syncRule.description} />
 
+                {originInstance && (
+                    <LiEntry label={i18n.t("Source instance")} value={originInstance.text} />
+                )}
+
                 <LiEntry
                     label={i18n.t("Target instances [{{total}}]", {
                         total: syncRule.targetInstances.length,
                     })}
                 >
                     <ul>
-                        {syncRule.targetInstances.map(id => {
-                            const instanceOption = instanceOptions.find(e => e.value === id);
-                            return instanceOption ? (
-                                <LiEntry key={instanceOption.value} label={instanceOption.text} />
-                            ) : null;
-                        })}
+                        {destinationInstances.map(instanceOption => (
+                            <LiEntry key={instanceOption.value} label={instanceOption.text} />
+                        ))}
                     </ul>
                 </LiEntry>
 
