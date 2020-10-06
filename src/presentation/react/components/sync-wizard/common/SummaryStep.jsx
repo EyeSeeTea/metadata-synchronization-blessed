@@ -205,44 +205,50 @@ const SaveStep = ({ syncRule, onCancel }) => {
                 {syncRule.type === "metadata" && !syncRule.useDefaultIncludeExclude && (
                     <LiEntry label={i18n.t("Include exclude configuration")}>
                         <ul>
-                            {_.keys(syncRule.metadataIncludeExcludeRules).map(key => (
-                                <LiEntry key={key} label={key}>
-                                    <ul>
-                                        <LiEntry label={i18n.t("Include rules")} />
+                            {_.keys(syncRule.metadataIncludeExcludeRules).map(key => {
+                                const {
+                                    includeRules,
+                                    excludeRules,
+                                } = syncRule.metadataIncludeExcludeRules[key];
+
+                                return (
+                                    <LiEntry key={key} label={key}>
                                         <ul>
-                                            {syncRule.metadataIncludeExcludeRules[
-                                                key
-                                            ].includeRules.map((includeRule, idx) => (
-                                                <ul key={`${key}-include-${idx}`}>
-                                                    <LiEntry
-                                                        label={
-                                                            includeExcludeRulesFriendlyNames[
-                                                                includeRule
-                                                            ] || includeRule
-                                                        }
-                                                    />
-                                                </ul>
-                                            ))}
+                                            {includeRules.length > 0 && (
+                                                <LiEntry label={i18n.t("Include rules")}>
+                                                    {includeRules.map((includeRule, idx) => (
+                                                        <ul key={`${key}-include-${idx}`}>
+                                                            <LiEntry
+                                                                label={
+                                                                    includeExcludeRulesFriendlyNames[
+                                                                        includeRule
+                                                                    ] || includeRule
+                                                                }
+                                                            />
+                                                        </ul>
+                                                    ))}
+                                                </LiEntry>
+                                            )}
+
+                                            {excludeRules.length > 0 && (
+                                                <LiEntry label={i18n.t("Exclude rules")}>
+                                                    {excludeRules.map((excludeRule, idx) => (
+                                                        <ul key={`${key}-exclude-${idx}`}>
+                                                            <LiEntry
+                                                                label={
+                                                                    includeExcludeRulesFriendlyNames[
+                                                                        excludeRule
+                                                                    ] || excludeRule
+                                                                }
+                                                            />
+                                                        </ul>
+                                                    ))}
+                                                </LiEntry>
+                                            )}
                                         </ul>
-                                        <LiEntry label={i18n.t("Exclude rules")} />
-                                        <ul>
-                                            {syncRule.metadataIncludeExcludeRules[
-                                                key
-                                            ].excludeRules.map((excludeRule, idx) => (
-                                                <ul key={`${key}-exclude-${idx}`}>
-                                                    <LiEntry
-                                                        label={
-                                                            includeExcludeRulesFriendlyNames[
-                                                                excludeRule
-                                                            ] || excludeRule
-                                                        }
-                                                    />
-                                                </ul>
-                                            ))}
-                                        </ul>
-                                    </ul>
-                                </LiEntry>
-                            ))}
+                                    </LiEntry>
+                                );
+                            })}
                         </ul>
                     </LiEntry>
                 )}
