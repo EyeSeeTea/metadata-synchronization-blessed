@@ -183,24 +183,45 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         data: object,
         additionalParams: DataImportParams | undefined
     ): Promise<SynchronizationResult> {
-        const { status, description, importCount, conflicts } = await this.api
-            .post<DataValueSetsPostResponse>(
-                "/dataValueSets",
-                {
-                    idScheme: "UID",
-                    dataElementIdScheme: "UID",
-                    orgUnitIdScheme: "UID",
-                    eventIdScheme: "UID",
-                    preheatCache: false,
-                    skipExistingCheck: false,
-                    format: "json",
-                    async: false,
-                    dryRun: false,
-                    ...additionalParams,
-                },
-                data
-            )
-            .getData();
+        try {
+            const response = await this.api
+                .post<DataValueSetsPostResponse>(
+                    "/dataValueSets",
+                    {
+                        idScheme: "UID",
+                        dataElementIdScheme: "UID",
+                        orgUnitIdScheme: "UID",
+                        eventIdScheme: "UID",
+                        preheatCache: false,
+                        skipExistingCheck: false,
+                        format: "json",
+                        async: false,
+                        dryRun: false,
+                        ...additionalParams,
+                    },
+                    data
+                )
+                .getData();
+
+            return this.cleanAggregatedImportResponse(response);
+        } catch (error) {
+            if (error?.response?.data) {
+                return this.cleanAggregatedImportResponse(error.response.data);
+            }
+
+            return {
+                status: "NETWORK ERROR",
+                instance: this.instance.toPublicObject(),
+                date: new Date(),
+                type: "aggregated",
+            };
+        }
+    }
+
+    private cleanAggregatedImportResponse(
+        importResult: DataValueSetsPostResponse
+    ): SynchronizationResult {
+        const { status, description, importCount, conflicts } = importResult;
 
         const errors =
             conflicts?.map(({ object, value }) => ({
