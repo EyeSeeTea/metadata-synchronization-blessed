@@ -2,6 +2,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import { ConfirmationDialog } from "d2-ui-components";
 import React, { useState } from "react";
 import i18n from "../../../../locales";
+import { PackageImportWizard } from "../package-import-wizard/PackageImportWizard";
 
 interface PackageImportDialogProps {
     isOpen: boolean;
@@ -42,7 +43,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                     onChange={onChange}
                     onCancel={onClose}
                 /> */}
-                Wizard
+                <PackageImportWizard />
             </DialogContent>
         </ConfirmationDialog>
     );
