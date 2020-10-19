@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-10-06T10:10:16.836Z\n"
+"POT-Creation-Date: 2020-10-19T11:00:30.607Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -524,6 +524,12 @@ msgstr ""
 msgid "[Pull Request by {{name}}] {{subject}}"
 msgstr ""
 
+msgid "Packages Import"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
 msgid "Invalid package"
 msgstr ""
 
@@ -593,9 +599,6 @@ msgid "Can't connect to store"
 msgstr ""
 
 msgid "Cannot get data from remote instance"
-msgstr ""
-
-msgid "Import"
 msgstr ""
 
 msgid "objects"

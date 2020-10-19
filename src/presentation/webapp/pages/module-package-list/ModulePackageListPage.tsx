@@ -9,6 +9,7 @@ import {
     PresentationOption,
     ViewOption,
 } from "../../../react/components/module-package-list-table/ModulePackageListTable";
+import PackageImportDialog from "../../../react/components/package-import-dialog/PackageImportDialog";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
 
@@ -26,6 +27,7 @@ export interface ModulePackageListPageProps {
 export const ModulePackageListPage: React.FC = () => {
     const history = useHistory();
     const [syncReport, setSyncReport] = useState<SyncReport>();
+    const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
 
     const { list: tableOption = "modules" } = useParams<{ list: ViewOption }>();
     const title = buildTitle(tableOption);
@@ -38,7 +40,7 @@ export const ModulePackageListPage: React.FC = () => {
         if (tableOption === "modules") {
             history.push(`/modules/new`);
         } else {
-            console.log("show wizard");
+            setOpenImportPackageDialog(true);
         }
     }, [history, tableOption]);
 
@@ -75,6 +77,11 @@ export const ModulePackageListPage: React.FC = () => {
             {!!syncReport && (
                 <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
             )}
+
+            <PackageImportDialog
+                isOpen={openImportPackageDialog}
+                onClose={() => setOpenImportPackageDialog(false)}
+            />
         </React.Fragment>
     );
 };

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-10-19T08:31:48.050Z\n"
-"PO-Revision-Date: 2020-10-19T08:31:48.050Z\n"
+"POT-Creation-Date: 2020-10-19T11:00:32.305Z\n"
+"PO-Revision-Date: 2020-10-19T11:00:32.305Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -523,6 +523,12 @@ msgstr ""
 msgid "[Pull Request by {{name}}] {{subject}}"
 msgstr ""
 
+msgid "Packages Import"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
 msgid "Invalid package"
 msgstr ""
 
@@ -592,9 +598,6 @@ msgid "Can't connect to store"
 msgstr ""
 
 msgid "Cannot get data from remote instance"
-msgstr ""
-
-msgid "Import"
 msgstr ""
 
 msgid "objects"
