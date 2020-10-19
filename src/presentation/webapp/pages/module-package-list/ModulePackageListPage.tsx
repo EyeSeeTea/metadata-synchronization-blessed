@@ -34,9 +34,13 @@ export const ModulePackageListPage: React.FC = () => {
         history.push("/");
     }, [history]);
 
-    const createModule = useCallback(() => {
-        history.push(`/modules/new`);
-    }, [history]);
+    const create = useCallback(() => {
+        if (tableOption === "modules") {
+            history.push(`/modules/new`);
+        } else {
+            console.log("show wizard");
+        }
+    }, [history, tableOption]);
 
     const setTableOption = useCallback(
         (option: ViewOption) => {
@@ -61,7 +65,7 @@ export const ModulePackageListPage: React.FC = () => {
             <ModulePackageListTable
                 showSelector={showSelector}
                 showInstances={showInstances}
-                onCreate={createModule}
+                onCreate={create}
                 viewValue={tableOption}
                 onViewChange={setTableOption}
                 presentation={"app"}

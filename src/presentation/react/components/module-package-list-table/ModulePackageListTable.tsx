@@ -98,7 +98,10 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
                 paginationOptions={paginationOptions}
                 openSyncSummary={openSyncSummary}
                 onActionButtonClick={
-                    viewSelector.value === "modules" && !selectedInstance ? onCreate : undefined
+                    (viewSelector.value === "modules" && !selectedInstance) ||
+                    (viewSelector.value === "packages" && selectedInstance)
+                        ? onCreate
+                        : undefined
                 }
             />
         );

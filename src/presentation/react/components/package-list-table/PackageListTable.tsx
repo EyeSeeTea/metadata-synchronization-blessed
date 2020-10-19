@@ -230,6 +230,8 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
         []
     );
 
+    const canImport = presentation === "app" && isRemoteInstance && appConfigurator;
+
     const actions: TableAction<ListPackage>[] = useMemo(
         () => [
             {
@@ -278,7 +280,7 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
                 multiple: false,
                 onClick: importPackage,
                 icon: <Icon>arrow_downward</Icon>,
-                isActive: () => presentation === "app" && isRemoteInstance && appConfigurator,
+                isActive: () => canImport,
             },
         ],
         [
@@ -291,6 +293,7 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
             presentation,
             publishPackage,
             showStore,
+            canImport,
         ]
     );
 
@@ -355,7 +358,7 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
                 columns={columns}
                 details={details}
                 actions={actions}
-                onActionButtonClick={onActionButtonClick}
+                onActionButtonClick={canImport ? onActionButtonClick : undefined}
                 forceSelectionColumn={presentation === "app"}
                 filterComponents={filterComponents}
                 selection={selection}
