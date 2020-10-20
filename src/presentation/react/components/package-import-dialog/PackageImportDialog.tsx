@@ -36,40 +36,56 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
     };
 
     const handleExecuteImport = async () => {
-        const result = await compositionRoot.packages.get(
-            packageImportRule.packageIds[0],
-            packageImportRule.instance
-        );
-        result.match({
-            success: async ({ name, contents }) => {
-                try {
-                    loading.show(true, i18n.t("Importing package {{name}}", { name }));
-                    const result = await compositionRoot.metadata.import(contents);
+        const report = SyncReport.create("metadata");
 
-                    const report = SyncReport.create("metadata");
-                    report.setStatus(
-                        result.status === "ERROR" || result.status === "NETWORK ERROR"
-                            ? "FAILURE"
-                            : "DONE"
-                    );
-                    report.addSyncResult({
-                        ...result,
-                        origin: packageImportRule.instance.toPublicObject(),
-                    });
-                    await report.save(api);
+        const executePackageImport = async (packageId: string) => {
+            const result = await compositionRoot.packages.get(
+                packageId,
+                packageImportRule.instance
+            );
 
-                    if (openSyncSummary) {
-                        openSyncSummary(report);
+            result.match({
+                success: async originPackage => {
+                    try {
+                        loading.show(
+                            true,
+                            i18n.t("Importing package {{name}}", { name: originPackage.name })
+                        );
+                        const result = await compositionRoot.metadata.import(
+                            originPackage.contents
+                        );
+
+                        report.setStatus(
+                            result.status === "ERROR" || result.status === "NETWORK ERROR"
+                                ? "FAILURE"
+                                : "DONE"
+                        );
+                        report.addSyncResult({
+                            ...result,
+                            originPackage,
+                            origin: packageImportRule.instance.toPublicObject(),
+                        });
+                        loading.reset();
+                    } catch (error) {
+                        snackbar.error(error.message);
                     }
-                } catch (error) {
-                    snackbar.error(error.message);
-                }
-                loading.reset();
-            },
-            error: async () => {
-                snackbar.error(i18n.t("Couldn't load package"));
-            },
-        });
+                },
+                error: async () => {
+                    loading.reset();
+                    snackbar.error(i18n.t("Couldn't load package"));
+                },
+            });
+        };
+
+        for (const id of packageImportRule.packageIds) {
+            await executePackageImport(id);
+        }
+
+        await report.save(api);
+
+        if (openSyncSummary) {
+            openSyncSummary(report);
+        }
     };
 
     return (
