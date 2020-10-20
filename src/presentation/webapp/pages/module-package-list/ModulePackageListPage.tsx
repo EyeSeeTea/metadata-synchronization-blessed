@@ -1,4 +1,4 @@
-import { PaginationOptions } from "d2-ui-components";
+import { PaginationOptions, useLoading, useSnackbar } from "d2-ui-components";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
@@ -13,6 +13,7 @@ import {
 import PackageImportDialog from "../../../react/components/package-import-dialog/PackageImportDialog";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
+import { useAppContext } from "../../../react/contexts/AppContext";
 
 export interface ModulePackageListPageProps {
     remoteInstance?: Instance;
@@ -27,6 +28,9 @@ export interface ModulePackageListPageProps {
 
 export const ModulePackageListPage: React.FC = () => {
     const history = useHistory();
+    const snackbar = useSnackbar();
+    const loading = useLoading();
+    const { compositionRoot, api } = useAppContext();
     const [syncReport, setSyncReport] = useState<SyncReport>();
     const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
     const [packageImportRule, setPackageImportRule] = useState<PackageImportRule | undefined>(
@@ -72,8 +76,40 @@ export const ModulePackageListPage: React.FC = () => {
         setPackageImportRule(packageImportRule);
     };
 
-    const handleExecuteImport = (packageImportRule: PackageImportRule) => {
-        console.log({ packageImportRule }, "Execute Import");
+    const handleExecuteImport = async (packageImportRule: PackageImportRule) => {
+        const result = await compositionRoot.packages.get(
+            packageImportRule.packageIds[0],
+            packageImportRule.instance
+        );
+        result.match({
+            success: async ({ name, contents }) => {
+                try {
+                    loading.show(true, i18n.t("Importing package {{name}}", { name }));
+                    const result = await compositionRoot.metadata.import(contents);
+
+                    const report = SyncReport.create("metadata");
+                    report.setStatus(
+                        result.status === "ERROR" || result.status === "NETWORK ERROR"
+                            ? "FAILURE"
+                            : "DONE"
+                    );
+                    report.addSyncResult({
+                        ...result,
+                        origin: packageImportRule.instance.toPublicObject(),
+                    });
+                    await report.save(api);
+
+                    setSyncReport(report);
+                } catch (error) {
+                    snackbar.error(error.message);
+                }
+                loading.reset();
+                setOpenImportPackageDialog(false);
+            },
+            error: async () => {
+                snackbar.error(i18n.t("Couldn't load package"));
+            },
+        });
     };
 
     return (
