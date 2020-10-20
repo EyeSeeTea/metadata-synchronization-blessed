@@ -196,7 +196,17 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
             <DialogContent>
                 {results.map(
                     (
-                        { origin, instance, status, typeStats = [], stats, message, errors, type },
+                        {
+                            origin,
+                            instance,
+                            status,
+                            typeStats = [],
+                            stats,
+                            message,
+                            errors,
+                            type,
+                            originPackage,
+                        },
                         i
                     ) => (
                         <Accordion
@@ -210,6 +220,9 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
                                     <br />
                                     {origin && `${i18n.t("Origin instance")}: ${origin.name}`}
                                     {origin && <br />}
+                                    {originPackage &&
+                                        `${i18n.t("Origin package")}: ${originPackage.name}`}
+                                    {originPackage && <br />}
                                     {`${i18n.t("Destination instance")}: ${instance.name}`}
                                 </Typography>
                                 <Typography className={classes.accordionHeading2}>
