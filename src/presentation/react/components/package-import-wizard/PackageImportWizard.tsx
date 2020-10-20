@@ -18,7 +18,7 @@ export interface PackageImportWizardStepProps {
 }
 
 const GeneralInfoStep = () => <div>General info</div>;
-const PackagesMetadataStep = () => <div>Packages</div>;
+const PackagesMetadataStep = () => <div>Packages Mapping</div>;
 
 export const stepsBaseInfo = [
     {

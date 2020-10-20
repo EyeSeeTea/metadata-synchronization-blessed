@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-10-20T10:17:34.025Z\n"
-"PO-Revision-Date: 2020-10-20T10:17:34.025Z\n"
+"POT-Creation-Date: 2020-10-20T10:35:03.005Z\n"
+"PO-Revision-Date: 2020-10-20T10:35:03.005Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -523,6 +523,12 @@ msgstr ""
 msgid "[Pull Request by {{name}}] {{subject}}"
 msgstr ""
 
+msgid "Importing package {{name}}"
+msgstr ""
+
+msgid "Couldn't load package"
+msgstr ""
+
 msgid "Packages Import"
 msgstr ""
 
@@ -571,12 +577,6 @@ msgid "Package published to store in a new branch"
 msgstr ""
 
 msgid "Couldn't create new branch on store"
-msgstr ""
-
-msgid "Importing package {{name}}"
-msgstr ""
-
-msgid "Couldn't load package"
 msgstr ""
 
 msgid "Version"

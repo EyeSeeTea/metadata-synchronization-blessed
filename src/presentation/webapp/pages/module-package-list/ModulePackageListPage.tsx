@@ -1,8 +1,7 @@
-import { PaginationOptions, useLoading, useSnackbar } from "d2-ui-components";
+import { PaginationOptions } from "d2-ui-components";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import {
@@ -13,7 +12,6 @@ import {
 import PackageImportDialog from "../../../react/components/package-import-dialog/PackageImportDialog";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
-import { useAppContext } from "../../../react/contexts/AppContext";
 
 export interface ModulePackageListPageProps {
     remoteInstance?: Instance;
@@ -28,14 +26,9 @@ export interface ModulePackageListPageProps {
 
 export const ModulePackageListPage: React.FC = () => {
     const history = useHistory();
-    const snackbar = useSnackbar();
-    const loading = useLoading();
-    const { compositionRoot, api } = useAppContext();
     const [syncReport, setSyncReport] = useState<SyncReport>();
     const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
-    const [packageImportRule, setPackageImportRule] = useState<PackageImportRule | undefined>(
-        undefined
-    );
+    const [selectedInstance, setSelectedInstance] = useState<Instance>();
 
     const { list: tableOption = "modules" } = useParams<{ list: ViewOption }>();
     const title = buildTitle(tableOption);
@@ -68,48 +61,9 @@ export const ModulePackageListPage: React.FC = () => {
         [tableOption]
     );
 
-    const handleInstanceChange = (instance?: Instance) => {
-        setPackageImportRule(instance ? PackageImportRule.create(instance) : undefined);
-    };
-
-    const handlePackageImportRuleChange = (packageImportRule: PackageImportRule) => {
-        setPackageImportRule(packageImportRule);
-    };
-
-    const handleExecuteImport = async (packageImportRule: PackageImportRule) => {
-        const result = await compositionRoot.packages.get(
-            packageImportRule.packageIds[0],
-            packageImportRule.instance
-        );
-        result.match({
-            success: async ({ name, contents }) => {
-                try {
-                    loading.show(true, i18n.t("Importing package {{name}}", { name }));
-                    const result = await compositionRoot.metadata.import(contents);
-
-                    const report = SyncReport.create("metadata");
-                    report.setStatus(
-                        result.status === "ERROR" || result.status === "NETWORK ERROR"
-                            ? "FAILURE"
-                            : "DONE"
-                    );
-                    report.addSyncResult({
-                        ...result,
-                        origin: packageImportRule.instance.toPublicObject(),
-                    });
-                    await report.save(api);
-
-                    setSyncReport(report);
-                } catch (error) {
-                    snackbar.error(error.message);
-                }
-                loading.reset();
-                setOpenImportPackageDialog(false);
-            },
-            error: async () => {
-                snackbar.error(i18n.t("Couldn't load package"));
-            },
-        });
+    const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
+        setOpenImportPackageDialog(false);
+        setSyncReport(syncReport);
     };
 
     return (
@@ -124,20 +78,19 @@ export const ModulePackageListPage: React.FC = () => {
                 onViewChange={setTableOption}
                 presentation={"app"}
                 openSyncSummary={setSyncReport}
-                onInstanceChange={handleInstanceChange}
+                onInstanceChange={setSelectedInstance}
             />
 
             {!!syncReport && (
                 <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
             )}
 
-            {packageImportRule && (
+            {selectedInstance && (
                 <PackageImportDialog
                     isOpen={openImportPackageDialog}
                     onClose={() => setOpenImportPackageDialog(false)}
-                    packageImportRule={packageImportRule}
-                    onChange={handlePackageImportRuleChange}
-                    executeImport={handleExecuteImport}
+                    instance={selectedInstance}
+                    openSyncSummary={handleOpenSyncSummaryFromDialog}
                 />
             )}
         </React.Fragment>
