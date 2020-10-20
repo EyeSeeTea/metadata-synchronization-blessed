@@ -1,10 +1,24 @@
 import { Wizard, WizardStep } from "d2-ui-components";
 import React from "react";
 import { useLocation } from "react-router-dom";
+import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
 import i18n from "../../../../locales";
+import { PackageSelectionStep } from "./steps/PackageSelectionStep";
+
+export interface PackageImportWizardStep extends WizardStep {
+    validationKeys: string[];
+    showOnSyncDialog?: boolean;
+}
+
+export interface PackageImportWizardStepProps {
+    packageImportRule: PackageImportRule;
+    onChange: (packageImportRule: PackageImportRule) => void;
+    onCancel: () => void;
+    onClose: () => void;
+}
 
 const GeneralInfoStep = () => <div>General info</div>;
-const PackagesStep = () => <div>Packages</div>;
+//const PackagesStep = () => <div>Packages</div>;
 const PackagesMetadataStep = () => <div>Packages</div>;
 const SummaryStep = () => <div>Summary</div>;
 
@@ -18,8 +32,8 @@ export const stepsBaseInfo = [
     {
         key: "packages",
         label: i18n.t("Packages"),
-        component: PackagesStep,
-        validationKeys: ["name", "department"],
+        component: PackageSelectionStep,
+        validationKeys: ["packageIds"],
     },
     {
         key: "package-mapping",
@@ -37,26 +51,25 @@ export const stepsBaseInfo = [
 ];
 
 export interface PackageImportWizardProps {
-    // isEdit: boolean;
-    // onCancel: () => void;
-    // onClose: () => void;
-    // module: Module;
-    // onChange: (module: Module) => void;
+    packageImportRule: PackageImportRule;
+    onChange: (packageImportRule: PackageImportRule) => void;
+    onCancel: () => void;
+    onClose: () => void;
 }
 
-export const PackageImportWizard: React.FC<PackageImportWizardProps> = () => {
+export const PackageImportWizard: React.FC<PackageImportWizardProps> = props => {
     const location = useLocation();
 
-    //const props: ModuleWizardStepProps = { module, onChange, onCancel, onClose, isEdit };
-    //const steps = metadataModuleSteps.map(step => ({ ...step, props }));
-    const steps = stepsBaseInfo; //.map(step => ({ ...step, props }));
+    const steps = stepsBaseInfo.map(step => ({ ...step, props }));
 
-    const onStepChangeRequest = async (_currentStep: WizardStep, _newStep: WizardStep) => {
-        // const index = _(steps).findIndex(step => step.key === newStep.key);
-        // return _.take(steps, index).flatMap(({ validationKeys }) =>
-        //     module.validate(validationKeys).map(({ description }) => description)
-        // );
-        return undefined;
+    const onStepChangeRequest = async (currentStep: WizardStep, _newStep: WizardStep) => {
+        const step = currentStep as PackageImportWizardStep;
+
+        const errors = props.packageImportRule
+            .validate(step.validationKeys)
+            .map(({ description }) => description);
+
+        return errors;
     };
 
     const urlHash = location.hash.slice(1);

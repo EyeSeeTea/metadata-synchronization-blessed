@@ -24,7 +24,13 @@ import { useAppContext } from "../../contexts/AppContext";
 
 type ListPackage = Omit<Package, "contents">;
 
-export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
+interface PackagesListTableProps extends ModulePackageListPageProps {
+    isImportDialog?: boolean;
+    onSelectionChange?: (ids: string[]) => void;
+    selectedIds?: string[];
+}
+
+export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     remoteInstance,
     showStore,
     onActionButtonClick,
@@ -32,6 +38,9 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     externalComponents,
     openSyncSummary = _.noop,
     paginationOptions,
+    isImportDialog = false,
+    onSelectionChange,
+    selectedIds,
 }) => {
     const { api, compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
@@ -42,7 +51,9 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     const rows = showStore ? storePackages : instancePackages;
 
     const [resetKey, setResetKey] = useState(Math.random());
-    const [selection, updateSelection] = useState<TableSelection[]>([]);
+    const [selection, updateSelection] = useState<TableSelection[]>(
+        selectedIds?.map(id => ({ id })) || []
+    );
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
     const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
     const [moduleFilter, setModuleFilter] = useState("");
@@ -68,8 +79,13 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     const updateTable = useCallback(
         ({ selection }: TableState<ListPackage>) => {
             updateSelection(selection);
+
+            if (onSelectionChange) {
+                const selectedIds = selection.map(selection => selection.id);
+                onSelectionChange(selectedIds);
+            }
         },
-        [updateSelection]
+        [updateSelection, onSelectionChange]
     );
 
     const downloadPackage = useCallback(
@@ -230,7 +246,8 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
         []
     );
 
-    const canImport = presentation === "app" && isRemoteInstance && appConfigurator;
+    const canImport =
+        !isImportDialog && presentation === "app" && isRemoteInstance && appConfigurator;
 
     const actions: TableAction<ListPackage>[] = useMemo(
         () => [
@@ -247,7 +264,11 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
                 onClick: deletePackages,
                 icon: <Icon>delete</Icon>,
                 isActive: () =>
-                    presentation === "app" && !isRemoteInstance && !showStore && appConfigurator,
+                    !isImportDialog &&
+                    presentation === "app" &&
+                    !isRemoteInstance &&
+                    !showStore &&
+                    appConfigurator,
             },
             {
                 name: "download",
@@ -263,7 +284,11 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
                 onClick: publishPackage,
                 icon: <Icon>publish</Icon>,
                 isActive: () =>
-                    presentation === "app" && !isRemoteInstance && !showStore && appConfigurator,
+                    !isImportDialog &&
+                    presentation === "app" &&
+                    !isRemoteInstance &&
+                    !showStore &&
+                    appConfigurator,
             },
             {
                 name: "compare-with-local",
@@ -294,6 +319,7 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
             publishPackage,
             showStore,
             canImport,
+            isImportDialog,
         ]
     );
 

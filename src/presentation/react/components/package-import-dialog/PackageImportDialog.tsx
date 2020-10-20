@@ -1,35 +1,36 @@
 import DialogContent from "@material-ui/core/DialogContent";
 import { ConfirmationDialog } from "d2-ui-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
 import i18n from "../../../../locales";
 import { PackageImportWizard } from "../package-import-wizard/PackageImportWizard";
 
 interface PackageImportDialogProps {
     isOpen: boolean;
-    //syncRule: SyncRule;
-    //task: (syncRule: SyncRule) => void;
-    //onChange(syncRule: SyncRule): void;
-    onClose: (importResponse?: any) => void;
+    packageImportRule: PackageImportRule;
+    onChange: (packageImportRule: PackageImportRule) => void;
+    onClose: () => void;
+    executeImport: (packageImportRule: PackageImportRule) => void;
 }
 
 const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
     isOpen,
-    //syncRule,
-    //onChange,
+    packageImportRule,
+    onChange,
     onClose,
-    //task,
+    executeImport,
 }) => {
-    const [enableImport] = useState(false);
+    const [enableImport, setEnableImport] = useState(false);
 
-    // useEffect(() => {
-    //     syncRule.isValid().then(setEnableImport);
-    // }, [syncRule]);
+    useEffect(() => {
+        setEnableImport(packageImportRule.validate().length === 0);
+    }, [packageImportRule]);
 
     return (
         <ConfirmationDialog
             isOpen={isOpen}
             title={i18n.t("Packages Import")}
-            //onSave={() => task(syncRule)}
+            onSave={() => executeImport(packageImportRule)}
             onCancel={onClose}
             saveText={i18n.t("Import")}
             maxWidth={"lg"}
@@ -37,13 +38,12 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
             disableSave={!enableImport}
         >
             <DialogContent>
-                {/* <SyncWizard
-                    isDialog={true}
-                    syncRule={syncRule}
+                <PackageImportWizard
+                    packageImportRule={packageImportRule}
                     onChange={onChange}
                     onCancel={onClose}
-                /> */}
-                <PackageImportWizard />
+                    onClose={onClose}
+                />
             </DialogContent>
         </ConfirmationDialog>
     );

@@ -2,6 +2,7 @@ import { PaginationOptions } from "d2-ui-components";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import {
@@ -28,6 +29,9 @@ export const ModulePackageListPage: React.FC = () => {
     const history = useHistory();
     const [syncReport, setSyncReport] = useState<SyncReport>();
     const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
+    const [packageImportRule, setPackageImportRule] = useState<PackageImportRule | undefined>(
+        undefined
+    );
 
     const { list: tableOption = "modules" } = useParams<{ list: ViewOption }>();
     const title = buildTitle(tableOption);
@@ -60,6 +64,18 @@ export const ModulePackageListPage: React.FC = () => {
         [tableOption]
     );
 
+    const handleInstanceChange = (instance?: Instance) => {
+        setPackageImportRule(instance ? PackageImportRule.create(instance) : undefined);
+    };
+
+    const handlePackageImportRuleChange = (packageImportRule: PackageImportRule) => {
+        setPackageImportRule(packageImportRule);
+    };
+
+    const handleExecuteImport = (packageImportRule: PackageImportRule) => {
+        console.log({ packageImportRule }, "Execute Import");
+    };
+
     return (
         <React.Fragment>
             <PageHeader title={title} onBackClick={backHome} />
@@ -72,16 +88,22 @@ export const ModulePackageListPage: React.FC = () => {
                 onViewChange={setTableOption}
                 presentation={"app"}
                 openSyncSummary={setSyncReport}
+                onInstanceChange={handleInstanceChange}
             />
 
             {!!syncReport && (
                 <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
             )}
 
-            <PackageImportDialog
-                isOpen={openImportPackageDialog}
-                onClose={() => setOpenImportPackageDialog(false)}
-            />
+            {packageImportRule && (
+                <PackageImportDialog
+                    isOpen={openImportPackageDialog}
+                    onClose={() => setOpenImportPackageDialog(false)}
+                    packageImportRule={packageImportRule}
+                    onChange={handlePackageImportRuleChange}
+                    executeImport={handleExecuteImport}
+                />
+            )}
         </React.Fragment>
     );
 };

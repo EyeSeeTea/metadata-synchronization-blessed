@@ -21,6 +21,7 @@ export interface ModulePackageListTableProps {
     showSelector: ViewSelectorConfig;
     showInstances: InstanceSelectionConfig;
     openSyncSummary?: (syncReport: SyncReport) => void;
+    onInstanceChange?: (instance?: Instance) => void;
 }
 
 export type ViewOption = "modules" | "packages";
@@ -35,6 +36,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
         showSelector,
         showInstances,
         openSyncSummary,
+        onInstanceChange,
     }) => {
         const [selectedInstance, setSelectedInstance] = useState<Instance>();
         const [showStore, setShowStore] = useState<boolean>(false);
@@ -53,8 +55,12 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
             (type: InstanceSelectionOption, instance?: Instance) => {
                 setShowStore(type === "store");
                 setSelectedInstance(instance);
+
+                if (onInstanceChange) {
+                    onInstanceChange(instance);
+                }
             },
-            []
+            [onInstanceChange]
         );
 
         const filters = useMemo(
