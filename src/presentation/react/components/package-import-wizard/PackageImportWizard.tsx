@@ -4,10 +4,10 @@ import { useLocation } from "react-router-dom";
 import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
 import i18n from "../../../../locales";
 import { PackageSelectionStep } from "./steps/PackageSelectionStep";
+import { SummaryStep } from "./steps/SummaryStep";
 
 export interface PackageImportWizardStep extends WizardStep {
     validationKeys: string[];
-    showOnSyncDialog?: boolean;
 }
 
 export interface PackageImportWizardStepProps {
@@ -18,16 +18,14 @@ export interface PackageImportWizardStepProps {
 }
 
 const GeneralInfoStep = () => <div>General info</div>;
-//const PackagesStep = () => <div>Packages</div>;
 const PackagesMetadataStep = () => <div>Packages</div>;
-const SummaryStep = () => <div>Summary</div>;
 
 export const stepsBaseInfo = [
     {
         key: "general-info",
         label: i18n.t("General info"),
         component: GeneralInfoStep,
-        validationKeys: ["name", "department"],
+        validationKeys: [],
     },
     {
         key: "packages",
@@ -39,14 +37,13 @@ export const stepsBaseInfo = [
         key: "package-mapping",
         label: i18n.t("Packages mapping"),
         component: PackagesMetadataStep,
-        validationKeys: ["name", "department"],
+        validationKeys: [],
     },
     {
         key: "summary",
         label: i18n.t("Summary"),
         component: SummaryStep,
         validationKeys: [],
-        showOnSyncDialog: true,
     },
 ];
 
