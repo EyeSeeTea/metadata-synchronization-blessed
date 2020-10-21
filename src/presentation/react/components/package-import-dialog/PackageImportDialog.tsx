@@ -36,6 +36,8 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
     };
 
     const handleExecuteImport = async () => {
+        // TODO: this coordination to import several packages and save the result
+        // should be in the domain layer, may be a new use case?
         const report = SyncReport.create("metadata");
 
         const executePackageImport = async (packageId: string) => {
@@ -62,7 +64,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                         );
                         report.addSyncResult({
                             ...result,
-                            originPackage,
+                            originPackage: originPackage.toRef(),
                             origin: packageImportRule.instance.toPublicObject(),
                         });
                         loading.reset();

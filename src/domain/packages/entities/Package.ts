@@ -133,4 +133,8 @@ export class Package implements BasePackage {
 
         return [];
     }
+
+    toRef(): NamedRef {
+        return { id: this.id, name: this.name };
+    }
 }
