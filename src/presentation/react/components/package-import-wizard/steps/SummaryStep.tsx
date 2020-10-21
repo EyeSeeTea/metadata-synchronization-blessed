@@ -11,7 +11,7 @@ export const SummaryStep: React.FC<PackageImportWizardProps> = ({ packageImportR
     const { api, compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
 
-    const packageList = compositionRoot.packages.list;
+    const getPackages = compositionRoot.packages.list;
 
     const [globalAdmin, setGlobalAdmin] = useState(false);
     const [instancePackages, setInstancePackages] = useState<ListPackage[]>([]);
@@ -22,13 +22,13 @@ export const SummaryStep: React.FC<PackageImportWizardProps> = ({ packageImportR
     }, [api]);
 
     useEffect(() => {
-        packageList(globalAdmin, packageImportRule.instance)
+        getPackages(globalAdmin, packageImportRule.instance)
             .then(setInstancePackages)
             .catch((error: Error) => {
                 snackbar.error(error.message);
                 setInstancePackages([]);
             });
-    }, [packageList, packageImportRule, globalAdmin, snackbar]);
+    }, [getPackages, packageImportRule, globalAdmin, snackbar]);
 
     return (
         <React.Fragment>
