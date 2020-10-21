@@ -3,6 +3,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
 import i18n from "../../../../locales";
+import { PackageMappingStep } from "./steps/PackageMappingStep";
 import { PackageSelectionStep } from "./steps/PackageSelectionStep";
 import { SummaryStep } from "./steps/SummaryStep";
 
@@ -18,7 +19,7 @@ export interface PackageImportWizardStepProps {
 }
 
 const GeneralInfoStep = () => <div>General info</div>;
-const PackagesMetadataStep = () => <div>Packages Mapping</div>;
+//const PackagesMetadataStep = () => <div>Packages Mapping</div>;
 
 export const stepsBaseInfo = [
     {
@@ -36,7 +37,7 @@ export const stepsBaseInfo = [
     {
         key: "package-mapping",
         label: i18n.t("Packages mapping"),
-        component: PackagesMetadataStep,
+        component: PackageMappingStep,
         validationKeys: [],
     },
     {
