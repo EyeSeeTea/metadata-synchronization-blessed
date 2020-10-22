@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-10-22T09:50:02.552Z\n"
-"PO-Revision-Date: 2020-10-22T09:50:02.552Z\n"
+"POT-Creation-Date: 2020-10-22T10:08:06.021Z\n"
+"PO-Revision-Date: 2020-10-22T10:08:06.021Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -529,10 +529,10 @@ msgstr ""
 msgid "Publishing package to Store"
 msgstr ""
 
-msgid "Package published to store"
+msgid "Package published to default store"
 msgstr ""
 
-msgid "Store is not properly configured"
+msgid "Default store is not properly configured"
 msgstr ""
 
 msgid "Could not read package"

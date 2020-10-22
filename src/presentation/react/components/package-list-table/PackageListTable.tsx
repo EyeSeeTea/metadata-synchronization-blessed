@@ -90,15 +90,15 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
             validation.match({
                 success: () => {
                     loading.reset();
-                    snackbar.success(i18n.t("Package published to store"));
+                    snackbar.success(i18n.t("Package published to default store"));
                 },
                 error: code => {
                     loading.reset();
                     switch (code) {
                         case "BAD_CREDENTIALS":
                         case "NO_TOKEN":
-                        case "STORE_NOT_FOUND":
-                            snackbar.error(i18n.t("Store is not properly configured"));
+                        case "DEFAULT_STORE_NOT_FOUND":
+                            snackbar.error(i18n.t("Default store is not properly configured"));
                             return;
                         case "PACKAGE_NOT_FOUND":
                             snackbar.error(i18n.t("Could not read package"));
