@@ -1,3 +1,4 @@
+import { generateUid } from "d2/uid";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { Namespace } from "../../storage/Namespaces";
@@ -18,7 +19,9 @@ export class SaveStoreUseCase implements UseCase {
             if (validation.isError()) return Either.error(validation.value.error ?? "UNKNOWN");
         }
 
-        await this.storageRepository.saveObject(Namespace.STORE, store);
+        const storeToSave = !store.id ? { ...store, id: generateUid() } : store;
+
+        await this.storageRepository.saveObjectInCollection(Namespace.STORES, storeToSave);
         return Either.success(undefined);
     }
 }

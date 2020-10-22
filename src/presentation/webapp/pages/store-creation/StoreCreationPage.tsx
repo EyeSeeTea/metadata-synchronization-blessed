@@ -8,7 +8,7 @@ import {
 } from "d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Linkify from "react-linkify";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { GitHubError } from "../../../../domain/packages/entities/Errors";
 import { Store } from "../../../../domain/packages/entities/Store";
 import i18n from "../../../../locales";
@@ -16,19 +16,37 @@ import { useAppContext } from "../../../react/contexts/AppContext";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import helpStoreGithub from "../../../../assets/img/help-store-github.png";
 
-const ModulesConfigPage: React.FC = () => {
+const StoreCreationPage: React.FC = () => {
     const { compositionRoot } = useAppContext();
     const history = useHistory();
     const classes = useStyles();
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const [state, setState] = useState<Partial<Store>>({});
+    const { id, action } = useParams<{ id: string; action: "edit" | "new" }>();
+
+    const [state, setState] = useState<Store>({
+        id: "",
+        token: "",
+        account: "",
+        repository: "",
+        default: false,
+    });
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
 
+    const isEdit = action === "edit" && (!!module || !!id);
+    const title = !isEdit ? i18n.t(`New store`) : i18n.t(`Edit store`);
+
     useEffect(() => {
-        compositionRoot.store.get().then(setState);
-    }, [compositionRoot]);
+        if (id)
+            compositionRoot.store.get(id).then(store => {
+                if (store) {
+                    setState(store);
+                } else {
+                    snackbar.error(i18n.t("Store not found: " + id));
+                }
+            });
+    }, [compositionRoot, id, snackbar]);
 
     const onChangeField = (field: keyof Store) => {
         return (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +56,7 @@ const ModulesConfigPage: React.FC = () => {
     };
 
     const close = useCallback(() => {
-        history.push("/");
+        history.goBack();
     }, [history]);
 
     const validateError = useCallback((error?: GitHubError): string => {
@@ -155,12 +173,7 @@ const ModulesConfigPage: React.FC = () => {
         <React.Fragment>
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
 
-            <PageHeader
-                title={i18n.t("Package store connection")}
-                onBackClick={close}
-                help={helpContainer}
-                helpSize={"lg"}
-            />
+            <PageHeader title={title} onBackClick={close} help={helpContainer} helpSize={"lg"} />
 
             <Paper className={classes.paper}>
                 <TextField
@@ -267,4 +280,4 @@ const useStyles = makeStyles({
     },
 });
 
-export default ModulesConfigPage;
+export default StoreCreationPage;
