@@ -8,9 +8,11 @@ export class GetStoreUseCase implements UseCase {
 
     public async execute(): Promise<Store> {
         return await this.storageRepository.getOrCreateObject<Store>(Namespace.STORE, {
+            id: "",
             token: "",
             account: "",
             repository: "",
+            default: false,
         });
     }
 }

@@ -16,6 +16,7 @@ import ModuleCreationPage from "./modules-creation/ModuleCreationPage";
 import NotificationsListPage from "./notifications-list/NotificationsListPage";
 import ResponsiblesListPage from "./responsibles-list/ResponsiblesListPage";
 import StoreConfigPage from "./store-config/StoreConfigPage";
+import StoreListPage from "./store-list/StoreListPage";
 import SyncRulesCreationPage from "./sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "./sync-rules-list/SyncRulesListPage";
 
@@ -76,6 +77,8 @@ function Root() {
                     path={"/modules/:action(new|edit)/:id?"}
                     render={props => <ModuleCreationPage {...props} />}
                 />
+
+                <RouteWithSession path="/stores" render={props => <StoreListPage {...props} />} />
 
                 <RouteWithSession
                     path="/modules/config"

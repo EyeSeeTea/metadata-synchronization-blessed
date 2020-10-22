@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-10-06T10:10:16.836Z\n"
+"POT-Creation-Date: 2020-10-22T08:37:35.777Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1483,6 +1483,38 @@ msgstr ""
 
 msgid "Reset"
 msgstr ""
+
+msgid "An unexpected error has ocurred deleting import rules. "
+msgstr ""
+
+msgid "Successfully delete {{deleteCount}} import rules"
+msgstr ""
+
+msgid "Account"
+msgstr ""
+
+msgid "Repository"
+msgstr ""
+
+msgid "Token"
+msgstr ""
+
+msgid "Default"
+msgstr ""
+
+msgid "Set as default"
+msgstr ""
+
+msgid "Stores"
+msgstr ""
+
+msgid "Delete Stores?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} stores?"
+msgid_plural "Are you sure you want to delete {{count}} stores?"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "New {{type}} synchronization rule"
 msgstr ""

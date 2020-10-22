@@ -9,6 +9,7 @@ export const Namespace = {
     NOTIFICATIONS: "notifications",
     CONFIG: "config",
     STORE: "store",
+    STORES: "stores",
     RESPONSIBLES: "responsibles",
 };
 
@@ -21,5 +22,6 @@ export const NamespaceProperties: Record<Namespace, string[]> = {
     [Namespace.NOTIFICATIONS]: ["payload"],
     [Namespace.CONFIG]: [],
     [Namespace.STORE]: [],
+    [Namespace.STORES]: [],
     [Namespace.RESPONSIBLES]: [],
 };

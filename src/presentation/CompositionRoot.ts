@@ -47,6 +47,7 @@ import { GetPackageUseCase } from "../domain/packages/usecases/GetPackageUseCase
 import { GetStoreUseCase } from "../domain/packages/usecases/GetStoreUseCase";
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
+import { ListStoresUseCase } from "../domain/packages/usecases/ListStoresUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
 import { SaveStoreUseCase } from "../domain/packages/usecases/SaveStoreUseCase";
 import { ValidateStoreUseCase } from "../domain/packages/usecases/ValidateStoreUseCase";
@@ -148,6 +149,7 @@ export class CompositionRoot {
             get: new GetStoreUseCase(storage),
             update: new SaveStoreUseCase(github, storage),
             validate: new ValidateStoreUseCase(github),
+            list: new ListStoresUseCase(storage),
         });
     }
 
