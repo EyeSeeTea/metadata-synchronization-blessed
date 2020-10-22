@@ -18,16 +18,19 @@ import { useAppContext } from "../../../react/contexts/AppContext";
 
 export const StoreListPage: React.FC = () => {
     const history = useHistory();
-    const [selection, updateSelection] = useState<TableSelection[]>([]);
+    const [selection, setSelection] = useState<TableSelection[]>([]);
     const [rows, setRows] = useState<Store[]>([]);
     const [toDelete, setToDelete] = useState<string[]>([]);
+    const [objectsTableKey, setObjectsTableKey] = useState(Math.random());
+
     const loading = useLoading();
     const { compositionRoot } = useAppContext();
     const getStores = compositionRoot.store.list;
+    const deleteStore = compositionRoot.store.delete;
 
     useEffect(() => {
         getStores().then(setRows);
-    }, [getStores]);
+    }, [getStores, objectsTableKey]);
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -48,44 +51,22 @@ export const StoreListPage: React.FC = () => {
 
     const updateTable = useCallback(
         ({ selection }: TableState<Store>) => {
-            updateSelection(selection);
+            setSelection(selection);
         },
-        [updateSelection]
+        [setSelection]
     );
 
     const confirmDelete = async () => {
-        loading.show(true, "Deleting packages");
+        loading.show(true, "Deleting stores");
 
-        // const handleFailure = (failure: DeleteImportRulesByIdError): string => {
-        //     switch (failure.kind) {
-        //         case "UnexpectedError":
-        //             return (
-        //                 i18n.t("An unexpected error has ocurred deleting import rules. ") +
-        //                 failure.error.message
-        //             );
-        //     }
-        // };
+        for (const id of toDelete) {
+            await deleteStore(id);
+        }
 
-        // const results = await importRules.delete.execute(state.toDelete);
-
-        // results.fold(
-        //     error => snackbar.error(handleFailure(error)),
-        //     () =>
-        //         snackbar.success(
-        //             i18n.t("Successfully delete {{deleteCount}} import rules", {
-        //                 deleteCount: state.toDelete.length,
-        //             })
-        //         )
-        // );
-
+        setObjectsTableKey(Math.random());
+        setSelection([]);
+        setToDelete([]);
         loading.reset();
-        // setState({
-        //     ...state,
-        //     isDeleting: false,
-        //     toDelete: [],
-        //     selection: [],
-        //     objectsTableKey: new Date().getTime(),
-        // });
     };
 
     const columns: TableColumn<Store>[] = [

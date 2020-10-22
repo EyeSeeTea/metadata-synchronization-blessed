@@ -11,6 +11,6 @@ export class ListStoresUseCase implements UseCase {
             Namespace.STORES
         );
 
-        return stores;
+        return stores.filter(store => !store.deleted);
     }
 }

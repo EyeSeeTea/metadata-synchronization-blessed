@@ -41,6 +41,7 @@ import { MarkReadNotificationsUseCase } from "../domain/notifications/usecases/M
 import { UpdatePullRequestStatusUseCase } from "../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
+import { DeleteStoreUseCase } from "../domain/packages/usecases/DeleteStoreUseCase";
 import { DiffPackageUseCase } from "../domain/packages/usecases/DiffPackageUseCase";
 import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPackageUseCase";
 import { GetPackageUseCase } from "../domain/packages/usecases/GetPackageUseCase";
@@ -150,6 +151,7 @@ export class CompositionRoot {
             update: new SaveStoreUseCase(github, storage),
             validate: new ValidateStoreUseCase(github),
             list: new ListStoresUseCase(storage),
+            delete: new DeleteStoreUseCase(storage),
         });
     }
 

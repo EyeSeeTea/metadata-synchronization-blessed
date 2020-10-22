@@ -3,7 +3,8 @@ export interface Store {
     token: string;
     account: string;
     repository: string;
-    default: boolean;
     branch?: string;
     basePath?: string;
+    default: boolean;
+    deleted?: boolean;
 }
