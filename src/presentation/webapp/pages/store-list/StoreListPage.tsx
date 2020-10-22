@@ -8,6 +8,7 @@ import {
     TableSelection,
     TableState,
     useLoading,
+    useSnackbar,
 } from "d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -18,6 +19,7 @@ import { useAppContext } from "../../../react/contexts/AppContext";
 
 export const StoreListPage: React.FC = () => {
     const history = useHistory();
+    const snackbar = useSnackbar();
     const [selection, setSelection] = useState<TableSelection[]>([]);
     const [rows, setRows] = useState<Store[]>([]);
     const [toDelete, setToDelete] = useState<string[]>([]);
@@ -27,6 +29,7 @@ export const StoreListPage: React.FC = () => {
     const { compositionRoot } = useAppContext();
     const getStores = compositionRoot.store.list;
     const deleteStore = compositionRoot.store.delete;
+    const setStoreAsDefault = compositionRoot.store.setAsDefault;
 
     useEffect(() => {
         getStores().then(setRows);
@@ -36,18 +39,29 @@ export const StoreListPage: React.FC = () => {
         history.push("/");
     }, [history]);
 
-    const createStore = useCallback(() => {
+    const handleCreateStore = useCallback(() => {
         history.push(`/stores/new`);
     }, [history]);
 
-    const editStore = useCallback(
+    const handleEditStore = useCallback(
         (id: string) => {
             history.push(`/stores/edit/${id}`);
         },
         [history]
     );
 
-    const setStoreAsDefault = useCallback((_id: string) => {}, []);
+    const handleSetStoreAsDefault = useCallback(
+        async (id: string) => {
+            const result = await setStoreAsDefault(id);
+            result.match({
+                error: () => {
+                    snackbar.error(i18n.t("An error has occurred setting store as default"));
+                },
+                success: () => setObjectsTableKey(Math.random()),
+            });
+        },
+        [setStoreAsDefault, snackbar]
+    );
 
     const updateTable = useCallback(
         ({ selection }: TableState<Store>) => {
@@ -102,7 +116,7 @@ export const StoreListPage: React.FC = () => {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            onClick: (ids: string[]) => editStore(ids[0]),
+            onClick: (ids: string[]) => handleEditStore(ids[0]),
             primary: true,
             icon: <Icon>edit</Icon>,
         },
@@ -117,7 +131,7 @@ export const StoreListPage: React.FC = () => {
             name: "setAdDefault",
             text: i18n.t("Set as default"),
             multiple: false,
-            onClick: (ids: string[]) => setStoreAsDefault(ids[0]),
+            onClick: (ids: string[]) => handleSetStoreAsDefault(ids[0]),
             icon: <Icon>cloud_download</Icon>,
         },
     ];
@@ -131,7 +145,7 @@ export const StoreListPage: React.FC = () => {
                 columns={columns}
                 details={details}
                 actions={actions}
-                onActionButtonClick={createStore}
+                onActionButtonClick={handleCreateStore}
                 forceSelectionColumn={true}
                 selection={selection}
                 onChange={updateTable}

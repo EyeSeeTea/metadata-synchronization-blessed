@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-10-22T09:21:03.775Z\n"
-"PO-Revision-Date: 2020-10-22T09:21:03.775Z\n"
+"POT-Creation-Date: 2020-10-22T09:50:02.552Z\n"
+"PO-Revision-Date: 2020-10-22T09:50:02.552Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1479,6 +1479,9 @@ msgid "GitHub personal access token (*)"
 msgstr ""
 
 msgid "Reset"
+msgstr ""
+
+msgid "An error has occurred setting store as default"
 msgstr ""
 
 msgid "Account"

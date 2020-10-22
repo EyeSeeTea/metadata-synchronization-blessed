@@ -51,6 +51,7 @@ import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStoreP
 import { ListStoresUseCase } from "../domain/packages/usecases/ListStoresUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
 import { SaveStoreUseCase } from "../domain/packages/usecases/SaveStoreUseCase";
+import { SetStoreAsDefaultUseCase } from "../domain/packages/usecases/SetStoreAsDefaultUseCase";
 import { ValidateStoreUseCase } from "../domain/packages/usecases/ValidateStoreUseCase";
 import { Repositories } from "../domain/Repositories";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
@@ -152,6 +153,7 @@ export class CompositionRoot {
             validate: new ValidateStoreUseCase(github),
             list: new ListStoresUseCase(storage),
             delete: new DeleteStoreUseCase(storage),
+            setAsDefault: new SetStoreAsDefaultUseCase(storage),
         });
     }
 
