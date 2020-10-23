@@ -103,7 +103,6 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
 
         const Table = viewSelector.value === "packages" ? PackagesListTable : ModulesListTable;
 
-        debugger;
         return (
             <Table
                 externalComponents={filters}
