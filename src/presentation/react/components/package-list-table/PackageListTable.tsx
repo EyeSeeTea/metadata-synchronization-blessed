@@ -246,9 +246,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         []
     );
 
-    const canImport =
-        !isImportDialog && presentation === "app" && isRemoteInstance && appConfigurator;
-
     const actions: TableAction<ListPackage>[] = useMemo(
         () => [
             {
@@ -305,7 +302,11 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 multiple: false,
                 onClick: importPackage,
                 icon: <Icon>arrow_downward</Icon>,
-                isActive: () => canImport,
+                isActive: () =>
+                    !isImportDialog &&
+                    presentation === "app" &&
+                    isRemoteInstance &&
+                    appConfigurator,
             },
         ],
         [
@@ -318,7 +319,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             presentation,
             publishPackage,
             showStore,
-            canImport,
             isImportDialog,
         ]
     );
@@ -377,6 +377,12 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
+    const showImportFromWizardButton =
+        !isImportDialog &&
+        presentation === "app" &&
+        (isRemoteInstance || showStore) &&
+        appConfigurator;
+
     return (
         <React.Fragment>
             <ObjectsTable<ListPackage>
@@ -384,7 +390,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 columns={columns}
                 details={details}
                 actions={actions}
-                onActionButtonClick={canImport ? onActionButtonClick : undefined}
+                onActionButtonClick={showImportFromWizardButton ? onActionButtonClick : undefined}
                 forceSelectionColumn={presentation === "app"}
                 filterComponents={filterComponents}
                 selection={selection}

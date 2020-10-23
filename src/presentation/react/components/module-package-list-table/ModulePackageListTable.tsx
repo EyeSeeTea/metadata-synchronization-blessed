@@ -105,7 +105,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
                 openSyncSummary={openSyncSummary}
                 onActionButtonClick={
                     (viewSelector.value === "modules" && !selectedInstance) ||
-                    (viewSelector.value === "packages" && selectedInstance)
+                    (viewSelector.value === "packages" && (selectedInstance || showStore))
                         ? onCreate
                         : undefined
                 }
