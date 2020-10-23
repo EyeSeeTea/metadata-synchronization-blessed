@@ -61,9 +61,10 @@ export class DiffPackageUseCase implements UseCase {
     }
 
     private async getStorePackage(url: string) {
-        const store = await this.storageRepository(this.localInstance).getObject<Store>(
-            Namespace.STORE
-        );
+        const store = (
+            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
+        )?.find(store => store.default);
+
         if (!store) return undefined;
 
         const { encoding, content } = await this.downloadRepository().fetch<{

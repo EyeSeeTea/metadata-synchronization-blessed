@@ -17,16 +17,17 @@ import { Package } from "../entities/Package";
 import { Store } from "../entities/Store";
 import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
 
-export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
+export type ListStorePackagesError = GitHubError | "DEFAULT_STORE_NOT_FOUND";
 
 export class ListStorePackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(): Promise<Either<ListStorePackagesError, Package[]>> {
-        const store = await this.storageRepository(this.localInstance).getObject<Store>(
-            Namespace.STORE
-        );
-        if (!store) return Either.error("STORE_NOT_FOUND");
+        const store = (
+            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
+        )?.find(store => store.default);
+
+        if (!store) return Either.error("DEFAULT_STORE_NOT_FOUND");
 
         const userGroups = await this.instanceRepository(this.localInstance).getUserGroups();
         const validation = await this.gitRepository().listBranches(store);
