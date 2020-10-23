@@ -11,6 +11,7 @@ import {
 import { useAppContext } from "../../../react/contexts/AppContext";
 import MetadataTable from "../../../react/components/metadata-table/MetadataTable";
 import PageHeader from "../../../react/components/page-header/PageHeader";
+import { Store } from "../../../../domain/packages/entities/Store";
 
 export const ResponsiblesListPage: React.FC = () => {
     const { compositionRoot } = useAppContext();
@@ -24,8 +25,8 @@ export const ResponsiblesListPage: React.FC = () => {
     }, [history]);
 
     const updateRemoteInstance = useCallback(
-        (_type: InstanceSelectionOption, instance?: Instance) => {
-            setRemoteInstance(instance);
+        (_type: InstanceSelectionOption, instance?: Instance | Store) => {
+            setRemoteInstance(instance !== undefined ? (instance as Instance) : undefined);
         },
         []
     );

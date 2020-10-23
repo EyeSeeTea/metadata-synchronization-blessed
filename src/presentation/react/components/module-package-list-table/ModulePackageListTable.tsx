@@ -12,6 +12,7 @@ import {
     InstanceSelectionOption,
 } from "../instance-selection-dropdown/InstanceSelectionDropdown";
 import { useViewSelector, ViewSelectorConfig } from "./useViewSelector";
+import { Store } from "../../../../domain/packages/entities/Store";
 
 export interface ModulePackageListTableProps {
     onCreate?(): void;
@@ -21,7 +22,7 @@ export interface ModulePackageListTableProps {
     showSelector: ViewSelectorConfig;
     showInstances: InstanceSelectionConfig;
     openSyncSummary?: (syncReport: SyncReport) => void;
-    onInstanceChange?: (instance?: Instance) => void;
+    onInstanceChange?: (instance?: Instance | Store) => void;
 }
 
 export type ViewOption = "modules" | "packages";
@@ -38,8 +39,8 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
         openSyncSummary,
         onInstanceChange,
     }) => {
-        const [selectedInstance, setSelectedInstance] = useState<Instance>();
-        const [showStore, setShowStore] = useState<boolean>(false);
+        const [selectedInstance, setSelectedInstance] = useState<Instance | undefined>();
+        const [selectedStore, setSelectedStore] = useState<Store | undefined>();
 
         const viewSelector = useViewSelector(showSelector, propsViewValue);
 
@@ -52,12 +53,12 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
         );
 
         const updateSelectedInstance = useCallback(
-            (type: InstanceSelectionOption, instance?: Instance) => {
-                setShowStore(type === "store");
-                setSelectedInstance(instance);
+            (type: InstanceSelectionOption, source?: Instance | Store) => {
+                setSelectedStore(type === "store" ? (source as Store) : undefined);
+                setSelectedInstance(type === "remote" ? (source as Instance) : undefined);
 
                 if (onInstanceChange) {
-                    onInstanceChange(instance);
+                    onInstanceChange(source);
                 }
             },
             [onInstanceChange]
@@ -67,8 +68,15 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
             () => (
                 <React.Fragment key="common-filters">
                     <InstanceSelectionDropdown
+                        title={
+                            showInstances.store
+                                ? i18n.t("Instances & Play Stores")
+                                : i18n.t("Instances")
+                        }
                         showInstances={showInstances}
-                        selectedInstance={showStore ? "STORE" : selectedInstance?.id ?? "LOCAL"}
+                        selectedInstance={
+                            selectedStore ? selectedStore.id : selectedInstance?.id ?? "LOCAL"
+                        }
                         onChangeSelected={updateSelectedInstance}
                     />
 
@@ -89,23 +97,24 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = Rea
                 setValue,
                 viewSelector,
                 updateSelectedInstance,
-                showStore,
+                selectedStore,
             ]
         );
 
         const Table = viewSelector.value === "packages" ? PackagesListTable : ModulesListTable;
 
+        debugger;
         return (
             <Table
                 externalComponents={filters}
                 presentation={presentation}
-                showStore={showStore}
+                remoteStore={selectedStore}
                 remoteInstance={selectedInstance}
                 paginationOptions={paginationOptions}
                 openSyncSummary={openSyncSummary}
                 onActionButtonClick={
                     (viewSelector.value === "modules" && !selectedInstance) ||
-                    (viewSelector.value === "packages" && (selectedInstance || showStore))
+                    (viewSelector.value === "packages" && (selectedInstance || selectedStore))
                         ? onCreate
                         : undefined
                 }

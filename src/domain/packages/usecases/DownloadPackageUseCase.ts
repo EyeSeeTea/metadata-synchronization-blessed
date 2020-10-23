@@ -16,9 +16,9 @@ import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
 export class DownloadPackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(store: boolean, id: string, instance = this.localInstance) {
-        const element = store
-            ? await this.getStorePackage(id)
+    public async execute(storeId: string | undefined, id: string, instance = this.localInstance) {
+        const element = storeId
+            ? await this.getStorePackage(storeId, id)
             : await this.getDataStorePackage(id, instance);
         if (!element) throw new Error("Couldn't find package");
 
@@ -37,10 +37,11 @@ export class DownloadPackageUseCase implements UseCase {
         );
     }
 
-    private async getStorePackage(url: string) {
-        const store = await this.storageRepository(this.localInstance).getObject<Store>(
-            Namespace.STORE
-        );
+    private async getStorePackage(storeId: string, url: string) {
+        const store = (
+            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
+        )?.find(store => store.id === storeId);
+
         if (!store) return undefined;
 
         const { encoding, content } = await this.downloadRepository().fetch<{

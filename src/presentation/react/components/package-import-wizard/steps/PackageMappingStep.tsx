@@ -1,9 +1,11 @@
 import { useSnackbar } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
+import { Instance } from "../../../../../domain/instance/entities/Instance";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
 } from "../../../../../domain/instance/entities/MetadataMapping";
+import { isInstance } from "../../../../../domain/package-import/entities/PackageSource";
 import { ListPackage } from "../../../../../domain/packages/entities/Package";
 import i18n from "../../../../../locales";
 import {
@@ -47,18 +49,22 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
     }, [api]);
 
     useEffect(() => {
-        getPackages(globalAdmin, packageImportRule.instance)
-            .then(packages => {
-                const importPackages = packages.filter(pkg =>
-                    packageImportRule.packageIds.includes(pkg.id)
-                );
+        if (isInstance(packageImportRule.source)) {
+            getPackages(globalAdmin, packageImportRule.source)
+                .then(packages => {
+                    const importPackages = packages.filter(pkg =>
+                        packageImportRule.packageIds.includes(pkg.id)
+                    );
 
-                setPackages(importPackages);
-            })
-            .catch((error: Error) => {
-                snackbar.error(error.message);
-                setPackages([]);
-            });
+                    setPackages(importPackages);
+                })
+                .catch((error: Error) => {
+                    snackbar.error(error.message);
+                    setPackages([]);
+                });
+        } else {
+            snackbar.error("Implement packages from store case");
+        }
     }, [getPackages, packageImportRule, globalAdmin, snackbar]);
 
     const onChangePackageFilter = (selectedPackageId: string) => {
@@ -105,11 +111,13 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
         />
     );
 
+    //TODO: mapping table reading from store
+
     return (
         <React.Fragment>
             <MappingTable
                 models={models}
-                instance={packageImportRule.instance}
+                instance={packageImportRule.source as Instance}
                 mapping={currentMetadataMapping}
                 globalMapping={currentMetadataMapping}
                 onChangeMapping={onChangeMapping}

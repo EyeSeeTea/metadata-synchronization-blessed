@@ -32,7 +32,7 @@ interface PackagesListTableProps extends ModulePackageListPageProps {
 
 export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     remoteInstance,
-    showStore,
+    remoteStore,
     onActionButtonClick,
     presentation = "app",
     externalComponents,
@@ -48,7 +48,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const [instancePackages, setInstancePackages] = useState<ListPackage[]>([]);
     const [storePackages, setStorePackages] = useState<ListPackage[]>([]);
-    const rows = showStore ? storePackages : instancePackages;
+    const rows = remoteStore ? storePackages : instancePackages;
 
     const [resetKey, setResetKey] = useState(Math.random());
     const [selection, updateSelection] = useState<TableSelection[]>(
@@ -91,12 +91,12 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const downloadPackage = useCallback(
         async (ids: string[]) => {
             try {
-                compositionRoot.packages.download(showStore, ids[0], remoteInstance);
+                compositionRoot.packages.download(remoteStore?.id, ids[0], remoteInstance);
             } catch (error) {
                 snackbar.error(i18n.t("Invalid package"));
             }
         },
-        [compositionRoot, remoteInstance, snackbar, showStore]
+        [compositionRoot, remoteInstance, snackbar, remoteStore]
     );
 
     const publishPackage = useCallback(
@@ -106,15 +106,15 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             validation.match({
                 success: () => {
                     loading.reset();
-                    snackbar.success(i18n.t("Package published to store"));
+                    snackbar.success(i18n.t("Package published to default store"));
                 },
                 error: code => {
                     loading.reset();
                     switch (code) {
                         case "BAD_CREDENTIALS":
                         case "NO_TOKEN":
-                        case "STORE_NOT_FOUND":
-                            snackbar.error(i18n.t("Store is not properly configured"));
+                        case "DEFAULT_STORE_NOT_FOUND":
+                            snackbar.error(i18n.t("Default store is not properly configured"));
                             return;
                         case "PACKAGE_NOT_FOUND":
                             snackbar.error(i18n.t("Could not read package"));
@@ -264,7 +264,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                     !isImportDialog &&
                     presentation === "app" &&
                     !isRemoteInstance &&
-                    !showStore &&
+                    !remoteStore &&
                     appConfigurator,
             },
             {
@@ -284,7 +284,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                     !isImportDialog &&
                     presentation === "app" &&
                     !isRemoteInstance &&
-                    !showStore &&
+                    !remoteStore &&
                     appConfigurator,
             },
             {
@@ -293,7 +293,9 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 multiple: false,
                 icon: <Icon>compare</Icon>,
                 isActive: () =>
-                    presentation === "app" && (isRemoteInstance || showStore) && appConfigurator,
+                    presentation === "app" &&
+                    (isRemoteInstance || remoteStore !== undefined) &&
+                    appConfigurator,
                 onClick: openPackageDiffDialog,
             },
             {
@@ -318,7 +320,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             openPackageDiffDialog,
             presentation,
             publishPackage,
-            showStore,
+            remoteStore,
             isImportDialog,
         ]
     );
@@ -360,13 +362,20 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     }, [compositionRoot, remoteInstance, resetKey, snackbar, globalAdmin]);
 
     useEffect(() => {
-        compositionRoot.packages.listStore().then(validation =>
-            validation.match({
-                success: setStorePackages,
-                error: () => snackbar.error(i18n.t("Can't connect to store")),
-            })
-        );
-    }, [compositionRoot, snackbar]);
+        if (remoteStore) {
+            compositionRoot.packages.listStore(remoteStore.id).then(validation =>
+                validation.match({
+                    success: setStorePackages,
+                    error: () => {
+                        snackbar.error(i18n.t("Can't connect to store"));
+                        setStorePackages([]);
+                    },
+                })
+            );
+        } else {
+            setStorePackages([]);
+        }
+    }, [compositionRoot, snackbar, remoteStore]);
 
     useEffect(() => {
         setModuleFilter("");
@@ -380,7 +389,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const showImportFromWizardButton =
         !isImportDialog &&
         presentation === "app" &&
-        (isRemoteInstance || showStore) &&
+        (isRemoteInstance || remoteStore) &&
         appConfigurator;
 
     return (
@@ -404,7 +413,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 <PackagesDiffDialog
                     onClose={closePackageDiffDialog}
                     remotePackage={packageToDiff}
-                    isStorePackage={showStore}
+                    remoteStore={remoteStore}
                     remoteInstance={remoteInstance}
                 />
             )}

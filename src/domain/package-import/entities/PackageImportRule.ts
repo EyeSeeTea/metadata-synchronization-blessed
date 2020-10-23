@@ -1,26 +1,26 @@
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
-import { Instance } from "../../instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import { PackageSource } from "./PackageSource";
 
 interface PackageImportRuleData {
-    instance: Instance;
+    source: PackageSource;
     packageIds: string[];
     mappingByPackageId: Record<string, MetadataMappingDictionary>;
 }
 
 export class PackageImportRule {
-    public readonly instance: Instance;
+    public readonly source: PackageSource;
     public readonly packageIds: string[];
     public readonly mappingByPackageId: Record<string, MetadataMappingDictionary>;
 
     constructor(private data: PackageImportRuleData) {
-        this.instance = data.instance;
+        this.source = data.source;
         this.packageIds = data.packageIds;
         this.mappingByPackageId = data.mappingByPackageId;
     }
 
-    static create(instance: Instance): PackageImportRule {
-        return new PackageImportRule({ instance, packageIds: [], mappingByPackageId: {} });
+    static create(source: PackageSource): PackageImportRule {
+        return new PackageImportRule({ source, packageIds: [], mappingByPackageId: {} });
     }
 
     public updatePackageIds(packageIds: string[]): PackageImportRule {

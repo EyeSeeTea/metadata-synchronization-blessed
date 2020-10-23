@@ -14,7 +14,7 @@ import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
 
 export type PublishStorePackageError =
     | GitHubError
-    | "STORE_NOT_FOUND"
+    | "DEFAULT_STORE_NOT_FOUND"
     | "PACKAGE_NOT_FOUND"
     | "ALREADY_PUBLISHED";
 
@@ -25,10 +25,11 @@ export class PublishStorePackageUseCase implements UseCase {
         packageId: string,
         force = false
     ): Promise<Either<PublishStorePackageError, void>> {
-        const store = await this.storageRepository(this.localInstance).getObject<Store>(
-            Namespace.STORE
-        );
-        if (!store) return Either.error("STORE_NOT_FOUND");
+        const store = (
+            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
+        )?.find(store => store.default);
+
+        if (!store) return Either.error("DEFAULT_STORE_NOT_FOUND");
 
         const storedPackage = await this.storageRepository(
             this.localInstance

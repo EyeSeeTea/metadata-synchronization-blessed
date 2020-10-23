@@ -41,14 +41,17 @@ import { MarkReadNotificationsUseCase } from "../domain/notifications/usecases/M
 import { UpdatePullRequestStatusUseCase } from "../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
+import { DeleteStoreUseCase } from "../domain/packages/usecases/DeleteStoreUseCase";
 import { DiffPackageUseCase } from "../domain/packages/usecases/DiffPackageUseCase";
 import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPackageUseCase";
 import { GetPackageUseCase } from "../domain/packages/usecases/GetPackageUseCase";
 import { GetStoreUseCase } from "../domain/packages/usecases/GetStoreUseCase";
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
+import { ListStoresUseCase } from "../domain/packages/usecases/ListStoresUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
 import { SaveStoreUseCase } from "../domain/packages/usecases/SaveStoreUseCase";
+import { SetStoreAsDefaultUseCase } from "../domain/packages/usecases/SetStoreAsDefaultUseCase";
 import { ValidateStoreUseCase } from "../domain/packages/usecases/ValidateStoreUseCase";
 import { Repositories } from "../domain/Repositories";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
@@ -148,6 +151,9 @@ export class CompositionRoot {
             get: new GetStoreUseCase(storage),
             update: new SaveStoreUseCase(github, storage),
             validate: new ValidateStoreUseCase(github),
+            list: new ListStoresUseCase(storage),
+            delete: new DeleteStoreUseCase(storage),
+            setAsDefault: new SetStoreAsDefaultUseCase(storage),
         });
     }
 

@@ -3,6 +3,10 @@ import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
 import React, { useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
+import {
+    isInstance,
+    PackageSource,
+} from "../../../../domain/package-import/entities/PackageSource";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { useAppContext } from "../../contexts/AppContext";
@@ -10,7 +14,7 @@ import { PackageImportWizard } from "../package-import-wizard/PackageImportWizar
 
 interface PackageImportDialogProps {
     isOpen: boolean;
-    instance: Instance;
+    instance: PackageSource;
     onClose: () => void;
     openSyncSummary?: (result: SyncReport) => void;
 }
@@ -41,42 +45,46 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
         const report = SyncReport.create("metadata");
 
         const executePackageImport = async (packageId: string) => {
-            const result = await compositionRoot.packages.get(
-                packageId,
-                packageImportRule.instance
-            );
+            if (isInstance(packageImportRule.source)) {
+                const result = await compositionRoot.packages.get(
+                    packageId,
+                    packageImportRule.source
+                );
 
-            result.match({
-                success: async originPackage => {
-                    try {
-                        loading.show(
-                            true,
-                            i18n.t("Importing package {{name}}", { name: originPackage.name })
-                        );
-                        const result = await compositionRoot.metadata.import(
-                            originPackage.contents
-                        );
+                result.match({
+                    success: async originPackage => {
+                        try {
+                            loading.show(
+                                true,
+                                i18n.t("Importing package {{name}}", { name: originPackage.name })
+                            );
+                            const result = await compositionRoot.metadata.import(
+                                originPackage.contents
+                            );
 
-                        report.setStatus(
-                            result.status === "ERROR" || result.status === "NETWORK ERROR"
-                                ? "FAILURE"
-                                : "DONE"
-                        );
-                        report.addSyncResult({
-                            ...result,
-                            originPackage: originPackage.toRef(),
-                            origin: packageImportRule.instance.toPublicObject(),
-                        });
+                            report.setStatus(
+                                result.status === "ERROR" || result.status === "NETWORK ERROR"
+                                    ? "FAILURE"
+                                    : "DONE"
+                            );
+                            report.addSyncResult({
+                                ...result,
+                                originPackage: originPackage.toRef(),
+                                origin: (packageImportRule.source as Instance).toPublicObject(),
+                            });
+                            loading.reset();
+                        } catch (error) {
+                            snackbar.error(error.message);
+                        }
+                    },
+                    error: async () => {
                         loading.reset();
-                    } catch (error) {
-                        snackbar.error(error.message);
-                    }
-                },
-                error: async () => {
-                    loading.reset();
-                    snackbar.error(i18n.t("Couldn't load package"));
-                },
-            });
+                        snackbar.error(i18n.t("Couldn't load package"));
+                    },
+                });
+            } else {
+                snackbar.error("Implement packages from store case");
+            }
         };
 
         for (const id of packageImportRule.packageIds) {

@@ -1,6 +1,7 @@
 import { makeStyles, TextField } from "@material-ui/core";
 import React, { useCallback, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
+import { Store } from "../../../../../domain/packages/entities/Store";
 import i18n from "../../../../../locales";
 import SyncRule from "../../../../../models/syncRule";
 import { Dictionary } from "../../../../../types/utils";
@@ -30,7 +31,7 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
     );
 
     const onChangeInstance = useCallback(
-        (_type: InstanceSelectionOption, instance?: Instance) => {
+        (_type: InstanceSelectionOption, instance?: Instance | Store) => {
             const originInstance = instance?.id ?? "LOCAL";
             const targetInstances = originInstance === "LOCAL" ? [] : ["LOCAL"];
 

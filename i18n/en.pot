@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-10-23T07:09:15.216Z\n"
-"PO-Revision-Date: 2020-10-23T07:09:15.216Z\n"
+"POT-Creation-Date: 2020-10-23T11:43:19.637Z\n"
+"PO-Revision-Date: 2020-10-23T11:43:19.637Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -472,6 +472,9 @@ msgstr ""
 msgid "{{n}} package(s) could not be created: {{list}}"
 msgstr ""
 
+msgid "Instances & Play Stores"
+msgstr ""
+
 msgid "View"
 msgstr ""
 
@@ -550,10 +553,10 @@ msgstr ""
 msgid "Publishing package to Store"
 msgstr ""
 
-msgid "Package published to store"
+msgid "Package published to default store"
 msgstr ""
 
-msgid "Store is not properly configured"
+msgid "Default store is not properly configured"
 msgstr ""
 
 msgid "Could not read package"
@@ -1444,7 +1447,19 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
+msgid "New store"
+msgstr ""
+
+msgid "Edit store"
+msgstr ""
+
 msgid "The token is empty"
+msgstr ""
+
+msgid "The account is empty"
+msgstr ""
+
+msgid "The repository is empty"
 msgstr ""
 
 msgid "The token is invalid"
@@ -1457,14 +1472,6 @@ msgid "Testing GitHub connection"
 msgstr ""
 
 msgid "Connected successfully"
-msgstr ""
-
-msgid "Reset store configuration"
-msgstr ""
-
-msgid ""
-"You will clear the existing configuration for all users in this instance.\n"
-"Do you want to proceed?"
 msgstr ""
 
 msgid "Saving store connection"
@@ -1493,8 +1500,37 @@ msgstr ""
 msgid "GitHub personal access token (*)"
 msgstr ""
 
-msgid "Reset"
+msgid "An error has occurred setting store as default"
 msgstr ""
+
+msgid "Account"
+msgstr ""
+
+msgid "Repository"
+msgstr ""
+
+msgid "Token"
+msgstr ""
+
+msgid "Default"
+msgstr ""
+
+msgid "Set as default"
+msgstr ""
+
+msgid "Test conection"
+msgstr ""
+
+msgid "Stores"
+msgstr ""
+
+msgid "Delete Stores?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} stores?"
+msgid_plural "Are you sure you want to delete {{count}} stores?"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "New {{type}} synchronization rule"
 msgstr ""

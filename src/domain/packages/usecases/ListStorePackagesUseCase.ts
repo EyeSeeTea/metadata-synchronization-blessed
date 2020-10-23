@@ -22,10 +22,11 @@ export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
 export class ListStorePackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(): Promise<Either<ListStorePackagesError, Package[]>> {
-        const store = await this.storageRepository(this.localInstance).getObject<Store>(
-            Namespace.STORE
-        );
+    public async execute(storeId: string): Promise<Either<ListStorePackagesError, Package[]>> {
+        const store = (
+            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
+        )?.find(store => store.id === storeId);
+
         if (!store) return Either.error("STORE_NOT_FOUND");
 
         const userGroups = await this.instanceRepository(this.localInstance).getUserGroups();
