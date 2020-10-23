@@ -63,6 +63,10 @@ const StoreCreationPage: React.FC = () => {
         switch (error) {
             case "NO_TOKEN":
                 return i18n.t("The token is empty");
+            case "NO_ACCOUNT":
+                return i18n.t("The account is empty");
+            case "NO_REPOSITORY":
+                return i18n.t("The repository is empty");
             case "BAD_CREDENTIALS":
                 return i18n.t("The token is invalid");
             case "NOT_FOUND":
@@ -111,31 +115,41 @@ const StoreCreationPage: React.FC = () => {
     const save = useCallback(async () => {
         loading.show(true, i18n.t("Saving store connection"));
 
+        const handleError = (error: GitHubError) => {
+            switch (error) {
+                case "NO_TOKEN":
+                case "NO_ACCOUNT":
+                case "NO_REPOSITORY":
+                    return snackbar.error(validateError(error));
+                default: {
+                    updateDialog({
+                        title: validateError(error),
+                        description: i18n.t(
+                            "There are issues with the connection details you provided.\nDo you want to proceed?"
+                        ),
+                        onCancel: () => {
+                            updateDialog(null);
+                        },
+                        onSave: async () => {
+                            await compositionRoot.store.update(state as Store, false);
+                            updateDialog(null);
+                            close();
+                        },
+                        cancelText: i18n.t("Cancel"),
+                        saveText: i18n.t("Proceed"),
+                    });
+                }
+            }
+        };
+
         const validation = await compositionRoot.store.update(state as Store);
         validation.match({
-            error: error => {
-                updateDialog({
-                    title: validateError(error),
-                    description: i18n.t(
-                        "There are issues with the connection details you provided.\nDo you want to proceed?"
-                    ),
-                    onCancel: () => {
-                        updateDialog(null);
-                    },
-                    onSave: async () => {
-                        await compositionRoot.store.update(state as Store, false);
-                        updateDialog(null);
-                        close();
-                    },
-                    cancelText: i18n.t("Cancel"),
-                    saveText: i18n.t("Proceed"),
-                });
-            },
+            error: error => handleError(error),
             success: close,
         });
 
         loading.reset();
-    }, [compositionRoot, state, validateError, close, loading]);
+    }, [compositionRoot, state, validateError, close, loading, snackbar]);
 
     const helpContainer = useMemo(
         () => (
