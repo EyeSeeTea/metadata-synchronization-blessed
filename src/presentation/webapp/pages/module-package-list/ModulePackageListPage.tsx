@@ -2,6 +2,7 @@ import { PaginationOptions } from "d2-ui-components";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { Store } from "../../../../domain/packages/entities/Store";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import {
@@ -14,7 +15,7 @@ import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
 
 export interface ModulePackageListPageProps {
     remoteInstance?: Instance;
-    showStore: boolean;
+    remoteStore?: Store;
     onActionButtonClick?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
     presentation: PresentationOption;
     externalComponents?: ReactNode;
