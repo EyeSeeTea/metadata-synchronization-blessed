@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-10-23T08:51:17.118Z\n"
+"POT-Creation-Date: 2020-10-23T08:53:45.330Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1458,14 +1458,6 @@ msgstr ""
 msgid "Connected successfully"
 msgstr ""
 
-msgid "Reset store configuration"
-msgstr ""
-
-msgid ""
-"You will clear the existing configuration for all users in this instance.\n"
-"Do you want to proceed?"
-msgstr ""
-
 msgid "Saving store connection"
 msgstr ""
 
@@ -1491,9 +1483,6 @@ msgid "GitHub repository (*)"
 msgstr ""
 
 msgid "GitHub personal access token (*)"
-msgstr ""
-
-msgid "Reset"
 msgstr ""
 
 msgid "An error has occurred setting store as default"

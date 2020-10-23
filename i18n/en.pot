@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-10-23T08:51:17.118Z\n"
-"PO-Revision-Date: 2020-10-23T08:51:17.118Z\n"
+"POT-Creation-Date: 2020-10-23T08:57:00.268Z\n"
+"PO-Revision-Date: 2020-10-23T08:57:00.268Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1456,14 +1456,6 @@ msgstr ""
 msgid "Connected successfully"
 msgstr ""
 
-msgid "Reset store configuration"
-msgstr ""
-
-msgid ""
-"You will clear the existing configuration for all users in this instance.\n"
-"Do you want to proceed?"
-msgstr ""
-
 msgid "Saving store connection"
 msgstr ""
 
@@ -1488,9 +1480,6 @@ msgid "GitHub repository (*)"
 msgstr ""
 
 msgid "GitHub personal access token (*)"
-msgstr ""
-
-msgid "Reset"
 msgstr ""
 
 msgid "An error has occurred setting store as default"
