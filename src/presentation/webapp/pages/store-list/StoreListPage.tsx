@@ -10,12 +10,14 @@ import {
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { GitHubError } from "../../../../domain/packages/entities/Errors";
 import { Store } from "../../../../domain/packages/entities/Store";
 import i18n from "../../../../locales";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import { useAppContext } from "../../../react/contexts/AppContext";
+import SettingsInputAntenaIcon from "@material-ui/icons/SettingsInputAntenna";
 
 export const StoreListPage: React.FC = () => {
     const history = useHistory();
@@ -35,40 +37,67 @@ export const StoreListPage: React.FC = () => {
         getStores().then(setRows);
     }, [getStores, objectsTableKey]);
 
-    const backHome = useCallback(() => {
-        history.push("/");
-    }, [history]);
+    const backHome = () => history.push("/");
 
-    const handleCreateStore = useCallback(() => {
-        history.push(`/stores/new`);
-    }, [history]);
+    const handleCreateStore = () => history.push(`/stores/new`);
 
-    const handleEditStore = useCallback(
-        (id: string) => {
-            history.push(`/stores/edit/${id}`);
-        },
-        [history]
-    );
+    const handleEditStore = (id: string) => {
+        history.push(`/stores/edit/${id}`);
+    };
 
-    const handleSetStoreAsDefault = useCallback(
-        async (id: string) => {
-            const result = await setStoreAsDefault(id);
-            result.match({
-                error: () => {
-                    snackbar.error(i18n.t("An error has occurred setting store as default"));
+    const handleSetStoreAsDefault = async (id: string) => {
+        const result = await setStoreAsDefault(id);
+        result.match({
+            error: () => {
+                snackbar.error(i18n.t("An error has occurred setting store as default"));
+            },
+            success: () => setObjectsTableKey(Math.random()),
+        });
+    };
+
+    const validateError = (error?: GitHubError): string => {
+        switch (error) {
+            case "NO_TOKEN":
+                return i18n.t("The token is empty");
+            case "NO_ACCOUNT":
+                return i18n.t("The account is empty");
+            case "NO_REPOSITORY":
+                return i18n.t("The repository is empty");
+            case "BAD_CREDENTIALS":
+                return i18n.t("The token is invalid");
+            case "NOT_FOUND":
+                return i18n.t("Repository not found");
+            case "UNKNOWN":
+            default:
+                return i18n.t("Unknown error");
+        }
+    };
+
+    const handleTestConnection = async (id: string) => {
+        loading.show(true, i18n.t("Testing GitHub connection"));
+
+        const store = await compositionRoot.store.get(id);
+
+        if (store) {
+            const validation = await compositionRoot.store.validate(store);
+            validation.match({
+                error: error => {
+                    snackbar.error(validateError(error));
                 },
-                success: () => setObjectsTableKey(Math.random()),
+                success: () => {
+                    snackbar.success(i18n.t("Connected successfully"));
+                },
             });
-        },
-        [setStoreAsDefault, snackbar]
-    );
+        } else {
+            snackbar.error(i18n.t("Store not found:" + id));
+        }
 
-    const updateTable = useCallback(
-        ({ selection }: TableState<Store>) => {
-            setSelection(selection);
-        },
-        [setSelection]
-    );
+        loading.reset();
+    };
+
+    const updateTable = ({ selection }: TableState<Store>) => {
+        setSelection(selection);
+    };
 
     const confirmDelete = async () => {
         loading.show(true, "Deleting stores");
@@ -133,6 +162,13 @@ export const StoreListPage: React.FC = () => {
             multiple: false,
             onClick: (ids: string[]) => handleSetStoreAsDefault(ids[0]),
             icon: <Icon>cloud_download</Icon>,
+        },
+        {
+            name: "testConnection",
+            text: i18n.t("Test conection"),
+            multiple: false,
+            onClick: (ids: string[]) => handleTestConnection(ids[0]),
+            icon: <SettingsInputAntenaIcon />,
         },
     ];
 

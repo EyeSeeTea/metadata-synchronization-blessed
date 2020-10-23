@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-10-23T08:57:00.268Z\n"
-"PO-Revision-Date: 2020-10-23T08:57:00.268Z\n"
+"POT-Creation-Date: 2020-10-23T09:20:19.308Z\n"
+"PO-Revision-Date: 2020-10-23T09:20:19.308Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1498,6 +1498,9 @@ msgid "Default"
 msgstr ""
 
 msgid "Set as default"
+msgstr ""
+
+msgid "Test conection"
 msgstr ""
 
 msgid "Stores"
