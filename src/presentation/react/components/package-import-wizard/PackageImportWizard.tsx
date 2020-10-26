@@ -3,6 +3,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
 import i18n from "../../../../locales";
+import { InstanceStoreSelectionStep } from "./steps/InstanceStoreSelectionStep";
 import { PackageMappingStep } from "./steps/PackageMappingStep";
 import { PackageSelectionStep } from "./steps/PackageSelectionStep";
 import { SummaryStep } from "./steps/SummaryStep";
@@ -18,14 +19,11 @@ export interface PackageImportWizardStepProps {
     onClose: () => void;
 }
 
-const GeneralInfoStep = () => <div>General info</div>;
-//const PackagesMetadataStep = () => <div>Packages Mapping</div>;
-
 export const stepsBaseInfo = [
     {
-        key: "general-info",
-        label: i18n.t("General info"),
-        component: GeneralInfoStep,
+        key: "instance-playstore",
+        label: i18n.t("Instances & Play Stores"),
+        component: InstanceStoreSelectionStep,
         validationKeys: [],
     },
     {

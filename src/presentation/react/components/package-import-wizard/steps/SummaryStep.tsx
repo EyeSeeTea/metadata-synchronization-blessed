@@ -1,7 +1,6 @@
 import { useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useEffect, useState } from "react";
-import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { isInstance } from "../../../../../domain/package-import/entities/PackageSource";
 import { ListPackage } from "../../../../../domain/packages/entities/Package";
 import i18n from "../../../../../locales";
@@ -13,11 +12,11 @@ export const SummaryStep: React.FC<PackageImportWizardProps> = ({ packageImportR
     const { api, compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
 
-    const getPackages = compositionRoot.packages.list;
+    const getPackagesFromInstance = compositionRoot.packages.list;
+    const getPackagesFromStore = compositionRoot.packages.listStore;
 
     const [globalAdmin, setGlobalAdmin] = useState(false);
-    const [instancePackages, setInstancePackages] = useState<ListPackage[]>([]);
-    //const [storePackages, setStorePackages] = useState<ListPackage[]>([]);
+    const [packages, setPackages] = useState<ListPackage[]>([]);
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
@@ -25,30 +24,50 @@ export const SummaryStep: React.FC<PackageImportWizardProps> = ({ packageImportR
 
     useEffect(() => {
         if (isInstance(packageImportRule.source)) {
-            getPackages(globalAdmin, packageImportRule.source)
-                .then(setInstancePackages)
+            getPackagesFromInstance(globalAdmin, packageImportRule.source)
+                .then(setPackages)
                 .catch((error: Error) => {
                     snackbar.error(error.message);
-                    setInstancePackages([]);
+                    setPackages([]);
                 });
         } else {
-            snackbar.error("Implement packages from store case");
+            getPackagesFromStore(packageImportRule.source.id).then(result => {
+                result.match({
+                    success: setPackages,
+                    error: () => {
+                        snackbar.error(i18n.t("Can't connect to store"));
+                        setPackages([]);
+                    },
+                });
+            });
         }
-    }, [getPackages, packageImportRule, globalAdmin, snackbar]);
+    }, [getPackagesFromInstance, getPackagesFromStore, packageImportRule, globalAdmin, snackbar]);
 
     return (
         <React.Fragment>
             <ul>
                 <LiEntry
-                    label={i18n.t("Instance")}
-                    value={(packageImportRule.source as Instance).name}
+                    label={
+                        isInstance(packageImportRule.source)
+                            ? i18n.t("Instance")
+                            : i18n.t("Play Store")
+                    }
+                    value={
+                        isInstance(packageImportRule.source)
+                            ? packageImportRule.source.name
+                            : `${packageImportRule.source.account} - ${packageImportRule.source.repository}`
+                    }
                 />
                 <LiEntry label={i18n.t("Packages")}>
                     <ul>
-                        {packageImportRule.packageIds.map(id => {
-                            const instancePackage = instancePackages.find(pkg => pkg.id === id);
-                            return <LiEntry key={id} label={`${instancePackage?.name} (${id})`} />;
-                        })}
+                        {packages.length === 0 ? (
+                            <LiEntry label={i18n.t("Loading ...")} />
+                        ) : (
+                            packageImportRule.packageIds.map(id => {
+                                const instancePackage = packages.find(pkg => pkg.id === id);
+                                return <LiEntry key={id} label={`${instancePackage?.name}`} />;
+                            })
+                        )}
                     </ul>
                 </LiEntry>
             </ul>

@@ -23,8 +23,19 @@ export class PackageImportRule {
         return new PackageImportRule({ source, packageIds: [], mappingByPackageId: {} });
     }
 
+    public updateSource(source: PackageSource): PackageImportRule {
+        return PackageImportRule.create(source);
+    }
+
     public updatePackageIds(packageIds: string[]): PackageImportRule {
-        return new PackageImportRule({ ...this.data, packageIds });
+        const mappingByPackageId = Object.keys(this.mappingByPackageId)
+            .filter(oldKey => packageIds.some(key => key === oldKey))
+            .reduce((acc: Record<string, MetadataMappingDictionary>, key: string) => {
+                acc[key] = this.mappingByPackageId[key];
+                return acc;
+            }, {});
+
+        return new PackageImportRule({ ...this.data, packageIds, mappingByPackageId });
     }
 
     public updateMappingsByPackageId(
