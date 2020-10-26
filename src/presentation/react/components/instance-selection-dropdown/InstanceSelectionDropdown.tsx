@@ -20,6 +20,7 @@ export interface InstanceSelectionDropdownProps {
     ) => void;
     view?: DropdownViewOption;
     title?: string;
+    refreshKey?: number;
 }
 
 export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps> = React.memo(
@@ -29,6 +30,7 @@ export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps>
         onChangeSelected,
         view = "filter",
         title = i18n.t("Instances"),
+        refreshKey,
     }) => {
         const { compositionRoot } = useAppContext();
 
@@ -70,7 +72,7 @@ export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps>
             if (showInstances.store) {
                 compositionRoot.store.list().then(setStores);
             }
-        }, [compositionRoot, showInstances]);
+        }, [compositionRoot, showInstances, refreshKey]);
 
         useEffect(() => {
             // Auto-select first instance

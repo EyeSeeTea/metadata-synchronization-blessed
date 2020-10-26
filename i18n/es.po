@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-10-23T11:11:27.453Z\n"
+"POT-Creation-Date: 2020-10-26T09:35:44.060Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -548,7 +548,16 @@ msgstr "Paquetes"
 msgid "Package"
 msgstr "Paquetes"
 
+msgid "Can't connect to store"
+msgstr ""
+
 msgid "Instance"
+msgstr ""
+
+msgid "Play Store"
+msgstr ""
+
+msgid "Loading ..."
 msgstr ""
 
 msgid "Invalid package"
@@ -608,9 +617,6 @@ msgid "Compare with local instance"
 msgstr ""
 
 msgid "Import package"
-msgstr ""
-
-msgid "Can't connect to store"
 msgstr ""
 
 msgid "Cannot get data from remote instance"
@@ -683,6 +689,60 @@ msgid "Custodians"
 msgstr ""
 
 msgid "Custodians for {{name}}"
+msgstr ""
+
+msgid "The token is empty"
+msgstr ""
+
+msgid "The account is empty"
+msgstr ""
+
+msgid "The repository is empty"
+msgstr ""
+
+msgid "The token is invalid"
+msgstr ""
+
+msgid "Repository not found"
+msgstr ""
+
+msgid "Testing GitHub connection"
+msgstr ""
+
+msgid "Connected successfully"
+msgstr ""
+
+msgid "Saving store connection"
+msgstr ""
+
+msgid ""
+"There are issues with the connection details you provided.\n"
+"Do you want to proceed?"
+msgstr ""
+
+msgid "- Create a repository at https://github.com/new"
+msgstr ""
+
+msgid ""
+"- Create a personal access token at https://github.com/settings/tokens/new"
+msgstr ""
+
+msgid "Create a personal access token on GitHub"
+msgstr ""
+
+msgid "New store"
+msgstr ""
+
+msgid "GitHub account or organisation (*)"
+msgstr ""
+
+msgid "GitHub repository (*)"
+msgstr ""
+
+msgid "GitHub personal access token (*)"
+msgstr ""
+
+msgid "Test Connection"
 msgstr ""
 
 msgid "Synchronize"
@@ -1229,9 +1289,6 @@ msgstr ""
 msgid "Metadata mapping"
 msgstr ""
 
-msgid "Test Connection"
-msgstr ""
-
 msgid "New Instance"
 msgstr ""
 
@@ -1452,58 +1509,7 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-msgid "New store"
-msgstr ""
-
 msgid "Edit store"
-msgstr ""
-
-msgid "The token is empty"
-msgstr ""
-
-msgid "The account is empty"
-msgstr ""
-
-msgid "The repository is empty"
-msgstr ""
-
-msgid "The token is invalid"
-msgstr ""
-
-msgid "Repository not found"
-msgstr ""
-
-msgid "Testing GitHub connection"
-msgstr ""
-
-msgid "Connected successfully"
-msgstr ""
-
-msgid "Saving store connection"
-msgstr ""
-
-msgid ""
-"There are issues with the connection details you provided.\n"
-"Do you want to proceed?"
-msgstr ""
-
-msgid "- Create a repository at https://github.com/new"
-msgstr ""
-
-msgid ""
-"- Create a personal access token at https://github.com/settings/tokens/new"
-msgstr ""
-
-msgid "Create a personal access token on GitHub"
-msgstr ""
-
-msgid "GitHub account or organisation (*)"
-msgstr ""
-
-msgid "GitHub repository (*)"
-msgstr ""
-
-msgid "GitHub personal access token (*)"
 msgstr ""
 
 msgid "An error has occurred setting store as default"
