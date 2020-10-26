@@ -297,12 +297,14 @@ export const PackagesListTable: React.FC<ModulePackageListPageProps> = ({
     );
 
     const moduleFilterItems = useMemo(() => {
-        return _(instancePackages)
-            .map(instancePackage => instancePackage.module)
+        const packages = remoteStore ? storePackages : instancePackages;
+
+        return _(packages)
+            .map(pkg => pkg.module)
             .uniqBy(({ id }) => id)
             .sortBy(({ name }) => name)
             .value();
-    }, [instancePackages]);
+    }, [instancePackages, storePackages, remoteStore]);
 
     const filterComponents = useMemo(() => {
         const moduleFilterComponent = (
