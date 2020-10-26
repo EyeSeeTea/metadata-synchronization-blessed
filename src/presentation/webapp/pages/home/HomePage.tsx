@@ -176,7 +176,7 @@ const LandingPage: React.FC = () => {
                         name: i18n.t("Package store connection"),
                         description: i18n.t("Configure connections to metadata package stores."),
                         isVisible: appConfigurator,
-                        addAction: () => history.push("/modules/config"),
+                        addAction: () => history.push("/stores/new"),
                         listAction: () => history.push("/stores"),
                     },
                 ]),
