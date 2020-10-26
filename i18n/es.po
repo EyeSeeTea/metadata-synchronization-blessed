@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-10-26T09:35:44.060Z\n"
+"POT-Creation-Date: 2020-10-26T10:26:18.236Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -617,6 +617,12 @@ msgid "Compare with local instance"
 msgstr ""
 
 msgid "Import package"
+msgstr ""
+
+msgid "Not recommended"
+msgstr ""
+
+msgid "Dhis2 version"
 msgstr ""
 
 msgid "Cannot get data from remote instance"

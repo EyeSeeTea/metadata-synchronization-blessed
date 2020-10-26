@@ -57,11 +57,17 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
     const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
     const [moduleFilter, setModuleFilter] = useState("");
+    const [dhis2VersionFilter, setDhis2VersionFilter] = useState("");
+    const [localDhis2Version, setLocalDhis2Version] = useState("");
 
     const [globalAdmin, setGlobalAdmin] = useState(false);
     const [appConfigurator, setAppConfigurator] = useState(false);
 
     const isRemoteInstance = !!remoteInstance;
+
+    useEffect(() => {
+        api.getVersion().then(setLocalDhis2Version);
+    }, [api]);
 
     const deletePackages = useCallback(
         async (ids: string[]) => {
@@ -335,6 +341,22 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             .value();
     }, [instancePackages, storePackages, remoteStore]);
 
+    const dhis2VersionFilterItems = useMemo(() => {
+        const packages = remoteStore ? storePackages : instancePackages;
+
+        return _(packages)
+            .map(pkg => ({
+                id: pkg.dhisVersion,
+                name:
+                    localDhis2Version === pkg.dhisVersion
+                        ? pkg.dhisVersion
+                        : `${pkg.dhisVersion} (${i18n.t("Not recommended")})`,
+            }))
+            .uniqBy(({ id }) => id)
+            .sortBy(({ name }) => name)
+            .value();
+    }, [instancePackages, storePackages, remoteStore, localDhis2Version]);
+
     const filterComponents = useMemo(() => {
         const moduleFilterComponent = (
             <Dropdown
@@ -346,12 +368,33 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             />
         );
 
-        return [externalComponents, moduleFilterComponent];
-    }, [externalComponents, moduleFilter, moduleFilterItems]);
+        const dhis2VersionFilterComponent = isImportDialog ? (
+            <Dropdown
+                key="filter-dhis2-version"
+                items={dhis2VersionFilterItems}
+                onValueChange={setDhis2VersionFilter}
+                value={dhis2VersionFilter}
+                label={i18n.t("Dhis2 version")}
+            />
+        ) : null;
+
+        return [externalComponents, moduleFilterComponent, dhis2VersionFilterComponent];
+    }, [
+        externalComponents,
+        moduleFilter,
+        moduleFilterItems,
+        isImportDialog,
+        dhis2VersionFilterItems,
+        dhis2VersionFilter,
+    ]);
 
     const rowsFiltered = useMemo(() => {
-        return moduleFilter ? rows.filter(row => row.module.id === moduleFilter) : rows;
-    }, [moduleFilter, rows]);
+        return rows.filter(
+            row =>
+                (row.module.id === moduleFilter || !moduleFilter) &&
+                (row.dhisVersion === dhis2VersionFilter || !dhis2VersionFilter)
+        );
+    }, [moduleFilter, rows, dhis2VersionFilter]);
 
     useEffect(() => {
         compositionRoot.packages
