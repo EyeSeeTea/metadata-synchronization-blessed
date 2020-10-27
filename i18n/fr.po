@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-10-26T10:26:18.236Z\n"
+"POT-Creation-Date: 2020-10-27T12:27:12.311Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -595,6 +595,15 @@ msgstr ""
 msgid "Couldn't create new branch on store"
 msgstr ""
 
+msgid "Installed"
+msgstr ""
+
+msgid "Not Installed"
+msgstr ""
+
+msgid "Upgrade Available"
+msgstr ""
+
 msgid "Version"
 msgstr ""
 
@@ -602,6 +611,9 @@ msgid "DHIS2 Version"
 msgstr ""
 
 msgid "Module"
+msgstr ""
+
+msgid "State"
 msgstr ""
 
 msgid "Download as JSON"
@@ -620,6 +632,9 @@ msgid "Not recommended"
 msgstr ""
 
 msgid "Dhis2 version"
+msgstr ""
+
+msgid "An error has ocurred retrieving imported packages"
 msgstr ""
 
 msgid "Cannot get data from remote instance"

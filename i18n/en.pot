@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-10-26T10:26:18.236Z\n"
-"PO-Revision-Date: 2020-10-26T10:26:18.236Z\n"
+"POT-Creation-Date: 2020-10-27T15:03:12.236Z\n"
+"PO-Revision-Date: 2020-10-27T15:03:12.236Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -594,6 +594,15 @@ msgstr ""
 msgid "Couldn't create new branch on store"
 msgstr ""
 
+msgid "Installed"
+msgstr ""
+
+msgid "Not Installed"
+msgstr ""
+
+msgid "Upgrade Available"
+msgstr ""
+
 msgid "Version"
 msgstr ""
 
@@ -601,6 +610,9 @@ msgid "DHIS2 Version"
 msgstr ""
 
 msgid "Module"
+msgstr ""
+
+msgid "State"
 msgstr ""
 
 msgid "Download as JSON"
@@ -619,6 +631,9 @@ msgid "Not recommended"
 msgstr ""
 
 msgid "Dhis2 version"
+msgstr ""
+
+msgid "An error has ocurred retrieving imported packages"
 msgstr ""
 
 msgid "Cannot get data from remote instance"

@@ -39,6 +39,8 @@ import { ImportPullRequestUseCase } from "../domain/notifications/usecases/Impor
 import { ListNotificationsUseCase } from "../domain/notifications/usecases/ListNotificationsUseCase";
 import { MarkReadNotificationsUseCase } from "../domain/notifications/usecases/MarkReadNotificationsUseCase";
 import { UpdatePullRequestStatusUseCase } from "../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
+import { ListImportedPackagesUseCase } from "../domain/package-import/usecases/ListImportedPackagesUseCase";
+import { SaveImportedPackageUseCase } from "../domain/package-import/usecases/SaveImportedPackageUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
 import { DeleteStoreUseCase } from "../domain/packages/usecases/DeleteStoreUseCase";
@@ -179,6 +181,14 @@ export class CompositionRoot {
             download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),
             publish: new PublishStorePackageUseCase(this.repositoryFactory, this.localInstance),
             diff: new DiffPackageUseCase(this, this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get importedPackages() {
+        return getExecute({
+            list: new ListImportedPackagesUseCase(this.repositoryFactory, this.localInstance),
+            save: new SaveImportedPackageUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
