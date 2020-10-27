@@ -1,4 +1,4 @@
-import { Checkbox, Icon } from "@material-ui/core";
+import { Icon } from "@material-ui/core";
 import {
     ConfirmationDialog,
     ObjectsTable,
@@ -121,9 +121,7 @@ export const StoreListPage: React.FC = () => {
             name: "default",
             text: i18n.t("Default"),
             sortable: true,
-            getValue: store => {
-                return <Checkbox disabled={true} checked={store.default} />;
-            },
+            getValue: store => (store.default ? <Icon>done</Icon> : ""),
         },
     ];
 
