@@ -186,6 +186,8 @@ export class GitHubOctokitRepository implements GitHubRepository {
         try {
             const { token, account, repository } = store;
             if (!token?.trim()) return Either.error("NO_TOKEN");
+            if (!account?.trim()) return Either.error("NO_ACCOUNT");
+            if (!repository?.trim()) return Either.error("NO_REPOSITORY");
 
             const octokit = await this.getOctoKit(token);
             const { login: username } = await this.getCurrentUser(store);

@@ -10,6 +10,7 @@ import {
     MetadataPackageDiff,
     ModelDiff,
 } from "../../../../domain/packages/entities/MetadataPackageDiff";
+import { Store } from "../../../../domain/packages/entities/Store";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 import SyncSummary from "../sync-summary/SyncSummary";
@@ -18,7 +19,7 @@ import { getChange, getTitle, usePackageImporter } from "./utils";
 export interface PackagesDiffDialogProps {
     onClose(): void;
     remoteInstance?: Instance;
-    isStorePackage: boolean;
+    remoteStore?: Store;
     remotePackage: NamedRef;
 }
 
@@ -28,11 +29,11 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const [metadataDiff, setMetadataDiff] = React.useState<MetadataPackageDiff>();
-    const { remotePackage, isStorePackage, remoteInstance, onClose } = props;
+    const { remotePackage, remoteStore, remoteInstance, onClose } = props;
 
     React.useEffect(() => {
         compositionRoot.packages
-            .diff(isStorePackage, remotePackage.id, remoteInstance)
+            .diff(remoteStore?.id, remotePackage.id, remoteInstance)
             .then(res => {
                 res.match({
                     error: msg => {
@@ -42,7 +43,7 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
                     success: setMetadataDiff,
                 });
             });
-    }, [compositionRoot, remotePackage, isStorePackage, remoteInstance, onClose, snackbar]);
+    }, [compositionRoot, remotePackage, remoteStore, remoteInstance, onClose, snackbar]);
 
     const hasChanges = metadataDiff && metadataDiff.hasChanges;
     const packageName = `${remotePackage.name} (${remoteInstance?.name ?? "Store"})`;

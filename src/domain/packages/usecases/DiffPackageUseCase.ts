@@ -26,12 +26,12 @@ export class DiffPackageUseCase implements UseCase {
     ) {}
 
     public async execute(
-        store: boolean,
+        storeId: string | undefined,
         id: string,
         instance = this.localInstance
     ): Promise<Either<DiffPackageUseCaseError, MetadataPackageDiff>> {
-        const remotePackage = store
-            ? await this.getStorePackage(id)
+        const remotePackage = storeId
+            ? await this.getStorePackage(storeId, id)
             : await this.getDataStorePackage(id, instance);
 
         if (!remotePackage) return Either.error("PACKAGE_NOT_FOUND");
@@ -60,10 +60,11 @@ export class DiffPackageUseCase implements UseCase {
         );
     }
 
-    private async getStorePackage(url: string) {
-        const store = await this.storageRepository(this.localInstance).getObject<Store>(
-            Namespace.STORE
-        );
+    private async getStorePackage(storeId: string, url: string) {
+        const store = (
+            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
+        )?.find(store => store.id === storeId);
+
         if (!store) return undefined;
 
         const { encoding, content } = await this.downloadRepository().fetch<{

@@ -8,7 +8,7 @@ import {
 } from "d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Linkify from "react-linkify";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { GitHubError } from "../../../../domain/packages/entities/Errors";
 import { Store } from "../../../../domain/packages/entities/Store";
 import i18n from "../../../../locales";
@@ -16,19 +16,37 @@ import { useAppContext } from "../../../react/contexts/AppContext";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import helpStoreGithub from "../../../../assets/img/help-store-github.png";
 
-const ModulesConfigPage: React.FC = () => {
+const StoreCreationPage: React.FC = () => {
     const { compositionRoot } = useAppContext();
     const history = useHistory();
     const classes = useStyles();
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const [state, setState] = useState<Partial<Store>>({});
+    const { id, action } = useParams<{ id: string; action: "edit" | "new" }>();
+
+    const [state, setState] = useState<Store>({
+        id: "",
+        token: "",
+        account: "",
+        repository: "",
+        default: false,
+    });
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
 
+    const isEdit = action === "edit" && (!!module || !!id);
+    const title = !isEdit ? i18n.t(`New store`) : i18n.t(`Edit store`);
+
     useEffect(() => {
-        compositionRoot.store.get().then(setState);
-    }, [compositionRoot]);
+        if (id)
+            compositionRoot.store.get(id).then(store => {
+                if (store) {
+                    setState(store);
+                } else {
+                    snackbar.error(i18n.t("Store not found: " + id));
+                }
+            });
+    }, [compositionRoot, id, snackbar]);
 
     const onChangeField = (field: keyof Store) => {
         return (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,13 +56,17 @@ const ModulesConfigPage: React.FC = () => {
     };
 
     const close = useCallback(() => {
-        history.push("/");
+        history.goBack();
     }, [history]);
 
     const validateError = useCallback((error?: GitHubError): string => {
         switch (error) {
             case "NO_TOKEN":
                 return i18n.t("The token is empty");
+            case "NO_ACCOUNT":
+                return i18n.t("The account is empty");
+            case "NO_REPOSITORY":
+                return i18n.t("The repository is empty");
             case "BAD_CREDENTIALS":
                 return i18n.t("The token is invalid");
             case "NOT_FOUND":
@@ -71,53 +93,44 @@ const ModulesConfigPage: React.FC = () => {
         loading.reset();
     }, [compositionRoot, state, validateError, snackbar, loading]);
 
-    const reset = useCallback(async () => {
-        updateDialog({
-            title: i18n.t("Reset store configuration"),
-            description: i18n.t(
-                "You will clear the existing configuration for all users in this instance.\nDo you want to proceed?"
-            ),
-            onCancel: () => {
-                updateDialog(null);
-            },
-            onSave: async () => {
-                await compositionRoot.store.update({} as Store, false);
-                updateDialog(null);
-                setState({} as Store);
-            },
-            cancelText: i18n.t("Cancel"),
-            saveText: i18n.t("Proceed"),
-        });
-    }, [compositionRoot]);
-
     const save = useCallback(async () => {
         loading.show(true, i18n.t("Saving store connection"));
 
+        const handleError = (error: GitHubError) => {
+            switch (error) {
+                case "NO_TOKEN":
+                case "NO_ACCOUNT":
+                case "NO_REPOSITORY":
+                    return snackbar.error(validateError(error));
+                default: {
+                    updateDialog({
+                        title: validateError(error),
+                        description: i18n.t(
+                            "There are issues with the connection details you provided.\nDo you want to proceed?"
+                        ),
+                        onCancel: () => {
+                            updateDialog(null);
+                        },
+                        onSave: async () => {
+                            await compositionRoot.store.update(state as Store, false);
+                            updateDialog(null);
+                            close();
+                        },
+                        cancelText: i18n.t("Cancel"),
+                        saveText: i18n.t("Proceed"),
+                    });
+                }
+            }
+        };
+
         const validation = await compositionRoot.store.update(state as Store);
         validation.match({
-            error: error => {
-                updateDialog({
-                    title: validateError(error),
-                    description: i18n.t(
-                        "There are issues with the connection details you provided.\nDo you want to proceed?"
-                    ),
-                    onCancel: () => {
-                        updateDialog(null);
-                    },
-                    onSave: async () => {
-                        await compositionRoot.store.update(state as Store, false);
-                        updateDialog(null);
-                        close();
-                    },
-                    cancelText: i18n.t("Cancel"),
-                    saveText: i18n.t("Proceed"),
-                });
-            },
+            error: error => handleError(error),
             success: close,
         });
 
         loading.reset();
-    }, [compositionRoot, state, validateError, close, loading]);
+    }, [compositionRoot, state, validateError, close, loading, snackbar]);
 
     const helpContainer = useMemo(
         () => (
@@ -155,12 +168,7 @@ const ModulesConfigPage: React.FC = () => {
         <React.Fragment>
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
 
-            <PageHeader
-                title={i18n.t("Package store connection")}
-                onBackClick={close}
-                help={helpContainer}
-                helpSize={"lg"}
-            />
+            <PageHeader title={title} onBackClick={close} help={helpContainer} helpSize={"lg"} />
 
             <Paper className={classes.paper}>
                 <TextField
@@ -201,13 +209,6 @@ const ModulesConfigPage: React.FC = () => {
                         </Button>
                     </div>
                     <div className={classes.actionButtonsContainer}>
-                        <Button
-                            variant="contained"
-                            onClick={reset}
-                            className={classes.actionButton}
-                        >
-                            {i18n.t("Reset")}
-                        </Button>
                         <Button
                             variant="contained"
                             onClick={testConnection}
@@ -267,4 +268,4 @@ const useStyles = makeStyles({
     },
 });
 
-export default ModulesConfigPage;
+export default StoreCreationPage;

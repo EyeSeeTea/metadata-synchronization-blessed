@@ -1,3 +1,4 @@
+import { generateUid } from "d2/uid";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { Namespace } from "../../storage/Namespaces";
@@ -18,7 +19,24 @@ export class SaveStoreUseCase implements UseCase {
             if (validation.isError()) return Either.error(validation.value.error ?? "UNKNOWN");
         }
 
-        await this.storageRepository.saveObject(Namespace.STORE, store);
+        const isFirstStore = await this.isFirstStore(store);
+
+        const isNew = !store.id;
+
+        const storeToSave = isNew
+            ? { ...store, id: generateUid(), default: isFirstStore ? true : store.default }
+            : store;
+
+        await this.storageRepository.saveObjectInCollection(Namespace.STORES, storeToSave);
+
         return Either.success(undefined);
+    }
+
+    private async isFirstStore(store: Store) {
+        const currentStores = (
+            await this.storageRepository.getObject<Store[]>(Namespace.STORES)
+        )?.filter(store => !store.deleted);
+
+        return !store.id && (!currentStores || currentStores.length === 0);
     }
 }
