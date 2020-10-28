@@ -10,7 +10,9 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
+import { isDhisInstance } from "../../../../domain/instance/entities/DataSource";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { JSONDataSource } from "../../../../domain/instance/entities/JSONDataSource";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
@@ -63,7 +65,7 @@ interface MappingConfig {
 }
 
 export interface MappingTableProps {
-    instance: Instance;
+    instance: Instance | JSONDataSource;
     models: typeof D2Model[];
     filterRows?: string[];
     transformRows?: (rows: MetadataType[]) => MetadataType[];
@@ -94,7 +96,7 @@ export default function MappingTable({
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const instanceApi = compositionRoot.instances.getApi(instance);
+    const instanceApi = isDhisInstance(instance) ? compositionRoot.instances.getApi(instance) : api;
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
 
     const [rows, setRows] = useState<MetadataType[]>([]);
@@ -841,7 +843,7 @@ export default function MappingTable({
                 />
             )}
 
-            {!!mappingConfig && (
+            {!!mappingConfig && isDhisInstance(instance) && (
                 <MappingDialog
                     instance={instance}
                     config={mappingConfig}
@@ -851,7 +853,7 @@ export default function MappingTable({
                 />
             )}
 
-            {!!wizardConfig && (
+            {!!wizardConfig && isDhisInstance(instance) && (
                 <MappingWizard
                     instance={instance}
                     config={wizardConfig}
@@ -862,6 +864,7 @@ export default function MappingTable({
             )}
 
             <MetadataTable
+                remoteInstance={instance}
                 models={models}
                 filterRows={filterRows}
                 transformRows={transformRows}

@@ -1,12 +1,11 @@
 import { useSnackbar } from "d2-ui-components";
-import React, { useEffect, useState } from "react";
-import { Instance } from "../../../../../domain/instance/entities/Instance";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
 } from "../../../../../domain/instance/entities/MetadataMapping";
 import { isInstance } from "../../../../../domain/package-import/entities/PackageSource";
-import { ListPackage } from "../../../../../domain/packages/entities/Package";
+import { Package } from "../../../../../domain/packages/entities/Package";
 import i18n from "../../../../../locales";
 import {
     AggregatedDataElementModel,
@@ -21,28 +20,28 @@ import Dropdown from "../../dropdown/Dropdown";
 import MappingTable from "../../mapping-table/MappingTable";
 import { PackageImportWizardProps } from "../PackageImportWizard";
 
+const models = [
+    AggregatedDataElementModel,
+    IndicatorMappedModel,
+    EventProgramWithDataElementsModel,
+    EventProgramWithIndicatorsModel,
+    OrganisationUnitMappedModel,
+];
+
 export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
     packageImportRule,
     onChange,
 }) => {
+    const { compositionRoot, api } = useAppContext();
+    const snackbar = useSnackbar();
+
+    const [globalAdmin, setGlobalAdmin] = useState(false);
+    const [packages, setPackages] = useState<Package[]>([]);
+
     const [packageFilter, setPackageFilter] = useState<string>(packageImportRule.packageIds[0]);
     const [currentMetadataMapping, setCurrentMetadataMapping] = useState<MetadataMappingDictionary>(
         {}
     );
-    const { compositionRoot, api } = useAppContext();
-    const snackbar = useSnackbar();
-    const getPackages = compositionRoot.packages.list;
-
-    const [globalAdmin, setGlobalAdmin] = useState(false);
-    const [packages, setPackages] = useState<ListPackage[]>([]);
-
-    const models = [
-        AggregatedDataElementModel,
-        IndicatorMappedModel,
-        EventProgramWithDataElementsModel,
-        EventProgramWithIndicatorsModel,
-        OrganisationUnitMappedModel,
-    ];
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
@@ -50,7 +49,8 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
 
     useEffect(() => {
         if (isInstance(packageImportRule.source)) {
-            getPackages(globalAdmin, packageImportRule.source)
+            compositionRoot.packages
+                .list(globalAdmin, packageImportRule.source)
                 .then(packages => {
                     const importPackages = packages.filter(pkg =>
                         packageImportRule.packageIds.includes(pkg.id)
@@ -63,9 +63,23 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
                     setPackages([]);
                 });
         } else {
-            snackbar.error("Implement packages from store case");
+            compositionRoot.packages.listStore(packageImportRule.source.id).then(result => {
+                result.match({
+                    success: packages => {
+                        const importPackages = packages.filter(pkg =>
+                            packageImportRule.packageIds.includes(pkg.id)
+                        );
+
+                        setPackages(importPackages);
+                    },
+                    error: error => {
+                        snackbar.error(error);
+                        setPackages([]);
+                    },
+                });
+            });
         }
-    }, [getPackages, packageImportRule, globalAdmin, snackbar]);
+    }, [compositionRoot, packageImportRule, globalAdmin, snackbar]);
 
     const onChangePackageFilter = (selectedPackageId: string) => {
         const metadataMapping = packageImportRule.mappingByPackageId[selectedPackageId] || {};
@@ -111,13 +125,25 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
         />
     );
 
+    const instance = useMemo(() => {
+        if (isInstance(packageImportRule.source)) return packageImportRule.source;
+        
+        const storePackage = packages.find(({ id }) => id === packageFilter);
+
+        return {
+            type: "json" as const,
+            version: storePackage?.dhisVersion ?? "",
+            metadata: storePackage?.contents ?? {},
+        };
+    }, [packageImportRule.source, packageFilter, packages]);
+
     //TODO: mapping table reading from store
 
     return (
         <React.Fragment>
             <MappingTable
                 models={models}
-                instance={packageImportRule.source as Instance}
+                instance={instance}
                 mapping={currentMetadataMapping}
                 globalMapping={currentMetadataMapping}
                 onChangeMapping={onChangeMapping}

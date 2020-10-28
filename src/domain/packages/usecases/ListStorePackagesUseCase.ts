@@ -7,13 +7,15 @@ import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
+import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { BaseModule } from "../../modules/entities/Module";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
+import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { GitHubError, GitHubListError } from "../entities/Errors";
-import { Package } from "../entities/Package";
+import { BasePackage, Package } from "../entities/Package";
 import { Store } from "../entities/Store";
 import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
 
@@ -43,7 +45,22 @@ export class ListStorePackagesUseCase implements UseCase {
             this.getPackages(store, userGroup)
         );
 
-        const packages = _.compact(rawPackages.flatMap(({ value }) => value.data));
+        // TODO FIXME
+        const packages = await promiseMap(
+            _.compact(rawPackages.flatMap(({ value }) => value.data)),
+            async item => {
+                const { encoding, content } = await this.downloadRepository().fetch<{
+                    encoding: string;
+                    content: string;
+                }>(item.id);
+
+                const validation = this.gitRepository().readFileContents<
+                    MetadataPackage & { package: BasePackage }
+                >(encoding, content);
+
+                return item.update({ contents: validation.value.data as MetadataPackage });
+            }
+        );
 
         return Either.success(packages);
     }
@@ -69,6 +86,14 @@ export class ListStorePackagesUseCase implements UseCase {
         return this.repositoryFactory.get<InstanceRepositoryConstructor>(
             Repositories.InstanceRepository,
             [instance, ""]
+        );
+    }
+
+    @cache()
+    private downloadRepository() {
+        return this.repositoryFactory.get<DownloadRepositoryConstructor>(
+            Repositories.DownloadRepository,
+            []
         );
     }
 

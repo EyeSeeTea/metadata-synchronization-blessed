@@ -1,15 +1,17 @@
+import { FilterSingleOperatorBase } from "d2-api/api/common";
 import { Ref } from "../../common/entities/Ref";
 import { Id } from "../../common/entities/Schemas";
 import { Instance } from "../../instance/entities/Instance";
+import { JSONDataSource } from "../../instance/entities/JSONDataSource";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
+import { FilterRule } from "../entities/FilterRule";
 import { MetadataEntities, MetadataEntity, MetadataPackage } from "../entities/MetadataEntities";
 import { MetadataImportParams } from "../types";
-import { FilterRule } from "../entities/FilterRule";
 
 export interface MetadataRepositoryConstructor {
     new (
-        instance: Instance,
+        instance: Instance | JSONDataSource,
         transformationRepository: TransformationRepository
     ): MetadataRepository;
 }
@@ -38,7 +40,7 @@ export interface ListMetadataParams {
     group?: { type: string; value: string };
     level?: string;
     includeParents?: boolean;
-    search?: { field: string; operator: string; value: string };
+    search?: { field: string; operator: FilterSingleOperatorBase; value: string };
     order?: { field: string; order: "asc" | "desc" };
     page?: number;
     pageSize?: number;

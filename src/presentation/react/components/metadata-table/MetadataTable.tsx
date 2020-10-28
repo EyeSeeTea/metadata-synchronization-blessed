@@ -18,7 +18,9 @@ import {
 import _ from "lodash";
 import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
+import { isDhisInstance, isJSONDataSource } from "../../../../domain/instance/entities/DataSource";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { JSONDataSource } from "../../../../domain/instance/entities/JSONDataSource";
 import { MetadataResponsible } from "../../../../domain/metadata/entities/MetadataResponsible";
 import { ListMetadataParams } from "../../../../domain/metadata/repositories/MetadataRepository";
 import i18n from "../../../../locales";
@@ -32,7 +34,7 @@ import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
-    remoteInstance?: Instance;
+    remoteInstance?: Instance | JSONDataSource;
     filterRows?: string[];
     transformRows?: (rows: MetadataType[]) => MetadataType[];
     models: typeof D2Model[];
@@ -115,7 +117,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     externalFilterComponets: externalFilterComponents,
     ...rest
 }) => {
-    const { compositionRoot } = useAppContext();
+    const { compositionRoot, api: defaultApi } = useAppContext();
     const classes = useStyles();
 
     const snackbar = useSnackbar();
@@ -141,7 +143,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         [setFilters]
     );
 
-    const api = compositionRoot.instances.getApi(remoteInstance);
+    const api = remoteInstance && isDhisInstance(remoteInstance)
+        ? compositionRoot.instances.getApi(remoteInstance)
+        : defaultApi;
 
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
     const [groupFilterData, setGroupFilterData] = useState<NamedRef[]>([]);
@@ -390,6 +394,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     useEffect(() => {
         if (model.getCollectionName() === "organisationUnits") return;
+        if (remoteInstance && isJSONDataSource(remoteInstance)) return;
 
         compositionRoot.metadata
             .listAll({ ...filters, filterRows, fields: { id: true } }, remoteInstance)
@@ -400,6 +405,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     useEffect(() => {
         if (model.getCollectionName() !== "organisationUnits") return;
+        if (remoteInstance && isJSONDataSource(remoteInstance)) return;
 
         compositionRoot.instances
             .getOrgUnitRoots(remoteInstance)
@@ -459,6 +465,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     }, [api, model]);
 
     useEffect(() => {
+        if (remoteInstance && isJSONDataSource(remoteInstance)) return;
+
         compositionRoot.responsibles.list(remoteInstance).then(updateResponsibles);
     }, [compositionRoot, remoteInstance]);
 

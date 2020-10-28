@@ -1,3 +1,4 @@
+import { FilterSingleOperatorBase } from "d2-api/api/common";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import _ from "lodash";
 import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
@@ -11,7 +12,7 @@ import {
 
 export interface SearchFilter {
     field: string;
-    operator: string;
+    operator: FilterSingleOperatorBase;
 }
 
 // TODO: This concepts are our entity definition

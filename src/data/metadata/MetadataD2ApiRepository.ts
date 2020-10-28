@@ -1,8 +1,17 @@
 import { FilterValueBase } from "d2-api/api/common";
 import _ from "lodash";
 import moment from "moment";
+import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Ref } from "../../domain/common/entities/Ref";
 import { Instance } from "../../domain/instance/entities/Instance";
+import { JSONDataSource } from "../../domain/instance/entities/JSONDataSource";
+import {
+    DateFilter,
+    FilterRule,
+    FilterWhere,
+    StringMatch,
+    stringMatchHasValue,
+} from "../../domain/metadata/entities/FilterRule";
 import {
     MetadataEntities,
     MetadataEntity,
@@ -18,32 +27,30 @@ import { getClassName } from "../../domain/metadata/utils";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
-import { D2Api, D2Model, MetadataResponse, Model, Stats, Id } from "../../types/d2-api";
-import { Dictionary, Maybe, isNotEmpty } from "../../types/utils";
+import { modelFactory } from "../../models/dhis/factory";
+import { D2Api, D2Model, Id, MetadataResponse, Model, Stats } from "../../types/d2-api";
+import { Dictionary, isNotEmpty, Maybe } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
+import { getD2APiFromInstance } from "../../utils/d2-utils";
 import { debug } from "../../utils/debug";
 import { paginate } from "../../utils/pagination";
 import { metadataTransformations } from "../transformations/PackageTransformations";
-import {
-    FilterRule,
-    DateFilter,
-    StringMatch,
-    FilterWhere,
-    stringMatchHasValue,
-} from "../../domain/metadata/entities/FilterRule";
-import { modelFactory } from "../../models/dhis/factory";
-import { buildPeriodFromParams } from "../../domain/aggregated/utils";
-import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
+    private instance: Instance;
 
     constructor(
-        private instance: Instance,
+        instance: Instance | JSONDataSource,
         private transformationRepository: TransformationRepository
     ) {
+        if (instance.type !== "dhis") {
+            throw new Error("Invalid instance type for MetadataD2ApiRepository");
+        }
+
         this.api = getD2APiFromInstance(instance);
+        this.instance = instance;
     }
 
     /**

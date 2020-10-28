@@ -19,6 +19,7 @@ export interface InstanceData {
 }
 
 export class Instance {
+    public type = "dhis" as const;
     private data: InstanceData;
 
     constructor(data: InstanceData) {
