@@ -46,6 +46,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     isImportDialog = false,
     onSelectionChange,
     selectedIds,
+    resetKeyEx,
 }) => {
     const { api, compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
@@ -56,10 +57,11 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const [importedPackages, setImportedPackages] = useState<ImportedPackage[]>([]);
     const rows = remoteStore ? storePackages : instancePackages;
 
-    const [resetKey, setResetKey] = useState(Math.random());
+    const [resetKey, setResetKey] = useState(resetKeyEx || Math.random());
     const [selection, updateSelection] = useState<TableSelection[]>(
         selectedIds?.map(id => ({ id })) || []
     );
+
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
     const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
     const [moduleFilter, setModuleFilter] = useState("");
@@ -71,6 +73,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const [appConfigurator, setAppConfigurator] = useState(false);
 
     const isRemoteInstance = !!remoteInstance;
+
+    useEffect(() => {
+        if (resetKeyEx) setResetKey(resetKeyEx);
+    }, [resetKeyEx]);
 
     useEffect(() => {
         api.getVersion().then(setLocalDhis2Version);
@@ -510,7 +516,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         } else {
             setStorePackages([]);
         }
-    }, [compositionRoot, snackbar, remoteStore, importedPackages, remoteInstance]);
+    }, [compositionRoot, snackbar, remoteStore, importedPackages, remoteInstance, resetKey]);
 
     useEffect(() => {
         compositionRoot.importedPackages.list().then(result =>
@@ -522,7 +528,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 },
             })
         );
-    }, [compositionRoot, snackbar]);
+    }, [compositionRoot, snackbar, resetKey]);
 
     useEffect(() => {
         setModuleFilter("");

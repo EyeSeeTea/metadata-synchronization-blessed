@@ -23,104 +23,105 @@ export interface ModulePackageListTableProps {
     showInstances: InstanceSelectionConfig;
     openSyncSummary?: (syncReport: SyncReport) => void;
     onInstanceChange?: (instance?: Instance | Store) => void;
+    resetKeyEx?: number;
 }
 
 export type ViewOption = "modules" | "packages";
 export type PresentationOption = "app" | "widget";
 
-export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = React.memo(
-    ({
-        onCreate,
-        onViewChange,
-        viewValue: propsViewValue,
-        presentation,
-        showSelector,
-        showInstances,
-        openSyncSummary,
-        onInstanceChange,
-    }) => {
-        const [selectedInstance, setSelectedInstance] = useState<Instance | undefined>();
-        const [selectedStore, setSelectedStore] = useState<Store | undefined>();
+export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
+    onCreate,
+    onViewChange,
+    viewValue: propsViewValue,
+    presentation,
+    showSelector,
+    showInstances,
+    openSyncSummary,
+    onInstanceChange,
+    resetKeyEx,
+}) => {
+    const [selectedInstance, setSelectedInstance] = useState<Instance | undefined>();
+    const [selectedStore, setSelectedStore] = useState<Store | undefined>();
 
-        const viewSelector = useViewSelector(showSelector, propsViewValue);
+    const viewSelector = useViewSelector(showSelector, propsViewValue);
 
-        const setValue = useCallback(
-            (value: ViewOption) => {
-                viewSelector.setValue(value);
-                if (onViewChange) onViewChange(value);
-            },
-            [viewSelector, onViewChange]
-        );
+    const setValue = useCallback(
+        (value: ViewOption) => {
+            viewSelector.setValue(value);
+            if (onViewChange) onViewChange(value);
+        },
+        [viewSelector, onViewChange]
+    );
 
-        const updateSelectedInstance = useCallback(
-            (type: InstanceSelectionOption, source?: Instance | Store) => {
-                setSelectedStore(type === "store" ? (source as Store) : undefined);
-                setSelectedInstance(type === "remote" ? (source as Instance) : undefined);
+    const updateSelectedInstance = useCallback(
+        (type: InstanceSelectionOption, source?: Instance | Store) => {
+            setSelectedStore(type === "store" ? (source as Store) : undefined);
+            setSelectedInstance(type === "remote" ? (source as Instance) : undefined);
 
-                if (onInstanceChange) {
-                    onInstanceChange(source);
-                }
-            },
-            [onInstanceChange]
-        );
+            if (onInstanceChange) {
+                onInstanceChange(source);
+            }
+        },
+        [onInstanceChange]
+    );
 
-        const filters = useMemo(
-            () => (
-                <React.Fragment key="common-filters">
-                    <InstanceSelectionDropdown
-                        title={
-                            showInstances.store
-                                ? i18n.t("Instances & Play Stores")
-                                : i18n.t("Instances")
-                        }
-                        showInstances={showInstances}
-                        selectedInstance={
-                            selectedStore ? selectedStore.id : selectedInstance?.id ?? "LOCAL"
-                        }
-                        onChangeSelected={updateSelectedInstance}
+    const filters = useMemo(
+        () => (
+            <React.Fragment key="common-filters">
+                <InstanceSelectionDropdown
+                    title={
+                        showInstances.store
+                            ? i18n.t("Instances & Play Stores")
+                            : i18n.t("Instances")
+                    }
+                    showInstances={showInstances}
+                    selectedInstance={
+                        selectedStore ? selectedStore.id : selectedInstance?.id ?? "LOCAL"
+                    }
+                    onChangeSelected={updateSelectedInstance}
+                />
+
+                {viewSelector.items.length > 1 && viewSelector.value && (
+                    <Dropdown
+                        items={viewSelector.items}
+                        value={viewSelector.value}
+                        onValueChange={setValue}
+                        label={i18n.t("View")}
+                        hideEmpty={true}
                     />
+                )}
+            </React.Fragment>
+        ),
+        [
+            showInstances,
+            selectedInstance,
+            setValue,
+            viewSelector,
+            updateSelectedInstance,
+            selectedStore,
+        ]
+    );
 
-                    {viewSelector.items.length > 1 && viewSelector.value && (
-                        <Dropdown
-                            items={viewSelector.items}
-                            value={viewSelector.value}
-                            onValueChange={setValue}
-                            label={i18n.t("View")}
-                            hideEmpty={true}
-                        />
-                    )}
-                </React.Fragment>
-            ),
-            [
-                showInstances,
-                selectedInstance,
-                setValue,
-                viewSelector,
-                updateSelectedInstance,
-                selectedStore,
-            ]
-        );
+    const Table = viewSelector.value === "packages" ? PackagesListTable : ModulesListTable;
 
-        const Table = viewSelector.value === "packages" ? PackagesListTable : ModulesListTable;
-
-        return (
-            <Table
-                externalComponents={filters}
-                presentation={presentation}
-                remoteStore={selectedStore}
-                remoteInstance={selectedInstance}
-                paginationOptions={paginationOptions}
-                openSyncSummary={openSyncSummary}
-                onActionButtonClick={
-                    (viewSelector.value === "modules" && !selectedInstance) ||
-                    (viewSelector.value === "packages" && (selectedInstance || selectedStore))
-                        ? onCreate
-                        : undefined
-                }
-            />
-        );
-    }
-);
+    return (
+        <Table
+            externalComponents={filters}
+            presentation={presentation}
+            remoteStore={selectedStore}
+            remoteInstance={selectedInstance}
+            paginationOptions={paginationOptions}
+            openSyncSummary={openSyncSummary}
+            resetKeyEx={resetKeyEx}
+            onActionButtonClick={
+                (viewSelector.value === "modules" && !selectedInstance) ||
+                (viewSelector.value === "packages" && (selectedInstance || selectedStore))
+                    ? onCreate
+                    : undefined
+            }
+        />
+    );
+};
 
 const paginationOptions: PaginationOptions = {
     pageSizeOptions: [10],
