@@ -42,19 +42,21 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
         setPackageImportRule(packageImportRule);
     };
 
-    const saveImportedPackage = async (
-        pkg: Package,
+    const saveImportedPackages = async (
+        packages: Package[],
         author: NamedRef,
         packageSource: PackageSource
     ) => {
-        const importedPackage = mapToImportedPackage(pkg, author, packageSource);
+        const importedPackages = packages.map(pkg =>
+            mapToImportedPackage(pkg, author, packageSource)
+        );
 
-        const result = await compositionRoot.importedPackages.save(importedPackage);
+        const result = await compositionRoot.importedPackages.save(importedPackages);
 
         result.match({
             success: () => {},
             error: () => {
-                snackbar.error("An error has ocurred tracking the imported package");
+                snackbar.error("An error has ocurred tracking the imported packages");
             },
         });
     };
@@ -70,6 +72,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
         //    2 - Import (save with the metadata reposigtory)
         //    3 - Save Result
         //    4 - Save ImportedPackage
+        const importedPackages: Package[] = [];
         const report = SyncReport.create("metadata");
 
         const currentUser = await api.currentUser
@@ -109,14 +112,8 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                             });
 
                             if (result.status === "SUCCESS") {
-                                await saveImportedPackage(
-                                    originPackage,
-                                    author,
-                                    packageImportRule.source
-                                );
+                                importedPackages.push(originPackage);
                             }
-
-                            loading.reset();
                         } catch (error) {
                             snackbar.error(error.message);
                         }
@@ -135,7 +132,12 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
             await executePackageImport(id);
         }
 
+        loading.show(true, i18n.t("Saving imported packages"));
+
         await report.save(api);
+        await saveImportedPackages(importedPackages, author, packageImportRule.source);
+
+        loading.reset();
 
         if (openSyncSummary) {
             openSyncSummary(report);

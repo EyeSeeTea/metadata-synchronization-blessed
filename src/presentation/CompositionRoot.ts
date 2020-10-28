@@ -40,7 +40,7 @@ import { ListNotificationsUseCase } from "../domain/notifications/usecases/ListN
 import { MarkReadNotificationsUseCase } from "../domain/notifications/usecases/MarkReadNotificationsUseCase";
 import { UpdatePullRequestStatusUseCase } from "../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
 import { ListImportedPackagesUseCase } from "../domain/package-import/usecases/ListImportedPackagesUseCase";
-import { SaveImportedPackageUseCase } from "../domain/package-import/usecases/SaveImportedPackageUseCase";
+import { SaveImportedPackagesUseCase } from "../domain/package-import/usecases/SaveImportedPackagesUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
 import { DeleteStoreUseCase } from "../domain/packages/usecases/DeleteStoreUseCase";
@@ -188,7 +188,7 @@ export class CompositionRoot {
     public get importedPackages() {
         return getExecute({
             list: new ListImportedPackagesUseCase(this.repositoryFactory, this.localInstance),
-            save: new SaveImportedPackageUseCase(this.repositoryFactory, this.localInstance),
+            save: new SaveImportedPackagesUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

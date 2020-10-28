@@ -35,6 +35,28 @@ export abstract class StorageRepository {
         return baseElement;
     }
 
+    public async saveObjectsInCollection<T extends Ref>(
+        key: Namespace,
+        elements: T[]
+    ): Promise<void> {
+        const oldData: Ref[] = (await this.getObject(key)) ?? [];
+        const cleanData = oldData.filter(item => !elements.some(element => item.id === element.id));
+
+        // Save base elements directly into collection: model
+        const advancedProperties = NamespaceProperties[key];
+        const baseElements = elements.map(element => _.omit(element, advancedProperties));
+
+        await this.saveObject(key, [...cleanData, ...baseElements]);
+
+        // Save advanced properties to its own key: model-id
+        if (advancedProperties.length > 0) {
+            for (const element of elements) {
+                const advancedElement = _.pick(element, advancedProperties);
+                await this.saveObject(`${key}-${element.id}`, advancedElement);
+            }
+        }
+    }
+
     public async saveObjectInCollection<T extends Ref>(key: Namespace, element: T): Promise<void> {
         const oldData: Ref[] = (await this.getObject(key)) ?? [];
         const cleanData = oldData.filter(item => item.id !== element.id);

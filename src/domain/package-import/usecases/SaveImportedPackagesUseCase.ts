@@ -9,11 +9,11 @@ import { ImportedPackage } from "../entities/ImportedPackage";
 
 type SavePackageError = "UNEXPECTED_ERROR";
 
-export class SaveImportedPackageUseCase implements UseCase {
+export class SaveImportedPackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(
-        importedPackage: ImportedPackage
+        importedPackages: ImportedPackage[]
     ): Promise<Either<SavePackageError, void>> {
         try {
             const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
@@ -21,9 +21,9 @@ export class SaveImportedPackageUseCase implements UseCase {
                 [this.localInstance]
             );
 
-            await storageRepository.saveObjectInCollection(
+            await storageRepository.saveObjectsInCollection(
                 Namespace.IMPORTEDPACKAGES,
-                importedPackage
+                importedPackages
             );
 
             return Either.success(undefined);
