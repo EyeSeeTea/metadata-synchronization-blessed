@@ -28,6 +28,7 @@ export class SaveImportedPackageUseCase implements UseCase {
 
             return Either.success(undefined);
         } catch (error) {
+            console.error({ error });
             return Either.error("UNEXPECTED_ERROR");
         }
     }

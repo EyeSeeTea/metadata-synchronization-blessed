@@ -53,9 +53,8 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
 
         result.match({
             success: () => {},
-            error: error => {
-                console.error({ error });
-                snackbar.error("An error has ocurred traking the imported package");
+            error: () => {
+                snackbar.error("An error has ocurred tracking the imported package");
             },
         });
     };
@@ -174,13 +173,11 @@ function mapToImportedPackage(
     packageSource: PackageSource
 ): ImportedPackage {
     return ImportedPackage.create({
-        type: "INSTANCE",
+        type: isInstance(packageSource) ? "INSTANCE" : "STORE",
         remoteId: packageSource.id,
-        url: undefined,
-        module: originPackage.module.name,
-        packageId: originPackage.id,
+        module: { id: originPackage.module.id, name: originPackage.module.name },
+        package: { id: originPackage.id, name: originPackage.name },
         version: originPackage.version,
-        name: originPackage.name,
         author,
         contents: originPackage.contents,
     });

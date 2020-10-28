@@ -29,7 +29,7 @@ export const InstanceStoreSelectionStep: React.FC<PackageImportWizardProps> = ({
 
     return (
         <React.Fragment>
-            <Box flex flexDirection="row">
+            <Box display="flex" flexDirection="row">
                 <InstanceSelectionDropdown
                     title={i18n.t("Instances & Play Stores")}
                     showInstances={showInstances}
