@@ -13,7 +13,7 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { BasePackage } from "../../../../domain/packages/entities/Package";
+import { BasePackage, Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { isAppConfigurator, isGlobalAdmin } from "../../../../utils/permissions";
@@ -25,6 +25,14 @@ import { ImportedPackage } from "../../../../domain/package-import/entities/Impo
 import semver from "semver";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Store } from "../../../../domain/packages/entities/Store";
+import { NamedRef } from "../../../../domain/common/entities/Ref";
+import {
+    isInstance,
+    isStore,
+    PackageSource,
+} from "../../../../domain/package-import/entities/PackageSource";
+import { mapToImportedPackage } from "../../../../domain/package-import/mappers/ImportedPackageMapper";
+import { Either } from "../../../../domain/common/entities/Either";
 
 type InstallState = "Installed" | "NotInstalled" | "Upgrade" | "Local";
 type ListPackage = Omit<BasePackage, "contents"> & { installState: InstallState };
@@ -203,14 +211,72 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const closePackageDiffDialog = useCallback(() => setPackageToDiff(null), [setPackageToDiff]);
 
+    const saveImportedPackage = useCallback(
+        async (
+            pkg: Package,
+            author: NamedRef,
+            packageSource: PackageSource,
+            storePackageUrl?: string
+        ) => {
+            const importedPackage = mapToImportedPackage(
+                pkg,
+                author,
+                packageSource,
+                storePackageUrl
+            );
+
+            const result = await compositionRoot.importedPackages.save([importedPackage]);
+
+            result.match({
+                success: () => {},
+                error: () => {
+                    snackbar.error("An error has ocurred tracking the imported package");
+                },
+            });
+        },
+        [compositionRoot, snackbar]
+    );
+
+    const getPackage = useCallback(
+        (
+            packageSource: PackageSource,
+            packageId: string
+        ): Promise<Either<"NOT_FOUND", Package>> => {
+            if (isInstance(packageSource)) {
+                return compositionRoot.packages.get(packageId, packageSource);
+            } else {
+                return compositionRoot.packages.getStore(packageSource.id, packageId);
+            }
+        },
+        [compositionRoot]
+    );
+
+    const getPackageSourceToImport = useCallback(() => {
+        if (remoteInstance) {
+            return remoteInstance;
+        } else if (remoteStore) {
+            return remoteStore;
+        } else {
+            throw new Error("The import action is only available for remote package source");
+        }
+    }, [remoteInstance, remoteStore]);
+
     const importPackage = useCallback(
         async (ids: string[]) => {
-            const result = await compositionRoot.packages.get(ids[0], remoteInstance);
+            const packageSource: PackageSource = getPackageSourceToImport();
+
+            const result = await getPackage(packageSource, ids[0]);
+
             result.match({
-                success: async ({ name, contents }) => {
+                success: async originPackage => {
                     try {
-                        loading.show(true, i18n.t("Importing package {{name}}", { name }));
-                        const result = await compositionRoot.metadata.import(contents);
+                        loading.show(
+                            true,
+                            i18n.t("Importing package {{name}}", { name: originPackage.name })
+                        );
+                        const result = await compositionRoot.metadata.import(
+                            originPackage.contents
+                        );
 
                         const report = SyncReport.create("metadata");
                         report.setStatus(
@@ -224,7 +290,24 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                         });
                         await report.save(api);
 
+                        const currentUser = await api.currentUser
+                            .get({ fields: { id: true, userCredentials: { username: true } } })
+                            .getData();
+
+                        const author = {
+                            id: currentUser.id,
+                            name: currentUser.userCredentials.username,
+                        };
+
+                        await saveImportedPackage(
+                            originPackage,
+                            author,
+                            packageSource,
+                            isStore(packageSource) ? ids[0] : undefined
+                        );
+
                         openSyncSummary(report);
+                        setResetKey(Math.random);
                     } catch (error) {
                         snackbar.error(error.message);
                     }
@@ -235,7 +318,17 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 },
             });
         },
-        [compositionRoot, api, loading, remoteInstance, snackbar, openSyncSummary]
+        [
+            compositionRoot,
+            api,
+            loading,
+            remoteInstance,
+            snackbar,
+            openSyncSummary,
+            getPackage,
+            getPackageSourceToImport,
+            saveImportedPackage,
+        ]
     );
 
     const getInstallStateText = (installState: InstallState) => {
@@ -351,7 +444,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 isActive: () =>
                     !isImportDialog &&
                     presentation === "app" &&
-                    isRemoteInstance &&
+                    (isRemoteInstance || remoteStore !== undefined) &&
                     appConfigurator,
             },
         ],

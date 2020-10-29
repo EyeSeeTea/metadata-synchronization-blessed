@@ -8,13 +8,13 @@ import {
     isStore,
     PackageSource,
 } from "../../../../domain/package-import/entities/PackageSource";
-import { ImportedPackage } from "../../../../domain/package-import/entities/ImportedPackage";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { useAppContext } from "../../contexts/AppContext";
 import { PackageImportWizard } from "../package-import-wizard/PackageImportWizard";
 import { Either } from "../../../../domain/common/entities/Either";
+import { mapToImportedPackage } from "../../../../domain/package-import/mappers/ImportedPackageMapper";
 
 interface PackageImportDialogProps {
     isOpen: boolean;
@@ -188,22 +188,3 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
 };
 
 export default PackageImportDialog;
-
-function mapToImportedPackage(
-    originPackage: Package,
-    author: NamedRef,
-    packageSource: PackageSource,
-    url?: string
-): ImportedPackage {
-    return ImportedPackage.create({
-        type: isInstance(packageSource) ? "INSTANCE" : "STORE",
-        remoteId: packageSource.id,
-        url,
-        module: { id: originPackage.module.id, name: originPackage.module.name },
-        package: { id: originPackage.id, name: originPackage.name },
-        version: originPackage.version,
-        dhisVersion: originPackage.dhisVersion,
-        author,
-        contents: originPackage.contents,
-    });
-}
