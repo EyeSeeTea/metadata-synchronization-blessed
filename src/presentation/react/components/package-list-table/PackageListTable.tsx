@@ -679,9 +679,8 @@ function mapPackagesToListPackages(
 
         const installed = importedPackages.some(imported => {
             return (
-                imported.module.id === pkg.module.id &&
-                imported.version === pkg.version &&
-                imported.dhisVersion === pkg.dhisVersion
+                (remoteStore && imported.url === pkg.id) ||
+                (remoteInstance && imported.package.id === pkg.id)
             );
         });
 
