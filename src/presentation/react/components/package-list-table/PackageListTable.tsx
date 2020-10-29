@@ -584,7 +584,9 @@ function mapPackagesToListPackages(
         if (!remoteStore && !remoteInstance)
             return { ...pkg, installState: "Local" as InstallState };
 
-        const installed = importedPackages.some(imported => imported.package.id === pkg.id);
+        const installed = importedPackages.some(imported => {
+            return imported.module.id === pkg.module.id && imported.version === pkg.version;
+        });
 
         const newUpdates = importedPackages.some(imported => {
             const importedVersion = semver.parse(imported.version);

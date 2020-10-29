@@ -7,6 +7,7 @@ export type ImportedPackageType = "STORE" | "INSTANCE";
 export interface ImportedPackageData extends Ref {
     type: ImportedPackageType;
     remoteId: string;
+    url?: string;
     module: NamedRef;
     package: NamedRef;
     version: string;
@@ -21,6 +22,7 @@ export class ImportedPackage implements ImportedPackageData {
     public readonly id: string;
     public readonly type: ImportedPackageType;
     public readonly remoteId: string;
+    public readonly url?: string;
     public readonly module: NamedRef;
     public readonly package: NamedRef;
     public readonly version: string;
@@ -32,6 +34,7 @@ export class ImportedPackage implements ImportedPackageData {
         this.id = data.id;
         this.type = data.type;
         this.remoteId = data.remoteId;
+        this.url = data.url;
         this.module = data.module;
         this.package = data.package;
         this.version = data.version;

@@ -17,6 +17,8 @@ import { ConfirmationDialog } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
+import { PublicInstance } from "../../../../domain/instance/entities/Instance";
+import { Store } from "../../../../domain/packages/entities/Store";
 import {
     ErrorMessage,
     SynchronizationResult,
@@ -174,6 +176,16 @@ interface SyncSummaryProps {
     onClose: () => void;
 }
 
+const getOriginName = (source: PublicInstance | Store) => {
+    if ((source as Store).token) {
+        const store = source as Store;
+        return store.account + " - " + store.repository;
+    } else {
+        const instance = source as PublicInstance;
+        return instance.name;
+    }
+};
+
 const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
     const { api } = useAppContext();
     const classes = useStyles();
@@ -218,7 +230,7 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
                                 <Typography className={classes.accordionHeading1}>
                                     {`Type: ${getTypeName(type, response.syncReport.type)}`}
                                     <br />
-                                    {origin && `${i18n.t("Origin instance")}: ${origin.name}`}
+                                    {origin && `${i18n.t("Origin")}: ${getOriginName(origin)}`}
                                     {origin && <br />}
                                     {originPackage &&
                                         `${i18n.t("Origin package")}: ${originPackage.name}`}
