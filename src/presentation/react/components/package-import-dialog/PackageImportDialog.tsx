@@ -200,6 +200,7 @@ function mapToImportedPackage(
         module: { id: originPackage.module.id, name: originPackage.module.name },
         package: { id: originPackage.id, name: originPackage.name },
         version: originPackage.version,
+        dhisVersion: originPackage.dhisVersion,
         author,
         contents: originPackage.contents,
     });

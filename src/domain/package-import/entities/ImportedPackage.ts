@@ -11,6 +11,7 @@ export interface ImportedPackageData extends Ref {
     module: NamedRef;
     package: NamedRef;
     version: string;
+    dhisVersion: string;
     date: Date;
     author: NamedRef;
     contents: MetadataPackage;
@@ -26,6 +27,7 @@ export class ImportedPackage implements ImportedPackageData {
     public readonly module: NamedRef;
     public readonly package: NamedRef;
     public readonly version: string;
+    public readonly dhisVersion: string;
     public readonly date: Date;
     public readonly author: NamedRef;
     public readonly contents: MetadataPackage;
@@ -38,6 +40,7 @@ export class ImportedPackage implements ImportedPackageData {
         this.module = data.module;
         this.package = data.package;
         this.version = data.version;
+        this.dhisVersion = data.dhisVersion;
         this.date = data.date;
         this.author = data.author;
         this.contents = data.contents;

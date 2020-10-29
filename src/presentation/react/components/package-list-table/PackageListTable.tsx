@@ -585,7 +585,11 @@ function mapPackagesToListPackages(
             return { ...pkg, installState: "Local" as InstallState };
 
         const installed = importedPackages.some(imported => {
-            return imported.module.id === pkg.module.id && imported.version === pkg.version;
+            return (
+                imported.module.id === pkg.module.id &&
+                imported.version === pkg.version &&
+                imported.dhisVersion === pkg.dhisVersion
+            );
         });
 
         const newUpdates = importedPackages.some(imported => {
@@ -596,6 +600,7 @@ function mapPackagesToListPackages(
                 imported.module.id === pkg.module.id &&
                 importedVersion &&
                 packageVersion &&
+                imported.dhisVersion === pkg.dhisVersion &&
                 importedVersion < packageVersion
             );
         });
