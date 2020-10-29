@@ -70,10 +70,18 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     @cache()
     public async listMetadata(listParams: ListMetadataParams): Promise<ListMetadataResponse> {
-        const { type, fields = { $owner: true }, page, pageSize, order, ...params } = listParams;
+        const {
+            type,
+            fields = { $owner: true },
+            page,
+            pageSize,
+            order,
+            rootJunction,
+            ...params
+        } = listParams;
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
-        const options = { type, fields, filter, order, page, pageSize };
+        const options = { type, fields, filter, order, page, pageSize, rootJunction };
         const { objects: baseObjects, pager } = await this.getListPaginated(options);
         // Prepend parent objects (if option enabled) as virtual rows, keep pagination unmodified.
         const objects = _.concat(await this.getParentObjects(listParams), baseObjects);
@@ -135,14 +143,14 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         Solution: Perform N sequential request and concatenate (+ sort) the objects manually.
     */
     private async getListGeneric(options: GetListAllOptions): Promise<GetListGenericResponse> {
-        const { type, fields, filter, order = defaultOrder } = options;
+        const { type, fields, filter, order = defaultOrder, rootJunction } = options;
         const idFilter = getIdFilter(filter, maxIds);
 
         if (idFilter) {
             const objectsLists = await promiseMap(_.chunk(idFilter.inIds, maxIds), async ids => {
                 const newFilter = { ...filter, id: { ...idFilter.value, in: ids } };
                 const { objects } = await this.getApiModel(type)
-                    .get({ paging: false, fields, filter: newFilter })
+                    .get({ paging: false, fields, filter: newFilter, rootJunction })
                     .getData();
                 return objects;
             });
@@ -155,9 +163,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         }
     }
 
-    private async getListAll(options: GetListAllOptions) {
-        const { type, fields, filter, order = defaultOrder } = options;
-        const list = await this.getListGeneric({ type, fields, filter, order });
+    private async getListAll({ type, fields, filter, order = defaultOrder, rootJunction }: GetListAllOptions) {
+        const list = await this.getListGeneric({ type, fields, filter, order, rootJunction });
 
         if (list.useSingleApiRequest) {
             const { objects } = await this.getApiModel(type)
@@ -169,13 +176,28 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         }
     }
 
-    private async getListPaginated(options: GetListPaginatedOptions) {
-        const { type, fields, filter, order = defaultOrder, page = 1, pageSize = 50 } = options;
-        const list = await this.getListGeneric({ type, fields, filter, order });
+    private async getListPaginated({
+        type,
+        fields,
+        filter,
+        order = defaultOrder,
+        page = 1,
+        pageSize = 50,
+        rootJunction,
+    }: GetListPaginatedOptions) {
+        const list = await this.getListGeneric({ type, fields, filter, order, rootJunction });
 
         if (list.useSingleApiRequest) {
             return this.getApiModel(type)
-                .get({ paging: true, fields, filter, page, pageSize, order: list.order })
+                .get({
+                    paging: true,
+                    fields,
+                    filter,
+                    page,
+                    pageSize,
+                    order: list.order,
+                    rootJunction,
+                })
                 .getData();
         } else {
             return paginate(list.objects, { page, pageSize });
@@ -415,6 +437,7 @@ interface GetListAllOptions {
     fields: object;
     filter: Dictionary<FilterValueBase | FilterValueBase[]>;
     order?: ListMetadataParams["order"];
+    rootJunction?: "AND" | "OR";
 }
 
 interface GetListPaginatedOptions extends GetListAllOptions {

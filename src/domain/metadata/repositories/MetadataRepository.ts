@@ -49,6 +49,7 @@ export interface ListMetadataParams {
     filterRows?: string[];
     showOnlySelected?: boolean;
     selectedIds?: string[];
+    rootJunction?: "AND" | "OR";
 }
 
 export interface ListMetadataResponse {
