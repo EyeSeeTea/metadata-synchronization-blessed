@@ -1,8 +1,7 @@
 import { FilterSingleOperatorBase } from "d2-api/api/common";
 import { Ref } from "../../common/entities/Ref";
 import { Id } from "../../common/entities/Schemas";
-import { Instance } from "../../instance/entities/Instance";
-import { JSONDataSource } from "../../instance/entities/JSONDataSource";
+import { DataSource } from "../../instance/entities/DataSource";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { FilterRule } from "../entities/FilterRule";
@@ -11,7 +10,7 @@ import { MetadataImportParams } from "../types";
 
 export interface MetadataRepositoryConstructor {
     new (
-        instance: Instance | JSONDataSource,
+        instance: DataSource,
         transformationRepository: TransformationRepository
     ): MetadataRepository;
 }

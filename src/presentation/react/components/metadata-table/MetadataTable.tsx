@@ -18,9 +18,11 @@ import {
 import _ from "lodash";
 import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
-import { isDhisInstance, isJSONDataSource } from "../../../../domain/instance/entities/DataSource";
-import { Instance } from "../../../../domain/instance/entities/Instance";
-import { JSONDataSource } from "../../../../domain/instance/entities/JSONDataSource";
+import {
+    DataSource,
+    isDhisInstance,
+    isJSONDataSource,
+} from "../../../../domain/instance/entities/DataSource";
 import { MetadataResponsible } from "../../../../domain/metadata/entities/MetadataResponsible";
 import { ListMetadataParams } from "../../../../domain/metadata/repositories/MetadataRepository";
 import i18n from "../../../../locales";
@@ -34,7 +36,7 @@ import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
 
 interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
-    remoteInstance?: Instance | JSONDataSource;
+    remoteInstance?: DataSource;
     filterRows?: string[];
     transformRows?: (rows: MetadataType[]) => MetadataType[];
     models: typeof D2Model[];

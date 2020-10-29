@@ -1,7 +1,7 @@
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
-import { JSONDataSource } from "../../instance/entities/JSONDataSource";
 import { Repositories } from "../../Repositories";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { MetadataEntity } from "../entities/MetadataEntities";
@@ -16,13 +16,13 @@ export class ListAllMetadataUseCase implements UseCase {
 
     public async execute(
         params: ListMetadataParams,
-        instance?: Instance | JSONDataSource
+        instance?: DataSource
     ): Promise<MetadataEntity[]> {
         return this.getMetadataRepository(instance).listAllMetadata(params);
     }
 
     private getMetadataRepository(
-        remoteInstance: Instance | JSONDataSource = this.localInstance
+        remoteInstance: DataSource = this.localInstance
     ): MetadataRepository {
         const transformationRepository = this.repositoryFactory.get<
             TransformationRepositoryConstructor

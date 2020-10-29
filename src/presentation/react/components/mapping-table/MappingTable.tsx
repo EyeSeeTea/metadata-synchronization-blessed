@@ -10,13 +10,12 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
-import { isDhisInstance } from "../../../../domain/instance/entities/DataSource";
-import { Instance } from "../../../../domain/instance/entities/Instance";
-import { JSONDataSource } from "../../../../domain/instance/entities/JSONDataSource";
+import { DataSource, isDhisInstance } from "../../../../domain/instance/entities/DataSource";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
 } from "../../../../domain/instance/entities/MetadataMapping";
+import { MappingConfig } from "../../../../domain/mapping/entities/MappingConfig";
 import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
 import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
@@ -58,14 +57,8 @@ interface WarningDialog {
     action?: () => void;
 }
 
-interface MappingConfig {
-    selection: string[];
-    mappedId: string | undefined;
-    overrides?: MetadataMapping;
-}
-
 export interface MappingTableProps {
-    instance: Instance | JSONDataSource;
+    instance: DataSource;
     models: typeof D2Model[];
     filterRows?: string[];
     transformRows?: (rows: MetadataType[]) => MetadataType[];
