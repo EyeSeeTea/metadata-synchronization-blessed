@@ -143,9 +143,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         [setFilters]
     );
 
-    const api = remoteInstance && isDhisInstance(remoteInstance)
-        ? compositionRoot.instances.getApi(remoteInstance)
-        : defaultApi;
+    const api =
+        remoteInstance && isDhisInstance(remoteInstance)
+            ? compositionRoot.instances.getApi(remoteInstance)
+            : defaultApi;
 
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
     const [groupFilterData, setGroupFilterData] = useState<NamedRef[]>([]);

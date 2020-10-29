@@ -37,7 +37,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
     useEffect(() => {
         getMetadata(api, syncRule.metadataIds, "id,name").then((metadata: MetadataPackage) => {
             const models = _.keys(metadata).map((type: string) => {
-                return modelFactory(api, type);
+                return modelFactory(type);
             });
 
             const options = models

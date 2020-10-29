@@ -265,7 +265,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     public async getByFilterRules(filterRules: FilterRule[]): Promise<Id[]> {
         const listOfIds = await promiseMap(filterRules, async filterRule => {
-            const myClass = modelFactory(this.api, filterRule.metadataType);
+            const myClass = modelFactory(filterRule.metadataType);
             const collectionName = myClass.getCollectionName();
             // Make one separate request per field and join results. That the only way to
             // perform an OR text-search on arbitrary fields (identifiable: id, name, code).

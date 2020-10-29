@@ -62,7 +62,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
     const api = compositionRoot.instances.getApi(instance);
-    const model = modelFactory(api, mappingType);
+    const model = modelFactory(mappingType);
     const modelName = model.getModelName(api);
 
     useEffect(() => {
@@ -79,7 +79,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 
     useEffect(() => {
         if (mappingPath) {
-            const parentModel = modelFactory(api, mappingPath[0]);
+            const parentModel = modelFactory(mappingPath[0]);
             const parentMappedId = mappingPath[2];
             getValidIds(api, parentModel, parentMappedId).then(setFilterRows);
         } else if (mappingType === "programDataElements" && elements.length === 1) {

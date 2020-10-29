@@ -143,7 +143,7 @@ export default function MappingTable({
                             throw new Error("Attempting to apply mapping without a valid type");
                         }
 
-                        const destinationModel = modelFactory(api, mappingType);
+                        const destinationModel = modelFactory(mappingType);
                         _.unset(newMapping, [mappingType, id]);
                         if (isChildrenMapping || mappedId) {
                             const mapping = await buildMapping({
@@ -272,7 +272,7 @@ export default function MappingTable({
                         );
 
                         const mappingType = row?.model.getMappingType();
-                        const destinationModel = modelFactory(api, mappingType);
+                        const destinationModel = modelFactory(mappingType);
                         const candidates = await autoMap({
                             api,
                             instanceApi,
@@ -352,8 +352,8 @@ export default function MappingTable({
                     const row = _.find(rows, ["id", id]);
                     const rowType = row?.model.getCollectionName() ?? type;
                     const mappingType = row?.model.getMappingType() ?? type;
-                    const originModel = modelFactory(api, rowType) ?? model;
-                    const destinationModel = modelFactory(api, mappingType);
+                    const originModel = modelFactory(rowType) ?? model;
+                    const destinationModel = modelFactory(mappingType);
                     const innerMapping = await createValidations(mapping);
                     const { mappedName, mappedCode, mappedLevel } = await buildMapping({
                         api,

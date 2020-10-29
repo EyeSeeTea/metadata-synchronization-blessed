@@ -45,7 +45,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             } = builder;
 
             //TODO: when metadata entities schema exists on domain, move this factory to domain
-            const collectionName = modelFactory(this.api, type).getCollectionName();
+            const collectionName = modelFactory(type).getCollectionName();
             const schema = this.api.models[collectionName].schema;
             const result: MetadataPackage = {};
 
@@ -115,7 +115,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const metadata = await metadataRepository.getMetadataByIds<Ref>(allMetadataIds, "id");
 
         const exportResults = await promiseMap(_.keys(metadata), type => {
-            const myClass = modelFactory(this.api, type);
+            const myClass = modelFactory(type);
             const metadataType = myClass.getMetadataType();
             const collectionName = myClass.getCollectionName();
 
@@ -175,7 +175,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const mapping = await this.getMapping(instance);
 
         return _.mapValues(payload, (items, model) => {
-            const collectionName = modelFactory(this.api, model).getCollectionName();
+            const collectionName = modelFactory(model).getCollectionName();
             const properties = _.keyBy(
                 this.api.models[collectionName]?.schema.properties,
                 "fieldName"

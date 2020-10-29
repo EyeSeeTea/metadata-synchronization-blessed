@@ -127,7 +127,7 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
 
     const instance = useMemo(() => {
         if (isInstance(packageImportRule.source)) return packageImportRule.source;
-        
+
         const storePackage = packages.find(({ id }) => id === packageFilter);
 
         return {
