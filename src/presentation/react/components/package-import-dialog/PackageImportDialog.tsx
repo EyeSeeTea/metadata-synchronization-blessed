@@ -1,6 +1,6 @@
 import DialogContent from "@material-ui/core/DialogContent";
 import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
 import {
@@ -37,6 +37,8 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
     const [packageImportRule, setPackageImportRule] = useState<PackageImportRule>(
         PackageImportRule.create(instance)
     );
+
+    useEffect(() => setPackageImportRule(PackageImportRule.create(instance)), [instance]);
 
     const handlePackageImportRuleChange = (packageImportRule: PackageImportRule) => {
         setEnableImport(packageImportRule.validate().length === 0);
