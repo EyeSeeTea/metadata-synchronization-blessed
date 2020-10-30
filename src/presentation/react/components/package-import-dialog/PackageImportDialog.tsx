@@ -1,16 +1,20 @@
 import DialogContent from "@material-ui/core/DialogContent";
 import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
-import React, { useState } from "react";
-import { Instance } from "../../../../domain/instance/entities/Instance";
+import React, { useEffect, useState } from "react";
+import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
 import {
     isInstance,
+    isStore,
     PackageSource,
 } from "../../../../domain/package-import/entities/PackageSource";
+import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { useAppContext } from "../../contexts/AppContext";
 import { PackageImportWizard } from "../package-import-wizard/PackageImportWizard";
+import { Either } from "../../../../domain/common/entities/Either";
+import { mapToImportedPackage } from "../../../../domain/package-import/mappers/ImportedPackageMapper";
 
 interface PackageImportDialogProps {
     isOpen: boolean;
@@ -34,64 +38,126 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
         PackageImportRule.create(instance)
     );
 
+    useEffect(() => setPackageImportRule(PackageImportRule.create(instance)), [instance]);
+
     const handlePackageImportRuleChange = (packageImportRule: PackageImportRule) => {
         setEnableImport(packageImportRule.validate().length === 0);
         setPackageImportRule(packageImportRule);
     };
 
+    const saveImportedPackages = async (
+        packages: Package[],
+        author: NamedRef,
+        packageSource: PackageSource,
+        storePackageUrls: Record<string, string>
+    ) => {
+        const importedPackages = packages.map(pkg =>
+            mapToImportedPackage(pkg, author, packageSource, storePackageUrls[pkg.id])
+        );
+
+        const result = await compositionRoot.importedPackages.save(importedPackages);
+
+        result.match({
+            success: () => {},
+            error: () => {
+                snackbar.error("An error has ocurred tracking the imported packages");
+            },
+        });
+    };
+
+    const getPackage = (packageId: string): Promise<Either<"NOT_FOUND", Package>> => {
+        if (isInstance(packageImportRule.source)) {
+            return compositionRoot.packages.get(packageId, packageImportRule.source);
+        } else {
+            return compositionRoot.packages.getStore(packageImportRule.source.id, packageId);
+        }
+    };
+
     const handleExecuteImport = async () => {
-        // TODO: this coordination to import several packages and save the result
-        // should be in the domain layer, may be a new use case?
+        // TODO: this steps coordination to import several packages, save the result
+        // and save the imported package should be in the domain layer,
+        // may be a new use case? ImportPackagesUseCase.execute (packageIds:string[])
+        // Steps:
+        // - Retrieve current user
+        // - for each packageId
+        //    1 - retrieve package (store or instance) (using PackageRepository)
+        //    2 - Import (using MetadataRepository)
+        //    3 - Save Result (using ResultRepository)
+        //    4 - Save ImportedPackage (using ImportedPackageRepository)
+        const importedPackages: Package[] = [];
         const report = SyncReport.create("metadata");
+        const storePackageUrls: Record<string, string> = {};
+
+        const currentUser = await api.currentUser
+            .get({ fields: { id: true, userCredentials: { username: true } } })
+            .getData();
+
+        const author = { id: currentUser.id, name: currentUser.userCredentials.username };
 
         const executePackageImport = async (packageId: string) => {
-            if (isInstance(packageImportRule.source)) {
-                const result = await compositionRoot.packages.get(
-                    packageId,
-                    packageImportRule.source
-                );
+            const result = await getPackage(packageId);
 
-                result.match({
-                    success: async originPackage => {
-                        try {
-                            loading.show(
-                                true,
-                                i18n.t("Importing package {{name}}", { name: originPackage.name })
-                            );
-                            const result = await compositionRoot.metadata.import(
-                                originPackage.contents
-                            );
+            result.match({
+                success: async originPackage => {
+                    try {
+                        loading.show(
+                            true,
+                            i18n.t("Importing package {{name}}", { name: originPackage.name })
+                        );
 
-                            report.setStatus(
-                                result.status === "ERROR" || result.status === "NETWORK ERROR"
-                                    ? "FAILURE"
-                                    : "DONE"
-                            );
-                            report.addSyncResult({
-                                ...result,
-                                originPackage: originPackage.toRef(),
-                                origin: (packageImportRule.source as Instance).toPublicObject(),
-                            });
-                            loading.reset();
-                        } catch (error) {
-                            snackbar.error(error.message);
+                        if (isStore(packageImportRule.source)) {
+                            storePackageUrls[originPackage.id] = packageId;
                         }
-                    },
-                    error: async () => {
-                        loading.reset();
-                        snackbar.error(i18n.t("Couldn't load package"));
-                    },
-                });
-            } else {
-                snackbar.error("Implement packages from store case");
-            }
+
+                        const result = await compositionRoot.metadata.import(
+                            originPackage.contents
+                        );
+
+                        report.setStatus(
+                            result.status === "ERROR" || result.status === "NETWORK ERROR"
+                                ? "FAILURE"
+                                : "DONE"
+                        );
+
+                        const origin = isInstance(packageImportRule.source)
+                            ? packageImportRule.source.toPublicObject()
+                            : packageImportRule.source;
+
+                        report.addSyncResult({
+                            ...result,
+                            originPackage: originPackage.toRef(),
+                            origin: origin,
+                        });
+
+                        if (result.status === "SUCCESS") {
+                            importedPackages.push(originPackage);
+                        }
+                    } catch (error) {
+                        snackbar.error(error.message);
+                    }
+                },
+                error: async () => {
+                    loading.reset();
+                    snackbar.error(i18n.t("Couldn't load package"));
+                },
+            });
         };
 
         for (const id of packageImportRule.packageIds) {
             await executePackageImport(id);
         }
 
+        loading.show(true, i18n.t("Saving imported packages"));
+
         await report.save(api);
+        await saveImportedPackages(
+            importedPackages,
+            author,
+            packageImportRule.source,
+            storePackageUrls
+        );
+
+        loading.reset();
 
         if (openSyncSummary) {
             openSyncSummary(report);

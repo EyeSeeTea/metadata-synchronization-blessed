@@ -27,7 +27,7 @@ export class PublishStorePackageUseCase implements UseCase {
     ): Promise<Either<PublishStorePackageError, void>> {
         const store = (
             await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
-        )?.find(store => store.default);
+        )?.find(store => store.default && !store.deleted);
 
         if (!store) return Either.error("DEFAULT_STORE_NOT_FOUND");
 

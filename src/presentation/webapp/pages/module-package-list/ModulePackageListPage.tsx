@@ -23,6 +23,7 @@ export interface ModulePackageListPageProps {
     pageSizeOptions?: number[];
     openSyncSummary?: (result: SyncReport) => void;
     paginationOptions?: PaginationOptions;
+    resetKeyEx?: number;
 }
 
 export const ModulePackageListPage: React.FC = () => {
@@ -30,6 +31,7 @@ export const ModulePackageListPage: React.FC = () => {
     const [syncReport, setSyncReport] = useState<SyncReport>();
     const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
     const [selectedInstance, setSelectedInstance] = useState<Instance | Store>();
+    const [resetKey, setResetKey] = useState(Math.random);
 
     const { list: tableOption = "modules" } = useParams<{ list: ViewOption }>();
     const title = buildTitle(tableOption);
@@ -65,6 +67,10 @@ export const ModulePackageListPage: React.FC = () => {
     const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
         setOpenImportPackageDialog(false);
         setSyncReport(syncReport);
+
+        if (tableOption === "packages") {
+            setResetKey(Math.random);
+        }
     };
 
     return (
@@ -80,6 +86,7 @@ export const ModulePackageListPage: React.FC = () => {
                 presentation={"app"}
                 openSyncSummary={setSyncReport}
                 onInstanceChange={setSelectedInstance}
+                resetKeyEx={resetKey}
             />
 
             {!!syncReport && (
