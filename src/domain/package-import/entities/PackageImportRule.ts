@@ -19,8 +19,8 @@ export class PackageImportRule {
         this.mappingByPackageId = data.mappingByPackageId;
     }
 
-    static create(source: PackageSource): PackageImportRule {
-        return new PackageImportRule({ source, packageIds: [], mappingByPackageId: {} });
+    static create(source: PackageSource, selectedPackagesId?: string[]): PackageImportRule {
+        return new PackageImportRule({ source, packageIds: selectedPackagesId || [], mappingByPackageId: {} });
     }
 
     public updateSource(source: PackageSource): PackageImportRule {

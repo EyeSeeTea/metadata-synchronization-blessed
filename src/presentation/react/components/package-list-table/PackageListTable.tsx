@@ -33,6 +33,7 @@ import {
 } from "../../../../domain/package-import/entities/PackageSource";
 import { mapToImportedPackage } from "../../../../domain/package-import/mappers/ImportedPackageMapper";
 import { Either } from "../../../../domain/common/entities/Either";
+import PackageImportDialog from "../package-import-dialog/PackageImportDialog";
 
 type InstallState = "Installed" | "NotInstalled" | "Upgrade" | "Local";
 type ListPackage = Omit<BasePackage, "contents"> & { installState: InstallState };
@@ -81,6 +82,9 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const [globalAdmin, setGlobalAdmin] = useState(false);
     const [appConfigurator, setAppConfigurator] = useState(false);
     const [loadingTable, setLoadingTable] = useState(true);
+    const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
+
+    const [toImportWizard, setToImportWizard] = useState<string[]>([]);
 
     const isRemoteInstance = !!remoteInstance;
 
@@ -262,6 +266,11 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             throw new Error("The import action is only available for remote package source");
         }
     }, [remoteInstance, remoteStore]);
+
+    const importPackagesFromWizard = useCallback((ids: string[]) => {
+        setToImportWizard(ids);
+        setOpenImportPackageDialog(true);
+    }, []);
 
     const importPackage = useCallback(
         async (ids: string[]) => {
@@ -451,12 +460,25 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                     (isRemoteInstance || remoteStore !== undefined) &&
                     appConfigurator,
             },
+            {
+                name: "importFromWizard",
+                text: i18n.t("Import package (wizard)"),
+                multiple: true,
+                onClick: importPackagesFromWizard,
+                icon: <Icon>arrow_downward</Icon>,
+                isActive: () =>
+                    !isImportDialog &&
+                    presentation === "app" &&
+                    (isRemoteInstance || remoteStore !== undefined) &&
+                    appConfigurator,
+            },
         ],
         [
             appConfigurator,
             deletePackages,
             downloadPackage,
             importPackage,
+            importPackagesFromWizard,
             isRemoteInstance,
             openPackageDiffDialog,
             presentation,
@@ -639,11 +661,25 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
+    const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
+        setOpenImportPackageDialog(false);
+        setToImportWizard([]);
+        openSyncSummary(syncReport);
+        setResetKey(Math.random);
+    };
+
+    const handleCloseImportWizard = () => {
+        setOpenImportPackageDialog(false);
+        setToImportWizard([]);
+    };
+
     const showImportFromWizardButton =
         !isImportDialog &&
         presentation === "app" &&
         (isRemoteInstance || remoteStore) &&
         appConfigurator;
+
+    const packageSource = remoteInstance ?? remoteStore;
 
     return (
         <React.Fragment>
@@ -670,6 +706,16 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                     remotePackage={packageToDiff}
                     remoteStore={remoteStore}
                     remoteInstance={remoteInstance}
+                />
+            )}
+
+            {packageSource && (
+                <PackageImportDialog
+                    isOpen={openImportPackageDialog}
+                    onClose={handleCloseImportWizard}
+                    instance={packageSource}
+                    selectedPackagesId={toImportWizard}
+                    openSyncSummary={handleOpenSyncSummaryFromDialog}
                 />
             )}
         </React.Fragment>
