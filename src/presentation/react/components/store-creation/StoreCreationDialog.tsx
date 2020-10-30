@@ -165,11 +165,26 @@ const StoreCreationDialog: React.FC<StoreCreationDialogProps> = ({ isOpen, onClo
         [classes]
     );
 
+    const title = () => {
+        return (
+            <div>
+                {i18n.t("New store")}
+                <DialogButton
+                    buttonComponent={HelpButton}
+                    title={i18n.t("Help")}
+                    maxWidth={"lg"}
+                    fullWidth={true}
+                    contents={helpContainer}
+                />
+            </div>
+        );
+    };
+
     return (
         <React.Fragment>
             <ConfirmationDialog
                 isOpen={isOpen}
-                title={i18n.t("New store")}
+                title={title()}
                 onSave={save}
                 onCancel={onClose}
                 saveText={i18n.t("Save")}
@@ -177,14 +192,6 @@ const StoreCreationDialog: React.FC<StoreCreationDialogProps> = ({ isOpen, onClo
                 fullWidth={true}
             >
                 <DialogContent>
-                    <DialogButton
-                        buttonComponent={HelpButton}
-                        title={i18n.t("Help")}
-                        maxWidth={"lg"}
-                        fullWidth={true}
-                        contents={helpContainer}
-                    />
-
                     <TextField
                         className={classes.row}
                         fullWidth={true}
