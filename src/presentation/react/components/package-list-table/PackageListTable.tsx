@@ -80,6 +80,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const [globalAdmin, setGlobalAdmin] = useState(false);
     const [appConfigurator, setAppConfigurator] = useState(false);
+    const [loadingTable, setLoadingTable] = useState(true);
 
     const isRemoteInstance = !!remoteInstance;
 
@@ -552,6 +553,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     ]);
 
     const rowsFiltered = useMemo(() => {
+        setLoadingTable(false);
         return rows.filter(
             row =>
                 (row.module.id === moduleFilter || !moduleFilter) &&
@@ -561,6 +563,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     }, [moduleFilter, rows, dhis2VersionFilter, installStateFilter]);
 
     useEffect(() => {
+        setLoadingTable(true);
         compositionRoot.packages
             .list(globalAdmin, remoteInstance)
             .then(packages => {
@@ -589,7 +592,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     useEffect(() => {
         if (remoteStore) {
-            compositionRoot.packages.listStore(remoteStore.id).then(validation =>
+            setLoadingTable(true);
+            compositionRoot.packages.listStore(remoteStore.id).then(validation => {
                 validation.match({
                     success: packages => {
                         setStorePackages(
@@ -605,8 +609,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                         snackbar.error(i18n.t("Can't connect to store"));
                         setStorePackages([]);
                     },
-                })
-            );
+                });
+            });
         } else {
             setStorePackages([]);
         }
@@ -653,6 +657,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 onChange={updateTable}
                 paginationOptions={paginationOptions}
                 actionButtonLabel={actionButtonLabel}
+                loading={loadingTable}
             />
 
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
