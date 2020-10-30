@@ -26,7 +26,7 @@ import helpStoreGithub from "../../../../assets/img/help-store-github.png";
 interface StoreCreationDialogProps {
     isOpen: boolean;
     onClose: () => void;
-    onSaved: () => void;
+    onSaved: (store: Store) => void;
 }
 
 const initialState = { id: "", token: "", account: "", repository: "", default: false };
@@ -100,10 +100,19 @@ const StoreCreationDialog: React.FC<StoreCreationDialogProps> = ({ isOpen, onClo
                             updateDialog(null);
                         },
                         onSave: async () => {
-                            await compositionRoot.store.update(state as Store, false);
-                            updateDialog(null);
-                            onSaved();
-                            setState(initialState);
+                            const saveResult = await compositionRoot.store.update(
+                                state as Store,
+                                false
+                            );
+
+                            saveResult.match({
+                                error: error => snackbar.error(validateError(error)),
+                                success: store => {
+                                    updateDialog(null);
+                                    onSaved(store);
+                                    setState(initialState);
+                                },
+                            });
                         },
                         cancelText: i18n.t("Cancel"),
                         saveText: i18n.t("Proceed"),
@@ -115,8 +124,8 @@ const StoreCreationDialog: React.FC<StoreCreationDialogProps> = ({ isOpen, onClo
         const result = await compositionRoot.store.update(state as Store);
         result.match({
             error: error => handleError(error),
-            success: () => {
-                onSaved();
+            success: store => {
+                onSaved(store);
                 setState(initialState);
             },
         });
