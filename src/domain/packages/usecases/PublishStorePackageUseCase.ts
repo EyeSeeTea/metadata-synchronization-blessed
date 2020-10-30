@@ -4,13 +4,14 @@ import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { BaseModule } from "../../modules/entities/Module";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { GitHubError } from "../entities/Errors";
 import { BasePackage } from "../entities/Package";
 import { Store } from "../entities/Store";
-import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
+import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubRepository";
 
 export type PublishStorePackageError =
     | GitHubError
@@ -69,7 +70,35 @@ export class PublishStorePackageUseCase implements UseCase {
             }
         }
 
+        await this.createModuleFileIfRequired(
+            store,
+            branch,
+            `${item.module.name}/${moduleFile}`,
+            item.module
+        );
+
         return Either.success(undefined);
+    }
+
+    private async createModuleFileIfRequired(
+        store: Store,
+        branch: string,
+        path: string,
+        moduleRef: Pick<BaseModule, "id" | "name" | "instance" | "department">
+    ) {
+        const existingFileCheck = await this.gitRepository().readFile(store, branch, path);
+
+        if (existingFileCheck.isError()) {
+            const validation = await this.gitRepository().writeFile(
+                store,
+                branch,
+                path,
+                JSON.stringify(moduleRef, null, 4)
+            );
+
+            if (validation.isError())
+                return console.warn("An error creating the module file has ocurred");
+        }
     }
 
     @cache()
