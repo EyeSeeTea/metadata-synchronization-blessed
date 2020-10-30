@@ -88,18 +88,18 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
         const report = SyncReport.create("metadata");
         const storePackageUrls: Record<string, string> = {};
 
-        const currentUser = await api.currentUser
-            .get({ fields: { id: true, userCredentials: { username: true } } })
-            .getData();
+        try {
+            const currentUser = await api.currentUser
+                .get({ fields: { id: true, userCredentials: { username: true } } })
+                .getData();
 
-        const author = { id: currentUser.id, name: currentUser.userCredentials.username };
+            const author = { id: currentUser.id, name: currentUser.userCredentials.username };
 
-        const executePackageImport = async (packageId: string) => {
-            const result = await getPackage(packageId);
+            const executePackageImport = async (packageId: string) => {
+                const getPackageResult = await getPackage(packageId);
 
-            result.match({
-                success: async originPackage => {
-                    try {
+                await getPackageResult.match({
+                    success: async originPackage => {
                         loading.show(
                             true,
                             i18n.t("Importing package {{name}}", { name: originPackage.name })
@@ -109,12 +109,13 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                             storePackageUrls[originPackage.id] = packageId;
                         }
 
-                        const result = await compositionRoot.metadata.import(
+                        const importResult = await compositionRoot.metadata.import(
                             originPackage.contents
                         );
 
                         report.setStatus(
-                            result.status === "ERROR" || result.status === "NETWORK ERROR"
+                            importResult.status === "ERROR" ||
+                                importResult.status === "NETWORK ERROR"
                                 ? "FAILURE"
                                 : "DONE"
                         );
@@ -124,43 +125,45 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                             : packageImportRule.source;
 
                         report.addSyncResult({
-                            ...result,
+                            ...importResult,
                             originPackage: originPackage.toRef(),
                             origin: origin,
                         });
 
-                        if (result.status === "SUCCESS") {
+                        if (importResult.status === "SUCCESS") {
                             importedPackages.push(originPackage);
                         }
-                    } catch (error) {
-                        snackbar.error(error.message);
-                    }
-                },
-                error: async () => {
-                    loading.reset();
-                    snackbar.error(i18n.t("Couldn't load package"));
-                },
-            });
-        };
+                    },
+                    error: async () => {
+                        loading.reset();
+                        snackbar.error(i18n.t("Couldn't load package"));
+                    },
+                });
+            };
 
-        for (const id of packageImportRule.packageIds) {
-            await executePackageImport(id);
-        }
+            for (const id of packageImportRule.packageIds) {
+                await executePackageImport(id);
+            }
 
-        loading.show(true, i18n.t("Saving imported packages"));
+            loading.show(true, i18n.t("Saving imported packages"));
 
-        await report.save(api);
-        await saveImportedPackages(
-            importedPackages,
-            author,
-            packageImportRule.source,
-            storePackageUrls
-        );
+            await report.save(api);
 
-        loading.reset();
+            await saveImportedPackages(
+                importedPackages,
+                author,
+                packageImportRule.source,
+                storePackageUrls
+            );
 
-        if (openSyncSummary) {
-            openSyncSummary(report);
+            loading.reset();
+
+            if (openSyncSummary) {
+                openSyncSummary(report);
+            }
+        } catch (error) {
+            loading.reset();
+            snackbar.error(i18n.t("An error has ocurred importing packages"));
         }
     };
 

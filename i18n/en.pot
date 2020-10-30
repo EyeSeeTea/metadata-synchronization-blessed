@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-10-30T11:30:12.818Z\n"
-"PO-Revision-Date: 2020-10-30T11:30:12.818Z\n"
+"POT-Creation-Date: 2020-10-30T15:51:30.019Z\n"
+"PO-Revision-Date: 2020-10-30T15:51:30.019Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -533,6 +533,9 @@ msgid "Couldn't load package"
 msgstr ""
 
 msgid "Saving imported packages"
+msgstr ""
+
+msgid "An error has ocurred importing packages"
 msgstr ""
 
 msgid "Packages Import"
