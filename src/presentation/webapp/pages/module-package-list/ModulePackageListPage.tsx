@@ -24,6 +24,7 @@ export interface ModulePackageListPageProps {
     openSyncSummary?: (result: SyncReport) => void;
     paginationOptions?: PaginationOptions;
     resetKeyEx?: number;
+    actionButtonLabel?: ReactNode;
 }
 
 export const ModulePackageListPage: React.FC = () => {

@@ -55,6 +55,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     onSelectionChange,
     selectedIds,
     resetKeyEx,
+    actionButtonLabel,
 }) => {
     const { api, compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
@@ -651,6 +652,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 selection={selection}
                 onChange={updateTable}
                 paginationOptions={paginationOptions}
+                actionButtonLabel={actionButtonLabel}
             />
 
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
