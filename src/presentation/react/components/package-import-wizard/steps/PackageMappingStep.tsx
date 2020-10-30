@@ -149,6 +149,8 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
                 onChangeMapping={onChangeMapping}
                 onApplyGlobalMapping={onApplyGlobalMapping}
                 externalFilterComponents={packageFilterComponent}
+                viewFilters={["onlySelected"]}
+                showResponsible={false}
             />
         </React.Fragment>
     );

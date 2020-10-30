@@ -163,7 +163,13 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         }
     }
 
-    private async getListAll({ type, fields, filter, order = defaultOrder, rootJunction }: GetListAllOptions) {
+    private async getListAll({
+        type,
+        fields,
+        filter,
+        order = defaultOrder,
+        rootJunction,
+    }: GetListAllOptions) {
         const list = await this.getListGeneric({ type, fields, filter, order, rootJunction });
 
         if (list.useSingleApiRequest) {

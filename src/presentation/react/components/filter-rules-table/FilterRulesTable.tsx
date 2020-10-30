@@ -1,26 +1,25 @@
-import { Icon, Button } from "@material-ui/core";
+import { Button, Icon } from "@material-ui/core";
 import {
     ObjectsTable,
+    PaginationOptions,
     TableAction,
     TableColumn,
     TableSelection,
     TableState,
-    PaginationOptions,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
-import i18n from "../../../../locales";
+import { updateObject as updateObjectInList } from "../../../../domain/common/entities/Ref";
 import {
     FilterRule,
-    getInitialFilterRule,
     getDateFilterString,
+    getInitialFilterRule,
     getStringMatchString,
 } from "../../../../domain/metadata/entities/FilterRule";
-import { FilterRuleDialog, NewFilterRuleDialogProps } from "./FilterRuleDialog";
-import { updateObject as updateObjectInList } from "../../../../domain/common/entities/Ref";
+import i18n from "../../../../locales";
 import { metadataModels } from "../../../../models/dhis/factory";
-import { useAppContext } from "../../contexts/AppContext";
 import { useOpenState } from "../../hooks/useOpenState";
+import { FilterRuleDialog, NewFilterRuleDialogProps } from "./FilterRuleDialog";
 
 export interface FilterRulesTableProps {
     filterRules: FilterRule[];
@@ -31,16 +30,15 @@ type Action = { type: "new" | "edit"; filterRule: FilterRule };
 
 const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
     const { filterRules, onChange } = props;
-    const { api } = useAppContext();
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const newFilterRuleDialog = useOpenState<Action>();
 
-    const modelNames = React.useMemo(() => {
+    const modelNames = useMemo(() => {
         return _(metadataModels)
-            .map(model => [model.getMetadataType(), model.getModelName(api)] as [string, string])
+            .map(model => [model.getMetadataType(), model.getModelName()] as [string, string])
             .fromPairs()
             .value();
-    }, [api]);
+    }, []);
 
     const editRule = useCallback(
         (ids: string[]) => {
@@ -112,7 +110,7 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
         [deleteRule, editRule]
     );
 
-    const openNewDialog = React.useCallback(() => {
+    const openNewDialog = useCallback(() => {
         const newFilterRule = { type: "new" as const, filterRule: getInitialFilterRule() };
         newFilterRuleDialog.open(newFilterRule);
     }, [newFilterRuleDialog]);
@@ -124,7 +122,7 @@ const FilterRulesTable: React.FC<FilterRulesTableProps> = props => {
     );
 
     const { close: closeFilterRuleDialog } = newFilterRuleDialog;
-    const save = React.useCallback<NewFilterRuleDialogProps["onSave"]>(
+    const save = useCallback<NewFilterRuleDialogProps["onSave"]>(
         filterRule => {
             const newFilterRules = updateObjectInList(filterRules, filterRule);
             onChange(newFilterRules);

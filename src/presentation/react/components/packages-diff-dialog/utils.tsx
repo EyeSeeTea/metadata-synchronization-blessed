@@ -1,6 +1,6 @@
 import { useLoading, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
-import React from "react";
+import { useCallback, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
     FieldUpdate,
@@ -39,15 +39,15 @@ export function usePackageImporter(
     const { compositionRoot, api } = useAppContext();
     const loading = useLoading();
     const snackbar = useSnackbar();
-    const [syncReport, setSyncReport] = React.useState<SyncReport>();
+    const [syncReport, setSyncReport] = useState<SyncReport>();
 
-    const closeSyncReport = React.useCallback(() => {
+    const closeSyncReport = useCallback(() => {
         setSyncReport(undefined);
         onClose();
     }, [setSyncReport, onClose]);
 
-    const importPackage = React.useCallback(() => {
-        async function import_() {
+    const importPackage = useCallback(() => {
+        async function performImport() {
             if (!metadataDiff) return;
             loading.show(true, i18n.t("Importing package {{name}}", { name: packageName }));
 
@@ -62,7 +62,7 @@ export function usePackageImporter(
             setSyncReport(report);
         }
 
-        import_()
+        performImport()
             .catch(err => snackbar.error(err.message))
             .finally(() => loading.reset());
     }, [packageName, metadataDiff, compositionRoot, loading, snackbar, api, instance]);

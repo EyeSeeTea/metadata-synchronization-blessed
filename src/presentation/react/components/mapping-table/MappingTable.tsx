@@ -9,7 +9,7 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { ReactNode, useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { DataSource, isDhisInstance } from "../../../../domain/instance/entities/DataSource";
 import {
     MetadataMapping,
@@ -26,7 +26,7 @@ import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../contexts/AppContext";
 import MappingDialog, { MappingDialogConfig } from "../mapping-dialog/MappingDialog";
 import MappingWizard, { MappingWizardConfig, prepareSteps } from "../mapping-wizard/MappingWizard";
-import MetadataTable from "../metadata-table/MetadataTable";
+import MetadataTable, { MetadataTableProps } from "../metadata-table/MetadataTable";
 import {
     autoMap,
     buildDataElementFilterForProgram,
@@ -57,7 +57,7 @@ interface WarningDialog {
     action?: () => void;
 }
 
-export interface MappingTableProps {
+export interface MappingTableProps extends MetadataTableProps {
     instance: DataSource;
     models: typeof D2Model[];
     filterRows?: string[];
@@ -68,7 +68,6 @@ export interface MappingTableProps {
     onApplyGlobalMapping(type: string, id: string, mapping: MetadataMapping): Promise<void>;
     isChildrenMapping?: boolean;
     mappingPath?: string[];
-    externalFilterComponents?: ReactNode;
 }
 
 export default function MappingTable({
@@ -82,7 +81,7 @@ export default function MappingTable({
     onApplyGlobalMapping,
     isChildrenMapping = false,
     mappingPath,
-    externalFilterComponents,
+    ...rest
 }: MappingTableProps) {
     const { api, compositionRoot } = useAppContext();
     const classes = useStyles();
@@ -502,7 +501,7 @@ export default function MappingTable({
                     text: i18n.t("Metadata type"),
                     hidden: model.getChildrenKeys() === undefined,
                     getValue: (row: MetadataType) => {
-                        return row.model.getModelName(api);
+                        return row.model.getModelName();
                     },
                 },
                 {
@@ -621,15 +620,7 @@ export default function MappingTable({
                     },
                 },
             ]),
-        [
-            api,
-            classes,
-            model,
-            openMappingDialog,
-            isChildrenMapping,
-            openRelatedMapping,
-            getMappedItem,
-        ]
+        [classes, model, openMappingDialog, isChildrenMapping, openRelatedMapping, getMappedItem]
     );
 
     const addToSelection = useCallback(
@@ -870,7 +861,7 @@ export default function MappingTable({
                 globalActions={globalActions}
                 childrenKeys={!isChildrenMapping ? model.getChildrenKeys() : undefined}
                 rowConfig={rowConfig}
-                externalFilterComponets={externalFilterComponents}
+                {...rest}
             />
         </React.Fragment>
     );

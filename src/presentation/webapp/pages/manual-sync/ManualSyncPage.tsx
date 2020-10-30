@@ -232,7 +232,7 @@ const ManualSyncPage: React.FC = () => {
             text: i18n.t("Metadata type"),
             hidden: config[type].childrenKeys === undefined,
             getValue: (row: MetadataType) => {
-                return row.model.getModelName(api);
+                return row.model.getModelName();
             },
         },
     ];
@@ -283,7 +283,7 @@ const ManualSyncPage: React.FC = () => {
                     childrenKeys={config[type].childrenKeys}
                     showIndeterminateSelection={true}
                     additionalColumns={additionalColumns}
-                    allowChangingResponsible={type === "metadata"}
+                    allowChangingResponsible={type === "metadata" && appConfigurator}
                 />
             )}
 

@@ -1,23 +1,22 @@
 import { makeStyles } from "@material-ui/core";
 import { ConfirmationDialog, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
-import React from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
     FilterRule,
     FilterRuleField,
+    FilterWhere,
     updateFilterRule,
+    updateStringMatch,
     validateFilterRule,
     whereNames,
-    FilterWhere,
-    updateStringMatch,
 } from "../../../../domain/metadata/entities/FilterRule";
 import i18n from "../../../../locales";
 import { metadataModels } from "../../../../models/dhis/factory";
 import Dropdown from "../dropdown/Dropdown";
 import PeriodSelection from "../period-selection/PeriodSelection";
-import { useAppContext } from "../../contexts/AppContext";
-import { Section } from "./Section";
 import TextFieldOnBlur from "../text-field-on-blur/TextFieldOnBlur";
+import { Section } from "./Section";
 
 export interface NewFilterRuleDialogProps {
     action: "new" | "edit";
@@ -28,17 +27,16 @@ export interface NewFilterRuleDialogProps {
 
 export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
     const { onClose, onSave, action, initialFilterRule } = props;
-    const { api } = useAppContext();
     const classes = useStyles();
     const snackbar = useSnackbar();
-    const [filterRule, setFilterRule] = React.useState<FilterRule>(initialFilterRule);
+    const [filterRule, setFilterRule] = useState<FilterRule>(initialFilterRule);
 
-    const metadataTypeItems = React.useMemo(() => {
+    const metadataTypeItems = useMemo(() => {
         return metadataModels.map(model => ({
             id: model.getMetadataType(),
-            name: model.getModelName(api),
+            name: model.getModelName(),
         }));
-    }, [api]);
+    }, []);
 
     function updateField<Field extends FilterRuleField>(field: Field) {
         return function (value: FilterRule[Field]) {
@@ -46,7 +44,7 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
         };
     }
 
-    const save = React.useCallback(() => {
+    const save = useCallback(() => {
         const errors = validateFilterRule(filterRule);
         if (_.isEmpty(errors)) {
             onSave(filterRule);

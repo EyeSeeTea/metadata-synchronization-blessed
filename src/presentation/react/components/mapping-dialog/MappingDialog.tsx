@@ -63,7 +63,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 
     const api = compositionRoot.instances.getApi(instance);
     const model = modelFactory(mappingType);
-    const modelName = model.getModelName(api);
+    const modelName = model.getModelName();
 
     useEffect(() => {
         let mounted = true;
