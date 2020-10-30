@@ -292,21 +292,23 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                         });
                         await report.save(api);
 
-                        const currentUser = await api.currentUser
-                            .get({ fields: { id: true, userCredentials: { username: true } } })
-                            .getData();
+                        if (result.status === "SUCCESS") {
+                            const currentUser = await api.currentUser
+                                .get({ fields: { id: true, userCredentials: { username: true } } })
+                                .getData();
 
-                        const author = {
-                            id: currentUser.id,
-                            name: currentUser.userCredentials.username,
-                        };
+                            const author = {
+                                id: currentUser.id,
+                                name: currentUser.userCredentials.username,
+                            };
 
-                        await saveImportedPackage(
-                            originPackage,
-                            author,
-                            packageSource,
-                            isStore(packageSource) ? ids[0] : undefined
-                        );
+                            await saveImportedPackage(
+                                originPackage,
+                                author,
+                                packageSource,
+                                isStore(packageSource) ? ids[0] : undefined
+                            );
+                        }
 
                         openSyncSummary(report);
                         setResetKey(Math.random);
