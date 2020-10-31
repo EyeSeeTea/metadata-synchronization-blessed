@@ -133,58 +133,11 @@ const StoreCreationDialog: React.FC<StoreCreationDialogProps> = ({ isOpen, onClo
         loading.reset();
     }, [compositionRoot, state, validateError, loading, snackbar, onSaved]);
 
-    const helpContainer = useMemo(
-        () => (
-            <Linkify>
-                <p>{i18n.t("To connect with a module store you need to:")}</p>
-                <p>
-                    {i18n.t("- Create a repository at https://github.com/new", {
-                        nsSeparator: false,
-                    })}
-                </p>
-                <p>
-                    {i18n.t(
-                        "- Create a personal access token at https://github.com/settings/tokens/new",
-                        { nsSeparator: false }
-                    )}
-                </p>
-                <p>
-                    {i18n.t(
-                        "The personal access token requires either 'public_repo' or 'repo' scopes depending if the repository is public or private"
-                    )}
-                </p>
-                <div className={classes.center}>
-                    <img
-                        className={classes.helpImage}
-                        src={helpStoreGithub}
-                        alt={i18n.t("Create a personal access token on GitHub")}
-                    />
-                </div>
-            </Linkify>
-        ),
-        [classes]
-    );
-
-    const title = () => {
-        return (
-            <div>
-                {i18n.t("New store")}
-                <DialogButton
-                    buttonComponent={HelpButton}
-                    title={i18n.t("Help")}
-                    maxWidth={"lg"}
-                    fullWidth={true}
-                    contents={helpContainer}
-                />
-            </div>
-        );
-    };
-
     return (
         <React.Fragment>
             <ConfirmationDialog
                 isOpen={isOpen}
-                title={title()}
+                title={<DialogTitle />}
                 onSave={save}
                 onCancel={onClose}
                 saveText={i18n.t("Save")}
@@ -241,10 +194,59 @@ const useStyles = makeStyles({
 
 export default StoreCreationDialog;
 
-const HelpButton = ({ onClick }: ButtonProps) => (
+const HelpButton: React.FC<ButtonProps> = ({ onClick }) => (
     <Tooltip title={i18n.t("Help")}>
         <IconButton onClick={onClick}>
             <Icon color="primary">help</Icon>
         </IconButton>
     </Tooltip>
 );
+
+const DialogTitle: React.FC = () => {
+    const classes = useStyles();
+
+    const helpContainer = useMemo(
+        () => (
+            <Linkify>
+                <p>{i18n.t("To connect with a module store you need to:")}</p>
+                <p>
+                    {i18n.t("- Create a repository at https://github.com/new", {
+                        nsSeparator: false,
+                    })}
+                </p>
+                <p>
+                    {i18n.t(
+                        "- Create a personal access token at https://github.com/settings/tokens/new",
+                        { nsSeparator: false }
+                    )}
+                </p>
+                <p>
+                    {i18n.t(
+                        "The personal access token requires either 'public_repo' or 'repo' scopes depending if the repository is public or private"
+                    )}
+                </p>
+                <div className={classes.center}>
+                    <img
+                        className={classes.helpImage}
+                        src={helpStoreGithub}
+                        alt={i18n.t("Create a personal access token on GitHub")}
+                    />
+                </div>
+            </Linkify>
+        ),
+        [classes]
+    );
+
+    return (
+        <div>
+            {i18n.t("New store")}
+            <DialogButton
+                buttonComponent={HelpButton}
+                title={i18n.t("Help")}
+                maxWidth={"lg"}
+                fullWidth={true}
+                contents={helpContainer}
+            />
+        </div>
+    );
+};
