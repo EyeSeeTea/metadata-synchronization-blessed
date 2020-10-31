@@ -13,7 +13,7 @@ export class SaveStoreUseCase implements UseCase {
         private storageRepository: StorageRepository
     ) {}
 
-    public async execute(store: Store, validate = true): Promise<Either<GitHubError, void>> {
+    public async execute(store: Store, validate = true): Promise<Either<GitHubError, Store>> {
         if (validate) {
             const validation = await this.githubRepository.validateStore(store);
             if (validation.isError()) return Either.error(validation.value.error ?? "UNKNOWN");
@@ -29,7 +29,7 @@ export class SaveStoreUseCase implements UseCase {
 
         await this.storageRepository.saveObjectInCollection(Namespace.STORES, storeToSave);
 
-        return Either.success(undefined);
+        return Either.success(storeToSave);
     }
 
     private async isFirstStore(store: Store) {

@@ -17,7 +17,7 @@ import { StorageRepositoryConstructor } from "../../storage/repositories/Storage
 import { GitHubError, GitHubListError } from "../entities/Errors";
 import { BasePackage, Package } from "../entities/Package";
 import { Store } from "../entities/Store";
-import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
+import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubRepository";
 
 export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
 
@@ -105,16 +105,21 @@ export class ListStorePackagesUseCase implements UseCase {
 
         if (validation.isError()) return Either.error(validation.value.error);
 
-        const files = validation.value.data ?? [];
+        const files = validation.value.data?.filter(file => file.type === "blob") ?? [];
 
-        const packages = await promiseMap(files, async ({ path, type, url }) => {
-            if (type !== "blob") return undefined;
+        const packageFiles = files.filter(file => !file.path.includes(moduleFile));
+        const moduleFiles = files.filter(file => file.path.includes(moduleFile));
 
+        const packages = await promiseMap(packageFiles, async ({ path, url }) => {
             const details = this.extractPackageDetailsFromPath(path);
             if (!details) return undefined;
 
             const { moduleName, name, version, dhisVersion, created } = details;
-            const module = await this.getModule(moduleName);
+
+            const moduleFileUrl =
+                moduleFiles.find(file => file.path === `${moduleName}/${moduleFile}`)?.url ??
+                undefined;
+            const module = await this.getModule(moduleFileUrl);
 
             return Package.build({ id: url, name, version, dhisVersion, created, module });
         });
@@ -122,15 +127,22 @@ export class ListStorePackagesUseCase implements UseCase {
         return Either.success(_.compact(packages));
     }
 
-    private async getModule(moduleName: string): Promise<BaseModule> {
-        const modules = await this.storageRepository(this.localInstance).listObjectsInCollection<
-            BaseModule
-        >(Namespace.MODULES);
+    private async getModule(moduleFileUrl?: string): Promise<BaseModule> {
+        const unknowModule = MetadataModule.build({ id: "Unknown module", name: "Unknown module" });
 
-        return (
-            modules.find(({ name }) => name === moduleName) ??
-            MetadataModule.build({ name: "Unknown module" })
-        );
+        if (!moduleFileUrl) return unknowModule;
+
+        const { encoding, content } = await this.downloadRepository().fetch<{
+            encoding: string;
+            content: string;
+        }>(moduleFileUrl);
+
+        const readFileResult = this.gitRepository().readFileContents<BaseModule>(encoding, content);
+
+        return readFileResult.match({
+            success: module => module,
+            error: () => unknowModule,
+        });
     }
 
     private extractPackageDetailsFromPath(path: string) {

@@ -251,7 +251,16 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             return this.cleanMetadataImportResponse(response, "metadata");
         } catch (error) {
             if (error?.response?.data) {
-                return this.cleanMetadataImportResponse(error.response.data, "metadata");
+                try {
+                    return this.cleanMetadataImportResponse(error.response.data, "metadata");
+                } catch (error) {
+                    return {
+                        status: "NETWORK ERROR",
+                        instance: this.instance.toPublicObject(),
+                        date: new Date(),
+                        type: "metadata",
+                    };
+                }
             }
 
             return {

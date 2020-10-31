@@ -13,6 +13,7 @@ import {
 } from "../instance-selection-dropdown/InstanceSelectionDropdown";
 import { useViewSelector, ViewSelectorConfig } from "./useViewSelector";
 import { Store } from "../../../../domain/packages/entities/Store";
+import { Icon } from "@material-ui/core";
 
 export interface ModulePackageListTableProps {
     onCreate?(): void;
@@ -113,6 +114,9 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
             paginationOptions={paginationOptions}
             openSyncSummary={openSyncSummary}
             resetKeyEx={resetKeyEx}
+            actionButtonLabel={
+                viewSelector.value === "packages" ? <Icon>arrow_downward</Icon> : undefined
+            }
             onActionButtonClick={
                 (viewSelector.value === "modules" && !selectedInstance) ||
                 (viewSelector.value === "packages" && (selectedInstance || selectedStore))

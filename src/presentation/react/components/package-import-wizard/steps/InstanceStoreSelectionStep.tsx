@@ -1,6 +1,7 @@
 import { Box, Icon, IconButton } from "@material-ui/core";
 import React, { useState } from "react";
 import { PackageSource } from "../../../../../domain/package-import/entities/PackageSource";
+import { Store } from "../../../../../domain/packages/entities/Store";
 import i18n from "../../../../../locales";
 import {
     InstanceSelectionDropdown,
@@ -22,8 +23,9 @@ export const InstanceStoreSelectionStep: React.FC<PackageImportWizardProps> = ({
         if (source) onChange(packageImportRule.updateSource(source));
     };
 
-    const handleOnSaved = () => {
+    const handleOnSaved = (store: Store) => {
         setCreationDialogOpen(false);
+        onChange(packageImportRule.updateSource(store));
         setRefreshKey(Math.random);
     };
 

@@ -9,6 +9,8 @@ export interface GitHubRepositoryConstructor {
     new (): GitHubRepository;
 }
 
+export const moduleFile = ".module.json";
+
 export interface GitHubRepository {
     listFiles(store: Store, branch: string): Promise<Either<GitHubListError, GithubFile[]>>;
     readFile<T>(store: Store, branch: string, path: string): Promise<Either<GitHubError, T>>;
