@@ -20,7 +20,11 @@ export class PackageImportRule {
     }
 
     static create(source: PackageSource, selectedPackagesId?: string[]): PackageImportRule {
-        return new PackageImportRule({ source, packageIds: selectedPackagesId || [], mappingByPackageId: {} });
+        return new PackageImportRule({
+            source,
+            packageIds: selectedPackagesId || [],
+            mappingByPackageId: {},
+        });
     }
 
     public updateSource(source: PackageSource): PackageImportRule {

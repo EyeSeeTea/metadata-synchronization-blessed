@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-10-30T19:12:29.727Z\n"
-"PO-Revision-Date: 2020-10-30T19:12:29.727Z\n"
+"POT-Creation-Date: 2020-10-31T16:26:00.297Z\n"
+"PO-Revision-Date: 2020-10-31T16:26:00.297Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -633,6 +633,9 @@ msgstr ""
 msgid "Import package"
 msgstr ""
 
+msgid "Import package (wizard)"
+msgstr ""
+
 msgid "Not recommended"
 msgstr ""
 
@@ -743,18 +746,6 @@ msgid ""
 "Do you want to proceed?"
 msgstr ""
 
-msgid "- Create a repository at https://github.com/new"
-msgstr ""
-
-msgid "- Create a personal access token at https://github.com/settings/tokens/new"
-msgstr ""
-
-msgid "Create a personal access token on GitHub"
-msgstr ""
-
-msgid "New store"
-msgstr ""
-
 msgid "GitHub account or organisation (*)"
 msgstr ""
 
@@ -765,6 +756,18 @@ msgid "GitHub personal access token (*)"
 msgstr ""
 
 msgid "Test Connection"
+msgstr ""
+
+msgid "- Create a repository at https://github.com/new"
+msgstr ""
+
+msgid "- Create a personal access token at https://github.com/settings/tokens/new"
+msgstr ""
+
+msgid "Create a personal access token on GitHub"
+msgstr ""
+
+msgid "New store"
 msgstr ""
 
 msgid "Synchronize"
