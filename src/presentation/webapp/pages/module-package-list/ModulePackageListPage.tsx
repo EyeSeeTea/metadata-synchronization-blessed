@@ -10,6 +10,7 @@ import {
     PresentationOption,
     ViewOption,
 } from "../../../react/components/module-package-list-table/ModulePackageListTable";
+import PackageImportDialog from "../../../react/components/package-import-dialog/PackageImportDialog";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
 
@@ -22,11 +23,16 @@ export interface ModulePackageListPageProps {
     pageSizeOptions?: number[];
     openSyncSummary?: (result: SyncReport) => void;
     paginationOptions?: PaginationOptions;
+    resetKeyEx?: number;
+    actionButtonLabel?: ReactNode;
 }
 
 export const ModulePackageListPage: React.FC = () => {
     const history = useHistory();
     const [syncReport, setSyncReport] = useState<SyncReport>();
+    const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
+    const [selectedInstance, setSelectedInstance] = useState<Instance | Store>();
+    const [resetKey, setResetKey] = useState(Math.random);
 
     const { list: tableOption = "modules" } = useParams<{ list: ViewOption }>();
     const title = buildTitle(tableOption);
@@ -35,9 +41,13 @@ export const ModulePackageListPage: React.FC = () => {
         history.push("/");
     }, [history]);
 
-    const createModule = useCallback(() => {
-        history.push(`/modules/new`);
-    }, [history]);
+    const create = useCallback(() => {
+        if (tableOption === "modules") {
+            history.push(`/modules/new`);
+        } else {
+            setOpenImportPackageDialog(true);
+        }
+    }, [history, tableOption]);
 
     const setTableOption = useCallback(
         (option: ViewOption) => {
@@ -55,6 +65,15 @@ export const ModulePackageListPage: React.FC = () => {
         [tableOption]
     );
 
+    const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
+        setOpenImportPackageDialog(false);
+        setSyncReport(syncReport);
+
+        if (tableOption === "packages") {
+            setResetKey(Math.random);
+        }
+    };
+
     return (
         <React.Fragment>
             <PageHeader title={title} onBackClick={backHome} />
@@ -62,15 +81,26 @@ export const ModulePackageListPage: React.FC = () => {
             <ModulePackageListTable
                 showSelector={showSelector}
                 showInstances={showInstances}
-                onCreate={createModule}
+                onCreate={create}
                 viewValue={tableOption}
                 onViewChange={setTableOption}
                 presentation={"app"}
                 openSyncSummary={setSyncReport}
+                onInstanceChange={setSelectedInstance}
+                resetKeyEx={resetKey}
             />
 
             {!!syncReport && (
                 <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
+            )}
+
+            {selectedInstance && (
+                <PackageImportDialog
+                    isOpen={openImportPackageDialog}
+                    onClose={() => setOpenImportPackageDialog(false)}
+                    instance={selectedInstance}
+                    openSyncSummary={handleOpenSyncSummaryFromDialog}
+                />
             )}
         </React.Fragment>
     );

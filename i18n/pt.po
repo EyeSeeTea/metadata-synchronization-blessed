@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-10-23T11:11:27.453Z\n"
+"POT-Creation-Date: 2020-10-30T11:47:49.026Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -527,6 +527,42 @@ msgstr ""
 msgid "[Pull Request by {{name}}] {{subject}}"
 msgstr ""
 
+msgid "Importing package {{name}}"
+msgstr ""
+
+msgid "Couldn't load package"
+msgstr ""
+
+msgid "Saving imported packages"
+msgstr ""
+
+msgid "An error has ocurred importing packages"
+msgstr ""
+
+msgid "Packages Import"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "Packages mapping"
+msgstr ""
+
+msgid "Package"
+msgstr ""
+
+msgid "Can't connect to store"
+msgstr ""
+
+msgid "Instance"
+msgstr ""
+
+msgid "Play Store"
+msgstr ""
+
+msgid "Loading ..."
+msgstr ""
+
 msgid "Invalid package"
 msgstr ""
 
@@ -565,10 +601,13 @@ msgstr ""
 msgid "Couldn't create new branch on store"
 msgstr ""
 
-msgid "Importing package {{name}}"
+msgid "Installed"
 msgstr ""
 
-msgid "Couldn't load package"
+msgid "Not Installed"
+msgstr ""
+
+msgid "Upgrade Available"
 msgstr ""
 
 msgid "Version"
@@ -578,6 +617,9 @@ msgid "DHIS2 Version"
 msgstr ""
 
 msgid "Module"
+msgstr ""
+
+msgid "State"
 msgstr ""
 
 msgid "Download as JSON"
@@ -592,13 +634,16 @@ msgstr ""
 msgid "Import package"
 msgstr ""
 
-msgid "Can't connect to store"
+msgid "Not recommended"
+msgstr ""
+
+msgid "Dhis2 version"
+msgstr ""
+
+msgid "An error has ocurred retrieving imported packages"
 msgstr ""
 
 msgid "Cannot get data from remote instance"
-msgstr ""
-
-msgid "Import"
 msgstr ""
 
 msgid "objects"
@@ -670,6 +715,60 @@ msgstr ""
 msgid "Custodians for {{name}}"
 msgstr ""
 
+msgid "The token is empty"
+msgstr ""
+
+msgid "The account is empty"
+msgstr ""
+
+msgid "The repository is empty"
+msgstr ""
+
+msgid "The token is invalid"
+msgstr ""
+
+msgid "Repository not found"
+msgstr ""
+
+msgid "Testing GitHub connection"
+msgstr ""
+
+msgid "Connected successfully"
+msgstr ""
+
+msgid "Saving store connection"
+msgstr ""
+
+msgid ""
+"There are issues with the connection details you provided.\n"
+"Do you want to proceed?"
+msgstr ""
+
+msgid "- Create a repository at https://github.com/new"
+msgstr ""
+
+msgid ""
+"- Create a personal access token at https://github.com/settings/tokens/new"
+msgstr ""
+
+msgid "Create a personal access token on GitHub"
+msgstr ""
+
+msgid "New store"
+msgstr ""
+
+msgid "GitHub account or organisation (*)"
+msgstr ""
+
+msgid "GitHub repository (*)"
+msgstr ""
+
+msgid "GitHub personal access token (*)"
+msgstr ""
+
+msgid "Test Connection"
+msgstr ""
+
 msgid "Synchronize"
 msgstr ""
 
@@ -736,7 +835,10 @@ msgstr ""
 msgid "Synchronization Results"
 msgstr ""
 
-msgid "Origin instance"
+msgid "Origin"
+msgstr ""
+
+msgid "Origin package"
 msgstr ""
 
 msgid "Destination instance"
@@ -1211,9 +1313,6 @@ msgstr ""
 msgid "Metadata mapping"
 msgstr ""
 
-msgid "Test Connection"
-msgstr ""
-
 msgid "New Instance"
 msgstr ""
 
@@ -1434,58 +1533,7 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-msgid "New store"
-msgstr ""
-
 msgid "Edit store"
-msgstr ""
-
-msgid "The token is empty"
-msgstr ""
-
-msgid "The account is empty"
-msgstr ""
-
-msgid "The repository is empty"
-msgstr ""
-
-msgid "The token is invalid"
-msgstr ""
-
-msgid "Repository not found"
-msgstr ""
-
-msgid "Testing GitHub connection"
-msgstr ""
-
-msgid "Connected successfully"
-msgstr ""
-
-msgid "Saving store connection"
-msgstr ""
-
-msgid ""
-"There are issues with the connection details you provided.\n"
-"Do you want to proceed?"
-msgstr ""
-
-msgid "- Create a repository at https://github.com/new"
-msgstr ""
-
-msgid ""
-"- Create a personal access token at https://github.com/settings/tokens/new"
-msgstr ""
-
-msgid "Create a personal access token on GitHub"
-msgstr ""
-
-msgid "GitHub account or organisation (*)"
-msgstr ""
-
-msgid "GitHub repository (*)"
-msgstr ""
-
-msgid "GitHub personal access token (*)"
 msgstr ""
 
 msgid "An error has occurred setting store as default"

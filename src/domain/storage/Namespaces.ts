@@ -2,6 +2,7 @@ export type Namespace = typeof Namespace[keyof typeof Namespace];
 
 export const Namespace = {
     MODULES: "modules",
+    IMPORTEDPACKAGES: "imported-packages",
     PACKAGES: "packages",
     INSTANCES: "instances",
     RULES: "rules",
@@ -15,6 +16,7 @@ export const Namespace = {
 export const NamespaceProperties: Record<Namespace, string[]> = {
     [Namespace.MODULES]: [],
     [Namespace.PACKAGES]: ["contents"],
+    [Namespace.IMPORTEDPACKAGES]: ["contents"],
     [Namespace.INSTANCES]: ["metadataMapping"],
     [Namespace.RULES]: [],
     [Namespace.HISTORY]: [],

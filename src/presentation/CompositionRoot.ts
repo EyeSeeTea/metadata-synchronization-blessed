@@ -39,12 +39,15 @@ import { ImportPullRequestUseCase } from "../domain/notifications/usecases/Impor
 import { ListNotificationsUseCase } from "../domain/notifications/usecases/ListNotificationsUseCase";
 import { MarkReadNotificationsUseCase } from "../domain/notifications/usecases/MarkReadNotificationsUseCase";
 import { UpdatePullRequestStatusUseCase } from "../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
+import { ListImportedPackagesUseCase } from "../domain/package-import/usecases/ListImportedPackagesUseCase";
+import { SaveImportedPackagesUseCase } from "../domain/package-import/usecases/SaveImportedPackagesUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
 import { DeleteStoreUseCase } from "../domain/packages/usecases/DeleteStoreUseCase";
 import { DiffPackageUseCase } from "../domain/packages/usecases/DiffPackageUseCase";
 import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPackageUseCase";
 import { GetPackageUseCase } from "../domain/packages/usecases/GetPackageUseCase";
+import { GetStorePackageUseCase } from "../domain/packages/usecases/GetStorePackageUseCase";
 import { GetStoreUseCase } from "../domain/packages/usecases/GetStoreUseCase";
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
@@ -175,10 +178,19 @@ export class CompositionRoot {
             listStore: new ListStorePackagesUseCase(this.repositoryFactory, this.localInstance),
             create: new CreatePackageUseCase(this, this.repositoryFactory, this.localInstance),
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
+            getStore: new GetStorePackageUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),
             download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),
             publish: new PublishStorePackageUseCase(this.repositoryFactory, this.localInstance),
             diff: new DiffPackageUseCase(this, this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get importedPackages() {
+        return getExecute({
+            list: new ListImportedPackagesUseCase(this.repositoryFactory, this.localInstance),
+            save: new SaveImportedPackagesUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

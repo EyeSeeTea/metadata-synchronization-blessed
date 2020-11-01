@@ -9,7 +9,7 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
     MetadataMapping,
@@ -73,6 +73,7 @@ export interface MappingTableProps {
     onApplyGlobalMapping(type: string, id: string, mapping: MetadataMapping): Promise<void>;
     isChildrenMapping?: boolean;
     mappingPath?: string[];
+    externalFilterComponents?: ReactNode;
 }
 
 export default function MappingTable({
@@ -86,6 +87,7 @@ export default function MappingTable({
     onApplyGlobalMapping,
     isChildrenMapping = false,
     mappingPath,
+    externalFilterComponents,
 }: MappingTableProps) {
     const { api, compositionRoot } = useAppContext();
     const classes = useStyles();
@@ -872,6 +874,7 @@ export default function MappingTable({
                 globalActions={globalActions}
                 childrenKeys={!isChildrenMapping ? model.getChildrenKeys() : undefined}
                 rowConfig={rowConfig}
+                externalFilterComponets={externalFilterComponents}
             />
         </React.Fragment>
     );

@@ -49,6 +49,7 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     notifyRowsChange?(rows: MetadataType[]): void;
     allowChangingResponsible?: boolean;
     showOnlySelectedFilter?: boolean;
+    externalFilterComponets?: ReactNode;
 }
 
 const useStyles = makeStyles({
@@ -111,6 +112,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     showIndeterminateSelection = false,
     allowChangingResponsible = false,
     showOnlySelectedFilter = true,
+    externalFilterComponets: externalFilterComponents,
     ...rest
 }) => {
     const { compositionRoot } = useAppContext();
@@ -235,6 +237,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const filterComponents = (
         <React.Fragment key={"metadata-table-filters"}>
+            {externalFilterComponents}
+
             {models.length > 1 && (
                 <div className={classes.metadataFilter}>
                     <Dropdown
