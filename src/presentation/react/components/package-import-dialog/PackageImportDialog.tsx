@@ -19,6 +19,7 @@ import { mapToImportedPackage } from "../../../../domain/package-import/mappers/
 interface PackageImportDialogProps {
     isOpen: boolean;
     instance: PackageSource;
+    selectedPackagesId?: string[];
     onClose: () => void;
     openSyncSummary?: (result: SyncReport) => void;
 }
@@ -26,6 +27,7 @@ interface PackageImportDialogProps {
 const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
     isOpen,
     instance,
+    selectedPackagesId,
     onClose,
     openSyncSummary,
 }) => {
@@ -35,10 +37,14 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
     const { compositionRoot, api } = useAppContext();
 
     const [packageImportRule, setPackageImportRule] = useState<PackageImportRule>(
-        PackageImportRule.create(instance)
+        PackageImportRule.create(instance, selectedPackagesId)
     );
 
-    useEffect(() => setPackageImportRule(PackageImportRule.create(instance)), [instance]);
+    useEffect(() => {
+        const rule = PackageImportRule.create(instance, selectedPackagesId);
+        setPackageImportRule(rule);
+        setEnableImport(rule.validate().length === 0);
+    }, [instance, selectedPackagesId]);
 
     const handlePackageImportRuleChange = (packageImportRule: PackageImportRule) => {
         setEnableImport(packageImportRule.validate().length === 0);
