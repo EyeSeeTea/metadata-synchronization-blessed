@@ -1,4 +1,4 @@
-import { MetadataMapping } from "../../instance/entities/MetadataMapping";
+import { MetadataMapping } from "./MetadataMapping";
 
 export interface MappingConfig {
     mappingType: string;

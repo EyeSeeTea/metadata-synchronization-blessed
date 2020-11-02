@@ -8,10 +8,7 @@ import { Expression, ExpressionParser, ExpressionType } from "../../../utils/exp
 import { mapCategoryOptionCombo } from "../../../utils/synchronization";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
-import {
-    MetadataMapping,
-    MetadataMappingDictionary,
-} from "../../instance/entities/MetadataMapping";
+import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import {

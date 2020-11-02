@@ -2,7 +2,7 @@ import { UseCase } from "../../common/entities/UseCase";
 import { Instance } from "../../instance/entities/Instance";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
-import { isMappingStoreOwner, Mapping, MappingOwner } from "../entities/Mapping";
+import { isMappingStoreOwner, Mapping, MappingOwner } from "../entities/DataSourceMapping";
 
 export class GetMappingByOwnerUseCase implements UseCase {
     constructor(private storageRepository: StorageRepository) {}

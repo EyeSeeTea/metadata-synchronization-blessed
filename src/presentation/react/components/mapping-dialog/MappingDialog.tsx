@@ -5,7 +5,7 @@ import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { DataSource, isDhisInstance } from "../../../../domain/instance/entities/DataSource";
-import { MetadataMappingDictionary } from "../../../../domain/instance/entities/MetadataMapping";
+import { MetadataMappingDictionary } from "../../../../domain/mapping/entities/MetadataMapping";
 import i18n from "../../../../locales";
 import { modelFactory } from "../../../../models/dhis/factory";
 import { MetadataType } from "../../../../utils/d2";

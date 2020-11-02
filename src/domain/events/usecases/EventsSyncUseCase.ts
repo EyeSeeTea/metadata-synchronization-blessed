@@ -12,7 +12,7 @@ import {
 import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import {

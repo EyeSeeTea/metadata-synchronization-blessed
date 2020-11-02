@@ -8,10 +8,6 @@ import { NamedRef } from "../../common/entities/Ref";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
-import {
-    MetadataMapping,
-    MetadataMappingDictionary,
-} from "../../instance/entities/MetadataMapping";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import {
     MetadataRepository,
@@ -19,6 +15,7 @@ import {
 } from "../../metadata/repositories/MetadataRepository";
 import { Repositories } from "../../Repositories";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
+import { MetadataMapping, MetadataMappingDictionary } from "../entities/MetadataMapping";
 
 export abstract class GenericMappingUseCase {
     constructor(

@@ -5,7 +5,7 @@ import { JSONDataSource } from "../../../../../domain/instance/entities/JSONData
 import {
     MetadataMapping,
     MetadataMappingDictionary,
-} from "../../../../../domain/instance/entities/MetadataMapping";
+} from "../../../../../domain/mapping/entities/MetadataMapping";
 import { isInstance } from "../../../../../domain/package-import/entities/PackageSource";
 import { ListPackage } from "../../../../../domain/packages/entities/Package";
 import i18n from "../../../../../locales";

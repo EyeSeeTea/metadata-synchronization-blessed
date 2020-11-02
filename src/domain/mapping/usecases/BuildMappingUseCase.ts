@@ -1,6 +1,6 @@
 import { UseCase } from "../../common/entities/UseCase";
 import { DataSource } from "../../instance/entities/DataSource";
-import { MetadataMapping } from "../../instance/entities/MetadataMapping";
+import { MetadataMapping } from "../entities/MetadataMapping";
 import { GenericMappingUseCase } from "./GenericMappingUseCase";
 
 export class BuildMappingUseCase extends GenericMappingUseCase implements UseCase {

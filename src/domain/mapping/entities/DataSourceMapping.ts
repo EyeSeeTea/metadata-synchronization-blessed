@@ -1,7 +1,7 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
-import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import { MetadataMappingDictionary } from "./MetadataMapping";
 
 export interface MappingStoreOwner {
     type: "store";

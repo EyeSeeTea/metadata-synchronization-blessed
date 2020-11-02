@@ -11,11 +11,11 @@ import {
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
 import { DataSource } from "../../../../domain/instance/entities/DataSource";
+import { MappingConfig } from "../../../../domain/mapping/entities/MappingConfig";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
-} from "../../../../domain/instance/entities/MetadataMapping";
-import { MappingConfig } from "../../../../domain/mapping/entities/MappingConfig";
+} from "../../../../domain/mapping/entities/MetadataMapping";
 import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
 import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";

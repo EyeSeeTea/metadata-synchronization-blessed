@@ -3,7 +3,7 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
-import { MetadataMappingDictionary } from "./MetadataMapping";
+import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 
 export type PublicInstance = Omit<InstanceData, "password">;
 

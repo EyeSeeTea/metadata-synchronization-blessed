@@ -2,9 +2,9 @@ import _ from "lodash";
 import { cleanNestedMappedId } from "../../../presentation/react/components/mapping-table/utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { DataSource } from "../../instance/entities/DataSource";
-import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
 import { cleanOrgUnitPaths } from "../../synchronization/utils";
 import { MappingConfig } from "../entities/MappingConfig";
+import { MetadataMappingDictionary } from "../entities/MetadataMapping";
 import { GenericMappingUseCase } from "./GenericMappingUseCase";
 
 export class ApplyMappingUseCase extends GenericMappingUseCase implements UseCase {

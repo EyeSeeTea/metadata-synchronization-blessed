@@ -1,5 +1,5 @@
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
-import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { PackageSource } from "./PackageSource";
 
 interface PackageImportRuleData {

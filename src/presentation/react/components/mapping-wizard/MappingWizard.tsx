@@ -6,7 +6,7 @@ import { DataSource } from "../../../../domain/instance/entities/DataSource";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
-} from "../../../../domain/instance/entities/MetadataMapping";
+} from "../../../../domain/mapping/entities/MetadataMapping";
 import i18n from "../../../../locales";
 import { MetadataType } from "../../../../utils/d2";
 import { MappingTableProps } from "../mapping-table/MappingTable";
