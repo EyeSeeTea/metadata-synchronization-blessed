@@ -1,12 +1,17 @@
 import { useSnackbar } from "d2-ui-components";
-import React, { useEffect, useState } from "react";
+import _ from "lodash";
+import React, { useCallback, useEffect, useState } from "react";
 import { DataSource } from "../../../../../domain/instance/entities/DataSource";
 import { JSONDataSource } from "../../../../../domain/instance/entities/JSONDataSource";
+import { DataSourceMapping } from "../../../../../domain/mapping/entities/DataSourceMapping";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
 } from "../../../../../domain/mapping/entities/MetadataMapping";
-import { isInstance } from "../../../../../domain/package-import/entities/PackageSource";
+import {
+    isInstance,
+    PackageSource,
+} from "../../../../../domain/package-import/entities/PackageSource";
 import { ListPackage } from "../../../../../domain/packages/entities/Package";
 import i18n from "../../../../../locales";
 import {
@@ -30,10 +35,7 @@ const models = [
     OrganisationUnitMappedModel,
 ];
 
-export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
-    packageImportRule,
-    onChange,
-}) => {
+export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({ packageImportRule }) => {
     const { compositionRoot, api } = useAppContext();
     const snackbar = useSnackbar();
 
@@ -42,9 +44,93 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
     const [instance, setInstance] = useState<DataSource>();
 
     const [packageFilter, setPackageFilter] = useState<string>(packageImportRule.packageIds[0]);
-    const [currentMetadataMapping, setCurrentMetadataMapping] = useState<MetadataMappingDictionary>(
-        {}
+    const [dataSourceMapping, setDataSourceMapping] = useState<DataSourceMapping>();
+
+    const onChangeMapping = useCallback(
+        async (metadataMapping: MetadataMappingDictionary) => {
+            if (!dataSourceMapping) {
+                snackbar.error(i18n.t("Attempting to update mapping without a valid data source"));
+                return;
+            }
+
+            const newMapping = dataSourceMapping.updateMappingDictionary(metadataMapping);
+
+            const result = await compositionRoot.mapping.save(newMapping);
+            result.match({
+                error: () => {
+                    snackbar.error(i18n.t("Could not save mapping"));
+                },
+                success: () => {
+                    setDataSourceMapping(newMapping);
+                },
+            });
+        },
+        [compositionRoot, dataSourceMapping, snackbar]
     );
+
+    const onApplyGlobalMapping = useCallback(
+        async (type: string, id: string, subMapping: MetadataMapping) => {
+            if (!dataSourceMapping) return;
+            const newMapping = _.clone(dataSourceMapping.mappingDictionary);
+            _.set(newMapping, [type, id], { ...subMapping, global: true });
+            await onChangeMapping(newMapping);
+        },
+        [dataSourceMapping, onChangeMapping]
+    );
+
+    const packageFilterComponent = (
+        <Dropdown
+            key="filter-package"
+            items={packages}
+            onValueChange={setPackageFilter}
+            value={packageFilter}
+            label={i18n.t("Package")}
+            hideEmpty={true}
+        />
+    );
+
+    const updateDataSource = useCallback(
+        async (source: PackageSource, packageId: string) => {
+            if (isInstance(source)) {
+                const mapping = await compositionRoot.mapping.get({
+                    type: "instance",
+                    id: source.id,
+                });
+
+                setDataSourceMapping(mapping);
+                setInstance(source);
+            } else {
+                const result = await compositionRoot.packages.getStore(source.id, packageId);
+
+                await result.match({
+                    error: async () => {
+                        snackbar.error(i18n.t("Unknown error happened loading store"));
+                    },
+                    success: async ({ dhisVersion, contents, module }) => {
+                        const owner = {
+                            type: "store" as const,
+                            id: source.id,
+                            moduleId: module.id,
+                        };
+
+                        const mapping = await compositionRoot.mapping.get(owner);
+                        const defaultMapping = DataSourceMapping.build({
+                            owner,
+                            mappingDictionary: {},
+                        });
+
+                        setDataSourceMapping(mapping ?? defaultMapping);
+                        setInstance(JSONDataSource.build(dhisVersion, contents));
+                    },
+                });
+            }
+        },
+        [compositionRoot, snackbar]
+    );
+
+    useEffect(() => {
+        updateDataSource(packageImportRule.source, packageFilter);
+    }, [updateDataSource, packageFilter, packageImportRule.source]);
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
@@ -84,81 +170,22 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
         }
     }, [compositionRoot, packageImportRule, globalAdmin, snackbar]);
 
-    const onChangePackageFilter = (selectedPackageId: string) => {
-        const metadataMapping = packageImportRule.mappingByPackageId[selectedPackageId] || {};
-
-        setCurrentMetadataMapping(metadataMapping);
-        setPackageFilter(selectedPackageId);
-    };
-
-    const onChangeMapping = async (metadataMapping: MetadataMappingDictionary) => {
-        setCurrentMetadataMapping(metadataMapping);
-
-        const metadataMappingsByPackageId = {
-            ...packageImportRule.mappingByPackageId,
-            [packageFilter]: metadataMapping,
-        };
-        onChange(packageImportRule.updateMappingsByPackageId(metadataMappingsByPackageId));
-
-        // if (!instance) return;
-        // const newInstance = instance.update({ metadataMapping });
-        // await compositionRoot.instances.save(newInstance);
-        // setInstance(newInstance);
-    };
-
-    const onApplyGlobalMapping = async (
-        _type: string,
-        _id: string,
-        _subMapping: MetadataMapping
-    ) => {
-        // if (!instance) return;
-        // const newMapping = _.clone(instance.metadataMapping);
-        // _.set(newMapping, [type, id], { ...subMapping, global: true });
-        // await onChangeMapping(newMapping);
-    };
-
-    const packageFilterComponent = (
-        <Dropdown
-            key="filter-package"
-            items={packages}
-            onValueChange={onChangePackageFilter}
-            value={packageFilter}
-            label={i18n.t("Package")}
-            hideEmpty={true}
-        />
-    );
-
-    useEffect(() => {
-        if (isInstance(packageImportRule.source)) return setInstance(packageImportRule.source);
-
-        compositionRoot.packages
-            .getStore(packageImportRule.source.id, packageFilter)
-            .then(result => {
-                setInstance(
-                    JSONDataSource.build(
-                        result.value.data?.dhisVersion ?? "",
-                        result.value.data?.contents ?? {}
-                    )
-                );
-            });
-    }, [compositionRoot, packageFilter, packageImportRule.source]);
-
-    //TODO: mapping table reading from store
-
     return (
         <React.Fragment>
-            <MappingTable
-                models={models}
-                originInstance={instance}
-                destinationInstance={compositionRoot.localInstance}
-                mapping={currentMetadataMapping}
-                globalMapping={currentMetadataMapping}
-                onChangeMapping={onChangeMapping}
-                onApplyGlobalMapping={onApplyGlobalMapping}
-                externalFilterComponents={packageFilterComponent}
-                viewFilters={["onlySelected"]}
-                showResponsible={false}
-            />
+            {dataSourceMapping && (
+                <MappingTable
+                    models={models}
+                    originInstance={instance}
+                    destinationInstance={compositionRoot.localInstance}
+                    mapping={dataSourceMapping.mappingDictionary}
+                    globalMapping={dataSourceMapping.mappingDictionary}
+                    onChangeMapping={onChangeMapping}
+                    onApplyGlobalMapping={onApplyGlobalMapping}
+                    externalFilterComponents={packageFilterComponent}
+                    viewFilters={["onlySelected"]}
+                    showResponsible={false}
+                />
+            )}
         </React.Fragment>
     );
 };

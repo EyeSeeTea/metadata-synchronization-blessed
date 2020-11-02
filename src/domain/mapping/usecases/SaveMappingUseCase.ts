@@ -3,7 +3,8 @@ import { UseCase } from "../../common/entities/UseCase";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
-import { isMappingStoreOwner, Mapping } from "../entities/DataSourceMapping";
+import { DataSourceMapping } from "../entities/DataSourceMapping";
+import { isMappingOwnerStore } from "../entities/MappingOwner";
 
 export type SaveMappingError = "UNEXPECTED_ERROR" | "INSTANCE_NOT_FOUND";
 
@@ -12,8 +13,10 @@ export type SaveMappingResult = { type: "instance"; instance: Instance } | { typ
 export class SaveMappingUseCase implements UseCase {
     constructor(private storageRepository: StorageRepository) {}
 
-    public async execute(mapping: Mapping): Promise<Either<SaveMappingError, SaveMappingResult>> {
-        if (isMappingStoreOwner(mapping.owner)) {
+    public async execute(
+        mapping: DataSourceMapping
+    ): Promise<Either<SaveMappingError, SaveMappingResult>> {
+        if (isMappingOwnerStore(mapping.owner)) {
             await this.storageRepository.saveObjectInCollection(
                 Namespace.MAPPINGS,
                 mapping.toObject()
