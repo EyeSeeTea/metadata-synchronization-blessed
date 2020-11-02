@@ -186,7 +186,9 @@ export default function MappingTable({
             if (!firstElement || !mappingType || !elementMapping?.mappedId) {
                 snackbar.error(i18n.t("You need to map the item before applying a global mapping"));
             } else {
-                await applyMapping([{ selection, mappingType, global: false, mappedId: undefined }]);
+                await applyMapping([
+                    { selection, mappingType, global: false, mappedId: undefined },
+                ]);
                 await onApplyGlobalMapping(mappingType, cleanNestedMappedId(id), elementMapping);
                 snackbar.success(i18n.t("Successfully applied global mapping"));
             }

@@ -22,11 +22,19 @@ export class MetadataJSONRepository implements MetadataRepository {
         }
 
         this.instance = instance;
-        console.log(this.transformationRepository);
     }
 
-    public async listMetadata(listParams: ListMetadataParams): Promise<ListMetadataResponse> {
-        const { type, page = 1, pageSize = 25, paging = true, search, order } = listParams;
+    public async listMetadata({
+        type,
+        page = 1,
+        pageSize = 25,
+        paging = true,
+        search,
+        order,
+        showOnlySelected,
+        selectedIds,
+        filterRows,
+    }: ListMetadataParams): Promise<ListMetadataResponse> {
         const baseObjects = this.instance.metadata[type] ?? [];
 
         const filteredObjects = _(baseObjects)
@@ -40,11 +48,17 @@ export class MetadataJSONRepository implements MetadataRepository {
                     case "!eq":
                         return value !== lookup;
                     case "token":
-                        return value.includes(lookup);
+                        return tokenSearch(value, lookup);
                     default:
-                        console.error("TODO: Default case", { item, search });
+                        console.error("Search operator not implemented", { item, search });
                         return false;
                 }
+            })
+            .filter(item => {
+                const enableFilter = showOnlySelected || filterRows;
+                if (!enableFilter) return true;
+
+                return selectedIds?.includes(item.id) || filterRows?.includes(item.id);
             })
             .orderBy(
                 [data => data[order?.field ?? "name"]?.toLowerCase() ?? ""],
@@ -67,22 +81,36 @@ export class MetadataJSONRepository implements MetadataRepository {
         return { objects, pager: { page, pageSize, total } };
     }
 
-    public async lookupSimilar(_query: IdentifiableRef): Promise<MetadataPackage<IdentifiableRef>> {
-        throw new Error("Method not implemented.");
+    public async listAllMetadata(params: ListMetadataParams): Promise<MetadataEntity[]> {
+        const { objects } = await this.listMetadata({ ...params, paging: false });
+        return objects;
+    }
+
+    public async lookupSimilar(query: IdentifiableRef): Promise<MetadataPackage<IdentifiableRef>> {
+        return _.mapValues(this.instance.metadata, items => {
+            const filtered = items?.find(item => {
+                const sameId = item.id === query.id;
+                const sameCode = item.code === query.code;
+                const sameName = tokenSearch(item.name, query.name);
+                const sameShortName = tokenSearch(item.shortName, query.shortName ?? "");
+
+                return sameId || sameCode || sameName || sameShortName;
+            });
+            return filtered as IdentifiableRef[];
+        });
     }
 
     public async getMetadataByIds<T>(
-        _ids: string[],
+        ids: string[],
         _fields?: object | string
     ): Promise<MetadataPackage<T>> {
-        throw new Error("Method not implemented.");
+        return _.mapValues(this.instance.metadata, items => {
+            const filtered = items?.filter(item => ids.includes(item.id)) ?? [];
+            return filtered as T[];
+        });
     }
 
     public async getByFilterRules(_filterRules: FilterRule[]): Promise<string[]> {
-        throw new Error("Method not implemented.");
-    }
-
-    public async listAllMetadata(_params: ListMetadataParams): Promise<MetadataEntity[]> {
         throw new Error("Method not implemented.");
     }
 
@@ -90,6 +118,7 @@ export class MetadataJSONRepository implements MetadataRepository {
         _metadata: MetadataPackage,
         _additionalParams?: MetadataImportParams
     ): Promise<SynchronizationResult> {
+        console.log(this.transformationRepository);
         throw new Error("Method not implemented.");
     }
 
@@ -100,3 +129,14 @@ export class MetadataJSONRepository implements MetadataRepository {
         throw new Error("Method not implemented.");
     }
 }
+
+const tokenSearch = (source: string, lookup: string): boolean => {
+    if (!source || !lookup) return false;
+
+    return _.some(
+        lookup
+            .toLowerCase()
+            .split(" ")
+            .map(token => source.toLowerCase().includes(token))
+    );
+};

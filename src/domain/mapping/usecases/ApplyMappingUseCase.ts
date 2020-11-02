@@ -1,7 +1,7 @@
 import _ from "lodash";
 import {
     cleanNestedMappedId,
-    EXCLUDED_KEY
+    EXCLUDED_KEY,
 } from "../../../presentation/react/components/mapping-table/utils";
 import { Dictionary } from "../../../types/utils";
 import { NamedRef } from "../../common/entities/Ref";
@@ -11,12 +11,12 @@ import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import {
     MetadataMapping,
-    MetadataMappingDictionary
+    MetadataMappingDictionary,
 } from "../../instance/entities/MetadataMapping";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import {
     MetadataRepository,
-    MetadataRepositoryConstructor
+    MetadataRepositoryConstructor,
 } from "../../metadata/repositories/MetadataRepository";
 import { Repositories } from "../../Repositories";
 import { cleanOrgUnitPaths } from "../../synchronization/utils";

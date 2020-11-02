@@ -44,7 +44,7 @@ export interface ListMetadataParams {
     order?: { field: string; order: "asc" | "desc" };
     page?: number;
     pageSize?: number;
-    paging?: false;
+    paging?: boolean;
     lastUpdated?: Date;
     parents?: string[];
     filterRows?: string[];
