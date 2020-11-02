@@ -286,6 +286,23 @@ export default function MappingTable({
 
     const applyAutoMapping = useCallback(
         async (elements: string[]) => {
+            const types = _(rows)
+                .filter(({ id }) => elements.includes(id))
+                .map(row => row.model.getMappingType())
+                .uniq()
+                .compact()
+                .value();
+
+            const id = elements[0];
+            const firstElement = _.find(rows, ["id", id]);
+            const global = firstElement?.model.getIsGlobalMapping();
+
+            if (types.length === 0) {
+                snackbar.error(i18n.t("You need to select at least one valid item"));
+            } else if (types.length > 1) {
+                snackbar.error(i18n.t("You need to select all items from the same type"));
+            }
+
             try {
                 loading.show(
                     true,
@@ -294,8 +311,8 @@ export default function MappingTable({
                     })
                 );
 
-                const tasks: MappingConfig[] = [];
-                const errors: string[] = [];
+                const oldTasks: MappingConfig[] = [];
+                const oldErrors: string[] = [];
 
                 for (const id of elements) {
                     const row = _.find(rows, ["id", id]);
@@ -319,22 +336,45 @@ export default function MappingTable({
                         const { mappedId } = _.first(candidates) ?? {};
 
                         if (!mappedId || !mappingType) {
-                            errors.push(
+                            oldErrors.push(
                                 i18n.t(
                                     "Could not find a suitable candidate to apply auto-mapping for {{id}}",
                                     { id: cleanNestedMappedId(id) }
                                 )
                             );
                         } else {
-                            tasks.push({ selection: [id], mappingType, mappedId });
+                            oldTasks.push({ selection: [id], mappingType, mappedId });
                         }
                     }
                 }
 
+                const { tasks, errors } = await compositionRoot.mapping.autoMap(
+                    originInstance ?? compositionRoot.localInstance,
+                    destinationInstance,
+                    mapping,
+                    types[0],
+                    elements,
+                    global
+                );
+
+                console.log("Auto mapping tasks", _.isEqual(tasks, oldTasks), {
+                    tasks,
+                    oldTasks,
+                });
+                
                 await applyMapping(tasks);
 
                 if (errors.length > 0) {
-                    snackbar.error(errors.join("\n"));
+                    snackbar.error(
+                        errors
+                            .map(id =>
+                                i18n.t(
+                                    "Could not find a suitable candidate to apply auto-mapping for {{id}}",
+                                    { id }
+                                )
+                            )
+                            .join("\n")
+                    );
                 } else if (elements.length === 1) {
                     const firstElement = _.find(rows, ["id", elements[0]]);
                     const mappingType = firstElement?.model.getMappingType();
@@ -353,7 +393,19 @@ export default function MappingTable({
             }
             loading.reset();
         },
-        [api, loading, applyMapping, instanceApi, rows, snackbar, mappingPath, mapping]
+        [
+            compositionRoot,
+            destinationInstance,
+            originInstance,
+            api,
+            loading,
+            applyMapping,
+            instanceApi,
+            rows,
+            snackbar,
+            mappingPath,
+            mapping,
+        ]
     );
 
     const openMappingDialog = useCallback(
