@@ -9,31 +9,31 @@ import {
     TableSelection,
     TableState,
     useLoading,
-    useSnackbar,
+    useSnackbar
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { BasePackage, ListPackage, Package } from "../../../../domain/packages/entities/Package";
-import i18n from "../../../../locales";
-import SyncReport from "../../../../models/syncReport";
-import { isAppConfigurator, isGlobalAdmin } from "../../../../utils/permissions";
-import Dropdown from "../dropdown/Dropdown";
-import { PackagesDiffDialog, PackageToDiff } from "../packages-diff-dialog/PackagesDiffDialog";
-import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
-import { useAppContext } from "../../contexts/AppContext";
-import { ImportedPackage } from "../../../../domain/package-import/entities/ImportedPackage";
 import semver from "semver";
-import { Instance } from "../../../../domain/instance/entities/Instance";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Either } from "../../../../domain/common/entities/Either";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
+import { Instance } from "../../../../domain/instance/entities/Instance";
+import { ImportedPackage } from "../../../../domain/package-import/entities/ImportedPackage";
 import {
     isInstance,
     isStore,
-    PackageSource,
+    PackageSource
 } from "../../../../domain/package-import/entities/PackageSource";
 import { mapToImportedPackage } from "../../../../domain/package-import/mappers/ImportedPackageMapper";
-import { Either } from "../../../../domain/common/entities/Either";
+import { BasePackage, ListPackage, Package } from "../../../../domain/packages/entities/Package";
+import { Store } from "../../../../domain/packages/entities/Store";
+import i18n from "../../../../locales";
+import SyncReport from "../../../../models/syncReport";
+import { isAppConfigurator, isGlobalAdmin } from "../../../../utils/permissions";
+import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
+import { useAppContext } from "../../contexts/AppContext";
+import Dropdown from "../dropdown/Dropdown";
 import PackageImportDialog from "../package-import-dialog/PackageImportDialog";
+import { PackagesDiffDialog, PackageToDiff } from "../packages-diff-dialog/PackagesDiffDialog";
 
 type InstallState = "Installed" | "NotInstalled" | "Upgrade" | "Local";
 type TableListPackage = Omit<BasePackage, "contents"> & { installState: InstallState };
@@ -67,9 +67,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const rows = remoteStore ? storePackages : instancePackages;
 
     const [resetKey, setResetKey] = useState(Math.random());
-    const [selection, updateSelection] = useState<TableSelection[]>(
-        selectedIds?.map(id => ({ id })) || []
-    );
+    const [stateSelection, updateStateSelection] = useState<TableSelection[]>([]);
+    const selection = selectedIds?.map(id => ({ id })) ?? stateSelection;
 
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
     const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
@@ -87,11 +86,16 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const isRemoteInstance = !!remoteInstance;
 
-    useEffect(() => {
-        api.getVersion().then(setLocalDhis2Version);
-    }, [api]);
+    const updateSelection = useCallback(
+        (selection: TableSelection[]) => {
+            updateStateSelection(selection);
 
-    useEffect(() => updateSelection([]), [remoteInstance, remoteStore]);
+            if (onSelectionChange) {
+                onSelectionChange(selection.map(selection => selection.id));
+            }
+        },
+        [onSelectionChange]
+    );
 
     const deletePackages = useCallback(
         async (ids: string[]) => {
@@ -103,19 +107,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             setResetKey(Math.random());
             updateSelection([]);
         },
-        [compositionRoot, loading]
+        [compositionRoot, loading, updateSelection]
     );
 
     const updateTable = useCallback(
         ({ selection }: TableState<TableListPackage>) => {
             updateSelection(selection);
-
-            if (onSelectionChange) {
-                const selectedIds = selection.map(selection => selection.id);
-                onSelectionChange(selectedIds);
-            }
         },
-        [updateSelection, onSelectionChange]
+        [updateSelection]
     );
 
     const downloadPackage = useCallback(
@@ -583,6 +582,30 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         );
     }, [moduleFilter, rows, dhis2VersionFilter, installStateFilter]);
 
+    const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
+        setOpenImportPackageDialog(false);
+        setToImportWizard([]);
+        openSyncSummary(syncReport);
+        setResetKey(Math.random);
+    };
+
+    const handleCloseImportWizard = () => {
+        setOpenImportPackageDialog(false);
+        setToImportWizard([]);
+    };
+
+    const showImportFromWizardButton =
+        !isImportDialog &&
+        presentation === "app" &&
+        (isRemoteInstance || remoteStore) &&
+        appConfigurator;
+
+    const packageSource = remoteInstance ?? remoteStore;
+
+    useEffect(() => {
+        api.getVersion().then(setLocalDhis2Version);
+    }, [api]);
+
     useEffect(() => {
         setLoadingTable(true);
         compositionRoot.packages
@@ -657,26 +680,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         isAppConfigurator(api).then(setAppConfigurator);
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
-
-    const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
-        setOpenImportPackageDialog(false);
-        setToImportWizard([]);
-        openSyncSummary(syncReport);
-        setResetKey(Math.random);
-    };
-
-    const handleCloseImportWizard = () => {
-        setOpenImportPackageDialog(false);
-        setToImportWizard([]);
-    };
-
-    const showImportFromWizardButton =
-        !isImportDialog &&
-        presentation === "app" &&
-        (isRemoteInstance || remoteStore) &&
-        appConfigurator;
-
-    const packageSource = remoteInstance ?? remoteStore;
 
     return (
         <React.Fragment>
