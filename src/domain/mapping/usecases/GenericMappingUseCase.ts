@@ -277,8 +277,9 @@ export abstract class GenericMappingUseCase {
     }
 
     protected getCategoryOptions(object: CombinedMetadata) {
+        // TODO: FIXME
         return _.flatten(
-            object.categoryCombo?.categories.map(({ id: category, categoryOptions }) =>
+            object.categoryCombo?.categories?.map(({ id: category, categoryOptions }) =>
                 categoryOptions.map(({ id, ...rest }) => ({
                     id: `${category}-${id}`,
                     model: "categoryOptions",
