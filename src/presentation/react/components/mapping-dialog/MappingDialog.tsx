@@ -10,7 +10,7 @@ import i18n from "../../../../locales";
 import { modelFactory } from "../../../../models/dhis/factory";
 import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../contexts/AppContext";
-import { buildDataElementFilterForProgram, getValidIds } from "../mapping-table/utils";
+import { EXCLUDED_KEY } from "../mapping-table/utils";
 import MetadataTable from "../metadata-table/MetadataTable";
 
 export interface MappingDialogConfig {
@@ -79,13 +79,14 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 
     useEffect(() => {
         if (mappingPath) {
-            const parentModel = modelFactory(mappingPath[0]);
             const parentMappedId = mappingPath[2];
-            getValidIds(api, parentModel, parentMappedId).then(setFilterRows);
+            compositionRoot.mapping.getValidIds(instance, parentMappedId).then(setFilterRows);
         } else if (mappingType === "programDataElements" && elements.length === 1) {
-            buildDataElementFilterForProgram(api, elements[0], mapping).then(setFilterRows);
+            compositionRoot.mapping.getValidIds(instance, elements[0]).then(validIds => {
+                setFilterRows(buildDataElementFilterForProgram(validIds, elements[0], mapping));
+            });
         }
-    }, [api, mappingPath, elements, mapping, mappingType]);
+    }, [compositionRoot, instance, api, mappingPath, elements, mapping, mappingType]);
 
     const onUpdateSelection = (selectedIds: string[]) => {
         const newSelection = _.last(selectedIds);
@@ -160,6 +161,18 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             </DialogContent>
         </ConfirmationDialog>
     );
+};
+
+const buildDataElementFilterForProgram = (
+    validIds: string[],
+    nestedId: string,
+    mapping: MetadataMappingDictionary
+): string[] | undefined => {
+    const originProgramId = nestedId.split("-")[0];
+    const { mappedId } = _.get(mapping, ["eventPrograms", originProgramId]) ?? {};
+
+    if (!mappedId || mappedId === EXCLUDED_KEY) return undefined;
+    return [...validIds, mappedId];
 };
 
 export default MappingDialog;

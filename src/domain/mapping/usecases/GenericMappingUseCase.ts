@@ -48,6 +48,11 @@ export abstract class GenericMappingUseCase {
         );
     }
 
+    protected createMetadataArray(metadata: MetadataPackage<NamedRef>) {
+        const dictionary = this.createMetadataDictionary(metadata);
+        return _.values(dictionary);
+    }
+
     protected getMetadataRepository(
         remoteInstance: DataSource = this.localInstance
     ): MetadataRepository {
@@ -308,6 +313,16 @@ export abstract class GenericMappingUseCase {
 
     protected getProgramStages(object: CombinedMetadata) {
         return object.programStages?.map(item => ({ ...item, model: "programStages" })) ?? [];
+    }
+
+    protected getProgramStageDataElements(object: CombinedMetadata) {
+        return _.compact(
+            _.flatten(
+                object.programStages?.map(({ programStageDataElements }) =>
+                    programStageDataElements?.map(({ dataElement }) => dataElement)
+                )
+            )
+        );
     }
 }
 
