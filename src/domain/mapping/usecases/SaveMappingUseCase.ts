@@ -8,21 +8,17 @@ import { isMappingOwnerStore } from "../entities/MappingOwner";
 
 export type SaveMappingError = "UNEXPECTED_ERROR" | "INSTANCE_NOT_FOUND";
 
-export type SaveMappingResult = { type: "instance"; instance: Instance } | { type: "store" };
-
 export class SaveMappingUseCase implements UseCase {
     constructor(private storageRepository: StorageRepository) {}
 
-    public async execute(
-        mapping: DataSourceMapping
-    ): Promise<Either<SaveMappingError, SaveMappingResult>> {
+    public async execute(mapping: DataSourceMapping): Promise<Either<SaveMappingError, void>> {
         if (isMappingOwnerStore(mapping.owner)) {
             await this.storageRepository.saveObjectInCollection(
                 Namespace.MAPPINGS,
                 mapping.toObject()
             );
 
-            return Either.success({ type: "store" });
+            return Either.success(undefined);
         } else {
             const rawInstance = await this.storageRepository.getObjectInCollection<InstanceData>(
                 Namespace.INSTANCES,
@@ -43,7 +39,7 @@ export class SaveMappingUseCase implements UseCase {
                     updatedInstance.toObject()
                 );
 
-                return Either.success({ type: "instance", instance });
+                return Either.success(undefined);
             }
         }
     }
