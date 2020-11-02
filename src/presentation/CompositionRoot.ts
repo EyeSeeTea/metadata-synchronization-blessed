@@ -23,6 +23,8 @@ import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesU
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
 import { ApplyMappingUseCase } from "../domain/mapping/usecases/ApplyMappingUseCase";
+import { GetMappingByOwnerUseCase } from "../domain/mapping/usecases/GetMappingByOwnerUseCase";
+import { SaveMappingUseCase } from "../domain/mapping/usecases/SaveMappingUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { GetResponsiblesUseCase } from "../domain/metadata/usecases/GetResponsiblesUseCase";
 import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
@@ -190,6 +192,16 @@ export class CompositionRoot {
             download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),
             publish: new PublishStorePackageUseCase(this.repositoryFactory, this.localInstance),
             diff: new DiffPackageUseCase(this, this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get mappings() {
+        const storage = new StorageDataStoreRepository(this.localInstance);
+
+        return getExecute({
+            get: new GetMappingByOwnerUseCase(storage),
+            save: new SaveMappingUseCase(storage),
         });
     }
 
