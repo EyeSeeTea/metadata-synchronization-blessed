@@ -112,6 +112,10 @@ export class MetadataJSONRepository implements MetadataRepository {
         });
     }
 
+    public async getDefaultIds(_filter?: string): Promise<string[]> {
+        return [];
+    }
+
     public async getByFilterRules(_filterRules: FilterRule[]): Promise<string[]> {
         throw new Error("Method not implemented.");
     }

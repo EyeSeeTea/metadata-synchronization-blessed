@@ -141,6 +141,27 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         return (response as unknown) as MetadataPackage<IdentifiableRef>;
     }
 
+    @cache()
+    public async getDefaultIds(filter?: string): Promise<string[]> {
+        const response = (await this.api
+            .get("/metadata", {
+                filter: "code:eq:default",
+                fields: "id",
+            })
+            .getData()) as {
+            [key: string]: { id: string }[];
+        };
+
+        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
+
+        return _(metadata)
+            .omit(["system"])
+            .values()
+            .flatten()
+            .map(({ id }) => id)
+            .value();
+    }
+
     private async getParentObjects(params: ListMetadataParams): Promise<unknown[]> {
         if (params.includeParents && isNotEmpty(params.parents)) {
             const parentIds = params.parents.map(ou => _(ou).split("/").last() || "");

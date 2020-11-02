@@ -22,6 +22,7 @@ export interface MetadataRepository {
         includeDefaults?: boolean
     ): Promise<MetadataPackage<T>>;
     getByFilterRules(filterRules: FilterRule[]): Promise<Id[]>;
+    getDefaultIds(filter?: string): Promise<string[]>;
 
     listMetadata(params: ListMetadataParams): Promise<ListMetadataResponse>;
     listAllMetadata(params: ListMetadataParams): Promise<MetadataEntity[]>;

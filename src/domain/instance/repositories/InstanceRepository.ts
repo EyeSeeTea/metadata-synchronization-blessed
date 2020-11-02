@@ -17,7 +17,6 @@ export interface InstanceRepository {
     getBaseUrl(): string;
     getUser(): Promise<User>;
     getVersion(): Promise<string>;
-    getDefaultIds(filter?: string): Promise<string[]>;
     getCategoryOptionCombos(): Promise<
         Pick<CategoryOptionCombo, "id" | "name" | "categoryCombo" | "categoryOptions">[]
     >;

@@ -153,11 +153,12 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         { events: oldEvents }: EventsPackage
     ): Promise<SyncronizationPayload> {
         const instanceRepository = await this.getInstanceRepository();
+        const metadataRepository = await this.getMetadataRepository();
         const remoteInstanceRepository = await this.getInstanceRepository(instance);
 
         const originCategoryOptionCombos = await instanceRepository.getCategoryOptionCombos();
         const destinationCategoryOptionCombos = await remoteInstanceRepository.getCategoryOptionCombos();
-        const defaultCategoryOptionCombos = await instanceRepository.getDefaultIds(
+        const defaultCategoryOptionCombos = await metadataRepository.getDefaultIds(
             "categoryOptionCombos"
         );
 
