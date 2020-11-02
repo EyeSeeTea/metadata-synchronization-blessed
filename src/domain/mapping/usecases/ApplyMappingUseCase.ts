@@ -24,6 +24,7 @@ export class ApplyMappingUseCase extends GenericMappingUseCase implements UseCas
             const metadata = this.createMetadataDictionary(metadataResponse);
 
             const newMapping = _.cloneDeep(mapping);
+
             for (const {
                 selection,
                 mappingType,

@@ -1,5 +1,8 @@
 import _ from "lodash";
-import { EXCLUDED_KEY } from "../../../presentation/react/components/mapping-table/utils";
+import {
+    cleanNestedMappedId,
+    EXCLUDED_KEY,
+} from "../../../presentation/react/components/mapping-table/utils";
 import { Dictionary } from "../../../types/utils";
 import { NamedRef } from "../../common/entities/Ref";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
@@ -209,7 +212,7 @@ export abstract class GenericMappingUseCase {
         destinationMetadata: CombinedMetadata[]
     ) {
         if (originMetadata.length === 0) return {};
-        const filter = _.compact(destinationMetadata.map(({ id }) => id));
+        const filter = _.compact(destinationMetadata.map(({ id }) => cleanNestedMappedId(id)));
 
         const mapping: {
             [id: string]: MetadataMapping;
@@ -219,7 +222,7 @@ export abstract class GenericMappingUseCase {
             const [candidate] = await this.autoMap({
                 originInstance,
                 destinationInstance,
-                selectedItemId: item.id,
+                selectedItemId: cleanNestedMappedId(item.id),
                 defaultValue: EXCLUDED_KEY,
                 filter,
             });
