@@ -1,5 +1,5 @@
 import { FilterSingleOperatorBase } from "d2-api/api/common";
-import { Ref } from "../../common/entities/Ref";
+import { IdentifiableRef, Ref } from "../../common/entities/Ref";
 import { Id } from "../../common/entities/Schemas";
 import { DataSource } from "../../instance/entities/DataSource";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
@@ -21,6 +21,7 @@ export interface MetadataRepository {
 
     listMetadata(params: ListMetadataParams): Promise<ListMetadataResponse>;
     listAllMetadata(params: ListMetadataParams): Promise<MetadataEntity[]>;
+    lookupSimilar(query: IdentifiableRef): Promise<MetadataPackage<IdentifiableRef>>;
 
     save(
         metadata: MetadataPackage,

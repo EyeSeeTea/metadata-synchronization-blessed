@@ -2,7 +2,7 @@ import { FilterValueBase } from "d2-api/api/common";
 import _ from "lodash";
 import moment from "moment";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
-import { Ref } from "../../domain/common/entities/Ref";
+import { IdentifiableRef, Ref } from "../../domain/common/entities/Ref";
 import { DataSource } from "../../domain/instance/entities/DataSource";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
@@ -117,6 +117,27 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         );
 
         return metadataPackage[type as keyof MetadataEntities] ?? [];
+    }
+
+    public async lookupSimilar(query: IdentifiableRef): Promise<MetadataPackage<IdentifiableRef>> {
+        const response = await this.api.metadata
+            .get({
+                //@ts-ignore
+                "": {
+                    fields: { id: true, code: true, name: true, path: true, level: true },
+                    filter: {
+                        name: { token: query.name },
+                        shortName: { token: query.shortName },
+                        id: { eq: query.id },
+                        code: { eq: query.code },
+                    },
+                    rootJunction: "OR",
+                    paging: false,
+                },
+            })
+            .getData();
+
+        return (response as unknown) as MetadataPackage<IdentifiableRef>;
     }
 
     private async getParentObjects(params: ListMetadataParams): Promise<unknown[]> {

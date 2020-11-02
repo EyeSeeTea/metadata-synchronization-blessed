@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { IdentifiableRef } from "../../domain/common/entities/Ref";
 import { DataSource } from "../../domain/instance/entities/DataSource";
 import { JSONDataSource } from "../../domain/instance/entities/JSONDataSource";
 import { FilterRule } from "../../domain/metadata/entities/FilterRule";
@@ -64,6 +65,10 @@ export class MetadataJSONRepository implements MetadataRepository {
         const objects = _.slice(filteredObjects, firstItem, lastItem) as MetadataEntity[];
 
         return { objects, pager: { page, pageSize, total } };
+    }
+
+    public async lookupSimilar(_query: IdentifiableRef): Promise<MetadataPackage<IdentifiableRef>> {
+        throw new Error("Method not implemented.");
     }
 
     public async getMetadataByIds<T>(
