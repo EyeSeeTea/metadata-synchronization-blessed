@@ -25,7 +25,9 @@ import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateIns
 import { ApplyMappingUseCase } from "../domain/mapping/usecases/ApplyMappingUseCase";
 import { AutoMapUseCase } from "../domain/mapping/usecases/AutoMapUseCase";
 import { BuildMappingUseCase } from "../domain/mapping/usecases/BuildMappingUseCase";
+import { GetMappingByOwnerUseCase } from "../domain/mapping/usecases/GetMappingByOwnerUseCase";
 import { GetValidMappingIdUseCase } from "../domain/mapping/usecases/GetValidMappingIdUseCase";
+import { SaveMappingUseCase } from "../domain/mapping/usecases/SaveMappingUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { GetResponsiblesUseCase } from "../domain/metadata/usecases/GetResponsiblesUseCase";
 import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
@@ -280,7 +282,11 @@ export class CompositionRoot {
 
     @cache()
     public get mapping() {
+        const storage = new StorageDataStoreRepository(this.localInstance);
+
         return getExecute({
+            get: new GetMappingByOwnerUseCase(storage),
+            save: new SaveMappingUseCase(storage),
             apply: new ApplyMappingUseCase(this.repositoryFactory, this.localInstance),
             getValidIds: new GetValidMappingIdUseCase(this.repositoryFactory, this.localInstance),
             autoMap: new AutoMapUseCase(this.repositoryFactory, this.localInstance),
