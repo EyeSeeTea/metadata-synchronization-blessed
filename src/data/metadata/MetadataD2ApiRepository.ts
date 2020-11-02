@@ -1,4 +1,4 @@
-import { FilterValueBase } from "d2-api/api/common";
+import { FilterBase, FilterValueBase } from "d2-api/api/common";
 import _ from "lodash";
 import moment from "moment";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
@@ -121,24 +121,26 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     public async lookupSimilar(query: IdentifiableRef): Promise<MetadataPackage<IdentifiableRef>> {
-        const response = await this.api.metadata
-            .get({
-                //@ts-ignore
-                "": {
-                    fields: { id: true, code: true, name: true, path: true, level: true },
-                    filter: {
-                        name: { token: query.name },
-                        shortName: { token: query.shortName },
-                        id: { eq: query.id },
-                        code: { eq: query.code },
-                    },
-                    rootJunction: "OR",
-                    paging: false,
-                },
+        const response = await this.api
+            .get<MetadataPackage<IdentifiableRef>>("/metadata", {
+                fields: getFieldsAsString({
+                    id: true,
+                    code: true,
+                    name: true,
+                    path: true,
+                    level: true,
+                }),
+                filter: getFilterAsString({
+                    name: { token: query.name },
+                    id: { eq: query.id },
+                    code: { eq: query.code },
+                }),
+                rootJunction: "OR",
+                paging: false,
             })
             .getData();
 
-        return (response as unknown) as MetadataPackage<IdentifiableRef>;
+        return _.omit(response, ["system"]);
     }
 
     @cache()
@@ -554,4 +556,30 @@ function getFieldsAsString(modelFields: object): string {
         .compact()
         .sortBy()
         .join(",");
+}
+
+function toArray<T>(itemOrItems: T | T[]): T[] {
+    return Array.isArray(itemOrItems) ? itemOrItems : [itemOrItems];
+}
+
+function isEmptyFilterValue(val: any): boolean {
+    return val === undefined || val === null || val === "";
+}
+
+function getFilterAsString(filter: FilterBase): string[] {
+    return _.sortBy(
+        _.flatMap(filter, (filterOrFilters, field) =>
+            _.flatMap(toArray(filterOrFilters || []), filter =>
+                _.compact(
+                    _.map(filter, (value, op) =>
+                        isEmptyFilterValue(value)
+                            ? null
+                            : op === "in" || op === "!in"
+                            ? `${field}:${op}:[${(value as string[]).join(",")}]`
+                            : `${field}:${op}:${value}`
+                    )
+                )
+            )
+        )
+    );
 }
