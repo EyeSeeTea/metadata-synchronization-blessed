@@ -24,11 +24,9 @@ export abstract class GenericMappingUseCase {
     ) {}
 
     protected async getMetadata(instance: DataSource, ids: string[]) {
-        const metadata = await this.getMetadataRepository(instance).getMetadataByIds<
+        return this.getMetadataRepository(instance).getMetadataByIds<
             Omit<CombinedMetadata, "model">
         >(ids, fields, true);
-        console.log("metadata", metadata);
-        return metadata;
     }
 
     protected createMetadataDictionary(metadata: MetadataPackage<NamedRef>) {
@@ -125,13 +123,6 @@ export abstract class GenericMappingUseCase {
             originMetadata,
             destinationItem
         );
-
-        console.log("inner", {
-            originMetadata,
-            destinationItem,
-            categoryCombos,
-            categoryOptions,
-        });
 
         const mapping = _.omitBy(
             {
