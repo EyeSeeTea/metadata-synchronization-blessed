@@ -54,10 +54,14 @@ export class MetadataD2ApiRepository implements MetadataRepository {
      * Return raw specific fields of metadata dhis2 models according to ids filter
      * @param ids metadata ids to retrieve
      */
-    public async getMetadataByIds<T>(ids: string[], fields: string): Promise<MetadataPackage<T>> {
+    public async getMetadataByIds<T>(
+        ids: string[],
+        fields: object | string
+    ): Promise<MetadataPackage<T>> {
         const { apiVersion } = this.instance;
 
-        const d2Metadata = await this.getMetadata<D2Model>(ids, fields);
+        const requestFields = typeof fields === "string" ? fields : getFieldsAsString(fields);
+        const d2Metadata = await this.getMetadata<D2Model>(ids, requestFields);
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -391,20 +395,16 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         payload: Partial<Record<string, unknown[]>>,
         additionalParams?: MetadataImportParams
     ): Promise<MetadataResponse> {
-        const response = await this.api
-            .post<MetadataResponse>(
-                "/metadata",
-                {
-                    importMode: "COMMIT",
-                    identifier: "UID",
-                    importReportMode: "FULL",
-                    importStrategy: "CREATE_AND_UPDATE",
-                    mergeMode: "MERGE",
-                    atomicMode: "ALL",
-                    ...additionalParams,
-                },
-                payload
-            )
+        const response = await this.api.metadata
+            .post(payload, {
+                importMode: "COMMIT",
+                identifier: "UID",
+                importReportMode: "FULL",
+                importStrategy: "CREATE_AND_UPDATE",
+                mergeMode: "MERGE",
+                atomicMode: "ALL",
+                ...additionalParams,
+            })
             .getData();
 
         return response;
@@ -478,4 +478,36 @@ function getIdFilter(
     } else {
         return null;
     }
+}
+
+function applyFieldTransformers(key: string, value: any) {
+    if (value.hasOwnProperty("$fn")) {
+        switch (value["$fn"]["name"]) {
+            case "rename":
+                return {
+                    key: `${key}~rename(${value["$fn"]["to"]})`,
+                    value: _.omit(value, ["$fn"]),
+                };
+            default:
+                return { key, value };
+        }
+    } else {
+        return { key, value };
+    }
+}
+
+function getFieldsAsString(modelFields: object): string {
+    return _(modelFields)
+        .map((value0, key0: string) => {
+            const { key, value } = applyFieldTransformers(key0, value0);
+
+            if (typeof value === "boolean" || _.isEqual(value, {})) {
+                return value ? key.replace(/^\$/, ":") : null;
+            } else {
+                return key + "[" + getFieldsAsString(value) + "]";
+            }
+        })
+        .compact()
+        .sortBy()
+        .join(",");
 }

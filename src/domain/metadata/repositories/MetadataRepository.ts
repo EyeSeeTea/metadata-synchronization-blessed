@@ -16,7 +16,7 @@ export interface MetadataRepositoryConstructor {
 }
 
 export interface MetadataRepository {
-    getMetadataByIds<T>(ids: Id[], fields?: string): Promise<MetadataPackage<T>>;
+    getMetadataByIds<T>(ids: Id[], fields?: object | string): Promise<MetadataPackage<T>>;
     getByFilterRules(filterRules: FilterRule[]): Promise<Id[]>;
 
     listMetadata(params: ListMetadataParams): Promise<ListMetadataResponse>;

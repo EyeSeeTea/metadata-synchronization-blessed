@@ -68,7 +68,7 @@ export class MetadataJSONRepository implements MetadataRepository {
 
     public async getMetadataByIds<T>(
         _ids: string[],
-        _fields?: string
+        _fields?: object | string
     ): Promise<MetadataPackage<T>> {
         throw new Error("Method not implemented.");
     }
