@@ -6,14 +6,14 @@ import {
     TableColumn,
     TableGlobalAction,
     useLoading,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
 import { DataSource } from "../../../../domain/instance/entities/DataSource";
 import {
     MetadataMapping,
-    MetadataMappingDictionary
+    MetadataMappingDictionary,
 } from "../../../../domain/instance/entities/MetadataMapping";
 import { MappingConfig } from "../../../../domain/mapping/entities/MappingConfig";
 import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
