@@ -96,6 +96,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         api.getVersion().then(setLocalDhis2Version);
     }, [api]);
 
+    useEffect(() => updateSelection([]), [remoteInstance, remoteStore]);
+
     const deletePackages = useCallback(
         async (ids: string[]) => {
             loading.show(true, "Deleting packages");
