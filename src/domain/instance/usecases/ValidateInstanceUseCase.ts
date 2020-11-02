@@ -14,12 +14,6 @@ export class ValidateInstanceUseCase implements UseCase {
         if (isJSONDataSource(instance)) return Either.success(undefined);
 
         try {
-            if (!instance.username || !instance.password) {
-                return Either.error(
-                    i18n.t("You need to provide a username and password combination")
-                );
-            }
-
             const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
                 Repositories.InstanceRepository,
                 [instance, ""]
@@ -29,6 +23,10 @@ export class ValidateInstanceUseCase implements UseCase {
 
             if (version) {
                 return Either.success(undefined);
+            } else if (!instance.username || !instance.password) {
+                return Either.error(
+                    i18n.t("You need to provide a username and password combination")
+                );
             } else {
                 return Either.error(i18n.t("Not a valid DHIS2 instance"));
             }
