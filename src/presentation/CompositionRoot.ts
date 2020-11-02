@@ -22,6 +22,7 @@ import { GetUserGroupsUseCase } from "../domain/instance/usecases/GetUserGroupsU
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
+import { ApplyMappingUseCase } from "../domain/mapping/usecases/ApplyMappingUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { GetResponsiblesUseCase } from "../domain/metadata/usecases/GetResponsiblesUseCase";
 import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
@@ -271,6 +272,13 @@ export class CompositionRoot {
 
         return getExecute({
             list: new ListEventsUseCase(events),
+        });
+    }
+
+    @cache()
+    public get mapping() {
+        return getExecute({
+            apply: new ApplyMappingUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }

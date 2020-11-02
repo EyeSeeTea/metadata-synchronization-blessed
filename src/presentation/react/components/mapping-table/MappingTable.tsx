@@ -186,7 +186,7 @@ export default function MappingTable({
             if (!firstElement || !mappingType || !elementMapping?.mappedId) {
                 snackbar.error(i18n.t("You need to map the item before applying a global mapping"));
             } else {
-                await applyMapping([{ selection, mappedId: undefined }]);
+                await applyMapping([{ selection, mappingType, global: false, mappedId: undefined }]);
                 await onApplyGlobalMapping(mappingType, cleanNestedMappedId(id), elementMapping);
                 snackbar.success(i18n.t("Successfully applied global mapping"));
             }
@@ -196,14 +196,26 @@ export default function MappingTable({
 
     const updateMapping = useCallback(
         async (selection: string[], mappedId?: string) => {
-            applyMapping([{ selection, mappedId }]);
+            const id = selection[0];
+            const firstElement = _.find(rows, ["id", id]);
+            const mappingType = firstElement?.model.getMappingType();
+            const global = firstElement?.model.getIsGlobalMapping();
+            if (!mappingType) {
+                snackbar.error(i18n.t("Unable to update mapping"));
+            } else {
+                applyMapping([{ selection, mappingType, global, mappedId }]);
+            }
         },
-        [applyMapping]
+        [applyMapping, rows, snackbar]
     );
 
     const disableMapping = useCallback(
         async (selection: string[]) => {
-            if (selection.length > 0) {
+            const id = selection[0];
+            const firstElement = _.find(rows, ["id", id]);
+            const mappingType = firstElement?.model.getMappingType();
+            const global = firstElement?.model.getIsGlobalMapping();
+            if (selection.length > 0 && mappingType) {
                 setWarningDialog({
                     title: i18n.t("Exclude mapping"),
                     description: i18n.t(
@@ -212,18 +224,24 @@ export default function MappingTable({
                             total: selection.length,
                         }
                     ),
-                    action: () => applyMapping([{ selection, mappedId: EXCLUDED_KEY }]),
+                    action: () => {
+                        applyMapping([{ selection, mappingType, global, mappedId: EXCLUDED_KEY }]);
+                    },
                 });
             } else {
                 snackbar.error(i18n.t("Please select at least one item to exclude mapping"));
             }
         },
-        [snackbar, applyMapping]
+        [snackbar, applyMapping, rows]
     );
 
     const resetMapping = useCallback(
         async (selection: string[]) => {
-            if (selection.length > 0) {
+            const id = selection[0];
+            const firstElement = _.find(rows, ["id", id]);
+            const mappingType = firstElement?.model.getMappingType();
+            const global = firstElement?.model.getIsGlobalMapping();
+            if (selection.length > 0 && mappingType) {
                 setWarningDialog({
                     title: i18n.t("Reset mapping"),
                     description: i18n.t(
@@ -232,13 +250,15 @@ export default function MappingTable({
                             total: selection.length,
                         }
                     ),
-                    action: () => applyMapping([{ selection, mappedId: undefined }]),
+                    action: () => {
+                        applyMapping([{ selection, mappingType, global, mappedId: undefined }]);
+                    },
                 });
             } else {
                 snackbar.error(i18n.t("Please select at least one item to reset mapping"));
             }
         },
-        [snackbar, applyMapping]
+        [snackbar, applyMapping, rows]
     );
 
     const applyAutoMapping = useCallback(
@@ -275,7 +295,7 @@ export default function MappingTable({
                         });
                         const { mappedId } = _.first(candidates) ?? {};
 
-                        if (!mappedId) {
+                        if (!mappedId || !mappingType) {
                             errors.push(
                                 i18n.t(
                                     "Could not find a suitable candidate to apply auto-mapping for {{id}}",
@@ -283,7 +303,7 @@ export default function MappingTable({
                                 )
                             );
                         } else {
-                            tasks.push({ selection: [id], mappedId });
+                            tasks.push({ selection: [id], mappingType, mappedId });
                         }
                     }
                 }
@@ -388,6 +408,7 @@ export default function MappingTable({
 
             for (const row of allRows) {
                 const mappingType = row.model.getMappingType();
+                const global = row.model.getIsGlobalMapping();
                 if (mappingType) {
                     const newMapping = await createValidations({
                         [mappingType]: {
@@ -395,7 +416,7 @@ export default function MappingTable({
                         },
                     });
                     const { mappedId, ...overrides } = newMapping[mappingType][row.id];
-                    tasks.push({ selection: [row.id], mappedId, overrides });
+                    tasks.push({ selection: [row.id], mappingType, global, mappedId, overrides });
                 }
             }
 
@@ -848,7 +869,6 @@ export default function MappingTable({
             )}
 
             <MetadataTable
-                remoteInstance={instance}
                 models={models}
                 filterRows={filterRows}
                 transformRows={transformRows}
