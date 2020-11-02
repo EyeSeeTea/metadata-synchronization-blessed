@@ -68,9 +68,12 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     useEffect(() => {
         let mounted = true;
 
-        compositionRoot.instances.validate(instance).then(result => {
-            if (mounted) setConnectionSuccess(result.isSuccess());
-        });
+        if (isDhisInstance(instance)) {
+            compositionRoot.instances.validate(instance).then(result => {
+                if (result.isError()) console.error(result.value.error);
+                if (mounted) setConnectionSuccess(result.isSuccess());
+            });
+        }
 
         return () => {
             mounted = false;
