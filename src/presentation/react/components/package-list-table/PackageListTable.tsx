@@ -55,7 +55,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     isImportDialog = false,
     onSelectionChange,
     selectedIds,
-    resetKeyEx,
     actionButtonLabel,
 }) => {
     const { api, compositionRoot } = useAppContext();
@@ -67,7 +66,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const [importedPackages, setImportedPackages] = useState<ImportedPackage[]>([]);
     const rows = remoteStore ? storePackages : instancePackages;
 
-    const [resetKey, setResetKey] = useState(resetKeyEx || Math.random());
+    const [resetKey, setResetKey] = useState(Math.random());
     const [selection, updateSelection] = useState<TableSelection[]>(
         selectedIds?.map(id => ({ id })) || []
     );
@@ -87,10 +86,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const [toImportWizard, setToImportWizard] = useState<string[]>([]);
 
     const isRemoteInstance = !!remoteInstance;
-
-    useEffect(() => {
-        if (resetKeyEx) setResetKey(resetKeyEx);
-    }, [resetKeyEx]);
 
     useEffect(() => {
         api.getVersion().then(setLocalDhis2Version);

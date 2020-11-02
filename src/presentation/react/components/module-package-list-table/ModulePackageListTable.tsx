@@ -24,7 +24,6 @@ export interface ModulePackageListTableProps {
     showInstances: InstanceSelectionConfig;
     openSyncSummary?: (syncReport: SyncReport) => void;
     onInstanceChange?: (instance?: Instance | Store) => void;
-    resetKeyEx?: number;
 }
 
 export type ViewOption = "modules" | "packages";
@@ -39,7 +38,6 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
     showInstances,
     openSyncSummary,
     onInstanceChange,
-    resetKeyEx,
 }) => {
     const [selectedInstance, setSelectedInstance] = useState<Instance | undefined>();
     const [selectedStore, setSelectedStore] = useState<Store | undefined>();
@@ -113,7 +111,6 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
             remoteInstance={selectedInstance}
             paginationOptions={paginationOptions}
             openSyncSummary={openSyncSummary}
-            resetKeyEx={resetKeyEx}
             actionButtonLabel={
                 viewSelector.value === "packages" ? <Icon>arrow_downward</Icon> : undefined
             }
