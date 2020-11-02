@@ -30,7 +30,7 @@ export class SaveMappingUseCase implements UseCase {
                 const instance = Instance.build({ ...rawInstance });
 
                 const updatedInstance = instance.update({
-                    metadataMapping: mapping.metadataMapping,
+                    metadataMapping: mapping.mappingDictionary,
                 });
 
                 await this.storageRepository.saveObjectInCollection(

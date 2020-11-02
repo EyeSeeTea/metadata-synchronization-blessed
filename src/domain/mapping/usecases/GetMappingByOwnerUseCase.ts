@@ -24,8 +24,9 @@ export class GetMappingByOwnerUseCase implements UseCase {
                 const mappingRawWithMetadataMapping = await this.storageRepository.getObjectInCollection<
                     Mapping
                 >(Namespace.MAPPINGS, rawMapping?.id);
+
                 return mappingRawWithMetadataMapping
-                    ? Mapping.createExisted({ ...mappingRawWithMetadataMapping })
+                    ? Mapping.build({ ...mappingRawWithMetadataMapping })
                     : undefined;
             } else {
                 return undefined;
@@ -37,10 +38,9 @@ export class GetMappingByOwnerUseCase implements UseCase {
             );
 
             return instance
-                ? Mapping.createNew({
-                      owner: { id: instance.id },
-                      ownerType: "INSTANCE",
-                      metadataMapping: instance?.metadataMapping,
+                ? Mapping.build({
+                      owner: { type: "instance", id: instance.id },
+                      mappingDictionary: instance.metadataMapping,
                   })
                 : undefined;
         }

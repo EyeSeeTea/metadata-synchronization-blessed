@@ -1,51 +1,54 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
-import { Ref } from "../../common/entities/Ref";
+import { PartialBy } from "../../../types/utils";
 import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
 
 export interface MappingStoreOwner {
+    type: "store";
     id: string;
     moduleId: string;
 }
 
-export type MappingInstanceOwner = Ref;
+export interface MappingInstanceOwner {
+    type: "instance";
+    id: string;
+}
 
 export type MappingOwner = MappingStoreOwner | MappingInstanceOwner;
 
 export const isMappingStoreOwner = (source: MappingOwner): source is MappingStoreOwner => {
-    return (source as MappingStoreOwner).moduleId !== undefined;
+    return source.type === "store";
 };
+
+export const isMappingInstanceOwner = (source: MappingOwner): source is MappingInstanceOwner => {
+    return source.type === "instance";
+};
+
+export type MappingOwnerType = "instance" | "store";
 
 export interface MappingData {
     id: string;
     owner: MappingOwner;
-    ownerType: "INSTANCE" | "STORE";
-    metadataMapping: MetadataMappingDictionary;
+    mappingDictionary: MetadataMappingDictionary;
 }
 
 export class Mapping implements MappingData {
     public readonly id: string;
-    public readonly metadataMapping: MetadataMappingDictionary;
+    public readonly mappingDictionary: MetadataMappingDictionary;
     public readonly owner: MappingOwner;
-    public readonly ownerType: "INSTANCE" | "STORE";
 
     constructor(private data: MappingData) {
         this.id = data.id;
-        this.metadataMapping = data.metadataMapping;
+        this.mappingDictionary = data.mappingDictionary;
         this.owner = data.owner;
-        this.ownerType = data.ownerType;
     }
 
-    public static createNew(data: Omit<MappingData, "id">): Mapping {
+    public static build(data: PartialBy<MappingData, "id">): Mapping {
         return new Mapping({ id: generateUid(), ...data });
     }
 
-    public static createExisted(data: MappingData): Mapping {
-        return new Mapping({ ...data });
-    }
-
-    public updateMetadataMapping(metadataMapping: MetadataMappingDictionary): Mapping {
-        return new Mapping({ ...this.data, metadataMapping });
+    public updateMappingDictionary(metadataMapping: MetadataMappingDictionary): Mapping {
+        return new Mapping({ ...this.data, mappingDictionary: metadataMapping });
     }
 
     public toObject(): MappingData {
