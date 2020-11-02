@@ -170,22 +170,20 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({ package
         }
     }, [compositionRoot, packageImportRule, globalAdmin, snackbar]);
 
+    if (!dataSourceMapping || !instance) return null;
+
     return (
-        <React.Fragment>
-            {dataSourceMapping && (
-                <MappingTable
-                    models={models}
-                    originInstance={instance}
-                    destinationInstance={compositionRoot.localInstance}
-                    mapping={dataSourceMapping.mappingDictionary}
-                    globalMapping={dataSourceMapping.mappingDictionary}
-                    onChangeMapping={onChangeMapping}
-                    onApplyGlobalMapping={onApplyGlobalMapping}
-                    externalFilterComponents={packageFilterComponent}
-                    viewFilters={["onlySelected"]}
-                    showResponsible={false}
-                />
-            )}
-        </React.Fragment>
+        <MappingTable
+            models={models}
+            originInstance={instance}
+            destinationInstance={compositionRoot.localInstance}
+            mapping={dataSourceMapping.mappingDictionary}
+            globalMapping={dataSourceMapping.mappingDictionary}
+            onChangeMapping={onChangeMapping}
+            onApplyGlobalMapping={onApplyGlobalMapping}
+            externalFilterComponents={packageFilterComponent}
+            viewFilters={["onlySelected"]}
+            showResponsible={false}
+        />
     );
 };
