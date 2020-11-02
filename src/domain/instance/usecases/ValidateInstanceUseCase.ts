@@ -4,13 +4,15 @@ import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Repositories } from "../../Repositories";
-import { Instance } from "../entities/Instance";
+import { DataSource, isJSONDataSource } from "../entities/DataSource";
 import { InstanceRepositoryConstructor } from "../repositories/InstanceRepository";
 
 export class ValidateInstanceUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory) {}
 
-    public async execute(instance: Instance): Promise<Either<string, void>> {
+    public async execute(instance: DataSource): Promise<Either<string, void>> {
+        if (isJSONDataSource(instance)) return Either.success(undefined);
+
         try {
             if (!instance.username || !instance.password) {
                 return Either.error(

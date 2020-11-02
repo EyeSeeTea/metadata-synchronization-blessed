@@ -58,7 +58,8 @@ interface WarningDialog {
 }
 
 export interface MappingTableProps extends MetadataTableProps {
-    instance: DataSource;
+    originInstance?: DataSource;
+    destinationInstance: DataSource;
     models: typeof D2Model[];
     filterRows?: string[];
     transformRows?: (rows: MetadataType[]) => MetadataType[];
@@ -71,7 +72,8 @@ export interface MappingTableProps extends MetadataTableProps {
 }
 
 export default function MappingTable({
-    instance,
+    originInstance,
+    destinationInstance,
     models,
     filterRows,
     transformRows,
@@ -88,7 +90,10 @@ export default function MappingTable({
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const instanceApi = isDhisInstance(instance) ? compositionRoot.instances.getApi(instance) : api;
+    const instanceApi =
+        originInstance && isDhisInstance(originInstance)
+            ? compositionRoot.instances.getApi(originInstance)
+            : api;
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
 
     const [rows, setRows] = useState<MetadataType[]>([]);
@@ -119,7 +124,7 @@ export default function MappingTable({
     const applyMapping = useCallback(
         async (config: MappingConfig[]) => {
             try {
-                const newMapping = _.cloneDeep(mapping);
+                const oldMapping = _.cloneDeep(mapping);
                 for (const { selection, mappedId, overrides = {} } of config) {
                     for (const id of selection) {
                         const row = _.find(rows, ["id", id]);
@@ -136,7 +141,7 @@ export default function MappingTable({
                         }
 
                         const destinationModel = modelFactory(mappingType);
-                        _.unset(newMapping, [mappingType, id]);
+                        _.unset(oldMapping, [mappingType, id]);
                         if (isChildrenMapping || mappedId) {
                             const mapping = await buildMapping({
                                 api,
@@ -146,7 +151,7 @@ export default function MappingTable({
                                 originalId: _.last(id.split("-")) ?? id,
                                 mappedId,
                             });
-                            _.set(newMapping, [mappingType, id], {
+                            _.set(oldMapping, [mappingType, id], {
                                 ...mapping,
                                 global: rowModel.getIsGlobalMapping(),
                                 ...overrides,
@@ -154,6 +159,19 @@ export default function MappingTable({
                         }
                     }
                 }
+
+                const newMapping = await compositionRoot.mapping.apply(
+                    originInstance ?? compositionRoot.localInstance,
+                    destinationInstance,
+                    mapping,
+                    config,
+                    isChildrenMapping
+                );
+
+                console.log("Apply mapping", _.isEqual(oldMapping, newMapping), {
+                    oldMapping,
+                    newMapping,
+                });
 
                 await onChangeMapping(newMapping);
                 setSelectedIds([]);
@@ -164,6 +182,9 @@ export default function MappingTable({
             loading.reset();
         },
         [
+            compositionRoot,
+            originInstance,
+            destinationInstance,
             api,
             instanceApi,
             snackbar,
@@ -850,9 +871,9 @@ export default function MappingTable({
                 />
             )}
 
-            {!!mappingConfig && isDhisInstance(instance) && (
+            {!!mappingConfig && (
                 <MappingDialog
-                    instance={instance}
+                    instance={destinationInstance}
                     config={mappingConfig}
                     mapping={mapping}
                     onUpdateMapping={updateMapping}
@@ -860,17 +881,20 @@ export default function MappingTable({
                 />
             )}
 
-            {!!wizardConfig && isDhisInstance(instance) && (
+            {!!wizardConfig && (
                 <MappingWizard
-                    instance={instance}
+                    originInstance={originInstance}
+                    destinationInstance={destinationInstance}
                     config={wizardConfig}
-                    updateMapping={onChangeMapping}
+                    mapping={mapping}
+                    onUpdateMapping={onChangeMapping}
                     onApplyGlobalMapping={onApplyGlobalMapping}
                     onCancel={closeWizard}
                 />
             )}
 
             <MetadataTable
+                remoteInstance={originInstance}
                 models={models}
                 filterRows={filterRows}
                 transformRows={transformRows}

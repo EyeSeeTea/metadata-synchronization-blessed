@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/styles";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { Instance } from "../../../../domain/instance/entities/Instance";
+import { DataSource, isDhisInstance } from "../../../../domain/instance/entities/DataSource";
 import { MetadataMappingDictionary } from "../../../../domain/instance/entities/MetadataMapping";
 import i18n from "../../../../locales";
 import { modelFactory } from "../../../../models/dhis/factory";
@@ -22,7 +22,7 @@ export interface MappingDialogConfig {
 
 export interface MappingDialogProps {
     config: MappingDialogConfig;
-    instance: Instance;
+    instance: DataSource;
     mapping: MetadataMappingDictionary;
     onUpdateMapping: (items: string[], id?: string) => void;
     onClose: () => void;
@@ -41,7 +41,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     onUpdateMapping,
     onClose,
 }) => {
-    const { compositionRoot } = useAppContext();
+    const { api: defaultApi, compositionRoot } = useAppContext();
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
     const [filterRows, setFilterRows] = useState<string[] | undefined>();
@@ -61,9 +61,9 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const defaultSelection = mappedId !== "DISABLED" ? mappedId : undefined;
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
-    const api = compositionRoot.instances.getApi(instance);
     const model = modelFactory(mappingType);
     const modelName = model.getModelName();
+    const api = isDhisInstance(instance) ? compositionRoot.instances.getApi(instance) : defaultApi;
 
     useEffect(() => {
         let mounted = true;

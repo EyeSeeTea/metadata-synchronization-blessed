@@ -107,7 +107,7 @@ export default function InstanceMappingPage() {
             {!!instance && (
                 <MappingTable
                     models={models}
-                    instance={instance}
+                    destinationInstance={instance}
                     mapping={instance.metadataMapping}
                     globalMapping={instance.metadataMapping}
                     onChangeMapping={onChangeMapping}

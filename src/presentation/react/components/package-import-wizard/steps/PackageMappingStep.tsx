@@ -1,11 +1,13 @@
 import { useSnackbar } from "d2-ui-components";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { DataSource } from "../../../../../domain/instance/entities/DataSource";
+import { JSONDataSource } from "../../../../../domain/instance/entities/JSONDataSource";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
 } from "../../../../../domain/instance/entities/MetadataMapping";
 import { isInstance } from "../../../../../domain/package-import/entities/PackageSource";
-import { Package } from "../../../../../domain/packages/entities/Package";
+import { ListPackage } from "../../../../../domain/packages/entities/Package";
 import i18n from "../../../../../locales";
 import {
     AggregatedDataElementModel,
@@ -36,7 +38,8 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
     const snackbar = useSnackbar();
 
     const [globalAdmin, setGlobalAdmin] = useState(false);
-    const [packages, setPackages] = useState<Package[]>([]);
+    const [packages, setPackages] = useState<ListPackage[]>([]);
+    const [instance, setInstance] = useState<DataSource>();
 
     const [packageFilter, setPackageFilter] = useState<string>(packageImportRule.packageIds[0]);
     const [currentMetadataMapping, setCurrentMetadataMapping] = useState<MetadataMappingDictionary>(
@@ -125,17 +128,20 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
         />
     );
 
-    const instance = useMemo(() => {
-        if (isInstance(packageImportRule.source)) return packageImportRule.source;
+    useEffect(() => {
+        if (isInstance(packageImportRule.source)) return setInstance(packageImportRule.source);
 
-        const storePackage = packages.find(({ id }) => id === packageFilter);
-
-        return {
-            type: "json" as const,
-            version: storePackage?.dhisVersion ?? "",
-            metadata: storePackage?.contents ?? {},
-        };
-    }, [packageImportRule.source, packageFilter, packages]);
+        compositionRoot.packages
+            .getStore(packageImportRule.source.id, packageFilter)
+            .then(result => {
+                setInstance(
+                    JSONDataSource.build(
+                        result.value.data?.dhisVersion ?? "",
+                        result.value.data?.contents ?? {}
+                    )
+                );
+            });
+    }, [compositionRoot, packageFilter, packageImportRule.source]);
 
     //TODO: mapping table reading from store
 
@@ -143,7 +149,8 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
         <React.Fragment>
             <MappingTable
                 models={models}
-                instance={instance}
+                originInstance={instance}
+                destinationInstance={compositionRoot.localInstance}
                 mapping={currentMetadataMapping}
                 globalMapping={currentMetadataMapping}
                 onChangeMapping={onChangeMapping}
