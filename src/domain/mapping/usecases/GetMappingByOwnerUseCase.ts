@@ -20,7 +20,16 @@ export class GetMappingByOwnerUseCase implements UseCase {
                     mapping.owner.moduleId === owner.moduleId
             );
 
-            return rawMapping ? Mapping.createExisted({ ...rawMapping }) : undefined;
+            if (rawMapping) {
+                const mappingRawWithMetadataMapping = await this.storageRepository.getObjectInCollection<
+                    Mapping
+                >(Namespace.MAPPINGS, rawMapping?.id);
+                return mappingRawWithMetadataMapping
+                    ? Mapping.createExisted({ ...mappingRawWithMetadataMapping })
+                    : undefined;
+            } else {
+                return undefined;
+            }
         } else {
             const instance = await this.storageRepository.getObjectInCollection<Instance>(
                 Namespace.INSTANCES,
