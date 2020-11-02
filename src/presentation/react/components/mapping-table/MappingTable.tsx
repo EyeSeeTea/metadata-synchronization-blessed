@@ -6,20 +6,19 @@ import {
     TableColumn,
     TableGlobalAction,
     useLoading,
-    useSnackbar,
+    useSnackbar
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
-import { DataSource, isDhisInstance } from "../../../../domain/instance/entities/DataSource";
+import { DataSource } from "../../../../domain/instance/entities/DataSource";
 import {
     MetadataMapping,
-    MetadataMappingDictionary,
+    MetadataMappingDictionary
 } from "../../../../domain/instance/entities/MetadataMapping";
 import { MappingConfig } from "../../../../domain/mapping/entities/MappingConfig";
 import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
 import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
-import { modelFactory } from "../../../../models/dhis/factory";
 import { ProgramDataElementModel } from "../../../../models/dhis/mapping";
 import { DataElementModel, OrganisationUnitModel } from "../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../utils/d2";
@@ -27,14 +26,7 @@ import { useAppContext } from "../../contexts/AppContext";
 import MappingDialog, { MappingDialogConfig } from "../mapping-dialog/MappingDialog";
 import MappingWizard, { MappingWizardConfig, prepareSteps } from "../mapping-wizard/MappingWizard";
 import MetadataTable, { MetadataTableProps } from "../metadata-table/MetadataTable";
-import {
-    autoMap,
-    buildDataElementFilterForProgram,
-    buildMapping,
-    cleanNestedMappedId,
-    EXCLUDED_KEY,
-    getChildrenRows,
-} from "./utils";
+import { cleanNestedMappedId, EXCLUDED_KEY, getChildrenRows } from "./utils";
 
 const useStyles = makeStyles({
     iconButton: {
@@ -85,15 +77,11 @@ export default function MappingTable({
     mappingPath,
     ...rest
 }: MappingTableProps) {
-    const { api, compositionRoot } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const classes = useStyles();
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const instanceApi =
-        originInstance && isDhisInstance(originInstance)
-            ? compositionRoot.instances.getApi(originInstance)
-            : api;
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
 
     const [rows, setRows] = useState<MetadataType[]>([]);
@@ -124,42 +112,6 @@ export default function MappingTable({
     const applyMapping = useCallback(
         async (config: MappingConfig[]) => {
             try {
-                const oldMapping = _.cloneDeep(mapping);
-                for (const { selection, mappedId, overrides = {} } of config) {
-                    for (const id of selection) {
-                        const row = _.find(rows, ["id", id]);
-                        const name = row?.name ?? cleanNestedMappedId(id);
-                        loading.show(
-                            true,
-                            i18n.t("Applying mapping update for element {{name}}", { name })
-                        );
-
-                        const rowModel = row?.model ?? model;
-                        const mappingType = rowModel.getMappingType();
-                        if (!rowModel || !mappingType) {
-                            throw new Error("Attempting to apply mapping without a valid type");
-                        }
-
-                        const destinationModel = modelFactory(mappingType);
-                        _.unset(oldMapping, [mappingType, id]);
-                        if (isChildrenMapping || mappedId) {
-                            const mapping = await buildMapping({
-                                api,
-                                instanceApi,
-                                originModel: rowModel,
-                                destinationModel,
-                                originalId: _.last(id.split("-")) ?? id,
-                                mappedId,
-                            });
-                            _.set(oldMapping, [mappingType, id], {
-                                ...mapping,
-                                global: rowModel.getIsGlobalMapping(),
-                                ...overrides,
-                            });
-                        }
-                    }
-                }
-
                 const newMapping = await compositionRoot.mapping.apply(
                     originInstance ?? compositionRoot.localInstance,
                     destinationInstance,
@@ -167,11 +119,6 @@ export default function MappingTable({
                     config,
                     isChildrenMapping
                 );
-
-                console.log("Apply mapping", _.isEqual(oldMapping, newMapping), {
-                    oldMapping,
-                    newMapping,
-                });
 
                 await onChangeMapping(newMapping);
                 setSelectedIds([]);
@@ -185,15 +132,11 @@ export default function MappingTable({
             compositionRoot,
             originInstance,
             destinationInstance,
-            api,
-            instanceApi,
             snackbar,
             loading,
             mapping,
             isChildrenMapping,
             onChangeMapping,
-            rows,
-            model,
         ]
     );
 
@@ -311,43 +254,6 @@ export default function MappingTable({
                     })
                 );
 
-                const oldTasks: MappingConfig[] = [];
-                const oldErrors: string[] = [];
-
-                for (const id of elements) {
-                    const row = _.find(rows, ["id", id]);
-                    if (row) {
-                        const filter = await buildDataElementFilterForProgram(
-                            instanceApi,
-                            id,
-                            mapping
-                        );
-
-                        const mappingType = row?.model.getMappingType();
-                        const destinationModel = modelFactory(mappingType);
-                        const candidates = await autoMap({
-                            api,
-                            instanceApi,
-                            originModel: row.model,
-                            destinationModel,
-                            selectedItemId: id,
-                            filter,
-                        });
-                        const { mappedId } = _.first(candidates) ?? {};
-
-                        if (!mappedId || !mappingType) {
-                            oldErrors.push(
-                                i18n.t(
-                                    "Could not find a suitable candidate to apply auto-mapping for {{id}}",
-                                    { id: cleanNestedMappedId(id) }
-                                )
-                            );
-                        } else {
-                            oldTasks.push({ selection: [id], mappingType, mappedId });
-                        }
-                    }
-                }
-
                 const { tasks, errors } = await compositionRoot.mapping.autoMap(
                     originInstance ?? compositionRoot.localInstance,
                     destinationInstance,
@@ -357,11 +263,6 @@ export default function MappingTable({
                     global
                 );
 
-                console.log("Auto mapping tasks", _.isEqual(tasks, oldTasks), {
-                    tasks,
-                    oldTasks,
-                });
-                
                 await applyMapping(tasks);
 
                 if (errors.length > 0) {
@@ -397,10 +298,8 @@ export default function MappingTable({
             compositionRoot,
             destinationInstance,
             originInstance,
-            api,
             loading,
             applyMapping,
-            instanceApi,
             rows,
             snackbar,
             mappingPath,
@@ -436,17 +335,15 @@ export default function MappingTable({
             for (const type of _.keys(dict)) {
                 for (const id of _.keys(dict[type])) {
                     const { mappedId, mapping = {}, ...rest } = dict[type][id];
-                    const row = _.find(rows, ["id", id]);
-                    const rowType = row?.model.getCollectionName() ?? type;
-                    const mappingType = row?.model.getMappingType() ?? type;
-                    const originModel = modelFactory(rowType) ?? model;
-                    const destinationModel = modelFactory(mappingType);
                     const innerMapping = await createValidations(mapping);
-                    const { mappedName, mappedCode, mappedLevel } = await buildMapping({
-                        api,
-                        instanceApi,
-                        originModel,
-                        destinationModel,
+
+                    const {
+                        mappedName,
+                        mappedCode,
+                        mappedLevel,
+                    } = await compositionRoot.mapping.buildMapping({
+                        originInstance: originInstance ?? compositionRoot.localInstance,
+                        destinationInstance,
                         originalId: id,
                         mappedId,
                     });
@@ -467,7 +364,7 @@ export default function MappingTable({
 
             return result;
         },
-        [api, instanceApi, model, rows]
+        [compositionRoot, destinationInstance, originInstance]
     );
 
     const applyValidateMapping = useCallback(

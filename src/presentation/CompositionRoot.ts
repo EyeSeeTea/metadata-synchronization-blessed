@@ -24,6 +24,7 @@ import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUse
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
 import { ApplyMappingUseCase } from "../domain/mapping/usecases/ApplyMappingUseCase";
 import { AutoMapUseCase } from "../domain/mapping/usecases/AutoMapUseCase";
+import { BuildMappingUseCase } from "../domain/mapping/usecases/BuildMappingUseCase";
 import { GetValidMappingIdUseCase } from "../domain/mapping/usecases/GetValidMappingIdUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { GetResponsiblesUseCase } from "../domain/metadata/usecases/GetResponsiblesUseCase";
@@ -283,6 +284,7 @@ export class CompositionRoot {
             apply: new ApplyMappingUseCase(this.repositoryFactory, this.localInstance),
             getValidIds: new GetValidMappingIdUseCase(this.repositoryFactory, this.localInstance),
             autoMap: new AutoMapUseCase(this.repositoryFactory, this.localInstance),
+            buildMapping: new BuildMappingUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }
