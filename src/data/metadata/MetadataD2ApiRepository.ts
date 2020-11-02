@@ -56,12 +56,13 @@ export class MetadataD2ApiRepository implements MetadataRepository {
      */
     public async getMetadataByIds<T>(
         ids: string[],
-        fields: object | string
+        fields: object | string,
+        includeDefaults = false
     ): Promise<MetadataPackage<T>> {
         const { apiVersion } = this.instance;
 
         const requestFields = typeof fields === "string" ? fields : getFieldsAsString(fields);
-        const d2Metadata = await this.getMetadata<D2Model>(ids, requestFields);
+        const d2Metadata = await this.getMetadata<D2Model>(ids, requestFields, includeDefaults);
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -433,7 +434,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     private async getMetadata<T>(
         elements: string[],
-        fields = ":all"
+        fields = ":all",
+        includeDefaults: boolean
     ): Promise<Record<string, T[]>> {
         const promises = [];
         for (let i = 0; i < elements.length; i += 100) {
@@ -443,7 +445,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                     .get("/metadata", {
                         fields,
                         filter: "id:in:[" + requestElements + "]",
-                        defaults: "EXCLUDE",
+                        defaults: includeDefaults ? undefined : "EXCLUDE",
                     })
                     .getData()
             );

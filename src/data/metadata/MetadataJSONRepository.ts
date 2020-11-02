@@ -102,11 +102,13 @@ export class MetadataJSONRepository implements MetadataRepository {
 
     public async getMetadataByIds<T>(
         ids: string[],
-        _fields?: object | string
+        _fields?: object | string,
+        includeDefaults = false
     ): Promise<MetadataPackage<T>> {
-        return _.mapValues(this.instance.metadata, items => {
-            const filtered = items?.filter(item => ids.includes(item.id)) ?? [];
-            return filtered as T[];
+        return _.mapValues(this.instance.metadata, (items = []) => {
+            return items
+                .filter(item => ids.includes(item.id))
+                .filter(item => includeDefaults || item.code !== "default") as T[];
         });
     }
 
