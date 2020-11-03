@@ -178,6 +178,7 @@ const tokenSearch = (source: string, lookup: string): boolean => {
 };
 
 // TODO: This method is not properly typed
+// TODO: We do not support $owner and $all
 const filterFields = (
     item: any,
     fields?: any,
