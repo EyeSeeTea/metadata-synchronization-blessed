@@ -1,8 +1,10 @@
 import axios from "axios";
 import FileSaver from "file-saver";
 import { DownloadRepository } from "../../domain/storage/repositories/DownloadRepository";
+import { cache } from "../../utils/cache";
 
 export class DownloadWebRepository implements DownloadRepository {
+    @cache()
     public async fetch<T>(url: string): Promise<T> {
         const response = await axios.get(url);
         return response.data as T;
