@@ -116,14 +116,30 @@ export class MetadataJSONRepository implements MetadataRepository {
         });
     }
 
-    public async getDefaultIds(_filter?: string): Promise<string[]> {
-        return [];
+    public async getDefaultIds(filter?: string): Promise<string[]> {
+        const response = await this.lookupSimilar({
+            name: "default",
+            code: "default",
+            id: "default",
+        });
+
+        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
+
+        return _(metadata)
+            .values()
+            .flatMap(array => array?.map(({ id }) => id) ?? [])
+            .value();
     }
 
     public async getCategoryOptionCombos(): Promise<
         Pick<CategoryOptionCombo, "id" | "name" | "categoryCombo" | "categoryOptions">[]
     > {
-        throw new Error("Method not implemented.");
+        const items = await this.listAllMetadata({
+            type: "categoryOptionCombos",
+            fields: { id: true, name: true, categoryCombo: true, categoryOptions: true },
+        });
+
+        return items as CategoryOptionCombo[];
     }
 
     public async getByFilterRules(_filterRules: FilterRule[]): Promise<string[]> {
