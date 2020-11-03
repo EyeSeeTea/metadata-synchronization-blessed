@@ -57,12 +57,12 @@ export class MetadataD2ApiRepository implements MetadataRepository {
      */
     public async getMetadataByIds<T>(
         ids: string[],
-        fields: object | string,
+        fields?: object | string,
         includeDefaults = false
     ): Promise<MetadataPackage<T>> {
         const { apiVersion } = this.instance;
 
-        const requestFields = typeof fields === "string" ? fields : getFieldsAsString(fields);
+        const requestFields = typeof fields === "object" ? getFieldsAsString(fields) : fields;
         const d2Metadata = await this.getMetadata<D2Model>(ids, requestFields, includeDefaults);
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
