@@ -41,7 +41,7 @@ export class GetMappingByOwnerUseCase implements UseCase {
             return instance
                 ? DataSourceMapping.build({
                       owner: { type: "instance", id: instance.id },
-                      mappingDictionary: instance.metadataMapping,
+                      mappingDictionary: instance.metadataMapping ?? {},
                   })
                 : undefined;
         }
