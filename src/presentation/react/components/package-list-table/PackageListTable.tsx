@@ -17,6 +17,7 @@ import semver from "semver";
 import { Either } from "../../../../domain/common/entities/Either";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { JSONDataSource } from "../../../../domain/instance/entities/JSONDataSource";
 import { ImportedPackage } from "../../../../domain/package-import/entities/ImportedPackage";
 import {
     isInstance,
@@ -288,9 +289,17 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                             moduleId: originPackage.module.id,
                         });
 
+                        const originDataSource = remoteInstance && isInstance(packageSource)
+                            ? remoteInstance
+                            : JSONDataSource.build(
+                                  originPackage.dhisVersion,
+                                  originPackage.contents
+                              );
+
                         const result = await compositionRoot.packages.import(
                             originPackage,
-                            mapping?.mappingDictionary
+                            mapping?.mappingDictionary,
+                            originDataSource
                         );
 
                         const report = SyncReport.create("metadata");

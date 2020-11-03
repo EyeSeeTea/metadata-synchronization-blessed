@@ -3,7 +3,6 @@ import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
-import { JSONDataSource } from "../../instance/entities/JSONDataSource";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
 import {
@@ -21,10 +20,9 @@ export class ImportPackageUseCase implements UseCase {
     public async execute(
         item: Package,
         mapping: MetadataMappingDictionary = {},
+        originInstance: DataSource,
         destinationInstance?: DataSource
     ): Promise<SynchronizationResult> {
-        const originInstance = JSONDataSource.build(item.dhisVersion, item.contents);
-
         const originCategoryOptionCombos = await this.getMetadataRepository(
             originInstance
         ).getCategoryOptionCombos();
