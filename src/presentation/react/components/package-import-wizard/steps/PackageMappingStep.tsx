@@ -180,8 +180,6 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({ package
 
     if (!dataSourceMapping || !instance) return null;
 
-    console.log(models)
-
     return (
         <MappingTable
             models={models}
