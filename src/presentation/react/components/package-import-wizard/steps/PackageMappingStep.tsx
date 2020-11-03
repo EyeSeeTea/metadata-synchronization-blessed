@@ -15,9 +15,13 @@ import {
 import { ListPackage } from "../../../../../domain/packages/entities/Package";
 import i18n from "../../../../../locales";
 import {
-    AggregatedDataElementModel,
-    EventProgramWithDataElementsModel,
-    EventProgramWithIndicatorsModel,
+    GlobalCategoryComboModel,
+    GlobalCategoryModel,
+    GlobalCategoryOptionGroupModel,
+    GlobalCategoryOptionGroupSetModel,
+    GlobalCategoryOptionModel,
+    GlobalDataElementModel,
+    GlobalOptionModel,
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
 } from "../../../../../models/dhis/mapping";
@@ -28,10 +32,14 @@ import MappingTable from "../../mapping-table/MappingTable";
 import { PackageImportWizardProps } from "../PackageImportWizard";
 
 const models = [
-    AggregatedDataElementModel,
+    GlobalCategoryModel,
+    GlobalCategoryComboModel,
+    GlobalCategoryOptionModel,
+    GlobalCategoryOptionGroupModel,
+    GlobalCategoryOptionGroupSetModel,
+    GlobalDataElementModel,
+    GlobalOptionModel,
     IndicatorMappedModel,
-    EventProgramWithDataElementsModel,
-    EventProgramWithIndicatorsModel,
     OrganisationUnitMappedModel,
 ];
 
