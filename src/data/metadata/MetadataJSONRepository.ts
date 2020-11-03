@@ -199,6 +199,8 @@ const filterFields = (
 
     const element = { ...metadataElement, ...item };
 
+    if (fields === true) return element;
+
     return _.transform(
         fields,
         (result, value, field) => {
