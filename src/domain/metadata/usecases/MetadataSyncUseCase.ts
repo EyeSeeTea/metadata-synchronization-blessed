@@ -150,11 +150,11 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         instance: Instance,
         payload: MetadataPackage
     ): Promise<MetadataPackage> {
-        const instanceRepository = await this.getInstanceRepository();
-        const remoteInstanceRepository = await this.getInstanceRepository(instance);
+        const metadataRepository = await this.getMetadataRepository();
+        const remoteMetadataRepository = await this.getMetadataRepository(instance);
 
-        const originCategoryOptionCombos = await instanceRepository.getCategoryOptionCombos();
-        const destinationCategoryOptionCombos = await remoteInstanceRepository.getCategoryOptionCombos();
+        const originCategoryOptionCombos = await metadataRepository.getCategoryOptionCombos();
+        const destinationCategoryOptionCombos = await remoteMetadataRepository.getCategoryOptionCombos();
         const mapping = await this.getMapping(instance);
 
         const mapper = new MappingMapper(
@@ -162,6 +162,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             originCategoryOptionCombos,
             destinationCategoryOptionCombos
         );
+
         return mapper.applyMapping(payload);
     }
 }

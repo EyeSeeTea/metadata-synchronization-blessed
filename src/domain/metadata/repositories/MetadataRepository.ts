@@ -5,7 +5,12 @@ import { DataSource } from "../../instance/entities/DataSource";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { FilterRule } from "../entities/FilterRule";
-import { MetadataEntities, MetadataEntity, MetadataPackage } from "../entities/MetadataEntities";
+import {
+    CategoryOptionCombo,
+    MetadataEntities,
+    MetadataEntity,
+    MetadataPackage,
+} from "../entities/MetadataEntities";
 import { MetadataImportParams } from "../types";
 
 export interface MetadataRepositoryConstructor {
@@ -23,6 +28,9 @@ export interface MetadataRepository {
     ): Promise<MetadataPackage<T>>;
     getByFilterRules(filterRules: FilterRule[]): Promise<Id[]>;
     getDefaultIds(filter?: string): Promise<string[]>;
+    getCategoryOptionCombos(): Promise<
+        Pick<CategoryOptionCombo, "id" | "name" | "categoryCombo" | "categoryOptions">[]
+    >;
 
     listMetadata(params: ListMetadataParams): Promise<ListMetadataResponse>;
     listAllMetadata(params: ListMetadataParams): Promise<MetadataEntity[]>;

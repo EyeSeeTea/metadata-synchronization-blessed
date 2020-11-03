@@ -185,13 +185,12 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         instance: Instance,
         { dataValues: oldDataValues }: AggregatedPackage
     ): Promise<AggregatedPackage> {
-        const instanceRepository = await this.getInstanceRepository();
         const metadataRepository = await this.getMetadataRepository();
-        const remoteInstanceRepository = await this.getInstanceRepository(instance);
+        const remoteMetadataRepository = await this.getMetadataRepository(instance);
 
         const defaultIds = await metadataRepository.getDefaultIds();
-        const originCategoryOptionCombos = await instanceRepository.getCategoryOptionCombos();
-        const destinationCategoryOptionCombos = await remoteInstanceRepository.getCategoryOptionCombos();
+        const originCategoryOptionCombos = await metadataRepository.getCategoryOptionCombos();
+        const destinationCategoryOptionCombos = await remoteMetadataRepository.getCategoryOptionCombos();
         const mapping = await this.getMapping(instance);
 
         const instanceAggregatedValues = await this.buildInstanceAggregation(

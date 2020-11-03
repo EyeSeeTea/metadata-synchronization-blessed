@@ -13,6 +13,7 @@ import {
     stringMatchHasValue,
 } from "../../domain/metadata/entities/FilterRule";
 import {
+    CategoryOptionCombo,
     MetadataEntities,
     MetadataEntity,
     MetadataPackage,
@@ -162,6 +163,25 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             .flatten()
             .map(({ id }) => id)
             .value();
+    }
+
+    @cache()
+    public async getCategoryOptionCombos(): Promise<
+        Pick<CategoryOptionCombo, "id" | "name" | "categoryCombo" | "categoryOptions">[]
+    > {
+        const { objects } = await this.api.models.categoryOptionCombos
+            .get({
+                paging: false,
+                fields: {
+                    id: true,
+                    name: true,
+                    categoryCombo: true,
+                    categoryOptions: true,
+                },
+            })
+            .getData();
+
+        return objects;
     }
 
     private async getParentObjects(params: ListMetadataParams): Promise<unknown[]> {
@@ -527,6 +547,7 @@ function getIdFilter(
 }
 
 function applyFieldTransformers(key: string, value: any) {
+    //@ts-ignore
     if (value.hasOwnProperty("$fn")) {
         switch (value["$fn"]["name"]) {
             case "rename":

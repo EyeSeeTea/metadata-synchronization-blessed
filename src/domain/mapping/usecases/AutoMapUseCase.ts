@@ -16,7 +16,7 @@ export class AutoMapUseCase extends GenericMappingUseCase implements UseCase {
         mapping: MetadataMappingDictionary,
         mappingType: string,
         ids: string[],
-        isGlobalMapping: boolean = false
+        isGlobalMapping = false
     ): Promise<AutoMapUseCaseResult> {
         const metadataResponse = await this.getMetadata(originInstance, ids);
         const elements = this.createMetadataArray(metadataResponse);

@@ -2,11 +2,7 @@ import { Instance } from "../../domain/instance/entities/Instance";
 import { InstanceMessage } from "../../domain/instance/entities/Message";
 import { User } from "../../domain/instance/entities/User";
 import { InstanceRepository } from "../../domain/instance/repositories/InstanceRepository";
-import {
-    CategoryOptionCombo,
-    OrganisationUnit,
-    UserGroup,
-} from "../../domain/metadata/entities/MetadataEntities";
+import { OrganisationUnit, UserGroup } from "../../domain/metadata/entities/MetadataEntities";
 import { D2Api } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
@@ -40,25 +36,6 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     @cache()
     public getBaseUrl(): string {
         return this.api.baseUrl;
-    }
-
-    @cache()
-    public async getCategoryOptionCombos(): Promise<
-        Pick<CategoryOptionCombo, "id" | "name" | "categoryCombo" | "categoryOptions">[]
-    > {
-        const { objects } = await this.api.models.categoryOptionCombos
-            .get({
-                paging: false,
-                fields: {
-                    id: true,
-                    name: true,
-                    categoryCombo: true,
-                    categoryOptions: true,
-                },
-            })
-            .getData();
-
-        return objects;
     }
 
     @cache()

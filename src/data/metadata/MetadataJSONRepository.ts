@@ -3,7 +3,11 @@ import { IdentifiableRef } from "../../domain/common/entities/Ref";
 import { DataSource } from "../../domain/instance/entities/DataSource";
 import { JSONDataSource } from "../../domain/instance/entities/JSONDataSource";
 import { FilterRule } from "../../domain/metadata/entities/FilterRule";
-import { MetadataEntity, MetadataPackage } from "../../domain/metadata/entities/MetadataEntities";
+import {
+    CategoryOptionCombo,
+    MetadataEntity,
+    MetadataPackage,
+} from "../../domain/metadata/entities/MetadataEntities";
 import {
     ListMetadataParams,
     ListMetadataResponse,
@@ -114,6 +118,12 @@ export class MetadataJSONRepository implements MetadataRepository {
 
     public async getDefaultIds(_filter?: string): Promise<string[]> {
         return [];
+    }
+
+    public async getCategoryOptionCombos(): Promise<
+        Pick<CategoryOptionCombo, "id" | "name" | "categoryCombo" | "categoryOptions">[]
+    > {
+        throw new Error("Method not implemented.");
     }
 
     public async getByFilterRules(_filterRules: FilterRule[]): Promise<string[]> {
