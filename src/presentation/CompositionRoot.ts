@@ -56,6 +56,7 @@ import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPack
 import { GetPackageUseCase } from "../domain/packages/usecases/GetPackageUseCase";
 import { GetStorePackageUseCase } from "../domain/packages/usecases/GetStorePackageUseCase";
 import { GetStoreUseCase } from "../domain/packages/usecases/GetStoreUseCase";
+import { ImportPackageUseCase } from "../domain/packages/usecases/ImportPackageUseCase";
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
 import { ListStoresUseCase } from "../domain/packages/usecases/ListStoresUseCase";
@@ -195,6 +196,7 @@ export class CompositionRoot {
             download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),
             publish: new PublishStorePackageUseCase(this.repositoryFactory, this.localInstance),
             diff: new DiffPackageUseCase(this, this.repositoryFactory, this.localInstance),
+            import: new ImportPackageUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

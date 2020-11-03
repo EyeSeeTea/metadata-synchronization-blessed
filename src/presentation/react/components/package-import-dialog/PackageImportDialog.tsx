@@ -115,13 +115,19 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                             storePackageUrls[originPackage.id] = packageId;
                         }
 
-                        const importResult = await compositionRoot.metadata.import(
-                            originPackage.contents
+                        const mapping = await compositionRoot.mapping.get({
+                            type: isInstance(packageImportRule.source) ? "instance" : "store",
+                            id: packageImportRule.source.id,
+                            moduleId: originPackage.module.id,
+                        });
+
+                        const result = await compositionRoot.packages.import(
+                            originPackage,
+                            mapping?.mappingDictionary
                         );
 
                         report.setStatus(
-                            importResult.status === "ERROR" ||
-                                importResult.status === "NETWORK ERROR"
+                            result.status === "ERROR" || result.status === "NETWORK ERROR"
                                 ? "FAILURE"
                                 : "DONE"
                         );
@@ -131,12 +137,12 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                             : packageImportRule.source;
 
                         report.addSyncResult({
-                            ...importResult,
+                            ...result,
                             originPackage: originPackage.toRef(),
                             origin: origin,
                         });
 
-                        if (importResult.status === "SUCCESS") {
+                        if (result.status === "SUCCESS") {
                             importedPackages.push(originPackage);
                         }
                     },

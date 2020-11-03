@@ -281,8 +281,16 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                             true,
                             i18n.t("Importing package {{name}}", { name: originPackage.name })
                         );
-                        const result = await compositionRoot.metadata.import(
-                            originPackage.contents
+
+                        const mapping = await compositionRoot.mapping.get({
+                            type: isInstance(packageSource) ? "instance" : "store",
+                            id: packageSource.id,
+                            moduleId: originPackage.module.id,
+                        });
+
+                        const result = await compositionRoot.packages.import(
+                            originPackage,
+                            mapping?.mappingDictionary
                         );
 
                         const report = SyncReport.create("metadata");
