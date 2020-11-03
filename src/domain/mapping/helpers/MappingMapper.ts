@@ -132,7 +132,9 @@ export class MappingMapper {
         switch (expression.type) {
             case "dataElement": {
                 const { mappedId: dataElement, mapping: innerMapping = {} } =
-                    (this.mapping["aggregatedDataElements"] && this.mapping["aggregatedDataElements"][expression.dataElement]) ?? {};
+                    (this.mapping["aggregatedDataElements"] &&
+                        this.mapping["aggregatedDataElements"][expression.dataElement]) ??
+                    {};
                 if (!dataElement) return undefined;
 
                 const categoryOptionCombo =
@@ -160,7 +162,9 @@ export class MappingMapper {
             }
             case "programDataElement": {
                 const { mappedId: program = expression.program } =
-                    (this.mapping["eventPrograms"] && this.mapping["eventPrograms"][expression.program]) ?? {};
+                    (this.mapping["eventPrograms"] &&
+                        this.mapping["eventPrograms"][expression.program]) ??
+                    {};
 
                 const dataElementId = _.keys(this.mapping["programDataElements"]).find(id => {
                     const parts = id.split("-");
