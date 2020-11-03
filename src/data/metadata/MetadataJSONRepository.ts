@@ -16,6 +16,7 @@ import {
 import { MetadataImportParams } from "../../domain/metadata/types";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
+import { Dictionary } from "../../types/utils";
 
 export class MetadataJSONRepository implements MetadataRepository {
     private instance: JSONDataSource;
@@ -38,6 +39,7 @@ export class MetadataJSONRepository implements MetadataRepository {
         showOnlySelected,
         selectedIds,
         filterRows,
+        fields,
     }: ListMetadataParams): Promise<ListMetadataResponse> {
         const baseObjects = this.instance.metadata[type] ?? [];
 
@@ -68,6 +70,7 @@ export class MetadataJSONRepository implements MetadataRepository {
                 [data => data[order?.field ?? "name"]?.toLowerCase() ?? ""],
                 [order?.order ?? "asc"]
             )
+            .map(item => filterFields(item, fields, this.instance.metadata))
             .value();
 
         if (!paging) {
@@ -106,13 +109,14 @@ export class MetadataJSONRepository implements MetadataRepository {
 
     public async getMetadataByIds<T>(
         ids: string[],
-        _fields?: object | string,
+        fields?: object | string,
         includeDefaults = false
     ): Promise<MetadataPackage<T>> {
         return _.mapValues(this.instance.metadata, (items = []) => {
             return items
                 .filter(item => ids.includes(item.id))
-                .filter(item => includeDefaults || item.code !== "default") as T[];
+                .filter(item => includeDefaults || item.code !== "default")
+                .map(item => filterFields(item, fields, this.instance.metadata)) as T[];
         });
     }
 
@@ -170,5 +174,42 @@ const tokenSearch = (source: string, lookup: string): boolean => {
             .toLowerCase()
             .split(" ")
             .map(token => source.toLowerCase().includes(token))
+    );
+};
+
+// TODO: This method is not properly typed
+const filterFields = (
+    item: any,
+    fields?: any,
+    metadata?: MetadataPackage<Dictionary<any>>
+): any => {
+    if (!fields || typeof fields === "string") {
+        console.error("Filtering fields is not supported for strings");
+        return item;
+    } else if (typeof item !== "object") {
+        return item;
+    }
+
+    const metadataElement =
+        _(metadata)
+            .values()
+            .compact()
+            .flatten()
+            .find(({ id }) => id === item.id) ?? {};
+
+    const element = { ...metadataElement, ...item };
+
+    return _.transform(
+        fields,
+        (result, value, field) => {
+            if (!!value && Array.isArray(element[field])) {
+                result[field] = element[field].map((subitem: unknown) =>
+                    filterFields(subitem, value, metadata)
+                );
+            } else if (!!value && !_.isNil(element[field])) {
+                result[field] = filterFields(element[field], value, metadata);
+            }
+        },
+        {} as Dictionary<unknown>
     );
 };
