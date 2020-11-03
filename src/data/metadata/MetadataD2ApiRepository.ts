@@ -283,6 +283,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         lastUpdated,
         group,
         level,
+        includeParents,
         parents,
         showOnlySelected,
         selectedIds = [],
@@ -294,7 +295,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         if (lastUpdated) filter["lastUpdated"] = { ge: moment(lastUpdated).format("YYYY-MM-DD") };
         if (group) filter[`${group.type}.id`] = { eq: group.value };
         if (level) filter["level"] = { eq: level };
-        if (isNotEmpty(parents)) filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
+        if (includeParents && isNotEmpty(parents)) filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
         if (showOnlySelected) filter["id"] = { in: selectedIds.concat(filter["id"]?.in ?? []) };
         if (filterRows) filter["id"] = { in: filterRows.concat(filter["id"]?.in ?? []) };
         if (search) filter[search.field] = { [search.operator]: search.value };
