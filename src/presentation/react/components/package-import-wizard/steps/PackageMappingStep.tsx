@@ -15,12 +15,12 @@ import {
 import { ListPackage } from "../../../../../domain/packages/entities/Package";
 import i18n from "../../../../../locales";
 import {
+    AggregatedDataElementModel,
     GlobalCategoryComboModel,
     GlobalCategoryModel,
     GlobalCategoryOptionGroupModel,
     GlobalCategoryOptionGroupSetModel,
     GlobalCategoryOptionModel,
-    GlobalDataElementModel,
     GlobalOptionModel,
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
@@ -37,7 +37,7 @@ const models = [
     GlobalCategoryOptionModel,
     GlobalCategoryOptionGroupModel,
     GlobalCategoryOptionGroupSetModel,
-    GlobalDataElementModel,
+    AggregatedDataElementModel,
     GlobalOptionModel,
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
@@ -179,6 +179,8 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({ package
     }, [compositionRoot, packageImportRule, globalAdmin, snackbar]);
 
     if (!dataSourceMapping || !instance) return null;
+
+    console.log(models)
 
     return (
         <MappingTable
