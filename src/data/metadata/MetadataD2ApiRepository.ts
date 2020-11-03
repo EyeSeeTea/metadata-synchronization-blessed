@@ -547,7 +547,7 @@ function getIdFilter(
 }
 
 function applyFieldTransformers(key: string, value: any) {
-    //@ts-ignore
+    // eslint-disable-next-line
     if (value.hasOwnProperty("$fn")) {
         switch (value["$fn"]["name"]) {
             case "rename":
