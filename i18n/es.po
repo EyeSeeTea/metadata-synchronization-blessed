@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-10-31T16:26:00.297Z\n"
+"POT-Creation-Date: 2020-11-02T17:56:39.574Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -192,9 +192,6 @@ msgstr ""
 msgid "Could not connect with remote instance"
 msgstr ""
 
-msgid "Applying mapping update for element {{name}}"
-msgstr ""
-
 msgid "Could not apply mapping, please try again."
 msgstr ""
 
@@ -202,6 +199,9 @@ msgid "You need to map the item before applying a global mapping"
 msgstr ""
 
 msgid "Successfully applied global mapping"
+msgstr ""
+
+msgid "Unable to update mapping"
 msgstr ""
 
 msgid "Exclude mapping"
@@ -222,16 +222,16 @@ msgstr ""
 msgid "Please select at least one item to reset mapping"
 msgstr ""
 
-msgid "Preparing auto-mapping for {{total}} elements"
-msgstr ""
-
-msgid "Could not find a suitable candidate to apply auto-mapping for {{id}}"
+msgid "You need to select at least one valid item"
 msgstr ""
 
 msgid "You need to select all items from the same type"
 msgstr ""
 
-msgid "You need to select at least one valid item"
+msgid "Preparing auto-mapping for {{total}} elements"
+msgstr ""
+
+msgid "Could not find a suitable candidate to apply auto-mapping for {{id}}"
 msgstr ""
 
 msgid "Validating mapping for {{total}} elements"
@@ -550,9 +550,18 @@ msgstr ""
 msgid "Packages mapping"
 msgstr "Paquetes"
 
+msgid "Attempting to update mapping without a valid data source"
+msgstr ""
+
+msgid "Could not save mapping"
+msgstr ""
+
 #, fuzzy
 msgid "Package"
 msgstr "Paquetes"
+
+msgid "Unknown error happened loading store"
+msgstr ""
 
 msgid "Can't connect to store"
 msgstr ""

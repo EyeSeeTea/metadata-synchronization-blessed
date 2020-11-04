@@ -1,14 +1,13 @@
-import React from "react";
 import { makeStyles } from "@material-ui/core";
 import { DatePicker } from "d2-ui-components";
 import _ from "lodash";
+import moment, { Moment } from "moment";
+import React, { useCallback, useMemo } from "react";
 import { DataSyncPeriod } from "../../../../domain/aggregated/types";
+import i18n from "../../../../locales";
+import { Maybe } from "../../../../types/utils";
 import { availablePeriods, PeriodType } from "../../../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";
-import i18n from "../../../../locales";
-import { Moment } from "moment";
-import moment from "moment";
-import { Maybe } from "../../../../types/utils";
 
 export interface ObjectWithPeriodInput {
     period: DataSyncPeriod;
@@ -69,7 +68,7 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
 
     const classes = useStyles();
 
-    const periodItems = React.useMemo(
+    const periodItems = useMemo(
         () =>
             _(availablePeriods)
                 .mapValues((value, key) => ({ ...value, id: key }))
@@ -79,7 +78,7 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
         [skipPeriods]
     );
 
-    const updatePeriod = React.useCallback(
+    const updatePeriod = useCallback(
         (period: ObjectWithPeriodInput["period"]) => {
             onChange({ ...objectWithPeriod, period });
             onFieldChange("period", period);
@@ -87,7 +86,7 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
         [objectWithPeriod, onChange, onFieldChange]
     );
 
-    const updateStartDate = React.useCallback(
+    const updateStartDate = useCallback(
         (startDateM: Maybe<Moment>) => {
             const startDate = startDateM?.toDate();
             onChange({ ...objectWithPeriod, startDate });
@@ -96,7 +95,7 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
         [objectWithPeriod, onChange, onFieldChange]
     );
 
-    const updateEndDate = React.useCallback(
+    const updateEndDate = useCallback(
         (endDateM: Maybe<Moment>) => {
             const endDate = endDateM?.toDate();
             onChange({ ...objectWithPeriod, endDate });

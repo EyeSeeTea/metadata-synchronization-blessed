@@ -1,5 +1,5 @@
 import { ConfirmationDialog } from "d2-ui-components";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import i18n from "../../../../locales";
 import { MigrationsRunner } from "../../../../migrations";
 
@@ -16,15 +16,15 @@ type State =
 
 const Migrations: React.FC<MigrationsProps> = props => {
     const { runner, onFinish } = props;
-    const [messages, setMessages] = React.useState<string[]>([]);
-    const [state, setState] = React.useState<State>(getInitialState(runner));
-    React.useEffect(followContents, [messages]);
+    const [messages, setMessages] = useState<string[]>([]);
+    const [state, setState] = useState<State>(getInitialState(runner));
+    useEffect(followContents, [messages]);
 
-    const debug = React.useCallback((message: string) => {
+    const debug = useCallback((message: string) => {
         setMessages(messages => [...messages, message]);
     }, []);
 
-    const startMigration = React.useCallback(() => {
+    const startMigration = useCallback(() => {
         runMigrations(runner, debug, setState).then(setState);
     }, [runner, debug]);
 

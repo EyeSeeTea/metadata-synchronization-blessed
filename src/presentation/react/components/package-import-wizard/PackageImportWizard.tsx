@@ -1,4 +1,5 @@
 import { Wizard, WizardStep } from "d2-ui-components";
+import _ from "lodash";
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
@@ -58,14 +59,13 @@ export const PackageImportWizard: React.FC<PackageImportWizardProps> = props => 
 
     const steps = stepsBaseInfo.map(step => ({ ...step, props }));
 
-    const onStepChangeRequest = async (currentStep: WizardStep, _newStep: WizardStep) => {
-        const step = currentStep as PackageImportWizardStep;
+    const onStepChangeRequest = async (_currentStep: WizardStep, newStep: WizardStep) => {
+        const index = _(steps).findIndex(step => step.key === newStep.key);
+        const validationMessages = _.take(steps, index).map(({ validationKeys }) =>
+            props.packageImportRule.validate(validationKeys).map(({ description }) => description)
+        );
 
-        const errors = props.packageImportRule
-            .validate(step.validationKeys)
-            .map(({ description }) => description);
-
-        return errors;
+        return _.flatten(validationMessages);
     };
 
     const urlHash = location.hash.slice(1);

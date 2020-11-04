@@ -23,7 +23,6 @@ export interface ModulePackageListPageProps {
     pageSizeOptions?: number[];
     openSyncSummary?: (result: SyncReport) => void;
     paginationOptions?: PaginationOptions;
-    resetKeyEx?: number;
     actionButtonLabel?: ReactNode;
 }
 
@@ -79,6 +78,7 @@ export const ModulePackageListPage: React.FC = () => {
             <PageHeader title={title} onBackClick={backHome} />
 
             <ModulePackageListTable
+                key={resetKey}
                 showSelector={showSelector}
                 showInstances={showInstances}
                 onCreate={create}
@@ -87,7 +87,6 @@ export const ModulePackageListPage: React.FC = () => {
                 presentation={"app"}
                 openSyncSummary={setSyncReport}
                 onInstanceChange={setSelectedInstance}
-                resetKeyEx={resetKey}
             />
 
             {!!syncReport && (

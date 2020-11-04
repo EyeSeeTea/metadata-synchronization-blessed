@@ -173,8 +173,6 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
         );
     }
 
-    console.log("loading", objects === undefined);
-
     return (
         <React.Fragment>
             <Toggle

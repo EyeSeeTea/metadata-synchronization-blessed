@@ -4,13 +4,13 @@ import moment from "moment";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
-} from "../domain/instance/entities/MetadataMapping";
+} from "../domain/mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../domain/metadata/entities/MetadataEntities";
 import i18n from "../locales";
 import SyncRule from "../models/syncRule";
 import { D2Api } from "../types/d2-api";
-import "../utils/lodash-mixins";
 import { buildObject } from "../types/utils";
+import "../utils/lodash-mixins";
 
 //TODO: when all request to metadata using metadataRepository.getMetadataByIds
 // this function should be removed

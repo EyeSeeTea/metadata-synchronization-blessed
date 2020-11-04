@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { DataSyncPeriod } from "../../../../../domain/aggregated/types";
-import { SyncWizardStepProps } from "../Steps";
 import PeriodSelection, { ObjectWithPeriod } from "../../period-selection/PeriodSelection";
+import { SyncWizardStepProps } from "../Steps";
 
 const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
-    const updatePeriod = React.useCallback(
+    const updatePeriod = useCallback(
         (period: DataSyncPeriod) => {
             onChange(
                 syncRule
@@ -17,21 +17,21 @@ const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange
         [onChange, syncRule]
     );
 
-    const updateStartDate = React.useCallback(
+    const updateStartDate = useCallback(
         (date: Date | null) => {
             onChange(syncRule.updateDataSyncStartDate(date ?? undefined).updateDataSyncEvents([]));
         },
         [onChange, syncRule]
     );
 
-    const updateEndDate = React.useCallback(
+    const updateEndDate = useCallback(
         (date: Date | null) => {
             onChange(syncRule.updateDataSyncEndDate(date ?? undefined).updateDataSyncEvents([]));
         },
         [onChange, syncRule]
     );
 
-    const onFieldChange = React.useCallback(
+    const onFieldChange = useCallback(
         (field: keyof ObjectWithPeriod, value: ObjectWithPeriod[keyof ObjectWithPeriod]) => {
             switch (field) {
                 case "period":
@@ -45,7 +45,7 @@ const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange
         [updatePeriod, updateStartDate, updateEndDate]
     );
 
-    const objectWithPeriod = React.useMemo(() => {
+    const objectWithPeriod = useMemo(() => {
         return {
             period: syncRule.dataSyncPeriod,
             startDate: syncRule.dataSyncStartDate || undefined,

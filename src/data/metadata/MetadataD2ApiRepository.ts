@@ -1,9 +1,19 @@
-import { FilterValueBase } from "d2-api/api/common";
+import { FilterBase, FilterValueBase } from "d2-api/api/common";
 import _ from "lodash";
 import moment from "moment";
-import { Ref } from "../../domain/common/entities/Ref";
+import { buildPeriodFromParams } from "../../domain/aggregated/utils";
+import { IdentifiableRef, Ref } from "../../domain/common/entities/Ref";
+import { DataSource } from "../../domain/instance/entities/DataSource";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
+    DateFilter,
+    FilterRule,
+    FilterWhere,
+    StringMatch,
+    stringMatchHasValue,
+} from "../../domain/metadata/entities/FilterRule";
+import {
+    CategoryOptionCombo,
     MetadataEntities,
     MetadataEntity,
     MetadataPackage,
@@ -18,42 +28,42 @@ import { getClassName } from "../../domain/metadata/utils";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
-import { D2Api, D2Model, MetadataResponse, Model, Stats, Id } from "../../types/d2-api";
-import { Dictionary, Maybe, isNotEmpty } from "../../types/utils";
+import { modelFactory } from "../../models/dhis/factory";
+import { D2Api, D2Model, Id, MetadataResponse, Model, Stats } from "../../types/d2-api";
+import { Dictionary, isNotEmpty, Maybe } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
+import { getD2APiFromInstance } from "../../utils/d2-utils";
 import { debug } from "../../utils/debug";
 import { paginate } from "../../utils/pagination";
 import { metadataTransformations } from "../transformations/PackageTransformations";
-import {
-    FilterRule,
-    DateFilter,
-    StringMatch,
-    FilterWhere,
-    stringMatchHasValue,
-} from "../../domain/metadata/entities/FilterRule";
-import { modelFactory } from "../../models/dhis/factory";
-import { buildPeriodFromParams } from "../../domain/aggregated/utils";
-import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
+    private instance: Instance;
 
-    constructor(
-        private instance: Instance,
-        private transformationRepository: TransformationRepository
-    ) {
+    constructor(instance: DataSource, private transformationRepository: TransformationRepository) {
+        if (instance.type !== "dhis") {
+            throw new Error("Invalid instance type for MetadataD2ApiRepository");
+        }
+
         this.api = getD2APiFromInstance(instance);
+        this.instance = instance;
     }
 
     /**
      * Return raw specific fields of metadata dhis2 models according to ids filter
      * @param ids metadata ids to retrieve
      */
-    public async getMetadataByIds<T>(ids: string[], fields: string): Promise<MetadataPackage<T>> {
+    public async getMetadataByIds<T>(
+        ids: string[],
+        fields?: object | string,
+        includeDefaults = false
+    ): Promise<MetadataPackage<T>> {
         const { apiVersion } = this.instance;
 
-        const d2Metadata = await this.getMetadata<D2Model>(ids, fields);
+        const requestFields = typeof fields === "object" ? getFieldsAsString(fields) : fields;
+        const d2Metadata = await this.getMetadata<D2Model>(ids, requestFields, includeDefaults);
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
             apiVersion,
@@ -66,10 +76,18 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     @cache()
     public async listMetadata(listParams: ListMetadataParams): Promise<ListMetadataResponse> {
-        const { type, fields = { $owner: true }, page, pageSize, order, ...params } = listParams;
+        const {
+            type,
+            fields = { $owner: true },
+            page,
+            pageSize,
+            order,
+            rootJunction,
+            ...params
+        } = listParams;
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
-        const options = { type, fields, filter, order, page, pageSize };
+        const options = { type, fields, filter, order, page, pageSize, rootJunction };
         const { objects: baseObjects, pager } = await this.getListPaginated(options);
         // Prepend parent objects (if option enabled) as virtual rows, keep pagination unmodified.
         const objects = _.concat(await this.getParentObjects(listParams), baseObjects);
@@ -103,6 +121,69 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         return metadataPackage[type as keyof MetadataEntities] ?? [];
     }
 
+    public async lookupSimilar(query: IdentifiableRef): Promise<MetadataPackage<IdentifiableRef>> {
+        const response = await this.api
+            .get<MetadataPackage<IdentifiableRef>>("/metadata", {
+                fields: getFieldsAsString({
+                    id: true,
+                    code: true,
+                    name: true,
+                    path: true,
+                    level: true,
+                }),
+                filter: getFilterAsString({
+                    name: { token: query.name },
+                    id: { eq: query.id },
+                    code: { eq: query.code },
+                }),
+                rootJunction: "OR",
+                paging: false,
+            })
+            .getData();
+
+        return _.omit(response, ["system"]);
+    }
+
+    @cache()
+    public async getDefaultIds(filter?: string): Promise<string[]> {
+        const response = (await this.api
+            .get("/metadata", {
+                filter: "code:eq:default",
+                fields: "id",
+            })
+            .getData()) as {
+            [key: string]: { id: string }[];
+        };
+
+        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
+
+        return _(metadata)
+            .omit(["system"])
+            .values()
+            .flatten()
+            .map(({ id }) => id)
+            .value();
+    }
+
+    @cache()
+    public async getCategoryOptionCombos(): Promise<
+        Pick<CategoryOptionCombo, "id" | "name" | "categoryCombo" | "categoryOptions">[]
+    > {
+        const { objects } = await this.api.models.categoryOptionCombos
+            .get({
+                paging: false,
+                fields: {
+                    id: true,
+                    name: true,
+                    categoryCombo: true,
+                    categoryOptions: true,
+                },
+            })
+            .getData();
+
+        return objects;
+    }
+
     private async getParentObjects(params: ListMetadataParams): Promise<unknown[]> {
         if (params.includeParents && isNotEmpty(params.parents)) {
             const parentIds = params.parents.map(ou => _(ou).split("/").last() || "");
@@ -131,14 +212,14 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         Solution: Perform N sequential request and concatenate (+ sort) the objects manually.
     */
     private async getListGeneric(options: GetListAllOptions): Promise<GetListGenericResponse> {
-        const { type, fields, filter, order = defaultOrder } = options;
+        const { type, fields, filter, order = defaultOrder, rootJunction } = options;
         const idFilter = getIdFilter(filter, maxIds);
 
         if (idFilter) {
             const objectsLists = await promiseMap(_.chunk(idFilter.inIds, maxIds), async ids => {
                 const newFilter = { ...filter, id: { ...idFilter.value, in: ids } };
                 const { objects } = await this.getApiModel(type)
-                    .get({ paging: false, fields, filter: newFilter })
+                    .get({ paging: false, fields, filter: newFilter, rootJunction })
                     .getData();
                 return objects;
             });
@@ -151,9 +232,14 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         }
     }
 
-    private async getListAll(options: GetListAllOptions) {
-        const { type, fields, filter, order = defaultOrder } = options;
-        const list = await this.getListGeneric({ type, fields, filter, order });
+    private async getListAll({
+        type,
+        fields,
+        filter,
+        order = defaultOrder,
+        rootJunction,
+    }: GetListAllOptions) {
+        const list = await this.getListGeneric({ type, fields, filter, order, rootJunction });
 
         if (list.useSingleApiRequest) {
             const { objects } = await this.getApiModel(type)
@@ -165,13 +251,28 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         }
     }
 
-    private async getListPaginated(options: GetListPaginatedOptions) {
-        const { type, fields, filter, order = defaultOrder, page = 1, pageSize = 50 } = options;
-        const list = await this.getListGeneric({ type, fields, filter, order });
+    private async getListPaginated({
+        type,
+        fields,
+        filter,
+        order = defaultOrder,
+        page = 1,
+        pageSize = 50,
+        rootJunction,
+    }: GetListPaginatedOptions) {
+        const list = await this.getListGeneric({ type, fields, filter, order, rootJunction });
 
         if (list.useSingleApiRequest) {
             return this.getApiModel(type)
-                .get({ paging: true, fields, filter, page, pageSize, order: list.order })
+                .get({
+                    paging: true,
+                    fields,
+                    filter,
+                    page,
+                    pageSize,
+                    order: list.order,
+                    rootJunction,
+                })
                 .getData();
         } else {
             return paginate(list.objects, { page, pageSize });
@@ -182,6 +283,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         lastUpdated,
         group,
         level,
+        includeParents,
         parents,
         showOnlySelected,
         selectedIds = [],
@@ -193,7 +295,9 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         if (lastUpdated) filter["lastUpdated"] = { ge: moment(lastUpdated).format("YYYY-MM-DD") };
         if (group) filter[`${group.type}.id`] = { eq: group.value };
         if (level) filter["level"] = { eq: level };
-        if (isNotEmpty(parents)) filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
+        if (includeParents && isNotEmpty(parents)) {
+            filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
+        }
         if (showOnlySelected) filter["id"] = { in: selectedIds.concat(filter["id"]?.in ?? []) };
         if (filterRows) filter["id"] = { in: filterRows.concat(filter["id"]?.in ?? []) };
         if (search) filter[search.field] = { [search.operator]: search.value };
@@ -267,7 +371,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     public async getByFilterRules(filterRules: FilterRule[]): Promise<Id[]> {
         const listOfIds = await promiseMap(filterRules, async filterRule => {
-            const myClass = modelFactory(this.api, filterRule.metadataType);
+            const myClass = modelFactory(filterRule.metadataType);
             const collectionName = myClass.getCollectionName();
             // Make one separate request per field and join results. That the only way to
             // perform an OR text-search on arbitrary fields (identifiable: id, name, code).
@@ -359,20 +463,16 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         payload: Partial<Record<string, unknown[]>>,
         additionalParams?: MetadataImportParams
     ): Promise<MetadataResponse> {
-        const response = await this.api
-            .post<MetadataResponse>(
-                "/metadata",
-                {
-                    importMode: "COMMIT",
-                    identifier: "UID",
-                    importReportMode: "FULL",
-                    importStrategy: "CREATE_AND_UPDATE",
-                    mergeMode: "MERGE",
-                    atomicMode: "ALL",
-                    ...additionalParams,
-                },
-                payload
-            )
+        const response = await this.api.metadata
+            .post(payload, {
+                importMode: "COMMIT",
+                identifier: "UID",
+                importReportMode: "FULL",
+                importStrategy: "CREATE_AND_UPDATE",
+                mergeMode: "MERGE",
+                atomicMode: "ALL",
+                ...additionalParams,
+            })
             .getData();
 
         return response;
@@ -380,7 +480,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     private async getMetadata<T>(
         elements: string[],
-        fields = ":all"
+        fields = ":all",
+        includeDefaults: boolean
     ): Promise<Record<string, T[]>> {
         const promises = [];
         for (let i = 0; i < elements.length; i += 100) {
@@ -390,7 +491,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                     .get("/metadata", {
                         fields,
                         filter: "id:in:[" + requestElements + "]",
-                        defaults: "EXCLUDE",
+                        defaults: includeDefaults ? undefined : "EXCLUDE",
                     })
                     .getData()
             );
@@ -420,6 +521,7 @@ interface GetListAllOptions {
     fields: object;
     filter: Dictionary<FilterValueBase | FilterValueBase[]>;
     order?: ListMetadataParams["order"];
+    rootJunction?: "AND" | "OR";
 }
 
 interface GetListPaginatedOptions extends GetListAllOptions {
@@ -445,4 +547,63 @@ function getIdFilter(
     } else {
         return null;
     }
+}
+
+function applyFieldTransformers(key: string, value: any) {
+    // eslint-disable-next-line
+    if (value.hasOwnProperty("$fn")) {
+        switch (value["$fn"]["name"]) {
+            case "rename":
+                return {
+                    key: `${key}~rename(${value["$fn"]["to"]})`,
+                    value: _.omit(value, ["$fn"]),
+                };
+            default:
+                return { key, value };
+        }
+    } else {
+        return { key, value };
+    }
+}
+
+function getFieldsAsString(modelFields: object): string {
+    return _(modelFields)
+        .map((value0, key0: string) => {
+            const { key, value } = applyFieldTransformers(key0, value0);
+
+            if (typeof value === "boolean" || _.isEqual(value, {})) {
+                return value ? key.replace(/^\$/, ":") : null;
+            } else {
+                return key + "[" + getFieldsAsString(value) + "]";
+            }
+        })
+        .compact()
+        .sortBy()
+        .join(",");
+}
+
+function toArray<T>(itemOrItems: T | T[]): T[] {
+    return Array.isArray(itemOrItems) ? itemOrItems : [itemOrItems];
+}
+
+function isEmptyFilterValue(val: any): boolean {
+    return val === undefined || val === null || val === "";
+}
+
+function getFilterAsString(filter: FilterBase): string[] {
+    return _.sortBy(
+        _.flatMap(filter, (filterOrFilters, field) =>
+            _.flatMap(toArray(filterOrFilters || []), filter =>
+                _.compact(
+                    _.map(filter, (value, op) =>
+                        isEmptyFilterValue(value)
+                            ? null
+                            : op === "in" || op === "!in"
+                            ? `${field}:${op}:[${(value as string[]).join(",")}]`
+                            : `${field}:${op}:${value}`
+                    )
+                )
+            )
+        )
+    );
 }

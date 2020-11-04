@@ -5,7 +5,7 @@ import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
-} from "../../../../domain/instance/entities/MetadataMapping";
+} from "../../../../domain/mapping/entities/MetadataMapping";
 import i18n from "../../../../locales";
 import {
     AggregatedDataElementModel,
@@ -21,9 +21,9 @@ import {
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
 } from "../../../../models/dhis/mapping";
-import { useAppContext } from "../../../react/contexts/AppContext";
 import MappingTable from "../../../react/components/mapping-table/MappingTable";
 import PageHeader from "../../../react/components/page-header/PageHeader";
+import { useAppContext } from "../../../react/contexts/AppContext";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 
@@ -107,7 +107,7 @@ export default function InstanceMappingPage() {
             {!!instance && (
                 <MappingTable
                     models={models}
-                    instance={instance}
+                    destinationInstance={instance}
                     mapping={instance.metadataMapping}
                     globalMapping={instance.metadataMapping}
                     onChangeMapping={onChangeMapping}

@@ -14,7 +14,7 @@ import { Namespace } from "../../storage/Namespaces";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { GitHubError, GitHubListError } from "../entities/Errors";
-import { Package } from "../entities/Package";
+import { ListPackage, Package } from "../entities/Package";
 import { Store } from "../entities/Store";
 import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubRepository";
 
@@ -23,7 +23,7 @@ export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
 export class ListStorePackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(storeId: string): Promise<Either<ListStorePackagesError, Package[]>> {
+    public async execute(storeId: string): Promise<Either<ListStorePackagesError, ListPackage[]>> {
         const store = (
             await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
         )?.find(store => store.id === storeId);
@@ -112,9 +112,12 @@ export class ListStorePackagesUseCase implements UseCase {
     }
 
     private async getModule(moduleFileUrl?: string): Promise<BaseModule> {
-        const unknowModule = MetadataModule.build({ id: "Unknown module", name: "Unknown module" });
+        const unknownModule = MetadataModule.build({
+            id: "Unknown module",
+            name: "Unknown module",
+        });
 
-        if (!moduleFileUrl) return unknowModule;
+        if (!moduleFileUrl) return unknownModule;
 
         const { encoding, content } = await this.downloadRepository().fetch<{
             encoding: string;
@@ -125,7 +128,7 @@ export class ListStorePackagesUseCase implements UseCase {
 
         return readFileResult.match({
             success: module => module,
-            error: () => unknowModule,
+            error: () => unknownModule,
         });
     }
 

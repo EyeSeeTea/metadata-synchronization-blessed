@@ -2,9 +2,10 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import { aggregatedTransformations } from "../../../data/transformations/PackageTransformations";
 import { promiseMap } from "../../../utils/common";
+import { debug } from "../../../utils/debug";
 import { mapCategoryOptionCombo, mapOptionValue } from "../../../utils/synchronization";
 import { Instance } from "../../instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import {
     CategoryOptionCombo,
     DataElement,
@@ -21,7 +22,6 @@ import {
 } from "../../synchronization/utils";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { DataValue } from "../entities/DataValue";
-import { debug } from "../../../utils/debug";
 
 export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public readonly type = "aggregated";
@@ -185,12 +185,12 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         instance: Instance,
         { dataValues: oldDataValues }: AggregatedPackage
     ): Promise<AggregatedPackage> {
-        const instanceRepository = await this.getInstanceRepository();
-        const remoteInstanceRepository = await this.getInstanceRepository(instance);
+        const metadataRepository = await this.getMetadataRepository();
+        const remoteMetadataRepository = await this.getMetadataRepository(instance);
 
-        const defaultIds = await instanceRepository.getDefaultIds();
-        const originCategoryOptionCombos = await instanceRepository.getCategoryOptionCombos();
-        const destinationCategoryOptionCombos = await remoteInstanceRepository.getCategoryOptionCombos();
+        const defaultIds = await metadataRepository.getDefaultIds();
+        const originCategoryOptionCombos = await metadataRepository.getCategoryOptionCombos();
+        const destinationCategoryOptionCombos = await remoteMetadataRepository.getCategoryOptionCombos();
         const mapping = await this.getMapping(instance);
 
         const instanceAggregatedValues = await this.buildInstanceAggregation(

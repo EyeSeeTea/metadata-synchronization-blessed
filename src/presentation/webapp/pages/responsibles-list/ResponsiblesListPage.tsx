@@ -2,23 +2,25 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataResponsible } from "../../../../domain/metadata/entities/MetadataResponsible";
+import { Store } from "../../../../domain/packages/entities/Store";
 import i18n from "../../../../locales";
 import { DataSetModel, ProgramModel } from "../../../../models/dhis/metadata";
+import { isAppConfigurator } from "../../../../utils/permissions";
 import {
     InstanceSelectionDropdown,
     InstanceSelectionOption,
 } from "../../../react/components/instance-selection-dropdown/InstanceSelectionDropdown";
-import { useAppContext } from "../../../react/contexts/AppContext";
 import MetadataTable from "../../../react/components/metadata-table/MetadataTable";
 import PageHeader from "../../../react/components/page-header/PageHeader";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { useAppContext } from "../../../react/contexts/AppContext";
 
 export const ResponsiblesListPage: React.FC = () => {
-    const { compositionRoot } = useAppContext();
+    const { compositionRoot, api } = useAppContext();
     const history = useHistory();
 
     const [remoteInstance, setRemoteInstance] = useState<Instance>();
     const [responsibles, updateResponsibles] = useState<ExpandedMetadataResponsible[]>([]);
+    const [appConfigurator, updateAppConfigurator] = useState(false);
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -35,6 +37,10 @@ export const ResponsiblesListPage: React.FC = () => {
         compositionRoot.responsibles.list(remoteInstance).then(updateResponsibles);
     }, [compositionRoot, remoteInstance]);
 
+    useEffect(() => {
+        isAppConfigurator(api).then(updateAppConfigurator);
+    }, [api, updateAppConfigurator]);
+
     return (
         <React.Fragment>
             <PageHeader onBackClick={backHome} title={i18n.t("Metadata custodians")}>
@@ -49,10 +55,10 @@ export const ResponsiblesListPage: React.FC = () => {
             <MetadataTable
                 remoteInstance={remoteInstance}
                 models={[DataSetModel, ProgramModel]}
-                allowChangingResponsible={true}
+                allowChangingResponsible={appConfigurator}
                 forceSelectionColumn={false}
                 filterRows={responsibles.map(({ id }) => id)}
-                showOnlySelectedFilter={false}
+                viewFilters={["group", "level", "orgUnit", "lastUpdated"]}
             />
         </React.Fragment>
     );

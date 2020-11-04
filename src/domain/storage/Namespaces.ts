@@ -11,6 +11,7 @@ export const Namespace = {
     CONFIG: "config",
     STORES: "stores",
     RESPONSIBLES: "responsibles",
+    MAPPINGS: "mappings",
 };
 
 export const NamespaceProperties: Record<Namespace, string[]> = {
@@ -18,6 +19,7 @@ export const NamespaceProperties: Record<Namespace, string[]> = {
     [Namespace.PACKAGES]: ["contents"],
     [Namespace.IMPORTEDPACKAGES]: ["contents"],
     [Namespace.INSTANCES]: ["metadataMapping"],
+    [Namespace.MAPPINGS]: ["mappingDictionary"],
     [Namespace.RULES]: [],
     [Namespace.HISTORY]: [],
     [Namespace.NOTIFICATIONS]: ["payload"],

@@ -13,30 +13,30 @@ import {
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { BasePackage, Package } from "../../../../domain/packages/entities/Package";
-import i18n from "../../../../locales";
-import SyncReport from "../../../../models/syncReport";
-import { isAppConfigurator, isGlobalAdmin } from "../../../../utils/permissions";
-import Dropdown from "../dropdown/Dropdown";
-import { PackagesDiffDialog, PackageToDiff } from "../packages-diff-dialog/PackagesDiffDialog";
-import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
-import { useAppContext } from "../../contexts/AppContext";
-import { ImportedPackage } from "../../../../domain/package-import/entities/ImportedPackage";
 import semver from "semver";
-import { Instance } from "../../../../domain/instance/entities/Instance";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Either } from "../../../../domain/common/entities/Either";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
+import { Instance } from "../../../../domain/instance/entities/Instance";
+import { ImportedPackage } from "../../../../domain/package-import/entities/ImportedPackage";
 import {
     isInstance,
     isStore,
     PackageSource,
 } from "../../../../domain/package-import/entities/PackageSource";
 import { mapToImportedPackage } from "../../../../domain/package-import/mappers/ImportedPackageMapper";
-import { Either } from "../../../../domain/common/entities/Either";
+import { BasePackage, ListPackage, Package } from "../../../../domain/packages/entities/Package";
+import { Store } from "../../../../domain/packages/entities/Store";
+import i18n from "../../../../locales";
+import SyncReport from "../../../../models/syncReport";
+import { isAppConfigurator, isGlobalAdmin } from "../../../../utils/permissions";
+import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
+import { useAppContext } from "../../contexts/AppContext";
+import Dropdown from "../dropdown/Dropdown";
 import PackageImportDialog from "../package-import-dialog/PackageImportDialog";
+import { PackagesDiffDialog, PackageToDiff } from "../packages-diff-dialog/PackagesDiffDialog";
 
 type InstallState = "Installed" | "NotInstalled" | "Upgrade" | "Local";
-type ListPackage = Omit<BasePackage, "contents"> & { installState: InstallState };
+type TableListPackage = Omit<BasePackage, "contents"> & { installState: InstallState };
 
 interface PackagesListTableProps extends ModulePackageListPageProps {
     isImportDialog?: boolean;
@@ -55,22 +55,20 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     isImportDialog = false,
     onSelectionChange,
     selectedIds,
-    resetKeyEx,
     actionButtonLabel,
 }) => {
     const { api, compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const [instancePackages, setInstancePackages] = useState<ListPackage[]>([]);
-    const [storePackages, setStorePackages] = useState<ListPackage[]>([]);
+    const [instancePackages, setInstancePackages] = useState<TableListPackage[]>([]);
+    const [storePackages, setStorePackages] = useState<TableListPackage[]>([]);
     const [importedPackages, setImportedPackages] = useState<ImportedPackage[]>([]);
     const rows = remoteStore ? storePackages : instancePackages;
 
-    const [resetKey, setResetKey] = useState(resetKeyEx || Math.random());
-    const [selection, updateSelection] = useState<TableSelection[]>(
-        selectedIds?.map(id => ({ id })) || []
-    );
+    const [resetKey, setResetKey] = useState(Math.random());
+    const [stateSelection, updateStateSelection] = useState<TableSelection[]>([]);
+    const selection = selectedIds?.map(id => ({ id })) ?? stateSelection;
 
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
     const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
@@ -88,13 +86,16 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const isRemoteInstance = !!remoteInstance;
 
-    useEffect(() => {
-        if (resetKeyEx) setResetKey(resetKeyEx);
-    }, [resetKeyEx]);
+    const updateSelection = useCallback(
+        (selection: TableSelection[]) => {
+            updateStateSelection(selection);
 
-    useEffect(() => {
-        api.getVersion().then(setLocalDhis2Version);
-    }, [api]);
+            if (onSelectionChange) {
+                onSelectionChange(selection.map(selection => selection.id));
+            }
+        },
+        [onSelectionChange]
+    );
 
     const deletePackages = useCallback(
         async (ids: string[]) => {
@@ -106,19 +107,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             setResetKey(Math.random());
             updateSelection([]);
         },
-        [compositionRoot, loading]
+        [compositionRoot, loading, updateSelection]
     );
 
     const updateTable = useCallback(
-        ({ selection }: TableState<ListPackage>) => {
+        ({ selection }: TableState<TableListPackage>) => {
             updateSelection(selection);
-
-            if (onSelectionChange) {
-                const selectedIds = selection.map(selection => selection.id);
-                onSelectionChange(selectedIds);
-            }
         },
-        [updateSelection, onSelectionChange]
+        [updateSelection]
     );
 
     const downloadPackage = useCallback(
@@ -285,8 +281,16 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                             true,
                             i18n.t("Importing package {{name}}", { name: originPackage.name })
                         );
-                        const result = await compositionRoot.metadata.import(
-                            originPackage.contents
+
+                        const mapping = await compositionRoot.mapping.get({
+                            type: isInstance(packageSource) ? "instance" : "store",
+                            id: packageSource.id,
+                            moduleId: originPackage.module.id,
+                        });
+
+                        const result = await compositionRoot.packages.import(
+                            originPackage,
+                            mapping?.mappingDictionary
                         );
 
                         const report = SyncReport.create("metadata");
@@ -357,7 +361,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         }
     };
 
-    const columns: TableColumn<ListPackage>[] = useMemo(
+    const columns: TableColumn<TableListPackage>[] = useMemo(
         () => [
             { name: "name", text: i18n.t("Name"), sortable: true },
             { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
@@ -371,13 +375,13 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 text: i18n.t("State"),
                 sortable: true,
                 hidden: !remoteInstance && !remoteStore,
-                getValue: (row: ListPackage) => getInstallStateText(row.installState),
+                getValue: (row: TableListPackage) => getInstallStateText(row.installState),
             },
         ],
         [remoteInstance, remoteStore]
     );
 
-    const details: ObjectsTableDetailField<ListPackage>[] = useMemo(
+    const details: ObjectsTableDetailField<TableListPackage>[] = useMemo(
         () => [
             { name: "id", text: i18n.t("ID") },
             { name: "name", text: i18n.t("Name") },
@@ -390,13 +394,13 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             {
                 name: "installState",
                 text: i18n.t("State"),
-                getValue: (row: ListPackage) => getInstallStateText(row.installState),
+                getValue: (row: TableListPackage) => getInstallStateText(row.installState),
             },
         ],
         []
     );
 
-    const actions: TableAction<ListPackage>[] = useMemo(
+    const actions: TableAction<TableListPackage>[] = useMemo(
         () => [
             {
                 name: "details",
@@ -586,6 +590,30 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         );
     }, [moduleFilter, rows, dhis2VersionFilter, installStateFilter]);
 
+    const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
+        setOpenImportPackageDialog(false);
+        setToImportWizard([]);
+        openSyncSummary(syncReport);
+        setResetKey(Math.random);
+    };
+
+    const handleCloseImportWizard = () => {
+        setOpenImportPackageDialog(false);
+        setToImportWizard([]);
+    };
+
+    const showImportFromWizardButton =
+        !isImportDialog &&
+        presentation === "app" &&
+        (isRemoteInstance || remoteStore) &&
+        appConfigurator;
+
+    const packageSource = remoteInstance ?? remoteStore;
+
+    useEffect(() => {
+        api.getVersion().then(setLocalDhis2Version);
+    }, [api]);
+
     useEffect(() => {
         setLoadingTable(true);
         compositionRoot.packages
@@ -661,29 +689,9 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
-    const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
-        setOpenImportPackageDialog(false);
-        setToImportWizard([]);
-        openSyncSummary(syncReport);
-        setResetKey(Math.random);
-    };
-
-    const handleCloseImportWizard = () => {
-        setOpenImportPackageDialog(false);
-        setToImportWizard([]);
-    };
-
-    const showImportFromWizardButton =
-        !isImportDialog &&
-        presentation === "app" &&
-        (isRemoteInstance || remoteStore) &&
-        appConfigurator;
-
-    const packageSource = remoteInstance ?? remoteStore;
-
     return (
         <React.Fragment>
-            <ObjectsTable<ListPackage>
+            <ObjectsTable<TableListPackage>
                 rows={rowsFiltered}
                 columns={columns}
                 details={details}
@@ -723,11 +731,11 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 };
 
 function mapPackagesToListPackages(
-    packages: BasePackage[],
+    packages: ListPackage[],
     importedPackages: ImportedPackage[],
     remoteInstance?: Instance,
     remoteStore?: Store
-): ListPackage[] {
+): TableListPackage[] {
     const listPackages = packages.map(pkg => {
         if (!remoteStore && !remoteInstance)
             return { ...pkg, installState: "Local" as InstallState };

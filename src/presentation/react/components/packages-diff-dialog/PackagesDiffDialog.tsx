@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/styles";
 import { useSnackbar } from "d2-ui-components";
 import { ConfirmationDialog } from "d2-ui-components/confirmation-dialog/ConfirmationDialog";
 import _ from "lodash";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
@@ -28,10 +28,10 @@ export type PackageToDiff = { id: string; name: string };
 export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
-    const [metadataDiff, setMetadataDiff] = React.useState<MetadataPackageDiff>();
+    const [metadataDiff, setMetadataDiff] = useState<MetadataPackageDiff>();
     const { remotePackage, remoteStore, remoteInstance, onClose } = props;
 
-    React.useEffect(() => {
+    useEffect(() => {
         compositionRoot.packages
             .diff(remoteStore?.id, remotePackage.id, remoteInstance)
             .then(res => {

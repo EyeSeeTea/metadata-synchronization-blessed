@@ -2,11 +2,11 @@ import { DialogContent } from "@material-ui/core";
 import { ConfirmationDialog, Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
-import { Instance } from "../../../../domain/instance/entities/Instance";
+import { DataSource } from "../../../../domain/instance/entities/DataSource";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
-} from "../../../../domain/instance/entities/MetadataMapping";
+} from "../../../../domain/mapping/entities/MetadataMapping";
 import i18n from "../../../../locales";
 import { MetadataType } from "../../../../utils/d2";
 import { MappingTableProps } from "../mapping-table/MappingTable";
@@ -25,9 +25,11 @@ export interface MappingWizardConfig {
 }
 
 export interface MappingWizardProps {
-    instance: Instance;
+    originInstance?: DataSource;
+    destinationInstance: DataSource;
+    mapping: MetadataMappingDictionary;
     config: MappingWizardConfig;
-    updateMapping: (mapping: MetadataMappingDictionary) => Promise<void>;
+    onUpdateMapping: (mapping: MetadataMappingDictionary) => Promise<void>;
     onApplyGlobalMapping(type: string, id: string, mapping: MetadataMapping): Promise<void>;
     onCancel?(): void;
 }
@@ -38,16 +40,18 @@ export const prepareSteps = (type: string | undefined, element: MetadataType) =>
 };
 
 const MappingWizard: React.FC<MappingWizardProps> = ({
-    instance,
+    originInstance,
+    destinationInstance,
+    mapping: instanceMapping,
     config,
-    updateMapping,
+    onUpdateMapping,
     onApplyGlobalMapping,
     onCancel = _.noop,
 }) => {
     const { mappingPath, type, element } = config;
 
     const { mappedId = "", mapping = {} }: MetadataMapping = _.get(
-        instance.metadataMapping,
+        instanceMapping,
         mappingPath,
         {}
     );
@@ -61,9 +65,9 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
     };
 
     const onChangeMapping = async (subMapping: MetadataMappingDictionary) => {
-        const newMapping = _.clone(instance.metadataMapping);
+        const newMapping = _.clone(instanceMapping);
         _.set(newMapping, [...mappingPath, "mapping"], subMapping);
-        await updateMapping(newMapping);
+        await onUpdateMapping(newMapping);
     };
 
     const steps: MappingWizardStep[] =
@@ -71,11 +75,12 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
             ...step,
             props: {
                 models,
-                globalMapping: instance.metadataMapping,
+                globalMapping: instanceMapping,
                 mapping,
                 onChangeMapping,
                 onApplyGlobalMapping,
-                instance,
+                originInstance,
+                destinationInstance,
                 filterRows,
                 transformRows,
                 mappingPath: [...mappingPath, mappedId],

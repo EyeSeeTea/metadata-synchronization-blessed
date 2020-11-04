@@ -2,6 +2,7 @@ import { AggregatedD2ApiRepository } from "../data/aggregated/AggregatedD2ApiRep
 import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
+import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
 import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StorageDataStoreRepository } from "../data/storage/StorageDataStoreRepository";
@@ -21,6 +22,12 @@ import { GetUserGroupsUseCase } from "../domain/instance/usecases/GetUserGroupsU
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
+import { ApplyMappingUseCase } from "../domain/mapping/usecases/ApplyMappingUseCase";
+import { AutoMapUseCase } from "../domain/mapping/usecases/AutoMapUseCase";
+import { BuildMappingUseCase } from "../domain/mapping/usecases/BuildMappingUseCase";
+import { GetMappingByOwnerUseCase } from "../domain/mapping/usecases/GetMappingByOwnerUseCase";
+import { GetValidMappingIdUseCase } from "../domain/mapping/usecases/GetValidMappingIdUseCase";
+import { SaveMappingUseCase } from "../domain/mapping/usecases/SaveMappingUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { GetResponsiblesUseCase } from "../domain/metadata/usecases/GetResponsiblesUseCase";
 import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
@@ -49,6 +56,7 @@ import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPack
 import { GetPackageUseCase } from "../domain/packages/usecases/GetPackageUseCase";
 import { GetStorePackageUseCase } from "../domain/packages/usecases/GetStorePackageUseCase";
 import { GetStoreUseCase } from "../domain/packages/usecases/GetStoreUseCase";
+import { ImportPackageUseCase } from "../domain/packages/usecases/ImportPackageUseCase";
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
 import { ListStoresUseCase } from "../domain/packages/usecases/ListStoresUseCase";
@@ -75,6 +83,11 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
         this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
+        this.repositoryFactory.bind(
+            Repositories.MetadataRepository,
+            MetadataJSONRepository,
+            "json"
+        );
         this.repositoryFactory.bind(
             Repositories.TransformationRepository,
             TransformationD2ApiRepository
@@ -183,6 +196,7 @@ export class CompositionRoot {
             download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),
             publish: new PublishStorePackageUseCase(this.repositoryFactory, this.localInstance),
             diff: new DiffPackageUseCase(this, this.repositoryFactory, this.localInstance),
+            import: new ImportPackageUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -265,6 +279,20 @@ export class CompositionRoot {
 
         return getExecute({
             list: new ListEventsUseCase(events),
+        });
+    }
+
+    @cache()
+    public get mapping() {
+        const storage = new StorageDataStoreRepository(this.localInstance);
+
+        return getExecute({
+            get: new GetMappingByOwnerUseCase(storage),
+            save: new SaveMappingUseCase(storage),
+            apply: new ApplyMappingUseCase(this.repositoryFactory, this.localInstance),
+            getValidIds: new GetValidMappingIdUseCase(this.repositoryFactory, this.localInstance),
+            autoMap: new AutoMapUseCase(this.repositoryFactory, this.localInstance),
+            buildMapping: new BuildMappingUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }
