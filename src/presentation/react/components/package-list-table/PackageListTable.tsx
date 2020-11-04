@@ -289,12 +289,13 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                             moduleId: originPackage.module.id,
                         });
 
-                        const originDataSource = remoteInstance && isInstance(packageSource)
-                            ? remoteInstance
-                            : JSONDataSource.build(
-                                  originPackage.dhisVersion,
-                                  originPackage.contents
-                              );
+                        const originDataSource =
+                            remoteInstance && isInstance(packageSource)
+                                ? remoteInstance
+                                : JSONDataSource.build(
+                                      originPackage.dhisVersion,
+                                      originPackage.contents
+                                  );
 
                         const result = await compositionRoot.packages.import(
                             originPackage,

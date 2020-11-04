@@ -1,20 +1,21 @@
 import DialogContent from "@material-ui/core/DialogContent";
 import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
+import { Either } from "../../../../domain/common/entities/Either";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
+import { JSONDataSource } from "../../../../domain/instance/entities/JSONDataSource";
 import { PackageImportRule } from "../../../../domain/package-import/entities/PackageImportRule";
 import {
     isInstance,
     isStore,
     PackageSource,
 } from "../../../../domain/package-import/entities/PackageSource";
+import { mapToImportedPackage } from "../../../../domain/package-import/mappers/ImportedPackageMapper";
 import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { useAppContext } from "../../contexts/AppContext";
 import { PackageImportWizard } from "../package-import-wizard/PackageImportWizard";
-import { Either } from "../../../../domain/common/entities/Either";
-import { mapToImportedPackage } from "../../../../domain/package-import/mappers/ImportedPackageMapper";
 
 interface PackageImportDialogProps {
     isOpen: boolean;
@@ -121,9 +122,18 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                             moduleId: originPackage.module.id,
                         });
 
+                        const originInstance = isInstance(packageImportRule.source)
+                            ? await compositionRoot.instances.getById(packageImportRule.source.id)
+                            : undefined;
+
+                        const originDataSource =
+                            originInstance?.value.data ??
+                            JSONDataSource.build(originPackage.dhisVersion, originPackage.contents);
+
                         const result = await compositionRoot.packages.import(
                             originPackage,
-                            mapping?.mappingDictionary
+                            mapping?.mappingDictionary,
+                            originDataSource
                         );
 
                         report.setStatus(
