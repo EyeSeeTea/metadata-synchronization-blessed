@@ -10,6 +10,13 @@ import { GitHubRepository } from "../../domain/packages/repositories/GitHubRepos
 import { cache } from "../../utils/cache";
 
 export class GitHubOctokitRepository implements GitHubRepository {
+    @cache()
+    public async request<T>(store: Store, url: string): Promise<T> {
+        const octokit = await this.getOctoKit(store.token);
+        const result = await octokit.request(`GET ${url}`);
+        return result.data as T;
+    }
+
     public async listFiles(
         store: Store,
         branch: string

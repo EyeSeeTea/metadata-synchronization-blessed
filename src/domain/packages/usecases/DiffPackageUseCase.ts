@@ -5,7 +5,6 @@ import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
-import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { getMetadataPackageDiff, MetadataPackageDiff } from "../entities/MetadataPackageDiff";
 import { Store } from "../entities/Store";
@@ -67,10 +66,10 @@ export class DiffPackageUseCase implements UseCase {
 
         if (!store) return undefined;
 
-        const { encoding, content } = await this.downloadRepository().fetch<{
+        const { encoding, content } = await this.gitRepository().request<{
             encoding: string;
             content: string;
-        }>(url);
+        }>(store, url);
 
         const validation = this.gitRepository().readFileContents<
             MetadataPackage & { package: BasePackage }
@@ -94,14 +93,6 @@ export class DiffPackageUseCase implements UseCase {
         return this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [instance]
-        );
-    }
-
-    @cache()
-    private downloadRepository() {
-        return this.repositoryFactory.get<DownloadRepositoryConstructor>(
-            Repositories.DownloadRepository,
-            []
         );
     }
 }

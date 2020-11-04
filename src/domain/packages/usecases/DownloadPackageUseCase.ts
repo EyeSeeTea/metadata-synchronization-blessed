@@ -44,10 +44,10 @@ export class DownloadPackageUseCase implements UseCase {
 
         if (!store) return undefined;
 
-        const { encoding, content } = await this.downloadRepository().fetch<{
+        const { encoding, content } = await this.gitRepository().request<{
             encoding: string;
             content: string;
-        }>(url);
+        }>(store, url);
 
         const validation = this.gitRepository().readFileContents<
             MetadataPackage & { package: BasePackage }
