@@ -20,7 +20,7 @@ import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubR
 export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
 
 export class ListStorePackagesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) { }
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(storeId: string): Promise<Either<ListStorePackagesError, ListPackage[]>> {
         const store = (
@@ -124,8 +124,8 @@ export class ListStorePackagesUseCase implements UseCase {
     }
 
     private extractPackageDetailsFromPath(path: string) {
-        const [moduleName, ...fileName] = path.split("/")
-        const [name, version, other] = fileName.join("/").split(/(-\d+\.\d+\.\d+-)/)
+        const [moduleName, ...fileName] = path.split("/");
+        const [name, version, other] = fileName.join("/").split(/(-\d+\.\d+\.\d+-)/);
         if (version && other) {
             const refinedVersion = version.slice(1, -1);
             const tokens = other ? _.compact(other.split("-")) : [];
