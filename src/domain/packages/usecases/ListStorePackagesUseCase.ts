@@ -20,7 +20,7 @@ import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubR
 export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
 
 export class ListStorePackagesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) { }
 
     public async execute(storeId: string): Promise<Either<ListStorePackagesError, ListPackage[]>> {
         const store = (
@@ -124,29 +124,33 @@ export class ListStorePackagesUseCase implements UseCase {
     }
 
     private extractPackageDetailsFromPath(path: string) {
-        const tokens = path.split("-");
-        if (tokens.length === 4) {
-            const [fileName, version, dhisVersion, date] = tokens;
-            const [moduleName, ...name] = fileName.split("/");
+        const [moduleName, ...fileName] = path.split("/")
+        const [name, version, other] = fileName.join("/").split(/(-\d+\.\d+\.\d+-)/)
+        if (version && other) {
+            const refinedVersion = version.slice(1, -1);
+            const tokens = other ? _.compact(other.split("-")) : [];
 
-            return {
-                moduleName,
-                name: name.join("/"),
-                version,
-                dhisVersion,
-                created: moment(date, "YYYYMMDDHHmm").toDate(),
-            };
-        } else if (tokens.length === 5) {
-            const [fileName, version, versionTag, dhisVersion, date] = tokens;
-            const [moduleName, ...name] = fileName.split("/");
+            if (tokens.length === 2) {
+                const [dhisVersion, date] = tokens;
 
-            return {
-                moduleName,
-                name: name.join("/"),
-                version: `${version}-${versionTag}`,
-                dhisVersion,
-                created: moment(date, "YYYYMMDDHHmm").toDate(),
-            };
-        } else return null;
+                return {
+                    moduleName,
+                    name: name,
+                    version: refinedVersion,
+                    dhisVersion,
+                    created: moment(date, "YYYYMMDDHHmm").toDate(),
+                };
+            } else if (tokens.length === 3) {
+                const [versionTag, dhisVersion, date] = tokens;
+
+                return {
+                    moduleName,
+                    name: name,
+                    version: `${refinedVersion}-${versionTag}`,
+                    dhisVersion,
+                    created: moment(date, "YYYYMMDDHHmm").toDate(),
+                };
+            } else return null;
+        }
     }
 }
