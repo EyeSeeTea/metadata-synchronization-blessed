@@ -11,7 +11,6 @@ import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { BaseModule } from "../../modules/entities/Module";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
-import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { GitHubError, GitHubListError } from "../entities/Errors";
 import { ListPackage, Package } from "../entities/Package";
@@ -73,14 +72,6 @@ export class ListStorePackagesUseCase implements UseCase {
         );
     }
 
-    @cache()
-    private downloadRepository() {
-        return this.repositoryFactory.get<DownloadRepositoryConstructor>(
-            Repositories.DownloadRepository,
-            []
-        );
-    }
-
     private async getPackages(
         store: Store,
         userGroup: string
@@ -103,7 +94,7 @@ export class ListStorePackagesUseCase implements UseCase {
             const moduleFileUrl =
                 moduleFiles.find(file => file.path === `${moduleName}/${moduleFile}`)?.url ??
                 undefined;
-            const module = await this.getModule(moduleFileUrl);
+            const module = await this.getModule(store, moduleFileUrl);
 
             return Package.build({ id: url, name, version, dhisVersion, created, module });
         });
@@ -111,7 +102,7 @@ export class ListStorePackagesUseCase implements UseCase {
         return Either.success(_.compact(packages));
     }
 
-    private async getModule(moduleFileUrl?: string): Promise<BaseModule> {
+    private async getModule(store: Store, moduleFileUrl?: string): Promise<BaseModule> {
         const unknownModule = MetadataModule.build({
             id: "Unknown module",
             name: "Unknown module",
@@ -119,10 +110,10 @@ export class ListStorePackagesUseCase implements UseCase {
 
         if (!moduleFileUrl) return unknownModule;
 
-        const { encoding, content } = await this.downloadRepository().fetch<{
+        const { encoding, content } = await this.gitRepository().request<{
             encoding: string;
             content: string;
-        }>(moduleFileUrl);
+        }>(store, moduleFileUrl);
 
         const readFileResult = this.gitRepository().readFileContents<BaseModule>(encoding, content);
 
@@ -133,29 +124,33 @@ export class ListStorePackagesUseCase implements UseCase {
     }
 
     private extractPackageDetailsFromPath(path: string) {
-        const tokens = path.split("-");
-        if (tokens.length === 4) {
-            const [fileName, version, dhisVersion, date] = tokens;
-            const [moduleName, ...name] = fileName.split("/");
+        const [moduleName, ...fileName] = path.split("/");
+        const [name, version, other] = fileName.join("/").split(/(-\d+\.\d+\.\d+-)/);
+        if (version && other) {
+            const refinedVersion = version.slice(1, -1);
+            const tokens = other ? _.compact(other.split("-")) : [];
 
-            return {
-                moduleName,
-                name: name.join("/"),
-                version,
-                dhisVersion,
-                created: moment(date, "YYYYMMDDHHmm").toDate(),
-            };
-        } else if (tokens.length === 5) {
-            const [fileName, version, versionTag, dhisVersion, date] = tokens;
-            const [moduleName, ...name] = fileName.split("/");
+            if (tokens.length === 2) {
+                const [dhisVersion, date] = tokens;
 
-            return {
-                moduleName,
-                name: name.join("/"),
-                version: `${version}-${versionTag}`,
-                dhisVersion,
-                created: moment(date, "YYYYMMDDHHmm").toDate(),
-            };
-        } else return null;
+                return {
+                    moduleName,
+                    name: name,
+                    version: refinedVersion,
+                    dhisVersion,
+                    created: moment(date, "YYYYMMDDHHmm").toDate(),
+                };
+            } else if (tokens.length === 3) {
+                const [versionTag, dhisVersion, date] = tokens;
+
+                return {
+                    moduleName,
+                    name: name,
+                    version: `${refinedVersion}-${versionTag}`,
+                    dhisVersion,
+                    created: moment(date, "YYYYMMDDHHmm").toDate(),
+                };
+            } else return null;
+        }
     }
 }

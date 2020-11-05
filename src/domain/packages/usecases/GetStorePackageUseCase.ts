@@ -7,7 +7,6 @@ import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
-import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { BasePackage, Package } from "../entities/Package";
 import { Store } from "../entities/Store";
@@ -26,10 +25,10 @@ export class GetStorePackageUseCase implements UseCase {
 
         if (!store) return Either.error("NOT_FOUND");
 
-        const { encoding, content } = await this.downloadRepository().fetch<{
+        const { encoding, content } = await this.gitRepository().request<{
             encoding: string;
             content: string;
-        }>(packageId);
+        }>(store, packageId);
 
         const readFileResult = this.gitRepository().readFileContents<
             MetadataPackage & { package: BasePackage }
@@ -58,14 +57,6 @@ export class GetStorePackageUseCase implements UseCase {
         return this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [instance]
-        );
-    }
-
-    @cache()
-    private downloadRepository() {
-        return this.repositoryFactory.get<DownloadRepositoryConstructor>(
-            Repositories.DownloadRepository,
-            []
         );
     }
 }
