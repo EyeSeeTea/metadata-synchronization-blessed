@@ -406,7 +406,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     useEffect(() => {
         if (model.getCollectionName() !== "organisationUnits") return;
-        if (remoteInstance && isJSONDataSource(remoteInstance)) return;
+        if (remoteInstance && isJSONDataSource(remoteInstance)) {
+            changeParentOrgUnitFilter([]);
+            return;
+        }
 
         compositionRoot.instances
             .getOrgUnitRoots(remoteInstance)
@@ -424,6 +427,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .list({ ...filters, filterRows, fields, includeParents }, remoteInstance)
             .then(({ objects, pager }) => {
                 const rows = model.getApiModelTransform()((objects as unknown) as MetadataType[]);
+                console.log(3, rows);
                 notifyRowsChange(rows);
 
                 setRows(rows);

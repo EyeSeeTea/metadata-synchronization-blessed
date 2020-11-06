@@ -86,18 +86,15 @@ export class PublishStorePackageUseCase implements UseCase {
         path: string,
         moduleRef: Pick<BaseModule, "id" | "name" | "instance" | "department">
     ) {
-        const existingFileCheck = await this.gitRepository().readFile(store, branch, path);
+        const validation = await this.gitRepository().writeFile(
+            store,
+            branch,
+            path,
+            JSON.stringify(moduleRef, null, 4)
+        );
 
-        if (existingFileCheck.isError()) {
-            const validation = await this.gitRepository().writeFile(
-                store,
-                branch,
-                path,
-                JSON.stringify(moduleRef, null, 4)
-            );
-
-            if (validation.isError())
-                return console.warn("An error creating the module file has ocurred");
+        if (validation.isError()) {
+            return console.warn("An error creating the module file has ocurred");
         }
     }
 
