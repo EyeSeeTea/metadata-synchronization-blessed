@@ -697,6 +697,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     useEffect(() => {
         setModuleFilter("");
+        setDhis2VersionFilter("");
+        setInstallStateFilter("");
         setResetKey(Math.random());
     }, [remoteInstance, remoteStore]);
 
