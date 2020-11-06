@@ -346,7 +346,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                         }
 
                         openSyncSummary(report);
-                        setResetKey(Math.random);
+                        setResetKey(Math.random());
                     } catch (error) {
                         snackbar.error(error.message);
                     }
@@ -567,11 +567,16 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     }, [instancePackages, storePackages, remoteStore]);
 
     const filterComponents = useMemo(() => {
+        const updateFilter = (fn: Function) => (...args: unknown[]) => {
+            fn(...args);
+            setResetKey(Math.random());
+        };
+
         const moduleFilterComponent = (
             <Dropdown
                 key="filter-module"
                 items={moduleFilterItems}
-                onValueChange={setModuleFilter}
+                onValueChange={updateFilter(setModuleFilter)}
                 value={moduleFilter}
                 label={i18n.t("Module")}
             />
@@ -581,7 +586,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             <Dropdown
                 key="filter-dhis2-version"
                 items={dhis2VersionFilterItems}
-                onValueChange={setDhis2VersionFilter}
+                onValueChange={updateFilter(setDhis2VersionFilter)}
                 value={dhis2VersionFilter}
                 label={i18n.t("Dhis2 version")}
             />
@@ -592,7 +597,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 <Dropdown
                     key="filter-install-state"
                     items={installStateFilterItems}
-                    onValueChange={setInstallStateFilter}
+                    onValueChange={updateFilter(setInstallStateFilter)}
                     value={installStateFilter}
                     label={i18n.t("State")}
                 />
@@ -629,7 +634,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         setOpenImportPackageDialog(false);
         setToImportWizard([]);
         openSyncSummary(syncReport);
-        setResetKey(Math.random);
+        setResetKey(Math.random());
     };
 
     const handleCloseImportWizard = () => {
@@ -717,7 +722,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     useEffect(() => {
         setModuleFilter("");
-    }, [remoteInstance]);
+        setResetKey(Math.random());
+    }, [remoteInstance, remoteStore]);
 
     useEffect(() => {
         isAppConfigurator(api).then(setAppConfigurator);
@@ -727,6 +733,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     return (
         <React.Fragment>
             <ObjectsTable<TableListPackage>
+                resetKey={`${resetKey}`}
                 rows={rowsFiltered}
                 columns={columns}
                 details={details}
