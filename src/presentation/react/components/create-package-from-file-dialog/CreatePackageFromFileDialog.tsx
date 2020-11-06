@@ -23,7 +23,10 @@ interface CreatePackageFromFileDialogProps {
     onSaved?: () => void;
 }
 
-const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogProps> = ({ onClose }) => {
+export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogProps> = ({
+    onClose,
+    onSaved,
+}) => {
     const { compositionRoot } = useAppContext();
     const loading = useLoading();
     const snackbar = useSnackbar();
@@ -161,7 +164,8 @@ const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogProps> = 
         const messages = _.keyBy(errors, "property");
 
         if (errors.length === 0) {
-            saveModuleAndPackage();
+            await saveModuleAndPackage();
+            if (onSaved) onSaved();
         } else {
             snackbar.error(errors.map(error => error.description).join("\n"));
             setErrors(messages);
@@ -280,5 +284,3 @@ const useStyles = makeStyles({
         marginRight: 10,
     },
 });
-
-export default CreatePackageFromFileDialog;
