@@ -34,7 +34,7 @@ import { ModulePackageListPageProps } from "../../../webapp/pages/module-package
 import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import PackageImportDialog from "../package-import-dialog/PackageImportDialog";
-import { PackagesDiffDialog, PackageToDiff } from "../packages-diff-dialog/PackagesDiffDialog";
+import { PackagesDiffDialog, DiffPackages } from "../packages-diff-dialog/PackagesDiffDialog";
 
 type InstallState = "Installed" | "NotInstalled" | "Upgrade" | "Local";
 type TableListPackage = Omit<BasePackage, "contents"> & { installState: InstallState };
@@ -72,7 +72,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const selection = selectedIds?.map(id => ({ id })) ?? stateSelection;
 
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
-    const [packageToDiff, setPackageToDiff] = useState<PackageToDiff | null>(null);
+    const [packagesToDiff, setPackagesToDiff] = useState<DiffPackages | null>(null);
     const [moduleFilter, setModuleFilter] = useState("");
     const [dhis2VersionFilter, setDhis2VersionFilter] = useState("");
     const [localDhis2Version, setLocalDhis2Version] = useState("");
@@ -206,13 +206,25 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             const packageId = _(ids).get(0, null);
             const remotePackage = packageId ? rows.find(row => row.id === packageId) : undefined;
             if (packageId && remotePackage) {
-                setPackageToDiff({ id: packageId, name: remotePackage.name });
+                setPackagesToDiff({ merge: remotePackage });
             }
         },
-        [rows, setPackageToDiff]
+        [rows, setPackagesToDiff]
     );
 
-    const closePackageDiffDialog = useCallback(() => setPackageToDiff(null), [setPackageToDiff]);
+    const openPairPackageDiffDialog = useCallback(
+        async (ids: string[]) => {
+            const [packageBase, packageMerge] = ids.map(packageId => {
+                return rows.find(row => row.id === packageId);
+            });
+            if (packageBase && packageMerge) {
+                setPackagesToDiff({ base: packageBase, merge: packageMerge });
+            }
+        },
+        [rows, setPackagesToDiff]
+    );
+
+    const closePackageDiffDialog = useCallback(() => setPackagesToDiff(null), [setPackagesToDiff]);
 
     const saveImportedPackage = useCallback(
         async (
@@ -463,6 +475,17 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 onClick: openPackageDiffDialog,
             },
             {
+                name: "compare-selected-packages",
+                text: i18n.t("Compare selected packages"),
+                multiple: true,
+                icon: <Icon>compare_arrows</Icon>,
+                isActive: () =>
+                    presentation === "app" &&
+                    appConfigurator &&
+                    (selectedIds ? selectedIds.length === 2 : false),
+                onClick: openPairPackageDiffDialog,
+            },
+            {
                 name: "import",
                 text: i18n.t("Import package"),
                 multiple: false,
@@ -495,10 +518,12 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             importPackagesFromWizard,
             isRemoteInstance,
             openPackageDiffDialog,
+            openPairPackageDiffDialog,
             presentation,
             publishPackage,
             remoteStore,
             isImportDialog,
+            selectedIds,
         ]
     );
 
@@ -721,10 +746,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
 
-            {packageToDiff && (
+            {packagesToDiff && (
                 <PackagesDiffDialog
                     onClose={closePackageDiffDialog}
-                    remotePackage={packageToDiff}
+                    packages={packagesToDiff}
                     remoteStore={remoteStore}
                     remoteInstance={remoteInstance}
                 />

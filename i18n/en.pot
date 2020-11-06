@@ -657,6 +657,9 @@ msgstr ""
 msgid "Compare with local instance"
 msgstr ""
 
+msgid "Compare selected packages"
+msgstr ""
+
 msgid "Import package"
 msgstr ""
 
@@ -690,10 +693,13 @@ msgstr ""
 msgid "Comparing package contents"
 msgstr ""
 
-msgid "Changes found in remote package"
+msgid "Changes found"
 msgstr ""
 
-msgid "No changes found in remote package"
+msgid "No changes found"
+msgstr ""
+
+msgid "Local"
 msgstr ""
 
 msgid "Back"
