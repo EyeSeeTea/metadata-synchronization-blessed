@@ -206,7 +206,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             const packageId = _(ids).get(0, null);
             const remotePackage = packageId ? rows.find(row => row.id === packageId) : undefined;
             if (packageId && remotePackage) {
-                setPackagesToDiff({ from: remotePackage, to: undefined });
+                setPackagesToDiff({ merge: remotePackage });
             }
         },
         [rows, setPackagesToDiff]
@@ -214,11 +214,11 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const openPairPackageDiffDialog = useCallback(
         async (ids: string[]) => {
-            const [packageB, packageA] = ids.map(packageId => {
+            const [packageBase, packageMerge] = ids.map(packageId => {
                 return rows.find(row => row.id === packageId);
             });
-            if (packageA && packageB) {
-                setPackagesToDiff({ from: packageA, to: packageB });
+            if (packageBase && packageMerge) {
+                setPackagesToDiff({ base: packageBase, merge: packageMerge });
             }
         },
         [rows, setPackagesToDiff]

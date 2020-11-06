@@ -25,38 +25,38 @@ export class DiffPackageUseCase implements UseCase {
     ) {}
 
     public async execute(
-        packageIdA: string,
-        packageIdB: string | undefined,
+        packageIdBase: string | undefined,
+        packageIdMerge: string,
         storeId: string | undefined,
         instance = this.localInstance
     ): Promise<Either<DiffPackageUseCaseError, MetadataPackageDiff>> {
-        const packageA = await this.getPackage(packageIdA, storeId, instance);
-        if (!packageA) return Either.error("PACKAGE_NOT_FOUND");
+        const packageMerge = await this.getPackage(packageIdMerge, storeId, instance);
+        if (!packageMerge) return Either.error("PACKAGE_NOT_FOUND");
 
-        const contentsA = packageA.contents;
-        let contentsB: MetadataPackage;
+        const contentsMerge = packageMerge.contents;
+        let contentsBase: MetadataPackage;
 
-        if (packageIdB) {
-            const packageB = await this.getPackage(packageIdB, storeId, instance);
-            if (!packageB) return Either.error("PACKAGE_NOT_FOUND");
-            contentsB = packageB.contents;
+        if (packageIdBase) {
+            const packageBase = await this.getPackage(packageIdBase, storeId, instance);
+            if (!packageBase) return Either.error("PACKAGE_NOT_FOUND");
+            contentsBase = packageBase.contents;
         } else {
             // No package B specified, use local contents
-            const moduleDataA = await this.storageRepository(instance).getObjectInCollection<
+            const moduleDataMerge = await this.storageRepository(instance).getObjectInCollection<
                 BaseModule
-            >(Namespace.MODULES, packageA.module.id);
+            >(Namespace.MODULES, packageMerge.module.id);
 
-            if (!moduleDataA) return Either.error("MODULE_NOT_FOUND");
-            const moduleA = MetadataModule.build(moduleDataA);
+            if (!moduleDataMerge) return Either.error("MODULE_NOT_FOUND");
+            const moduleMerge = MetadataModule.build(moduleDataMerge);
 
-            contentsB = await this.compositionRoot.sync[moduleA.type]({
-                ...moduleA.toSyncBuilder(),
+            contentsBase = await this.compositionRoot.sync[moduleMerge.type]({
+                ...moduleMerge.toSyncBuilder(),
                 originInstance: "LOCAL",
                 targetInstances: [],
             }).buildPayload();
         }
 
-        return Either.success(getMetadataPackageDiff(contentsB, contentsA));
+        return Either.success(getMetadataPackageDiff(contentsBase, contentsMerge));
     }
 
     private async getPackage(

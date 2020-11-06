@@ -19,8 +19,8 @@ function truncate(s: string) {
 }
 
 export function getTitle(
-    packageA: string,
-    packageB: string,
+    packageBase: string,
+    packageMerge: string,
     metadataDiff: MetadataPackageDiff | undefined
 ) {
     let prefix: string;
@@ -31,7 +31,7 @@ export function getTitle(
     } else {
         prefix = i18n.t("No changes found");
     }
-    return `${prefix}: ${packageA} vs ${packageB}`;
+    return `${prefix}: ${packageBase} -> ${packageMerge}`;
 }
 
 export function usePackageImporter(

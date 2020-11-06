@@ -23,8 +23,8 @@ export interface PackagesDiffDialogProps {
 }
 
 export interface DiffPackages {
-    from: PackageToDiff;
-    to?: PackageToDiff;
+    base?: PackageToDiff;
+    merge: PackageToDiff;
 }
 
 export type PackageToDiff = { id: string; name: string };
@@ -34,12 +34,12 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
     const snackbar = useSnackbar();
     const [metadataDiff, setMetadataDiff] = useState<MetadataPackageDiff>();
     const { packages, remoteStore, remoteInstance, onClose } = props;
-    const { from: packageA, to: packageB } = packages;
-    const showImportButton = !packageB;
+    const { base: packageBase, merge: packageMerge } = packages;
+    const showImportButton = !packageBase;
 
     useEffect(() => {
         compositionRoot.packages
-            .diff(packageA.id, packageB?.id, remoteStore?.id, remoteInstance)
+            .diff(packageBase?.id, packageMerge.id, remoteStore?.id, remoteInstance)
             .then(res => {
                 res.match({
                     error: msg => {
@@ -49,10 +49,18 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
                     success: setMetadataDiff,
                 });
             });
-    }, [compositionRoot, packageA, packageB, remoteStore, remoteInstance, onClose, snackbar]);
+    }, [
+        compositionRoot,
+        packageBase,
+        packageMerge,
+        remoteStore,
+        remoteInstance,
+        onClose,
+        snackbar,
+    ]);
 
     const hasChanges = metadataDiff && metadataDiff.hasChanges;
-    const packageName = `${packageA.name} (${remoteInstance?.name ?? "Store"})`;
+    const packageName = `${packageMerge.name} (${remoteInstance?.name ?? "Store"})`;
     const { importPackage, syncReport, closeSyncReport } = usePackageImporter(
         remoteInstance,
         packageName,
@@ -65,8 +73,8 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
             <ConfirmationDialog
                 isOpen={true}
                 title={getTitle(
-                    packageA.name,
-                    packageB ? packageB.name : i18n.t("Local"),
+                    packageBase ? packageBase.name : i18n.t("Local"),
+                    packageMerge.name,
                     metadataDiff
                 )}
                 maxWidth="lg"
