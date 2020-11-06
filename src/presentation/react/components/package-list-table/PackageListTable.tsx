@@ -617,11 +617,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         setToImportWizard([]);
     };
 
-    const showImportFromWizardButton =
-        !isImportDialog &&
-        presentation === "app" &&
-        (isRemoteInstance || remoteStore) &&
-        appConfigurator;
+    const showImportFromWizardButton = !isImportDialog && presentation === "app" && appConfigurator;
 
     const packageSource = remoteInstance ?? remoteStore;
 
