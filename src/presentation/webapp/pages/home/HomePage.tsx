@@ -11,7 +11,6 @@ import {
 import { useAppContext } from "../../../react/contexts/AppContext";
 import { Card, Landing } from "../../../react/components/landing/Landing";
 import { TestWrapper } from "../../../react/components/test-wrapper/TestWrapper";
-import CreatePackageFromFileDialog from "../../../react/components/create-package-from-file-dialog/CreatePackageFromFileDialog";
 
 const LandingPage: React.FC = () => {
     const { api, compositionRoot } = useAppContext();
@@ -21,7 +20,6 @@ const LandingPage: React.FC = () => {
     const [appConfigurator, setAppConfigurator] = useState(false);
     const [appExecutor, setAppExecutor] = useState(false);
     const [pendingNotifications, setPendingNotifications] = useState(0);
-    const [addPackageDialogOpen, setAddPackageDialogOpen] = useState(false);
 
     useEffect(() => {
         shouldShowDeletedObjects(api).then(setShowDeletedObjects);
@@ -172,7 +170,6 @@ const LandingPage: React.FC = () => {
                             "View, publish, download and delete metadata packages from this instance metadata modules."
                         ),
                         isVisible: appConfigurator || appExecutor,
-                        addAction: () => setAddPackageDialogOpen(true),
                         listAction: () => history.push("/packages"),
                     },
                     {
@@ -216,10 +213,6 @@ const LandingPage: React.FC = () => {
     return (
         <TestWrapper>
             <Landing cards={cards} />
-
-            {addPackageDialogOpen && (
-                <CreatePackageFromFileDialog onClose={() => setAddPackageDialogOpen(false)} />
-            )}
         </TestWrapper>
     );
 };

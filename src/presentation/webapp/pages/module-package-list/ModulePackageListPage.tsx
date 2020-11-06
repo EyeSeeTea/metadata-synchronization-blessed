@@ -6,7 +6,7 @@ import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Store } from "../../../../domain/packages/entities/Store";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
-import CreatePackageFromFileDialog from "../../../react/components/create-package-from-file-dialog/CreatePackageFromFileDialog";
+import { CreatePackageFromFileDialog } from "../../../react/components/create-package-from-file-dialog/CreatePackageFromFileDialog";
 import {
     ModulePackageListTable,
     PresentationOption,
@@ -81,8 +81,6 @@ export const ModulePackageListPage: React.FC = () => {
     };
 
     const handleCreatedNewPackageFromFile = () => {
-        setAddPackageDialogOpen(false);
-
         if (tableOption === "packages") {
             setResetKey(Math.random());
         }
