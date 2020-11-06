@@ -479,7 +479,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 text: i18n.t("Compare selected packages"),
                 multiple: true,
                 icon: <Icon>compare_arrows</Icon>,
-                isActive: () => (selectedIds ? selectedIds.length === 2 : false),
+                isActive: () =>
+                    presentation === "app" &&
+                    appConfigurator &&
+                    (selectedIds ? selectedIds.length === 2 : false),
                 onClick: openPairPackageDiffDialog,
             },
             {
