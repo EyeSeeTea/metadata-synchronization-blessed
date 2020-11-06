@@ -698,7 +698,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     useEffect(() => {
         setModuleFilter("");
         setResetKey(Math.random());
-    }, [remoteInstance]);
+    }, [remoteInstance, remoteStore]);
 
     useEffect(() => {
         isAppConfigurator(api).then(setAppConfigurator);
