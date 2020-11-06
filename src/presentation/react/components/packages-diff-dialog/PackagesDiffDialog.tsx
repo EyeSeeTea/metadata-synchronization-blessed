@@ -4,7 +4,6 @@ import { useSnackbar } from "d2-ui-components";
 import { ConfirmationDialog } from "d2-ui-components/confirmation-dialog/ConfirmationDialog";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
     MetadataPackageDiff,
@@ -20,7 +19,12 @@ export interface PackagesDiffDialogProps {
     onClose(): void;
     remoteInstance?: Instance;
     remoteStore?: Store;
-    remotePackage: NamedRef;
+    packages: DiffPackages;
+}
+
+export interface DiffPackages {
+    from: PackageToDiff;
+    to?: PackageToDiff;
 }
 
 export type PackageToDiff = { id: string; name: string };
@@ -29,11 +33,13 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const [metadataDiff, setMetadataDiff] = useState<MetadataPackageDiff>();
-    const { remotePackage, remoteStore, remoteInstance, onClose } = props;
+    const { packages, remoteStore, remoteInstance, onClose } = props;
+    const { from: packageA, to: packageB } = packages;
+    const showImportButton = !packageB;
 
     useEffect(() => {
         compositionRoot.packages
-            .diff(remoteStore?.id, remotePackage.id, remoteInstance)
+            .diff(packageA.id, packageB?.id, remoteStore?.id, remoteInstance)
             .then(res => {
                 res.match({
                     error: msg => {
@@ -43,10 +49,10 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
                     success: setMetadataDiff,
                 });
             });
-    }, [compositionRoot, remotePackage, remoteStore, remoteInstance, onClose, snackbar]);
+    }, [compositionRoot, packageA, packageB, remoteStore, remoteInstance, onClose, snackbar]);
 
     const hasChanges = metadataDiff && metadataDiff.hasChanges;
-    const packageName = `${remotePackage.name} (${remoteInstance?.name ?? "Store"})`;
+    const packageName = `${packageA.name} (${remoteInstance?.name ?? "Store"})`;
     const { importPackage, syncReport, closeSyncReport } = usePackageImporter(
         remoteInstance,
         packageName,
@@ -58,11 +64,15 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
         <React.Fragment>
             <ConfirmationDialog
                 isOpen={true}
-                title={getTitle(packageName, metadataDiff)}
+                title={getTitle(
+                    packageA.name,
+                    packageB ? packageB.name : i18n.t("Local"),
+                    metadataDiff
+                )}
                 maxWidth="lg"
                 fullWidth={true}
                 onCancel={onClose}
-                onSave={hasChanges ? importPackage : undefined}
+                onSave={hasChanges && showImportButton ? importPackage : undefined}
                 cancelText={i18n.t("Close")}
                 saveText={i18n.t("Import")}
             >

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-11-02T17:56:54.187Z\n"
-"PO-Revision-Date: 2020-11-02T17:56:54.187Z\n"
+"POT-Creation-Date: 2020-11-06T09:00:56.753Z\n"
+"PO-Revision-Date: 2020-11-06T09:00:56.753Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -637,6 +637,9 @@ msgid "Publish to Store"
 msgstr ""
 
 msgid "Compare with local instance"
+msgstr ""
+
+msgid "Compare selected packages"
 msgstr ""
 
 msgid "Import package"

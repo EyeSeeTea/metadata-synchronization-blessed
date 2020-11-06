@@ -25,31 +25,48 @@ export class DiffPackageUseCase implements UseCase {
     ) {}
 
     public async execute(
+        packageIdA: string,
+        packageIdB: string | undefined,
         storeId: string | undefined,
-        id: string,
         instance = this.localInstance
     ): Promise<Either<DiffPackageUseCaseError, MetadataPackageDiff>> {
-        const remotePackage = storeId
-            ? await this.getStorePackage(storeId, id)
-            : await this.getDataStorePackage(id, instance);
+        const packageA = await this.getPackage(packageIdA, storeId, instance);
+        if (!packageA) return Either.error("PACKAGE_NOT_FOUND");
 
-        if (!remotePackage) return Either.error("PACKAGE_NOT_FOUND");
+        const contentsA = packageA.contents;
+        let contentsB: MetadataPackage;
 
-        const moduleData = await this.storageRepository(instance).getObjectInCollection<BaseModule>(
-            Namespace.MODULES,
-            remotePackage.module.id
-        );
+        if (packageIdB) {
+            const packageB = await this.getPackage(packageIdB, storeId, instance);
+            if (!packageB) return Either.error("PACKAGE_NOT_FOUND");
+            contentsB = packageB.contents;
+        } else {
+            // No package B specified, use local contents
+            const moduleDataA = await this.storageRepository(instance).getObjectInCollection<
+                BaseModule
+            >(Namespace.MODULES, packageA.module.id);
 
-        if (!moduleData) return Either.error("MODULE_NOT_FOUND");
+            if (!moduleDataA) return Either.error("MODULE_NOT_FOUND");
+            const moduleA = MetadataModule.build(moduleDataA);
 
-        const remoteModule = MetadataModule.build(moduleData);
-        const localContents = await this.compositionRoot.sync[remoteModule.type]({
-            ...remoteModule.toSyncBuilder(),
-            originInstance: "LOCAL",
-            targetInstances: [],
-        }).buildPayload();
+            contentsB = await this.compositionRoot.sync[moduleA.type]({
+                ...moduleA.toSyncBuilder(),
+                originInstance: "LOCAL",
+                targetInstances: [],
+            }).buildPayload();
+        }
 
-        return Either.success(getMetadataPackageDiff(localContents, remotePackage.contents));
+        return Either.success(getMetadataPackageDiff(contentsB, contentsA));
+    }
+
+    private async getPackage(
+        packageId: string,
+        storeId: string | undefined,
+        instance: Instance
+    ): Promise<BasePackage | undefined> {
+        return storeId
+            ? this.getStorePackage(storeId, packageId)
+            : this.getDataStorePackage(packageId, instance);
     }
 
     private async getDataStorePackage(id: string, instance: Instance) {

@@ -18,16 +18,20 @@ function truncate(s: string) {
     return _.truncate(s, { length: 50 });
 }
 
-export function getTitle(packageName: string, metadataDiff: MetadataPackageDiff | undefined) {
+export function getTitle(
+    packageA: string,
+    packageB: string,
+    metadataDiff: MetadataPackageDiff | undefined
+) {
     let prefix: string;
     if (!metadataDiff) {
         prefix = i18n.t("Comparing package contents");
     } else if (metadataDiff.hasChanges) {
-        prefix = i18n.t("Changes found in remote package");
+        prefix = i18n.t("Changes found");
     } else {
-        prefix = i18n.t("No changes found in remote package");
+        prefix = i18n.t("No changes found");
     }
-    return `${prefix}: ${packageName}`;
+    return `${prefix}: ${packageA} vs ${packageB}`;
 }
 
 export function usePackageImporter(
