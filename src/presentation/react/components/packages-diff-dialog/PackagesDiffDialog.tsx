@@ -27,7 +27,7 @@ export interface DiffPackages {
     merge: PackageToDiff;
 }
 
-export type PackageToDiff = { id: string; name: string };
+export type PackageToDiff = { id: string; name: string; version: string };
 
 export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
     const { compositionRoot } = useAppContext();
@@ -72,11 +72,7 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
         <React.Fragment>
             <ConfirmationDialog
                 isOpen={true}
-                title={getTitle(
-                    packageBase ? packageBase.name : i18n.t("Local"),
-                    packageMerge.name,
-                    metadataDiff
-                )}
+                title={getTitle(packageBase, packageMerge, metadataDiff)}
                 maxWidth="lg"
                 fullWidth={true}
                 onCancel={onClose}
