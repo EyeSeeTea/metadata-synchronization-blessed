@@ -34,6 +34,7 @@ const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogProps> = 
 
     const [newPackage, setNewPackage] = useState<Package>(
         Package.build({
+            name: "",
             module,
             version: "1.0.0",
         })
