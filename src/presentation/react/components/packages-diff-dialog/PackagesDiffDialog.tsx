@@ -4,7 +4,6 @@ import { useSnackbar } from "d2-ui-components";
 import { ConfirmationDialog } from "d2-ui-components/confirmation-dialog/ConfirmationDialog";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { NamedRef } from "../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import {
     MetadataPackageDiff,
@@ -20,20 +19,27 @@ export interface PackagesDiffDialogProps {
     onClose(): void;
     remoteInstance?: Instance;
     remoteStore?: Store;
-    remotePackage: NamedRef;
+    packages: DiffPackages;
 }
 
-export type PackageToDiff = { id: string; name: string };
+export interface DiffPackages {
+    base?: PackageToDiff;
+    merge: PackageToDiff;
+}
+
+export type PackageToDiff = { id: string; name: string; version: string };
 
 export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const [metadataDiff, setMetadataDiff] = useState<MetadataPackageDiff>();
-    const { remotePackage, remoteStore, remoteInstance, onClose } = props;
+    const { packages, remoteStore, remoteInstance, onClose } = props;
+    const { base: packageBase, merge: packageMerge } = packages;
+    const showImportButton = !packageBase;
 
     useEffect(() => {
         compositionRoot.packages
-            .diff(remoteStore?.id, remotePackage.id, remoteInstance)
+            .diff(packageBase?.id, packageMerge.id, remoteStore?.id, remoteInstance)
             .then(res => {
                 res.match({
                     error: msg => {
@@ -43,10 +49,18 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
                     success: setMetadataDiff,
                 });
             });
-    }, [compositionRoot, remotePackage, remoteStore, remoteInstance, onClose, snackbar]);
+    }, [
+        compositionRoot,
+        packageBase,
+        packageMerge,
+        remoteStore,
+        remoteInstance,
+        onClose,
+        snackbar,
+    ]);
 
     const hasChanges = metadataDiff && metadataDiff.hasChanges;
-    const packageName = `${remotePackage.name} (${remoteInstance?.name ?? "Store"})`;
+    const packageName = `${packageMerge.name} (${remoteInstance?.name ?? "Store"})`;
     const { importPackage, syncReport, closeSyncReport } = usePackageImporter(
         remoteInstance,
         packageName,
@@ -58,11 +72,11 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
         <React.Fragment>
             <ConfirmationDialog
                 isOpen={true}
-                title={getTitle(packageName, metadataDiff)}
+                title={getTitle(packageBase, packageMerge, metadataDiff)}
                 maxWidth="lg"
                 fullWidth={true}
                 onCancel={onClose}
-                onSave={hasChanges ? importPackage : undefined}
+                onSave={hasChanges && showImportButton ? importPackage : undefined}
                 cancelText={i18n.t("Close")}
                 saveText={i18n.t("Import")}
             >
@@ -90,9 +104,7 @@ export const MetadataDiffTable: React.FC<{
                 <li key={model}>
                     <h3 className={classes.modelTitle}>{model}</h3>: {modelDiff.total}{" "}
                     {i18n.t("objects")} ({i18n.t("Unmodified")}: {modelDiff.unmodified.length})
-                    <ul>
-                        <ModelDiffList modelDiff={modelDiff} />
-                    </ul>
+                    <ModelDiffList modelDiff={modelDiff} />
                 </li>
             ))}
         </ul>
@@ -104,20 +116,14 @@ export const ModelDiffList: React.FC<{ modelDiff: ModelDiff }> = props => {
     const classes = useStyles();
 
     return (
-        <React.Fragment>
+        <ul>
             {diff.created.length > 0 && (
                 <li>
                     <span className={classes.added}>
                         {i18n.t("New")}: {diff.created.length}
                     </span>
 
-                    <List
-                        items={diff.created.map(obj => (
-                            <li key={obj.id}>
-                                [{obj.id}] {obj.name}
-                            </li>
-                        ))}
-                    />
+                    <List items={diff.created.map(obj => `[${obj.id}] ${obj.name}`)} />
                 </li>
             )}
 
@@ -137,7 +143,7 @@ export const ModelDiffList: React.FC<{ modelDiff: ModelDiff }> = props => {
                     />
                 </li>
             )}
-        </React.Fragment>
+        </ul>
     );
 };
 

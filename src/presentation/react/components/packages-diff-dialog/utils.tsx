@@ -9,6 +9,7 @@ import {
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { useAppContext } from "../../contexts/AppContext";
+import { PackageToDiff } from "./PackagesDiffDialog";
 
 export function getChange(u: FieldUpdate): string {
     return `${u.field}: ${truncate(u.oldValue)} -> ${truncate(u.newValue)}`;
@@ -18,16 +19,24 @@ function truncate(s: string) {
     return _.truncate(s, { length: 50 });
 }
 
-export function getTitle(packageName: string, metadataDiff: MetadataPackageDiff | undefined) {
+export function getTitle(
+    packageBase: PackageToDiff | undefined,
+    packageMerge: PackageToDiff | undefined,
+    metadataDiff: MetadataPackageDiff | undefined
+) {
     let prefix: string;
     if (!metadataDiff) {
         prefix = i18n.t("Comparing package contents");
     } else if (metadataDiff.hasChanges) {
-        prefix = i18n.t("Changes found in remote package");
+        prefix = i18n.t("Changes found");
     } else {
-        prefix = i18n.t("No changes found in remote package");
+        prefix = i18n.t("No changes found");
     }
-    return `${prefix}: ${packageName}`;
+    const info = [packageBase, packageMerge]
+        .map(package_ => (package_ ? `${package_.name} (${package_.version})` : i18n.t("Local")))
+        .join(" - > ");
+
+    return `${prefix}: ${info}`;
 }
 
 export function usePackageImporter(

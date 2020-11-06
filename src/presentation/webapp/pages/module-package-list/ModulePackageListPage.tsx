@@ -1,3 +1,4 @@
+import { Icon } from "@material-ui/core";
 import { PaginationOptions } from "d2-ui-components";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -5,6 +6,7 @@ import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Store } from "../../../../domain/packages/entities/Store";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
+import CreatePackageFromFileDialog from "../../../react/components/create-package-from-file-dialog/CreatePackageFromFileDialog";
 import {
     ModulePackageListTable,
     PresentationOption,
@@ -30,6 +32,7 @@ export const ModulePackageListPage: React.FC = () => {
     const history = useHistory();
     const [syncReport, setSyncReport] = useState<SyncReport>();
     const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
+    const [addPackageDialogOpen, setAddPackageDialogOpen] = useState(false);
     const [selectedInstance, setSelectedInstance] = useState<Instance | Store>();
     const [resetKey, setResetKey] = useState(Math.random);
 
@@ -44,9 +47,13 @@ export const ModulePackageListPage: React.FC = () => {
         if (tableOption === "modules") {
             history.push(`/modules/new`);
         } else {
-            setOpenImportPackageDialog(true);
+            if (!selectedInstance) {
+                setAddPackageDialogOpen(true);
+            } else {
+                setOpenImportPackageDialog(true);
+            }
         }
-    }, [history, tableOption]);
+    }, [history, tableOption, selectedInstance]);
 
     const setTableOption = useCallback(
         (option: ViewOption) => {
@@ -69,7 +76,15 @@ export const ModulePackageListPage: React.FC = () => {
         setSyncReport(syncReport);
 
         if (tableOption === "packages") {
-            setResetKey(Math.random);
+            setResetKey(Math.random());
+        }
+    };
+
+    const handleCreatedNewPackageFromFile = () => {
+        setAddPackageDialogOpen(false);
+
+        if (tableOption === "packages") {
+            setResetKey(Math.random());
         }
     };
 
@@ -87,6 +102,13 @@ export const ModulePackageListPage: React.FC = () => {
                 presentation={"app"}
                 openSyncSummary={setSyncReport}
                 onInstanceChange={setSelectedInstance}
+                actionButtonLabel={
+                    tableOption === "modules" ? undefined : !selectedInstance ? (
+                        <Icon>add</Icon>
+                    ) : (
+                        <Icon>arrow_downward</Icon>
+                    )
+                }
             />
 
             {!!syncReport && (
@@ -99,6 +121,13 @@ export const ModulePackageListPage: React.FC = () => {
                     onClose={() => setOpenImportPackageDialog(false)}
                     instance={selectedInstance}
                     openSyncSummary={handleOpenSyncSummaryFromDialog}
+                />
+            )}
+
+            {addPackageDialogOpen && (
+                <CreatePackageFromFileDialog
+                    onClose={() => setAddPackageDialogOpen(false)}
+                    onSaved={handleCreatedNewPackageFromFile}
                 />
             )}
         </React.Fragment>

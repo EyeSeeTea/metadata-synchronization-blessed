@@ -25,31 +25,48 @@ export class DiffPackageUseCase implements UseCase {
     ) {}
 
     public async execute(
+        packageIdBase: string | undefined,
+        packageIdMerge: string,
         storeId: string | undefined,
-        id: string,
         instance = this.localInstance
     ): Promise<Either<DiffPackageUseCaseError, MetadataPackageDiff>> {
-        const remotePackage = storeId
-            ? await this.getStorePackage(storeId, id)
-            : await this.getDataStorePackage(id, instance);
+        const packageMerge = await this.getPackage(packageIdMerge, storeId, instance);
+        if (!packageMerge) return Either.error("PACKAGE_NOT_FOUND");
 
-        if (!remotePackage) return Either.error("PACKAGE_NOT_FOUND");
+        const contentsMerge = packageMerge.contents;
+        let contentsBase: MetadataPackage;
 
-        const moduleData = await this.storageRepository(instance).getObjectInCollection<BaseModule>(
-            Namespace.MODULES,
-            remotePackage.module.id
-        );
+        if (packageIdBase) {
+            const packageBase = await this.getPackage(packageIdBase, storeId, instance);
+            if (!packageBase) return Either.error("PACKAGE_NOT_FOUND");
+            contentsBase = packageBase.contents;
+        } else {
+            // No package B specified, use local contents
+            const moduleDataMerge = await this.storageRepository(instance).getObjectInCollection<
+                BaseModule
+            >(Namespace.MODULES, packageMerge.module.id);
 
-        if (!moduleData) return Either.error("MODULE_NOT_FOUND");
+            if (!moduleDataMerge) return Either.error("MODULE_NOT_FOUND");
+            const moduleMerge = MetadataModule.build(moduleDataMerge);
 
-        const remoteModule = MetadataModule.build(moduleData);
-        const localContents = await this.compositionRoot.sync[remoteModule.type]({
-            ...remoteModule.toSyncBuilder(),
-            originInstance: "LOCAL",
-            targetInstances: [],
-        }).buildPayload();
+            contentsBase = await this.compositionRoot.sync[moduleMerge.type]({
+                ...moduleMerge.toSyncBuilder(),
+                originInstance: "LOCAL",
+                targetInstances: [],
+            }).buildPayload();
+        }
 
-        return Either.success(getMetadataPackageDiff(localContents, remotePackage.contents));
+        return Either.success(getMetadataPackageDiff(contentsBase, contentsMerge));
+    }
+
+    private async getPackage(
+        packageId: string,
+        storeId: string | undefined,
+        instance: Instance
+    ): Promise<BasePackage | undefined> {
+        return storeId
+            ? this.getStorePackage(storeId, packageId)
+            : this.getDataStorePackage(packageId, instance);
     }
 
     private async getDataStorePackage(id: string, instance: Instance) {
