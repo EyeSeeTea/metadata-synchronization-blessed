@@ -1,5 +1,5 @@
 import { PaginationOptions } from "d2-ui-components";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
@@ -13,7 +13,6 @@ import {
 } from "../instance-selection-dropdown/InstanceSelectionDropdown";
 import { useViewSelector, ViewSelectorConfig } from "./useViewSelector";
 import { Store } from "../../../../domain/packages/entities/Store";
-import { Icon } from "@material-ui/core";
 
 export interface ModulePackageListTableProps {
     onCreate?(): void;
@@ -24,6 +23,7 @@ export interface ModulePackageListTableProps {
     showInstances: InstanceSelectionConfig;
     openSyncSummary?: (syncReport: SyncReport) => void;
     onInstanceChange?: (instance?: Instance | Store) => void;
+    actionButtonLabel?: ReactNode;
 }
 
 export type ViewOption = "modules" | "packages";
@@ -38,6 +38,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
     showInstances,
     openSyncSummary,
     onInstanceChange,
+    actionButtonLabel,
 }) => {
     const [selectedInstance, setSelectedInstance] = useState<Instance | undefined>();
     const [selectedStore, setSelectedStore] = useState<Store | undefined>();
@@ -113,12 +114,10 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
             remoteInstance={selectedInstance}
             paginationOptions={paginationOptions}
             openSyncSummary={openSyncSummary}
-            actionButtonLabel={
-                viewSelector.value === "packages" ? <Icon>arrow_downward</Icon> : undefined
-            }
+            actionButtonLabel={actionButtonLabel}
             onActionButtonClick={
                 (viewSelector.value === "modules" && !selectedInstance) ||
-                (viewSelector.value === "packages" && (selectedInstance || selectedStore))
+                viewSelector.value === "packages"
                     ? onCreate
                     : undefined
             }
