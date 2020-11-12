@@ -71,14 +71,14 @@
         "update-po": "yarn extract-pot && for pofile in i18n/*.po; do msgmerge --backup=off -U $pofile i18n/en.pot; done",
         "migrate": "yarn run-ts src/migrations/cli.ts",
         "manifest": "d2-manifest package.json build/manifest.webapp",
-        "pre-push": "yarn prettify && yarn lint && yarn localize && yarn jest",
         "cy:verify": "cypress verify",
         "cy:e2e:open": "CYPRESS_E2E=true cypress open",
         "cy:e2e:run": "CYPRESS_E2E=true cypress run --browser chrome"
     },
     "husky": {
         "hooks": {
-            "pre-push": "yarn pre-push"
+            "pre-push": "yarn prettify && yarn lint && yarn update-po && yarn test",
+            "post-merge": "./.githooks/dep-check"
         }
     },
     "devDependencies": {
