@@ -9,7 +9,7 @@ import { SynchronizationBuilder } from "../../../../types/synchronization";
 import { startDhis } from "../../../../utils/dhisServer";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../../../metadata/MetadataD2ApiRepository";
-import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
+import { StorageDataStoreClient } from "../../../storage/StorageDataStoreClient";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
 
 const repositoryFactory = buildRepositoryFactory();
@@ -398,7 +398,7 @@ describe("Sync metadata", () => {
 function buildRepositoryFactory() {
     const repositoryFactory: RepositoryFactory = new RepositoryFactory();
     repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreRepository);
+    repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreClient);
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
     repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
     return repositoryFactory;
