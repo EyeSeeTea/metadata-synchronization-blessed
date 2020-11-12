@@ -15,7 +15,8 @@ export abstract class StorageRepository {
     public abstract removeObject(key: string): Promise<void>;
 
     public async listObjectsInCollection<T extends Ref>(key: string): Promise<T[]> {
-        return (await this.getObject<T[]>(key)) ?? [];
+        const collection = await this.getObject<T[]>(key);
+        return collection ?? [];
     }
 
     public async getObjectInCollection<T extends Ref>(

@@ -1,16 +1,11 @@
 import { UseCase } from "../../common/entities/UseCase";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepository } from "../../storage/repositories/StorageRepository";
 import { Store } from "../entities/Store";
+import { StoreRepository } from "../repositories/StoreRepository";
 
 export class ListStoresUseCase implements UseCase {
-    constructor(private storageRepository: StorageRepository) {}
+    constructor(private storeRepository: StoreRepository) {}
 
     public async execute(): Promise<Store[]> {
-        const stores = await this.storageRepository.listObjectsInCollection<Store>(
-            Namespace.STORES
-        );
-
-        return stores.filter(store => !store.deleted);
+        return this.storeRepository.list();
     }
 }

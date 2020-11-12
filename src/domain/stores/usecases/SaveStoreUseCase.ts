@@ -21,11 +21,11 @@ export class SaveStoreUseCase implements UseCase {
 
         const isFirstStore = await this.isFirstStore(store);
 
-        const isNew = !store.id;
-
-        const storeToSave = isNew
-            ? { ...store, id: generateUid(), default: isFirstStore ? true : store.default }
-            : store;
+        const storeToSave = {
+            ...store,
+            id: store.id || generateUid(),
+            default: isFirstStore ? true : store.default,
+        };
 
         await this.storageRepository.saveObjectInCollection(Namespace.STORES, storeToSave);
 

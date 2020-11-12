@@ -11,7 +11,7 @@ interface Constant {
 
 const defaultName = "Bulk Load Storage";
 
-export class StorageConstantRepository extends StorageRepository {
+export class StorageConstantClient extends StorageRepository {
     constructor(private api: D2Api) {
         super();
     }

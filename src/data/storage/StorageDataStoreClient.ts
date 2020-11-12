@@ -5,7 +5,7 @@ import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 const dataStoreNamespace = "metadata-synchronization";
 
-export class StorageDataStoreRepository extends StorageRepository {
+export class StorageDataStoreClient extends StorageRepository {
     private api: D2Api;
     private dataStore: DataStore;
 

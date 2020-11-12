@@ -5,7 +5,7 @@ import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepositor
 import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
 import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
-import { StorageDataStoreRepository } from "../data/storage/StorageDataStoreClient";
+import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
@@ -70,6 +70,7 @@ import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/Cre
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
+import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -77,7 +78,7 @@ export class CompositionRoot {
     constructor(public readonly localInstance: Instance, private encryptionKey: string) {
         this.repositoryFactory = new RepositoryFactory();
         this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreRepository);
+        this.repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreClient);
         this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);
         this.repositoryFactory.bind(Repositories.GitHubRepository, GitHubOctokitRepository);
         this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
@@ -161,14 +162,15 @@ export class CompositionRoot {
     @cache()
     public get store() {
         const github = new GitHubOctokitRepository();
-        const storage = new StorageDataStoreRepository(this.localInstance);
+        const storage = new StorageDataStoreClient(this.localInstance);
+        const storeRepository = new StoreD2ApiRepository(this.localInstance);
 
         return getExecute({
             get: new GetStoreUseCase(storage),
             update: new SaveStoreUseCase(github, storage),
             validate: new ValidateStoreUseCase(github),
-            list: new ListStoresUseCase(storage),
-            delete: new DeleteStoreUseCase(storage),
+            list: new ListStoresUseCase(storeRepository),
+            delete: new DeleteStoreUseCase(storeRepository),
             setAsDefault: new SetStoreAsDefaultUseCase(storage),
         });
     }
@@ -284,7 +286,7 @@ export class CompositionRoot {
 
     @cache()
     public get mapping() {
-        const storage = new StorageDataStoreRepository(this.localInstance);
+        const storage = new StorageDataStoreClient(this.localInstance);
 
         return getExecute({
             get: new GetMappingByOwnerUseCase(storage),
