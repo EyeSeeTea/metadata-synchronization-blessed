@@ -1,7 +1,7 @@
 import { makeStyles, TextField } from "@material-ui/core";
 import React, { useCallback, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
-import { Store } from "../../../../../domain/packages/entities/Store";
+import { Store } from "../../../../../domain/stores/entities/Store";
 import i18n from "../../../../../locales";
 import SyncRule from "../../../../../models/syncRule";
 import { Dictionary } from "../../../../../types/utils";

@@ -7,7 +7,7 @@ import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { getMetadataPackageDiff, MetadataPackageDiff } from "../entities/MetadataPackageDiff";
-import { Store } from "../entities/Store";
+import { Store } from "../../stores/entities/Store";
 import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
 import { CompositionRoot } from "./../../../presentation/CompositionRoot";
 import { Either } from "./../../common/entities/Either";

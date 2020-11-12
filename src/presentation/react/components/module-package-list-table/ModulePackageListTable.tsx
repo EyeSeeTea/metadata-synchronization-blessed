@@ -12,7 +12,7 @@ import {
     InstanceSelectionOption,
 } from "../instance-selection-dropdown/InstanceSelectionDropdown";
 import { useViewSelector, ViewSelectorConfig } from "./useViewSelector";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Store } from "../../../../domain/stores/entities/Store";
 
 export interface ModulePackageListTableProps {
     onCreate?(): void;

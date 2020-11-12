@@ -9,7 +9,7 @@ import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { BasePackage, Package } from "../entities/Package";
-import { Store } from "../entities/Store";
+import { Store } from "../../stores/entities/Store";
 import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
 
 export class GetStorePackageUseCase implements UseCase {

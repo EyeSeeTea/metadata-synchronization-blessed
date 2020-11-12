@@ -14,7 +14,7 @@ import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { GitHubError, GitHubListError } from "../entities/Errors";
 import { ListPackage, Package } from "../entities/Package";
-import { Store } from "../entities/Store";
+import { Store } from "../../stores/entities/Store";
 import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubRepository";
 
 export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";

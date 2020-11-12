@@ -4,8 +4,8 @@ import { Either } from "../../domain/common/entities/Either";
 import { GitHubError, GitHubListError } from "../../domain/packages/entities/Errors";
 import { GithubBranch } from "../../domain/packages/entities/GithubBranch";
 import { GithubFile } from "../../domain/packages/entities/GithubFile";
-import { Store } from "../../domain/packages/entities/Store";
-import { StorePermissions } from "../../domain/packages/entities/StorePermissions";
+import { Store } from "../../domain/stores/entities/Store";
+import { StorePermissions } from "../../domain/stores/entities/StorePermissions";
 import { GitHubRepository } from "../../domain/packages/repositories/GitHubRepository";
 import { cache } from "../../utils/cache";
 

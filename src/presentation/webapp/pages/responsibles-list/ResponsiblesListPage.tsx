@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataResponsible } from "../../../../domain/metadata/entities/MetadataResponsible";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Store } from "../../../../domain/stores/entities/Store";
 import i18n from "../../../../locales";
 import { DataSetModel, ProgramModel } from "../../../../models/dhis/metadata";
 import { isAppConfigurator } from "../../../../utils/permissions";

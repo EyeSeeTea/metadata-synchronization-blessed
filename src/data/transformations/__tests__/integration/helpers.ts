@@ -8,7 +8,7 @@ import { RepositoryFactory } from "../../../../domain/common/factories/Repositor
 import { Repositories } from "../../../../domain/Repositories";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../../../metadata/MetadataD2ApiRepository";
-import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
+import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreClient";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { AnyRegistry } from "miragejs/-types";

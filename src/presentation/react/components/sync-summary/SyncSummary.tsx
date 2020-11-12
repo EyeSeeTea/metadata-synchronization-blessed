@@ -18,7 +18,7 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
 import { PublicInstance } from "../../../../domain/instance/entities/Instance";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Store } from "../../../../domain/stores/entities/Store";
 import {
     ErrorMessage,
     SynchronizationResult,

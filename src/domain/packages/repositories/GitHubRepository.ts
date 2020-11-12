@@ -2,8 +2,8 @@ import { Either } from "../../common/entities/Either";
 import { GitHubError, GitHubListError } from "../entities/Errors";
 import { GithubBranch } from "../entities/GithubBranch";
 import { GithubFile } from "../entities/GithubFile";
-import { Store } from "../entities/Store";
-import { StorePermissions } from "../entities/StorePermissions";
+import { Store } from "../../stores/entities/Store";
+import { StorePermissions } from "../../stores/entities/StorePermissions";
 
 export interface GitHubRepositoryConstructor {
     new (): GitHubRepository;

@@ -9,7 +9,7 @@ import {
     MetadataPackageDiff,
     ModelDiff,
 } from "../../../../domain/packages/entities/MetadataPackageDiff";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Store } from "../../../../domain/stores/entities/Store";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 import SyncSummary from "../sync-summary/SyncSummary";

@@ -3,9 +3,9 @@ import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepository } from "../../storage/repositories/StorageRepository";
-import { GitHubError } from "../entities/Errors";
+import { GitHubError } from "../../packages/entities/Errors";
 import { Store } from "../entities/Store";
-import { GitHubRepository } from "../repositories/GitHubRepository";
+import { GitHubRepository } from "../../packages/repositories/GitHubRepository";
 
 export class SaveStoreUseCase implements UseCase {
     constructor(

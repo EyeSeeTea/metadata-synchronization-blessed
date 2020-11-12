@@ -17,7 +17,7 @@ import {
 } from "d2-ui-components";
 import React, { useCallback, useMemo, useState } from "react";
 import { GitHubError } from "../../../../domain/packages/entities/Errors";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Store } from "../../../../domain/stores/entities/Store";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 import Linkify from "react-linkify";

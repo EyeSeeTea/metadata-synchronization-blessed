@@ -26,7 +26,7 @@ import {
 } from "../../../../domain/package-import/entities/PackageSource";
 import { mapToImportedPackage } from "../../../../domain/package-import/mappers/ImportedPackageMapper";
 import { BasePackage, ListPackage, Package } from "../../../../domain/packages/entities/Package";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Store } from "../../../../domain/stores/entities/Store";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { isAppConfigurator, isGlobalAdmin } from "../../../../utils/permissions";

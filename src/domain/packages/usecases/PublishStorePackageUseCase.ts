@@ -10,7 +10,7 @@ import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { GitHubError } from "../entities/Errors";
 import { BasePackage } from "../entities/Package";
-import { Store } from "../entities/Store";
+import { Store } from "../../stores/entities/Store";
 import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubRepository";
 
 export type PublishStorePackageError =
