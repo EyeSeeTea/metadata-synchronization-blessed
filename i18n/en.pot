@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-11-13T15:04:06.311Z\n"
-"PO-Revision-Date: 2020-11-13T15:04:06.311Z\n"
+"POT-Creation-Date: 2020-11-16T09:46:43.582Z\n"
+"PO-Revision-Date: 2020-11-16T09:46:43.582Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -574,7 +574,21 @@ msgstr ""
 msgid "Package"
 msgstr ""
 
+msgid "Unknown error happened loading package"
+msgstr ""
+
 msgid "Unknown error happened loading store"
+msgstr ""
+
+msgid "Existing mapping will be used"
+msgstr ""
+
+msgid ""
+"Some elements have been already mapped previously, please continue mapping "
+"remaining one or changed previous mapping"
+msgstr ""
+
+msgid "No mapping found"
 msgstr ""
 
 msgid "Can't connect to store"
