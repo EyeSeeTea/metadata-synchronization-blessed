@@ -34,8 +34,8 @@ import Dropdown from "../dropdown/Dropdown";
 import PackageImportDialog from "../package-import-dialog/PackageImportDialog";
 import { PackagesDiffDialog, DiffPackages } from "../packages-diff-dialog/PackagesDiffDialog";
 
-type InstallState = "Installed" | "NotInstalled" | "Upgrade";
-type TableListPackage = Omit<BasePackage, "contents"> & { installState: InstallState };
+type InstallStatus = "Installed" | "NotInstalled" | "Upgrade";
+type TableListPackage = Omit<BasePackage, "contents"> & { installStatus: InstallStatus };
 
 interface PackagesListTableProps extends ModulePackageListPageProps {
     isImportDialog?: boolean;
@@ -74,7 +74,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const [moduleFilter, setModuleFilter] = useState("");
     const [dhis2VersionFilter, setDhis2VersionFilter] = useState("");
     const [localDhis2Version, setLocalDhis2Version] = useState("");
-    const [installStateFilter, setInstallStateFilter] = useState("");
+    const [installStatusFilter, setInstallStatusFilter] = useState("");
 
     const [globalAdmin, setGlobalAdmin] = useState(false);
     const [appConfigurator, setAppConfigurator] = useState(false);
@@ -368,8 +368,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         ]
     );
 
-    const getInstallStateText = (installState: InstallState) => {
-        switch (installState) {
+    const getInstallStatusText = (installStatus: InstallStatus) => {
+        switch (installStatus) {
             case "Installed":
                 return i18n.t("Installed");
             case "NotInstalled":
@@ -389,10 +389,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
             { name: "user", text: i18n.t("Created by"), sortable: true, hidden: true },
             {
-                name: "installState",
-                text: i18n.t("State"),
+                name: "installStatus",
+                text: i18n.t("Status"),
                 sortable: true,
-                getValue: (row: TableListPackage) => getInstallStateText(row.installState),
+                getValue: (row: TableListPackage) => getInstallStatusText(row.installStatus),
             },
         ],
         []
@@ -409,9 +409,9 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             { name: "created", text: i18n.t("Created") },
             { name: "user", text: i18n.t("Created by") },
             {
-                name: "installState",
-                text: i18n.t("State"),
-                getValue: (row: TableListPackage) => getInstallStateText(row.installState),
+                name: "installStatus",
+                text: i18n.t("Status"),
+                getValue: (row: TableListPackage) => getInstallStatusText(row.installStatus),
             },
         ],
         []
@@ -548,13 +548,13 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             .value();
     }, [instancePackages, storePackages, remoteStore, localDhis2Version]);
 
-    const installStateFilterItems = useMemo(() => {
+    const installStatusFilterItems = useMemo(() => {
         const packages = remoteStore ? storePackages : instancePackages;
 
         return _(packages)
             .map(pkg => ({
-                id: pkg.installState,
-                name: getInstallStateText(pkg.installState),
+                id: pkg.installStatus,
+                name: getInstallStatusText(pkg.installStatus),
             }))
             .uniqBy(({ id }) => id)
             .sortBy(({ name }) => name)
@@ -589,11 +589,11 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
         const installStateFilterComponent = (
             <Dropdown
-                key="filter-install-state"
-                items={installStateFilterItems}
-                onValueChange={updateFilter(setInstallStateFilter)}
-                value={installStateFilter}
-                label={i18n.t("State")}
+                key="filter-install-status"
+                items={installStatusFilterItems}
+                onValueChange={updateFilter(setInstallStatusFilter)}
+                value={installStatusFilter}
+                label={i18n.t("Status")}
             />
         );
         return [
@@ -608,8 +608,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         moduleFilterItems,
         dhis2VersionFilterItems,
         dhis2VersionFilter,
-        installStateFilterItems,
-        installStateFilter,
+        installStatusFilterItems,
+        installStatusFilter,
     ]);
 
     const rowsFiltered = useMemo(() => {
@@ -618,9 +618,9 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             row =>
                 (row.module.id === moduleFilter || !moduleFilter) &&
                 (row.dhisVersion === dhis2VersionFilter || !dhis2VersionFilter) &&
-                (row.installState === installStateFilter || !installStateFilter)
+                (row.installStatus === installStatusFilter || !installStatusFilter)
         );
-    }, [moduleFilter, rows, dhis2VersionFilter, installStateFilter]);
+    }, [moduleFilter, rows, dhis2VersionFilter, installStatusFilter]);
 
     const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
         setOpenImportPackageDialog(false);
@@ -697,7 +697,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     useEffect(() => {
         setModuleFilter("");
         setDhis2VersionFilter("");
-        setInstallStateFilter("");
+        setInstallStatusFilter("");
         setResetKey(Math.random());
     }, [remoteInstance, remoteStore]);
 
@@ -774,13 +774,13 @@ function mapPackagesToListPackages(
             );
         });
 
-        const installState: InstallState = installed
+        const installStatus: InstallStatus = installed
             ? "Installed"
             : newUpdates
             ? "Upgrade"
             : "NotInstalled";
 
-        return { ...pkg, installState };
+        return { ...pkg, installStatus };
     });
 
     return listPackages;
