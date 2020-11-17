@@ -271,17 +271,40 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
-    private async getFile({ token, account, repository }: Store, branch: string, path: string) {
+    private async getFile(
+        store: Store,
+        branch: string,
+        path: string
+    ): Promise<{ encoding: string; content: string; sha: string }> {
+        const { token, account, repository } = store;
         const octokit = await this.getOctoKit(token);
 
-        const { data } = await octokit.repos.getContent({
-            owner: account,
-            repo: repository,
-            ref: branch,
-            path,
-        });
+        try {
+            const { data } = await octokit.repos.getContent({
+                owner: account,
+                repo: repository,
+                ref: branch,
+                path,
+            });
 
-        return data;
+            return data;
+        } catch (error) {
+            if (!error.errors?.find((error: { code?: string }) => error.code === "too_large")) {
+                throw error;
+            }
+
+            const files = await this.listFiles(store, branch);
+            const file = files.value.data?.find(file => file.path === path);
+            if (!file) throw new Error("Not Found");
+
+            const { data } = await octokit.git.getBlob({
+                owner: account,
+                repo: repository,
+                file_sha: file.sha,
+            });
+
+            return data;
+        }
     }
 
     private parseFileContents(contents: string): unknown {
