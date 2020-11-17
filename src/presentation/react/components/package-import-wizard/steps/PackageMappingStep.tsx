@@ -9,6 +9,10 @@ import {
     MetadataMappingDictionary,
 } from "../../../../../domain/mapping/entities/MetadataMapping";
 import {
+    MetadataEntities,
+    MetadataPackage,
+} from "../../../../../domain/metadata/entities/MetadataEntities";
+import {
     isInstance,
     PackageSource,
 } from "../../../../../domain/package-import/entities/PackageSource";
@@ -30,6 +34,8 @@ import { useAppContext } from "../../../contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";
 import MappingTable from "../../mapping-table/MappingTable";
 import { PackageImportWizardProps } from "../PackageImportWizard";
+import Alert from "@material-ui/lab/Alert/Alert";
+import { makeStyles, Theme } from "@material-ui/core";
 
 const models = [
     GlobalCategoryModel,
@@ -44,6 +50,7 @@ const models = [
 ];
 
 export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({ packageImportRule }) => {
+    const classes = useStyles();
     const { compositionRoot, api } = useAppContext();
     const snackbar = useSnackbar();
 
@@ -53,6 +60,8 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({ package
 
     const [packageFilter, setPackageFilter] = useState<string>(packageImportRule.packageIds[0]);
     const [dataSourceMapping, setDataSourceMapping] = useState<DataSourceMapping>();
+    const [packageContents, setPackageContents] = useState<MetadataPackage>();
+    const [mappingMessage, setMappingMessage] = useState("");
 
     const onChangeMapping = useCallback(
         async (metadataMapping: MetadataMappingDictionary) => {
@@ -105,6 +114,17 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({ package
                     id: source.id,
                 });
 
+                const packageResult = await compositionRoot.packages.get(packageId, source);
+
+                await packageResult.match({
+                    error: async () => {
+                        snackbar.error(i18n.t("Unknown error happened loading package"));
+                    },
+                    success: async ({ contents }) => {
+                        setPackageContents(contents);
+                    },
+                });
+
                 setDataSourceMapping(mapping);
                 setInstance(source);
             } else {
@@ -127,6 +147,7 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({ package
                             mappingDictionary: {},
                         });
 
+                        setPackageContents(contents);
                         setDataSourceMapping(mapping ?? defaultMapping);
                         setInstance(JSONDataSource.build(dhisVersion, contents));
                     },
@@ -139,6 +160,43 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({ package
     useEffect(() => {
         updateDataSource(packageImportRule.source, packageFilter);
     }, [updateDataSource, packageFilter, packageImportRule.source]);
+
+    useEffect(() => {
+        if (packageContents && dataSourceMapping) {
+            const mapeableModels = models.map(model => model.getCollectionName());
+
+            const contentsIds: string[] = Object.entries(packageContents).reduce(
+                (acc: string[], [key, items]) => {
+                    const modelKey = key as keyof MetadataEntities;
+
+                    const ids: string[] =
+                        mapeableModels.includes(modelKey) && items
+                            ? items.map(item => item.id)
+                            : [];
+                    return [...acc, ...ids];
+                },
+                []
+            );
+
+            const mappingIds: string[] = Object.entries(dataSourceMapping.mappingDictionary).reduce(
+                (acc: string[], [_, mapping]) => [...acc, ...Object.keys(mapping)],
+                []
+            );
+
+            const noMappedIds = _.difference(contentsIds, mappingIds);
+
+            const message =
+                noMappedIds.length === 0
+                    ? i18n.t("Existing mapping will be used")
+                    : noMappedIds.length < contentsIds.length
+                    ? i18n.t(
+                          "Some elements have been already mapped previously, please continue mapping remaining one or changed previous mapping"
+                      )
+                    : i18n.t("No mapping found");
+
+            setMappingMessage(message);
+        }
+    }, [packageContents, dataSourceMapping]);
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
@@ -181,17 +239,33 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({ package
     if (!dataSourceMapping || !instance) return null;
 
     return (
-        <MappingTable
-            models={models}
-            originInstance={instance}
-            destinationInstance={compositionRoot.localInstance}
-            mapping={dataSourceMapping.mappingDictionary}
-            globalMapping={dataSourceMapping.mappingDictionary}
-            onChangeMapping={onChangeMapping}
-            onApplyGlobalMapping={onApplyGlobalMapping}
-            externalFilterComponents={packageFilterComponent}
-            viewFilters={["onlySelected"]}
-            showResponsible={false}
-        />
+        <React.Fragment>
+            {mappingMessage && (
+                <Alert variant="outlined" severity="info" className={classes.alert}>
+                    {mappingMessage}
+                </Alert>
+            )}
+            <MappingTable
+                models={models}
+                originInstance={instance}
+                destinationInstance={compositionRoot.localInstance}
+                mapping={dataSourceMapping.mappingDictionary}
+                globalMapping={dataSourceMapping.mappingDictionary}
+                onChangeMapping={onChangeMapping}
+                onApplyGlobalMapping={onApplyGlobalMapping}
+                externalFilterComponents={packageFilterComponent}
+                viewFilters={["onlySelected"]}
+                showResponsible={false}
+            />
+        </React.Fragment>
     );
 };
+
+const useStyles = makeStyles((theme: Theme) => ({
+    alert: {
+        textAlign: "center",
+        margin: theme.spacing(2),
+        display: "flex",
+        justifyContent: "center",
+    },
+}));
