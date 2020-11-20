@@ -24,7 +24,7 @@ import {
     PackageSource,
 } from "../../../../domain/package-import/entities/PackageSource";
 import { mapToImportedPackage } from "../../../../domain/package-import/mappers/ImportedPackageMapper";
-import { BasePackage, ListPackage, Package } from "../../../../domain/packages/entities/Package";
+import { ListPackage, Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { isAppConfigurator, isGlobalAdmin } from "../../../../utils/permissions";
@@ -33,9 +33,13 @@ import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import PackageImportDialog from "../package-import-dialog/PackageImportDialog";
 import { PackagesDiffDialog, DiffPackages } from "../packages-diff-dialog/PackagesDiffDialog";
-
-type InstallStatus = "Installed" | "NotInstalled" | "Upgrade";
-type TableListPackage = Omit<BasePackage, "contents"> & { installStatus: InstallStatus };
+import {
+    groupPackageByModuleAndVersion as groupPackagesByModuleAndVersion,
+    InstallStatus,
+    isPackageItem,
+    PackageItem,
+    PackageModuleItem,
+} from "./PackageModuleItem";
 
 interface PackagesListTableProps extends ModulePackageListPageProps {
     isImportDialog?: boolean;
@@ -60,8 +64,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const snackbar = useSnackbar();
     const loading = useLoading();
 
-    const [instancePackages, setInstancePackages] = useState<TableListPackage[]>([]);
-    const [storePackages, setStorePackages] = useState<TableListPackage[]>([]);
+    const [instancePackages, setInstancePackages] = useState<PackageItem[]>([]);
+    const [storePackages, setStorePackages] = useState<PackageItem[]>([]);
     const [importedPackages, setImportedPackages] = useState<ImportedPackage[]>([]);
     const rows = remoteStore ? storePackages : instancePackages;
 
@@ -110,7 +114,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     );
 
     const updateTable = useCallback(
-        ({ selection }: TableState<TableListPackage>) => {
+        ({ selection }: TableState<PackageModuleItem>) => {
             updateSelection(selection);
         },
         [updateSelection]
@@ -203,7 +207,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         async (ids: string[]) => {
             const packageId = _(ids).get(0, null);
             const remotePackage = packageId ? rows.find(row => row.id === packageId) : undefined;
-            if (packageId && remotePackage) {
+            if (packageId && remotePackage && isPackageItem(remotePackage)) {
                 setPackagesToDiff({ merge: remotePackage });
             }
         },
@@ -215,7 +219,12 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             const [packageBase, packageMerge] = ids.map(packageId => {
                 return rows.find(row => row.id === packageId);
             });
-            if (packageBase && packageMerge) {
+            if (
+                packageBase &&
+                packageMerge &&
+                isPackageItem(packageBase) &&
+                isPackageItem(packageMerge)
+            ) {
                 setPackagesToDiff({ base: packageBase, merge: packageMerge });
             }
         },
@@ -379,26 +388,26 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         }
     };
 
-    const columns: TableColumn<TableListPackage>[] = useMemo(
+    const columns: TableColumn<PackageModuleItem>[] = useMemo(
         () => [
             { name: "name", text: i18n.t("Name"), sortable: true },
             { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
             { name: "version", text: i18n.t("Version"), sortable: true },
             { name: "dhisVersion", text: i18n.t("DHIS2 Version"), sortable: true },
-            { name: "module", text: i18n.t("Module"), sortable: true },
             { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
             { name: "user", text: i18n.t("Created by"), sortable: true, hidden: true },
             {
                 name: "installStatus",
                 text: i18n.t("Status"),
                 sortable: true,
-                getValue: (row: TableListPackage) => getInstallStatusText(row.installStatus),
+                getValue: (row: PackageModuleItem) =>
+                    isPackageItem(row) ? getInstallStatusText(row.installStatus) : undefined,
             },
         ],
         []
     );
 
-    const details: ObjectsTableDetailField<TableListPackage>[] = useMemo(
+    const details: ObjectsTableDetailField<PackageModuleItem>[] = useMemo(
         () => [
             { name: "id", text: i18n.t("ID") },
             { name: "name", text: i18n.t("Name") },
@@ -411,13 +420,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             {
                 name: "installStatus",
                 text: i18n.t("Status"),
-                getValue: (row: TableListPackage) => getInstallStatusText(row.installStatus),
+                getValue: (row: PackageModuleItem) =>
+                    isPackageItem(row) ? getInstallStatusText(row.installStatus) : undefined,
             },
         ],
         []
     );
 
-    const actions: TableAction<TableListPackage>[] = useMemo(
+    const actions: TableAction<PackageModuleItem>[] = useMemo(
         () => [
             {
                 name: "details",
@@ -614,12 +624,15 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const rowsFiltered = useMemo(() => {
         setLoadingTable(false);
-        return rows.filter(
+
+        const packageItems = rows.filter(
             row =>
                 (row.module.id === moduleFilter || !moduleFilter) &&
                 (row.dhisVersion === dhis2VersionFilter || !dhis2VersionFilter) &&
                 (row.installStatus === installStatusFilter || !installStatusFilter)
         );
+
+        return groupPackagesByModuleAndVersion(packageItems);
     }, [moduleFilter, rows, dhis2VersionFilter, installStatusFilter]);
 
     const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
@@ -647,7 +660,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         compositionRoot.packages
             .list(globalAdmin, remoteInstance)
             .then(packages => {
-                setInstancePackages(mapPackagesToListPackages(packages, importedPackages));
+                setInstancePackages(mapPackagesToPackageItems(packages, importedPackages));
             })
             .catch((error: Error) => {
                 snackbar.error(error.message);
@@ -669,7 +682,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             compositionRoot.packages.listStore(remoteStore.id).then(validation => {
                 validation.match({
                     success: packages => {
-                        setStorePackages(mapPackagesToListPackages(packages, importedPackages));
+                        setStorePackages(mapPackagesToPackageItems(packages, importedPackages));
                     },
                     error: () => {
                         snackbar.error(i18n.t("Can't connect to store"));
@@ -708,7 +721,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     return (
         <React.Fragment>
-            <ObjectsTable<TableListPackage>
+            <ObjectsTable<PackageModuleItem>
                 resetKey={`${resetKey}`}
                 rows={rowsFiltered}
                 columns={columns}
@@ -722,6 +735,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 paginationOptions={paginationOptions}
                 actionButtonLabel={actionButtonLabel}
                 loading={loadingTable}
+                childrenKeys={["packages"]}
             />
 
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
@@ -748,10 +762,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     );
 };
 
-function mapPackagesToListPackages(
+function mapPackagesToPackageItems(
     packages: ListPackage[],
     importedPackages: ImportedPackage[]
-): TableListPackage[] {
+): PackageItem[] {
     const listPackages = packages.map(pkg => {
         const installed = importedPackages.some(imported => {
             return (
