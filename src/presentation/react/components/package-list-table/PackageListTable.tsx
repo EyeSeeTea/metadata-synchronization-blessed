@@ -4,6 +4,7 @@ import {
     ConfirmationDialogProps,
     ObjectsTable,
     ObjectsTableDetailField,
+    RowConfig,
     TableAction,
     TableColumn,
     TableSelection,
@@ -434,6 +435,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 text: i18n.t("Details"),
                 multiple: false,
                 primary: true,
+                isActive: (rows: PackageModuleItem[]) => _.every(rows, row => isPackageItem(row)),
             },
             {
                 name: "delete",
@@ -441,7 +443,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 multiple: true,
                 onClick: deletePackages,
                 icon: <Icon>delete</Icon>,
-                isActive: () =>
+                isActive: (rows: PackageModuleItem[]) =>
+                    _.every(rows, row => isPackageItem(row)) &&
                     !isImportDialog &&
                     presentation === "app" &&
                     !isRemoteInstance &&
@@ -454,6 +457,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 multiple: false,
                 onClick: downloadPackage,
                 icon: <Icon>cloud_download</Icon>,
+                isActive: (rows: PackageModuleItem[]) => _.every(rows, row => isPackageItem(row)),
             },
             {
                 name: "publish",
@@ -461,7 +465,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 multiple: false,
                 onClick: publishPackage,
                 icon: <Icon>publish</Icon>,
-                isActive: () =>
+                isActive: (rows: PackageModuleItem[]) =>
+                    _.every(rows, row => isPackageItem(row)) &&
                     !isImportDialog &&
                     presentation === "app" &&
                     !isRemoteInstance &&
@@ -473,7 +478,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 text: i18n.t("Compare with local instance"),
                 multiple: false,
                 icon: <Icon>compare</Icon>,
-                isActive: () =>
+                isActive: (rows: PackageModuleItem[]) =>
+                    _.every(rows, row => isPackageItem(row)) &&
                     presentation === "app" &&
                     (isRemoteInstance || remoteStore !== undefined) &&
                     appConfigurator,
@@ -484,7 +490,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 text: i18n.t("Compare selected packages"),
                 multiple: true,
                 icon: <Icon>compare_arrows</Icon>,
-                isActive: () =>
+                isActive: (rows: PackageModuleItem[]) =>
+                    _.every(rows, row => isPackageItem(row)) &&
                     presentation === "app" &&
                     appConfigurator &&
                     (selectedIds ? selectedIds.length === 2 : false),
@@ -496,7 +503,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 multiple: false,
                 onClick: importPackage,
                 icon: <Icon>arrow_downward</Icon>,
-                isActive: () =>
+                isActive: (rows: PackageModuleItem[]) =>
+                    _.every(rows, row => isPackageItem(row)) &&
                     !isImportDialog &&
                     presentation === "app" &&
                     (isRemoteInstance || remoteStore !== undefined) &&
@@ -508,7 +516,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 multiple: true,
                 onClick: importPackagesFromWizard,
                 icon: <Icon>arrow_downward</Icon>,
-                isActive: () =>
+                isActive: (rows: PackageModuleItem[]) =>
+                    _.every(rows, row => isPackageItem(row)) &&
                     !isImportDialog &&
                     presentation === "app" &&
                     (isRemoteInstance || remoteStore !== undefined) &&
@@ -719,11 +728,19 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
+    const rowConfig = React.useCallback(
+        (item: PackageModuleItem): RowConfig => ({
+            selectable: isPackageItem(item),
+        }),
+        []
+    );
+
     return (
         <React.Fragment>
             <ObjectsTable<PackageModuleItem>
                 resetKey={`${resetKey}`}
                 rows={rowsFiltered}
+                rowConfig={rowConfig}
                 columns={columns}
                 details={details}
                 actions={actions}

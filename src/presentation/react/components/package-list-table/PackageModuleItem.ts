@@ -14,24 +14,24 @@ export type InstallStatus = "Installed" | "NotInstalled" | "Upgrade";
 export type PackageItem = Omit<BasePackage, "contents"> & { installStatus: InstallStatus };
 
 export const isPackageItem = (item: PackageModuleItem): item is PackageItem => {
-    return (item as PackageItem).version !== undefined;
+    return (item as PackageItem).module !== undefined;
 };
 
 export const groupPackageByModuleAndVersion = (packages: PackageItem[]) => {
     return packages.reduce((acc, item) => {
-        const parent = acc.find(
-            parent => parent.id === item.module.id && parent.version === item.version
-        );
+        const parentKey = `${item.module.id}-${item.version}`;
+
+        const parent = acc.find(parent => parent.id === parentKey);
 
         if (parent) {
             return acc.map(parentItem =>
-                parentItem.id === item.module.id && parentItem.version === item.version
+                parentItem.id === parentKey
                     ? { ...parentItem, packages: [...parentItem.packages, item] }
                     : parentItem
             );
         } else {
             const newParent = {
-                id: item.module.id,
+                id: parentKey,
                 name: item.module.name,
                 version: item.version,
                 packages: [item],
