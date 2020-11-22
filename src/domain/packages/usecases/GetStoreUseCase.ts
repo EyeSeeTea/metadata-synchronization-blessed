@@ -6,11 +6,9 @@ import { Store } from "../entities/Store";
 export class GetStoreUseCase implements UseCase {
     constructor(private storageRepository: StorageRepository) {}
 
-    public async execute(): Promise<Store> {
-        return await this.storageRepository.getOrCreateObject<Store>(Namespace.STORE, {
-            token: "",
-            account: "",
-            repository: "",
-        });
+    public async execute(id: string): Promise<Store | undefined> {
+        const store = this.storageRepository.getObjectInCollection<Store>(Namespace.STORES, id);
+
+        return store;
     }
 }

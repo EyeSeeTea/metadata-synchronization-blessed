@@ -1,4 +1,6 @@
+import { NamedRef } from "../../common/entities/Ref";
 import { PublicInstance } from "../../instance/entities/Instance";
+import { Store } from "../../packages/entities/Store";
 import { SynchronizationType } from "./SynchronizationType";
 
 export type SynchronizationStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
@@ -21,8 +23,9 @@ export interface ErrorMessage {
 
 export interface SynchronizationResult {
     status: SynchronizationStatus;
-    origin?: PublicInstance;
+    origin?: PublicInstance | Store;
     instance: PublicInstance;
+    originPackage?: NamedRef;
     date: Date;
     type: SynchronizationType;
     message?: string;

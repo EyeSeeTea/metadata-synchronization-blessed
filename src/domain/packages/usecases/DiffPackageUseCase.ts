@@ -5,7 +5,6 @@ import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
-import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { getMetadataPackageDiff, MetadataPackageDiff } from "../entities/MetadataPackageDiff";
 import { Store } from "../entities/Store";
@@ -26,31 +25,48 @@ export class DiffPackageUseCase implements UseCase {
     ) {}
 
     public async execute(
-        store: boolean,
-        id: string,
+        packageIdBase: string | undefined,
+        packageIdMerge: string,
+        storeId: string | undefined,
         instance = this.localInstance
     ): Promise<Either<DiffPackageUseCaseError, MetadataPackageDiff>> {
-        const remotePackage = store
-            ? await this.getStorePackage(id)
-            : await this.getDataStorePackage(id, instance);
+        const packageMerge = await this.getPackage(packageIdMerge, storeId, instance);
+        if (!packageMerge) return Either.error("PACKAGE_NOT_FOUND");
 
-        if (!remotePackage) return Either.error("PACKAGE_NOT_FOUND");
+        const contentsMerge = packageMerge.contents;
+        let contentsBase: MetadataPackage;
 
-        const moduleData = await this.storageRepository(instance).getObjectInCollection<BaseModule>(
-            Namespace.MODULES,
-            remotePackage.module.id
-        );
+        if (packageIdBase) {
+            const packageBase = await this.getPackage(packageIdBase, storeId, instance);
+            if (!packageBase) return Either.error("PACKAGE_NOT_FOUND");
+            contentsBase = packageBase.contents;
+        } else {
+            // No package B specified, use local contents
+            const moduleDataMerge = await this.storageRepository(instance).getObjectInCollection<
+                BaseModule
+            >(Namespace.MODULES, packageMerge.module.id);
 
-        if (!moduleData) return Either.error("MODULE_NOT_FOUND");
+            if (!moduleDataMerge) return Either.error("MODULE_NOT_FOUND");
+            const moduleMerge = MetadataModule.build(moduleDataMerge);
 
-        const remoteModule = MetadataModule.build(moduleData);
-        const localContents = await this.compositionRoot.sync[remoteModule.type]({
-            ...remoteModule.toSyncBuilder(),
-            originInstance: "LOCAL",
-            targetInstances: [],
-        }).buildPayload();
+            contentsBase = await this.compositionRoot.sync[moduleMerge.type]({
+                ...moduleMerge.toSyncBuilder(),
+                originInstance: "LOCAL",
+                targetInstances: [],
+            }).buildPayload();
+        }
 
-        return Either.success(getMetadataPackageDiff(localContents, remotePackage.contents));
+        return Either.success(getMetadataPackageDiff(contentsBase, contentsMerge));
+    }
+
+    private async getPackage(
+        packageId: string,
+        storeId: string | undefined,
+        instance: Instance
+    ): Promise<BasePackage | undefined> {
+        return storeId
+            ? this.getStorePackage(storeId, packageId)
+            : this.getDataStorePackage(packageId, instance);
     }
 
     private async getDataStorePackage(id: string, instance: Instance) {
@@ -60,16 +76,17 @@ export class DiffPackageUseCase implements UseCase {
         );
     }
 
-    private async getStorePackage(url: string) {
-        const store = await this.storageRepository(this.localInstance).getObject<Store>(
-            Namespace.STORE
-        );
+    private async getStorePackage(storeId: string, url: string) {
+        const store = (
+            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
+        )?.find(store => store.id === storeId);
+
         if (!store) return undefined;
 
-        const { encoding, content } = await this.downloadRepository().fetch<{
+        const { encoding, content } = await this.gitRepository().request<{
             encoding: string;
             content: string;
-        }>(url);
+        }>(store, url);
 
         const validation = this.gitRepository().readFileContents<
             MetadataPackage & { package: BasePackage }
@@ -93,14 +110,6 @@ export class DiffPackageUseCase implements UseCase {
         return this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [instance]
-        );
-    }
-
-    @cache()
-    private downloadRepository() {
-        return this.repositoryFactory.get<DownloadRepositoryConstructor>(
-            Repositories.DownloadRepository,
-            []
         );
     }
 }

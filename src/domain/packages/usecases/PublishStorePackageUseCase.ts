@@ -4,17 +4,18 @@ import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { BaseModule } from "../../modules/entities/Module";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { GitHubError } from "../entities/Errors";
 import { BasePackage } from "../entities/Package";
 import { Store } from "../entities/Store";
-import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
+import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubRepository";
 
 export type PublishStorePackageError =
     | GitHubError
-    | "STORE_NOT_FOUND"
+    | "DEFAULT_STORE_NOT_FOUND"
     | "PACKAGE_NOT_FOUND"
     | "ALREADY_PUBLISHED";
 
@@ -25,10 +26,11 @@ export class PublishStorePackageUseCase implements UseCase {
         packageId: string,
         force = false
     ): Promise<Either<PublishStorePackageError, void>> {
-        const store = await this.storageRepository(this.localInstance).getObject<Store>(
-            Namespace.STORE
-        );
-        if (!store) return Either.error("STORE_NOT_FOUND");
+        const store = (
+            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
+        )?.find(store => store.default && !store.deleted);
+
+        if (!store) return Either.error("DEFAULT_STORE_NOT_FOUND");
 
         const storedPackage = await this.storageRepository(
             this.localInstance
@@ -68,7 +70,32 @@ export class PublishStorePackageUseCase implements UseCase {
             }
         }
 
+        await this.createModuleFileIfRequired(
+            store,
+            branch,
+            `${item.module.name}/${moduleFile}`,
+            item.module
+        );
+
         return Either.success(undefined);
+    }
+
+    private async createModuleFileIfRequired(
+        store: Store,
+        branch: string,
+        path: string,
+        moduleRef: Pick<BaseModule, "id" | "name" | "instance" | "department">
+    ) {
+        const validation = await this.gitRepository().writeFile(
+            store,
+            branch,
+            path,
+            JSON.stringify(moduleRef, null, 4)
+        );
+
+        if (validation.isError()) {
+            return console.warn("An error creating the module file has ocurred");
+        }
     }
 
     @cache()

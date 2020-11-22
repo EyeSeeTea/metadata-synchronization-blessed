@@ -116,7 +116,7 @@ export default class SyncReport {
         this.results = _.unionBy(
             [...result],
             this.results,
-            ({ instance, type }) => `${instance.id}-${type}`
+            ({ instance, type, originPackage }) => `${instance.id}-${type}-${originPackage?.id}`
         );
     }
 

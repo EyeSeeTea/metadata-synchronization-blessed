@@ -10,6 +10,13 @@ import { GitHubRepository } from "../../domain/packages/repositories/GitHubRepos
 import { cache } from "../../utils/cache";
 
 export class GitHubOctokitRepository implements GitHubRepository {
+    @cache()
+    public async request<T>(store: Store, url: string): Promise<T> {
+        const octokit = await this.getOctoKit(store.token);
+        const result = await octokit.request(`GET ${url}`);
+        return result.data as T;
+    }
+
     public async listFiles(
         store: Store,
         branch: string
@@ -186,6 +193,8 @@ export class GitHubOctokitRepository implements GitHubRepository {
         try {
             const { token, account, repository } = store;
             if (!token?.trim()) return Either.error("NO_TOKEN");
+            if (!account?.trim()) return Either.error("NO_ACCOUNT");
+            if (!repository?.trim()) return Either.error("NO_REPOSITORY");
 
             const octokit = await this.getOctoKit(token);
             const { login: username } = await this.getCurrentUser(store);
@@ -262,17 +271,40 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
-    private async getFile({ token, account, repository }: Store, branch: string, path: string) {
+    private async getFile(
+        store: Store,
+        branch: string,
+        path: string
+    ): Promise<{ encoding: string; content: string; sha: string }> {
+        const { token, account, repository } = store;
         const octokit = await this.getOctoKit(token);
 
-        const { data } = await octokit.repos.getContent({
-            owner: account,
-            repo: repository,
-            ref: branch,
-            path,
-        });
+        try {
+            const { data } = await octokit.repos.getContent({
+                owner: account,
+                repo: repository,
+                ref: branch,
+                path,
+            });
 
-        return data;
+            return data;
+        } catch (error) {
+            if (!error.errors?.find((error: { code?: string }) => error.code === "too_large")) {
+                throw error;
+            }
+
+            const files = await this.listFiles(store, branch);
+            const file = files.value.data?.find(file => file.path === path);
+            if (!file) throw new Error("Not Found");
+
+            const { data } = await octokit.git.getBlob({
+                owner: account,
+                repo: repository,
+                file_sha: file.sha,
+            });
+
+            return data;
+        }
     }
 
     private parseFileContents(contents: string): unknown {

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { TextFieldProps, TextField } from "@material-ui/core";
+import { TextField, TextFieldProps } from "@material-ui/core";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 /* Wrap TextField with those two changes:
 
@@ -16,8 +16,8 @@ const TextFieldOnBlur: React.FC<TextFieldOnBlurProps> = props => {
     const { onChange } = props;
     // Use props.value as initial value for the initial state but also react to changes from the parent
     const propValue = props.value;
-    const prevPropValue = React.useRef(propValue);
-    const [value, setValue] = React.useState<string>(propValue);
+    const prevPropValue = useRef(propValue);
+    const [value, setValue] = useState<string>(propValue);
 
     useEffect(() => {
         if (propValue !== prevPropValue.current) {
@@ -27,11 +27,11 @@ const TextFieldOnBlur: React.FC<TextFieldOnBlurProps> = props => {
         }
     }, [propValue, prevPropValue, value]);
 
-    const callParentOnChange = React.useCallback(() => {
+    const callParentOnChange = useCallback(() => {
         onChange(value);
     }, [value, onChange]);
 
-    const setValueFromEvent = React.useCallback(
+    const setValueFromEvent = useCallback(
         (ev: React.ChangeEvent<{ value: string }>) => {
             setValue(ev.target.value);
         },

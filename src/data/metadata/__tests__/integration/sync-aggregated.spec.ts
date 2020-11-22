@@ -105,7 +105,7 @@ describe("Sync metadata", () => {
         remote.get("/dataValueSets", async () => ({
             dataValues: [
                 {
-                    dataElement: "id1",
+                    dataElement: "id2",
                     period: "20191231",
                     orgUnit: "Global",
                     categoryOptionCombo: "default4",
@@ -138,7 +138,20 @@ describe("Sync metadata", () => {
             },
         ]);
 
-        local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
+        local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({
+            metadataMapping: {
+                aggregatedDataElements: {
+                    id1: {
+                        mappedId: "id2",
+                        mappedName: "foo",
+                        code: "foo",
+                        conflicts: false,
+                        global: false,
+                        mapping: {},
+                    },
+                },
+            },
+        }));
 
         const addAggregatedToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
             schema.db.dataValueSets.insert(JSON.parse(request.requestBody));
@@ -195,6 +208,7 @@ describe("Sync metadata", () => {
 
         const response = remote.db.dataValueSets.find(1);
         expect(response.dataValues[0].value).toEqual("test-value-1");
+        expect(response.dataValues[0].dataElement).toEqual("id2");
         expect(local.db.dataValueSets.find(1)).toBeNull();
     });
 
@@ -223,6 +237,7 @@ describe("Sync metadata", () => {
 
         const response = local.db.dataValueSets.find(1);
         expect(response.dataValues[0].value).toEqual("test-value-2");
+        expect(response.dataValues[0].dataElement).toEqual("id1");
         expect(remote.db.dataValueSets.find(1)).toBeNull();
     });
 });

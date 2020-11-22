@@ -1,10 +1,10 @@
-import React from "react";
-import { SyncWizardStepProps } from "../Steps";
+import React, { useCallback } from "react";
 import FilterRulesTable, { FilterRulesTableProps } from "../../filter-rules-table/FilterRulesTable";
+import { SyncWizardStepProps } from "../Steps";
 
 const MetadataFilterRulesStep: React.FC<SyncWizardStepProps> = props => {
     const { syncRule, onChange } = props;
-    const setFilterRules = React.useCallback<FilterRulesTableProps["onChange"]>(
+    const setFilterRules = useCallback<FilterRulesTableProps["onChange"]>(
         filterRules => {
             onChange(syncRule.updateFilterRules(filterRules));
         },
