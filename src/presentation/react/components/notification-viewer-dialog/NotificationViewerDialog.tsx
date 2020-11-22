@@ -58,7 +58,7 @@ export const NotificationViewerDialog: React.FC<NotificationViewerDialogProps> =
                         models={[DataSetModel, ProgramModel, DashboardModel]}
                         filterRows={notification.selectedIds}
                         forceSelectionColumn={false}
-                        showOnlySelectedFilter={false}
+                        viewFilters={["group", "level", "orgUnit", "lastUpdated"]}
                     />
                 )}
         </ConfirmationDialog>

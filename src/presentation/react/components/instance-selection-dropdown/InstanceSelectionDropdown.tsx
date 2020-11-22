@@ -5,6 +5,7 @@ import i18n from "../../../../locales";
 import { Maybe } from "../../../../types/utils";
 import Dropdown, { DropdownViewOption } from "../dropdown/Dropdown";
 import { useAppContext } from "../../contexts/AppContext";
+import { Store } from "../../../../domain/packages/entities/Store";
 
 export type InstanceSelectionOption = "local" | "remote" | "store";
 
@@ -15,10 +16,11 @@ export interface InstanceSelectionDropdownProps {
     selectedInstance: Maybe<string>;
     onChangeSelected: <T extends InstanceSelectionOption>(
         type: T,
-        instance?: T extends "remote" ? Instance : never
+        instance?: T extends "remote" ? Instance : T extends "store" ? Store : never
     ) => void;
     view?: DropdownViewOption;
     title?: string;
+    refreshKey?: number;
 }
 
 export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps> = React.memo(
@@ -28,40 +30,49 @@ export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps>
         onChangeSelected,
         view = "filter",
         title = i18n.t("Instances"),
+        refreshKey,
     }) => {
         const { compositionRoot } = useAppContext();
 
         const [instances, setInstances] = useState<Instance[]>([]);
+        const [stores, setStores] = useState<Store[]>([]);
 
         const updateSelectedInstance = useCallback(
             (id: string) => {
-                if (id === "STORE") {
-                    onChangeSelected("store");
-                } else if (id === "LOCAL") {
+                if (id === "LOCAL") {
                     onChangeSelected("local");
                 } else {
-                    onChangeSelected(
-                        "remote",
-                        instances.find(instance => instance.id === id)
-                    );
+                    const store = stores.find(store => store.id === id);
+                    const instance = instances.find(instance => instance.id === id);
+
+                    onChangeSelected(instance ? "remote" : "store", instance ?? store);
                 }
             },
-            [instances, onChangeSelected]
+            [instances, stores, onChangeSelected]
         );
 
         const instanceItems = useMemo(
             () =>
                 _.compact([
                     showInstances.local && { id: "LOCAL", name: i18n.t("This instance") },
-                    showInstances.store && { id: "STORE", name: i18n.t("Store") },
+                    ...(showInstances.store
+                        ? stores.map(store => ({
+                              id: store.id,
+                              name: `${store.account} - ${store.repository} (${i18n.t("Store")})`,
+                          }))
+                        : []),
                     ...(showInstances.remote ? instances : []),
                 ]),
-            [showInstances, instances]
+            [showInstances, instances, stores]
         );
 
         useEffect(() => {
             compositionRoot.instances.list().then(setInstances);
-        }, [compositionRoot]);
+
+            if (showInstances.store) {
+                compositionRoot.store.list().then(setStores);
+            }
+        }, [compositionRoot, showInstances, refreshKey]);
 
         useEffect(() => {
             // Auto-select first instance

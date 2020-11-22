@@ -18,21 +18,27 @@ import {
 import _ from "lodash";
 import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
-import { Instance } from "../../../../domain/instance/entities/Instance";
+import {
+    DataSource,
+    isDhisInstance,
+    isJSONDataSource,
+} from "../../../../domain/instance/entities/DataSource";
 import { MetadataResponsible } from "../../../../domain/metadata/entities/MetadataResponsible";
 import { ListMetadataParams } from "../../../../domain/metadata/repositories/MetadataRepository";
 import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
 import { DataElementModel } from "../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../utils/d2";
-import { isAppConfigurator } from "../../../../utils/permissions";
 import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
 
-interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
-    remoteInstance?: Instance;
+export type MetadataTableFilters = "group" | "level" | "orgUnit" | "lastUpdated" | "onlySelected";
+
+export interface MetadataTableProps
+    extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
+    remoteInstance?: DataSource;
     filterRows?: string[];
     transformRows?: (rows: MetadataType[]) => MetadataType[];
     models: typeof D2Model[];
@@ -41,14 +47,15 @@ interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>, "rows
     childrenKeys?: string[];
     initialShowOnlySelected?: boolean;
     additionalColumns?: TableColumn<MetadataType>[];
-    additionalFilters?: ReactNode;
     additionalActions?: TableAction<MetadataType>[];
     showIndeterminateSelection?: boolean;
     notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
     notifyNewModel?(model: typeof D2Model): void;
     notifyRowsChange?(rows: MetadataType[]): void;
     allowChangingResponsible?: boolean;
-    showOnlySelectedFilter?: boolean;
+    showResponsible?: boolean;
+    externalFilterComponents?: ReactNode;
+    viewFilters?: MetadataTableFilters[];
 }
 
 const useStyles = makeStyles({
@@ -104,16 +111,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     notifyRowsChange = _.noop,
     childrenKeys = [],
     additionalColumns = [],
-    additionalFilters = null,
     additionalActions = [],
     loading: providedLoading,
     initialShowOnlySelected = false,
     showIndeterminateSelection = false,
     allowChangingResponsible = false,
-    showOnlySelectedFilter = true,
+    showResponsible = true,
+    externalFilterComponents,
+    viewFilters = ["group", "level", "orgUnit", "lastUpdated", "onlySelected"],
     ...rest
 }) => {
-    const { compositionRoot } = useAppContext();
+    const { compositionRoot, api: defaultApi } = useAppContext();
     const classes = useStyles();
 
     const snackbar = useSnackbar();
@@ -139,19 +147,22 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         [setFilters]
     );
 
-    const api = compositionRoot.instances.getApi(remoteInstance);
+    const api =
+        remoteInstance && isDhisInstance(remoteInstance)
+            ? compositionRoot.instances.getApi(remoteInstance)
+            : defaultApi;
 
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
     const [groupFilterData, setGroupFilterData] = useState<NamedRef[]>([]);
     const [levelFilterData, setLevelFilterData] = useState<NamedRef[]>([]);
-    const [appConfigurator, setAppConfigurator] = useState(false);
 
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [pager, setPager] = useState<Partial<TablePagination>>({});
     const [loading, setLoading] = useState<boolean>(true);
 
     const showResponsibles =
-        model.getCollectionName() === "dataSets" || model.getCollectionName() === "programs";
+        showResponsible &&
+        (model.getCollectionName() === "dataSets" || model.getCollectionName() === "programs");
 
     const changeModelFilter = (modelName: string) => {
         if (models.length === 0) throw new Error("You need to provide at least one model");
@@ -235,12 +246,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const filterComponents = (
         <React.Fragment key={"metadata-table-filters"}>
+            {externalFilterComponents}
+
             {models.length > 1 && (
                 <div className={classes.metadataFilter}>
                     <Dropdown
                         items={models.map(model => ({
                             id: model.getMetadataType(),
-                            name: model.getModelName(api),
+                            name: model.getModelName(),
                         }))}
                         onValueChange={changeModelFilter}
                         value={model.getMetadataType()}
@@ -250,42 +263,44 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 </div>
             )}
 
-            <div className={classes.dateFilter}>
-                <DatePicker
-                    placeholder={i18n.t("Last updated date")}
-                    value={filters.lastUpdated ?? null}
-                    onChange={changeLastUpdatedFilter}
-                    isFilter={true}
-                />
-            </div>
+            {viewFilters.includes("lastUpdated") && (
+                <div className={classes.dateFilter}>
+                    <DatePicker
+                        placeholder={i18n.t("Last updated date")}
+                        value={filters.lastUpdated ?? null}
+                        onChange={changeLastUpdatedFilter}
+                        isFilter={true}
+                    />
+                </div>
+            )}
 
-            {model.getGroupFilterName() && (
+            {viewFilters.includes("group") && model.getGroupFilterName() && (
                 <div className={classes.groupFilter}>
                     <Dropdown
                         items={groupFilterData}
                         onValueChange={changeGroupFilter}
                         value={filters.group?.value ?? ""}
                         label={i18n.t("{{displayName}} Group", {
-                            displayName: model.getModelName(api),
+                            displayName: model.getModelName(),
                         })}
                     />
                 </div>
             )}
 
-            {model.getLevelFilterName() && (
+            {viewFilters.includes("level") && model.getLevelFilterName() && (
                 <div className={classes.levelFilter}>
                     <Dropdown
                         items={levelFilterData}
                         onValueChange={changeLevelFilter}
                         value={filters.level ?? ""}
                         label={i18n.t("{{displayName}} Level", {
-                            displayName: model.getModelName(api),
+                            displayName: model.getModelName(),
                         })}
                     />
                 </div>
             )}
 
-            {showOnlySelectedFilter && (
+            {viewFilters.includes("onlySelected") && (
                 <div className={classes.onlySelectedFilter}>
                     <FormControlLabel
                         className={classes.checkbox}
@@ -299,30 +314,29 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                     />
                 </div>
             )}
-
-            {additionalFilters}
         </React.Fragment>
     );
 
-    const sideComponents = model.getCollectionName() === "organisationUnits" && (
-        <div key={"org-unit-selector-filter"} className={classes.orgUnitFilter}>
-            <OrgUnitsSelector
-                api={api}
-                withElevation={true}
-                controls={{}}
-                hideCheckboxes={true}
-                hideMemberCount={true}
-                fullWidth={false}
-                height={500}
-                square={true}
-                onChange={changeParentOrgUnitFilter}
-                selected={filters.parents ?? []}
-                singleSelection={true}
-                selectOnClick={true}
-                initiallyExpanded={expandOrgUnits}
-            />
-        </div>
-    );
+    const orgUnitTreeFilter = viewFilters.includes("orgUnit") &&
+        model.getCollectionName() === "organisationUnits" && (
+            <div key={"org-unit-selector-filter"} className={classes.orgUnitFilter}>
+                <OrgUnitsSelector
+                    api={api}
+                    withElevation={true}
+                    controls={{}}
+                    hideCheckboxes={true}
+                    hideMemberCount={true}
+                    fullWidth={false}
+                    height={500}
+                    square={true}
+                    onChange={changeParentOrgUnitFilter}
+                    selected={filters.parents ?? []}
+                    singleSelection={true}
+                    selectOnClick={true}
+                    initiallyExpanded={expandOrgUnits}
+                />
+            </div>
+        );
 
     const handleError = useCallback(
         (error: Error) => {
@@ -368,12 +382,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             icon: <Icon>supervisor_account</Icon>,
             onClick: openResponsibleDialog,
             isActive: () => {
-                return (
-                    allowChangingResponsible &&
-                    !remoteInstance &&
-                    showResponsibles &&
-                    appConfigurator
-                );
+                return allowChangingResponsible && !remoteInstance && showResponsibles;
             },
         },
     ];
@@ -386,6 +395,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     useEffect(() => {
         if (model.getCollectionName() === "organisationUnits") return;
+        if (remoteInstance && isJSONDataSource(remoteInstance)) return;
 
         compositionRoot.metadata
             .listAll({ ...filters, filterRows, fields: { id: true } }, remoteInstance)
@@ -396,6 +406,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     useEffect(() => {
         if (model.getCollectionName() !== "organisationUnits") return;
+        if (remoteInstance && isJSONDataSource(remoteInstance)) {
+            changeParentOrgUnitFilter([]);
+            return;
+        }
 
         compositionRoot.instances
             .getOrgUnitRoots(remoteInstance)
@@ -413,6 +427,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .list({ ...filters, filterRows, fields, includeParents }, remoteInstance)
             .then(({ objects, pager }) => {
                 const rows = model.getApiModelTransform()((objects as unknown) as MetadataType[]);
+                console.log(3, rows);
                 notifyRowsChange(rows);
 
                 setRows(rows);
@@ -455,12 +470,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     }, [api, model]);
 
     useEffect(() => {
+        if (remoteInstance && isJSONDataSource(remoteInstance)) return;
+
         compositionRoot.responsibles.list(remoteInstance).then(updateResponsibles);
     }, [compositionRoot, remoteInstance]);
-
-    useEffect(() => {
-        isAppConfigurator(api).then(setAppConfigurator);
-    }, [api]);
 
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;
@@ -574,7 +587,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 filterComponents={filterComponents}
                 forceSelectionColumn={true}
                 actions={actions}
-                sideComponents={sideComponents}
+                sideComponents={orgUnitTreeFilter}
                 {...rest}
             />
         </React.Fragment>

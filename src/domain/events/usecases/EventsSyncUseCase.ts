@@ -12,7 +12,7 @@ import {
 import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import {
@@ -152,12 +152,12 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         instance: Instance,
         { events: oldEvents }: EventsPackage
     ): Promise<SyncronizationPayload> {
-        const instanceRepository = await this.getInstanceRepository();
-        const remoteInstanceRepository = await this.getInstanceRepository(instance);
+        const metadataRepository = await this.getMetadataRepository();
+        const remoteMetadataRepository = await this.getMetadataRepository(instance);
 
-        const originCategoryOptionCombos = await instanceRepository.getCategoryOptionCombos();
-        const destinationCategoryOptionCombos = await remoteInstanceRepository.getCategoryOptionCombos();
-        const defaultCategoryOptionCombos = await instanceRepository.getDefaultIds(
+        const originCategoryOptionCombos = await metadataRepository.getCategoryOptionCombos();
+        const destinationCategoryOptionCombos = await remoteMetadataRepository.getCategoryOptionCombos();
+        const defaultCategoryOptionCombos = await metadataRepository.getDefaultIds(
             "categoryOptionCombos"
         );
 

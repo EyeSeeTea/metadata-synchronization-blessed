@@ -1,5 +1,5 @@
 import { PaginationOptions } from "d2-ui-components";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
@@ -12,6 +12,7 @@ import {
     InstanceSelectionOption,
 } from "../instance-selection-dropdown/InstanceSelectionDropdown";
 import { useViewSelector, ViewSelectorConfig } from "./useViewSelector";
+import { Store } from "../../../../domain/packages/entities/Store";
 
 export interface ModulePackageListTableProps {
     onCreate?(): void;
@@ -21,89 +22,110 @@ export interface ModulePackageListTableProps {
     showSelector: ViewSelectorConfig;
     showInstances: InstanceSelectionConfig;
     openSyncSummary?: (syncReport: SyncReport) => void;
+    onInstanceChange?: (instance?: Instance | Store) => void;
+    actionButtonLabel?: ReactNode;
 }
 
 export type ViewOption = "modules" | "packages";
 export type PresentationOption = "app" | "widget";
 
-export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = React.memo(
-    ({
-        onCreate,
-        onViewChange,
-        viewValue: propsViewValue,
-        presentation,
-        showSelector,
-        showInstances,
-        openSyncSummary,
-    }) => {
-        const [selectedInstance, setSelectedInstance] = useState<Instance>();
-        const [showStore, setShowStore] = useState<boolean>(false);
+export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
+    onCreate,
+    onViewChange,
+    viewValue: propsViewValue,
+    presentation,
+    showSelector,
+    showInstances,
+    openSyncSummary,
+    onInstanceChange,
+    actionButtonLabel,
+}) => {
+    const [selectedInstance, setSelectedInstance] = useState<Instance | undefined>();
+    const [selectedStore, setSelectedStore] = useState<Store | undefined>();
+    const [selection, setSelection] = useState<string[]>([]);
 
-        const viewSelector = useViewSelector(showSelector, propsViewValue);
+    const viewSelector = useViewSelector(showSelector, propsViewValue);
 
-        const setValue = useCallback(
-            (value: ViewOption) => {
-                viewSelector.setValue(value);
-                if (onViewChange) onViewChange(value);
-            },
-            [viewSelector, onViewChange]
-        );
+    const setValue = useCallback(
+        (value: ViewOption) => {
+            viewSelector.setValue(value);
+            if (onViewChange) onViewChange(value);
+        },
+        [viewSelector, onViewChange]
+    );
 
-        const updateSelectedInstance = useCallback(
-            (type: InstanceSelectionOption, instance?: Instance) => {
-                setShowStore(type === "store");
-                setSelectedInstance(instance);
-            },
-            []
-        );
+    const updateSelectedInstance = useCallback(
+        (type: InstanceSelectionOption, source?: Instance | Store) => {
+            setSelection([]);
+            setSelectedStore(type === "store" ? (source as Store) : undefined);
+            setSelectedInstance(type === "remote" ? (source as Instance) : undefined);
 
-        const filters = useMemo(
-            () => (
-                <React.Fragment key="common-filters">
-                    <InstanceSelectionDropdown
-                        showInstances={showInstances}
-                        selectedInstance={showStore ? "STORE" : selectedInstance?.id ?? "LOCAL"}
-                        onChangeSelected={updateSelectedInstance}
+            if (onInstanceChange) {
+                onInstanceChange(source);
+            }
+        },
+        [onInstanceChange]
+    );
+
+    const filters = useMemo(
+        () => (
+            <React.Fragment key="common-filters">
+                <InstanceSelectionDropdown
+                    title={
+                        showInstances.store
+                            ? i18n.t("Instances & Play Stores")
+                            : i18n.t("Instances")
+                    }
+                    showInstances={showInstances}
+                    selectedInstance={
+                        selectedStore ? selectedStore.id : selectedInstance?.id ?? "LOCAL"
+                    }
+                    onChangeSelected={updateSelectedInstance}
+                />
+
+                {viewSelector.items.length > 1 && viewSelector.value && (
+                    <Dropdown
+                        items={viewSelector.items}
+                        value={viewSelector.value}
+                        onValueChange={setValue}
+                        label={i18n.t("View")}
+                        hideEmpty={true}
                     />
+                )}
+            </React.Fragment>
+        ),
+        [
+            showInstances,
+            selectedInstance,
+            setValue,
+            viewSelector,
+            updateSelectedInstance,
+            selectedStore,
+        ]
+    );
 
-                    {viewSelector.items.length > 1 && viewSelector.value && (
-                        <Dropdown
-                            items={viewSelector.items}
-                            value={viewSelector.value}
-                            onValueChange={setValue}
-                            label={i18n.t("View")}
-                            hideEmpty={true}
-                        />
-                    )}
-                </React.Fragment>
-            ),
-            [
-                showInstances,
-                selectedInstance,
-                setValue,
-                viewSelector,
-                updateSelectedInstance,
-                showStore,
-            ]
-        );
+    const Table = viewSelector.value === "packages" ? PackagesListTable : ModulesListTable;
 
-        const Table = viewSelector.value === "packages" ? PackagesListTable : ModulesListTable;
-
-        return (
-            <Table
-                externalComponents={filters}
-                presentation={presentation}
-                showStore={showStore}
-                remoteInstance={selectedInstance}
-                paginationOptions={paginationOptions}
-                openSyncSummary={openSyncSummary}
-                onActionButtonClick={
-                    viewSelector.value === "modules" && !selectedInstance ? onCreate : undefined
-                }
-            />
-        );
-    }
-);
+    return (
+        <Table
+            externalComponents={filters}
+            presentation={presentation}
+            remoteStore={selectedStore}
+            remoteInstance={selectedInstance}
+            paginationOptions={paginationOptions}
+            openSyncSummary={openSyncSummary}
+            actionButtonLabel={actionButtonLabel}
+            onActionButtonClick={
+                (viewSelector.value === "modules" && !selectedInstance) ||
+                viewSelector.value === "packages"
+                    ? onCreate
+                    : undefined
+            }
+            onSelectionChange={setSelection}
+            selectedIds={selection}
+        />
+    );
+};
 
 const paginationOptions: PaginationOptions = {
     pageSizeOptions: [10],

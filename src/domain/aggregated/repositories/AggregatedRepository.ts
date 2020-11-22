@@ -1,6 +1,6 @@
 import { DataImportParams } from "../../../types/d2";
 import { Instance } from "../../instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../instance/entities/MetadataMapping";
+import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { AggregatedPackage } from "../entities/AggregatedPackage";

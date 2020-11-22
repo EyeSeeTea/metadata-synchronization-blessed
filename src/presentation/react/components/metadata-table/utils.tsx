@@ -9,7 +9,7 @@ import { D2Api } from "../../../../types/d2-api";
  */
 export const getFilterData = memoize(
     (modelName: keyof MetadataEntities, type: "group" | "level", _baseUrl: string, api: D2Api) =>
-        modelFactory(api, modelName)
+        modelFactory(modelName)
             .getApiModel(api)
             .get({
                 paging: false,

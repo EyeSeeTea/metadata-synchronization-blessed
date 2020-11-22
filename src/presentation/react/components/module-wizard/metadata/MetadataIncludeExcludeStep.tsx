@@ -29,7 +29,7 @@ export const MetadataIncludeExcludeStep: React.FC<ModuleWizardStepProps<Metadata
     useEffect(() => {
         getMetadata(api, module.metadataIds, "id,name").then((metadata: MetadataPackage) => {
             const models = _.keys(metadata).map((type: string) => {
-                return modelFactory(api, type);
+                return modelFactory(type);
             });
 
             const options = models

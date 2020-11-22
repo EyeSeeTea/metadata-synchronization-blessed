@@ -1,3 +1,4 @@
+import { FilterSingleOperatorBase } from "d2-api/api/common";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import _ from "lodash";
 import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
@@ -11,7 +12,7 @@ import {
 
 export interface SearchFilter {
     field: string;
-    operator: string;
+    operator: FilterSingleOperatorBase;
 }
 
 // TODO: This concepts are our entity definition
@@ -49,10 +50,10 @@ export abstract class D2Model {
         return modelCollection[this.collectionName];
     }
 
-    public static getModelName(api: D2Api): string {
-        return (
-            this.modelName ?? api.models[this.collectionName].schema.displayName ?? "Unknown model"
-        );
+    public static getModelName(): string {
+        const api = new D2Api();
+        const apiName = api.models[this.collectionName].schema.displayName;
+        return this.modelName ?? apiName ?? "Unknown model";
     }
 
     public static getApiModelTransform(): (objects: MetadataType[]) => MetadataType[] {

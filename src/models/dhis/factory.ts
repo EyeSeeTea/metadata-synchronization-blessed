@@ -65,10 +65,11 @@ const findClasses = (key: string, value: string) => {
  * If the class doesn't exist a new default class is created
  * d2ModelName: string (collection name or metadata type)
  */
-export function modelFactory(api: D2Api, d2ModelName?: string): typeof D2Model {
+export function modelFactory(d2ModelName?: string): typeof D2Model {
     if (!d2ModelName) throw new Error("You must provide a non-null model name");
 
     // TODO: Improvement, use schemas to find properties
+    const api = new D2Api();
     const { modelName = "default" } = api.models[d2ModelName as keyof MetadataEntities] ?? {};
 
     const directClass = findClasses("metadataType", d2ModelName);

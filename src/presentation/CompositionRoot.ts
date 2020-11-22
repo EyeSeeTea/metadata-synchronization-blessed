@@ -2,6 +2,7 @@ import { AggregatedD2ApiRepository } from "../data/aggregated/AggregatedD2ApiRep
 import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
+import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
 import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StorageDataStoreRepository } from "../data/storage/StorageDataStoreRepository";
@@ -21,6 +22,12 @@ import { GetUserGroupsUseCase } from "../domain/instance/usecases/GetUserGroupsU
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
+import { ApplyMappingUseCase } from "../domain/mapping/usecases/ApplyMappingUseCase";
+import { AutoMapUseCase } from "../domain/mapping/usecases/AutoMapUseCase";
+import { BuildMappingUseCase } from "../domain/mapping/usecases/BuildMappingUseCase";
+import { GetMappingByOwnerUseCase } from "../domain/mapping/usecases/GetMappingByOwnerUseCase";
+import { GetValidMappingIdUseCase } from "../domain/mapping/usecases/GetValidMappingIdUseCase";
+import { SaveMappingUseCase } from "../domain/mapping/usecases/SaveMappingUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
 import { GetResponsiblesUseCase } from "../domain/metadata/usecases/GetResponsiblesUseCase";
 import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
@@ -39,16 +46,23 @@ import { ImportPullRequestUseCase } from "../domain/notifications/usecases/Impor
 import { ListNotificationsUseCase } from "../domain/notifications/usecases/ListNotificationsUseCase";
 import { MarkReadNotificationsUseCase } from "../domain/notifications/usecases/MarkReadNotificationsUseCase";
 import { UpdatePullRequestStatusUseCase } from "../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
+import { ListImportedPackagesUseCase } from "../domain/package-import/usecases/ListImportedPackagesUseCase";
+import { SaveImportedPackagesUseCase } from "../domain/package-import/usecases/SaveImportedPackagesUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
+import { DeleteStoreUseCase } from "../domain/packages/usecases/DeleteStoreUseCase";
 import { DiffPackageUseCase } from "../domain/packages/usecases/DiffPackageUseCase";
 import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPackageUseCase";
 import { GetPackageUseCase } from "../domain/packages/usecases/GetPackageUseCase";
+import { GetStorePackageUseCase } from "../domain/packages/usecases/GetStorePackageUseCase";
 import { GetStoreUseCase } from "../domain/packages/usecases/GetStoreUseCase";
+import { ImportPackageUseCase } from "../domain/packages/usecases/ImportPackageUseCase";
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
+import { ListStoresUseCase } from "../domain/packages/usecases/ListStoresUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
 import { SaveStoreUseCase } from "../domain/packages/usecases/SaveStoreUseCase";
+import { SetStoreAsDefaultUseCase } from "../domain/packages/usecases/SetStoreAsDefaultUseCase";
 import { ValidateStoreUseCase } from "../domain/packages/usecases/ValidateStoreUseCase";
 import { Repositories } from "../domain/Repositories";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
@@ -69,6 +83,11 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
         this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
+        this.repositoryFactory.bind(
+            Repositories.MetadataRepository,
+            MetadataJSONRepository,
+            "json"
+        );
         this.repositoryFactory.bind(
             Repositories.TransformationRepository,
             TransformationD2ApiRepository
@@ -148,6 +167,9 @@ export class CompositionRoot {
             get: new GetStoreUseCase(storage),
             update: new SaveStoreUseCase(github, storage),
             validate: new ValidateStoreUseCase(github),
+            list: new ListStoresUseCase(storage),
+            delete: new DeleteStoreUseCase(storage),
+            setAsDefault: new SetStoreAsDefaultUseCase(storage),
         });
     }
 
@@ -169,10 +191,20 @@ export class CompositionRoot {
             listStore: new ListStorePackagesUseCase(this.repositoryFactory, this.localInstance),
             create: new CreatePackageUseCase(this, this.repositoryFactory, this.localInstance),
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
+            getStore: new GetStorePackageUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),
             download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),
             publish: new PublishStorePackageUseCase(this.repositoryFactory, this.localInstance),
             diff: new DiffPackageUseCase(this, this.repositoryFactory, this.localInstance),
+            import: new ImportPackageUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get importedPackages() {
+        return getExecute({
+            list: new ListImportedPackagesUseCase(this.repositoryFactory, this.localInstance),
+            save: new SaveImportedPackagesUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -247,6 +279,20 @@ export class CompositionRoot {
 
         return getExecute({
             list: new ListEventsUseCase(events),
+        });
+    }
+
+    @cache()
+    public get mapping() {
+        const storage = new StorageDataStoreRepository(this.localInstance);
+
+        return getExecute({
+            get: new GetMappingByOwnerUseCase(storage),
+            save: new SaveMappingUseCase(storage),
+            apply: new ApplyMappingUseCase(this.repositoryFactory, this.localInstance),
+            getValidIds: new GetValidMappingIdUseCase(this.repositoryFactory, this.localInstance),
+            autoMap: new AutoMapUseCase(this.repositoryFactory, this.localInstance),
+            buildMapping: new BuildMappingUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }

@@ -6,7 +6,7 @@ import { AggregatedRepository } from "../../domain/aggregated/repositories/Aggre
 import { DataSyncAggregation, DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Instance } from "../../domain/instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../domain/instance/entities/MetadataMapping";
+import { MetadataMappingDictionary } from "../../domain/mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../domain/metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";

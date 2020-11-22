@@ -430,7 +430,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             .value();
     }, [rows]);
 
-    const filterComponents = React.useMemo(() => {
+    const filterComponents = useMemo(() => {
         const departmentFilterComponent = (
             <Dropdown
                 key="filter-department"

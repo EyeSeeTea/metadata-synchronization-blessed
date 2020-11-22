@@ -4,13 +4,13 @@ import { makeStyles } from "@material-ui/styles";
 import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { Instance } from "../../../../domain/instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../../../domain/instance/entities/MetadataMapping";
+import { DataSource, isDhisInstance } from "../../../../domain/instance/entities/DataSource";
+import { MetadataMappingDictionary } from "../../../../domain/mapping/entities/MetadataMapping";
 import i18n from "../../../../locales";
 import { modelFactory } from "../../../../models/dhis/factory";
 import { MetadataType } from "../../../../utils/d2";
 import { useAppContext } from "../../contexts/AppContext";
-import { buildDataElementFilterForProgram, getValidIds } from "../mapping-table/utils";
+import { EXCLUDED_KEY } from "../mapping-table/utils";
 import MetadataTable from "../metadata-table/MetadataTable";
 
 export interface MappingDialogConfig {
@@ -22,7 +22,7 @@ export interface MappingDialogConfig {
 
 export interface MappingDialogProps {
     config: MappingDialogConfig;
-    instance: Instance;
+    instance: DataSource;
     mapping: MetadataMappingDictionary;
     onUpdateMapping: (items: string[], id?: string) => void;
     onClose: () => void;
@@ -41,7 +41,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     onUpdateMapping,
     onClose,
 }) => {
-    const { compositionRoot } = useAppContext();
+    const { api: defaultApi, compositionRoot } = useAppContext();
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
     const [filterRows, setFilterRows] = useState<string[] | undefined>();
@@ -61,16 +61,19 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     const defaultSelection = mappedId !== "DISABLED" ? mappedId : undefined;
     const [selected, updateSelected] = useState<string | undefined>(defaultSelection);
 
-    const api = compositionRoot.instances.getApi(instance);
-    const model = modelFactory(api, mappingType);
-    const modelName = model.getModelName(api);
+    const model = modelFactory(mappingType);
+    const modelName = model.getModelName();
+    const api = isDhisInstance(instance) ? compositionRoot.instances.getApi(instance) : defaultApi;
 
     useEffect(() => {
         let mounted = true;
 
-        compositionRoot.instances.validate(instance).then(result => {
-            if (mounted) setConnectionSuccess(result.isSuccess());
-        });
+        if (isDhisInstance(instance)) {
+            compositionRoot.instances.validate(instance).then(result => {
+                if (result.isError()) console.error(result.value.error);
+                if (mounted) setConnectionSuccess(result.isSuccess());
+            });
+        }
 
         return () => {
             mounted = false;
@@ -79,13 +82,14 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
 
     useEffect(() => {
         if (mappingPath) {
-            const parentModel = modelFactory(api, mappingPath[0]);
             const parentMappedId = mappingPath[2];
-            getValidIds(api, parentModel, parentMappedId).then(setFilterRows);
+            compositionRoot.mapping.getValidIds(instance, parentMappedId).then(setFilterRows);
         } else if (mappingType === "programDataElements" && elements.length === 1) {
-            buildDataElementFilterForProgram(api, elements[0], mapping).then(setFilterRows);
+            compositionRoot.mapping.getValidIds(instance, elements[0]).then(validIds => {
+                setFilterRows(buildDataElementFilterForProgram(validIds, elements[0], mapping));
+            });
         }
-    }, [api, mappingPath, elements, mapping, mappingType]);
+    }, [compositionRoot, instance, api, mappingPath, elements, mapping, mappingType]);
 
     const onUpdateSelection = (selectedIds: string[]) => {
         const newSelection = _.last(selectedIds);
@@ -160,6 +164,18 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             </DialogContent>
         </ConfirmationDialog>
     );
+};
+
+const buildDataElementFilterForProgram = (
+    validIds: string[],
+    nestedId: string,
+    mapping: MetadataMappingDictionary
+): string[] | undefined => {
+    const originProgramId = nestedId.split("-")[0];
+    const { mappedId } = _.get(mapping, ["eventPrograms", originProgramId]) ?? {};
+
+    if (!mappedId || mappedId === EXCLUDED_KEY) return undefined;
+    return [...validIds, mappedId];
 };
 
 export default MappingDialog;

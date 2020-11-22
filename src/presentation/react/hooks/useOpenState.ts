@@ -1,9 +1,9 @@
-import React from "react";
+import { useCallback, useState } from "react";
 
 export function useOpenState<Value>(initialValue?: Value) {
-    const [value, setValue] = React.useState<Value | undefined>(initialValue);
-    const open = React.useCallback((value: Value) => setValue(value), [setValue]);
-    const close = React.useCallback(() => setValue(undefined), [setValue]);
+    const [value, setValue] = useState<Value | undefined>(initialValue);
+    const open = useCallback((value: Value) => setValue(value), [setValue]);
+    const close = useCallback(() => setValue(undefined), [setValue]);
     const isOpen = !!value;
 
     return { isOpen, value, open, close };

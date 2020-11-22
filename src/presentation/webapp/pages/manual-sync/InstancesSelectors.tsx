@@ -1,13 +1,13 @@
 import { makeStyles } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
 import ArrowRightIcon from "@material-ui/icons/ArrowRightAlt";
-import React from "react";
+import React, { useCallback } from "react";
 import { Ref } from "../../../../types/d2-api";
 import { Maybe } from "../../../../types/utils";
 import {
     InstanceSelectionDropdown,
     InstanceSelectionDropdownProps,
 } from "../../../react/components/instance-selection-dropdown/InstanceSelectionDropdown";
-import Typography from "@material-ui/core/Typography";
 
 interface InstancesSelectorsProps {
     sourceInstance: Maybe<Ref>;
@@ -32,7 +32,7 @@ const InstancesSelectors: React.FC<InstancesSelectorsProps> = ({
         : showOnlyRemoteInstances;
     const sourceSelectedInstance = sourceInstance?.id ?? "LOCAL";
 
-    const changeDestination = React.useCallback<ChangeDestination>(
+    const changeDestination = useCallback<ChangeDestination>(
         (_type, instance) => {
             onChangeDestination(instance);
         },

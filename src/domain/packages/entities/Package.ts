@@ -73,14 +73,14 @@ export class Package implements BasePackage {
     protected static buildDefaultValues = (): Pick<Package, keyof BasePackage> => {
         return {
             id: generateUid(),
-            name: "",
+            name: "-",
             deleted: false,
             description: "",
             version: "",
             dhisVersion: "",
             module: {
                 id: "",
-                name: "",
+                name: "-",
                 instance: "",
                 department: {
                     id: "",
@@ -90,13 +90,13 @@ export class Package implements BasePackage {
             contents: {},
             user: {
                 id: "",
-                name: "",
+                name: "-",
             },
             created: new Date(),
             lastUpdated: new Date(),
             lastUpdatedBy: {
                 id: "",
-                name: "",
+                name: "-",
             },
         };
     };
@@ -132,5 +132,9 @@ export class Package implements BasePackage {
         }
 
         return [];
+    }
+
+    toRef(): NamedRef {
+        return { id: this.id, name: this.name };
     }
 }

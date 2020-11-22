@@ -6,6 +6,7 @@ import SyncRule from "../../../models/syncRule";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
+import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { debug } from "../../../utils/debug";
 import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";
 import { AggregatedRepositoryConstructor } from "../../aggregated/repositories/AggregatedRepository";
@@ -15,11 +16,8 @@ import { EventsPackage } from "../../events/entities/EventsPackage";
 import { EventsRepositoryConstructor } from "../../events/repositories/EventsRepository";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import {
-    MetadataMapping,
-    MetadataMappingDictionary,
-} from "../../instance/entities/MetadataMapping";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
+import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataRepositoryConstructor } from "../../metadata/repositories/MetadataRepository";
 import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetadataSyncUseCase";
@@ -35,7 +33,6 @@ import {
 } from "../entities/SynchronizationReport";
 import { SynchronizationResult, SynchronizationStatus } from "../entities/SynchronizationResult";
 import { SynchronizationType } from "../entities/SynchronizationType";
-import { getD2APiFromInstance } from "../../../utils/d2-utils";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase
