@@ -1,26 +1,17 @@
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageClient } from "../../storage/repositories/StorageClient";
-import { Store } from "../entities/Store";
+import { StoreRepository } from "../repositories/StoreRepository";
 
 type SetStoreAsDefaultError = {
     kind: "SetStoreAsDefaultError";
 };
 
 export class SetStoreAsDefaultUseCase implements UseCase {
-    constructor(private storageRepository: StorageClient) {}
+    constructor(private storeRepository: StoreRepository) {}
 
     public async execute(id: string): Promise<Either<SetStoreAsDefaultError, void>> {
         try {
-            const stores = await this.storageRepository.listObjectsInCollection<Store>(
-                Namespace.STORES
-            );
-
-            const newStores = stores.map(store => ({ ...store, default: store.id === id }));
-
-            await this.storageRepository.saveObject(Namespace.STORES, newStores);
-
+            await this.storeRepository.setDefault(id);
             return Either.success(undefined);
         } catch {
             return Either.error({

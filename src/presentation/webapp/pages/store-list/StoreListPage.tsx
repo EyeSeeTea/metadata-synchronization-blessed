@@ -155,7 +155,7 @@ export const StoreListPage: React.FC = () => {
             icon: <Icon>delete</Icon>,
         },
         {
-            name: "setAdDefault",
+            name: "setAsDefault",
             text: i18n.t("Set as default"),
             multiple: false,
             onClick: (ids: string[]) => handleSetStoreAsDefault(ids[0]),

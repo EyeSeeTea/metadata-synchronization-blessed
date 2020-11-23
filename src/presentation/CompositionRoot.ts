@@ -162,16 +162,15 @@ export class CompositionRoot {
     @cache()
     public get store() {
         const github = new GitHubOctokitRepository();
-        const storage = new StorageDataStoreClient(this.localInstance);
         const storeRepository = new StoreD2ApiRepository(this.localInstance);
 
         return getExecute({
-            get: new GetStoreUseCase(storage),
-            update: new SaveStoreUseCase(github, storage),
+            get: new GetStoreUseCase(storeRepository),
+            update: new SaveStoreUseCase(github, storeRepository),
             validate: new ValidateStoreUseCase(github),
             list: new ListStoresUseCase(storeRepository),
             delete: new DeleteStoreUseCase(storeRepository),
-            setAsDefault: new SetStoreAsDefaultUseCase(storage),
+            setAsDefault: new SetStoreAsDefaultUseCase(storeRepository),
         });
     }
 

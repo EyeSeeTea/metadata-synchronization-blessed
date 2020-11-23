@@ -1,14 +1,11 @@
 import { UseCase } from "../../common/entities/UseCase";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageClient } from "../../storage/repositories/StorageClient";
 import { Store } from "../entities/Store";
+import { StoreRepository } from "../repositories/StoreRepository";
 
 export class GetStoreUseCase implements UseCase {
-    constructor(private storageRepository: StorageClient) {}
+    constructor(private storeRepository: StoreRepository) {}
 
     public async execute(id: string): Promise<Store | undefined> {
-        const store = this.storageRepository.getObjectInCollection<Store>(Namespace.STORES, id);
-
-        return store;
+        return this.storeRepository.getById(id);
     }
 }
