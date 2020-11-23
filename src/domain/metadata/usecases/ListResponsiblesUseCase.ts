@@ -4,7 +4,7 @@ import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { MetadataResponsible } from "../entities/MetadataResponsible";
 import { MetadataRepositoryConstructor } from "../repositories/MetadataRepository";

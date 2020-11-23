@@ -4,10 +4,10 @@ import { Instance } from "../../instance/entities/Instance";
 import { Namespace, NamespaceProperties } from "../Namespaces";
 
 export interface StorageRepositoryConstructor {
-    new (instance: Instance): StorageRepository;
+    new (instance: Instance): StorageClient;
 }
 
-export abstract class StorageRepository {
+export abstract class StorageClient {
     // Object operations
     public abstract getObject<T extends object>(key: string): Promise<T | undefined>;
     public abstract getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T>;

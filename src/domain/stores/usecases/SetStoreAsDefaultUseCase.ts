@@ -1,7 +1,7 @@
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { Namespace } from "../../storage/Namespaces";
-import { StorageRepository } from "../../storage/repositories/StorageRepository";
+import { StorageClient } from "../../storage/repositories/StorageClient";
 import { Store } from "../entities/Store";
 
 type SetStoreAsDefaultError = {
@@ -9,7 +9,7 @@ type SetStoreAsDefaultError = {
 };
 
 export class SetStoreAsDefaultUseCase implements UseCase {
-    constructor(private storageRepository: StorageRepository) {}
+    constructor(private storageRepository: StorageClient) {}
 
     public async execute(id: string): Promise<Either<SetStoreAsDefaultError, void>> {
         try {

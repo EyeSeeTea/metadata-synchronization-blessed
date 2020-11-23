@@ -1,12 +1,12 @@
 import { UseCase } from "../../common/entities/UseCase";
 import { Instance } from "../../instance/entities/Instance";
 import { Namespace } from "../../storage/Namespaces";
-import { StorageRepository } from "../../storage/repositories/StorageRepository";
+import { StorageClient } from "../../storage/repositories/StorageClient";
 import { DataSourceMapping } from "../entities/DataSourceMapping";
 import { isMappingOwnerStore, MappingOwner } from "../entities/MappingOwner";
 
 export class GetMappingByOwnerUseCase implements UseCase {
-    constructor(private storageRepository: StorageRepository) {}
+    constructor(private storageRepository: StorageClient) {}
 
     public async execute(owner: MappingOwner): Promise<DataSourceMapping | undefined> {
         if (isMappingOwnerStore(owner)) {

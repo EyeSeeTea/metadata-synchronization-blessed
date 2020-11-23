@@ -8,7 +8,7 @@ import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { BasePackage } from "../entities/Package";
 import { Store } from "../../stores/entities/Store";
 import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";

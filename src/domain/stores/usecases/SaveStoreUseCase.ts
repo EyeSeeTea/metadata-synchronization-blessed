@@ -2,7 +2,7 @@ import { generateUid } from "d2/uid";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { Namespace } from "../../storage/Namespaces";
-import { StorageRepository } from "../../storage/repositories/StorageRepository";
+import { StorageClient } from "../../storage/repositories/StorageClient";
 import { GitHubError } from "../../packages/entities/Errors";
 import { Store } from "../entities/Store";
 import { GitHubRepository } from "../../packages/repositories/GitHubRepository";
@@ -10,7 +10,7 @@ import { GitHubRepository } from "../../packages/repositories/GitHubRepository";
 export class SaveStoreUseCase implements UseCase {
     constructor(
         private githubRepository: GitHubRepository,
-        private storageRepository: StorageRepository
+        private storageRepository: StorageClient
     ) {}
 
     public async execute(store: Store, validate = true): Promise<Either<GitHubError, Store>> {

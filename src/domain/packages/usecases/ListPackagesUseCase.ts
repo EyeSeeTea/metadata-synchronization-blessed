@@ -6,7 +6,7 @@ import { InstanceRepositoryConstructor } from "../../instance/repositories/Insta
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { BasePackage, Package } from "../entities/Package";
 
 export class ListPackagesUseCase implements UseCase {

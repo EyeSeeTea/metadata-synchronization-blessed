@@ -24,7 +24,7 @@ import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetad
 import { MetadataSyncUseCase } from "../../metadata/usecases/MetadataSyncUseCase";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import {
     AggregatedDataStats,

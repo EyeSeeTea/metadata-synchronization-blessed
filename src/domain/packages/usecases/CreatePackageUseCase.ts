@@ -12,7 +12,7 @@ import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Module } from "../../modules/entities/Module";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { Package } from "../entities/Package";
 

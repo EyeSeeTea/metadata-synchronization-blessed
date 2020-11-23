@@ -1,12 +1,12 @@
 import { Instance } from "../../domain/instance/entities/Instance";
 import { Namespace } from "../../domain/storage/Namespaces";
-import { StorageRepository } from "../../domain/storage/repositories/StorageRepository";
+import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { Store } from "../../domain/stores/entities/Store";
 import { StoreRepository } from "../../domain/stores/repositories/StoreRepository";
 import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
 
 export class StoreD2ApiRepository implements StoreRepository {
-    private storageClient: StorageRepository;
+    private storageClient: StorageClient;
 
     constructor(instance: Instance) {
         this.storageClient = new StorageDataStoreClient(instance);

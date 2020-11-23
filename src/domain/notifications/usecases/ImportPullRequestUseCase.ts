@@ -12,7 +12,7 @@ import {
 } from "../../metadata/repositories/MetadataRepository";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { AppNotification } from "../entities/Notification";

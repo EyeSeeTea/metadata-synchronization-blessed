@@ -8,7 +8,7 @@ import { InstanceRepositoryConstructor } from "../../instance/repositories/Insta
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { Repositories } from "../../Repositories";
 import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
 export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE" | "INSTANCE_NOT_FOUND";
