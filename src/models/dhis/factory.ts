@@ -20,6 +20,7 @@ export const metadataModels = [
     metadataClasses.DataElementGroupSetModel,
     metadataClasses.DataEntryFormModel,
     metadataClasses.DataSetModel,
+    metadataClasses.DocumentsModel,
     metadataClasses.EventChartModel,
     metadataClasses.EventReportModel,
     metadataClasses.IndicatorModel,

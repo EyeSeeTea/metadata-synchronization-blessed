@@ -2,6 +2,9 @@ import {
     dataElementGroupFields,
     dataElementGroupSetFields,
     dataSetFields,
+    documentColumns,
+    documentDetails,
+    documentFields,
     organisationUnitFields,
     organisationUnitsColumns,
     organisationUnitsDetails,
@@ -255,6 +258,18 @@ export class DataSetModel extends D2Model {
         "dataElements.dataElementGroups.dataElementGroupSets",
         "dataElements.dataElementGroups.dataElementGroupSets.attributes",
     ];
+}
+
+export class DocumentsModel extends D2Model {
+    protected static metadataType = "document";
+    protected static collectionName = "documents" as const;
+
+    protected static columns = documentColumns;
+    protected static details = documentDetails;
+    protected static fields = documentFields;
+
+    protected static excludeRules = [];
+    protected static includeRules = [];
 }
 
 export class EventChartModel extends D2Model {
