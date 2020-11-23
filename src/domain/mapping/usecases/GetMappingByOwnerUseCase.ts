@@ -1,6 +1,6 @@
 import { UseCase } from "../../common/entities/UseCase";
 import { Instance } from "../../instance/entities/Instance";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageClient } from "../../storage/repositories/StorageClient";
 import { DataSourceMapping } from "../entities/DataSourceMapping";
 import { isMappingOwnerStore, MappingOwner } from "../entities/MappingOwner";

@@ -7,7 +7,7 @@ import { Instance, InstanceData } from "../../instance/entities/Instance";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { SynchronizationType } from "../entities/SynchronizationType";
 

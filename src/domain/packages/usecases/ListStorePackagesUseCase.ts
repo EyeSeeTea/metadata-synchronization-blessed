@@ -10,7 +10,7 @@ import { InstanceRepositoryConstructor } from "../../instance/repositories/Insta
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { BaseModule } from "../../modules/entities/Module";
 import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { GitHubError, GitHubListError } from "../entities/Errors";
 import { ListPackage, Package } from "../entities/Package";

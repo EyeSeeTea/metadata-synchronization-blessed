@@ -2,7 +2,7 @@ import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { BasePackage } from "../entities/Package";
 

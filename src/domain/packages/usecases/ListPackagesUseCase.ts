@@ -5,7 +5,7 @@ import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { BasePackage, Package } from "../entities/Package";
 

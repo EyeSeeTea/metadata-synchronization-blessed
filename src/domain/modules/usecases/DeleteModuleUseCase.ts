@@ -4,7 +4,7 @@ import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { BasePackage, Package } from "../../packages/entities/Package";
 import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 
 export class DeleteModuleUseCase implements UseCase {

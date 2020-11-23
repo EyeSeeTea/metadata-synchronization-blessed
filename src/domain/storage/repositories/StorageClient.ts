@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
-import { Namespace, NamespaceProperties } from "../Namespaces";
+import { Namespace, NamespaceProperties } from "../../../data/storage/Namespaces";
 
 export interface StorageRepositoryConstructor {
     new (instance: Instance): StorageClient;

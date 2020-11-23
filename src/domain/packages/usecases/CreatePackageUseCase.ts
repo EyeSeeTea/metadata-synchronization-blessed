@@ -11,7 +11,7 @@ import { InstanceRepositoryConstructor } from "../../instance/repositories/Insta
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Module } from "../../modules/entities/Module";
 import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { Package } from "../entities/Package";

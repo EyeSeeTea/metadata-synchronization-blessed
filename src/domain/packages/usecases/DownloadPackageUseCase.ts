@@ -6,7 +6,7 @@ import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { BasePackage } from "../entities/Package";

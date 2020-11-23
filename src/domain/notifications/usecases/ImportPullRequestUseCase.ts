@@ -11,7 +11,7 @@ import {
     MetadataRepositoryConstructor,
 } from "../../metadata/repositories/MetadataRepository";
 import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";

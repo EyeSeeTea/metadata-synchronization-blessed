@@ -1,7 +1,7 @@
 import { generateUid } from "d2/uid";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageClient } from "../../storage/repositories/StorageClient";
 import { GitHubError } from "../../packages/entities/Errors";
 import { Store } from "../entities/Store";

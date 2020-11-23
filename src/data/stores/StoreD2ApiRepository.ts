@@ -1,5 +1,5 @@
 import { Instance } from "../../domain/instance/entities/Instance";
-import { Namespace } from "../../domain/storage/Namespaces";
+import { Namespace } from "../storage/Namespaces";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { Store } from "../../domain/stores/entities/Store";
 import { StoreRepository } from "../../domain/stores/repositories/StoreRepository";

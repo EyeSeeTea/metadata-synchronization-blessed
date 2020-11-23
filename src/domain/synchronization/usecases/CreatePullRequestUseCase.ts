@@ -13,7 +13,7 @@ import {
     SentPullRequestNotification,
 } from "../../notifications/entities/PullRequestNotification";
 import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { SynchronizationType } from "../entities/SynchronizationType";
 

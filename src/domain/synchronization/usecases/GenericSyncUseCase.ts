@@ -23,7 +23,7 @@ import { MetadataRepositoryConstructor } from "../../metadata/repositories/Metad
 import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../../metadata/usecases/MetadataSyncUseCase";
 import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import {
