@@ -14,7 +14,7 @@ import { Store } from "../../../../domain/stores/entities/Store";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../../react/contexts/AppContext";
 import PageHeader from "../../../react/components/page-header/PageHeader";
-import helpStoreGithub from "../../../../assets/img/help-store-github.png";
+import helpStoreGithub from "../../../assets/img/help-store-github.png";
 
 const StoreCreationPage: React.FC = () => {
     const { compositionRoot } = useAppContext();

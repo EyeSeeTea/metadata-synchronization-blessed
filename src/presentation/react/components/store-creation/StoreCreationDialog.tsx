@@ -21,7 +21,7 @@ import { Store } from "../../../../domain/stores/entities/Store";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 import Linkify from "react-linkify";
-import helpStoreGithub from "../../../../assets/img/help-store-github.png";
+import helpStoreGithub from "../../../assets/img/help-store-github.png";
 
 interface StoreCreationDialogProps {
     isOpen: boolean;
