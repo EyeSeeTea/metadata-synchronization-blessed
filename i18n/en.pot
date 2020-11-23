@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-11-06T11:42:05.389Z\n"
-"PO-Revision-Date: 2020-11-06T11:42:05.389Z\n"
+"POT-Creation-Date: 2020-11-20T09:27:57.833Z\n"
+"PO-Revision-Date: 2020-11-20T09:27:57.833Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -574,7 +574,21 @@ msgstr ""
 msgid "Package"
 msgstr ""
 
+msgid "Unknown error happened loading package"
+msgstr ""
+
 msgid "Unknown error happened loading store"
+msgstr ""
+
+msgid "Existing mapping will be used"
+msgstr ""
+
+msgid ""
+"Some elements have been already mapped previously, please continue mapping "
+"remaining one or changed previous mapping"
+msgstr ""
+
+msgid "No mapping found"
 msgstr ""
 
 msgid "Can't connect to store"
@@ -642,10 +656,10 @@ msgstr ""
 msgid "DHIS2 Version"
 msgstr ""
 
-msgid "Module"
+msgid "Status"
 msgstr ""
 
-msgid "State"
+msgid "Module"
 msgstr ""
 
 msgid "Download as JSON"
@@ -876,9 +890,6 @@ msgid "Origin package"
 msgstr ""
 
 msgid "Destination instance"
-msgstr ""
-
-msgid "Status"
 msgstr ""
 
 msgid "Messages"
