@@ -36,9 +36,16 @@ export class FileD2Repository implements FileRepository {
             new URL(`/api/documents/${fileId}/data`, this.instance.url).href,
             fetchOptions
         );
-        const blob = await response.blob();
 
-        return this.blobToFile(blob, `${document.name}.${mime.extension(blob.type)}`);
+        if (!response.ok) {
+            throw Error(
+                `An error has ocurred retrieving the file resource of document '${document.name}' from ${this.instance.name}`
+            );
+        } else {
+            const blob = await response.blob();
+
+            return this.blobToFile(blob, `${document.name}.${mime.extension(blob.type)}`);
+        }
     }
 
     public async save(file: File): Promise<FileId> {
@@ -61,9 +68,15 @@ export class FileD2Repository implements FileRepository {
             new URL(`/api/fileResources`, this.instance.url).href,
             fetchOptions
         );
-        const apiResponse: SaveApiResponse = JSON.parse(await response.text());
+        if (!response.ok) {
+            throw Error(
+                `An error has ocurred saving the resource file of the document '${file.name}' in ${this.instance.name}`
+            );
+        } else {
+            const apiResponse: SaveApiResponse = JSON.parse(await response.text());
 
-        return apiResponse.response.fileResource.id;
+            return apiResponse.response.fileResource.id;
+        }
     }
 
     private getAuthHeaders(
