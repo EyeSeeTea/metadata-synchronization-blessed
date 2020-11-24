@@ -1,27 +1,24 @@
 import { generateUid } from "d2/uid";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
 import { CompositionRoot } from "../../../presentation/CompositionRoot";
-import { cache } from "../../../utils/cache";
 import { getMajorVersion } from "../../../utils/d2-utils";
-import { UseCase } from "../../common/entities/UseCase";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Module } from "../../modules/entities/Module";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
-import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { Package } from "../entities/Package";
 
-export class CreatePackageUseCase implements UseCase {
+export class CreatePackageUseCase extends DefaultUseCase implements UseCase {
     constructor(
         private compositionRoot: CompositionRoot,
-        private repositoryFactory: RepositoryFactory,
+        repositoryFactory: RepositoryFactory,
         private localInstance: Instance
-    ) {}
+    ) {
+        super(repositoryFactory);
+    }
 
     public async execute(
         originInstance: string,
@@ -31,7 +28,6 @@ export class CreatePackageUseCase implements UseCase {
         contents?: MetadataPackage
     ): Promise<ValidationError[]> {
         const apiVersion = getMajorVersion(dhisVersion);
-        const transformationRepository = this.getTransformationRepository();
 
         const basePayload = contents
             ? contents
@@ -41,7 +37,7 @@ export class CreatePackageUseCase implements UseCase {
                   targetInstances: [],
               }).buildPayload();
 
-        const versionedPayload = transformationRepository.mapPackageTo(
+        const versionedPayload = this.transformationRepository().mapPackageTo(
             apiVersion,
             basePayload,
             metadataTransformations
@@ -49,20 +45,10 @@ export class CreatePackageUseCase implements UseCase {
 
         const payload = sourcePackage.update({ contents: versionedPayload, dhisVersion });
 
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [this.localInstance]
-        );
-
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [this.localInstance, ""]
-        );
-
         const validations = payload.validate();
 
         if (validations.length === 0) {
-            const user = await instanceRepository.getUser();
+            const user = await this.instanceRepository(this.localInstance).getUser();
             const newPackage = payload.update({
                 id: generateUid(),
                 lastUpdated: new Date(),
@@ -70,20 +56,18 @@ export class CreatePackageUseCase implements UseCase {
                 user: payload.user.id ? payload.user : user,
             });
 
-            await storageRepository.saveObjectInCollection(Namespace.PACKAGES, newPackage);
+            await this.storageRepository(this.localInstance).saveObjectInCollection(
+                Namespace.PACKAGES,
+                newPackage
+            );
 
             const newModule = module.update({ lastPackageVersion: newPackage.version });
-            await storageRepository.saveObjectInCollection(Namespace.MODULES, newModule);
+            await this.storageRepository(this.localInstance).saveObjectInCollection(
+                Namespace.MODULES,
+                newModule
+            );
         }
 
         return validations;
-    }
-
-    @cache()
-    protected getTransformationRepository() {
-        return this.repositoryFactory.get<TransformationRepositoryConstructor>(
-            Repositories.TransformationRepository,
-            []
-        );
     }
 }

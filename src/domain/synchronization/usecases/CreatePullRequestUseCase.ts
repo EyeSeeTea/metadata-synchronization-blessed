@@ -1,10 +1,9 @@
 import _ from "lodash";
-import { cache } from "../../../utils/cache";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { NamedRef } from "../../common/entities/Ref";
-import { UseCase } from "../../common/entities/UseCase";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { MessageNotification } from "../../notifications/entities/Notification";
@@ -12,9 +11,6 @@ import {
     ReceivedPullRequestNotification,
     SentPullRequestNotification,
 } from "../../notifications/entities/PullRequestNotification";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
 interface CreatePullRequestParams {
@@ -27,8 +23,10 @@ interface CreatePullRequestParams {
     notificationUsers: Pick<MessageNotification, "users" | "userGroups">;
 }
 
-export class CreatePullRequestUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+export class CreatePullRequestUseCase extends DefaultUseCase implements UseCase {
+    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
+        super(repositoryFactory);
+    }
 
     public async execute({
         instance,
@@ -76,22 +74,6 @@ export class CreatePullRequestUseCase implements UseCase {
         );
 
         await this.sendMessage(instance, receivedPullRequest);
-    }
-
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-    }
-
-    @cache()
-    private instanceRepository(instance: Instance) {
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
     }
 
     private async getOwner(): Promise<NamedRef> {

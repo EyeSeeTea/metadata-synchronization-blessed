@@ -1,15 +1,12 @@
-import { cache } from "../../../utils/cache";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
-import { UseCase } from "../../common/entities/UseCase";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { AppNotification } from "../entities/Notification";
 import {
-    SentPullRequestNotification,
     ReceivedPullRequestNotification,
+    SentPullRequestNotification,
 } from "../entities/PullRequestNotification";
 
 export type CancelPullRequestError =
@@ -19,12 +16,14 @@ export type CancelPullRequestError =
     | "REMOTE_NOT_FOUND"
     | "REMOTE_INVALID";
 
-export class CancelPullRequestUseCase implements UseCase {
+export class CancelPullRequestUseCase extends DefaultUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryFactory,
+        repositoryFactory: RepositoryFactory,
         private localInstance: Instance,
         private encryptionKey: string
-    ) {}
+    ) {
+        super(repositoryFactory);
+    }
 
     public async execute(id: string): Promise<Either<CancelPullRequestError, void>> {
         const notification = await this.getNotification(this.localInstance, id);
@@ -73,14 +72,6 @@ export class CancelPullRequestUseCase implements UseCase {
         );
 
         return Either.success(undefined);
-    }
-
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
     }
 
     private async getNotification(

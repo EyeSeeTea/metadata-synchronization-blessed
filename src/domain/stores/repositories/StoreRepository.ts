@@ -1,4 +1,9 @@
+import { Instance } from "../../instance/entities/Instance";
 import { Store } from "../entities/Store";
+
+export interface StoreRepositoryConstructor {
+    new (instance: Instance): StoreRepository;
+}
 
 export interface StoreRepository {
     list(): Promise<Store[]>;

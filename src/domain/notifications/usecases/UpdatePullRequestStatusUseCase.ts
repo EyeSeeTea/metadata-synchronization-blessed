@@ -1,14 +1,10 @@
 import _ from "lodash";
-import { cache } from "../../../utils/cache";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
-import { UseCase } from "../../common/entities/UseCase";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import {
     PullRequestStatus,
     ReceivedPullRequestNotification,
@@ -16,8 +12,10 @@ import {
 
 export type UpdatePullRequestStatusError = "NOT_FOUND" | "PERMISSIONS" | "INVALID";
 
-export class UpdatePullRequestStatusUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+export class UpdatePullRequestStatusUseCase extends DefaultUseCase implements UseCase {
+    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
+        super(repositoryFactory);
+    }
 
     public async execute(
         id: string,
@@ -48,22 +46,6 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
         );
 
         return Either.success(undefined);
-    }
-
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-    }
-
-    @cache()
-    private instanceRepository(instance: Instance) {
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
     }
 
     private async hasPermissions(ids: string[]) {

@@ -1,5 +1,6 @@
 import { D2Api } from "d2-api/2.30";
 import _ from "lodash";
+import { Namespace } from "../../../data/storage/Namespaces";
 import i18n from "../../../locales";
 import SyncReport from "../../../models/syncReport";
 import SyncRule from "../../../models/syncRule";
@@ -9,23 +10,16 @@ import { promiseMap } from "../../../utils/common";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { debug } from "../../../utils/debug";
 import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";
-import { AggregatedRepositoryConstructor } from "../../aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
+import { DefaultUseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { EventsPackage } from "../../events/entities/EventsPackage";
-import { EventsRepositoryConstructor } from "../../events/repositories/EventsRepository";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-import { MetadataRepositoryConstructor } from "../../metadata/repositories/MetadataRepository";
 import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../../metadata/usecases/MetadataSyncUseCase";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
-import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import {
     AggregatedDataStats,
     EventsDataStats,
@@ -41,7 +35,7 @@ export type SyncronizationClass =
     | typeof DeletedMetadataSyncUseCase;
 export type SyncronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
-export abstract class GenericSyncUseCase {
+export abstract class GenericSyncUseCase extends DefaultUseCase {
     public abstract readonly type: SynchronizationType;
     public readonly fields: string = "id,name";
     protected readonly api: D2Api;
@@ -52,6 +46,7 @@ export abstract class GenericSyncUseCase {
         protected readonly localInstance: Instance,
         protected readonly encryptionKey: string
     ) {
+        super(repositoryFactory);
         this.api = getD2APiFromInstance(localInstance);
     }
 
@@ -79,45 +74,30 @@ export abstract class GenericSyncUseCase {
     @cache()
     protected async getInstanceRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [remoteInstance ?? defaultInstance, ""]
-        );
+        return this.instanceRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
     protected getTransformationRepository() {
-        return this.repositoryFactory.get<TransformationRepositoryConstructor>(
-            Repositories.TransformationRepository,
-            []
-        );
+        return this.transformationRepository();
     }
 
     @cache()
     protected async getMetadataRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.get<MetadataRepositoryConstructor>(
-            Repositories.MetadataRepository,
-            [remoteInstance ?? defaultInstance, this.getTransformationRepository()]
-        );
+        return this.metadataRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
     protected async getAggregatedRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.get<AggregatedRepositoryConstructor>(
-            Repositories.AggregatedRepository,
-            [remoteInstance ?? defaultInstance]
-        );
+        return this.aggregatedRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
     protected async getEventsRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.get<EventsRepositoryConstructor>(
-            Repositories.EventsRepository,
-            [remoteInstance ?? defaultInstance]
-        );
+        return this.eventsRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
@@ -182,26 +162,16 @@ export abstract class GenericSyncUseCase {
     private async getInstanceById(id: string): Promise<Instance | undefined> {
         if (id === "LOCAL") return this.localInstance;
 
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [this.localInstance]
-        );
-
-        const data = await storageRepository.getObjectInCollection<InstanceData>(
-            Namespace.INSTANCES,
-            id
-        );
+        const data = await this.storageRepository(this.localInstance).getObjectInCollection<
+            InstanceData
+        >(Namespace.INSTANCES, id);
 
         if (!data) return undefined;
 
         const instance = Instance.build(data).decryptPassword(this.encryptionKey);
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
 
         try {
-            const version = await instanceRepository.getVersion();
+            const version = await this.instanceRepository(instance).getVersion();
             return instance.update({ version });
         } catch (error) {
             return instance;

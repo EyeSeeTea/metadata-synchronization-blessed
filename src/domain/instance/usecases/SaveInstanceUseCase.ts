@@ -1,28 +1,23 @@
-import { UseCase } from "../../common/entities/UseCase";
+import { Namespace } from "../../../data/storage/Namespaces";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { Instance } from "../entities/Instance";
 
-export class SaveInstanceUseCase implements UseCase {
+export class SaveInstanceUseCase extends DefaultUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryFactory,
+        repositoryFactory: RepositoryFactory,
         private localInstance: Instance,
         private encryptionKey: string
-    ) {}
+    ) {
+        super(repositoryFactory);
+    }
 
     public async execute(instance: Instance): Promise<ValidationError[]> {
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [this.localInstance]
-        );
-
         const validations = instance.validate();
 
         if (validations.length === 0) {
-            await storageRepository.saveObjectInCollection(
+            await this.storageRepository(this.localInstance).saveObjectInCollection(
                 Namespace.INSTANCES,
                 instance.encryptPassword(this.encryptionKey).toObject()
             );

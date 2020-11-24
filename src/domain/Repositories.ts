@@ -1,5 +1,6 @@
 export const Repositories = {
     InstanceRepository: "instanceRepository",
+    StoreRepository: "storeRepository",
     StorageRepository: "storageRepository",
     DownloadRepository: "downloadRepository",
     GitHubRepository: "githubRepository",

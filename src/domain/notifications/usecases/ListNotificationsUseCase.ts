@@ -1,23 +1,22 @@
 import _ from "lodash";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { promiseMap } from "../../../utils/common";
-import { UseCase } from "../../common/entities/UseCase";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { AppNotification } from "../entities/Notification";
 
-export class ListNotificationsUseCase implements UseCase {
+export class ListNotificationsUseCase extends DefaultUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryFactory,
+        repositoryFactory: RepositoryFactory,
         private localInstance: Instance,
         private encryptionKey: string
-    ) {}
+    ) {
+        super(repositoryFactory);
+    }
 
     public async execute(): Promise<AppNotification[]> {
-        const { id, userGroups } = await this.instanceRepository().getUser();
+        const { id, userGroups } = await this.instanceRepository(this.localInstance).getUser();
         const notifications = await this.getInstanceNotifications();
 
         const sentPullRequestNotifications = notifications.filter(
@@ -41,20 +40,6 @@ export class ListNotificationsUseCase implements UseCase {
                     notification.users?.find(user => user.id === id) ||
                     notification.userGroups?.find(({ id }) => userGroups.includes(id))
             );
-    }
-
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-    }
-
-    private instanceRepository() {
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [this.localInstance, this.encryptionKey]
-        );
     }
 
     private async getInstanceNotifications(): Promise<AppNotification[]> {

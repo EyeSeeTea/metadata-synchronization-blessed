@@ -1,20 +1,11 @@
 import _ from "lodash";
-import { cache } from "../../../utils/cache";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
-import { UseCase } from "../../common/entities/UseCase";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
-import {
-    MetadataRepository,
-    MetadataRepositoryConstructor,
-} from "../../metadata/repositories/MetadataRepository";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
-import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { AppNotification } from "../entities/Notification";
 import {
     PullRequestStatus,
@@ -30,12 +21,14 @@ export type ImportPullRequestError =
     | "ALREADY_IMPORTED"
     | "NOT_APPROVED";
 
-export class ImportPullRequestUseCase implements UseCase {
+export class ImportPullRequestUseCase extends DefaultUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryFactory,
+        repositoryFactory: RepositoryFactory,
         private localInstance: Instance,
         private encryptionKey: string
-    ) {}
+    ) {
+        super(repositoryFactory);
+    }
 
     public async execute(
         notificationId: string
@@ -84,34 +77,6 @@ export class ImportPullRequestUseCase implements UseCase {
         );
 
         return Either.success({ ...result, origin: remoteInstance.toPublicObject() });
-    }
-
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-    }
-
-    @cache()
-    private instanceRepository(instance: Instance) {
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
-    }
-
-    @cache()
-    private metadataRepository(instance: Instance): MetadataRepository {
-        const transformationRepository = this.repositoryFactory.get<
-            TransformationRepositoryConstructor
-        >(Repositories.TransformationRepository, []);
-
-        return this.repositoryFactory.get<MetadataRepositoryConstructor>(
-            Repositories.MetadataRepository,
-            [instance, transformationRepository]
-        );
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {

@@ -5,28 +5,24 @@ import {
 } from "../../../presentation/react/components/mapping-table/utils";
 import { Dictionary } from "../../../types/utils";
 import { NamedRef } from "../../common/entities/Ref";
+import { DefaultUseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-import {
-    MetadataRepository,
-    MetadataRepositoryConstructor,
-} from "../../metadata/repositories/MetadataRepository";
-import { Repositories } from "../../Repositories";
-import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { MetadataMapping, MetadataMappingDictionary } from "../entities/MetadataMapping";
 
-export abstract class GenericMappingUseCase {
-    constructor(
-        protected repositoryFactory: RepositoryFactory,
-        protected localInstance: Instance
-    ) {}
+export abstract class GenericMappingUseCase extends DefaultUseCase {
+    constructor(repositoryFactory: RepositoryFactory, protected localInstance: Instance) {
+        super(repositoryFactory);
+    }
 
     protected async getMetadata(instance: DataSource, ids: string[]) {
-        return this.getMetadataRepository(instance).getMetadataByIds<
-            Omit<CombinedMetadata, "model">
-        >(ids, fields, true);
+        return this.metadataRepository(instance).getMetadataByIds<Omit<CombinedMetadata, "model">>(
+            ids,
+            fields,
+            true
+        );
     }
 
     protected createMetadataDictionary(metadata: MetadataPackage<NamedRef>) {
@@ -46,22 +42,6 @@ export abstract class GenericMappingUseCase {
     protected createMetadataArray(metadata: MetadataPackage<NamedRef>) {
         const dictionary = this.createMetadataDictionary(metadata);
         return _.values(dictionary);
-    }
-
-    protected getMetadataRepository(
-        remoteInstance: DataSource = this.localInstance
-    ): MetadataRepository {
-        const transformationRepository = this.repositoryFactory.get<
-            TransformationRepositoryConstructor
-        >(Repositories.TransformationRepository, []);
-
-        const tag = remoteInstance.type === "json" ? "json" : undefined;
-
-        return this.repositoryFactory.get<MetadataRepositoryConstructor>(
-            Repositories.MetadataRepository,
-            [remoteInstance, transformationRepository],
-            tag
-        );
     }
 
     protected async buildMapping({
@@ -152,7 +132,7 @@ export abstract class GenericMappingUseCase {
         const programStages = this.getProgramStages(metadata[0]);
         const programStageDataElements = this.getProgramStageDataElements(metadata[0]);
 
-        const defaultValues = await this.getMetadataRepository(instance).getDefaultIds();
+        const defaultValues = await this.metadataRepository(instance).getDefaultIds();
 
         return _.union(categoryOptions, options, programStages, programStageDataElements)
             .map(({ id }) => id)
@@ -178,7 +158,7 @@ export abstract class GenericMappingUseCase {
         const selectedItem = originMetadata[selectedItemId];
         if (!selectedItem) return [];
 
-        const destinationMetadata = await this.getMetadataRepository(
+        const destinationMetadata = await this.metadataRepository(
             destinationInstance
         ).lookupSimilar(selectedItem);
 

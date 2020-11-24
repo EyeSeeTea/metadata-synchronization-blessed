@@ -1,27 +1,22 @@
+import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
-import { UseCase } from "../../common/entities/UseCase";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { ImportedPackage } from "../entities/ImportedPackage";
 
 type SavePackageError = "UNEXPECTED_ERROR";
 
-export class SaveImportedPackagesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+export class SaveImportedPackagesUseCase extends DefaultUseCase implements UseCase {
+    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
+        super(repositoryFactory);
+    }
 
     public async execute(
         importedPackages: ImportedPackage[]
     ): Promise<Either<SavePackageError, void>> {
         try {
-            const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-                Repositories.StorageRepository,
-                [this.localInstance]
-            );
-
-            await storageRepository.saveObjectsInCollection(
+            await this.storageRepository(this.localInstance).saveObjectsInCollection(
                 Namespace.IMPORTEDPACKAGES,
                 importedPackages
             );

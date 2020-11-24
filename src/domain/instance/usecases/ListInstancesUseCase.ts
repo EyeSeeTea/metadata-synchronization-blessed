@@ -1,31 +1,26 @@
 import _ from "lodash";
-import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
-import { Repositories } from "../../Repositories";
 import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../entities/Instance";
 
 export interface ListInstancesUseCaseProps {
     search?: string;
 }
 
-export class ListInstancesUseCase implements UseCase {
+export class ListInstancesUseCase extends DefaultUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryFactory,
+        repositoryFactory: RepositoryFactory,
         private localInstance: Instance,
         private encryptionKey: string
-    ) {}
+    ) {
+        super(repositoryFactory);
+    }
 
     public async execute({ search }: ListInstancesUseCaseProps = {}): Promise<Instance[]> {
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [this.localInstance]
-        );
-
-        const objects = await storageRepository.listObjectsInCollection<InstanceData>(
-            Namespace.INSTANCES
-        );
+        const objects = await this.storageRepository(this.localInstance).listObjectsInCollection<
+            InstanceData
+        >(Namespace.INSTANCES);
 
         const filteredData = search
             ? _.filter(objects, o =>

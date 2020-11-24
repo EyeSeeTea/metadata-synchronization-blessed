@@ -1,17 +1,14 @@
 import moment from "moment";
-import { cache } from "../../../utils/cache";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
-import { UseCase } from "../../common/entities/UseCase";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { BaseModule } from "../../modules/entities/Module";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
+import { Store } from "../../stores/entities/Store";
 import { GitHubError } from "../entities/Errors";
 import { BasePackage } from "../entities/Package";
-import { Store } from "../../stores/entities/Store";
-import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubRepository";
+import { moduleFile } from "../repositories/GitHubRepository";
 
 export type PublishStorePackageError =
     | GitHubError
@@ -19,18 +16,17 @@ export type PublishStorePackageError =
     | "PACKAGE_NOT_FOUND"
     | "ALREADY_PUBLISHED";
 
-export class PublishStorePackageUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+export class PublishStorePackageUseCase extends DefaultUseCase implements UseCase {
+    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
+        super(repositoryFactory);
+    }
 
     public async execute(
         packageId: string,
         force = false
     ): Promise<Either<PublishStorePackageError, void>> {
-        const store = (
-            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
-        )?.find(store => store.default && !store.deleted);
-
-        if (!store) return Either.error("DEFAULT_STORE_NOT_FOUND");
+        const defaultStore = await this.storeRepository(this.localInstance).getDefault();
+        if (!defaultStore) return Either.error("DEFAULT_STORE_NOT_FOUND");
 
         const storedPackage = await this.storageRepository(
             this.localInstance
@@ -44,11 +40,11 @@ export class PublishStorePackageUseCase implements UseCase {
         const path = `${item.module.name}/${fileName}.json`;
         const branch = item.module.department.name.replace(/\s/g, "-");
 
-        const existingFileCheck = await this.gitRepository().readFile(store, branch, path);
+        const existingFileCheck = await this.gitRepository().readFile(defaultStore, branch, path);
         if (existingFileCheck.isSuccess()) return Either.error("ALREADY_PUBLISHED");
 
         const validation = await this.gitRepository().writeFile(
-            store,
+            defaultStore,
             branch,
             path,
             JSON.stringify(payload, null, 4)
@@ -56,9 +52,9 @@ export class PublishStorePackageUseCase implements UseCase {
 
         if (validation.isError()) {
             if (force && validation.value.error === "BRANCH_NOT_FOUND") {
-                await this.gitRepository().createBranch(store, branch);
+                await this.gitRepository().createBranch(defaultStore, branch);
                 const validation = await this.gitRepository().writeFile(
-                    store,
+                    defaultStore,
                     branch,
                     path,
                     JSON.stringify(payload, null, 4)
@@ -71,7 +67,7 @@ export class PublishStorePackageUseCase implements UseCase {
         }
 
         await this.createModuleFileIfRequired(
-            store,
+            defaultStore,
             branch,
             `${item.module.name}/${moduleFile}`,
             item.module
@@ -96,21 +92,5 @@ export class PublishStorePackageUseCase implements UseCase {
         if (validation.isError()) {
             return console.warn("An error creating the module file has ocurred");
         }
-    }
-
-    @cache()
-    private gitRepository() {
-        return this.repositoryFactory.get<GitHubRepositoryConstructor>(
-            Repositories.GitHubRepository,
-            []
-        );
-    }
-
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
     }
 }

@@ -1,24 +1,23 @@
 import _ from "lodash";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { Either } from "../../common/entities/Either";
-import { UseCase } from "../../common/entities/UseCase";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
 export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE" | "INSTANCE_NOT_FOUND";
 
-export class PrepareSyncUseCase implements UseCase {
+export class PrepareSyncUseCase extends DefaultUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryFactory,
+        repositoryFactory: RepositoryFactory,
         private localInstance: Instance,
         private encryptionKey: string
-    ) {}
+    ) {
+        super(repositoryFactory);
+    }
 
     public async execute(
         type: SynchronizationType,
@@ -66,12 +65,7 @@ export class PrepareSyncUseCase implements UseCase {
     }
 
     private async getCurrentUser() {
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [this.localInstance, ""]
-        );
-
-        return instanceRepository.getUser();
+        return this.instanceRepository(this.localInstance).getUser();
     }
 
     private async getResponsiblesForInstance(
@@ -80,14 +74,9 @@ export class PrepareSyncUseCase implements UseCase {
         const instance = await this.getInstanceById(instanceId);
         if (instance.isError() || !instance.value.data) return Either.error("INSTANCE_NOT_FOUND");
 
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance.value.data]
-        );
-
-        const responsibles = await storageRepository.listObjectsInCollection<MetadataResponsible>(
-            Namespace.RESPONSIBLES
-        );
+        const responsibles = await this.storageRepository(
+            instance.value.data
+        ).listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         return Either.success(responsibles);
     }
@@ -95,25 +84,16 @@ export class PrepareSyncUseCase implements UseCase {
     private async getInstanceById(id: string): Promise<Either<"INSTANCE_NOT_FOUND", Instance>> {
         if (id === "LOCAL") return Either.success(this.localInstance);
 
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [this.localInstance]
-        );
-
-        const objects = await storageRepository.listObjectsInCollection<InstanceData>(
-            Namespace.INSTANCES
-        );
+        const objects = await this.storageRepository(this.localInstance).listObjectsInCollection<
+            InstanceData
+        >(Namespace.INSTANCES);
 
         const data = objects.find(data => data.id === id);
         if (!data) return Either.error("INSTANCE_NOT_FOUND");
 
         const instance = Instance.build(data).decryptPassword(this.encryptionKey);
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
+        const version = await this.instanceRepository(instance).getVersion();
 
-        const version = await instanceRepository.getVersion();
         return Either.success(instance.update({ version }));
     }
 }

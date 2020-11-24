@@ -1,14 +1,9 @@
-import { cache } from "../../../utils/cache";
-import { UseCase } from "../../common/entities/UseCase";
+import { Namespace } from "../../../data/storage/Namespaces";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { getMetadataPackageDiff, MetadataPackageDiff } from "../entities/MetadataPackageDiff";
-import { Store } from "../../stores/entities/Store";
-import { GitHubRepositoryConstructor } from "../repositories/GitHubRepository";
 import { CompositionRoot } from "./../../../presentation/CompositionRoot";
 import { Either } from "./../../common/entities/Either";
 import { MetadataModule } from "./../../modules/entities/MetadataModule";
@@ -17,12 +12,14 @@ import { BasePackage } from "./../entities/Package";
 
 type DiffPackageUseCaseError = "PACKAGE_NOT_FOUND" | "MODULE_NOT_FOUND" | "NETWORK_ERROR";
 
-export class DiffPackageUseCase implements UseCase {
+export class DiffPackageUseCase extends DefaultUseCase implements UseCase {
     constructor(
         private compositionRoot: CompositionRoot,
-        private repositoryFactory: RepositoryFactory,
+        repositoryFactory: RepositoryFactory,
         private localInstance: Instance
-    ) {}
+    ) {
+        super(repositoryFactory);
+    }
 
     public async execute(
         packageIdBase: string | undefined,
@@ -77,10 +74,7 @@ export class DiffPackageUseCase implements UseCase {
     }
 
     private async getStorePackage(storeId: string, url: string) {
-        const store = (
-            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
-        )?.find(store => store.id === storeId);
-
+        const store = await this.storeRepository(this.localInstance).getById(storeId);
         if (!store) return undefined;
 
         const { encoding, content } = await this.gitRepository().request<{
@@ -95,21 +89,5 @@ export class DiffPackageUseCase implements UseCase {
 
         const { package: basePackage, ...contents } = validation.value.data;
         return { ...basePackage, contents };
-    }
-
-    @cache()
-    private gitRepository() {
-        return this.repositoryFactory.get<GitHubRepositoryConstructor>(
-            Repositories.GitHubRepository,
-            []
-        );
-    }
-
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
     }
 }

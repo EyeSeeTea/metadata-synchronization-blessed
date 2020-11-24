@@ -1,16 +1,14 @@
-import { cache } from "../../../utils/cache";
-import { UseCase } from "../../common/entities/UseCase";
+import { Namespace } from "../../../data/storage/Namespaces";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { MetadataModule } from "../entities/MetadataModule";
 import { BaseModule, Module } from "../entities/Module";
 
-export class ListModulesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+export class ListModulesUseCase extends DefaultUseCase implements UseCase {
+    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
+        super(repositoryFactory);
+    }
 
     public async execute(
         bypassSharingSettings = false,
@@ -37,21 +35,5 @@ export class ListModulesUseCase implements UseCase {
             .filter(
                 module => bypassSharingSettings || module.hasPermissions("read", userId, userGroups)
             );
-    }
-
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-    }
-
-    @cache()
-    private instanceRepository(instance: Instance) {
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
     }
 }

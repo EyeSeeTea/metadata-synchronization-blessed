@@ -1,32 +1,26 @@
 import _ from "lodash";
 import moment from "moment";
-import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { Either } from "../../common/entities/Either";
-import { UseCase } from "../../common/entities/UseCase";
+import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { BaseModule } from "../../modules/entities/Module";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../../data/storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
+import { Store } from "../../stores/entities/Store";
 import { GitHubError, GitHubListError } from "../entities/Errors";
 import { ListPackage, Package } from "../entities/Package";
-import { Store } from "../../stores/entities/Store";
-import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubRepository";
+import { moduleFile } from "../repositories/GitHubRepository";
 
 export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
 
-export class ListStorePackagesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+export class ListStorePackagesUseCase extends DefaultUseCase implements UseCase {
+    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
+        super(repositoryFactory);
+    }
 
     public async execute(storeId: string): Promise<Either<ListStorePackagesError, ListPackage[]>> {
-        const store = (
-            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
-        )?.find(store => store.id === storeId);
-
+        const store = await this.storeRepository(this.localInstance).getById(storeId);
         if (!store) return Either.error("STORE_NOT_FOUND");
 
         const userGroups = await this.instanceRepository(this.localInstance).getUserGroups();
@@ -46,30 +40,6 @@ export class ListStorePackagesUseCase implements UseCase {
         const packages = _.compact(rawPackages.flatMap(({ value }) => value.data));
 
         return Either.success(packages);
-    }
-
-    @cache()
-    private gitRepository() {
-        return this.repositoryFactory.get<GitHubRepositoryConstructor>(
-            Repositories.GitHubRepository,
-            []
-        );
-    }
-
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-    }
-
-    @cache()
-    private instanceRepository(instance: Instance) {
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
     }
 
     private async getPackages(
