@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-11-24T06:20:39.492Z\n"
-"PO-Revision-Date: 2020-11-24T06:20:39.492Z\n"
+"POT-Creation-Date: 2020-11-24T10:33:51.362Z\n"
+"PO-Revision-Date: 2020-11-24T10:33:51.362Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -641,6 +641,15 @@ msgstr ""
 msgid "Couldn't create new branch on store"
 msgstr ""
 
+msgid "Generating module"
+msgstr ""
+
+msgid "Module generated successfully"
+msgstr ""
+
+msgid "An error has ocurred generating the module"
+msgstr ""
+
 msgid "Installed"
 msgstr ""
 
@@ -678,6 +687,9 @@ msgid "Import package"
 msgstr ""
 
 msgid "Import package (wizard)"
+msgstr ""
+
+msgid "Generate Module"
 msgstr ""
 
 msgid "Not recommended"
