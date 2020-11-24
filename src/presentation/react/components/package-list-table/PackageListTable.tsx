@@ -369,6 +369,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
                         report.addSyncResult({
                             ...result,
+                            originPackage: originPackage.toRef(),
                             origin: remoteInstance?.toPublicObject(),
                         });
                         await report.save(api);
