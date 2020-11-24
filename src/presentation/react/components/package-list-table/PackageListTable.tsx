@@ -92,6 +92,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const isRemoteInstance = !!remoteInstance;
 
+    useEffect(() => {
+        compositionRoot.modules.list(globalAdmin, remoteInstance, true).then(setModules);
+    }, [compositionRoot, globalAdmin, remoteInstance]);
+
     const updateSelection = useCallback(
         (selection: TableSelection[]) => {
             updateStateSelection(selection);
@@ -365,7 +369,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
                         report.addSyncResult({
                             ...result,
-                            originPackage: originPackage.toRef(),
                             origin: remoteInstance?.toPublicObject(),
                         });
                         await report.save(api);
@@ -773,10 +776,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             })
         );
     }, [compositionRoot, snackbar, resetKey]);
-
-    useEffect(() => {
-        compositionRoot.modules.list(globalAdmin, remoteInstance, true).then(setModules);
-    }, [compositionRoot, globalAdmin, remoteInstance]);
 
     useEffect(() => {
         setModuleFilter("");
