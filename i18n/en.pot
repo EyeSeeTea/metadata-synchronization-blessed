@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-11-24T11:00:41.553Z\n"
-"PO-Revision-Date: 2020-11-24T11:00:41.553Z\n"
+"POT-Creation-Date: 2020-11-25T07:24:45.796Z\n"
+"PO-Revision-Date: 2020-11-25T07:24:45.796Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -143,6 +143,15 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+msgid "Cancel"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Save & import"
+msgstr ""
+
 msgid "Identifier"
 msgstr ""
 
@@ -174,9 +183,6 @@ msgid "Create"
 msgstr ""
 
 msgid "Update"
-msgstr ""
-
-msgid "Cancel"
 msgstr ""
 
 msgid "Match string (name, code, description)"
@@ -524,9 +530,6 @@ msgid "Selected {{difference}} elements"
 msgstr ""
 
 msgid "Removed {{difference}} elements"
-msgstr ""
-
-msgid "Save"
 msgstr ""
 
 msgid "Metadata exclusions"
