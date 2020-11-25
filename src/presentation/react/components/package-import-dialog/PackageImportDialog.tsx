@@ -118,11 +118,17 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                             storePackageUrls[originPackage.id] = packageId;
                         }
 
-                        const mapping = await compositionRoot.mapping.get({
-                            type: isInstance(packageImportRule.source) ? "instance" : "store",
-                            id: packageImportRule.source.id,
-                            moduleId: originPackage.module.id,
-                        });
+                        const temporalPackageMapping = packageImportRule.temporalPackageMappings.find(
+                            mappingTemp => mappingTemp.owner.id === packageId
+                        );
+
+                        const mapping = temporalPackageMapping
+                            ? temporalPackageMapping
+                            : await compositionRoot.mapping.get({
+                                  type: isInstance(packageImportRule.source) ? "instance" : "store",
+                                  id: packageImportRule.source.id,
+                                  moduleId: originPackage.module.id,
+                              });
 
                         const originInstance = isInstance(packageImportRule.source)
                             ? await compositionRoot.instances.getById(packageImportRule.source.id)
