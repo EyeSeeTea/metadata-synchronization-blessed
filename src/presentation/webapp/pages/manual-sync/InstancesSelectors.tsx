@@ -27,9 +27,7 @@ const InstancesSelectors: React.FC<InstancesSelectorsProps> = ({
     const classes = useStyles();
 
     const sourceInstanceIsRemote = !!sourceInstance;
-    const showRemoteInstances = sourceInstanceIsRemote
-        ? showOnlyLocalInstances
-        : showOnlyRemoteInstances;
+    const showRemoteInstances = sourceInstanceIsRemote ? showOnlyLocalInstances : showAllInstances;
     const sourceSelectedInstance = sourceInstance?.id ?? "LOCAL";
 
     const changeDestination = useCallback<ChangeDestination>(
@@ -66,7 +64,6 @@ const InstancesSelectors: React.FC<InstancesSelectorsProps> = ({
 };
 
 const showAllInstances = { local: true, remote: true };
-const showOnlyRemoteInstances = { local: false, remote: true };
 const showOnlyLocalInstances = { local: true, remote: false };
 
 const useStyles = makeStyles({
