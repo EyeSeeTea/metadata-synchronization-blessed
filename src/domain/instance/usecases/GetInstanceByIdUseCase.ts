@@ -12,8 +12,6 @@ export class GetInstanceByIdUseCase implements UseCase {
     ) {}
 
     public async execute(id: string): Promise<Either<"NOT_FOUND", Instance>> {
-        if (id === "LOCAL") return Either.success(this.localInstance);
-
         const data = await this.repositoryFactory
             .storageRepository(this.localInstance)
             .getObjectInCollection<InstanceData>(Namespace.INSTANCES, id);

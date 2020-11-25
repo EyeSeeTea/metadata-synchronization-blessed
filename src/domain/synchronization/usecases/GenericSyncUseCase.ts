@@ -158,8 +158,6 @@ export abstract class GenericSyncUseCase {
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        if (id === "LOCAL") return this.localInstance;
-
         const data = await this.repositoryFactory
             .storageRepository(this.localInstance)
             .getObjectInCollection<InstanceData>(Namespace.INSTANCES, id);

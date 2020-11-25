@@ -80,8 +80,6 @@ export class PrepareSyncUseCase implements UseCase {
     }
 
     private async getInstanceById(id: string): Promise<Either<"INSTANCE_NOT_FOUND", Instance>> {
-        if (id === "LOCAL") return Either.success(this.localInstance);
-
         const objects = await this.repositoryFactory
             .storageRepository(this.localInstance)
             .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
