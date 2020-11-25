@@ -6,8 +6,10 @@ import { ModelValidation, validateModel, ValidationError } from "../../common/en
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 
 export type PublicInstance = Omit<InstanceData, "password">;
+export type InstanceType = "local" | "dhis";
 
 export interface InstanceData {
+    type: InstanceType;
     id: string;
     name: string;
     url: string;
@@ -19,11 +21,14 @@ export interface InstanceData {
 }
 
 export class Instance {
-    public type = "dhis" as const;
     private data: InstanceData;
 
-    constructor(data: InstanceData) {
+    private constructor(data: InstanceData) {
         this.data = data;
+    }
+
+    public get type(): InstanceType {
+        return this.data.type;
     }
 
     public get id(): string {
@@ -95,8 +100,9 @@ export class Instance {
         });
     }
 
-    public static build(data: PartialBy<InstanceData, "id">): Instance {
-        return new Instance({ id: generateUid(), ...data });
+    public static build(data: PartialBy<InstanceData, "id" | "type">): Instance {
+        const { type = "dhis", id = generateUid() } = data;
+        return new Instance({ type, id: type === "local" ? "LOCAL" : id, ...data });
     }
 
     private moduleValidations = (): ModelValidation[] => [
