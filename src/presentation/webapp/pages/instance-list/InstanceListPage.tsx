@@ -50,9 +50,11 @@ const InstanceListPage = () => {
         history.push("/instances/new");
     };
 
-    const editInstance = (ids: string[]) => {
-        if (ids.length !== 1) return;
-        if (appConfigurator) history.push(`/instances/edit/${ids[0]}`);
+    const editInstance = async (ids: string[]) => {
+        const instance = rows.find(row => row.id === ids[0]);
+        if (instance?.type === "dhis" && appConfigurator) {
+            history.push(`/instances/edit/${instance.id}`);
+        }
     };
 
     const replicateInstance = async (ids: string[]) => {

@@ -165,7 +165,6 @@ describe("Sync metadata", () => {
         expect(response.dataValues[0].value).toEqual("test-value-1");
         expect(response.dataValues[0].dataElement).toEqual("id2");
     });
-
 });
 
 function buildRepositoryFactory() {
