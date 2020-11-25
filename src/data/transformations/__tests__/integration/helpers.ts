@@ -54,6 +54,14 @@ export async function sync({
 
     local.get("/dataStore/metadata-synchronization/instances", async () => [
         {
+            type: "local",
+            id: "LOCAL",
+            name: "This instance",
+            description: "",
+            url: "http://origin.test",
+        },
+        {
+            type: "dhis",
             id: "DESTINATION",
             name: "Destination test",
             url: "http://destination.test",
@@ -63,6 +71,7 @@ export async function sync({
         },
     ]);
 
+    local.get("/dataStore/metadata-synchronization/instances-LOCAL", async () => ({}));
     local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
 
     const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
@@ -98,7 +107,7 @@ export async function executeMetadataSync(
     const repositoryFactory = buildRepositoryFactory();
 
     const localInstance = Instance.build({
-        url: local.urlPrefix,
+        url: "http://origin.test",
         name: "Testing",
         version: fromVersion,
     });
@@ -112,9 +121,8 @@ export async function executeMetadataSync(
 
     const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
 
-    for await (const { done } of useCase.execute()) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        done;
+    for await (const _sync of useCase.execute()) {
+        // no-op
     }
 
     expect(local.db.metadata.where({})).toHaveLength(0);

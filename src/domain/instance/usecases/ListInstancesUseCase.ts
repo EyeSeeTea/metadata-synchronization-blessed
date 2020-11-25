@@ -36,6 +36,7 @@ export class ListInstancesUseCase implements UseCase {
             Instance.build({
                 ...data,
                 url: data.type === "local" ? this.localInstance.url : data.url,
+                version: data.type === "local" ? this.localInstance.version : data.version,
             }).decryptPassword(this.encryptionKey)
         );
     }

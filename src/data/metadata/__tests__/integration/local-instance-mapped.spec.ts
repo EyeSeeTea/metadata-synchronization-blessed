@@ -90,10 +90,11 @@ describe("Sync metadata", () => {
 
         local.get("/dataStore/metadata-synchronization/instances", async () => [
             {
+                type: "local",
                 id: "LOCAL",
                 name: "This instance",
-                url: "http://origin.test",
                 description: "",
+                url: "http://origin.test",
             },
         ]);
 
