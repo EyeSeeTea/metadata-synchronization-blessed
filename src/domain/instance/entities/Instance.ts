@@ -103,9 +103,18 @@ export class Instance {
         });
     }
 
-    public static build(data: PartialBy<InstanceData, "id" | "type">): Instance {
-        const { type = "dhis", id = generateUid() } = data;
-        return new Instance({ type, id: type === "local" ? "LOCAL" : id, ...data });
+    public static build({
+        type = "dhis",
+        id = generateUid(),
+        url,
+        ...rest
+    }: PartialBy<InstanceData, "id" | "type">): Instance {
+        return new Instance({
+            type,
+            id: type === "local" ? "LOCAL" : id,
+            url: type === "local" ? "" : url,
+            ...rest,
+        });
     }
 
     private moduleValidations = (): ModelValidation[] => [
