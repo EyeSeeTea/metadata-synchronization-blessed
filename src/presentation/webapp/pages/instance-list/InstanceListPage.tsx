@@ -228,6 +228,7 @@ const InstanceListPage = () => {
     const rowConfig = React.useCallback(
         (instance: Instance): RowConfig => ({
             cellStyle: instance.type === "local" ? { fontWeight: "bold" } : undefined,
+            selectable: instance.type !== "local",
         }),
         []
     );
