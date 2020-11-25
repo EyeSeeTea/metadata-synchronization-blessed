@@ -75,9 +75,14 @@ const GeneralInfoForm = ({ instance, onChange, cancelAction }: GeneralInfoFormPr
         }
 
         setIsSaving(true);
-        await compositionRoot.instances.save(instance);
+        const validationErrors = await compositionRoot.instances.save(instance);
         setIsSaving(false);
-        history.push("/instances");
+
+        if (validationErrors.length === 0) {
+            history.push("/instances");
+        } else {
+            snackbar.error(validationErrors.map(({ description }) => description).join("\n"));
+        }
     }, [compositionRoot, errors, history, instance, snackbar]);
 
     return (
