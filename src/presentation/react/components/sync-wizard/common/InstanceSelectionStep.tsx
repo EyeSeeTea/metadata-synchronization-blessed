@@ -10,7 +10,9 @@ import { SyncWizardStepProps } from "../Steps";
 export const buildInstanceOptions = (instances: Instance[]) => {
     return instances.map(instance => ({
         value: instance.id,
-        text: `${instance.name} (${instance.url} with user ${instance.username ?? "logged"})`,
+        text: instance.username
+            ? i18n.t("{{name}} ({{url}}) with user {{username}}")
+            : i18n.t("{{name}} ({{url}}) with logged user"),
     }));
 };
 
