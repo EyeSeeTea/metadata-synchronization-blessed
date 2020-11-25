@@ -1,10 +1,9 @@
 import { Instance } from "../../domain/instance/entities/Instance";
-import { Namespace } from "../storage/Namespaces";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { Store } from "../../domain/stores/entities/Store";
 import { StoreRepository } from "../../domain/stores/repositories/StoreRepository";
+import { Namespace } from "../storage/Namespaces";
 import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
-import { generateUid } from "d2/uid";
 
 export class StoreD2ApiRepository implements StoreRepository {
     private storageClient: StorageClient;
@@ -36,14 +35,7 @@ export class StoreD2ApiRepository implements StoreRepository {
     }
 
     public async save(store: Store): Promise<void> {
-        const currentStores = await this.list();
-        const isFirstStore = !store.id && currentStores.length === 0;
-
-        await this.storageClient.saveObjectInCollection(Namespace.STORES, {
-            ...store,
-            id: store.id || generateUid(),
-            default: isFirstStore || store.default,
-        });
+        await this.storageClient.saveObjectInCollection(Namespace.STORES, store);
     }
 
     public async getDefault(): Promise<Store | undefined> {

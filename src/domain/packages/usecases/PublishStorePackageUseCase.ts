@@ -26,6 +26,7 @@ export class PublishStorePackageUseCase implements UseCase {
         const defaultStore = await this.repositoryFactory
             .storeRepository(this.localInstance)
             .getDefault();
+
         if (!defaultStore) return Either.error("DEFAULT_STORE_NOT_FOUND");
 
         const storedPackage = await this.repositoryFactory

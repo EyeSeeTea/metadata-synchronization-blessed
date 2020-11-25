@@ -1,3 +1,4 @@
+import { generateUid } from "d2/uid";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { GitHubError } from "../../packages/entities/Errors";
@@ -17,7 +18,14 @@ export class SaveStoreUseCase implements UseCase {
             if (validation.isError()) return Either.error(validation.value.error ?? "UNKNOWN");
         }
 
-        await this.storeRepository.save(store);
+        const currentStores = await this.storeRepository.list();
+        const isFirstStore = !store.id && currentStores.length === 0;
+
+        await this.storeRepository.save({
+            ...store,
+            id: store.id || generateUid(),
+            default: isFirstStore || store.default,
+        });
 
         return Either.success(store);
     }
