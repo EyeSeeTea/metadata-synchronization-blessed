@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
@@ -21,14 +21,12 @@ export type ImportPullRequestError =
     | "ALREADY_IMPORTED"
     | "NOT_APPROVED";
 
-export class ImportPullRequestUseCase extends DefaultUseCase implements UseCase {
+export class ImportPullRequestUseCase implements UseCase {
     constructor(
-        repositoryFactory: RepositoryFactory,
+        private repositoryFactory: RepositoryFactory,
         private localInstance: Instance,
         private encryptionKey: string
-    ) {
-        super(repositoryFactory);
-    }
+    ) {}
 
     public async execute(
         notificationId: string
@@ -52,23 +50,31 @@ export class ImportPullRequestUseCase extends DefaultUseCase implements UseCase 
         if (remoteNotification.status === "PENDING" || remoteNotification.status === "REJECTED")
             return Either.error("NOT_APPROVED");
 
-        const result = await this.metadataRepository(this.localInstance).save(
-            remoteNotification.payload
-        );
+        const result = await this.repositoryFactory
+            .metadataRepository(this.localInstance)
+            .save(remoteNotification.payload);
 
         const status: PullRequestStatus =
             result.status === "SUCCESS" ? "IMPORTED" : "IMPORTED_WITH_ERRORS";
 
         const payload = status === "IMPORTED" ? {} : remoteNotification.payload;
 
-        await this.storageRepository(
-            this.localInstance
-        ).saveObjectInCollection(Namespace.NOTIFICATIONS, { ...notification, read: true, status });
+        await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .saveObjectInCollection(Namespace.NOTIFICATIONS, {
+                ...notification,
+                read: true,
+                status,
+            });
 
-        await this.storageRepository(remoteInstance).saveObjectInCollection(
-            Namespace.NOTIFICATIONS,
-            { ...remoteNotification, read: false, status, payload }
-        );
+        await this.repositoryFactory
+            .storageRepository(remoteInstance)
+            .saveObjectInCollection(Namespace.NOTIFICATIONS, {
+                ...remoteNotification,
+                read: false,
+                status,
+                payload,
+            });
 
         await this.sendMessage(
             remoteInstance,
@@ -80,9 +86,9 @@ export class ImportPullRequestUseCase extends DefaultUseCase implements UseCase 
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const objects = await this.storageRepository(this.localInstance).listObjectsInCollection<
-            InstanceData
-        >(Namespace.INSTANCES);
+        const objects = await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
 
         const data = objects.find(data => data.id === id);
         if (!data) return undefined;
@@ -94,10 +100,9 @@ export class ImportPullRequestUseCase extends DefaultUseCase implements UseCase 
         instance: Instance,
         id: string
     ): Promise<AppNotification | undefined> {
-        return await this.storageRepository(instance).getObjectInCollection<AppNotification>(
-            Namespace.NOTIFICATIONS,
-            id
-        );
+        return await this.repositoryFactory
+            .storageRepository(instance)
+            .getObjectInCollection<AppNotification>(Namespace.NOTIFICATIONS, id);
     }
 
     private async sendMessage(
@@ -126,7 +131,7 @@ export class ImportPullRequestUseCase extends DefaultUseCase implements UseCase 
             `More details at: ${instance.url}/api/apps/MetaData-Synchronization/index.html#/notifications/${id}`,
         ];
 
-        await this.instanceRepository(instance).sendMessage({
+        await this.repositoryFactory.instanceRepository(instance).sendMessage({
             subject: `[MDSync] ${title}: ${subject}`,
             text: message.join("\n\n"),
             users: users.map(({ id }) => ({ id })),
@@ -135,9 +140,9 @@ export class ImportPullRequestUseCase extends DefaultUseCase implements UseCase 
     }
 
     private async getResponsibleNames(instance: Instance, ids: string[]) {
-        const responsibles = await this.storageRepository(instance).listObjectsInCollection<
-            MetadataResponsible
-        >(Namespace.RESPONSIBLES);
+        const responsibles = await this.repositoryFactory
+            .storageRepository(instance)
+            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 

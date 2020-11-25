@@ -1,22 +1,22 @@
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { promiseMap } from "../../../utils/common";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 import { AppNotification } from "../entities/Notification";
 
-export class ListNotificationsUseCase extends DefaultUseCase implements UseCase {
+export class ListNotificationsUseCase implements UseCase {
     constructor(
-        repositoryFactory: RepositoryFactory,
+        private repositoryFactory: RepositoryFactory,
         private localInstance: Instance,
         private encryptionKey: string
-    ) {
-        super(repositoryFactory);
-    }
+    ) {}
 
     public async execute(): Promise<AppNotification[]> {
-        const { id, userGroups } = await this.instanceRepository(this.localInstance).getUser();
+        const { id, userGroups } = await this.repositoryFactory
+            .instanceRepository(this.localInstance)
+            .getUser();
         const notifications = await this.getInstanceNotifications();
 
         const sentPullRequestNotifications = notifications.filter(
@@ -43,15 +43,15 @@ export class ListNotificationsUseCase extends DefaultUseCase implements UseCase 
     }
 
     private async getInstanceNotifications(): Promise<AppNotification[]> {
-        return this.storageRepository(this.localInstance).listObjectsInCollection<AppNotification>(
-            Namespace.NOTIFICATIONS
-        );
+        return this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .listObjectsInCollection<AppNotification>(Namespace.NOTIFICATIONS);
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const objects = await this.storageRepository(this.localInstance).listObjectsInCollection<
-            InstanceData
-        >(Namespace.INSTANCES);
+        const objects = await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
 
         const data = objects.find(data => data.id === id);
         if (!data) return undefined;
@@ -68,9 +68,12 @@ export class ListNotificationsUseCase extends DefaultUseCase implements UseCase 
         const instance = await this.getInstanceById(notification.instance.id);
         if (!instance) return undefined;
 
-        const remoteNotification = await this.storageRepository(instance).getObjectInCollection<
-            AppNotification
-        >(Namespace.NOTIFICATIONS, notification.remoteNotification);
+        const remoteNotification = await this.repositoryFactory
+            .storageRepository(instance)
+            .getObjectInCollection<AppNotification>(
+                Namespace.NOTIFICATIONS,
+                notification.remoteNotification
+            );
 
         if (
             !remoteNotification ||
@@ -86,10 +89,9 @@ export class ListNotificationsUseCase extends DefaultUseCase implements UseCase 
             status: remoteNotification.status,
         };
 
-        await this.storageRepository(this.localInstance).saveObjectInCollection(
-            Namespace.NOTIFICATIONS,
-            newNotification
-        );
+        await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
 
         return newNotification;
     }

@@ -2,7 +2,7 @@ import _ from "lodash";
 import moment from "moment";
 import { promiseMap } from "../../../utils/common";
 import { Either } from "../../common/entities/Either";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
@@ -14,17 +14,19 @@ import { moduleFile } from "../repositories/GitHubRepository";
 
 export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
 
-export class ListStorePackagesUseCase extends DefaultUseCase implements UseCase {
-    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
-        super(repositoryFactory);
-    }
+export class ListStorePackagesUseCase implements UseCase {
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(storeId: string): Promise<Either<ListStorePackagesError, ListPackage[]>> {
-        const store = await this.storeRepository(this.localInstance).getById(storeId);
+        const store = await this.repositoryFactory
+            .storeRepository(this.localInstance)
+            .getById(storeId);
         if (!store) return Either.error("STORE_NOT_FOUND");
 
-        const userGroups = await this.instanceRepository(this.localInstance).getUserGroups();
-        const validation = await this.gitRepository().listBranches(store);
+        const userGroups = await this.repositoryFactory
+            .instanceRepository(this.localInstance)
+            .getUserGroups();
+        const validation = await this.repositoryFactory.gitRepository().listBranches(store);
         if (validation.isError()) return Either.error(validation.value.error);
 
         const branches = validation.value.data?.flatMap(({ name }) => name) ?? [];
@@ -46,7 +48,7 @@ export class ListStorePackagesUseCase extends DefaultUseCase implements UseCase 
         store: Store,
         userGroup: string
     ): Promise<Either<GitHubListError, Package[]>> {
-        const validation = await this.gitRepository().listFiles(store, userGroup);
+        const validation = await this.repositoryFactory.gitRepository().listFiles(store, userGroup);
 
         if (validation.isError()) return Either.error(validation.value.error);
 
@@ -80,12 +82,14 @@ export class ListStorePackagesUseCase extends DefaultUseCase implements UseCase 
 
         if (!moduleFileUrl) return unknownModule;
 
-        const { encoding, content } = await this.gitRepository().request<{
+        const { encoding, content } = await this.repositoryFactory.gitRepository().request<{
             encoding: string;
             content: string;
         }>(store, moduleFileUrl);
 
-        const readFileResult = this.gitRepository().readFileContents<BaseModule>(encoding, content);
+        const readFileResult = this.repositoryFactory
+            .gitRepository()
+            .readFileContents<BaseModule>(encoding, content);
 
         return readFileResult.match({
             success: module => module,

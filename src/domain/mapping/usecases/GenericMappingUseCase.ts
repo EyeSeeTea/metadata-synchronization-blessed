@@ -5,24 +5,20 @@ import {
 } from "../../../presentation/react/components/mapping-table/utils";
 import { Dictionary } from "../../../types/utils";
 import { NamedRef } from "../../common/entities/Ref";
-import { DefaultUseCase } from "../../common/entities/UseCase";
+
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataMapping, MetadataMappingDictionary } from "../entities/MetadataMapping";
 
-export abstract class GenericMappingUseCase extends DefaultUseCase {
-    constructor(repositoryFactory: RepositoryFactory, protected localInstance: Instance) {
-        super(repositoryFactory);
-    }
+export abstract class GenericMappingUseCase {
+    constructor(private repositoryFactory: RepositoryFactory, protected localInstance: Instance) {}
 
     protected async getMetadata(instance: DataSource, ids: string[]) {
-        return this.metadataRepository(instance).getMetadataByIds<Omit<CombinedMetadata, "model">>(
-            ids,
-            fields,
-            true
-        );
+        return this.repositoryFactory
+            .metadataRepository(instance)
+            .getMetadataByIds<Omit<CombinedMetadata, "model">>(ids, fields, true);
     }
 
     protected createMetadataDictionary(metadata: MetadataPackage<NamedRef>) {
@@ -132,7 +128,9 @@ export abstract class GenericMappingUseCase extends DefaultUseCase {
         const programStages = this.getProgramStages(metadata[0]);
         const programStageDataElements = this.getProgramStageDataElements(metadata[0]);
 
-        const defaultValues = await this.metadataRepository(instance).getDefaultIds();
+        const defaultValues = await this.repositoryFactory
+            .metadataRepository(instance)
+            .getDefaultIds();
 
         return _.union(categoryOptions, options, programStages, programStageDataElements)
             .map(({ id }) => id)
@@ -158,9 +156,9 @@ export abstract class GenericMappingUseCase extends DefaultUseCase {
         const selectedItem = originMetadata[selectedItemId];
         if (!selectedItem) return [];
 
-        const destinationMetadata = await this.metadataRepository(
-            destinationInstance
-        ).lookupSimilar(selectedItem);
+        const destinationMetadata = await this.repositoryFactory
+            .metadataRepository(destinationInstance)
+            .lookupSimilar(selectedItem);
 
         const objects = _(destinationMetadata)
             .values()

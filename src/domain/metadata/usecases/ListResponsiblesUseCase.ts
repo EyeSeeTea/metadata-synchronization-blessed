@@ -1,19 +1,17 @@
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../entities/MetadataResponsible";
 
-export class ListResponsiblesUseCase extends DefaultUseCase implements UseCase {
-    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
-        super(repositoryFactory);
-    }
+export class ListResponsiblesUseCase implements UseCase {
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(instance = this.localInstance): Promise<MetadataResponsible[]> {
-        const items = await this.storageRepository(instance).listObjectsInCollection<
-            MetadataResponsible
-        >(Namespace.RESPONSIBLES);
+        const items = await this.repositoryFactory
+            .storageRepository(instance)
+            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         const names = await this.getDisplayNames(
             instance,
@@ -24,10 +22,12 @@ export class ListResponsiblesUseCase extends DefaultUseCase implements UseCase {
     }
 
     private async getDisplayNames(instance: Instance, ids: string[]) {
-        const metadata = await this.metadataRepository(instance).getMetadataByIds<{
-            id: string;
-            displayName: string;
-        }>(ids, "id,displayName");
+        const metadata = await this.repositoryFactory
+            .metadataRepository(instance)
+            .getMetadataByIds<{
+                id: string;
+                displayName: string;
+            }>(ids, "id,displayName");
 
         return _(metadata)
             .values()

@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../entities/Instance";
 
@@ -8,19 +8,17 @@ export interface ListInstancesUseCaseProps {
     search?: string;
 }
 
-export class ListInstancesUseCase extends DefaultUseCase implements UseCase {
+export class ListInstancesUseCase implements UseCase {
     constructor(
-        repositoryFactory: RepositoryFactory,
+        private repositoryFactory: RepositoryFactory,
         private localInstance: Instance,
         private encryptionKey: string
-    ) {
-        super(repositoryFactory);
-    }
+    ) {}
 
     public async execute({ search }: ListInstancesUseCaseProps = {}): Promise<Instance[]> {
-        const objects = await this.storageRepository(this.localInstance).listObjectsInCollection<
-            InstanceData
-        >(Namespace.INSTANCES);
+        const objects = await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
 
         const filteredData = search
             ? _.filter(objects, o =>

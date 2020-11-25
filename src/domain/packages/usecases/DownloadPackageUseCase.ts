@@ -1,16 +1,14 @@
 import _ from "lodash";
 import moment from "moment";
 import { Namespace } from "../../../data/storage/Namespaces";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { BasePackage } from "../entities/Package";
 
-export class DownloadPackageUseCase extends DefaultUseCase implements UseCase {
-    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
-        super(repositoryFactory);
-    }
+export class DownloadPackageUseCase implements UseCase {
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(storeId: string | undefined, id: string, instance = this.localInstance) {
         const element = storeId
@@ -23,28 +21,29 @@ export class DownloadPackageUseCase extends DefaultUseCase implements UseCase {
         const date = moment().format("YYYYMMDDHHmm");
         const name = `package-${ruleName}-${date}.json`;
         const payload = { package: item, ...contents };
-        this.downloadRepository().downloadFile(name, payload);
+        this.repositoryFactory.downloadRepository().downloadFile(name, payload);
     }
 
     private async getDataStorePackage(id: string, instance: Instance) {
-        return this.storageRepository(instance).getObjectInCollection<BasePackage>(
-            Namespace.PACKAGES,
-            id
-        );
+        return this.repositoryFactory
+            .storageRepository(instance)
+            .getObjectInCollection<BasePackage>(Namespace.PACKAGES, id);
     }
 
     private async getStorePackage(storeId: string, url: string) {
-        const store = await this.storeRepository(this.localInstance).getById(storeId);
+        const store = await this.repositoryFactory
+            .storeRepository(this.localInstance)
+            .getById(storeId);
         if (!store) return undefined;
 
-        const { encoding, content } = await this.gitRepository().request<{
+        const { encoding, content } = await this.repositoryFactory.gitRepository().request<{
             encoding: string;
             content: string;
         }>(store, url);
 
-        const validation = this.gitRepository().readFileContents<
-            MetadataPackage & { package: BasePackage }
-        >(encoding, content);
+        const validation = this.repositoryFactory
+            .gitRepository()
+            .readFileContents<MetadataPackage & { package: BasePackage }>(encoding, content);
         if (!validation.value.data) return undefined;
 
         const { package: basePackage, ...contents } = validation.value.data;

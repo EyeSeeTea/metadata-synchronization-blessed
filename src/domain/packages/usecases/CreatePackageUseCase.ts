@@ -3,7 +3,7 @@ import { Namespace } from "../../../data/storage/Namespaces";
 import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
 import { CompositionRoot } from "../../../presentation/CompositionRoot";
 import { getMajorVersion } from "../../../utils/d2-utils";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
@@ -11,14 +11,12 @@ import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Module } from "../../modules/entities/Module";
 import { Package } from "../entities/Package";
 
-export class CreatePackageUseCase extends DefaultUseCase implements UseCase {
+export class CreatePackageUseCase implements UseCase {
     constructor(
         private compositionRoot: CompositionRoot,
-        repositoryFactory: RepositoryFactory,
+        private repositoryFactory: RepositoryFactory,
         private localInstance: Instance
-    ) {
-        super(repositoryFactory);
-    }
+    ) {}
 
     public async execute(
         originInstance: string,
@@ -37,18 +35,18 @@ export class CreatePackageUseCase extends DefaultUseCase implements UseCase {
                   targetInstances: [],
               }).buildPayload();
 
-        const versionedPayload = this.transformationRepository().mapPackageTo(
-            apiVersion,
-            basePayload,
-            metadataTransformations
-        );
+        const versionedPayload = this.repositoryFactory
+            .transformationRepository()
+            .mapPackageTo(apiVersion, basePayload, metadataTransformations);
 
         const payload = sourcePackage.update({ contents: versionedPayload, dhisVersion });
 
         const validations = payload.validate();
 
         if (validations.length === 0) {
-            const user = await this.instanceRepository(this.localInstance).getUser();
+            const user = await this.repositoryFactory
+                .instanceRepository(this.localInstance)
+                .getUser();
             const newPackage = payload.update({
                 id: generateUid(),
                 lastUpdated: new Date(),
@@ -56,16 +54,14 @@ export class CreatePackageUseCase extends DefaultUseCase implements UseCase {
                 user: payload.user.id ? payload.user : user,
             });
 
-            await this.storageRepository(this.localInstance).saveObjectInCollection(
-                Namespace.PACKAGES,
-                newPackage
-            );
+            await this.repositoryFactory
+                .storageRepository(this.localInstance)
+                .saveObjectInCollection(Namespace.PACKAGES, newPackage);
 
             const newModule = module.update({ lastPackageVersion: newPackage.version });
-            await this.storageRepository(this.localInstance).saveObjectInCollection(
-                Namespace.MODULES,
-                newModule
-            );
+            await this.repositoryFactory
+                .storageRepository(this.localInstance)
+                .saveObjectInCollection(Namespace.MODULES, newModule);
         }
 
         return validations;

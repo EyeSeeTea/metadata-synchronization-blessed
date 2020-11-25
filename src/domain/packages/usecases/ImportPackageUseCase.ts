@@ -1,5 +1,5 @@
 import { debug } from "../../../utils/debug";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
@@ -8,10 +8,8 @@ import { MappingMapper } from "../../mapping/helpers/MappingMapper";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { Package } from "../entities/Package";
 
-export class ImportPackageUseCase extends DefaultUseCase implements UseCase {
-    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
-        super(repositoryFactory);
-    }
+export class ImportPackageUseCase implements UseCase {
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(
         item: Package,
@@ -19,12 +17,12 @@ export class ImportPackageUseCase extends DefaultUseCase implements UseCase {
         originInstance: DataSource,
         destinationInstance: DataSource = this.localInstance
     ): Promise<SynchronizationResult> {
-        const originCategoryOptionCombos = await this.metadataRepository(
-            originInstance
-        ).getCategoryOptionCombos();
-        const destinationCategoryOptionCombos = await this.metadataRepository(
-            destinationInstance
-        ).getCategoryOptionCombos();
+        const originCategoryOptionCombos = await this.repositoryFactory
+            .metadataRepository(originInstance)
+            .getCategoryOptionCombos();
+        const destinationCategoryOptionCombos = await this.repositoryFactory
+            .metadataRepository(destinationInstance)
+            .getCategoryOptionCombos();
 
         const mapper = new MappingMapper(
             mapping,
@@ -33,7 +31,9 @@ export class ImportPackageUseCase extends DefaultUseCase implements UseCase {
         );
 
         const payload = mapper.applyMapping(item.contents);
-        const result = await this.metadataRepository(destinationInstance).save(payload);
+        const result = await this.repositoryFactory
+            .metadataRepository(destinationInstance)
+            .save(payload);
 
         debug("Import package", {
             originInstance,

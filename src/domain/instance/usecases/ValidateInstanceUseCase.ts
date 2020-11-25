@@ -1,15 +1,18 @@
 import i18n from "../../../locales";
 import { debug } from "../../../utils/debug";
 import { Either } from "../../common/entities/Either";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource, isJSONDataSource } from "../entities/DataSource";
 
-export class ValidateInstanceUseCase extends DefaultUseCase implements UseCase {
+export class ValidateInstanceUseCase implements UseCase {
+    constructor(private repositoryFactory: RepositoryFactory) {}
+
     public async execute(instance: DataSource): Promise<Either<string, void>> {
         if (isJSONDataSource(instance)) return Either.success(undefined);
 
         try {
-            const version = await this.instanceRepository(instance).getVersion();
+            const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
 
             if (version) {
                 return Either.success(undefined);

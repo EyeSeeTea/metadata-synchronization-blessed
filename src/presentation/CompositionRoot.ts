@@ -6,10 +6,11 @@ import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository"
 import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
+import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
-import { RepositoryFactory } from "../domain/common/factories/RepositoryFactory";
+import { Repositories, RepositoryFactory } from "../domain/common/factories/RepositoryFactory";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
 import { Instance } from "../domain/instance/entities/Instance";
@@ -50,27 +51,25 @@ import { ListImportedPackagesUseCase } from "../domain/package-import/usecases/L
 import { SaveImportedPackagesUseCase } from "../domain/package-import/usecases/SaveImportedPackagesUseCase";
 import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageUseCase";
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
-import { DeleteStoreUseCase } from "../domain/stores/usecases/DeleteStoreUseCase";
 import { DiffPackageUseCase } from "../domain/packages/usecases/DiffPackageUseCase";
 import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPackageUseCase";
 import { GetPackageUseCase } from "../domain/packages/usecases/GetPackageUseCase";
 import { GetStorePackageUseCase } from "../domain/packages/usecases/GetStorePackageUseCase";
-import { GetStoreUseCase } from "../domain/stores/usecases/GetStoreUseCase";
 import { ImportPackageUseCase } from "../domain/packages/usecases/ImportPackageUseCase";
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
-import { ListStoresUseCase } from "../domain/stores/usecases/ListStoresUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
+import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
+import { DeleteStoreUseCase } from "../domain/stores/usecases/DeleteStoreUseCase";
+import { GetStoreUseCase } from "../domain/stores/usecases/GetStoreUseCase";
+import { ListStoresUseCase } from "../domain/stores/usecases/ListStoresUseCase";
 import { SaveStoreUseCase } from "../domain/stores/usecases/SaveStoreUseCase";
 import { SetStoreAsDefaultUseCase } from "../domain/stores/usecases/SetStoreAsDefaultUseCase";
 import { ValidateStoreUseCase } from "../domain/stores/usecases/ValidateStoreUseCase";
-import { Repositories } from "../domain/Repositories";
-import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/CreatePullRequestUseCase";
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { SynchronizationBuilder } from "../types/synchronization";
 import { cache } from "../utils/cache";
-import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;

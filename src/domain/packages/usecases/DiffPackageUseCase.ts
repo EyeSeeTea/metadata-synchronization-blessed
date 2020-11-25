@@ -1,5 +1,5 @@
 import { Namespace } from "../../../data/storage/Namespaces";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
@@ -12,14 +12,12 @@ import { BasePackage } from "./../entities/Package";
 
 type DiffPackageUseCaseError = "PACKAGE_NOT_FOUND" | "MODULE_NOT_FOUND" | "NETWORK_ERROR";
 
-export class DiffPackageUseCase extends DefaultUseCase implements UseCase {
+export class DiffPackageUseCase implements UseCase {
     constructor(
         private compositionRoot: CompositionRoot,
-        repositoryFactory: RepositoryFactory,
+        private repositoryFactory: RepositoryFactory,
         private localInstance: Instance
-    ) {
-        super(repositoryFactory);
-    }
+    ) {}
 
     public async execute(
         packageIdBase: string | undefined,
@@ -39,9 +37,9 @@ export class DiffPackageUseCase extends DefaultUseCase implements UseCase {
             contentsBase = packageBase.contents;
         } else {
             // No package B specified, use local contents
-            const moduleDataMerge = await this.storageRepository(instance).getObjectInCollection<
-                BaseModule
-            >(Namespace.MODULES, packageMerge.module.id);
+            const moduleDataMerge = await this.repositoryFactory
+                .storageRepository(instance)
+                .getObjectInCollection<BaseModule>(Namespace.MODULES, packageMerge.module.id);
 
             if (!moduleDataMerge) return Either.error("MODULE_NOT_FOUND");
             const moduleMerge = MetadataModule.build(moduleDataMerge);
@@ -67,24 +65,25 @@ export class DiffPackageUseCase extends DefaultUseCase implements UseCase {
     }
 
     private async getDataStorePackage(id: string, instance: Instance) {
-        return this.storageRepository(instance).getObjectInCollection<BasePackage>(
-            Namespace.PACKAGES,
-            id
-        );
+        return this.repositoryFactory
+            .storageRepository(instance)
+            .getObjectInCollection<BasePackage>(Namespace.PACKAGES, id);
     }
 
     private async getStorePackage(storeId: string, url: string) {
-        const store = await this.storeRepository(this.localInstance).getById(storeId);
+        const store = await this.repositoryFactory
+            .storeRepository(this.localInstance)
+            .getById(storeId);
         if (!store) return undefined;
 
-        const { encoding, content } = await this.gitRepository().request<{
+        const { encoding, content } = await this.repositoryFactory.gitRepository().request<{
             encoding: string;
             content: string;
         }>(store, url);
 
-        const validation = this.gitRepository().readFileContents<
-            MetadataPackage & { package: BasePackage }
-        >(encoding, content);
+        const validation = this.repositoryFactory
+            .gitRepository()
+            .readFileContents<MetadataPackage & { package: BasePackage }>(encoding, content);
         if (!validation.value.data) return undefined;
 
         const { package: basePackage, ...contents } = validation.value.data;

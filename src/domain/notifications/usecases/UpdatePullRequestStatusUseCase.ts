@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
@@ -12,18 +12,16 @@ import {
 
 export type UpdatePullRequestStatusError = "NOT_FOUND" | "PERMISSIONS" | "INVALID";
 
-export class UpdatePullRequestStatusUseCase extends DefaultUseCase implements UseCase {
-    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
-        super(repositoryFactory);
-    }
+export class UpdatePullRequestStatusUseCase implements UseCase {
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(
         id: string,
         status: PullRequestStatus
     ): Promise<Either<UpdatePullRequestStatusError, void>> {
-        const notification = await this.storageRepository(this.localInstance).getObjectInCollection<
-            ReceivedPullRequestNotification
-        >(Namespace.NOTIFICATIONS, id);
+        const notification = await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .getObjectInCollection<ReceivedPullRequestNotification>(Namespace.NOTIFICATIONS, id);
 
         if (!notification) {
             return Either.error("NOT_FOUND");
@@ -40,17 +38,18 @@ export class UpdatePullRequestStatusUseCase extends DefaultUseCase implements Us
             status,
         };
 
-        await this.storageRepository(this.localInstance).saveObjectInCollection(
-            Namespace.NOTIFICATIONS,
-            newNotification
-        );
+        await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
 
         return Either.success(undefined);
     }
 
     private async hasPermissions(ids: string[]) {
         const responsibles = await this.getResponsibles(this.localInstance, ids);
-        const { id, userGroups } = await this.instanceRepository(this.localInstance).getUser();
+        const { id, userGroups } = await this.repositoryFactory
+            .instanceRepository(this.localInstance)
+            .getUser();
 
         if (
             !responsibles.users?.find(user => user.id === id) &&
@@ -63,9 +62,9 @@ export class UpdatePullRequestStatusUseCase extends DefaultUseCase implements Us
     }
 
     private async getResponsibles(instance: Instance, ids: string[]) {
-        const responsibles = await this.storageRepository(instance).listObjectsInCollection<
-            MetadataResponsible
-        >(Namespace.RESPONSIBLES);
+        const responsibles = await this.repositoryFactory
+            .storageRepository(instance)
+            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 

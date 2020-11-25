@@ -1,7 +1,7 @@
 import moment from "moment";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { BaseModule } from "../../modules/entities/Module";
@@ -16,21 +16,21 @@ export type PublishStorePackageError =
     | "PACKAGE_NOT_FOUND"
     | "ALREADY_PUBLISHED";
 
-export class PublishStorePackageUseCase extends DefaultUseCase implements UseCase {
-    constructor(repositoryFactory: RepositoryFactory, private localInstance: Instance) {
-        super(repositoryFactory);
-    }
+export class PublishStorePackageUseCase implements UseCase {
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(
         packageId: string,
         force = false
     ): Promise<Either<PublishStorePackageError, void>> {
-        const defaultStore = await this.storeRepository(this.localInstance).getDefault();
+        const defaultStore = await this.repositoryFactory
+            .storeRepository(this.localInstance)
+            .getDefault();
         if (!defaultStore) return Either.error("DEFAULT_STORE_NOT_FOUND");
 
-        const storedPackage = await this.storageRepository(
-            this.localInstance
-        ).getObjectInCollection<BasePackage>(Namespace.PACKAGES, packageId);
+        const storedPackage = await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .getObjectInCollection<BasePackage>(Namespace.PACKAGES, packageId);
         if (!storedPackage) return Either.error("PACKAGE_NOT_FOUND");
 
         const { contents, ...item } = storedPackage;
@@ -40,25 +40,21 @@ export class PublishStorePackageUseCase extends DefaultUseCase implements UseCas
         const path = `${item.module.name}/${fileName}.json`;
         const branch = item.module.department.name.replace(/\s/g, "-");
 
-        const existingFileCheck = await this.gitRepository().readFile(defaultStore, branch, path);
+        const existingFileCheck = await this.repositoryFactory
+            .gitRepository()
+            .readFile(defaultStore, branch, path);
         if (existingFileCheck.isSuccess()) return Either.error("ALREADY_PUBLISHED");
 
-        const validation = await this.gitRepository().writeFile(
-            defaultStore,
-            branch,
-            path,
-            JSON.stringify(payload, null, 4)
-        );
+        const validation = await this.repositoryFactory
+            .gitRepository()
+            .writeFile(defaultStore, branch, path, JSON.stringify(payload, null, 4));
 
         if (validation.isError()) {
             if (force && validation.value.error === "BRANCH_NOT_FOUND") {
-                await this.gitRepository().createBranch(defaultStore, branch);
-                const validation = await this.gitRepository().writeFile(
-                    defaultStore,
-                    branch,
-                    path,
-                    JSON.stringify(payload, null, 4)
-                );
+                await this.repositoryFactory.gitRepository().createBranch(defaultStore, branch);
+                const validation = await this.repositoryFactory
+                    .gitRepository()
+                    .writeFile(defaultStore, branch, path, JSON.stringify(payload, null, 4));
 
                 if (validation.isError()) return Either.error(validation.value.error);
             } else {
@@ -82,12 +78,9 @@ export class PublishStorePackageUseCase extends DefaultUseCase implements UseCas
         path: string,
         moduleRef: Pick<BaseModule, "id" | "name" | "instance" | "department">
     ) {
-        const validation = await this.gitRepository().writeFile(
-            store,
-            branch,
-            path,
-            JSON.stringify(moduleRef, null, 4)
-        );
+        const validation = await this.repositoryFactory
+            .gitRepository()
+            .writeFile(store, branch, path, JSON.stringify(moduleRef, null, 4));
 
         if (validation.isError()) {
             return console.warn("An error creating the module file has ocurred");

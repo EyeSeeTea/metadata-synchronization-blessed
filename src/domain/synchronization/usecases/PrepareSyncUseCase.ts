@@ -2,7 +2,7 @@ import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { Either } from "../../common/entities/Either";
-import { DefaultUseCase, UseCase } from "../../common/entities/UseCase";
+import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
@@ -10,14 +10,12 @@ import { SynchronizationType } from "../entities/SynchronizationType";
 
 export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE" | "INSTANCE_NOT_FOUND";
 
-export class PrepareSyncUseCase extends DefaultUseCase implements UseCase {
+export class PrepareSyncUseCase implements UseCase {
     constructor(
-        repositoryFactory: RepositoryFactory,
+        private repositoryFactory: RepositoryFactory,
         private localInstance: Instance,
         private encryptionKey: string
-    ) {
-        super(repositoryFactory);
-    }
+    ) {}
 
     public async execute(
         type: SynchronizationType,
@@ -65,7 +63,7 @@ export class PrepareSyncUseCase extends DefaultUseCase implements UseCase {
     }
 
     private async getCurrentUser() {
-        return this.instanceRepository(this.localInstance).getUser();
+        return this.repositoryFactory.instanceRepository(this.localInstance).getUser();
     }
 
     private async getResponsiblesForInstance(
@@ -74,9 +72,9 @@ export class PrepareSyncUseCase extends DefaultUseCase implements UseCase {
         const instance = await this.getInstanceById(instanceId);
         if (instance.isError() || !instance.value.data) return Either.error("INSTANCE_NOT_FOUND");
 
-        const responsibles = await this.storageRepository(
-            instance.value.data
-        ).listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
+        const responsibles = await this.repositoryFactory
+            .storageRepository(instance.value.data)
+            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         return Either.success(responsibles);
     }
@@ -84,15 +82,15 @@ export class PrepareSyncUseCase extends DefaultUseCase implements UseCase {
     private async getInstanceById(id: string): Promise<Either<"INSTANCE_NOT_FOUND", Instance>> {
         if (id === "LOCAL") return Either.success(this.localInstance);
 
-        const objects = await this.storageRepository(this.localInstance).listObjectsInCollection<
-            InstanceData
-        >(Namespace.INSTANCES);
+        const objects = await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
 
         const data = objects.find(data => data.id === id);
         if (!data) return Either.error("INSTANCE_NOT_FOUND");
 
         const instance = Instance.build(data).decryptPassword(this.encryptionKey);
-        const version = await this.instanceRepository(instance).getVersion();
+        const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
 
         return Either.success(instance.update({ version }));
     }
