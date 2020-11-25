@@ -51,20 +51,19 @@ export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps>
             [instances, stores, onChangeSelected]
         );
 
-        const instanceItems = useMemo(
-            () =>
-                _.compact([
-                    showInstances.local && { id: "LOCAL", name: i18n.t("This instance") },
-                    ...(showInstances.store
-                        ? stores.map(store => ({
-                              id: store.id,
-                              name: `${store.account} - ${store.repository} (${i18n.t("Store")})`,
-                          }))
-                        : []),
-                    ...(showInstances.remote ? instances : []),
-                ]),
-            [showInstances, instances, stores]
-        );
+        const instanceItems = useMemo(() => {
+            const localInstance = { id: "LOCAL", name: i18n.t("This instance") };
+            const storeInstances = stores.map(store => ({
+                id: store.id,
+                name: `${store.account} - ${store.repository} (${i18n.t("Store")})`,
+            }));
+
+            return _.compact([
+                showInstances.local && localInstance,
+                ...(showInstances.store ? storeInstances : []),
+                ...(showInstances.remote ? instances.filter(item => item.type === "dhis") : []),
+            ]);
+        }, [showInstances, instances, stores]);
 
         useEffect(() => {
             compositionRoot.instances.list().then(setInstances);

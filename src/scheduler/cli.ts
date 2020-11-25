@@ -60,6 +60,7 @@ const start = async (): Promise<void> => {
 
     const version = await api.getVersion();
     const instance = Instance.build({
+        type: "local",
         name: "This instance",
         url: baseUrl,
         username,
