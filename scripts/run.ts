@@ -112,6 +112,7 @@ function build(args: BuildArgs): void {
         const fileName = `${variant.file}.zip`;
         const manifestType = variant.type === "widget" ? "DASHBOARD_WIDGET" : "APP";
 
+        run(`yarn clean && yarn localize && yarn test`);
         run(`react-scripts build && cp -r i18n icon.png build`);
         run(
             `d2-manifest package.json build/manifest.webapp -t ${manifestType} -n '${variant.title}'`
@@ -144,6 +145,7 @@ function startServer(args: StartServerArgs): void {
         PORT: args.port,
     });
 
+    run("yarn localize && d2-manifest package.json manifest.webapp");
     run("react-scripts start");
 }
 
