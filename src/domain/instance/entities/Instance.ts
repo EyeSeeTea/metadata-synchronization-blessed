@@ -65,14 +65,16 @@ export class Instance {
         return this.data.metadataMapping ?? {};
     }
 
-    public get version(): string {
-        return this.data.version ?? "2.30";
+    public get version(): string | undefined {
+        return this.data.version;
     }
 
     public get apiVersion(): number {
         const apiVersion = _.get(this.version?.split("."), 1);
-        if (!apiVersion) throw new Error("Invalid api version");
-        return Number(apiVersion);
+        // TODO: Review implications of having a default value here
+        // Not having this set means no connection possible on save
+        // For example, we should error during sync instead
+        return apiVersion ? Number(apiVersion) : 30;
     }
 
     public toObject(): InstanceData {
@@ -103,18 +105,9 @@ export class Instance {
         });
     }
 
-    public static build({
-        type = "dhis",
-        id = generateUid(),
-        url,
-        ...rest
-    }: PartialBy<InstanceData, "id" | "type">): Instance {
-        return new Instance({
-            type,
-            id: type === "local" ? "LOCAL" : id,
-            url: type === "local" ? "" : url,
-            ...rest,
-        });
+    public static build(data: PartialBy<InstanceData, "id" | "type">): Instance {
+        const { type = "dhis", id = generateUid() } = data;
+        return new Instance({ type, id: type === "local" ? "LOCAL" : id, ...data });
     }
 
     private moduleValidations = (): ModelValidation[] => [

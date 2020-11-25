@@ -169,6 +169,7 @@ const InstanceListPage = () => {
             getValue: row => (row.type === "local" ? "Logged user" : row.username),
         },
         { name: "description" as const, text: i18n.t("Description") },
+        { name: "version" as const, text: i18n.t("Version") },
     ];
 
     const actions: TableAction<Instance>[] = [
