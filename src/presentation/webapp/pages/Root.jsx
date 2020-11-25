@@ -23,6 +23,9 @@ import SyncRulesPage from "./sync-rules-list/SyncRulesListPage";
 function Root() {
     const { api } = useAppContext();
 
+    // TODO: Jorge from here on we can customize the front-end
+    console.log("Variant", process.env.REACT_APP_PRESENTATION_VARIANT);
+
     return (
         <HashRouter>
             <Switch>

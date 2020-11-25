@@ -53,13 +53,10 @@
     "scripts": {
         "clean": "npx rimraf build/ dist/",
         "prestart": "yarn localize && d2-manifest package.json manifest.webapp",
-        "start": "react-scripts start",
-        "start-widget": "yarn run-ts scripts/widget.ts start-server -p ${PORT:-8082}",
+        "start": "yarn run-ts scripts/run.ts start-server -p ${PORT:-8081}",
         "start-scheduler": "yarn run-ts --files src/scheduler/cli.ts",
-        "prebuild": "rm -rf build/ && yarn localize && yarn test",
-        "build": "react-scripts build && cp -r i18n icon.png build",
-        "build-webapp": "yarn build && yarn manifest && rm -f $npm_package_name.zip && cd build && zip -r ../$npm_package_name.zip *",
-        "build-widget": "yarn run-ts scripts/widget.ts build $npm_package_name",
+        "prebuild": "yarn clean && yarn localize && yarn test",
+        "build": "yarn run-ts scripts/run.ts build",
         "build-scheduler": "ncc build src/scheduler/cli.ts -m && cp dist/index.js $npm_package_name-server.js",
         "run-ts": "ts-node -O '{\"module\":\"commonjs\"}'",
         "test": "jest --env=jsdom-fourteen --passWithNoTests",
@@ -70,7 +67,6 @@
         "localize": "yarn update-po && d2-i18n-generate -n metadata-synchronization -p ./i18n/ -o ./src/locales/",
         "update-po": "yarn extract-pot && for pofile in i18n/*.po; do msgmerge --backup=off -U $pofile i18n/en.pot; done",
         "migrate": "yarn run-ts src/migrations/cli.ts",
-        "manifest": "d2-manifest package.json build/manifest.webapp",
         "pre-push": "yarn prettify && yarn lint && yarn localize && yarn jest",
         "cy:verify": "cypress verify",
         "cy:e2e:open": "CYPRESS_E2E=true cypress open",
@@ -136,7 +132,7 @@
     },
     "manifest.webapp": {
         "name": "MetaData Synchronization",
-        "description": "Advanced metadata synchronization utility",
+        "description": "Advanced metadata & data synchronization utility",
         "icons": {
             "48": "icon.png"
         },
