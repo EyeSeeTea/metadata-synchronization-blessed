@@ -7,6 +7,7 @@ import {
     ConfirmationDialog,
     ObjectsTable,
     ObjectsTableDetailField,
+    RowConfig,
     TableAction,
     TableColumn,
     TableSelection,
@@ -149,13 +150,22 @@ const InstanceListPage = () => {
     const columns: TableColumn<Instance>[] = [
         { name: "name" as const, text: i18n.t("Server name"), sortable: true },
         { name: "url" as const, text: i18n.t("URL endpoint"), sortable: false },
-        { name: "username" as const, text: i18n.t("Username"), sortable: true },
+        {
+            name: "username" as const,
+            text: i18n.t("Username"),
+            sortable: true,
+            getValue: row => (row.type === "local" ? "Logged user" : row.username),
+        },
     ];
 
     const details: ObjectsTableDetailField<Instance>[] = [
         { name: "name" as const, text: i18n.t("Server name") },
         { name: "url" as const, text: i18n.t("URL endpoint") },
-        { name: "username" as const, text: i18n.t("Username") },
+        {
+            name: "username" as const,
+            text: i18n.t("Username"),
+            getValue: row => (row.type === "local" ? "Logged user" : row.username),
+        },
         { name: "description" as const, text: i18n.t("Description") },
     ];
 
@@ -169,7 +179,7 @@ const InstanceListPage = () => {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            isActive: () => appConfigurator,
+            isActive: rows => appConfigurator && _.every(rows, row => row.type !== "local"),
             primary: true,
             onClick: editInstance,
             icon: <EditIcon />,
@@ -178,6 +188,7 @@ const InstanceListPage = () => {
             name: "replicate",
             text: i18n.t("Replicate"),
             multiple: false,
+            isActive: rows => appConfigurator && _.every(rows, row => row.type !== "local"),
             onClick: replicateInstance,
             icon: <Icon>content_copy</Icon>,
         },
@@ -185,7 +196,7 @@ const InstanceListPage = () => {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: true,
-            isActive: () => appConfigurator,
+            isActive: rows => appConfigurator && _.every(rows, row => row.type !== "local"),
             onClick: deleteInstances,
             icon: <DeleteIcon />,
         },
@@ -193,6 +204,7 @@ const InstanceListPage = () => {
             name: "testConnection",
             text: i18n.t("Test Connection"),
             multiple: false,
+            isActive: rows => _.every(rows, row => row.type !== "local"),
             onClick: testConnection,
             icon: <SettingsInputAntenaIcon />,
         },
@@ -212,6 +224,13 @@ const InstanceListPage = () => {
             icon: <DoubleArrowIcon />,
         },
     ];
+
+    const rowConfig = React.useCallback(
+        (instance: Instance): RowConfig => ({
+            cellStyle: instance.type === "local" ? { fontWeight: "bold" } : undefined,
+        }),
+        []
+    );
 
     return (
         <TestWrapper>
@@ -233,6 +252,7 @@ const InstanceListPage = () => {
                 columns={columns}
                 details={details}
                 actions={actions}
+                rowConfig={rowConfig}
                 onActionButtonClick={appConfigurator ? createInstance : undefined}
                 onChangeSearch={changeSearch}
                 selection={selection}

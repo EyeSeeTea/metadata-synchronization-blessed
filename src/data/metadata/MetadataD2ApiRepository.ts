@@ -3,7 +3,7 @@ import _ from "lodash";
 import moment from "moment";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { IdentifiableRef, Ref } from "../../domain/common/entities/Ref";
-import { DataSource } from "../../domain/instance/entities/DataSource";
+import { DataSource, isDhisInstance } from "../../domain/instance/entities/DataSource";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
     DateFilter,
@@ -43,7 +43,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     private instance: Instance;
 
     constructor(instance: DataSource, private transformationRepository: TransformationRepository) {
-        if (instance.type !== "dhis") {
+        if (!isDhisInstance(instance)) {
             throw new Error("Invalid instance type for MetadataD2ApiRepository");
         }
 
