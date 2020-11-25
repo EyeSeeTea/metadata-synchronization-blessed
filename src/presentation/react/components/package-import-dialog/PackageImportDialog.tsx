@@ -23,6 +23,7 @@ interface PackageImportDialogProps {
     selectedPackagesId?: string[];
     onClose: () => void;
     openSyncSummary?: (result: SyncReport) => void;
+    disablePackageSelection?: boolean;
 }
 
 const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
@@ -31,6 +32,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
     selectedPackagesId,
     onClose,
     openSyncSummary,
+    disablePackageSelection,
 }) => {
     const [enableImport, setEnableImport] = useState(false);
     const snackbar = useSnackbar();
@@ -206,6 +208,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                     onChange={handlePackageImportRuleChange}
                     onCancel={onClose}
                     onClose={onClose}
+                    disablePackageSelection={disablePackageSelection}
                 />
             </DialogContent>
         </ConfirmationDialog>
