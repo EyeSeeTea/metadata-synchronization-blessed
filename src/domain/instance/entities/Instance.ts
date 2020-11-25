@@ -84,7 +84,10 @@ export class Instance {
     }
 
     public validate(filter?: string[]): ValidationError[] {
-        return validateModel<Instance>(this, this.moduleValidations()).filter(
+        const validations =
+            this.type === "local" ? this.localInstanceValidations() : this.moduleValidations();
+
+        return validateModel<Instance>(this, validations).filter(
             ({ property }) => filter?.includes(property) ?? true
         );
     }
@@ -111,6 +114,12 @@ export class Instance {
         { property: "url", validation: "hasText" },
         { property: "username", validation: "hasText" },
         { property: "password", validation: "hasText" },
+    ];
+
+    private localInstanceValidations = (): ModelValidation[] => [
+        { property: "name", validation: "hasText" },
+        { property: "url", validation: "isUrl" },
+        { property: "url", validation: "hasText" },
     ];
 
     public decryptPassword(encryptionKey: string): Instance {
