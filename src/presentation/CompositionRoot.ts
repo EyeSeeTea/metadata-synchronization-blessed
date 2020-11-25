@@ -75,7 +75,7 @@ export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
 
     constructor(public readonly localInstance: Instance, private encryptionKey: string) {
-        this.repositoryFactory = new RepositoryFactory();
+        this.repositoryFactory = new RepositoryFactory(encryptionKey);
         this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
         this.repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreClient);
         this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);

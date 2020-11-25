@@ -5,7 +5,6 @@ import {
 } from "../../../presentation/react/components/mapping-table/utils";
 import { Dictionary } from "../../../types/utils";
 import { NamedRef } from "../../common/entities/Ref";
-
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";

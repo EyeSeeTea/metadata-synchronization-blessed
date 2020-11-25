@@ -26,6 +26,8 @@ import {
 type ClassType = new (...args: any[]) => any;
 
 export class RepositoryFactory {
+    constructor(private encryptionKey: string) {}
+
     private repositories: Map<string, ClassType> = new Map(); // TODO: TS 4.1 `${RepositoryKeys}-${string}`
 
     public bind(repository: RepositoryKeys, implementation: ClassType, tag = "default") {
@@ -68,7 +70,7 @@ export class RepositoryFactory {
     public instanceRepository(instance: Instance) {
         return this.get<InstanceRepositoryConstructor>(Repositories.InstanceRepository, [
             instance,
-            "",
+            this.encryptionKey,
         ]);
     }
 
