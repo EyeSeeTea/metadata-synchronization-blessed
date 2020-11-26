@@ -11,6 +11,18 @@ const variants = [
         file: "metadata-synchronization",
     },
     {
+        type: "app",
+        name: "data-metadata-app",
+        title: "Data/Metadata Exchange",
+        file: "data-metadata-exchange",
+    },
+    {
+        type: "app",
+        name: "module-package-app",
+        title: "Module/Package Generation",
+        file: "module-package-generation",
+    },
+    {
         type: "widget",
         name: "modules-list",
         title: "MetaData Synchronization Modules List Widget",
