@@ -14,13 +14,13 @@ const variants = [
         type: "app",
         name: "data-metadata-app",
         title: "Data/Metadata Exchange",
-        file: "data-metadata-exchange",
+        file: "metadata-synchronization-data-metadata-exchange",
     },
     {
         type: "app",
         name: "module-package-app",
         title: "Module/Package Generation",
-        file: "module-package-generation",
+        file: "metadata-synchronization-module-package-generation",
     },
     {
         type: "widget",
@@ -115,6 +115,7 @@ function build(args: BuildArgs): void {
         Object.assign(process.env, {
             REACT_APP_PRESENTATION_TYPE: variant.type,
             REACT_APP_PRESENTATION_VARIANT: variant.name,
+            REACT_APP_PRESENTATION_TITLE: variant.title,
         });
 
         if (args.verbose) {
@@ -154,6 +155,7 @@ function startServer(args: StartServerArgs): void {
     Object.assign(process.env, {
         REACT_APP_PRESENTATION_TYPE: variant.type,
         REACT_APP_PRESENTATION_VARIANT: variant.name,
+        REACT_APP_PRESENTATION_TITLE: variant.title,
         PORT: args.port,
     });
 

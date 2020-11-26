@@ -10,7 +10,6 @@ import _ from "lodash";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
-import i18n from "../../locales";
 import { MigrationsRunner } from "../../migrations";
 import { D2Api } from "../../types/d2-api";
 import { debug } from "../../utils/debug";
@@ -86,6 +85,8 @@ const App = () => {
     const [migrationsState, setMigrationsState] = useState<MigrationState>({ type: "checking" });
     const [showShareButton, setShowShareButton] = useState(false);
 
+    const appTitle = process.env.REACT_APP_PRESENTATION_TITLE;
+
     useEffect(() => {
         const run = async () => {
             const appConfig = await fetch("app-config.json", {
@@ -129,7 +130,7 @@ const App = () => {
                     <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                         <LoadingProvider>
                             <SnackbarProvider>
-                                <HeaderBar appName={i18n.t("MetaData Synchronization")} />
+                                <HeaderBar appName={appTitle} />
 
                                 <div id="app" className="content">
                                     <AppContext.Provider value={appContext}>
