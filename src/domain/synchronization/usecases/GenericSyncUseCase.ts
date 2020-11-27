@@ -11,7 +11,7 @@ import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { debug } from "../../../utils/debug";
 import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { Repositories, RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { EventsPackage } from "../../events/entities/EventsPackage";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import { FileRepositoryConstructor } from "../../file/FileRepository";
