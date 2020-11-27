@@ -18,6 +18,7 @@ import { DeleteInstanceUseCase } from "../domain/instance/usecases/DeleteInstanc
 import { GetInstanceApiUseCase } from "../domain/instance/usecases/GetInstanceApiUseCase";
 import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceByIdUseCase";
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
+import { GetLocalInstanceUseCase } from "../domain/instance/usecases/GetLocalInstanceUseCase";
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
 import { GetUserGroupsUseCase } from "../domain/instance/usecases/GetUserGroupsUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
@@ -252,6 +253,7 @@ export class CompositionRoot {
     public get instances() {
         return getExecute({
             getApi: new GetInstanceApiUseCase(this.repositoryFactory, this.localInstance),
+            getLocal: new GetLocalInstanceUseCase(this.localInstance),
             list: new ListInstancesUseCase(
                 this.repositoryFactory,
                 this.localInstance,

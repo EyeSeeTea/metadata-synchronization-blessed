@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-11-24T10:33:51.362Z\n"
+"POT-Creation-Date: 2020-11-25T10:47:53.003Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -143,6 +143,15 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+msgid "Cancel"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Save & import"
+msgstr ""
+
 msgid "Identifier"
 msgstr ""
 
@@ -174,9 +183,6 @@ msgid "Create"
 msgstr ""
 
 msgid "Update"
-msgstr ""
-
-msgid "Cancel"
 msgstr ""
 
 msgid "Match string (name, code, description)"
@@ -527,9 +533,6 @@ msgstr ""
 msgid "Removed {{difference}} elements"
 msgstr ""
 
-msgid "Save"
-msgstr ""
-
 msgid "Metadata exclusions"
 msgstr ""
 
@@ -578,7 +581,13 @@ msgstr ""
 msgid "Unknown error happened loading package"
 msgstr ""
 
+msgid "Unknown error happened loading module"
+msgstr ""
+
 msgid "Unknown error happened loading store"
+msgstr ""
+
+msgid "There are not elements to map in the package"
 msgstr ""
 
 msgid "Existing mapping will be used"
