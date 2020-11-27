@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-11-26T11:58:52.696Z\n"
-"PO-Revision-Date: 2020-11-26T11:58:52.696Z\n"
+"POT-Creation-Date: 2020-11-27T10:12:16.920Z\n"
+"PO-Revision-Date: 2020-11-27T10:12:16.920Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -666,6 +666,12 @@ msgid "Not Installed"
 msgstr ""
 
 msgid "Upgrade Available"
+msgstr ""
+
+msgid "Local Package (Installed)"
+msgstr ""
+
+msgid "Local Package (Not Installed)"
 msgstr ""
 
 msgid "Version"
