@@ -143,6 +143,15 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+msgid "Cancel"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Save & import"
+msgstr ""
+
 msgid "Identifier"
 msgstr ""
 
@@ -174,9 +183,6 @@ msgid "Create"
 msgstr ""
 
 msgid "Update"
-msgstr ""
-
-msgid "Cancel"
 msgstr ""
 
 msgid "Match string (name, code, description)"
@@ -527,9 +533,6 @@ msgstr ""
 msgid "Removed {{difference}} elements"
 msgstr ""
 
-msgid "Save"
-msgstr ""
-
 msgid "Metadata exclusions"
 msgstr ""
 
@@ -581,7 +584,13 @@ msgstr "Paquetes"
 msgid "Unknown error happened loading package"
 msgstr ""
 
+msgid "Unknown error happened loading module"
+msgstr ""
+
 msgid "Unknown error happened loading store"
+msgstr ""
+
+msgid "There are not elements to map in the package"
 msgstr ""
 
 msgid "Existing mapping will be used"
@@ -645,6 +654,15 @@ msgstr ""
 msgid "Couldn't create new branch on store"
 msgstr ""
 
+msgid "Generating module"
+msgstr ""
+
+msgid "Module generated successfully"
+msgstr ""
+
+msgid "An error has ocurred generating the module"
+msgstr ""
+
 msgid "Installed"
 msgstr ""
 
@@ -682,6 +700,9 @@ msgid "Import package"
 msgstr ""
 
 msgid "Import package (wizard)"
+msgstr ""
+
+msgid "Generate Module"
 msgstr ""
 
 msgid "Not recommended"
@@ -1707,6 +1728,9 @@ msgid "Action"
 msgstr ""
 
 msgid "Program Rule"
+msgstr ""
+
+msgid "Url"
 msgstr ""
 
 msgid "This URL and username combination already exists"
