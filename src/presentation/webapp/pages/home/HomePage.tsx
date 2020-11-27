@@ -12,7 +12,24 @@ import { useAppContext } from "../../../react/contexts/AppContext";
 import { Card, Landing } from "../../../react/components/landing/Landing";
 import { TestWrapper } from "../../../react/components/test-wrapper/TestWrapper";
 
+export type AppVariant = "core-app" | "data-metadata-app" | "module-package-app";
+
+const appVariantConfiguration: Record<AppVariant, string[]> = {
+    "core-app": [
+        "aggregated",
+        "events",
+        "metadata",
+        "other",
+        "metadata-distribution",
+        "configuration",
+    ],
+    "data-metadata-app": ["aggregated", "events", "metadata", "other", "configuration"],
+    "module-package-app": ["metadata-distribution", "configuration"],
+};
+
 const LandingPage: React.FC = () => {
+    const appVariant = process.env.REACT_APP_PRESENTATION_VARIANT as AppVariant;
+
     const { api, compositionRoot } = useAppContext();
     const history = useHistory();
 
@@ -31,7 +48,7 @@ const LandingPage: React.FC = () => {
         });
     }, [api, compositionRoot]);
 
-    const cards: Card[] = useMemo(
+    const allCards: Card[] = useMemo(
         () => [
             {
                 title: i18n.t("Aggregated Data Sync"),
@@ -212,7 +229,11 @@ const LandingPage: React.FC = () => {
 
     return (
         <TestWrapper>
-            <Landing cards={cards} />
+            <Landing
+                cards={allCards.filter(card =>
+                    appVariantConfiguration[appVariant].includes(card.key)
+                )}
+            />
         </TestWrapper>
     );
 };

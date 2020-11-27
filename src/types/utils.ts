@@ -13,6 +13,12 @@ export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclu
         [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
     }[Keys];
 
+export type ArrayElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<
+    infer ElementType
+>
+    ? ElementType
+    : never;
+
 export function isValueInUnionType<S, T extends S>(value: S, values: readonly T[]): value is T {
     return (values as readonly S[]).indexOf(value) >= 0;
 }

@@ -1,6 +1,6 @@
 import { Icon } from "@material-ui/core";
 import { PaginationOptions } from "d2-ui-components";
-import React, { ReactNode, useCallback, useMemo, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Store } from "../../../../domain/stores/entities/Store";
@@ -15,6 +15,7 @@ import {
 import PackageImportDialog from "../../../react/components/package-import-dialog/PackageImportDialog";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
+import { useAppContext } from "../../../react/contexts/AppContext";
 
 export interface ModulePackageListPageProps {
     remoteInstance?: Instance;
@@ -34,10 +35,20 @@ export const ModulePackageListPage: React.FC = () => {
     const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
     const [addPackageDialogOpen, setAddPackageDialogOpen] = useState(false);
     const [selectedInstance, setSelectedInstance] = useState<Instance | Store>();
+    const [localInstance, setLocalInstance] = useState<Instance>();
     const [resetKey, setResetKey] = useState(Math.random);
+    const [selectedPackagesId, setSelectedPackagesId] = useState<string[]>([]);
+    const [disablePackageSelection, setDisablePackageSelection] = useState<boolean>(false);
+    const { compositionRoot } = useAppContext();
 
     const { list: tableOption = "modules" } = useParams<{ list: ViewOption }>();
     const title = buildTitle(tableOption);
+
+    useEffect(() => {
+        //TODO: when we have local instance  in data store this will not be necessary
+        // because local instance will be selected by dropdown
+        compositionRoot.instances.getLocal().then(setLocalInstance);
+    }, [compositionRoot]);
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -50,6 +61,7 @@ export const ModulePackageListPage: React.FC = () => {
             if (!selectedInstance) {
                 setAddPackageDialogOpen(true);
             } else {
+                setDisablePackageSelection(false);
                 setOpenImportPackageDialog(true);
             }
         }
@@ -86,6 +98,15 @@ export const ModulePackageListPage: React.FC = () => {
         }
     };
 
+    const handleOnImportFromFilePackage = (packageId: string) => {
+        setResetKey(Math.random());
+        setSelectedPackagesId([packageId]);
+        setOpenImportPackageDialog(true);
+        setDisablePackageSelection(true);
+    };
+
+    const instanceInImportDialog = selectedInstance ?? localInstance;
+
     return (
         <React.Fragment>
             <PageHeader title={title} onBackClick={backHome} />
@@ -113,12 +134,14 @@ export const ModulePackageListPage: React.FC = () => {
                 <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
             )}
 
-            {selectedInstance && (
+            {instanceInImportDialog && (
                 <PackageImportDialog
                     isOpen={openImportPackageDialog}
                     onClose={() => setOpenImportPackageDialog(false)}
-                    instance={selectedInstance}
+                    instance={instanceInImportDialog}
+                    selectedPackagesId={selectedPackagesId}
                     openSyncSummary={handleOpenSyncSummaryFromDialog}
+                    disablePackageSelection={disablePackageSelection}
                 />
             )}
 
@@ -126,6 +149,7 @@ export const ModulePackageListPage: React.FC = () => {
                 <CreatePackageFromFileDialog
                     onClose={() => setAddPackageDialogOpen(false)}
                     onSaved={handleCreatedNewPackageFromFile}
+                    onImport={handleOnImportFromFilePackage}
                 />
             )}
         </React.Fragment>
