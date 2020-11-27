@@ -50,7 +50,7 @@ This will open the development server for the main application at port 8081 and 
 ### Customization of the development server:
 
 ```
-$ yarn start -p 8082 modules-list|package-exporter
+$ yarn start -p 8082 core-app|data-metadata-app|module-package-app|modules-list|package-exporter
 ```
 
 This will open the development server for the given front-end at port 8082 and will connect to DHIS 2 instance http://localhost:8080.
@@ -100,7 +100,7 @@ $ yarn build
 To build a given front-end:
 
 ```
-$ yarn build [all|core-app|modules-list|package-exporter]
+$ yarn build [all|core-app|data-metadata-app|module-package-app|modules-list|package-exporter]
 ```
 
 To build the scheduler:
