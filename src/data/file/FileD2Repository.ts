@@ -69,8 +69,12 @@ export class FileD2Repository implements FileRepository {
             fetchOptions
         );
         if (!response.ok) {
+            const responseBody = JSON.parse(await response.text());
+
+            const bodyError = responseBody.message ? `: ${responseBody.message}` : "";
+
             throw Error(
-                `An error has ocurred saving the resource file of the document '${file.name}' in ${this.instance.name}`
+                `An error has ocurred saving the resource file of the document '${file.name}' in ${this.instance.name}${bodyError}`
             );
         } else {
             const apiResponse: SaveApiResponse = JSON.parse(await response.text());
