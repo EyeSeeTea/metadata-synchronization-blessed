@@ -335,6 +335,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             result.match({
                 success: async originPackage => {
                     try {
+                        const currentUser = await api.currentUser
+                            .get({ fields: { id: true, userCredentials: { username: true } } })
+                            .getData();
+
                         loading.show(
                             true,
                             i18n.t("Importing package {{name}}", { name: originPackage.name })
@@ -360,7 +364,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                             originDataSource
                         );
 
-                        const report = SyncReport.create("metadata");
+                        const report = SyncReport.create(
+                            "metadata",
+                            currentUser.userCredentials.username ?? "Unknown",
+                            true
+                        );
+
+                        report.setTypes(_.keys(originPackage.contents));
+
                         report.setStatus(
                             result.status === "ERROR" || result.status === "NETWORK ERROR"
                                 ? "FAILURE"
@@ -375,10 +386,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                         await report.save(api);
 
                         if (result.status === "SUCCESS") {
-                            const currentUser = await api.currentUser
-                                .get({ fields: { id: true, userCredentials: { username: true } } })
-                                .getData();
-
                             const author = {
                                 id: currentUser.id,
                                 name: currentUser.userCredentials.username,

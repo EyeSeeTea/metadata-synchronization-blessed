@@ -7,6 +7,7 @@ export interface SynchronizationReport {
     status: SynchronizationReportStatus;
     types: string[];
     syncRule?: string;
+    packageImport?: boolean;
     deletedSyncRuleLabel?: string;
     type: SynchronizationType;
     dataStats?: AggregatedDataStats[] | EventsDataStats[];
