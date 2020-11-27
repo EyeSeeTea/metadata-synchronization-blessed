@@ -4,7 +4,7 @@ import { HashRouter } from "react-router-dom";
 import { Dictionary } from "../../../types/utils";
 
 function useWidget(): { dashboardItemId: string; userOrgUnits: string[]; widget: string } {
-    const widget = process.env.REACT_APP_DASHBOARD_WIDGET;
+    const widget = process.env.REACT_APP_PRESENTATION_VARIANT;
     if (!widget) {
         throw new Error("Attempting to use useWidget on application");
     }

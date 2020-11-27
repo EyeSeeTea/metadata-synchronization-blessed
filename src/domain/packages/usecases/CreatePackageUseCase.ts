@@ -1,4 +1,3 @@
-import { generateUid } from "d2/uid";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
 import { CompositionRoot } from "../../../presentation/CompositionRoot";
@@ -48,7 +47,6 @@ export class CreatePackageUseCase implements UseCase {
                 .instanceRepository(this.localInstance)
                 .getUser();
             const newPackage = payload.update({
-                id: generateUid(),
                 lastUpdated: new Date(),
                 lastUpdatedBy: user,
                 user: payload.user.id ? payload.user : user,

@@ -1,14 +1,15 @@
 import { useConfig } from "@dhis2/app-runtime";
+//@ts-ignore
 import { HeaderBar } from "@dhis2/ui-widgets";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 import { init } from "d2";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
 import _ from "lodash";
+//@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
-import i18n from "../../locales";
 import { MigrationsRunner } from "../../migrations";
 import { D2Api } from "../../types/d2-api";
 import { debug } from "../../utils/debug";
@@ -26,24 +27,65 @@ const generateClassName = createGenerateClassName({
     productionPrefix: "c",
 });
 
-function initFeedbackTool(d2, appConfig) {
-    const appKey = _(appConfig).get("appKey");
+interface AppConfig {
+    appKey: string;
+    appearance: {
+        showShareButton: boolean;
+    };
+    feedback: {
+        token: string[];
+        createIssue: boolean;
+        sendToDhis2UserGroups: string[];
+        issues: {
+            repository: string;
+            title: string;
+            body: string;
+        };
+        snapshots: {
+            repository: string;
+            branch: string;
+        };
+        feedbackOptions: {};
+    };
+}
 
+interface AppWindow extends Window {
+    $: {
+        feedbackDhis2: (
+            d2: unknown,
+            appKey: string,
+            appConfig: AppConfig["feedback"]["feedbackOptions"]
+        ) => void;
+    };
+}
+
+function initFeedbackTool(d2: unknown, appConfig: AppConfig): void {
+    const appKey = _(appConfig).get("appKey");
     if (appConfig && appConfig.feedback) {
         const feedbackOptions = {
             ...appConfig.feedback,
             i18nPath: "feedback-tool/i18n",
         };
-        if (window.$) window.$.feedbackDhis2(d2, appKey, feedbackOptions);
-        else console.error("Could not initialize feedback tool");
+        ((window as unknown) as AppWindow).$.feedbackDhis2(d2, appKey, feedbackOptions);
     }
 }
 
+type MigrationState =
+    | {
+          type: "checking" | "checked";
+      }
+    | {
+          type: "pending";
+          runner: MigrationsRunner;
+      };
+
 const App = () => {
     const { baseUrl } = useConfig();
-    const [appContext, setAppContext] = useState(null);
-    const [migrationsState, setMigrationsState] = useState({ type: "checking" });
+    const [appContext, setAppContext] = useState<AppContext | null>(null);
+    const [migrationsState, setMigrationsState] = useState<MigrationState>({ type: "checking" });
     const [showShareButton, setShowShareButton] = useState(false);
+
+    const appTitle = process.env.REACT_APP_PRESENTATION_TITLE;
 
     useEffect(() => {
         const run = async () => {
@@ -66,8 +108,7 @@ const App = () => {
 
             const compositionRoot = new CompositionRoot(instance, encryptionKey);
 
-            const appContext = { d2, api, compositionRoot };
-            setAppContext(appContext);
+            setAppContext({ d2: d2 as object, api, compositionRoot });
 
             Object.assign(window, { d2, api });
             setShowShareButton(_(appConfig).get("appearance.showShareButton") || false);
@@ -94,7 +135,7 @@ const App = () => {
                     <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                         <LoadingProvider>
                             <SnackbarProvider>
-                                <HeaderBar appName={i18n.t("MetaData Synchronization")} />
+                                <HeaderBar appName={appTitle} />
 
                                 <div id="app" className="content">
                                     <AppContext.Provider value={appContext}>
@@ -112,7 +153,7 @@ const App = () => {
     } else return null;
 };
 
-async function runMigrations(api) {
+async function runMigrations(api: D2Api): Promise<MigrationState> {
     const runner = await MigrationsRunner.init({ api, debug: debug });
 
     if (runner.hasPendingMigrations()) {

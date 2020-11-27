@@ -14,6 +14,7 @@ import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncU
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { EventsPackage } from "../../events/entities/EventsPackage";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
+import { FileRepositoryConstructor } from "../../file/FileRepository";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
@@ -84,6 +85,14 @@ export abstract class GenericSyncUseCase {
     protected async getMetadataRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
         return this.repositoryFactory.metadataRepository(remoteInstance ?? defaultInstance);
+    }
+
+    @cache()
+    protected async getFileRepository(remoteInstance?: Instance) {
+        const defaultInstance = await this.getOriginInstance();
+        return this.repositoryFactory.get<FileRepositoryConstructor>(Repositories.FileRepository, [
+            remoteInstance ?? defaultInstance,
+        ]);
     }
 
     @cache()

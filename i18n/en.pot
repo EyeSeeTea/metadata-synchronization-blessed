@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-11-25T17:48:23.463Z\n"
-"PO-Revision-Date: 2020-11-25T17:48:23.463Z\n"
+"POT-Creation-Date: 2020-11-27T08:15:04.135Z\n"
+"PO-Revision-Date: 2020-11-27T08:15:04.135Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -146,6 +146,15 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+msgid "Cancel"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Save & import"
+msgstr ""
+
 msgid "Identifier"
 msgstr ""
 
@@ -177,9 +186,6 @@ msgid "Create"
 msgstr ""
 
 msgid "Update"
-msgstr ""
-
-msgid "Cancel"
 msgstr ""
 
 msgid "Match string (name, code, description)"
@@ -529,9 +535,6 @@ msgstr ""
 msgid "Removed {{difference}} elements"
 msgstr ""
 
-msgid "Save"
-msgstr ""
-
 msgid "Metadata exclusions"
 msgstr ""
 
@@ -580,7 +583,13 @@ msgstr ""
 msgid "Unknown error happened loading package"
 msgstr ""
 
+msgid "Unknown error happened loading module"
+msgstr ""
+
 msgid "Unknown error happened loading store"
+msgstr ""
+
+msgid "There are not elements to map in the package"
 msgstr ""
 
 msgid "Existing mapping will be used"
@@ -644,6 +653,15 @@ msgstr ""
 msgid "Couldn't create new branch on store"
 msgstr ""
 
+msgid "Generating module"
+msgstr ""
+
+msgid "Module generated successfully"
+msgstr ""
+
+msgid "An error has ocurred generating the module"
+msgstr ""
+
 msgid "Installed"
 msgstr ""
 
@@ -681,6 +699,9 @@ msgid "Import package"
 msgstr ""
 
 msgid "Import package (wizard)"
+msgstr ""
+
+msgid "Generate Module"
 msgstr ""
 
 msgid "Not recommended"
@@ -1157,9 +1178,6 @@ msgid "Sync all events"
 msgstr ""
 
 msgid "You do not have assigned any organisation unit"
-msgstr ""
-
-msgid "MetaData Synchronization"
 msgstr ""
 
 msgid "Metadata Synchronization History"
@@ -1713,6 +1731,9 @@ msgid "Action"
 msgstr ""
 
 msgid "Program Rule"
+msgstr ""
+
+msgid "Url"
 msgstr ""
 
 msgid "This URL and username combination already exists"
