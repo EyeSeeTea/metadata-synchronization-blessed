@@ -72,6 +72,19 @@ export const organisationUnitsDetails: typeof d2BaseModelDetails = _.map(
     column => _.pick(column, ["name", "text", "getValue"])
 );
 
+export const documentColumns: typeof d2BaseModelColumns = [
+    { name: "displayName", text: i18n.t("Name"), sortable: true },
+    { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
+    { name: "lastUpdated", text: i18n.t("Last updated"), sortable: true },
+    { name: "id", text: i18n.t("ID"), sortable: true, hidden: true },
+    { name: "url", text: i18n.t("Url"), sortable: true, hidden: true },
+    { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
+];
+
+export const documentDetails: typeof d2BaseModelDetails = _.map(documentColumns, column =>
+    _.pick(column, ["name", "text", "getValue"])
+);
+
 export const d2BaseModelFields = {
     id: include,
     name: include,
@@ -159,4 +172,10 @@ export const optionFields = {
         id: include,
         displayName: include,
     },
+};
+
+export const documentFields = {
+    ...d2BaseModelFields,
+    url: include,
+    external: include,
 };
