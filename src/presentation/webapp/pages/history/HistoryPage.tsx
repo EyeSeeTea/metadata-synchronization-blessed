@@ -122,7 +122,7 @@ const HistoryPage: React.FC = () => {
             sortable: true,
             getValue: ({ syncRule: id, deletedSyncRuleLabel, packageImport }) => {
                 return packageImport
-                    ? i18n.t("(package importation)")
+                    ? i18n.t("(package import)")
                     : deletedSyncRuleLabel ??
                           _.find(syncRules, { id })?.name ??
                           i18n.t("(manual synchronization)");
