@@ -335,6 +335,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             result.match({
                 success: async originPackage => {
                     try {
+                        const currentUser = await api.currentUser
+                            .get({ fields: { id: true, userCredentials: { username: true } } })
+                            .getData();
+
                         loading.show(
                             true,
                             i18n.t("Importing package {{name}}", { name: originPackage.name })
@@ -360,7 +364,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                             originDataSource
                         );
 
-                        const report = SyncReport.create("metadata");
+                        const report = SyncReport.create(
+                            "metadata",
+                            currentUser.userCredentials.username ?? "Unknown",
+                            true
+                        );
+
+                        report.setTypes(_.keys(originPackage.contents));
+
                         report.setStatus(
                             result.status === "ERROR" || result.status === "NETWORK ERROR"
                                 ? "FAILURE"
@@ -375,10 +386,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                         await report.save(api);
 
                         if (result.status === "SUCCESS") {
-                            const currentUser = await api.currentUser
-                                .get({ fields: { id: true, userCredentials: { username: true } } })
-                                .getData();
-
                             const author = {
                                 id: currentUser.id,
                                 name: currentUser.userCredentials.username,
@@ -417,7 +424,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         ]
     );
 
-    const getInstallStatusText = (installStatus: InstallStatus) => {
+    const getInstallStatusText = (installStatus: InstallStatus): string => {
         switch (installStatus) {
             case "Installed":
                 return i18n.t("Installed");
@@ -425,6 +432,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 return i18n.t("Not Installed");
             case "Upgrade":
                 return i18n.t("Upgrade Available");
+            case "InstalledLocalPackage":
+                return i18n.t("Local Package (Installed)");
+            case "NotInstalledLocalPackage":
+                return i18n.t("Local Package (Not Installed)");
         }
     };
 
@@ -731,7 +742,9 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         compositionRoot.packages
             .list(globalAdmin, remoteInstance)
             .then(packages => {
-                setInstancePackages(mapPackagesToPackageItems(packages, importedPackages));
+                setInstancePackages(
+                    mapPackagesToPackageItems(modules, packages, importedPackages, packageSource)
+                );
             })
             .catch((error: Error) => {
                 snackbar.error(error.message);
@@ -745,6 +758,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         globalAdmin,
         importedPackages,
         remoteStore,
+        modules,
+        packageSource,
     ]);
 
     useEffect(() => {
@@ -753,7 +768,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             compositionRoot.packages.listStore(remoteStore.id).then(validation => {
                 validation.match({
                     success: packages => {
-                        setStorePackages(mapPackagesToPackageItems(packages, importedPackages));
+                        setStorePackages(
+                            mapPackagesToPackageItems(
+                                modules,
+                                packages,
+                                importedPackages,
+                                packageSource
+                            )
+                        );
                     },
                     error: () => {
                         snackbar.error(i18n.t("Can't connect to store"));
@@ -764,7 +786,16 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         } else {
             setStorePackages([]);
         }
-    }, [compositionRoot, snackbar, remoteStore, importedPackages, remoteInstance, resetKey]);
+    }, [
+        compositionRoot,
+        snackbar,
+        remoteStore,
+        importedPackages,
+        remoteInstance,
+        resetKey,
+        modules,
+        packageSource,
+    ]);
 
     useEffect(() => {
         compositionRoot.importedPackages.list().then(result =>
@@ -842,39 +873,64 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 };
 
 function mapPackagesToPackageItems(
+    modules: Module[],
     packages: ListPackage[],
-    importedPackages: ImportedPackage[]
+    importedPackages: ImportedPackage[],
+    packageSource?: PackageSource
 ): PackageItem[] {
-    const listPackages = packages.map(pkg => {
-        const installed = importedPackages.some(imported => {
-            return (
+    const verifyIfPackageIsImported = (pkg: ListPackage) => {
+        return importedPackages.some(
+            imported =>
                 imported.module.id === pkg.module.id &&
                 imported.version === pkg.version &&
                 imported.dhisVersion === pkg.dhisVersion
-            );
+        );
+    };
+
+    if (packageSource) {
+        const listPackages = packages.map(pkg => {
+            const installed = verifyIfPackageIsImported(pkg);
+
+            const newUpdates = importedPackages.some(imported => {
+                const importedVersion = semver.parse(imported.version);
+                const packageVersion = semver.parse(pkg.version);
+
+                return (
+                    imported.module.id === pkg.module.id &&
+                    importedVersion &&
+                    packageVersion &&
+                    imported.dhisVersion === pkg.dhisVersion &&
+                    importedVersion < packageVersion
+                );
+            });
+
+            const installStatus: InstallStatus = installed
+                ? "Installed"
+                : newUpdates
+                ? "Upgrade"
+                : "NotInstalled";
+
+            return { ...pkg, installStatus };
         });
 
-        const newUpdates = importedPackages.some(imported => {
-            const importedVersion = semver.parse(imported.version);
-            const packageVersion = semver.parse(pkg.version);
+        return listPackages;
+    } else {
+        const listPackages = packages.map(pkg => {
+            const isPackageImported = verifyIfPackageIsImported(pkg);
 
-            return (
-                imported.module.id === pkg.module.id &&
-                importedVersion &&
-                packageVersion &&
-                imported.dhisVersion === pkg.dhisVersion &&
-                importedVersion < packageVersion
-            );
+            const module = modules.find(module => module.id === pkg.module.id);
+
+            const isPackageFromFile = module && module.autogenerated;
+
+            const installed = !isPackageFromFile || (isPackageFromFile && isPackageImported);
+
+            const installStatus: InstallStatus = installed
+                ? "InstalledLocalPackage"
+                : "NotInstalledLocalPackage";
+
+            return { ...pkg, installStatus };
         });
 
-        const installStatus: InstallStatus = installed
-            ? "Installed"
-            : newUpdates
-            ? "Upgrade"
-            : "NotInstalled";
-
-        return { ...pkg, installStatus };
-    });
-
-    return listPackages;
+        return listPackages;
+    }
 }
