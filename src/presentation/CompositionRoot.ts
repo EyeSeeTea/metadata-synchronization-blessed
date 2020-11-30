@@ -1,5 +1,6 @@
 import { AggregatedD2ApiRepository } from "../data/aggregated/AggregatedD2ApiRepository";
 import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
+import { FileD2Repository } from "../data/file/FileD2Repository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
 import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
@@ -17,6 +18,7 @@ import { DeleteInstanceUseCase } from "../domain/instance/usecases/DeleteInstanc
 import { GetInstanceApiUseCase } from "../domain/instance/usecases/GetInstanceApiUseCase";
 import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceByIdUseCase";
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
+import { GetLocalInstanceUseCase } from "../domain/instance/usecases/GetLocalInstanceUseCase";
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
 import { GetUserGroupsUseCase } from "../domain/instance/usecases/GetUserGroupsUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
@@ -83,6 +85,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
         this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.FileRepository, FileD2Repository);
         this.repositoryFactory.bind(
             Repositories.MetadataRepository,
             MetadataJSONRepository,
@@ -250,6 +253,7 @@ export class CompositionRoot {
     public get instances() {
         return getExecute({
             getApi: new GetInstanceApiUseCase(this.repositoryFactory, this.localInstance),
+            getLocal: new GetLocalInstanceUseCase(this.localInstance),
             list: new ListInstancesUseCase(
                 this.repositoryFactory,
                 this.localInstance,

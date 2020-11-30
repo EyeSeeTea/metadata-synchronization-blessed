@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-11-16T06:06:52.782Z\n"
+"POT-Creation-Date: 2020-11-30T08:20:56.222Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -143,6 +143,15 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+msgid "Cancel"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Save & import"
+msgstr ""
+
 msgid "Identifier"
 msgstr ""
 
@@ -174,9 +183,6 @@ msgid "Create"
 msgstr ""
 
 msgid "Update"
-msgstr ""
-
-msgid "Cancel"
 msgstr ""
 
 msgid "Match string (name, code, description)"
@@ -527,9 +533,6 @@ msgstr ""
 msgid "Removed {{difference}} elements"
 msgstr ""
 
-msgid "Save"
-msgstr ""
-
 msgid "Metadata exclusions"
 msgstr ""
 
@@ -578,7 +581,13 @@ msgstr ""
 msgid "Unknown error happened loading package"
 msgstr ""
 
+msgid "Unknown error happened loading module"
+msgstr ""
+
 msgid "Unknown error happened loading store"
+msgstr ""
+
+msgid "There are not elements to map in the package"
 msgstr ""
 
 msgid "Existing mapping will be used"
@@ -642,6 +651,15 @@ msgstr ""
 msgid "Couldn't create new branch on store"
 msgstr ""
 
+msgid "Generating module"
+msgstr ""
+
+msgid "Module generated successfully"
+msgstr ""
+
+msgid "An error has ocurred generating the module"
+msgstr ""
+
 msgid "Installed"
 msgstr ""
 
@@ -651,16 +669,22 @@ msgstr ""
 msgid "Upgrade Available"
 msgstr ""
 
+msgid "Local Package (Installed)"
+msgstr ""
+
+msgid "Local Package (Not Installed)"
+msgstr ""
+
 msgid "Version"
 msgstr ""
 
 msgid "DHIS2 Version"
 msgstr ""
 
-msgid "Module"
+msgid "Status"
 msgstr ""
 
-msgid "State"
+msgid "Module"
 msgstr ""
 
 msgid "Download as JSON"
@@ -679,6 +703,9 @@ msgid "Import package"
 msgstr ""
 
 msgid "Import package (wizard)"
+msgstr ""
+
+msgid "Generate Module"
 msgstr ""
 
 msgid "Not recommended"
@@ -892,9 +919,6 @@ msgid "Origin package"
 msgstr ""
 
 msgid "Destination instance"
-msgstr ""
-
-msgid "Status"
 msgstr ""
 
 msgid "Messages"
@@ -1156,9 +1180,6 @@ msgstr ""
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
-msgid "MetaData Synchronization"
-msgstr ""
-
 msgid "Metadata Synchronization History"
 msgstr ""
 
@@ -1184,6 +1205,9 @@ msgid "Done"
 msgstr ""
 
 msgid "Sync Rule"
+msgstr ""
+
+msgid "(package import)"
 msgstr ""
 
 msgid "(manual synchronization)"
@@ -1710,6 +1734,9 @@ msgid "Action"
 msgstr ""
 
 msgid "Program Rule"
+msgstr ""
+
+msgid "Url"
 msgstr ""
 
 msgid "This URL and username combination already exists"

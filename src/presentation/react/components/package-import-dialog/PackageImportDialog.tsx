@@ -1,5 +1,6 @@
 import DialogContent from "@material-ui/core/DialogContent";
 import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Either } from "../../../../domain/common/entities/Either";
 import { NamedRef } from "../../../../domain/common/entities/Ref";
@@ -23,6 +24,7 @@ interface PackageImportDialogProps {
     selectedPackagesId?: string[];
     onClose: () => void;
     openSyncSummary?: (result: SyncReport) => void;
+    disablePackageSelection?: boolean;
 }
 
 const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
@@ -31,6 +33,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
     selectedPackagesId,
     onClose,
     openSyncSummary,
+    disablePackageSelection,
 }) => {
     const [enableImport, setEnableImport] = useState(false);
     const snackbar = useSnackbar();
@@ -92,14 +95,20 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
         //    3 - Save Result (using ResultRepository)
         //    4 - Save ImportedPackage (using ImportedPackageRepository)
         const importedPackages: Package[] = [];
-        const report = SyncReport.create("metadata");
+
+        const currentUser = await api.currentUser
+            .get({ fields: { id: true, userCredentials: { username: true } } })
+            .getData();
+
+        const report = SyncReport.create(
+            "metadata",
+            currentUser.userCredentials.username ?? "Unknown",
+            true
+        );
+
         const storePackageUrls: Record<string, string> = {};
 
         try {
-            const currentUser = await api.currentUser
-                .get({ fields: { id: true, userCredentials: { username: true } } })
-                .getData();
-
             const author = { id: currentUser.id, name: currentUser.userCredentials.username };
 
             const executePackageImport = async (packageId: string) => {
@@ -116,11 +125,17 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                             storePackageUrls[originPackage.id] = packageId;
                         }
 
-                        const mapping = await compositionRoot.mapping.get({
-                            type: isInstance(packageImportRule.source) ? "instance" : "store",
-                            id: packageImportRule.source.id,
-                            moduleId: originPackage.module.id,
-                        });
+                        const temporalPackageMapping = packageImportRule.temporalPackageMappings.find(
+                            mappingTemp => mappingTemp.owner.id === packageId
+                        );
+
+                        const mapping = temporalPackageMapping
+                            ? temporalPackageMapping
+                            : await compositionRoot.mapping.get({
+                                  type: isInstance(packageImportRule.source) ? "instance" : "store",
+                                  id: packageImportRule.source.id,
+                                  moduleId: originPackage.module.id,
+                              });
 
                         const originInstance = isInstance(packageImportRule.source)
                             ? await compositionRoot.instances.getById(packageImportRule.source.id)
@@ -134,6 +149,10 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                             originPackage,
                             mapping?.mappingDictionary,
                             originDataSource
+                        );
+
+                        report.setTypes(
+                            _.uniq([...report.syncReport.types, ..._.keys(originPackage.contents)])
                         );
 
                         report.setStatus(
@@ -206,6 +225,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                     onChange={handlePackageImportRuleChange}
                     onCancel={onClose}
                     onClose={onClose}
+                    disablePackageSelection={disablePackageSelection}
                 />
             </DialogContent>
         </ConfirmationDialog>

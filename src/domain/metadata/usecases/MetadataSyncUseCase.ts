@@ -9,7 +9,7 @@ import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
-import { MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
+import { MetadataEntities, MetadataPackage, Document } from "../entities/MetadataEntities";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
@@ -129,9 +129,15 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const { syncParams } = this.builder;
 
         const payloadPackage = await this.buildPayload();
+
+        const payloadWithDocumentFiles = await this.createDocumentFilesInRemote(
+            instance,
+            payloadPackage
+        );
+
         const mappedPayloadPackage = syncParams?.enableMapping
-            ? await this.mapPayload(instance, payloadPackage)
-            : payloadPackage;
+            ? await this.mapPayload(instance, payloadWithDocumentFiles)
+            : payloadWithDocumentFiles;
 
         debug("Metadata package", { payloadPackage, mappedPayloadPackage });
 
@@ -164,5 +170,30 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         );
 
         return mapper.applyMapping(payload);
+    }
+
+    public async createDocumentFilesInRemote(
+        instance: Instance,
+        payload: MetadataPackage
+    ): Promise<MetadataPackage> {
+        const documents = payload.documents as Document[] | undefined;
+
+        if (documents) {
+            const newDocuments = await promiseMap(documents, async (document: Document) => {
+                if (!document.external) {
+                    const fileRepository = await this.getFileRepository();
+                    const file = await fileRepository.getById(document.id);
+                    const fileRemoteRepository = await this.getFileRepository(instance);
+                    const fileId = await fileRemoteRepository.save(file);
+                    return { ...document, url: fileId };
+                } else {
+                    return document;
+                }
+            });
+
+            return { ...payload, documents: newDocuments };
+        } else {
+            return payload;
+        }
     }
 }

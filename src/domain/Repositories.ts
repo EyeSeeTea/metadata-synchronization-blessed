@@ -7,4 +7,5 @@ export const Repositories = {
     EventsRepository: "eventsRepository",
     MetadataRepository: "metadataRepository",
     TransformationRepository: "transformationsRepository",
+    FileRepository: "fileRepository",
 };
