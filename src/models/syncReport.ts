@@ -43,16 +43,22 @@ export default class SyncReport {
                 "deletedSyncRuleLabel",
                 "type",
                 "dataStats",
+                "packageImport",
             ]),
         };
     }
 
-    public static create(type: SynchronizationType = "metadata"): SyncReport {
+    public static create(
+        type: SynchronizationType = "metadata",
+        user = "",
+        packageImport?: boolean
+    ): SyncReport {
         return new SyncReport({
-            user: "",
+            user,
             status: "READY" as SynchronizationReportStatus,
             types: [],
             type,
+            packageImport,
         });
     }
 
@@ -110,6 +116,10 @@ export default class SyncReport {
 
     public setStatus(status: SynchronizationReportStatus): void {
         this.syncReport.status = status;
+    }
+
+    public setTypes(types: string[]): void {
+        this.syncReport.types = types;
     }
 
     public addSyncResult(...result: SynchronizationResult[]): void {

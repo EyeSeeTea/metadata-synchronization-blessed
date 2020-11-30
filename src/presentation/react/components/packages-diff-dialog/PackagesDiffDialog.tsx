@@ -103,7 +103,9 @@ export const MetadataDiffTable: React.FC<{
             {_.map(metadataDiff, (modelDiff, model) => (
                 <li key={model}>
                     <h3 className={classes.modelTitle}>{model}</h3>: {modelDiff.total}{" "}
-                    {i18n.t("objects")} ({i18n.t("Unmodified")}: {modelDiff.unmodified.length})
+                    {i18n.t("objects")} ({i18n.t("Unmodified")}: {modelDiff.unmodified.length},{" "}
+                    {i18n.t("New")}: {modelDiff.created.length}, {i18n.t("Updated")}:{" "}
+                    {modelDiff.updates.length})
                     <ModelDiffList modelDiff={modelDiff} />
                 </li>
             ))}
@@ -123,7 +125,7 @@ export const ModelDiffList: React.FC<{ modelDiff: ModelDiff }> = props => {
                         {i18n.t("New")}: {diff.created.length}
                     </span>
 
-                    <List items={diff.created.map(obj => `[${obj.id}] ${obj.name}`)} />
+                    <List items={diff.created.map(obj => `${obj.name} (${obj.id})`)} />
                 </li>
             )}
 

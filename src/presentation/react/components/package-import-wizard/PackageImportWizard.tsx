@@ -47,17 +47,27 @@ export const stepsBaseInfo = [
     },
 ];
 
+const stepsRelatedToPackageSelection = ["instance-playstore", "packages"];
+
 export interface PackageImportWizardProps {
     packageImportRule: PackageImportRule;
     onChange: (packageImportRule: PackageImportRule) => void;
     onCancel: () => void;
     onClose: () => void;
+    disablePackageSelection?: boolean;
 }
 
 export const PackageImportWizard: React.FC<PackageImportWizardProps> = props => {
     const location = useLocation();
 
-    const steps = stepsBaseInfo.map(step => ({ ...step, props }));
+    const steps = stepsBaseInfo
+        .filter(
+            step =>
+                !props.disablePackageSelection ||
+                (props.disablePackageSelection &&
+                    !stepsRelatedToPackageSelection.includes(step.key))
+        )
+        .map(step => ({ ...step, props }));
 
     const onStepChangeRequest = async (_currentStep: WizardStep, newStep: WizardStep) => {
         const index = _(steps).findIndex(step => step.key === newStep.key);

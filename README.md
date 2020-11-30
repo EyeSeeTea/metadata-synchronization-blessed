@@ -47,13 +47,13 @@ $ yarn start
 
 This will open the development server for the main application at port 8081 and will connect to DHIS 2 instance http://localhost:8080.
 
-### Start the development server of a given widget:
+### Customization of the development server:
 
 ```
-$ yarn start-widget -p 8082 modules-list|package-exporter
+$ yarn start -p 8082 core-app|data-metadata-app|module-package-app|modules-list|package-exporter
 ```
 
-This will open the development server for the given widget at port 8082 and will connect to DHIS 2 instance http://localhost:8080.
+This will open the development server for the given front-end at port 8082 and will connect to DHIS 2 instance http://localhost:8080.
 
 ### Customize DHIS2 instance url
 
@@ -91,16 +91,16 @@ Note tests only pass on the testing docker instance eyeseetea/dhis2-data:2.30-da
 
 ## Build
 
-To build the web app:
+To build all the front-ends:
 
 ```
-$ yarn build-webapp
+$ yarn build
 ```
 
-To build the widget:
+To build a given front-end:
 
 ```
-$ yarn build-widget modules-list|package-exporter
+$ yarn build [all|core-app|data-metadata-app|module-package-app|modules-list|package-exporter]
 ```
 
 To build the scheduler:
