@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-11-26T11:58:52.696Z\n"
-"PO-Revision-Date: 2020-11-26T11:58:52.696Z\n"
+"POT-Creation-Date: 2020-11-30T08:20:56.222Z\n"
+"PO-Revision-Date: 2020-11-30T08:20:56.222Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -668,6 +668,12 @@ msgstr ""
 msgid "Upgrade Available"
 msgstr ""
 
+msgid "Local Package (Installed)"
+msgstr ""
+
+msgid "Local Package (Not Installed)"
+msgstr ""
+
 msgid "Version"
 msgstr ""
 
@@ -1196,6 +1202,9 @@ msgid "Done"
 msgstr ""
 
 msgid "Sync Rule"
+msgstr ""
+
+msgid "(package import)"
 msgstr ""
 
 msgid "(manual synchronization)"
