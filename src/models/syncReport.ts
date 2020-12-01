@@ -10,6 +10,7 @@ import { SynchronizationResult } from "../domain/synchronization/entities/Synchr
 import { SynchronizationType } from "../domain/synchronization/entities/SynchronizationType";
 import { D2Api } from "../types/d2-api";
 import { SyncReportTableFilters } from "../types/d2-ui-components";
+import { PartialBy } from "../types/utils";
 import {
     deleteData,
     deleteDataStore,
@@ -22,13 +23,11 @@ import {
 
 const dataStoreKey = Namespace.HISTORY;
 
-type Optional<T, K extends keyof T> = Omit<T, K> & { [P in Extract<keyof T, K>]?: T[P] };
-
 export default class SyncReport {
     private results: SynchronizationResult[] | null;
     public readonly syncReport: SynchronizationReport;
 
-    constructor(syncReport: Optional<SynchronizationReport, "id">) {
+    constructor(syncReport: PartialBy<SynchronizationReport, "id">) {
         this.results = null;
         this.syncReport = {
             id: generateUid(),
@@ -62,7 +61,7 @@ export default class SyncReport {
         });
     }
 
-    public static build(syncReport?: Optional<SynchronizationReport, "id">): SyncReport {
+    public static build(syncReport?: PartialBy<SynchronizationReport, "id">): SyncReport {
         return syncReport ? new SyncReport(syncReport) : this.create();
     }
 
