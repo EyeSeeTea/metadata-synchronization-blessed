@@ -26,6 +26,7 @@ const MetadataDropZone: React.FC<MetadataDropZoneProps> = ({ onChange }) => {
         const contentsFile = await file.text();
         const contentsJson = JSON.parse(contentsFile);
         delete contentsJson.date;
+        delete contentsJson.package;
 
         onChange(file.name, contentsJson as MetadataPackage);
         setFile(file);

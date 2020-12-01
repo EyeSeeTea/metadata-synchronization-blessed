@@ -10,7 +10,12 @@ export interface ModuleItem {
     packages: PackageItem[];
 }
 
-export type InstallStatus = "Installed" | "NotInstalled" | "Upgrade";
+export type InstallStatus =
+    | "Installed"
+    | "NotInstalled"
+    | "Upgrade"
+    | "InstalledLocalPackage"
+    | "NotInstalledLocalPackage";
 export type PackageItem = Omit<BasePackage, "contents"> & { installStatus: InstallStatus };
 
 export const isPackageItem = (item: PackageModuleItem): item is PackageItem => {

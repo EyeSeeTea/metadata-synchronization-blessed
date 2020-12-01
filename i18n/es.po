@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-11-27T08:15:04.135Z\n"
+"POT-Creation-Date: 2020-12-01T09:53:24.942Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -675,6 +675,12 @@ msgstr ""
 msgid "Upgrade Available"
 msgstr ""
 
+msgid "Local Package (Installed)"
+msgstr ""
+
+msgid "Local Package (Not Installed)"
+msgstr ""
+
 msgid "Version"
 msgstr ""
 
@@ -1212,6 +1218,10 @@ msgstr ""
 
 msgid "Sync Rule"
 msgstr ""
+
+#, fuzzy
+msgid "(package import)"
+msgstr "Paquetes"
 
 msgid "(manual synchronization)"
 msgstr ""
