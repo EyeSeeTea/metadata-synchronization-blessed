@@ -16,18 +16,17 @@ import {
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { SynchronizationReport } from "../../../../domain/synchronization/entities/SynchronizationReport";
+import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../domain/synchronization/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
-import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
 import { getValueForCollection } from "../../../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../../../utils/permissions";
-import { useAppContext } from "../../../react/contexts/AppContext";
 import Dropdown from "../../../react/components/dropdown/Dropdown";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import SyncSummary, { formatStatusTag } from "../../../react/components/sync-summary/SyncSummary";
+import { useAppContext } from "../../../react/contexts/AppContext";
 
 const config = {
     metadata: {
@@ -77,7 +76,7 @@ const HistoryPage: React.FC = () => {
     const { title } = config[type];
 
     const [syncRules, setSyncRules] = useState<SynchronizationRule[]>([]);
-    const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
+    const [syncReport, setSyncReport] = useState<SynchronizationReport | null>(null);
     const [toDelete, setToDelete] = useState<string[]>([]);
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [response, updateResponse] = useState<{
@@ -93,21 +92,24 @@ const HistoryPage: React.FC = () => {
 
     const updateTable = useCallback(
         (tableState?: TableState<SynchronizationReport>) => {
-            SyncReport.list(
+            // TODO: Add use-case
+            /**SyncReport.list(
                 api,
                 { type, statusFilter, syncRuleFilter },
                 tableState ?? initialState
-            ).then(updateResponse);
+            ).then(updateResponse);**/
+            updateResponse({ rows: [], pager: {} });
             updateSelection(oldSelection => tableState?.selection ?? oldSelection);
         },
-        [api, statusFilter, syncRuleFilter, type, updateSelection]
+        [statusFilter, syncRuleFilter, type, updateSelection]
     );
 
     useEffect(() => {
         SyncRule.list(api, { type }, { paging: false }).then(({ objects }) =>
             setSyncRules(objects)
         );
-        if (id) SyncReport.get(api, id).then(setSyncReport);
+        // TODO: Add use-case
+        //if (id) SyncReport.get(api, id).then(setSyncReport);
         isAppConfigurator(api).then(setAppConfigurator);
     }, [api, id, type]);
 
@@ -181,7 +183,7 @@ const HistoryPage: React.FC = () => {
         if (!id) return;
 
         const item = _.find(response.rows, ["id", id]);
-        if (item) setSyncReport(SyncReport.build(item));
+        if (item) setSyncReport(SynchronizationReport.build(item));
     };
 
     const actions: TableAction<SynchronizationReport>[] = [
@@ -213,12 +215,14 @@ const HistoryPage: React.FC = () => {
         const notifications = _(toDelete)
             .map(id => _.find(response.rows, ["id", id]))
             .compact()
-            .map(data => new SyncReport(data))
+            .map(data => SynchronizationReport.build(data))
             .value();
 
-        const results = [];
+        const results: any[] = [];
         for (const notification of notifications) {
-            results.push(await notification.remove(api));
+            // TODO: Add use-case
+            //results.push(await notification.remove(api));
+            console.log(notification, results);
         }
 
         loading.reset();

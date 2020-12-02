@@ -5,7 +5,7 @@ import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
-import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { Package } from "../entities/Package";
 
 export class ImportPackageUseCase implements UseCase {

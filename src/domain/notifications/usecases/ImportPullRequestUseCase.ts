@@ -5,7 +5,7 @@ import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
-import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { AppNotification } from "../entities/Notification";
 import {
     PullRequestStatus,

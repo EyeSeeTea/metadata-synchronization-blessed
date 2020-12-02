@@ -22,14 +22,14 @@ import { Package } from "../../../../domain/packages/entities/Package";
 import i18n from "../../../../locales";
 import { promiseMap } from "../../../../utils/common";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../../../../utils/permissions";
+import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
+import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import {
     PullRequestCreation,
     PullRequestCreationDialog,
 } from "../pull-request-creation-dialog/PullRequestCreationDialog";
 import { SharingDialog } from "../sharing-dialog/SharingDialog";
-import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
-import { useAppContext } from "../../contexts/AppContext";
 import { NewPackageDialog } from "./NewPackageDialog";
 import { getValidationsByVersionFeedback } from "./utils";
 
@@ -168,7 +168,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 const synchronize = async () => {
                     for await (const { message, syncReport, done } of sync.execute()) {
                         if (message) loading.show(true, message);
-                        if (syncReport) await syncReport.save(api);
+                        if (syncReport) await compositionRoot.reports.save(syncReport);
                         if (done) {
                             openSyncSummary(syncReport);
                             return;
@@ -219,7 +219,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 loading.reset();
             }
         },
-        [compositionRoot, openSyncSummary, remoteInstance, loading, rows, snackbar, api]
+        [compositionRoot, openSyncSummary, remoteInstance, loading, rows, snackbar]
     );
 
     const replicateModule = useCallback(

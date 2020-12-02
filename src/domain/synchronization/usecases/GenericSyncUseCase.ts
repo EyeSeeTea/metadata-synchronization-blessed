@@ -2,7 +2,6 @@ import { D2Api } from "d2-api/2.30";
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import i18n from "../../../locales";
-import SyncReport from "../../../models/syncReport";
 import SyncRule from "../../../models/syncRule";
 import { SynchronizationBuilder } from "../../../types/synchronization";
 import { cache } from "../../../utils/cache";
@@ -23,9 +22,13 @@ import { MetadataSyncUseCase } from "../../metadata/usecases/MetadataSyncUseCase
 import {
     AggregatedDataStats,
     EventsDataStats,
+    SynchronizationReport,
     SynchronizationReportStatus,
-} from "../entities/SynchronizationReport";
-import { SynchronizationResult, SynchronizationStatus } from "../entities/SynchronizationResult";
+} from "../../reports/entities/SynchronizationReport";
+import {
+    SynchronizationResult,
+    SynchronizationStatus,
+} from "../../reports/entities/SynchronizationResult";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
 export type SyncronizationClass =
@@ -156,7 +159,7 @@ export abstract class GenericSyncUseCase {
             .get({ fields: { userCredentials: { username: true } } })
             .getData();
 
-        return SyncReport.build({
+        return SynchronizationReport.build({
             user: currentUser.userCredentials.username ?? "Unknown",
             types: _.keys(metadataPackage),
             status: "RUNNING" as SynchronizationReportStatus,

@@ -61,6 +61,7 @@ import { ImportPackageUseCase } from "../domain/packages/usecases/ImportPackageU
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
+import { SaveSyncReportUseCase } from "../domain/reports/usecases/SaveSyncReportUseCase";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { DeleteStoreUseCase } from "../domain/stores/usecases/DeleteStoreUseCase";
 import { GetStoreUseCase } from "../domain/stores/usecases/GetStoreUseCase";
@@ -297,6 +298,13 @@ export class CompositionRoot {
             getValidIds: new GetValidMappingIdUseCase(this.repositoryFactory, this.localInstance),
             autoMap: new AutoMapUseCase(this.repositoryFactory, this.localInstance),
             buildMapping: new BuildMappingUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get reports() {
+        return getExecute({
+            save: new SaveSyncReportUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }

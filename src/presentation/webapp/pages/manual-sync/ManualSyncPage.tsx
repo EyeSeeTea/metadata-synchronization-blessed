@@ -9,6 +9,8 @@ import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { Store } from "../../../../domain/stores/entities/Store";
+import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import { D2Model } from "../../../../models/dhis/default";
@@ -21,14 +23,12 @@ import {
     IndicatorMappedModel,
 } from "../../../../models/dhis/mapping";
 import { DataElementGroupModel, DataElementGroupSetModel } from "../../../../models/dhis/metadata";
-import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
 import { Ref } from "../../../../types/d2-api";
 import { MetadataType } from "../../../../utils/d2";
 import { isAppConfigurator } from "../../../../utils/permissions";
-import { InstanceSelectionOption } from "../../../react/components/instance-selection-dropdown/InstanceSelectionDropdown";
-import { useAppContext } from "../../../react/contexts/AppContext";
 import DeletedObjectsTable from "../../../react/components/delete-objects-table/DeletedObjectsTable";
+import { InstanceSelectionOption } from "../../../react/components/instance-selection-dropdown/InstanceSelectionDropdown";
 import MetadataTable from "../../../react/components/metadata-table/MetadataTable";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import {
@@ -38,8 +38,8 @@ import {
 import SyncDialog from "../../../react/components/sync-dialog/SyncDialog";
 import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../../react/components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../react/contexts/AppContext";
 import InstancesSelectors from "./InstancesSelectors";
-import { Store } from "../../../../domain/stores/entities/Store";
 
 const config: Record<
     SynchronizationType,
@@ -87,7 +87,7 @@ const ManualSyncPage: React.FC = () => {
 
     const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand(type));
     const [appConfigurator, updateAppConfigurator] = useState(false);
-    const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
+    const [syncReport, setSyncReport] = useState<SynchronizationReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
     const [sourceInstance, setSourceInstance] = useState<Instance>();
     const [destinationInstance, setDestinationInstanceBase] = useState<Ref>();
@@ -139,7 +139,7 @@ const ManualSyncPage: React.FC = () => {
         }
     };
 
-    const finishSynchronization = (importResponse?: SyncReport) => {
+    const finishSynchronization = (importResponse?: SynchronizationReport) => {
         setSyncDialogOpen(false);
 
         if (importResponse) {
@@ -174,7 +174,8 @@ const ManualSyncPage: React.FC = () => {
         const synchronize = async () => {
             for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) loading.show(true, message);
-                if (syncReport) await syncReport.save(api);
+                // TODO: Use-case
+                //if (syncReport) await syncReport.save(api);
                 if (done) {
                     finishSynchronization(syncReport);
                     return;

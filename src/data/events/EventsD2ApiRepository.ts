@@ -7,7 +7,7 @@ import { Instance } from "../../domain/instance/entities/Instance";
 import {
     SynchronizationResult,
     SynchronizationStats,
-} from "../../domain/synchronization/entities/SynchronizationResult";
+} from "../../domain/reports/entities/SynchronizationResult";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { DataImportParams } from "../../types/d2";
 import { D2Api, Pager } from "../../types/d2-api";

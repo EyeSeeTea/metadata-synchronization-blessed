@@ -23,17 +23,17 @@ import { AppNotification } from "../../../../domain/notifications/entities/Notif
 import { CancelPullRequestError } from "../../../../domain/notifications/usecases/CancelPullRequestUseCase";
 import { ImportPullRequestError } from "../../../../domain/notifications/usecases/ImportPullRequestUseCase";
 import { UpdatePullRequestStatusError } from "../../../../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
-import { SynchronizationResult } from "../../../../domain/synchronization/entities/SynchronizationResult";
+import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
+import { SynchronizationResult } from "../../../../domain/reports/entities/SynchronizationResult";
 import i18n from "../../../../locales";
-import SyncReport from "../../../../models/syncReport";
-import { useAppContext } from "../../../react/contexts/AppContext";
 import Dropdown from "../../../react/components/dropdown/Dropdown";
 import { NotificationViewerDialog } from "../../../react/components/notification-viewer-dialog/NotificationViewerDialog";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
+import { useAppContext } from "../../../react/contexts/AppContext";
 
 export const NotificationsListPage: React.FC = () => {
-    const { api, compositionRoot } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const history = useHistory();
     const snackbar = useSnackbar();
     const loading = useLoading();
@@ -45,7 +45,7 @@ export const NotificationsListPage: React.FC = () => {
     const [statusFilter, setStatusFilter] = useState<string>("");
     const [resetKey, setResetKey] = useState(Math.random());
     const [detailsNotification, setDetailsNotification] = useState<AppNotification>();
-    const [syncReport, setSyncReport] = useState<SyncReport>();
+    const [syncReport, setSyncReport] = useState<SynchronizationReport>();
 
     const backHome = useCallback(() => {
         history.push("/");
@@ -151,14 +151,15 @@ export const NotificationsListPage: React.FC = () => {
         async (result: Either<ImportPullRequestError, SynchronizationResult>) => {
             await result.match({
                 success: async result => {
-                    const report = SyncReport.create("metadata");
+                    const report = SynchronizationReport.create("metadata");
                     report.setStatus(
                         result.status === "ERROR" || result.status === "NETWORK ERROR"
                             ? "FAILURE"
                             : "DONE"
                     );
                     report.addSyncResult(result);
-                    await report.save(api);
+
+                    await compositionRoot.reports.save(report);
 
                     setSyncReport(report);
                 },
@@ -192,7 +193,7 @@ export const NotificationsListPage: React.FC = () => {
                 },
             });
         },
-        [snackbar, api]
+        [snackbar, compositionRoot]
     );
 
     const validateUpdateStatusAction = useCallback(

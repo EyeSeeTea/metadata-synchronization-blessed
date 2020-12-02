@@ -2,7 +2,7 @@ import { FilterSingleOperatorBase } from "d2-api/api/common";
 import { IdentifiableRef, Ref } from "../../common/entities/Ref";
 import { Id } from "../../common/entities/Schemas";
 import { DataSource } from "../../instance/entities/DataSource";
-import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { FilterRule } from "../entities/FilterRule";
 import {

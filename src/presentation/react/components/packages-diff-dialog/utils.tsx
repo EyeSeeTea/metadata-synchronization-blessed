@@ -6,8 +6,8 @@ import {
     FieldUpdate,
     MetadataPackageDiff,
 } from "../../../../domain/packages/entities/MetadataPackageDiff";
+import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import i18n from "../../../../locales";
-import SyncReport from "../../../../models/syncReport";
 import { useAppContext } from "../../contexts/AppContext";
 import { PackageToDiff } from "./PackagesDiffDialog";
 
@@ -45,10 +45,10 @@ export function usePackageImporter(
     metadataDiff: MetadataPackageDiff | undefined,
     onClose: () => void
 ) {
-    const { compositionRoot, api } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const loading = useLoading();
     const snackbar = useSnackbar();
-    const [syncReport, setSyncReport] = useState<SyncReport>();
+    const [syncReport, setSyncReport] = useState<SynchronizationReport>();
 
     const closeSyncReport = useCallback(() => {
         setSyncReport(undefined);
@@ -61,12 +61,13 @@ export function usePackageImporter(
             loading.show(true, i18n.t("Importing package {{name}}", { name: packageName }));
 
             const result = await compositionRoot.metadata.import(metadataDiff.mergeableMetadata);
-            const report = SyncReport.create("metadata");
+            const report = SynchronizationReport.create("metadata");
             report.setStatus(
                 result.status === "ERROR" || result.status === "NETWORK ERROR" ? "FAILURE" : "DONE"
             );
             report.addSyncResult({ ...result, origin: instance?.toPublicObject() });
-            await report.save(api);
+
+            await compositionRoot.reports.save(report);
 
             setSyncReport(report);
         }
@@ -74,7 +75,7 @@ export function usePackageImporter(
         performImport()
             .catch(err => snackbar.error(err.message))
             .finally(() => loading.reset());
-    }, [packageName, metadataDiff, compositionRoot, loading, snackbar, api, instance]);
+    }, [packageName, metadataDiff, compositionRoot, loading, snackbar, instance]);
 
     return { importPackage, syncReport, closeSyncReport };
 }

@@ -8,7 +8,7 @@ import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../domain/mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../domain/metadata/entities/MetadataEntities";
-import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { DataImportParams } from "../../types/d2";
 import { D2Api, DataValueSetsPostResponse } from "../../types/d2-api";

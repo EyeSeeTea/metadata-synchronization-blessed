@@ -21,10 +21,10 @@ import { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../domain/synchronization/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
-import SyncReport from "../../../../models/syncReport";
 import SyncRule from "../../../../models/syncRule";
 import { getValueForCollection } from "../../../../utils/d2-ui-components";
 import { getValidationMessages } from "../../../../utils/old-validations";
@@ -36,7 +36,6 @@ import {
     UserInfo,
 } from "../../../../utils/permissions";
 import { requestJSONDownload } from "../../../../utils/synchronization";
-import { useAppContext } from "../../../react/contexts/AppContext";
 import Dropdown from "../../../react/components/dropdown/Dropdown";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import {
@@ -46,6 +45,7 @@ import {
 import { SharingDialog } from "../../../react/components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../../react/components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../react/contexts/AppContext";
 
 const config: {
     [key: string]: {
@@ -85,7 +85,7 @@ const SyncRulesPage: React.FC = () => {
     const [targetInstanceFilter, setTargetInstanceFilter] = useState("");
     const [enabledFilter, setEnabledFilter] = useState("");
     const [lastExecutedFilter, setLastExecutedFilter] = useState<Moment | null>(null);
-    const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
+    const [syncReport, setSyncReport] = useState<SynchronizationReport | null>(null);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
@@ -205,6 +205,8 @@ const SyncRulesPage: React.FC = () => {
     const confirmDelete = async () => {
         loading.show(true, i18n.t("Deleting Sync Rules"));
 
+        // TODO: Add use-case
+        /**
         const results = [];
         for (const id of toDelete) {
             const rule = await SyncRule.get(api, id);
@@ -220,11 +222,10 @@ const SyncRulesPage: React.FC = () => {
             );
 
             for (const syncReportData of syncReports.rows) {
-                const editedSyncReport = {
+                const syncReport = SyncReport.build({
                     ...syncReportData,
                     deletedSyncRuleLabel: deletedRuleLabel,
-                };
-                const syncReport = SyncReport.build(editedSyncReport);
+                });
                 const syncResults = await syncReport.loadSyncResults(api);
                 syncReport.addSyncResult(syncResults[0]);
 
@@ -238,7 +239,7 @@ const SyncRulesPage: React.FC = () => {
             snackbar.success(
                 i18n.t("Successfully deleted {{count}} rules", { count: toDelete.length })
             );
-        }
+        }**/
 
         loading.reset();
         setToDelete([]);
@@ -299,7 +300,7 @@ const SyncRulesPage: React.FC = () => {
         const synchronize = async () => {
             for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) loading.show(true, message);
-                if (syncReport) await syncReport.save(api);
+                if (syncReport) await compositionRoot.reports.save(syncReport);
                 if (done && syncReport) setSyncReport(syncReport);
             }
         };

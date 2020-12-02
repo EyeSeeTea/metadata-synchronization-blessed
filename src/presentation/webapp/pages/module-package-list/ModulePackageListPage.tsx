@@ -4,8 +4,8 @@ import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "rea
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { Store } from "../../../../domain/stores/entities/Store";
+import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import i18n from "../../../../locales";
-import SyncReport from "../../../../models/syncReport";
 import { CreatePackageFromFileDialog } from "../../../react/components/create-package-from-file-dialog/CreatePackageFromFileDialog";
 import {
     ModulePackageListTable,
@@ -24,14 +24,14 @@ export interface ModulePackageListPageProps {
     presentation: PresentationOption;
     externalComponents?: ReactNode;
     pageSizeOptions?: number[];
-    openSyncSummary?: (result: SyncReport) => void;
+    openSyncSummary?: (result: SynchronizationReport) => void;
     paginationOptions?: PaginationOptions;
     actionButtonLabel?: ReactNode;
 }
 
 export const ModulePackageListPage: React.FC = () => {
     const history = useHistory();
-    const [syncReport, setSyncReport] = useState<SyncReport>();
+    const [syncReport, setSyncReport] = useState<SynchronizationReport>();
     const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
     const [addPackageDialogOpen, setAddPackageDialogOpen] = useState(false);
     const [selectedInstance, setSelectedInstance] = useState<Instance | Store>();
@@ -83,7 +83,7 @@ export const ModulePackageListPage: React.FC = () => {
         [tableOption]
     );
 
-    const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
+    const handleOpenSyncSummaryFromDialog = (syncReport: SynchronizationReport) => {
         setOpenImportPackageDialog(false);
         setSyncReport(syncReport);
 
