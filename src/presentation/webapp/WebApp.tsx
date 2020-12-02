@@ -20,7 +20,7 @@ import { muiTheme } from "../react/themes/dhis2.theme";
 import { CompositionRoot } from "../CompositionRoot";
 import Migrations from "../react/components/migrations/Migrations";
 import Share from "../react/components/share/Share";
-import Root from "./pages/Root";
+import Root from "./Root";
 import "./WebApp.css";
 
 const generateClassName = createGenerateClassName({

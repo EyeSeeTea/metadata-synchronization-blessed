@@ -28,7 +28,7 @@ import {
     PullRequestCreationDialog,
 } from "../pull-request-creation-dialog/PullRequestCreationDialog";
 import { SharingDialog } from "../sharing-dialog/SharingDialog";
-import { ModulePackageListPageProps } from "../../../webapp/pages/module-package-list/ModulePackageListPage";
+import { ModulePackageListPageProps } from "../../../webapp/core/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
 import { NewPackageDialog } from "./NewPackageDialog";
 import { getValidationsByVersionFeedback } from "./utils";

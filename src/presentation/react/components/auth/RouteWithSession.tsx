@@ -5,13 +5,18 @@ import WithSession from "./WithSession";
 export interface RouteWithSessionProps {
     render: (props: RouteComponentProps) => React.ReactNode;
     path?: string | string[];
+    exact?: boolean;
 }
 
-const RouteWithSession: React.FC<RouteWithSessionProps> = ({ path, render }) => {
+const RouteWithSession: React.FC<RouteWithSessionProps> = ({ path, render, exact }) => {
     const key = path?.toString() ?? "";
 
     return (
-        <Route path={path} render={props => <WithSession key={key}>{render(props)}</WithSession>} />
+        <Route
+            path={path}
+            exact={exact}
+            render={props => <WithSession key={key}>{render(props)}</WithSession>}
+        />
     );
 };
 
