@@ -158,7 +158,6 @@ export const NotificationsListPage: React.FC = () => {
                             : "DONE"
                     );
                     report.addSyncResult(result);
-
                     await compositionRoot.reports.save(report);
 
                     setSyncReport(report);

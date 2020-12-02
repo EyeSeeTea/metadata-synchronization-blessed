@@ -66,7 +66,6 @@ export function usePackageImporter(
                 result.status === "ERROR" || result.status === "NETWORK ERROR" ? "FAILURE" : "DONE"
             );
             report.addSyncResult({ ...result, origin: instance?.toPublicObject() });
-
             await compositionRoot.reports.save(report);
 
             setSyncReport(report);

@@ -174,8 +174,7 @@ const ManualSyncPage: React.FC = () => {
         const synchronize = async () => {
             for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) loading.show(true, message);
-                // TODO: Use-case
-                //if (syncReport) await syncReport.save(api);
+                if (syncReport) await compositionRoot.reports.save(syncReport);
                 if (done) {
                     finishSynchronization(syncReport);
                     return;
