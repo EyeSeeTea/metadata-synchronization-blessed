@@ -16,7 +16,7 @@ import { TransformationD2ApiRepository } from "../../../transformations/Transfor
 import { SynchronizationBuilder } from "./../../../../types/synchronization";
 
 export function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryFactory = new RepositoryFactory();
+    const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
     repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
     repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreClient);
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
@@ -121,9 +121,11 @@ export async function executeMetadataSync(
 
     const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
 
-    for await (const _sync of useCase.execute()) {
-        // no-op
+    let done = false;
+    for await (const sync of useCase.execute()) {
+        done = !!sync.done;
     }
+    expect(done).toBeTruthy();
 
     expect(local.db.metadata.where({})).toHaveLength(0);
 
