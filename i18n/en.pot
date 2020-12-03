@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-02T16:23:09.972Z\n"
-"PO-Revision-Date: 2020-12-02T16:23:09.972Z\n"
+"POT-Creation-Date: 2020-12-03T07:18:49.558Z\n"
+"PO-Revision-Date: 2020-12-03T07:18:49.558Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1720,6 +1720,27 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Aggregate Data For HMIS"
+msgstr ""
+
+msgid "Agreggate Data"
+msgstr ""
+
+msgid "Synchronization Progress"
+msgstr ""
+
+msgid "Advanced Settings"
+msgstr ""
+
+msgid "MSF Settings"
+msgstr ""
+
+msgid "Go To Admin Dashboard"
+msgstr ""
+
+msgid "Go to History"
+msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
 msgstr ""
