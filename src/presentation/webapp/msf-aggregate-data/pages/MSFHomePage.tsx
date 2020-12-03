@@ -7,6 +7,7 @@ import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
 import { PeriodSelectionDialog } from "../../../react/core/components/period-selection-dialog/PeriodSelectionDialog";
 import { useAppContext } from "../../../react/core/contexts/AppContext";
+import { MSFSettingsDialog } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
 
 export interface PeriodFilter {
     period: DataSyncPeriod;
@@ -19,6 +20,7 @@ export const MSFHomePage: React.FC = () => {
     const history = useHistory();
 
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
+    const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
     const [period, setPeriod] = useState<PeriodFilter>({ period: "ALL" });
     const [globalAdmin, setGlobalAdmin] = useState(false);
     const { api } = useAppContext();
@@ -31,7 +33,11 @@ export const MSFHomePage: React.FC = () => {
     const handleAdvancedSettings = () => {
         setShowPeriodDialog(true);
     };
-    const handleMSFSettings = () => {};
+
+    const handleMSFSettings = () => {
+        setShowMSFSettingsDialog(true);
+    };
+
     const handleGoToDashboard = () => {
         history.push("/dashboard");
     };
@@ -46,6 +52,14 @@ export const MSFHomePage: React.FC = () => {
     const handleSaveAdvancedSettings = (period: PeriodFilter) => {
         setShowPeriodDialog(false);
         setPeriod(period);
+    };
+
+    const handleCloseMSFSettings = () => {
+        setShowMSFSettingsDialog(false);
+    };
+
+    const handleSaveMSFSettings = () => {
+        setShowMSFSettingsDialog(false);
     };
 
     return (
@@ -126,6 +140,13 @@ export const MSFHomePage: React.FC = () => {
                     period={period}
                     onClose={handleCloseAdvancedSettings}
                     onSave={handleSaveAdvancedSettings}
+                />
+            )}
+
+            {showMSFSettingsDialog && (
+                <MSFSettingsDialog
+                    onClose={handleCloseMSFSettings}
+                    onSave={handleSaveMSFSettings}
                 />
             )}
         </React.Fragment>
