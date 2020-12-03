@@ -39,7 +39,7 @@ import SyncDialog from "../../../react/components/sync-dialog/SyncDialog";
 import SyncSummary from "../../../react/components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../../react/components/test-wrapper/TestWrapper";
 import InstancesSelectors from "./InstancesSelectors";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Store } from "../../../../domain/stores/entities/Store";
 
 const config: Record<
     SynchronizationType,

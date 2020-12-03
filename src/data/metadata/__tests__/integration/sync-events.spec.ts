@@ -1,16 +1,18 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
+import {
+    Repositories,
+    RepositoryFactory,
+} from "../../../../domain/common/factories/RepositoryFactory";
 import { EventsSyncUseCase } from "../../../../domain/events/usecases/EventsSyncUseCase";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import { Repositories } from "../../../../domain/Repositories";
 import { SynchronizationBuilder } from "../../../../types/synchronization";
 import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
 import { EventsD2ApiRepository } from "../../../events/EventsD2ApiRepository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
-import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
+import { StorageDataStoreClient } from "../../../storage/StorageDataStoreClient";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
 import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
 
@@ -275,9 +277,9 @@ describe("Sync metadata", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryFactory = new RepositoryFactory();
+    const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
     repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreRepository);
+    repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreClient);
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
     repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
     repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);

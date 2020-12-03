@@ -1,21 +1,16 @@
 import _ from "lodash";
 import moment from "moment";
-import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { BaseModule } from "../../modules/entities/Module";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { Store } from "../../stores/entities/Store";
 import { GitHubError, GitHubListError } from "../entities/Errors";
 import { ListPackage, Package } from "../entities/Package";
-import { Store } from "../entities/Store";
-import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubRepository";
+import { moduleFile } from "../repositories/GitHubRepository";
 
 export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
 
@@ -23,14 +18,15 @@ export class ListStorePackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(storeId: string): Promise<Either<ListStorePackagesError, ListPackage[]>> {
-        const store = (
-            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
-        )?.find(store => store.id === storeId);
-
+        const store = await this.repositoryFactory
+            .storeRepository(this.localInstance)
+            .getById(storeId);
         if (!store) return Either.error("STORE_NOT_FOUND");
 
-        const userGroups = await this.instanceRepository(this.localInstance).getUserGroups();
-        const validation = await this.gitRepository().listBranches(store);
+        const userGroups = await this.repositoryFactory
+            .instanceRepository(this.localInstance)
+            .getUserGroups();
+        const validation = await this.repositoryFactory.gitRepository().listBranches(store);
         if (validation.isError()) return Either.error(validation.value.error);
 
         const branches = validation.value.data?.flatMap(({ name }) => name) ?? [];
@@ -48,35 +44,11 @@ export class ListStorePackagesUseCase implements UseCase {
         return Either.success(packages);
     }
 
-    @cache()
-    private gitRepository() {
-        return this.repositoryFactory.get<GitHubRepositoryConstructor>(
-            Repositories.GitHubRepository,
-            []
-        );
-    }
-
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-    }
-
-    @cache()
-    private instanceRepository(instance: Instance) {
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
-    }
-
     private async getPackages(
         store: Store,
         userGroup: string
     ): Promise<Either<GitHubListError, Package[]>> {
-        const validation = await this.gitRepository().listFiles(store, userGroup);
+        const validation = await this.repositoryFactory.gitRepository().listFiles(store, userGroup);
 
         if (validation.isError()) return Either.error(validation.value.error);
 
@@ -110,12 +82,14 @@ export class ListStorePackagesUseCase implements UseCase {
 
         if (!moduleFileUrl) return unknownModule;
 
-        const { encoding, content } = await this.gitRepository().request<{
+        const { encoding, content } = await this.repositoryFactory.gitRepository().request<{
             encoding: string;
             content: string;
         }>(store, moduleFileUrl);
 
-        const readFileResult = this.gitRepository().readFileContents<BaseModule>(encoding, content);
+        const readFileResult = this.repositoryFactory
+            .gitRepository()
+            .readFileContents<BaseModule>(encoding, content);
 
         return readFileResult.match({
             success: module => module,

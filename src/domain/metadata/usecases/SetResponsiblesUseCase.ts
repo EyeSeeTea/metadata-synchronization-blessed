@@ -1,13 +1,10 @@
 import _ from "lodash";
-import { cache } from "../../../utils/cache";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { ReceivedPullRequestNotification } from "../../notifications/entities/PullRequestNotification";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { MetadataResponsible } from "../entities/MetadataResponsible";
 
 export class SetResponsiblesUseCase implements UseCase {
@@ -17,23 +14,16 @@ export class SetResponsiblesUseCase implements UseCase {
         const { id, users, userGroups } = responsible;
 
         if (users.length === 0 && userGroups.length === 0) {
-            await this.storageRepository.removeObjectInCollection(Namespace.RESPONSIBLES, id);
+            await this.repositoryFactory
+                .storageRepository(this.localInstance)
+                .removeObjectInCollection(Namespace.RESPONSIBLES, id);
         } else {
-            await this.storageRepository.saveObjectInCollection(
-                Namespace.RESPONSIBLES,
-                responsible
-            );
+            await this.repositoryFactory
+                .storageRepository(this.localInstance)
+                .saveObjectInCollection(Namespace.RESPONSIBLES, responsible);
         }
 
         await this.updatePendingPullRequests(responsible);
-    }
-
-    @cache()
-    private get storageRepository() {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [this.localInstance]
-        );
     }
 
     private async updatePendingPullRequests({
@@ -41,9 +31,9 @@ export class SetResponsiblesUseCase implements UseCase {
         users,
         userGroups,
     }: MetadataResponsible): Promise<void> {
-        const notifications = await this.storageRepository.listObjectsInCollection<
-            ReceivedPullRequestNotification
-        >(Namespace.NOTIFICATIONS);
+        const notifications = await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .listObjectsInCollection<ReceivedPullRequestNotification>(Namespace.NOTIFICATIONS);
 
         const relatedPullRequests = notifications.filter(
             ({ type, selectedIds }) => type === "received-pull-request" && selectedIds.includes(id)
@@ -57,10 +47,9 @@ export class SetResponsiblesUseCase implements UseCase {
                 userGroups: _.uniqBy([...notification.userGroups, ...userGroups], "id"),
             };
 
-            await this.storageRepository.saveObjectInCollection(
-                Namespace.NOTIFICATIONS,
-                newNotification
-            );
+            await this.repositoryFactory
+                .storageRepository(this.localInstance)
+                .saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
         });
     }
 }

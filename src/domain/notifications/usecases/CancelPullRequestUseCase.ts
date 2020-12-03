@@ -1,15 +1,12 @@
-import { cache } from "../../../utils/cache";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { AppNotification } from "../entities/Notification";
 import {
-    SentPullRequestNotification,
     ReceivedPullRequestNotification,
+    SentPullRequestNotification,
 } from "../entities/PullRequestNotification";
 
 export type CancelPullRequestError =
@@ -41,10 +38,9 @@ export class CancelPullRequestUseCase implements UseCase {
             status: "CANCELLED",
         };
 
-        await this.storageRepository(this.localInstance).saveObjectInCollection(
-            Namespace.NOTIFICATIONS,
-            newNotification
-        );
+        await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
 
         const remoteInstance = await this.getInstanceById(notification.instance.id);
         if (!remoteInstance) return Either.error("INSTANCE_NOT_FOUND");
@@ -67,36 +63,26 @@ export class CancelPullRequestUseCase implements UseCase {
             payload: {},
         };
 
-        await this.storageRepository(remoteInstance).saveObjectInCollection(
-            Namespace.NOTIFICATIONS,
-            newRemoteNotification
-        );
+        await this.repositoryFactory
+            .storageRepository(remoteInstance)
+            .saveObjectInCollection(Namespace.NOTIFICATIONS, newRemoteNotification);
 
         return Either.success(undefined);
-    }
-
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
     }
 
     private async getNotification(
         instance: Instance,
         id: string
     ): Promise<AppNotification | undefined> {
-        return await this.storageRepository(instance).getObjectInCollection<AppNotification>(
-            Namespace.NOTIFICATIONS,
-            id
-        );
+        return await this.repositoryFactory
+            .storageRepository(instance)
+            .getObjectInCollection<AppNotification>(Namespace.NOTIFICATIONS, id);
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const objects = await this.storageRepository(this.localInstance).listObjectsInCollection<
-            InstanceData
-        >(Namespace.INSTANCES);
+        const objects = await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
 
         const data = objects.find(data => data.id === id);
         if (!data) return undefined;

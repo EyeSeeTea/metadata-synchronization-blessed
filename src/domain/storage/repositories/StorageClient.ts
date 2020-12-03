@@ -1,13 +1,13 @@
 import _ from "lodash";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
-import { Namespace, NamespaceProperties } from "../Namespaces";
+import { Namespace, NamespaceProperties } from "../../../data/storage/Namespaces";
 
 export interface StorageRepositoryConstructor {
-    new (instance: Instance): StorageRepository;
+    new (instance: Instance): StorageClient;
 }
 
-export abstract class StorageRepository {
+export abstract class StorageClient {
     // Object operations
     public abstract getObject<T extends object>(key: string): Promise<T | undefined>;
     public abstract getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T>;
@@ -15,7 +15,8 @@ export abstract class StorageRepository {
     public abstract removeObject(key: string): Promise<void>;
 
     public async listObjectsInCollection<T extends Ref>(key: string): Promise<T[]> {
-        return (await this.getObject<T[]>(key)) ?? [];
+        const collection = await this.getObject<T[]>(key);
+        return collection ?? [];
     }
 
     public async getObjectInCollection<T extends Ref>(

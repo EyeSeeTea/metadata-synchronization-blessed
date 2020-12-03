@@ -1,5 +1,5 @@
 import { generateUid } from "d2/uid";
-import { Store } from "../../domain/packages/entities/Store";
+import { Store } from "../../domain/stores/entities/Store";
 import { deleteDataStore, saveDataStore } from "../../models/dataStore";
 import { D2Api } from "../../types/d2-api";
 

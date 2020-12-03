@@ -1,6 +1,6 @@
 import { NamedRef } from "../../common/entities/Ref";
 import { PublicInstance } from "../../instance/entities/Instance";
-import { Store } from "../../packages/entities/Store";
+import { Store } from "../../stores/entities/Store";
 import { SynchronizationType } from "./SynchronizationType";
 
 export type SynchronizationStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";

@@ -10,11 +10,11 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Linkify from "react-linkify";
 import { useHistory, useParams } from "react-router-dom";
 import { GitHubError } from "../../../../domain/packages/entities/Errors";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Store } from "../../../../domain/stores/entities/Store";
 import i18n from "../../../../locales";
 import { useAppContext } from "../../../react/contexts/AppContext";
 import PageHeader from "../../../react/components/page-header/PageHeader";
-import helpStoreGithub from "../../../../assets/img/help-store-github.png";
+import helpStoreGithub from "../../../assets/img/help-store-github.png";
 
 const StoreCreationPage: React.FC = () => {
     const { compositionRoot } = useAppContext();

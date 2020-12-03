@@ -1,10 +1,9 @@
 import _ from "lodash";
-import { cache } from "../../../utils/cache";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { NamedRef } from "../../common/entities/Ref";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { MessageNotification } from "../../notifications/entities/Notification";
@@ -12,9 +11,6 @@ import {
     ReceivedPullRequestNotification,
     SentPullRequestNotification,
 } from "../../notifications/entities/PullRequestNotification";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
 interface CreatePullRequestParams {
@@ -65,37 +61,21 @@ export class CreatePullRequestUseCase implements UseCase {
             remoteNotification: receivedPullRequest.id,
         });
 
-        await this.storageRepository(instance).saveObjectInCollection(
-            Namespace.NOTIFICATIONS,
-            receivedPullRequest
-        );
+        await this.repositoryFactory
+            .storageRepository(instance)
+            .saveObjectInCollection(Namespace.NOTIFICATIONS, receivedPullRequest);
 
-        await this.storageRepository(this.localInstance).saveObjectInCollection(
-            Namespace.NOTIFICATIONS,
-            sentPullRequest
-        );
+        await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .saveObjectInCollection(Namespace.NOTIFICATIONS, sentPullRequest);
 
         await this.sendMessage(instance, receivedPullRequest);
     }
 
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-    }
-
-    @cache()
-    private instanceRepository(instance: Instance) {
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
-    }
-
     private async getOwner(): Promise<NamedRef> {
-        const { id, name } = await this.instanceRepository(this.localInstance).getUser();
+        const { id, name } = await this.repositoryFactory
+            .instanceRepository(this.localInstance)
+            .getUser();
         return { id, name };
     }
 
@@ -124,7 +104,7 @@ export class CreatePullRequestUseCase implements UseCase {
             `More details at: ${instance.url}/api/apps/MetaData-Synchronization/index.html#/notifications/${id}`,
         ];
 
-        await this.instanceRepository(instance).sendMessage({
+        await this.repositoryFactory.instanceRepository(instance).sendMessage({
             subject: `[MDSync] Received Pull Request: ${subject}`,
             text: message.join("\n\n"),
             users: users.map(({ id }) => ({ id })),
@@ -133,9 +113,9 @@ export class CreatePullRequestUseCase implements UseCase {
     }
 
     private async getResponsibleNames(instance: Instance, ids: string[]) {
-        const responsibles = await this.storageRepository(instance).listObjectsInCollection<
-            MetadataResponsible
-        >(Namespace.RESPONSIBLES);
+        const responsibles = await this.repositoryFactory
+            .storageRepository(instance)
+            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 

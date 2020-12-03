@@ -34,7 +34,7 @@ import { ModulePackageListPageProps } from "../../../webapp/pages/module-package
 import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import PackageImportDialog from "../package-import-dialog/PackageImportDialog";
-import { PackagesDiffDialog, DiffPackages } from "../packages-diff-dialog/PackagesDiffDialog";
+import { DiffPackages, PackagesDiffDialog } from "../packages-diff-dialog/PackagesDiffDialog";
 import {
     groupPackageByModuleAndVersion as groupPackagesByModuleAndVersion,
     InstallStatus,

@@ -1,20 +1,11 @@
 import _ from "lodash";
-import { cache } from "../../../utils/cache";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
-import {
-    MetadataRepository,
-    MetadataRepositoryConstructor,
-} from "../../metadata/repositories/MetadataRepository";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
-import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { AppNotification } from "../entities/Notification";
 import {
     PullRequestStatus,
@@ -59,23 +50,31 @@ export class ImportPullRequestUseCase implements UseCase {
         if (remoteNotification.status === "PENDING" || remoteNotification.status === "REJECTED")
             return Either.error("NOT_APPROVED");
 
-        const result = await this.metadataRepository(this.localInstance).save(
-            remoteNotification.payload
-        );
+        const result = await this.repositoryFactory
+            .metadataRepository(this.localInstance)
+            .save(remoteNotification.payload);
 
         const status: PullRequestStatus =
             result.status === "SUCCESS" ? "IMPORTED" : "IMPORTED_WITH_ERRORS";
 
         const payload = status === "IMPORTED" ? {} : remoteNotification.payload;
 
-        await this.storageRepository(
-            this.localInstance
-        ).saveObjectInCollection(Namespace.NOTIFICATIONS, { ...notification, read: true, status });
+        await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .saveObjectInCollection(Namespace.NOTIFICATIONS, {
+                ...notification,
+                read: true,
+                status,
+            });
 
-        await this.storageRepository(remoteInstance).saveObjectInCollection(
-            Namespace.NOTIFICATIONS,
-            { ...remoteNotification, read: false, status, payload }
-        );
+        await this.repositoryFactory
+            .storageRepository(remoteInstance)
+            .saveObjectInCollection(Namespace.NOTIFICATIONS, {
+                ...remoteNotification,
+                read: false,
+                status,
+                payload,
+            });
 
         await this.sendMessage(
             remoteInstance,
@@ -86,38 +85,10 @@ export class ImportPullRequestUseCase implements UseCase {
         return Either.success({ ...result, origin: remoteInstance.toPublicObject() });
     }
 
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-    }
-
-    @cache()
-    private instanceRepository(instance: Instance) {
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
-    }
-
-    @cache()
-    private metadataRepository(instance: Instance): MetadataRepository {
-        const transformationRepository = this.repositoryFactory.get<
-            TransformationRepositoryConstructor
-        >(Repositories.TransformationRepository, []);
-
-        return this.repositoryFactory.get<MetadataRepositoryConstructor>(
-            Repositories.MetadataRepository,
-            [instance, transformationRepository]
-        );
-    }
-
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const objects = await this.storageRepository(this.localInstance).listObjectsInCollection<
-            InstanceData
-        >(Namespace.INSTANCES);
+        const objects = await this.repositoryFactory
+            .storageRepository(this.localInstance)
+            .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
 
         const data = objects.find(data => data.id === id);
         if (!data) return undefined;
@@ -129,10 +100,9 @@ export class ImportPullRequestUseCase implements UseCase {
         instance: Instance,
         id: string
     ): Promise<AppNotification | undefined> {
-        return await this.storageRepository(instance).getObjectInCollection<AppNotification>(
-            Namespace.NOTIFICATIONS,
-            id
-        );
+        return await this.repositoryFactory
+            .storageRepository(instance)
+            .getObjectInCollection<AppNotification>(Namespace.NOTIFICATIONS, id);
     }
 
     private async sendMessage(
@@ -161,7 +131,7 @@ export class ImportPullRequestUseCase implements UseCase {
             `More details at: ${instance.url}/api/apps/MetaData-Synchronization/index.html#/notifications/${id}`,
         ];
 
-        await this.instanceRepository(instance).sendMessage({
+        await this.repositoryFactory.instanceRepository(instance).sendMessage({
             subject: `[MDSync] ${title}: ${subject}`,
             text: message.join("\n\n"),
             users: users.map(({ id }) => ({ id })),
@@ -170,9 +140,9 @@ export class ImportPullRequestUseCase implements UseCase {
     }
 
     private async getResponsibleNames(instance: Instance, ids: string[]) {
-        const responsibles = await this.storageRepository(instance).listObjectsInCollection<
-            MetadataResponsible
-        >(Namespace.RESPONSIBLES);
+        const responsibles = await this.repositoryFactory
+            .storageRepository(instance)
+            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 

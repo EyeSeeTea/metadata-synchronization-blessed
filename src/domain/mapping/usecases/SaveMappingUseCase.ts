@@ -1,15 +1,15 @@
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepository } from "../../storage/repositories/StorageRepository";
+import { Namespace } from "../../../data/storage/Namespaces";
+import { StorageClient } from "../../storage/repositories/StorageClient";
 import { DataSourceMapping } from "../entities/DataSourceMapping";
 import { isMappingOwnerStore } from "../entities/MappingOwner";
 
 export type SaveMappingError = "UNEXPECTED_ERROR" | "INSTANCE_NOT_FOUND";
 
 export class SaveMappingUseCase implements UseCase {
-    constructor(private storageRepository: StorageRepository) {}
+    constructor(private storageRepository: StorageClient) {}
 
     public async execute(mapping: DataSourceMapping): Promise<Either<SaveMappingError, void>> {
         if (isMappingOwnerStore(mapping.owner)) {

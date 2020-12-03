@@ -3,7 +3,7 @@ import { PaginationOptions } from "d2-ui-components";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Store } from "../../../../domain/stores/entities/Store";
 import i18n from "../../../../locales";
 import SyncReport from "../../../../models/syncReport";
 import { CreatePackageFromFileDialog } from "../../../react/components/create-package-from-file-dialog/CreatePackageFromFileDialog";

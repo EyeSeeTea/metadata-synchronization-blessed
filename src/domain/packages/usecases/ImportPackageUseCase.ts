@@ -5,13 +5,7 @@ import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
-import {
-    MetadataRepository,
-    MetadataRepositoryConstructor,
-} from "../../metadata/repositories/MetadataRepository";
-import { Repositories } from "../../Repositories";
 import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
-import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { Package } from "../entities/Package";
 
 export class ImportPackageUseCase implements UseCase {
@@ -21,14 +15,14 @@ export class ImportPackageUseCase implements UseCase {
         item: Package,
         mapping: MetadataMappingDictionary = {},
         originInstance: DataSource,
-        destinationInstance?: DataSource
+        destinationInstance: DataSource = this.localInstance
     ): Promise<SynchronizationResult> {
-        const originCategoryOptionCombos = await this.getMetadataRepository(
-            originInstance
-        ).getCategoryOptionCombos();
-        const destinationCategoryOptionCombos = await this.getMetadataRepository(
-            destinationInstance
-        ).getCategoryOptionCombos();
+        const originCategoryOptionCombos = await this.repositoryFactory
+            .metadataRepository(originInstance)
+            .getCategoryOptionCombos();
+        const destinationCategoryOptionCombos = await this.repositoryFactory
+            .metadataRepository(destinationInstance)
+            .getCategoryOptionCombos();
 
         const mapper = new MappingMapper(
             mapping,
@@ -37,7 +31,9 @@ export class ImportPackageUseCase implements UseCase {
         );
 
         const payload = mapper.applyMapping(item.contents);
-        const result = await this.getMetadataRepository(destinationInstance).save(payload);
+        const result = await this.repositoryFactory
+            .metadataRepository(destinationInstance)
+            .save(payload);
 
         debug("Import package", {
             originInstance,
@@ -49,21 +45,5 @@ export class ImportPackageUseCase implements UseCase {
         });
 
         return result;
-    }
-
-    protected getMetadataRepository(
-        remoteInstance: DataSource = this.localInstance
-    ): MetadataRepository {
-        const transformationRepository = this.repositoryFactory.get<
-            TransformationRepositoryConstructor
-        >(Repositories.TransformationRepository, []);
-
-        const tag = remoteInstance.type === "json" ? "json" : undefined;
-
-        return this.repositoryFactory.get<MetadataRepositoryConstructor>(
-            Repositories.MetadataRepository,
-            [remoteInstance, transformationRepository],
-            tag
-        );
     }
 }

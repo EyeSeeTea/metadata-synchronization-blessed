@@ -13,7 +13,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { GitHubError } from "../../../../domain/packages/entities/Errors";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Store } from "../../../../domain/stores/entities/Store";
 import i18n from "../../../../locales";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import { useAppContext } from "../../../react/contexts/AppContext";
@@ -155,7 +155,7 @@ export const StoreListPage: React.FC = () => {
             icon: <Icon>delete</Icon>,
         },
         {
-            name: "setAdDefault",
+            name: "setAsDefault",
             text: i18n.t("Set as default"),
             multiple: false,
             onClick: (ids: string[]) => handleSetStoreAsDefault(ids[0]),

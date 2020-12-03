@@ -1,26 +1,17 @@
 import _ from "lodash";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { MetadataResponsible } from "../entities/MetadataResponsible";
-import { MetadataRepositoryConstructor } from "../repositories/MetadataRepository";
 
 export class ListResponsiblesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(instance = this.localInstance): Promise<MetadataResponsible[]> {
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
-
-        const items = await storageRepository.listObjectsInCollection<MetadataResponsible>(
-            Namespace.RESPONSIBLES
-        );
+        const items = await this.repositoryFactory
+            .storageRepository(instance)
+            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         const names = await this.getDisplayNames(
             instance,
@@ -31,19 +22,12 @@ export class ListResponsiblesUseCase implements UseCase {
     }
 
     private async getDisplayNames(instance: Instance, ids: string[]) {
-        const transformationsRepository = this.repositoryFactory.get<
-            TransformationRepositoryConstructor
-        >(Repositories.TransformationRepository, []);
-
-        const metadataRepository = this.repositoryFactory.get<MetadataRepositoryConstructor>(
-            Repositories.MetadataRepository,
-            [instance, transformationsRepository]
-        );
-
-        const metadata = await metadataRepository.getMetadataByIds<{
-            id: string;
-            displayName: string;
-        }>(ids, "id,displayName");
+        const metadata = await this.repositoryFactory
+            .metadataRepository(instance)
+            .getMetadataByIds<{
+                id: string;
+                displayName: string;
+            }>(ids, "id,displayName");
 
         return _(metadata)
             .values()

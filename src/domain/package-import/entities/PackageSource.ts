@@ -1,5 +1,5 @@
 import { Instance } from "../../instance/entities/Instance";
-import { Store } from "../../packages/entities/Store";
+import { Store } from "../../stores/entities/Store";
 
 export type PackageSource = Instance | Store;
 

@@ -5,7 +5,7 @@ import i18n from "../../../../locales";
 import { Maybe } from "../../../../types/utils";
 import Dropdown, { DropdownViewOption } from "../dropdown/Dropdown";
 import { useAppContext } from "../../contexts/AppContext";
-import { Store } from "../../../../domain/packages/entities/Store";
+import { Store } from "../../../../domain/stores/entities/Store";
 
 export type InstanceSelectionOption = "local" | "remote" | "store";
 

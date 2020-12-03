@@ -1,7 +1,7 @@
 import { TableInitialState, TablePagination } from "d2-ui-components";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
-import { Namespace } from "../domain/storage/Namespaces";
+import { Namespace } from "../data/storage/Namespaces";
 import {
     SynchronizationReport,
     SynchronizationReportStatus,
