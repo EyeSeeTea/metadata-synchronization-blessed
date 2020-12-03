@@ -1,10 +1,12 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
 import i18n from "d2-ui-components/locales";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { DataSyncPeriod } from "../../../../domain/aggregated/types";
+import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/components/page-header/PageHeader";
 import { PeriodSelectionDialog } from "../../../react/components/period-selection-dialog/PeriodSelectionDialog";
+import { useAppContext } from "../../../react/contexts/AppContext";
 
 export interface PeriodFilter {
     period: DataSyncPeriod;
@@ -18,6 +20,12 @@ export const MSFHomePage: React.FC = () => {
 
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [period, setPeriod] = useState<PeriodFilter>({ period: "ALL" });
+    const [globalAdmin, setGlobalAdmin] = useState(false);
+    const { api } = useAppContext();
+
+    useEffect(() => {
+        isGlobalAdmin(api).then(setGlobalAdmin);
+    }, [api]);
 
     const handleAggregateData = () => {};
     const handleAdvancedSettings = () => {
@@ -81,22 +89,26 @@ export const MSFHomePage: React.FC = () => {
                             >
                                 {i18n.t("Advanced Settings")}
                             </Button>
-                            <Button
-                                className={classes.actionButton}
-                                onClick={() => handleMSFSettings()}
-                                variant="contained"
-                            >
-                                {i18n.t("MSF Settings")}
-                            </Button>
+                            {globalAdmin && (
+                                <Button
+                                    className={classes.actionButton}
+                                    onClick={() => handleMSFSettings()}
+                                    variant="contained"
+                                >
+                                    {i18n.t("MSF Settings")}
+                                </Button>
+                            )}
                         </Box>
                         <Box display="flex" flexDirection="row">
-                            <Button
-                                className={classes.actionButton}
-                                onClick={() => handleGoToDashboard()}
-                                variant="contained"
-                            >
-                                {i18n.t("Go To Admin Dashboard")}
-                            </Button>
+                            {globalAdmin && (
+                                <Button
+                                    className={classes.actionButton}
+                                    onClick={() => handleGoToDashboard()}
+                                    variant="contained"
+                                >
+                                    {i18n.t("Go To Admin Dashboard")}
+                                </Button>
+                            )}
                             <Button
                                 className={classes.actionButton}
                                 onClick={() => handleGoToHistory()}
