@@ -137,6 +137,7 @@ export const MSFHomePage: React.FC = () => {
 
             {showPeriodDialog && (
                 <PeriodSelectionDialog
+                    title={i18n.t("Advanced Settings")}
                     period={period}
                     onClose={handleCloseAdvancedSettings}
                     onSave={handleSaveAdvancedSettings}
