@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-01T09:53:24.942Z\n"
+"POT-Creation-Date: 2020-12-03T08:51:09.935Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1022,10 +1022,10 @@ msgstr ""
 msgid "Source instance"
 msgstr ""
 
-msgid "{{name}} ({{url}}) with user {{username}}"
+msgid "with user {{username}}"
 msgstr ""
 
-msgid "{{name}} ({{url}}) with logged user"
+msgid "with logged user"
 msgstr ""
 
 msgid "Destination"
