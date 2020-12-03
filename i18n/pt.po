@@ -1022,10 +1022,10 @@ msgstr ""
 msgid "Source instance"
 msgstr ""
 
-msgid "{{name}} ({{url}}) with user {{username}}"
+msgid "with user {{username}}"
 msgstr ""
 
-msgid "{{name}} ({{url}}) with logged user"
+msgid "with logged user"
 msgstr ""
 
 msgid "Destination"

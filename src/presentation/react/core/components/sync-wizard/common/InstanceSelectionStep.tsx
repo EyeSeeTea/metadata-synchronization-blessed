@@ -11,8 +11,8 @@ export const buildInstanceOptions = (instances: Instance[]) => {
     return instances.map(instance => ({
         value: instance.id,
         text: instance.username
-            ? i18n.t("{{name}} ({{url}}) with user {{username}}")
-            : i18n.t("{{name}} ({{url}}) with logged user"),
+            ? `${instance.name} (${instance.url}) ` + i18n.t("with user {{username}}", instance)
+            : `${instance.name} (${instance.url}) ` + i18n.t("with logged user"),
     }));
 };
 
