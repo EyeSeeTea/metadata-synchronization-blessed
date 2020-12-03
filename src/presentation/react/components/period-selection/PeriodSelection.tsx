@@ -30,6 +30,7 @@ export interface PeriodSelectionProps {
         value: ObjectWithPeriod[Field]
     ): void;
     skipPeriods?: Set<PeriodType>;
+    className?: string;
 }
 
 export type OnChange = Required<PeriodSelectionProps>["onChange"];
@@ -57,6 +58,7 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
         onFieldChange = _.noop as OnFieldChange,
         skipPeriods = new Set(),
         periodTitle = i18n.t("Period"),
+        className,
     } = props;
 
     const objectWithPeriod: ObjectWithPeriod = {
@@ -105,7 +107,7 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
     );
 
     return (
-        <React.Fragment>
+        <div className={className}>
             <div className={classes.dropdown}>
                 <Dropdown
                     label={periodTitle}
@@ -134,7 +136,7 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
                     </div>
                 </div>
             )}
-        </React.Fragment>
+        </div>
     );
 };
 

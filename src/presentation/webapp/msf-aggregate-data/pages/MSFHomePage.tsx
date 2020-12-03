@@ -1,21 +1,43 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
 import i18n from "d2-ui-components/locales";
-import React from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { DataSyncPeriod } from "../../../../domain/aggregated/types";
 import PageHeader from "../../../react/components/page-header/PageHeader";
+import { PeriodSelectionDialog } from "../../../react/components/period-selection-dialog/PeriodSelectionDialog";
+
+export interface PeriodFilter {
+    period: DataSyncPeriod;
+    startDate?: Date;
+    endDate?: Date;
+}
 
 export const MSFHomePage: React.FC = () => {
     const classes = useStyles();
     const history = useHistory();
 
+    const [showPeriodDialog, setShowPeriodDialog] = useState(false);
+    const [period, setPeriod] = useState<PeriodFilter>({ period: "ALL" });
+
     const handleAggregateData = () => {};
-    const handleAdvancedSettings = () => {};
+    const handleAdvancedSettings = () => {
+        setShowPeriodDialog(true);
+    };
     const handleMSFSettings = () => {};
     const handleGoToDashboard = () => {
         history.push("/dashboard");
     };
     const handleGoToHistory = () => {
         history.push("/history/events");
+    };
+
+    const handleCloseAdvancedSettings = () => {
+        setShowPeriodDialog(false);
+    };
+
+    const handleSaveAdvancedSettings = (period: PeriodFilter) => {
+        setShowPeriodDialog(false);
+        setPeriod(period);
     };
 
     return (
@@ -30,7 +52,7 @@ export const MSFHomePage: React.FC = () => {
                         color="primary"
                         className={classes.runButton}
                     >
-                        {i18n.t("Agreggate Data")}
+                        {i18n.t("Aggregate Data")}
                     </Button>
 
                     <Box display="flex" flexGrow={2} justifyContent="center">
@@ -86,6 +108,14 @@ export const MSFHomePage: React.FC = () => {
                     </Box>
                 </Box>
             </Paper>
+
+            {showPeriodDialog && (
+                <PeriodSelectionDialog
+                    period={period}
+                    onClose={handleCloseAdvancedSettings}
+                    onSave={handleSaveAdvancedSettings}
+                />
+            )}
         </React.Fragment>
     );
 };
