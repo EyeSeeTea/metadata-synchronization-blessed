@@ -1,5 +1,5 @@
 import React from "react";
-import { ModulePackageListTable } from "../../../react/components/module-package-list-table/ModulePackageListTable";
+import { ModulePackageListTable } from "../../../react/core/components/module-package-list-table/ModulePackageListTable";
 
 const showSelector = {
     modules: false,

@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { DataSyncPeriod } from "../../../../domain/aggregated/types";
 import { isGlobalAdmin } from "../../../../utils/permissions";
-import PageHeader from "../../../react/components/page-header/PageHeader";
-import { PeriodSelectionDialog } from "../../../react/components/period-selection-dialog/PeriodSelectionDialog";
-import { useAppContext } from "../../../react/contexts/AppContext";
+import PageHeader from "../../../react/core/components/page-header/PageHeader";
+import { PeriodSelectionDialog } from "../../../react/core/components/period-selection-dialog/PeriodSelectionDialog";
+import { useAppContext } from "../../../react/core/contexts/AppContext";
 
 export interface PeriodFilter {
     period: DataSyncPeriod;

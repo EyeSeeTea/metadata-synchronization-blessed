@@ -15,8 +15,8 @@ import { useHistory } from "react-router-dom";
 import { GitHubError } from "../../../../../domain/packages/entities/Errors";
 import { Store } from "../../../../../domain/stores/entities/Store";
 import i18n from "../../../../../locales";
-import PageHeader from "../../../../react/components/page-header/PageHeader";
-import { useAppContext } from "../../../../react/contexts/AppContext";
+import PageHeader from "../../../../react/core/components/page-header/PageHeader";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import SettingsInputAntenaIcon from "@material-ui/icons/SettingsInputAntenna";
 
 export const StoreListPage: React.FC = () => {

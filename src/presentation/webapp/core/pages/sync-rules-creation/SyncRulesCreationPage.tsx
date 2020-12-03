@@ -1,10 +1,10 @@
 import { ConfirmationDialog, useLoading } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import PageHeader from "../../../../react/components/page-header/PageHeader";
-import SyncWizard from "../../../../react/components/sync-wizard/SyncWizard";
-import { TestWrapper } from "../../../../react/components/test-wrapper/TestWrapper";
-import { useAppContext } from "../../../../react/contexts/AppContext";
+import PageHeader from "../../../../react/core/components/page-header/PageHeader";
+import SyncWizard from "../../../../react/core/components/sync-wizard/SyncWizard";
+import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
 import SyncRule from "../../../../../models/syncRule";

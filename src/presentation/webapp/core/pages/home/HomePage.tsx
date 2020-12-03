@@ -8,9 +8,9 @@ import {
     isAppExecutor,
     shouldShowDeletedObjects,
 } from "../../../../../utils/permissions";
-import { useAppContext } from "../../../../react/contexts/AppContext";
-import { Card, Landing } from "../../../../react/components/landing/Landing";
-import { TestWrapper } from "../../../../react/components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
+import { Card, Landing } from "../../../../react/core/components/landing/Landing";
+import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 import { AppVariant } from "../../../Root";
 
 const appVariantConfiguration: Record<AppVariant, string[]> = {

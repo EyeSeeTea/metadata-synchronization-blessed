@@ -26,11 +26,11 @@ import { UpdatePullRequestStatusError } from "../../../../../domain/notification
 import { SynchronizationResult } from "../../../../../domain/synchronization/entities/SynchronizationResult";
 import i18n from "../../../../../locales";
 import SyncReport from "../../../../../models/syncReport";
-import { useAppContext } from "../../../../react/contexts/AppContext";
-import Dropdown from "../../../../react/components/dropdown/Dropdown";
-import { NotificationViewerDialog } from "../../../../react/components/notification-viewer-dialog/NotificationViewerDialog";
-import PageHeader from "../../../../react/components/page-header/PageHeader";
-import SyncSummary from "../../../../react/components/sync-summary/SyncSummary";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
+import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
+import { NotificationViewerDialog } from "../../../../react/core/components/notification-viewer-dialog/NotificationViewerDialog";
+import PageHeader from "../../../../react/core/components/page-header/PageHeader";
+import SyncSummary from "../../../../react/core/components/sync-summary/SyncSummary";
 
 export const NotificationsListPage: React.FC = () => {
     const { api, compositionRoot } = useAppContext();

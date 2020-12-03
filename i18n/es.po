@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-03T08:15:32.383Z\n"
+"POT-Creation-Date: 2020-12-03T09:02:53.049Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1192,6 +1192,9 @@ msgstr ""
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
+msgid "MSF Settings"
+msgstr ""
+
 msgid "Metadata Synchronization History"
 msgstr ""
 
@@ -1738,9 +1741,6 @@ msgid "Synchronization Progress"
 msgstr ""
 
 msgid "Advanced Settings"
-msgstr ""
-
-msgid "MSF Settings"
 msgstr ""
 
 msgid "Go To Admin Dashboard"

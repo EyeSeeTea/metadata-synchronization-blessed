@@ -22,9 +22,9 @@ import { Instance } from "../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../locales";
 import { executeAnalytics } from "../../../../../utils/analytics";
 import { isAppConfigurator } from "../../../../../utils/permissions";
-import { useAppContext } from "../../../../react/contexts/AppContext";
-import PageHeader from "../../../../react/components/page-header/PageHeader";
-import { TestWrapper } from "../../../../react/components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
+import PageHeader from "../../../../react/core/components/page-header/PageHeader";
+import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 
 const InstanceListPage = () => {
     const { api, compositionRoot } = useAppContext();

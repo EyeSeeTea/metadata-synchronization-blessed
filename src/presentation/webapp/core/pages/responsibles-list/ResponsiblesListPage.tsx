@@ -9,10 +9,10 @@ import { isAppConfigurator } from "../../../../../utils/permissions";
 import {
     InstanceSelectionDropdown,
     InstanceSelectionOption,
-} from "../../../../react/components/instance-selection-dropdown/InstanceSelectionDropdown";
-import MetadataTable from "../../../../react/components/metadata-table/MetadataTable";
-import PageHeader from "../../../../react/components/page-header/PageHeader";
-import { useAppContext } from "../../../../react/contexts/AppContext";
+} from "../../../../react/core/components/instance-selection-dropdown/InstanceSelectionDropdown";
+import MetadataTable from "../../../../react/core/components/metadata-table/MetadataTable";
+import PageHeader from "../../../../react/core/components/page-header/PageHeader";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
 
 export const ResponsiblesListPage: React.FC = () => {
     const { compositionRoot, api } = useAppContext();

@@ -1,7 +1,7 @@
 import React from "react";
 import { HashRouter, Switch } from "react-router-dom";
-import RouteWithSession from "../react/components/auth/RouteWithSession";
-import RouteWithSessionAndAuth from "../react/components/auth/RouteWithSessionAndAuth";
+import RouteWithSession from "../react/core/components/auth/RouteWithSession";
+import RouteWithSessionAndAuth from "../react/core/components/auth/RouteWithSessionAndAuth";
 import InstanceCreationPage from "./core/pages/instance-creation/InstanceCreationPage";
 import HistoryPage from "./core/pages/history/HistoryPage";
 import InstanceListPage from "./core/pages/instance-list/InstanceListPage";
@@ -19,7 +19,7 @@ import SyncRulesCreationPage, {
 } from "./core/pages/sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "./core/pages/sync-rules-list/SyncRulesListPage";
 import { SynchronizationType } from "../../domain/synchronization/entities/SynchronizationType";
-import { useAppContext } from "../react/contexts/AppContext";
+import { useAppContext } from "../react/core/contexts/AppContext";
 import * as permissions from "../../utils/permissions";
 import HomePage from "./core/pages/home/HomePage";
 import { MSFHomePage } from "./msf-aggregate-data/pages/MSFHomePage";

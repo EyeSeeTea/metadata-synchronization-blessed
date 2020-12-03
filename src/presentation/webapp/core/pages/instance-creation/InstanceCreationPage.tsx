@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../locales";
-import { useAppContext } from "../../../../react/contexts/AppContext";
-import PageHeader from "../../../../react/components/page-header/PageHeader";
-import { TestWrapper } from "../../../../react/components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
+import PageHeader from "../../../../react/core/components/page-header/PageHeader";
+import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 import GeneralInfoForm from "./GeneralInfoForm";
 
 const InstanceCreationPage = () => {

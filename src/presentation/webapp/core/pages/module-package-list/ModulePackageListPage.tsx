@@ -6,16 +6,16 @@ import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { Store } from "../../../../../domain/stores/entities/Store";
 import i18n from "../../../../../locales";
 import SyncReport from "../../../../../models/syncReport";
-import { CreatePackageFromFileDialog } from "../../../../react/components/create-package-from-file-dialog/CreatePackageFromFileDialog";
+import { CreatePackageFromFileDialog } from "../../../../react/core/components/create-package-from-file-dialog/CreatePackageFromFileDialog";
 import {
     ModulePackageListTable,
     PresentationOption,
     ViewOption,
-} from "../../../../react/components/module-package-list-table/ModulePackageListTable";
-import PackageImportDialog from "../../../../react/components/package-import-dialog/PackageImportDialog";
-import PageHeader from "../../../../react/components/page-header/PageHeader";
-import SyncSummary from "../../../../react/components/sync-summary/SyncSummary";
-import { useAppContext } from "../../../../react/contexts/AppContext";
+} from "../../../../react/core/components/module-package-list-table/ModulePackageListTable";
+import PackageImportDialog from "../../../../react/core/components/package-import-dialog/PackageImportDialog";
+import PageHeader from "../../../../react/core/components/page-header/PageHeader";
+import SyncSummary from "../../../../react/core/components/sync-summary/SyncSummary";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
 
 export interface ModulePackageListPageProps {
     remoteInstance?: Instance;

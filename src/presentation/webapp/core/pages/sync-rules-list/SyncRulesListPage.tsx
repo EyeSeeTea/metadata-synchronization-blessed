@@ -36,16 +36,16 @@ import {
     UserInfo,
 } from "../../../../../utils/permissions";
 import { requestJSONDownload } from "../../../../../utils/synchronization";
-import { useAppContext } from "../../../../react/contexts/AppContext";
-import Dropdown from "../../../../react/components/dropdown/Dropdown";
-import PageHeader from "../../../../react/components/page-header/PageHeader";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
+import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
+import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import {
     PullRequestCreation,
     PullRequestCreationDialog,
-} from "../../../../react/components/pull-request-creation-dialog/PullRequestCreationDialog";
-import { SharingDialog } from "../../../../react/components/sharing-dialog/SharingDialog";
-import SyncSummary from "../../../../react/components/sync-summary/SyncSummary";
-import { TestWrapper } from "../../../../react/components/test-wrapper/TestWrapper";
+} from "../../../../react/core/components/pull-request-creation-dialog/PullRequestCreationDialog";
+import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
+import SyncSummary from "../../../../react/core/components/sync-summary/SyncSummary";
+import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 
 const config: {
     [key: string]: {

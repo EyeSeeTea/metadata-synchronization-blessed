@@ -21,9 +21,9 @@ import {
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
 } from "../../../../../models/dhis/mapping";
-import MappingTable from "../../../../react/components/mapping-table/MappingTable";
-import PageHeader from "../../../../react/components/page-header/PageHeader";
-import { useAppContext } from "../../../../react/contexts/AppContext";
+import MappingTable from "../../../../react/core/components/mapping-table/MappingTable";
+import PageHeader from "../../../../react/core/components/page-header/PageHeader";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
 
 export type MappingType = "aggregated" | "tracker" | "orgUnit";
 

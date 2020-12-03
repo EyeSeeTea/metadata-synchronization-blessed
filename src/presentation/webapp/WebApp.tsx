@@ -14,12 +14,12 @@ import { MigrationsRunner } from "../../migrations";
 import { D2Api } from "../../types/d2-api";
 import { debug } from "../../utils/debug";
 import { initializeAppRoles } from "../../utils/permissions";
-import { AppContext } from "../react/contexts/AppContext";
-import muiThemeLegacy from "../react/themes/dhis2-legacy.theme";
-import { muiTheme } from "../react/themes/dhis2.theme";
+import { AppContext } from "../react/core/contexts/AppContext";
+import muiThemeLegacy from "../react/core/themes/dhis2-legacy.theme";
+import { muiTheme } from "../react/core/themes/dhis2.theme";
 import { CompositionRoot } from "../CompositionRoot";
-import Migrations from "../react/components/migrations/Migrations";
-import Share from "../react/components/share/Share";
+import Migrations from "../react/core/components/migrations/Migrations";
+import Share from "../react/core/components/share/Share";
 import Root from "./Root";
 import "./WebApp.css";
 

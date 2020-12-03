@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 import { ValidationError } from "../../../../../domain/common/entities/Validations";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../locales";
-import { useAppContext } from "../../../../react/contexts/AppContext";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import SaveButton from "./SaveButton";
 
 export interface GeneralInfoFormProps {

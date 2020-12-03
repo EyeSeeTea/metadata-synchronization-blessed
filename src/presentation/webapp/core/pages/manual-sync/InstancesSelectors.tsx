@@ -7,7 +7,7 @@ import { Maybe } from "../../../../../types/utils";
 import {
     InstanceSelectionDropdown,
     InstanceSelectionDropdownProps,
-} from "../../../../react/components/instance-selection-dropdown/InstanceSelectionDropdown";
+} from "../../../../react/core/components/instance-selection-dropdown/InstanceSelectionDropdown";
 
 interface InstancesSelectorsProps {
     sourceInstance: Maybe<Ref>;
