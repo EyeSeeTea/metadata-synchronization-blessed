@@ -187,15 +187,13 @@ const getOriginName = (source: PublicInstance | Store) => {
 };
 
 const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
-    const { api } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const classes = useStyles();
     const [results, setResults] = useState<SynchronizationResult[]>([]);
 
     useEffect(() => {
-        // TODO: Add use-case
-        //response.loadSyncResults(api).then(setResults);
-        setResults([]);
-    }, [api, response]);
+        compositionRoot.reports.getSyncResults(response.id).then(setResults);
+    }, [compositionRoot, response]);
 
     if (results.length === 0) return null;
     return (

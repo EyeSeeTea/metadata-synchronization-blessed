@@ -3,6 +3,7 @@ import {
     SynchronizationReport,
     SynchronizationReportData,
 } from "../../domain/reports/entities/SynchronizationReport";
+import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { ReportsRepository } from "../../domain/reports/repositories/ReportsRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { Namespace } from "../storage/Namespaces";
@@ -22,6 +23,14 @@ export class ReportsD2ApiRepository implements ReportsRepository {
         );
 
         return data ? SynchronizationReport.build(data) : undefined;
+    }
+
+    public async getSyncResults(id: string): Promise<SynchronizationResult[]> {
+        const data = await this.storageClient.getObject<SynchronizationResult[]>(
+            `${Namespace.HISTORY}-${id}`
+        );
+
+        return data ?? [];
     }
 
     public async list(): Promise<SynchronizationReport[]> {

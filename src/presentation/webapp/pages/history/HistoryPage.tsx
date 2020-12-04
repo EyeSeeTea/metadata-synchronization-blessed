@@ -21,6 +21,7 @@ import { SynchronizationRule } from "../../../../domain/synchronization/entities
 import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import SyncRule from "../../../../models/syncRule";
+import { promiseMap } from "../../../../utils/common";
 import { getValueForCollection } from "../../../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../../../utils/permissions";
 import Dropdown from "../../../react/components/dropdown/Dropdown";
@@ -68,7 +69,7 @@ const initialState = {
 };
 
 const HistoryPage: React.FC = () => {
-    const { api } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const loading = useLoading();
     const history = useHistory();
@@ -76,7 +77,7 @@ const HistoryPage: React.FC = () => {
     const { title } = config[type];
 
     const [syncRules, setSyncRules] = useState<SynchronizationRule[]>([]);
-    const [syncReport, setSyncReport] = useState<SynchronizationReport | null>(null);
+    const [syncReport, setSyncReport] = useState<SynchronizationReport>();
     const [toDelete, setToDelete] = useState<string[]>([]);
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [response, updateResponse] = useState<{
@@ -92,26 +93,30 @@ const HistoryPage: React.FC = () => {
 
     const updateTable = useCallback(
         (tableState?: TableState<SynchronizationReport>) => {
-            // TODO: Add use-case
-            /**SyncReport.list(
-                api,
-                { type, statusFilter, syncRuleFilter },
-                tableState ?? initialState
-            ).then(updateResponse);**/
             updateResponse({ rows: [], pager: {} });
             updateSelection(oldSelection => tableState?.selection ?? oldSelection);
+
+            const { pagination, sorting } = tableState ?? initialState;
+            compositionRoot.reports
+                .list({
+                    paging: true,
+                    pageSize: pagination.pageSize,
+                    page: pagination.page,
+                    sorting,
+                    filters: { type, statusFilter, syncRuleFilter },
+                })
+                .then(updateResponse);
         },
-        [statusFilter, syncRuleFilter, type, updateSelection]
+        [statusFilter, syncRuleFilter, type, compositionRoot]
     );
 
     useEffect(() => {
         SyncRule.list(api, { type }, { paging: false }).then(({ objects }) =>
             setSyncRules(objects)
         );
-        // TODO: Add use-case
-        //if (id) SyncReport.get(api, id).then(setSyncReport);
+        if (id) compositionRoot.reports.get(id).then(setSyncReport);
         isAppConfigurator(api).then(setAppConfigurator);
-    }, [api, id, type]);
+    }, [api, id, type, compositionRoot]);
 
     useEffect(() => {
         updateTable();
@@ -212,30 +217,16 @@ const HistoryPage: React.FC = () => {
 
     const confirmDelete = async () => {
         loading.show(true, i18n.t("Deleting History Notifications"));
-        const notifications = _(toDelete)
-            .map(id => _.find(response.rows, ["id", id]))
-            .compact()
-            .map(data => SynchronizationReport.build(data))
-            .value();
 
-        const results: any[] = [];
-        for (const notification of notifications) {
-            // TODO: Add use-case
-            //results.push(await notification.remove(api));
-            console.log(notification, results);
-        }
+        await promiseMap(toDelete, id => compositionRoot.reports.delete(id));
 
         loading.reset();
 
-        if (_.some(results, ["status", false])) {
-            snackbar.error(i18n.t("Failed to delete some history notifications"));
-        } else {
-            snackbar.success(
-                i18n.t("Successfully deleted {{count}} history notifications", {
-                    count: toDelete.length,
-                })
-            );
-        }
+        snackbar.success(
+            i18n.t("Successfully deleted {{count}} history notifications", {
+                count: toDelete.length,
+            })
+        );
 
         updateSelection([]);
         setToDelete([]);
@@ -276,7 +267,7 @@ const HistoryPage: React.FC = () => {
             />
 
             {!!syncReport && (
-                <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
             )}
 
             {toDelete.length > 0 && (

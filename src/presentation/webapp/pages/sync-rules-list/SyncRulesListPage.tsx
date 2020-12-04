@@ -205,8 +205,6 @@ const SyncRulesPage: React.FC = () => {
     const confirmDelete = async () => {
         loading.show(true, i18n.t("Deleting Sync Rules"));
 
-        // TODO: Add use-case
-        /**
         const results = [];
         for (const id of toDelete) {
             const rule = await SyncRule.get(api, id);
@@ -214,22 +212,19 @@ const SyncRulesPage: React.FC = () => {
 
             results.push(await rule.remove(api));
 
-            const syncReports = await SyncReport.list(
-                api,
-                { type: rule.type, syncRuleFilter: id },
-                {},
-                false
-            );
+            // TODO: Fully refactor with SyncRule
+            const syncReports = await compositionRoot.reports.list({
+                filters: { type: rule.type, syncRuleFilter: id },
+                paging: false,
+            });
 
             for (const syncReportData of syncReports.rows) {
-                const syncReport = SyncReport.build({
+                const syncReport = SynchronizationReport.build({
                     ...syncReportData,
                     deletedSyncRuleLabel: deletedRuleLabel,
                 });
-                const syncResults = await syncReport.loadSyncResults(api);
-                syncReport.addSyncResult(syncResults[0]);
 
-                await syncReport.save(api);
+                await compositionRoot.reports.save(syncReport);
             }
         }
 
@@ -239,7 +234,7 @@ const SyncRulesPage: React.FC = () => {
             snackbar.success(
                 i18n.t("Successfully deleted {{count}} rules", { count: toDelete.length })
             );
-        }**/
+        }
 
         loading.reset();
         setToDelete([]);
