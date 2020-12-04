@@ -2,18 +2,12 @@ import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@materi
 import i18n from "d2-ui-components/locales";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { DataSyncPeriod } from "../../../../domain/aggregated/types";
+import { Period } from "../../../../domain/common/entities/Period";
 import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
 import { PeriodSelectionDialog } from "../../../react/core/components/period-selection-dialog/PeriodSelectionDialog";
 import { useAppContext } from "../../../react/core/contexts/AppContext";
 import { MSFSettingsDialog } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
-
-export interface PeriodFilter {
-    period: DataSyncPeriod;
-    startDate?: Date;
-    endDate?: Date;
-}
 
 export const MSFHomePage: React.FC = () => {
     const classes = useStyles();
@@ -21,7 +15,7 @@ export const MSFHomePage: React.FC = () => {
 
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
-    const [period, setPeriod] = useState<PeriodFilter>({ period: "ALL" });
+    const [period, setPeriod] = useState<Period>(Period.createDefault());
     const [globalAdmin, setGlobalAdmin] = useState(false);
     const { api } = useAppContext();
 
@@ -49,7 +43,7 @@ export const MSFHomePage: React.FC = () => {
         setShowPeriodDialog(false);
     };
 
-    const handleSaveAdvancedSettings = (period: PeriodFilter) => {
+    const handleSaveAdvancedSettings = (period: Period) => {
         setShowPeriodDialog(false);
         setPeriod(period);
     };
