@@ -1,11 +1,11 @@
 import { Icon } from "@material-ui/core";
 import { PaginationOptions } from "d2-ui-components";
-import i18n from "d2-ui-components/locales";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import { Store } from "../../../../../domain/stores/entities/Store";
+import i18n from "../../../../../locales";
 import { CreatePackageFromFileDialog } from "../../../../react/core/components/create-package-from-file-dialog/CreatePackageFromFileDialog";
 import {
     ModulePackageListTable,

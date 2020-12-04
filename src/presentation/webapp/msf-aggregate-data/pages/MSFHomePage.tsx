@@ -1,8 +1,8 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
-import i18n from "d2-ui-components/locales";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Period } from "../../../../domain/common/entities/Period";
+import i18n from "../../../../locales";
 import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
 import { PeriodSelectionDialog } from "../../../react/core/components/period-selection-dialog/PeriodSelectionDialog";

@@ -16,7 +16,6 @@ import {
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
-import i18n from "d2-ui-components/locales";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Either } from "../../../../../domain/common/entities/Either";
@@ -26,6 +25,7 @@ import { ImportPullRequestError } from "../../../../../domain/notifications/usec
 import { UpdatePullRequestStatusError } from "../../../../../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationResult } from "../../../../../domain/reports/entities/SynchronizationResult";
+import i18n from "../../../../../locales";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
 import { NotificationViewerDialog } from "../../../../react/core/components/notification-viewer-dialog/NotificationViewerDialog";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
