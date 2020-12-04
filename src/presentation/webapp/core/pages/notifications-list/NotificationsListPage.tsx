@@ -5,7 +5,7 @@ import {
     IconButton,
     makeStyles,
     Tooltip,
-    Typography
+    Typography,
 } from "@material-ui/core";
 import {
     ObjectsTable,
@@ -14,7 +14,7 @@ import {
     TableColumn,
     TableGlobalAction,
     useLoading,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import i18n from "d2-ui-components/locales";
 import React, { useCallback, useEffect, useMemo, useState } from "react";

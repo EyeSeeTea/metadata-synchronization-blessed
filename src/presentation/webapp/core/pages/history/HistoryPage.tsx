@@ -26,7 +26,9 @@ import { getValueForCollection } from "../../../../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../../../../utils/permissions";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
-import SyncSummary, { formatStatusTag } from "../../../../react/core/components/sync-summary/SyncSummary";
+import SyncSummary, {
+    formatStatusTag,
+} from "../../../../react/core/components/sync-summary/SyncSummary";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
 
 const config = {

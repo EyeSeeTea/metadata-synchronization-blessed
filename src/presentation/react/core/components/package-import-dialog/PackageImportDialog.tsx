@@ -6,7 +6,11 @@ import { Either } from "../../../../../domain/common/entities/Either";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { JSONDataSource } from "../../../../../domain/instance/entities/JSONDataSource";
 import { PackageImportRule } from "../../../../../domain/package-import/entities/PackageImportRule";
-import { PackageSource, isInstance, isStore } from "../../../../../domain/package-import/entities/PackageSource";
+import {
+    PackageSource,
+    isInstance,
+    isStore,
+} from "../../../../../domain/package-import/entities/PackageSource";
 import { mapToImportedPackage } from "../../../../../domain/package-import/mappers/ImportedPackageMapper";
 import { Package } from "../../../../../domain/packages/entities/Package";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";

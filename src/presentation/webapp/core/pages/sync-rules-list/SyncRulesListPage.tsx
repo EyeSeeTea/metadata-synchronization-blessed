@@ -14,7 +14,7 @@ import {
     TableSelection,
     TableState,
     useLoading,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
 import { Moment } from "moment";
@@ -28,11 +28,20 @@ import i18n from "../../../../../locales";
 import SyncRule from "../../../../../models/syncRule";
 import { getValueForCollection } from "../../../../../utils/d2-ui-components";
 import { getValidationMessages } from "../../../../../utils/old-validations";
-import { getUserInfo, isAppConfigurator, isAppExecutor, isGlobalAdmin, UserInfo } from "../../../../../utils/permissions";
+import {
+    getUserInfo,
+    isAppConfigurator,
+    isAppExecutor,
+    isGlobalAdmin,
+    UserInfo,
+} from "../../../../../utils/permissions";
 import { requestJSONDownload } from "../../../../../utils/synchronization";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
-import { PullRequestCreation, PullRequestCreationDialog } from "../../../../react/core/components/pull-request-creation-dialog/PullRequestCreationDialog";
+import {
+    PullRequestCreation,
+    PullRequestCreationDialog,
+} from "../../../../react/core/components/pull-request-creation-dialog/PullRequestCreationDialog";
 import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../../../react/core/components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";

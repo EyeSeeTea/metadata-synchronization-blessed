@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-04T07:06:19.722Z\n"
-"PO-Revision-Date: 2020-12-04T07:06:19.723Z\n"
+"POT-Creation-Date: 2020-12-04T08:16:36.678Z\n"
+"PO-Revision-Date: 2020-12-04T08:16:36.678Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1186,6 +1186,9 @@ msgstr ""
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
+msgid "MSF Settings"
+msgstr ""
+
 msgid "Metadata Synchronization History"
 msgstr ""
 
@@ -1367,6 +1370,9 @@ msgstr ""
 msgid ""
 "Define who are the custodians of this instance metadata. Custodians approve "
 "metadata requests coming from other DHIS instances."
+msgstr ""
+
+msgid "Admin Dashboard"
 msgstr ""
 
 msgid "Please fix the issues before testing the connection"
@@ -1714,6 +1720,24 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Aggregate Data For HMIS"
+msgstr ""
+
+msgid "Aggregate Data"
+msgstr ""
+
+msgid "Synchronization Progress"
+msgstr ""
+
+msgid "Advanced Settings"
+msgstr ""
+
+msgid "Go To Admin Dashboard"
+msgstr ""
+
+msgid "Go to History"
+msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
 msgstr ""

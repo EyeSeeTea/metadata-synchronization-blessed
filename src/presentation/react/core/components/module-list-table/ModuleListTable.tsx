@@ -12,7 +12,7 @@ import {
     TableSelection,
     TableState,
     useLoading,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -27,7 +27,7 @@ import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import {
     PullRequestCreation,
-    PullRequestCreationDialog
+    PullRequestCreationDialog,
 } from "../pull-request-creation-dialog/PullRequestCreationDialog";
 import { SharingDialog } from "../sharing-dialog/SharingDialog";
 import { NewPackageDialog } from "./NewPackageDialog";

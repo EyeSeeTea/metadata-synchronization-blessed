@@ -3,7 +3,7 @@ import {
     ConfirmationDialog,
     ConfirmationDialogProps,
     useLoading,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
@@ -16,8 +16,17 @@ import { SynchronizationType } from "../../../../../domain/synchronization/entit
 import i18n from "../../../../../locales";
 import { D2Model } from "../../../../../models/dhis/default";
 import { metadataModels } from "../../../../../models/dhis/factory";
-import { AggregatedDataElementModel, DataSetWithDataElementsModel, EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel, IndicatorMappedModel } from "../../../../../models/dhis/mapping";
-import { DataElementGroupModel, DataElementGroupSetModel } from "../../../../../models/dhis/metadata";
+import {
+    AggregatedDataElementModel,
+    DataSetWithDataElementsModel,
+    EventProgramWithDataElementsModel,
+    EventProgramWithIndicatorsModel,
+    IndicatorMappedModel,
+} from "../../../../../models/dhis/mapping";
+import {
+    DataElementGroupModel,
+    DataElementGroupSetModel,
+} from "../../../../../models/dhis/metadata";
 import SyncRule from "../../../../../models/syncRule";
 import { MetadataType } from "../../../../../utils/d2";
 import { isAppConfigurator } from "../../../../../utils/permissions";
@@ -25,7 +34,10 @@ import DeletedObjectsTable from "../../../../react/core/components/delete-object
 import { InstanceSelectionOption } from "../../../../react/core/components/instance-selection-dropdown/InstanceSelectionDropdown";
 import MetadataTable from "../../../../react/core/components/metadata-table/MetadataTable";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
-import { PullRequestCreation, PullRequestCreationDialog } from "../../../../react/core/components/pull-request-creation-dialog/PullRequestCreationDialog";
+import {
+    PullRequestCreation,
+    PullRequestCreationDialog,
+} from "../../../../react/core/components/pull-request-creation-dialog/PullRequestCreationDialog";
 import SyncDialog from "../../../../react/core/components/sync-dialog/SyncDialog";
 import SyncSummary from "../../../../react/core/components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";

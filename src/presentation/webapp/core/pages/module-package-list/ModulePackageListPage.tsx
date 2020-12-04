@@ -10,7 +10,7 @@ import { CreatePackageFromFileDialog } from "../../../../react/core/components/c
 import {
     ModulePackageListTable,
     PresentationOption,
-    ViewOption
+    ViewOption,
 } from "../../../../react/core/components/module-package-list-table/ModulePackageListTable";
 import PackageImportDialog from "../../../../react/core/components/package-import-dialog/PackageImportDialog";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";

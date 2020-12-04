@@ -10,7 +10,7 @@ import {
     TableSelection,
     TableState,
     useLoading,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -23,7 +23,7 @@ import { ImportedPackage } from "../../../../../domain/package-import/entities/I
 import {
     isInstance,
     isStore,
-    PackageSource
+    PackageSource,
 } from "../../../../../domain/package-import/entities/PackageSource";
 import { mapToImportedPackage } from "../../../../../domain/package-import/mappers/ImportedPackageMapper";
 import { ListPackage, Package } from "../../../../../domain/packages/entities/Package";
@@ -40,7 +40,7 @@ import {
     InstallStatus,
     isPackageItem,
     PackageItem,
-    PackageModuleItem
+    PackageModuleItem,
 } from "./PackageModuleItem";
 
 interface PackagesListTableProps extends ModulePackageListPageProps {

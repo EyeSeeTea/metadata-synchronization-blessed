@@ -8,7 +8,7 @@ import Dropdown from "../dropdown/Dropdown";
 import {
     InstanceSelectionConfig,
     InstanceSelectionDropdown,
-    InstanceSelectionOption
+    InstanceSelectionOption,
 } from "../instance-selection-dropdown/InstanceSelectionDropdown";
 import { ModulesListTable } from "../module-list-table/ModuleListTable";
 import { PackagesListTable } from "../package-list-table/PackageListTable";
