@@ -23,6 +23,12 @@ const variants = [
         file: "metadata-synchronization-module-package-generation",
     },
     {
+        type: "app",
+        name: "msf-aggregate-data-app",
+        title: "MSF Aggregate Data",
+        file: "metadata-synchronization-msf-aggregate-data",
+    },
+    {
         type: "widget",
         name: "modules-list",
         title: "MetaData Synchronization Modules List Widget",
