@@ -5,15 +5,13 @@ import { SynchronizationType } from "../../synchronization/entities/Synchronizat
 import { SynchronizationResult } from "./SynchronizationResult";
 
 export class SynchronizationReport implements SynchronizationReportData {
-    // TODO: Review functional
     private results: SynchronizationResult[] | null;
+    public status: SynchronizationReportStatus;
+    public types: string[];
+
     public readonly id: string;
     public readonly date?: Date | undefined;
     public readonly user: string;
-    // TODO: Review functional
-    public status: SynchronizationReportStatus;
-    // TODO: Review functional
-    public types: string[];
     public readonly syncRule?: string | undefined;
     public readonly packageImport?: boolean | undefined;
     public readonly deletedSyncRuleLabel?: string | undefined;
