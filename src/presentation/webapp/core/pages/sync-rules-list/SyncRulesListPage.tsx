@@ -21,10 +21,10 @@ import { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
+import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../../domain/synchronization/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
-import SyncReport from "../../../../../models/syncReport";
 import SyncRule from "../../../../../models/syncRule";
 import { getValueForCollection } from "../../../../../utils/d2-ui-components";
 import { getValidationMessages } from "../../../../../utils/old-validations";
@@ -36,7 +36,6 @@ import {
     UserInfo,
 } from "../../../../../utils/permissions";
 import { requestJSONDownload } from "../../../../../utils/synchronization";
-import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import {
@@ -46,6 +45,7 @@ import {
 import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
 import SyncSummary from "../../../../react/core/components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
 
 const config: {
     [key: string]: {
@@ -85,7 +85,7 @@ const SyncRulesPage: React.FC = () => {
     const [targetInstanceFilter, setTargetInstanceFilter] = useState("");
     const [enabledFilter, setEnabledFilter] = useState("");
     const [lastExecutedFilter, setLastExecutedFilter] = useState<Moment | null>(null);
-    const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
+    const [syncReport, setSyncReport] = useState<SynchronizationReport | null>(null);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
@@ -212,23 +212,19 @@ const SyncRulesPage: React.FC = () => {
 
             results.push(await rule.remove(api));
 
-            const syncReports = await SyncReport.list(
-                api,
-                { type: rule.type, syncRuleFilter: id },
-                {},
-                false
-            );
+            // TODO: Fully refactor with SyncRule
+            const syncReports = await compositionRoot.reports.list({
+                filters: { type: rule.type, syncRuleFilter: id },
+                paging: false,
+            });
 
             for (const syncReportData of syncReports.rows) {
-                const editedSyncReport = {
+                const syncReport = SynchronizationReport.build({
                     ...syncReportData,
                     deletedSyncRuleLabel: deletedRuleLabel,
-                };
-                const syncReport = SyncReport.build(editedSyncReport);
-                const syncResults = await syncReport.loadSyncResults(api);
-                syncReport.addSyncResult(syncResults[0]);
+                });
 
-                await syncReport.save(api);
+                await compositionRoot.reports.save(syncReport);
             }
         }
 
@@ -299,7 +295,7 @@ const SyncRulesPage: React.FC = () => {
         const synchronize = async () => {
             for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) loading.show(true, message);
-                if (syncReport) await syncReport.save(api);
+                if (syncReport) await compositionRoot.reports.save(syncReport);
                 if (done && syncReport) setSyncReport(syncReport);
             }
         };

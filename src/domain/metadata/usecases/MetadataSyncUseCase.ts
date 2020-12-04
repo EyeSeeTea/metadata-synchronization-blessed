@@ -7,7 +7,7 @@ import { debug } from "../../../utils/debug";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
-import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { MetadataEntities, MetadataPackage, Document } from "../entities/MetadataEntities";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";

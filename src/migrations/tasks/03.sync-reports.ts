@@ -1,4 +1,4 @@
-import { SynchronizationReport } from "../../domain/synchronization/entities/SynchronizationReport";
+import { SynchronizationReportData } from "../../domain/reports/entities/SynchronizationReport";
 import { getDataStore, saveDataStore } from "../../models/dataStore";
 import { D2Api } from "../../types/d2-api";
 import { Debug } from "../types";
@@ -88,7 +88,7 @@ export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
         .filter(key => key.startsWith("notifications-"))
         .map(key => key.replace("notifications-", ""));
 
-    const notifications = await getDataStore<SynchronizationReport[]>(api, "notifications", []);
+    const notifications = await getDataStore<SynchronizationReportData[]>(api, "notifications", []);
 
     for (const notification of notificationKeys) {
         const { type = "metadata" } = notifications.find(({ id }) => id === notification) ?? {};

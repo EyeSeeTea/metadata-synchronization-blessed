@@ -5,6 +5,7 @@ import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepositor
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
 import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
 import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepository";
+import { ReportsD2ApiRepository } from "../data/reports/ReportsD2ApiRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
@@ -61,6 +62,11 @@ import { ImportPackageUseCase } from "../domain/packages/usecases/ImportPackageU
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
+import { DeleteSyncReportUseCase } from "../domain/reports/usecases/DeleteSyncReportUseCase";
+import { GetSyncReportUseCase } from "../domain/reports/usecases/GetSyncReportUseCase";
+import { GetSyncResultsUseCase } from "../domain/reports/usecases/GetSyncResultsUseCase";
+import { ListSyncReportUseCase } from "../domain/reports/usecases/ListSyncReportUseCase";
+import { SaveSyncReportUseCase } from "../domain/reports/usecases/SaveSyncReportUseCase";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { DeleteStoreUseCase } from "../domain/stores/usecases/DeleteStoreUseCase";
 import { GetStoreUseCase } from "../domain/stores/usecases/GetStoreUseCase";
@@ -86,6 +92,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
         this.repositoryFactory.bind(Repositories.FileRepository, FileD2Repository);
+        this.repositoryFactory.bind(Repositories.ReportsRepository, ReportsD2ApiRepository);
         this.repositoryFactory.bind(
             Repositories.MetadataRepository,
             MetadataJSONRepository,
@@ -297,6 +304,17 @@ export class CompositionRoot {
             getValidIds: new GetValidMappingIdUseCase(this.repositoryFactory, this.localInstance),
             autoMap: new AutoMapUseCase(this.repositoryFactory, this.localInstance),
             buildMapping: new BuildMappingUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get reports() {
+        return getExecute({
+            list: new ListSyncReportUseCase(this.repositoryFactory, this.localInstance),
+            save: new SaveSyncReportUseCase(this.repositoryFactory, this.localInstance),
+            delete: new DeleteSyncReportUseCase(this.repositoryFactory, this.localInstance),
+            get: new GetSyncReportUseCase(this.repositoryFactory, this.localInstance),
+            getSyncResults: new GetSyncResultsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }

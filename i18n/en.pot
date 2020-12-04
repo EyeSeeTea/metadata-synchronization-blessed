@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-04T09:39:33.056Z\n"
-"PO-Revision-Date: 2020-12-04T09:39:33.056Z\n"
+"POT-Creation-Date: 2020-12-04T10:44:16.777Z\n"
+"PO-Revision-Date: 2020-12-04T10:44:16.777Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1250,9 +1250,6 @@ msgid "View summary"
 msgstr ""
 
 msgid "Deleting History Notifications"
-msgstr ""
-
-msgid "Failed to delete some history notifications"
 msgstr ""
 
 msgid "Successfully deleted {{count}} history notifications"

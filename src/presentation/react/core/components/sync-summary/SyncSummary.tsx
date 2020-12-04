@@ -18,15 +18,15 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
 import { PublicInstance } from "../../../../../domain/instance/entities/Instance";
-import { Store } from "../../../../../domain/stores/entities/Store";
+import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import {
     ErrorMessage,
     SynchronizationResult,
     SynchronizationStats,
-} from "../../../../../domain/synchronization/entities/SynchronizationResult";
+} from "../../../../../domain/reports/entities/SynchronizationResult";
+import { Store } from "../../../../../domain/stores/entities/Store";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
-import SyncReport from "../../../../../models/syncReport";
 import { useAppContext } from "../../contexts/AppContext";
 
 const useStyles = makeStyles(theme => ({
@@ -172,7 +172,7 @@ const getTypeName = (reportType: SynchronizationType, syncType: string) => {
 };
 
 interface SyncSummaryProps {
-    response: SyncReport;
+    response: SynchronizationReport;
     onClose: () => void;
 }
 
@@ -187,13 +187,13 @@ const getOriginName = (source: PublicInstance | Store) => {
 };
 
 const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
-    const { api } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const classes = useStyles();
     const [results, setResults] = useState<SynchronizationResult[]>([]);
 
     useEffect(() => {
-        response.loadSyncResults(api).then(setResults);
-    }, [api, response]);
+        compositionRoot.reports.getSyncResults(response.id).then(setResults);
+    }, [compositionRoot, response]);
 
     if (results.length === 0) return null;
     return (
@@ -228,7 +228,7 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
                         >
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography className={classes.accordionHeading1}>
-                                    {`Type: ${getTypeName(type, response.syncReport.type)}`}
+                                    {`Type: ${getTypeName(type, response.type)}`}
                                     <br />
                                     {origin && `${i18n.t("Origin")}: ${getOriginName(origin)}`}
                                     {origin && <br />}
@@ -278,7 +278,7 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
                     )
                 )}
 
-                {response.syncReport.dataStats && (
+                {response.dataStats && (
                     <Accordion>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <Typography className={classes.accordionHeading1}>
@@ -287,11 +287,7 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
                         </AccordionSummary>
 
                         <AccordionDetails>
-                            {buildDataStatsTable(
-                                response.syncReport.type,
-                                response.syncReport.dataStats,
-                                classes
-                            )}
+                            {buildDataStatsTable(response.type, response.dataStats, classes)}
                         </AccordionDetails>
                     </Accordion>
                 )}

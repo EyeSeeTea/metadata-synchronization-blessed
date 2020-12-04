@@ -25,7 +25,7 @@ import {
 } from "../../domain/metadata/repositories/MetadataRepository";
 import { MetadataImportParams } from "../../domain/metadata/types";
 import { getClassName } from "../../domain/metadata/utils";
-import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import { modelFactory } from "../../models/dhis/factory";

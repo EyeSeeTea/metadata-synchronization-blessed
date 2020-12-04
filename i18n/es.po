@@ -1259,9 +1259,6 @@ msgstr ""
 msgid "Deleting History Notifications"
 msgstr ""
 
-msgid "Failed to delete some history notifications"
-msgstr ""
-
 msgid "Successfully deleted {{count}} history notifications"
 msgid_plural "Successfully deleted {{count}} history notifications"
 msgstr[0] ""

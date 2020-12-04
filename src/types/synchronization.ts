@@ -1,8 +1,8 @@
 import { DataSynchronizationParams } from "../domain/aggregated/types";
-import { MetadataEntities } from "../domain/metadata/entities/MetadataEntities";
-import SyncReport from "../models/syncReport";
-import { MetadataImportParams } from "./d2";
 import { FilterRule } from "../domain/metadata/entities/FilterRule";
+import { MetadataEntities } from "../domain/metadata/entities/MetadataEntities";
+import { SynchronizationReport } from "../domain/reports/entities/SynchronizationReport";
+import { MetadataImportParams } from "./d2";
 
 //TODO: Review this to move it to domain
 
@@ -52,6 +52,6 @@ export interface NestedRules {
 
 export interface SynchronizationState {
     message?: string;
-    syncReport?: SyncReport;
+    syncReport?: SynchronizationReport;
     done?: boolean;
 }

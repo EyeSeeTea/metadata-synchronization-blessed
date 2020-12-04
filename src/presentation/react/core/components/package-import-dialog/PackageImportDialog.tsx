@@ -7,14 +7,14 @@ import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { JSONDataSource } from "../../../../../domain/instance/entities/JSONDataSource";
 import { PackageImportRule } from "../../../../../domain/package-import/entities/PackageImportRule";
 import {
+    PackageSource,
     isInstance,
     isStore,
-    PackageSource,
 } from "../../../../../domain/package-import/entities/PackageSource";
 import { mapToImportedPackage } from "../../../../../domain/package-import/mappers/ImportedPackageMapper";
 import { Package } from "../../../../../domain/packages/entities/Package";
+import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import i18n from "../../../../../locales";
-import SyncReport from "../../../../../models/syncReport";
 import { useAppContext } from "../../contexts/AppContext";
 import { PackageImportWizard } from "../package-import-wizard/PackageImportWizard";
 
@@ -23,7 +23,7 @@ interface PackageImportDialogProps {
     instance: PackageSource;
     selectedPackagesId?: string[];
     onClose: () => void;
-    openSyncSummary?: (result: SyncReport) => void;
+    openSyncSummary?: (result: SynchronizationReport) => void;
     disablePackageSelection?: boolean;
 }
 
@@ -100,7 +100,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
             .get({ fields: { id: true, userCredentials: { username: true } } })
             .getData();
 
-        const report = SyncReport.create(
+        const report = SynchronizationReport.create(
             "metadata",
             currentUser.userCredentials.username ?? "Unknown",
             true
@@ -152,7 +152,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                         );
 
                         report.setTypes(
-                            _.uniq([...report.syncReport.types, ..._.keys(originPackage.contents)])
+                            _.uniq([...report.types, ..._.keys(originPackage.contents)])
                         );
 
                         report.setStatus(
@@ -188,7 +188,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
 
             loading.show(true, i18n.t("Saving imported packages"));
 
-            await report.save(api);
+            await compositionRoot.reports.save(report);
 
             await saveImportedPackages(
                 importedPackages,

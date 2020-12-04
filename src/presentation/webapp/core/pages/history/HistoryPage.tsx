@@ -16,20 +16,20 @@ import {
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { SynchronizationReport } from "../../../../../domain/synchronization/entities/SynchronizationReport";
+import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../../domain/synchronization/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
-import SyncReport from "../../../../../models/syncReport";
 import SyncRule from "../../../../../models/syncRule";
+import { promiseMap } from "../../../../../utils/common";
 import { getValueForCollection } from "../../../../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../../../../utils/permissions";
-import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import SyncSummary, {
     formatStatusTag,
 } from "../../../../react/core/components/sync-summary/SyncSummary";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
 
 const config = {
     metadata: {
@@ -71,7 +71,7 @@ const initialState = {
 };
 
 const HistoryPage: React.FC = () => {
-    const { api } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const loading = useLoading();
     const history = useHistory();
@@ -79,7 +79,7 @@ const HistoryPage: React.FC = () => {
     const { title } = config[type];
 
     const [syncRules, setSyncRules] = useState<SynchronizationRule[]>([]);
-    const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
+    const [syncReport, setSyncReport] = useState<SynchronizationReport>();
     const [toDelete, setToDelete] = useState<string[]>([]);
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [response, updateResponse] = useState<{
@@ -95,23 +95,30 @@ const HistoryPage: React.FC = () => {
 
     const updateTable = useCallback(
         (tableState?: TableState<SynchronizationReport>) => {
-            SyncReport.list(
-                api,
-                { type, statusFilter, syncRuleFilter },
-                tableState ?? initialState
-            ).then(updateResponse);
+            updateResponse({ rows: [], pager: {} });
             updateSelection(oldSelection => tableState?.selection ?? oldSelection);
+
+            const { pagination, sorting } = tableState ?? initialState;
+            compositionRoot.reports
+                .list({
+                    paging: true,
+                    pageSize: pagination.pageSize,
+                    page: pagination.page,
+                    sorting,
+                    filters: { type, statusFilter, syncRuleFilter },
+                })
+                .then(updateResponse);
         },
-        [api, statusFilter, syncRuleFilter, type, updateSelection]
+        [statusFilter, syncRuleFilter, type, compositionRoot]
     );
 
     useEffect(() => {
         SyncRule.list(api, { type }, { paging: false }).then(({ objects }) =>
             setSyncRules(objects)
         );
-        if (id) SyncReport.get(api, id).then(setSyncReport);
+        if (id) compositionRoot.reports.get(id).then(setSyncReport);
         isAppConfigurator(api).then(setAppConfigurator);
-    }, [api, id, type]);
+    }, [api, id, type, compositionRoot]);
 
     useEffect(() => {
         updateTable();
@@ -183,7 +190,7 @@ const HistoryPage: React.FC = () => {
         if (!id) return;
 
         const item = _.find(response.rows, ["id", id]);
-        if (item) setSyncReport(SyncReport.build(item));
+        if (item) setSyncReport(SynchronizationReport.build(item));
     };
 
     const actions: TableAction<SynchronizationReport>[] = [
@@ -212,28 +219,16 @@ const HistoryPage: React.FC = () => {
 
     const confirmDelete = async () => {
         loading.show(true, i18n.t("Deleting History Notifications"));
-        const notifications = _(toDelete)
-            .map(id => _.find(response.rows, ["id", id]))
-            .compact()
-            .map(data => new SyncReport(data))
-            .value();
 
-        const results = [];
-        for (const notification of notifications) {
-            results.push(await notification.remove(api));
-        }
+        await promiseMap(toDelete, id => compositionRoot.reports.delete(id));
 
         loading.reset();
 
-        if (_.some(results, ["status", false])) {
-            snackbar.error(i18n.t("Failed to delete some history notifications"));
-        } else {
-            snackbar.success(
-                i18n.t("Successfully deleted {{count}} history notifications", {
-                    count: toDelete.length,
-                })
-            );
-        }
+        snackbar.success(
+            i18n.t("Successfully deleted {{count}} history notifications", {
+                count: toDelete.length,
+            })
+        );
 
         updateSelection([]);
         setToDelete([]);
@@ -274,7 +269,7 @@ const HistoryPage: React.FC = () => {
             />
 
             {!!syncReport && (
-                <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
             )}
 
             {toDelete.length > 0 && (
