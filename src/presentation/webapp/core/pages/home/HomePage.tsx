@@ -245,7 +245,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
     return (
         <TestWrapper>
             <Landing
-                title={type === "dashboard" ? i18n.t("Dashboard") : undefined}
+                title={type === "dashboard" ? i18n.t("Admin Dashboard") : undefined}
                 onBackClick={type === "dashboard" ? backHome : undefined}
                 cards={allCards.filter(card =>
                     appVariantConfiguration[appVariant].includes(card.key)
