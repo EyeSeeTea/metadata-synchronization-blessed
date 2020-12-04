@@ -1,8 +1,8 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
-import i18n from "d2-ui-components/locales";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Period } from "../../../../domain/common/entities/Period";
+import i18n from "../../../../locales";
 import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
 import { PeriodSelectionDialog } from "../../../react/core/components/period-selection-dialog/PeriodSelectionDialog";
@@ -11,25 +11,34 @@ import {
     MSFSettings,
     MSFSettingsDialog,
 } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
+import { executeAggregateData } from "./MSFHomePagePresenter";
 
 export const MSFHomePage: React.FC = () => {
     const classes = useStyles();
     const history = useHistory();
+    const { api, compositionRoot } = useAppContext();
 
+    const [syncProgress, setSyncProgress] = useState<string[]>([]);
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
     const [period, setPeriod] = useState<Period>(Period.createDefault());
+
     const [msfSettings, setMsfSettings] = useState<MSFSettings>({
         runAnalytics: "by-sync-rule-settings",
     });
     const [globalAdmin, setGlobalAdmin] = useState(false);
-    const { api } = useAppContext();
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
-    const handleAggregateData = () => {};
+    const handleAggregateData = () => {
+        executeAggregateData(api, compositionRoot, progress => {
+            console.log({ syncProcess: syncProgress });
+            setSyncProgress(progress);
+        });
+    };
+
     const handleAdvancedSettings = () => {
         setShowPeriodDialog(true);
     };
@@ -84,13 +93,9 @@ export const MSFHomePage: React.FC = () => {
                                 <Typography variant="h6" gutterBottom>
                                     {i18n.t("Synchronization Progress")}
                                 </Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
+                                {syncProgress.map((trace, index) => (
+                                    <Typography key={index}>{trace}</Typography>
+                                ))}
                             </List>
                         </Paper>
                     </Box>
