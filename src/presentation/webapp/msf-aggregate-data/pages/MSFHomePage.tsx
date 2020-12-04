@@ -7,7 +7,10 @@ import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
 import { PeriodSelectionDialog } from "../../../react/core/components/period-selection-dialog/PeriodSelectionDialog";
 import { useAppContext } from "../../../react/core/contexts/AppContext";
-import { MSFSettingsDialog } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
+import {
+    MSFSettings,
+    MSFSettingsDialog,
+} from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
 
 export const MSFHomePage: React.FC = () => {
     const classes = useStyles();
@@ -16,6 +19,9 @@ export const MSFHomePage: React.FC = () => {
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
     const [period, setPeriod] = useState<Period>(Period.createDefault());
+    const [msfSettings, setMsfSettings] = useState<MSFSettings>({
+        runAnalytics: "by-sync-rule-settings",
+    });
     const [globalAdmin, setGlobalAdmin] = useState(false);
     const { api } = useAppContext();
 
@@ -52,8 +58,9 @@ export const MSFHomePage: React.FC = () => {
         setShowMSFSettingsDialog(false);
     };
 
-    const handleSaveMSFSettings = () => {
+    const handleSaveMSFSettings = (msfSettings: MSFSettings) => {
         setShowMSFSettingsDialog(false);
+        setMsfSettings(msfSettings);
     };
 
     return (
@@ -140,6 +147,7 @@ export const MSFHomePage: React.FC = () => {
 
             {showMSFSettingsDialog && (
                 <MSFSettingsDialog
+                    msfSettings={msfSettings}
                     onClose={handleCloseMSFSettings}
                     onSave={handleSaveMSFSettings}
                 />
