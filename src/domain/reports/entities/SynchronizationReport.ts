@@ -8,13 +8,13 @@ export class SynchronizationReport implements SynchronizationReportData {
     private results: SynchronizationResult[] | null;
     public status: SynchronizationReportStatus;
     public types: string[];
+    public deletedSyncRuleLabel?: string | undefined;
 
     public readonly id: string;
     public readonly date?: Date | undefined;
     public readonly user: string;
     public readonly syncRule?: string | undefined;
     public readonly packageImport?: boolean | undefined;
-    public readonly deletedSyncRuleLabel?: string | undefined;
     public readonly type: SynchronizationType;
     public readonly dataStats?: AggregatedDataStats[] | EventsDataStats[] | undefined;
 
@@ -61,6 +61,10 @@ export class SynchronizationReport implements SynchronizationReportData {
 
     public setTypes(types: string[]): void {
         this.types = types;
+    }
+
+    public setDeletedSyncRuleLabel(label: string): void {
+        this.deletedSyncRuleLabel = label;
     }
 
     public addSyncResult(...result: SynchronizationResult[]): void {

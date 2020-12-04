@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-04T08:16:36.678Z\n"
-"PO-Revision-Date: 2020-12-04T08:16:36.678Z\n"
+"POT-Creation-Date: 2020-12-04T10:59:47.983Z\n"
+"PO-Revision-Date: 2020-12-04T10:59:47.983Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -93,6 +93,9 @@ msgid "Version is not valid (ie. {{validExample}})"
 msgstr ""
 
 msgid "Version is too small (next version is {{validExample}})"
+msgstr ""
+
+msgid "deleted"
 msgstr ""
 
 msgid "Preparing synchronization"
@@ -1679,12 +1682,6 @@ msgid "Last executed"
 msgstr ""
 
 msgid "Deleting Sync Rules"
-msgstr ""
-
-msgid "deleted"
-msgstr ""
-
-msgid "Failed to delete some rules"
 msgstr ""
 
 msgid "Successfully deleted {{count}} rules"

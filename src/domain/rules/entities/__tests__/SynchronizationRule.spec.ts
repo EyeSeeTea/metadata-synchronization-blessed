@@ -1,5 +1,9 @@
-import SyncRule from "../syncRule";
-import { DataElementModel, IndicatorModel, OrganisationUnitModel } from "../dhis/metadata";
+import {
+    DataElementModel,
+    IndicatorModel,
+    OrganisationUnitModel,
+} from "../../../../models/dhis/metadata";
+import { SynchronizationRule } from "../SynchronizationRule";
 
 const indicatorIncludeExcludeRules = {
     includeRules: [
@@ -16,14 +20,14 @@ const indicatorIncludeExcludeRules = {
 describe("SyncRule", () => {
     describe("create", () => {
         it("should return a SyncRule with a empty name", () => {
-            const syncRule = SyncRule.create("metadata");
+            const syncRule = SynchronizationRule.create("metadata");
             expect(syncRule.name).toBe("");
         });
     });
 
     describe("createOnDemand", () => {
         it("should return a SyncRule with a name", () => {
-            const syncRule = SyncRule.createOnDemand("metadata");
+            const syncRule = SynchronizationRule.createOnDemand("metadata");
             expect(syncRule.name).not.toBe("");
         });
     });
@@ -31,15 +35,15 @@ describe("SyncRule", () => {
     describe("isValid", () => {
         describe("metadata", () => {
             it("should return false when is created using create method", async () => {
-                const isValid = await SyncRule.create("metadata").isValid();
+                const isValid = await SynchronizationRule.create("metadata").isValid();
                 expect(isValid).toEqual(false);
             });
             it("should return false when is created using createOnDemand method", async () => {
-                const isValid = await SyncRule.createOnDemand("metadata").isValid();
+                const isValid = await SynchronizationRule.createOnDemand("metadata").isValid();
                 expect(isValid).toEqual(false);
             });
             it("should return true when is metadata sync rule and contains name, instances and metadataIds", async () => {
-                const syncRule = SyncRule.create("metadata")
+                const syncRule = SynchronizationRule.create("metadata")
                     .updateName("SyncRule test")
                     .updateMetadataIds(["zXvNvFtGwDu"])
                     .updateTargetInstances(["fP3MMoWv6qp"]);
@@ -47,7 +51,7 @@ describe("SyncRule", () => {
                 expect(isValid).toEqual(true);
             });
             it("should return false when does not contains metadataIds", async () => {
-                const syncRule = SyncRule.create("metadata")
+                const syncRule = SynchronizationRule.create("metadata")
                     .updateName("SyncRule test")
                     .updateTargetInstances(["fP3MMoWv6qp"]);
                 const isValid = await syncRule.isValid();
@@ -57,15 +61,15 @@ describe("SyncRule", () => {
 
         describe("events", () => {
             it("should return false when is created using create method", async () => {
-                const isValid = await SyncRule.create("events").isValid();
+                const isValid = await SynchronizationRule.create("events").isValid();
                 expect(isValid).toEqual(false);
             });
             it("should return false when is created using createOnDemand method", async () => {
-                const isValid = await SyncRule.createOnDemand("events").isValid();
+                const isValid = await SynchronizationRule.createOnDemand("events").isValid();
                 expect(isValid).toEqual(false);
             });
             it("should return true when contains name, instances and organisationUnits", async () => {
-                const syncRule = SyncRule.create("events")
+                const syncRule = SynchronizationRule.create("events")
                     .updateName("SyncRule test")
                     .updateMetadataIds(["dataElement"])
                     .updateDataSyncAllEvents(true)
@@ -77,7 +81,7 @@ describe("SyncRule", () => {
                 expect(isValid).toEqual(true);
             });
             it("should return false when does not contains organisationUnits", async () => {
-                const syncRule = SyncRule.create("events")
+                const syncRule = SynchronizationRule.create("events")
                     .updateName("SyncRule test")
                     .updateTargetInstances(["fP3MMoWv6qp"]);
                 const isValid = await syncRule.isValid();
@@ -513,8 +517,10 @@ describe("SyncRule", () => {
     });
 });
 
-function givenASyncRuleWithMetadataIncludeExcludeRules(dependantRulesInExclude = false): SyncRule {
-    const initialSyncRule = SyncRule.create("metadata")
+function givenASyncRuleWithMetadataIncludeExcludeRules(
+    dependantRulesInExclude = false
+): SynchronizationRule {
+    const initialSyncRule = SynchronizationRule.create("metadata")
         .updateMetadataIds(["id1", "id2"])
         .markToNotUseDefaultIncludeExclude([OrganisationUnitModel, IndicatorModel]);
 
@@ -539,8 +545,8 @@ function givenASyncRuleWithMetadataIncludeExcludeRules(dependantRulesInExclude =
     }
 }
 
-function givenASyncRuleWithoutMetadataIncludeExcludeRules(): SyncRule {
-    return SyncRule.create("metadata").updateMetadataIds(["id1", "id2"]);
+function givenASyncRuleWithoutMetadataIncludeExcludeRules(): SynchronizationRule {
+    return SynchronizationRule.create("metadata").updateMetadataIds(["id1", "id2"]);
 }
 
 export {};

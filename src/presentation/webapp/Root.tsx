@@ -1,9 +1,13 @@
 import React from "react";
 import { HashRouter, Switch } from "react-router-dom";
+import { SynchronizationType } from "../../domain/synchronization/entities/SynchronizationType";
+import * as permissions from "../../utils/permissions";
 import RouteWithSession from "../react/core/components/auth/RouteWithSession";
 import RouteWithSessionAndAuth from "../react/core/components/auth/RouteWithSessionAndAuth";
-import InstanceCreationPage from "./core/pages/instance-creation/InstanceCreationPage";
+import { useAppContext } from "../react/core/contexts/AppContext";
 import HistoryPage from "./core/pages/history/HistoryPage";
+import HomePage from "./core/pages/home/HomePage";
+import InstanceCreationPage from "./core/pages/instance-creation/InstanceCreationPage";
 import InstanceListPage from "./core/pages/instance-list/InstanceListPage";
 import InstanceMappingLandingPage from "./core/pages/instance-mapping/InstanceMappingLandingPage";
 import InstanceMappingPage from "./core/pages/instance-mapping/InstanceMappingPage";
@@ -18,10 +22,6 @@ import SyncRulesCreationPage, {
     SyncRulesCreationParams,
 } from "./core/pages/sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "./core/pages/sync-rules-list/SyncRulesListPage";
-import { SynchronizationType } from "../../domain/synchronization/entities/SynchronizationType";
-import { useAppContext } from "../react/core/contexts/AppContext";
-import * as permissions from "../../utils/permissions";
-import HomePage from "./core/pages/home/HomePage";
 import { MSFHomePage } from "./msf-aggregate-data/pages/MSFHomePage";
 
 export type AppVariant =
@@ -32,7 +32,7 @@ export type AppVariant =
 
 const Root: React.FC = () => {
     const appVariant = process.env.REACT_APP_PRESENTATION_VARIANT as AppVariant;
-    const { api } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
 
     return (
         <HashRouter>
@@ -65,10 +65,11 @@ const Root: React.FC = () => {
 
                 <RouteWithSessionAndAuth
                     path={"/sync-rules/:type(metadata|aggregated|events)/:action(new|edit)/:id?"}
-                    authorize={props => {
+                    authorize={async props => {
                         const { id } = props.match.params as SyncRulesCreationParams;
+                        const syncRule = await compositionRoot.rules.get(id);
 
-                        return permissions.verifyUserHasAccessToSyncRule(api, id);
+                        return permissions.verifyUserHasAccessToSyncRule(api, syncRule);
                     }}
                     render={() => <SyncRulesCreationPage />}
                 />

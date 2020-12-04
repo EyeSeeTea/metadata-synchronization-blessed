@@ -1,22 +1,7 @@
 import { DataSynchronizationParams } from "../domain/aggregated/types";
-import { FilterRule } from "../domain/metadata/entities/FilterRule";
 import { MetadataEntities } from "../domain/metadata/entities/MetadataEntities";
 import { SynchronizationReport } from "../domain/reports/entities/SynchronizationReport";
 import { MetadataImportParams } from "./d2";
-
-//TODO: Review this to move it to domain
-
-export interface SynchronizationBuilder {
-    originInstance: string;
-    targetInstances: string[];
-    metadataIds: string[];
-    filterRules?: FilterRule[];
-    excludedIds: string[];
-    metadataTypes?: string[];
-    syncRule?: string;
-    syncParams?: MetadataSynchronizationParams;
-    dataParams?: DataSynchronizationParams;
-}
 
 export interface MetadataIncludeExcludeRules {
     [metadataType: string]: ExcludeIncludeRules;
