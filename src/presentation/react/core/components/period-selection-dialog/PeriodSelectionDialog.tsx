@@ -1,4 +1,4 @@
-import { Box, Checkbox, FormControlLabel, makeStyles, Theme } from "@material-ui/core";
+import { Checkbox, FormControlLabel } from "@material-ui/core";
 import { ConfirmationDialog, useSnackbar } from "d2-ui-components";
 import React, { useState } from "react";
 import { Period } from "../../../../../domain/common/entities/Period";
@@ -18,7 +18,6 @@ export const PeriodSelectionDialog: React.FC<PeriodSelectionDialogProps> = ({
     onSave,
     period,
 }) => {
-    const classes = useStyles();
     const snackbar = useSnackbar();
     const [objectWithPeriod, setObjectWithPeriod] = useState<ObjectWithPeriod | undefined>(
         period
@@ -66,38 +65,22 @@ export const PeriodSelectionDialog: React.FC<PeriodSelectionDialogProps> = ({
             cancelText={i18n.t("Cancel")}
             saveText={i18n.t("Save")}
         >
-            <Box className={classes.periodContainer} width="80%">
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            className={classes.check}
-                            checked={objectWithPeriod === undefined}
-                            onChange={handleCheckBoxChange}
-                        />
-                    }
-                    label={i18n.t("Use sync rules periods")}
-                />
-
-                {objectWithPeriod && (
-                    <PeriodSelection
-                        className={classes.periodContent}
-                        objectWithPeriod={objectWithPeriod}
-                        onChange={setObjectWithPeriod}
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        checked={objectWithPeriod === undefined}
+                        onChange={handleCheckBoxChange}
                     />
-                )}
-            </Box>
+                }
+                label={i18n.t("Use sync rules periods")}
+            />
+
+            {objectWithPeriod && (
+                <PeriodSelection
+                    objectWithPeriod={objectWithPeriod}
+                    onChange={setObjectWithPeriod}
+                />
+            )}
         </ConfirmationDialog>
     );
 };
-
-const useStyles = makeStyles((theme: Theme) => ({
-    periodContainer: {
-        margin: "0 auto",
-    },
-    periodContent: {
-        margin: theme.spacing(2),
-    },
-    check: {
-        marginLeft: theme.spacing(3),
-    },
-}));

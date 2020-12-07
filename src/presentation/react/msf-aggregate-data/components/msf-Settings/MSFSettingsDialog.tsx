@@ -1,4 +1,3 @@
-import { Box, makeStyles } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
 import React, { useMemo, useState } from "react";
 import i18n from "../../../../../locales";
@@ -22,7 +21,6 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
     msfSettings,
 }) => {
     const [useSyncRule, setUseSyncRule] = useState(msfSettings.runAnalytics.toString());
-    const classes = useStyles();
 
     const useSyncRuleItems = useMemo(() => {
         return [
@@ -65,21 +63,13 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             cancelText={i18n.t("Cancel")}
             saveText={i18n.t("Save")}
         >
-            <Box className={classes.root} width="80%">
-                <Dropdown
-                    label={i18n.t("Run Analytics")}
-                    items={useSyncRuleItems}
-                    onValueChange={setUseSyncRule}
-                    value={useSyncRule}
-                    hideEmpty
-                />
-            </Box>
+            <Dropdown
+                label={i18n.t("Run Analytics")}
+                items={useSyncRuleItems}
+                onValueChange={setUseSyncRule}
+                value={useSyncRule}
+                hideEmpty
+            />
         </ConfirmationDialog>
     );
 };
-
-const useStyles = makeStyles(() => ({
-    root: {
-        margin: "0 auto",
-    },
-}));
