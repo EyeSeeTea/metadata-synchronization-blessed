@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-04T12:19:04.582Z\n"
+"POT-Creation-Date: 2020-12-07T07:29:23.728Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -763,6 +763,9 @@ msgid "Start date"
 msgstr ""
 
 msgid "End date"
+msgstr ""
+
+msgid "Use sync rules periods"
 msgstr ""
 
 msgid "You need to provide a subject"
