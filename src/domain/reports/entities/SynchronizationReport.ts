@@ -86,6 +86,10 @@ export class SynchronizationReport implements SynchronizationReportData {
             dataStats: this.dataStats,
         };
     }
+
+    public getResults(): SynchronizationResult[] {
+        return this.results ?? [];
+    }
 }
 
 export interface SynchronizationReportData {

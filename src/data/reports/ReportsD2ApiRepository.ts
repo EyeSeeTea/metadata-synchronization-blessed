@@ -46,6 +46,11 @@ export class ReportsD2ApiRepository implements ReportsRepository {
             Namespace.HISTORY,
             report.toObject()
         );
+
+        await this.storageClient.saveObject<SynchronizationResult[]>(
+            `${Namespace.HISTORY}-${report.id}`,
+            report.getResults()
+        );
     }
 
     public async delete(id: string): Promise<void> {
