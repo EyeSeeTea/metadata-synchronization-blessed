@@ -40,6 +40,7 @@ export class SynchronizationRule {
             "created",
             "description",
             "builder",
+            "targetInstances",
             "enabled",
             "frequency",
             "lastExecuted",
@@ -158,7 +159,7 @@ export class SynchronizationRule {
     }
 
     public get targetInstances(): string[] {
-        return this.syncRule.builder?.targetInstances ?? [];
+        return this.syncRule.targetInstances;
     }
 
     public get enabled(): boolean {
@@ -223,6 +224,7 @@ export class SynchronizationRule {
             description: "",
             type: type,
             builder: defaultSynchronizationBuilder,
+            targetInstances: [],
             enabled: false,
             lastUpdated: new Date(),
             lastUpdatedBy: {
@@ -501,7 +503,7 @@ export class SynchronizationRule {
     }
 
     public updateTargetInstances(targetInstances: string[]): SynchronizationRule {
-        return this.updateBuilder({ targetInstances });
+        return this.update({ targetInstances }).updateBuilder({ targetInstances });
     }
 
     public updateSyncParams(syncParams: MetadataSynchronizationParams): SynchronizationRule {
@@ -678,6 +680,7 @@ export interface SynchronizationRuleData extends SharedRef {
     created: Date;
     description?: string;
     builder: SynchronizationBuilder;
+    targetInstances: string[];
     enabled: boolean;
     lastExecuted?: Date;
     frequency?: string;

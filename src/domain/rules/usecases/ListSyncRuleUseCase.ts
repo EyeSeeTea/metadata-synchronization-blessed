@@ -5,7 +5,6 @@ import { getUserInfo, isGlobalAdmin } from "../../../utils/permissions";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { defaultSynchronizationBuilder } from "../../synchronization/entities/SynchronizationBuilder";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { SynchronizationRule } from "../entities/SynchronizationRule";
 
@@ -70,12 +69,6 @@ export class ListSyncRuleUseCase implements UseCase {
         const userInfo = await getUserInfo(getD2APiFromInstance(this.localInstance));
 
         const filteredObjects = _(sortedData)
-            .map(rule =>
-                rule.updateBuilder({
-                    ...defaultSynchronizationBuilder,
-                    targetInstances: rule.targetInstances,
-                })
-            )
             .filter(rule => {
                 return _.isNull(type) || rule.type === type;
             })
