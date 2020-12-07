@@ -51,7 +51,7 @@ export const ModulePackageListPage: React.FC = () => {
     }, [compositionRoot]);
 
     const backHome = useCallback(() => {
-        history.push("/");
+        history.push("/dashboard");
     }, [history]);
 
     const create = useCallback(() => {

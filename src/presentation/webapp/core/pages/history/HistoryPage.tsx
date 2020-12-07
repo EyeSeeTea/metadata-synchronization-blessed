@@ -91,7 +91,7 @@ const HistoryPage: React.FC = () => {
     const [statusFilter, updateStatusFilter] = useState("");
     const [syncRuleFilter, updateSyncRuleFilter] = useState("");
 
-    const goBack = () => history.goBack();
+    const goBack = () => history.push("/");
 
     const updateTable = useCallback(
         (tableState?: TableState<SynchronizationReport>) => {
