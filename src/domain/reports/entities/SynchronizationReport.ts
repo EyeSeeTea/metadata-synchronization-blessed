@@ -10,7 +10,7 @@ export class SynchronizationReport implements SynchronizationReportData {
     public types: string[];
 
     public readonly id: string;
-    public readonly date?: Date | undefined;
+    public readonly date: Date;
     public readonly user: string;
     public readonly syncRule?: string | undefined;
     public readonly packageImport?: boolean | undefined;
@@ -18,10 +18,10 @@ export class SynchronizationReport implements SynchronizationReportData {
     public readonly type: SynchronizationType;
     public readonly dataStats?: AggregatedDataStats[] | EventsDataStats[] | undefined;
 
-    private constructor(syncReport: SynchronizationReportData) {
+    private constructor(syncReport: PartialBy<SynchronizationReportData, "id" | "date">) {
         this.results = null;
-        this.id = syncReport.id;
-        this.date = syncReport.date;
+        this.id = syncReport.id ?? generateUid();
+        this.date = syncReport.date ?? new Date();
         this.user = syncReport.user;
         this.status = syncReport.status;
         this.types = syncReport.types;
@@ -38,7 +38,6 @@ export class SynchronizationReport implements SynchronizationReportData {
         packageImport?: boolean
     ): SynchronizationReport {
         return new SynchronizationReport({
-            id: generateUid(),
             user,
             status: "READY" as SynchronizationReportStatus,
             types: [],
@@ -48,11 +47,9 @@ export class SynchronizationReport implements SynchronizationReportData {
     }
 
     public static build(
-        syncReport?: PartialBy<SynchronizationReportData, "id">
+        data?: PartialBy<SynchronizationReportData, "id" | "date">
     ): SynchronizationReport {
-        return syncReport
-            ? new SynchronizationReport({ id: generateUid(), ...syncReport })
-            : this.create();
+        return data ? new SynchronizationReport(data) : this.create();
     }
 
     public setStatus(status: SynchronizationReportStatus): void {
