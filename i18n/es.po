@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-07T07:29:23.728Z\n"
+"POT-Creation-Date: 2020-12-07T10:59:14.950Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -93,6 +93,9 @@ msgid "Version is not valid (ie. {{validExample}})"
 msgstr ""
 
 msgid "Version is too small (next version is {{validExample}})"
+msgstr ""
+
+msgid "deleted"
 msgstr ""
 
 msgid "Preparing synchronization"
@@ -871,6 +874,9 @@ msgid "Generate new UID"
 msgstr ""
 
 msgid "Dry Run"
+msgstr ""
+
+msgid "Run Analytics before sync"
 msgstr ""
 
 msgid "Type"
@@ -1701,12 +1707,6 @@ msgid "Last executed"
 msgstr ""
 
 msgid "Deleting Sync Rules"
-msgstr ""
-
-msgid "deleted"
-msgstr ""
-
-msgid "Failed to delete some rules"
 msgstr ""
 
 msgid "Successfully deleted {{count}} rules"

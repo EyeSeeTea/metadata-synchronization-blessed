@@ -17,15 +17,17 @@ import {
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
-import { SynchronizationRule } from "../../../../../domain/synchronization/entities/SynchronizationRule";
+import {
+    SynchronizationRule,
+    SynchronizationRuleData,
+} from "../../../../../domain/rules/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
-import SyncRule from "../../../../../models/syncRule";
+import { promiseMap } from "../../../../../utils/common";
 import { getValueForCollection } from "../../../../../utils/d2-ui-components";
 import { getValidationMessages } from "../../../../../utils/old-validations";
 import {
@@ -76,7 +78,7 @@ const SyncRulesPage: React.FC = () => {
     const { type } = useParams() as { type: SynchronizationType };
     const { title } = config[type];
 
-    const [rows, setRows] = useState<SyncRule[]>([]);
+    const [rows, setRows] = useState<SynchronizationRule[]>([]);
 
     const [refreshKey, setRefreshKey] = useState(0);
     const [selection, updateSelection] = useState<TableSelection[]>([]);
@@ -84,22 +86,21 @@ const SyncRulesPage: React.FC = () => {
     const [search, setSearchFilter] = useState("");
     const [targetInstanceFilter, setTargetInstanceFilter] = useState("");
     const [enabledFilter, setEnabledFilter] = useState("");
-    const [lastExecutedFilter, setLastExecutedFilter] = useState<Moment | null>(null);
+    const [lastExecutedFilter, setLastExecutedFilter] = useState<Date | null>(null);
     const [syncReport, setSyncReport] = useState<SynchronizationReport | null>(null);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
 
     useEffect(() => {
-        SyncRule.list(
-            api,
-            { type, targetInstanceFilter, enabledFilter, lastExecutedFilter, search },
-            { paging: false }
-        ).then(({ objects }) => {
-            setRows(objects.map(SyncRule.build));
-        });
+        compositionRoot.rules
+            .list({
+                filters: { type, targetInstanceFilter, enabledFilter, lastExecutedFilter, search },
+                paging: false,
+            })
+            .then(({ rows }) => setRows(rows));
     }, [
-        api,
+        compositionRoot,
         refreshKey,
         type,
         search,
@@ -123,24 +124,24 @@ const SyncRulesPage: React.FC = () => {
         isAppExecutor(api).then(setAppExecutor);
     }, [api, compositionRoot]);
 
-    const getTargetInstances = (rule: SyncRule) => {
+    const getTargetInstances = (rule: SynchronizationRule) => {
         return _(rule.targetInstances)
             .map(id => allInstances.find(instance => instance.id === id))
             .compact()
             .map(({ name }) => ({ name }));
     };
 
-    const getReadableFrequency = (rule: SyncRule) => {
+    const getReadableFrequency = (rule: SynchronizationRule) => {
         return rule.longFrequency;
     };
 
-    const columns: TableColumn<SyncRule>[] = [
+    const columns: TableColumn<SynchronizationRule>[] = [
         { name: "name", text: i18n.t("Name"), sortable: true },
         {
             name: "targetInstances",
             text: i18n.t("Destination instances"),
             sortable: false,
-            getValue: (ruleData: SyncRule) =>
+            getValue: (ruleData: SynchronizationRule) =>
                 getTargetInstances(ruleData)
                     .map(e => e.name)
                     .join(", "),
@@ -164,7 +165,7 @@ const SyncRulesPage: React.FC = () => {
         },
     ];
 
-    const details: ObjectsTableDetailField<SyncRule>[] = [
+    const details: ObjectsTableDetailField<SynchronizationRule>[] = [
         { name: "name", text: i18n.t("Name") },
         { name: "description", text: i18n.t("Description") },
         {
@@ -188,9 +189,11 @@ const SyncRulesPage: React.FC = () => {
     const downloadJSON = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
-        loading.show(true, "Generating JSON file");
-        const rule = await SyncRule.get(api, id);
 
+        const rule = await compositionRoot.rules.get(id);
+        if (!rule) return;
+
+        loading.show(true, "Generating JSON file");
         const sync = compositionRoot.sync[rule.type](rule.toBuilder());
         const payload = await sync.buildPayload();
 
@@ -205,36 +208,11 @@ const SyncRulesPage: React.FC = () => {
     const confirmDelete = async () => {
         loading.show(true, i18n.t("Deleting Sync Rules"));
 
-        const results = [];
-        for (const id of toDelete) {
-            const rule = await SyncRule.get(api, id);
-            const deletedRuleLabel = `${rule.name} (${i18n.t("deleted")})`;
+        await promiseMap(toDelete, id => compositionRoot.rules.delete(id));
 
-            results.push(await rule.remove(api));
-
-            // TODO: Fully refactor with SyncRule
-            const syncReports = await compositionRoot.reports.list({
-                filters: { type: rule.type, syncRuleFilter: id },
-                paging: false,
-            });
-
-            for (const syncReportData of syncReports.rows) {
-                const syncReport = SynchronizationReport.build({
-                    ...syncReportData,
-                    deletedSyncRuleLabel: deletedRuleLabel,
-                });
-
-                await compositionRoot.reports.save(syncReport);
-            }
-        }
-
-        if (_.some(results, ["status", false])) {
-            snackbar.error(i18n.t("Failed to delete some rules"));
-        } else {
-            snackbar.success(
-                i18n.t("Successfully deleted {{count}} rules", { count: toDelete.length })
-            );
-        }
+        snackbar.success(
+            i18n.t("Successfully deleted {{count}} rules", { count: toDelete.length })
+        );
 
         loading.reset();
         setToDelete([]);
@@ -256,7 +234,9 @@ const SyncRulesPage: React.FC = () => {
     const replicateRule = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
-        const rule = await SyncRule.get(api, id);
+
+        const rule = await compositionRoot.rules.get(id);
+        if (!rule) return;
 
         history.push({
             pathname: `/sync-rules/${type}/new`,
@@ -268,7 +248,9 @@ const SyncRulesPage: React.FC = () => {
         const id = _.first(ids);
         if (!id) return;
 
-        const rule = await SyncRule.get(api, id);
+        const rule = await compositionRoot.rules.get(id);
+        if (!rule) return;
+
         const { builder, id: syncRule, type = "metadata" } = rule;
         loading.show(true, i18n.t("Synchronizing {{name}}", rule));
 
@@ -347,7 +329,9 @@ const SyncRulesPage: React.FC = () => {
     const toggleEnable = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
-        const oldSyncRule = await SyncRule.get(api, id);
+
+        const oldSyncRule = await compositionRoot.rules.get(id);
+        if (!oldSyncRule) return;
 
         const syncRule = oldSyncRule.updateEnabled(!oldSyncRule.enabled);
         const errors = getValidationMessages(syncRule);
@@ -356,7 +340,7 @@ const SyncRulesPage: React.FC = () => {
                 autoHideDuration: null,
             });
         } else {
-            await syncRule.save(api);
+            await compositionRoot.rules.save(syncRule);
             snackbar.success(i18n.t("Successfully updated sync rule"));
             setRefreshKey(Math.random());
         }
@@ -365,7 +349,9 @@ const SyncRulesPage: React.FC = () => {
     const openSharingSettings = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
-        const syncRule = await SyncRule.get(api, id);
+
+        const syncRule = await compositionRoot.rules.get(id);
+        if (!syncRule) return;
 
         setSharingSettingsObject({
             object: syncRule.toObject(),
@@ -373,7 +359,7 @@ const SyncRulesPage: React.FC = () => {
         });
     };
 
-    const verifyUserHasAccess = (rules: SyncRule[], condition = false) => {
+    const verifyUserHasAccess = (rules: SynchronizationRule[], condition = false) => {
         if (globalAdmin) return true;
 
         for (const rule of rules) {
@@ -383,11 +369,11 @@ const SyncRulesPage: React.FC = () => {
         return condition;
     };
 
-    const verifyUserCanEdit = (rules: SyncRule[]) => {
+    const verifyUserCanEdit = (rules: SynchronizationRule[]) => {
         return verifyUserHasAccess(rules, appConfigurator);
     };
 
-    const verifyUserCanEditSharingSettings = (rules: SyncRule[]) => {
+    const verifyUserCanEditSharingSettings = (rules: SynchronizationRule[]) => {
         return verifyUserHasAccess(rules, appConfigurator);
     };
 
@@ -399,7 +385,7 @@ const SyncRulesPage: React.FC = () => {
         return appConfigurator;
     };
 
-    const actions: TableAction<SyncRule>[] = [
+    const actions: TableAction<SynchronizationRule>[] = [
         {
             name: "details",
             text: i18n.t("Details"),
@@ -480,8 +466,10 @@ const SyncRulesPage: React.FC = () => {
             },
         };
 
-        const syncRule = SyncRule.build(newSharingSettings.object as SynchronizationRule);
-        await syncRule.save(api);
+        const syncRule = SynchronizationRule.build(
+            newSharingSettings.object as SynchronizationRuleData
+        );
+        await compositionRoot.rules.save(syncRule);
 
         setSharingSettingsObject(newSharingSettings);
     };
@@ -520,7 +508,7 @@ const SyncRulesPage: React.FC = () => {
     return (
         <TestWrapper>
             <PageHeader title={title} onBackClick={back} />
-            <ObjectsTable<SyncRule>
+            <ObjectsTable<SynchronizationRule>
                 rows={rows}
                 columns={columns}
                 details={details}

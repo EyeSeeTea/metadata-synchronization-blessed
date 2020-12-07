@@ -16,6 +16,7 @@ import {
 } from "../../metadata/repositories/MetadataRepository";
 import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubRepository";
 import { ReportsRepositoryConstructor } from "../../reports/repositories/ReportsRepository";
+import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
@@ -110,6 +111,11 @@ export class RepositoryFactory {
     public reportsRepository(instance: Instance) {
         return this.get<ReportsRepositoryConstructor>(Repositories.ReportsRepository, [instance]);
     }
+
+    @cache()
+    public rulesRepository(instance: Instance) {
+        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [instance]);
+    }
 }
 
 type RepositoryKeys = typeof Repositories[keyof typeof Repositories];
@@ -126,4 +132,5 @@ export const Repositories = {
     TransformationRepository: "transformationsRepository",
     FileRepository: "fileRepository",
     ReportsRepository: "reportsRepository",
+    RulesRepository: "rulesRepository",
 } as const;

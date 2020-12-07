@@ -3,8 +3,7 @@ import _ from "lodash";
 import { getLogger } from "log4js";
 import moment from "moment";
 import schedule from "node-schedule";
-import { SynchronizationRule } from "../domain/synchronization/entities/SynchronizationRule";
-import SyncRule from "../models/syncRule";
+import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
 import { CompositionRoot } from "../presentation/CompositionRoot";
 import { D2Api } from "../types/d2-api";
 
@@ -12,7 +11,9 @@ export default class Scheduler {
     constructor(private api: D2Api, private compositionRoot: CompositionRoot) {}
 
     private synchronizationTask = async (id: string): Promise<void> => {
-        const rule = await SyncRule.get(this.api, id);
+        const rule = await this.compositionRoot.rules.get(id);
+        if (!rule) return;
+
         const { name, frequency, builder, id: syncRule, type = "metadata" } = rule;
 
         const logger = getLogger(name);
@@ -57,7 +58,7 @@ export default class Scheduler {
     };
 
     private fetchTask = async (): Promise<void> => {
-        const { objects: rules } = await SyncRule.list(this.api, {}, { paging: false });
+        const { rows: rules } = await this.compositionRoot.rules.list({ paging: false });
 
         const jobs = _.filter(rules, rule => rule.enabled);
         const enabledJobIds = jobs.map(({ id }) => id);

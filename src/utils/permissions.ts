@@ -1,8 +1,7 @@
 import axios from "axios";
-import { D2Api } from "../types/d2-api";
 import memoize from "nano-memoize";
-import SyncRule from "../models/syncRule";
-import { Maybe } from "../types/utils";
+import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
+import { D2Api } from "../types/d2-api";
 
 const AppRoles: {
     [key: string]: {
@@ -109,17 +108,17 @@ export const isAppExecutor = async (api: D2Api) => {
     return globalAdmin || !!userRoles.find((role: any) => role.name === name);
 };
 
-export const verifyUserHasAccessToSyncRule = async (api: D2Api, syncRuleUId: Maybe<string>) => {
+export const verifyUserHasAccessToSyncRule = async (
+    api: D2Api,
+    syncRule: SynchronizationRule | undefined
+) => {
     const globalAdmin = await isGlobalAdmin(api);
     if (globalAdmin) return true;
 
     const appConfigurator = await isAppConfigurator(api);
     const userInfo = await getUserInfo(api);
-    if (!syncRuleUId) return appConfigurator;
 
-    const syncRule = await SyncRule.get(api, syncRuleUId);
-
-    const syncRuleVisibleToUser = syncRuleUId ? syncRule.isVisibleToUser(userInfo, "WRITE") : true;
+    const syncRuleVisibleToUser = syncRule?.isVisibleToUser(userInfo, "WRITE") ?? true;
 
     return appConfigurator && syncRuleVisibleToUser;
 };

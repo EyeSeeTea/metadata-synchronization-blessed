@@ -1,10 +1,13 @@
+//@ts-ignore
 import { DropDown, TextField } from "@dhis2/d2-ui-core";
+//@ts-ignore
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import PropTypes from "prop-types";
 import React from "react";
 import i18n from "../../../../../../locales";
 import isValidCronExpression from "../../../../../../utils/validCronExpression";
 import { Toggle } from "../../toggle/Toggle";
+import { SyncWizardStepProps } from "../Steps";
 
 const cronExpressions = [
     { displayName: i18n.t("Every day"), id: "0 0 0 ? * *" },
@@ -14,10 +17,10 @@ const cronExpressions = [
     { displayName: i18n.t("Every year"), id: "0 0 0 1 1 ?" },
 ];
 
-const SchedulerStep = ({ syncRule, onChange }) => {
+const SchedulerStep = ({ syncRule, onChange }: SyncWizardStepProps) => {
     const selectedCron = cronExpressions.find(({ id }) => id === syncRule.frequency);
 
-    const updateFields = (field, value) => {
+    const updateFields = (field: string, value: any) => {
         if (field === "enabled") {
             onChange(syncRule.updateEnabled(value));
         } else if (field === "frequency" || field === "frequencyDropdown") {
@@ -39,7 +42,7 @@ const SchedulerStep = ({ syncRule, onChange }) => {
         },
         {
             name: "frequencyDropdown",
-            value: selectedCron?.value ?? "",
+            value: selectedCron?.id ?? "",
             component: DropDown,
             props: {
                 hintText: syncRule.readableFrequency || i18n.t("Select frequency template"),
@@ -62,7 +65,7 @@ const SchedulerStep = ({ syncRule, onChange }) => {
             validators: [
                 {
                     message: i18n.t("Cron expression must be valid"),
-                    validator(value) {
+                    validator(value: string | undefined) {
                         return !value || isValidCronExpression(value);
                     },
                 },

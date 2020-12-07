@@ -1,21 +1,18 @@
-import SyncRule from "../../../../models/syncRule";
-import { CompositionRoot } from "../../../CompositionRoot";
-import { D2Api } from "../../../../types/d2-api";
-import i18n from "../../../../locales";
-import { MSFSettings } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
 import { Period } from "../../../../domain/common/entities/Period";
+import i18n from "../../../../locales";
+import { CompositionRoot } from "../../../CompositionRoot";
+import { MSFSettings } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
 
 //TODO: maybe convert to class and presenter to use MVP, MVI pattern
 export async function executeAggregateData(
-    api: D2Api,
     compositionRoot: CompositionRoot,
     msfSettings: MSFSettings,
     onProgressChange: (progress: string[]) => void,
     period?: Period
 ) {
     const eventSyncRules = (
-        await SyncRule.list(api, { type: "events" }, { paging: false })
-    ).objects.slice(0, 2);
+        await compositionRoot.rules.list({ filters: { type: "events" },  paging: false })
+    ).rows.slice(0, 2);
 
     let syncProgress: string[] = [i18n.t(`Starting Aggregate Data...`)];
 
@@ -28,7 +25,6 @@ export async function executeAggregateData(
 
     for (const syncRule of eventSyncRules) {
         await executeSyncRule(
-            api,
             compositionRoot,
             msfSettings,
             syncRule.id,
@@ -41,14 +37,15 @@ export async function executeAggregateData(
 }
 
 const executeSyncRule = async (
-    api: D2Api,
     compositionRoot: CompositionRoot,
     _msfSettings: MSFSettings,
     id: string,
     onProgressChange: (event: string) => void,
     period?: Period
 ): Promise<void> => {
-    const rule = await SyncRule.get(api, id);
+    const rule = await compositionRoot.rules.get(id);
+    if (!rule) return;
+
     const { name, builder, id: syncRule, type = "metadata" } = rule;
 
     const newBuilder = period

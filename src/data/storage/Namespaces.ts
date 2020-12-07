@@ -20,7 +20,7 @@ export const NamespaceProperties: Record<Namespace, string[]> = {
     [Namespace.IMPORTEDPACKAGES]: ["contents"],
     [Namespace.INSTANCES]: ["metadataMapping"],
     [Namespace.MAPPINGS]: ["mappingDictionary"],
-    [Namespace.RULES]: [],
+    [Namespace.RULES]: ["builder"],
     [Namespace.HISTORY]: [],
     [Namespace.NOTIFICATIONS]: ["payload"],
     [Namespace.CONFIG]: [],

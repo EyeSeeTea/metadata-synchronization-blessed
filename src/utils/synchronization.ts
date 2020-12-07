@@ -6,8 +6,8 @@ import {
     MetadataMappingDictionary,
 } from "../domain/mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../domain/metadata/entities/MetadataEntities";
+import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
 import i18n from "../locales";
-import SyncRule from "../models/syncRule";
 import { D2Api } from "../types/d2-api";
 import { buildObject } from "../types/utils";
 import "../utils/lodash-mixins";
@@ -62,7 +62,7 @@ export const availablePeriods = buildObject<{
 
 export type PeriodType = keyof typeof availablePeriods;
 
-export function requestJSONDownload(payload: object, syncRule: SyncRule) {
+export function requestJSONDownload(payload: object, syncRule: SynchronizationRule) {
     const json = JSON.stringify(payload, null, 4);
     const blob = new Blob([json], { type: "application/json" });
     const ruleName = _.kebabCase(_.toLower(syncRule.name));

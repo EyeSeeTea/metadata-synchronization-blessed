@@ -4,6 +4,8 @@ import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { Instance } from "../../../../../../domain/instance/entities/Instance";
+import { filterRuleToString } from "../../../../../../domain/metadata/entities/FilterRule";
 import { includeExcludeRulesFriendlyNames } from "../../../../../../domain/metadata/entities/MetadataFriendlyNames";
 import { cleanOrgUnitPaths } from "../../../../../../domain/synchronization/utils";
 import i18n from "../../../../../../locales";
@@ -15,10 +17,10 @@ import {
 } from "../../../../../../utils/synchronization";
 import { useAppContext } from "../../../contexts/AppContext";
 import { buildAggregationItems } from "../data/AggregationStep";
+import { SyncWizardStepProps } from "../Steps";
 import { buildInstanceOptions } from "./InstanceSelectionStep";
-import { filterRuleToString } from "../../../../../../domain/metadata/entities/FilterRule";
 
-const LiEntry = ({ label, value, children }) => {
+const LiEntry: React.FC<{ label: string; value?: string }> = ({ label, value, children }) => {
     return (
         <li key={label}>
             {label}
@@ -41,7 +43,7 @@ const useStyles = makeStyles({
     },
 });
 
-const SaveStep = ({ syncRule, onCancel }) => {
+const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
     const { api, compositionRoot } = useAppContext();
 
     const snackbar = useSnackbar();
@@ -51,8 +53,8 @@ const SaveStep = ({ syncRule, onCancel }) => {
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
-    const [metadata, updateMetadata] = useState({});
-    const [targetInstances, setTargetInstances] = useState([]);
+    const [metadata, updateMetadata] = useState<Record<string, any[]>>({});
+    const [targetInstances, setTargetInstances] = useState<Instance[]>([]);
     const instanceOptions = buildInstanceOptions(targetInstances);
 
     const openCancelDialog = () => setCancelDialogOpen(true);
@@ -70,8 +72,9 @@ const SaveStep = ({ syncRule, onCancel }) => {
         if (errors.length > 0) {
             snackbar.error(errors.join("\n"));
         } else {
-            const newSyncRule = await syncRule.updateName(name).save(api);
-            history.push(`/sync-rules/${newSyncRule.type}/edit/${newSyncRule.id}`);
+            const newSyncRule = syncRule.updateName(name);
+            await compositionRoot.rules.save(newSyncRule);
+            history.push(`/sync-rules/${syncRule.type}/edit/${newSyncRule.id}`);
             onCancel();
         }
 
@@ -156,6 +159,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
                         items.length > 0 && (
                             <LiEntry
                                 key={metadataType}
+                                //@ts-ignore
                                 label={`${api.models[metadataType].schema.displayName} [${items.length}]`}
                             >
                                 <ul>
@@ -175,14 +179,16 @@ const SaveStep = ({ syncRule, onCancel }) => {
                         })}
                     >
                         <ul>
-                            {_.sortBy(syncRule.filterRules, fr => fr.type).map(filterRule => {
-                                return (
-                                    <LiEntry
-                                        key={filterRule.id}
-                                        label={filterRuleToString(filterRule)}
-                                    />
-                                );
-                            })}
+                            {_.sortBy(syncRule.filterRules, fr => fr.metadataType).map(
+                                filterRule => {
+                                    return (
+                                        <LiEntry
+                                            key={filterRule.id}
+                                            label={filterRuleToString(filterRule)}
+                                        />
+                                    );
+                                }
+                            )}
                         </ul>
                     </LiEntry>
                 )}

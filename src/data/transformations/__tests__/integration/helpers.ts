@@ -13,7 +13,7 @@ import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiReposito
 import { MetadataD2ApiRepository } from "../../../metadata/MetadataD2ApiRepository";
 import { StorageDataStoreClient } from "../../../storage/StorageDataStoreClient";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
-import { SynchronizationBuilder } from "./../../../../types/synchronization";
+import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 
 export function buildRepositoryFactory() {
     const repositoryFactory: RepositoryFactory = new RepositoryFactory("");

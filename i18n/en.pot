@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-07T09:44:53.049Z\n"
-"PO-Revision-Date: 2020-12-07T09:44:53.049Z\n"
+"POT-Creation-Date: 2020-12-07T10:59:14.950Z\n"
+"PO-Revision-Date: 2020-12-07T10:59:14.950Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -93,6 +93,9 @@ msgid "Version is not valid (ie. {{validExample}})"
 msgstr ""
 
 msgid "Version is too small (next version is {{validExample}})"
+msgstr ""
+
+msgid "deleted"
 msgstr ""
 
 msgid "Preparing synchronization"
@@ -866,6 +869,9 @@ msgid "Generate new UID"
 msgstr ""
 
 msgid "Dry Run"
+msgstr ""
+
+msgid "Run Analytics before sync"
 msgstr ""
 
 msgid "Type"
@@ -1694,12 +1700,6 @@ msgid "Last executed"
 msgstr ""
 
 msgid "Deleting Sync Rules"
-msgstr ""
-
-msgid "deleted"
-msgstr ""
-
-msgid "Failed to delete some rules"
 msgstr ""
 
 msgid "Successfully deleted {{count}} rules"

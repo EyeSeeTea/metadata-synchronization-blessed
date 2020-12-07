@@ -17,10 +17,9 @@ import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
-import { SynchronizationRule } from "../../../../../domain/synchronization/entities/SynchronizationRule";
+import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
-import SyncRule from "../../../../../models/syncRule";
 import { promiseMap } from "../../../../../utils/common";
 import { getValueForCollection } from "../../../../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../../../../utils/permissions";
@@ -113,10 +112,12 @@ const HistoryPage: React.FC = () => {
     );
 
     useEffect(() => {
-        SyncRule.list(api, { type }, { paging: false }).then(({ objects }) =>
-            setSyncRules(objects)
-        );
+        compositionRoot.rules
+            .list({ filters: { type }, paging: false })
+            .then(({ rows }) => setSyncRules(rows));
+
         if (id) compositionRoot.reports.get(id).then(setSyncReport);
+
         isAppConfigurator(api).then(setAppConfigurator);
     }, [api, id, type, compositionRoot]);
 

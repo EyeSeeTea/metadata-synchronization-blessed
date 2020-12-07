@@ -34,7 +34,6 @@ export const MSFHomePage: React.FC = () => {
 
     const handleAggregateData = () => {
         executeAggregateData(
-            api,
             compositionRoot,
             msfSettings,
             progress => setSyncProgress(progress),

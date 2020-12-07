@@ -1,9 +1,9 @@
 import { makeStyles, TextField } from "@material-ui/core";
 import React, { useCallback, useState } from "react";
 import { Instance } from "../../../../../../domain/instance/entities/Instance";
+import { SynchronizationRule } from "../../../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../../../domain/stores/entities/Store";
 import i18n from "../../../../../../locales";
-import SyncRule from "../../../../../../models/syncRule";
 import { Dictionary } from "../../../../../../types/utils";
 import { getValidationMessages } from "../../../../../../utils/old-validations";
 import {
@@ -18,7 +18,7 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
     const [errors, setErrors] = useState<Dictionary<string>>({});
 
     const onChangeField = useCallback(
-        (field: keyof SyncRule) => {
+        (field: keyof SynchronizationRule) => {
             return (event: React.ChangeEvent<{ value: unknown }>) => {
                 const newRule = syncRule.update({ [field]: event.target.value });
                 const messages = getValidationMessages(newRule, [field]);
