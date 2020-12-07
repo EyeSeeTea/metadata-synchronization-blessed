@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-04T10:59:47.983Z\n"
+"POT-Creation-Date: 2020-12-07T10:43:15.175Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -768,6 +768,9 @@ msgstr ""
 msgid "End date"
 msgstr ""
 
+msgid "Use sync rules periods"
+msgstr ""
+
 msgid "You need to provide a subject"
 msgstr ""
 
@@ -1195,7 +1198,19 @@ msgstr ""
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
+msgid "True"
+msgstr ""
+
+msgid "False"
+msgstr ""
+
+msgid "Use sync rule settings"
+msgstr ""
+
 msgid "MSF Settings"
+msgstr ""
+
+msgid "Run Analytics"
 msgstr ""
 
 msgid "Metadata Synchronization History"
@@ -1741,6 +1756,21 @@ msgid "Go To Admin Dashboard"
 msgstr ""
 
 msgid "Go to History"
+msgstr ""
+
+msgid "Starting Aggregate Data..."
+msgstr ""
+
+msgid "Finished Aggregate Data"
+msgstr ""
+
+msgid "Starting Sync Rule {{name}} ..."
+msgstr ""
+
+msgid "Finished Sync Rule {{name}}"
+msgstr ""
+
+msgid "Finished Sync Rule {{name}} with errors"
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
