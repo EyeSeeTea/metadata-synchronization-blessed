@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-07T09:44:53.049Z\n"
-"PO-Revision-Date: 2020-12-07T09:44:53.049Z\n"
+"POT-Creation-Date: 2020-12-07T11:31:58.789Z\n"
+"PO-Revision-Date: 2020-12-07T11:31:58.789Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -868,6 +868,9 @@ msgstr ""
 msgid "Dry Run"
 msgstr ""
 
+msgid "Run Analytics before sync"
+msgstr ""
+
 msgid "Type"
 msgstr ""
 
@@ -1385,6 +1388,9 @@ msgstr ""
 msgid ""
 "Define who are the custodians of this instance metadata. Custodians approve "
 "metadata requests coming from other DHIS instances."
+msgstr ""
+
+msgid "Settings"
 msgstr ""
 
 msgid "Admin Dashboard"
