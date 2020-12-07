@@ -21,7 +21,7 @@ export const MSFHomePage: React.FC = () => {
     const [syncProgress, setSyncProgress] = useState<string[]>([]);
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
-    const [period, setPeriod] = useState<Period>(Period.createDefault());
+    const [period, setPeriod] = useState<Period>();
 
     const [msfSettings, setMsfSettings] = useState<MSFSettings>({
         runAnalytics: "by-sync-rule-settings",
@@ -33,10 +33,13 @@ export const MSFHomePage: React.FC = () => {
     }, [api]);
 
     const handleAggregateData = () => {
-        executeAggregateData(api, compositionRoot, progress => {
-            console.log({ syncProcess: syncProgress });
-            setSyncProgress(progress);
-        });
+        executeAggregateData(
+            api,
+            compositionRoot,
+            msfSettings,
+            progress => setSyncProgress(progress),
+            period
+        );
     };
 
     const handleAdvancedSettings = () => {
