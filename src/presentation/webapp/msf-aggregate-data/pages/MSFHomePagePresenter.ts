@@ -2,6 +2,7 @@ import _ from "lodash";
 import { Period } from "../../../../domain/common/entities/Period";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../locales";
+import { executeAnalytics } from "../../../../utils/analytics";
 import { promiseMap } from "../../../../utils/common";
 import { CompositionRoot } from "../../../CompositionRoot";
 import { MSFSettings } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
@@ -13,18 +14,36 @@ export async function executeAggregateData(
     onProgressChange: (progress: string[]) => void,
     period?: Period
 ) {
-    const eventSyncRules = await getSyncRules(compositionRoot);
-
     let syncProgress: string[] = [i18n.t(`Starting Aggregate Data...`)];
 
     onProgressChange(syncProgress);
 
     const onSyncRuleProgressChange = (event: string) => {
-        syncProgress = [...syncProgress, event];
-        onProgressChange(syncProgress);
+        const lastEvent = syncProgress[syncProgress.length - 1];
+
+        if (lastEvent !== event) {
+            syncProgress = [...syncProgress, event];
+            onProgressChange(syncProgress);
+        }
     };
 
-    for (const syncRule of eventSyncRules) {
+    const eventSyncRules = await getSyncRules(compositionRoot);
+
+    const someRuleRunAnalytics = eventSyncRules.some(
+        rule => rule.builder.dataParams?.runAnalytics ?? false
+    );
+
+    const rulesWithoutRunAnalylics = someRuleRunAnalytics
+        ? eventSyncRules.map(rule =>
+              rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
+          )
+        : eventSyncRules;
+
+    if (someRuleRunAnalytics) {
+        await runAnalytics(compositionRoot, onSyncRuleProgressChange);
+    }
+
+    for (const syncRule of rulesWithoutRunAnalylics) {
         await executeSyncRule(
             compositionRoot,
             msfSettings,
@@ -44,19 +63,18 @@ async function executeSyncRule(
     onProgressChange: (event: string) => void,
     period?: Period
 ): Promise<void> {
-
     const { name, builder, id: syncRule, type = "metadata" } = rule;
 
     const newBuilder = period
         ? {
-            ...builder,
-            dataParams: {
-                ...builder.dataParams,
-                period: period.type,
-                startDate: period.startDate,
-                endDate: period.endDate,
-            },
-        }
+              ...builder,
+              dataParams: {
+                  ...builder.dataParams,
+                  period: period.type,
+                  startDate: period.startDate,
+                  endDate: period.endDate,
+              },
+          }
         : builder;
 
     console.log({ newBuilder });
@@ -75,16 +93,29 @@ async function executeSyncRule(
             onProgressChange(i18n.t(`Finished Sync Rule {{name}} with errors`, { name }));
         }
     }
-};
+}
 
-async function getSyncRules(compositionRoot: CompositionRoot,): Promise<SynchronizationRule[]> {
+async function getSyncRules(compositionRoot: CompositionRoot): Promise<SynchronizationRule[]> {
     const rulesList = (
         await compositionRoot.rules.list({ filters: { type: "events" }, paging: false })
     ).rows.slice(0, 2);
 
     const rules = await promiseMap(rulesList, rule => {
-        return compositionRoot.rules.get(rule.id)
+        return compositionRoot.rules.get(rule.id);
     });
 
     return _.compact(rules);
+}
+
+async function runAnalytics(
+    compositionRoot: CompositionRoot,
+    onProgressChange: (event: string) => void
+) {
+    const localInstance = await compositionRoot.instances.getLocal();
+
+    for await (const message of executeAnalytics(localInstance)) {
+        onProgressChange(message);
+    }
+
+    onProgressChange(i18n.t("Analytics execution finished on {{name}}", localInstance));
 }
