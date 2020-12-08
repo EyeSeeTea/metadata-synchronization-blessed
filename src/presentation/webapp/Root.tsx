@@ -1,5 +1,5 @@
 import React from "react";
-import { HashRouter, Switch } from "react-router-dom";
+import { HashRouter, Redirect, Switch } from "react-router-dom";
 import { SynchronizationType } from "../../domain/synchronization/entities/SynchronizationType";
 import * as permissions from "../../utils/permissions";
 import RouteWithSession from "../react/core/components/auth/RouteWithSession";
@@ -24,15 +24,9 @@ import SyncRulesCreationPage, {
 import SyncRulesPage from "./core/pages/sync-rules-list/SyncRulesListPage";
 import { MSFHomePage } from "./msf-aggregate-data/pages/MSFHomePage";
 
-export type AppVariant =
-    | "core-app"
-    | "data-metadata-app"
-    | "module-package-app"
-    | "msf-aggregate-data-app";
-
 const Root: React.FC = () => {
-    const appVariant = process.env.REACT_APP_PRESENTATION_VARIANT as AppVariant;
     const { api, compositionRoot } = useAppContext();
+    const appVariant = getAppVariant();
 
     return (
         <HashRouter>
@@ -108,21 +102,60 @@ const Root: React.FC = () => {
                     render={() => <NotificationsListPage />}
                 />
 
-                <RouteWithSession
-                    path={appVariant === "msf-aggregate-data-app" ? "/dashboard" : "/"}
-                    render={() => (
-                        <HomePage
-                            type={appVariant === "msf-aggregate-data-app" ? "dashboard" : "home"}
-                        />
-                    )}
-                />
-
-                {appVariant === "msf-aggregate-data-app" && (
-                    <RouteWithSession path="/" exact render={() => <MSFHomePage />} />
-                )}
+                <VariantRoutes variant={appVariant} />
             </Switch>
         </HashRouter>
     );
 };
+
+const VariantRoutes: React.FC<{ variant: AppVariant }> = ({ variant }) => {
+    switch (variant) {
+        case "msf-aggregate-data-app":
+            return (
+                <Switch>
+                    <RouteWithSession path="/msf" exact render={() => <MSFHomePage />} />
+
+                    <RouteWithSession
+                        path={"/dashboard"}
+                        render={() => <HomePage type={"dashboard"} />}
+                    />
+
+                    <Redirect to="/msf" />
+                </Switch>
+            );
+        default:
+            return (
+                <Switch>
+                    <RouteWithSession
+                        path={"/dashboard"}
+                        render={() => <HomePage type={"home"} />}
+                    />
+
+                    <Redirect to="/dashboard" />
+                </Switch>
+            );
+    }
+};
+
+const getAppVariant = (): AppVariant => {
+    const variant = process.env.REACT_APP_PRESENTATION_VARIANT;
+
+    return isAppVariant(variant) ? variant : "core-app";
+};
+
+const isAppVariant = (variant?: string): variant is AppVariant => {
+    return (
+        !!variant &&
+        ["core-app", "data-metadata-app", "module-package-app", "msf-aggregate-data-app"].includes(
+            variant
+        )
+    );
+};
+
+export type AppVariant =
+    | "core-app"
+    | "data-metadata-app"
+    | "module-package-app"
+    | "msf-aggregate-data-app";
 
 export default Root;

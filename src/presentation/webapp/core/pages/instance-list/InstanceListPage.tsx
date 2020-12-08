@@ -141,7 +141,7 @@ const InstanceListPage = () => {
     };
 
     const backHome = () => {
-        history.push("/");
+        history.push("/dashboard");
     };
 
     const updateTable = (state: TableState<Instance>) => {
