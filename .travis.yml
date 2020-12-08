@@ -1,0 +1,52 @@
+dist: bionic
+language: node_js
+node_js:
+    - 12.13.0
+services:
+    - xvfb
+addons:
+    chrome: stable
+    apt:
+        packages:
+            - libgconf-2-4
+cache:
+    directories:
+        - "$HOME/.cache"
+before_install:
+    - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+    # Install python dependencies
+    - sudo apt-get update
+    - sudo apt-get install docker.io docker-compose python3 python3-setuptools httpie
+    #  Install d2-docker
+    - git clone https://github.com/EyeSeeTea/d2-docker.git
+    - cd d2-docker/
+    - sudo python3 setup.py install
+    - cd ../
+    # Hack to not be prompted in the terminal
+    - sudo apt-get remove golang-docker-credential-helpers
+    # Start docker service
+    - sudo systemctl unmask docker.service
+    - sudo systemctl unmask docker.socket
+    - sudo systemctl start docker.service
+    # Login to docker and start DHIS2 instance
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - d2-docker start eyeseetea/dhis2-data:2.30-datasync-sender -d
+install:
+    - yarn install --frozen-lockfile
+    - yarn cy:verify
+    - yarn localize
+    - yarn start &
+env:
+    global:
+        - PORT=8081
+        - REACT_APP_DHIS2_BASE_URL=http://localhost:8080
+        - REACT_APP_CYPRESS=true
+        - CYPRESS_EXTERNAL_API=http://localhost:8080
+        - CYPRESS_ROOT_URL=http://localhost:8081
+        - NODE_OPTIONS=--max-old-space-size=8192
+script:
+    - yarn test
+    - yarn wait-on http-get://localhost:8080
+    - yarn wait-on http-get://localhost:8081
+    - yarn cy:e2e:run --browser chrome
+    - kill $(jobs -p) || true
