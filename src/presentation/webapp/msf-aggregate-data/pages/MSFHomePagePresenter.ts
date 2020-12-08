@@ -1,5 +1,8 @@
+import _ from "lodash";
 import { Period } from "../../../../domain/common/entities/Period";
+import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../locales";
+import { promiseMap } from "../../../../utils/common";
 import { CompositionRoot } from "../../../CompositionRoot";
 import { MSFSettings } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
 
@@ -10,9 +13,7 @@ export async function executeAggregateData(
     onProgressChange: (progress: string[]) => void,
     period?: Period
 ) {
-    const eventSyncRules = (
-        await compositionRoot.rules.list({ filters: { type: "events" }, paging: false })
-    ).rows.slice(0, 2);
+    const eventSyncRules = await getSyncRules(compositionRoot);
 
     let syncProgress: string[] = [i18n.t(`Starting Aggregate Data...`)];
 
@@ -27,7 +28,7 @@ export async function executeAggregateData(
         await executeSyncRule(
             compositionRoot,
             msfSettings,
-            syncRule.id,
+            syncRule,
             onSyncRuleProgressChange,
             period
         );
@@ -36,28 +37,26 @@ export async function executeAggregateData(
     onProgressChange([...syncProgress, i18n.t(`Finished Aggregate Data`)]);
 }
 
-const executeSyncRule = async (
+async function executeSyncRule(
     compositionRoot: CompositionRoot,
     _msfSettings: MSFSettings,
-    id: string,
+    rule: SynchronizationRule,
     onProgressChange: (event: string) => void,
     period?: Period
-): Promise<void> => {
-    const rule = await compositionRoot.rules.get(id);
-    if (!rule) return;
+): Promise<void> {
 
     const { name, builder, id: syncRule, type = "metadata" } = rule;
 
     const newBuilder = period
         ? {
-              ...builder,
-              dataParams: {
-                  ...builder.dataParams,
-                  period: period.type,
-                  startDate: period.startDate,
-                  endDate: period.endDate,
-              },
-          }
+            ...builder,
+            dataParams: {
+                ...builder.dataParams,
+                period: period.type,
+                startDate: period.startDate,
+                endDate: period.endDate,
+            },
+        }
         : builder;
 
     console.log({ newBuilder });
@@ -77,3 +76,15 @@ const executeSyncRule = async (
         }
     }
 };
+
+async function getSyncRules(compositionRoot: CompositionRoot,): Promise<SynchronizationRule[]> {
+    const rulesList = (
+        await compositionRoot.rules.list({ filters: { type: "events" }, paging: false })
+    ).rows.slice(0, 2);
+
+    const rules = await promiseMap(rulesList, rule => {
+        return compositionRoot.rules.get(rule.id)
+    });
+
+    return _.compact(rules);
+}
