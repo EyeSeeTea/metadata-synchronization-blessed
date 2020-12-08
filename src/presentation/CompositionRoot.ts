@@ -83,6 +83,8 @@ import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/Cre
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { SynchronizationBuilder } from "../domain/synchronization/entities/SynchronizationBuilder";
 import { cache } from "../utils/cache";
+import { GetSystemInfoUseCase } from "../domain/system-info/usecases/GetSystemInfoUseCase";
+import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRepository";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -99,6 +101,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.FileRepository, FileD2Repository);
         this.repositoryFactory.bind(Repositories.ReportsRepository, ReportsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.RulesRepository, RulesD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
         this.repositoryFactory.bind(
             Repositories.MetadataRepository,
             MetadataJSONRepository,
@@ -287,6 +290,15 @@ export class CompositionRoot {
             getVersion: new GetInstanceVersionUseCase(this.repositoryFactory, this.localInstance),
             getOrgUnitRoots: new GetRootOrgUnitUseCase(this.repositoryFactory, this.localInstance),
             getUserGroups: new GetUserGroupsUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get systemInfo() {
+        const systemInfoRepository = new SystemInfoD2ApiRepository(this.localInstance);
+
+        return getExecute({
+            get: new GetSystemInfoUseCase(systemInfoRepository),
         });
     }
 

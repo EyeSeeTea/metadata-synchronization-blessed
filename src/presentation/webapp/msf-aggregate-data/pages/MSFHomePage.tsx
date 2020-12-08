@@ -11,7 +11,7 @@ import {
     MSFSettings,
     MSFSettingsDialog,
 } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
-import { executeAggregateData } from "./MSFHomePagePresenter";
+import { executeAggregateData, isGlobalInstance } from "./MSFHomePagePresenter";
 
 export const MSFHomePage: React.FC = () => {
     const classes = useStyles();
@@ -33,8 +33,7 @@ export const MSFHomePage: React.FC = () => {
     }, [api]);
 
     useEffect(() => {
-        const isGlobalInstance = !window.location.host.includes("localhost");
-        const msfSettings: MSFSettings = isGlobalInstance
+        const msfSettings: MSFSettings = isGlobalInstance()
             ? { runAnalytics: false }
             : { runAnalytics: "by-sync-rule-settings" };
 
