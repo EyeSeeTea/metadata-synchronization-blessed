@@ -32,6 +32,15 @@ export const MSFHomePage: React.FC = () => {
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
+    useEffect(() => {
+        const isGlobalInstance = !window.location.host.includes("localhost");
+        const msfSettings: MSFSettings = isGlobalInstance
+            ? { runAnalytics: false }
+            : { runAnalytics: "by-sync-rule-settings" };
+
+        setMsfSettings(msfSettings);
+    }, []);
+
     const handleAggregateData = () => {
         executeAggregateData(
             compositionRoot,
