@@ -29,6 +29,7 @@ import {
     SynchronizationStatus,
 } from "../../reports/entities/SynchronizationResult";
 import { SynchronizationType } from "../entities/SynchronizationType";
+import { executeAnalytics } from "../../../utils/analytics";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase
@@ -186,8 +187,18 @@ export abstract class GenericSyncUseCase {
     }
 
     public async *execute() {
-        const { targetInstances: targetInstanceIds, syncRule } = this.builder;
+        const { targetInstances: targetInstanceIds, syncRule, dataParams } = this.builder;
+
         const origin = await this.getOriginInstance();
+
+        if (dataParams && dataParams.runAnalytics) {
+            for await (const message of executeAnalytics(origin)) {
+                yield { message };
+            }
+
+            yield { message: i18n.t("Analytics execution finished on {{name}}", origin) };
+        }
+
         yield { message: i18n.t("Preparing synchronization") };
 
         // Build instance list

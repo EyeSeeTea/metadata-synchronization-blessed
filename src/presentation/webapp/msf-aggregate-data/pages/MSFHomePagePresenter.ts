@@ -11,7 +11,7 @@ export async function executeAggregateData(
     period?: Period
 ) {
     const eventSyncRules = (
-        await compositionRoot.rules.list({ filters: { type: "events" },  paging: false })
+        await compositionRoot.rules.list({ filters: { type: "events" }, paging: false })
     ).rows.slice(0, 2);
 
     let syncProgress: string[] = [i18n.t(`Starting Aggregate Data...`)];

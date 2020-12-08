@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-07T10:59:14.950Z\n"
+"POT-Creation-Date: 2020-12-07T12:11:28.395Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -96,6 +96,9 @@ msgid "Version is too small (next version is {{validExample}})"
 msgstr ""
 
 msgid "deleted"
+msgstr ""
+
+msgid "Analytics execution finished on {{name}}"
 msgstr ""
 
 msgid "Preparing synchronization"
@@ -1436,9 +1439,6 @@ msgid "All your changes will be lost. Are you sure?"
 msgstr ""
 
 msgid "Saving..."
-msgstr ""
-
-msgid "Analytics execution finished on {{name}}"
 msgstr ""
 
 msgid "Deleting Instances"
