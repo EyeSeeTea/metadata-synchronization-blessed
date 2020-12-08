@@ -117,7 +117,7 @@ const ManualSyncPage: React.FC = () => {
         isAppConfigurator(api).then(updateAppConfigurator);
     }, [api, updateAppConfigurator]);
 
-    const goBack = () => history.goBack();
+    const goBack = () => history.push("/dashboard");
 
     const updateSelection = useCallback(
         (selection: string[], exclusion: string[]) => {

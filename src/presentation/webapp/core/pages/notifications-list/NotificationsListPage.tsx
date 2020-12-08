@@ -48,7 +48,7 @@ export const NotificationsListPage: React.FC = () => {
     const [syncReport, setSyncReport] = useState<SynchronizationReport>();
 
     const backHome = useCallback(() => {
-        history.push("/");
+        history.push("/dashboard");
     }, [history]);
 
     const changeUnreadCheckbox = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {

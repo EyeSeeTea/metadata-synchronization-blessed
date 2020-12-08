@@ -199,7 +199,7 @@ const SyncRulesPage: React.FC = () => {
     };
 
     const back = () => {
-        history.goBack();
+        history.push("/dashboard");
     };
 
     const confirmDelete = async () => {
