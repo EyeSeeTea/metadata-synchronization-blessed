@@ -29,28 +29,21 @@ export async function executeAggregateData(
 
     const eventSyncRules = await getSyncRules(compositionRoot);
 
-    const someRuleRunAnalytics = eventSyncRules.some(
-        rule => rule.builder.dataParams?.runAnalytics ?? false
+    const runAnalyticsIsRequired =
+        msfSettings.runAnalytics === "by-sync-rule-settings"
+            ? eventSyncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
+            : msfSettings.runAnalytics;
+
+    const rulesWithoutRunAnalylics = eventSyncRules.map(rule =>
+        rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
     );
 
-    const rulesWithoutRunAnalylics = someRuleRunAnalytics
-        ? eventSyncRules.map(rule =>
-              rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
-          )
-        : eventSyncRules;
-
-    if (someRuleRunAnalytics) {
+    if (runAnalyticsIsRequired) {
         await runAnalytics(compositionRoot, onSyncRuleProgressChange);
     }
 
     for (const syncRule of rulesWithoutRunAnalylics) {
-        await executeSyncRule(
-            compositionRoot,
-            msfSettings,
-            syncRule,
-            onSyncRuleProgressChange,
-            period
-        );
+        await executeSyncRule(compositionRoot, syncRule, onSyncRuleProgressChange, period);
     }
 
     onProgressChange([...syncProgress, i18n.t(`Finished Aggregate Data`)]);
@@ -58,7 +51,6 @@ export async function executeAggregateData(
 
 async function executeSyncRule(
     compositionRoot: CompositionRoot,
-    _msfSettings: MSFSettings,
     rule: SynchronizationRule,
     onProgressChange: (event: string) => void,
     period?: Period
