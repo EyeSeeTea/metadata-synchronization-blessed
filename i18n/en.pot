@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-09T08:23:20.457Z\n"
-"PO-Revision-Date: 2020-12-09T08:23:20.457Z\n"
+"POT-Creation-Date: 2020-12-09T10:20:20.683Z\n"
+"PO-Revision-Date: 2020-12-09T10:20:20.683Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1638,6 +1638,18 @@ msgid "Unread messages"
 msgstr ""
 
 msgid "Refresh"
+msgstr ""
+
+msgid "Storage"
+msgstr ""
+
+msgid "Data Store"
+msgstr ""
+
+msgid "Metadata constant"
+msgstr ""
+
+msgid "Application storage"
 msgstr ""
 
 msgid "Edit store"

@@ -53,6 +53,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
     const [appExecutor, setAppExecutor] = useState(false);
     const [globalAdmin, setGlobalAdmin] = useState(false);
 
+    const backHome = () => {
+        history.push("/");
+    };
+
+    const goToSettings = () => {
+        history.push("/settings");
+    };
+
     useEffect(() => {
         shouldShowDeletedObjects(api).then(setShowDeletedObjects);
         isAppConfigurator(api).then(setAppConfigurator);
@@ -63,10 +71,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
             setPendingNotifications(unread);
         });
     }, [api, compositionRoot]);
-
-    const backHome = () => {
-        history.push("/");
-    };
 
     const allCards: Card[] = useMemo(
         () => [
@@ -255,7 +259,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
                     title={i18n.t("Settings")}
                     placement="left"
                 >
-                    <IconButton>
+                    <IconButton onClick={goToSettings}>
                         <Icon>settings</Icon>
                     </IconButton>
                 </Tooltip>
