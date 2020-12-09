@@ -87,7 +87,11 @@ export class PrepareSyncUseCase implements UseCase {
         const data = objects.find(data => data.id === id);
         if (!data) return Either.error("INSTANCE_NOT_FOUND");
 
-        const instance = Instance.build(data).decryptPassword(this.encryptionKey);
+        const instance = Instance.build({
+            ...data,
+            url: data.type === "local" ? this.localInstance.url : data.url,
+            version: data.type === "local" ? this.localInstance.version : data.version,
+        }).decryptPassword(this.encryptionKey);
         const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
 
         return Either.success(instance.update({ version }));

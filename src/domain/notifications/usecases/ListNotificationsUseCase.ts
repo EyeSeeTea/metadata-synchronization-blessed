@@ -56,7 +56,11 @@ export class ListNotificationsUseCase implements UseCase {
         const data = objects.find(data => data.id === id);
         if (!data) return undefined;
 
-        return Instance.build(data).decryptPassword(this.encryptionKey);
+        return Instance.build({
+            ...data,
+            url: data.type === "local" ? this.localInstance.url : data.url,
+            version: data.type === "local" ? this.localInstance.version : data.version,
+        }).decryptPassword(this.encryptionKey);
     }
 
     private async updateSentPullRequest(
