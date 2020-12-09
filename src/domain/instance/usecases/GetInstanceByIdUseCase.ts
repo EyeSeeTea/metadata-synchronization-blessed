@@ -18,6 +18,12 @@ export class GetInstanceByIdUseCase implements UseCase {
 
         if (!data) return Either.error("NOT_FOUND");
 
-        return Either.success(Instance.build(data).decryptPassword(this.encryptionKey));
+        const instance = Instance.build({
+            ...data,
+            url: data.type === "local" ? this.localInstance.url : data.url,
+            version: data.type === "local" ? this.localInstance.version : data.version,
+        }).decryptPassword(this.encryptionKey);
+
+        return Either.success(instance);
     }
 }

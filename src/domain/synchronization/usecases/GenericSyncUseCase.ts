@@ -173,7 +173,11 @@ export abstract class GenericSyncUseCase {
 
         if (!data) return undefined;
 
-        const instance = Instance.build(data).decryptPassword(this.encryptionKey);
+        const instance = Instance.build({
+            ...data,
+            url: data.type === "local" ? this.localInstance.url : data.url,
+            version: data.type === "local" ? this.localInstance.version : data.version,
+        }).decryptPassword(this.encryptionKey);
 
         try {
             const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
