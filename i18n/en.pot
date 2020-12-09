@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-09T08:43:07.131Z\n"
-"PO-Revision-Date: 2020-12-09T08:43:07.131Z\n"
+"POT-Creation-Date: 2020-12-09T08:47:04.153Z\n"
+"PO-Revision-Date: 2020-12-09T08:47:04.153Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1758,6 +1758,9 @@ msgid "Go to History"
 msgstr ""
 
 msgid "Starting Aggregate Data..."
+msgstr ""
+
+msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
 msgstr ""
 
 msgid "Finished Aggregate Data"

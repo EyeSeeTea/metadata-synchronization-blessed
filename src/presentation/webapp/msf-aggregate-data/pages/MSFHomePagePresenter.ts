@@ -36,6 +36,7 @@ export async function executeAggregateData(
         onSyncRuleProgressChange(
             i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
                 lastExecution,
+                nsSeparator: false,
             })
         );
     }
@@ -76,14 +77,14 @@ async function executeSyncRule(
 
     const newBuilder = period
         ? {
-              ...builder,
-              dataParams: {
-                  ...builder.dataParams,
-                  period: period.type,
-                  startDate: period.startDate,
-                  endDate: period.endDate,
-              },
-          }
+            ...builder,
+            dataParams: {
+                ...builder.dataParams,
+                period: period.type,
+                startDate: period.startDate,
+                endDate: period.endDate,
+            },
+        }
         : builder;
 
     onProgressChange(i18n.t(`Starting Sync Rule {{name}} ...`, { name }));
@@ -108,7 +109,7 @@ async function executeSyncRule(
 
                 const status = `${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`;
                 const message = result.message ?? "";
-                if (result.message) onProgressChange(`${status} - ${message}`);
+                onProgressChange(`${status} - ${message}`);
             });
             onProgressChange(i18n.t(`Finished Sync Rule {{name}}`, { name }));
         } else if (done) {
