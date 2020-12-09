@@ -31,7 +31,11 @@ export async function executeAggregateData(
     if (isGlobalInstance && msfSettings.runAnalytics === false) {
         const lastExecution = await getLastAnalyticsExecution(compositionRoot);
 
-        onSyncRuleProgressChange(i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", { lastExecution }));
+        onSyncRuleProgressChange(
+            i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
+                lastExecution,
+            })
+        );
     }
 
     const eventSyncRules = await getSyncRules(compositionRoot);
@@ -57,7 +61,7 @@ export async function executeAggregateData(
 }
 
 export function isGlobalInstance(): boolean {
-    return !window.location.host.includes("localhost")
+    return !window.location.host.includes("localhost");
 }
 
 async function executeSyncRule(
@@ -70,14 +74,14 @@ async function executeSyncRule(
 
     const newBuilder = period
         ? {
-            ...builder,
-            dataParams: {
-                ...builder.dataParams,
-                period: period.type,
-                startDate: period.startDate,
-                endDate: period.endDate,
-            },
-        }
+              ...builder,
+              dataParams: {
+                  ...builder.dataParams,
+                  period: period.type,
+                  startDate: period.startDate,
+                  endDate: period.endDate,
+              },
+          }
         : builder;
 
     onProgressChange(i18n.t(`Starting Sync Rule {{name}} ...`, { name }));
@@ -124,5 +128,7 @@ async function runAnalytics(
 async function getLastAnalyticsExecution(compositionRoot: CompositionRoot): Promise<string> {
     const systemInfo = await compositionRoot.systemInfo.get();
 
-    return systemInfo.lastAnalyticsTableSuccess ? formatDateLong(systemInfo.lastAnalyticsTableSuccess) : i18n.t("never");
+    return systemInfo.lastAnalyticsTableSuccess
+        ? formatDateLong(systemInfo.lastAnalyticsTableSuccess)
+        : i18n.t("never");
 }
