@@ -14,7 +14,7 @@ import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
-import { SynchronizationBuilder } from "../../../../../types/synchronization";
+import { SynchronizationBuilder } from "../../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { useAppContext } from "../../contexts/AppContext";
 
 export interface PullRequestCreation {

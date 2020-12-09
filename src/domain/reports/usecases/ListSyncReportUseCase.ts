@@ -9,7 +9,7 @@ export interface ListSyncReportUseCaseParams {
     pageSize?: number;
     page?: number;
     sorting?: { field: keyof SynchronizationReport; order: "asc" | "desc" };
-    filters: { statusFilter?: string; syncRuleFilter?: string; type?: string; search?: string };
+    filters?: { statusFilter?: string; syncRuleFilter?: string; type?: string; search?: string };
 }
 
 export interface ListSyncReportUseCaseResult {
@@ -25,7 +25,7 @@ export class ListSyncReportUseCase implements UseCase {
         pageSize = 25,
         page = 1,
         sorting = { field: "id", order: "asc" },
-        filters,
+        filters = {},
     }: ListSyncReportUseCaseParams): Promise<ListSyncReportUseCaseResult> {
         const rawData = await this.repositoryFactory.reportsRepository(this.localInstance).list();
 

@@ -1,8 +1,9 @@
 import { WizardStep } from "d2-ui-components";
+import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../../locales";
-import SyncRule from "../../../../../models/syncRule";
 import GeneralInfoStep from "./common/GeneralInfoStep";
 import InstanceSelectionStep from "./common/InstanceSelectionStep";
+import MetadataFilterRulesStep from "./common/MetadataFilterRulesStep";
 import MetadataSelectionStep from "./common/MetadataSelectionStep";
 import SchedulerStep from "./common/SchedulerStep";
 import SummaryStep from "./common/SummaryStep";
@@ -12,17 +13,16 @@ import EventsSelectionStep from "./data/EventsSelectionStep";
 import OrganisationUnitsSelectionStep from "./data/OrganisationUnitsSelectionStep";
 import PeriodSelectionStep from "./data/PeriodSelectionStep";
 import MetadataIncludeExcludeStep from "./metadata/MetadataIncludeExcludeStep";
-import MetadataFilterRulesStep from "./common/MetadataFilterRulesStep";
 
 export interface SyncWizardStep extends WizardStep {
     validationKeys: string[];
     showOnSyncDialog?: boolean;
-    hidden?: (syncRule: SyncRule) => boolean;
+    hidden?: (syncRule: SynchronizationRule) => boolean;
 }
 
 export interface SyncWizardStepProps {
-    syncRule: SyncRule;
-    onChange: (syncRule: SyncRule) => void;
+    syncRule: SynchronizationRule;
+    onChange: (syncRule: SynchronizationRule) => void;
     onCancel: () => void;
 }
 

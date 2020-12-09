@@ -3,11 +3,11 @@ import React, { useMemo, useState } from "react";
 import i18n from "../../../../../locales";
 import Dropdown from "../../../core/components/dropdown/Dropdown";
 
-type RunAnalyticsSettings = boolean | "by-sync-rule-settings";
+export type RunAnalyticsSettings = boolean | "by-sync-rule-settings";
 
-export interface MSFSettings {
+export type MSFSettings = {
     runAnalytics: RunAnalyticsSettings;
-}
+};
 
 export interface MSFSettingsDialogProps {
     msfSettings: MSFSettings;

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-07T11:31:58.789Z\n"
-"PO-Revision-Date: 2020-12-07T11:31:58.789Z\n"
+"POT-Creation-Date: 2020-12-09T08:13:58.418Z\n"
+"PO-Revision-Date: 2020-12-09T08:13:58.418Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -93,6 +93,12 @@ msgid "Version is not valid (ie. {{validExample}})"
 msgstr ""
 
 msgid "Version is too small (next version is {{validExample}})"
+msgstr ""
+
+msgid "deleted"
+msgstr ""
+
+msgid "Analytics execution finished on {{name}}"
 msgstr ""
 
 msgid "Preparing synchronization"
@@ -1435,9 +1441,6 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-msgid "Analytics execution finished on {{name}}"
-msgstr ""
-
 msgid "Deleting Instances"
 msgstr ""
 
@@ -1702,12 +1705,6 @@ msgstr ""
 msgid "Deleting Sync Rules"
 msgstr ""
 
-msgid "deleted"
-msgstr ""
-
-msgid "Failed to delete some rules"
-msgstr ""
-
 msgid "Successfully deleted {{count}} rules"
 msgid_plural "Successfully deleted {{count}} rules"
 msgstr[0] ""
@@ -1773,6 +1770,9 @@ msgid "Finished Sync Rule {{name}}"
 msgstr ""
 
 msgid "Finished Sync Rule {{name}} with errors"
+msgstr ""
+
+msgid "never"
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"

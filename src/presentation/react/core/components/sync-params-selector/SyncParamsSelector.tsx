@@ -1,14 +1,14 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import React from "react";
+import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../../locales";
-import SyncRule from "../../../../../models/syncRule";
 import RadioButtonGroup from "../radio-button-group/RadioButtonGroup";
 import { Toggle } from "../toggle/Toggle";
 
 interface SyncParamsSelectorProps {
     generateNewUidDisabled?: boolean;
-    syncRule: SyncRule;
-    onChange(newParams: SyncRule): void;
+    syncRule: SynchronizationRule;
+    onChange(newParams: SynchronizationRule): void;
 }
 
 const useStyles = makeStyles({

@@ -6,6 +6,7 @@ import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepositor
 import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
 import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepository";
 import { ReportsD2ApiRepository } from "../data/reports/ReportsD2ApiRepository";
+import { RulesD2ApiRepository } from "../data/rules/RulesD2ApiRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
@@ -67,6 +68,10 @@ import { GetSyncReportUseCase } from "../domain/reports/usecases/GetSyncReportUs
 import { GetSyncResultsUseCase } from "../domain/reports/usecases/GetSyncResultsUseCase";
 import { ListSyncReportUseCase } from "../domain/reports/usecases/ListSyncReportUseCase";
 import { SaveSyncReportUseCase } from "../domain/reports/usecases/SaveSyncReportUseCase";
+import { DeleteSyncRuleUseCase } from "../domain/rules/usecases/DeleteSyncRuleUseCase";
+import { GetSyncRuleUseCase } from "../domain/rules/usecases/GetSyncRuleUseCase";
+import { ListSyncRuleUseCase } from "../domain/rules/usecases/ListSyncRuleUseCase";
+import { SaveSyncRuleUseCase } from "../domain/rules/usecases/SaveSyncRuleUseCase";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { DeleteStoreUseCase } from "../domain/stores/usecases/DeleteStoreUseCase";
 import { GetStoreUseCase } from "../domain/stores/usecases/GetStoreUseCase";
@@ -76,8 +81,10 @@ import { SetStoreAsDefaultUseCase } from "../domain/stores/usecases/SetStoreAsDe
 import { ValidateStoreUseCase } from "../domain/stores/usecases/ValidateStoreUseCase";
 import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/CreatePullRequestUseCase";
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
-import { SynchronizationBuilder } from "../types/synchronization";
+import { SynchronizationBuilder } from "../domain/synchronization/entities/SynchronizationBuilder";
 import { cache } from "../utils/cache";
+import { GetSystemInfoUseCase } from "../domain/system-info/usecases/GetSystemInfoUseCase";
+import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRepository";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -93,6 +100,8 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
         this.repositoryFactory.bind(Repositories.FileRepository, FileD2Repository);
         this.repositoryFactory.bind(Repositories.ReportsRepository, ReportsD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.RulesRepository, RulesD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
         this.repositoryFactory.bind(
             Repositories.MetadataRepository,
             MetadataJSONRepository,
@@ -285,6 +294,15 @@ export class CompositionRoot {
     }
 
     @cache()
+    public get systemInfo() {
+        const systemInfoRepository = new SystemInfoD2ApiRepository(this.localInstance);
+
+        return getExecute({
+            get: new GetSystemInfoUseCase(systemInfoRepository),
+        });
+    }
+
+    @cache()
     public get events() {
         const events = new EventsD2ApiRepository(this.localInstance);
 
@@ -315,6 +333,16 @@ export class CompositionRoot {
             delete: new DeleteSyncReportUseCase(this.repositoryFactory, this.localInstance),
             get: new GetSyncReportUseCase(this.repositoryFactory, this.localInstance),
             getSyncResults: new GetSyncResultsUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get rules() {
+        return getExecute({
+            list: new ListSyncRuleUseCase(this.repositoryFactory, this.localInstance),
+            save: new SaveSyncRuleUseCase(this.repositoryFactory, this.localInstance),
+            delete: new DeleteSyncRuleUseCase(this.repositoryFactory, this.localInstance),
+            get: new GetSyncRuleUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }

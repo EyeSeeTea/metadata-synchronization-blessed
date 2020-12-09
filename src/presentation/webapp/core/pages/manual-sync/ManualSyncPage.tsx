@@ -11,6 +11,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { Ref } from "../../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
+import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../../domain/stores/entities/Store";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
@@ -27,7 +28,6 @@ import {
     DataElementGroupModel,
     DataElementGroupSetModel,
 } from "../../../../../models/dhis/metadata";
-import SyncRule from "../../../../../models/syncRule";
 import { MetadataType } from "../../../../../utils/d2";
 import { isAppConfigurator } from "../../../../../utils/permissions";
 import DeletedObjectsTable from "../../../../react/core/components/delete-objects-table/DeletedObjectsTable";
@@ -88,7 +88,9 @@ const ManualSyncPage: React.FC = () => {
     const { type } = useParams() as { type: SynchronizationType };
     const { title, models } = config[type];
 
-    const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand(type));
+    const [syncRule, updateSyncRule] = useState<SynchronizationRule>(
+        SynchronizationRule.createOnDemand(type)
+    );
     const [appConfigurator, updateAppConfigurator] = useState(false);
     const [syncReport, setSyncReport] = useState<SynchronizationReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
@@ -97,7 +99,7 @@ const ManualSyncPage: React.FC = () => {
     const [pullRequestProps, setPullRequestProps] = useState<PullRequestCreation>();
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
 
-    const updateSyncRuleFromDialog = useCallback((newSyncRule: SyncRule) => {
+    const updateSyncRuleFromDialog = useCallback((newSyncRule: SynchronizationRule) => {
         const id = newSyncRule.targetInstances[0];
         setDestinationInstanceBase(id ? { id } : undefined);
         updateSyncRule(newSyncRule);
@@ -122,7 +124,7 @@ const ManualSyncPage: React.FC = () => {
     const updateSelection = useCallback(
         (selection: string[], exclusion: string[]) => {
             updateSyncRule(({ originInstance, targetInstances }) =>
-                SyncRule.createOnDemand(type)
+                SynchronizationRule.createOnDemand(type)
                     .updateBuilder({ originInstance })
                     .updateTargetInstances(targetInstances)
                     .updateMetadataIds(selection)
@@ -156,7 +158,7 @@ const ManualSyncPage: React.FC = () => {
         setSyncDialogOpen(false);
     };
 
-    const handleSynchronization = async (syncRule: SyncRule) => {
+    const handleSynchronization = async (syncRule: SynchronizationRule) => {
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
 
         const result = await compositionRoot.sync.prepare(syncRule.type, syncRule.toBuilder());

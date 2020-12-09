@@ -4,8 +4,8 @@ import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ProgramEvent } from "../../../../../../domain/events/entities/ProgramEvent";
 import { DataElement, Program } from "../../../../../../domain/metadata/entities/MetadataEntities";
+import { SynchronizationRule } from "../../../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../../../locales";
-import SyncRule from "../../../../../../models/syncRule";
 import { useAppContext } from "../../../contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
@@ -22,7 +22,7 @@ type CustomProgram = Program & {
 export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
     const { compositionRoot } = useAppContext();
 
-    const [memoizedSyncRule] = useState<SyncRule>(syncRule);
+    const [memoizedSyncRule] = useState<SynchronizationRule>(syncRule);
     const [objects, setObjects] = useState<ProgramEvent[] | undefined>();
     const [programs, setPrograms] = useState<CustomProgram[]>([]);
     const [programFilter, changeProgramFilter] = useState<string>("");
