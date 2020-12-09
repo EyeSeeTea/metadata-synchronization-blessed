@@ -7,6 +7,7 @@ import i18n from "../../../../locales";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { promiseMap } from "../../../../utils/common";
 import { formatDateLong } from "../../../../utils/date";
+import { availablePeriods } from "../../../../utils/synchronization";
 import { CompositionRoot } from "../../../CompositionRoot";
 import { MSFSettings } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
 
@@ -14,57 +15,94 @@ import { MSFSettings } from "../../../react/msf-aggregate-data/components/msf-Se
 export async function executeAggregateData(
     compositionRoot: CompositionRoot,
     msfSettings: MSFSettings,
+    validateRequired: boolean,
     onProgressChange: (progress: string[]) => void,
+    onValidationError: (errors: string[]) => void,
     period?: Period
 ) {
-    let syncProgress: string[] = [i18n.t(`Starting Aggregate Data...`)];
-
-    onProgressChange(syncProgress);
-
-    const onSyncRuleProgressChange = (event: string) => {
-        const lastEvent = syncProgress[syncProgress.length - 1];
-
-        if (lastEvent !== event) {
-            syncProgress = [...syncProgress, event];
-            onProgressChange(syncProgress);
-        }
-    };
-
-    if (isGlobalInstance && msfSettings.runAnalytics === false) {
-        const lastExecution = await getLastAnalyticsExecution(compositionRoot);
-
-        onSyncRuleProgressChange(
-            i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
-                lastExecution,
-                nsSeparator: false,
-            })
-        );
-    }
-
+    //TODO: Merge period here
     const eventSyncRules = await getSyncRules(compositionRoot);
 
-    const runAnalyticsIsRequired =
-        msfSettings.runAnalytics === "by-sync-rule-settings"
-            ? eventSyncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
-            : msfSettings.runAnalytics;
-
-    const rulesWithoutRunAnalylics = eventSyncRules.map(rule =>
-        rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
+    const validationErrors = await validatePreviousDataValues(
+        compositionRoot,
+        validateRequired,
+        eventSyncRules
     );
 
-    if (runAnalyticsIsRequired) {
-        await runAnalytics(compositionRoot, onSyncRuleProgressChange);
-    }
+    if (validationErrors.length > 0) {
+        onValidationError(validationErrors);
+    } else {
+        let syncProgress: string[] = [i18n.t(`Starting Aggregate Data...`)];
 
-    for (const syncRule of rulesWithoutRunAnalylics) {
-        await executeSyncRule(compositionRoot, syncRule, onSyncRuleProgressChange, period);
-    }
+        onProgressChange(syncProgress);
 
-    onProgressChange([...syncProgress, i18n.t(`Finished Aggregate Data`)]);
+        const onSyncRuleProgressChange = (event: string) => {
+            const lastEvent = syncProgress[syncProgress.length - 1];
+
+            if (lastEvent !== event) {
+                syncProgress = [...syncProgress, event];
+                onProgressChange(syncProgress);
+            }
+        };
+
+        if (isGlobalInstance && msfSettings.runAnalytics === false) {
+            const lastExecution = await getLastAnalyticsExecution(compositionRoot);
+
+            onSyncRuleProgressChange(
+                i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
+                    lastExecution,
+                    nsSeparator: false,
+                })
+            );
+        }
+
+        const runAnalyticsIsRequired =
+            msfSettings.runAnalytics === "by-sync-rule-settings"
+                ? eventSyncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
+                : msfSettings.runAnalytics;
+
+        const rulesWithoutRunAnalylics = eventSyncRules.map(rule =>
+            rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
+        );
+
+        if (runAnalyticsIsRequired) {
+            await runAnalytics(compositionRoot, onSyncRuleProgressChange);
+        }
+
+        for (const syncRule of rulesWithoutRunAnalylics) {
+            await executeSyncRule(compositionRoot, syncRule, onSyncRuleProgressChange, period);
+        }
+
+        onProgressChange([...syncProgress, i18n.t(`Finished Aggregate Data`)]);
+    }
 }
 
 export function isGlobalInstance(): boolean {
     return !window.location.host.includes("localhost");
+}
+
+async function validatePreviousDataValues(
+    compositionRoot: CompositionRoot,
+    validateRequired: boolean,
+    syncRules: SynchronizationRule[]
+): Promise<string[]> {
+    if (!validateRequired) return [];
+
+    const validationsErrors = await promiseMap(syncRules, async rule => {
+        const targetInstances = await compositionRoot.instances.list({ ids: rule.targetInstances });
+
+        const byInstance = await promiseMap(targetInstances, async instance => {
+            if (!rule.dataParams.period) return undefined;
+
+            const periodName = availablePeriods[rule.dataParams.period].name;
+
+            return `Sync rule '${rule.name}': there are data values in '${instance.name}' for previous date to '${periodName}' and last updated in '${periodName}'`;
+        });
+
+        return _.compact(byInstance);
+    });
+
+    return _.compact(validationsErrors).flat();
 }
 
 async function executeSyncRule(
@@ -77,14 +115,14 @@ async function executeSyncRule(
 
     const newBuilder = period
         ? {
-            ...builder,
-            dataParams: {
-                ...builder.dataParams,
-                period: period.type,
-                startDate: period.startDate,
-                endDate: period.endDate,
-            },
-        }
+              ...builder,
+              dataParams: {
+                  ...builder.dataParams,
+                  period: period.type,
+                  startDate: period.startDate,
+                  endDate: period.endDate,
+              },
+          }
         : builder;
 
     onProgressChange(i18n.t(`Starting Sync Rule {{name}} ...`, { name }));

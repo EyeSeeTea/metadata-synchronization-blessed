@@ -6,6 +6,7 @@ import { Instance, InstanceData } from "../entities/Instance";
 
 export interface ListInstancesUseCaseProps {
     search?: string;
+    ids?: string[];
 }
 
 export class ListInstancesUseCase implements UseCase {
@@ -15,12 +16,12 @@ export class ListInstancesUseCase implements UseCase {
         private encryptionKey: string
     ) {}
 
-    public async execute({ search }: ListInstancesUseCaseProps = {}): Promise<Instance[]> {
+    public async execute({ search, ids }: ListInstancesUseCaseProps = {}): Promise<Instance[]> {
         const objects = await this.repositoryFactory
             .storageRepository(this.localInstance)
             .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
 
-        const filteredData = search
+        const filteredDataBySearch = search
             ? _.filter(objects, o =>
                   _(o)
                       .values()
@@ -32,7 +33,11 @@ export class ListInstancesUseCase implements UseCase {
               )
             : objects;
 
-        return filteredData.map(data =>
+        const filteredDataByIds = filteredDataBySearch.filter(
+            instanceData => !ids || ids.includes(instanceData.id)
+        );
+
+        return filteredDataByIds.map(data =>
             Instance.build({
                 ...data,
                 url: data.type === "local" ? this.localInstance.url : data.url,

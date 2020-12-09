@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-09T08:23:20.457Z\n"
+"POT-Creation-Date: 2020-12-09T15:51:00.236Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1762,6 +1762,12 @@ msgid "Go To Admin Dashboard"
 msgstr ""
 
 msgid "Go to History"
+msgstr ""
+
+msgid "MSF Validation"
+msgstr ""
+
+msgid "Do you want to proceed?"
 msgstr ""
 
 msgid "Starting Aggregate Data..."

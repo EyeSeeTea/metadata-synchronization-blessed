@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-09T08:47:04.153Z\n"
-"PO-Revision-Date: 2020-12-09T08:47:04.153Z\n"
+"POT-Creation-Date: 2020-12-09T16:06:06.293Z\n"
+"PO-Revision-Date: 2020-12-09T16:06:06.293Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1755,6 +1755,12 @@ msgid "Go To Admin Dashboard"
 msgstr ""
 
 msgid "Go to History"
+msgstr ""
+
+msgid "MSF Validation"
+msgstr ""
+
+msgid "Do you want to proceed?"
 msgstr ""
 
 msgid "Starting Aggregate Data..."
