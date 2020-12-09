@@ -60,7 +60,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
     }, [api, compositionRoot]);
 
     const backHome = () => {
-        history.goBack();
+        history.push("/");
     };
 
     const allCards: Card[] = useMemo(

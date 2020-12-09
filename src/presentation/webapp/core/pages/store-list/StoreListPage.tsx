@@ -37,7 +37,7 @@ export const StoreListPage: React.FC = () => {
         getStores().then(setRows);
     }, [getStores, objectsTableKey]);
 
-    const backHome = () => history.push("/");
+    const backHome = () => history.push("/dashboard");
 
     const handleCreateStore = () => history.push(`/stores/new`);
 
