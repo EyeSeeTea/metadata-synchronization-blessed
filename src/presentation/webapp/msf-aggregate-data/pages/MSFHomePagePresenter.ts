@@ -1,6 +1,8 @@
 import _ from "lodash";
 import { Period } from "../../../../domain/common/entities/Period";
+import { PublicInstance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
+import { Store } from "../../../../domain/stores/entities/Store";
 import i18n from "../../../../locales";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { promiseMap } from "../../../../utils/common";
@@ -93,6 +95,21 @@ async function executeSyncRule(
         if (syncReport) await compositionRoot.reports.save(syncReport);
 
         if (done && syncReport) {
+            syncReport.getResults().forEach(result => {
+                onProgressChange(`${i18n.t("Summary")}:`);
+                const origin = result.origin
+                    ? `${i18n.t("Origin")}: ${getOriginName(result.origin)} `
+                    : "";
+                const originPackage = result.originPackage
+                    ? `${i18n.t("Origin package")}: ${result.originPackage.name}`
+                    : "";
+                const destination = `${i18n.t("Destination instance")}: ${result.instance.name}`;
+                onProgressChange(`${origin} ${originPackage} -> ${destination}`);
+
+                const status = `${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`;
+                const message = result.message ?? "";
+                if (result.message) onProgressChange(`${status} - ${message}`);
+            });
             onProgressChange(i18n.t(`Finished Sync Rule {{name}}`, { name }));
         } else if (done) {
             onProgressChange(i18n.t(`Finished Sync Rule {{name}} with errors`, { name }));
@@ -132,3 +149,13 @@ async function getLastAnalyticsExecution(compositionRoot: CompositionRoot): Prom
         ? formatDateLong(systemInfo.lastAnalyticsTableSuccess)
         : i18n.t("never");
 }
+
+const getOriginName = (source: PublicInstance | Store) => {
+    if ((source as Store).token) {
+        const store = source as Store;
+        return store.account + " - " + store.repository;
+    } else {
+        const instance = source as PublicInstance;
+        return instance.name;
+    }
+};
