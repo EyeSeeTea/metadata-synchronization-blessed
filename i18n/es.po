@@ -1403,6 +1403,9 @@ msgid ""
 "metadata requests coming from other DHIS instances."
 msgstr ""
 
+msgid "Settings"
+msgstr ""
+
 msgid "Admin Dashboard"
 msgstr ""
 
