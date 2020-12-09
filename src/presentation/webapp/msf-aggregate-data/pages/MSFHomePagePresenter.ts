@@ -34,6 +34,7 @@ export async function executeAggregateData(
         onSyncRuleProgressChange(
             i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
                 lastExecution,
+                nsSeparator: false,
             })
         );
     }
