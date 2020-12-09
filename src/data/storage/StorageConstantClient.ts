@@ -1,6 +1,8 @@
 import { generateUid } from "d2/uid";
+import { Instance } from "../../domain/instance/entities/Instance";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { D2Api } from "../../types/d2-api";
+import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 interface Constant {
     id: string;
@@ -12,8 +14,11 @@ interface Constant {
 const defaultName = "Bulk Load Storage";
 
 export class StorageConstantClient extends StorageClient {
-    constructor(private api: D2Api) {
+    private api: D2Api;
+
+    constructor(instance: Instance) {
         super();
+        this.api = getD2APiFromInstance(instance);
     }
 
     private buildDefault<T extends object>(key: string, value: T): Constant {
