@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-09T10:20:20.683Z\n"
-"PO-Revision-Date: 2020-12-09T10:20:20.683Z\n"
+"POT-Creation-Date: 2020-12-10T10:40:16.790Z\n"
+"PO-Revision-Date: 2020-12-10T10:40:16.790Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -875,6 +875,9 @@ msgid "Dry Run"
 msgstr ""
 
 msgid "Run Analytics before sync"
+msgstr ""
+
+msgid "Delete data values before sync"
 msgstr ""
 
 msgid "Type"

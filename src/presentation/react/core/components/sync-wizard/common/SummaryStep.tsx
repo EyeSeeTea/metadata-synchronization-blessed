@@ -435,6 +435,18 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
                                 }
                             />
                         </ul>
+                        {syncRule.type === "events" && (
+                            <ul>
+                                <LiEntry
+                                    label={i18n.t("Delete data values before sync")}
+                                    value={
+                                        syncRule.dataParams.deleteDataValuesBeforeSync
+                                            ? i18n.t("Yes")
+                                            : i18n.t("No")
+                                    }
+                                />
+                            </ul>
+                        )}
                     </LiEntry>
                 )}
 
