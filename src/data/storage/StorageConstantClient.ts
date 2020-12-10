@@ -2,16 +2,11 @@ import { generateUid } from "d2/uid";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { D2Api } from "../../types/d2-api";
+import { Dictionary } from "../../types/utils";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
-interface Constant {
-    id: string;
-    code: string;
-    name: string;
-    description: string;
-}
-
-const defaultName = "Bulk Load Storage";
+const defaultName = "MDSync Storage";
+const defaultKey = "MDSYNC_STORAGE";
 
 export class StorageConstantClient extends StorageClient {
     private api: D2Api;
@@ -21,56 +16,73 @@ export class StorageConstantClient extends StorageClient {
         this.api = getD2APiFromInstance(instance);
     }
 
-    private buildDefault<T extends object>(key: string, value: T): Constant {
-        return {
-            id: generateUid(),
-            code: key,
-            name: `${defaultName} - ${key}`,
-            description: JSON.stringify(value, null, 2),
-        };
+    public async getObject<T extends object>(key: string): Promise<T | undefined> {
+        const { value } = await this.getConstant<Dictionary<T>>();
+        return value ? value[key] : undefined;
     }
 
-    private async getConstant(key: string): Promise<Partial<Constant>> {
+    public async getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T> {
+        const { id, value = {} } = await this.getConstant<Dictionary<T>>();
+        if (!value[key]) {
+            await this.updateConstant(id, { ...value, [key]: defaultValue });
+        }
+        return value[key] ?? defaultValue;
+    }
+
+    public async saveObject<T extends object>(key: string, keyValue: T): Promise<void> {
+        const { id, value = {} } = await this.getConstant<Dictionary<T>>();
+        await this.updateConstant(id, { ...value, [key]: keyValue });
+    }
+
+    public async removeObject(key: string): Promise<void> {
+        const { id, value = {} } = await this.getConstant<Dictionary<unknown>>();
+        await this.updateConstant(id, { ...value, [key]: undefined });
+    }
+
+    public async clearStorage(): Promise<void> {
+        const { id } = await this.getConstant();
+        await this.api.models.constants.delete({ id }).getData();
+    }
+
+    public async clone(): Promise<Dictionary<unknown>> {
+        const { value = {} } = await this.getConstant<Dictionary<unknown>>();
+        return value;
+    }
+
+    public async import(value: Dictionary<unknown>): Promise<void> {
+        const { id } = await this.getConstant();
+        await this.updateConstant(id, value);
+    }
+
+    private async updateConstant<T extends object>(id: string, value: T): Promise<void> {
+        await this.api.models.constants
+            .post({
+                id,
+                code: defaultKey,
+                name: defaultName,
+                description: JSON.stringify(value, null, 2),
+            })
+            .getData();
+    }
+
+    private async getConstant<T>(): Promise<{ id: string; value?: T }> {
         const { objects: constants } = await this.api.models.constants
             .get({
                 paging: false,
                 fields: { id: true, code: true, name: true, description: true },
-                filter: { code: { eq: key } },
+                filter: { code: { eq: defaultKey } },
             })
             .getData();
 
-        return constants[0] ?? {};
-    }
+        const { id = generateUid(), description } = constants[0] ?? {};
 
-    public async getObject<T extends object>(key: string): Promise<T | undefined> {
-        const { description } = await this.getConstant(key);
-        return description ? JSON.parse(description) : undefined;
-    }
-
-    public async getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T> {
-        const result = await this.getObject<T>(key);
-        if (!result) {
-            await this.api.models.constants.post(this.buildDefault(key, defaultValue)).getData();
+        try {
+            const value = JSON.parse(description);
+            return { id, value };
+        } catch (error) {
+            console.error(error);
         }
-        return result ?? defaultValue;
-    }
 
-    public async saveObject<T extends object>(key: string, value: T): Promise<void> {
-        const { id = generateUid(), name = `${defaultName} - ${key}` } = await this.getConstant(
-            key
-        );
-
-        const response = await this.api.models.constants
-            .put({ id, name, code: key, description: JSON.stringify(value, null, 4) })
-            .getData();
-
-        if (response.status !== "OK") {
-            throw new Error(JSON.stringify(response.message, null, 2));
-        }
-    }
-
-    public async removeObject(key: string): Promise<void> {
-        const { id } = await this.getConstant(key);
-        if (id) await this.api.models.constants.delete({ id }).getData();
+        return { id };
     }
 }

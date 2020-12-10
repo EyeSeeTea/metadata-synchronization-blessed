@@ -1,6 +1,7 @@
 import { Instance } from "../../domain/instance/entities/Instance";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { D2Api, DataStore } from "../../types/d2-api";
+import { Dictionary } from "../../types/utils";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 const dataStoreNamespace = "metadata-synchronization";
@@ -38,5 +39,17 @@ export class StorageDataStoreClient extends StorageClient {
                 throw error;
             }
         }
+    }
+
+    public async clearStorage(): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+
+    public async clone(): Promise<Dictionary<unknown>> {
+        throw new Error("Method not implemented.");
+    }
+
+    public async import(_dump: Dictionary<unknown>): Promise<void> {
+        throw new Error("Method not implemented.");
     }
 }
