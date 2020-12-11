@@ -1,8 +1,8 @@
-import { Instance } from "../../instance/entities/Instance";
+import { ConfigRepository } from "../../config/ConfigRepository";
 import { SynchronizationRule } from "../entities/SynchronizationRule";
 
 export interface RulesRepositoryConstructor {
-    new (instance: Instance): RulesRepository;
+    new (configRepository: ConfigRepository): RulesRepository;
 }
 
 export interface RulesRepository {

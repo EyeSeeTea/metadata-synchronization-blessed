@@ -1,4 +1,5 @@
 import { AggregatedD2ApiRepository } from "../data/aggregated/AggregatedD2ApiRepository";
+import { ConfigAppRepository } from "../data/config/ConfigAppRepository";
 import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
 import { FileD2Repository } from "../data/file/FileD2Repository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
@@ -8,8 +9,7 @@ import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepositor
 import { ReportsD2ApiRepository } from "../data/reports/ReportsD2ApiRepository";
 import { RulesD2ApiRepository } from "../data/rules/RulesD2ApiRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
-import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
-import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
+import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRepository";
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
@@ -79,12 +79,11 @@ import { ListStoresUseCase } from "../domain/stores/usecases/ListStoresUseCase";
 import { SaveStoreUseCase } from "../domain/stores/usecases/SaveStoreUseCase";
 import { SetStoreAsDefaultUseCase } from "../domain/stores/usecases/SetStoreAsDefaultUseCase";
 import { ValidateStoreUseCase } from "../domain/stores/usecases/ValidateStoreUseCase";
+import { SynchronizationBuilder } from "../domain/synchronization/entities/SynchronizationBuilder";
 import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/CreatePullRequestUseCase";
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
-import { SynchronizationBuilder } from "../domain/synchronization/entities/SynchronizationBuilder";
-import { cache } from "../utils/cache";
 import { GetSystemInfoUseCase } from "../domain/system-info/usecases/GetSystemInfoUseCase";
-import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRepository";
+import { cache } from "../utils/cache";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -92,7 +91,7 @@ export class CompositionRoot {
     constructor(public readonly localInstance: Instance, private encryptionKey: string) {
         this.repositoryFactory = new RepositoryFactory(encryptionKey);
         this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreClient);
+        this.repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
         this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);
         this.repositoryFactory.bind(Repositories.GitHubRepository, GitHubOctokitRepository);
         this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
@@ -179,16 +178,13 @@ export class CompositionRoot {
 
     @cache()
     public get store() {
-        const github = new GitHubOctokitRepository();
-        const storeRepository = new StoreD2ApiRepository(this.localInstance);
-
         return getExecute({
-            get: new GetStoreUseCase(storeRepository),
-            update: new SaveStoreUseCase(github, storeRepository),
-            validate: new ValidateStoreUseCase(github),
-            list: new ListStoresUseCase(storeRepository),
-            delete: new DeleteStoreUseCase(storeRepository),
-            setAsDefault: new SetStoreAsDefaultUseCase(storeRepository),
+            get: new GetStoreUseCase(this.repositoryFactory, this.localInstance),
+            update: new SaveStoreUseCase(this.repositoryFactory, this.localInstance),
+            validate: new ValidateStoreUseCase(this.repositoryFactory),
+            list: new ListStoresUseCase(this.repositoryFactory, this.localInstance),
+            delete: new DeleteStoreUseCase(this.repositoryFactory, this.localInstance),
+            setAsDefault: new SetStoreAsDefaultUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -229,10 +225,8 @@ export class CompositionRoot {
 
     @cache()
     public get storage() {
-        const download = new DownloadWebRepository();
-
         return getExecute({
-            downloadFile: new DownloadFileUseCase(download),
+            downloadFile: new DownloadFileUseCase(this.repositoryFactory),
         });
     }
 
@@ -313,11 +307,9 @@ export class CompositionRoot {
 
     @cache()
     public get mapping() {
-        const storage = new StorageDataStoreClient(this.localInstance);
-
         return getExecute({
-            get: new GetMappingByOwnerUseCase(storage),
-            save: new SaveMappingUseCase(storage),
+            get: new GetMappingByOwnerUseCase(this.repositoryFactory, this.localInstance),
+            save: new SaveMappingUseCase(this.repositoryFactory, this.localInstance),
             apply: new ApplyMappingUseCase(this.repositoryFactory, this.localInstance),
             getValidIds: new GetValidMappingIdUseCase(this.repositoryFactory, this.localInstance),
             autoMap: new AutoMapUseCase(this.repositoryFactory, this.localInstance),

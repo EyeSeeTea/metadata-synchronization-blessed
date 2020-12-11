@@ -13,10 +13,15 @@ export class SaveImportedPackagesUseCase implements UseCase {
     public async execute(
         importedPackages: ImportedPackage[]
     ): Promise<Either<SavePackageError, void>> {
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
         try {
-            await this.repositoryFactory
-                .storageRepository(this.localInstance)
-                .saveObjectsInCollection(Namespace.IMPORTEDPACKAGES, importedPackages);
+            await storageClient.saveObjectsInCollection(
+                Namespace.IMPORTEDPACKAGES,
+                importedPackages
+            );
 
             return Either.success(undefined);
         } catch (error) {

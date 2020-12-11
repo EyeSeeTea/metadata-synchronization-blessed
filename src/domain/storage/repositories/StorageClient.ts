@@ -4,7 +4,7 @@ import { Dictionary } from "../../../types/utils";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
 
-export interface StorageRepositoryConstructor {
+export interface StorageClientConstructor {
     new (instance: Instance): StorageClient;
 }
 

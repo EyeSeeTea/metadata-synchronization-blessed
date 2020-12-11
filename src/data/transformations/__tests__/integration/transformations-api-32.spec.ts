@@ -287,7 +287,6 @@ describe("Sync metadata", () => {
 function buildRepositoryFactory() {
     const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
     repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreClient);
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
     repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
     return repositoryFactory;

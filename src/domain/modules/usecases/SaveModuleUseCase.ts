@@ -10,6 +10,10 @@ export class SaveModuleUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(module: Module): Promise<ValidationError[]> {
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
         const validations = module.validate();
 
         if (validations.length === 0) {
@@ -36,9 +40,7 @@ export class SaveModuleUseCase implements UseCase {
                 ),
             });
 
-            await this.repositoryFactory
-                .storageRepository(this.localInstance)
-                .saveObjectInCollection(Namespace.MODULES, newModule);
+            await storageClient.saveObjectInCollection(Namespace.MODULES, newModule);
         }
 
         return validations;

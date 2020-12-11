@@ -1,7 +1,11 @@
 import { Instance } from "../instance/entities/Instance";
 import { StorageClient } from "../storage/repositories/StorageClient";
 
+export interface ConfigRepositoryConstructor {
+    new (instance: Instance): ConfigRepository;
+}
+
 export interface ConfigRepository {
-    getStorageClient(instance: Instance): Promise<StorageClient>;
-    changeStorageClient(instance: Instance, client: "dataStore" | "constant"): Promise<void>;
+    getStorageClient(): Promise<StorageClient>;
+    changeStorageClient(client: "dataStore" | "constant"): Promise<void>;
 }

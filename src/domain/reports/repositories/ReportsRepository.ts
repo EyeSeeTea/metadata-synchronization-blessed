@@ -1,9 +1,9 @@
-import { Instance } from "../../instance/entities/Instance";
+import { ConfigRepository } from "../../config/ConfigRepository";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
 import { SynchronizationResult } from "../entities/SynchronizationResult";
 
 export interface ReportsRepositoryConstructor {
-    new (instance: Instance): ReportsRepository;
+    new (configRepository: ConfigRepository): ReportsRepository;
 }
 
 export interface ReportsRepository {

@@ -1,4 +1,4 @@
-import { Instance } from "../../domain/instance/entities/Instance";
+import { ConfigRepository } from "../../domain/config/ConfigRepository";
 import {
     SynchronizationReport,
     SynchronizationReportData,
@@ -7,17 +7,13 @@ import { SynchronizationResult } from "../../domain/reports/entities/Synchroniza
 import { ReportsRepository } from "../../domain/reports/repositories/ReportsRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { Namespace } from "../storage/Namespaces";
-import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
 
 export class ReportsD2ApiRepository implements ReportsRepository {
-    private storageClient: StorageClient;
-
-    constructor(instance: Instance) {
-        this.storageClient = new StorageDataStoreClient(instance);
-    }
+    constructor(private configRepository: ConfigRepository) {}
 
     public async getById(id: string): Promise<SynchronizationReport | undefined> {
-        const data = await this.storageClient.getObjectInCollection<SynchronizationReportData>(
+        const storageClient = await this.getStorageClient();
+        const data = await storageClient.getObjectInCollection<SynchronizationReportData>(
             Namespace.HISTORY,
             id
         );
@@ -26,7 +22,8 @@ export class ReportsD2ApiRepository implements ReportsRepository {
     }
 
     public async getSyncResults(id: string): Promise<SynchronizationResult[]> {
-        const data = await this.storageClient.getObject<SynchronizationResult[]>(
+        const storageClient = await this.getStorageClient();
+        const data = await storageClient.getObject<SynchronizationResult[]>(
             `${Namespace.HISTORY}-${id}`
         );
 
@@ -34,7 +31,8 @@ export class ReportsD2ApiRepository implements ReportsRepository {
     }
 
     public async list(): Promise<SynchronizationReport[]> {
-        const stores = await this.storageClient.listObjectsInCollection<SynchronizationReportData>(
+        const storageClient = await this.getStorageClient();
+        const stores = await storageClient.listObjectsInCollection<SynchronizationReportData>(
             Namespace.HISTORY
         );
 
@@ -42,18 +40,25 @@ export class ReportsD2ApiRepository implements ReportsRepository {
     }
 
     public async save(report: SynchronizationReport): Promise<void> {
-        await this.storageClient.saveObjectInCollection<SynchronizationReportData>(
+        const storageClient = await this.getStorageClient();
+
+        await storageClient.saveObjectInCollection<SynchronizationReportData>(
             Namespace.HISTORY,
             report.toObject()
         );
 
-        await this.storageClient.saveObject<SynchronizationResult[]>(
+        await storageClient.saveObject<SynchronizationResult[]>(
             `${Namespace.HISTORY}-${report.id}`,
             report.getResults()
         );
     }
 
     public async delete(id: string): Promise<void> {
-        await this.storageClient.removeObjectInCollection(Namespace.HISTORY, id);
+        const storageClient = await this.getStorageClient();
+        await storageClient.removeObjectInCollection(Namespace.HISTORY, id);
+    }
+
+    private getStorageClient(): Promise<StorageClient> {
+        return this.configRepository.getStorageClient();
     }
 }

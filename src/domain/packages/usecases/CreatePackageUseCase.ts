@@ -24,6 +24,10 @@ export class CreatePackageUseCase implements UseCase {
         dhisVersion: string,
         contents?: MetadataPackage
     ): Promise<ValidationError[]> {
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
         const apiVersion = getMajorVersion(dhisVersion);
 
         const basePayload = contents
@@ -52,14 +56,10 @@ export class CreatePackageUseCase implements UseCase {
                 user: payload.user.id ? payload.user : user,
             });
 
-            await this.repositoryFactory
-                .storageRepository(this.localInstance)
-                .saveObjectInCollection(Namespace.PACKAGES, newPackage);
+            await storageClient.saveObjectInCollection(Namespace.PACKAGES, newPackage);
 
             const newModule = module.update({ lastPackageVersion: newPackage.version });
-            await this.repositoryFactory
-                .storageRepository(this.localInstance)
-                .saveObjectInCollection(Namespace.MODULES, newModule);
+            await storageClient.saveObjectInCollection(Namespace.MODULES, newModule);
         }
 
         return validations;

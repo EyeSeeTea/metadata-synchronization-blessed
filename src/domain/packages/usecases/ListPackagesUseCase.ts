@@ -12,6 +12,10 @@ export class ListPackagesUseCase implements UseCase {
         bypassSharingSettings = false,
         instance = this.localInstance
     ): Promise<Package[]> {
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
+
         const userGroups = await this.repositoryFactory
             .instanceRepository(this.localInstance)
             .getUserGroups();
@@ -19,9 +23,7 @@ export class ListPackagesUseCase implements UseCase {
             .instanceRepository(this.localInstance)
             .getUser();
 
-        const items = await this.repositoryFactory
-            .storageRepository(instance)
-            .listObjectsInCollection<BasePackage>(Namespace.PACKAGES);
+        const items = await storageClient.listObjectsInCollection<BasePackage>(Namespace.PACKAGES);
 
         return items
             .filter(({ deleted }) => !deleted)
