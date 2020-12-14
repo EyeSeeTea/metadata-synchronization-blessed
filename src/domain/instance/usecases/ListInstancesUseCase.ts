@@ -16,9 +16,13 @@ export class ListInstancesUseCase implements UseCase {
     ) {}
 
     public async execute({ search }: ListInstancesUseCaseProps = {}): Promise<Instance[]> {
-        const objects = await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
+        const objects = await storageClient.listObjectsInCollection<InstanceData>(
+            Namespace.INSTANCES
+        );
 
         const filteredData = search
             ? _.filter(objects, o =>

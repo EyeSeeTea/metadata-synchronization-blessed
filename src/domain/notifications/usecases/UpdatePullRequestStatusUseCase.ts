@@ -19,9 +19,13 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
         id: string,
         status: PullRequestStatus
     ): Promise<Either<UpdatePullRequestStatusError, void>> {
-        const notification = await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .getObjectInCollection<ReceivedPullRequestNotification>(Namespace.NOTIFICATIONS, id);
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
+        const notification = await storageClient.getObjectInCollection<
+            ReceivedPullRequestNotification
+        >(Namespace.NOTIFICATIONS, id);
 
         if (!notification) {
             return Either.error("NOT_FOUND");
@@ -38,9 +42,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
             status,
         };
 
-        await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
+        await storageClient.saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
 
         return Either.success(undefined);
     }
@@ -62,9 +64,13 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
     }
 
     private async getResponsibles(instance: Instance, ids: string[]) {
-        const responsibles = await this.repositoryFactory
-            .storageRepository(instance)
-            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
+
+        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(
+            Namespace.RESPONSIBLES
+        );
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 

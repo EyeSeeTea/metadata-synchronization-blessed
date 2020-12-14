@@ -9,6 +9,8 @@ const defaultName = "MDSync Storage";
 const defaultKey = "MDSYNC_STORAGE";
 
 export class StorageConstantClient extends StorageClient {
+    public type = "constant" as const;
+
     private api: D2Api;
 
     constructor(instance: Instance) {
@@ -40,8 +42,21 @@ export class StorageConstantClient extends StorageClient {
     }
 
     public async clearStorage(): Promise<void> {
-        const { id } = await this.getConstant();
-        await this.api.models.constants.delete({ id }).getData();
+        try {
+            const { objects: constants } = await this.api.models.constants
+                .get({
+                    paging: false,
+                    fields: { id: true, code: true, name: true, description: true },
+                    filter: { code: { eq: defaultKey } },
+                })
+                .getData();
+
+            const { id } = constants[0] ?? {};
+
+            if (id) await this.api.models.constants.delete({ id }).getData();
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     public async clone(): Promise<Dictionary<unknown>> {
@@ -55,12 +70,17 @@ export class StorageConstantClient extends StorageClient {
     }
 
     private async updateConstant<T extends object>(id: string, value: T): Promise<void> {
-        await this.api.models.constants
+        await this.api.metadata
             .post({
-                id,
-                code: defaultKey,
-                name: defaultName,
-                description: JSON.stringify(value, null, 2),
+                constants: [
+                    {
+                        id,
+                        code: defaultKey,
+                        name: defaultName,
+                        description: JSON.stringify(value, null, 2),
+                        value: 1,
+                    },
+                ],
             })
             .getData();
     }
@@ -77,7 +97,7 @@ export class StorageConstantClient extends StorageClient {
         const { id = generateUid(), description } = constants[0] ?? {};
 
         try {
-            const value = JSON.parse(description);
+            const value = description ? JSON.parse(description) : undefined;
             return { id, value };
         } catch (error) {
             console.error(error);

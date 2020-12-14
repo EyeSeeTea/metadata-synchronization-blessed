@@ -12,9 +12,11 @@ export class GetPackageUseCase implements UseCase {
         id: string,
         instance = this.localInstance
     ): Promise<Either<"NOT_FOUND", Package>> {
-        const data = await this.repositoryFactory
-            .storageRepository(instance)
-            .getObjectInCollection<BasePackage>(Namespace.PACKAGES, id);
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
+
+        const data = await storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, id);
 
         if (data) return Either.success(Package.build(data));
         else return Either.error("NOT_FOUND");

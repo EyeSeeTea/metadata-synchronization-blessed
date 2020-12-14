@@ -64,5 +64,4 @@ export interface DataImportParams {
     skipExistingCheck?: boolean;
     strategy?: "NEW_AND_UPDATES" | "NEW" | "UPDATES" | "DELETES";
     format?: "json" | "xml" | "csv" | "pdf" | "adx";
-    runAnalytics?: boolean;
 }

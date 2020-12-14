@@ -4,11 +4,13 @@ import { Dictionary } from "../../../types/utils";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
 
-export interface StorageRepositoryConstructor {
+export interface StorageClientConstructor {
     new (instance: Instance): StorageClient;
 }
 
 export abstract class StorageClient {
+    public abstract type: "constant" | "dataStore";
+
     // Object operations
     public abstract getObject<T extends object>(key: string): Promise<T | undefined>;
     public abstract getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T>;

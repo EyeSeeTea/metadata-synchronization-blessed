@@ -154,6 +154,9 @@ const App = () => {
 };
 
 async function runMigrations(api: D2Api): Promise<MigrationState> {
+    // TODO: Fix migrations
+    return { type: "checked" };
+
     const runner = await MigrationsRunner.init({ api, debug: debug });
 
     if (runner.hasPendingMigrations()) {

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-10T12:12:12.320Z\n"
-"PO-Revision-Date: 2020-12-10T12:12:12.320Z\n"
+"POT-Creation-Date: 2020-12-14T12:09:33.611Z\n"
+"PO-Revision-Date: 2020-12-14T12:09:33.611Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1640,7 +1640,7 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-msgid "Storage"
+msgid "Application storage"
 msgstr ""
 
 msgid "Data Store"
@@ -1649,7 +1649,16 @@ msgstr ""
 msgid "Metadata constant"
 msgstr ""
 
-msgid "Application storage"
+msgid "Updating storage location, please wait..."
+msgstr ""
+
+msgid "Change storage"
+msgstr ""
+
+msgid ""
+"When changing the storage of the application, all stored information will "
+"be moved to the new storage. This might take a while, please wait. Do you "
+"want to proceed?"
 msgstr ""
 
 msgid "Edit store"

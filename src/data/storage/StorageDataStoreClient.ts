@@ -1,12 +1,16 @@
+import _ from "lodash";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { D2Api, DataStore } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
+import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 const dataStoreNamespace = "metadata-synchronization";
 
 export class StorageDataStoreClient extends StorageClient {
+    public type = "dataStore" as const;
+
     private api: D2Api;
     private dataStore: DataStore;
 
@@ -42,14 +46,26 @@ export class StorageDataStoreClient extends StorageClient {
     }
 
     public async clearStorage(): Promise<void> {
-        throw new Error("Method not implemented.");
+        const keys = await this.dataStore.getKeys().getData();
+        await promiseMap(keys, key => this.removeObject(key));
     }
 
     public async clone(): Promise<Dictionary<unknown>> {
-        throw new Error("Method not implemented.");
+        const keys = await this.dataStore.getKeys().getData();
+
+        const pairs = await promiseMap(keys, async key => {
+            const value = await this.getObject(key);
+            return [key, value];
+        });
+
+        return _.fromPairs(pairs);
     }
 
-    public async import(_dump: Dictionary<unknown>): Promise<void> {
-        throw new Error("Method not implemented.");
+    public async import(dump: Dictionary<unknown>): Promise<void> {
+        const pairs = _.toPairs(dump);
+
+        await promiseMap(pairs, async ([key, value]) => {
+            await this.saveObject(key, value as object);
+        });
     }
 }
