@@ -7,9 +7,10 @@ import {
     RepositoryFactory,
 } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import { SynchronizationBuilder } from "../../../../types/synchronization";
+import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
+import { ConfigAppRepository } from "../../../config/ConfigAppRepository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
 import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
@@ -255,6 +256,7 @@ describe("Sync metadata", () => {
 function buildRepositoryFactory() {
     const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
     repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
+    repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
     repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
     repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
