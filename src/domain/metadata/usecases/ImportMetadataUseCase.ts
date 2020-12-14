@@ -1,7 +1,7 @@
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { MetadataPackage } from "../entities/MetadataEntities";
 
 export class ImportMetadataUseCase implements UseCase {

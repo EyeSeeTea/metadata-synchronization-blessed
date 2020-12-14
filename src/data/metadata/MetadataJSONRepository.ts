@@ -14,7 +14,7 @@ import {
     MetadataRepository,
 } from "../../domain/metadata/repositories/MetadataRepository";
 import { MetadataImportParams } from "../../domain/metadata/types";
-import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import { Dictionary } from "../../types/utils";
 

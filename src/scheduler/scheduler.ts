@@ -25,7 +25,7 @@ export default class Scheduler {
             const synchronize = async () => {
                 for await (const { message, syncReport, done } of sync.execute()) {
                     if (message) logger.debug(message);
-                    if (syncReport) await syncReport.save(this.api);
+                    if (syncReport) await this.compositionRoot.reports.save(syncReport);
                     if (done && syncReport && syncReport.id) {
                         const reportUrl = this.buildUrl(type, syncReport.id);
                         logger.debug(`Finished. Report available at ${reportUrl}`);

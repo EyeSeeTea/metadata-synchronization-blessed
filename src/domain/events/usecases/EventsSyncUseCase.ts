@@ -14,7 +14,7 @@ import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncU
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
-import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import {
     GenericSyncUseCase,
     SyncronizationPayload,

@@ -1,18 +1,18 @@
 import { PaginationOptions } from "d2-ui-components";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
+import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
+import { Store } from "../../../../../domain/stores/entities/Store";
 import i18n from "../../../../../locales";
-import SyncReport from "../../../../../models/syncReport";
-import { ModulesListTable } from "../module-list-table/ModuleListTable";
-import { PackagesListTable } from "../package-list-table/PackageListTable";
 import Dropdown from "../dropdown/Dropdown";
 import {
     InstanceSelectionConfig,
     InstanceSelectionDropdown,
     InstanceSelectionOption,
 } from "../instance-selection-dropdown/InstanceSelectionDropdown";
+import { ModulesListTable } from "../module-list-table/ModuleListTable";
+import { PackagesListTable } from "../package-list-table/PackageListTable";
 import { useViewSelector, ViewSelectorConfig } from "./useViewSelector";
-import { Store } from "../../../../../domain/stores/entities/Store";
 
 export interface ModulePackageListTableProps {
     onCreate?(): void;
@@ -21,7 +21,7 @@ export interface ModulePackageListTableProps {
     presentation: PresentationOption;
     showSelector: ViewSelectorConfig;
     showInstances: InstanceSelectionConfig;
-    openSyncSummary?: (syncReport: SyncReport) => void;
+    openSyncSummary?: (syncReport: SynchronizationReport) => void;
     onInstanceChange?: (instance?: Instance | Store) => void;
     actionButtonLabel?: ReactNode;
 }

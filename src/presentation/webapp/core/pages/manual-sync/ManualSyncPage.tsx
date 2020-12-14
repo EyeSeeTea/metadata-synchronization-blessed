@@ -8,7 +8,10 @@ import {
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import { Ref } from "../../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
+import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
+import { Store } from "../../../../../domain/stores/entities/Store";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
 import { D2Model } from "../../../../../models/dhis/default";
@@ -24,14 +27,11 @@ import {
     DataElementGroupModel,
     DataElementGroupSetModel,
 } from "../../../../../models/dhis/metadata";
-import SyncReport from "../../../../../models/syncReport";
 import SyncRule from "../../../../../models/syncRule";
-import { Ref } from "../../../../../types/d2-api";
 import { MetadataType } from "../../../../../utils/d2";
 import { isAppConfigurator } from "../../../../../utils/permissions";
-import { InstanceSelectionOption } from "../../../../react/core/components/instance-selection-dropdown/InstanceSelectionDropdown";
-import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import DeletedObjectsTable from "../../../../react/core/components/delete-objects-table/DeletedObjectsTable";
+import { InstanceSelectionOption } from "../../../../react/core/components/instance-selection-dropdown/InstanceSelectionDropdown";
 import MetadataTable from "../../../../react/core/components/metadata-table/MetadataTable";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import {
@@ -41,8 +41,8 @@ import {
 import SyncDialog from "../../../../react/core/components/sync-dialog/SyncDialog";
 import SyncSummary from "../../../../react/core/components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import InstancesSelectors from "./InstancesSelectors";
-import { Store } from "../../../../../domain/stores/entities/Store";
 
 const config: Record<
     SynchronizationType,
@@ -90,7 +90,7 @@ const ManualSyncPage: React.FC = () => {
 
     const [syncRule, updateSyncRule] = useState<SyncRule>(SyncRule.createOnDemand(type));
     const [appConfigurator, updateAppConfigurator] = useState(false);
-    const [syncReport, setSyncReport] = useState<SyncReport | null>(null);
+    const [syncReport, setSyncReport] = useState<SynchronizationReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
     const [sourceInstance, setSourceInstance] = useState<Instance>();
     const [destinationInstance, setDestinationInstanceBase] = useState<Ref>();
@@ -142,7 +142,7 @@ const ManualSyncPage: React.FC = () => {
         }
     };
 
-    const finishSynchronization = (importResponse?: SyncReport) => {
+    const finishSynchronization = (importResponse?: SynchronizationReport) => {
         setSyncDialogOpen(false);
 
         if (importResponse) {
@@ -177,7 +177,7 @@ const ManualSyncPage: React.FC = () => {
         const synchronize = async () => {
             for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) loading.show(true, message);
-                if (syncReport) await syncReport.save(api);
+                if (syncReport) await compositionRoot.reports.save(syncReport);
                 if (done) {
                     finishSynchronization(syncReport);
                     return;

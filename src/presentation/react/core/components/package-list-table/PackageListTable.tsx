@@ -27,8 +27,8 @@ import {
 } from "../../../../../domain/package-import/entities/PackageSource";
 import { mapToImportedPackage } from "../../../../../domain/package-import/mappers/ImportedPackageMapper";
 import { ListPackage, Package } from "../../../../../domain/packages/entities/Package";
+import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import i18n from "../../../../../locales";
-import SyncReport from "../../../../../models/syncReport";
 import { isAppConfigurator, isGlobalAdmin } from "../../../../../utils/permissions";
 import { ModulePackageListPageProps } from "../../../../webapp/core/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
@@ -364,7 +364,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                             originDataSource
                         );
 
-                        const report = SyncReport.create(
+                        const report = SynchronizationReport.create(
                             "metadata",
                             currentUser.userCredentials.username ?? "Unknown",
                             true
@@ -383,7 +383,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                             originPackage: originPackage.toRef(),
                             origin: remoteInstance?.toPublicObject(),
                         });
-                        await report.save(api);
+
+                        await compositionRoot.reports.save(report);
 
                         if (result.status === "SUCCESS") {
                             const author = {
@@ -717,7 +718,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         return groupPackagesByModuleAndVersion(packageItems);
     }, [moduleFilter, rows, dhis2VersionFilter, installStatusFilter]);
 
-    const handleOpenSyncSummaryFromDialog = (syncReport: SyncReport) => {
+    const handleOpenSyncSummaryFromDialog = (syncReport: SynchronizationReport) => {
         setOpenImportPackageDialog(false);
         setToImportWizard([]);
         openSyncSummary(syncReport);
