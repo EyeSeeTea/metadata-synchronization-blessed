@@ -1,10 +1,7 @@
 import _ from "lodash";
 import { D2Model } from "../../../models/dhis/default";
-import {
-    ExcludeIncludeRules,
-    MetadataIncludeExcludeRules,
-    SynchronizationBuilder,
-} from "../../../types/synchronization";
+import { ExcludeIncludeRules, MetadataIncludeExcludeRules } from "../../../types/synchronization";
+import { SynchronizationBuilder } from "../../synchronization/entities/SynchronizationBuilder";
 import {
     extractChildrenFromRules,
     extractParentsFromRule,

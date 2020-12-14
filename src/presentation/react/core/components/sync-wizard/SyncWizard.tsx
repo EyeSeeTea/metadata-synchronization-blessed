@@ -2,16 +2,16 @@ import { Wizard, WizardStep } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import SyncRule from "../../../../../models/syncRule";
+import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import { getValidationMessages } from "../../../../../utils/old-validations";
 import { getMetadata } from "../../../../../utils/synchronization";
 import { useAppContext } from "../../contexts/AppContext";
 import { aggregatedSteps, deletedSteps, eventsSteps, metadataSteps } from "./Steps";
 
 interface SyncWizardProps {
-    syncRule: SyncRule;
+    syncRule: SynchronizationRule;
     isDialog?: boolean;
-    onChange?(syncRule: SyncRule): void;
+    onChange?(syncRule: SynchronizationRule): void;
     onCancel?(): void;
 }
 

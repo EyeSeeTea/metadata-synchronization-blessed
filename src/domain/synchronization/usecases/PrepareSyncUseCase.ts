@@ -1,11 +1,11 @@
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
-import { SynchronizationBuilder } from "../../../types/synchronization";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
+import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
 export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE" | "INSTANCE_NOT_FOUND";

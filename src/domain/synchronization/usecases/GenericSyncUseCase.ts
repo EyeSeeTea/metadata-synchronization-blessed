@@ -2,8 +2,7 @@ import { D2Api } from "d2-api/2.30";
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import i18n from "../../../locales";
-import SyncRule from "../../../models/syncRule";
-import { SynchronizationBuilder } from "../../../types/synchronization";
+import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
@@ -244,9 +243,14 @@ export abstract class GenericSyncUseCase {
 
         // Phase 4: Update sync rule last executed date
         if (syncRule) {
-            const oldRule = await SyncRule.get(this.api, syncRule);
-            const updatedRule = oldRule.updateLastExecuted(new Date());
-            await updatedRule.save(this.api);
+            const oldRule = await this.repositoryFactory
+                .rulesRepository(this.localInstance)
+                .getById(syncRule);
+
+            if (oldRule) {
+                const updatedRule = oldRule.updateLastExecuted(new Date());
+                await this.repositoryFactory.rulesRepository(this.localInstance).save(updatedRule);
+            }
         }
 
         // Phase 5: Update parent task status

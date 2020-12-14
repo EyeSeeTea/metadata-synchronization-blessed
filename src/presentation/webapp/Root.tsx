@@ -25,7 +25,7 @@ import SyncRulesPage from "./core/pages/sync-rules-list/SyncRulesListPage";
 import { MSFHomePage } from "./msf-aggregate-data/pages/MSFHomePage";
 
 const Root: React.FC = () => {
-    const { api } = useAppContext();
+    const { api, compositionRoot } = useAppContext();
     const appVariant = getAppVariant();
 
     return (
@@ -59,10 +59,11 @@ const Root: React.FC = () => {
 
                 <RouteWithSessionAndAuth
                     path={"/sync-rules/:type(metadata|aggregated|events)/:action(new|edit)/:id?"}
-                    authorize={props => {
+                    authorize={async props => {
                         const { id } = props.match.params as SyncRulesCreationParams;
+                        const syncRule = await compositionRoot.rules.get(id);
 
-                        return permissions.verifyUserHasAccessToSyncRule(api, id);
+                        return permissions.verifyUserHasAccessToSyncRule(api, syncRule);
                     }}
                     render={() => <SyncRulesCreationPage />}
                 />

@@ -1,13 +1,13 @@
 import { ConfirmationDialog, useLoading } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
+import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
+import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
+import i18n from "../../../../../locales";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import SyncWizard from "../../../../react/core/components/sync-wizard/SyncWizard";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
-import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
-import i18n from "../../../../../locales";
-import SyncRule from "../../../../../models/syncRule";
 
 export interface SyncRulesCreationParams {
     id: string;
@@ -17,12 +17,15 @@ export interface SyncRulesCreationParams {
 
 const SyncRulesCreation: React.FC = () => {
     const history = useHistory();
-    const location = useLocation<{ syncRule?: SyncRule }>();
+    const location = useLocation<{ syncRule?: SynchronizationRule }>();
     const loading = useLoading();
     const { id, action, type } = useParams() as SyncRulesCreationParams;
-    const { api } = useAppContext();
+    const { compositionRoot } = useAppContext();
+
     const [dialogOpen, updateDialogOpen] = useState(false);
-    const [syncRule, updateSyncRule] = useState(location.state?.syncRule ?? SyncRule.create(type));
+    const [syncRule, updateSyncRule] = useState(
+        location.state?.syncRule ?? SynchronizationRule.create(type)
+    );
     const isEdit = action === "edit" && !!id;
 
     const title = !isEdit
@@ -44,12 +47,12 @@ const SyncRulesCreation: React.FC = () => {
     useEffect(() => {
         if (isEdit && !!id) {
             loading.show(true, "Loading sync rule");
-            SyncRule.get(api, id).then(syncRule => {
-                updateSyncRule(syncRule);
+            compositionRoot.rules.get(id).then(syncRule => {
+                updateSyncRule(syncRule ?? SynchronizationRule.create(type));
                 loading.reset();
             });
         }
-    }, [api, loading, isEdit, id]);
+    }, [compositionRoot, loading, isEdit, id, type]);
 
     return (
         <TestWrapper>

@@ -1,16 +1,16 @@
 import DialogContent from "@material-ui/core/DialogContent";
 import { ConfirmationDialog } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
+import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../../locales";
-import SyncRule from "../../../../../models/syncRule";
 import SyncWizard from "../sync-wizard/SyncWizard";
 
 interface SyncDialogProps {
     title: string;
     isOpen: boolean;
-    syncRule: SyncRule;
-    task: (syncRule: SyncRule) => void;
-    onChange(syncRule: SyncRule): void;
+    syncRule: SynchronizationRule;
+    task: (syncRule: SynchronizationRule) => void;
+    onChange(syncRule: SynchronizationRule): void;
     onClose: (importResponse?: any) => void;
 }
 

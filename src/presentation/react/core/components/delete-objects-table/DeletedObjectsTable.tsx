@@ -1,24 +1,24 @@
 import SyncIcon from "@material-ui/icons/Sync";
 import {
+    DatePicker,
     ObjectsTable,
     ObjectsTableDetailField,
     ReferenceObject,
     TableColumn,
     TableState,
-    DatePicker,
 } from "d2-ui-components";
-import React, { useEffect, useState } from "react";
-import DeletedObject from "../../../../../models/deletedObjects";
-import SyncRule from "../../../../../models/syncRule";
-import { MetadataType } from "../../../../../utils/d2";
 import moment from "moment";
-import { useAppContext } from "../../contexts/AppContext";
+import React, { useEffect, useState } from "react";
+import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../../locales";
+import DeletedObject from "../../../../../models/deletedObjects";
+import { MetadataType } from "../../../../../utils/d2";
+import { useAppContext } from "../../contexts/AppContext";
 
 export interface DeletedObjectsTableProps {
     openSynchronizationDialog: () => void;
-    syncRule: SyncRule;
-    onChange: (syncRule: SyncRule) => void;
+    syncRule: SynchronizationRule;
+    onChange: (syncRule: SynchronizationRule) => void;
 }
 
 const DeletedObjectsTable: React.FC<DeletedObjectsTableProps> = ({
