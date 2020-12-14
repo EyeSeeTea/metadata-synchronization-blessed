@@ -1,5 +1,5 @@
 import { Icon, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
-import { useLoading } from "d2-ui-components";
+import { ConfirmationDialog, ConfirmationDialogProps, useLoading } from "d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import i18n from "../../../../../../locales";
 import Dropdown from "../../../../../react/core/components/dropdown/Dropdown";
@@ -10,6 +10,7 @@ export const StorageSettingDropdown: React.FC = () => {
     const loading = useLoading();
 
     const [selectedOption, setSelectedOption] = useState("dataStore");
+    const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
 
     const options = useMemo(
         () => [
@@ -31,12 +32,35 @@ export const StorageSettingDropdown: React.FC = () => {
         [compositionRoot, loading]
     );
 
+    const showConfirmationDialog = useCallback(
+        (storage: "constant" | "dataStore") => {
+            updateDialog({
+                title: i18n.t("Change storage"),
+                description: i18n.t(
+                    "When changing the storage of the application, all stored information will be moved to the new storage. This might take a while, please wait. Do you want to proceed?"
+                ),
+                onCancel: () => {
+                    updateDialog(null);
+                },
+                onSave: async () => {
+                    updateDialog(null);
+                    await changeStorage(storage);
+                },
+                cancelText: i18n.t("Cancel"),
+                saveText: i18n.t("Proceed"),
+            });
+        },
+        [changeStorage]
+    );
+
     useEffect(() => {
         compositionRoot.config.getStorage().then(storage => setSelectedOption(storage));
     }, [compositionRoot]);
 
     return (
         <React.Fragment>
+            {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
+
             <ListItem button>
                 <ListItemIcon>
                     <Icon>storage</Icon>
@@ -47,7 +71,7 @@ export const StorageSettingDropdown: React.FC = () => {
                         <Dropdown<"constant" | "dataStore">
                             items={options}
                             value={selectedOption}
-                            onValueChange={changeStorage}
+                            onValueChange={showConfirmationDialog}
                             hideEmpty={true}
                             view={"full-width"}
                         />
