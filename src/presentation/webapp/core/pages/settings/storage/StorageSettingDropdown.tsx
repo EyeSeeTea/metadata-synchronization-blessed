@@ -1,4 +1,3 @@
-import { Icon, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import { ConfirmationDialog, ConfirmationDialogProps, useLoading } from "d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import i18n from "../../../../../../locales";
@@ -61,23 +60,13 @@ export const StorageSettingDropdown: React.FC = () => {
         <React.Fragment>
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
 
-            <ListItem button>
-                <ListItemIcon>
-                    <Icon>storage</Icon>
-                </ListItemIcon>
-                <ListItemText
-                    primary={i18n.t("Application storage")}
-                    secondary={
-                        <Dropdown<"constant" | "dataStore">
-                            items={options}
-                            value={selectedOption}
-                            onValueChange={showConfirmationDialog}
-                            hideEmpty={true}
-                            view={"full-width"}
-                        />
-                    }
-                />
-            </ListItem>
+            <Dropdown<"constant" | "dataStore">
+                items={options}
+                value={selectedOption}
+                onValueChange={showConfirmationDialog}
+                hideEmpty={true}
+                view={"full-width"}
+            />
         </React.Fragment>
     );
 };

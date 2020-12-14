@@ -1,4 +1,4 @@
-import { FormGroup, makeStyles } from "@material-ui/core";
+import { FormGroup, makeStyles, Paper } from "@material-ui/core";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import i18n from "../../../../../locales";
@@ -15,13 +15,13 @@ export const SettingsPage: React.FC = () => {
         <React.Fragment>
             <PageHeader title={i18n.t("Settings")} onBackClick={backHome} />
 
-            <div className={classes.container}>
-                <h3 className={classes.title}>{i18n.t("Storage")}</h3>
+            <Paper className={classes.container}>
+                <h3 className={classes.title}>{i18n.t("Application storage")}</h3>
 
                 <FormGroup className={classes.content} row={true}>
                     <StorageSettingDropdown />
                 </FormGroup>
-            </div>
+            </Paper>
         </React.Fragment>
     );
 };
@@ -29,5 +29,5 @@ export const SettingsPage: React.FC = () => {
 const useStyles = makeStyles({
     content: { margin: "1rem", marginBottom: 35, marginLeft: 0 },
     title: { marginTop: 0 },
-    container: { margin: "1rem" },
+    container: { margin: "1rem", padding: "1rem" },
 });
