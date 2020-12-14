@@ -3,7 +3,7 @@ import {
     AggregatedRepository,
     AggregatedRepositoryConstructor,
 } from "../../aggregated/repositories/AggregatedRepository";
-import { ConfigRepositoryConstructor } from "../../config/ConfigRepository";
+import { ConfigRepositoryConstructor } from "../../config/repositories/ConfigRepository";
 import {
     EventsRepository,
     EventsRepositoryConstructor,

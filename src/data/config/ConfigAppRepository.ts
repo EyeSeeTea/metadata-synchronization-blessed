@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { ConfigRepository } from "../../domain/config/ConfigRepository";
+import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { cache, clear } from "../../utils/cache";
@@ -39,11 +39,17 @@ export class ConfigAppRepository implements ConfigRepository {
         const oldClient = client === "dataStore" ? constantClient : dataStoreClient;
         const newClient = client === "dataStore" ? dataStoreClient : constantClient;
 
-        console.log({ oldClient, newClient });
+        // TODO: Back-up everything
 
         // Clear new client
+        await newClient.clearStorage();
+
         // Copy old client data into new client
+        const dump = await oldClient.clone();
+        await newClient.import(dump);
+
         // Clear old client
+        oldClient.clearStorage();
 
         // Reset memoize
         clear(this.getStorageClient, this);

@@ -1,4 +1,4 @@
-import { ConfigRepository } from "../../domain/config/ConfigRepository";
+import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { Store } from "../../domain/stores/entities/Store";
 import { StoreRepository } from "../../domain/stores/repositories/StoreRepository";

@@ -1,4 +1,4 @@
-import { ConfigRepository } from "../../config/ConfigRepository";
+import { ConfigRepository } from "../../config/repositories/ConfigRepository";
 import { SynchronizationRule } from "../entities/SynchronizationRule";
 
 export interface RulesRepositoryConstructor {

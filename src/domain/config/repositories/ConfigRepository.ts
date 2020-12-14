@@ -1,5 +1,5 @@
-import { Instance } from "../instance/entities/Instance";
-import { StorageClient } from "../storage/repositories/StorageClient";
+import { Instance } from "../../instance/entities/Instance";
+import { StorageClient } from "../../storage/repositories/StorageClient";
 
 export interface ConfigRepositoryConstructor {
     new (instance: Instance): ConfigRepository;

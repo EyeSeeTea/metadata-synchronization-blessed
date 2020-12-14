@@ -14,6 +14,8 @@ import { TransformationD2ApiRepository } from "../data/transformations/Transform
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
 import { Repositories, RepositoryFactory } from "../domain/common/factories/RepositoryFactory";
+import { GetStorageConfigUseCase } from "../domain/config/usecases/GetStorageConfigUseCase";
+import { SetStorageConfigUseCase } from "../domain/config/usecases/SetStorageConfigUseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
 import { Instance } from "../domain/instance/entities/Instance";
@@ -335,6 +337,14 @@ export class CompositionRoot {
             save: new SaveSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             get: new GetSyncRuleUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get config() {
+        return getExecute({
+            getStorage: new GetStorageConfigUseCase(this.repositoryFactory, this.localInstance),
+            setStorage: new SetStorageConfigUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }

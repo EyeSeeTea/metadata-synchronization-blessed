@@ -1,4 +1,4 @@
-import { ConfigRepository } from "../../config/ConfigRepository";
+import { ConfigRepository } from "../../config/repositories/ConfigRepository";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
 import { SynchronizationResult } from "../entities/SynchronizationResult";
 

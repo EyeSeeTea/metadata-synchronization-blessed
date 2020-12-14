@@ -1,61 +1,59 @@
-import { Icon, ListItem, ListItemIcon, ListItemText, Menu, MenuItem } from "@material-ui/core";
-import React, { useMemo, useState } from "react";
+import { Icon, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
+import { useLoading } from "d2-ui-components";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import i18n from "../../../../../../locales";
+import Dropdown from "../../../../../react/core/components/dropdown/Dropdown";
+import { useAppContext } from "../../../../../react/core/contexts/AppContext";
 
 export const StorageSettingDropdown: React.FC = () => {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const { compositionRoot } = useAppContext();
+    const loading = useLoading();
+
     const [selectedOption, setSelectedOption] = useState("dataStore");
-
-    const handleClickListItem = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleMenuItemClick = (key: string) => {
-        setSelectedOption(key);
-        setAnchorEl(null);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
 
     const options = useMemo(
         () => [
-            { id: "dataStore", label: i18n.t("Data Store") },
-            { id: "constant", label: i18n.t("Metadata constant") },
+            { id: "dataStore" as const, name: i18n.t("Data Store") },
+            { id: "constant" as const, name: i18n.t("Metadata constant") },
         ],
         []
     );
 
+    const changeStorage = useCallback(
+        async (storage: "constant" | "dataStore") => {
+            loading.show(true, i18n.t("Updating storage location, please wait..."));
+            await compositionRoot.config.setStorage(storage);
+
+            const newStorage = await compositionRoot.config.getStorage();
+            setSelectedOption(newStorage);
+            loading.reset();
+        },
+        [compositionRoot, loading]
+    );
+
+    useEffect(() => {
+        compositionRoot.config.getStorage().then(storage => setSelectedOption(storage));
+    }, [compositionRoot]);
+
     return (
         <React.Fragment>
-            <ListItem button onClick={handleClickListItem}>
+            <ListItem button>
                 <ListItemIcon>
                     <Icon>storage</Icon>
                 </ListItemIcon>
                 <ListItemText
                     primary={i18n.t("Application storage")}
-                    secondary={options.find(option => option.id === selectedOption)?.label}
+                    secondary={
+                        <Dropdown<"constant" | "dataStore">
+                            items={options}
+                            value={selectedOption}
+                            onValueChange={changeStorage}
+                            hideEmpty={true}
+                            view={"full-width"}
+                        />
+                    }
                 />
             </ListItem>
-
-            <Menu
-                id="lock-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={!!anchorEl}
-                onClose={handleClose}
-            >
-                {options.map(option => (
-                    <MenuItem
-                        key={option.id}
-                        selected={option.id === selectedOption}
-                        onClick={() => handleMenuItemClick(option.id)}
-                    >
-                        {option.label}
-                    </MenuItem>
-                ))}
-            </Menu>
         </React.Fragment>
     );
 };

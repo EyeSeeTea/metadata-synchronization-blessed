@@ -4,19 +4,19 @@ import _ from "lodash";
 import React from "react";
 import i18n from "../../../../../locales";
 
-export interface DropdownOption {
-    id: string;
+export interface DropdownOption<T extends string = string> {
+    id: T;
     name: string;
 }
 
 export type DropdownViewOption = "filter" | "inline" | "full-width";
 
-interface DropdownProps {
-    items: DropdownOption[];
+interface DropdownProps<T extends string = string> {
+    items: DropdownOption<T>[];
     value: string;
     label?: string;
     onChange?: Function;
-    onValueChange?(value: string): void;
+    onValueChange?(value: T): void;
     hideEmpty?: boolean;
     emptyLabel?: string;
     view?: DropdownViewOption;
@@ -68,7 +68,7 @@ const getTheme = (view: DropdownViewOption) => {
     }
 };
 
-const Dropdown: React.FC<DropdownProps> = ({
+export function Dropdown<T extends string = string>({
     items,
     value,
     onChange = _.noop,
@@ -78,7 +78,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     emptyLabel,
     view = "filter",
     disabled = false,
-}) => {
+}: DropdownProps<T>) {
     const inlineStyles = { minWidth: 120, paddingLeft: 25, paddingRight: 25 };
     const styles = view === "inline" ? inlineStyles : {};
 
@@ -92,7 +92,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                     value={value}
                     onChange={e => {
                         onChange(e);
-                        onValueChange(e.target.value as string);
+                        onValueChange(e.target.value as T);
                     }}
                     MenuProps={{
                         getContentAnchorEl: null,
@@ -116,6 +116,6 @@ const Dropdown: React.FC<DropdownProps> = ({
             </FormControl>
         </MuiThemeProvider>
     );
-};
+}
 
 export default Dropdown;

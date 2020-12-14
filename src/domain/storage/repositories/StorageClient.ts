@@ -9,6 +9,8 @@ export interface StorageClientConstructor {
 }
 
 export abstract class StorageClient {
+    public abstract type: "constant" | "dataStore";
+
     // Object operations
     public abstract getObject<T extends object>(key: string): Promise<T | undefined>;
     public abstract getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T>;

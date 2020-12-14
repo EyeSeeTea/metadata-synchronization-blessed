@@ -1,4 +1,4 @@
-import { ConfigRepository } from "../../domain/config/ConfigRepository";
+import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import {
     SynchronizationReport,
     SynchronizationReportData,
