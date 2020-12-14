@@ -40,6 +40,7 @@ const Migrations: React.FC<MigrationsProps> = props => {
             title={i18n.t("There are pending migrations")}
             onSave={() => (state.type === "success" ? onFinish() : startMigration())}
             saveText={actionText}
+            onCancel={undefined}
             disableSave={state.type === "migrating" || !actionText}
             maxWidth="md"
             fullWidth={true}
