@@ -7,6 +7,7 @@ import {
     ConfirmationDialog,
     ObjectsTable,
     ObjectsTableDetailField,
+    RowConfig,
     TableAction,
     TableColumn,
     TableSelection,
@@ -49,9 +50,11 @@ const InstanceListPage = () => {
         history.push("/instances/new");
     };
 
-    const editInstance = (ids: string[]) => {
-        if (ids.length !== 1) return;
-        if (appConfigurator) history.push(`/instances/edit/${ids[0]}`);
+    const editInstance = async (ids: string[]) => {
+        const instance = rows.find(row => row.id === ids[0]);
+        if (instance?.type === "dhis" && appConfigurator) {
+            history.push(`/instances/edit/${instance.id}`);
+        }
     };
 
     const replicateInstance = async (ids: string[]) => {
@@ -149,14 +152,24 @@ const InstanceListPage = () => {
     const columns: TableColumn<Instance>[] = [
         { name: "name" as const, text: i18n.t("Server name"), sortable: true },
         { name: "url" as const, text: i18n.t("URL endpoint"), sortable: false },
-        { name: "username" as const, text: i18n.t("Username"), sortable: true },
+        {
+            name: "username" as const,
+            text: i18n.t("Username"),
+            sortable: true,
+            getValue: row => (row.type === "local" ? "Logged user" : row.username),
+        },
     ];
 
     const details: ObjectsTableDetailField<Instance>[] = [
         { name: "name" as const, text: i18n.t("Server name") },
         { name: "url" as const, text: i18n.t("URL endpoint") },
-        { name: "username" as const, text: i18n.t("Username") },
+        {
+            name: "username" as const,
+            text: i18n.t("Username"),
+            getValue: row => (row.type === "local" ? "Logged user" : row.username),
+        },
         { name: "description" as const, text: i18n.t("Description") },
+        { name: "version" as const, text: i18n.t("Version") },
     ];
 
     const actions: TableAction<Instance>[] = [
@@ -169,7 +182,7 @@ const InstanceListPage = () => {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            isActive: () => appConfigurator,
+            isActive: rows => appConfigurator && _.every(rows, row => row.type !== "local"),
             primary: true,
             onClick: editInstance,
             icon: <EditIcon />,
@@ -178,6 +191,7 @@ const InstanceListPage = () => {
             name: "replicate",
             text: i18n.t("Replicate"),
             multiple: false,
+            isActive: rows => appConfigurator && _.every(rows, row => row.type !== "local"),
             onClick: replicateInstance,
             icon: <Icon>content_copy</Icon>,
         },
@@ -185,7 +199,7 @@ const InstanceListPage = () => {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: true,
-            isActive: () => appConfigurator,
+            isActive: rows => appConfigurator && _.every(rows, row => row.type !== "local"),
             onClick: deleteInstances,
             icon: <DeleteIcon />,
         },
@@ -193,6 +207,7 @@ const InstanceListPage = () => {
             name: "testConnection",
             text: i18n.t("Test Connection"),
             multiple: false,
+            isActive: rows => _.every(rows, row => row.type !== "local"),
             onClick: testConnection,
             icon: <SettingsInputAntenaIcon />,
         },
@@ -212,6 +227,14 @@ const InstanceListPage = () => {
             icon: <DoubleArrowIcon />,
         },
     ];
+
+    const rowConfig = React.useCallback(
+        (instance: Instance): RowConfig => ({
+            cellStyle: instance.type === "local" ? { fontWeight: "bold" } : undefined,
+            selectable: instance.type !== "local",
+        }),
+        []
+    );
 
     return (
         <TestWrapper>
@@ -233,6 +256,7 @@ const InstanceListPage = () => {
                 columns={columns}
                 details={details}
                 actions={actions}
+                rowConfig={rowConfig}
                 onActionButtonClick={appConfigurator ? createInstance : undefined}
                 onChangeSearch={changeSearch}
                 selection={selection}

@@ -102,10 +102,7 @@ const SaveStep = ({ syncRule, onCancel }) => {
     const destinationInstances = useMemo(
         () =>
             _.compact(
-                syncRule.targetInstances.map(id => {
-                    if (id === "LOCAL") return { value: id, text: "This instance" };
-                    return instanceOptions.find(e => e.value === id);
-                })
+                syncRule.targetInstances.map(id => instanceOptions.find(e => e.value === id))
             ),
         [instanceOptions, syncRule.targetInstances]
     );

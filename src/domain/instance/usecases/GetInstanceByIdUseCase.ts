@@ -12,14 +12,18 @@ export class GetInstanceByIdUseCase implements UseCase {
     ) {}
 
     public async execute(id: string): Promise<Either<"NOT_FOUND", Instance>> {
-        if (id === "LOCAL") return Either.success(this.localInstance);
-
         const data = await this.repositoryFactory
             .storageRepository(this.localInstance)
             .getObjectInCollection<InstanceData>(Namespace.INSTANCES, id);
 
         if (!data) return Either.error("NOT_FOUND");
 
-        return Either.success(Instance.build(data).decryptPassword(this.encryptionKey));
+        const instance = Instance.build({
+            ...data,
+            url: data.type === "local" ? this.localInstance.url : data.url,
+            version: data.type === "local" ? this.localInstance.version : data.version,
+        }).decryptPassword(this.encryptionKey);
+
+        return Either.success(instance);
     }
 }

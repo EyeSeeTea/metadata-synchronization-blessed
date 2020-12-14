@@ -72,7 +72,13 @@ const InstanceCreationPage = () => {
 
             <PageHeader title={title} onBackClick={cancelSave} />
 
-            <GeneralInfoForm instance={instance} onChange={onChange} cancelAction={cancelSave} />
+            {instance.type === "dhis" && (
+                <GeneralInfoForm
+                    instance={instance}
+                    onChange={onChange}
+                    cancelAction={cancelSave}
+                />
+            )}
         </TestWrapper>
     );
 };

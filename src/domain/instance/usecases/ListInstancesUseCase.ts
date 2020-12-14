@@ -32,8 +32,12 @@ export class ListInstancesUseCase implements UseCase {
               )
             : objects;
 
-        return filteredData.map(data => {
-            return Instance.build(data).decryptPassword(this.encryptionKey);
-        });
+        return filteredData.map(data =>
+            Instance.build({
+                ...data,
+                url: data.type === "local" ? this.localInstance.url : data.url,
+                version: data.type === "local" ? this.localInstance.version : data.version,
+            }).decryptPassword(this.encryptionKey)
+        );
     }
 }

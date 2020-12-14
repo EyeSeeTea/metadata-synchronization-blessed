@@ -1,6 +1,5 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import { MultiSelector } from "d2-ui-components";
-import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../locales";
@@ -11,7 +10,9 @@ import { SyncWizardStepProps } from "../Steps";
 export const buildInstanceOptions = (instances: Instance[]) => {
     return instances.map(instance => ({
         value: instance.id,
-        text: `${instance.name} (${instance.url} with user ${instance.username})`,
+        text: instance.username
+            ? `${instance.name} (${instance.url}) ` + i18n.t("with user {{username}}", instance)
+            : `${instance.name} (${instance.url}) ` + i18n.t("with logged user"),
     }));
 };
 
@@ -21,9 +22,7 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
 
     const [selectedOptions, setSelectedOptions] = useState<string[]>(syncRule.targetInstances);
     const [targetInstances, setTargetInstances] = useState<Instance[]>([]);
-
     const instanceOptions = buildInstanceOptions(targetInstances);
-    const isDestinationRemote = !_.isEqual(syncRule.targetInstances, ["LOCAL"]);
 
     const includeCurrentUrlAndTypeIsEvents = (selectedinstanceIds: string[]) => {
         return (
@@ -55,7 +54,7 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
 
     return (
         <React.Fragment>
-            {isDestinationRemote ? (
+            {syncRule.originInstance === "LOCAL" ? (
                 <MultiSelector
                     d2={d2}
                     height={300}

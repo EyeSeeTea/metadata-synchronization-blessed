@@ -16,7 +16,7 @@ import { TransformationD2ApiRepository } from "../../../transformations/Transfor
 import { SynchronizationBuilder } from "./../../../../types/synchronization";
 
 export function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryFactory = new RepositoryFactory();
+    const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
     repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
     repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreClient);
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
@@ -54,6 +54,14 @@ export async function sync({
 
     local.get("/dataStore/metadata-synchronization/instances", async () => [
         {
+            type: "local",
+            id: "LOCAL",
+            name: "This instance",
+            description: "",
+            url: "http://origin.test",
+        },
+        {
+            type: "dhis",
             id: "DESTINATION",
             name: "Destination test",
             url: "http://destination.test",
@@ -63,6 +71,7 @@ export async function sync({
         },
     ]);
 
+    local.get("/dataStore/metadata-synchronization/instances-LOCAL", async () => ({}));
     local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
 
     const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
@@ -98,7 +107,7 @@ export async function executeMetadataSync(
     const repositoryFactory = buildRepositoryFactory();
 
     const localInstance = Instance.build({
-        url: local.urlPrefix,
+        url: "http://origin.test",
         name: "Testing",
         version: fromVersion,
     });
@@ -112,10 +121,11 @@ export async function executeMetadataSync(
 
     const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
 
-    for await (const { done } of useCase.execute()) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        done;
+    let done = false;
+    for await (const sync of useCase.execute()) {
+        done = !!sync.done;
     }
+    expect(done).toBeTruthy();
 
     expect(local.db.metadata.where({})).toHaveLength(0);
 

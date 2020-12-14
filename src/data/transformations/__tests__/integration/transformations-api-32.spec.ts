@@ -70,6 +70,14 @@ describe("Sync metadata", () => {
 
         local.get("/dataStore/metadata-synchronization/instances", async () => [
             {
+                type: "local",
+                id: "LOCAL",
+                name: "This instance",
+                description: "",
+                url: "http://origin.test",
+            },
+            {
+                type: "dhis",
                 id: "DESTINATION",
                 name: "Destination test",
                 url: "http://destination.test",
@@ -79,6 +87,7 @@ describe("Sync metadata", () => {
             },
         ]);
 
+        local.get("/dataStore/metadata-synchronization/instances-LOCAL", async () => ({}));
         local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
 
         const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request) => {

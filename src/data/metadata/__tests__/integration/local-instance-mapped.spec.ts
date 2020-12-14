@@ -19,7 +19,6 @@ const repositoryFactory = buildRepositoryFactory();
 
 describe("Sync metadata", () => {
     let local: Server;
-    let remote: Server;
 
     beforeAll(() => {
         jest.setTimeout(30000);
@@ -27,10 +26,6 @@ describe("Sync metadata", () => {
 
     beforeEach(() => {
         local = startDhis({ urlPrefix: "http://origin.test" });
-        remote = startDhis({
-            urlPrefix: "http://destination.test",
-            pretender: local.pretender,
-        });
 
         local.get("/categoryOptionCombos", async () => ({
             categoryOptionCombos: [
@@ -39,17 +34,6 @@ describe("Sync metadata", () => {
                     id: "default8",
                     categoryCombo: { id: "default7" },
                     categoryOptions: [{ id: "default5" }],
-                },
-            ],
-        }));
-
-        remote.get("/categoryOptionCombos", async () => ({
-            categoryOptionCombos: [
-                {
-                    name: "default",
-                    id: "default4",
-                    categoryCombo: { id: "default3" },
-                    categoryOptions: [{ id: "default1" }],
                 },
             ],
         }));
@@ -104,31 +88,6 @@ describe("Sync metadata", () => {
             ],
         }));
 
-        remote.get("/dataValueSets", async () => ({
-            dataValues: [
-                {
-                    dataElement: "id2",
-                    period: "20191231",
-                    orgUnit: "Global",
-                    categoryOptionCombo: "default4",
-                    attributeOptionCombo: "default4",
-                    value: "test-value-2",
-                    storedBy: "test-user",
-                    created: "2020-05-28T08:32:53.000+0000",
-                    lastUpdated: "2020-05-28T08:32:53.000+0000",
-                    followup: false,
-                },
-            ],
-        }));
-
-        remote.get("/metadata", async () => ({
-            categoryOptions: [{ id: "default5" }],
-            categories: [{ id: "default6" }],
-            categoryCombos: [{ id: "default7" }],
-            categoryOptionCombos: [{ id: "default8" }],
-            dataElements: [{ id: "id2", name: "Test data element 2" }],
-        }));
-
         local.get("/dataStore/metadata-synchronization/instances", async () => [
             {
                 type: "local",
@@ -137,19 +96,9 @@ describe("Sync metadata", () => {
                 description: "",
                 url: "http://origin.test",
             },
-            {
-                type: "dhis",
-                id: "DESTINATION",
-                name: "Destination test",
-                url: "http://destination.test",
-                username: "test",
-                password: "",
-                description: "",
-            },
         ]);
 
-        local.get("/dataStore/metadata-synchronization/instances-LOCAL", async () => ({}));
-        local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({
+        local.get("/dataStore/metadata-synchronization/instances-LOCAL", async () => ({
             metadataMapping: {
                 aggregatedDataElements: {
                     id1: {
@@ -184,17 +133,13 @@ describe("Sync metadata", () => {
 
         local.db.createCollection("dataValueSets", []);
         local.post("/dataValueSets", addAggregatedToDb);
-
-        remote.db.createCollection("dataValueSets", []);
-        remote.post("/dataValueSets", addAggregatedToDb);
     });
 
     afterEach(() => {
         local.shutdown();
-        remote.shutdown();
     });
 
-    it("Local server to remote - same version", async () => {
+    it("Local server to local - same version", async () => {
         const localInstance = Instance.build({
             url: "http://origin.test",
             name: "Testing",
@@ -203,7 +148,7 @@ describe("Sync metadata", () => {
 
         const builder: SynchronizationBuilder = {
             originInstance: "LOCAL",
-            targetInstances: ["DESTINATION"],
+            targetInstances: ["LOCAL"],
             metadataIds: ["dataSet1"],
             excludedIds: [],
         };
@@ -217,39 +162,9 @@ describe("Sync metadata", () => {
             // no-op
         }
 
-        const response = remote.db.dataValueSets.find(1);
+        const response = local.db.dataValueSets.find(1);
         expect(response.dataValues[0].value).toEqual("test-value-1");
         expect(response.dataValues[0].dataElement).toEqual("id2");
-        expect(local.db.dataValueSets.find(1)).toBeNull();
-    });
-
-    it("Remote server to local - same version", async () => {
-        const localInstance = Instance.build({
-            url: "http://origin.test",
-            name: "Testing",
-            version: "2.30",
-        });
-
-        const builder: SynchronizationBuilder = {
-            originInstance: "DESTINATION",
-            targetInstances: ["LOCAL"],
-            metadataIds: ["dataSet1"],
-            excludedIds: [],
-        };
-
-        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
-
-        const payload = await sync.buildPayload();
-        expect(payload.dataValues?.find(({ value }) => value === "test-value-2")).toBeDefined();
-
-        for await (const _sync of sync.execute()) {
-            // no-op
-        }
-
-        const response = local.db.dataValueSets.find(1);
-        expect(response.dataValues[0].value).toEqual("test-value-2");
-        expect(response.dataValues[0].dataElement).toEqual("id1");
-        expect(remote.db.dataValueSets.find(1)).toBeNull();
     });
 });
 
