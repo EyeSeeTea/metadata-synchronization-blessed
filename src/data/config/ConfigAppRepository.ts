@@ -49,7 +49,7 @@ export class ConfigAppRepository implements ConfigRepository {
         await newClient.import(dump);
 
         // Clear old client
-        oldClient.clearStorage();
+        await oldClient.clearStorage();
 
         // Reset memoize
         clear(this.getStorageClient, this);
