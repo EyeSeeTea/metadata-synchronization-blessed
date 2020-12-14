@@ -2,7 +2,7 @@ import _ from "lodash";
 import {
     cleanNestedMappedId,
     EXCLUDED_KEY,
-} from "../../../presentation/react/components/mapping-table/utils";
+} from "../../../presentation/react/core/components/mapping-table/utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { DataSource } from "../../instance/entities/DataSource";
 import { MappingConfig } from "../entities/MappingConfig";
