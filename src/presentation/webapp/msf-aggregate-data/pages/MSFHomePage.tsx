@@ -7,23 +7,41 @@ import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
 import { PeriodSelectionDialog } from "../../../react/core/components/period-selection-dialog/PeriodSelectionDialog";
 import { useAppContext } from "../../../react/core/contexts/AppContext";
-import { MSFSettingsDialog } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
+import {
+    MSFSettings,
+    MSFSettingsDialog,
+} from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
+import { executeAggregateData } from "./MSFHomePagePresenter";
 
 export const MSFHomePage: React.FC = () => {
     const classes = useStyles();
     const history = useHistory();
+    const { api, compositionRoot } = useAppContext();
 
+    const [syncProgress, setSyncProgress] = useState<string[]>([]);
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
-    const [period, setPeriod] = useState<Period>(Period.createDefault());
+    const [period, setPeriod] = useState<Period>();
+
+    const [msfSettings, setMsfSettings] = useState<MSFSettings>({
+        runAnalytics: "by-sync-rule-settings",
+    });
     const [globalAdmin, setGlobalAdmin] = useState(false);
-    const { api } = useAppContext();
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
-    const handleAggregateData = () => {};
+    const handleAggregateData = () => {
+        executeAggregateData(
+            api,
+            compositionRoot,
+            msfSettings,
+            progress => setSyncProgress(progress),
+            period
+        );
+    };
+
     const handleAdvancedSettings = () => {
         setShowPeriodDialog(true);
     };
@@ -52,8 +70,9 @@ export const MSFHomePage: React.FC = () => {
         setShowMSFSettingsDialog(false);
     };
 
-    const handleSaveMSFSettings = () => {
+    const handleSaveMSFSettings = (msfSettings: MSFSettings) => {
         setShowMSFSettingsDialog(false);
+        setMsfSettings(msfSettings);
     };
 
     return (
@@ -77,13 +96,9 @@ export const MSFHomePage: React.FC = () => {
                                 <Typography variant="h6" gutterBottom>
                                     {i18n.t("Synchronization Progress")}
                                 </Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
-                                <Typography>{"Synchronizing Sync Rule 1 ..."}</Typography>
+                                {syncProgress.map((trace, index) => (
+                                    <Typography key={index}>{trace}</Typography>
+                                ))}
                             </List>
                         </Paper>
                     </Box>
@@ -140,6 +155,7 @@ export const MSFHomePage: React.FC = () => {
 
             {showMSFSettingsDialog && (
                 <MSFSettingsDialog
+                    msfSettings={msfSettings}
                     onClose={handleCloseMSFSettings}
                     onSave={handleSaveMSFSettings}
                 />

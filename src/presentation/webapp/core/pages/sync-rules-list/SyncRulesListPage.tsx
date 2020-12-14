@@ -198,8 +198,8 @@ const SyncRulesPage: React.FC = () => {
         loading.reset();
     };
 
-    const backHome = () => {
-        history.push("/");
+    const back = () => {
+        history.push("/dashboard");
     };
 
     const confirmDelete = async () => {
@@ -519,7 +519,7 @@ const SyncRulesPage: React.FC = () => {
 
     return (
         <TestWrapper>
-            <PageHeader title={title} onBackClick={backHome} />
+            <PageHeader title={title} onBackClick={back} />
             <ObjectsTable<SyncRule>
                 rows={rows}
                 columns={columns}

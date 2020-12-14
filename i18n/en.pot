@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-04T08:16:36.678Z\n"
-"PO-Revision-Date: 2020-12-04T08:16:36.678Z\n"
+"POT-Creation-Date: 2020-12-08T06:20:05.518Z\n"
+"PO-Revision-Date: 2020-12-08T06:20:05.518Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -761,6 +761,9 @@ msgstr ""
 msgid "End date"
 msgstr ""
 
+msgid "Use sync rules periods"
+msgstr ""
+
 msgid "You need to provide a subject"
 msgstr ""
 
@@ -1186,7 +1189,19 @@ msgstr ""
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
+msgid "True"
+msgstr ""
+
+msgid "False"
+msgstr ""
+
+msgid "Use sync rule settings"
+msgstr ""
+
 msgid "MSF Settings"
+msgstr ""
+
+msgid "Run Analytics"
 msgstr ""
 
 msgid "Metadata Synchronization History"
@@ -1737,6 +1752,21 @@ msgid "Go To Admin Dashboard"
 msgstr ""
 
 msgid "Go to History"
+msgstr ""
+
+msgid "Starting Aggregate Data..."
+msgstr ""
+
+msgid "Finished Aggregate Data"
+msgstr ""
+
+msgid "Starting Sync Rule {{name}} ..."
+msgstr ""
+
+msgid "Finished Sync Rule {{name}}"
+msgstr ""
+
+msgid "Finished Sync Rule {{name}} with errors"
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"

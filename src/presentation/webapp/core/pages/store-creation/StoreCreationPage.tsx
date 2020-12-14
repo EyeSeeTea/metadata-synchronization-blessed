@@ -56,7 +56,7 @@ const StoreCreationPage: React.FC = () => {
     };
 
     const close = useCallback(() => {
-        history.goBack();
+        history.push("/dashboard");
     }, [history]);
 
     const validateError = useCallback((error?: GitHubError): string => {

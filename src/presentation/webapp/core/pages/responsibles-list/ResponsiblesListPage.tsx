@@ -23,7 +23,7 @@ export const ResponsiblesListPage: React.FC = () => {
     const [appConfigurator, updateAppConfigurator] = useState(false);
 
     const backHome = useCallback(() => {
-        history.push("/");
+        history.push("/dashboard");
     }, [history]);
 
     const updateRemoteInstance = useCallback(
