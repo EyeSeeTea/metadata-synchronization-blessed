@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-07T10:44:02.661Z\n"
-"PO-Revision-Date: 2020-12-07T10:44:02.661Z\n"
+"POT-Creation-Date: 2020-12-10T10:54:47.677Z\n"
+"PO-Revision-Date: 2020-12-10T10:54:47.677Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -96,6 +96,9 @@ msgid "Version is too small (next version is {{validExample}})"
 msgstr ""
 
 msgid "deleted"
+msgstr ""
+
+msgid "Analytics execution finished on {{name}}"
 msgstr ""
 
 msgid "Preparing synchronization"
@@ -871,6 +874,9 @@ msgstr ""
 msgid "Dry Run"
 msgstr ""
 
+msgid "Run Analytics before sync"
+msgstr ""
+
 msgid "Type"
 msgstr ""
 
@@ -1432,9 +1438,6 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-msgid "Analytics execution finished on {{name}}"
-msgstr ""
-
 msgid "Deleting Instances"
 msgstr ""
 
@@ -1754,6 +1757,9 @@ msgstr ""
 msgid "Starting Aggregate Data..."
 msgstr ""
 
+msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
+msgstr ""
+
 msgid "Finished Aggregate Data"
 msgstr ""
 
@@ -1764,6 +1770,9 @@ msgid "Finished Sync Rule {{name}}"
 msgstr ""
 
 msgid "Finished Sync Rule {{name}} with errors"
+msgstr ""
+
+msgid "never"
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"

@@ -133,4 +133,5 @@ export const Repositories = {
     FileRepository: "fileRepository",
     ReportsRepository: "reportsRepository",
     RulesRepository: "rulesRepository",
+    SystemInfoRepository: "systemInfoRepository",
 } as const;

@@ -427,6 +427,14 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
                                 value={syncRule.dataParams.dryRun ? i18n.t("Yes") : i18n.t("No")}
                             />
                         </ul>
+                        <ul>
+                            <LiEntry
+                                label={i18n.t("Run Analytics before sync")}
+                                value={
+                                    syncRule.dataParams.runAnalytics ? i18n.t("Yes") : i18n.t("No")
+                                }
+                            />
+                        </ul>
                     </LiEntry>
                 )}
 
