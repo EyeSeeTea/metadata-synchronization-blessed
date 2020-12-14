@@ -78,6 +78,7 @@ export class StorageConstantClient extends StorageClient {
                         code: defaultKey,
                         name: defaultName,
                         description: JSON.stringify(value, null, 2),
+                        value: 1,
                     },
                 ],
             })
