@@ -70,12 +70,16 @@ export class StorageConstantClient extends StorageClient {
     }
 
     private async updateConstant<T extends object>(id: string, value: T): Promise<void> {
-        await this.api.models.constants
+        await this.api.metadata
             .post({
-                id,
-                code: defaultKey,
-                name: defaultName,
-                description: JSON.stringify(value, null, 2),
+                constants: [
+                    {
+                        id,
+                        code: defaultKey,
+                        name: defaultName,
+                        description: JSON.stringify(value, null, 2),
+                    },
+                ],
             })
             .getData();
     }
