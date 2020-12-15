@@ -1,10 +1,11 @@
 import { UseCase } from "../../common/entities/UseCase";
-import { StoreRepository } from "../repositories/StoreRepository";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { Instance } from "../../instance/entities/Instance";
 
 export class DeleteStoreUseCase implements UseCase {
-    constructor(private storeRepository: StoreRepository) {}
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(id: string): Promise<boolean> {
-        return this.storeRepository.delete(id);
+        return this.repositoryFactory.storeRepository(this.localInstance).delete(id);
     }
 }

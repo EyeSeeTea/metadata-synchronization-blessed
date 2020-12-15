@@ -9,9 +9,11 @@ export class GetModuleUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(id: string, instance = this.localInstance): Promise<Module | undefined> {
-        const module = await this.repositoryFactory
-            .storageRepository(instance)
-            .getObjectInCollection<BaseModule>(Namespace.MODULES, id);
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
+
+        const module = await storageClient.getObjectInCollection<BaseModule>(Namespace.MODULES, id);
 
         switch (module?.type) {
             case "metadata":

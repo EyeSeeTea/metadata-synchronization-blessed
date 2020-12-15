@@ -72,17 +72,25 @@ export class PrepareSyncUseCase implements UseCase {
         const instance = await this.getInstanceById(instanceId);
         if (instance.isError() || !instance.value.data) return Either.error("INSTANCE_NOT_FOUND");
 
-        const responsibles = await this.repositoryFactory
-            .storageRepository(instance.value.data)
-            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance.value.data)
+            .getStorageClient();
+
+        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(
+            Namespace.RESPONSIBLES
+        );
 
         return Either.success(responsibles);
     }
 
     private async getInstanceById(id: string): Promise<Either<"INSTANCE_NOT_FOUND", Instance>> {
-        const objects = await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
+        const objects = await storageClient.listObjectsInCollection<InstanceData>(
+            Namespace.INSTANCES
+        );
 
         const data = objects.find(data => data.id === id);
         if (!data) return Either.error("INSTANCE_NOT_FOUND");

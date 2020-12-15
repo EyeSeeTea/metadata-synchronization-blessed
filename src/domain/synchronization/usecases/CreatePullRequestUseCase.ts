@@ -35,6 +35,14 @@ export class CreatePullRequestUseCase implements UseCase {
         description = "",
         notificationUsers: { users, userGroups },
     }: CreatePullRequestParams): Promise<void> {
+        const localStorageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
+        const remoteStorageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
+
         const owner = await this.getOwner();
 
         const receivedPullRequest = ReceivedPullRequestNotification.create({
@@ -61,13 +69,12 @@ export class CreatePullRequestUseCase implements UseCase {
             remoteNotification: receivedPullRequest.id,
         });
 
-        await this.repositoryFactory
-            .storageRepository(instance)
-            .saveObjectInCollection(Namespace.NOTIFICATIONS, receivedPullRequest);
+        await remoteStorageClient.saveObjectInCollection(
+            Namespace.NOTIFICATIONS,
+            receivedPullRequest
+        );
 
-        await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .saveObjectInCollection(Namespace.NOTIFICATIONS, sentPullRequest);
+        await localStorageClient.saveObjectInCollection(Namespace.NOTIFICATIONS, sentPullRequest);
 
         await this.sendMessage(instance, receivedPullRequest);
     }
@@ -113,9 +120,13 @@ export class CreatePullRequestUseCase implements UseCase {
     }
 
     private async getResponsibleNames(instance: Instance, ids: string[]) {
-        const responsibles = await this.repositoryFactory
-            .storageRepository(instance)
-            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
+
+        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(
+            Namespace.RESPONSIBLES
+        );
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 
