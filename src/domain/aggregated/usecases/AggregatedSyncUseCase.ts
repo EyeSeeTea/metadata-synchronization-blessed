@@ -163,7 +163,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         const syncResult = await aggregatedRepository.save(versionedPayloadPackage, dataParams);
         const origin = await this.getOriginInstance();
 
-        return [{ ...syncResult, origin: origin.toPublicObject() }];
+        return { results: [{ ...syncResult, origin: origin.toPublicObject() }] };
     }
 
     public async buildDataStats() {

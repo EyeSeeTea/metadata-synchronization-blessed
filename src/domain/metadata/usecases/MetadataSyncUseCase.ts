@@ -7,9 +7,11 @@ import { debug } from "../../../utils/debug";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
-import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
-import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
-import { MetadataEntities, MetadataPackage, Document } from "../entities/MetadataEntities";
+import {
+    GenericSyncUseCase,
+    PostPayloadResult,
+} from "../../synchronization/usecases/GenericSyncUseCase";
+import { Document, MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
@@ -125,7 +127,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         return metadataWithoutDuplicates;
     });
 
-    public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
+    public async postPayload(instance: Instance): Promise<PostPayloadResult> {
         const { syncParams } = this.builder;
 
         const payloadPackage = await this.buildPayload();
@@ -145,7 +147,10 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const syncResult = await remoteMetadataRepository.save(mappedPayloadPackage, syncParams);
         const origin = await this.getOriginInstance();
 
-        return [{ ...syncResult, origin: origin.toPublicObject() }];
+        return {
+            results: [{ ...syncResult, origin: origin.toPublicObject() }],
+            payload: mappedPayloadPackage,
+        };
     }
 
     public async buildDataStats() {

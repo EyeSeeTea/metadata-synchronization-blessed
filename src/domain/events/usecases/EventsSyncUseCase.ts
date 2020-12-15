@@ -76,7 +76,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
-        return _.compact([eventsResponse, indicatorsResponse]);
+        return { results: _.compact([eventsResponse, indicatorsResponse]) };
     }
 
     private async postEventsPayload(

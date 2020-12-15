@@ -38,6 +38,11 @@ export type SyncronizationClass =
     | typeof DeletedMetadataSyncUseCase;
 export type SyncronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
+export interface PostPayloadResult {
+    results: SynchronizationResult[];
+    payload?: MetadataPackage;
+}
+
 export abstract class GenericSyncUseCase {
     public abstract readonly type: SynchronizationType;
     public readonly fields: string = "id,name";
@@ -52,8 +57,8 @@ export abstract class GenericSyncUseCase {
         this.api = getD2APiFromInstance(localInstance);
     }
 
-    public abstract async buildPayload(): Promise<SyncronizationPayload>;
-    public abstract async mapPayload(
+    public abstract buildPayload(): Promise<SyncronizationPayload>;
+    public abstract mapPayload(
         instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload>;
@@ -61,8 +66,8 @@ export abstract class GenericSyncUseCase {
     // We start to use domain concepts:
     // for the moment old model instance and domain entity instance are going to live together for a while on sync classes.
     // Little by little through refactors the old instance model should disappear
-    public abstract async postPayload(instance: Instance): Promise<SynchronizationResult[]>;
-    public abstract async buildDataStats(): Promise<
+    public abstract postPayload(instance: Instance): Promise<PostPayloadResult>;
+    public abstract buildDataStats(): Promise<
         AggregatedDataStats[] | EventsDataStats[] | undefined
     >;
 
@@ -239,8 +244,9 @@ export abstract class GenericSyncUseCase {
             try {
                 debug("Start import on destination instance", instance.toPublicObject());
 
-                const syncResults = await this.postPayload(instance);
-                syncReport.addSyncResult(...syncResults);
+                // TODO: @Jocelyn here you will receive the payload
+                const { results } = await this.postPayload(instance);
+                syncReport.addSyncResult(...results);
 
                 debug("Finished import on instance", instance.toPublicObject());
             } catch (error) {

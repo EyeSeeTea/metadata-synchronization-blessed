@@ -28,7 +28,7 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
         const syncResult = await remoteMetadataRepository.remove(payloadPackage, syncParams);
         const origin = await this.getOriginInstance();
 
-        return [{ ...syncResult, origin: origin.toPublicObject() }];
+        return { results: [{ ...syncResult, origin: origin.toPublicObject() }] };
     }
 
     public async buildDataStats() {
