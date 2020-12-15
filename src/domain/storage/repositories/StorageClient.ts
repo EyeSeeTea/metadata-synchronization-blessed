@@ -1,18 +1,24 @@
 import _ from "lodash";
+import { Namespace, NamespaceProperties } from "../../../data/storage/Namespaces";
+import { Dictionary } from "../../../types/utils";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
-import { Namespace, NamespaceProperties } from "../../../data/storage/Namespaces";
 
-export interface StorageRepositoryConstructor {
+export interface StorageClientConstructor {
     new (instance: Instance): StorageClient;
 }
 
 export abstract class StorageClient {
+    public abstract type: "constant" | "dataStore";
+
     // Object operations
     public abstract getObject<T extends object>(key: string): Promise<T | undefined>;
     public abstract getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T>;
     public abstract saveObject<T extends object>(key: string, value: T): Promise<void>;
     public abstract removeObject(key: string): Promise<void>;
+    public abstract clearStorage(): Promise<void>;
+    public abstract clone(): Promise<Dictionary<unknown>>;
+    public abstract import(dump: Dictionary<unknown>): Promise<void>;
 
     public async listObjectsInCollection<T extends Ref>(key: string): Promise<T[]> {
         const collection = await this.getObject<T[]>(key);

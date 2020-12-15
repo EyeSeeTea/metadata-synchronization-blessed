@@ -25,6 +25,10 @@ export class DiffPackageUseCase implements UseCase {
         storeId: string | undefined,
         instance = this.localInstance
     ): Promise<Either<DiffPackageUseCaseError, MetadataPackageDiff>> {
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
+
         const packageMerge = await this.getPackage(packageIdMerge, storeId, instance);
         if (!packageMerge) return Either.error("PACKAGE_NOT_FOUND");
 
@@ -37,9 +41,10 @@ export class DiffPackageUseCase implements UseCase {
             contentsBase = packageBase.contents;
         } else {
             // No package B specified, use local contents
-            const moduleDataMerge = await this.repositoryFactory
-                .storageRepository(instance)
-                .getObjectInCollection<BaseModule>(Namespace.MODULES, packageMerge.module.id);
+            const moduleDataMerge = await storageClient.getObjectInCollection<BaseModule>(
+                Namespace.MODULES,
+                packageMerge.module.id
+            );
 
             if (!moduleDataMerge) return Either.error("MODULE_NOT_FOUND");
             const moduleMerge = MetadataModule.build(moduleDataMerge);
@@ -65,9 +70,11 @@ export class DiffPackageUseCase implements UseCase {
     }
 
     private async getDataStorePackage(id: string, instance: Instance) {
-        return this.repositoryFactory
-            .storageRepository(instance)
-            .getObjectInCollection<BasePackage>(Namespace.PACKAGES, id);
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
+
+        return storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, id);
     }
 
     private async getStorePackage(storeId: string, url: string) {

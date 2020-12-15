@@ -16,6 +16,7 @@ import ModulePackageListPage from "./core/pages/module-package-list/ModulePackag
 import ModuleCreationPage from "./core/pages/modules-creation/ModuleCreationPage";
 import NotificationsListPage from "./core/pages/notifications-list/NotificationsListPage";
 import ResponsiblesListPage from "./core/pages/responsibles-list/ResponsiblesListPage";
+import { SettingsPage } from "./core/pages/settings/SettingsPage";
 import StoreCreationPage from "./core/pages/store-creation/StoreCreationPage";
 import StoreListPage from "./core/pages/store-list/StoreListPage";
 import SyncRulesCreationPage, {
@@ -101,6 +102,8 @@ const Root: React.FC = () => {
                     path="/notifications/:id?"
                     render={() => <NotificationsListPage />}
                 />
+
+                <RouteWithSession path="/settings" render={() => <SettingsPage />} />
 
                 <VariantRoutes variant={appVariant} />
             </Switch>

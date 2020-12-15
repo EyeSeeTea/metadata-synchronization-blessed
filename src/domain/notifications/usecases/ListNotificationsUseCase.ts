@@ -43,15 +43,21 @@ export class ListNotificationsUseCase implements UseCase {
     }
 
     private async getInstanceNotifications(): Promise<AppNotification[]> {
-        return this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .listObjectsInCollection<AppNotification>(Namespace.NOTIFICATIONS);
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
+        return storageClient.listObjectsInCollection<AppNotification>(Namespace.NOTIFICATIONS);
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const objects = await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
+        const objects = await storageClient.listObjectsInCollection<InstanceData>(
+            Namespace.INSTANCES
+        );
 
         const data = objects.find(data => data.id === id);
         if (!data) return undefined;
@@ -66,18 +72,24 @@ export class ListNotificationsUseCase implements UseCase {
     private async updateSentPullRequest(
         notification: AppNotification
     ): Promise<AppNotification | undefined> {
+        const localStorageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
         if (notification.type !== "sent-pull-request" || notification.status !== "PENDING")
             return undefined;
 
-        const instance = await this.getInstanceById(notification.instance.id);
-        if (!instance) return undefined;
+        const remoteInstance = await this.getInstanceById(notification.instance.id);
+        if (!remoteInstance) return undefined;
 
-        const remoteNotification = await this.repositoryFactory
-            .storageRepository(instance)
-            .getObjectInCollection<AppNotification>(
-                Namespace.NOTIFICATIONS,
-                notification.remoteNotification
-            );
+        const remoteStorageClient = await this.repositoryFactory
+            .configRepository(remoteInstance)
+            .getStorageClient();
+
+        const remoteNotification = await remoteStorageClient.getObjectInCollection<AppNotification>(
+            Namespace.NOTIFICATIONS,
+            notification.remoteNotification
+        );
 
         if (
             !remoteNotification ||
@@ -93,9 +105,7 @@ export class ListNotificationsUseCase implements UseCase {
             status: remoteNotification.status,
         };
 
-        await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
+        await localStorageClient.saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
 
         return newNotification;
     }

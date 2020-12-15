@@ -9,9 +9,13 @@ export class ListResponsiblesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(instance = this.localInstance): Promise<MetadataResponsible[]> {
-        const items = await this.repositoryFactory
-            .storageRepository(instance)
-            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
+
+        const items = await storageClient.listObjectsInCollection<MetadataResponsible>(
+            Namespace.RESPONSIBLES
+        );
 
         const names = await this.getDisplayNames(
             instance,

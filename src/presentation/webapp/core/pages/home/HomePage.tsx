@@ -1,4 +1,4 @@
-import { Badge, Icon } from "@material-ui/core";
+import { Badge, Icon, IconButton, makeStyles, Tooltip } from "@material-ui/core";
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -6,11 +6,12 @@ import i18n from "../../../../../locales";
 import {
     isAppConfigurator,
     isAppExecutor,
+    isGlobalAdmin,
     shouldShowDeletedObjects,
 } from "../../../../../utils/permissions";
-import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import { Card, Landing } from "../../../../react/core/components/landing/Landing";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import { AppVariant } from "../../../Root";
 
 const appVariantConfiguration: Record<AppVariant, string[]> = {
@@ -43,25 +44,33 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
 
     const { api, compositionRoot } = useAppContext();
     const history = useHistory();
+    const classes = useStyles();
 
     const [showDeletedObjects, setShowDeletedObjects] = useState(false);
+    const [pendingNotifications, setPendingNotifications] = useState(0);
+
     const [appConfigurator, setAppConfigurator] = useState(false);
     const [appExecutor, setAppExecutor] = useState(false);
-    const [pendingNotifications, setPendingNotifications] = useState(0);
+    const [globalAdmin, setGlobalAdmin] = useState(false);
+
+    const backHome = () => {
+        history.push("/");
+    };
+
+    const goToSettings = () => {
+        history.push("/settings");
+    };
 
     useEffect(() => {
         shouldShowDeletedObjects(api).then(setShowDeletedObjects);
         isAppConfigurator(api).then(setAppConfigurator);
         isAppExecutor(api).then(setAppExecutor);
+        isGlobalAdmin(api).then(setGlobalAdmin);
         compositionRoot.notifications.list().then(notifications => {
             const unread = notifications.filter(({ read }) => !read).length;
             setPendingNotifications(unread);
         });
     }, [api, compositionRoot]);
-
-    const backHome = () => {
-        history.push("/");
-    };
 
     const allCards: Card[] = useMemo(
         () => [
@@ -244,6 +253,18 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
 
     return (
         <TestWrapper>
+            {globalAdmin ? (
+                <Tooltip
+                    className={classes.settingsButton}
+                    title={i18n.t("Settings")}
+                    placement="left"
+                >
+                    <IconButton onClick={goToSettings}>
+                        <Icon>settings</Icon>
+                    </IconButton>
+                </Tooltip>
+            ) : null}
+
             <Landing
                 title={type === "dashboard" ? i18n.t("Admin Dashboard") : undefined}
                 onBackClick={type === "dashboard" ? backHome : undefined}
@@ -254,5 +275,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
         </TestWrapper>
     );
 };
+
+const useStyles = makeStyles({
+    settingsButton: {
+        float: "right",
+    },
+});
 
 export default LandingPage;
