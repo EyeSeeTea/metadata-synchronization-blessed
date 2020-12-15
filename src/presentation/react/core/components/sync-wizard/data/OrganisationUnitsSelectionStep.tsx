@@ -47,6 +47,12 @@ const OrganisationUnitsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRul
                 rootIds={orgUnitRootIds}
                 withElevation={false}
                 initiallyExpanded={syncRule.dataSyncOrgUnitPaths}
+                controls={{
+                    filterByLevel: true,
+                    filterByGroup: true,
+                    filterByProgram: true,
+                    selectAll: true,
+                }}
             />
         );
     }
