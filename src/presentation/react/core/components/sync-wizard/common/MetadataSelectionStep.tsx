@@ -144,7 +144,9 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
                               const children = getChildrenRows(selectedRows, model).map(
                                   ({ id }) => id
                               );
-                              changeSelection(children, []);
+
+                              const newSelected = _.uniq([...syncRule.metadataIds, ...children]);
+                              changeSelection(newSelected, []);
                           },
                           icon: <Icon>done_all</Icon>,
                           isActive: (selection: MetadataType[]) => {
@@ -154,7 +156,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
                       },
                   ]
                 : [],
-        [model, rows, changeSelection, syncRule.type]
+        [model, rows, changeSelection, syncRule.type, syncRule.metadataIds]
     );
 
     if (loading || error) return null;
