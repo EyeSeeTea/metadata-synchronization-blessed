@@ -7,12 +7,25 @@ export interface Config {
 
 export type Debug = (message: string) => void;
 
-export type Migration = { version: number; fn: MigrationFn; name: string };
+export interface MigrationWithVersion {
+    version: number;
+    migrate: MigrationFn;
+    name: string;
+}
+
+export type Migration = Omit<MigrationWithVersion, "version">;
 
 export type MigrationFn = (api: D2Api, debug: Debug) => Promise<void>;
 
 export interface RunnerOptions {
     api: D2Api;
     debug?: Debug;
-    migrations?: Migration[];
+    dataStoreNamespace: string;
+    migrations: MigrationWithVersion[];
+}
+
+export type MigrationTasks = MigrationWithVersion[];
+
+export function migration(version: number, migration: Migration): MigrationWithVersion {
+    return { version, ...migration };
 }

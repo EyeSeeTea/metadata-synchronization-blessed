@@ -9,3 +9,12 @@ export function getDuplicatedIds<Obj extends Ref>(objects: Obj[]): string[] {
         .keys()
         .value();
 }
+
+export function zeroPad(num: number, places: number) {
+    const zero = places - num.toString().length + 1;
+    return Array(+(zero > 0 && zero)).join("0") + num;
+}
+
+export function enumerate<T>(xs: T[]): Array<[number, T]> {
+    return xs.map((x, idx) => [idx, x]);
+}

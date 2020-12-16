@@ -2,8 +2,9 @@ import { generateUid } from "d2/uid";
 import { Store } from "../../domain/stores/entities/Store";
 import { deleteDataStore, saveDataStore } from "../../models/dataStore";
 import { D2Api } from "../../types/d2-api";
+import { Migration } from "../types";
 
-export default async function migrate(api: D2Api): Promise<void> {
+export async function migrate(api: D2Api): Promise<void> {
     const oldKey = "store";
     const newKey = "stores";
 
@@ -17,3 +18,7 @@ export default async function migrate(api: D2Api): Promise<void> {
         await deleteDataStore(api, oldKey);
     }
 }
+
+const migration: Migration = { name: "Update history notifications", migrate };
+
+export default migration;

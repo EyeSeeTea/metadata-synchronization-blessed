@@ -1,8 +1,9 @@
 import _ from "lodash";
 import { Instance, InstanceData } from "../../domain/instance/entities/Instance";
 import { D2Api } from "../../types/d2-api";
+import { Migration } from "../types";
 
-export default async function migrate(api: D2Api): Promise<void> {
+export async function migrate(api: D2Api): Promise<void> {
     const dataStore = api.dataStore("metadata-synchronization");
     const oldContents = await dataStore.get<InstanceData[]>("instances").getData();
     if (!oldContents) return;
@@ -28,3 +29,7 @@ export default async function migrate(api: D2Api): Promise<void> {
 
     await dataStore.save("instances", instances).getData();
 }
+
+const migration: Migration = { name: "Update history notifications", migrate };
+
+export default migration;

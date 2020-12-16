@@ -3,7 +3,7 @@ import { getDataStore, saveDataStore } from "../../models/dataStore";
 import { D2Api, Id } from "../../types/d2-api";
 import { Maybe } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
-import { Debug } from "../types";
+import { Debug, Migration } from "../types";
 import { getDuplicatedIds } from "../utils";
 
 type SynchronizationBuilder = { targetInstances: Id[] };
@@ -20,7 +20,7 @@ interface SynchronizationRuleDetailsNew {
     builder: SynchronizationBuilder;
 }
 
-export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
+async function migrate(api: D2Api, debug: Debug): Promise<void> {
     const oldRules = await getDataStore<SynchronizationRuleOld[]>(api, "rules", []);
     const newRules: SynchronizationRuleNew[] = oldRules.map(oldRule => ({
         ..._.omit(oldRule, ["builder"]),
@@ -42,3 +42,7 @@ export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
     debug(`Save main sync rules object`);
     await saveDataStore(api, "rules", newRules);
 }
+
+const migration: Migration = { name: "Update sync rules ids", migrate };
+
+export default migration;

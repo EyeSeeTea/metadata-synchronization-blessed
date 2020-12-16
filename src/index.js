@@ -32,8 +32,9 @@ const configI18n = ({ keyUiLocale }) => {
 async function main() {
     const baseUrl = await getBaseUrl();
 
+    const api = new D2Api({ baseUrl, backend: "fetch" });
+
     try {
-        const api = new D2Api({ baseUrl, backend: "fetch" });
         const userSettings = await api.get("/userSettings").getData();
         if (typeof userSettings === "string") throw new Error("User needs to log in");
         configI18n(userSettings);
@@ -55,7 +56,7 @@ async function main() {
     try {
         ReactDOM.render(
             <Provider config={{ baseUrl, apiVersion: "30" }}>
-                <PresentationLoader />
+                <PresentationLoader api={api} />
             </Provider>,
             document.getElementById("root")
         );

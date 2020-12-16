@@ -1,7 +1,7 @@
 import { SynchronizationReportData } from "../../domain/reports/entities/SynchronizationReport";
 import { getDataStore, saveDataStore } from "../../models/dataStore";
 import { D2Api } from "../../types/d2-api";
-import { Debug } from "../types";
+import { Debug, Migration } from "../types";
 
 export interface SynchronizationResultOld {
     status: "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
@@ -81,7 +81,7 @@ interface SynchronizationResultNew {
     }[];
 }
 
-export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
+async function migrate(api: D2Api, debug: Debug): Promise<void> {
     const dataStoreKeys = await api.dataStore("metadata-synchronization").getKeys().getData();
 
     const notificationKeys = dataStoreKeys
@@ -131,3 +131,7 @@ export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
         await saveDataStore(api, `notifications-${notification}`, newNotification);
     }
 }
+
+const migration: Migration = { name: "Update sync reports", migrate };
+
+export default migration;

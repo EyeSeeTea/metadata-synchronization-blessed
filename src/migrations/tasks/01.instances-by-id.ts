@@ -3,7 +3,7 @@ import { getDataStore, saveDataStore } from "../../models/dataStore";
 import { D2Api } from "../../types/d2-api";
 import { Maybe } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
-import { Debug } from "../types";
+import { Debug, Migration } from "../types";
 import { getDuplicatedIds } from "../utils";
 
 interface InstanceOld {
@@ -26,7 +26,7 @@ interface InstanceDetailsNew {
     metadataMapping: MetadataMappingDictionary;
 }
 
-export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
+async function migrate(api: D2Api, debug: Debug): Promise<void> {
     const oldInstances = await getDataStore<InstanceOld[]>(api, "instances", []);
     const newInstances: InstanceNew[] = oldInstances.map(ins => _.omit(ins, ["metadataMapping"]));
     const duplicatedIds = getDuplicatedIds(oldInstances);
@@ -45,3 +45,7 @@ export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
     debug(`Save main instances object`);
     await saveDataStore(api, "instances", newInstances);
 }
+
+const migration: Migration = { name: "Update instance ids", migrate };
+
+export default migration;
