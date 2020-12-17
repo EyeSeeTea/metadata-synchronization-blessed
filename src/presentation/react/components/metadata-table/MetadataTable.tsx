@@ -135,6 +135,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [filters, setFilters] = useState<ListMetadataParams>({
         type: model.getCollectionName(),
         showOnlySelected: initialShowOnlySelected,
+        selectedIds,
         order: initialState.sorting,
         page: initialState.pagination.page,
         pageSize: initialState.pagination.pageSize,
@@ -427,7 +428,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .list({ ...filters, filterRows, fields, includeParents }, remoteInstance)
             .then(({ objects, pager }) => {
                 const rows = model.getApiModelTransform()((objects as unknown) as MetadataType[]);
-                console.log(3, rows);
                 notifyRowsChange(rows);
 
                 setRows(rows);
