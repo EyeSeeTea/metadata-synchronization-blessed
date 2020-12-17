@@ -42,11 +42,13 @@ export class MigrationsAppRepository implements MigrationsRepository {
         const storageClient = await this.configRepository.getStorageClient();
 
         return {
-            get: storageClient.getObject,
-            getOrCreate: storageClient.getOrCreateObject,
-            save: storageClient.saveObject,
-            remove: storageClient.removeObject,
-            listKeys: storageClient.listKeys,
+            get: <T extends object>(key: string) => storageClient.getObject<T>(key),
+            getOrCreate: <T extends object>(key: string, defaultValue: T) =>
+                storageClient.getOrCreateObject<T>(key, defaultValue),
+            save: <T extends object>(key: string, value: T) =>
+                storageClient.saveObject<T>(key, value),
+            remove: (key: string) => storageClient.removeObject(key),
+            listKeys: () => storageClient.listKeys(),
         };
     }
 }
