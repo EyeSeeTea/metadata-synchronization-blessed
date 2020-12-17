@@ -7,7 +7,7 @@ import {
     DashboardModel,
     DataSetModel,
     ProgramModel,
-    ProgramRuleModel
+    ProgramRuleModel,
 } from "../../../../../models/dhis/metadata";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { ModuleWizardStepProps } from "../Steps";
