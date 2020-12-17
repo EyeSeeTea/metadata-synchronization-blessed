@@ -21,7 +21,7 @@ const generateClassName = createGenerateClassName({
     productionPrefix: "c",
 });
 
-const App: React.FC<{ api: D2Api }> = ({ api }) => {
+const App = () => {
     const { baseUrl } = useConfig();
     const migrations = useMigrations();
 
@@ -37,6 +37,7 @@ const App: React.FC<{ api: D2Api }> = ({ api }) => {
             if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
 
             const d2 = await init({ baseUrl: `${baseUrl}/api` });
+            const api = new D2Api({ baseUrl, backend: "fetch" });
             const version = await api.getVersion();
             const instance = Instance.build({
                 type: "local",
@@ -50,7 +51,7 @@ const App: React.FC<{ api: D2Api }> = ({ api }) => {
         };
 
         run();
-    }, [baseUrl, api]);
+    }, [baseUrl]);
 
     if (migrations.state.type === "pending") {
         return (
