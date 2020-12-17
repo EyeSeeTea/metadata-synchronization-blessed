@@ -6,6 +6,7 @@ export interface ConfigRepositoryConstructor {
 }
 
 export interface ConfigRepository {
+    getBaseUrl(): string;
     getStorageClient(): Promise<StorageClient>;
     changeStorageClient(client: "dataStore" | "constant"): Promise<void>;
 }

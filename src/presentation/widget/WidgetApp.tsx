@@ -8,9 +8,9 @@ import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
 import i18n from "../../locales";
-import { useMigrations } from "../../migrations/hooks";
 import { D2Api } from "../../types/d2-api";
 import { CompositionRoot } from "../CompositionRoot";
+import { useMigrations } from "../react/core/components/migrations/hooks";
 import { AppContext } from "../react/core/contexts/AppContext";
 import muiThemeLegacy from "../react/core/themes/dhis2-legacy.theme";
 import { muiTheme } from "../react/core/themes/dhis2.theme";
@@ -23,7 +23,7 @@ const generateClassName = createGenerateClassName({
 
 const App: React.FC<{ api: D2Api }> = ({ api }) => {
     const { baseUrl } = useConfig();
-    const migrations = useMigrations(api, "metadata-synchronization");
+    const migrations = useMigrations();
 
     const [appContext, setAppContext] = useState<AppContext | null>(null);
 

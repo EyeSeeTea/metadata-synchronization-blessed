@@ -69,6 +69,11 @@ export class StorageConstantClient extends StorageClient {
         await this.updateConstant(id, value);
     }
 
+    public async listKeys(): Promise<string[]> {
+        const { value = {} } = await this.getConstant<Dictionary<unknown>>();
+        return Object.keys(value);
+    }
+
     private async updateConstant<T extends object>(id: string, value: T): Promise<void> {
         await this.api.metadata
             .post({

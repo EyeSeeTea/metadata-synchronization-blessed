@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Ref } from "../types/d2-api";
+import { Ref } from "../../../domain/common/entities/Ref";
 
 export function getDuplicatedIds<Obj extends Ref>(objects: Obj[]): string[] {
     return _(objects)

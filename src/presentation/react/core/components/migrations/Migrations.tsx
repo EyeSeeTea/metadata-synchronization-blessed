@@ -1,15 +1,15 @@
 import { ConfirmationDialog } from "d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
+import { MigrationVersions } from "../../../../../domain/migrations/entities/MigrationVersions";
 import i18n from "../../../../../locales";
-import { MigrationsRunner } from "../../../../../migrations";
-import { UseMigrationsResult } from "../../../../../migrations/hooks";
+import { useAppContext } from "../../contexts/AppContext";
+import { UseMigrationsResult } from "./hooks";
 
 export interface MigrationsProps {
     migrations: UseMigrationsResult;
 }
 
 export interface MigrationsRunnerProps {
-    runner: MigrationsRunner;
     onFinish: () => void;
 }
 
@@ -19,35 +19,67 @@ const Migrations: React.FC<MigrationsProps> = props => {
     if (state.type === "checking" || state.type === "checked") {
         return null;
     } else {
-        return <MigrationsDialog runner={state.runner} onFinish={onFinish} />;
+        return <MigrationsDialog onFinish={onFinish} />;
     }
 };
 
-type DialogState =
-    | { type: "show-info" }
-    | { type: "app-out-of-date" }
-    | { type: "migrating" }
-    | { type: "success" };
+interface DialogState {
+    type: "show-info" | "app-out-of-date" | "migrating" | "success" | "initializing";
+}
 
-const MigrationsDialog: React.FC<MigrationsRunnerProps> = props => {
-    const { runner, onFinish } = props;
+const MigrationsDialog: React.FC<MigrationsRunnerProps> = ({ onFinish }) => {
+    const { compositionRoot } = useAppContext();
+
+    const [state, setState] = useState<DialogState>({ type: "initializing" });
     const [messages, setMessages] = useState<string[]>([]);
+    const [versions, setVersions] = useState<MigrationVersions>();
 
-    const [state, setState] = useState<DialogState>(getInitialState(runner));
+    useEffect(() => {
+        compositionRoot.migrations.getVersions().then(versions => {
+            const { appVersion, instanceVersion } = versions;
+            setVersions(versions);
+
+            if (instanceVersion === appVersion) {
+                setState({ type: "success" });
+            } else if (instanceVersion > appVersion) {
+                setState({ type: "app-out-of-date" });
+            } else {
+                setState({ type: "show-info" });
+            }
+        });
+    }, [compositionRoot]);
+
     useEffect(followContents, [messages]);
 
     const debug = useCallback((message: string) => {
         setMessages(messages => [...messages, message]);
     }, []);
 
-    const startMigration = useCallback(() => {
-        runMigrations(runner, debug, setState).then(setState);
-    }, [runner, debug]);
+    const startMigration = useCallback(async () => {
+        try {
+            setState({ type: "migrating" });
+            await compositionRoot.migrations.run(debug);
+            setState({ type: "success" });
+        } catch (err) {
+            debug("---");
+            debug(`Error: ${err.message}`);
+            debug(
+                i18n.t(
+                    "There has been an error. You can either retry or contact your administrator if you think there has been an un recoverable error"
+                )
+            );
+            setState({ type: "show-info" });
+        }
+    }, [compositionRoot, debug]);
 
     const actionText = getActionText(state);
 
+    if (!versions) {
+        return null;
+    }
+
     if (state.type === "app-out-of-date") {
-        return <MigrationsError runner={runner} onFinish={onFinish} />;
+        return <MigrationsError versions={versions} onFinish={onFinish} />;
     }
 
     return (
@@ -62,7 +94,7 @@ const MigrationsDialog: React.FC<MigrationsRunnerProps> = props => {
             fullWidth={true}
         >
             <div id="migrations-contents">
-                <p>{getPendingMigrationsText(runner)}</p>
+                <p>{getPendingMigrationsText(versions)}</p>
 
                 <p>
                     {messages.map((msg, idx) => (
@@ -82,29 +114,6 @@ const MigrationsDialog: React.FC<MigrationsRunnerProps> = props => {
     );
 };
 
-function runMigrations(
-    runner: MigrationsRunner,
-    debug: (message: string) => void,
-    setState: React.Dispatch<React.SetStateAction<DialogState>>
-): Promise<DialogState> {
-    setState({ type: "migrating" });
-
-    return runner
-        .setDebug(debug)
-        .execute()
-        .then(() => ({ type: "success" as const }))
-        .catch(err => {
-            debug("---");
-            debug(`Error: ${err.message}`);
-            debug(
-                i18n.t(
-                    "There has been an error. You can either retry or contact your administrator if you think there has been an un recoverable error"
-                )
-            );
-            return { type: "show-info" as const };
-        });
-}
-
 function followContents() {
     const contentsEl = document.getElementById("migrations-contents");
     const divEl = contentsEl ? contentsEl.parentElement : null;
@@ -113,6 +122,8 @@ function followContents() {
 
 function getActionText(state: DialogState): string | undefined {
     switch (state.type) {
+        case "initializing":
+            return i18n.t("Checking migrations");
         case "show-info":
             return i18n.t("Migrate instance");
         case "migrating":
@@ -124,27 +135,17 @@ function getActionText(state: DialogState): string | undefined {
     }
 }
 
-function getInitialState(runner: MigrationsRunner): DialogState {
-    if (runner.instanceVersion === runner.appVersion) {
-        return { type: "success" };
-    } else if (runner.instanceVersion > runner.appVersion) {
-        return { type: "app-out-of-date" };
-    } else {
-        return { type: "show-info" };
-    }
-}
-
-function getPendingMigrationsText(runner: MigrationsRunner): string {
+function getPendingMigrationsText(versions: MigrationVersions): string {
     return i18n.t(
         "The app needs to run pending migrations (from version {{instanceVersion}} to version {{appVersion}}) in order to continue. This may take a long time, make sure the process is not interrupted.",
-        runner
+        versions
     );
 }
 
 const isDebug = process.env.NODE_ENV === "development";
 
-const MigrationsError: React.FC<{ runner: MigrationsRunner; onFinish: () => void }> = ({
-    runner,
+const MigrationsError: React.FC<{ versions: MigrationVersions; onFinish: () => void }> = ({
+    versions,
     onFinish,
 }) => (
     <ConfirmationDialog
@@ -157,7 +158,7 @@ const MigrationsError: React.FC<{ runner: MigrationsRunner; onFinish: () => void
     >
         {i18n.t(
             "The database version ({{instanceVersion}}) is greater than the app version ({{appVersion}}), cannot continue. Please contact the administrator to update the app.",
-            runner
+            versions
         )}
     </ConfirmationDialog>
 );

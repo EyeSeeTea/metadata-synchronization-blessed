@@ -68,4 +68,8 @@ export class StorageDataStoreClient extends StorageClient {
             await this.saveObject(key, value as object);
         });
     }
+
+    public async listKeys(): Promise<string[]> {
+        return this.dataStore.getKeys().getData();
+    }
 }

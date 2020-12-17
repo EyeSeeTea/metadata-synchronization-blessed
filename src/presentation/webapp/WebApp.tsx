@@ -10,10 +10,10 @@ import _ from "lodash";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
-import { useMigrations } from "../../migrations/hooks";
 import { D2Api } from "../../types/d2-api";
 import { initializeAppRoles } from "../../utils/permissions";
 import { CompositionRoot } from "../CompositionRoot";
+import { useMigrations } from "../react/core/components/migrations/hooks";
 import Migrations from "../react/core/components/migrations/Migrations";
 import Share from "../react/core/components/share/Share";
 import { AppContext } from "../react/core/contexts/AppContext";
@@ -71,7 +71,7 @@ function initFeedbackTool(d2: unknown, appConfig: AppConfig): void {
 
 const App: React.FC<{ api: D2Api }> = ({ api }) => {
     const { baseUrl } = useConfig();
-    const migrations = useMigrations(api, "metadata-synchronization");
+    const migrations = useMigrations();
 
     const [appContext, setAppContext] = useState<AppContext | null>(null);
     const [showShareButton, setShowShareButton] = useState(false);

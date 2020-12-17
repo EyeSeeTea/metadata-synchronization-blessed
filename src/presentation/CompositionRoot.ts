@@ -5,6 +5,7 @@ import { FileD2Repository } from "../data/file/FileD2Repository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
 import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
+import { MigrationsAppRepository } from "../data/migrations/MigrationsAppRepository";
 import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepository";
 import { ReportsD2ApiRepository } from "../data/reports/ReportsD2ApiRepository";
 import { RulesD2ApiRepository } from "../data/rules/RulesD2ApiRepository";
@@ -43,6 +44,9 @@ import { ListMetadataUseCase } from "../domain/metadata/usecases/ListMetadataUse
 import { ListResponsiblesUseCase } from "../domain/metadata/usecases/ListResponsiblesUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import { SetResponsiblesUseCase } from "../domain/metadata/usecases/SetResponsiblesUseCase";
+import { GetMigrationVersionsUseCase } from "../domain/migrations/usecases/GetMigrationVersionsUseCase";
+import { HasPendingMigrationsUseCase } from "../domain/migrations/usecases/HasPendingMigrationsUseCase";
+import { RunMigrationsUseCase } from "../domain/migrations/usecases/RunMigrationsUseCase";
 import { DeleteModuleUseCase } from "../domain/modules/usecases/DeleteModuleUseCase";
 import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/DownloadModuleSnapshotUseCase";
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
@@ -103,6 +107,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.ReportsRepository, ReportsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.RulesRepository, RulesD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.MigrationsRepository, MigrationsAppRepository);
         this.repositoryFactory.bind(
             Repositories.MetadataRepository,
             MetadataJSONRepository,
@@ -345,6 +350,18 @@ export class CompositionRoot {
         return getExecute({
             getStorage: new GetStorageConfigUseCase(this.repositoryFactory, this.localInstance),
             setStorage: new SetStorageConfigUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get migrations() {
+        return getExecute({
+            run: new RunMigrationsUseCase(this.repositoryFactory, this.localInstance),
+            getVersions: new GetMigrationVersionsUseCase(
+                this.repositoryFactory,
+                this.localInstance
+            ),
+            hasPending: new HasPendingMigrationsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }
