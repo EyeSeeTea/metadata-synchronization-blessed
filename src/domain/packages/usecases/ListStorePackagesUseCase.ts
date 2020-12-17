@@ -6,7 +6,6 @@ import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { BaseModule } from "../../modules/entities/Module";
 import { Repositories } from "../../Repositories";
@@ -29,20 +28,12 @@ export class ListStorePackagesUseCase implements UseCase {
 
         if (!store) return Either.error("STORE_NOT_FOUND");
 
-        const userGroups = await this.instanceRepository(this.localInstance).getUserGroups();
         const validation = await this.gitRepository().listBranches(store);
         if (validation.isError()) return Either.error(validation.value.error);
 
         const branches = validation.value.data?.flatMap(({ name }) => name) ?? [];
-        const matchingBranches = _.intersection(
-            userGroups.map(({ name }) => name.replace(/\s/g, "-")),
-            branches
-        );
 
-        const rawPackages = await promiseMap(matchingBranches, userGroup =>
-            this.getPackages(store, userGroup)
-        );
-
+        const rawPackages = await promiseMap(branches, branch => this.getPackages(store, branch));
         const packages = _.compact(rawPackages.flatMap(({ value }) => value.data));
 
         return Either.success(packages);
@@ -61,14 +52,6 @@ export class ListStorePackagesUseCase implements UseCase {
         return this.repositoryFactory.get<StorageRepositoryConstructor>(
             Repositories.StorageRepository,
             [instance]
-        );
-    }
-
-    @cache()
-    private instanceRepository(instance: Instance) {
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
         );
     }
 
