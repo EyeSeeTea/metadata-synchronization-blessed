@@ -879,12 +879,20 @@ function mapPackagesToPackageItems(
     packageSource?: PackageSource
 ): PackageItem[] {
     const verifyIfPackageIsImported = (pkg: ListPackage) => {
-        return importedPackages.some(
-            imported =>
+        return importedPackages.some(imported => {
+            const importedRevision = imported.version.split("-")[0];
+            const importedTag = imported.version.split("-")[1] || "";
+
+            const pkgRevision = pkg.version.split("-")[0];
+            const pkgTag = pkg.version.split("-")[1] || "";
+
+            return (
                 imported.module.id === pkg.module.id &&
-                imported.version === pkg.version &&
+                importedRevision === pkgRevision &&
+                importedTag === pkgTag &&
                 imported.dhisVersion === pkg.dhisVersion
-        );
+            );
+        });
     };
 
     if (packageSource) {
