@@ -71,10 +71,9 @@ function initFeedbackTool(d2: unknown, appConfig: AppConfig): void {
 
 const App = () => {
     const { baseUrl } = useConfig();
-    const migrations = useMigrations();
-
     const [appContext, setAppContext] = useState<AppContext | null>(null);
     const [showShareButton, setShowShareButton] = useState(false);
+    const migrations = useMigrations(appContext);
 
     const appTitle = process.env.REACT_APP_PRESENTATION_TITLE;
 
@@ -112,7 +111,11 @@ const App = () => {
     }, [baseUrl]);
 
     if (migrations.state.type === "pending") {
-        return <Migrations migrations={migrations} />;
+        return (
+            <AppContext.Provider value={appContext}>
+                <Migrations migrations={migrations} />
+            </AppContext.Provider>
+        );
     }
 
     if (migrations.state.type === "checked") {

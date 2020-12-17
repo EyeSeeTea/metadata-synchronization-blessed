@@ -23,9 +23,8 @@ const generateClassName = createGenerateClassName({
 
 const App = () => {
     const { baseUrl } = useConfig();
-    const migrations = useMigrations();
-
     const [appContext, setAppContext] = useState<AppContext | null>(null);
+    const migrations = useMigrations(appContext);
 
     useEffect(() => {
         const run = async () => {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAppContext } from "../../contexts/AppContext";
+import { AppContext } from "../../contexts/AppContext";
 
 export interface MigrationsState {
     type: "checking" | "pending" | "checked";
@@ -10,19 +10,17 @@ export interface UseMigrationsResult {
     onFinish: () => void;
 }
 
-export function useMigrations(): UseMigrationsResult {
-    const { compositionRoot } = useAppContext();
-
+export function useMigrations(appContext: AppContext | null): UseMigrationsResult {
     const [state, setState] = useState<MigrationsState>({ type: "checking" });
     const onFinish = useCallback(() => setState({ type: "checked" }), [setState]);
 
     useEffect(() => {
-        compositionRoot.migrations
+        appContext?.compositionRoot.migrations
             .hasPending()
             .then(pendingMigrations =>
                 setState({ type: pendingMigrations ? "pending" : "checked" })
             );
-    }, [compositionRoot]);
+    }, [appContext]);
 
     const result = useMemo(() => ({ state, onFinish }), [state, onFinish]);
 
