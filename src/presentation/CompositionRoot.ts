@@ -10,6 +10,7 @@ import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepositor
 import { ReportsD2ApiRepository } from "../data/reports/ReportsD2ApiRepository";
 import { RulesD2ApiRepository } from "../data/rules/RulesD2ApiRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
+import { Namespace } from "../data/storage/Namespaces";
 import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRepository";
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
@@ -19,7 +20,7 @@ import { GetStorageConfigUseCase } from "../domain/config/usecases/GetStorageCon
 import { SetStorageConfigUseCase } from "../domain/config/usecases/SetStorageConfigUseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
-import { Instance } from "../domain/instance/entities/Instance";
+import { Instance, InstanceData } from "../domain/instance/entities/Instance";
 import { DeleteInstanceUseCase } from "../domain/instance/usecases/DeleteInstanceUseCase";
 import { GetInstanceApiUseCase } from "../domain/instance/usecases/GetInstanceApiUseCase";
 import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceByIdUseCase";
@@ -117,6 +118,11 @@ export class CompositionRoot {
             Repositories.TransformationRepository,
             TransformationD2ApiRepository
         );
+    }
+
+    public async initialize() {
+        const initializeRoutine = new StartApplicationRoutine(this.repositoryFactory, this.localInstance);
+        await initializeRoutine.execute();
     }
 
     @cache()
@@ -378,4 +384,33 @@ function getExecute<UseCases extends Record<Key, UseCase>, Key extends keyof Use
         output[key] = execute;
         return output;
     }, initialOutput);
+}
+
+export class StartApplicationRoutine implements UseCase {
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+
+    public async execute(): Promise<void> {
+        await this.verifyLocalInstanceExists();
+    }
+
+    private async verifyLocalInstanceExists() {
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
+        const objects = await storageClient.listObjectsInCollection<InstanceData>(
+            Namespace.INSTANCES
+        );
+
+        if (objects.find(data => data.id === "LOCAL")) return;
+
+        const localInstance = Instance.build({
+            type: "local",
+            id: "LOCAL",
+            name: "This instance",
+            url: "",
+        });
+
+        await storageClient.saveObjectInCollection(Namespace.INSTANCES, localInstance);
+    }
 }
