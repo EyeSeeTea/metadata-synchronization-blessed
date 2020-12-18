@@ -74,7 +74,9 @@ export class ImportPackageUseCase implements UseCase {
             result,
         });
 
-        await this.createPackageInLocalIfRequired(item, payload);
+        if (result.status === "SUCCESS") {
+            await this.createPackageInLocalIfRequired(item, payload);
+        }
 
         return result;
     }

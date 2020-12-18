@@ -87,6 +87,15 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
         [updateModel]
     );
 
+    const onChangeName = useCallback(
+        (event: React.ChangeEvent<{ value: unknown }>) => {
+            const updatedModule = module.update({ name: event.target.value as string });
+            setModule(updatedModule);
+            setNewPackage(newPackage.update({ name: event.target.value as string }));
+        },
+        [module, newPackage]
+    );
+
     const updateVersionNumber = useCallback(
         (event: React.ChangeEvent<{ value: unknown }>) => {
             const revision = event.target.value as string;
@@ -214,9 +223,9 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
                 <TextField
                     className={classes.row}
                     fullWidth={true}
-                    label={i18n.t("Name (*)")}
+                    label={i18n.t("Package/Module Name (*)")}
                     value={newPackage.name ?? ""}
-                    onChange={onChangeField("name")}
+                    onChange={onChangeName}
                     error={!!errors["name"]}
                     helperText={errors["name"]?.description}
                 />
