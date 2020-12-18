@@ -160,7 +160,7 @@ const ManualSyncPage: React.FC = () => {
 
     const handleSynchronization = async (syncRule: SynchronizationRule) => {
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
-
+        
         const result = await compositionRoot.sync.prepare(syncRule.type, syncRule.toBuilder());
         const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
 
@@ -304,7 +304,11 @@ const ManualSyncPage: React.FC = () => {
             )}
 
             {!!syncReport && (
-                <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
+                <SyncSummary
+                    response={syncReport}
+                    payload={syncReport.payload}
+                    onClose={() => setSyncReport(null)}
+                />
             )}
 
             {!!pullRequestProps && (

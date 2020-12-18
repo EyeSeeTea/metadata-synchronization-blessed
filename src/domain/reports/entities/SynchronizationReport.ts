@@ -3,17 +3,20 @@ import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { SynchronizationResult } from "./SynchronizationResult";
+import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 
 export class SynchronizationReport implements SynchronizationReportData {
     private results: SynchronizationResult[] | null;
     public status: SynchronizationReportStatus;
     public types: string[];
     public deletedSyncRuleLabel?: string | undefined;
+    //new addition
+    public payload?: MetadataPackage;
 
     public readonly id: string;
     public readonly date: Date;
     public readonly user: string;
-    public readonly syncRule?: string | undefined;
+    public syncRule?: string | undefined;
     public readonly packageImport?: boolean | undefined;
     public readonly type: SynchronizationType;
     public readonly dataStats?: AggregatedDataStats[] | EventsDataStats[] | undefined;
@@ -71,6 +74,10 @@ export class SynchronizationReport implements SynchronizationReportData {
             ({ instance, type, originPackage }) => `${instance.id}-${type}-${originPackage?.id}`
         );
     }
+    public setPayload(payload: MetadataPackage): void {
+        this.payload = payload;
+    }
+
 
     public hasErrors(): boolean {
         return _.some(this.results, result => ["ERROR", "NETWORK ERROR"].includes(result.status));

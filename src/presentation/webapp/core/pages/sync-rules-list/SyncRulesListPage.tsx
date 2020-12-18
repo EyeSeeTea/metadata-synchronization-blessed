@@ -195,6 +195,7 @@ const SyncRulesPage: React.FC = () => {
 
         loading.show(true, "Generating JSON file");
         const sync = compositionRoot.sync[rule.type](rule.toBuilder());
+        //I think this is type MetadataPackage
         const payload = await sync.buildPayload();
 
         requestJSONDownload(payload, rule);
@@ -275,6 +276,7 @@ const SyncRulesPage: React.FC = () => {
         };
 
         const synchronize = async () => {
+            //added payload
             for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) loading.show(true, message);
                 if (syncReport) await compositionRoot.reports.save(syncReport);

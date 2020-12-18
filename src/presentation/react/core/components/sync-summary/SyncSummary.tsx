@@ -28,6 +28,9 @@ import { Store } from "../../../../../domain/stores/entities/Store";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
+import { MetadataPackage } from "../../../../../domain/metadata/entities/MetadataEntities";
+//import { requestJSONDownload } from "../../../../../utils/synchronization";
+import moment from "moment";
 
 const useStyles = makeStyles(theme => ({
     accordionHeading1: {
@@ -174,6 +177,8 @@ const getTypeName = (reportType: SynchronizationType, syncType: string) => {
 interface SyncSummaryProps {
     response: SynchronizationReport;
     onClose: () => void;
+    //new
+    payload?: MetadataPackage;
 }
 
 const getOriginName = (source: PublicInstance | Store) => {
@@ -186,10 +191,29 @@ const getOriginName = (source: PublicInstance | Store) => {
     }
 };
 
-const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
+const SyncSummary = ({ response, payload, onClose }: SyncSummaryProps) => {
     const { compositionRoot } = useAppContext();
     const classes = useStyles();
     const [results, setResults] = useState<SynchronizationResult[]>([]);
+    //const loading = useLoading();
+    const downloadJSON = () => {
+        console.log('payload!!');
+        console.log(payload);
+        const date = moment().format("YYYYMMDDHHmm");
+        const fileName = `synchronization-${date}.json`;
+        compositionRoot.storage.downloadFile(fileName, payload);
+       // loading.show(true, "Generating JSON file");
+        //it wants it as an object
+        //const payloadd = _.mapValues(payload, elements => _.uniqBy(elements, "id"));
+        //getting an error 
+        //Argument of type 'string | undefined' is not assignable to parameter of type 'SynchronizationRule'.
+        // Type 'undefined' is not assignable to type 'SynchronizationRule'.
+        //
+        //requestJSONDownload(payloadd, response.syncRule);
+        //loading.reset();
+    };
+
+
 
     useEffect(() => {
         compositionRoot.reports.getSyncResults(response.id).then(setResults);
@@ -246,7 +270,15 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
                             <AccordionDetails className={classes.accordionDetails}>
                                 <Typography variant="overline">{i18n.t("Summary")}</Typography>
                             </AccordionDetails>
-
+                            {status !== "SUCCESS" && (
+                                <AccordionDetails className={classes.accordionDetails}>
+                                    <button onClick={downloadJSON}>
+                                        <Typography className={classes.accordionHeading1}>
+                                            {i18n.t("Download JSON Payload")}
+                                        </Typography>
+                                    </button>
+                                </AccordionDetails>
+                            )}
                             {message && (
                                 <AccordionDetails className={classes.accordionDetails}>
                                     <Typography variant="body2">{message}</Typography>

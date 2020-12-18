@@ -136,12 +136,14 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             instance,
             payloadPackage
         );
-
+            //you want to return this mappedPayloadPackage
+            //you can return it in the SynchronizationResult
         const mappedPayloadPackage = syncParams?.enableMapping
             ? await this.mapPayload(instance, payloadWithDocumentFiles)
             : payloadWithDocumentFiles;
 
         debug("Metadata package", { payloadPackage, mappedPayloadPackage });
+        console.log("Metadata package", { payloadPackage, mappedPayloadPackage });
 
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
         const syncResult = await remoteMetadataRepository.save(mappedPayloadPackage, syncParams);
