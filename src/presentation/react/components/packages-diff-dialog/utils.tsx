@@ -14,7 +14,6 @@ import { PackageToDiff } from "./PackagesDiffDialog";
 export function getChange(fieldUpdate: FieldUpdate): string {
     const { field, oldValue, newValue } = fieldUpdate;
     const has = (s: string) => !!s;
-    console.log(fieldUpdate);
 
     if (has(oldValue) && has(newValue)) {
         return `${field}: ${truncate(oldValue)} -> ${truncate(newValue)}`;
