@@ -6,6 +6,7 @@ import { cache } from "../../utils/cache";
 import { MigrationsRunner } from "./client/MigrationsRunner";
 import { AppStorage } from "./client/types";
 import { getMigrationTasks, MigrationParams } from "./tasks";
+import { promiseMap } from "../../utils/common";
 
 export class MigrationsAppRepository implements MigrationsRepository {
     constructor(private configRepository: ConfigRepository) {}
@@ -29,11 +30,14 @@ export class MigrationsAppRepository implements MigrationsRepository {
     private async getMigrationsRunner(): Promise<MigrationsRunner<MigrationParams>> {
         const storage = await this.getStorageClient();
         const baseUrl = this.configRepository.getBaseUrl();
+        const migrations = await promiseMap(getMigrationTasks(), async ([version, module_]) => {
+            return { version, ...(await module_).default };
+        });
 
         return MigrationsRunner.init<MigrationParams>({
             storage,
             debug: console.debug,
-            migrations: await getMigrationTasks(),
+            migrations,
             migrationParams: { baseUrl },
         });
     }

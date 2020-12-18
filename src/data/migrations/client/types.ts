@@ -32,4 +32,4 @@ export interface RunnerOptions<T> {
     migrationParams: T;
 }
 
-export type MigrationTasks<T> = MigrationWithVersion<T>[];
+export type MigrationTasks<T> = Array<[number, Promise<{ default: Migration<T> }>]>;
