@@ -121,7 +121,10 @@ export class CompositionRoot {
     }
 
     public async initialize() {
-        const initializeRoutine = new StartApplicationRoutine(this.repositoryFactory, this.localInstance);
+        const initializeRoutine = new StartApplicationRoutine(
+            this.repositoryFactory,
+            this.localInstance
+        );
         await initializeRoutine.execute();
     }
 
@@ -409,7 +412,7 @@ export class StartApplicationRoutine implements UseCase {
             id: "LOCAL",
             name: "This instance",
             url: "",
-        });
+        }).toObject();
 
         await storageClient.saveObjectInCollection(Namespace.INSTANCES, localInstance);
     }
