@@ -29,7 +29,6 @@ export class MigrationsAppRepository implements MigrationsRepository {
     @cache()
     private async getMigrationsRunner(): Promise<MigrationsRunner<MigrationParams>> {
         const storage = await this.getStorageClient();
-        const baseUrl = this.configRepository.getBaseUrl();
         const migrations = await promiseMap(getMigrationTasks(), async ([version, module_]) => {
             return { version, ...(await module_).default };
         });
@@ -38,7 +37,7 @@ export class MigrationsAppRepository implements MigrationsRepository {
             storage,
             debug: console.debug,
             migrations,
-            migrationParams: { baseUrl },
+            migrationParams: {},
         });
     }
 

@@ -7,7 +7,7 @@ import { MigrationParams } from "./index";
 export async function migrate(
     storageClient: AppStorage,
     _debug: Debug,
-    params: MigrationParams
+    _params: MigrationParams
 ): Promise<void> {
     const oldContents = await storageClient.get<InstanceData[]>("instances");
     if (!oldContents) return;
@@ -26,7 +26,7 @@ export async function migrate(
         type: "local",
         id: "LOCAL",
         name: "This instance",
-        url: params.baseUrl,
+        url: "",
     }).toObject();
 
     const instances = _.uniqBy([localInstance, ...oldInstances], "id");

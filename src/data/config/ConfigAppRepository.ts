@@ -10,10 +10,6 @@ import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
 export class ConfigAppRepository implements ConfigRepository {
     constructor(private instance: Instance) {}
 
-    public getBaseUrl(): string {
-        return this.instance.url;
-    }
-
     public async detectStorageClients(): Promise<Array<"dataStore" | "constant">> {
         const dataStoreClient = new StorageDataStoreClient(this.instance);
         const constantClient = new StorageConstantClient(this.instance);

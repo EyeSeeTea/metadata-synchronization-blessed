@@ -11,6 +11,4 @@ export function getMigrationTasks(): MigrationTasks<MigrationParams> {
     ];
 }
 
-export interface MigrationParams {
-    baseUrl: string;
-}
+export interface MigrationParams {}
