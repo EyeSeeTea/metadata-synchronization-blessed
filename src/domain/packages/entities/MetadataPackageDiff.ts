@@ -49,6 +49,7 @@ function getChanges(
     const metadataDiffPairs = modelKeys.map(modelKey => {
         const baseObjects = getObjectsWithStringValues(baseMetadata, modelKey);
         const mergeableObjects = getObjectsWithStringValues(mergeableMetadata, modelKey);
+        console.log({ baseObjects, mergeableObjects });
         const mergableObjectsById = _.keyBy(mergeableObjects, getId);
         const updatedObjs = _.intersectionBy(baseObjects, mergeableObjects, getId);
         const createdObjs = _.differenceBy(mergeableObjects, baseObjects, getId);
