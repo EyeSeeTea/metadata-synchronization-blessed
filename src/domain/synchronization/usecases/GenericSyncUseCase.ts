@@ -1,4 +1,3 @@
-import { D2Api } from "d2-api/2.30";
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import i18n from "../../../locales";
@@ -30,6 +29,7 @@ import {
 } from "../../reports/entities/SynchronizationResult";
 import { SynchronizationType } from "../entities/SynchronizationType";
 import { executeAnalytics } from "../../../utils/analytics";
+import { D2Api } from "../../../types/d2-api";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase
@@ -66,6 +66,7 @@ export abstract class GenericSyncUseCase {
     // We start to use domain concepts:
     // for the moment old model instance and domain entity instance are going to live together for a while on sync classes.
     // Little by little through refactors the old instance model should disappear
+    //public abstract postPayload(instance: Instance): Promise<SynchronizationResult[]>;
     public abstract postPayload(instance: Instance): Promise<PostPayloadResult>;
     public abstract buildDataStats(): Promise<
         AggregatedDataStats[] | EventsDataStats[] | undefined

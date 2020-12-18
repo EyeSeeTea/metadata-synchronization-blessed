@@ -160,7 +160,6 @@ const ManualSyncPage: React.FC = () => {
 
     const handleSynchronization = async (syncRule: SynchronizationRule) => {
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
-        
         const result = await compositionRoot.sync.prepare(syncRule.type, syncRule.toBuilder());
         const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
 

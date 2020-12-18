@@ -3,17 +3,17 @@ import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 import { init } from "d2";
 import { LoadingProvider, SnackbarProvider } from "d2-ui-components";
+//@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
 import i18n from "../../locales";
-import { MigrationsRunner } from "../../migrations";
 import { D2Api } from "../../types/d2-api";
-import { debug } from "../../utils/debug";
+import { CompositionRoot } from "../CompositionRoot";
+import { useMigrations } from "../react/core/components/migrations/hooks";
 import { AppContext } from "../react/core/contexts/AppContext";
 import muiThemeLegacy from "../react/core/themes/dhis2-legacy.theme";
 import { muiTheme } from "../react/core/themes/dhis2.theme";
-import { CompositionRoot } from "../CompositionRoot";
 import Root from "./pages/Root";
 import "./WidgetApp.css";
 
@@ -23,8 +23,8 @@ const generateClassName = createGenerateClassName({
 
 const App = () => {
     const { baseUrl } = useConfig();
-    const [appContext, setAppContext] = useState(null);
-    const [migrationsState, setMigrationsState] = useState({ type: "checking" });
+    const [appContext, setAppContext] = useState<AppContext | null>(null);
+    const migrations = useMigrations(appContext);
 
     useEffect(() => {
         const run = async () => {
@@ -46,15 +46,15 @@ const App = () => {
             });
 
             const compositionRoot = new CompositionRoot(instance, encryptionKey);
-            setAppContext({ d2, api, compositionRoot });
+            await compositionRoot.initialize();
 
-            runMigrations(api).then(setMigrationsState);
+            setAppContext({ d2: d2 as object, api, compositionRoot });
         };
 
         run();
     }, [baseUrl]);
 
-    if (migrationsState.type === "pending") {
+    if (migrations.state.type === "pending") {
         return (
             <p>{i18n.t("Widget cannot be used until an administrator opens the application")}</p>
         );
@@ -80,15 +80,5 @@ const App = () => {
         </StylesProvider>
     );
 };
-
-async function runMigrations(api) {
-    const runner = await MigrationsRunner.init({ api, debug: debug });
-
-    if (runner.hasPendingMigrations()) {
-        return { type: "pending", runner };
-    } else {
-        return { type: "checked" };
-    }
-}
 
 export default App;

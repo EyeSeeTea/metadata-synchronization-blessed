@@ -1,7 +1,8 @@
-import { SynchronizationReportData } from "../../domain/reports/entities/SynchronizationReport";
-import { getDataStore, saveDataStore } from "../../models/dataStore";
-import { D2Api } from "../../types/d2-api";
-import { Debug } from "../types";
+import debug from "debug";
+import { MigrationParams } from ".";
+import { Debug } from "../../../domain/migrations/entities/Debug";
+import { SynchronizationReportData } from "../../../domain/reports/entities/SynchronizationReport";
+import { AppStorage, Migration } from "../client/types";
 
 export interface SynchronizationResultOld {
     status: "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
@@ -81,24 +82,25 @@ interface SynchronizationResultNew {
     }[];
 }
 
-export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
-    const dataStoreKeys = await api.dataStore("metadata-synchronization").getKeys().getData();
+export async function migrate(
+    storage: AppStorage,
+    _debug: Debug,
+    _params: MigrationParams
+): Promise<void> {
+    const dataStoreKeys = await storage.listKeys();
 
     const notificationKeys = dataStoreKeys
         .filter(key => key.startsWith("notifications-"))
         .map(key => key.replace("notifications-", ""));
 
-    const notifications = await getDataStore<SynchronizationReportData[]>(api, "notifications", []);
+    const notifications = (await storage.get<SynchronizationReportData[]>("notifications")) ?? [];
 
     for (const notification of notificationKeys) {
         const { type = "metadata" } = notifications.find(({ id }) => id === notification) ?? {};
         debug(`Updating ${type} notification ${notification}`);
 
-        const oldNotification = await getDataStore<SynchronizationResultOld[]>(
-            api,
-            `notifications-${notification}`,
-            []
-        );
+        const oldNotification =
+            (await storage.get<SynchronizationResultOld[]>(`notifications-${notification}`)) ?? [];
 
         const newNotification: SynchronizationResultNew[] = oldNotification.map(
             ({
@@ -128,6 +130,10 @@ export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
             })
         );
 
-        await saveDataStore(api, `notifications-${notification}`, newNotification);
+        await storage.save(`notifications-${notification}`, newNotification);
     }
 }
+
+const migration: Migration<MigrationParams> = { name: "Update sync reports", migrate };
+
+export default migration;

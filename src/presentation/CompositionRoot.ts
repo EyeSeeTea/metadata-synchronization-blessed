@@ -5,10 +5,12 @@ import { FileD2Repository } from "../data/file/FileD2Repository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
 import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
+import { MigrationsAppRepository } from "../data/migrations/MigrationsAppRepository";
 import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepository";
 import { ReportsD2ApiRepository } from "../data/reports/ReportsD2ApiRepository";
 import { RulesD2ApiRepository } from "../data/rules/RulesD2ApiRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
+import { Namespace } from "../data/storage/Namespaces";
 import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRepository";
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
@@ -18,7 +20,7 @@ import { GetStorageConfigUseCase } from "../domain/config/usecases/GetStorageCon
 import { SetStorageConfigUseCase } from "../domain/config/usecases/SetStorageConfigUseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
-import { Instance } from "../domain/instance/entities/Instance";
+import { Instance, InstanceData } from "../domain/instance/entities/Instance";
 import { DeleteInstanceUseCase } from "../domain/instance/usecases/DeleteInstanceUseCase";
 import { GetInstanceApiUseCase } from "../domain/instance/usecases/GetInstanceApiUseCase";
 import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceByIdUseCase";
@@ -43,6 +45,9 @@ import { ListMetadataUseCase } from "../domain/metadata/usecases/ListMetadataUse
 import { ListResponsiblesUseCase } from "../domain/metadata/usecases/ListResponsiblesUseCase";
 import { MetadataSyncUseCase } from "../domain/metadata/usecases/MetadataSyncUseCase";
 import { SetResponsiblesUseCase } from "../domain/metadata/usecases/SetResponsiblesUseCase";
+import { GetMigrationVersionsUseCase } from "../domain/migrations/usecases/GetMigrationVersionsUseCase";
+import { HasPendingMigrationsUseCase } from "../domain/migrations/usecases/HasPendingMigrationsUseCase";
+import { RunMigrationsUseCase } from "../domain/migrations/usecases/RunMigrationsUseCase";
 import { DeleteModuleUseCase } from "../domain/modules/usecases/DeleteModuleUseCase";
 import { DownloadModuleSnapshotUseCase } from "../domain/modules/usecases/DownloadModuleSnapshotUseCase";
 import { GetModuleUseCase } from "../domain/modules/usecases/GetModuleUseCase";
@@ -103,6 +108,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.ReportsRepository, ReportsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.RulesRepository, RulesD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.MigrationsRepository, MigrationsAppRepository);
         this.repositoryFactory.bind(
             Repositories.MetadataRepository,
             MetadataJSONRepository,
@@ -112,6 +118,14 @@ export class CompositionRoot {
             Repositories.TransformationRepository,
             TransformationD2ApiRepository
         );
+    }
+
+    public async initialize() {
+        const initializeRoutine = new StartApplicationRoutine(
+            this.repositoryFactory,
+            this.localInstance
+        );
+        await initializeRoutine.execute();
     }
 
     @cache()
@@ -347,6 +361,18 @@ export class CompositionRoot {
             setStorage: new SetStorageConfigUseCase(this.repositoryFactory, this.localInstance),
         });
     }
+
+    @cache()
+    public get migrations() {
+        return getExecute({
+            run: new RunMigrationsUseCase(this.repositoryFactory, this.localInstance),
+            getVersions: new GetMigrationVersionsUseCase(
+                this.repositoryFactory,
+                this.localInstance
+            ),
+            hasPending: new HasPendingMigrationsUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
 }
 
 function getExecute<UseCases extends Record<Key, UseCase>, Key extends keyof UseCases>(
@@ -361,4 +387,33 @@ function getExecute<UseCases extends Record<Key, UseCase>, Key extends keyof Use
         output[key] = execute;
         return output;
     }, initialOutput);
+}
+
+export class StartApplicationRoutine implements UseCase {
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+
+    public async execute(): Promise<void> {
+        await this.verifyLocalInstanceExists();
+    }
+
+    private async verifyLocalInstanceExists() {
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
+        const objects = await storageClient.listObjectsInCollection<InstanceData>(
+            Namespace.INSTANCES
+        );
+
+        if (objects.find(data => data.id === "LOCAL")) return;
+
+        const localInstance = Instance.build({
+            type: "local",
+            id: "LOCAL",
+            name: "This instance",
+            url: "",
+        }).toObject();
+
+        await storageClient.saveObjectInCollection(Namespace.INSTANCES, localInstance);
+    }
 }

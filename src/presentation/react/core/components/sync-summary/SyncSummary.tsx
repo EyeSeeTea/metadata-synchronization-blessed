@@ -2,6 +2,7 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    Button,
     DialogContent,
     makeStyles,
     Table,
@@ -195,25 +196,11 @@ const SyncSummary = ({ response, payload, onClose }: SyncSummaryProps) => {
     const { compositionRoot } = useAppContext();
     const classes = useStyles();
     const [results, setResults] = useState<SynchronizationResult[]>([]);
-    //const loading = useLoading();
     const downloadJSON = () => {
-        console.log('payload!!');
-        console.log(payload);
         const date = moment().format("YYYYMMDDHHmm");
         const fileName = `synchronization-${date}.json`;
         compositionRoot.storage.downloadFile(fileName, payload);
-       // loading.show(true, "Generating JSON file");
-        //it wants it as an object
-        //const payloadd = _.mapValues(payload, elements => _.uniqBy(elements, "id"));
-        //getting an error 
-        //Argument of type 'string | undefined' is not assignable to parameter of type 'SynchronizationRule'.
-        // Type 'undefined' is not assignable to type 'SynchronizationRule'.
-        //
-        //requestJSONDownload(payloadd, response.syncRule);
-        //loading.reset();
     };
-
-
 
     useEffect(() => {
         compositionRoot.reports.getSyncResults(response.id).then(setResults);
@@ -270,15 +257,6 @@ const SyncSummary = ({ response, payload, onClose }: SyncSummaryProps) => {
                             <AccordionDetails className={classes.accordionDetails}>
                                 <Typography variant="overline">{i18n.t("Summary")}</Typography>
                             </AccordionDetails>
-                            {status !== "SUCCESS" && (
-                                <AccordionDetails className={classes.accordionDetails}>
-                                    <button onClick={downloadJSON}>
-                                        <Typography className={classes.accordionHeading1}>
-                                            {i18n.t("Download JSON Payload")}
-                                        </Typography>
-                                    </button>
-                                </AccordionDetails>
-                            )}
                             {message && (
                                 <AccordionDetails className={classes.accordionDetails}>
                                     <Typography variant="body2">{message}</Typography>
@@ -339,6 +317,12 @@ const SyncSummary = ({ response, payload, onClose }: SyncSummaryProps) => {
                         />
                     </AccordionDetails>
                 </Accordion>
+
+                {results[0].status !== "SUCCESS" && (
+                    <AccordionDetails className={classes.accordionDetails}>
+                        <Button onClick={downloadJSON} color="primary">{i18n.t("Download JSON Payload")}</Button>
+                    </AccordionDetails>
+                )}
             </DialogContent>
         </ConfirmationDialog>
     );
