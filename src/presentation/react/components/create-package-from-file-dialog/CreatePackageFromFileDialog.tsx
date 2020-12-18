@@ -91,8 +91,8 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
         (event: React.ChangeEvent<{ value: unknown }>) => {
             const revision = event.target.value as string;
             const tag = newPackage.version.split("-")[1];
-            const newVersion = [revision, tag].join("-");
-            updateModel("version", newVersion);
+            const newVersion = semver.parse([revision, tag].join("-"))?.format();
+            updateModel("version", newVersion ?? revision);
         },
         [newPackage, updateModel]
     );
