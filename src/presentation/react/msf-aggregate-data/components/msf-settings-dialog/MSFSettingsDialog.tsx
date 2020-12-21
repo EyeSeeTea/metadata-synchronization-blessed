@@ -118,6 +118,6 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
 
 const useStyles = makeStyles((theme: Theme) => ({
     selector: {
-        margin: theme.spacing(4, 0, 4, 0),
+        margin: theme.spacing(3, 0, 3, 0),
     },
 }));

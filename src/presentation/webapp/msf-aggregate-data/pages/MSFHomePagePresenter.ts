@@ -1,19 +1,19 @@
 import _ from "lodash";
-import { Period } from "../../../../domain/common/entities/Period";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../locales";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { promiseMap } from "../../../../utils/common";
 import { formatDateLong } from "../../../../utils/date";
 import { CompositionRoot } from "../../../CompositionRoot";
-import { MSFSettings } from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
+import { AdvancedSettings } from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
+import { MSFSettings } from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
 
-//TODO: maybe convert to class and presenter to use MVP, MVI pattern
+//TODO: maybe convert to class and presenter to use MVP, MVI or BLoC pattern
 export async function executeAggregateData(
     compositionRoot: CompositionRoot,
+    advancedSettings: AdvancedSettings,
     msfSettings: MSFSettings,
-    onProgressChange: (progress: string[]) => void,
-    period?: Period
+    onProgressChange: (progress: string[]) => void
 ) {
     let syncProgress: string[] = [i18n.t(`Starting Aggregate Data...`)];
 
@@ -55,7 +55,12 @@ export async function executeAggregateData(
     }
 
     for (const syncRule of rulesWithoutRunAnalylics) {
-        await executeSyncRule(compositionRoot, syncRule, onSyncRuleProgressChange, period);
+        await executeSyncRule(
+            compositionRoot,
+            syncRule,
+            onSyncRuleProgressChange,
+            advancedSettings
+        );
     }
 
     onProgressChange([...syncProgress, i18n.t(`Finished Aggregate Data`)]);
@@ -69,18 +74,18 @@ async function executeSyncRule(
     compositionRoot: CompositionRoot,
     rule: SynchronizationRule,
     onProgressChange: (event: string) => void,
-    period?: Period
+    advancedSettings: AdvancedSettings
 ): Promise<void> {
     const { name, builder, id: syncRule, type = "metadata" } = rule;
 
-    const newBuilder = period
+    const newBuilder = advancedSettings.period
         ? {
               ...builder,
               dataParams: {
                   ...builder.dataParams,
-                  period: period.type,
-                  startDate: period.startDate,
-                  endDate: period.endDate,
+                  period: advancedSettings.period.type,
+                  startDate: advancedSettings.period.startDate,
+                  endDate: advancedSettings.period.endDate,
               },
           }
         : builder;

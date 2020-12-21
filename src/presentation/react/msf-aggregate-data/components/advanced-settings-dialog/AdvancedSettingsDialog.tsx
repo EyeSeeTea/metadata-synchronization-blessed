@@ -1,30 +1,43 @@
-import { Checkbox, FormControlLabel } from "@material-ui/core";
+import { Checkbox, FormControlLabel, makeStyles, Theme } from "@material-ui/core";
 import { ConfirmationDialog, useSnackbar } from "d2-ui-components";
 import React, { useState } from "react";
 import { Period } from "../../../../../domain/common/entities/Period";
 import i18n from "../../../../../locales";
-import PeriodSelection, { ObjectWithPeriod } from "../period-selection/PeriodSelection";
+import PeriodSelection, {
+    ObjectWithPeriod,
+} from "../../../core/components/period-selection/PeriodSelection";
+import { Toggle } from "../../../core/components/toggle/Toggle";
 
-export interface PeriodSelectionDialogProps {
-    title?: string;
+export type AdvancedSettings = {
     period?: Period;
+    deleteDataValuesBeforeSync?: boolean;
+};
+
+export interface AdvancedSettingsDialogProps {
+    title?: string;
+    advancedSettings?: AdvancedSettings;
     onClose(): void;
-    onSave(period?: Period): void;
+    onSave(advancedSettings?: AdvancedSettings): void;
 }
 
-export const PeriodSelectionDialog: React.FC<PeriodSelectionDialogProps> = ({
+export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
     title,
     onClose,
     onSave,
-    period,
+    advancedSettings,
 }) => {
+    const classes = useStyles();
     const snackbar = useSnackbar();
+    const [deleteDataValuesBeforeSync, setDeleteDataValuesBeforeSync] = useState<boolean>(
+        advancedSettings?.deleteDataValuesBeforeSync || false
+    );
+
     const [objectWithPeriod, setObjectWithPeriod] = useState<ObjectWithPeriod | undefined>(
-        period
+        advancedSettings?.period
             ? {
-                  period: period.type,
-                  startDate: period.startDate,
-                  endDate: period.endDate,
+                  period: advancedSettings?.period.type,
+                  startDate: advancedSettings?.period.startDate,
+                  endDate: advancedSettings?.period.endDate,
               }
             : undefined
     );
@@ -47,7 +60,7 @@ export const PeriodSelectionDialog: React.FC<PeriodSelectionDialogProps> = ({
 
             periodValidation.match({
                 error: errors => snackbar.error(errors.map(error => error.description).join("\n")),
-                success: period => onSave(period),
+                success: period => onSave({ period, deleteDataValuesBeforeSync }),
             });
         } else {
             onSave(undefined);
@@ -76,11 +89,27 @@ export const PeriodSelectionDialog: React.FC<PeriodSelectionDialogProps> = ({
             />
 
             {objectWithPeriod && (
-                <PeriodSelection
-                    objectWithPeriod={objectWithPeriod}
-                    onChange={setObjectWithPeriod}
-                />
+                <div className={classes.period}>
+                    <PeriodSelection
+                        objectWithPeriod={objectWithPeriod}
+                        onChange={setObjectWithPeriod}
+                    />
+                </div>
             )}
+
+            <div>
+                <Toggle
+                    label={i18n.t("Delete data values before sync")}
+                    onValueChange={setDeleteDataValuesBeforeSync}
+                    value={deleteDataValuesBeforeSync}
+                />
+            </div>
         </ConfirmationDialog>
     );
 };
+
+const useStyles = makeStyles((theme: Theme) => ({
+    period: {
+        margin: theme.spacing(3, 0),
+    },
+}));
