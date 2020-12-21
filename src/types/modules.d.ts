@@ -40,3 +40,7 @@ declare module "nano-memoize" {
         }
     ): T;
 }
+
+declare module "json-stringify-deterministic" {
+    export default function stringify(obj: any): string;
+}
