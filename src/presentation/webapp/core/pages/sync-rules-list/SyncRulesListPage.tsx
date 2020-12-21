@@ -276,7 +276,6 @@ const SyncRulesPage: React.FC = () => {
         };
 
         const synchronize = async () => {
-            //added payload
             for await (const { message, syncReport, done } of sync.execute()) {
                 if (message) loading.show(true, message);
                 if (syncReport) await compositionRoot.reports.save(syncReport);

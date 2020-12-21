@@ -10,7 +10,6 @@ export class SynchronizationReport implements SynchronizationReportData {
     public status: SynchronizationReportStatus;
     public types: string[];
     public deletedSyncRuleLabel?: string | undefined;
-    //new addition
     public payload?: MetadataPackage;
 
     public readonly id: string;
@@ -77,7 +76,6 @@ export class SynchronizationReport implements SynchronizationReportData {
     public setPayload(payload: MetadataPackage): void {
         this.payload = payload;
     }
-
 
     public hasErrors(): boolean {
         return _.some(this.results, result => ["ERROR", "NETWORK ERROR"].includes(result.status));

@@ -32,6 +32,4 @@ export interface SynchronizationResult {
     stats?: SynchronizationStats;
     typeStats?: SynchronizationStats[];
     errors?: ErrorMessage[];
-    //adding payload to SyncResult so it can be used in SyncReport
-    //payload?: MetadataPackage;
 }

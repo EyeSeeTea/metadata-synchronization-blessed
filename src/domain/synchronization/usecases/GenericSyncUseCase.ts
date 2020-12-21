@@ -66,7 +66,6 @@ export abstract class GenericSyncUseCase {
     // We start to use domain concepts:
     // for the moment old model instance and domain entity instance are going to live together for a while on sync classes.
     // Little by little through refactors the old instance model should disappear
-    //public abstract postPayload(instance: Instance): Promise<SynchronizationResult[]>;
     public abstract postPayload(instance: Instance): Promise<PostPayloadResult>;
     public abstract buildDataStats(): Promise<
         AggregatedDataStats[] | EventsDataStats[] | undefined

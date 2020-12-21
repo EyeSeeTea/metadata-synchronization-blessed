@@ -320,7 +320,9 @@ const SyncSummary = ({ response, payload, onClose }: SyncSummaryProps) => {
 
                 {results[0].status !== "SUCCESS" && (
                     <AccordionDetails className={classes.accordionDetails}>
-                        <Button onClick={downloadJSON} color="primary">{i18n.t("Download JSON Payload")}</Button>
+                        <Button onClick={downloadJSON} color="primary">
+                            {i18n.t("Download JSON Payload")}
+                        </Button>
                     </AccordionDetails>
                 )}
             </DialogContent>
