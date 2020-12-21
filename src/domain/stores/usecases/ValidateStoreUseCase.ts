@@ -1,11 +1,11 @@
 import { UseCase } from "../../common/entities/UseCase";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Store } from "../entities/Store";
-import { GitHubRepository } from "../../packages/repositories/GitHubRepository";
 
 export class ValidateStoreUseCase implements UseCase {
-    constructor(private githubRepository: GitHubRepository) {}
+    constructor(private repositoryFactory: RepositoryFactory) {}
 
     public async execute(store: Store) {
-        return this.githubRepository.validateStore(store);
+        return this.repositoryFactory.gitRepository().validateStore(store);
     }
 }

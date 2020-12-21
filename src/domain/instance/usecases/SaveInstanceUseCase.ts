@@ -13,10 +13,14 @@ export class SaveInstanceUseCase implements UseCase {
     ) {}
 
     public async execute(instance: Instance): Promise<ValidationError[]> {
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
         // Find for other existing instance with same name
-        const existingInstances = await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .getObject<InstanceData[]>(Namespace.INSTANCES);
+        const existingInstances = await storageClient.getObject<InstanceData[]>(
+            Namespace.INSTANCES
+        );
 
         const sameNameInstance = existingInstances?.find(
             ({ name, id }) => id !== instance.id && name === instance.name
@@ -42,9 +46,7 @@ export class SaveInstanceUseCase implements UseCase {
             version: await this.getVersion(instance),
         };
 
-        await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .saveObjectInCollection(Namespace.INSTANCES, instanceData);
+        await storageClient.saveObjectInCollection(Namespace.INSTANCES, instanceData);
 
         return [];
     }

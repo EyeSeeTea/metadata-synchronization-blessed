@@ -23,15 +23,20 @@ export class PublishStorePackageUseCase implements UseCase {
         packageId: string,
         force = false
     ): Promise<Either<PublishStorePackageError, void>> {
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
         const defaultStore = await this.repositoryFactory
             .storeRepository(this.localInstance)
             .getDefault();
 
         if (!defaultStore) return Either.error("DEFAULT_STORE_NOT_FOUND");
 
-        const storedPackage = await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .getObjectInCollection<BasePackage>(Namespace.PACKAGES, packageId);
+        const storedPackage = await storageClient.getObjectInCollection<BasePackage>(
+            Namespace.PACKAGES,
+            packageId
+        );
         if (!storedPackage) return Either.error("PACKAGE_NOT_FOUND");
 
         const { contents, ...item } = storedPackage;

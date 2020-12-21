@@ -3,6 +3,7 @@ import {
     AggregatedRepository,
     AggregatedRepositoryConstructor,
 } from "../../aggregated/repositories/AggregatedRepository";
+import { ConfigRepositoryConstructor } from "../../config/repositories/ConfigRepository";
 import {
     EventsRepository,
     EventsRepositoryConstructor,
@@ -18,7 +19,6 @@ import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubR
 import { ReportsRepositoryConstructor } from "../../reports/repositories/ReportsRepository";
 import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageClient";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
 import {
     TransformationRepository,
@@ -54,8 +54,8 @@ export class RepositoryFactory {
     }
 
     @cache()
-    public storageRepository(instance: Instance) {
-        return this.get<StorageRepositoryConstructor>(Repositories.StorageRepository, [instance]);
+    public configRepository(instance: Instance) {
+        return this.get<ConfigRepositoryConstructor>(Repositories.ConfigRepository, [instance]);
     }
 
     @cache()
@@ -109,12 +109,14 @@ export class RepositoryFactory {
 
     @cache()
     public reportsRepository(instance: Instance) {
-        return this.get<ReportsRepositoryConstructor>(Repositories.ReportsRepository, [instance]);
+        const config = this.configRepository(instance);
+        return this.get<ReportsRepositoryConstructor>(Repositories.ReportsRepository, [config]);
     }
 
     @cache()
     public rulesRepository(instance: Instance) {
-        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [instance]);
+        const config = this.configRepository(instance);
+        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [config]);
     }
 }
 
@@ -123,7 +125,7 @@ type RepositoryKeys = typeof Repositories[keyof typeof Repositories];
 export const Repositories = {
     InstanceRepository: "instanceRepository",
     StoreRepository: "storeRepository",
-    StorageRepository: "storageRepository",
+    ConfigRepository: "configRepository",
     DownloadRepository: "downloadRepository",
     GitHubRepository: "githubRepository",
     AggregatedRepository: "aggregatedRepository",

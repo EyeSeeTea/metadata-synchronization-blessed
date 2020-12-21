@@ -1,4 +1,4 @@
-import { Instance } from "../../domain/instance/entities/Instance";
+import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import {
     SynchronizationRule,
     SynchronizationRuleData,
@@ -6,17 +6,13 @@ import {
 import { RulesRepository } from "../../domain/rules/repositories/RulesRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { Namespace } from "../storage/Namespaces";
-import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
 
 export class RulesD2ApiRepository implements RulesRepository {
-    private storageClient: StorageClient;
-
-    constructor(instance: Instance) {
-        this.storageClient = new StorageDataStoreClient(instance);
-    }
+    constructor(private configRepository: ConfigRepository) {}
 
     public async getById(id: string): Promise<SynchronizationRule | undefined> {
-        const data = await this.storageClient.getObjectInCollection<SynchronizationRuleData>(
+        const storageClient = await this.getStorageClient();
+        const data = await storageClient.getObjectInCollection<SynchronizationRuleData>(
             Namespace.RULES,
             id
         );
@@ -25,7 +21,8 @@ export class RulesD2ApiRepository implements RulesRepository {
     }
 
     public async getSyncResults(id: string): Promise<SynchronizationRule[]> {
-        const data = await this.storageClient.getObject<SynchronizationRule[]>(
+        const storageClient = await this.getStorageClient();
+        const data = await storageClient.getObject<SynchronizationRule[]>(
             `${Namespace.RULES}-${id}`
         );
 
@@ -33,7 +30,8 @@ export class RulesD2ApiRepository implements RulesRepository {
     }
 
     public async list(): Promise<SynchronizationRule[]> {
-        const stores = await this.storageClient.listObjectsInCollection<SynchronizationRuleData>(
+        const storageClient = await this.getStorageClient();
+        const stores = await storageClient.listObjectsInCollection<SynchronizationRuleData>(
             Namespace.RULES
         );
 
@@ -41,13 +39,19 @@ export class RulesD2ApiRepository implements RulesRepository {
     }
 
     public async save(report: SynchronizationRule): Promise<void> {
-        await this.storageClient.saveObjectInCollection<SynchronizationRuleData>(
+        const storageClient = await this.getStorageClient();
+        await storageClient.saveObjectInCollection<SynchronizationRuleData>(
             Namespace.RULES,
             report.toObject()
         );
     }
 
     public async delete(id: string): Promise<void> {
-        await this.storageClient.removeObjectInCollection(Namespace.RULES, id);
+        const storageClient = await this.getStorageClient();
+        await storageClient.removeObjectInCollection(Namespace.RULES, id);
+    }
+
+    private getStorageClient(): Promise<StorageClient> {
+        return this.configRepository.getStorageClient();
     }
 }

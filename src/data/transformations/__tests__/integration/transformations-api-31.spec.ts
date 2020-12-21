@@ -31,6 +31,8 @@ describe("Transformations for 2.30 -> 2.31", () => {
     };
 
     beforeAll(async () => {
+        jest.setTimeout(30000);
+
         payload = await sync({
             from: "2.30",
             to: "2.31",

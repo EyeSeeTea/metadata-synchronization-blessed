@@ -1,7 +1,8 @@
+import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { Namespace } from "../../../data/storage/Namespaces";
 import { StorageClient } from "../../storage/repositories/StorageClient";
 import { DataSourceMapping } from "../entities/DataSourceMapping";
 import { isMappingOwnerStore } from "../entities/MappingOwner";
@@ -9,18 +10,17 @@ import { isMappingOwnerStore } from "../entities/MappingOwner";
 export type SaveMappingError = "UNEXPECTED_ERROR" | "INSTANCE_NOT_FOUND";
 
 export class SaveMappingUseCase implements UseCase {
-    constructor(private storageRepository: StorageClient) {}
+    constructor(private repositoryFactory: RepositoryFactory, protected localInstance: Instance) {}
 
     public async execute(mapping: DataSourceMapping): Promise<Either<SaveMappingError, void>> {
+        const storageClient = await this.getStorageClient();
+
         if (isMappingOwnerStore(mapping.owner)) {
-            await this.storageRepository.saveObjectInCollection(
-                Namespace.MAPPINGS,
-                mapping.toObject()
-            );
+            await storageClient.saveObjectInCollection(Namespace.MAPPINGS, mapping.toObject());
 
             return Either.success(undefined);
         } else {
-            const rawInstance = await this.storageRepository.getObjectInCollection<InstanceData>(
+            const rawInstance = await storageClient.getObjectInCollection<InstanceData>(
                 Namespace.INSTANCES,
                 mapping.owner.id
             );
@@ -34,7 +34,7 @@ export class SaveMappingUseCase implements UseCase {
                     metadataMapping: mapping.mappingDictionary,
                 });
 
-                await this.storageRepository.saveObjectInCollection(
+                await storageClient.saveObjectInCollection(
                     Namespace.INSTANCES,
                     updatedInstance.toObject()
                 );
@@ -42,5 +42,9 @@ export class SaveMappingUseCase implements UseCase {
                 return Either.success(undefined);
             }
         }
+    }
+
+    private getStorageClient(): Promise<StorageClient> {
+        return this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
     }
 }
