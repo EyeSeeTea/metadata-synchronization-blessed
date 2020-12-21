@@ -148,7 +148,7 @@ export const metadataTransformations: Transformation[] = [
                     const { dashboardItems } = dashboard;
                     return {
                         ...dashboard,
-                        dashboardItems: dashboardItems?.map((dashboardItem: any) => {
+                        dashboardItems: _.compact(dashboardItems).map((dashboardItem: any) => {
                             const { type } = dashboardItem;
                             if (!isKeyOf(itemsMapping, type)) return dashboardItem;
                             const refField = itemsMapping[type];
