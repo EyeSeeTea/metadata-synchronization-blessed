@@ -1,12 +1,17 @@
+import { makeStyles, Theme } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { DataElementGroup } from "../../../../../domain/metadata/entities/MetadataEntities";
 import i18n from "../../../../../locales";
-import Dropdown from "../../../core/components/dropdown/Dropdown";
+import { DataElementGroupModel } from "../../../../../models/dhis/metadata";
+import Dropdown, { DropdownOption } from "../../../core/components/dropdown/Dropdown";
+import { useAppContext } from "../../../core/contexts/AppContext";
 
 export type RunAnalyticsSettings = boolean | "by-sync-rule-settings";
 
 export type MSFSettings = {
     runAnalytics: RunAnalyticsSettings;
+    categoryOptionGroupId?: string;
 };
 
 export interface MSFSettingsDialogProps {
@@ -20,7 +25,32 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
     onSave,
     msfSettings,
 }) => {
+    const classes = useStyles();
+    const { compositionRoot } = useAppContext();
     const [useSyncRule, setUseSyncRule] = useState(msfSettings.runAnalytics.toString());
+    const [catOptionGroups, setCatOptionGroups] = useState<DropdownOption<string>[]>([]);
+    const [selectedCatOptionGroup, setSelectedCatOptionGroup] = useState(
+        msfSettings.categoryOptionGroupId
+    );
+
+    useEffect(() => {
+        compositionRoot.metadata
+            .listAll({
+                type: DataElementGroupModel.getCollectionName(),
+                paging: false,
+                order: {
+                    field: "displayName" as const,
+                    order: "asc" as const,
+                },
+            })
+            .then(data => {
+                const dataElementGroups = data as DataElementGroup[];
+
+                setCatOptionGroups(
+                    dataElementGroups.map(group => ({ id: group.id, name: group.name }))
+                );
+            });
+    }, [compositionRoot.metadata]);
 
     const useSyncRuleItems = useMemo(() => {
         return [
@@ -47,6 +77,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     : useSyncRule === "true"
                     ? true
                     : false,
+            categoryOptionGroupId: selectedCatOptionGroup,
         };
 
         onSave(msfSettings);
@@ -55,7 +86,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
     return (
         <ConfirmationDialog
             open={true}
-            maxWidth="xs"
+            maxWidth="sm"
             fullWidth={true}
             title={i18n.t("MSF Settings")}
             onCancel={onClose}
@@ -63,13 +94,30 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             cancelText={i18n.t("Cancel")}
             saveText={i18n.t("Save")}
         >
-            <Dropdown
-                label={i18n.t("Run Analytics")}
-                items={useSyncRuleItems}
-                onValueChange={setUseSyncRule}
-                value={useSyncRule}
-                hideEmpty
-            />
+            <div className={classes.selector}>
+                <Dropdown
+                    label={i18n.t("Run Analytics")}
+                    items={useSyncRuleItems}
+                    onValueChange={setUseSyncRule}
+                    value={useSyncRule}
+                    hideEmpty
+                />
+            </div>
+            <div className={classes.selector}>
+                <Dropdown
+                    label={i18n.t("Category Option Group")}
+                    items={catOptionGroups}
+                    onValueChange={setSelectedCatOptionGroup}
+                    value={selectedCatOptionGroup || ""}
+                    hideEmpty
+                />
+            </div>
         </ConfirmationDialog>
     );
 };
+
+const useStyles = makeStyles((theme: Theme) => ({
+    selector: {
+        margin: theme.spacing(4, 0, 4, 0),
+    },
+}));
