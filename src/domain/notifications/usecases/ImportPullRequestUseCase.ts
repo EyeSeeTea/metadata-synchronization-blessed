@@ -31,12 +31,20 @@ export class ImportPullRequestUseCase implements UseCase {
     public async execute(
         notificationId: string
     ): Promise<Either<ImportPullRequestError, SynchronizationResult>> {
+        const localStorageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
         const notification = await this.getNotification(this.localInstance, notificationId);
         if (!notification) return Either.error("NOTIFICATION_NOT_FOUND");
         if (notification.type !== "sent-pull-request") return Either.error("INVALID_NOTIFICATION");
 
         const remoteInstance = await this.getInstanceById(notification.instance.id);
         if (!remoteInstance) return Either.error("INSTANCE_NOT_FOUND");
+
+        const remoteStorageClient = await this.repositoryFactory
+            .configRepository(remoteInstance)
+            .getStorageClient();
 
         const remoteNotification = await this.getNotification(
             remoteInstance,
@@ -59,22 +67,18 @@ export class ImportPullRequestUseCase implements UseCase {
 
         const payload = status === "IMPORTED" ? {} : remoteNotification.payload;
 
-        await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .saveObjectInCollection(Namespace.NOTIFICATIONS, {
-                ...notification,
-                read: true,
-                status,
-            });
+        await localStorageClient.saveObjectInCollection(Namespace.NOTIFICATIONS, {
+            ...notification,
+            read: true,
+            status,
+        });
 
-        await this.repositoryFactory
-            .storageRepository(remoteInstance)
-            .saveObjectInCollection(Namespace.NOTIFICATIONS, {
-                ...remoteNotification,
-                read: false,
-                status,
-                payload,
-            });
+        await remoteStorageClient.saveObjectInCollection(Namespace.NOTIFICATIONS, {
+            ...remoteNotification,
+            read: false,
+            status,
+            payload,
+        });
 
         await this.sendMessage(
             remoteInstance,
@@ -86,9 +90,13 @@ export class ImportPullRequestUseCase implements UseCase {
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const objects = await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
+        const objects = await storageClient.listObjectsInCollection<InstanceData>(
+            Namespace.INSTANCES
+        );
 
         const data = objects.find(data => data.id === id);
         if (!data) return undefined;
@@ -104,9 +112,14 @@ export class ImportPullRequestUseCase implements UseCase {
         instance: Instance,
         id: string
     ): Promise<AppNotification | undefined> {
-        return await this.repositoryFactory
-            .storageRepository(instance)
-            .getObjectInCollection<AppNotification>(Namespace.NOTIFICATIONS, id);
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
+
+        return await storageClient.getObjectInCollection<AppNotification>(
+            Namespace.NOTIFICATIONS,
+            id
+        );
     }
 
     private async sendMessage(
@@ -144,9 +157,13 @@ export class ImportPullRequestUseCase implements UseCase {
     }
 
     private async getResponsibleNames(instance: Instance, ids: string[]) {
-        const responsibles = await this.repositoryFactory
-            .storageRepository(instance)
-            .listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
+
+        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(
+            Namespace.RESPONSIBLES
+        );
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 

@@ -13,14 +13,14 @@ export class SetResponsiblesUseCase implements UseCase {
     public async execute(responsible: MetadataResponsible): Promise<void> {
         const { id, users, userGroups } = responsible;
 
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
         if (users.length === 0 && userGroups.length === 0) {
-            await this.repositoryFactory
-                .storageRepository(this.localInstance)
-                .removeObjectInCollection(Namespace.RESPONSIBLES, id);
+            await storageClient.removeObjectInCollection(Namespace.RESPONSIBLES, id);
         } else {
-            await this.repositoryFactory
-                .storageRepository(this.localInstance)
-                .saveObjectInCollection(Namespace.RESPONSIBLES, responsible);
+            await storageClient.saveObjectInCollection(Namespace.RESPONSIBLES, responsible);
         }
 
         await this.updatePendingPullRequests(responsible);
@@ -31,9 +31,13 @@ export class SetResponsiblesUseCase implements UseCase {
         users,
         userGroups,
     }: MetadataResponsible): Promise<void> {
-        const notifications = await this.repositoryFactory
-            .storageRepository(this.localInstance)
-            .listObjectsInCollection<ReceivedPullRequestNotification>(Namespace.NOTIFICATIONS);
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
+
+        const notifications = await storageClient.listObjectsInCollection<
+            ReceivedPullRequestNotification
+        >(Namespace.NOTIFICATIONS);
 
         const relatedPullRequests = notifications.filter(
             ({ type, selectedIds }) => type === "received-pull-request" && selectedIds.includes(id)
@@ -47,9 +51,7 @@ export class SetResponsiblesUseCase implements UseCase {
                 userGroups: _.uniqBy([...notification.userGroups, ...userGroups], "id"),
             };
 
-            await this.repositoryFactory
-                .storageRepository(this.localInstance)
-                .saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
+            await storageClient.saveObjectInCollection(Namespace.NOTIFICATIONS, newNotification);
         });
     }
 }

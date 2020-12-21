@@ -6,6 +6,7 @@ import i18n from "../../../../../locales";
 import {
     isAppConfigurator,
     isAppExecutor,
+    isGlobalAdmin,
     shouldShowDeletedObjects,
 } from "../../../../../utils/permissions";
 import { Card, Landing } from "../../../../react/core/components/landing/Landing";
@@ -46,23 +47,30 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
     const classes = useStyles();
 
     const [showDeletedObjects, setShowDeletedObjects] = useState(false);
+    const [pendingNotifications, setPendingNotifications] = useState(0);
+
     const [appConfigurator, setAppConfigurator] = useState(false);
     const [appExecutor, setAppExecutor] = useState(false);
-    const [pendingNotifications, setPendingNotifications] = useState(0);
+    const [globalAdmin, setGlobalAdmin] = useState(false);
+
+    const backHome = () => {
+        history.push("/");
+    };
+
+    const goToSettings = () => {
+        history.push("/settings");
+    };
 
     useEffect(() => {
         shouldShowDeletedObjects(api).then(setShowDeletedObjects);
         isAppConfigurator(api).then(setAppConfigurator);
         isAppExecutor(api).then(setAppExecutor);
+        isGlobalAdmin(api).then(setGlobalAdmin);
         compositionRoot.notifications.list().then(notifications => {
             const unread = notifications.filter(({ read }) => !read).length;
             setPendingNotifications(unread);
         });
     }, [api, compositionRoot]);
-
-    const backHome = () => {
-        history.push("/");
-    };
 
     const allCards: Card[] = useMemo(
         () => [
@@ -245,11 +253,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
 
     return (
         <TestWrapper>
-            <Tooltip className={classes.settingsButton} title={i18n.t("Settings")} placement="left">
-                <IconButton>
-                    <Icon>settings</Icon>
-                </IconButton>
-            </Tooltip>
+            {globalAdmin ? (
+                <Tooltip
+                    className={classes.settingsButton}
+                    title={i18n.t("Settings")}
+                    placement="left"
+                >
+                    <IconButton onClick={goToSettings}>
+                        <Icon>settings</Icon>
+                    </IconButton>
+                </Tooltip>
+            ) : null}
 
             <Landing
                 title={type === "dashboard" ? i18n.t("Admin Dashboard") : undefined}
