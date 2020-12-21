@@ -120,12 +120,11 @@ export class CompositionRoot {
         );
     }
 
-    public async initialize() {
-        const initializeRoutine = new StartApplicationUseCase(
-            this.repositoryFactory,
-            this.localInstance
-        );
-        await initializeRoutine.execute();
+    @cache()
+    public get presentation() {
+        return getExecute({
+            initialize: new StartApplicationUseCase(this.repositoryFactory, this.localInstance),
+        });
     }
 
     @cache()

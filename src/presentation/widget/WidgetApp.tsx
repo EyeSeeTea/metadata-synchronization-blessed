@@ -46,7 +46,7 @@ const App = () => {
             });
 
             const compositionRoot = new CompositionRoot(instance, encryptionKey);
-            await compositionRoot.initialize();
+            await compositionRoot.presentation.initialize();
 
             setAppContext({ d2: d2 as object, api, compositionRoot });
         };
