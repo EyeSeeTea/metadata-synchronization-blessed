@@ -63,7 +63,7 @@ export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
                 success: period => onSave({ period, deleteDataValuesBeforeSync }),
             });
         } else {
-            onSave(undefined);
+            onSave({ deleteDataValuesBeforeSync });
         }
     };
 

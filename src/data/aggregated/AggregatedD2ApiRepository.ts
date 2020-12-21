@@ -179,6 +179,10 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         return dimensions.map(({ id }) => id);
     }
 
+    async delete(data: AggregatedPackage): Promise<SynchronizationResult> {
+        return await this.save(data, { strategy: "DELETES" });
+    }
+
     public async save(
         data: object,
         additionalParams: DataImportParams | undefined

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-21T05:46:39.583Z\n"
+"POT-Creation-Date: 2020-12-21T12:23:19.188Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1793,6 +1793,11 @@ msgstr ""
 msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
 msgstr ""
 
+msgid ""
+"Deleting previous data values is not possible because data element group is "
+"not defined, please contact with your administrator"
+msgstr ""
+
 msgid "Finished Aggregate Data"
 msgstr ""
 
@@ -1806,6 +1811,17 @@ msgid "Finished Sync Rule {{name}} with errors"
 msgstr ""
 
 msgid "never"
+msgstr ""
+
+msgid "Error retrieving instance {{name}} to delete previoud data values"
+msgstr ""
+
+msgid "Error creating period"
+msgstr ""
+
+msgid ""
+"Deleting previous data values in target instance {{name}} for period "
+"{{period}}..."
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"

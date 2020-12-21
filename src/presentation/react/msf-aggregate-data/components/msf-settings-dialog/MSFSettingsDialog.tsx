@@ -11,7 +11,7 @@ export type RunAnalyticsSettings = boolean | "by-sync-rule-settings";
 
 export type MSFSettings = {
     runAnalytics: RunAnalyticsSettings;
-    categoryOptionGroupId?: string;
+    dataElementGroupId?: string;
 };
 
 export interface MSFSettingsDialogProps {
@@ -28,9 +28,9 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
     const classes = useStyles();
     const { compositionRoot } = useAppContext();
     const [useSyncRule, setUseSyncRule] = useState(msfSettings.runAnalytics.toString());
-    const [catOptionGroups, setCatOptionGroups] = useState<DropdownOption<string>[]>([]);
-    const [selectedCatOptionGroup, setSelectedCatOptionGroup] = useState(
-        msfSettings.categoryOptionGroupId
+    const [catOptionGroups, setDataElementGroups] = useState<DropdownOption<string>[]>([]);
+    const [selectedDataElementGroup, setSelectedDataElementGroup] = useState(
+        msfSettings.dataElementGroupId
     );
 
     useEffect(() => {
@@ -46,7 +46,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             .then(data => {
                 const dataElementGroups = data as DataElementGroup[];
 
-                setCatOptionGroups(
+                setDataElementGroups(
                     dataElementGroups.map(group => ({ id: group.id, name: group.name }))
                 );
             });
@@ -77,7 +77,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     : useSyncRule === "true"
                     ? true
                     : false,
-            categoryOptionGroupId: selectedCatOptionGroup,
+            dataElementGroupId: selectedDataElementGroup,
         };
 
         onSave(msfSettings);
@@ -107,8 +107,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                 <Dropdown
                     label={i18n.t("Category Option Group")}
                     items={catOptionGroups}
-                    onValueChange={setSelectedCatOptionGroup}
-                    value={selectedCatOptionGroup || ""}
+                    onValueChange={setSelectedDataElementGroup}
+                    value={selectedDataElementGroup || ""}
                     hideEmpty
                 />
             </div>
