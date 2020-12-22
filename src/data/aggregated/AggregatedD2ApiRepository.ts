@@ -180,7 +180,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
     }
 
     async delete(data: AggregatedPackage): Promise<SynchronizationResult> {
-        return await this.save(data, { strategy: "DELETES" });
+        return await this.save(data, { strategy: "DELETES", skipAudit: true });
     }
 
     public async save(
