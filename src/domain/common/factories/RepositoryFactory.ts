@@ -28,7 +28,7 @@ import {
 type ClassType = new (...args: any[]) => any;
 
 export class RepositoryFactory {
-    constructor(private encryptionKey: string) {}
+    constructor(private encryptionKey: string) { }
 
     private repositories: Map<string, ClassType> = new Map(); // TODO: TS 4.1 `${RepositoryKeys}-${string}`
 
