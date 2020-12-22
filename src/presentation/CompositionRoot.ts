@@ -1,5 +1,6 @@
 import { AggregatedD2ApiRepository } from "../data/aggregated/AggregatedD2ApiRepository";
 import { ConfigAppRepository } from "../data/config/ConfigAppRepository";
+import { CustomDataD2ApiRepository } from "../data/custom-data/CustomDataD2ApiRepository";
 import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
 import { FileD2Repository } from "../data/file/FileD2Repository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
@@ -17,6 +18,8 @@ import { UseCase } from "../domain/common/entities/UseCase";
 import { Repositories, RepositoryFactory } from "../domain/common/factories/RepositoryFactory";
 import { GetStorageConfigUseCase } from "../domain/config/usecases/GetStorageConfigUseCase";
 import { SetStorageConfigUseCase } from "../domain/config/usecases/SetStorageConfigUseCase";
+import { GetCustomDataUseCase } from "../domain/custom-data/usecases/GetCustomDataUseCase";
+import { SaveCustomDataUseCase } from "../domain/custom-data/usecases/SaveCustomDataUseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
 import { Instance } from "../domain/instance/entities/Instance";
@@ -95,6 +98,7 @@ export class CompositionRoot {
         this.repositoryFactory = new RepositoryFactory(encryptionKey);
         this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
         this.repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
+        this.repositoryFactory.bind(Repositories.CustomDataRepository, CustomDataD2ApiRepository);
         this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);
         this.repositoryFactory.bind(Repositories.GitHubRepository, GitHubOctokitRepository);
         this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
@@ -174,6 +178,14 @@ export class CompositionRoot {
             list: new ListMetadataUseCase(this.repositoryFactory, this.localInstance),
             listAll: new ListAllMetadataUseCase(this.repositoryFactory, this.localInstance),
             import: new ImportMetadataUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get customData() {
+        return getExecute({
+            get: new GetCustomDataUseCase(this.repositoryFactory, this.localInstance),
+            save: new SaveCustomDataUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

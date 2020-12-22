@@ -15,6 +15,8 @@ import {
 } from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
 import { executeAggregateData, isGlobalInstance } from "./MSFHomePagePresenter";
 
+const msfStorage = "msf-storage";
+
 export const MSFHomePage: React.FC = () => {
     const classes = useStyles();
     const history = useHistory();
@@ -38,12 +40,16 @@ export const MSFHomePage: React.FC = () => {
     }, [api]);
 
     useEffect(() => {
-        const msfSettings: MSFSettings = isGlobalInstance()
-            ? { runAnalytics: false }
-            : { runAnalytics: "by-sync-rule-settings" };
+        compositionRoot.customData.get(msfStorage).then(data => {
+            const runAnalytics = isGlobalInstance() ? false : "by-sync-rule-settings";
 
-        setMsfSettings(msfSettings);
-    }, []);
+            if (data) {
+                setMsfSettings({ runAnalytics, dataElementGroupId: data.dataElementGroupId });
+            } else {
+                setMsfSettings({ runAnalytics });
+            }
+        });
+    }, [compositionRoot]);
 
     const handleAggregateData = () => {
         executeAggregateData(compositionRoot, advancedSettings, msfSettings, progress =>
@@ -82,6 +88,9 @@ export const MSFHomePage: React.FC = () => {
     const handleSaveMSFSettings = (msfSettings: MSFSettings) => {
         setShowMSFSettingsDialog(false);
         setMsfSettings(msfSettings);
+        compositionRoot.customData.save(msfStorage, {
+            dataElementGroupId: msfSettings.dataElementGroupId,
+        });
     };
 
     return (
