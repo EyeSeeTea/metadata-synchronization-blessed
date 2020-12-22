@@ -111,15 +111,6 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
         );
     };
 
-    const changeDeleteDataValuesBeforeSync = (deleteDataValuesBeforeSync: boolean) => {
-        onChange(
-            syncRule.updateDataParams({
-                ...dataParams,
-                deleteDataValuesBeforeSync,
-            })
-        );
-    };
-
     return (
         <React.Fragment>
             <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
@@ -219,16 +210,6 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
                         label={i18n.t("Run Analytics before sync")}
                         onValueChange={changeRunAnalytics}
                         value={dataParams.runAnalytics ?? false}
-                    />
-                </div>
-            )}
-
-            {syncRule.type === "events" && (
-                <div>
-                    <Toggle
-                        label={i18n.t("Delete data values before sync")}
-                        onValueChange={changeDeleteDataValuesBeforeSync}
-                        value={dataParams.deleteDataValuesBeforeSync ?? false}
                     />
                 </div>
             )}

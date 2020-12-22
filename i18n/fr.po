@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-21T12:23:19.188Z\n"
+"POT-Creation-Date: 2020-12-22T08:34:56.287Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -876,9 +876,6 @@ msgstr ""
 msgid "Run Analytics before sync"
 msgstr ""
 
-msgid "Delete data values before sync"
-msgstr ""
-
 msgid "Type"
 msgstr ""
 
@@ -1202,6 +1199,9 @@ msgid "You do not have assigned any organisation unit"
 msgstr ""
 
 msgid "Use sync rules periods"
+msgstr ""
+
+msgid "Delete data values before sync"
 msgstr ""
 
 msgid "True"
