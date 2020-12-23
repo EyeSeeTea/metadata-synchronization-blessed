@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-23T07:30:18.161Z\n"
-"PO-Revision-Date: 2020-12-23T07:30:18.161Z\n"
+"POT-Creation-Date: 2020-12-23T11:01:03.365Z\n"
+"PO-Revision-Date: 2020-12-23T11:01:03.365Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -773,9 +773,6 @@ msgstr ""
 msgid "End date"
 msgstr ""
 
-msgid "Use sync rules periods"
-msgstr ""
-
 msgid "You need to provide a subject"
 msgstr ""
 
@@ -1204,6 +1201,12 @@ msgstr ""
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
+msgid "Use sync rules periods"
+msgstr ""
+
+msgid "Delete data values before sync"
+msgstr ""
+
 msgid "True"
 msgstr ""
 
@@ -1217,6 +1220,9 @@ msgid "MSF Settings"
 msgstr ""
 
 msgid "Run Analytics"
+msgstr ""
+
+msgid "Data Element Group *"
 msgstr ""
 
 msgid "Metadata Synchronization History"
@@ -1790,6 +1796,11 @@ msgstr ""
 msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
 msgstr ""
 
+msgid ""
+"Deleting previous data values is not possible because data element group is "
+"not defined, please contact with your administrator"
+msgstr ""
+
 msgid "Finished Aggregate Data"
 msgstr ""
 
@@ -1803,6 +1814,20 @@ msgid "Finished Sync Rule {{name}} with errors"
 msgstr ""
 
 msgid "never"
+msgstr ""
+
+msgid "Error retrieving instance {{name}} to delete previoud data values"
+msgstr ""
+
+msgid "Error creating period"
+msgstr ""
+
+msgid ""
+"Deleting previous data values in target instance {{name}} for period "
+"{{period}}..."
+msgstr ""
+
+msgid "Deleting previous data values for period {{period}} is not possible"
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"

@@ -62,6 +62,7 @@ export interface DataImportParams {
     dryRun?: boolean;
     preheatCache?: boolean;
     skipExistingCheck?: boolean;
+    skipAudit?: boolean;
     strategy?: "NEW_AND_UPDATES" | "NEW" | "UPDATES" | "DELETES";
     format?: "json" | "xml" | "csv" | "pdf" | "adx";
 }
