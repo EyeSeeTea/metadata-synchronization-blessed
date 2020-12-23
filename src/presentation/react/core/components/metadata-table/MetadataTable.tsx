@@ -104,7 +104,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     filterRows,
     transformRows = rows => rows,
     models,
-    selectedIds = [],
+    selectedIds: externalSelection,
     excludedIds = [],
     notifyNewSelection = _.noop,
     notifyNewModel = _.noop,
@@ -131,7 +131,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [responsibles, updateResponsibles] = useState<MetadataResponsible[]>([]);
     const [sharingSettingsElement, setSharingSettingsElement] = useState<NamedRef>();
 
-    const [selectedRows, setSelectedRows] = useState<string[]>(selectedIds);
+    const [stateSelection, setStateSelection] = useState<string[]>(externalSelection ?? []);
+    const selectedIds = externalSelection ?? stateSelection;
     const [filters, setFilters] = useState<ListMetadataParams>({
         type: model.getCollectionName(),
         showOnlySelected: initialShowOnlySelected,
@@ -196,10 +197,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const changeOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
         const showOnlySelected = event.target?.checked;
-        updateFilters({
-            selectedIds: showOnlySelected ? selectedRows : undefined,
-            showOnlySelected,
-        });
+        updateFilters({ showOnlySelected });
     };
 
     const changeParentOrgUnitFilter = useCallback(
@@ -424,7 +422,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
         setLoading(true);
         compositionRoot.metadata
-            .list({ ...filters, filterRows, fields, includeParents }, remoteInstance)
+            .list({ ...filters, selectedIds, filterRows, fields, includeParents }, remoteInstance)
             .then(({ objects, pager }) => {
                 const rows = model.getApiModelTransform()((objects as unknown) as MetadataType[]);
                 notifyRowsChange(rows);
@@ -442,6 +440,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         filterRows,
         model,
         handleError,
+        selectedIds,
     ]);
 
     useEffect(() => {
@@ -498,7 +497,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .value();
 
         notifyNewSelection(included, excluded);
-        setSelectedRows(included);
+        setStateSelection(included);
         updateFilters({
             order: sorting,
             page: pagination.page,

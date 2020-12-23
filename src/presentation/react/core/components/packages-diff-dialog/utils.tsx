@@ -11,8 +11,19 @@ import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 import { PackageToDiff } from "./PackagesDiffDialog";
 
-export function getChange(u: FieldUpdate): string {
-    return `${u.field}: ${truncate(u.oldValue)} -> ${truncate(u.newValue)}`;
+export function getChange(fieldUpdate: FieldUpdate): string {
+    const { field, oldValue, newValue } = fieldUpdate;
+    const has = (s: string) => !!s;
+
+    if (has(oldValue) && has(newValue)) {
+        return `${field}: ${truncate(oldValue)} -> ${truncate(newValue)}`;
+    } else if (has(newValue)) {
+        return `${field} [new]: ${truncate(newValue)}`;
+    } else if (has(oldValue)) {
+        return `${field} [removed]: ${truncate(oldValue)}`;
+    } else {
+        return `${field}: no values`;
+    }
 }
 
 function truncate(s: string) {

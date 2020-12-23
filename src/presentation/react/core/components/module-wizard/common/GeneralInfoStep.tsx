@@ -52,6 +52,7 @@ export const GeneralInfoStep = ({ module, onChange, isEdit }: ModuleWizardStepPr
                 onChange={onChangeField("name")}
                 error={!!errors["name"]}
                 helperText={errors["name"]?.description}
+                disabled={isEdit}
             />
 
             <Dropdown
