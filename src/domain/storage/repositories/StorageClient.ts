@@ -19,6 +19,7 @@ export abstract class StorageClient {
     public abstract clearStorage(): Promise<void>;
     public abstract clone(): Promise<Dictionary<unknown>>;
     public abstract import(dump: Dictionary<unknown>): Promise<void>;
+    public abstract listKeys(): Promise<string[]>;
 
     public async listObjectsInCollection<T extends Ref>(key: string): Promise<T[]> {
         const collection = await this.getObject<T[]>(key);

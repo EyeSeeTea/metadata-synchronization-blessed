@@ -1,5 +1,4 @@
 import React, { Suspense } from "react";
-import { D2Api } from "../types/d2-api";
 
 const App = React.lazy(() => {
     switch (process.env.REACT_APP_PRESENTATION_TYPE) {
@@ -12,10 +11,10 @@ const App = React.lazy(() => {
     }
 });
 
-export const PresentationLoader: React.FC<{ api: D2Api }> = ({ api }) => {
+export const PresentationLoader: React.FC = () => {
     return (
         <Suspense fallback={null}>
-            <App api={api} />
+            <App />
         </Suspense>
     );
 };

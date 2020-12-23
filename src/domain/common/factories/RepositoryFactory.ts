@@ -15,6 +15,7 @@ import {
     MetadataRepository,
     MetadataRepositoryConstructor,
 } from "../../metadata/repositories/MetadataRepository";
+import { MigrationsRepositoryConstructor } from "../../migrations/repositories/MigrationsRepository";
 import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubRepository";
 import { ReportsRepositoryConstructor } from "../../reports/repositories/ReportsRepository";
 import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
@@ -119,6 +120,14 @@ export class RepositoryFactory {
         const config = this.configRepository(instance);
         return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [config]);
     }
+
+    @cache()
+    public migrationsRepository(instance: Instance) {
+        const config = this.configRepository(instance);
+        return this.get<MigrationsRepositoryConstructor>(Repositories.MigrationsRepository, [
+            config,
+        ]);
+    }
 }
 
 type RepositoryKeys = typeof Repositories[keyof typeof Repositories];
@@ -137,4 +146,5 @@ export const Repositories = {
     ReportsRepository: "reportsRepository",
     RulesRepository: "rulesRepository",
     SystemInfoRepository: "systemInfoRepository",
+    MigrationsRepository: "migrationsRepository",
 } as const;

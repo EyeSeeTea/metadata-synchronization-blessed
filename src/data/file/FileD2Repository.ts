@@ -1,7 +1,7 @@
-import { D2Document } from "d2-api/2.30";
 import { FileId, FileRepository } from "../../domain/file/FileRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
 import mime from "mime-types";
+import { D2Document } from "../../types/d2-api";
 
 interface SaveApiResponse {
     response: {

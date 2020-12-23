@@ -10,10 +10,10 @@ import _ from "lodash";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
-import { useMigrations } from "../../migrations/hooks";
 import { D2Api } from "../../types/d2-api";
 import { initializeAppRoles } from "../../utils/permissions";
 import { CompositionRoot } from "../CompositionRoot";
+import { useMigrations } from "../react/core/components/migrations/hooks";
 import Migrations from "../react/core/components/migrations/Migrations";
 import Share from "../react/core/components/share/Share";
 import { AppContext } from "../react/core/contexts/AppContext";
@@ -69,12 +69,11 @@ function initFeedbackTool(d2: unknown, appConfig: AppConfig): void {
     }
 }
 
-const App: React.FC<{ api: D2Api }> = ({ api }) => {
+const App = () => {
     const { baseUrl } = useConfig();
-    const migrations = useMigrations(api, "metadata-synchronization");
-
     const [appContext, setAppContext] = useState<AppContext | null>(null);
     const [showShareButton, setShowShareButton] = useState(false);
+    const migrations = useMigrations(appContext);
 
     const appTitle = process.env.REACT_APP_PRESENTATION_TITLE;
 
@@ -88,6 +87,7 @@ const App: React.FC<{ api: D2Api }> = ({ api }) => {
             if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
 
             const d2 = await init({ baseUrl: `${baseUrl}/api` });
+            const api = new D2Api({ baseUrl, backend: "fetch" });
             const version = await api.getVersion();
             const instance = Instance.build({
                 type: "local",
@@ -108,10 +108,14 @@ const App: React.FC<{ api: D2Api }> = ({ api }) => {
         };
 
         run();
-    }, [baseUrl, api]);
+    }, [baseUrl]);
 
     if (migrations.state.type === "pending") {
-        return <Migrations migrations={migrations} />;
+        return (
+            <AppContext.Provider value={appContext}>
+                <Migrations migrations={migrations} />
+            </AppContext.Provider>
+        );
     }
 
     if (migrations.state.type === "checked") {
