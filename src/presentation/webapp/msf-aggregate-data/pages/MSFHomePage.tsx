@@ -1,17 +1,21 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Period } from "../../../../domain/common/entities/Period";
 import i18n from "../../../../locales";
 import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
-import { PeriodSelectionDialog } from "../../../react/core/components/period-selection-dialog/PeriodSelectionDialog";
+import {
+    AdvancedSettings,
+    AdvancedSettingsDialog,
+} from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
 import { useAppContext } from "../../../react/core/contexts/AppContext";
 import {
     MSFSettings,
     MSFSettingsDialog,
-} from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
+} from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
 import { executeAggregateData, isGlobalInstance } from "./MSFHomePagePresenter";
+
+const msfStorage = "msf-storage";
 
 export const MSFHomePage: React.FC = () => {
     const classes = useStyles();
@@ -21,7 +25,10 @@ export const MSFHomePage: React.FC = () => {
     const [syncProgress, setSyncProgress] = useState<string[]>([]);
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
-    const [period, setPeriod] = useState<Period>();
+    const [advancedSettings, setAdvancedSettings] = useState<AdvancedSettings>({
+        period: undefined,
+        deleteDataValuesBeforeSync: false,
+    });
 
     const [msfSettings, setMsfSettings] = useState<MSFSettings>({
         runAnalytics: "by-sync-rule-settings",
@@ -33,19 +40,20 @@ export const MSFHomePage: React.FC = () => {
     }, [api]);
 
     useEffect(() => {
-        const msfSettings: MSFSettings = isGlobalInstance()
-            ? { runAnalytics: false }
-            : { runAnalytics: "by-sync-rule-settings" };
+        compositionRoot.customData.get(msfStorage).then(data => {
+            const runAnalytics = isGlobalInstance() ? false : "by-sync-rule-settings";
 
-        setMsfSettings(msfSettings);
-    }, []);
+            if (data) {
+                setMsfSettings({ runAnalytics, dataElementGroupId: data.dataElementGroupId });
+            } else {
+                setMsfSettings({ runAnalytics });
+            }
+        });
+    }, [compositionRoot]);
 
     const handleAggregateData = () => {
-        executeAggregateData(
-            compositionRoot,
-            msfSettings,
-            progress => setSyncProgress(progress),
-            period
+        executeAggregateData(compositionRoot, advancedSettings, msfSettings, progress =>
+            setSyncProgress(progress)
         );
     };
 
@@ -68,9 +76,9 @@ export const MSFHomePage: React.FC = () => {
         setShowPeriodDialog(false);
     };
 
-    const handleSaveAdvancedSettings = (period: Period) => {
+    const handleSaveAdvancedSettings = (advancedSettings: AdvancedSettings) => {
         setShowPeriodDialog(false);
-        setPeriod(period);
+        setAdvancedSettings(advancedSettings);
     };
 
     const handleCloseMSFSettings = () => {
@@ -80,6 +88,9 @@ export const MSFHomePage: React.FC = () => {
     const handleSaveMSFSettings = (msfSettings: MSFSettings) => {
         setShowMSFSettingsDialog(false);
         setMsfSettings(msfSettings);
+        compositionRoot.customData.save(msfStorage, {
+            dataElementGroupId: msfSettings.dataElementGroupId,
+        });
     };
 
     return (
@@ -152,9 +163,9 @@ export const MSFHomePage: React.FC = () => {
             </Paper>
 
             {showPeriodDialog && (
-                <PeriodSelectionDialog
+                <AdvancedSettingsDialog
                     title={i18n.t("Advanced Settings")}
-                    period={period}
+                    advancedSettings={advancedSettings}
                     onClose={handleCloseAdvancedSettings}
                     onSave={handleSaveAdvancedSettings}
                 />
