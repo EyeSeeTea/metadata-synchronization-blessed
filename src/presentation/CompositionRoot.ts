@@ -121,7 +121,7 @@ export class CompositionRoot {
     }
 
     @cache()
-    public get presentation() {
+    public get app() {
         return getExecute({
             initialize: new StartApplicationUseCase(this.repositoryFactory, this.localInstance),
         });
