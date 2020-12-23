@@ -3,7 +3,9 @@ import i18n from "../../locales";
 import {
     D2CategoryOptionSchema,
     D2DataSetSchema,
+    D2IndicatorSchema,
     D2OptionSchema,
+    D2ProgramIndicatorSchema,
     D2ProgramSchema,
     SelectedPick,
 } from "../../types/d2-api";
@@ -11,6 +13,7 @@ import {
     categoryOptionFields,
     dataElementFields,
     dataSetFields,
+    indicatorFields,
     optionFields,
     programFieldsWithDataElements,
     programFieldsWithIndicators,
@@ -49,7 +52,16 @@ export class CategoryOptionMappedModel extends CategoryOptionModel {
 }
 
 export class IndicatorMappedModel extends IndicatorModel {
+    protected static fields = indicatorFields;
     protected static mappingType = "aggregatedDataElements";
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2IndicatorSchema, typeof indicatorFields>[]
+    ) => {
+        return _.map(objects, ({ aggregateExportCategoryOptionCombo = "default", ...rest }) => {
+            return { ...rest, aggregateExportCategoryOptionCombo };
+        });
+    };
 }
 
 export class OptionMappedModel extends OptionModel {
@@ -61,7 +73,16 @@ export class OrganisationUnitMappedModel extends OrganisationUnitModel {
 }
 
 export class ProgramIndicatorMappedModel extends ProgramIndicatorModel {
+    protected static fields = indicatorFields;
     protected static mappingType = "aggregatedDataElements";
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2ProgramIndicatorSchema, typeof indicatorFields>[]
+    ) => {
+        return _.map(objects, ({ aggregateExportCategoryOptionCombo = "default", ...rest }) => {
+            return { ...rest, aggregateExportCategoryOptionCombo };
+        });
+    };
 }
 
 export class ProgramStageMappedModel extends ProgramStageModel {

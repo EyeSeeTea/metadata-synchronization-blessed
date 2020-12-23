@@ -179,3 +179,8 @@ export const documentFields = {
     url: include,
     external: include,
 };
+
+export const indicatorFields = {
+    ...d2BaseModelFields,
+    aggregateExportCategoryOptionCombo: include,
+};
