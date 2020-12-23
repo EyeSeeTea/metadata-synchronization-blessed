@@ -1163,10 +1163,17 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.2.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.0", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.2.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
   version "7.11.2"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.11.2.tgz#f549c13c754cc40b87644b9fa9f09a6a95fe0736"
   integrity sha512-TeWkU52so0mPtDcaCTxNBI/IHiz0pZgr8VEFqXFtZWpYD08ZB6FaSwVAS8MKRQAP3bYKiVjwysOJgMFY28o6Tw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.6.0":
+  version "7.12.5"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
+  integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -5221,10 +5228,10 @@ cypress@4.10.0:
     url "0.11.0"
     yauzl "2.10.0"
 
-d2-api@1.4.2-beta.1:
-  version "1.4.2-beta.1"
-  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-1.4.2-beta.1.tgz#cff7dcf3bc2784cfa5fc2113712ee1b24d3f7a84"
-  integrity sha512-SW456Nu8wDoqPg2f3st/AibUC5Z+3Ps/WITBDNCCtWETUmnstQNNzphuV9djzCrbi1JssPsOJNF1tUHg0/icIQ==
+d2-api@1.6.0-beta.1:
+  version "1.6.0-beta.1"
+  resolved "https://registry.yarnpkg.com/d2-api/-/d2-api-1.6.0-beta.1.tgz#c9725ce8411b5c26e392cccafe57d7364413c7db"
+  integrity sha512-Gko/DMim5voYtzp0cclk/773UlHxhnT3Snl+Srp05jOIYGXVIY5Md+Sds7noNBjFOQ1AmY5+E9maEy2/4be0pw==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@dhis2/d2-i18n" "^1.0.5"
@@ -5262,17 +5269,15 @@ d2-manifest@1.0.0:
     minimist "^1.1.0"
     readline-sync "^1.4.1"
 
-d2-ui-components@2.4.0-beta.1:
-  version "2.4.0-beta.1"
-  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-2.4.0-beta.1.tgz#c81ccb562f5cca5c80d7a0f0ca536da7d1019bf9"
-  integrity sha512-xq8Zi1VeLjLRXnVtTCRb8Vfs5q2L9CoMevDvQDK9NaLx70apal6G1fQxL3k/RFEYDtS7fOrsd66PpKPNnKgS2A==
+d2-ui-components@2.4.0-beta.3:
+  version "2.4.0-beta.3"
+  resolved "https://registry.yarnpkg.com/d2-ui-components/-/d2-ui-components-2.4.0-beta.3.tgz#f423cad9fa5ebe44f018ca1aa75fbabe60d1350d"
+  integrity sha512-OMN3Yuur1y0+ZFnWMSTAo3KamwBsHImJeMZm7l7fjUHXL1axZEkW8gnr7MwCfQsoSfkSMJmjtm1T0UQHWsOrew==
   dependencies:
     "@date-io/core" "^1.3.6"
     "@date-io/moment" "^1.0.2"
     "@dhis2/d2-i18n" "1.0.6"
     "@dhis2/d2-ui-core" "6.3.0"
-    "@material-ui/icons" "4.9.1"
-    "@material-ui/pickers" "3.2.10"
     classnames "^2.2.6"
     downshift "^5.4.2"
     lodash "4.17.19"
@@ -9691,6 +9696,11 @@ json-stable-stringify@^1.0.1:
   integrity sha1-mnWdOcXy/1A/1TAGRu1EX4jE+a8=
   dependencies:
     jsonify "~0.0.0"
+
+json-stringify-deterministic@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/json-stringify-deterministic/-/json-stringify-deterministic-1.0.1.tgz#3334798c374d723d46f7ba0e47d6e5e5ac8511f9"
+  integrity sha512-9Fg0OY3uyzozpvJ8TVbUk09PjzhT7O2Q5kEe30g6OrKhbA/Is92igcx0XDDX7E3yAwnIlUcYLRl+ZkVrBYVP7A==
 
 json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
   version "5.0.1"

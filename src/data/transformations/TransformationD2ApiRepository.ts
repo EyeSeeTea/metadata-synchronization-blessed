@@ -47,7 +47,9 @@ export class TransformationD2ApiRepository implements TransformationRepository {
         );
 
         if (transformationstoApply.length > 0) {
-            return this.undoTransformations<Input, Output>(payload, transformationstoApply);
+            return this.cleanTransformationObject(
+                this.undoTransformations<Input, Output>(payload, transformationstoApply)
+            );
         } else {
             return (payload as unknown) as Output;
         }
@@ -77,5 +79,19 @@ export class TransformationD2ApiRepository implements TransformationRepository {
                     : transformedPayload,
             (payload as unknown) as Output
         );
+    }
+
+    private cleanTransformationObject<Output>(payload: Output): Output {
+        return _.transform(
+            payload as Record<string, unknown>,
+            (result, value, key) => {
+                if (!!value && Array.isArray(value) && _.compact(value).length > 0) {
+                    result[key] = value;
+                } else if (!!value && !Array.isArray(value)) {
+                    result[key] = value;
+                }
+            },
+            {} as Record<string, unknown>
+        ) as Output;
     }
 }

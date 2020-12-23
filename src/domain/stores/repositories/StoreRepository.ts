@@ -1,8 +1,8 @@
-import { Instance } from "../../instance/entities/Instance";
+import { ConfigRepository } from "../../config/repositories/ConfigRepository";
 import { Store } from "../entities/Store";
 
 export interface StoreRepositoryConstructor {
-    new (instance: Instance): StoreRepository;
+    new (configRepository: ConfigRepository): StoreRepository;
 }
 
 export interface StoreRepository {
