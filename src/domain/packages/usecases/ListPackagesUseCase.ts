@@ -25,12 +25,15 @@ export class ListPackagesUseCase implements UseCase {
 
         const items = await storageClient.listObjectsInCollection<BasePackage>(Namespace.PACKAGES);
 
+        const isRemoteInstance = instance !== this.localInstance;
+
         return items
             .filter(({ deleted }) => !deleted)
             .map(data => Package.build(data))
             .filter(
                 ({ module }) =>
                     bypassSharingSettings ||
+                    isRemoteInstance ||
                     MetadataModule.build(module).hasPermissions("read", userId, userGroups)
             );
     }

@@ -4,8 +4,6 @@ import { configure, getLogger } from "log4js";
 import path from "path";
 import * as yargs from "yargs";
 import { Instance } from "../domain/instance/entities/Instance";
-import { MigrationsRunner } from "../migrations";
-import { migrationTasks } from "../migrations/tasks";
 import { CompositionRoot } from "../presentation/CompositionRoot";
 import { D2Api } from "../types/d2-api";
 import Scheduler from "./scheduler";
@@ -35,10 +33,8 @@ const { config } = yargs
         return JSON.parse(fs.readFileSync(path, "utf8"));
     }).argv;
 
-const checkMigrations = async (api: D2Api) => {
-    const debug = getLogger("migrations").debug;
-    const runner = await MigrationsRunner.init({ api, debug, migrations: migrationTasks });
-    if (runner.hasPendingMigrations()) {
+const checkMigrations = async (compositionRoot: CompositionRoot) => {
+    if (await compositionRoot.migrations.hasPending()) {
         getLogger("migrations").fatal("Scheduler is unable to continue due to database migrations");
         throw new Error("There are pending migrations to be applied to the data store");
     }
@@ -52,23 +48,25 @@ const start = async (): Promise<void> => {
     }
 
     const api = new D2Api({ baseUrl, auth: { username, password }, backend: "fetch" });
-    await checkMigrations(api);
+    const version = await api.getVersion();
+    const compositionRoot = new CompositionRoot(
+        Instance.build({
+            type: "local",
+            name: "This instance",
+            url: baseUrl,
+            username,
+            password,
+            version,
+        }),
+        encryptionKey
+    );
+
+    await checkMigrations(compositionRoot);
 
     const welcomeMessage = `Script initialized on ${baseUrl} with user ${username}`;
     getLogger("main").info("-".repeat(welcomeMessage.length));
     getLogger("main").info(welcomeMessage);
 
-    const version = await api.getVersion();
-    const instance = Instance.build({
-        type: "local",
-        name: "This instance",
-        url: baseUrl,
-        username,
-        password,
-        version,
-    });
-
-    const compositionRoot = new CompositionRoot(instance, encryptionKey);
     new Scheduler(api, compositionRoot).initialize();
 };
 
