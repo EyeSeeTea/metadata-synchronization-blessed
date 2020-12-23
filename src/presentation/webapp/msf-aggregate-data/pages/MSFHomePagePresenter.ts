@@ -22,7 +22,7 @@ export async function executeAggregateData(
     advancedSettings: AdvancedSettings,
     msfSettings: MSFSettings,
     onProgressChange: (progress: string[]) => void,
-    onValidationError: (errors: string[]) => void,
+    onValidationError: (errors: string[]) => void
 ) {
     let syncProgress: string[] = [];
 
@@ -37,11 +37,9 @@ export async function executeAggregateData(
 
     const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings);
 
-    const validationErrors = advancedSettings.checkInPreviousPeriods ? await validatePreviousDataValues(
-        compositionRoot,
-        eventSyncRules,
-        msfSettings
-    ) : [];
+    const validationErrors = advancedSettings.checkInPreviousPeriods
+        ? await validatePreviousDataValues(compositionRoot, eventSyncRules, msfSettings)
+        : [];
 
     if (validationErrors.length > 0) {
         onValidationError(validationErrors);
@@ -106,7 +104,8 @@ async function validatePreviousDataValues(
         const targetInstances = await compositionRoot.instances.list({ ids: rule.targetInstances });
 
         const byInstance = await promiseMap(targetInstances, async instance => {
-            if (!rule.dataParams || !rule.dataParams.period || !msfSettings.dataElementGroupId) return undefined;
+            if (!rule.dataParams || !rule.dataParams.period || !msfSettings.dataElementGroupId)
+                return undefined;
 
             const [periodStartDate] = buildPeriodFromParams(rule.dataParams);
 
@@ -118,15 +117,19 @@ async function validatePreviousDataValues(
                     orgUnitPaths: rule.builder.dataParams?.orgUnitPaths ?? [],
                     startDate: moment("1970-01-01").toDate(),
                     endDate: endDate.toDate(),
-                    lastUpdated: periodStartDate.toDate()
+                    lastUpdated: periodStartDate.toDate(),
                 },
-                msfSettings.dataElementGroupId,
-            )
+                msfSettings.dataElementGroupId
+            );
 
             if (aggregatedResponse.dataValues?.length > 0) {
                 const periodName = availablePeriods[rule.dataParams.period].name;
 
-                return `Sync rule '${rule.name}': there are data values in '${instance.name}' for previous period to '${periodName}' and updated after '${periodStartDate.format("YYYY-MM-DD")}'`;
+                return `Sync rule '${rule.name}': there are data values in '${
+                    instance.name
+                }' for previous period to '${periodName}' and updated after '${periodStartDate.format(
+                    "YYYY-MM-DD"
+                )}'`;
             } else {
                 return undefined;
             }
@@ -168,7 +171,9 @@ async function executeSyncRule(
         if (done && syncReport) {
             syncReport.getResults().forEach(result => {
                 addEventToProgress(`${i18n.t("Summary")}:`);
-                addEventToProgress(`${i18n.t("Type")}: ${getTypeName(result.type, syncReport.type)}`);
+                addEventToProgress(
+                    `${i18n.t("Type")}: ${getTypeName(result.type, syncReport.type)}`
+                );
 
                 const origin = result.origin
                     ? `${i18n.t("Origin")}: ${getOriginName(result.origin)} `
@@ -205,11 +210,14 @@ const getTypeName = (reportType: SynchronizationType, syncType: string) => {
     }
 };
 
-async function getSyncRules(compositionRoot: CompositionRoot, advancedSettings: AdvancedSettings): Promise<SynchronizationRule[]> {
+async function getSyncRules(
+    compositionRoot: CompositionRoot,
+    advancedSettings: AdvancedSettings
+): Promise<SynchronizationRule[]> {
     //TODO: implement logic to retrieve sync rules to execute
     const rulesList = (
         await compositionRoot.rules.list({ filters: { type: "events" }, paging: false })
-    ).rows.slice(0, 2);
+    ).rows.slice(0, 5);
 
     const rules = await promiseMap(rulesList, async rule => {
         const fullRule = await compositionRoot.rules.get(rule.id);
@@ -227,7 +235,7 @@ async function getSyncRules(compositionRoot: CompositionRoot, advancedSettings: 
                 },
             };
 
-            return fullRule.update({ builder: newBuilder })
+            return fullRule.update({ builder: newBuilder });
         }
     });
 
@@ -274,10 +282,11 @@ async function deletePreviousDataValues(
     const getPeriodText = (period: Period) => {
         const formatDate = (date?: Date) => moment(date).format("YYYY-MM-DD");
 
-        return `${availablePeriods[period.type].name} ${period.type === "FIXED"
-            ? `- start: ${formatDate(period.startDate)} - end: ${formatDate(period.endDate)}`
-            : ""
-            }`;
+        return `${availablePeriods[period.type].name} ${
+            period.type === "FIXED"
+                ? `- start: ${formatDate(period.startDate)} - end: ${formatDate(period.endDate)}`
+                : ""
+        }`;
     };
 
     for (const instanceId of targetInstances) {

@@ -14,7 +14,7 @@ export class ListInstancesUseCase implements UseCase {
         private repositoryFactory: RepositoryFactory,
         private localInstance: Instance,
         private encryptionKey: string
-    ) { }
+    ) {}
 
     public async execute({ search, ids }: ListInstancesUseCaseProps = {}): Promise<Instance[]> {
         const storageClient = await this.repositoryFactory
@@ -27,14 +27,14 @@ export class ListInstancesUseCase implements UseCase {
 
         const filteredDataBySearch = search
             ? _.filter(objects, o =>
-                _(o)
-                    .values()
-                    .some(value =>
-                        typeof value === "string"
-                            ? value.toLowerCase().includes(search.toLowerCase())
-                            : false
-                    )
-            )
+                  _(o)
+                      .values()
+                      .some(value =>
+                          typeof value === "string"
+                              ? value.toLowerCase().includes(search.toLowerCase())
+                              : false
+                      )
+              )
             : objects;
 
         const filteredDataByIds = filteredDataBySearch.filter(
