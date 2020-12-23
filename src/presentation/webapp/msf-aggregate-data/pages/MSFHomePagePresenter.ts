@@ -15,45 +15,41 @@ import { AdvancedSettings } from "../../../react/msf-aggregate-data/components/a
 import { MSFSettings } from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
 
 //TODO: maybe convert to class and presenter to use MVP, MVI or BLoC pattern
-//TODO: maybe create MSF AggregateData use case?
 export async function executeAggregateData(
     compositionRoot: CompositionRoot,
     advancedSettings: AdvancedSettings,
     msfSettings: MSFSettings,
-    validateRequired: boolean,
     onProgressChange: (progress: string[]) => void,
     onValidationError: (errors: string[]) => void,
 ) {
-    validateRequired = false;
+    let syncProgress: string[] = [];
+
+    const addEventToProgress = (event: string) => {
+        const lastEvent = syncProgress[syncProgress.length - 1];
+
+        if (lastEvent !== event) {
+            syncProgress = [...syncProgress, event];
+            onProgressChange(syncProgress);
+        }
+    };
+
     //TODO: Merge period here
     const eventSyncRules = await getSyncRules(compositionRoot);
 
-    const validationErrors = await validatePreviousDataValues(
+    const validationErrors = advancedSettings.checkInPreviousPeriods ? await validatePreviousDataValues(
         compositionRoot,
-        validateRequired,
         eventSyncRules
-    );
+    ) : [];
 
     if (validationErrors.length > 0) {
         onValidationError(validationErrors);
     } else {
-        let syncProgress: string[] = [i18n.t(`Starting Aggregate Data...`)];
-
-        onProgressChange(syncProgress);
-
-        const onSyncRuleProgressChange = (event: string) => {
-            const lastEvent = syncProgress[syncProgress.length - 1];
-
-            if (lastEvent !== event) {
-                syncProgress = [...syncProgress, event];
-                onProgressChange(syncProgress);
-            }
-        };
+        addEventToProgress(i18n.t(`Starting Aggregate Data...`));
 
         if (isGlobalInstance && msfSettings.runAnalytics === false) {
             const lastExecution = await getLastAnalyticsExecution(compositionRoot);
 
-            onSyncRuleProgressChange(
+            addEventToProgress(
                 i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
                     lastExecution,
                     nsSeparator: false,
@@ -61,14 +57,12 @@ export async function executeAggregateData(
             );
         }
         if (advancedSettings.deleteDataValuesBeforeSync && !msfSettings.dataElementGroupId) {
-            onSyncRuleProgressChange(
+            addEventToProgress(
                 i18n.t(
                     `Deleting previous data values is not possible because data element group is not defined, please contact with your administrator`
                 )
             );
         }
-
-        const eventSyncRules = await getSyncRules(compositionRoot);
 
         const runAnalyticsIsRequired =
             msfSettings.runAnalytics === "by-sync-rule-settings"
@@ -80,20 +74,20 @@ export async function executeAggregateData(
         );
 
         if (runAnalyticsIsRequired) {
-            await runAnalytics(compositionRoot, onSyncRuleProgressChange);
+            await runAnalytics(compositionRoot, addEventToProgress);
         }
 
         for (const syncRule of rulesWithoutRunAnalylics) {
             await executeSyncRule(
                 compositionRoot,
                 syncRule,
-                onSyncRuleProgressChange,
+                addEventToProgress,
                 advancedSettings,
                 msfSettings
             );
         }
 
-        onProgressChange([...syncProgress, i18n.t(`Finished Aggregate Data`)]);
+        addEventToProgress(i18n.t(`Finished Aggregate Data`));
     }
 }
 
@@ -103,11 +97,8 @@ export function isGlobalInstance(): boolean {
 
 async function validatePreviousDataValues(
     compositionRoot: CompositionRoot,
-    validateRequired: boolean,
     syncRules: SynchronizationRule[]
 ): Promise<string[]> {
-    if (!validateRequired) return [];
-
     const validationsErrors = await promiseMap(syncRules, async rule => {
         const targetInstances = await compositionRoot.instances.list({ ids: rule.targetInstances });
 
@@ -128,7 +119,7 @@ async function validatePreviousDataValues(
 async function executeSyncRule(
     compositionRoot: CompositionRoot,
     rule: SynchronizationRule,
-    onProgressChange: (event: string) => void,
+    addEventToProgress: (event: string) => void,
     advancedSettings: AdvancedSettings,
     msfSettings: MSFSettings
 ): Promise<void> {
@@ -146,7 +137,7 @@ async function executeSyncRule(
         }
         : builder;
 
-    onProgressChange(i18n.t(`Starting Sync Rule {{name}} ...`, { name }));
+    addEventToProgress(i18n.t(`Starting Sync Rule {{name}} ...`, { name }));
 
     if (advancedSettings.deleteDataValuesBeforeSync && msfSettings.dataElementGroupId) {
         await deletePreviousDataValues(
@@ -154,19 +145,19 @@ async function executeSyncRule(
             targetInstances,
             newBuilder,
             msfSettings,
-            onProgressChange
+            addEventToProgress
         );
     }
 
     const sync = compositionRoot.sync[type]({ ...newBuilder, syncRule });
 
     for await (const { message, syncReport, done } of sync.execute()) {
-        if (message) onProgressChange(message);
+        if (message) addEventToProgress(message);
         if (syncReport) await compositionRoot.reports.save(syncReport);
 
         if (done && syncReport) {
             syncReport.getResults().forEach(result => {
-                onProgressChange(`${i18n.t("Summary")}:`);
+                addEventToProgress(`${i18n.t("Summary")}:`);
                 const origin = result.origin
                     ? `${i18n.t("Origin")}: ${getOriginName(result.origin)} `
                     : "";
@@ -174,15 +165,15 @@ async function executeSyncRule(
                     ? `${i18n.t("Origin package")}: ${result.originPackage.name}`
                     : "";
                 const destination = `${i18n.t("Destination instance")}: ${result.instance.name}`;
-                onProgressChange(`${origin} ${originPackage} -> ${destination}`);
+                addEventToProgress(`${origin} ${originPackage} -> ${destination}`);
 
                 const status = `${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`;
                 const message = result.message ?? "";
-                onProgressChange(`${status} - ${message}`);
+                addEventToProgress(`${status} - ${message}`);
             });
-            onProgressChange(i18n.t(`Finished Sync Rule {{name}}`, { name }));
+            addEventToProgress(i18n.t(`Finished Sync Rule {{name}}`, { name }));
         } else if (done) {
-            onProgressChange(i18n.t(`Finished Sync Rule {{name}} with errors`, { name }));
+            addEventToProgress(i18n.t(`Finished Sync Rule {{name}} with errors`, { name }));
         }
     }
 }
@@ -201,15 +192,15 @@ async function getSyncRules(compositionRoot: CompositionRoot): Promise<Synchroni
 
 async function runAnalytics(
     compositionRoot: CompositionRoot,
-    onProgressChange: (event: string) => void
+    addEventToProgress: (event: string) => void
 ) {
     const localInstance = await compositionRoot.instances.getLocal();
 
     for await (const message of executeAnalytics(localInstance)) {
-        onProgressChange(message);
+        addEventToProgress(message);
     }
 
-    onProgressChange(i18n.t("Analytics execution finished on {{name}}", localInstance));
+    addEventToProgress(i18n.t("Analytics execution finished on {{name}}", localInstance));
 }
 
 async function getLastAnalyticsExecution(compositionRoot: CompositionRoot): Promise<string> {
@@ -234,7 +225,7 @@ async function deletePreviousDataValues(
     targetInstances: string[],
     newBuilder: SynchronizationBuilder,
     msfSettings: MSFSettings,
-    onProgressChange: (event: string) => void
+    addEventToProgress: (event: string) => void
 ) {
     const getPeriodText = (period: Period) => {
         const formatDate = (date?: Date) => moment(date).format("YYYY-MM-DD");
@@ -250,7 +241,7 @@ async function deletePreviousDataValues(
 
         instanceResult.match({
             error: () =>
-                onProgressChange(
+                addEventToProgress(
                     i18n.t(`Error retrieving instance {{name}} to delete previoud data values`, {
                         name: instanceId,
                     })
@@ -264,12 +255,12 @@ async function deletePreviousDataValues(
                     });
 
                     periodResult.match({
-                        error: () => onProgressChange(i18n.t(`Error creating period`)),
+                        error: () => addEventToProgress(i18n.t(`Error creating period`)),
                         success: period => {
                             if (msfSettings.dataElementGroupId) {
                                 const periodText = getPeriodText(period);
 
-                                onProgressChange(
+                                addEventToProgress(
                                     i18n.t(
                                         `Deleting previous data values in target instance {{name}} for period {{period}}...`,
                                         { name: instance.name, period: periodText }

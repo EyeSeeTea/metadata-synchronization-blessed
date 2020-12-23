@@ -53,12 +53,13 @@ export const MSFHomePage: React.FC = () => {
         });
     }, [compositionRoot]);
 
-    const handleAggregateData = (validateRequired: boolean) => {
+    const handleAggregateData = (skipCheckInPreviousPeriods?: boolean) => {
         executeAggregateData(
             compositionRoot,
-            advancedSettings,
+            skipCheckInPreviousPeriods
+                ? { ...advancedSettings, checkInPreviousPeriods: false }
+                : advancedSettings,
             msfSettings,
-            validateRequired,
             progress => setSyncProgress(progress),
             errors => setMsfValidationErrors(errors)
         );
@@ -107,7 +108,7 @@ export const MSFHomePage: React.FC = () => {
             <Paper className={classes.root}>
                 <Box display="flex" flexDirection="column">
                     <Button
-                        onClick={() => handleAggregateData(true)}
+                        onClick={() => handleAggregateData()}
                         variant="contained"
                         color="primary"
                         className={classes.runButton}
@@ -195,7 +196,7 @@ export const MSFHomePage: React.FC = () => {
                     onCancel={() => setMsfValidationErrors(undefined)}
                     onSave={() => {
                         setMsfValidationErrors(undefined);
-                        handleAggregateData(false);
+                        handleAggregateData(true);
                     }}
                     cancelText={i18n.t("Cancel")}
                     saveText={i18n.t("Proceed")}
