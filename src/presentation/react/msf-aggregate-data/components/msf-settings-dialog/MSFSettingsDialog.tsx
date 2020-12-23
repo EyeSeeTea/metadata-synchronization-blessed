@@ -105,7 +105,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             </div>
             <div className={classes.selector}>
                 <Dropdown
-                    label={i18n.t("Category Option Group")}
+                    label={i18n.t("Data Element Group")}
                     items={catOptionGroups}
                     onValueChange={setSelectedDataElementGroup}
                     value={selectedDataElementGroup || ""}
