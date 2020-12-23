@@ -21,6 +21,7 @@ import {
 import {
     CategoryComboModel,
     CategoryModel,
+    CategoryOptionComboModel,
     CategoryOptionGroupModel,
     CategoryOptionGroupSetModel,
     CategoryOptionModel,
@@ -49,6 +50,10 @@ export class CategoryOptionMappedModel extends CategoryOptionModel {
             .flatten()
             .value();
     };
+}
+
+export class CategoryOptionComboMappedModel extends CategoryOptionComboModel {
+    protected static mappingType = "categoryOptionCombos";
 }
 
 export class IndicatorMappedModel extends IndicatorModel {

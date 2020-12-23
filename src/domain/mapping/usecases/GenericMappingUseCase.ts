@@ -85,6 +85,13 @@ export abstract class GenericMappingUseCase {
             this.getCategoryOptions(destinationItem)
         );
 
+        const categoryOptionCombos = await this.autoMapCollection(
+            originInstance,
+            destinationInstance,
+            this.getCategoryOptionCombos(originMetadata),
+            this.getCategoryOptionCombos(destinationItem)
+        );
+
         const options = await this.autoMapCollection(
             originInstance,
             destinationInstance,
@@ -101,6 +108,7 @@ export abstract class GenericMappingUseCase {
 
         const mapping = _.omitBy(
             {
+                categoryOptionCombos,
                 categoryCombos,
                 categoryOptions,
                 options,
@@ -123,6 +131,7 @@ export abstract class GenericMappingUseCase {
         if (metadata.length === 0) return [];
 
         const categoryOptions = this.getCategoryOptions(metadata[0]);
+        const categoryOptionCombos = this.getCategoryOptionCombos(metadata[0]);
         const options = this.getOptions(metadata[0]);
         const programStages = this.getProgramStages(metadata[0]);
         const programStageDataElements = this.getProgramStageDataElements(metadata[0]);
@@ -131,7 +140,13 @@ export abstract class GenericMappingUseCase {
             .metadataRepository(instance)
             .getDefaultIds();
 
-        return _.union(categoryOptions, options, programStages, programStageDataElements)
+        return _.union(
+            categoryOptions,
+            categoryOptionCombos,
+            options,
+            programStages,
+            programStageDataElements
+        )
             .map(({ id }) => id)
             .concat(...defaultValues)
             .map(cleanNestedMappedId);
@@ -299,6 +314,28 @@ export abstract class GenericMappingUseCase {
         return object.programStages?.map(item => ({ ...item, model: "programStages" })) ?? [];
     }
 
+    protected getCategoryOptionCombos(object: CombinedMetadata): CombinedMetadata[] {
+        const indicatorOptionCombos = _([
+            _.last(object.aggregateExportCategoryOptionCombo?.split(".") ?? []),
+        ])
+            .compact()
+            .map(id => ({
+                id,
+                model: "categoryOptionCombos",
+                name: "Aggregate Export Category Option Combo",
+            }))
+            .value();
+
+        const dataElementOptionCombos =
+            object.categoryCombo?.categoryOptionCombos.map(({ id, name }) => ({
+                id,
+                name,
+                model: "categoryOptionCombos",
+            })) ?? [];
+
+        return [...indicatorOptionCombos, ...dataElementOptionCombos];
+    }
+
     protected getProgramStageDataElements(object: CombinedMetadata) {
         return _.compact(
             _.flatten(
@@ -330,6 +367,7 @@ interface CombinedMetadata {
                 code: string;
             }[];
         }[];
+        categoryOptionCombos: { id: string; name: string }[];
     };
     optionSet?: {
         options: {
@@ -356,6 +394,7 @@ interface CombinedMetadata {
             };
         }[];
     }[];
+    aggregateExportCategoryOptionCombo?: string;
 }
 
 const fields = {
@@ -371,7 +410,9 @@ const fields = {
             id: true,
             categoryOptions: { id: true, name: true, shortName: true, code: true },
         },
+        categoryOptionCombos: { id: true, name: true },
     },
+    aggregateExportCategoryOptionCombo: true,
     optionSet: { options: { id: true, name: true, shortName: true, code: true } },
     commentOptionSet: {
         options: { id: true, name: true, shortName: true, code: true },

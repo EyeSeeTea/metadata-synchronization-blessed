@@ -436,6 +436,7 @@ export default function MappingTable({
                     )
                 );
             } else {
+                console.log("open", { mappingPath: [mappingType, id], type: mappingType, element });
                 setWizardConfig({ mappingPath: [mappingType, id], type: mappingType, element });
             }
         },
