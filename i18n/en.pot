@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-22T15:15:02.068Z\n"
-"PO-Revision-Date: 2020-12-22T15:15:02.068Z\n"
+"POT-Creation-Date: 2020-12-23T05:39:10.579Z\n"
+"PO-Revision-Date: 2020-12-23T05:39:10.579Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1199,6 +1199,9 @@ msgid "Use sync rules periods"
 msgstr ""
 
 msgid "Delete data values before sync"
+msgstr ""
+
+msgid "Check existing data values in previous periods"
 msgstr ""
 
 msgid "True"
