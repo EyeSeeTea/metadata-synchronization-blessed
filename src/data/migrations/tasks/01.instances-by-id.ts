@@ -1,10 +1,11 @@
+import debug from "debug";
 import _ from "lodash";
-import { getDataStore, saveDataStore } from "../../models/dataStore";
-import { D2Api } from "../../types/d2-api";
-import { Maybe } from "../../types/utils";
-import { promiseMap } from "../../utils/common";
-import { Debug } from "../types";
-import { getDuplicatedIds } from "../utils";
+import { MigrationParams } from ".";
+import { Debug } from "../../../domain/migrations/entities/Debug";
+import { Maybe } from "../../../types/utils";
+import { promiseMap } from "../../../utils/common";
+import { AppStorage, Migration } from "../client/types";
+import { getDuplicatedIds } from "../client/utils";
 
 interface InstanceOld {
     id: string;
@@ -26,8 +27,12 @@ interface InstanceDetailsNew {
     metadataMapping: MetadataMappingDictionary;
 }
 
-export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
-    const oldInstances = await getDataStore<InstanceOld[]>(api, "instances", []);
+export async function migrate(
+    storage: AppStorage,
+    _debug: Debug,
+    _params: MigrationParams
+): Promise<void> {
+    const oldInstances = (await storage.get<InstanceOld[]>("instances")) ?? [];
     const newInstances: InstanceNew[] = oldInstances.map(ins => _.omit(ins, ["metadataMapping"]));
     const duplicatedIds = getDuplicatedIds(oldInstances);
     const uniqueOldInstances = _.uniqBy(oldInstances, instance => instance.id);
@@ -39,9 +44,13 @@ export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
             metadataMapping: oldInstance.metadataMapping || {},
         };
         debug(`Create details entry for instance ${oldInstance.id}`);
-        await saveDataStore(api, "instances-" + oldInstance.id, newInstanceDatails);
+        await storage.save("instances-" + oldInstance.id, newInstanceDatails);
     });
 
     debug(`Save main instances object`);
-    await saveDataStore(api, "instances", newInstances);
+    await storage.save("instances", newInstances);
 }
+
+const migration: Migration<MigrationParams> = { name: "Update instance ids", migrate };
+
+export default migration;
