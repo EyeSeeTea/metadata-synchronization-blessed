@@ -5,6 +5,7 @@ import { PublicInstance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../domain/stores/entities/Store";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
+import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { promiseMap } from "../../../../utils/common";
@@ -33,8 +34,7 @@ export async function executeAggregateData(
         }
     };
 
-    //TODO: Merge period here
-    const eventSyncRules = await getSyncRules(compositionRoot);
+    const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings);
 
     const validationErrors = advancedSettings.checkInPreviousPeriods ? await validatePreviousDataValues(
         compositionRoot,
@@ -125,31 +125,19 @@ async function executeSyncRule(
 ): Promise<void> {
     const { name, builder, id: syncRule, type = "metadata", targetInstances } = rule;
 
-    const newBuilder = advancedSettings.period
-        ? {
-            ...builder,
-            dataParams: {
-                ...builder.dataParams,
-                period: advancedSettings.period.type,
-                startDate: advancedSettings.period.startDate,
-                endDate: advancedSettings.period.endDate,
-            },
-        }
-        : builder;
-
     addEventToProgress(i18n.t(`Starting Sync Rule {{name}} ...`, { name }));
 
     if (advancedSettings.deleteDataValuesBeforeSync && msfSettings.dataElementGroupId) {
         await deletePreviousDataValues(
             compositionRoot,
             targetInstances,
-            newBuilder,
+            builder,
             msfSettings,
             addEventToProgress
         );
     }
 
-    const sync = compositionRoot.sync[type]({ ...newBuilder, syncRule });
+    const sync = compositionRoot.sync[type]({ ...builder, syncRule });
 
     for await (const { message, syncReport, done } of sync.execute()) {
         if (message) addEventToProgress(message);
@@ -158,13 +146,15 @@ async function executeSyncRule(
         if (done && syncReport) {
             syncReport.getResults().forEach(result => {
                 addEventToProgress(`${i18n.t("Summary")}:`);
+                addEventToProgress(`${i18n.t("Type")}: ${getTypeName(result.type, syncReport.type)}`);
+
                 const origin = result.origin
                     ? `${i18n.t("Origin")}: ${getOriginName(result.origin)} `
                     : "";
                 const originPackage = result.originPackage
                     ? `${i18n.t("Origin package")}: ${result.originPackage.name}`
                     : "";
-                const destination = `${i18n.t("Destination instance")}: ${result.instance.name}`;
+                const destination = `${i18n.t("Destination")}: ${result.instance.name}`;
                 addEventToProgress(`${origin} ${originPackage} -> ${destination}`);
 
                 const status = `${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`;
@@ -178,13 +168,44 @@ async function executeSyncRule(
     }
 }
 
-async function getSyncRules(compositionRoot: CompositionRoot): Promise<SynchronizationRule[]> {
+const getTypeName = (reportType: SynchronizationType, syncType: string) => {
+    switch (reportType) {
+        case "aggregated":
+            return syncType === "events" ? i18n.t("Program Indicators") : i18n.t("Aggregated");
+        case "events":
+            return i18n.t("Events");
+        case "metadata":
+            return i18n.t("Metadata");
+        case "deleted":
+            return i18n.t("Deleted");
+        default:
+            return i18n.t("Unknown");
+    }
+};
+
+async function getSyncRules(compositionRoot: CompositionRoot, advancedSettings: AdvancedSettings): Promise<SynchronizationRule[]> {
     const rulesList = (
         await compositionRoot.rules.list({ filters: { type: "events" }, paging: false })
     ).rows.slice(0, 2);
 
-    const rules = await promiseMap(rulesList, rule => {
-        return compositionRoot.rules.get(rule.id);
+    const rules = await promiseMap(rulesList, async rule => {
+        const fullRule = await compositionRoot.rules.get(rule.id);
+
+        if (!fullRule || !advancedSettings.period) {
+            return fullRule;
+        } else {
+            const newBuilder = {
+                ...fullRule.builder,
+                dataParams: {
+                    ...fullRule.builder.dataParams,
+                    period: advancedSettings.period.type,
+                    startDate: advancedSettings.period.startDate,
+                    endDate: advancedSettings.period.endDate,
+                },
+            };
+
+            return fullRule.update({ builder: newBuilder })
+        }
     });
 
     return _.compact(rules);
