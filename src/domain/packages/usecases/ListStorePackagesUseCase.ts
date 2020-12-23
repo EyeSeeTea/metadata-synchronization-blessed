@@ -15,7 +15,7 @@ import { moduleFile } from "../repositories/GitHubRepository";
 export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
 
 export class ListStorePackagesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) { }
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(storeId: string): Promise<Either<ListStorePackagesError, ListPackage[]>> {
         const store = await this.repositoryFactory

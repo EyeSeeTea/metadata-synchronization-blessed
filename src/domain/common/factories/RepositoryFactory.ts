@@ -28,7 +28,7 @@ import {
 type ClassType = new (...args: any[]) => any;
 
 export class RepositoryFactory {
-    constructor(private encryptionKey: string) { }
+    constructor(private encryptionKey: string) {}
 
     private repositories: Map<string, ClassType> = new Map(); // TODO: TS 4.1 `${RepositoryKeys}-${string}`
 
@@ -65,7 +65,8 @@ export class RepositoryFactory {
 
     @cache()
     public storeRepository(instance: Instance) {
-        return this.get<StoreRepositoryConstructor>(Repositories.StoreRepository, [instance]);
+        const config = this.configRepository(instance);
+        return this.get<StoreRepositoryConstructor>(Repositories.StoreRepository, [config]);
     }
 
     @cache()
