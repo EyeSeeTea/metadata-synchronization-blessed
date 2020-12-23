@@ -36,4 +36,6 @@ export interface AggregatedRepository {
         data: object,
         additionalParams: DataImportParams | undefined
     ): Promise<SynchronizationResult>;
+
+    delete(data: AggregatedPackage): Promise<SynchronizationResult>;
 }

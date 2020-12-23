@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-14T12:09:33.611Z\n"
+"POT-Creation-Date: 2020-12-22T08:34:56.287Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -771,9 +771,6 @@ msgstr ""
 msgid "End date"
 msgstr ""
 
-msgid "Use sync rules periods"
-msgstr ""
-
 msgid "You need to provide a subject"
 msgstr ""
 
@@ -1204,6 +1201,12 @@ msgstr ""
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
+msgid "Use sync rules periods"
+msgstr ""
+
+msgid "Delete data values before sync"
+msgstr ""
+
 msgid "True"
 msgstr ""
 
@@ -1217,6 +1220,9 @@ msgid "MSF Settings"
 msgstr ""
 
 msgid "Run Analytics"
+msgstr ""
+
+msgid "Category Option Group"
 msgstr ""
 
 msgid "Metadata Synchronization History"
@@ -1797,6 +1803,11 @@ msgstr ""
 msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
 msgstr ""
 
+msgid ""
+"Deleting previous data values is not possible because data element group is "
+"not defined, please contact with your administrator"
+msgstr ""
+
 msgid "Finished Aggregate Data"
 msgstr ""
 
@@ -1810,6 +1821,17 @@ msgid "Finished Sync Rule {{name}} with errors"
 msgstr ""
 
 msgid "never"
+msgstr ""
+
+msgid "Error retrieving instance {{name}} to delete previoud data values"
+msgstr ""
+
+msgid "Error creating period"
+msgstr ""
+
+msgid ""
+"Deleting previous data values in target instance {{name}} for period "
+"{{period}}..."
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
