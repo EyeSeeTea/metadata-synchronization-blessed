@@ -24,7 +24,7 @@ export const buildModelSteps = (type: string): MappingWizardStepBuilder[] => {
             component: (props: MappingTableProps) => <MappingTable {...props} />,
             models: [CategoryOptionMappedModel],
             isVisible: (_type: string, element: MetadataType) => {
-                return !!element.categoryCombo?.id;
+                return !!element.categoryCombo?.id || !!element.aggregateExportCategoryOptionCombo;
             },
         },
         options: {
