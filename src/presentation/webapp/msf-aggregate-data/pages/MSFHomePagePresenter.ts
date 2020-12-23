@@ -38,7 +38,12 @@ export async function executeAggregateData(
     const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings);
 
     const validationErrors = advancedSettings.checkInPreviousPeriods
-        ? await validatePreviousDataValues(compositionRoot, eventSyncRules, msfSettings)
+        ? await validatePreviousDataValues(
+              compositionRoot,
+              eventSyncRules,
+              msfSettings,
+              addEventToProgress
+          )
         : [];
 
     if (validationErrors.length > 0) {
@@ -98,8 +103,11 @@ export function isGlobalInstance(): boolean {
 async function validatePreviousDataValues(
     compositionRoot: CompositionRoot,
     syncRules: SynchronizationRule[],
-    msfSettings: MSFSettings
+    msfSettings: MSFSettings,
+    addEventToProgress: (event: string) => void
 ): Promise<string[]> {
+    addEventToProgress(i18n.t(`Checking data values in previous periods ....`));
+
     const validationsErrors = await promiseMap(syncRules, async rule => {
         const targetInstances = await compositionRoot.instances.list({ ids: rule.targetInstances });
 
