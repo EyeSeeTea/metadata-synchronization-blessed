@@ -1,4 +1,5 @@
 import _ from "lodash";
+import stringify from "json-stringify-deterministic";
 import {
     MetadataEntities,
     MetadataPackage,
@@ -112,14 +113,14 @@ function getStringValue(value: AttributeValue): string {
             } else if (Array.isArray(value)) {
                 // On arrays, remove the ignored fields and apply a simple, best-effort sorting
                 // so the same items in different order are considered equal.
-                return JSON.stringify(
+                return stringify(
                     _(value as Obj[])
                         .map(obj => _.omit(obj, ignoredFields))
-                        .sortBy(obj => obj.id || JSON.stringify(obj))
+                        .sortBy(obj => obj.id || stringify(obj))
                         .value()
                 );
             } else {
-                return JSON.stringify(value);
+                return stringify(value);
             }
         default:
             return "NULL";

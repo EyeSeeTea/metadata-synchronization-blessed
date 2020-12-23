@@ -65,7 +65,8 @@ export class RepositoryFactory {
 
     @cache()
     public storeRepository(instance: Instance) {
-        return this.get<StoreRepositoryConstructor>(Repositories.StoreRepository, [instance]);
+        const config = this.configRepository(instance);
+        return this.get<StoreRepositoryConstructor>(Repositories.StoreRepository, [config]);
     }
 
     @cache()
