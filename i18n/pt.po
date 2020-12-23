@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-23T09:01:58.460Z\n"
+"POT-Creation-Date: 2020-12-23T10:12:01.579Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1828,6 +1828,9 @@ msgstr ""
 msgid ""
 "Deleting previous data values in target instance {{name}} for period "
 "{{period}}..."
+msgstr ""
+
+msgid "Deleting previous data values for period {{period}} is not possible"
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
