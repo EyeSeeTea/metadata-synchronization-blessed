@@ -177,8 +177,8 @@ async function executeSyncRule(
         if (syncReport) await compositionRoot.reports.save(syncReport);
 
         if (done && syncReport) {
+            addEventToProgress(`${i18n.t("Summary of Sync Rule")}:`);
             syncReport.getResults().forEach(result => {
-                addEventToProgress(`${i18n.t("Summary")}:`);
                 addEventToProgress(
                     `${i18n.t("Type")}: ${getTypeName(result.type, syncReport.type)}`
                 );
@@ -195,6 +195,10 @@ async function executeSyncRule(
                 const status = `${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`;
                 const message = result.message ?? "";
                 addEventToProgress(`${status} - ${message}`);
+
+                result.errors?.forEach(error => {
+                    addEventToProgress(error.message);
+                });
             });
             addEventToProgress(i18n.t(`Finished Sync Rule {{name}}`, { name }));
         } else if (done) {

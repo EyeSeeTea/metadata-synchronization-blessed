@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-23T11:37:17.470Z\n"
-"PO-Revision-Date: 2020-12-23T11:37:17.470Z\n"
+"POT-Creation-Date: 2020-12-23T12:07:51.820Z\n"
+"PO-Revision-Date: 2020-12-23T12:07:51.820Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1817,6 +1817,9 @@ msgid "Checking data values in previous periods ...."
 msgstr ""
 
 msgid "Starting Sync Rule {{name}} ..."
+msgstr ""
+
+msgid "Summary of Sync Rule"
 msgstr ""
 
 msgid "Finished Sync Rule {{name}}"
