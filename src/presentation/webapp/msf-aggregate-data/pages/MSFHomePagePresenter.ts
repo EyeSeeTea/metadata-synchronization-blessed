@@ -1,5 +1,6 @@
 import _ from "lodash";
 import moment from "moment";
+import { buildPeriodFromParams } from "../../../../domain/aggregated/utils";
 import { Period } from "../../../../domain/common/entities/Period";
 import { PublicInstance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
@@ -38,7 +39,8 @@ export async function executeAggregateData(
 
     const validationErrors = advancedSettings.checkInPreviousPeriods ? await validatePreviousDataValues(
         compositionRoot,
-        eventSyncRules
+        eventSyncRules,
+        msfSettings
     ) : [];
 
     if (validationErrors.length > 0) {
@@ -97,17 +99,37 @@ export function isGlobalInstance(): boolean {
 
 async function validatePreviousDataValues(
     compositionRoot: CompositionRoot,
-    syncRules: SynchronizationRule[]
+    syncRules: SynchronizationRule[],
+    msfSettings: MSFSettings
 ): Promise<string[]> {
     const validationsErrors = await promiseMap(syncRules, async rule => {
         const targetInstances = await compositionRoot.instances.list({ ids: rule.targetInstances });
 
         const byInstance = await promiseMap(targetInstances, async instance => {
-            if (!rule.dataParams.period) return undefined;
+            if (!rule.dataParams || !rule.dataParams.period || !msfSettings.dataElementGroupId) return undefined;
 
-            const periodName = availablePeriods[rule.dataParams.period].name;
+            const [periodStartDate] = buildPeriodFromParams(rule.dataParams);
 
-            return `Sync rule '${rule.name}': there are data values in '${instance.name}' for previous date to '${periodName}' and last updated in '${periodName}'`;
+            const endDate = periodStartDate.clone().subtract(1, "day");
+
+            const aggregatedResponse = await compositionRoot.aggregated.list(
+                instance,
+                {
+                    orgUnitPaths: rule.builder.dataParams?.orgUnitPaths ?? [],
+                    startDate: moment("1970-01-01").toDate(),
+                    endDate: endDate.toDate(),
+                    lastUpdated: periodStartDate.toDate()
+                },
+                msfSettings.dataElementGroupId,
+            )
+
+            if (aggregatedResponse.dataValues?.length > 0) {
+                const periodName = availablePeriods[rule.dataParams.period].name;
+
+                return `Sync rule '${rule.name}': there are data values in '${instance.name}' for previous period to '${periodName}' and updated after '${periodStartDate.format("YYYY-MM-DD")}'`;
+            } else {
+                return undefined;
+            }
         });
 
         return _.compact(byInstance);

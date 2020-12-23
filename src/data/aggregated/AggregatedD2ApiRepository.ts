@@ -1,4 +1,5 @@
 import _ from "lodash";
+import moment from "moment";
 import { Moment } from "moment";
 import { AggregatedPackage } from "../../domain/aggregated/entities/AggregatedPackage";
 import { MappedCategoryOption } from "../../domain/aggregated/entities/MappedCategoryOption";
@@ -27,7 +28,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         dataSet: string[],
         dataElementGroup: string[]
     ): Promise<AggregatedPackage> {
-        const { orgUnitPaths = [], allAttributeCategoryOptions, attributeCategoryOptions } = params;
+        const { orgUnitPaths = [], allAttributeCategoryOptions, attributeCategoryOptions, lastUpdated } = params;
         const [startDate, endDate] = buildPeriodFromParams(params);
 
         if (dataSet.length === 0 && dataElementGroup.length === 0) return { dataValues: [] };
@@ -50,6 +51,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                     dataSet,
                     dataElementGroup,
                     orgUnit,
+                    lastUpdated: moment(lastUpdated).format("YYYY-MM-DD")
                 })
                 .getData();
 
