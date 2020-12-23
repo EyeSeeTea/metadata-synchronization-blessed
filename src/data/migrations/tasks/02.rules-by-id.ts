@@ -1,10 +1,12 @@
+import debug from "debug";
 import _ from "lodash";
-import { getDataStore, saveDataStore } from "../../models/dataStore";
-import { D2Api, Id } from "../../types/d2-api";
-import { Maybe } from "../../types/utils";
-import { promiseMap } from "../../utils/common";
-import { Debug } from "../types";
-import { getDuplicatedIds } from "../utils";
+import { MigrationParams } from ".";
+import { Id } from "../../../domain/common/entities/Schemas";
+import { Debug } from "../../../domain/migrations/entities/Debug";
+import { Maybe } from "../../../types/utils";
+import { promiseMap } from "../../../utils/common";
+import { AppStorage, Migration } from "../client/types";
+import { getDuplicatedIds } from "../client/utils";
 
 type SynchronizationBuilder = { targetInstances: Id[] };
 
@@ -20,8 +22,12 @@ interface SynchronizationRuleDetailsNew {
     builder: SynchronizationBuilder;
 }
 
-export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
-    const oldRules = await getDataStore<SynchronizationRuleOld[]>(api, "rules", []);
+export async function migrate(
+    storage: AppStorage,
+    _debug: Debug,
+    _params: MigrationParams
+): Promise<void> {
+    const oldRules = (await storage.get<SynchronizationRuleOld[]>("rules")) ?? [];
     const newRules: SynchronizationRuleNew[] = oldRules.map(oldRule => ({
         ..._.omit(oldRule, ["builder"]),
         targetInstances: oldRule.builder.targetInstances,
@@ -36,9 +42,13 @@ export default async function migrate(api: D2Api, debug: Debug): Promise<void> {
             builder: oldRule.builder,
         };
         debug(`Create details entry for sync rule ${oldRule.id}`);
-        await saveDataStore(api, "rules-" + oldRule.id, newRuleDetails);
+        await storage.save("rules-" + oldRule.id, newRuleDetails);
     });
 
     debug(`Save main sync rules object`);
-    await saveDataStore(api, "rules", newRules);
+    await storage.save("rules", newRules);
 }
+
+const migration: Migration<MigrationParams> = { name: "Update sync rules ids", migrate };
+
+export default migration;

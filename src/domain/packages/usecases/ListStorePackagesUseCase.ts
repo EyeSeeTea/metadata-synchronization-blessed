@@ -23,22 +23,12 @@ export class ListStorePackagesUseCase implements UseCase {
             .getById(storeId);
         if (!store) return Either.error("STORE_NOT_FOUND");
 
-        const userGroups = await this.repositoryFactory
-            .instanceRepository(this.localInstance)
-            .getUserGroups();
         const validation = await this.repositoryFactory.gitRepository().listBranches(store);
         if (validation.isError()) return Either.error(validation.value.error);
 
         const branches = validation.value.data?.flatMap(({ name }) => name) ?? [];
-        const matchingBranches = _.intersection(
-            userGroups.map(({ name }) => name.replace(/\s/g, "-")),
-            branches
-        );
 
-        const rawPackages = await promiseMap(matchingBranches, userGroup =>
-            this.getPackages(store, userGroup)
-        );
-
+        const rawPackages = await promiseMap(branches, branch => this.getPackages(store, branch));
         const packages = _.compact(rawPackages.flatMap(({ value }) => value.data));
 
         return Either.success(packages);

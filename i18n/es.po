@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-23T05:39:10.579Z\n"
+"POT-Creation-Date: 2020-12-23T10:23:56.055Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -134,7 +134,7 @@ msgstr ""
 msgid "Generate package from File"
 msgstr ""
 
-msgid "Name (*)"
+msgid "Package/Module Name (*)"
 msgstr ""
 
 msgid "Department (*)"
@@ -394,15 +394,18 @@ msgstr ""
 msgid "Search by "
 msgstr ""
 
+msgid ""
+"There has been an error. You can either retry or contact your administrator "
+"if you think there has been an un recoverable error"
+msgstr ""
+
 msgid "There are pending migrations"
 msgstr ""
 
 msgid "Migrations finished successfully, you may now continue to the app"
 msgstr ""
 
-msgid ""
-"There has been an error. You can either retry or contact your administrator "
-"if you think there has been an un recoverable error"
+msgid "Checking migrations"
 msgstr ""
 
 msgid "Migrate instance"
@@ -415,20 +418,20 @@ msgid "Continue to the App"
 msgstr ""
 
 msgid ""
-"The app needs to run all pending migrations (v{{instanceVersion}} -> "
-"v{{appVersion}}) in order to continue. This may take a long time, make sure "
-"the process is not interrupted."
+"The app needs to run pending migrations (from version {{instanceVersion}} to "
+"version {{appVersion}}) in order to continue. This may take a long time, "
+"make sure the process is not interrupted."
 msgstr ""
 
 msgid "Error"
 msgstr ""
 
-msgid "Continue to app anyway"
+msgid "Continue to the app anyway"
 msgstr ""
 
 msgid ""
-"The database version (v{{instanceVersion}}) is greater than the app version "
-"(v{{appVersion}}), we cannot continue. Please contact the administrator to "
+"The database version ({{instanceVersion}}) is greater than the app version "
+"({{appVersion}}), cannot continue. Please contact the administrator to "
 "update the app."
 msgstr ""
 
@@ -498,6 +501,9 @@ msgid "Package of {{name}}"
 msgstr ""
 
 msgid "Generate package from {{name}}"
+msgstr ""
+
+msgid "Name (*)"
 msgstr ""
 
 msgid "Module: {{module}}"
@@ -1225,7 +1231,7 @@ msgstr ""
 msgid "Run Analytics"
 msgstr ""
 
-msgid "Category Option Group"
+msgid "Data Element Group *"
 msgstr ""
 
 msgid "Metadata Synchronization History"
@@ -1835,6 +1841,9 @@ msgstr ""
 msgid ""
 "Deleting previous data values in target instance {{name}} for period "
 "{{period}}..."
+msgstr ""
+
+msgid "Deleting previous data values for period {{period}} is not possible"
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"

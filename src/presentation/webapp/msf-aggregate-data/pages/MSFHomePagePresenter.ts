@@ -320,6 +320,14 @@ async function deletePreviousDataValues(
                             }
                         },
                     });
+                } else {
+                    const periodText = getPeriodText(Period.createDefault());
+                    addEventToProgress(
+                        i18n.t(
+                            `Deleting previous data values for period {{period}} is not possible`,
+                            { period: periodText }
+                        )
+                    );
                 }
             },
         });

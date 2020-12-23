@@ -105,12 +105,17 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             </div>
             <div className={classes.selector}>
                 <Dropdown
-                    label={i18n.t("Category Option Group")}
+                    label={i18n.t("Data Element Group *")}
                     items={catOptionGroups}
                     onValueChange={setSelectedDataElementGroup}
                     value={selectedDataElementGroup || ""}
                     hideEmpty
                 />
+            </div>
+            <div className={classes.info}>
+                {i18n.t(
+                    "* Data Element Group: used to check existing data values in the destination data elements"
+                )}
             </div>
         </ConfirmationDialog>
     );
@@ -119,5 +124,9 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
 const useStyles = makeStyles((theme: Theme) => ({
     selector: {
         margin: theme.spacing(3, 0, 3, 0),
+    },
+    info: {
+        margin: theme.spacing(0, 0, 0, 1),
+        fontSize: "0.8em",
     },
 }));
