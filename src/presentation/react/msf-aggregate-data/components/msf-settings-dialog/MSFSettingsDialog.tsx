@@ -112,6 +112,11 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     hideEmpty
                 />
             </div>
+            <div className={classes.info}>
+                {i18n.t(
+                    "* Data Element Group: used to check existing data values in the destination data elements"
+                )}
+            </div>
         </ConfirmationDialog>
     );
 };
@@ -119,5 +124,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
 const useStyles = makeStyles((theme: Theme) => ({
     selector: {
         margin: theme.spacing(3, 0, 3, 0),
+    },
+    info: {
+        margin: theme.spacing(0, 0, 0, 1),
     },
 }));
