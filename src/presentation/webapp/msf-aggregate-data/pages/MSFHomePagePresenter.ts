@@ -206,6 +206,7 @@ const getTypeName = (reportType: SynchronizationType, syncType: string) => {
 };
 
 async function getSyncRules(compositionRoot: CompositionRoot, advancedSettings: AdvancedSettings): Promise<SynchronizationRule[]> {
+    //TODO: implement logic to retrieve sync rules to execute
     const rulesList = (
         await compositionRoot.rules.list({ filters: { type: "events" }, paging: false })
     ).rows.slice(0, 2);
