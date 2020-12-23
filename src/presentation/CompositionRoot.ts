@@ -18,6 +18,7 @@ import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedS
 import { DeleteAggregatedUseCase } from "../domain/aggregated/usecases/DeleteAggregatedUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
 import { Repositories, RepositoryFactory } from "../domain/common/factories/RepositoryFactory";
+import { StartApplicationUseCase } from "../domain/common/usecases/StartApplicationUseCase";
 import { GetStorageConfigUseCase } from "../domain/config/usecases/GetStorageConfigUseCase";
 import { SetStorageConfigUseCase } from "../domain/config/usecases/SetStorageConfigUseCase";
 import { GetCustomDataUseCase } from "../domain/custom-data/usecases/GetCustomDataUseCase";
@@ -124,6 +125,13 @@ export class CompositionRoot {
             Repositories.TransformationRepository,
             TransformationD2ApiRepository
         );
+    }
+
+    @cache()
+    public get app() {
+        return getExecute({
+            initialize: new StartApplicationUseCase(this.repositoryFactory, this.localInstance),
+        });
     }
 
     @cache()
