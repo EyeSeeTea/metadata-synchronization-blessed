@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-23T11:01:03.365Z\n"
-"PO-Revision-Date: 2020-12-23T11:01:03.365Z\n"
+"POT-Creation-Date: 2020-12-23T11:57:28.208Z\n"
+"PO-Revision-Date: 2020-12-23T11:57:28.208Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -352,6 +352,9 @@ msgid "Related metadata mapping for {{name}} ({{id}})"
 msgstr ""
 
 msgid "Category Options"
+msgstr ""
+
+msgid "Category Option Combos"
 msgstr ""
 
 msgid "Options"
@@ -1223,6 +1226,11 @@ msgid "Run Analytics"
 msgstr ""
 
 msgid "Data Element Group *"
+msgstr ""
+
+msgid ""
+"* Data Element Group: used to check existing data values in the destination "
+"data elements"
 msgstr ""
 
 msgid "Metadata Synchronization History"

@@ -114,7 +114,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             </div>
             <div className={classes.info}>
                 {i18n.t(
-                    "* Data Element Group: used to check existing data values in the destination data elements"
+                    "* Data Element Group: used to check existing data values in the destination data elements",
+                    { nsSeparator: false }
                 )}
             </div>
         </ConfirmationDialog>
