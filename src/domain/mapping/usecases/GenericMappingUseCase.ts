@@ -41,13 +41,11 @@ export abstract class GenericMappingUseCase {
 
     protected async buildMapping({
         metadata,
-        originInstance,
         destinationInstance,
         originalId,
         mappedId = "",
     }: {
         metadata: Record<string, CombinedMetadata>;
-        originInstance: DataSource;
         destinationInstance: DataSource;
         originalId: string;
         mappedId?: string;
@@ -79,28 +77,24 @@ export abstract class GenericMappingUseCase {
         const categoryCombos = this.autoMapCategoryCombo(originMetadata, destinationItem);
 
         const categoryOptions = await this.autoMapCollection(
-            originInstance,
             destinationInstance,
             this.getCategoryOptions(originMetadata),
             this.getCategoryOptions(destinationItem)
         );
 
         const categoryOptionCombos = await this.autoMapCollection(
-            originInstance,
             destinationInstance,
             this.getCategoryOptionCombos(originMetadata),
             this.getCategoryOptionCombos(destinationItem)
         );
 
         const options = await this.autoMapCollection(
-            originInstance,
             destinationInstance,
             this.getOptions(originMetadata),
             this.getOptions(destinationItem)
         );
 
         const programStages = await this.autoMapProgramStages(
-            originInstance,
             destinationInstance,
             originMetadata,
             destinationItem
@@ -153,28 +147,22 @@ export abstract class GenericMappingUseCase {
     }
 
     protected async autoMap({
-        originInstance,
         destinationInstance,
-        selectedItemId,
+        selectedItem,
         defaultValue,
         filter,
     }: {
-        originInstance: DataSource;
         destinationInstance: DataSource;
-        selectedItemId: string;
+        selectedItem: { id: string; name: string; code?: string };
         defaultValue?: string;
         filter?: string[];
     }): Promise<MetadataMapping[]> {
-        const metadataResponse = await this.getMetadata(originInstance, [selectedItemId]);
-        const originMetadata = this.createMetadataDictionary(metadataResponse);
-        const selectedItem = originMetadata[selectedItemId];
-        if (!selectedItem) return [];
-
         const destinationMetadata = await this.repositoryFactory
             .metadataRepository(destinationInstance)
             .lookupSimilar(selectedItem);
 
         const objects = _(destinationMetadata)
+            .omit(["indicators", "programIndicators"])
             .values()
             .flatMap(item => (Array.isArray(item) ? item : []))
             .value();
@@ -209,7 +197,6 @@ export abstract class GenericMappingUseCase {
     }
 
     protected async autoMapCollection(
-        originInstance: DataSource,
         destinationInstance: DataSource,
         originMetadata: CombinedMetadata[],
         destinationMetadata: CombinedMetadata[]
@@ -223,9 +210,8 @@ export abstract class GenericMappingUseCase {
 
         for (const item of originMetadata) {
             const [candidate] = await this.autoMap({
-                originInstance,
                 destinationInstance,
-                selectedItemId: cleanNestedMappedId(item.id),
+                selectedItem: { ...item, id: cleanNestedMappedId(item.id) },
                 defaultValue: EXCLUDED_KEY,
                 filter,
             });
@@ -241,7 +227,6 @@ export abstract class GenericMappingUseCase {
     }
 
     protected async autoMapProgramStages(
-        originInstance: DataSource,
         destinationInstance: DataSource,
         originMetadata: CombinedMetadata,
         destinationMetadata: CombinedMetadata
@@ -260,7 +245,6 @@ export abstract class GenericMappingUseCase {
             };
         } else {
             return this.autoMapCollection(
-                originInstance,
                 destinationInstance,
                 originProgramStages,
                 destinationProgramStages
@@ -322,7 +306,7 @@ export abstract class GenericMappingUseCase {
             .map(id => ({
                 id,
                 model: "categoryOptionCombos",
-                name: "Aggregate Export Category Option Combo",
+                name: "",
             }))
             .value();
 

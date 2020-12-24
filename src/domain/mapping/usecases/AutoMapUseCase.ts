@@ -31,10 +31,17 @@ export class AutoMapUseCase extends GenericMappingUseCase implements UseCase {
                 mapping
             );
 
+            // Special scenario: indicators look-up the id from a property
+            const lookUpItem = item.aggregateExportCategoryOptionCombo
+                ? {
+                      id: _.first(item.aggregateExportCategoryOptionCombo?.split(".")) ?? item.id,
+                      name: "",
+                  }
+                : item;
+
             const candidates = await this.autoMap({
-                originInstance,
                 destinationInstance,
-                selectedItemId: item.id,
+                selectedItem: lookUpItem,
                 filter,
             });
             const { mappedId } = _.first(candidates) ?? {};

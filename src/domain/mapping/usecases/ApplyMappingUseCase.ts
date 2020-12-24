@@ -37,7 +37,6 @@ export class ApplyMappingUseCase extends GenericMappingUseCase implements UseCas
                     if (isChildrenMapping || mappedId) {
                         const mapping = await this.buildMapping({
                             metadata,
-                            originInstance,
                             destinationInstance,
                             originalId: _.last(id.split("-")) ?? id,
                             mappedId: cleanOrgUnitPath(mappedId),
