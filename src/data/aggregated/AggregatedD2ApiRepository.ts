@@ -13,6 +13,7 @@ import { SynchronizationResult } from "../../domain/reports/entities/Synchroniza
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { DataImportParams } from "../../types/d2";
 import { D2Api, DataValueSetsPostResponse } from "../../types/d2-api";
+import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
@@ -113,13 +114,17 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                 })
             );
 
+            const defaultCategoryOptionCombo = await this.getDefaultIds("categoryOptionCombos");
+
             const dataValues = _(result)
                 .flatten()
                 .map(({ dataValues }) =>
                     dataValues?.map(dataValue => ({
                         ...dataValue,
                         // Special scenario: We allow having dataElement.categoryOptionCombo in indicators
-                        categoryOptionCombo: _.last(dataValue.categoryOptionCombo?.split(".")),
+                        categoryOptionCombo:
+                            _.last(dataValue.categoryOptionCombo?.split(".")) ??
+                            defaultCategoryOptionCombo[0],
                     }))
                 )
                 .flatten()
@@ -278,6 +283,27 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
 
         return periods;
     };
+
+    @cache()
+    public async getDefaultIds(filter?: string): Promise<string[]> {
+        const response = (await this.api
+            .get("/metadata", {
+                filter: "identifiable:eq:default",
+                fields: "id",
+            })
+            .getData()) as {
+            [key: string]: { id: string }[];
+        };
+
+        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
+
+        return _(metadata)
+            .omit(["system"])
+            .values()
+            .flatten()
+            .map(({ id }) => id)
+            .value();
+    }
 }
 
 const aggregations = {

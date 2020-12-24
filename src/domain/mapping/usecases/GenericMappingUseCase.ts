@@ -334,7 +334,6 @@ export abstract class GenericMappingUseCase {
                 );
             }
             default: {
-                console.error("Invalid object to parse category option combos");
                 return [];
             }
         }
