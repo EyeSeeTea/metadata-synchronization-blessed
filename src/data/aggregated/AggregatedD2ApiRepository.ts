@@ -87,24 +87,27 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         if (dimensionIds.length === 0 || orgUnit.length === 0) {
             return { dataValues: [] };
         } else if (aggregationType) {
-            const result = await promiseMap(_.chunk(periods, 500), period => {
-                return this.api
-                    .get<AggregatedPackage>("/analytics/dataValueSet.json", {
-                        dimension: _.compact([
-                            `dx:${dimensionIds.join(";")}`,
-                            `pe:${period.join(";")}`,
-                            `ou:${orgUnit.join(";")}`,
-                            includeCategories ? `co` : undefined,
-                            attributeOptionCombo
-                                ? `ao:${attributeOptionCombo.join(";")}`
-                                : undefined,
-                        ]),
-                        filter,
-                    })
-                    .getData();
-            });
+            const result = await promiseMap(_.chunk(periods, 300), period =>
+                promiseMap(_.chunk(dimensionIds, Math.max(10, 300 - period.length)), ids => {
+                    return this.api
+                        .get<AggregatedPackage>("/analytics/dataValueSet.json", {
+                            dimension: _.compact([
+                                `dx:${ids.join(";")}`,
+                                `pe:${period.join(";")}`,
+                                `ou:${orgUnit.join(";")}`,
+                                includeCategories ? `co` : undefined,
+                                attributeOptionCombo
+                                    ? `ao:${attributeOptionCombo.join(";")}`
+                                    : undefined,
+                            ]),
+                            filter,
+                        })
+                        .getData();
+                })
+            );
 
             const dataValues = _(result)
+                .flatten()
                 .map(({ dataValues }) =>
                     dataValues?.map(dataValue => ({
                         ...dataValue,
