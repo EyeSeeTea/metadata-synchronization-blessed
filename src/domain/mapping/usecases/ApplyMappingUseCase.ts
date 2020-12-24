@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { cleanNestedMappedId } from "../../../presentation/react/components/mapping-table/utils";
+import { cleanNestedMappedId } from "../../../presentation/react/core/components/mapping-table/utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { DataSource } from "../../instance/entities/DataSource";
 import { cleanOrgUnitPath, cleanOrgUnitPaths } from "../../synchronization/utils";

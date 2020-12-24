@@ -1,39 +1,35 @@
-import { D2Api } from "d2-api/2.30";
 import _ from "lodash";
+import { Namespace } from "../../../data/storage/Namespaces";
 import i18n from "../../../locales";
-import SyncReport from "../../../models/syncReport";
-import SyncRule from "../../../models/syncRule";
-import { SynchronizationBuilder } from "../../../types/synchronization";
+import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { debug } from "../../../utils/debug";
 import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";
-import { AggregatedRepositoryConstructor } from "../../aggregated/repositories/AggregatedRepository";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { Repositories, RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { EventsPackage } from "../../events/entities/EventsPackage";
-import { EventsRepositoryConstructor } from "../../events/repositories/EventsRepository";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import { FileRepositoryConstructor } from "../../file/FileRepository";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-import { MetadataRepositoryConstructor } from "../../metadata/repositories/MetadataRepository";
 import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../../metadata/usecases/MetadataSyncUseCase";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
-import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import {
     AggregatedDataStats,
     EventsDataStats,
+    SynchronizationReport,
     SynchronizationReportStatus,
-} from "../entities/SynchronizationReport";
-import { SynchronizationResult, SynchronizationStatus } from "../entities/SynchronizationResult";
+} from "../../reports/entities/SynchronizationReport";
+import {
+    SynchronizationResult,
+    SynchronizationStatus,
+} from "../../reports/entities/SynchronizationResult";
 import { SynchronizationType } from "../entities/SynchronizationType";
+import { executeAnalytics } from "../../../utils/analytics";
+import { D2Api } from "../../../types/d2-api";
 
 export type SyncronizationClass =
     | typeof MetadataSyncUseCase
@@ -56,8 +52,8 @@ export abstract class GenericSyncUseCase {
         this.api = getD2APiFromInstance(localInstance);
     }
 
-    public abstract async buildPayload(): Promise<SyncronizationPayload>;
-    public abstract async mapPayload(
+    public abstract buildPayload(): Promise<SyncronizationPayload>;
+    public abstract mapPayload(
         instance: Instance,
         payload: SyncronizationPayload
     ): Promise<SyncronizationPayload>;
@@ -65,8 +61,8 @@ export abstract class GenericSyncUseCase {
     // We start to use domain concepts:
     // for the moment old model instance and domain entity instance are going to live together for a while on sync classes.
     // Little by little through refactors the old instance model should disappear
-    public abstract async postPayload(instance: Instance): Promise<SynchronizationResult[]>;
-    public abstract async buildDataStats(): Promise<
+    public abstract postPayload(instance: Instance): Promise<SynchronizationResult[]>;
+    public abstract buildDataStats(): Promise<
         AggregatedDataStats[] | EventsDataStats[] | undefined
     >;
 
@@ -80,27 +76,18 @@ export abstract class GenericSyncUseCase {
     @cache()
     protected async getInstanceRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [remoteInstance ?? defaultInstance, ""]
-        );
+        return this.repositoryFactory.instanceRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
     protected getTransformationRepository() {
-        return this.repositoryFactory.get<TransformationRepositoryConstructor>(
-            Repositories.TransformationRepository,
-            []
-        );
+        return this.repositoryFactory.transformationRepository();
     }
 
     @cache()
     protected async getMetadataRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.get<MetadataRepositoryConstructor>(
-            Repositories.MetadataRepository,
-            [remoteInstance ?? defaultInstance, this.getTransformationRepository()]
-        );
+        return this.repositoryFactory.metadataRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
@@ -114,19 +101,13 @@ export abstract class GenericSyncUseCase {
     @cache()
     protected async getAggregatedRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.get<AggregatedRepositoryConstructor>(
-            Repositories.AggregatedRepository,
-            [remoteInstance ?? defaultInstance]
-        );
+        return this.repositoryFactory.aggregatedRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
     protected async getEventsRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.get<EventsRepositoryConstructor>(
-            Repositories.EventsRepository,
-            [remoteInstance ?? defaultInstance]
-        );
+        return this.repositoryFactory.eventsRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
@@ -178,7 +159,7 @@ export abstract class GenericSyncUseCase {
             .get({ fields: { userCredentials: { username: true } } })
             .getData();
 
-        return SyncReport.build({
+        return SynchronizationReport.build({
             user: currentUser.userCredentials.username ?? "Unknown",
             types: _.keys(metadataPackage),
             status: "RUNNING" as SynchronizationReportStatus,
@@ -189,28 +170,25 @@ export abstract class GenericSyncUseCase {
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        if (id === "LOCAL") return this.localInstance;
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
 
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [this.localInstance]
-        );
-
-        const data = await storageRepository.getObjectInCollection<InstanceData>(
+        const data = await storageClient.getObjectInCollection<InstanceData>(
             Namespace.INSTANCES,
             id
         );
 
         if (!data) return undefined;
 
-        const instance = Instance.build(data).decryptPassword(this.encryptionKey);
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
+        const instance = Instance.build({
+            ...data,
+            url: data.type === "local" ? this.localInstance.url : data.url,
+            version: data.type === "local" ? this.localInstance.version : data.version,
+        }).decryptPassword(this.encryptionKey);
 
         try {
-            const version = await instanceRepository.getVersion();
+            const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
             return instance.update({ version });
         } catch (error) {
             return instance;
@@ -218,8 +196,18 @@ export abstract class GenericSyncUseCase {
     }
 
     public async *execute() {
-        const { targetInstances: targetInstanceIds, syncRule } = this.builder;
+        const { targetInstances: targetInstanceIds, syncRule, dataParams } = this.builder;
+
         const origin = await this.getOriginInstance();
+
+        if (dataParams && dataParams.runAnalytics) {
+            for await (const message of executeAnalytics(origin)) {
+                yield { message };
+            }
+
+            yield { message: i18n.t("Analytics execution finished on {{name}}", origin) };
+        }
+
         yield { message: i18n.t("Preparing synchronization") };
 
         // Build instance list
@@ -271,9 +259,14 @@ export abstract class GenericSyncUseCase {
 
         // Phase 4: Update sync rule last executed date
         if (syncRule) {
-            const oldRule = await SyncRule.get(this.api, syncRule);
-            const updatedRule = oldRule.updateLastExecuted(new Date());
-            await updatedRule.save(this.api);
+            const oldRule = await this.repositoryFactory
+                .rulesRepository(this.localInstance)
+                .getById(syncRule);
+
+            if (oldRule) {
+                const updatedRule = oldRule.updateLastExecuted(new Date());
+                await this.repositoryFactory.rulesRepository(this.localInstance).save(updatedRule);
+            }
         }
 
         // Phase 5: Update parent task status

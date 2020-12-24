@@ -58,6 +58,9 @@ export function startDhis(
             }));
             this.get("/system/info", async () => ({ version }));
             this.get("/apps", async () => []);
+            this.get("/dataStore/metadata-synchronization/config", async () => ({
+                version: 0,
+            }));
         },
     });
 

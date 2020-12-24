@@ -1,36 +1,38 @@
 import { sync, SyncResult } from "./helpers";
 
-const metadata = {
-    programs: [
-        {
-            id: "id1",
-            name: "Test tracker program",
-            captureCoordinates: true,
-        },
-        {
-            id: "id2",
-            name: "Test tracker program",
-            captureCoordinates: false,
-        },
-    ],
-    programStages: [
-        {
-            id: "ps_id1",
-            name: "Test programStage",
-            validCompleteOnly: false,
-        },
-        {
-            id: "ps_id2",
-            name: "Test programStage",
-            validCompleteOnly: true,
-        },
-    ],
-};
-
 let payload: SyncResult;
 
 describe("Transformations for 2.30 -> 2.31", () => {
+    const metadata = {
+        programs: [
+            {
+                id: "id1",
+                name: "Test tracker program",
+                captureCoordinates: true,
+            },
+            {
+                id: "id2",
+                name: "Test tracker program",
+                captureCoordinates: false,
+            },
+        ],
+        programStages: [
+            {
+                id: "ps_id1",
+                name: "Test programStage",
+                validCompleteOnly: false,
+            },
+            {
+                id: "ps_id2",
+                name: "Test programStage",
+                validCompleteOnly: true,
+            },
+        ],
+    };
+
     beforeAll(async () => {
+        jest.setTimeout(30000);
+
         payload = await sync({
             from: "2.30",
             to: "2.31",

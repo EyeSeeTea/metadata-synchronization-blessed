@@ -1,6 +1,6 @@
 import _ from "lodash";
+import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
 import i18n from "../locales";
-import SyncRule from "../models/syncRule";
 
 // TODO: This should be migrated to use the new ValidationError[]
 export interface OldValidation {
@@ -25,7 +25,10 @@ const translations: { [key: string]: (namespace: object) => string } = {
 };
 
 // TODO: This should be migrated to use the new ValidationError[]
-export function getValidationMessages(model: SyncRule, validationKeys: string[] | null = null) {
+export function getValidationMessages(
+    model: SynchronizationRule,
+    validationKeys: string[] | null = null
+) {
     const validationObj = model.validate();
 
     return _(validationObj)

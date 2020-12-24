@@ -6,8 +6,10 @@ import { ModelValidation, validateModel, ValidationError } from "../../common/en
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 
 export type PublicInstance = Omit<InstanceData, "password">;
+export type InstanceType = "local" | "dhis";
 
 export interface InstanceData {
+    type: InstanceType;
     id: string;
     name: string;
     url: string;
@@ -19,11 +21,14 @@ export interface InstanceData {
 }
 
 export class Instance {
-    public type = "dhis" as const;
     private data: InstanceData;
 
-    constructor(data: InstanceData) {
+    private constructor(data: InstanceData) {
         this.data = data;
+    }
+
+    public get type(): InstanceType {
+        return this.data.type;
     }
 
     public get id(): string {
@@ -60,14 +65,16 @@ export class Instance {
         return this.data.metadataMapping ?? {};
     }
 
-    public get version(): string {
-        return this.data.version ?? "2.30";
+    public get version(): string | undefined {
+        return this.data.version;
     }
 
     public get apiVersion(): number {
         const apiVersion = _.get(this.version?.split("."), 1);
-        if (!apiVersion) throw new Error("Invalid api version");
-        return Number(apiVersion);
+        // TODO: Review implications of having a default value here
+        // Not having this set means no connection possible on save
+        // For example, we should error during sync instead
+        return apiVersion ? Number(apiVersion) : 30;
     }
 
     public toObject(): InstanceData {
@@ -79,7 +86,10 @@ export class Instance {
     }
 
     public validate(filter?: string[]): ValidationError[] {
-        return validateModel<Instance>(this, this.moduleValidations()).filter(
+        const validations =
+            this.type === "local" ? this.localInstanceValidations() : this.moduleValidations();
+
+        return validateModel<Instance>(this, validations).filter(
             ({ property }) => filter?.includes(property) ?? true
         );
     }
@@ -95,8 +105,9 @@ export class Instance {
         });
     }
 
-    public static build(data: PartialBy<InstanceData, "id">): Instance {
-        return new Instance({ id: generateUid(), ...data });
+    public static build(data: PartialBy<InstanceData, "id" | "type">): Instance {
+        const { type = "dhis", id = generateUid() } = data;
+        return new Instance({ type, id: type === "local" ? "LOCAL" : id, ...data });
     }
 
     private moduleValidations = (): ModelValidation[] => [
@@ -105,6 +116,12 @@ export class Instance {
         { property: "url", validation: "hasText" },
         { property: "username", validation: "hasText" },
         { property: "password", validation: "hasText" },
+    ];
+
+    private localInstanceValidations = (): ModelValidation[] => [
+        { property: "name", validation: "hasText" },
+        { property: "url", validation: "isUrl" },
+        { property: "url", validation: "hasText" },
     ];
 
     public decryptPassword(encryptionKey: string): Instance {

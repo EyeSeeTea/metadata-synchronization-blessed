@@ -1,9 +1,7 @@
+import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { MetadataResponsible } from "../entities/MetadataResponsible";
 
 export class GetResponsiblesUseCase implements UseCase {
@@ -13,12 +11,11 @@ export class GetResponsiblesUseCase implements UseCase {
         ids: string[],
         instance = this.localInstance
     ): Promise<MetadataResponsible[]> {
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance)
+            .getStorageClient();
 
-        const items = await storageRepository.listObjectsInCollection<MetadataResponsible>(
+        const items = await storageClient.listObjectsInCollection<MetadataResponsible>(
             Namespace.RESPONSIBLES
         );
 

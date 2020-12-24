@@ -1,18 +1,21 @@
+import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepository } from "../../storage/repositories/StorageRepository";
+import { StorageClient } from "../../storage/repositories/StorageClient";
 import { DataSourceMapping } from "../entities/DataSourceMapping";
 import { isMappingOwnerStore, MappingOwner } from "../entities/MappingOwner";
 
 export class GetMappingByOwnerUseCase implements UseCase {
-    constructor(private storageRepository: StorageRepository) {}
+    constructor(private repositoryFactory: RepositoryFactory, protected localInstance: Instance) {}
 
     public async execute(owner: MappingOwner): Promise<DataSourceMapping | undefined> {
+        const storageClient = await this.getStorageClient();
+
         if (isMappingOwnerStore(owner)) {
-            const mappings = await this.storageRepository.listObjectsInCollection<
-                DataSourceMapping
-            >(Namespace.MAPPINGS);
+            const mappings = await storageClient.listObjectsInCollection<DataSourceMapping>(
+                Namespace.MAPPINGS
+            );
 
             const rawMapping = mappings.find(
                 mapping =>
@@ -22,7 +25,7 @@ export class GetMappingByOwnerUseCase implements UseCase {
             );
 
             if (rawMapping) {
-                const mappingRawWithMetadataMapping = await this.storageRepository.getObjectInCollection<
+                const mappingRawWithMetadataMapping = await storageClient.getObjectInCollection<
                     DataSourceMapping
                 >(Namespace.MAPPINGS, rawMapping?.id);
 
@@ -33,7 +36,7 @@ export class GetMappingByOwnerUseCase implements UseCase {
                 return undefined;
             }
         } else {
-            const instance = await this.storageRepository.getObjectInCollection<Instance>(
+            const instance = await storageClient.getObjectInCollection<Instance>(
                 Namespace.INSTANCES,
                 owner.id
             );
@@ -45,5 +48,9 @@ export class GetMappingByOwnerUseCase implements UseCase {
                   })
                 : undefined;
         }
+    }
+
+    private getStorageClient(): Promise<StorageClient> {
+        return this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
     }
 }

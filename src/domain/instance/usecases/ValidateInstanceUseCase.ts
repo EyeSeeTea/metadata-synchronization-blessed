@@ -3,9 +3,7 @@ import { debug } from "../../../utils/debug";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
-import { Repositories } from "../../Repositories";
 import { DataSource, isJSONDataSource } from "../entities/DataSource";
-import { InstanceRepositoryConstructor } from "../repositories/InstanceRepository";
 
 export class ValidateInstanceUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory) {}
@@ -14,12 +12,7 @@ export class ValidateInstanceUseCase implements UseCase {
         if (isJSONDataSource(instance)) return Either.success(undefined);
 
         try {
-            const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-                Repositories.InstanceRepository,
-                [instance, ""]
-            );
-
-            const version = await instanceRepository.getVersion();
+            const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
 
             if (version) {
                 return Either.success(undefined);
