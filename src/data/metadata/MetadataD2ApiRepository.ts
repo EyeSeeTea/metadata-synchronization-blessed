@@ -148,7 +148,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     public async getDefaultIds(filter?: string): Promise<string[]> {
         const response = (await this.api
             .get("/metadata", {
-                filter: "code:eq:default",
+                filter: "identifiable:eq:default",
                 fields: "id",
             })
             .getData()) as {
