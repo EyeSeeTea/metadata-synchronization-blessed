@@ -79,7 +79,11 @@ export const mapCategoryOptionCombo = (
 ): string | undefined => {
     if (!optionCombo) return undefined;
     for (const mapping of mappings) {
-        const { categoryOptions = {}, categoryCombos = {} } = mapping;
+        const { categoryOptions = {}, categoryCombos = {}, categoryOptionCombos = {} } = mapping;
+
+        const exactMatch = categoryOptionCombos[optionCombo]?.mappedId;
+        if (exactMatch) return exactMatch;
+
         const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
         const isDisabled = _.some(
             origin?.categoryOptions?.map(({ id }) =>

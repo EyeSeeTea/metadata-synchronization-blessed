@@ -41,11 +41,13 @@ export abstract class GenericMappingUseCase {
 
     protected async buildMapping({
         metadata,
+        originInstance,
         destinationInstance,
         originalId,
         mappedId = "",
     }: {
         metadata: Record<string, CombinedMetadata>;
+        originInstance: DataSource;
         destinationInstance: DataSource;
         originalId: string;
         mappedId?: string;
@@ -66,6 +68,14 @@ export abstract class GenericMappingUseCase {
         const destinationItem = destinationMetadata[mappedId];
         if (!originMetadata || !destinationItem) return {};
 
+        const defaultOriginCategoryOptionCombo = await this.repositoryFactory
+            .metadataRepository(originInstance)
+            .getDefaultIds("categoryOptionCombos");
+
+        const defaultDestinationCategoryOptionCombo = await this.repositoryFactory
+            .metadataRepository(destinationInstance)
+            .getDefaultIds("categoryOptionCombos");
+
         const mappedElement = {
             mappedId: destinationItem.path ?? destinationItem.id,
             mappedName: destinationItem.name,
@@ -84,8 +94,8 @@ export abstract class GenericMappingUseCase {
 
         const categoryOptionCombos = await this.autoMapCollection(
             destinationInstance,
-            this.getCategoryOptionCombos(originMetadata),
-            this.getCategoryOptionCombos(destinationItem)
+            this.getCategoryOptionCombos(originMetadata, defaultOriginCategoryOptionCombo[0]),
+            this.getCategoryOptionCombos(destinationItem, defaultDestinationCategoryOptionCombo[0])
         );
 
         const options = await this.autoMapCollection(
@@ -298,26 +308,35 @@ export abstract class GenericMappingUseCase {
         return object.programStages?.map(item => ({ ...item, model: "programStages" })) ?? [];
     }
 
-    protected getCategoryOptionCombos(object: CombinedMetadata): CombinedMetadata[] {
-        const indicatorOptionCombos = _([
-            _.last(object.aggregateExportCategoryOptionCombo?.split(".") ?? []),
-        ])
-            .compact()
-            .map(id => ({
-                id,
-                model: "categoryOptionCombos",
-                name: "",
-            }))
-            .value();
-
-        const dataElementOptionCombos =
-            object.categoryCombo?.categoryOptionCombos.map(({ id, name }) => ({
-                id,
-                name,
-                model: "categoryOptionCombos",
-            })) ?? [];
-
-        return [...indicatorOptionCombos, ...dataElementOptionCombos];
+    protected getCategoryOptionCombos(
+        object: CombinedMetadata,
+        defaultCoc = "default"
+    ): CombinedMetadata[] {
+        switch (object.model) {
+            case "indicators": {
+                const { aggregateExportCategoryOptionCombo = defaultCoc } = object;
+                return _([_.last(aggregateExportCategoryOptionCombo.split("."))])
+                    .compact()
+                    .map(id => ({
+                        id,
+                        model: "categoryOptionCombos",
+                        name: "",
+                    }))
+                    .value();
+            }
+            case "dataElements": {
+                return (
+                    object.categoryCombo?.categoryOptionCombos.map(({ id, name }) => ({
+                        id,
+                        name,
+                        model: "categoryOptionCombos",
+                    })) ?? []
+                );
+            }
+            default: {
+                return [];
+            }
+        }
     }
 
     protected getProgramStageDataElements(object: CombinedMetadata) {
