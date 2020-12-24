@@ -1,6 +1,7 @@
+import { Namespace } from "../../../data/storage/Namespaces";
 import { debug } from "../../../utils/debug";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { Repositories, RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { User } from "../../instance/entities/User";
@@ -17,26 +18,16 @@ import {
 } from "../../metadata/repositories/MetadataRepository";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { BaseModule } from "../../modules/entities/Module";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import {
-    StorageRepository,
-    StorageRepositoryConstructor,
-} from "../../storage/repositories/StorageRepository";
-import { SynchronizationResult } from "../../synchronization/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
+import { StorageClient } from "../../storage/repositories/StorageClient";
+
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { BasePackage, Package } from "../entities/Package";
 
 export class ImportPackageUseCase implements UseCase {
-    storageRepository: StorageRepository;
     instanceRepository: InstanceRepository;
 
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {
-        this.storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [this.localInstance]
-        );
-
         this.instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
             Repositories.InstanceRepository,
             [this.localInstance, ""]
@@ -47,14 +38,14 @@ export class ImportPackageUseCase implements UseCase {
         item: Package,
         mapping: MetadataMappingDictionary = {},
         originInstance: DataSource,
-        destinationInstance?: DataSource
+        destinationInstance: DataSource = this.localInstance
     ): Promise<SynchronizationResult> {
-        const originCategoryOptionCombos = await this.getMetadataRepository(
-            originInstance
-        ).getCategoryOptionCombos();
-        const destinationCategoryOptionCombos = await this.getMetadataRepository(
-            destinationInstance
-        ).getCategoryOptionCombos();
+        const originCategoryOptionCombos = await this.repositoryFactory
+            .metadataRepository(originInstance)
+            .getCategoryOptionCombos();
+        const destinationCategoryOptionCombos = await this.repositoryFactory
+            .metadataRepository(destinationInstance)
+            .getCategoryOptionCombos();
 
         const mapper = new MappingMapper(
             mapping,
@@ -63,7 +54,9 @@ export class ImportPackageUseCase implements UseCase {
         );
 
         const payload = mapper.applyMapping(item.contents);
-        const result = await this.getMetadataRepository(destinationInstance).save(payload);
+        const result = await this.repositoryFactory
+            .metadataRepository(destinationInstance)
+            .save(payload);
 
         debug("Import package", {
             originInstance,
@@ -85,7 +78,9 @@ export class ImportPackageUseCase implements UseCase {
         packageToCreate: Package,
         importedPayload: MetadataPackage
     ): Promise<void> {
-        const existedPackage = await this.storageRepository.getObjectInCollection<BasePackage>(
+        const storageClient = await this.getStorageClient();
+
+        const existedPackage = await storageClient.getObjectInCollection<BasePackage>(
             Namespace.PACKAGES,
             packageToCreate.id
         );
@@ -104,7 +99,7 @@ export class ImportPackageUseCase implements UseCase {
                 contents: importedPayload,
             });
 
-            await this.storageRepository.saveObjectInCollection(Namespace.PACKAGES, newPackage);
+            await storageClient.saveObjectInCollection(Namespace.PACKAGES, newPackage);
 
             await this.createOrUpdateModule(newPackage, user, instance, importedPayload);
         }
@@ -116,7 +111,9 @@ export class ImportPackageUseCase implements UseCase {
         instance: string,
         importedPayload: MetadataPackage
     ): Promise<void> {
-        const existedModuleData = await this.storageRepository.getObjectInCollection<BaseModule>(
+        const storageClient = await this.getStorageClient();
+
+        const existedModuleData = await storageClient.getObjectInCollection<BaseModule>(
             Namespace.MODULES,
             packageToCreate.module.id
         );
@@ -131,7 +128,7 @@ export class ImportPackageUseCase implements UseCase {
                 lastUpdatedBy: user,
             });
 
-            await this.storageRepository.saveObjectInCollection(Namespace.MODULES, existedModule);
+            await storageClient.saveObjectInCollection(Namespace.MODULES, existedModule);
         } else {
             const { module } = packageToCreate;
 
@@ -153,7 +150,7 @@ export class ImportPackageUseCase implements UseCase {
                 ],
             });
 
-            await this.storageRepository.saveObjectInCollection(Namespace.MODULES, newModule);
+            await storageClient.saveObjectInCollection(Namespace.MODULES, newModule);
         }
     }
 
@@ -178,5 +175,9 @@ export class ImportPackageUseCase implements UseCase {
             [remoteInstance, transformationRepository],
             tag
         );
+    }
+
+    private async getStorageClient(): Promise<StorageClient> {
+        return await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
     }
 }

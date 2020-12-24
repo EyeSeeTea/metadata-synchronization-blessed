@@ -1,14 +1,11 @@
 import _ from "lodash";
-import { SynchronizationBuilder } from "../../../types/synchronization";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
-import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
 export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE" | "INSTANCE_NOT_FOUND";
@@ -66,12 +63,7 @@ export class PrepareSyncUseCase implements UseCase {
     }
 
     private async getCurrentUser() {
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [this.localInstance, ""]
-        );
-
-        return instanceRepository.getUser();
+        return this.repositoryFactory.instanceRepository(this.localInstance).getUser();
     }
 
     private async getResponsiblesForInstance(
@@ -80,12 +72,11 @@ export class PrepareSyncUseCase implements UseCase {
         const instance = await this.getInstanceById(instanceId);
         if (instance.isError() || !instance.value.data) return Either.error("INSTANCE_NOT_FOUND");
 
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance.value.data]
-        );
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance.value.data)
+            .getStorageClient();
 
-        const responsibles = await storageRepository.listObjectsInCollection<MetadataResponsible>(
+        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(
             Namespace.RESPONSIBLES
         );
 
@@ -93,27 +84,24 @@ export class PrepareSyncUseCase implements UseCase {
     }
 
     private async getInstanceById(id: string): Promise<Either<"INSTANCE_NOT_FOUND", Instance>> {
-        if (id === "LOCAL") return Either.success(this.localInstance);
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
 
-        const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [this.localInstance]
-        );
-
-        const objects = await storageRepository.listObjectsInCollection<InstanceData>(
+        const objects = await storageClient.listObjectsInCollection<InstanceData>(
             Namespace.INSTANCES
         );
 
         const data = objects.find(data => data.id === id);
         if (!data) return Either.error("INSTANCE_NOT_FOUND");
 
-        const instance = Instance.build(data).decryptPassword(this.encryptionKey);
-        const instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [instance, ""]
-        );
+        const instance = Instance.build({
+            ...data,
+            url: data.type === "local" ? this.localInstance.url : data.url,
+            version: data.type === "local" ? this.localInstance.version : data.version,
+        }).decryptPassword(this.encryptionKey);
+        const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
 
-        const version = await instanceRepository.getVersion();
         return Either.success(instance.update({ version }));
     }
 }

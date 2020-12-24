@@ -3,7 +3,7 @@ import _ from "lodash";
 import moment from "moment";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { IdentifiableRef, Ref } from "../../domain/common/entities/Ref";
-import { DataSource } from "../../domain/instance/entities/DataSource";
+import { DataSource, isDhisInstance } from "../../domain/instance/entities/DataSource";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
     DateFilter,
@@ -25,7 +25,7 @@ import {
 } from "../../domain/metadata/repositories/MetadataRepository";
 import { MetadataImportParams } from "../../domain/metadata/types";
 import { getClassName } from "../../domain/metadata/utils";
-import { SynchronizationResult } from "../../domain/synchronization/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import { modelFactory } from "../../models/dhis/factory";
@@ -43,7 +43,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     private instance: Instance;
 
     constructor(instance: DataSource, private transformationRepository: TransformationRepository) {
-        if (instance.type !== "dhis") {
+        if (!isDhisInstance(instance)) {
             throw new Error("Invalid instance type for MetadataD2ApiRepository");
         }
 
@@ -148,7 +148,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     public async getDefaultIds(filter?: string): Promise<string[]> {
         const response = (await this.api
             .get("/metadata", {
-                filter: "code:eq:default",
+                filter: "identifiable:eq:default",
                 fields: "id",
             })
             .getData()) as {

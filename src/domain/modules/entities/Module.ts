@@ -1,6 +1,6 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
-import { SynchronizationBuilder } from "../../../types/synchronization";
+import { SynchronizationBuilder } from "../../synchronization/entities/SynchronizationBuilder";
 import { NamedRef, Ref, SharedRef } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";

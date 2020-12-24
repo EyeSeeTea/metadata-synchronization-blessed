@@ -7,11 +7,13 @@ export interface DataSynchronizationParams extends DataImportParams {
     period?: DataSyncPeriod;
     startDate?: Date;
     endDate?: Date;
+    lastUpdated?: Date;
     events?: string[];
     allEvents?: boolean;
     generateNewUid?: boolean;
     enableAggregation?: boolean;
     aggregationType?: DataSyncAggregation;
+    runAnalytics?: boolean;
 }
 
 export type DataSyncPeriod =

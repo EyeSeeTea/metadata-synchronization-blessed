@@ -1,16 +1,18 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
+import {
+    Repositories,
+    RepositoryFactory,
+} from "../../../../domain/common/factories/RepositoryFactory";
 import { EventsSyncUseCase } from "../../../../domain/events/usecases/EventsSyncUseCase";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import { Repositories } from "../../../../domain/Repositories";
-import { SynchronizationBuilder } from "../../../../types/synchronization";
+import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
+import { ConfigAppRepository } from "../../../config/ConfigAppRepository";
 import { EventsD2ApiRepository } from "../../../events/EventsD2ApiRepository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
-import { StorageDataStoreRepository } from "../../../storage/StorageDataStoreRepository";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
 import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
 
@@ -168,6 +170,14 @@ describe("Sync metadata", () => {
 
         local.get("/dataStore/metadata-synchronization/instances", async () => [
             {
+                type: "local",
+                id: "LOCAL",
+                name: "This instance",
+                description: "",
+                url: "http://origin.test",
+            },
+            {
+                type: "dhis",
                 id: "DESTINATION",
                 name: "Destination test",
                 url: "http://destination.test",
@@ -177,6 +187,7 @@ describe("Sync metadata", () => {
             },
         ]);
 
+        local.get("/dataStore/metadata-synchronization/instances-LOCAL", async () => ({}));
         local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
 
         const addEventsToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
@@ -275,9 +286,9 @@ describe("Sync metadata", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryFactory = new RepositoryFactory();
+    const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
     repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.StorageRepository, StorageDataStoreRepository);
+    repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
     repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
     repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);

@@ -23,6 +23,11 @@ const availableValidations = {
         getDescription: (field: string) => i18n.t("Field {{field}} cannot be blank", { field }),
         check: (value?: string) => !value?.trim(),
     },
+    hasValue: {
+        error: "cannot_be_blank",
+        getDescription: (field: string) => i18n.t("Field {{field}} cannot be blank", { field }),
+        check: (value?: string) => !value,
+    },
     hasItems: {
         error: "cannot_be_empty",
         getDescription: (field: string) =>

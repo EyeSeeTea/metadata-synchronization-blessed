@@ -1,10 +1,8 @@
+import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
 import { ImportedPackageData } from "../entities/ImportedPackage";
 
 type ListImportedPackageError = "UNEXPECTED_ERROR";
@@ -13,13 +11,12 @@ export class ListImportedPackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(): Promise<Either<ListImportedPackageError, ImportedPackageData[]>> {
-        try {
-            const storageRepository = this.repositoryFactory.get<StorageRepositoryConstructor>(
-                Repositories.StorageRepository,
-                [this.localInstance]
-            );
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
 
-            const items = await storageRepository.listObjectsInCollection<ImportedPackageData>(
+        try {
+            const items = await storageClient.listObjectsInCollection<ImportedPackageData>(
                 Namespace.IMPORTEDPACKAGES
             );
 

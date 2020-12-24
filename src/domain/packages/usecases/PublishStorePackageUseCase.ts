@@ -1,17 +1,14 @@
 import moment from "moment";
-import { cache } from "../../../utils/cache";
+import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { BaseModule } from "../../modules/entities/Module";
-import { Repositories } from "../../Repositories";
-import { Namespace } from "../../storage/Namespaces";
-import { StorageRepositoryConstructor } from "../../storage/repositories/StorageRepository";
+import { Store } from "../../stores/entities/Store";
 import { GitHubError } from "../entities/Errors";
 import { BasePackage } from "../entities/Package";
-import { Store } from "../entities/Store";
-import { GitHubRepositoryConstructor, moduleFile } from "../repositories/GitHubRepository";
+import { moduleFile } from "../repositories/GitHubRepository";
 
 export type PublishStorePackageError =
     | GitHubError
@@ -26,15 +23,20 @@ export class PublishStorePackageUseCase implements UseCase {
         packageId: string,
         force = false
     ): Promise<Either<PublishStorePackageError, void>> {
-        const store = (
-            await this.storageRepository(this.localInstance).getObject<Store[]>(Namespace.STORES)
-        )?.find(store => store.default && !store.deleted);
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClient();
 
-        if (!store) return Either.error("DEFAULT_STORE_NOT_FOUND");
+        const defaultStore = await this.repositoryFactory
+            .storeRepository(this.localInstance)
+            .getDefault();
 
-        const storedPackage = await this.storageRepository(
-            this.localInstance
-        ).getObjectInCollection<BasePackage>(Namespace.PACKAGES, packageId);
+        if (!defaultStore) return Either.error("DEFAULT_STORE_NOT_FOUND");
+
+        const storedPackage = await storageClient.getObjectInCollection<BasePackage>(
+            Namespace.PACKAGES,
+            packageId
+        );
         if (!storedPackage) return Either.error("PACKAGE_NOT_FOUND");
 
         const { contents, ...item } = storedPackage;
@@ -44,25 +46,21 @@ export class PublishStorePackageUseCase implements UseCase {
         const path = `${item.module.name}/${fileName}.json`;
         const branch = item.module.department.name.replace(/\s/g, "-");
 
-        const existingFileCheck = await this.gitRepository().readFile(store, branch, path);
+        const existingFileCheck = await this.repositoryFactory
+            .gitRepository()
+            .readFile(defaultStore, branch, path);
         if (existingFileCheck.isSuccess()) return Either.error("ALREADY_PUBLISHED");
 
-        const validation = await this.gitRepository().writeFile(
-            store,
-            branch,
-            path,
-            JSON.stringify(payload, null, 4)
-        );
+        const validation = await this.repositoryFactory
+            .gitRepository()
+            .writeFile(defaultStore, branch, path, JSON.stringify(payload, null, 4));
 
         if (validation.isError()) {
             if (force && validation.value.error === "BRANCH_NOT_FOUND") {
-                await this.gitRepository().createBranch(store, branch);
-                const validation = await this.gitRepository().writeFile(
-                    store,
-                    branch,
-                    path,
-                    JSON.stringify(payload, null, 4)
-                );
+                await this.repositoryFactory.gitRepository().createBranch(defaultStore, branch);
+                const validation = await this.repositoryFactory
+                    .gitRepository()
+                    .writeFile(defaultStore, branch, path, JSON.stringify(payload, null, 4));
 
                 if (validation.isError()) return Either.error(validation.value.error);
             } else {
@@ -71,7 +69,7 @@ export class PublishStorePackageUseCase implements UseCase {
         }
 
         await this.createModuleFileIfRequired(
-            store,
+            defaultStore,
             branch,
             `${item.module.name}/${moduleFile}`,
             item.module
@@ -86,31 +84,12 @@ export class PublishStorePackageUseCase implements UseCase {
         path: string,
         moduleRef: Pick<BaseModule, "id" | "name" | "instance" | "department">
     ) {
-        const validation = await this.gitRepository().writeFile(
-            store,
-            branch,
-            path,
-            JSON.stringify(moduleRef, null, 4)
-        );
+        const validation = await this.repositoryFactory
+            .gitRepository()
+            .writeFile(store, branch, path, JSON.stringify(moduleRef, null, 4));
 
         if (validation.isError()) {
             return console.warn("An error creating the module file has ocurred");
         }
-    }
-
-    @cache()
-    private gitRepository() {
-        return this.repositoryFactory.get<GitHubRepositoryConstructor>(
-            Repositories.GitHubRepository,
-            []
-        );
-    }
-
-    @cache()
-    private storageRepository(instance: Instance) {
-        return this.repositoryFactory.get<StorageRepositoryConstructor>(
-            Repositories.StorageRepository,
-            [instance]
-        );
     }
 }
