@@ -176,10 +176,13 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
     ) => {
         return objects.map(({ programIndicators, ...program }) => ({
             ...program,
-            programIndicators: programIndicators.map(programIndicator => ({
-                ...programIndicator,
-                model: ProgramIndicatorMappedModel,
-            })),
+            programIndicators: programIndicators.map(
+                ({ aggregateExportCategoryOptionCombo = "default", ...programIndicator }) => ({
+                    ...programIndicator,
+                    aggregateExportCategoryOptionCombo,
+                    model: ProgramIndicatorMappedModel,
+                })
+            ),
         }));
     };
 }

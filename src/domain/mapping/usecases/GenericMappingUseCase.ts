@@ -313,7 +313,8 @@ export abstract class GenericMappingUseCase {
         defaultCoc = "default"
     ): CombinedMetadata[] {
         switch (object.model) {
-            case "indicators": {
+            case "indicators":
+            case "programIndicators": {
                 const { aggregateExportCategoryOptionCombo = defaultCoc } = object;
                 return _([_.last(aggregateExportCategoryOptionCombo.split("."))])
                     .compact()
