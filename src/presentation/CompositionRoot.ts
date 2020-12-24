@@ -16,6 +16,7 @@ import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRe
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { DeleteAggregatedUseCase } from "../domain/aggregated/usecases/DeleteAggregatedUseCase";
+import { ListAggregatedUseCase } from "../domain/aggregated/usecases/ListAggregatedUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
 import { Repositories, RepositoryFactory } from "../domain/common/factories/RepositoryFactory";
 import { StartApplicationUseCase } from "../domain/common/usecases/StartApplicationUseCase";
@@ -137,6 +138,7 @@ export class CompositionRoot {
     @cache()
     public get aggregated() {
         return getExecute({
+            list: new ListAggregatedUseCase(this.repositoryFactory),
             delete: new DeleteAggregatedUseCase(this.repositoryFactory),
         });
     }

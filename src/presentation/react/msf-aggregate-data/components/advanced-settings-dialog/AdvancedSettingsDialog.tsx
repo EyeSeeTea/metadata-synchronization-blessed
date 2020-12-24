@@ -11,6 +11,7 @@ import { Toggle } from "../../../core/components/toggle/Toggle";
 export type AdvancedSettings = {
     period?: Period;
     deleteDataValuesBeforeSync?: boolean;
+    checkInPreviousPeriods?: boolean;
 };
 
 export interface AdvancedSettingsDialogProps {
@@ -30,6 +31,10 @@ export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
     const snackbar = useSnackbar();
     const [deleteDataValuesBeforeSync, setDeleteDataValuesBeforeSync] = useState<boolean>(
         advancedSettings?.deleteDataValuesBeforeSync || false
+    );
+
+    const [checkInPreviousPeriods, setCheckInPreviousPeriods] = useState<boolean>(
+        advancedSettings?.checkInPreviousPeriods || false
     );
 
     const [objectWithPeriod, setObjectWithPeriod] = useState<ObjectWithPeriod | undefined>(
@@ -60,10 +65,11 @@ export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
 
             periodValidation.match({
                 error: errors => snackbar.error(errors.map(error => error.description).join("\n")),
-                success: period => onSave({ period, deleteDataValuesBeforeSync }),
+                success: period =>
+                    onSave({ period, deleteDataValuesBeforeSync, checkInPreviousPeriods }),
             });
         } else {
-            onSave({ deleteDataValuesBeforeSync });
+            onSave({ deleteDataValuesBeforeSync, checkInPreviousPeriods });
         }
     };
 
@@ -102,6 +108,14 @@ export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
                     label={i18n.t("Delete data values before sync")}
                     onValueChange={setDeleteDataValuesBeforeSync}
                     value={deleteDataValuesBeforeSync}
+                />
+            </div>
+
+            <div>
+                <Toggle
+                    label={i18n.t("Check existing data values in previous periods")}
+                    onValueChange={setCheckInPreviousPeriods}
+                    value={checkInPreviousPeriods}
                 />
             </div>
         </ConfirmationDialog>

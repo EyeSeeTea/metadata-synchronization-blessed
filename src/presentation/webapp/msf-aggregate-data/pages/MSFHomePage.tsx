@@ -1,4 +1,5 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
+import { ConfirmationDialog } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import i18n from "../../../../locales";
@@ -25,6 +26,7 @@ export const MSFHomePage: React.FC = () => {
     const [syncProgress, setSyncProgress] = useState<string[]>([]);
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
+    const [msfValidationErrors, setMsfValidationErrors] = useState<string[]>();
     const [advancedSettings, setAdvancedSettings] = useState<AdvancedSettings>({
         period: undefined,
         deleteDataValuesBeforeSync: false,
@@ -51,9 +53,15 @@ export const MSFHomePage: React.FC = () => {
         });
     }, [compositionRoot]);
 
-    const handleAggregateData = () => {
-        executeAggregateData(compositionRoot, advancedSettings, msfSettings, progress =>
-            setSyncProgress(progress)
+    const handleAggregateData = (skipCheckInPreviousPeriods?: boolean) => {
+        executeAggregateData(
+            compositionRoot,
+            skipCheckInPreviousPeriods
+                ? { ...advancedSettings, checkInPreviousPeriods: false }
+                : advancedSettings,
+            msfSettings,
+            progress => setSyncProgress(progress),
+            errors => setMsfValidationErrors(errors)
         );
     };
 
@@ -177,6 +185,34 @@ export const MSFHomePage: React.FC = () => {
                     onClose={handleCloseMSFSettings}
                     onSave={handleSaveMSFSettings}
                 />
+            )}
+
+            {msfValidationErrors && msfValidationErrors.length > 0 && (
+                <ConfirmationDialog
+                    open={true}
+                    maxWidth="md"
+                    fullWidth={true}
+                    title={i18n.t("MSF Validation")}
+                    onCancel={() => setMsfValidationErrors(undefined)}
+                    onSave={() => {
+                        setMsfValidationErrors(undefined);
+                        handleAggregateData(true);
+                    }}
+                    cancelText={i18n.t("Cancel")}
+                    saveText={i18n.t("Proceed")}
+                >
+                    <Typography>{i18n.t("There are issues with data values:")}</Typography>
+                    <ul>
+                        {msfValidationErrors.map((error, index) => {
+                            return (
+                                <li key={`err-${index}`}>
+                                    <Typography>{error}</Typography>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                    <Typography>{i18n.t("Do you want to proceed?")}</Typography>
+                </ConfirmationDialog>
             )}
         </React.Fragment>
     );
