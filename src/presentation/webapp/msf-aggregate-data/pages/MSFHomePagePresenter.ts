@@ -119,7 +119,7 @@ async function validatePreviousDataValues(
 
             const endDate = periodStartDate.clone().subtract(1, "day");
 
-            const aggregatedResponse = await compositionRoot.aggregated.list(
+            const { dataValues = [] } = await compositionRoot.aggregated.list(
                 instance,
                 {
                     orgUnitPaths: rule.builder.dataParams?.orgUnitPaths ?? [],
@@ -130,7 +130,7 @@ async function validatePreviousDataValues(
                 msfSettings.dataElementGroupId
             );
 
-            if (aggregatedResponse.dataValues?.length > 0) {
+            if (dataValues.length > 0) {
                 const periodName = availablePeriods[rule.dataParams.period].name;
 
                 return `Sync rule '${rule.name}': there are data values in '${
