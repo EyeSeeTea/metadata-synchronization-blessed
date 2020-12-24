@@ -263,7 +263,9 @@ export abstract class GenericMappingUseCase {
     }
 
     protected getCategoryOptions(object: CombinedMetadata) {
-        // TODO: FIXME
+        // TODO: This method should properly validate original model from object
+        if (["categoryOptionCombos"].includes(object.model)) return [];
+
         return _.flatten(
             object.categoryCombo?.categories?.map(({ id: category, categoryOptions }) =>
                 categoryOptions.map(({ id, ...rest }) => ({
