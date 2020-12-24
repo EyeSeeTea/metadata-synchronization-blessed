@@ -141,9 +141,14 @@ export const programFieldsWithDataElements = {
     },
 };
 
+export const indicatorFields = {
+    ...d2BaseModelFields,
+    aggregateExportCategoryOptionCombo: include,
+};
+
 export const programFieldsWithIndicators = {
     ...programFields,
-    programIndicators: d2BaseModelFields,
+    programIndicators: indicatorFields,
 };
 
 export const organisationUnitFields = {

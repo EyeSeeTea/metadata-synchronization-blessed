@@ -2,6 +2,7 @@ import React from "react";
 import i18n from "../../../../../locales";
 import { D2Model } from "../../../../../models/dhis/default";
 import {
+    CategoryOptionComboMappedModel,
     CategoryOptionMappedModel,
     OptionMappedModel,
     ProgramStageMappedModel,
@@ -27,6 +28,15 @@ export const buildModelSteps = (type: string): MappingWizardStepBuilder[] => {
                 return !!element.categoryCombo?.id;
             },
         },
+        categoryOptionCombos: {
+            key: "category-option-combos",
+            label: i18n.t("Category Option Combos"),
+            component: (props: MappingTableProps) => <MappingTable {...props} />,
+            models: [CategoryOptionComboMappedModel],
+            isVisible: (_type: string, element: MetadataType) => {
+                return !!element.aggregateExportCategoryOptionCombo;
+            },
+        },
         options: {
             key: "options",
             label: i18n.t("Options"),
@@ -48,7 +58,11 @@ export const buildModelSteps = (type: string): MappingWizardStepBuilder[] => {
     };
 
     const modelSteps: Dictionary<MappingWizardStepBuilder[]> = {
-        aggregatedDataElements: [availableSteps.categoryOptions, availableSteps.options],
+        aggregatedDataElements: [
+            availableSteps.categoryOptions,
+            availableSteps.categoryOptionCombos,
+            availableSteps.options,
+        ],
         programDataElements: [availableSteps.options],
         eventPrograms: [availableSteps.categoryOptions, availableSteps.programStages],
     };

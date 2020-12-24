@@ -3,7 +3,9 @@ import i18n from "../../locales";
 import {
     D2CategoryOptionSchema,
     D2DataSetSchema,
+    D2IndicatorSchema,
     D2OptionSchema,
+    D2ProgramIndicatorSchema,
     D2ProgramSchema,
     SelectedPick,
 } from "../../types/d2-api";
@@ -11,6 +13,7 @@ import {
     categoryOptionFields,
     dataElementFields,
     dataSetFields,
+    indicatorFields,
     optionFields,
     programFieldsWithDataElements,
     programFieldsWithIndicators,
@@ -18,6 +21,7 @@ import {
 import {
     CategoryComboModel,
     CategoryModel,
+    CategoryOptionComboModel,
     CategoryOptionGroupModel,
     CategoryOptionGroupSetModel,
     CategoryOptionModel,
@@ -48,8 +52,21 @@ export class CategoryOptionMappedModel extends CategoryOptionModel {
     };
 }
 
+export class CategoryOptionComboMappedModel extends CategoryOptionComboModel {
+    protected static mappingType = "categoryOptionCombos";
+}
+
 export class IndicatorMappedModel extends IndicatorModel {
+    protected static fields = indicatorFields;
     protected static mappingType = "aggregatedDataElements";
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2IndicatorSchema, typeof indicatorFields>[]
+    ) => {
+        return _.map(objects, ({ aggregateExportCategoryOptionCombo = "default", ...rest }) => {
+            return { ...rest, aggregateExportCategoryOptionCombo };
+        });
+    };
 }
 
 export class OptionMappedModel extends OptionModel {
@@ -61,7 +78,16 @@ export class OrganisationUnitMappedModel extends OrganisationUnitModel {
 }
 
 export class ProgramIndicatorMappedModel extends ProgramIndicatorModel {
+    protected static fields = indicatorFields;
     protected static mappingType = "aggregatedDataElements";
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2ProgramIndicatorSchema, typeof indicatorFields>[]
+    ) => {
+        return _.map(objects, ({ aggregateExportCategoryOptionCombo = "default", ...rest }) => {
+            return { ...rest, aggregateExportCategoryOptionCombo };
+        });
+    };
 }
 
 export class ProgramStageMappedModel extends ProgramStageModel {
@@ -150,10 +176,13 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
     ) => {
         return objects.map(({ programIndicators, ...program }) => ({
             ...program,
-            programIndicators: programIndicators.map(programIndicator => ({
-                ...programIndicator,
-                model: ProgramIndicatorMappedModel,
-            })),
+            programIndicators: programIndicators.map(
+                ({ aggregateExportCategoryOptionCombo = "default", ...programIndicator }) => ({
+                    ...programIndicator,
+                    aggregateExportCategoryOptionCombo,
+                    model: ProgramIndicatorMappedModel,
+                })
+            ),
         }));
     };
 }
