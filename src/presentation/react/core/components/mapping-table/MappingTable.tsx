@@ -111,6 +111,7 @@ export default function MappingTable({
 
     const applyMapping = useCallback(
         async (config: MappingConfig[]) => {
+            loading.show(true, i18n.t("Applying mapping..."));
             try {
                 const newMapping = await compositionRoot.mapping.apply(
                     originInstance ?? compositionRoot.localInstance,
