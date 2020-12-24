@@ -10,6 +10,7 @@ import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
 export class ConfigAppRepository implements ConfigRepository {
     constructor(private instance: Instance) {}
 
+    @cache()
     public async detectStorageClients(): Promise<Array<"dataStore" | "constant">> {
         const dataStoreClient = new StorageDataStoreClient(this.instance);
         const constantClient = new StorageConstantClient(this.instance);
@@ -52,6 +53,7 @@ export class ConfigAppRepository implements ConfigRepository {
         await oldClient.clearStorage();
 
         // Reset memoize
+        clear(this.detectStorageClients, this);
         clear(this.getStorageClient, this);
     }
 }
