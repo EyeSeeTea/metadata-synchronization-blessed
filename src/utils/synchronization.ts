@@ -49,6 +49,8 @@ export const availablePeriods = buildObject<{
     YESTERDAY: { name: i18n.t("Yesterday"), start: [1, "day"] },
     LAST_7_DAYS: { name: i18n.t("Last 7 days"), start: [7, "day"], end: [0, "day"] },
     LAST_14_DAYS: { name: i18n.t("Last 14 days"), start: [14, "day"], end: [0, "day"] },
+    LAST_30_DAYS: { name: i18n.t("Last 30 days"), start: [30, "day"], end: [0, "day"] },
+    LAST_90_DAYS: { name: i18n.t("Last 90 days"), start: [90, "day"], end: [0, "day"] },
     THIS_WEEK: { name: i18n.t("This week"), start: [0, "isoWeek"] },
     LAST_WEEK: { name: i18n.t("Last week"), start: [1, "isoWeek"] },
     THIS_MONTH: { name: i18n.t("This month"), start: [0, "month"] },
