@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-28T18:03:10.949Z\n"
-"PO-Revision-Date: 2020-12-28T18:03:10.949Z\n"
+"POT-Creation-Date: 2020-12-28T20:21:02.582Z\n"
+"PO-Revision-Date: 2020-12-28T20:21:02.582Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1917,6 +1917,12 @@ msgid "Last 7 days"
 msgstr ""
 
 msgid "Last 14 days"
+msgstr ""
+
+msgid "Last 30 days"
+msgstr ""
+
+msgid "Last 90 days"
 msgstr ""
 
 msgid "This week"
