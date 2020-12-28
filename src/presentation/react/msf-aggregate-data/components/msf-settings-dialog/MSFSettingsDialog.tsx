@@ -1,6 +1,6 @@
 import { makeStyles, TextField, Theme } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { DataElementGroup } from "../../../../../domain/metadata/entities/MetadataEntities";
 import i18n from "../../../../../locales";
 import { DataElementGroupModel } from "../../../../../models/dhis/metadata";
@@ -76,6 +76,11 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
         updateSettings(settings => ({ ...settings, dataElementGroupId }));
     };
 
+    const setAnalyticsYears = (event: ChangeEvent<HTMLInputElement>) => {
+        const analyticsYears = parseInt(event.target.value);
+        updateSettings(settings => ({ ...settings, analyticsYears }));
+    };
+
     const handleSave = () => {
         onSave(settings);
     };
@@ -103,6 +108,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     className={classes.yearsSelector}
                     label={i18n.t("Number of years to include")}
                     value={settings.analyticsYears}
+                    onChange={setAnalyticsYears}
                     type="number"
                 />
             </div>
