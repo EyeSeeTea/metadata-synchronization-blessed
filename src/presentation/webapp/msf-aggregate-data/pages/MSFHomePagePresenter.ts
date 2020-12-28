@@ -7,6 +7,7 @@ import { SynchronizationRule } from "../../../../domain/rules/entities/Synchroni
 import { Store } from "../../../../domain/stores/entities/Store";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
+import { cleanOrgUnitPaths } from "../../../../domain/synchronization/utils";
 import i18n from "../../../../locales";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { promiseMap } from "../../../../utils/common";
@@ -226,12 +227,24 @@ async function getSyncRules(
     compositionRoot: CompositionRoot,
     advancedSettings: AdvancedSettings
 ): Promise<SynchronizationRule[]> {
-    //TODO: implement logic to retrieve sync rules to execute
-    const rulesList = (
-        await compositionRoot.rules.list({ filters: { type: "events" }, paging: false })
-    ).rows.slice(0, 5);
+    const { dataViewOrganisationUnits } = await compositionRoot.instances.getCurrentUser();
 
-    const rules = await promiseMap(rulesList, async rule => {
+    const { rows } = await compositionRoot.rules.list({
+        filters: { type: "events" },
+        paging: false,
+    });
+
+    const allRules = await promiseMap(rows, ({ id }) => compositionRoot.rules.get(id));
+
+    const accesibleRules = _.compact(allRules).filter(
+        ({ dataSyncOrgUnitPaths }) =>
+            _.intersection(
+                cleanOrgUnitPaths(dataSyncOrgUnitPaths),
+                dataViewOrganisationUnits.map(({ id }) => id)
+            ).length > 0
+    );
+
+    const rules = await promiseMap(accesibleRules, async rule => {
         const fullRule = await compositionRoot.rules.get(rule.id);
 
         if (!fullRule || !advancedSettings.period) {
