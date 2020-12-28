@@ -35,6 +35,7 @@ export const MSFHomePage: React.FC = () => {
     const [globalAdmin, setGlobalAdmin] = useState(false);
     const [msfSettings, setMsfSettings] = useState<MSFSettings>({
         runAnalytics: "by-sync-rule-settings",
+        analyticsYears: 2,
     });
 
     useEffect(() => {
@@ -42,14 +43,13 @@ export const MSFHomePage: React.FC = () => {
     }, [api]);
 
     useEffect(() => {
-        compositionRoot.customData.get(msfStorage).then(data => {
-            const runAnalytics = isGlobalInstance() ? "false" : "by-sync-rule-settings";
-
-            if (data) {
-                setMsfSettings({ runAnalytics, dataElementGroupId: data.dataElementGroupId });
-            } else {
-                setMsfSettings({ runAnalytics });
-            }
+        compositionRoot.customData.get<Omit<MSFSettings, "runAnalytics">>(msfStorage).then(data => {
+            setMsfSettings(settings => ({
+                ...settings,
+                runAnalytics: isGlobalInstance() ? "false" : "by-sync-rule-settings",
+                dataElementGroupId: data?.dataElementGroupId,
+                analyticsYears: data?.analyticsYears ?? 2,
+            }));
         });
     }, [compositionRoot]);
 
@@ -181,7 +181,7 @@ export const MSFHomePage: React.FC = () => {
 
             {showMSFSettingsDialog && (
                 <MSFSettingsDialog
-                    msfSettings={msfSettings}
+                    settings={msfSettings}
                     onClose={handleCloseMSFSettings}
                     onSave={handleSaveMSFSettings}
                 />

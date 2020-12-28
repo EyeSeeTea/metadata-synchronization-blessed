@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-24T10:46:07.699Z\n"
-"PO-Revision-Date: 2020-12-24T10:46:07.699Z\n"
+"POT-Creation-Date: 2020-12-28T18:03:10.949Z\n"
+"PO-Revision-Date: 2020-12-28T18:03:10.949Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1229,6 +1229,9 @@ msgid "MSF Settings"
 msgstr ""
 
 msgid "Run Analytics"
+msgstr ""
+
+msgid "Number of years to include"
 msgstr ""
 
 msgid "Data Element Group *"

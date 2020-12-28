@@ -1,4 +1,4 @@
-import { makeStyles, Theme } from "@material-ui/core";
+import { makeStyles, TextField, Theme } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { DataElementGroup } from "../../../../../domain/metadata/entities/MetadataEntities";
@@ -11,29 +11,26 @@ export type RunAnalyticsSettings = "true" | "false" | "by-sync-rule-settings";
 
 export type MSFSettings = {
     runAnalytics: RunAnalyticsSettings;
+    analyticsYears: number;
     dataElementGroupId?: string;
 };
 
 export interface MSFSettingsDialogProps {
-    msfSettings: MSFSettings;
+    settings: MSFSettings;
+    onSave(settings: MSFSettings): void;
     onClose(): void;
-    onSave(msfSettings: MSFSettings): void;
 }
 
 export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
     onClose,
     onSave,
-    msfSettings,
+    settings: defaultSettings,
 }) => {
     const classes = useStyles();
     const { compositionRoot } = useAppContext();
-    const [runAnalytics, setRunAnalytics] = useState<RunAnalyticsSettings>(
-        msfSettings.runAnalytics
-    );
+
+    const [settings, updateSettings] = useState<MSFSettings>(defaultSettings);
     const [catOptionGroups, setDataElementGroups] = useState<DropdownOption<string>[]>([]);
-    const [selectedDataElementGroup, setSelectedDataElementGroup] = useState(
-        msfSettings.dataElementGroupId
-    );
 
     useEffect(() => {
         compositionRoot.metadata
@@ -71,11 +68,16 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
         ];
     }, []);
 
+    const setRunAnalytics = (runAnalytics: RunAnalyticsSettings) => {
+        updateSettings(settings => ({ ...settings, runAnalytics }));
+    };
+
+    const setSelectedDataElementGroup = (dataElementGroupId: string) => {
+        updateSettings(settings => ({ ...settings, dataElementGroupId }));
+    };
+
     const handleSave = () => {
-        onSave({
-            runAnalytics,
-            dataElementGroupId: selectedDataElementGroup,
-        });
+        onSave(settings);
     };
 
     return (
@@ -94,8 +96,14 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     label={i18n.t("Run Analytics")}
                     items={analyticsSettingItems}
                     onValueChange={setRunAnalytics}
-                    value={runAnalytics}
+                    value={settings.runAnalytics}
                     hideEmpty
+                />
+                <TextField
+                    className={classes.yearsSelector}
+                    label={i18n.t("Number of years to include")}
+                    value={settings.analyticsYears}
+                    type="number"
                 />
             </div>
             <div className={classes.selector}>
@@ -103,7 +111,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     label={i18n.t("Data Element Group *")}
                     items={catOptionGroups}
                     onValueChange={setSelectedDataElementGroup}
-                    value={selectedDataElementGroup || ""}
+                    value={settings.dataElementGroupId ?? ""}
                     hideEmpty
                 />
             </div>
@@ -120,6 +128,11 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
 const useStyles = makeStyles((theme: Theme) => ({
     selector: {
         margin: theme.spacing(3, 0, 3, 0),
+    },
+    yearsSelector: {
+        minWidth: 250,
+        marginTop: -8,
+        marginLeft: 15,
     },
     info: {
         margin: theme.spacing(0, 0, 0, 1),
