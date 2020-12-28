@@ -98,6 +98,7 @@ export const MSFHomePage: React.FC = () => {
         setMsfSettings(msfSettings);
         compositionRoot.customData.save(msfStorage, {
             dataElementGroupId: msfSettings.dataElementGroupId,
+            analyticsYears: msfSettings.analyticsYears,
         });
     };
 
