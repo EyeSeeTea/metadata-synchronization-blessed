@@ -79,7 +79,7 @@ export async function executeAggregateData(
         );
 
         if (runAnalyticsIsRequired) {
-            await runAnalytics(compositionRoot, addEventToProgress);
+            await runAnalytics(compositionRoot, addEventToProgress, msfSettings.analyticsYears);
         }
 
         for (const syncRule of rulesWithoutRunAnalylics) {
@@ -256,11 +256,12 @@ async function getSyncRules(
 
 async function runAnalytics(
     compositionRoot: CompositionRoot,
-    addEventToProgress: (event: string) => void
+    addEventToProgress: (event: string) => void,
+    lastYears: number
 ) {
     const localInstance = await compositionRoot.instances.getLocal();
 
-    for await (const message of executeAnalytics(localInstance)) {
+    for await (const message of executeAnalytics(localInstance, { lastYears })) {
         addEventToProgress(message);
     }
 

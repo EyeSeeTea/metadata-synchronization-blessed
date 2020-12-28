@@ -6,19 +6,18 @@ const timeout = (ms: number) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 };
 
-export async function* executeAnalytics(instance: Instance) {
+export async function* executeAnalytics(instance: Instance, options?: AnalyticsOptions) {
     yield i18n.t("Running analytics for instance {{name}}", instance);
     const api = getD2APiFromInstance(instance);
 
-    const { response } = await api.analytics.run().getData();
+    const { response } = await api.analytics.run(options).getData();
+    const endpoint = response.relativeNotifierEndpoint.replace("/api", "");
 
     let done = false;
     while (!done) {
         try {
-            const [{ message, completed }] =
-                (await (api
-                    .get(response.relativeNotifierEndpoint.replace("/api", ""))
-                    .getData() as Promise<{ message: string; completed: boolean }[]>)) ?? [];
+            const response = await api.get<AnalyticsResponse>(endpoint).getData();
+            const [{ message, completed }] = response ?? [];
 
             yield message;
             if (completed) done = true;
@@ -29,4 +28,15 @@ export async function* executeAnalytics(instance: Instance) {
     }
 
     return i18n.t("Updating analytics done`for instance {{name}}", instance);
+}
+
+type AnalyticsMessage = { message: string; completed: boolean };
+type AnalyticsResponse = AnalyticsMessage[] | null;
+
+interface AnalyticsOptions {
+    skipResourceTables?: boolean;
+    skipAggregate?: boolean;
+    skipEvents?: boolean;
+    skipEnrollment?: boolean;
+    lastYears?: number;
 }
