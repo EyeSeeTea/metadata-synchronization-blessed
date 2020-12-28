@@ -68,6 +68,14 @@ export abstract class GenericMappingUseCase {
         const destinationItem = destinationMetadata[mappedId];
         if (!originMetadata || !destinationItem) return {};
 
+        const defaultOriginCategoryOptionCombo = await this.repositoryFactory
+            .metadataRepository(originInstance)
+            .getDefaultIds("categoryOptionCombos");
+
+        const defaultDestinationCategoryOptionCombo = await this.repositoryFactory
+            .metadataRepository(destinationInstance)
+            .getDefaultIds("categoryOptionCombos");
+
         const mappedElement = {
             mappedId: destinationItem.path ?? destinationItem.id,
             mappedName: destinationItem.name,
@@ -79,21 +87,24 @@ export abstract class GenericMappingUseCase {
         const categoryCombos = this.autoMapCategoryCombo(originMetadata, destinationItem);
 
         const categoryOptions = await this.autoMapCollection(
-            originInstance,
             destinationInstance,
             this.getCategoryOptions(originMetadata),
             this.getCategoryOptions(destinationItem)
         );
 
+        const categoryOptionCombos = await this.autoMapCollection(
+            destinationInstance,
+            this.getCategoryOptionCombos(originMetadata, defaultOriginCategoryOptionCombo[0]),
+            this.getCategoryOptionCombos(destinationItem, defaultDestinationCategoryOptionCombo[0])
+        );
+
         const options = await this.autoMapCollection(
-            originInstance,
             destinationInstance,
             this.getOptions(originMetadata),
             this.getOptions(destinationItem)
         );
 
         const programStages = await this.autoMapProgramStages(
-            originInstance,
             destinationInstance,
             originMetadata,
             destinationItem
@@ -101,6 +112,7 @@ export abstract class GenericMappingUseCase {
 
         const mapping = _.omitBy(
             {
+                categoryOptionCombos,
                 categoryCombos,
                 categoryOptions,
                 options,
@@ -123,6 +135,7 @@ export abstract class GenericMappingUseCase {
         if (metadata.length === 0) return [];
 
         const categoryOptions = this.getCategoryOptions(metadata[0]);
+        const categoryOptionCombos = this.getCategoryOptionCombos(metadata[0]);
         const options = this.getOptions(metadata[0]);
         const programStages = this.getProgramStages(metadata[0]);
         const programStageDataElements = this.getProgramStageDataElements(metadata[0]);
@@ -131,35 +144,35 @@ export abstract class GenericMappingUseCase {
             .metadataRepository(instance)
             .getDefaultIds();
 
-        return _.union(categoryOptions, options, programStages, programStageDataElements)
+        return _.union(
+            categoryOptions,
+            categoryOptionCombos,
+            options,
+            programStages,
+            programStageDataElements
+        )
             .map(({ id }) => id)
             .concat(...defaultValues)
             .map(cleanNestedMappedId);
     }
 
     protected async autoMap({
-        originInstance,
         destinationInstance,
-        selectedItemId,
+        selectedItem,
         defaultValue,
         filter,
     }: {
-        originInstance: DataSource;
         destinationInstance: DataSource;
-        selectedItemId: string;
+        selectedItem: { id: string; name: string; code?: string };
         defaultValue?: string;
         filter?: string[];
     }): Promise<MetadataMapping[]> {
-        const metadataResponse = await this.getMetadata(originInstance, [selectedItemId]);
-        const originMetadata = this.createMetadataDictionary(metadataResponse);
-        const selectedItem = originMetadata[selectedItemId];
-        if (!selectedItem) return [];
-
         const destinationMetadata = await this.repositoryFactory
             .metadataRepository(destinationInstance)
             .lookupSimilar(selectedItem);
 
         const objects = _(destinationMetadata)
+            .omit(["indicators", "programIndicators"])
             .values()
             .flatMap(item => (Array.isArray(item) ? item : []))
             .value();
@@ -194,7 +207,6 @@ export abstract class GenericMappingUseCase {
     }
 
     protected async autoMapCollection(
-        originInstance: DataSource,
         destinationInstance: DataSource,
         originMetadata: CombinedMetadata[],
         destinationMetadata: CombinedMetadata[]
@@ -208,9 +220,8 @@ export abstract class GenericMappingUseCase {
 
         for (const item of originMetadata) {
             const [candidate] = await this.autoMap({
-                originInstance,
                 destinationInstance,
-                selectedItemId: cleanNestedMappedId(item.id),
+                selectedItem: { ...item, id: cleanNestedMappedId(item.id) },
                 defaultValue: EXCLUDED_KEY,
                 filter,
             });
@@ -226,7 +237,6 @@ export abstract class GenericMappingUseCase {
     }
 
     protected async autoMapProgramStages(
-        originInstance: DataSource,
         destinationInstance: DataSource,
         originMetadata: CombinedMetadata,
         destinationMetadata: CombinedMetadata
@@ -245,7 +255,6 @@ export abstract class GenericMappingUseCase {
             };
         } else {
             return this.autoMapCollection(
-                originInstance,
                 destinationInstance,
                 originProgramStages,
                 destinationProgramStages
@@ -254,7 +263,9 @@ export abstract class GenericMappingUseCase {
     }
 
     protected getCategoryOptions(object: CombinedMetadata) {
-        // TODO: FIXME
+        // TODO: This method should properly validate original model from object
+        if (["categoryOptionCombos"].includes(object.model)) return [];
+
         return _.flatten(
             object.categoryCombo?.categories?.map(({ id: category, categoryOptions }) =>
                 categoryOptions.map(({ id, ...rest }) => ({
@@ -299,6 +310,38 @@ export abstract class GenericMappingUseCase {
         return object.programStages?.map(item => ({ ...item, model: "programStages" })) ?? [];
     }
 
+    protected getCategoryOptionCombos(
+        object: CombinedMetadata,
+        defaultCoc = "default"
+    ): CombinedMetadata[] {
+        switch (object.model) {
+            case "indicators":
+            case "programIndicators": {
+                const { aggregateExportCategoryOptionCombo = defaultCoc } = object;
+                return _([_.last(aggregateExportCategoryOptionCombo.split("."))])
+                    .compact()
+                    .map(id => ({
+                        id,
+                        model: "categoryOptionCombos",
+                        name: "",
+                    }))
+                    .value();
+            }
+            case "dataElements": {
+                return (
+                    object.categoryCombo?.categoryOptionCombos.map(({ id, name }) => ({
+                        id,
+                        name,
+                        model: "categoryOptionCombos",
+                    })) ?? []
+                );
+            }
+            default: {
+                return [];
+            }
+        }
+    }
+
     protected getProgramStageDataElements(object: CombinedMetadata) {
         return _.compact(
             _.flatten(
@@ -330,6 +373,7 @@ interface CombinedMetadata {
                 code: string;
             }[];
         }[];
+        categoryOptionCombos: { id: string; name: string }[];
     };
     optionSet?: {
         options: {
@@ -356,6 +400,7 @@ interface CombinedMetadata {
             };
         }[];
     }[];
+    aggregateExportCategoryOptionCombo?: string;
 }
 
 const fields = {
@@ -371,7 +416,9 @@ const fields = {
             id: true,
             categoryOptions: { id: true, name: true, shortName: true, code: true },
         },
+        categoryOptionCombos: { id: true, name: true },
     },
+    aggregateExportCategoryOptionCombo: true,
     optionSet: { options: { id: true, name: true, shortName: true, code: true } },
     commentOptionSet: {
         options: { id: true, name: true, shortName: true, code: true },

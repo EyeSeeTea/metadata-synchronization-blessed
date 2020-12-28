@@ -1,17 +1,22 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
+import { ConfirmationDialog } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Period } from "../../../../domain/common/entities/Period";
 import i18n from "../../../../locales";
 import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
-import { PeriodSelectionDialog } from "../../../react/core/components/period-selection-dialog/PeriodSelectionDialog";
+import {
+    AdvancedSettings,
+    AdvancedSettingsDialog,
+} from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
 import { useAppContext } from "../../../react/core/contexts/AppContext";
 import {
     MSFSettings,
     MSFSettingsDialog,
-} from "../../../react/msf-aggregate-data/components/msf-Settings/MSFSettingsDialog";
+} from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
 import { executeAggregateData, isGlobalInstance } from "./MSFHomePagePresenter";
+
+const msfStorage = "msf-storage";
 
 export const MSFHomePage: React.FC = () => {
     const classes = useStyles();
@@ -21,7 +26,11 @@ export const MSFHomePage: React.FC = () => {
     const [syncProgress, setSyncProgress] = useState<string[]>([]);
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
-    const [period, setPeriod] = useState<Period>();
+    const [msfValidationErrors, setMsfValidationErrors] = useState<string[]>();
+    const [advancedSettings, setAdvancedSettings] = useState<AdvancedSettings>({
+        period: undefined,
+        deleteDataValuesBeforeSync: false,
+    });
 
     const [msfSettings, setMsfSettings] = useState<MSFSettings>({
         runAnalytics: "by-sync-rule-settings",
@@ -33,19 +42,26 @@ export const MSFHomePage: React.FC = () => {
     }, [api]);
 
     useEffect(() => {
-        const msfSettings: MSFSettings = isGlobalInstance()
-            ? { runAnalytics: false }
-            : { runAnalytics: "by-sync-rule-settings" };
+        compositionRoot.customData.get(msfStorage).then(data => {
+            const runAnalytics = isGlobalInstance() ? false : "by-sync-rule-settings";
 
-        setMsfSettings(msfSettings);
-    }, []);
+            if (data) {
+                setMsfSettings({ runAnalytics, dataElementGroupId: data.dataElementGroupId });
+            } else {
+                setMsfSettings({ runAnalytics });
+            }
+        });
+    }, [compositionRoot]);
 
-    const handleAggregateData = () => {
+    const handleAggregateData = (skipCheckInPreviousPeriods?: boolean) => {
         executeAggregateData(
             compositionRoot,
+            skipCheckInPreviousPeriods
+                ? { ...advancedSettings, checkInPreviousPeriods: false }
+                : advancedSettings,
             msfSettings,
             progress => setSyncProgress(progress),
-            period
+            errors => setMsfValidationErrors(errors)
         );
     };
 
@@ -68,9 +84,9 @@ export const MSFHomePage: React.FC = () => {
         setShowPeriodDialog(false);
     };
 
-    const handleSaveAdvancedSettings = (period: Period) => {
+    const handleSaveAdvancedSettings = (advancedSettings: AdvancedSettings) => {
         setShowPeriodDialog(false);
-        setPeriod(period);
+        setAdvancedSettings(advancedSettings);
     };
 
     const handleCloseMSFSettings = () => {
@@ -80,6 +96,9 @@ export const MSFHomePage: React.FC = () => {
     const handleSaveMSFSettings = (msfSettings: MSFSettings) => {
         setShowMSFSettingsDialog(false);
         setMsfSettings(msfSettings);
+        compositionRoot.customData.save(msfStorage, {
+            dataElementGroupId: msfSettings.dataElementGroupId,
+        });
     };
 
     return (
@@ -152,9 +171,9 @@ export const MSFHomePage: React.FC = () => {
             </Paper>
 
             {showPeriodDialog && (
-                <PeriodSelectionDialog
+                <AdvancedSettingsDialog
                     title={i18n.t("Advanced Settings")}
-                    period={period}
+                    advancedSettings={advancedSettings}
                     onClose={handleCloseAdvancedSettings}
                     onSave={handleSaveAdvancedSettings}
                 />
@@ -166,6 +185,34 @@ export const MSFHomePage: React.FC = () => {
                     onClose={handleCloseMSFSettings}
                     onSave={handleSaveMSFSettings}
                 />
+            )}
+
+            {msfValidationErrors && msfValidationErrors.length > 0 && (
+                <ConfirmationDialog
+                    open={true}
+                    maxWidth="md"
+                    fullWidth={true}
+                    title={i18n.t("MSF Validation")}
+                    onCancel={() => setMsfValidationErrors(undefined)}
+                    onSave={() => {
+                        setMsfValidationErrors(undefined);
+                        handleAggregateData(true);
+                    }}
+                    cancelText={i18n.t("Cancel")}
+                    saveText={i18n.t("Proceed")}
+                >
+                    <Typography>{i18n.t("There are issues with data values:")}</Typography>
+                    <ul>
+                        {msfValidationErrors.map((error, index) => {
+                            return (
+                                <li key={`err-${index}`}>
+                                    <Typography>{error}</Typography>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                    <Typography>{i18n.t("Do you want to proceed?")}</Typography>
+                </ConfirmationDialog>
             )}
         </React.Fragment>
     );
