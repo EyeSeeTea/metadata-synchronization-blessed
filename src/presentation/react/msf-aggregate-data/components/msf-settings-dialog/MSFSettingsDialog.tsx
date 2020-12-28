@@ -7,7 +7,7 @@ import { DataElementGroupModel } from "../../../../../models/dhis/metadata";
 import Dropdown, { DropdownOption } from "../../../core/components/dropdown/Dropdown";
 import { useAppContext } from "../../../core/contexts/AppContext";
 
-export type RunAnalyticsSettings = boolean | "by-sync-rule-settings";
+export type RunAnalyticsSettings = "true" | "false" | "by-sync-rule-settings";
 
 export type MSFSettings = {
     runAnalytics: RunAnalyticsSettings;
@@ -27,7 +27,9 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
 }) => {
     const classes = useStyles();
     const { compositionRoot } = useAppContext();
-    const [useSyncRule, setUseSyncRule] = useState(msfSettings.runAnalytics.toString());
+    const [runAnalytics, setRunAnalytics] = useState<RunAnalyticsSettings>(
+        msfSettings.runAnalytics
+    );
     const [catOptionGroups, setDataElementGroups] = useState<DropdownOption<string>[]>([]);
     const [selectedDataElementGroup, setSelectedDataElementGroup] = useState(
         msfSettings.dataElementGroupId
@@ -52,35 +54,28 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             });
     }, [compositionRoot.metadata]);
 
-    const useSyncRuleItems = useMemo(() => {
+    const analyticsSettingItems = useMemo(() => {
         return [
             {
-                id: "true",
+                id: "true" as const,
                 name: i18n.t("True"),
             },
             {
-                id: "false",
+                id: "false" as const,
                 name: i18n.t("False"),
             },
             {
-                id: "by-sync-rule-settings",
+                id: "by-sync-rule-settings" as const,
                 name: i18n.t("Use sync rule settings"),
             },
         ];
     }, []);
 
     const handleSave = () => {
-        const msfSettings: MSFSettings = {
-            runAnalytics:
-                useSyncRule === "by-sync-rule-settings"
-                    ? "by-sync-rule-settings"
-                    : useSyncRule === "true"
-                    ? true
-                    : false,
+        onSave({
+            runAnalytics,
             dataElementGroupId: selectedDataElementGroup,
-        };
-
-        onSave(msfSettings);
+        });
     };
 
     return (
@@ -90,16 +85,16 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             fullWidth={true}
             title={i18n.t("MSF Settings")}
             onCancel={onClose}
-            onSave={() => handleSave()}
+            onSave={handleSave}
             cancelText={i18n.t("Cancel")}
             saveText={i18n.t("Save")}
         >
             <div className={classes.selector}>
-                <Dropdown
+                <Dropdown<RunAnalyticsSettings>
                     label={i18n.t("Run Analytics")}
-                    items={useSyncRuleItems}
-                    onValueChange={setUseSyncRule}
-                    value={useSyncRule}
+                    items={analyticsSettingItems}
+                    onValueChange={setRunAnalytics}
+                    value={runAnalytics}
                     hideEmpty
                 />
             </div>

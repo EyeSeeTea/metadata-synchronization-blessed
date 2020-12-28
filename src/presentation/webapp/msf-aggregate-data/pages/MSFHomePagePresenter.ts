@@ -51,7 +51,7 @@ export async function executeAggregateData(
     } else {
         addEventToProgress(i18n.t(`Starting Aggregate Data...`));
 
-        if (isGlobalInstance && msfSettings.runAnalytics === false) {
+        if (isGlobalInstance && msfSettings.runAnalytics === "false") {
             const lastExecution = await getLastAnalyticsExecution(compositionRoot);
 
             addEventToProgress(
@@ -72,7 +72,7 @@ export async function executeAggregateData(
         const runAnalyticsIsRequired =
             msfSettings.runAnalytics === "by-sync-rule-settings"
                 ? eventSyncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
-                : msfSettings.runAnalytics;
+                : msfSettings.runAnalytics === "true";
 
         const rulesWithoutRunAnalylics = eventSyncRules.map(rule =>
             rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
