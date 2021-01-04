@@ -7,7 +7,6 @@ import { SynchronizationRule } from "../../../../domain/rules/entities/Synchroni
 import { Store } from "../../../../domain/stores/entities/Store";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
-import { cleanOrgUnitPaths } from "../../../../domain/synchronization/utils";
 import i18n from "../../../../locales";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { promiseMap } from "../../../../utils/common";
@@ -236,13 +235,17 @@ async function getSyncRules(
 
     const allRules = await promiseMap(rows, ({ id }) => compositionRoot.rules.get(id));
 
-    const accesibleRules = _.compact(allRules).filter(
-        ({ dataSyncOrgUnitPaths }) =>
-            _.intersection(
-                cleanOrgUnitPaths(dataSyncOrgUnitPaths),
-                dataViewOrganisationUnits.map(({ id }) => id)
-            ).length > 0
-    );
+    const accesibleRules = _(allRules)
+        .map(rule => {
+            const paths =
+                rule?.dataSyncOrgUnitPaths.filter(path =>
+                    _.some(dataViewOrganisationUnits, ({ id }) => path.includes(id))
+                ) ?? [];
+
+            return paths.length > 0 ? rule?.updateDataSyncOrgUnitPaths(paths) : undefined;
+        })
+        .compact()
+        .value();
 
     const rules = await promiseMap(accesibleRules, async rule => {
         const fullRule = await compositionRoot.rules.get(rule.id);
