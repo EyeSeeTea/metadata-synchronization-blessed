@@ -243,13 +243,9 @@ export abstract class GenericSyncUseCase {
 
             try {
                 debug("Start import on destination instance", instance.toPublicObject());
-
-                // TODO: @Jocelyn here you will receive the payload
                 const { results, payload } = await this.postPayload(instance);
                 syncReport.addSyncResult(...results);
-                if (payload) {
-                    syncReport.setPayload(payload);
-                }
+                syncReport.setPayload(payload);
 
                 debug("Finished import on instance", instance.toPublicObject());
             } catch (error) {

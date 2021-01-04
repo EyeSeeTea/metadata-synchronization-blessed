@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-18T14:45:57.104Z\n"
+"POT-Creation-Date: 2021-01-04T11:59:39.795Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -930,6 +930,9 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
+msgid "Download JSON Payload"
+msgstr ""
+
 msgid "Synchronization Results"
 msgstr ""
 
@@ -948,10 +951,7 @@ msgstr ""
 msgid "Data Statistics"
 msgstr ""
 
-msgid "JSON Response"
-msgstr ""
-
-msgid "Download JSON Payload"
+msgid "JSON response"
 msgstr ""
 
 msgid "Instance Selection"

@@ -302,10 +302,10 @@ const ManualSyncPage: React.FC = () => {
                 />
             )}
 
-            {!!syncReport && (
+            {!!syncReport && destinationInstance && (
                 <SyncSummary
                     response={syncReport}
-                    payload={syncReport.payload}
+                    instance={destinationInstance.id}
                     onClose={() => setSyncReport(null)}
                 />
             )}

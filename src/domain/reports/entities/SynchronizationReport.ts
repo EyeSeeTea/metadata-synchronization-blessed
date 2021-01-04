@@ -10,12 +10,12 @@ export class SynchronizationReport implements SynchronizationReportData {
     public status: SynchronizationReportStatus;
     public types: string[];
     public deletedSyncRuleLabel?: string | undefined;
-    public payload?: MetadataPackage;
+    public payload?: MetadataPackage | undefined;
 
     public readonly id: string;
     public readonly date: Date;
     public readonly user: string;
-    public syncRule?: string | undefined;
+    public readonly syncRule?: string | undefined;
     public readonly packageImport?: boolean | undefined;
     public readonly type: SynchronizationType;
     public readonly dataStats?: AggregatedDataStats[] | EventsDataStats[] | undefined;
@@ -73,7 +73,7 @@ export class SynchronizationReport implements SynchronizationReportData {
             ({ instance, type, originPackage }) => `${instance.id}-${type}-${originPackage?.id}`
         );
     }
-    public setPayload(payload: MetadataPackage): void {
+    public setPayload(payload?: MetadataPackage): void {
         this.payload = payload;
     }
 

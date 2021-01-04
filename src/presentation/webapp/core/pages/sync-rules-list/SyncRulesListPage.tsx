@@ -195,7 +195,6 @@ const SyncRulesPage: React.FC = () => {
 
         loading.show(true, "Generating JSON file");
         const sync = compositionRoot.sync[rule.type](rule.toBuilder());
-        //I think this is type MetadataPackage
         const payload = await sync.buildPayload();
 
         requestJSONDownload(payload, rule);

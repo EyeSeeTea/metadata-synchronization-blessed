@@ -2,7 +2,6 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Button,
     DialogContent,
     makeStyles,
     Table,
@@ -29,8 +28,6 @@ import { Store } from "../../../../../domain/stores/entities/Store";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
-import { MetadataPackage } from "../../../../../domain/metadata/entities/MetadataEntities";
-//import { requestJSONDownload } from "../../../../../utils/synchronization";
 import moment from "moment";
 
 const useStyles = makeStyles(theme => ({
@@ -177,9 +174,8 @@ const getTypeName = (reportType: SynchronizationType, syncType: string) => {
 
 interface SyncSummaryProps {
     response: SynchronizationReport;
+    instance?: string;
     onClose: () => void;
-    //new
-    payload?: MetadataPackage;
 }
 
 const getOriginName = (source: PublicInstance | Store) => {
@@ -192,13 +188,14 @@ const getOriginName = (source: PublicInstance | Store) => {
     }
 };
 
-const SyncSummary = ({ response, payload, onClose }: SyncSummaryProps) => {
+const SyncSummary = ({ response, instance, onClose }: SyncSummaryProps) => {
     const { compositionRoot } = useAppContext();
+    const payload = response.payload;
     const classes = useStyles();
     const [results, setResults] = useState<SynchronizationResult[]>([]);
     const downloadJSON = () => {
         const date = moment().format("YYYYMMDDHHmm");
-        const fileName = `synchronization-${date}.json`;
+        const fileName = `synchronization-${instance}-${date}.json`;
         compositionRoot.storage.downloadFile(fileName, payload);
     };
 
@@ -212,9 +209,11 @@ const SyncSummary = ({ response, payload, onClose }: SyncSummaryProps) => {
             isOpen={true}
             title={i18n.t("Synchronization Results")}
             onCancel={onClose}
+            onInfoAction={(): void => downloadJSON()}
             cancelText={i18n.t("Ok")}
             maxWidth={"lg"}
             fullWidth={true}
+            infoActionText={i18n.t("Download JSON Payload")}
         >
             <DialogContent>
                 {results.map(
@@ -305,7 +304,7 @@ const SyncSummary = ({ response, payload, onClose }: SyncSummaryProps) => {
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography className={classes.accordionHeading1}>
-                            {i18n.t("JSON Response")}
+                            {i18n.t("JSON response")}
                         </Typography>
                     </AccordionSummary>
 
@@ -317,14 +316,6 @@ const SyncSummary = ({ response, payload, onClose }: SyncSummaryProps) => {
                         />
                     </AccordionDetails>
                 </Accordion>
-
-                {results[0].status !== "SUCCESS" && (
-                    <AccordionDetails className={classes.accordionDetails}>
-                        <Button onClick={downloadJSON} color="primary">
-                            {i18n.t("Download JSON Payload")}
-                        </Button>
-                    </AccordionDetails>
-                )}
             </DialogContent>
         </ConfirmationDialog>
     );
