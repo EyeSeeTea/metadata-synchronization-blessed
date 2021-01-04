@@ -248,26 +248,22 @@ async function getSyncRules(
         .value();
 
     const rules = await promiseMap(accesibleRules, async rule => {
-        const fullRule = await compositionRoot.rules.get(rule.id);
+        if (!advancedSettings.period) return rule;
 
-        if (!fullRule || !advancedSettings.period) {
-            return fullRule;
-        } else {
-            const newBuilder = {
-                ...fullRule.builder,
+        return rule.update({
+            builder: {
+                ...rule.builder,
                 dataParams: {
-                    ...fullRule.builder.dataParams,
+                    ...rule.builder.dataParams,
                     period: advancedSettings.period.type,
                     startDate: advancedSettings.period.startDate,
                     endDate: advancedSettings.period.endDate,
                 },
-            };
-
-            return fullRule.update({ builder: newBuilder });
-        }
+            },
+        });
     });
 
-    return _.compact(rules);
+    return rules;
 }
 
 async function runAnalytics(
