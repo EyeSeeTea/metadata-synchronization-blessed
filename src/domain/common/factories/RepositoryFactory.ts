@@ -4,6 +4,7 @@ import {
     AggregatedRepositoryConstructor,
 } from "../../aggregated/repositories/AggregatedRepository";
 import { ConfigRepositoryConstructor } from "../../config/repositories/ConfigRepository";
+import { CustomDataRepositoryConstructor } from "../../custom-data/repository/CustomDataRepository";
 import {
     EventsRepository,
     EventsRepositoryConstructor,
@@ -66,7 +67,8 @@ export class RepositoryFactory {
 
     @cache()
     public storeRepository(instance: Instance) {
-        return this.get<StoreRepositoryConstructor>(Repositories.StoreRepository, [instance]);
+        const config = this.configRepository(instance);
+        return this.get<StoreRepositoryConstructor>(Repositories.StoreRepository, [config]);
     }
 
     @cache()
@@ -121,6 +123,14 @@ export class RepositoryFactory {
     }
 
     @cache()
+    public customDataRepository(instance: Instance) {
+        const config = this.configRepository(instance);
+        return this.get<CustomDataRepositoryConstructor>(Repositories.CustomDataRepository, [
+            config,
+        ]);
+    }
+
+    @cache()
     public migrationsRepository(instance: Instance) {
         const config = this.configRepository(instance);
         return this.get<MigrationsRepositoryConstructor>(Repositories.MigrationsRepository, [
@@ -135,6 +145,7 @@ export const Repositories = {
     InstanceRepository: "instanceRepository",
     StoreRepository: "storeRepository",
     ConfigRepository: "configRepository",
+    CustomDataRepository: "customDataRepository",
     DownloadRepository: "downloadRepository",
     GitHubRepository: "githubRepository",
     AggregatedRepository: "aggregatedRepository",

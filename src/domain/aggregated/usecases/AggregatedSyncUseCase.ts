@@ -183,7 +183,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
 
     public async mapPayload(
         instance: Instance,
-        { dataValues: oldDataValues }: AggregatedPackage
+        { dataValues: oldDataValues = [] }: AggregatedPackage
     ): Promise<AggregatedPackage> {
         const metadataRepository = await this.getMetadataRepository();
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
@@ -288,7 +288,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         const result = await promiseMap(
             await aggregatedRepository.getOptions(mapping, categoryOptionCombos),
             async ({ dataElement, categoryOptions, mappedOptionCombo }) => {
-                const { dataValues } = await aggregatedRepository.getAnalytics({
+                const { dataValues = [] } = await aggregatedRepository.getAnalytics({
                     dataParams,
                     dimensionIds: [dataElement],
                     includeCategories: false,

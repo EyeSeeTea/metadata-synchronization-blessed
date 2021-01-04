@@ -134,7 +134,7 @@ msgstr ""
 msgid "Generate package from File"
 msgstr ""
 
-msgid "Name (*)"
+msgid "Package/Module Name (*)"
 msgstr ""
 
 msgid "Department (*)"
@@ -238,6 +238,9 @@ msgid "Close"
 msgstr ""
 
 msgid "Could not connect with remote instance"
+msgstr ""
+
+msgid "Applying mapping..."
 msgstr ""
 
 msgid "Could not apply mapping, please try again."
@@ -353,6 +356,9 @@ msgid "Related metadata mapping for {{name}} ({{id}})"
 msgstr ""
 
 msgid "Category Options"
+msgstr ""
+
+msgid "Category Option Combos"
 msgstr ""
 
 msgid "Options"
@@ -501,6 +507,9 @@ msgid "Package of {{name}}"
 msgstr ""
 
 msgid "Generate package from {{name}}"
+msgstr ""
+
+msgid "Name (*)"
 msgstr ""
 
 msgid "Module: {{module}}"
@@ -772,9 +781,6 @@ msgid "Start date"
 msgstr ""
 
 msgid "End date"
-msgstr ""
-
-msgid "Use sync rules periods"
 msgstr ""
 
 msgid "You need to provide a subject"
@@ -1210,6 +1216,15 @@ msgstr ""
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
+msgid "Use sync rules periods"
+msgstr ""
+
+msgid "Delete data values before sync"
+msgstr ""
+
+msgid "Check existing data values in previous periods"
+msgstr ""
+
 msgid "True"
 msgstr ""
 
@@ -1223,6 +1238,14 @@ msgid "MSF Settings"
 msgstr ""
 
 msgid "Run Analytics"
+msgstr ""
+
+msgid "Data Element Group *"
+msgstr ""
+
+msgid ""
+"* Data Element Group: used to check existing data values in the destination "
+"data elements"
 msgstr ""
 
 msgid "Metadata Synchronization History"
@@ -1791,16 +1814,33 @@ msgstr ""
 msgid "Go to History"
 msgstr ""
 
+msgid "MSF Validation"
+msgstr ""
+
+msgid "Do you want to proceed?"
+msgstr ""
+
 msgid "Starting Aggregate Data..."
 msgstr ""
 
 msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
 msgstr ""
 
+msgid ""
+"Deleting previous data values is not possible because data element group is "
+"not defined, please contact with your administrator"
+msgstr ""
+
 msgid "Finished Aggregate Data"
 msgstr ""
 
+msgid "Checking data values in previous periods ...."
+msgstr ""
+
 msgid "Starting Sync Rule {{name}} ..."
+msgstr ""
+
+msgid "Summary of Sync Rule"
 msgstr ""
 
 msgid "Finished Sync Rule {{name}}"
@@ -1810,6 +1850,20 @@ msgid "Finished Sync Rule {{name}} with errors"
 msgstr ""
 
 msgid "never"
+msgstr ""
+
+msgid "Error retrieving instance {{name}} to delete previoud data values"
+msgstr ""
+
+msgid "Error creating period"
+msgstr ""
+
+msgid ""
+"Deleting previous data values in target instance {{name}} for period "
+"{{period}}..."
+msgstr ""
+
+msgid "Deleting previous data values for period {{period}} is not possible"
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"

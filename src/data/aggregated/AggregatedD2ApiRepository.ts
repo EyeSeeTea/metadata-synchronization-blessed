@@ -1,4 +1,5 @@
 import _ from "lodash";
+import moment from "moment";
 import { Moment } from "moment";
 import { AggregatedPackage } from "../../domain/aggregated/entities/AggregatedPackage";
 import { MappedCategoryOption } from "../../domain/aggregated/entities/MappedCategoryOption";
@@ -12,6 +13,7 @@ import { SynchronizationResult } from "../../domain/reports/entities/Synchroniza
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { DataImportParams } from "../../types/d2";
 import { D2Api, DataValueSetsPostResponse } from "../../types/d2-api";
+import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
@@ -27,7 +29,12 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         dataSet: string[],
         dataElementGroup: string[]
     ): Promise<AggregatedPackage> {
-        const { orgUnitPaths = [], allAttributeCategoryOptions, attributeCategoryOptions } = params;
+        const {
+            orgUnitPaths = [],
+            allAttributeCategoryOptions,
+            attributeCategoryOptions,
+            lastUpdated,
+        } = params;
         const [startDate, endDate] = buildPeriodFromParams(params);
 
         if (dataSet.length === 0 && dataElementGroup.length === 0) return { dataValues: [] };
@@ -50,6 +57,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                     dataSet,
                     dataElementGroup,
                     orgUnit,
+                    lastUpdated: moment(lastUpdated).format("YYYY-MM-DD"),
                 })
                 .getData();
 
@@ -87,25 +95,38 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         if (dimensionIds.length === 0 || orgUnit.length === 0) {
             return { dataValues: [] };
         } else if (aggregationType) {
-            const result = await promiseMap(_.chunk(periods, 500), period => {
-                return this.api
-                    .get<AggregatedPackage>("/analytics/dataValueSet.json", {
-                        dimension: _.compact([
-                            `dx:${dimensionIds.join(";")}`,
-                            `pe:${period.join(";")}`,
-                            `ou:${orgUnit.join(";")}`,
-                            includeCategories ? `co` : undefined,
-                            attributeOptionCombo
-                                ? `ao:${attributeOptionCombo.join(";")}`
-                                : undefined,
-                        ]),
-                        filter,
-                    })
-                    .getData();
-            });
+            const result = await promiseMap(_.chunk(periods, 300), period =>
+                promiseMap(_.chunk(dimensionIds, Math.max(10, 300 - period.length)), ids => {
+                    return this.api
+                        .get<AggregatedPackage>("/analytics/dataValueSet.json", {
+                            dimension: _.compact([
+                                `dx:${ids.join(";")}`,
+                                `pe:${period.join(";")}`,
+                                `ou:${orgUnit.join(";")}`,
+                                includeCategories ? `co` : undefined,
+                                attributeOptionCombo
+                                    ? `ao:${attributeOptionCombo.join(";")}`
+                                    : undefined,
+                            ]),
+                            filter,
+                        })
+                        .getData();
+                })
+            );
+
+            const defaultCategoryOptionCombo = await this.getDefaultIds("categoryOptionCombos");
 
             const dataValues = _(result)
-                .map(({ dataValues }) => dataValues)
+                .flatten()
+                .map(({ dataValues }) =>
+                    dataValues?.map(dataValue => ({
+                        ...dataValue,
+                        // Special scenario: We allow having dataElement.categoryOptionCombo in indicators
+                        categoryOptionCombo:
+                            _.last(dataValue.categoryOptionCombo?.split(".")) ??
+                            defaultCategoryOptionCombo[0],
+                    }))
+                )
                 .flatten()
                 .compact()
                 .value();
@@ -177,6 +198,10 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             .getData();
 
         return dimensions.map(({ id }) => id);
+    }
+
+    async delete(data: AggregatedPackage): Promise<SynchronizationResult> {
+        return await this.save(data, { strategy: "DELETES", skipAudit: true });
     }
 
     public async save(
@@ -258,6 +283,27 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
 
         return periods;
     };
+
+    @cache()
+    public async getDefaultIds(filter?: string): Promise<string[]> {
+        const response = (await this.api
+            .get("/metadata", {
+                filter: "identifiable:eq:default",
+                fields: "id",
+            })
+            .getData()) as {
+            [key: string]: { id: string }[];
+        };
+
+        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
+
+        return _(metadata)
+            .omit(["system"])
+            .values()
+            .flatten()
+            .map(({ id }) => id)
+            .value();
+    }
 }
 
 const aggregations = {

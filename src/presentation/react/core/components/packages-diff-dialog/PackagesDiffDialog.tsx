@@ -138,7 +138,7 @@ export const ModelDiffList: React.FC<{ modelDiff: ModelDiff }> = props => {
                     <List
                         items={diff.updates.map(update => (
                             <React.Fragment key={update.obj.id}>
-                                [{update.obj.id}] {update.obj.name}
+                                {update.obj.name} [{update.obj.id}]
                                 <List items={update.fieldsUpdated.map(getChange)} />
                             </React.Fragment>
                         ))}
