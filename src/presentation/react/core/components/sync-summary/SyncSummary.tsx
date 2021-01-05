@@ -13,10 +13,12 @@ import {
     Typography,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
+import { Ref } from "../../../../../domain/common/entities/Ref";
 import { PublicInstance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import {
@@ -28,7 +30,6 @@ import { Store } from "../../../../../domain/stores/entities/Store";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
-import moment from "moment";
 
 const useStyles = makeStyles(theme => ({
     accordionHeading1: {
@@ -174,7 +175,7 @@ const getTypeName = (reportType: SynchronizationType, syncType: string) => {
 
 interface SyncSummaryProps {
     response: SynchronizationReport;
-    instance?: string;
+    instance?: Ref;
     onClose: () => void;
 }
 
@@ -191,12 +192,21 @@ const getOriginName = (source: PublicInstance | Store) => {
 const SyncSummary = ({ response, instance, onClose }: SyncSummaryProps) => {
     const { compositionRoot } = useAppContext();
     const classes = useStyles();
+    const snackbar = useSnackbar();
+
     const [results, setResults] = useState<SynchronizationResult[]>([]);
 
-    const downloadJSON = () => {
+    const downloadJSON = async () => {
+        if (!instance || !response.payload) {
+            snackbar.error(i18n.t("Couldn't download JSON"));
+            return;
+        }
+
         const date = moment().format("YYYYMMDDHHmm");
-        const fileName = _.kebabCase(`synchronization-${instance}-${date}.json`);
-        compositionRoot.storage.downloadFile(fileName, response.payload);
+        const result = await compositionRoot.instances.getById(instance.id);
+        const instanceName = result.value.data?.name ?? instance.id;
+        const fileName = _.kebabCase(`synchronization-${instanceName}-${date}`);
+        await compositionRoot.storage.downloadFile(fileName, response.payload);
     };
 
     useEffect(() => {
@@ -204,6 +214,7 @@ const SyncSummary = ({ response, instance, onClose }: SyncSummaryProps) => {
     }, [compositionRoot, response]);
 
     if (results.length === 0) return null;
+
     return (
         <ConfirmationDialog
             isOpen={true}

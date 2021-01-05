@@ -306,7 +306,7 @@ const ManualSyncPage: React.FC = () => {
             {!!syncReport && destinationInstance && (
                 <SyncSummary
                     response={syncReport}
-                    instance={destinationInstance.name}
+                    instance={destinationInstance}
                     onClose={() => setSyncReport(null)}
                 />
             )}
