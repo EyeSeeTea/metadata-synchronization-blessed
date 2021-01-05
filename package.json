@@ -23,7 +23,7 @@
         "@material-ui/lab": "4.0.0-alpha.56",
         "@material-ui/styles": "4.10.0",
         "@octokit/rest": "18.0.0",
-        "axios": "0.19.2",
+        "axios": "0.21.1",
         "btoa": "1.2.1",
         "cronstrue": "1.95.0",
         "cryptr": "4.0.2",
