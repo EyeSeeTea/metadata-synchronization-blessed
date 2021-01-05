@@ -190,13 +190,13 @@ const getOriginName = (source: PublicInstance | Store) => {
 
 const SyncSummary = ({ response, instance, onClose }: SyncSummaryProps) => {
     const { compositionRoot } = useAppContext();
-    const payload = response.payload;
     const classes = useStyles();
     const [results, setResults] = useState<SynchronizationResult[]>([]);
+
     const downloadJSON = () => {
         const date = moment().format("YYYYMMDDHHmm");
-        const fileName = `synchronization-${instance}-${date}.json`;
-        compositionRoot.storage.downloadFile(fileName, payload);
+        const fileName = _.kebabCase(`synchronization-${instance}-${date}.json`);
+        compositionRoot.storage.downloadFile(fileName, response.payload);
     };
 
     useEffect(() => {
@@ -209,7 +209,7 @@ const SyncSummary = ({ response, instance, onClose }: SyncSummaryProps) => {
             isOpen={true}
             title={i18n.t("Synchronization Results")}
             onCancel={onClose}
-            onInfoAction={(): void => downloadJSON()}
+            onInfoAction={response.payload ? downloadJSON : undefined}
             cancelText={i18n.t("Ok")}
             maxWidth={"lg"}
             fullWidth={true}
@@ -256,6 +256,7 @@ const SyncSummary = ({ response, instance, onClose }: SyncSummaryProps) => {
                             <AccordionDetails className={classes.accordionDetails}>
                                 <Typography variant="overline">{i18n.t("Summary")}</Typography>
                             </AccordionDetails>
+
                             {message && (
                                 <AccordionDetails className={classes.accordionDetails}>
                                     <Typography variant="body2">{message}</Typography>

@@ -10,7 +10,7 @@ export class SynchronizationReport implements SynchronizationReportData {
     public status: SynchronizationReportStatus;
     public types: string[];
     public deletedSyncRuleLabel?: string | undefined;
-    public payload?: MetadataPackage | undefined;
+    public payload?: MetadataPackage;
 
     public readonly id: string;
     public readonly date: Date;
