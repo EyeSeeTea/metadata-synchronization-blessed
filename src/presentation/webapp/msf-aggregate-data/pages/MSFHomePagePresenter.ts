@@ -228,19 +228,16 @@ async function getSyncRules(
 ): Promise<SynchronizationRule[]> {
     const { dataViewOrganisationUnits } = await compositionRoot.instances.getCurrentUser();
 
-    const { rows } = await compositionRoot.rules.list({
-        filters: { type: "events" },
-        paging: false,
-    });
-
+    const { rows } = await compositionRoot.rules.list({ paging: false });
     const allRules = await promiseMap(rows, ({ id }) => compositionRoot.rules.get(id));
 
     const accesibleRules = _(allRules)
         .map(rule => {
-            const paths =
-                rule?.dataSyncOrgUnitPaths.filter(path =>
-                    _.some(dataViewOrganisationUnits, ({ id }) => path.includes(id))
-                ) ?? [];
+            if (!rule || !["events", "aggregated"].includes(rule.type)) return undefined;
+
+            const paths = rule.dataSyncOrgUnitPaths.filter(path =>
+                _.some(dataViewOrganisationUnits, ({ id }) => path.includes(id))
+            );
 
             return paths.length > 0 ? rule?.updateDataSyncOrgUnitPaths(paths) : undefined;
         })
