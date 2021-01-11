@@ -260,6 +260,11 @@ async function getSyncRules(
         });
     });
 
+    // Use the settings.projectStartDates to split the rules and adapt start and end dates
+    // If minimumDate > startDate -> Create a copy of sync rule (grouped by minimum date collecting orgUnits) and update start date to minimum date. Remove orgUnit(s) from original sync rule.
+    // If minimumDate > endDate -> Remove orgUnit from sync rule
+    // Remove sync rules if they do not have any orgUnit
+
     return rules;
 }
 

@@ -3,54 +3,35 @@ import { DatePicker, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { cleanOrgUnitPath } from "../../../../../domain/synchronization/utils";
 import i18n from "../../../../../locales";
 import { Dictionary } from "../../../../../types/utils";
 import { useAppContext } from "../../../core/contexts/AppContext";
 
 export interface NamedDate {
-    name: string;
     date: Date | null;
 }
 
 export interface OrgUnitDateSelectorProps {
-    projectStartDates: Dictionary<NamedDate>;
-    onChange(projectStartDates: Dictionary<NamedDate>): void;
+    projectMinimumDates: Dictionary<NamedDate>;
+    onChange(projectMinimumDates: Dictionary<NamedDate>): void;
 }
 
 export const OrgUnitDateSelector: React.FC<OrgUnitDateSelectorProps> = React.memo(props => {
-    const { projectStartDates, onChange: updateProjectStartDates } = props;
+    const { projectMinimumDates, onChange: updateProjectMinimumDates } = props;
     const { api, compositionRoot } = useAppContext();
 
     const [orgUnitRootIds, setOrgUnitRootIds] = useState<string[] | undefined>();
     const [selectedOrgUnitPaths, updateSelectedOrgUnitPaths] = useState<string[]>([]);
 
-    const fetchName = useCallback(
-        async (path: string) => {
-            const id = cleanOrgUnitPath(path);
-
-            const { objects } = await compositionRoot.metadata.list({
-                type: "organisationUnits",
-                filterRows: [id],
-                fields: { name: true },
-            });
-
-            return objects[0]?.name ?? i18n.t("Unknown organisation {{id}}", { id });
-        },
-        [compositionRoot]
-    );
-
-    const addProjectStartDate = useCallback(
+    const addProjectMinimumDate = useCallback(
         async (project: string, date: Date | null) => {
-            const name = await fetchName(project);
-
             if (!date && !selectedOrgUnitPaths.includes(project)) {
-                updateProjectStartDates(_.omit(projectStartDates, [project]));
+                updateProjectMinimumDates(_.omit(projectMinimumDates, [project]));
             } else {
-                updateProjectStartDates({ ...projectStartDates, [project]: { name, date } });
+                updateProjectMinimumDates({ ...projectMinimumDates, [project]: { date } });
             }
         },
-        [fetchName, selectedOrgUnitPaths, projectStartDates, updateProjectStartDates]
+        [selectedOrgUnitPaths, projectMinimumDates, updateProjectMinimumDates]
     );
 
     const selectOrgUnit = useCallback(
@@ -58,11 +39,10 @@ export const OrgUnitDateSelector: React.FC<OrgUnitDateSelectorProps> = React.mem
             updateSelectedOrgUnitPaths(paths);
             if (paths.length === 0) return;
 
-            const name = await fetchName(paths[0]);
-            const items = _.omitBy(projectStartDates, item => item.date === null);
-            updateProjectStartDates({ [paths[0]]: { name, date: null }, ...items });
+            const items = _.omitBy(projectMinimumDates, item => item.date === null);
+            updateProjectMinimumDates({ [paths[0]]: { date: null }, ...items });
         },
-        [fetchName, projectStartDates, updateProjectStartDates]
+        [projectMinimumDates, updateProjectMinimumDates]
     );
 
     useEffect(() => {
@@ -86,6 +66,7 @@ export const OrgUnitDateSelector: React.FC<OrgUnitDateSelectorProps> = React.mem
                         singleSelection={true}
                         typeInput={"radio"}
                         hideMemberCount={true}
+                        selectableLevels={[4]}
                         controls={{
                             filterByLevel: false,
                             filterByGroup: false,
@@ -97,14 +78,13 @@ export const OrgUnitDateSelector: React.FC<OrgUnitDateSelectorProps> = React.mem
                 <Divider orientation={"vertical"} flexItem={true} />
                 <Container>
                     <FlexBox orientation={"vertical"}>
-                        {_.toPairs(projectStartDates).map(([orgUnitPath, item]) => (
+                        {selectedOrgUnitPaths.map(orgUnitPath => (
                             <React.Fragment key={`date-${orgUnitPath}`}>
-                                <h4>{i18n.t("Project {{name}} start date", item)}</h4>
                                 <Picker
-                                    label={i18n.t("Start date")}
-                                    value={item.date}
+                                    label={i18n.t("Minimum date")}
+                                    value={projectMinimumDates[orgUnitPath]?.date ?? null}
                                     onChange={(date: Date | null) =>
-                                        addProjectStartDate(orgUnitPath, date)
+                                        addProjectMinimumDate(orgUnitPath, date)
                                     }
                                 />
                             </React.Fragment>

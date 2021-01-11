@@ -14,7 +14,7 @@ export type RunAnalyticsSettings = "true" | "false" | "by-sync-rule-settings";
 export type MSFSettings = {
     runAnalytics: RunAnalyticsSettings;
     analyticsYears: number;
-    projectStartDates: Dictionary<NamedDate>;
+    projectMinimumDates: Dictionary<NamedDate>;
     dataElementGroupId?: string;
 };
 
@@ -84,8 +84,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
         updateSettings(settings => ({ ...settings, analyticsYears }));
     };
 
-    const updateProjectStartDates = (projectStartDates: Dictionary<NamedDate>) => {
-        updateSettings(settings => ({ ...settings, projectStartDates }));
+    const updateProjectMinimumDates = (projectStartDates: Dictionary<NamedDate>) => {
+        updateSettings(settings => ({ ...settings, projectMinimumDates: projectStartDates }));
     };
 
     const handleSave = () => {
@@ -136,8 +136,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             </div>
             <div>
                 <OrgUnitDateSelector
-                    projectStartDates={settings.projectStartDates}
-                    onChange={updateProjectStartDates}
+                    projectMinimumDates={settings.projectMinimumDates}
+                    onChange={updateProjectMinimumDates}
                 />
             </div>
         </ConfirmationDialog>
