@@ -53,7 +53,7 @@ export const OrgUnitDateSelector: React.FC<OrgUnitDateSelectorProps> = React.mem
     }, [compositionRoot]);
 
     return (
-        <Wrapper>
+        <React.Fragment>
             <FlexBox>
                 <Container>
                     <OrgUnitsSelector
@@ -92,13 +92,9 @@ export const OrgUnitDateSelector: React.FC<OrgUnitDateSelectorProps> = React.mem
                     </FlexBox>
                 </Container>
             </FlexBox>
-        </Wrapper>
+        </React.Fragment>
     );
 });
-
-const Wrapper = styled.div`
-    margin: 25px 0;
-`;
 
 const FlexBox = styled.div<{ orientation?: "horizontal" | "vertical" }>`
     display: flex;
@@ -108,7 +104,6 @@ const FlexBox = styled.div<{ orientation?: "horizontal" | "vertical" }>`
 
 const Container = styled.div`
     width: 50%;
-    margin: 0 25px;
 `;
 
 const Picker = styled(DatePicker)`

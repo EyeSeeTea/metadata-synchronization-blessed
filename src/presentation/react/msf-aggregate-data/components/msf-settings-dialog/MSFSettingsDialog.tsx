@@ -103,6 +103,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             cancelText={i18n.t("Cancel")}
             saveText={i18n.t("Save")}
         >
+            <h3 className={classes.title}>{i18n.t("Analytics")}</h3>
             <div className={classes.selector}>
                 <Dropdown<RunAnalyticsSettings>
                     label={i18n.t("Run Analytics")}
@@ -119,6 +120,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     type="number"
                 />
             </div>
+
+            <h3 className={classes.title}>{i18n.t("Data element filter")}</h3>
             <div className={classes.selector}>
                 <Dropdown
                     label={i18n.t("Data Element Group *")}
@@ -134,6 +137,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     { nsSeparator: false }
                 )}
             </div>
+
+            <h3 className={classes.title}>{i18n.t("Project minimum dates")}</h3>
             <div>
                 <OrgUnitDateSelector
                     projectMinimumDates={settings.projectMinimumDates}
@@ -154,7 +159,10 @@ const useStyles = makeStyles((theme: Theme) => ({
         marginLeft: 15,
     },
     info: {
-        margin: theme.spacing(0, 0, 0, 1),
+        margin: theme.spacing(0, 0, 2, 1),
         fontSize: "0.8em",
+    },
+    title: {
+        marginTop: 0,
     },
 }));
