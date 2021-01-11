@@ -1,17 +1,20 @@
 import { makeStyles, TextField, Theme } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
+import { Dictionary } from "lodash";
 import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { DataElementGroup } from "../../../../../domain/metadata/entities/MetadataEntities";
 import i18n from "../../../../../locales";
 import { DataElementGroupModel } from "../../../../../models/dhis/metadata";
 import Dropdown, { DropdownOption } from "../../../core/components/dropdown/Dropdown";
 import { useAppContext } from "../../../core/contexts/AppContext";
+import { NamedDate, OrgUnitDateSelector } from "../org-unit-date-selector/OrgUnitDateSelector";
 
 export type RunAnalyticsSettings = "true" | "false" | "by-sync-rule-settings";
 
 export type MSFSettings = {
     runAnalytics: RunAnalyticsSettings;
     analyticsYears: number;
+    projectStartDates: Dictionary<NamedDate>;
     dataElementGroupId?: string;
 };
 
@@ -81,6 +84,10 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
         updateSettings(settings => ({ ...settings, analyticsYears }));
     };
 
+    const updateProjectStartDates = (projectStartDates: Dictionary<NamedDate>) => {
+        updateSettings(settings => ({ ...settings, projectStartDates }));
+    };
+
     const handleSave = () => {
         onSave(settings);
     };
@@ -88,7 +95,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
     return (
         <ConfirmationDialog
             open={true}
-            maxWidth="sm"
+            maxWidth="lg"
             fullWidth={true}
             title={i18n.t("MSF Settings")}
             onCancel={onClose}
@@ -126,6 +133,12 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     "* Data Element Group: used to check existing data values in the destination data elements",
                     { nsSeparator: false }
                 )}
+            </div>
+            <div>
+                <OrgUnitDateSelector
+                    projectStartDates={settings.projectStartDates}
+                    onChange={updateProjectStartDates}
+                />
             </div>
         </ConfirmationDialog>
     );

@@ -36,6 +36,7 @@ export const MSFHomePage: React.FC = () => {
     const [msfSettings, setMsfSettings] = useState<MSFSettings>({
         runAnalytics: "by-sync-rule-settings",
         analyticsYears: 2,
+        projectStartDates: {},
     });
 
     useEffect(() => {
