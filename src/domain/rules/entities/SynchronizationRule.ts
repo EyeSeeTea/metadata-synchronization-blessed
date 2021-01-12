@@ -126,12 +126,12 @@ export class SynchronizationRule {
         return this.syncRule.builder?.dataParams?.period ?? "ALL";
     }
 
-    public get dataSyncStartDate(): Date | null {
-        return this.syncRule.builder?.dataParams?.startDate ?? null;
+    public get dataSyncStartDate(): Date | undefined {
+        return this.syncRule.builder?.dataParams?.startDate;
     }
 
-    public get dataSyncEndDate(): Date | null {
-        return this.syncRule.builder?.dataParams?.endDate ?? null;
+    public get dataSyncEndDate(): Date | undefined {
+        return this.syncRule.builder?.dataParams?.endDate;
     }
 
     public get dataSyncEvents(): string[] {
@@ -416,9 +416,10 @@ export class SynchronizationRule {
     public updateBuilderDataParams(
         partialDataParams: Partial<DataSynchronizationParams>
     ): SynchronizationRule {
+        const dataParams = this.syncRule.builder?.dataParams ?? {};
         return this.updateBuilder({
             dataParams: {
-                ...this.syncRule.builder?.dataParams,
+                ...dataParams,
                 ...partialDataParams,
             },
         });
