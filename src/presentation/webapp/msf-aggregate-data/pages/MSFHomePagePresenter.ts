@@ -35,7 +35,7 @@ export async function executeAggregateData(
         }
     };
 
-    const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings);
+    const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings, msfSettings);
 
     const validationErrors = advancedSettings.checkInPreviousPeriods
         ? await validatePreviousDataValues(
@@ -224,48 +224,73 @@ const getTypeName = (reportType: SynchronizationType, syncType: string) => {
 
 async function getSyncRules(
     compositionRoot: CompositionRoot,
-    advancedSettings: AdvancedSettings
+    advancedSettings: AdvancedSettings,
+    msfSettings: MSFSettings
 ): Promise<SynchronizationRule[]> {
+    const { period: overridePeriod } = advancedSettings;
+    const { projectMinimumDates } = msfSettings;
     const { dataViewOrganisationUnits } = await compositionRoot.instances.getCurrentUser();
 
     const { rows } = await compositionRoot.rules.list({ paging: false });
     const allRules = await promiseMap(rows, ({ id }) => compositionRoot.rules.get(id));
 
-    const accesibleRules = _(allRules)
+    return _(allRules)
         .map(rule => {
+            // Remove rules that are not aggregated or events
             if (!rule || !["events", "aggregated"].includes(rule.type)) return undefined;
 
             const paths = rule.dataSyncOrgUnitPaths.filter(path =>
                 _.some(dataViewOrganisationUnits, ({ id }) => path.includes(id))
             );
 
+            // Filter organisation units to user visibility
             return paths.length > 0 ? rule?.updateDataSyncOrgUnitPaths(paths) : undefined;
         })
         .compact()
+        .map(rule => {
+            // Update period and dates according to settings
+            return !overridePeriod
+                ? rule
+                : rule.updateBuilderDataParams({
+                      period: overridePeriod.type,
+                      startDate: overridePeriod.startDate,
+                      endDate: overridePeriod.endDate,
+                  });
+        })
+        .map(rule => {
+            // Remove org units with minimum date after end date
+            return rule.updateDataSyncOrgUnitPaths(
+                rule.dataSyncOrgUnitPaths.filter(path => {
+                    const { date } = projectMinimumDates[path] ?? {};
+                    return (
+                        !date || !rule.dataSyncEndDate || moment(date).isAfter(rule.dataSyncEndDate)
+                    );
+                })
+            );
+        })
+        .flatMap(rule => {
+            if (!rule.dataSyncStartDate) return rule;
+
+            // Update start date if minimum date is after current one
+            return _(rule.dataSyncOrgUnitPaths)
+                .groupBy(path =>
+                    projectMinimumDates[path]?.date
+                        ? moment(projectMinimumDates[path].date).format("YYYY-MM-DD")
+                        : undefined
+                )
+                .toPairs()
+                .map(([date, paths]) =>
+                    rule.updateDataSyncOrgUnitPaths(paths).updateBuilderDataParams({
+                        startDate:
+                            date && moment(date).isAfter(rule.dataSyncStartDate)
+                                ? new Date(date)
+                                : rule.dataSyncStartDate,
+                    })
+                )
+                .value();
+        })
+        .filter(rule => rule.dataSyncOrgUnitPaths.length > 0)
         .value();
-
-    const rules = await promiseMap(accesibleRules, async rule => {
-        if (!advancedSettings.period) return rule;
-
-        return rule.update({
-            builder: {
-                ...rule.builder,
-                dataParams: {
-                    ...rule.builder.dataParams,
-                    period: advancedSettings.period.type,
-                    startDate: advancedSettings.period.startDate,
-                    endDate: advancedSettings.period.endDate,
-                },
-            },
-        });
-    });
-
-    // Use the settings.projectStartDates to split the rules and adapt start and end dates
-    // If minimumDate > startDate -> Create a copy of sync rule (grouped by minimum date collecting orgUnits) and update start date to minimum date. Remove orgUnit(s) from original sync rule.
-    // If minimumDate > endDate -> Remove orgUnit from sync rule
-    // Remove sync rules if they do not have any orgUnit
-
-    return rules;
 }
 
 async function runAnalytics(
