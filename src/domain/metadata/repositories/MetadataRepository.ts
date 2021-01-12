@@ -62,6 +62,7 @@ export interface ListMetadataParams {
     parents?: string[];
     filterRows?: string[];
     showOnlySelected?: boolean;
+    disableFilterRows?: boolean;
     selectedIds?: string[];
     rootJunction?: "AND" | "OR";
 }

@@ -34,7 +34,13 @@ import Dropdown from "../dropdown/Dropdown";
 import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
 
-export type MetadataTableFilters = "group" | "level" | "orgUnit" | "lastUpdated" | "onlySelected";
+export type MetadataTableFilters =
+    | "group"
+    | "level"
+    | "orgUnit"
+    | "lastUpdated"
+    | "onlySelected"
+    | "disableFilterRows";
 
 export interface MetadataTableProps
     extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
@@ -139,6 +145,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         order: initialState.sorting,
         page: initialState.pagination.page,
         pageSize: initialState.pagination.pageSize,
+        disableFilterRows: false,
     });
 
     const updateFilters = useCallback(
@@ -198,6 +205,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const changeOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
         const showOnlySelected = event.target?.checked;
         updateFilters({ showOnlySelected });
+    };
+
+    const changeFilterRowsFilter = (event: ChangeEvent<HTMLInputElement>) => {
+        const disableFilterRows = event.target?.checked;
+        updateFilters({ disableFilterRows });
     };
 
     const changeParentOrgUnitFilter = useCallback(
@@ -309,6 +321,21 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                             />
                         }
                         label={i18n.t("Only selected items")}
+                    />
+                </div>
+            )}
+
+            {viewFilters.includes("disableFilterRows") && (
+                <div className={classes.onlySelectedFilter}>
+                    <FormControlLabel
+                        className={classes.checkbox}
+                        control={
+                            <Checkbox
+                                checked={filters.disableFilterRows}
+                                onChange={changeFilterRowsFilter}
+                            />
+                        }
+                        label={i18n.t("Show all entries")}
                     />
                 </div>
             )}
