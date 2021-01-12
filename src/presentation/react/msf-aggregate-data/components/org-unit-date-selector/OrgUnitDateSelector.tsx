@@ -1,6 +1,7 @@
 import { Divider } from "@material-ui/core";
 import { DatePicker, OrgUnitsSelector } from "d2-ui-components";
 import _ from "lodash";
+import moment from "moment";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import i18n from "../../../../../locales";
@@ -8,7 +9,7 @@ import { Dictionary } from "../../../../../types/utils";
 import { useAppContext } from "../../../core/contexts/AppContext";
 
 export interface NamedDate {
-    date: Date | null;
+    date?: string;
 }
 
 export interface OrgUnitDateSelectorProps {
@@ -28,7 +29,10 @@ export const OrgUnitDateSelector: React.FC<OrgUnitDateSelectorProps> = React.mem
             if (!date && !selectedOrgUnitPaths.includes(project)) {
                 updateProjectMinimumDates(_.omit(projectMinimumDates, [project]));
             } else {
-                updateProjectMinimumDates({ ...projectMinimumDates, [project]: { date } });
+                updateProjectMinimumDates({
+                    ...projectMinimumDates,
+                    [project]: { date: date ? moment(date).format("YYYY-MM-DD") : undefined },
+                });
             }
         },
         [selectedOrgUnitPaths, projectMinimumDates, updateProjectMinimumDates]
@@ -40,7 +44,7 @@ export const OrgUnitDateSelector: React.FC<OrgUnitDateSelectorProps> = React.mem
             if (paths.length === 0) return;
 
             const items = _.omitBy(projectMinimumDates, item => item.date === null);
-            updateProjectMinimumDates({ [paths[0]]: { date: null }, ...items });
+            updateProjectMinimumDates({ [paths[0]]: { date: undefined }, ...items });
         },
         [projectMinimumDates, updateProjectMinimumDates]
     );
@@ -82,7 +86,7 @@ export const OrgUnitDateSelector: React.FC<OrgUnitDateSelectorProps> = React.mem
                             <React.Fragment key={`date-${orgUnitPath}`}>
                                 <Picker
                                     label={i18n.t("Minimum date")}
-                                    value={projectMinimumDates[orgUnitPath]?.date ?? null}
+                                    value={projectMinimumDates[orgUnitPath]?.date}
                                     onChange={(date: Date | null) =>
                                         addProjectMinimumDate(orgUnitPath, date)
                                     }
