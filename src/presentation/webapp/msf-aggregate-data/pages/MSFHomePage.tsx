@@ -50,6 +50,7 @@ export const MSFHomePage: React.FC = () => {
                 runAnalytics: isGlobalInstance() ? "false" : "by-sync-rule-settings",
                 dataElementGroupId: data?.dataElementGroupId,
                 analyticsYears: data?.analyticsYears ?? 2,
+                projectMinimumDates: data?.projectMinimumDates ?? {},
             }));
         });
     }, [compositionRoot]);
@@ -100,6 +101,7 @@ export const MSFHomePage: React.FC = () => {
         compositionRoot.customData.save(msfStorage, {
             dataElementGroupId: msfSettings.dataElementGroupId,
             analyticsYears: msfSettings.analyticsYears,
+            projectMinimumDates: msfSettings.projectMinimumDates,
         });
     };
 
