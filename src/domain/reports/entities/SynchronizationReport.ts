@@ -74,13 +74,7 @@ export class SynchronizationReport implements SynchronizationReportData {
         );
     }
     public setPayload(payload?: MetadataPackage): void {
-        if (payload) {
-            console.log("payload!!");
-            console.log(payload);
-            this.payload?.push(payload);
-            console.log("this.payload");
-            console.log(this.payload);
-        }
+        this.payload?.push(payload);
     }
 
     public hasErrors(): boolean {

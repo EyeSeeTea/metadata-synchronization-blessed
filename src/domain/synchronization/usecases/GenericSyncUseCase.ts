@@ -39,7 +39,7 @@ export type SyncronizationClass =
 export type SyncronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
 export interface PostPayloadResult {
-    results: SynchronizationResult[];
+    results: SynchronizationResult;
     payload?: MetadataPackage;
 }
 
@@ -246,11 +246,9 @@ export abstract class GenericSyncUseCase {
                 //const { results, payload } = await this.postPayload(instance);
                 const metadata = await this.postPayload(instance);
                 metadata.forEach(item => {
-                    syncReport.addSyncResult(...item.results);
+                    syncReport.addSyncResult(item.results);
                     syncReport.setPayload(item.payload);
                 });
-                //syncReport.addSyncResult(...results);
-                //syncReport.setPayload(payload);
 
                 debug("Finished import on instance", instance.toPublicObject());
             } catch (error) {

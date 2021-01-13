@@ -230,7 +230,7 @@ const ManualSyncPage: React.FC = () => {
         loading.reset();
         closeDialogs();
     };
-//instance={destinationInstance}
+    //instance={destinationInstance}
     const additionalColumns = [
         {
             name: "metadata-type",
