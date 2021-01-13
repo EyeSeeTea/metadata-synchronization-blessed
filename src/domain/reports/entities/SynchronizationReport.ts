@@ -10,7 +10,7 @@ export class SynchronizationReport implements SynchronizationReportData {
     public status: SynchronizationReportStatus;
     public types: string[];
     public deletedSyncRuleLabel?: string | undefined;
-    public payload?: MetadataPackage | undefined;
+    public payload?: MetadataPackage[];
 
     public readonly id: string;
     public readonly date: Date;
@@ -74,7 +74,13 @@ export class SynchronizationReport implements SynchronizationReportData {
         );
     }
     public setPayload(payload?: MetadataPackage): void {
-        this.payload = payload;
+        if (payload) {
+            console.log("payload!!");
+            console.log(payload);
+            this.payload?.push(payload);
+            console.log("this.payload");
+            console.log(this.payload);
+        }
     }
 
     public hasErrors(): boolean {

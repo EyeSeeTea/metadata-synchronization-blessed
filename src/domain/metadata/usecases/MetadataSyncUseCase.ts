@@ -127,7 +127,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         return metadataWithoutDuplicates;
     });
 
-    public async postPayload(instance: Instance): Promise<PostPayloadResult> {
+    public async postPayload(instance: Instance): Promise<PostPayloadResult[]> {
         const { syncParams } = this.builder;
 
         const payloadPackage = await this.buildPayload();
@@ -144,11 +144,13 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
         const syncResult = await remoteMetadataRepository.save(mappedPayloadPackage, syncParams);
         const origin = await this.getOriginInstance();
-
-        return {
-            results: [{ ...syncResult, origin: origin.toPublicObject() }],
-            payload: mappedPayloadPackage,
-        };
+        //results: [{ ...syncResult, origin: origin.toPublicObject() }],
+        return [
+            {
+                results: [{ ...syncResult, origin: origin.toPublicObject() }],
+                payload: mappedPayloadPackage,
+            },
+        ];
     }
 
     public async buildDataStats() {

@@ -160,6 +160,7 @@ const ManualSyncPage: React.FC = () => {
 
     const handleSynchronization = async (syncRule: SynchronizationRule) => {
         loading.show(true, i18n.t(`Synchronizing ${syncRule.type}`));
+
         const result = await compositionRoot.sync.prepare(syncRule.type, syncRule.toBuilder());
         const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
 
@@ -229,7 +230,7 @@ const ManualSyncPage: React.FC = () => {
         loading.reset();
         closeDialogs();
     };
-
+//instance={destinationInstance}
     const additionalColumns = [
         {
             name: "metadata-type",
@@ -303,13 +304,8 @@ const ManualSyncPage: React.FC = () => {
             )}
 
             {!!syncReport && destinationInstance && (
-                <SyncSummary
-                    response={syncReport}
-                    instance={destinationInstance.id}
-                    onClose={() => setSyncReport(null)}
-                />
+                <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
             )}
-
             {!!pullRequestProps && (
                 <PullRequestCreationDialog
                     {...pullRequestProps}

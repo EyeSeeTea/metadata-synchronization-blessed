@@ -13,7 +13,7 @@ import {
     Typography,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
@@ -28,6 +28,8 @@ import { Store } from "../../../../../domain/stores/entities/Store";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
+import FileSaver from "file-saver";
+import JSZip from "jszip";
 import moment from "moment";
 
 const useStyles = makeStyles(theme => ({
@@ -171,10 +173,9 @@ const getTypeName = (reportType: SynchronizationType, syncType: string) => {
             return i18n.t("Unknown");
     }
 };
-
+//instance?: Ref;
 interface SyncSummaryProps {
     response: SynchronizationReport;
-    instance?: string;
     onClose: () => void;
 }
 
@@ -188,15 +189,45 @@ const getOriginName = (source: PublicInstance | Store) => {
     }
 };
 
-const SyncSummary = ({ response, instance, onClose }: SyncSummaryProps) => {
+const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
     const { compositionRoot } = useAppContext();
-    const payload = response.payload;
     const classes = useStyles();
+    const snackbar = useSnackbar();
     const [results, setResults] = useState<SynchronizationResult[]>([]);
-    const downloadJSON = () => {
-        const date = moment().format("YYYYMMDDHHmm");
-        const fileName = `synchronization-${instance}-${date}.json`;
-        compositionRoot.storage.downloadFile(fileName, payload);
+    const downloadJSON = async () => {
+        console.log(results);
+        console.log(response.payload);
+        console.log(response);
+        if (!response.payload) {
+            snackbar.error(i18n.t("Couldn't download JSON"));
+            return;
+        }
+        snackbar.info("Generating JSON");
+        const syncRule = await compositionRoot.rules.get(String(response.syncRule));
+        const syncRuleName = syncRule?.name;
+        const conventionName =
+            syncRuleName === undefined ? "synchronization" : `synchronization_${syncRuleName}`;
+        const date = moment().format("DDMMYYYY");
+        if (results.length === 1) {
+            await compositionRoot.storage.downloadFile(
+                _.kebabCase(`${conventionName}_${results[0].instance.name}_${date}`),
+                response.payload
+            );
+        } else {
+            const zip = new JSZip();
+            results.forEach(result => {
+                const json = JSON.stringify(response.payload, null, 4);
+                const blob = new Blob([json], { type: "application/json" });
+                zip.file(
+                    `${_.kebabCase(`${conventionName}_${result.instance.name}_${date}`)}.json`,
+                    blob
+                );
+            });
+            zip.generateAsync({ type: "blob" }).then(function (content) {
+                const zipFileName = `${conventionName}_${date}.zip`;
+                FileSaver.saveAs(content, zipFileName);
+            });
+        }
     };
 
     useEffect(() => {
@@ -209,7 +240,7 @@ const SyncSummary = ({ response, instance, onClose }: SyncSummaryProps) => {
             isOpen={true}
             title={i18n.t("Synchronization Results")}
             onCancel={onClose}
-            onInfoAction={(): void => downloadJSON()}
+            onInfoAction={response.payload ? downloadJSON : undefined}
             cancelText={i18n.t("Ok")}
             maxWidth={"lg"}
             fullWidth={true}
@@ -256,6 +287,7 @@ const SyncSummary = ({ response, instance, onClose }: SyncSummaryProps) => {
                             <AccordionDetails className={classes.accordionDetails}>
                                 <Typography variant="overline">{i18n.t("Summary")}</Typography>
                             </AccordionDetails>
+
                             {message && (
                                 <AccordionDetails className={classes.accordionDetails}>
                                     <Typography variant="body2">{message}</Typography>

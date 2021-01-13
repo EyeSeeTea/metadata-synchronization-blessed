@@ -66,7 +66,7 @@ export abstract class GenericSyncUseCase {
     // We start to use domain concepts:
     // for the moment old model instance and domain entity instance are going to live together for a while on sync classes.
     // Little by little through refactors the old instance model should disappear
-    public abstract postPayload(instance: Instance): Promise<PostPayloadResult>;
+    public abstract postPayload(instance: Instance): Promise<PostPayloadResult[]>;
     public abstract buildDataStats(): Promise<
         AggregatedDataStats[] | EventsDataStats[] | undefined
     >;
@@ -243,9 +243,14 @@ export abstract class GenericSyncUseCase {
 
             try {
                 debug("Start import on destination instance", instance.toPublicObject());
-                const { results, payload } = await this.postPayload(instance);
-                syncReport.addSyncResult(...results);
-                syncReport.setPayload(payload);
+                //const { results, payload } = await this.postPayload(instance);
+                const metadata = await this.postPayload(instance);
+                metadata.forEach(item => {
+                    syncReport.addSyncResult(...item.results);
+                    syncReport.setPayload(item.payload);
+                });
+                //syncReport.addSyncResult(...results);
+                //syncReport.setPayload(payload);
 
                 debug("Finished import on instance", instance.toPublicObject());
             } catch (error) {

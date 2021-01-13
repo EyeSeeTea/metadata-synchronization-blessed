@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-01-04T15:30:33.998Z\n"
-"PO-Revision-Date: 2021-01-04T15:30:33.999Z\n"
+"POT-Creation-Date: 2021-01-12T09:49:03.304Z\n"
+"PO-Revision-Date: 2021-01-12T09:49:03.304Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -929,6 +929,9 @@ msgid "Events"
 msgstr ""
 
 msgid "Unknown"
+msgstr ""
+
+msgid "Couldn't download JSON"
 msgstr ""
 
 msgid "Synchronization Results"

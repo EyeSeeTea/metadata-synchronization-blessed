@@ -18,6 +18,7 @@ import { SynchronizationResult } from "../../reports/entities/SynchronizationRes
 import {
     GenericSyncUseCase,
     SyncronizationPayload,
+    PostPayloadResult,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
 import { EventsPackage } from "../entities/EventsPackage";
@@ -69,14 +70,25 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         return { events, dataValues };
     });
 
-    public async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance): Promise<PostPayloadResult[]> {
         const { events, dataValues } = await this.buildPayload();
 
         const eventsResponse = await this.postEventsPayload(instance, events);
 
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
-        return { results: _.compact([eventsResponse, indicatorsResponse]) };
+        //return [{ results: { ..._.compact([eventsResponse, indicatorsResponse]) } }];
+        //[{ results: { ...syncResult, origin: origin.toPublicObject() } }]
+        console.log(typeof dataValues);
+        console.log(eventsResponse);
+        console.log(indicatorsResponse);
+        console.log(_.compact([eventsResponse, indicatorsResponse]));
+        return [
+            { 
+                results: _.compact([eventsResponse, indicatorsResponse]),
+                
+            }
+        ];
     }
 
     private async postEventsPayload(
@@ -102,6 +114,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const eventsRepository = await this.getEventsRepository(instance);
         const syncResult = await eventsRepository.save(payload, dataParams);
+        debug("syncResult Events", { syncResult });
         const origin = await this.getOriginInstance();
 
         return { ...syncResult, origin: origin.toPublicObject() };
@@ -124,7 +137,6 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         );
         const payload = await aggregatedSync.mapPayload(instance, { dataValues });
         debug("Program indicator package", { dataValues, payload });
-
         const aggregatedRepository = await this.getAggregatedRepository(instance);
         const syncResult = await aggregatedRepository.save(payload, dataParams);
         const origin = await this.getOriginInstance();
