@@ -14,11 +14,10 @@ import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncU
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
-import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import {
     GenericSyncUseCase,
-    SynchronizationPayload,
     PostPayloadResult,
+    SynchronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
 import { EventsPackage } from "../entities/EventsPackage";
@@ -70,25 +69,20 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         return { events, dataValues };
     });
 
-    public async postPayload(instance: Instance): Promise<PostPayloadResult[]> {
+    public async postPayload(instance: Instance) {
         const { events, dataValues } = await this.buildPayload();
 
         const eventsResponse = await this.postEventsPayload(instance, events);
 
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
-        return _.compact([
-            { result: eventsResponse, payload: { events } },
-            indicatorsResponse
-                ? { result: indicatorsResponse, payload: { dataValues } }
-                : undefined,
-        ]);
+        return _.compact([eventsResponse, indicatorsResponse]);
     }
 
     private async postEventsPayload(
         instance: Instance,
         events: ProgramEvent[]
-    ): Promise<SynchronizationResult> {
+    ): Promise<PostPayloadResult> {
         const { dataParams = {} } = this.builder;
 
         const payload = await this.mapPayload(instance, { events });
@@ -108,16 +102,15 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const eventsRepository = await this.getEventsRepository(instance);
         const syncResult = await eventsRepository.save(payload, dataParams);
-        debug("syncResult Events", { syncResult });
         const origin = await this.getOriginInstance();
 
-        return { ...syncResult, origin: origin.toPublicObject() };
+        return { result: { ...syncResult, origin: origin.toPublicObject() }, payload };
     }
 
     private async postIndicatorPayload(
         instance: Instance,
         dataValues: DataValue[]
-    ): Promise<SynchronizationResult | undefined> {
+    ): Promise<PostPayloadResult | undefined> {
         const { dataParams = {} } = this.builder;
         const { enableAggregation } = dataParams;
         if (!enableAggregation) return undefined;
@@ -131,11 +124,12 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         );
         const payload = await aggregatedSync.mapPayload(instance, { dataValues });
         debug("Program indicator package", { dataValues, payload });
+
         const aggregatedRepository = await this.getAggregatedRepository(instance);
         const syncResult = await aggregatedRepository.save(payload, dataParams);
         const origin = await this.getOriginInstance();
 
-        return { ...syncResult, origin: origin.toPublicObject() };
+        return { result: { ...syncResult, origin: origin.toPublicObject() }, payload };
     }
 
     public async buildDataStats() {
