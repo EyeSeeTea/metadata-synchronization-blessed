@@ -17,7 +17,7 @@ import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import {
     GenericSyncUseCase,
-    SyncronizationPayload,
+    SynchronizationPayload,
     PostPayloadResult,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
@@ -77,12 +77,12 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
-        //console.log(_.compact([eventsResponse, indicatorsResponse]));
-        return [
-            {
-                results: _.compact([eventsResponse, indicatorsResponse]),
-            },
-        ];
+        return _.compact([
+            { result: eventsResponse, payload: { events } },
+            indicatorsResponse
+                ? { result: indicatorsResponse, payload: { dataValues } }
+                : undefined,
+        ]);
     }
 
     private async postEventsPayload(
@@ -157,7 +157,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
     public async mapPayload(
         instance: Instance,
         { events: oldEvents }: EventsPackage
-    ): Promise<SyncronizationPayload> {
+    ): Promise<SynchronizationPayload> {
         const metadataRepository = await this.getMetadataRepository();
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
 

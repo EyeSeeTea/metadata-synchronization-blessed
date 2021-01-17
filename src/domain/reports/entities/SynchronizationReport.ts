@@ -2,15 +2,15 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
+import { SynchronizationPayload } from "../../synchronization/usecases/GenericSyncUseCase";
 import { SynchronizationResult } from "./SynchronizationResult";
-import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 
 export class SynchronizationReport implements SynchronizationReportData {
     private results: SynchronizationResult[] | null;
     public status: SynchronizationReportStatus;
     public types: string[];
     public deletedSyncRuleLabel?: string | undefined;
-    public payload?: MetadataPackage[];
+    public payload: SynchronizationPayload[] = [];
 
     public readonly id: string;
     public readonly date: Date;
@@ -73,8 +73,9 @@ export class SynchronizationReport implements SynchronizationReportData {
             ({ instance, type, originPackage }) => `${instance.id}-${type}-${originPackage?.id}`
         );
     }
-    public setPayload(payload?: MetadataPackage): void {
-        this.payload?.push(payload);
+
+    public addPayload(payload: SynchronizationPayload): void {
+        this.payload = [...this.payload, payload];
     }
 
     public hasErrors(): boolean {

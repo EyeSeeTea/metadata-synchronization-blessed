@@ -144,10 +144,10 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
         const syncResult = await remoteMetadataRepository.save(mappedPayloadPackage, syncParams);
         const origin = await this.getOriginInstance();
-        //results: [{ ...syncResult, origin: origin.toPublicObject() }],
+
         return [
             {
-                results: [{ ...syncResult, origin: origin.toPublicObject() }],
+                result: { ...syncResult, origin: origin.toPublicObject() },
                 payload: mappedPayloadPackage,
             },
         ];

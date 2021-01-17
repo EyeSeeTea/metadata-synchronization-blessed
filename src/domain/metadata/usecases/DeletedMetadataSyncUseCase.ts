@@ -3,7 +3,7 @@ import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
 import {
     GenericSyncUseCase,
-    SyncronizationPayload,
+    SynchronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { debug } from "../../../utils/debug";
 
@@ -28,7 +28,7 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
         const syncResult = await remoteMetadataRepository.remove(payloadPackage, syncParams);
         const origin = await this.getOriginInstance();
 
-        return [{ results: [{ ...syncResult, origin: origin.toPublicObject() }] }];
+        return [{ result: { ...syncResult, origin: origin.toPublicObject() } }];
     }
 
     public async buildDataStats() {
@@ -37,8 +37,8 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
 
     public async mapPayload(
         _instance: Instance,
-        payload: SyncronizationPayload
-    ): Promise<SyncronizationPayload> {
+        payload: SynchronizationPayload
+    ): Promise<SynchronizationPayload> {
         return payload;
     }
 }

@@ -31,16 +31,17 @@ import { SynchronizationType } from "../entities/SynchronizationType";
 import { executeAnalytics } from "../../../utils/analytics";
 import { D2Api } from "../../../types/d2-api";
 
-export type SyncronizationClass =
+export type SynchronizationClass =
     | typeof MetadataSyncUseCase
     | typeof AggregatedSyncUseCase
     | typeof EventsSyncUseCase
     | typeof DeletedMetadataSyncUseCase;
-export type SyncronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
+
+export type SynchronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
 export interface PostPayloadResult {
-    results: SynchronizationResult;
-    payload?: MetadataPackage;
+    result: SynchronizationResult;
+    payload?: SynchronizationPayload;
 }
 
 export abstract class GenericSyncUseCase {
@@ -57,11 +58,11 @@ export abstract class GenericSyncUseCase {
         this.api = getD2APiFromInstance(localInstance);
     }
 
-    public abstract buildPayload(): Promise<SyncronizationPayload>;
+    public abstract buildPayload(): Promise<SynchronizationPayload>;
     public abstract mapPayload(
         instance: Instance,
-        payload: SyncronizationPayload
-    ): Promise<SyncronizationPayload>;
+        payload: SynchronizationPayload
+    ): Promise<SynchronizationPayload>;
 
     // We start to use domain concepts:
     // for the moment old model instance and domain entity instance are going to live together for a while on sync classes.
@@ -246,8 +247,8 @@ export abstract class GenericSyncUseCase {
                 //const { results, payload } = await this.postPayload(instance);
                 const metadata = await this.postPayload(instance);
                 metadata.forEach(item => {
-                    syncReport.addSyncResult(item.results);
-                    syncReport.setPayload(item.payload);
+                    syncReport.addSyncResult(item.result);
+                    if (item.payload) syncReport.addPayload(item.payload);
                 });
 
                 debug("Finished import on instance", instance.toPublicObject());
