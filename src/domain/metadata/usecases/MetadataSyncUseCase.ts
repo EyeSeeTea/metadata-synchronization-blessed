@@ -7,10 +7,8 @@ import { debug } from "../../../utils/debug";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
-import {
-    GenericSyncUseCase,
-    PostPayloadResult,
-} from "../../synchronization/usecases/GenericSyncUseCase";
+import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
+import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { Document, MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
@@ -127,7 +125,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         return metadataWithoutDuplicates;
     });
 
-    public async postPayload(instance: Instance): Promise<PostPayloadResult[]> {
+    public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
         const { syncParams } = this.builder;
 
         const payloadPackage = await this.buildPayload();
@@ -136,21 +134,18 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             instance,
             payloadPackage
         );
+
         const mappedPayloadPackage = syncParams?.enableMapping
             ? await this.mapPayload(instance, payloadWithDocumentFiles)
             : payloadWithDocumentFiles;
 
         debug("Metadata package", { payloadPackage, mappedPayloadPackage });
+
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
         const syncResult = await remoteMetadataRepository.save(mappedPayloadPackage, syncParams);
         const origin = await this.getOriginInstance();
 
-        return [
-            {
-                result: { ...syncResult, origin: origin.toPublicObject() },
-                payload: mappedPayloadPackage,
-            },
-        ];
+        return [{ ...syncResult, origin: origin.toPublicObject(), payload: mappedPayloadPackage }];
     }
 
     public async buildDataStats() {

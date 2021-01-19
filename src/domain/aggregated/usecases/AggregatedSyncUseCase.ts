@@ -14,6 +14,7 @@ import {
     DataSet,
     Indicator,
 } from "../../metadata/entities/MetadataEntities";
+import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import {
     buildMetadataDictionary,
@@ -136,7 +137,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         return { dataValues };
     };
 
-    public async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
         const { dataParams = {} } = this.builder;
 
         const payloadPackage = await this.buildPayload();
@@ -165,7 +166,8 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
 
         return [
             {
-                result: { ...syncResult, origin: origin.toPublicObject() },
+                ...syncResult,
+                origin: origin.toPublicObject(),
                 payload: versionedPayloadPackage,
             },
         ];

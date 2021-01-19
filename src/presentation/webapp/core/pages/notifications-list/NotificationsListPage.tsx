@@ -478,7 +478,7 @@ export const NotificationsListPage: React.FC = () => {
             )}
 
             {!!syncReport && (
-                <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
+                <SyncSummary report={syncReport} onClose={() => setSyncReport(undefined)} />
             )}
         </React.Fragment>
     );

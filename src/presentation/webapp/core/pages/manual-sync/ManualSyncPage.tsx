@@ -304,7 +304,7 @@ const ManualSyncPage: React.FC = () => {
             )}
 
             {!!syncReport && destinationInstance && (
-                <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
+                <SyncSummary report={syncReport} onClose={() => setSyncReport(null)} />
             )}
             {!!pullRequestProps && (
                 <PullRequestCreationDialog

@@ -2,7 +2,6 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
-import { SynchronizationPayload } from "../../synchronization/usecases/GenericSyncUseCase";
 import { SynchronizationResult } from "./SynchronizationResult";
 
 export class SynchronizationReport implements SynchronizationReportData {
@@ -10,7 +9,6 @@ export class SynchronizationReport implements SynchronizationReportData {
     public status: SynchronizationReportStatus;
     public types: string[];
     public deletedSyncRuleLabel?: string | undefined;
-    public payload: SynchronizationPayload[] = [];
 
     public readonly id: string;
     public readonly date: Date;
@@ -72,10 +70,6 @@ export class SynchronizationReport implements SynchronizationReportData {
             this.results,
             ({ instance, type, originPackage }) => `${instance.id}-${type}-${originPackage?.id}`
         );
-    }
-
-    public addPayload(payload: SynchronizationPayload): void {
-        this.payload = [...this.payload, payload];
     }
 
     public hasErrors(): boolean {

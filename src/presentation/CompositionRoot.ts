@@ -77,6 +77,7 @@ import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUse
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
 import { DeleteSyncReportUseCase } from "../domain/reports/usecases/DeleteSyncReportUseCase";
+import { DownloadPayloadUseCase } from "../domain/reports/usecases/DownloadPayloadUseCase";
 import { GetSyncReportUseCase } from "../domain/reports/usecases/GetSyncReportUseCase";
 import { GetSyncResultsUseCase } from "../domain/reports/usecases/GetSyncResultsUseCase";
 import { ListSyncReportUseCase } from "../domain/reports/usecases/ListSyncReportUseCase";
@@ -364,6 +365,10 @@ export class CompositionRoot {
             delete: new DeleteSyncReportUseCase(this.repositoryFactory, this.localInstance),
             get: new GetSyncReportUseCase(this.repositoryFactory, this.localInstance),
             getSyncResults: new GetSyncResultsUseCase(this.repositoryFactory, this.localInstance),
+            downloadPayloads: new DownloadPayloadUseCase(
+                this.repositoryFactory,
+                this.localInstance
+            ),
         });
     }
 

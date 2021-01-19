@@ -87,7 +87,7 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
                 )}
             </ConfirmationDialog>
 
-            {!!syncReport && <SyncSummary response={syncReport} onClose={closeSyncReport} />}
+            {!!syncReport && <SyncSummary report={syncReport} onClose={closeSyncReport} />}
         </React.Fragment>
     );
 };
