@@ -418,7 +418,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     private getFiltersForDateFilter(field: string, dateFilter: DateFilter): string[] {
-        const [startDate, endDate] = buildPeriodFromParams(dateFilter);
+        const { startDate, endDate } = buildPeriodFromParams(dateFilter);
         const dayFormat = "YYYY-MM-DD";
 
         return [
