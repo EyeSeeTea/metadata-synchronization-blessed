@@ -37,7 +37,7 @@ export async function executeAggregateData(
 
     const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings, msfSettings);
 
-    const validationErrors = advancedSettings.checkInPreviousPeriods
+    const validationErrors = msfSettings.checkInPreviousPeriods
         ? await validatePreviousDataValues(
               compositionRoot,
               eventSyncRules,
@@ -61,7 +61,7 @@ export async function executeAggregateData(
                 })
             );
         }
-        if (advancedSettings.deleteDataValuesBeforeSync && !msfSettings.dataElementGroupId) {
+        if (msfSettings.deleteDataValuesBeforeSync && !msfSettings.dataElementGroupId) {
             addEventToProgress(
                 i18n.t(
                     `Deleting previous data values is not possible because data element group is not defined, please contact with your administrator`
@@ -87,7 +87,6 @@ export async function executeAggregateData(
                 compositionRoot,
                 syncRule,
                 addEventToProgress,
-                advancedSettings,
                 msfSettings
             );
         }
@@ -153,14 +152,13 @@ async function executeSyncRule(
     compositionRoot: CompositionRoot,
     rule: SynchronizationRule,
     addEventToProgress: (event: string) => void,
-    advancedSettings: AdvancedSettings,
     msfSettings: MSFSettings
 ): Promise<void> {
     const { name, builder, id: syncRule, type = "metadata", targetInstances } = rule;
 
     addEventToProgress(i18n.t(`Starting Sync Rule {{name}} ...`, { name }));
 
-    if (advancedSettings.deleteDataValuesBeforeSync && msfSettings.dataElementGroupId) {
+    if (msfSettings.deleteDataValuesBeforeSync && msfSettings.dataElementGroupId) {
         await deletePreviousDataValues(
             compositionRoot,
             targetInstances,

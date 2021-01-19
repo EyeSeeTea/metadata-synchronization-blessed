@@ -29,7 +29,6 @@ export const MSFHomePage: React.FC = () => {
     const [msfValidationErrors, setMsfValidationErrors] = useState<string[]>();
     const [advancedSettings, setAdvancedSettings] = useState<AdvancedSettings>({
         period: undefined,
-        deleteDataValuesBeforeSync: false,
     });
 
     const [globalAdmin, setGlobalAdmin] = useState(false);
@@ -58,10 +57,10 @@ export const MSFHomePage: React.FC = () => {
     const handleAggregateData = (skipCheckInPreviousPeriods?: boolean) => {
         executeAggregateData(
             compositionRoot,
+            advancedSettings,
             skipCheckInPreviousPeriods
-                ? { ...advancedSettings, checkInPreviousPeriods: false }
-                : advancedSettings,
-            msfSettings,
+                ? { ...msfSettings, checkInPreviousPeriods: false }
+                : msfSettings,
             progress => setSyncProgress(progress),
             errors => setMsfValidationErrors(errors)
         );

@@ -6,6 +6,7 @@ import { DataElementGroup } from "../../../../../domain/metadata/entities/Metada
 import i18n from "../../../../../locales";
 import { DataElementGroupModel } from "../../../../../models/dhis/metadata";
 import Dropdown, { DropdownOption } from "../../../core/components/dropdown/Dropdown";
+import { Toggle } from "../../../core/components/toggle/Toggle";
 import { useAppContext } from "../../../core/contexts/AppContext";
 import { NamedDate, OrgUnitDateSelector } from "../org-unit-date-selector/OrgUnitDateSelector";
 
@@ -16,6 +17,8 @@ export type MSFSettings = {
     analyticsYears: number;
     projectMinimumDates: Dictionary<NamedDate>;
     dataElementGroupId?: string;
+    deleteDataValuesBeforeSync?: boolean;
+    checkInPreviousPeriods?: boolean;
 };
 
 export interface MSFSettingsDialogProps {
@@ -92,6 +95,9 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
         onSave(settings);
     };
 
+    const [deleteDataValuesBeforeSync, setDeleteDataValuesBeforeSync] = useState<boolean>(false);
+    const [checkInPreviousPeriods, setCheckInPreviousPeriods] = useState<boolean>(false);
+
     return (
         <ConfirmationDialog
             open={true}
@@ -118,6 +124,22 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     value={settings.analyticsYears}
                     onChange={setAnalyticsYears}
                     type="number"
+                />
+            </div>
+
+            <div>
+                <Toggle
+                    label={i18n.t("Delete data values before sync")}
+                    onValueChange={setDeleteDataValuesBeforeSync}
+                    value={deleteDataValuesBeforeSync}
+                />
+            </div>
+
+            <div>
+                <Toggle
+                    label={i18n.t("Check existing data values in previous periods")}
+                    onValueChange={setCheckInPreviousPeriods}
+                    value={checkInPreviousPeriods}
                 />
             </div>
 

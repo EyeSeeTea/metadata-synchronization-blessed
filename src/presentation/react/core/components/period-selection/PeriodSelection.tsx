@@ -10,13 +10,13 @@ import { availablePeriods, PeriodType } from "../../../../../utils/synchronizati
 import Dropdown from "../dropdown/Dropdown";
 
 export interface ObjectWithPeriodInput {
-    period: DataSyncPeriod;
+    type: DataSyncPeriod;
     startDate?: Date | string;
     endDate?: Date | string;
 }
 
 export interface ObjectWithPeriod {
-    period: DataSyncPeriod;
+    type: DataSyncPeriod;
     startDate?: Date;
     endDate?: Date;
 }
@@ -62,11 +62,11 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
     } = props;
 
     const objectWithPeriod: ObjectWithPeriod = {
-        period: obj.period,
+        type: obj.type,
         startDate: obj.startDate ? moment(obj.startDate).toDate() : undefined,
         endDate: obj.endDate ? moment(obj.endDate).toDate() : undefined,
     };
-    const { period, startDate, endDate } = objectWithPeriod;
+    const { type: period, startDate, endDate } = objectWithPeriod;
 
     const classes = useStyles();
 
@@ -81,9 +81,9 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
     );
 
     const updatePeriod = useCallback(
-        (period: ObjectWithPeriodInput["period"]) => {
-            onChange({ ...objectWithPeriod, period });
-            onFieldChange("period", period);
+        (period: ObjectWithPeriodInput["type"]) => {
+            onChange({ ...objectWithPeriod, type: period });
+            onFieldChange("type", period);
         },
         [objectWithPeriod, onChange, onFieldChange]
     );
