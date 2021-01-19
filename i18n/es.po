@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-01-19T07:41:10.020Z\n"
+"POT-Creation-Date: 2021-01-19T10:06:13.314Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -209,6 +209,68 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
+msgid "Ready"
+msgstr ""
+
+msgid "Running"
+msgstr ""
+
+msgid "Failure"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "Sync Rule"
+msgstr ""
+
+#, fuzzy
+msgid "(package import)"
+msgstr "Paquetes"
+
+msgid "(manual synchronization)"
+msgstr ""
+
+msgid "Timestamp"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Metadata Types"
+msgstr ""
+
+msgid "Edit {{name}}"
+msgstr ""
+
+msgid "View summary"
+msgstr ""
+
+msgid "Deleting History Notifications"
+msgstr ""
+
+msgid "Successfully deleted {{count}} history notifications"
+msgid_plural "Successfully deleted {{count}} history notifications"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Synchronization status"
+msgstr ""
+
+msgid "Delete History Notifications?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} history notifications?"
+msgid_plural "Are you sure you want to delete {{count}} history notifications?"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Ok"
+msgstr ""
+
 msgid "Instances"
 msgstr ""
 
@@ -347,9 +409,6 @@ msgid "Reset mapping to default values"
 msgstr ""
 
 msgid "Related metadata mapping"
-msgstr ""
-
-msgid "Ok"
 msgstr ""
 
 msgid "Related metadata mapping for {{name}} ({{id}})"
@@ -706,9 +765,6 @@ msgid "Version"
 msgstr ""
 
 msgid "DHIS2 Version"
-msgstr ""
-
-msgid "Status"
 msgstr ""
 
 msgid "Module"
@@ -1281,62 +1337,6 @@ msgstr ""
 msgid "Deleted Synchronization History"
 msgstr ""
 
-msgid "Ready"
-msgstr ""
-
-msgid "Running"
-msgstr ""
-
-msgid "Failure"
-msgstr ""
-
-msgid "Done"
-msgstr ""
-
-msgid "Sync Rule"
-msgstr ""
-
-#, fuzzy
-msgid "(package import)"
-msgstr "Paquetes"
-
-msgid "(manual synchronization)"
-msgstr ""
-
-msgid "Timestamp"
-msgstr ""
-
-msgid "User"
-msgstr ""
-
-msgid "Metadata Types"
-msgstr ""
-
-msgid "Edit {{name}}"
-msgstr ""
-
-msgid "View summary"
-msgstr ""
-
-msgid "Deleting History Notifications"
-msgstr ""
-
-msgid "Successfully deleted {{count}} history notifications"
-msgid_plural "Successfully deleted {{count}} history notifications"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Synchronization status"
-msgstr ""
-
-msgid "Delete History Notifications?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{count}} history notifications?"
-msgid_plural "Are you sure you want to delete {{count}} history notifications?"
-msgstr[0] ""
-msgstr[1] ""
-
 msgid "Aggregated Data Sync"
 msgstr ""
 
@@ -1816,6 +1816,9 @@ msgid "Are you sure you want to delete {{count}} rules?"
 msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Synchronization History"
+msgstr ""
 
 msgid "Aggregate Data For HMIS"
 msgstr ""
