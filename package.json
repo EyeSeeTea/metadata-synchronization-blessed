@@ -28,7 +28,7 @@
         "cronstrue": "1.95.0",
         "cryptr": "4.0.2",
         "d2": "31.8.1",
-        "d2-api": "1.6.0",
+        "d2-api": "1.6.1-beta.1",
         "d2-manifest": "1.0.0",
         "d2-ui-components": "2.4.0",
         "file-saver": "2.0.2",
@@ -52,6 +52,7 @@
         "react-scripts": "3.4.1",
         "run-ts": "1.1.2",
         "semver": "7.3.2",
+        "styled-components": "5.2.1",
         "styled-jsx": "3.3.0"
     },
     "scripts": {
@@ -97,6 +98,7 @@
         "@types/react-linkify": "1.0.0",
         "@types/react-router-dom": "5.1.5",
         "@types/semver": "7.3.1",
+        "@types/styled-components": "5.1.7",
         "@types/webpack-env": "1.15.2",
         "@typescript-eslint/eslint-plugin": "3.6.0",
         "@typescript-eslint/parser": "3.6.0",

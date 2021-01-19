@@ -49,7 +49,7 @@ export class PrepareSyncUseCase implements UseCase {
                 const sameGroup =
                     _.intersection(
                         userGroups.map(({ id }) => id),
-                        currentUser.userGroups
+                        currentUser.userGroups.map(({ id }) => id)
                     ).length > 0;
 
                 return sameUser || sameGroup;

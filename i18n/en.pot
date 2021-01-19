@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-01-19T07:31:19.872Z\n"
-"PO-Revision-Date: 2021-01-19T07:31:19.872Z\n"
+"POT-Creation-Date: 2021-01-19T07:41:10.020Z\n"
+"PO-Revision-Date: 2021-01-19T07:41:10.020Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -382,6 +382,9 @@ msgid "{{displayName}} Level"
 msgstr ""
 
 msgid "Only selected items"
+msgstr ""
+
+msgid "Show all entries"
 msgstr ""
 
 msgid "Select with children subtree"
@@ -1234,7 +1237,16 @@ msgstr ""
 msgid "MSF Settings"
 msgstr ""
 
+msgid "Analytics"
+msgstr ""
+
 msgid "Run Analytics"
+msgstr ""
+
+msgid "Number of years to include"
+msgstr ""
+
+msgid "Data element filter"
 msgstr ""
 
 msgid "Data Element Group *"
@@ -1243,6 +1255,12 @@ msgstr ""
 msgid ""
 "* Data Element Group: used to check existing data values in the destination "
 "data elements"
+msgstr ""
+
+msgid "Project minimum dates"
+msgstr ""
+
+msgid "Minimum date"
 msgstr ""
 
 msgid "Metadata Synchronization History"
@@ -1920,6 +1938,12 @@ msgid "Last 7 days"
 msgstr ""
 
 msgid "Last 14 days"
+msgstr ""
+
+msgid "Last 30 days"
+msgstr ""
+
+msgid "Last 90 days"
 msgstr ""
 
 msgid "This week"

@@ -121,6 +121,11 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             hideSelectAll={true}
             filterRows={filterRows}
             initialShowOnlySelected={!!selected}
+            viewFilters={_.compact([
+                "group",
+                "onlySelected",
+                filterRows ? "disableFilterRows" : undefined,
+            ])}
         />
     );
 

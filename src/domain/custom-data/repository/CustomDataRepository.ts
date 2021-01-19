@@ -6,6 +6,6 @@ export interface CustomDataRepositoryConstructor {
 }
 
 export interface CustomDataRepository {
-    get(customDataKey: string): Promise<CustomData | undefined>;
-    save(customDataKey: string, data: CustomData): Promise<void>;
+    get<T extends CustomData>(customDataKey: string): Promise<T | undefined>;
+    save<T extends CustomData>(customDataKey: string, data: T): Promise<void>;
 }

@@ -35,7 +35,7 @@ export async function executeAggregateData(
         }
     };
 
-    const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings);
+    const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings, msfSettings);
 
     const validationErrors = advancedSettings.checkInPreviousPeriods
         ? await validatePreviousDataValues(
@@ -51,7 +51,7 @@ export async function executeAggregateData(
     } else {
         addEventToProgress(i18n.t(`Starting Aggregate Data...`));
 
-        if (isGlobalInstance && msfSettings.runAnalytics === false) {
+        if (isGlobalInstance && msfSettings.runAnalytics === "false") {
             const lastExecution = await getLastAnalyticsExecution(compositionRoot);
 
             addEventToProgress(
@@ -72,14 +72,14 @@ export async function executeAggregateData(
         const runAnalyticsIsRequired =
             msfSettings.runAnalytics === "by-sync-rule-settings"
                 ? eventSyncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
-                : msfSettings.runAnalytics;
+                : msfSettings.runAnalytics === "true";
 
         const rulesWithoutRunAnalylics = eventSyncRules.map(rule =>
             rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
         );
 
         if (runAnalyticsIsRequired) {
-            await runAnalytics(compositionRoot, addEventToProgress);
+            await runAnalytics(compositionRoot, addEventToProgress, msfSettings.analyticsYears);
         }
 
         for (const syncRule of rulesWithoutRunAnalylics) {
@@ -224,43 +224,83 @@ const getTypeName = (reportType: SynchronizationType, syncType: string) => {
 
 async function getSyncRules(
     compositionRoot: CompositionRoot,
-    advancedSettings: AdvancedSettings
+    advancedSettings: AdvancedSettings,
+    msfSettings: MSFSettings
 ): Promise<SynchronizationRule[]> {
-    //TODO: implement logic to retrieve sync rules to execute
-    const rulesList = (
-        await compositionRoot.rules.list({ filters: { type: "events" }, paging: false })
-    ).rows.slice(0, 5);
+    const { period: overridePeriod } = advancedSettings;
+    const { projectMinimumDates } = msfSettings;
+    const { dataViewOrganisationUnits } = await compositionRoot.instances.getCurrentUser();
 
-    const rules = await promiseMap(rulesList, async rule => {
-        const fullRule = await compositionRoot.rules.get(rule.id);
+    const { rows } = await compositionRoot.rules.list({ paging: false });
+    const allRules = await promiseMap(rows, ({ id }) => compositionRoot.rules.get(id));
 
-        if (!fullRule || !advancedSettings.period) {
-            return fullRule;
-        } else {
-            const newBuilder = {
-                ...fullRule.builder,
-                dataParams: {
-                    ...fullRule.builder.dataParams,
-                    period: advancedSettings.period.type,
-                    startDate: advancedSettings.period.startDate,
-                    endDate: advancedSettings.period.endDate,
-                },
-            };
+    return _(allRules)
+        .map(rule => {
+            // Remove rules that are not aggregated or events
+            if (!rule || !["events", "aggregated"].includes(rule.type)) return undefined;
 
-            return fullRule.update({ builder: newBuilder });
-        }
-    });
+            const paths = rule.dataSyncOrgUnitPaths.filter(path =>
+                _.some(dataViewOrganisationUnits, ({ id }) => path.includes(id))
+            );
 
-    return _.compact(rules);
+            // Filter organisation units to user visibility
+            return paths.length > 0 ? rule?.updateDataSyncOrgUnitPaths(paths) : undefined;
+        })
+        .compact()
+        .map(rule => {
+            // Update period and dates according to settings
+            return !overridePeriod
+                ? rule
+                : rule.updateBuilderDataParams({
+                      period: overridePeriod.type,
+                      startDate: overridePeriod.startDate,
+                      endDate: overridePeriod.endDate,
+                  });
+        })
+        .map(rule => {
+            // Remove org units with minimum date after end date
+            return rule.updateDataSyncOrgUnitPaths(
+                rule.dataSyncOrgUnitPaths.filter(path => {
+                    const { date } = projectMinimumDates[path] ?? {};
+                    return (
+                        !date || !rule.dataSyncEndDate || moment(date).isAfter(rule.dataSyncEndDate)
+                    );
+                })
+            );
+        })
+        .flatMap(rule => {
+            if (!rule.dataSyncStartDate) return rule;
+
+            // Update start date if minimum date is after current one
+            return _(rule.dataSyncOrgUnitPaths)
+                .groupBy(path =>
+                    projectMinimumDates[path]?.date
+                        ? moment(projectMinimumDates[path].date).format("YYYY-MM-DD")
+                        : undefined
+                )
+                .toPairs()
+                .map(([date, paths]) =>
+                    rule.updateDataSyncOrgUnitPaths(paths).updateBuilderDataParams({
+                        startDate:
+                            date && moment(date).isAfter(rule.dataSyncStartDate)
+                                ? new Date(date)
+                                : rule.dataSyncStartDate,
+                    })
+                )
+                .value();
+        })
+        .filter(rule => rule.dataSyncOrgUnitPaths.length > 0)
+        .value();
 }
 
 async function runAnalytics(
     compositionRoot: CompositionRoot,
-    addEventToProgress: (event: string) => void
+    addEventToProgress: (event: string) => void,
+    lastYears: number
 ) {
     const localInstance = await compositionRoot.instances.getLocal();
 
-    for await (const message of executeAnalytics(localInstance)) {
+    for await (const message of executeAnalytics(localInstance, { lastYears })) {
         addEventToProgress(message);
     }
 
