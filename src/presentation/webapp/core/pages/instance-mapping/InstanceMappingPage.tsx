@@ -4,7 +4,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import {
     MetadataMapping,
-    MetadataMappingDictionary
+    MetadataMappingDictionary,
 } from "../../../../../domain/mapping/entities/MetadataMapping";
 import i18n from "../../../../../locales";
 import {
@@ -20,7 +20,7 @@ import {
     GlobalOptionModel,
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
-    ProgramIndicatorMappedModel
+    ProgramIndicatorMappedModel,
 } from "../../../../../models/dhis/mapping";
 import MappingTable from "../../../../react/core/components/mapping-table/MappingTable";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";

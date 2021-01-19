@@ -3,7 +3,7 @@ import {
     ConfirmationDialog,
     ConfirmationDialogProps,
     useLoading,
-    useSnackbar
+    useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
@@ -23,11 +23,11 @@ import {
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
     IndicatorMappedModel,
-    ProgramIndicatorMappedModel
+    ProgramIndicatorMappedModel,
 } from "../../../../../models/dhis/mapping";
 import {
     DataElementGroupModel,
-    DataElementGroupSetModel
+    DataElementGroupSetModel,
 } from "../../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../../utils/d2";
 import { isAppConfigurator } from "../../../../../utils/permissions";
@@ -37,7 +37,7 @@ import MetadataTable from "../../../../react/core/components/metadata-table/Meta
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import {
     PullRequestCreation,
-    PullRequestCreationDialog
+    PullRequestCreationDialog,
 } from "../../../../react/core/components/pull-request-creation-dialog/PullRequestCreationDialog";
 import SyncDialog from "../../../../react/core/components/sync-dialog/SyncDialog";
 import SyncSummary from "../../../../react/core/components/sync-summary/SyncSummary";

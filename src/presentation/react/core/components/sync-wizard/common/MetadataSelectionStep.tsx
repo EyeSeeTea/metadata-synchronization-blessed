@@ -10,13 +10,13 @@ import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
-    ProgramIndicatorMappedModel
+    ProgramIndicatorMappedModel,
 } from "../../../../../../models/dhis/mapping";
 import {
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,
-    IndicatorModel
+    IndicatorModel,
 } from "../../../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../../../utils/d2";
 import { getMetadata } from "../../../../../../utils/synchronization";
