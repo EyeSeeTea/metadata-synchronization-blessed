@@ -10,12 +10,13 @@ import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
+    ProgramIndicatorMappedModel
 } from "../../../../../../models/dhis/mapping";
 import {
     DataElementGroupModel,
     DataElementGroupSetModel,
     DataSetModel,
-    IndicatorModel,
+    IndicatorModel
 } from "../../../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../../../utils/d2";
 import { getMetadata } from "../../../../../../utils/synchronization";
@@ -40,7 +41,11 @@ const config = {
         childrenKeys: ["dataElements", "dataElementGroups"],
     },
     events: {
-        models: [EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel],
+        models: [
+            EventProgramWithDataElementsModel,
+            EventProgramWithIndicatorsModel,
+            ProgramIndicatorMappedModel,
+        ],
         childrenKeys: ["dataElements", "programIndicators"],
     },
     deleted: {
