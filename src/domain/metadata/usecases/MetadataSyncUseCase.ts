@@ -128,24 +128,24 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
         const { syncParams } = this.builder;
 
-        const payloadPackage = await this.buildPayload();
+        const originalPayload = await this.buildPayload();
 
         const payloadWithDocumentFiles = await this.createDocumentFilesInRemote(
             instance,
-            payloadPackage
+            originalPayload
         );
 
-        const mappedPayloadPackage = syncParams?.enableMapping
+        const payload = syncParams?.enableMapping
             ? await this.mapPayload(instance, payloadWithDocumentFiles)
             : payloadWithDocumentFiles;
 
-        debug("Metadata package", { payloadPackage, mappedPayloadPackage });
+        debug("Metadata package", { originalPayload, payload });
 
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
-        const syncResult = await remoteMetadataRepository.save(mappedPayloadPackage, syncParams);
+        const syncResult = await remoteMetadataRepository.save(payload, syncParams);
         const origin = await this.getOriginInstance();
 
-        return [{ ...syncResult, origin: origin.toPublicObject(), payload: mappedPayloadPackage }];
+        return [{ ...syncResult, origin: origin.toPublicObject(), payload }];
     }
 
     public async buildDataStats() {

@@ -230,7 +230,7 @@ const ManualSyncPage: React.FC = () => {
         loading.reset();
         closeDialogs();
     };
-    //instance={destinationInstance}
+
     const additionalColumns = [
         {
             name: "metadata-type",
@@ -303,9 +303,10 @@ const ManualSyncPage: React.FC = () => {
                 />
             )}
 
-            {!!syncReport && destinationInstance && (
+            {!!syncReport && (
                 <SyncSummary report={syncReport} onClose={() => setSyncReport(null)} />
             )}
+
             {!!pullRequestProps && (
                 <PullRequestCreationDialog
                     {...pullRequestProps}

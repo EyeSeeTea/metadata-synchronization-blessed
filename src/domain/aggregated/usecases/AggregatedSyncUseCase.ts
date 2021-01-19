@@ -140,8 +140,8 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
         const { dataParams = {} } = this.builder;
 
-        const payloadPackage = await this.buildPayload();
-        const mappedPayloadPackage = await this.mapPayload(instance, payloadPackage);
+        const originalPayload = await this.buildPayload();
+        const mappedPayloadPackage = await this.mapPayload(instance, originalPayload);
 
         if (!instance.apiVersion) {
             throw new Error(
@@ -149,28 +149,23 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
             );
         }
 
-        const versionedPayloadPackage = this.getTransformationRepository().mapPackageTo(
+        const payload = this.getTransformationRepository().mapPackageTo(
             instance.apiVersion,
             mappedPayloadPackage,
             aggregatedTransformations
         );
+
         debug("Aggregated package", {
-            payloadPackage,
+            originalPayload,
             mappedPayloadPackage,
-            versionedPayloadPackage,
+            versionedPayloadPackage: payload,
         });
 
         const aggregatedRepository = await this.getAggregatedRepository(instance);
-        const syncResult = await aggregatedRepository.save(versionedPayloadPackage, dataParams);
+        const syncResult = await aggregatedRepository.save(payload, dataParams);
         const origin = await this.getOriginInstance();
 
-        return [
-            {
-                ...syncResult,
-                origin: origin.toPublicObject(),
-                payload: versionedPayloadPackage,
-            },
-        ];
+        return [{ ...syncResult, origin: origin.toPublicObject(), payload }];
     }
 
     public async buildDataStats() {

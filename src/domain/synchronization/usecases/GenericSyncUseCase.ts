@@ -240,10 +240,8 @@ export abstract class GenericSyncUseCase {
             try {
                 debug("Start import on destination instance", instance.toPublicObject());
 
-                const results = await this.postPayload(instance);
-                results.forEach(result => {
-                    syncReport.addSyncResult(result);
-                });
+                const syncResults = await this.postPayload(instance);
+                syncReport.addSyncResult(...syncResults);
 
                 debug("Finished import on instance", instance.toPublicObject());
             } catch (error) {
