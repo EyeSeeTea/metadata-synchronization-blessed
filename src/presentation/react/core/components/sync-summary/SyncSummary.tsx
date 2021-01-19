@@ -307,7 +307,7 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography className={classes.accordionHeading1}>
-                            {i18n.t("JSON response")}
+                            {i18n.t("JSON Response")}
                         </Typography>
                     </AccordionSummary>
 
