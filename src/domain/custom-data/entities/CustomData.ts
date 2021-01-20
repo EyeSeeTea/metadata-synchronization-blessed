@@ -1,1 +1,1 @@
-export type CustomData = Record<string, any>;
+export type CustomData = Record<string, unknown>;

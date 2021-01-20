@@ -1,37 +1,36 @@
-import { makeStyles, Theme } from "@material-ui/core";
+import { makeStyles, TextField, Theme } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { DataElementGroup } from "../../../../../domain/metadata/entities/MetadataEntities";
 import i18n from "../../../../../locales";
 import { DataElementGroupModel } from "../../../../../models/dhis/metadata";
 import Dropdown, { DropdownOption } from "../../../core/components/dropdown/Dropdown";
 import { useAppContext } from "../../../core/contexts/AppContext";
 
-export type RunAnalyticsSettings = boolean | "by-sync-rule-settings";
+export type RunAnalyticsSettings = "true" | "false" | "by-sync-rule-settings";
 
 export type MSFSettings = {
     runAnalytics: RunAnalyticsSettings;
+    analyticsYears: number;
     dataElementGroupId?: string;
 };
 
 export interface MSFSettingsDialogProps {
-    msfSettings: MSFSettings;
+    settings: MSFSettings;
+    onSave(settings: MSFSettings): void;
     onClose(): void;
-    onSave(msfSettings: MSFSettings): void;
 }
 
 export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
     onClose,
     onSave,
-    msfSettings,
+    settings: defaultSettings,
 }) => {
     const classes = useStyles();
     const { compositionRoot } = useAppContext();
-    const [useSyncRule, setUseSyncRule] = useState(msfSettings.runAnalytics.toString());
+
+    const [settings, updateSettings] = useState<MSFSettings>(defaultSettings);
     const [catOptionGroups, setDataElementGroups] = useState<DropdownOption<string>[]>([]);
-    const [selectedDataElementGroup, setSelectedDataElementGroup] = useState(
-        msfSettings.dataElementGroupId
-    );
 
     useEffect(() => {
         compositionRoot.metadata
@@ -52,35 +51,38 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             });
     }, [compositionRoot.metadata]);
 
-    const useSyncRuleItems = useMemo(() => {
+    const analyticsSettingItems = useMemo(() => {
         return [
             {
-                id: "true",
+                id: "true" as const,
                 name: i18n.t("True"),
             },
             {
-                id: "false",
+                id: "false" as const,
                 name: i18n.t("False"),
             },
             {
-                id: "by-sync-rule-settings",
+                id: "by-sync-rule-settings" as const,
                 name: i18n.t("Use sync rule settings"),
             },
         ];
     }, []);
 
-    const handleSave = () => {
-        const msfSettings: MSFSettings = {
-            runAnalytics:
-                useSyncRule === "by-sync-rule-settings"
-                    ? "by-sync-rule-settings"
-                    : useSyncRule === "true"
-                    ? true
-                    : false,
-            dataElementGroupId: selectedDataElementGroup,
-        };
+    const setRunAnalytics = (runAnalytics: RunAnalyticsSettings) => {
+        updateSettings(settings => ({ ...settings, runAnalytics }));
+    };
 
-        onSave(msfSettings);
+    const setSelectedDataElementGroup = (dataElementGroupId: string) => {
+        updateSettings(settings => ({ ...settings, dataElementGroupId }));
+    };
+
+    const setAnalyticsYears = (event: ChangeEvent<HTMLInputElement>) => {
+        const analyticsYears = parseInt(event.target.value);
+        updateSettings(settings => ({ ...settings, analyticsYears }));
+    };
+
+    const handleSave = () => {
+        onSave(settings);
     };
 
     return (
@@ -90,17 +92,24 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             fullWidth={true}
             title={i18n.t("MSF Settings")}
             onCancel={onClose}
-            onSave={() => handleSave()}
+            onSave={handleSave}
             cancelText={i18n.t("Cancel")}
             saveText={i18n.t("Save")}
         >
             <div className={classes.selector}>
-                <Dropdown
+                <Dropdown<RunAnalyticsSettings>
                     label={i18n.t("Run Analytics")}
-                    items={useSyncRuleItems}
-                    onValueChange={setUseSyncRule}
-                    value={useSyncRule}
+                    items={analyticsSettingItems}
+                    onValueChange={setRunAnalytics}
+                    value={settings.runAnalytics}
                     hideEmpty
+                />
+                <TextField
+                    className={classes.yearsSelector}
+                    label={i18n.t("Number of years to include")}
+                    value={settings.analyticsYears}
+                    onChange={setAnalyticsYears}
+                    type="number"
                 />
             </div>
             <div className={classes.selector}>
@@ -108,7 +117,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     label={i18n.t("Data Element Group *")}
                     items={catOptionGroups}
                     onValueChange={setSelectedDataElementGroup}
-                    value={selectedDataElementGroup || ""}
+                    value={settings.dataElementGroupId ?? ""}
                     hideEmpty
                 />
             </div>
@@ -125,6 +134,11 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
 const useStyles = makeStyles((theme: Theme) => ({
     selector: {
         margin: theme.spacing(3, 0, 3, 0),
+    },
+    yearsSelector: {
+        minWidth: 250,
+        marginTop: -8,
+        marginLeft: 15,
     },
     info: {
         margin: theme.spacing(0, 0, 0, 1),

@@ -32,24 +32,24 @@ export const MSFHomePage: React.FC = () => {
         deleteDataValuesBeforeSync: false,
     });
 
+    const [globalAdmin, setGlobalAdmin] = useState(false);
     const [msfSettings, setMsfSettings] = useState<MSFSettings>({
         runAnalytics: "by-sync-rule-settings",
+        analyticsYears: 2,
     });
-    const [globalAdmin, setGlobalAdmin] = useState(false);
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
     useEffect(() => {
-        compositionRoot.customData.get(msfStorage).then(data => {
-            const runAnalytics = isGlobalInstance() ? false : "by-sync-rule-settings";
-
-            if (data) {
-                setMsfSettings({ runAnalytics, dataElementGroupId: data.dataElementGroupId });
-            } else {
-                setMsfSettings({ runAnalytics });
-            }
+        compositionRoot.customData.get<Omit<MSFSettings, "runAnalytics">>(msfStorage).then(data => {
+            setMsfSettings(settings => ({
+                ...settings,
+                runAnalytics: isGlobalInstance() ? "false" : "by-sync-rule-settings",
+                dataElementGroupId: data?.dataElementGroupId,
+                analyticsYears: data?.analyticsYears ?? 2,
+            }));
         });
     }, [compositionRoot]);
 
@@ -98,6 +98,7 @@ export const MSFHomePage: React.FC = () => {
         setMsfSettings(msfSettings);
         compositionRoot.customData.save(msfStorage, {
             dataElementGroupId: msfSettings.dataElementGroupId,
+            analyticsYears: msfSettings.analyticsYears,
         });
     };
 
@@ -133,7 +134,7 @@ export const MSFHomePage: React.FC = () => {
                         <Box display="flex" flexDirection="row">
                             <Button
                                 className={classes.actionButton}
-                                onClick={() => handleAdvancedSettings()}
+                                onClick={handleAdvancedSettings}
                                 variant="contained"
                             >
                                 {i18n.t("Advanced Settings")}
@@ -141,7 +142,7 @@ export const MSFHomePage: React.FC = () => {
                             {globalAdmin && (
                                 <Button
                                     className={classes.actionButton}
-                                    onClick={() => handleMSFSettings()}
+                                    onClick={handleMSFSettings}
                                     variant="contained"
                                 >
                                     {i18n.t("MSF Settings")}
@@ -152,7 +153,7 @@ export const MSFHomePage: React.FC = () => {
                             {globalAdmin && (
                                 <Button
                                     className={classes.actionButton}
-                                    onClick={() => handleGoToDashboard()}
+                                    onClick={handleGoToDashboard}
                                     variant="contained"
                                 >
                                     {i18n.t("Go To Admin Dashboard")}
@@ -160,7 +161,7 @@ export const MSFHomePage: React.FC = () => {
                             )}
                             <Button
                                 className={classes.actionButton}
-                                onClick={() => handleGoToHistory()}
+                                onClick={handleGoToHistory}
                                 variant="contained"
                             >
                                 {i18n.t("Go to History")}
@@ -181,7 +182,7 @@ export const MSFHomePage: React.FC = () => {
 
             {showMSFSettingsDialog && (
                 <MSFSettingsDialog
-                    msfSettings={msfSettings}
+                    settings={msfSettings}
                     onClose={handleCloseMSFSettings}
                     onSave={handleSaveMSFSettings}
                 />

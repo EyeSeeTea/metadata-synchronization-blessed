@@ -76,7 +76,7 @@ describe("Sync metadata", () => {
                     ],
                 };
 
-            if (request.queryParams.filter === "code:eq:default")
+            if (request.queryParams.filter === "identifiable:eq:default")
                 return {
                     categoryOptions: [{ id: "default1" }],
                     categories: [{ id: "default2" }],

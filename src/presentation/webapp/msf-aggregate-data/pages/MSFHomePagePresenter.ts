@@ -51,7 +51,7 @@ export async function executeAggregateData(
     } else {
         addEventToProgress(i18n.t(`Starting Aggregate Data...`));
 
-        if (isGlobalInstance && msfSettings.runAnalytics === false) {
+        if (isGlobalInstance && msfSettings.runAnalytics === "false") {
             const lastExecution = await getLastAnalyticsExecution(compositionRoot);
 
             addEventToProgress(
@@ -72,14 +72,14 @@ export async function executeAggregateData(
         const runAnalyticsIsRequired =
             msfSettings.runAnalytics === "by-sync-rule-settings"
                 ? eventSyncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
-                : msfSettings.runAnalytics;
+                : msfSettings.runAnalytics === "true";
 
         const rulesWithoutRunAnalylics = eventSyncRules.map(rule =>
             rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
         );
 
         if (runAnalyticsIsRequired) {
-            await runAnalytics(compositionRoot, addEventToProgress);
+            await runAnalytics(compositionRoot, addEventToProgress, msfSettings.analyticsYears);
         }
 
         for (const syncRule of rulesWithoutRunAnalylics) {
@@ -256,11 +256,12 @@ async function getSyncRules(
 
 async function runAnalytics(
     compositionRoot: CompositionRoot,
-    addEventToProgress: (event: string) => void
+    addEventToProgress: (event: string) => void,
+    lastYears: number
 ) {
     const localInstance = await compositionRoot.instances.getLocal();
 
-    for await (const message of executeAnalytics(localInstance)) {
+    for await (const message of executeAnalytics(localInstance, { lastYears })) {
         addEventToProgress(message);
     }
 
