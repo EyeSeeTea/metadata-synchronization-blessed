@@ -1,0 +1,17 @@
+import { ObjectWithPeriod } from "../../../react/core/components/period-selection/PeriodSelection";
+import { NamedDate } from "../../../react/msf-aggregate-data/components/org-unit-date-selector/OrgUnitDateSelector";
+
+export type RunAnalyticsSettings = "true" | "false" | "by-sync-rule-settings";
+
+export type MSFSettings = {
+    runAnalytics: RunAnalyticsSettings;
+    analyticsYears: number;
+    projectMinimumDates: Record<string, NamedDate>;
+    dataElementGroupId?: string;
+    deleteDataValuesBeforeSync?: boolean;
+    checkInPreviousPeriods?: boolean;
+};
+
+export type AdvancedSettings = {
+    period?: ObjectWithPeriod;
+};

@@ -5,15 +5,10 @@ import { useHistory } from "react-router-dom";
 import i18n from "../../../../locales";
 import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
-import {
-    AdvancedSettings,
-    AdvancedSettingsDialog,
-} from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
 import { useAppContext } from "../../../react/core/contexts/AppContext";
-import {
-    MSFSettings,
-    MSFSettingsDialog,
-} from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
+import { AdvancedSettingsDialog } from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
+import { MSFSettingsDialog } from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
+import { AdvancedSettings, MSFSettings } from "./MSFEntities";
 import { executeAggregateData, isGlobalInstance } from "./MSFHomePagePresenter";
 
 const msfStorage = "msf-storage";
@@ -66,7 +61,7 @@ export const MSFHomePage: React.FC = () => {
         );
     };
 
-    const handleAdvancedSettings = () => {
+    const handleOpenAdvancedSettings = () => {
         setShowPeriodDialog(true);
     };
 
@@ -136,7 +131,7 @@ export const MSFHomePage: React.FC = () => {
                         <Box display="flex" flexDirection="row">
                             <Button
                                 className={classes.actionButton}
-                                onClick={handleAdvancedSettings}
+                                onClick={handleOpenAdvancedSettings}
                                 variant="contained"
                             >
                                 {i18n.t("Advanced Settings")}

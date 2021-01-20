@@ -3,11 +3,8 @@ import { ConfirmationDialog, DatePicker, useSnackbar } from "d2-ui-components";
 import React, { useState } from "react";
 import { Period } from "../../../../../domain/common/entities/Period";
 import i18n from "../../../../../locales";
+import { AdvancedSettings } from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
 import { ObjectWithPeriod } from "../../../core/components/period-selection/PeriodSelection";
-
-export type AdvancedSettings = {
-    period?: ObjectWithPeriod;
-};
 
 export interface AdvancedSettingsDialogProps {
     title?: string;

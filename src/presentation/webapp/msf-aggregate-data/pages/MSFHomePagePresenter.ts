@@ -13,8 +13,7 @@ import { promiseMap } from "../../../../utils/common";
 import { formatDateLong } from "../../../../utils/date";
 import { availablePeriods } from "../../../../utils/synchronization";
 import { CompositionRoot } from "../../../CompositionRoot";
-import { AdvancedSettings } from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
-import { MSFSettings } from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
+import { AdvancedSettings, MSFSettings } from "./MSFEntities";
 
 //TODO: maybe convert to class and presenter to use MVP, MVI or BLoC pattern
 export async function executeAggregateData(

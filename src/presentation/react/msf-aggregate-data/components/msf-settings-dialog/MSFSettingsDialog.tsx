@@ -5,21 +5,11 @@ import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { DataElementGroup } from "../../../../../domain/metadata/entities/MetadataEntities";
 import i18n from "../../../../../locales";
 import { DataElementGroupModel } from "../../../../../models/dhis/metadata";
+import { MSFSettings, RunAnalyticsSettings } from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
 import Dropdown, { DropdownOption } from "../../../core/components/dropdown/Dropdown";
 import { Toggle } from "../../../core/components/toggle/Toggle";
 import { useAppContext } from "../../../core/contexts/AppContext";
 import { NamedDate, OrgUnitDateSelector } from "../org-unit-date-selector/OrgUnitDateSelector";
-
-export type RunAnalyticsSettings = "true" | "false" | "by-sync-rule-settings";
-
-export type MSFSettings = {
-    runAnalytics: RunAnalyticsSettings;
-    analyticsYears: number;
-    projectMinimumDates: Dictionary<NamedDate>;
-    dataElementGroupId?: string;
-    deleteDataValuesBeforeSync?: boolean;
-    checkInPreviousPeriods?: boolean;
-};
 
 export interface MSFSettingsDialogProps {
     settings: MSFSettings;
