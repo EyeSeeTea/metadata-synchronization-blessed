@@ -84,6 +84,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             allAttributeCategoryOptions,
             attributeCategoryOptions,
             aggregationType,
+            includeAnalyticsZeroValues,
         } = dataParams;
 
         const { startDate, endDate } = buildPeriodFromParams(dataParams);
@@ -116,6 +117,9 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             );
 
             const defaultCategoryOptionCombo = await this.getDefaultIds("categoryOptionCombos");
+
+            // TODO: Should we ignore the COCs?
+            console.log({ includeAnalyticsZeroValues });
 
             const dataValues = _(result)
                 .flatten()
