@@ -511,12 +511,9 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         }
 
         if (model.getCollectionName() === "programIndicators") {
-            getFilterData(
-                "programs",
-                "group",
-                api.apiPath,
-                api
-            ).then(({ objects }) => setProgramFilterData(objects));
+            getFilterData("programs", "group", api.apiPath, api).then(({ objects }) =>
+                setProgramFilterData(objects)
+            );
         }
     }, [api, model]);
 
