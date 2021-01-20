@@ -30,6 +30,7 @@ export class DownloadPayloadUseCase implements UseCase {
             this.repositoryFactory
                 .downloadRepository()
                 .downloadFile(buildName(results[0]), results[0].payload);
+            return;
         }
 
         const files = results.map(result => ({ name: buildName(result), content: result.payload }));
