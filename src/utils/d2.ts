@@ -67,6 +67,18 @@ export const programRuleActionsColumns: typeof d2BaseModelColumns = [
     { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
 ];
 
+export const programIndicatorColumns: typeof d2BaseModelColumns = [
+    { name: "displayName", text: i18n.t("Name"), sortable: true },
+    { name: "shortName", text: i18n.t("Short name"), sortable: true, hidden: true },
+    { name: "code", text: i18n.t("Code"), sortable: true, hidden: true },
+    { name: "program", text: i18n.t("Program"), sortable: true },
+    { name: "description", text: i18n.t("Description"), sortable: true, hidden: true },
+    { name: "created", text: i18n.t("Created"), sortable: true, hidden: true },
+    { name: "lastUpdated", text: i18n.t("Last updated"), sortable: true },
+    { name: "id", text: i18n.t("ID"), sortable: true, hidden: true },
+    { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
+];
+
 export const organisationUnitsDetails: typeof d2BaseModelDetails = _.map(
     organisationUnitsColumns,
     column => _.pick(column, ["name", "text", "getValue"])
@@ -144,6 +156,11 @@ export const programFieldsWithDataElements = {
 export const indicatorFields = {
     ...d2BaseModelFields,
     aggregateExportCategoryOptionCombo: include,
+};
+
+export const programIndicatorFields = {
+    ...indicatorFields,
+    program: { id: include, name: include },
 };
 
 export const programFieldsWithIndicators = {

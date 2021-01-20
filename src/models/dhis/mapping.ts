@@ -78,7 +78,6 @@ export class OrganisationUnitMappedModel extends OrganisationUnitModel {
 }
 
 export class ProgramIndicatorMappedModel extends ProgramIndicatorModel {
-    protected static fields = indicatorFields;
     protected static mappingType = "aggregatedDataElements";
 
     protected static modelTransform = (

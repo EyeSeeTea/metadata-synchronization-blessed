@@ -9,6 +9,8 @@ import {
     organisationUnitsColumns,
     organisationUnitsDetails,
     programFields,
+    programIndicatorColumns,
+    programIndicatorFields,
     programRuleActionsColumns,
     programRuleActionsFields,
 } from "../../utils/d2";
@@ -539,6 +541,8 @@ export class ProgramIndicatorModel extends D2Model {
     protected static metadataType = "programIndicator";
     protected static collectionName = "programIndicators" as const;
     protected static groupFilterName = "programIndicatorGroups" as const;
+    protected static columns = programIndicatorColumns;
+    protected static fields = programIndicatorFields;
 
     protected static excludeRules = [];
     protected static includeRules = [
