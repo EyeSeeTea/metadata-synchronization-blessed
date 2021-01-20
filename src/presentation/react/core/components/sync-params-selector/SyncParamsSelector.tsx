@@ -111,6 +111,15 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
         );
     };
 
+    const changeAnalyticsZeroValues = (includeAnalyticsZeroValues: boolean) => {
+        onChange(
+            syncRule.updateDataParams({
+                ...dataParams,
+                includeAnalyticsZeroValues,
+            })
+        );
+    };
+
     return (
         <React.Fragment>
             <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
@@ -210,6 +219,22 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
                         label={i18n.t("Run Analytics before sync")}
                         onValueChange={changeRunAnalytics}
                         value={dataParams.runAnalytics ?? false}
+                    />
+                </div>
+            )}
+
+            {(syncRule.type === "events" || syncRule.type === "aggregated") && (
+                <div>
+                    <Toggle
+                        label={
+                            syncRule.type === "events"
+                                ? i18n.t("Save empty values as zero (only for program indicators)")
+                                : i18n.t(
+                                      "Save empty values as zero (only for aggregated data values and indicators)"
+                                  )
+                        }
+                        onValueChange={changeAnalyticsZeroValues}
+                        value={dataParams.includeAnalyticsZeroValues ?? false}
                     />
                 </div>
             )}
