@@ -102,7 +102,7 @@ export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
 const useStyles = makeStyles(() => ({
     fixedPeriod: {
         marginTop: 5,
-        marginBottom: -20,
+        marginBottom: 20,
         marginLeft: 10,
     },
     datePicker: {

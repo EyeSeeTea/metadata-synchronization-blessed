@@ -109,63 +109,77 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             cancelText={i18n.t("Cancel")}
             saveText={i18n.t("Save")}
         >
-            <h3 className={classes.title}>{i18n.t("Analytics")}</h3>
-            <div className={classes.selector}>
-                <Dropdown<RunAnalyticsSettings>
-                    label={i18n.t("Run Analytics")}
-                    items={analyticsSettingItems}
-                    onValueChange={setRunAnalytics}
-                    value={settings.runAnalytics}
-                    hideEmpty
-                />
-                <TextField
-                    className={classes.yearsSelector}
-                    label={i18n.t("Number of years to include")}
-                    value={settings.analyticsYears}
-                    onChange={setAnalyticsYears}
-                    type="number"
-                />
+            <div className={classes.section}>
+                <h3 className={classes.title}>{i18n.t("Analytics")}</h3>
+
+                <div className={classes.selector}>
+                    <Dropdown<RunAnalyticsSettings>
+                        label={i18n.t("Run Analytics")}
+                        items={analyticsSettingItems}
+                        onValueChange={setRunAnalytics}
+                        value={settings.runAnalytics}
+                        hideEmpty
+                    />
+                    <TextField
+                        className={classes.yearsSelector}
+                        label={i18n.t("Number of years to include")}
+                        value={settings.analyticsYears}
+                        onChange={setAnalyticsYears}
+                        type="number"
+                    />
+                </div>
             </div>
 
-            <div>
-                <Toggle
-                    label={i18n.t("Delete data values before sync")}
-                    onValueChange={setDeleteDataValuesBeforeSync}
-                    value={deleteDataValuesBeforeSync}
-                />
+            <div className={classes.section}>
+                <h3 className={classes.title}>{i18n.t("Data values settings")}</h3>
+
+                <div>
+                    <Toggle
+                        label={i18n.t("Delete data values before sync")}
+                        onValueChange={setDeleteDataValuesBeforeSync}
+                        value={deleteDataValuesBeforeSync}
+                    />
+                </div>
+
+                <div>
+                    <Toggle
+                        label={i18n.t("Check existing data values in previous periods")}
+                        onValueChange={setCheckInPreviousPeriods}
+                        value={checkInPreviousPeriods}
+                    />
+                </div>
             </div>
 
-            <div>
-                <Toggle
-                    label={i18n.t("Check existing data values in previous periods")}
-                    onValueChange={setCheckInPreviousPeriods}
-                    value={checkInPreviousPeriods}
-                />
+            <div className={classes.section}>
+                <h3 className={classes.title}>{i18n.t("Data element filter")}</h3>
+
+                <div className={classes.selector}>
+                    <Dropdown
+                        label={i18n.t("Data Element Group *")}
+                        items={catOptionGroups}
+                        onValueChange={setSelectedDataElementGroup}
+                        value={settings.dataElementGroupId ?? ""}
+                        hideEmpty
+                    />
+                </div>
+
+                <div className={classes.info}>
+                    {i18n.t(
+                        "* Data Element Group: used to check existing data values in the destination data elements",
+                        { nsSeparator: false }
+                    )}
+                </div>
             </div>
 
-            <h3 className={classes.title}>{i18n.t("Data element filter")}</h3>
-            <div className={classes.selector}>
-                <Dropdown
-                    label={i18n.t("Data Element Group *")}
-                    items={catOptionGroups}
-                    onValueChange={setSelectedDataElementGroup}
-                    value={settings.dataElementGroupId ?? ""}
-                    hideEmpty
-                />
-            </div>
-            <div className={classes.info}>
-                {i18n.t(
-                    "* Data Element Group: used to check existing data values in the destination data elements",
-                    { nsSeparator: false }
-                )}
-            </div>
+            <div className={classes.section}>
+                <h3 className={classes.title}>{i18n.t("Project minimum dates")}</h3>
 
-            <h3 className={classes.title}>{i18n.t("Project minimum dates")}</h3>
-            <div>
-                <OrgUnitDateSelector
-                    projectMinimumDates={settings.projectMinimumDates}
-                    onChange={updateProjectMinimumDates}
-                />
+                <div>
+                    <OrgUnitDateSelector
+                        projectMinimumDates={settings.projectMinimumDates}
+                        onChange={updateProjectMinimumDates}
+                    />
+                </div>
             </div>
         </ConfirmationDialog>
     );
@@ -173,7 +187,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
 
 const useStyles = makeStyles((theme: Theme) => ({
     selector: {
-        margin: theme.spacing(3, 0, 3, 0),
+        margin: theme.spacing(0, 0, 3, 0),
     },
     yearsSelector: {
         minWidth: 250,
@@ -186,5 +200,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     title: {
         marginTop: 0,
+    },
+    section: {
+        marginBottom: 20,
     },
 }));
