@@ -18,7 +18,7 @@ export class DeleteAggregatedUseCase {
     ): Promise<SynchronizationResult> {
         const aggregatedRepository = this.getAggregatedRepository(instance);
 
-        const [startDate, endDate] = buildPeriodFromParams({
+        const { startDate, endDate } = buildPeriodFromParams({
             period: period.type,
             startDate: period.startDate,
             endDate: period.endDate,
