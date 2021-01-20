@@ -257,20 +257,19 @@ async function getSyncRules(
                   });
         })
         .map(rule => {
+            const { endDate } = buildPeriodFromParams(rule.dataParams);
+
             // Remove org units with minimum date after end date
             return rule.updateDataSyncOrgUnitPaths(
                 rule.dataSyncOrgUnitPaths.filter(path => {
                     const { date } = projectMinimumDates[path] ?? {};
-                    const { endDate } = buildPeriodFromParams(rule.dataParams);
-
-                    return !date || moment(date).isAfter(endDate);
+                    return !date || moment(date).isSameOrBefore(endDate);
                 })
             );
         })
         .flatMap(rule => {
-            const { startDate } = buildPeriodFromParams(rule.dataParams);
+            const { startDate, endDate } = buildPeriodFromParams(rule.dataParams);
 
-            // Update start date if minimum date is after current one
             return _(rule.dataSyncOrgUnitPaths)
                 .groupBy(path =>
                     projectMinimumDates[path]?.date
@@ -278,14 +277,19 @@ async function getSyncRules(
                         : undefined
                 )
                 .toPairs()
-                .map(([date, paths]) =>
-                    rule.updateDataSyncOrgUnitPaths(paths).updateBuilderDataParams({
-                        startDate:
-                            date && moment(date).isAfter(startDate)
-                                ? new Date(date)
-                                : rule.dataSyncStartDate,
-                    })
-                )
+                .map(([date, paths]) => {
+                    // Keep original dates but update org unit paths if is before current date
+                    if (date === "undefined" || moment(date).isSameOrBefore(startDate)) {
+                        return rule.updateDataSyncOrgUnitPaths(paths);
+                    }
+
+                    // Update start date if minimum date is after current one
+                    return rule.updateDataSyncOrgUnitPaths(paths).updateBuilderDataParams({
+                        period: "FIXED",
+                        startDate: new Date(date),
+                        endDate: endDate.toDate(),
+                    });
+                })
                 .value();
         })
         .filter(rule => rule.dataSyncOrgUnitPaths.length > 0)

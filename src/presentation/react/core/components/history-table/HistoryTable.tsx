@@ -124,6 +124,13 @@ export const HistoryTable: React.FC<HistoryTableProps> = React.memo(props => {
                           i18n.t("(manual synchronization)");
             },
         },
+        {
+            name: "type",
+            text: i18n.t("Type"),
+            sortable: true,
+            getValue: ({ type }) => _.startCase(type),
+            hidden: types.length === 1,
+        },
         { name: "date", text: i18n.t("Timestamp"), sortable: true },
         {
             name: "status",
