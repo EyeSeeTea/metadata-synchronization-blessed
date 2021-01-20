@@ -27,29 +27,29 @@ export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
     );
 
     const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setObjectWithPeriod(event.target.checked ? undefined : { type: "FIXED" });
+        setObjectWithPeriod(event.target.checked ? undefined : { period: "FIXED" });
     };
 
     const updateStartDate = (startDate: Date) => {
-        setObjectWithPeriod(period => ({ type: "FIXED", startDate, endDate: period?.endDate }));
+        setObjectWithPeriod(period => ({ period: "FIXED", startDate, endDate: period?.endDate }));
     };
 
     const updateEndDate = (endDate: Date) => {
-        setObjectWithPeriod(period => ({ type: "FIXED", startDate: period?.startDate, endDate }));
+        setObjectWithPeriod(period => ({ period: "FIXED", startDate: period?.startDate, endDate }));
     };
 
     const handleSave = () => {
         if (!objectWithPeriod) return;
 
         const periodValidation = Period.create({
-            type: objectWithPeriod.type,
+            type: objectWithPeriod.period,
             startDate: objectWithPeriod.startDate,
             endDate: objectWithPeriod.endDate,
         });
 
         periodValidation.match({
             error: errors => snackbar.error(errors.map(error => error.description).join("\n")),
-            success: period => onSave({ period }),
+            success: period => onSave({ period: period.toObject() }),
         });
     };
 

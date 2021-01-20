@@ -105,9 +105,9 @@ async function validatePreviousDataValues(
         const targetInstances = await compositionRoot.instances.list({ ids: rule.targetInstances });
 
         const byInstance = await promiseMap(targetInstances, async instance => {
-            if (!rule.dataParams || !rule.dataParams.period || !msfSettings.dataElementGroupId)
+            if (!rule.dataParams || !rule.dataParams.period || !msfSettings.dataElementGroupId) {
                 return undefined;
-
+            }
             const { startDate } = buildPeriodFromParams(rule.dataParams);
             const endDate = startDate.clone().subtract(1, "day");
 
@@ -138,7 +138,7 @@ async function validatePreviousDataValues(
         return _.compact(byInstance);
     });
 
-    return _.compact(validationsErrors).flat();
+    return _(validationsErrors).compact().flatten().value();
 }
 
 async function executeSyncRule(
@@ -243,7 +243,7 @@ async function getSyncRules(
             return !overridePeriod
                 ? rule
                 : rule.updateBuilderDataParams({
-                      period: overridePeriod.type,
+                      period: overridePeriod.period,
                       startDate: overridePeriod.startDate,
                       endDate: overridePeriod.endDate,
                   });

@@ -10,13 +10,13 @@ import { availablePeriods, PeriodType } from "../../../../../utils/synchronizati
 import Dropdown from "../dropdown/Dropdown";
 
 export interface ObjectWithPeriodInput {
-    type: DataSyncPeriod;
+    period: DataSyncPeriod;
     startDate?: Date | string;
     endDate?: Date | string;
 }
 
 export interface ObjectWithPeriod {
-    type: DataSyncPeriod;
+    period: DataSyncPeriod;
     startDate?: Date;
     endDate?: Date;
 }
@@ -62,11 +62,11 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
     } = props;
 
     const objectWithPeriod: ObjectWithPeriod = {
-        type: obj.type,
+        period: obj.period,
         startDate: obj.startDate ? moment(obj.startDate).toDate() : undefined,
         endDate: obj.endDate ? moment(obj.endDate).toDate() : undefined,
     };
-    const { type, startDate, endDate } = objectWithPeriod;
+    const { period, startDate, endDate } = objectWithPeriod;
 
     const classes = useStyles();
 
@@ -81,9 +81,9 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
     );
 
     const updatePeriod = useCallback(
-        (type: ObjectWithPeriodInput["type"]) => {
-            onChange({ ...objectWithPeriod, type });
-            onFieldChange("type", type);
+        (period: ObjectWithPeriodInput["period"]) => {
+            onChange({ ...objectWithPeriod, period });
+            onFieldChange("period", period);
         },
         [objectWithPeriod, onChange, onFieldChange]
     );
@@ -112,13 +112,13 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
                 <Dropdown
                     label={periodTitle}
                     items={periodItems}
-                    value={type || null}
+                    value={period || null}
                     onValueChange={updatePeriod}
                     hideEmpty={true}
                 />
             </div>
 
-            {type === "FIXED" && (
+            {period === "FIXED" && (
                 <div className={classes.fixedPeriod}>
                     <div className={classes.datePicker}>
                         <DatePicker
