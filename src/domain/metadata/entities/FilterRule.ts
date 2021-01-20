@@ -51,14 +51,14 @@ export function getInitialFilterRule(): FilterRule {
     return {
         id: generateUid(),
         metadataType: "",
-        created: { type: "ALL" },
-        lastUpdated: { type: "ALL" },
+        created: { period: "ALL" },
+        lastUpdated: { period: "ALL" },
         stringMatch: { where: null, value: "" },
     };
 }
 
 export interface DateFilter {
-    type: DataSyncPeriod;
+    period: DataSyncPeriod;
     startDate?: Date;
     endDate?: Date;
 }
@@ -102,7 +102,7 @@ export function getStringMatchString(stringMatch: StringMatch): string {
 }
 
 export function getDateFilterString(dateFilter: DateFilter): string {
-    switch (dateFilter.type) {
+    switch (dateFilter.period) {
         case "FIXED": {
             const { startDate, endDate } = dateFilter;
             const namespace = {
@@ -120,7 +120,7 @@ export function getDateFilterString(dateFilter: DateFilter): string {
             }
         }
         default:
-            return availablePeriods[dateFilter.type]?.name || "-";
+            return availablePeriods[dateFilter.period]?.name || "-";
     }
 }
 
@@ -145,7 +145,7 @@ export function validateFilterRule(filterRule: FilterRule): ValidationError[] {
             error: "cannot_be_empty",
         },
 
-        filterRule.created?.type === "FIXED" &&
+        filterRule.created?.period === "FIXED" &&
             !filterRule.created?.startDate &&
             !filterRule.created?.endDate && {
                 property: "created",
@@ -153,7 +153,7 @@ export function validateFilterRule(filterRule: FilterRule): ValidationError[] {
                 error: "cannot_be_empty",
             },
 
-        filterRule.lastUpdated?.type === "FIXED" &&
+        filterRule.lastUpdated?.period === "FIXED" &&
             !filterRule.lastUpdated?.startDate &&
             !filterRule.lastUpdated?.endDate && {
                 property: "created",

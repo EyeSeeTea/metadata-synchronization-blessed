@@ -34,8 +34,8 @@ const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange
     const onFieldChange = useCallback(
         (field: keyof ObjectWithPeriod, value: ObjectWithPeriod[keyof ObjectWithPeriod]) => {
             switch (field) {
-                case "type":
-                    return updatePeriod(value as ObjectWithPeriod["type"]);
+                case "period":
+                    return updatePeriod(value as ObjectWithPeriod["period"]);
                 case "startDate":
                     return updateStartDate((value as ObjectWithPeriod["startDate"]) || null);
                 case "endDate":
@@ -45,9 +45,9 @@ const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange
         [updatePeriod, updateStartDate, updateEndDate]
     );
 
-    const objectWithPeriod = useMemo(() => {
+    const objectWithPeriod: ObjectWithPeriod = useMemo(() => {
         return {
-            type: syncRule.dataSyncPeriod,
+            period: syncRule.dataSyncPeriod,
             startDate: syncRule.dataSyncStartDate || undefined,
             endDate: syncRule.dataSyncEndDate || undefined,
         };
