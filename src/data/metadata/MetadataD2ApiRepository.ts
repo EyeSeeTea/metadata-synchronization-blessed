@@ -283,6 +283,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         lastUpdated,
         group,
         level,
+        program,
         includeParents,
         parents,
         showOnlySelected,
@@ -296,6 +297,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         if (lastUpdated) filter["lastUpdated"] = { ge: moment(lastUpdated).format("YYYY-MM-DD") };
         if (group) filter[`${group.type}.id`] = { eq: group.value };
         if (level) filter["level"] = { eq: level };
+        if (program) filter["program.id"] = { eq: program };
         if (includeParents && isNotEmpty(parents)) {
             filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
         }
