@@ -8,10 +8,8 @@ import PageHeader from "../../../react/core/components/page-header/PageHeader";
 import { useAppContext } from "../../../react/core/contexts/AppContext";
 import { AdvancedSettingsDialog } from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
 import { MSFSettingsDialog } from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
-import { AdvancedSettings, MSFSettings } from "./MSFEntities";
+import { AdvancedSettings, defaultMSFSettings, MSFSettings, MSFStorageKey } from "./MSFEntities";
 import { executeAggregateData, isGlobalInstance } from "./MSFHomePagePresenter";
-
-const msfStorage = "msf-storage";
 
 export const MSFHomePage: React.FC = () => {
     const classes = useStyles();
@@ -27,24 +25,18 @@ export const MSFHomePage: React.FC = () => {
     });
 
     const [globalAdmin, setGlobalAdmin] = useState(false);
-    const [msfSettings, setMsfSettings] = useState<MSFSettings>({
-        runAnalytics: "by-sync-rule-settings",
-        analyticsYears: 2,
-        projectMinimumDates: {},
-    });
+    const [msfSettings, setMsfSettings] = useState<MSFSettings>(defaultMSFSettings);
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
     useEffect(() => {
-        compositionRoot.customData.get<Omit<MSFSettings, "runAnalytics">>(msfStorage).then(data => {
+        compositionRoot.customData.get<Omit<MSFSettings, "runAnalytics">>(MSFStorageKey).then(data => {
             setMsfSettings(settings => ({
                 ...settings,
+                ...data,
                 runAnalytics: isGlobalInstance() ? "false" : "by-sync-rule-settings",
-                dataElementGroupId: data?.dataElementGroupId,
-                analyticsYears: data?.analyticsYears ?? 2,
-                projectMinimumDates: data?.projectMinimumDates ?? {},
             }));
         });
     }, [compositionRoot]);
@@ -92,11 +84,7 @@ export const MSFHomePage: React.FC = () => {
     const handleSaveMSFSettings = (msfSettings: MSFSettings) => {
         setShowMSFSettingsDialog(false);
         setMsfSettings(msfSettings);
-        compositionRoot.customData.save(msfStorage, {
-            dataElementGroupId: msfSettings.dataElementGroupId,
-            analyticsYears: msfSettings.analyticsYears,
-            projectMinimumDates: msfSettings.projectMinimumDates,
-        });
+        compositionRoot.customData.save(MSFStorageKey, msfSettings);
     };
 
     return (

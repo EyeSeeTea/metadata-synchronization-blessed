@@ -15,3 +15,14 @@ export type MSFSettings = {
 export type AdvancedSettings = {
     period?: ObjectWithPeriod;
 };
+
+export const MSFStorageKey = "msf-storage";
+
+export const defaultMSFSettings: MSFSettings = {
+    runAnalytics: "by-sync-rule-settings",
+    analyticsYears: 2,
+    projectMinimumDates: {},
+    dataElementGroupId: undefined,
+    deleteDataValuesBeforeSync: false,
+    checkInPreviousPeriods: false,
+};
