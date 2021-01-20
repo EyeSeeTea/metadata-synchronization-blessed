@@ -35,7 +35,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             attributeCategoryOptions,
             lastUpdated,
         } = params;
-        const [startDate, endDate] = buildPeriodFromParams(params);
+        const { startDate, endDate } = buildPeriodFromParams(params);
 
         if (dataSet.length === 0 && dataElementGroup.length === 0) return { dataValues: [] };
 
@@ -85,7 +85,8 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             attributeCategoryOptions,
             aggregationType,
         } = dataParams;
-        const [startDate, endDate] = buildPeriodFromParams(dataParams);
+
+        const { startDate, endDate } = buildPeriodFromParams(dataParams);
         const periods = this.buildPeriodsForAggregation(aggregationType, startDate, endDate);
         const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
         const attributeOptionCombo = !allAttributeCategoryOptions

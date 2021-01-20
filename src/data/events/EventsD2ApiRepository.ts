@@ -57,7 +57,7 @@ export class EventsD2ApiRepository implements EventsRepository {
         if (programs.length === 0) return [];
 
         const { period, orgUnitPaths = [] } = params;
-        const [startDate, endDate] = buildPeriodFromParams(params);
+        const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
@@ -104,7 +104,7 @@ export class EventsD2ApiRepository implements EventsRepository {
         if (programs.length === 0) return [];
 
         const { period, orgUnitPaths = [] } = params;
-        const [startDate, endDate] = buildPeriodFromParams(params);
+        const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 

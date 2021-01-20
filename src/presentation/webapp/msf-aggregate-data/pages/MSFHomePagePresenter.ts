@@ -109,9 +109,8 @@ async function validatePreviousDataValues(
             if (!rule.dataParams || !rule.dataParams.period || !msfSettings.dataElementGroupId)
                 return undefined;
 
-            const [periodStartDate] = buildPeriodFromParams(rule.dataParams);
-
-            const endDate = periodStartDate.clone().subtract(1, "day");
+            const { startDate } = buildPeriodFromParams(rule.dataParams);
+            const endDate = startDate.clone().subtract(1, "day");
 
             const { dataValues = [] } = await compositionRoot.aggregated.list(
                 instance,
@@ -119,7 +118,7 @@ async function validatePreviousDataValues(
                     orgUnitPaths: rule.builder.dataParams?.orgUnitPaths ?? [],
                     startDate: moment("1970-01-01").toDate(),
                     endDate: endDate.toDate(),
-                    lastUpdated: periodStartDate.toDate(),
+                    lastUpdated: startDate.toDate(),
                 },
                 msfSettings.dataElementGroupId
             );
@@ -129,7 +128,7 @@ async function validatePreviousDataValues(
 
                 return `Sync rule '${rule.name}': there are data values in '${
                     instance.name
-                }' for previous period to '${periodName}' and updated after '${periodStartDate.format(
+                }' for previous period to '${periodName}' and updated after '${startDate.format(
                     "YYYY-MM-DD"
                 )}'`;
             } else {
@@ -255,14 +254,14 @@ async function getSyncRules(
             return rule.updateDataSyncOrgUnitPaths(
                 rule.dataSyncOrgUnitPaths.filter(path => {
                     const { date } = projectMinimumDates[path] ?? {};
-                    return (
-                        !date || !rule.dataSyncEndDate || moment(date).isAfter(rule.dataSyncEndDate)
-                    );
+                    const { endDate } = buildPeriodFromParams(rule.dataParams);
+
+                    return !date || moment(date).isAfter(endDate);
                 })
             );
         })
         .flatMap(rule => {
-            if (!rule.dataSyncStartDate) return rule;
+            const { startDate } = buildPeriodFromParams(rule.dataParams);
 
             // Update start date if minimum date is after current one
             return _(rule.dataSyncOrgUnitPaths)
@@ -275,7 +274,7 @@ async function getSyncRules(
                 .map(([date, paths]) =>
                     rule.updateDataSyncOrgUnitPaths(paths).updateBuilderDataParams({
                         startDate:
-                            date && moment(date).isAfter(rule.dataSyncStartDate)
+                            date && moment(date).isAfter(startDate)
                                 ? new Date(date)
                                 : rule.dataSyncStartDate,
                     })
