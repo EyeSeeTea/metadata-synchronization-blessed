@@ -12,6 +12,8 @@ export type MSFSettings = {
     checkInPreviousPeriods?: boolean;
 };
 
+export type PersistedMSFSettings = Omit<MSFSettings, "runAnalytics">;
+
 export type AdvancedSettings = {
     period?: ObjectWithPeriod;
 };
