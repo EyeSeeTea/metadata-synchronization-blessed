@@ -303,7 +303,7 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
                     </Accordion>
                 )}
 
-                <Accordion defaultExpanded={results.length === 0}>
+                <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography className={classes.accordionHeading1}>
                             {i18n.t("JSON Response")}
