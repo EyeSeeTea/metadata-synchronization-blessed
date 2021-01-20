@@ -4,7 +4,7 @@ import {
     EXCLUDED_KEY,
 } from "../../../presentation/react/core/components/mapping-table/utils";
 import { Dictionary } from "../../../types/utils";
-import { NamedRef } from "../../common/entities/Ref";
+import { IdentifiableRef, NamedRef } from "../../common/entities/Ref";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
@@ -163,7 +163,12 @@ export abstract class GenericMappingUseCase {
         filter,
     }: {
         destinationInstance: DataSource;
-        selectedItem: { id: string; name: string; code?: string };
+        selectedItem: {
+            id: string;
+            name: string;
+            code?: string;
+            aggregateExportCategoryOptionCombo?: string;
+        };
         defaultValue?: string;
         filter?: string[];
     }): Promise<MetadataMapping[]> {
@@ -171,19 +176,35 @@ export abstract class GenericMappingUseCase {
             .metadataRepository(destinationInstance)
             .lookupSimilar(selectedItem);
 
+        const aggregateExportMetadata = selectedItem.aggregateExportCategoryOptionCombo
+            ? await this.repositoryFactory
+                  .metadataRepository(destinationInstance)
+                  .getMetadataByIds<IdentifiableRef>(
+                      [selectedItem.aggregateExportCategoryOptionCombo],
+                      { id: true, name: true, code: true }
+                  )
+            : {};
+
         const objects = _(destinationMetadata)
             .omit(["indicators", "programIndicators"])
             .values()
+            .union(_.values(aggregateExportMetadata))
             .flatMap(item => (Array.isArray(item) ? item : []))
             .value();
 
         const candidateWithSameId = _.find(objects, ["id", selectedItem.id]);
         const candidateWithSameCode = _.find(objects, ["code", selectedItem.code]);
         const candidateWithSameName = _.find(objects, ["name", selectedItem.name]);
+        const candidateWithExportCoC = _.find(objects, [
+            "id",
+            selectedItem.aggregateExportCategoryOptionCombo,
+        ]);
+
         const matches = _.compact([
             candidateWithSameId,
             candidateWithSameCode,
             candidateWithSameName,
+            candidateWithExportCoC,
         ]).filter(({ id }) => filter?.includes(id) ?? true);
 
         const candidates = _(matches)
@@ -318,14 +339,16 @@ export abstract class GenericMappingUseCase {
             case "indicators":
             case "programIndicators": {
                 const { aggregateExportCategoryOptionCombo = defaultCoc } = object;
-                return _([_.last(aggregateExportCategoryOptionCombo.split("."))])
-                    .compact()
-                    .map(id => ({
-                        id,
+                return [
+                    {
+                        id: defaultCoc,
                         model: "categoryOptionCombos",
                         name: "",
-                    }))
-                    .value();
+                        aggregateExportCategoryOptionCombo: _.last(
+                            aggregateExportCategoryOptionCombo.split(".")
+                        ),
+                    },
+                ];
             }
             case "dataElements": {
                 return (

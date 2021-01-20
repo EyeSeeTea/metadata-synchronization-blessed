@@ -141,9 +141,9 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                             comment,
                             attributeOptionCombo,
                             // Special scenario: We allow having dataElement.categoryOptionCombo in indicators
-                            categoryOptionCombo:
-                                _.last(categoryOptionCombo?.split(".")) ??
-                                defaultCategoryOptionCombo[0],
+                            categoryOptionCombo: includeCategories
+                                ? categoryOptionCombo
+                                : defaultCategoryOptionCombo[0],
                         })
                     )
                 )
