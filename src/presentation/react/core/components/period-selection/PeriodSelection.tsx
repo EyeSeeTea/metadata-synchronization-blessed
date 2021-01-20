@@ -66,7 +66,7 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
         startDate: obj.startDate ? moment(obj.startDate).toDate() : undefined,
         endDate: obj.endDate ? moment(obj.endDate).toDate() : undefined,
     };
-    const { type: period, startDate, endDate } = objectWithPeriod;
+    const { type, startDate, endDate } = objectWithPeriod;
 
     const classes = useStyles();
 
@@ -81,9 +81,9 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
     );
 
     const updatePeriod = useCallback(
-        (period: ObjectWithPeriodInput["type"]) => {
-            onChange({ ...objectWithPeriod, type: period });
-            onFieldChange("type", period);
+        (type: ObjectWithPeriodInput["type"]) => {
+            onChange({ ...objectWithPeriod, type });
+            onFieldChange("type", type);
         },
         [objectWithPeriod, onChange, onFieldChange]
     );
@@ -112,13 +112,13 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
                 <Dropdown
                     label={periodTitle}
                     items={periodItems}
-                    value={period || null}
+                    value={type || null}
                     onValueChange={updatePeriod}
                     hideEmpty={true}
                 />
             </div>
 
-            {period === "FIXED" && (
+            {type === "FIXED" && (
                 <div className={classes.fixedPeriod}>
                     <div className={classes.datePicker}>
                         <DatePicker
