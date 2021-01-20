@@ -226,32 +226,41 @@ async function getSyncRules(
     compositionRoot: CompositionRoot,
     advancedSettings: AdvancedSettings
 ): Promise<SynchronizationRule[]> {
-    //TODO: implement logic to retrieve sync rules to execute
-    const rulesList = (
-        await compositionRoot.rules.list({ filters: { type: "events" }, paging: false })
-    ).rows.slice(0, 5);
+    const { dataViewOrganisationUnits } = await compositionRoot.instances.getCurrentUser();
 
-    const rules = await promiseMap(rulesList, async rule => {
-        const fullRule = await compositionRoot.rules.get(rule.id);
+    const { rows } = await compositionRoot.rules.list({ paging: false });
+    const allRules = await promiseMap(rows, ({ id }) => compositionRoot.rules.get(id));
 
-        if (!fullRule || !advancedSettings.period) {
-            return fullRule;
-        } else {
-            const newBuilder = {
-                ...fullRule.builder,
+    const accesibleRules = _(allRules)
+        .map(rule => {
+            if (!rule || !["events", "aggregated"].includes(rule.type)) return undefined;
+
+            const paths = rule.dataSyncOrgUnitPaths.filter(path =>
+                _.some(dataViewOrganisationUnits, ({ id }) => path.includes(id))
+            );
+
+            return paths.length > 0 ? rule?.updateDataSyncOrgUnitPaths(paths) : undefined;
+        })
+        .compact()
+        .value();
+
+    const rules = await promiseMap(accesibleRules, async rule => {
+        if (!advancedSettings.period) return rule;
+
+        return rule.update({
+            builder: {
+                ...rule.builder,
                 dataParams: {
-                    ...fullRule.builder.dataParams,
+                    ...rule.builder.dataParams,
                     period: advancedSettings.period.type,
                     startDate: advancedSettings.period.startDate,
                     endDate: advancedSettings.period.endDate,
                 },
-            };
-
-            return fullRule.update({ builder: newBuilder });
-        }
+            },
+        });
     });
 
-    return _.compact(rules);
+    return rules;
 }
 
 async function runAnalytics(

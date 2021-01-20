@@ -33,7 +33,7 @@ import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceB
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
 import { GetLocalInstanceUseCase } from "../domain/instance/usecases/GetLocalInstanceUseCase";
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
-import { GetUserGroupsUseCase } from "../domain/instance/usecases/GetUserGroupsUseCase";
+import { GetCurrentUserUseCase } from "../domain/instance/usecases/GetCurrentUserUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
@@ -322,7 +322,7 @@ export class CompositionRoot {
             validate: new ValidateInstanceUseCase(this.repositoryFactory),
             getVersion: new GetInstanceVersionUseCase(this.repositoryFactory, this.localInstance),
             getOrgUnitRoots: new GetRootOrgUnitUseCase(this.repositoryFactory, this.localInstance),
-            getUserGroups: new GetUserGroupsUseCase(this.repositoryFactory, this.localInstance),
+            getCurrentUser: new GetCurrentUserUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

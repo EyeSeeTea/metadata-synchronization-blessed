@@ -55,7 +55,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
 
         if (
             !responsibles.users?.find(user => user.id === id) &&
-            !responsibles.userGroups?.find(({ id }) => userGroups.includes(id))
+            !responsibles.userGroups?.find(({ id }) => userGroups.map(({ id }) => id).includes(id))
         ) {
             return false;
         }
