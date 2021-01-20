@@ -83,12 +83,7 @@ export async function executeAggregateData(
         }
 
         for (const syncRule of rulesWithoutRunAnalylics) {
-            await executeSyncRule(
-                compositionRoot,
-                syncRule,
-                addEventToProgress,
-                msfSettings
-            );
+            await executeSyncRule(compositionRoot, syncRule, addEventToProgress, msfSettings);
         }
 
         addEventToProgress(i18n.t(`Finished Aggregate Data`));
