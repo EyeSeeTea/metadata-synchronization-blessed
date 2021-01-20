@@ -2,10 +2,12 @@ import { makeStyles, TextField, Theme } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
 import { Dictionary } from "lodash";
 import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
-import { DataElementGroup } from "../../../../../domain/metadata/entities/MetadataEntities";
 import i18n from "../../../../../locales";
 import { DataElementGroupModel } from "../../../../../models/dhis/metadata";
-import { MSFSettings, RunAnalyticsSettings } from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
+import {
+    MSFSettings,
+    RunAnalyticsSettings,
+} from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
 import Dropdown, { DropdownOption } from "../../../core/components/dropdown/Dropdown";
 import { Toggle } from "../../../core/components/toggle/Toggle";
 import { useAppContext } from "../../../core/contexts/AppContext";
@@ -38,13 +40,11 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     order: "asc" as const,
                 },
             })
-            .then(data => {
-                const dataElementGroups = data as DataElementGroup[];
-
+            .then(dataElementGroups =>
                 setDataElementGroups(
                     dataElementGroups.map(group => ({ id: group.id, name: group.name }))
-                );
-            });
+                )
+            );
     }, [compositionRoot.metadata]);
 
     const analyticsSettingItems = useMemo(() => {
@@ -81,12 +81,17 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
         updateSettings(settings => ({ ...settings, projectMinimumDates: projectStartDates }));
     };
 
+    const setDeleteDataValuesBeforeSync = (deleteDataValuesBeforeSync: boolean) => {
+        updateSettings(settings => ({ ...settings, deleteDataValuesBeforeSync }));
+    };
+
+    const setCheckInPreviousPeriods = (checkInPreviousPeriods: boolean) => {
+        updateSettings(settings => ({ ...settings, checkInPreviousPeriods }));
+    };
+
     const handleSave = () => {
         onSave(settings);
     };
-
-    const [deleteDataValuesBeforeSync, setDeleteDataValuesBeforeSync] = useState<boolean>(false);
-    const [checkInPreviousPeriods, setCheckInPreviousPeriods] = useState<boolean>(false);
 
     return (
         <ConfirmationDialog
@@ -127,7 +132,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     <Toggle
                         label={i18n.t("Delete data values before sync")}
                         onValueChange={setDeleteDataValuesBeforeSync}
-                        value={deleteDataValuesBeforeSync}
+                        value={settings.deleteDataValuesBeforeSync ?? false}
                     />
                 </div>
 
@@ -135,7 +140,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     <Toggle
                         label={i18n.t("Check existing data values in previous periods")}
                         onValueChange={setCheckInPreviousPeriods}
-                        value={checkInPreviousPeriods}
+                        value={settings.checkInPreviousPeriods ?? false}
                     />
                 </div>
             </div>

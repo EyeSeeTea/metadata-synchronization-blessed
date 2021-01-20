@@ -32,13 +32,15 @@ export const MSFHomePage: React.FC = () => {
     }, [api]);
 
     useEffect(() => {
-        compositionRoot.customData.get<Omit<MSFSettings, "runAnalytics">>(MSFStorageKey).then(data => {
-            setMsfSettings(settings => ({
-                ...settings,
-                ...data,
-                runAnalytics: isGlobalInstance() ? "false" : "by-sync-rule-settings",
-            }));
-        });
+        compositionRoot.customData
+            .get<Omit<MSFSettings, "runAnalytics">>(MSFStorageKey)
+            .then(settings => {
+                setMsfSettings(oldSettings => ({
+                    ...oldSettings,
+                    ...settings,
+                    runAnalytics: isGlobalInstance() ? "false" : "by-sync-rule-settings",
+                }));
+            });
     }, [compositionRoot]);
 
     const handleAggregateData = (skipCheckInPreviousPeriods?: boolean) => {
