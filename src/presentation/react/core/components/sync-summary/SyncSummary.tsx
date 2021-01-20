@@ -205,7 +205,6 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
         compositionRoot.reports.getSyncResults(report.id).then(setResults);
     }, [compositionRoot, report]);
 
-    if (results.length === 0) return null;
     return (
         <ConfirmationDialog
             isOpen={true}
@@ -304,7 +303,7 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
                     </Accordion>
                 )}
 
-                <Accordion>
+                <Accordion defaultExpanded={results.length === 0}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography className={classes.accordionHeading1}>
                             {i18n.t("JSON Response")}
