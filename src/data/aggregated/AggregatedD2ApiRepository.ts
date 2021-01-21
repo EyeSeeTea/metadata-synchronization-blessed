@@ -120,13 +120,28 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             const dataValues = _(result)
                 .flatten()
                 .map(({ dataValues }) =>
-                    dataValues?.map(dataValue => ({
-                        ...dataValue,
-                        // Special scenario: We allow having dataElement.categoryOptionCombo in indicators
-                        categoryOptionCombo:
-                            _.last(dataValue.categoryOptionCombo?.split(".")) ??
-                            defaultCategoryOptionCombo[0],
-                    }))
+                    dataValues?.map(
+                        ({
+                            dataElement,
+                            period,
+                            orgUnit,
+                            categoryOptionCombo,
+                            attributeOptionCombo,
+                            value,
+                            comment,
+                        }) => ({
+                            dataElement,
+                            period,
+                            orgUnit,
+                            value,
+                            comment,
+                            attributeOptionCombo,
+                            // Special scenario: We allow having dataElement.categoryOptionCombo in indicators
+                            categoryOptionCombo:
+                                _.last(categoryOptionCombo?.split(".")) ??
+                                defaultCategoryOptionCombo[0],
+                        })
+                    )
                 )
                 .flatten()
                 .compact()
