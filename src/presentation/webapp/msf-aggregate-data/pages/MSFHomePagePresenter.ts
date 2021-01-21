@@ -35,7 +35,7 @@ export async function executeAggregateData(
         }
     };
 
-    const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings);
+    const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings, msfSettings);
 
     const validationErrors = advancedSettings.checkInPreviousPeriods
         ? await validatePreviousDataValues(
@@ -115,9 +115,8 @@ async function validatePreviousDataValues(
             if (!rule.dataParams || !rule.dataParams.period || !msfSettings.dataElementGroupId)
                 return undefined;
 
-            const [periodStartDate] = buildPeriodFromParams(rule.dataParams);
-
-            const endDate = periodStartDate.clone().subtract(1, "day");
+            const { startDate } = buildPeriodFromParams(rule.dataParams);
+            const endDate = startDate.clone().subtract(1, "day");
 
             const { dataValues = [] } = await compositionRoot.aggregated.list(
                 instance,
@@ -125,7 +124,7 @@ async function validatePreviousDataValues(
                     orgUnitPaths: rule.builder.dataParams?.orgUnitPaths ?? [],
                     startDate: moment("1970-01-01").toDate(),
                     endDate: endDate.toDate(),
-                    lastUpdated: periodStartDate.toDate(),
+                    lastUpdated: startDate.toDate(),
                 },
                 msfSettings.dataElementGroupId
             );
@@ -135,7 +134,7 @@ async function validatePreviousDataValues(
 
                 return `Sync rule '${rule.name}': there are data values in '${
                     instance.name
-                }' for previous period to '${periodName}' and updated after '${periodStartDate.format(
+                }' for previous period to '${periodName}' and updated after '${startDate.format(
                     "YYYY-MM-DD"
                 )}'`;
             } else {
@@ -224,43 +223,77 @@ const getTypeName = (reportType: SynchronizationType, syncType: string) => {
 
 async function getSyncRules(
     compositionRoot: CompositionRoot,
-    advancedSettings: AdvancedSettings
+    advancedSettings: AdvancedSettings,
+    msfSettings: MSFSettings
 ): Promise<SynchronizationRule[]> {
+    const { period: overridePeriod } = advancedSettings;
+    const { projectMinimumDates } = msfSettings;
     const { dataViewOrganisationUnits } = await compositionRoot.instances.getCurrentUser();
 
     const { rows } = await compositionRoot.rules.list({ paging: false });
     const allRules = await promiseMap(rows, ({ id }) => compositionRoot.rules.get(id));
 
-    const accesibleRules = _(allRules)
+    return _(allRules)
         .map(rule => {
+            // Remove rules that are not aggregated or events
             if (!rule || !["events", "aggregated"].includes(rule.type)) return undefined;
 
             const paths = rule.dataSyncOrgUnitPaths.filter(path =>
                 _.some(dataViewOrganisationUnits, ({ id }) => path.includes(id))
             );
 
+            // Filter organisation units to user visibility
             return paths.length > 0 ? rule?.updateDataSyncOrgUnitPaths(paths) : undefined;
         })
         .compact()
+        .map(rule => {
+            // Update period and dates according to settings
+            return !overridePeriod
+                ? rule
+                : rule.updateBuilderDataParams({
+                      period: overridePeriod.type,
+                      startDate: overridePeriod.startDate,
+                      endDate: overridePeriod.endDate,
+                  });
+        })
+        .map(rule => {
+            const { endDate } = buildPeriodFromParams(rule.dataParams);
+
+            // Remove org units with minimum date after end date
+            return rule.updateDataSyncOrgUnitPaths(
+                rule.dataSyncOrgUnitPaths.filter(path => {
+                    const { date } = projectMinimumDates[path] ?? {};
+                    return !date || moment(date).isSameOrBefore(endDate);
+                })
+            );
+        })
+        .flatMap(rule => {
+            const { startDate, endDate } = buildPeriodFromParams(rule.dataParams);
+
+            return _(rule.dataSyncOrgUnitPaths)
+                .groupBy(path =>
+                    projectMinimumDates[path]?.date
+                        ? moment(projectMinimumDates[path].date).format("YYYY-MM-DD")
+                        : undefined
+                )
+                .toPairs()
+                .map(([date, paths]) => {
+                    // Keep original dates but update org unit paths if is before current date
+                    if (date === "undefined" || moment(date).isSameOrBefore(startDate)) {
+                        return rule.updateDataSyncOrgUnitPaths(paths);
+                    }
+
+                    // Update start date if minimum date is after current one
+                    return rule.updateDataSyncOrgUnitPaths(paths).updateBuilderDataParams({
+                        period: "FIXED",
+                        startDate: new Date(date),
+                        endDate: endDate.toDate(),
+                    });
+                })
+                .value();
+        })
+        .filter(rule => rule.dataSyncOrgUnitPaths.length > 0)
         .value();
-
-    const rules = await promiseMap(accesibleRules, async rule => {
-        if (!advancedSettings.period) return rule;
-
-        return rule.update({
-            builder: {
-                ...rule.builder,
-                dataParams: {
-                    ...rule.builder.dataParams,
-                    period: advancedSettings.period.type,
-                    startDate: advancedSettings.period.startDate,
-                    endDate: advancedSettings.period.endDate,
-                },
-            },
-        });
-    });
-
-    return rules;
 }
 
 async function runAnalytics(

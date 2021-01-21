@@ -2456,6 +2456,7 @@ export type ProgramRuleAction = {
     favorite: boolean;
     favorites: string[];
     id: Id;
+    name: never;
     lastUpdated: string;
     lastUpdatedBy: Ref;
     programRule: Ref;

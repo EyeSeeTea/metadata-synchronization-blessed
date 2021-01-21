@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-12-28T20:21:02.582Z\n"
-"PO-Revision-Date: 2020-12-28T20:21:02.582Z\n"
+"POT-Creation-Date: 2021-01-11T12:02:54.375Z\n"
+"PO-Revision-Date: 2021-01-11T12:02:54.375Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1228,10 +1228,16 @@ msgstr ""
 msgid "MSF Settings"
 msgstr ""
 
+msgid "Analytics"
+msgstr ""
+
 msgid "Run Analytics"
 msgstr ""
 
 msgid "Number of years to include"
+msgstr ""
+
+msgid "Data element filter"
 msgstr ""
 
 msgid "Data Element Group *"
@@ -1240,6 +1246,12 @@ msgstr ""
 msgid ""
 "* Data Element Group: used to check existing data values in the destination "
 "data elements"
+msgstr ""
+
+msgid "Project minimum dates"
+msgstr ""
+
+msgid "Minimum date"
 msgstr ""
 
 msgid "Metadata Synchronization History"

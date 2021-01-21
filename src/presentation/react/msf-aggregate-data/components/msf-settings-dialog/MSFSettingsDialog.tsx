@@ -1,17 +1,20 @@
 import { makeStyles, TextField, Theme } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
+import { Dictionary } from "lodash";
 import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { DataElementGroup } from "../../../../../domain/metadata/entities/MetadataEntities";
 import i18n from "../../../../../locales";
 import { DataElementGroupModel } from "../../../../../models/dhis/metadata";
 import Dropdown, { DropdownOption } from "../../../core/components/dropdown/Dropdown";
 import { useAppContext } from "../../../core/contexts/AppContext";
+import { NamedDate, OrgUnitDateSelector } from "../org-unit-date-selector/OrgUnitDateSelector";
 
 export type RunAnalyticsSettings = "true" | "false" | "by-sync-rule-settings";
 
 export type MSFSettings = {
     runAnalytics: RunAnalyticsSettings;
     analyticsYears: number;
+    projectMinimumDates: Dictionary<NamedDate>;
     dataElementGroupId?: string;
 };
 
@@ -81,6 +84,10 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
         updateSettings(settings => ({ ...settings, analyticsYears }));
     };
 
+    const updateProjectMinimumDates = (projectStartDates: Dictionary<NamedDate>) => {
+        updateSettings(settings => ({ ...settings, projectMinimumDates: projectStartDates }));
+    };
+
     const handleSave = () => {
         onSave(settings);
     };
@@ -88,7 +95,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
     return (
         <ConfirmationDialog
             open={true}
-            maxWidth="sm"
+            maxWidth="lg"
             fullWidth={true}
             title={i18n.t("MSF Settings")}
             onCancel={onClose}
@@ -96,6 +103,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             cancelText={i18n.t("Cancel")}
             saveText={i18n.t("Save")}
         >
+            <h3 className={classes.title}>{i18n.t("Analytics")}</h3>
             <div className={classes.selector}>
                 <Dropdown<RunAnalyticsSettings>
                     label={i18n.t("Run Analytics")}
@@ -112,6 +120,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     type="number"
                 />
             </div>
+
+            <h3 className={classes.title}>{i18n.t("Data element filter")}</h3>
             <div className={classes.selector}>
                 <Dropdown
                     label={i18n.t("Data Element Group *")}
@@ -127,6 +137,14 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     { nsSeparator: false }
                 )}
             </div>
+
+            <h3 className={classes.title}>{i18n.t("Project minimum dates")}</h3>
+            <div>
+                <OrgUnitDateSelector
+                    projectMinimumDates={settings.projectMinimumDates}
+                    onChange={updateProjectMinimumDates}
+                />
+            </div>
         </ConfirmationDialog>
     );
 };
@@ -141,7 +159,10 @@ const useStyles = makeStyles((theme: Theme) => ({
         marginLeft: 15,
     },
     info: {
-        margin: theme.spacing(0, 0, 0, 1),
+        margin: theme.spacing(0, 0, 2, 1),
         fontSize: "0.8em",
+    },
+    title: {
+        marginTop: 0,
     },
 }));
