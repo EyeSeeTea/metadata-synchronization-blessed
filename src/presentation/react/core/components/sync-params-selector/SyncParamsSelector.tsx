@@ -13,7 +13,7 @@ interface SyncParamsSelectorProps {
 
 const useStyles = makeStyles({
     advancedOptionsTitle: {
-        marginTop: "40px",
+        marginTop: 40,
         fontWeight: 500,
     },
 });
@@ -100,24 +100,6 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
                 })
             );
         }
-    };
-
-    const changeRunAnalytics = (runAnalytics: boolean) => {
-        onChange(
-            syncRule.updateDataParams({
-                ...dataParams,
-                runAnalytics,
-            })
-        );
-    };
-
-    const changeAnalyticsZeroValues = (includeAnalyticsZeroValues: boolean) => {
-        onChange(
-            syncRule.updateDataParams({
-                ...dataParams,
-                includeAnalyticsZeroValues,
-            })
-        );
     };
 
     return (
@@ -212,32 +194,6 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
                     }
                 />
             </div>
-
-            {(syncRule.type === "events" || syncRule.type === "aggregated") && (
-                <div>
-                    <Toggle
-                        label={i18n.t("Run Analytics before sync")}
-                        onValueChange={changeRunAnalytics}
-                        value={dataParams.runAnalytics ?? false}
-                    />
-                </div>
-            )}
-
-            {(syncRule.type === "events" || syncRule.type === "aggregated") && (
-                <div>
-                    <Toggle
-                        label={
-                            syncRule.type === "events"
-                                ? i18n.t("Save empty values as zero (only for program indicators)")
-                                : i18n.t(
-                                      "Save empty values as zero (only for aggregated data values and indicators)"
-                                  )
-                        }
-                        onValueChange={changeAnalyticsZeroValues}
-                        value={dataParams.includeAnalyticsZeroValues ?? false}
-                    />
-                </div>
-            )}
         </React.Fragment>
     );
 };
