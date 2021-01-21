@@ -29,24 +29,28 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public readonly fields =
         "id,dataElements[id,name],dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
 
-    public buildPayload = memoize(async () => {
+    public buildPayload = memoize(async (remoteInstance?: Instance) => {
         const { dataParams: { enableAggregation = false } = {} } = this.builder;
 
         if (enableAggregation) {
-            return this.buildAnalyticsPayload();
+            return this.buildAnalyticsPayload(remoteInstance);
         } else {
-            return this.buildNormalPayload();
+            return this.buildNormalPayload(remoteInstance);
         }
     });
 
-    private buildNormalPayload = async () => {
+    private buildNormalPayload = async (remoteInstance?: Instance) => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
-        const aggregatedRepository = await this.getAggregatedRepository();
+        const aggregatedRepository = await this.getAggregatedRepository(remoteInstance);
 
-        const { dataSets = [] } = await this.extractMetadata<DataSet>();
-        const { dataElementGroups = [] } = await this.extractMetadata<DataElementGroup>();
-        const { dataElementGroupSets = [] } = await this.extractMetadata<DataElementGroupSet>();
-        const { dataElements = [] } = await this.extractMetadata<DataElement>();
+        const { dataSets = [] } = await this.extractMetadata<DataSet>(remoteInstance);
+        const { dataElementGroups = [] } = await this.extractMetadata<DataElementGroup>(
+            remoteInstance
+        );
+        const { dataElementGroupSets = [] } = await this.extractMetadata<DataElementGroupSet>(
+            remoteInstance
+        );
+        const { dataElements = [] } = await this.extractMetadata<DataElement>(remoteInstance);
 
         const dataSetIds = dataSets.map(({ id }) => id);
         const dataElementGroupIds = dataElementGroups.map(({ id }) => id);
@@ -84,14 +88,18 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         return { dataValues };
     };
 
-    private buildAnalyticsPayload = async () => {
+    private buildAnalyticsPayload = async (remoteInstance?: Instance) => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
 
-        const { dataSets = [] } = await this.extractMetadata<DataSet>();
-        const { dataElementGroups = [] } = await this.extractMetadata<DataElementGroup>();
-        const { dataElementGroupSets = [] } = await this.extractMetadata<DataElementGroupSet>();
-        const { dataElements = [] } = await this.extractMetadata<DataElement>();
-        const { indicators = [] } = await this.extractMetadata<Indicator>();
+        const { dataSets = [] } = await this.extractMetadata<DataSet>(remoteInstance);
+        const { dataElementGroups = [] } = await this.extractMetadata<DataElementGroup>(
+            remoteInstance
+        );
+        const { dataElementGroupSets = [] } = await this.extractMetadata<DataElementGroupSet>(
+            remoteInstance
+        );
+        const { dataElements = [] } = await this.extractMetadata<DataElement>(remoteInstance);
+        const { indicators = [] } = await this.extractMetadata<Indicator>(remoteInstance);
 
         const dataElementIds = dataElements.map(({ id }) => id);
         const indicatorIds = indicators.map(({ id }) => id);
@@ -111,7 +119,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
             )
         );
 
-        const aggregatedRepository = await this.getAggregatedRepository();
+        const aggregatedRepository = await this.getAggregatedRepository(remoteInstance);
 
         const { dataValues: dataElementValues = [] } = await aggregatedRepository.getAnalytics({
             dataParams,
@@ -141,7 +149,13 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         const { dataParams = {} } = this.builder;
 
         const originalPayload = await this.buildPayload();
-        const mappedPayloadPackage = await this.mapPayload(instance, originalPayload);
+        const mappedPayload = await this.mapPayload(instance, originalPayload);
+
+        const existingPayload = dataParams.ignoreDuplicateExistingValues
+            ? await this.mapPayload(instance, await this.buildPayload(instance))
+            : { dataValues: [] };
+
+        const filteredPayload = this.filterPayload(mappedPayload, existingPayload);
 
         if (!instance.apiVersion) {
             throw new Error(
@@ -151,14 +165,16 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
 
         const payload = this.getTransformationRepository().mapPackageTo(
             instance.apiVersion,
-            mappedPayloadPackage,
+            filteredPayload,
             aggregatedTransformations
         );
 
         debug("Aggregated package", {
             originalPayload,
-            mappedPayloadPackage,
-            versionedPayloadPackage: payload,
+            mappedPayload,
+            existingPayload,
+            filteredPayload,
+            payload,
         });
 
         const aggregatedRepository = await this.getAggregatedRepository(instance);
@@ -305,5 +321,26 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         );
 
         return _.flatten(result);
+    }
+
+    private filterPayload(
+        payload: AggregatedPackage,
+        filter: AggregatedPackage
+    ): AggregatedPackage {
+        const dataValues = _.differenceBy(
+            payload.dataValues ?? [],
+            filter.dataValues ?? [],
+            ({ dataElement, period, orgUnit, categoryOptionCombo, attributeOptionCombo, value }) =>
+                [
+                    dataElement,
+                    period,
+                    orgUnit,
+                    categoryOptionCombo ?? "default",
+                    attributeOptionCombo ?? "default",
+                    value,
+                ].join("-")
+        );
+
+        return { dataValues };
     }
 }
