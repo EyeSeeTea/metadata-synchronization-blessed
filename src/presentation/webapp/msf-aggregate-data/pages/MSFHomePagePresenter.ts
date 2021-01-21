@@ -34,6 +34,8 @@ export async function executeAggregateData(
         }
     };
 
+    addEventToProgress(i18n.t(`Retrieving information from the system...`));
+
     const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings, msfSettings);
 
     const validationErrors = msfSettings.checkInPreviousPeriods
