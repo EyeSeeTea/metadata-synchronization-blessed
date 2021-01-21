@@ -31,12 +31,13 @@ import { SynchronizationType } from "../entities/SynchronizationType";
 import { executeAnalytics } from "../../../utils/analytics";
 import { D2Api } from "../../../types/d2-api";
 
-export type SyncronizationClass =
+export type SynchronizationClass =
     | typeof MetadataSyncUseCase
     | typeof AggregatedSyncUseCase
     | typeof EventsSyncUseCase
     | typeof DeletedMetadataSyncUseCase;
-export type SyncronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
+
+export type SynchronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
 export abstract class GenericSyncUseCase {
     public abstract readonly type: SynchronizationType;
@@ -52,11 +53,11 @@ export abstract class GenericSyncUseCase {
         this.api = getD2APiFromInstance(localInstance);
     }
 
-    public abstract buildPayload(): Promise<SyncronizationPayload>;
+    public abstract buildPayload(): Promise<SynchronizationPayload>;
     public abstract mapPayload(
         instance: Instance,
-        payload: SyncronizationPayload
-    ): Promise<SyncronizationPayload>;
+        payload: SynchronizationPayload
+    ): Promise<SynchronizationPayload>;
 
     // We start to use domain concepts:
     // for the moment old model instance and domain entity instance are going to live together for a while on sync classes.

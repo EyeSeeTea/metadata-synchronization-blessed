@@ -17,7 +17,7 @@ import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import {
     GenericSyncUseCase,
-    SyncronizationPayload,
+    SynchronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
 import { EventsPackage } from "../entities/EventsPackage";
@@ -69,11 +69,10 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         return { events, dataValues };
     });
 
-    public async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
         const { events, dataValues } = await this.buildPayload();
 
         const eventsResponse = await this.postEventsPayload(instance, events);
-
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
         return _.compact([eventsResponse, indicatorsResponse]);
@@ -104,7 +103,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const syncResult = await eventsRepository.save(payload, dataParams);
         const origin = await this.getOriginInstance();
 
-        return { ...syncResult, origin: origin.toPublicObject() };
+        return { ...syncResult, origin: origin.toPublicObject(), payload };
     }
 
     private async postIndicatorPayload(
@@ -129,7 +128,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const syncResult = await aggregatedRepository.save(payload, dataParams);
         const origin = await this.getOriginInstance();
 
-        return { ...syncResult, origin: origin.toPublicObject() };
+        return { ...syncResult, origin: origin.toPublicObject(), payload };
     }
 
     public async buildDataStats() {
@@ -151,7 +150,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
     public async mapPayload(
         instance: Instance,
         { events: oldEvents }: EventsPackage
-    ): Promise<SyncronizationPayload> {
+    ): Promise<SynchronizationPayload> {
         const metadataRepository = await this.getMetadataRepository();
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
 

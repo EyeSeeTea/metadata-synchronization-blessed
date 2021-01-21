@@ -270,7 +270,7 @@ const HistoryPage: React.FC = () => {
             />
 
             {!!syncReport && (
-                <SyncSummary response={syncReport} onClose={() => setSyncReport(undefined)} />
+                <SyncSummary report={syncReport} onClose={() => setSyncReport(undefined)} />
             )}
 
             {toDelete.length > 0 && (

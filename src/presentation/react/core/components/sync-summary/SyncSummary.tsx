@@ -13,7 +13,7 @@ import {
     Typography,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog, useLoading } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
@@ -172,7 +172,7 @@ const getTypeName = (reportType: SynchronizationType, syncType: string) => {
 };
 
 interface SyncSummaryProps {
-    response: SynchronizationReport;
+    report: SynchronizationReport;
     onClose: () => void;
 }
 
@@ -186,14 +186,24 @@ const getOriginName = (source: PublicInstance | Store) => {
     }
 };
 
-const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
+const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
     const { compositionRoot } = useAppContext();
     const classes = useStyles();
-    const [results, setResults] = useState<SynchronizationResult[]>([]);
+    const loading = useLoading();
+
+    const [results, setResults] = useState<SynchronizationResult[]>(report.getResults());
+    const payloads = _.compact(report.getResults().map(({ payload }) => payload));
+
+    const downloadJSON = async () => {
+        loading.show(true, i18n.t("Generating JSON"));
+        await compositionRoot.reports.downloadPayloads(report);
+        loading.reset();
+    };
 
     useEffect(() => {
-        compositionRoot.reports.getSyncResults(response.id).then(setResults);
-    }, [compositionRoot, response]);
+        if (report.getResults().length > 0) return;
+        compositionRoot.reports.getSyncResults(report.id).then(setResults);
+    }, [compositionRoot, report]);
 
     if (results.length === 0) return null;
     return (
@@ -201,9 +211,11 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
             isOpen={true}
             title={i18n.t("Synchronization Results")}
             onCancel={onClose}
+            onInfoAction={payloads.length > 0 ? downloadJSON : undefined}
             cancelText={i18n.t("Ok")}
             maxWidth={"lg"}
             fullWidth={true}
+            infoActionText={i18n.t("Download JSON Payload")}
         >
             <DialogContent>
                 {results.map(
@@ -228,7 +240,7 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
                         >
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography className={classes.accordionHeading1}>
-                                    {`Type: ${getTypeName(type, response.type)}`}
+                                    {`Type: ${getTypeName(type, report.type)}`}
                                     <br />
                                     {origin && `${i18n.t("Origin")}: ${getOriginName(origin)}`}
                                     {origin && <br />}
@@ -278,7 +290,7 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
                     )
                 )}
 
-                {response.dataStats && (
+                {report.dataStats && (
                     <Accordion>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <Typography className={classes.accordionHeading1}>
@@ -287,7 +299,7 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
                         </AccordionSummary>
 
                         <AccordionDetails>
-                            {buildDataStatsTable(response.type, response.dataStats, classes)}
+                            {buildDataStatsTable(report.type, report.dataStats, classes)}
                         </AccordionDetails>
                     </Accordion>
                 )}
@@ -301,7 +313,7 @@ const SyncSummary = ({ response, onClose }: SyncSummaryProps) => {
 
                     <AccordionDetails>
                         <ReactJson
-                            src={{ ...response, results }}
+                            src={{ ...report, results }}
                             collapsed={2}
                             enableClipboard={false}
                         />

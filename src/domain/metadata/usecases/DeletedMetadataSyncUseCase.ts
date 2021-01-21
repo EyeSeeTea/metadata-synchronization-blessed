@@ -3,7 +3,7 @@ import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
 import {
     GenericSyncUseCase,
-    SyncronizationPayload,
+    SynchronizationPayload,
 } from "../../synchronization/usecases/GenericSyncUseCase";
 import { debug } from "../../../utils/debug";
 
@@ -18,14 +18,11 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
         const { metadataIds, syncParams = {} } = this.builder;
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
 
-        const payloadPackage = await remoteMetadataRepository.getMetadataByIds<Ref>(
-            metadataIds,
-            "id"
-        );
+        const payload = await remoteMetadataRepository.getMetadataByIds<Ref>(metadataIds, "id");
 
-        debug("Metadata package", payloadPackage);
+        debug("Metadata package", payload);
 
-        const syncResult = await remoteMetadataRepository.remove(payloadPackage, syncParams);
+        const syncResult = await remoteMetadataRepository.remove(payload, syncParams);
         const origin = await this.getOriginInstance();
 
         return [{ ...syncResult, origin: origin.toPublicObject() }];
@@ -37,8 +34,8 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
 
     public async mapPayload(
         _instance: Instance,
-        payload: SyncronizationPayload
-    ): Promise<SyncronizationPayload> {
+        payload: SynchronizationPayload
+    ): Promise<SynchronizationPayload> {
         return payload;
     }
 }
