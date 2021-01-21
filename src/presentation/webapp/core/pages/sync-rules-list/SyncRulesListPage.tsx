@@ -95,7 +95,13 @@ const SyncRulesPage: React.FC = () => {
     useEffect(() => {
         compositionRoot.rules
             .list({
-                filters: { type, targetInstanceFilter, enabledFilter, lastExecutedFilter, search },
+                filters: {
+                    types: [type],
+                    targetInstanceFilter,
+                    enabledFilter,
+                    lastExecutedFilter,
+                    search,
+                },
                 paging: false,
             })
             .then(({ rows }) => setRows(rows));

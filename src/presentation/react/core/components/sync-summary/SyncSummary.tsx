@@ -205,7 +205,6 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
         compositionRoot.reports.getSyncResults(report.id).then(setResults);
     }, [compositionRoot, report]);
 
-    if (results.length === 0) return null;
     return (
         <ConfirmationDialog
             isOpen={true}

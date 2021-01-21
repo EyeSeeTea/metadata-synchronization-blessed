@@ -79,7 +79,7 @@ export const MSFHomePage: React.FC = () => {
         history.push("/dashboard");
     };
     const handleGoToHistory = () => {
-        history.push("/history/events");
+        history.push("/msf/history");
     };
 
     const handleCloseAdvancedSettings = () => {
