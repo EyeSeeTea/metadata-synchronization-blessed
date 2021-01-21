@@ -22,6 +22,7 @@ export const MSFHomePage: React.FC = () => {
     const history = useHistory();
     const { api, compositionRoot } = useAppContext();
 
+    const [running, setRunning] = useState<boolean>(false);
     const [syncProgress, setSyncProgress] = useState<string[]>([]);
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
@@ -47,8 +48,9 @@ export const MSFHomePage: React.FC = () => {
         });
     }, [compositionRoot]);
 
-    const handleAggregateData = (skipCheckInPreviousPeriods?: boolean) => {
-        executeAggregateData(
+    const handleAggregateData = async (skipCheckInPreviousPeriods?: boolean) => {
+        setRunning(true);
+        await executeAggregateData(
             compositionRoot,
             advancedSettings,
             skipCheckInPreviousPeriods
@@ -57,6 +59,7 @@ export const MSFHomePage: React.FC = () => {
             progress => setSyncProgress(progress),
             errors => setMsfValidationErrors(errors)
         );
+        setRunning(false)
     };
 
     const handleOpenAdvancedSettings = () => {
@@ -104,6 +107,7 @@ export const MSFHomePage: React.FC = () => {
                         variant="contained"
                         color="primary"
                         className={classes.runButton}
+                        disabled={running}
                     >
                         {i18n.t("Aggregate Data")}
                     </Button>
