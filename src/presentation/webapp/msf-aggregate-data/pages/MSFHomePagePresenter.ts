@@ -34,6 +34,8 @@ export async function executeAggregateData(
         }
     };
 
+    addEventToProgress(i18n.t(`Retrieving information from the system...`));
+
     const syncRules = await getSyncRules(compositionRoot, advancedSettings, msfSettings);
 
     const validationErrors = await validatePreviousDataValues(
