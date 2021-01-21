@@ -16,6 +16,7 @@ export interface DataSynchronizationParams extends DataImportParams {
     runAnalytics?: boolean;
     includeAnalyticsZeroValues?: boolean;
     analyticsYears?: number;
+    ignoreDuplicateExistingValues?: boolean;
 }
 
 export type DataSyncPeriod =
