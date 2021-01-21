@@ -124,7 +124,7 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
                                           "Save empty values as zero (only for program indicators)"
                                       )
                                     : i18n.t(
-                                          "Save empty values as zero (only for aggregated data values and indicators)"
+                                          "Save empty values as zero (only for indicators)"
                                       )
                             }
                             onValueChange={changeAnalyticsZeroValues}
