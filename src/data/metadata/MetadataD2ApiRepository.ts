@@ -289,6 +289,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         selectedIds = [],
         filterRows,
         search,
+        disableFilterRows = false,
     }: Partial<ListMetadataParams>) {
         const filter: Dictionary<FilterValueBase> = {};
 
@@ -299,7 +300,9 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
         }
         if (showOnlySelected) filter["id"] = { in: selectedIds.concat(filter["id"]?.in ?? []) };
-        if (filterRows) filter["id"] = { in: filterRows.concat(filter["id"]?.in ?? []) };
+        if (!disableFilterRows && filterRows) {
+            filter["id"] = { in: filterRows.concat(filter["id"]?.in ?? []) };
+        }
         if (search) filter[search.field] = { [search.operator]: search.value };
 
         return filter;
