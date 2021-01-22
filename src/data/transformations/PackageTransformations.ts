@@ -14,17 +14,28 @@ export const metadataTransformations: Transformation[] = [
                     ({ featureType, coordinates, geometry, ...rest }: any) => {
                         if (featureType && featureType !== "NONE" && coordinates) {
                             try {
-                                geometry = {
-                                    type: _.startCase(featureType.toLowerCase()),
-                                    coordinates: JSON.parse(coordinates),
-                                };
+                                return _.pickBy(
+                                    {
+                                        geometry: {
+                                            type: geometry?.type ?? _.startCase(featureType),
+                                            coordinates: JSON.parse(coordinates),
+                                        },
+                                        featureType,
+                                        coordinates,
+                                        ...rest,
+                                    },
+                                    _.identity
+                                );
                             } catch (error) {
                                 console.log(
                                     "Error during coordinates conversion OU: " + rest["id"]
                                 );
                             }
                         }
-                        return _.pickBy({ geometry, ...rest }, _.identity);
+                        return _.pickBy(
+                            { geometry, featureType, coordinates, ...rest },
+                            _.identity
+                        );
                     }
                 ),
                 ...rest,
@@ -36,10 +47,17 @@ export const metadataTransformations: Transformation[] = [
                     ({ geometry, featureType, coordinates, ...rest }: any) => {
                         if (geometry && geometry.type && geometry.coordinates) {
                             try {
-                                featureType = geometry.type.toUpperCase();
-                                coordinates = JSON.stringify(geometry.coordinates).replace(
-                                    /"/g,
-                                    ""
+                                return _.pickBy(
+                                    {
+                                        geometry: geometry.type.toUpperCase(),
+                                        featureType,
+                                        coordinates: JSON.stringify(geometry.coordinates).replace(
+                                            /"/g,
+                                            ""
+                                        ),
+                                        ...rest,
+                                    },
+                                    _.identity
                                 );
                             } catch (error) {
                                 console.log(
@@ -47,7 +65,10 @@ export const metadataTransformations: Transformation[] = [
                                 );
                             }
                         }
-                        return _.pickBy({ featureType, coordinates, ...rest }, _.identity);
+                        return _.pickBy(
+                            { geometry, featureType, coordinates, ...rest },
+                            _.identity
+                        );
                     }
                 ),
                 ...rest,
