@@ -2,21 +2,16 @@ import { makeStyles, TextField, Theme } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
 import { Dictionary } from "lodash";
 import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
-import { DataElementGroup } from "../../../../../domain/metadata/entities/MetadataEntities";
 import i18n from "../../../../../locales";
 import { DataElementGroupModel } from "../../../../../models/dhis/metadata";
+import {
+    MSFSettings,
+    RunAnalyticsSettings,
+} from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
 import Dropdown, { DropdownOption } from "../../../core/components/dropdown/Dropdown";
+import { Toggle } from "../../../core/components/toggle/Toggle";
 import { useAppContext } from "../../../core/contexts/AppContext";
 import { NamedDate, OrgUnitDateSelector } from "../org-unit-date-selector/OrgUnitDateSelector";
-
-export type RunAnalyticsSettings = "true" | "false" | "by-sync-rule-settings";
-
-export type MSFSettings = {
-    runAnalytics: RunAnalyticsSettings;
-    analyticsYears: number;
-    projectMinimumDates: Dictionary<NamedDate>;
-    dataElementGroupId?: string;
-};
 
 export interface MSFSettingsDialogProps {
     settings: MSFSettings;
@@ -45,13 +40,11 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                     order: "asc" as const,
                 },
             })
-            .then(data => {
-                const dataElementGroups = data as DataElementGroup[];
-
+            .then(dataElementGroups =>
                 setDataElementGroups(
                     dataElementGroups.map(group => ({ id: group.id, name: group.name }))
-                );
-            });
+                )
+            );
     }, [compositionRoot.metadata]);
 
     const analyticsSettingItems = useMemo(() => {
@@ -88,6 +81,14 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
         updateSettings(settings => ({ ...settings, projectMinimumDates: projectStartDates }));
     };
 
+    const setDeleteDataValuesBeforeSync = (deleteDataValuesBeforeSync: boolean) => {
+        updateSettings(settings => ({ ...settings, deleteDataValuesBeforeSync }));
+    };
+
+    const setCheckInPreviousPeriods = (checkInPreviousPeriods: boolean) => {
+        updateSettings(settings => ({ ...settings, checkInPreviousPeriods }));
+    };
+
     const handleSave = () => {
         onSave(settings);
     };
@@ -103,47 +104,77 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
             cancelText={i18n.t("Cancel")}
             saveText={i18n.t("Save")}
         >
-            <h3 className={classes.title}>{i18n.t("Analytics")}</h3>
-            <div className={classes.selector}>
-                <Dropdown<RunAnalyticsSettings>
-                    label={i18n.t("Run Analytics")}
-                    items={analyticsSettingItems}
-                    onValueChange={setRunAnalytics}
-                    value={settings.runAnalytics}
-                    hideEmpty
-                />
-                <TextField
-                    className={classes.yearsSelector}
-                    label={i18n.t("Number of years to include")}
-                    value={settings.analyticsYears}
-                    onChange={setAnalyticsYears}
-                    type="number"
-                />
+            <div className={classes.section}>
+                <h3 className={classes.title}>{i18n.t("Analytics")}</h3>
+
+                <div className={classes.selector}>
+                    <Dropdown<RunAnalyticsSettings>
+                        label={i18n.t("Run Analytics")}
+                        items={analyticsSettingItems}
+                        onValueChange={setRunAnalytics}
+                        value={settings.runAnalytics}
+                        hideEmpty
+                    />
+                    <TextField
+                        className={classes.yearsSelector}
+                        label={i18n.t("Number of years to include")}
+                        value={settings.analyticsYears}
+                        onChange={setAnalyticsYears}
+                        type="number"
+                    />
+                </div>
             </div>
 
-            <h3 className={classes.title}>{i18n.t("Data element filter")}</h3>
-            <div className={classes.selector}>
-                <Dropdown
-                    label={i18n.t("Data Element Group *")}
-                    items={catOptionGroups}
-                    onValueChange={setSelectedDataElementGroup}
-                    value={settings.dataElementGroupId ?? ""}
-                    hideEmpty
-                />
-            </div>
-            <div className={classes.info}>
-                {i18n.t(
-                    "* Data Element Group: used to check existing data values in the destination data elements",
-                    { nsSeparator: false }
-                )}
+            <div className={classes.section}>
+                <h3 className={classes.title}>{i18n.t("Data values settings")}</h3>
+
+                <div>
+                    <Toggle
+                        label={i18n.t("Delete data values before sync")}
+                        onValueChange={setDeleteDataValuesBeforeSync}
+                        value={settings.deleteDataValuesBeforeSync ?? false}
+                    />
+                </div>
+
+                <div>
+                    <Toggle
+                        label={i18n.t("Check existing data values in previous periods")}
+                        onValueChange={setCheckInPreviousPeriods}
+                        value={settings.checkInPreviousPeriods ?? false}
+                    />
+                </div>
             </div>
 
-            <h3 className={classes.title}>{i18n.t("Project minimum dates")}</h3>
-            <div>
-                <OrgUnitDateSelector
-                    projectMinimumDates={settings.projectMinimumDates}
-                    onChange={updateProjectMinimumDates}
-                />
+            <div className={classes.section}>
+                <h3 className={classes.title}>{i18n.t("Data element filter")}</h3>
+
+                <div className={classes.selector}>
+                    <Dropdown
+                        label={i18n.t("Data Element Group *")}
+                        items={catOptionGroups}
+                        onValueChange={setSelectedDataElementGroup}
+                        value={settings.dataElementGroupId ?? ""}
+                        hideEmpty
+                    />
+                </div>
+
+                <div className={classes.info}>
+                    {i18n.t(
+                        "* Data Element Group: used to check existing data values in the destination data elements",
+                        { nsSeparator: false }
+                    )}
+                </div>
+            </div>
+
+            <div className={classes.section}>
+                <h3 className={classes.title}>{i18n.t("Project minimum dates")}</h3>
+
+                <div>
+                    <OrgUnitDateSelector
+                        projectMinimumDates={settings.projectMinimumDates}
+                        onChange={updateProjectMinimumDates}
+                    />
+                </div>
             </div>
         </ConfirmationDialog>
     );
@@ -151,7 +182,7 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
 
 const useStyles = makeStyles((theme: Theme) => ({
     selector: {
-        margin: theme.spacing(3, 0, 3, 0),
+        margin: theme.spacing(0, 0, 3, 0),
     },
     yearsSelector: {
         minWidth: 250,
@@ -164,5 +195,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     title: {
         marginTop: 0,
+    },
+    section: {
+        marginBottom: 20,
     },
 }));

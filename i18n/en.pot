@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-01-19T10:06:13.314Z\n"
-"PO-Revision-Date: 2021-01-19T10:06:13.314Z\n"
+"POT-Creation-Date: 2021-01-21T08:28:11.465Z\n"
+"PO-Revision-Date: 2021-01-21T08:28:11.465Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -230,6 +230,9 @@ msgstr ""
 msgid "(manual synchronization)"
 msgstr ""
 
+msgid "Type"
+msgstr ""
+
 msgid "Timestamp"
 msgstr ""
 
@@ -437,6 +440,9 @@ msgid "{{displayName}} Group"
 msgstr ""
 
 msgid "{{displayName}} Level"
+msgstr ""
+
+msgid "Program"
 msgstr ""
 
 msgid "Only selected items"
@@ -944,9 +950,6 @@ msgstr ""
 msgid "Run Analytics before sync"
 msgstr ""
 
-msgid "Type"
-msgstr ""
-
 msgid "Imported"
 msgstr ""
 
@@ -960,9 +963,6 @@ msgid "Total"
 msgstr ""
 
 msgid "Data element"
-msgstr ""
-
-msgid "Program"
 msgstr ""
 
 msgid "Number of entries"
@@ -1274,12 +1274,6 @@ msgstr ""
 msgid "Use sync rules periods"
 msgstr ""
 
-msgid "Delete data values before sync"
-msgstr ""
-
-msgid "Check existing data values in previous periods"
-msgstr ""
-
 msgid "True"
 msgstr ""
 
@@ -1299,6 +1293,15 @@ msgid "Run Analytics"
 msgstr ""
 
 msgid "Number of years to include"
+msgstr ""
+
+msgid "Data values settings"
+msgstr ""
+
+msgid "Delete data values before sync"
+msgstr ""
+
+msgid "Check existing data values in previous periods"
 msgstr ""
 
 msgid "Data element filter"

@@ -13,8 +13,7 @@ import { promiseMap } from "../../../../utils/common";
 import { formatDateLong } from "../../../../utils/date";
 import { availablePeriods } from "../../../../utils/synchronization";
 import { CompositionRoot } from "../../../CompositionRoot";
-import { AdvancedSettings } from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
-import { MSFSettings } from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
+import { AdvancedSettings, MSFSettings } from "./MSFEntities";
 
 //TODO: maybe convert to class and presenter to use MVP, MVI or BLoC pattern
 export async function executeAggregateData(
@@ -37,7 +36,7 @@ export async function executeAggregateData(
 
     const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings, msfSettings);
 
-    const validationErrors = advancedSettings.checkInPreviousPeriods
+    const validationErrors = msfSettings.checkInPreviousPeriods
         ? await validatePreviousDataValues(
               compositionRoot,
               eventSyncRules,
@@ -61,7 +60,7 @@ export async function executeAggregateData(
                 })
             );
         }
-        if (advancedSettings.deleteDataValuesBeforeSync && !msfSettings.dataElementGroupId) {
+        if (msfSettings.deleteDataValuesBeforeSync && !msfSettings.dataElementGroupId) {
             addEventToProgress(
                 i18n.t(
                     `Deleting previous data values is not possible because data element group is not defined, please contact with your administrator`
@@ -83,13 +82,7 @@ export async function executeAggregateData(
         }
 
         for (const syncRule of rulesWithoutRunAnalylics) {
-            await executeSyncRule(
-                compositionRoot,
-                syncRule,
-                addEventToProgress,
-                advancedSettings,
-                msfSettings
-            );
+            await executeSyncRule(compositionRoot, syncRule, addEventToProgress, msfSettings);
         }
 
         addEventToProgress(i18n.t(`Finished Aggregate Data`));
@@ -112,9 +105,9 @@ async function validatePreviousDataValues(
         const targetInstances = await compositionRoot.instances.list({ ids: rule.targetInstances });
 
         const byInstance = await promiseMap(targetInstances, async instance => {
-            if (!rule.dataParams || !rule.dataParams.period || !msfSettings.dataElementGroupId)
+            if (!rule.dataParams || !rule.dataParams.period || !msfSettings.dataElementGroupId) {
                 return undefined;
-
+            }
             const { startDate } = buildPeriodFromParams(rule.dataParams);
             const endDate = startDate.clone().subtract(1, "day");
 
@@ -145,21 +138,20 @@ async function validatePreviousDataValues(
         return _.compact(byInstance);
     });
 
-    return _.compact(validationsErrors).flat();
+    return _(validationsErrors).compact().flatten().value();
 }
 
 async function executeSyncRule(
     compositionRoot: CompositionRoot,
     rule: SynchronizationRule,
     addEventToProgress: (event: string) => void,
-    advancedSettings: AdvancedSettings,
     msfSettings: MSFSettings
 ): Promise<void> {
     const { name, builder, id: syncRule, type = "metadata", targetInstances } = rule;
 
     addEventToProgress(i18n.t(`Starting Sync Rule {{name}} ...`, { name }));
 
-    if (advancedSettings.deleteDataValuesBeforeSync && msfSettings.dataElementGroupId) {
+    if (msfSettings.deleteDataValuesBeforeSync && msfSettings.dataElementGroupId) {
         await deletePreviousDataValues(
             compositionRoot,
             targetInstances,
@@ -251,7 +243,7 @@ async function getSyncRules(
             return !overridePeriod
                 ? rule
                 : rule.updateBuilderDataParams({
-                      period: overridePeriod.type,
+                      period: overridePeriod.period,
                       startDate: overridePeriod.startDate,
                       endDate: overridePeriod.endDate,
                   });

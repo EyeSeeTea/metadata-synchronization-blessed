@@ -5,18 +5,17 @@ import { useHistory } from "react-router-dom";
 import i18n from "../../../../locales";
 import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
+import { useAppContext } from "../../../react/core/contexts/AppContext";
+import { AdvancedSettingsDialog } from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
+import { MSFSettingsDialog } from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
 import {
     AdvancedSettings,
-    AdvancedSettingsDialog,
-} from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
-import { useAppContext } from "../../../react/core/contexts/AppContext";
-import {
+    defaultMSFSettings,
     MSFSettings,
-    MSFSettingsDialog,
-} from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
+    MSFStorageKey,
+    PersistedMSFSettings,
+} from "./MSFEntities";
 import { executeAggregateData, isGlobalInstance } from "./MSFHomePagePresenter";
-
-const msfStorage = "msf-storage";
 
 export const MSFHomePage: React.FC = () => {
     const classes = useStyles();
@@ -29,28 +28,21 @@ export const MSFHomePage: React.FC = () => {
     const [msfValidationErrors, setMsfValidationErrors] = useState<string[]>();
     const [advancedSettings, setAdvancedSettings] = useState<AdvancedSettings>({
         period: undefined,
-        deleteDataValuesBeforeSync: false,
     });
 
     const [globalAdmin, setGlobalAdmin] = useState(false);
-    const [msfSettings, setMsfSettings] = useState<MSFSettings>({
-        runAnalytics: "by-sync-rule-settings",
-        analyticsYears: 2,
-        projectMinimumDates: {},
-    });
+    const [msfSettings, setMsfSettings] = useState<MSFSettings>(defaultMSFSettings);
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
     useEffect(() => {
-        compositionRoot.customData.get<Omit<MSFSettings, "runAnalytics">>(msfStorage).then(data => {
-            setMsfSettings(settings => ({
+        compositionRoot.customData.get<PersistedMSFSettings>(MSFStorageKey).then(settings => {
+            setMsfSettings(oldSettings => ({
+                ...oldSettings,
                 ...settings,
                 runAnalytics: isGlobalInstance() ? "false" : "by-sync-rule-settings",
-                dataElementGroupId: data?.dataElementGroupId,
-                analyticsYears: data?.analyticsYears ?? 2,
-                projectMinimumDates: data?.projectMinimumDates ?? {},
             }));
         });
     }, [compositionRoot]);
@@ -58,16 +50,16 @@ export const MSFHomePage: React.FC = () => {
     const handleAggregateData = (skipCheckInPreviousPeriods?: boolean) => {
         executeAggregateData(
             compositionRoot,
+            advancedSettings,
             skipCheckInPreviousPeriods
-                ? { ...advancedSettings, checkInPreviousPeriods: false }
-                : advancedSettings,
-            msfSettings,
+                ? { ...msfSettings, checkInPreviousPeriods: false }
+                : msfSettings,
             progress => setSyncProgress(progress),
             errors => setMsfValidationErrors(errors)
         );
     };
 
-    const handleAdvancedSettings = () => {
+    const handleOpenAdvancedSettings = () => {
         setShowPeriodDialog(true);
     };
 
@@ -98,11 +90,7 @@ export const MSFHomePage: React.FC = () => {
     const handleSaveMSFSettings = (msfSettings: MSFSettings) => {
         setShowMSFSettingsDialog(false);
         setMsfSettings(msfSettings);
-        compositionRoot.customData.save(msfStorage, {
-            dataElementGroupId: msfSettings.dataElementGroupId,
-            analyticsYears: msfSettings.analyticsYears,
-            projectMinimumDates: msfSettings.projectMinimumDates,
-        });
+        compositionRoot.customData.save(MSFStorageKey, { ...msfSettings, runAnalytics: undefined });
     };
 
     return (
@@ -137,7 +125,7 @@ export const MSFHomePage: React.FC = () => {
                         <Box display="flex" flexDirection="row">
                             <Button
                                 className={classes.actionButton}
-                                onClick={handleAdvancedSettings}
+                                onClick={handleOpenAdvancedSettings}
                                 variant="contained"
                             >
                                 {i18n.t("Advanced Settings")}

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-01-19T10:06:13.314Z\n"
+"POT-Creation-Date: 2021-01-21T08:28:11.465Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -231,6 +231,9 @@ msgstr "Paquetes"
 msgid "(manual synchronization)"
 msgstr ""
 
+msgid "Type"
+msgstr ""
+
 msgid "Timestamp"
 msgstr ""
 
@@ -439,6 +442,9 @@ msgid "{{displayName}} Group"
 msgstr ""
 
 msgid "{{displayName}} Level"
+msgstr ""
+
+msgid "Program"
 msgstr ""
 
 msgid "Only selected items"
@@ -950,9 +956,6 @@ msgstr ""
 msgid "Run Analytics before sync"
 msgstr ""
 
-msgid "Type"
-msgstr ""
-
 msgid "Imported"
 msgstr ""
 
@@ -966,9 +969,6 @@ msgid "Total"
 msgstr ""
 
 msgid "Data element"
-msgstr ""
-
-msgid "Program"
 msgstr ""
 
 msgid "Number of entries"
@@ -1281,12 +1281,6 @@ msgstr ""
 msgid "Use sync rules periods"
 msgstr ""
 
-msgid "Delete data values before sync"
-msgstr ""
-
-msgid "Check existing data values in previous periods"
-msgstr ""
-
 msgid "True"
 msgstr ""
 
@@ -1306,6 +1300,15 @@ msgid "Run Analytics"
 msgstr ""
 
 msgid "Number of years to include"
+msgstr ""
+
+msgid "Data values settings"
+msgstr ""
+
+msgid "Delete data values before sync"
+msgstr ""
+
+msgid "Check existing data values in previous periods"
 msgstr ""
 
 msgid "Data element filter"
