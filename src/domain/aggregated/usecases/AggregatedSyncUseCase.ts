@@ -1,6 +1,5 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { aggregatedTransformations } from "../../../data/transformations/PackageTransformations";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
 import { mapCategoryOptionCombo, mapOptionValue } from "../../../utils/synchronization";
@@ -160,25 +159,11 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
             ? await this.mapPayload(instance, await this.buildPayload(instance))
             : { dataValues: [] };
 
-        const filteredPayload = this.filterPayload(mappedPayload, existingPayload);
-
-        if (!instance.apiVersion) {
-            throw new Error(
-                "Necessary api version of receiver instance to apply transformations to package is undefined"
-            );
-        }
-
-        const payload = this.getTransformationRepository().mapPackageTo(
-            instance.apiVersion,
-            filteredPayload,
-            aggregatedTransformations
-        );
-
+        const payload = this.filterPayload(mappedPayload, existingPayload);
         debug("Aggregated package", {
             originalPayload,
             mappedPayload,
             existingPayload,
-            filteredPayload,
             payload,
         });
 

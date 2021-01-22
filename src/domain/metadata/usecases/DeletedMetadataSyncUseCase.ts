@@ -1,11 +1,9 @@
 import memoize from "nano-memoize";
+import { debug } from "../../../utils/debug";
 import { Ref } from "../../common/entities/Ref";
 import { Instance } from "../../instance/entities/Instance";
-import {
-    GenericSyncUseCase,
-    SynchronizationPayload,
-} from "../../synchronization/usecases/GenericSyncUseCase";
-import { debug } from "../../../utils/debug";
+import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
+import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 
 export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "deleted";

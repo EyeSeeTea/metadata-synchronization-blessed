@@ -290,9 +290,9 @@ async function getSyncRules(
                     if (date === "undefined" || minDate.isSameOrBefore(startDate)) {
                         return rule
                             .updateName(
-                                `${rule.name} (${startDate.format("DD-MM-YYYY")} to ${endDate.format(
+                                `${rule.name} (${startDate.format(
                                     "DD-MM-YYYY"
-                                )})`
+                                )} to ${endDate.format("DD-MM-YYYY")})`
                             )
                             .updateDataSyncOrgUnitPaths(paths);
                     }

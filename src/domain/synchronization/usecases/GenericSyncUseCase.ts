@@ -1,20 +1,18 @@
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import i18n from "../../../locales";
-import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
+import { D2Api } from "../../../types/d2-api";
+import { executeAnalytics } from "../../../utils/analytics";
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { debug } from "../../../utils/debug";
-import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Repositories, RepositoryFactory } from "../../common/factories/RepositoryFactory";
-import { EventsPackage } from "../../events/entities/EventsPackage";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import { FileRepositoryConstructor } from "../../file/FileRepository";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
-import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../../metadata/usecases/MetadataSyncUseCase";
 import {
@@ -27,17 +25,15 @@ import {
     SynchronizationResult,
     SynchronizationStatus,
 } from "../../reports/entities/SynchronizationResult";
+import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
+import { SynchronizationPayload } from "../entities/SynchronizationPayload";
 import { SynchronizationType } from "../entities/SynchronizationType";
-import { executeAnalytics } from "../../../utils/analytics";
-import { D2Api } from "../../../types/d2-api";
 
 export type SynchronizationClass =
     | typeof MetadataSyncUseCase
     | typeof AggregatedSyncUseCase
     | typeof EventsSyncUseCase
     | typeof DeletedMetadataSyncUseCase;
-
-export type SynchronizationPayload = MetadataPackage | AggregatedPackage | EventsPackage;
 
 export abstract class GenericSyncUseCase {
     public abstract readonly type: SynchronizationType;

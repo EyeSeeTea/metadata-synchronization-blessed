@@ -1,8 +1,8 @@
 import { NamedRef } from "../../common/entities/Ref";
 import { PublicInstance } from "../../instance/entities/Instance";
 import { Store } from "../../stores/entities/Store";
+import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
-import { SynchronizationPayload } from "../../synchronization/usecases/GenericSyncUseCase";
 
 export type SynchronizationStatus = "PENDING" | "SUCCESS" | "WARNING" | "ERROR" | "NETWORK ERROR";
 
