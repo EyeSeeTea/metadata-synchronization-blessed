@@ -290,7 +290,7 @@ async function getSyncRules(
                     if (date === "undefined" || minDate.isSameOrBefore(startDate)) {
                         return rule
                             .updateName(
-                                `${rule.name} (${startDate.format("DD-MM-YYYY")} - ${endDate.format(
+                                `${rule.name} (${startDate.format("DD-MM-YYYY")} to ${endDate.format(
                                     "DD-MM-YYYY"
                                 )})`
                             )
@@ -300,7 +300,7 @@ async function getSyncRules(
                     // Update start date if minimum date is after current one
                     return rule
                         .updateName(
-                            `${rule.name} (${minDate.format("DD-MM-YYYY")} - ${endDate.format(
+                            `${rule.name} (${minDate.format("DD-MM-YYYY")} to ${endDate.format(
                                 "DD-MM-YYYY"
                             )})`
                         )
