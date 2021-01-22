@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-01-21T08:28:11.465Z\n"
-"PO-Revision-Date: 2021-01-21T08:28:11.465Z\n"
+"POT-Creation-Date: 2021-01-21T11:31:14.715Z\n"
+"PO-Revision-Date: 2021-01-21T11:31:14.715Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -947,7 +947,10 @@ msgstr ""
 msgid "Dry Run"
 msgstr ""
 
-msgid "Run Analytics before sync"
+msgid "Ignore data with same value on destination (only for program indicators)"
+msgstr ""
+
+msgid "Ignore data with same value on destination"
 msgstr ""
 
 msgid "Imported"
@@ -1206,6 +1209,9 @@ msgstr ""
 msgid "Updates"
 msgstr ""
 
+msgid "Run Analytics before sync"
+msgstr ""
+
 msgid "Frequency"
 msgstr ""
 
@@ -1242,6 +1248,12 @@ msgid "Enable data aggregation"
 msgstr ""
 
 msgid "Aggregation type"
+msgstr ""
+
+msgid "Save empty values as zero (only for program indicators)"
+msgstr ""
+
+msgid "Save empty values as zero (only for indicators)"
 msgstr ""
 
 msgid "Sync all attribute category options"
@@ -1838,6 +1850,9 @@ msgid "MSF Validation"
 msgstr ""
 
 msgid "Do you want to proceed?"
+msgstr ""
+
+msgid "Retrieving information from the system..."
 msgstr ""
 
 msgid "Starting Aggregate Data..."

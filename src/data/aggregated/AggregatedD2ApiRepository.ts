@@ -46,7 +46,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             : undefined;
 
         try {
-            const response = await this.api
+            const { dataValues = [] } = await this.api
                 .get<AggregatedPackage>("/dataValueSets", {
                     dataElementIdScheme: "UID",
                     orgUnitIdScheme: "UID",
@@ -62,7 +62,29 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                 })
                 .getData();
 
-            return response;
+            const [defaultCategoryOptionCombo] = await this.getDefaultIds("categoryOptionCombos");
+
+            return {
+                dataValues: dataValues.map(
+                    ({
+                        dataElement,
+                        period,
+                        orgUnit,
+                        categoryOptionCombo,
+                        attributeOptionCombo,
+                        value,
+                        comment,
+                    }) => ({
+                        dataElement,
+                        period,
+                        orgUnit,
+                        value,
+                        comment,
+                        categoryOptionCombo: categoryOptionCombo ?? defaultCategoryOptionCombo,
+                        attributeOptionCombo: attributeOptionCombo ?? defaultCategoryOptionCombo,
+                    })
+                ),
+            };
         } catch (error) {
             console.error(error);
             return { dataValues: [] };
@@ -137,10 +159,11 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                             orgUnit,
                             value,
                             comment,
-                            attributeOptionCombo,
+                            attributeOptionCombo:
+                                attributeOptionCombo ?? defaultCategoryOptionCombo,
                             // Special scenario: We allow having dataElement.categoryOptionCombo in indicators
                             categoryOptionCombo: includeCategories
-                                ? categoryOptionCombo
+                                ? categoryOptionCombo ?? defaultCategoryOptionCombo
                                 : defaultCategoryOptionCombo,
                         })
                     )
@@ -158,6 +181,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                                   period,
                                   orgUnit,
                                   categoryOptionCombo: defaultCategoryOptionCombo,
+                                  attributeOptionCombo: defaultCategoryOptionCombo,
                                   value: "0",
                                   comment: "[aggregated]",
                               }))

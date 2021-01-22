@@ -102,6 +102,15 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
         }
     };
 
+    const changeIgnoreDuplicateExistingValues = (ignoreDuplicateExistingValues: boolean) => {
+        onChange(
+            syncRule.updateDataParams({
+                ...dataParams,
+                ignoreDuplicateExistingValues,
+            })
+        );
+    };
+
     return (
         <React.Fragment>
             <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
@@ -194,6 +203,22 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
                     }
                 />
             </div>
+
+            {(syncRule.type === "events" || syncRule.type === "aggregated") && (
+                <div>
+                    <Toggle
+                        label={
+                            syncRule.type === "events"
+                                ? i18n.t(
+                                      "Ignore data with same value on destination (only for program indicators)"
+                                  )
+                                : i18n.t("Ignore data with same value on destination")
+                        }
+                        onValueChange={changeIgnoreDuplicateExistingValues}
+                        value={dataParams.ignoreDuplicateExistingValues ?? false}
+                    />
+                </div>
+            )}
         </React.Fragment>
     );
 };

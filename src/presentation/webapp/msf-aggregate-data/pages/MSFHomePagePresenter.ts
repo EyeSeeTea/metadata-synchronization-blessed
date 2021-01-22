@@ -34,16 +34,16 @@ export async function executeAggregateData(
         }
     };
 
-    const eventSyncRules = await getSyncRules(compositionRoot, advancedSettings, msfSettings);
+    addEventToProgress(i18n.t(`Retrieving information from the system...`));
 
-    const validationErrors = msfSettings.checkInPreviousPeriods
-        ? await validatePreviousDataValues(
-              compositionRoot,
-              eventSyncRules,
-              msfSettings,
-              addEventToProgress
-          )
-        : [];
+    const syncRules = await getSyncRules(compositionRoot, advancedSettings, msfSettings);
+
+    const validationErrors = await validatePreviousDataValues(
+        compositionRoot,
+        syncRules,
+        msfSettings,
+        addEventToProgress
+    );
 
     if (validationErrors.length > 0) {
         onValidationError(validationErrors);
@@ -70,10 +70,10 @@ export async function executeAggregateData(
 
         const runAnalyticsIsRequired =
             msfSettings.runAnalytics === "by-sync-rule-settings"
-                ? eventSyncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
+                ? syncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
                 : msfSettings.runAnalytics === "true";
 
-        const rulesWithoutRunAnalylics = eventSyncRules.map(rule =>
+        const rulesWithoutRunAnalylics = syncRules.map(rule =>
             rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
         );
 
@@ -99,6 +99,8 @@ async function validatePreviousDataValues(
     msfSettings: MSFSettings,
     addEventToProgress: (event: string) => void
 ): Promise<string[]> {
+    if (!msfSettings.checkInPreviousPeriods) return [];
+
     addEventToProgress(i18n.t(`Checking data values in previous periods ....`));
 
     const validationsErrors = await promiseMap(syncRules, async rule => {
