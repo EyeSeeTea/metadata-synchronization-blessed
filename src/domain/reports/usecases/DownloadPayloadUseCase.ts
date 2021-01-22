@@ -1,54 +1,54 @@
 import _ from "lodash";
 import moment from "moment";
+import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
-import { SynchronizationResult } from "../entities/SynchronizationResult";
 
 export class DownloadPayloadUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(reports: SynchronizationReport[]): Promise<void> {
-        const files = await promiseMap(reports, async report => {
+        const date = moment().format("YYYYMMDDHHmm");
+
+        const fetchPayload = async (report: SynchronizationReport) => {
             const syncRule = await this.getSyncRule(report.syncRule);
             const results = report.getResults().filter(({ payload }) => !!payload);
-            if (results.length === 0) return;
 
-            const buildName = (result?: SynchronizationResult) =>
-                _([
+            return results.map(result => ({
+                name: _([
                     "synchronization",
                     syncRule?.name,
                     result?.type,
                     result?.instance.name,
-                    moment(report.date).format("YYYYMMDDHHmm"),
+                    date,
                 ])
                     .compact()
-                    .kebabCase();
-
-            if (results.length === 1) {
-                this.repositoryFactory
-                    .downloadRepository()
-                    .downloadFile(buildName(results[0]), results[0].payload);
-                return;
-            }
-
-            return results.map(result => ({
-                name: buildName(result),
+                    .kebabCase(),
                 content: result.payload,
             }));
-        });
+        };
 
-        await this.repositoryFactory
-            .downloadRepository()
-            .downloadZippedFiles(
-                `synchronization-${moment().format("YYYYMMDDHHmm")}`,
-                _(files).compact().flatten().value()
-            );
+        const files = _(await promiseMap(reports, fetchPayload))
+            .compact()
+            .flatten()
+            .value();
+
+        if (files.length === 1) {
+            this.repositoryFactory
+                .downloadRepository()
+                .downloadFile(files[0].name, files[0].content);
+        } else {
+            await this.repositoryFactory
+                .downloadRepository()
+                .downloadZippedFiles(`synchronization-${moment().format("YYYYMMDDHHmm")}`, files);
+        }
     }
 
+    @cache()
     private async getSyncRule(id?: string): Promise<SynchronizationRule | undefined> {
         if (!id) return undefined;
 
