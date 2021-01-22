@@ -321,23 +321,24 @@ const getOriginName = (source: PublicInstance | Store) => {
         return instance.name;
     }
 };
+
+const getPeriodText = (period: Period) => {
+    const formatDate = (date?: Date) => moment(date).format("YYYY-MM-DD");
+
+    return `${availablePeriods[period.type].name} ${
+        period.type === "FIXED"
+            ? `- start: ${formatDate(period.startDate)} - end: ${formatDate(period.endDate)}`
+            : ""
+    }`;
+};
+
 async function deletePreviousDataValues(
     compositionRoot: CompositionRoot,
     targetInstances: string[],
-    newBuilder: SynchronizationBuilder,
+    builder: SynchronizationBuilder,
     msfSettings: MSFSettings,
     addEventToProgress: (event: string) => void
 ) {
-    const getPeriodText = (period: Period) => {
-        const formatDate = (date?: Date) => moment(date).format("YYYY-MM-DD");
-
-        return `${availablePeriods[period.type].name} ${
-            period.type === "FIXED"
-                ? `- start: ${formatDate(period.startDate)} - end: ${formatDate(period.endDate)}`
-                : ""
-        }`;
-    };
-
     for (const instanceId of targetInstances) {
         const instanceResult = await compositionRoot.instances.getById(instanceId);
 
@@ -349,11 +350,11 @@ async function deletePreviousDataValues(
                     })
                 ),
             success: instance => {
-                if (newBuilder.dataParams?.period) {
+                if (builder.dataParams?.period) {
                     const periodResult = Period.create({
-                        type: newBuilder.dataParams.period,
-                        startDate: newBuilder.dataParams.startDate,
-                        endDate: newBuilder.dataParams.endDate,
+                        type: builder.dataParams.period,
+                        startDate: builder.dataParams.startDate,
+                        endDate: builder.dataParams.endDate,
                     });
 
                     periodResult.match({
@@ -370,7 +371,7 @@ async function deletePreviousDataValues(
                                 );
 
                                 compositionRoot.aggregated.delete(
-                                    newBuilder.dataParams?.orgUnitPaths ?? [],
+                                    builder.dataParams?.orgUnitPaths ?? [],
                                     msfSettings.dataElementGroupId,
                                     period,
                                     instance
