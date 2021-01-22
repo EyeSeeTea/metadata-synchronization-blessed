@@ -13,7 +13,7 @@ interface SyncParamsSelectorProps {
 
 const useStyles = makeStyles({
     advancedOptionsTitle: {
-        marginTop: "40px",
+        marginTop: 40,
         fontWeight: 500,
     },
 });
@@ -100,15 +100,6 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
                 })
             );
         }
-    };
-
-    const changeRunAnalytics = (runAnalytics: boolean) => {
-        onChange(
-            syncRule.updateDataParams({
-                ...dataParams,
-                runAnalytics,
-            })
-        );
     };
 
     return (
@@ -203,16 +194,6 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
                     }
                 />
             </div>
-
-            {(syncRule.type === "events" || syncRule.type === "aggregated") && (
-                <div>
-                    <Toggle
-                        label={i18n.t("Run Analytics before sync")}
-                        onValueChange={changeRunAnalytics}
-                        value={dataParams.runAnalytics ?? false}
-                    />
-                </div>
-            )}
         </React.Fragment>
     );
 };

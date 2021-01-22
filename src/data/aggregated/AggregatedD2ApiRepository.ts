@@ -2,6 +2,7 @@ import _ from "lodash";
 import moment from "moment";
 import { Moment } from "moment";
 import { AggregatedPackage } from "../../domain/aggregated/entities/AggregatedPackage";
+import { DataValue } from "../../domain/aggregated/entities/DataValue";
 import { MappedCategoryOption } from "../../domain/aggregated/entities/MappedCategoryOption";
 import { AggregatedRepository } from "../../domain/aggregated/repositories/AggregatedRepository";
 import { DataSyncAggregation, DataSynchronizationParams } from "../../domain/aggregated/types";
@@ -84,16 +85,17 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             allAttributeCategoryOptions,
             attributeCategoryOptions,
             aggregationType,
+            includeAnalyticsZeroValues,
         } = dataParams;
 
         const { startDate, endDate } = buildPeriodFromParams(dataParams);
         const periods = this.buildPeriodsForAggregation(aggregationType, startDate, endDate);
-        const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
+        const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
         const attributeOptionCombo = !allAttributeCategoryOptions
             ? attributeCategoryOptions
             : undefined;
 
-        if (dimensionIds.length === 0 || orgUnit.length === 0) {
+        if (dimensionIds.length === 0 || orgUnits.length === 0) {
             return { dataValues: [] };
         } else if (aggregationType) {
             const result = await promiseMap(_.chunk(periods, 300), period =>
@@ -103,7 +105,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                             dimension: _.compact([
                                 `dx:${ids.join(";")}`,
                                 `pe:${period.join(";")}`,
-                                `ou:${orgUnit.join(";")}`,
+                                `ou:${orgUnits.join(";")}`,
                                 includeCategories ? `co` : undefined,
                                 attributeOptionCombo
                                     ? `ao:${attributeOptionCombo.join(";")}`
@@ -115,12 +117,12 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                 })
             );
 
-            const defaultCategoryOptionCombo = await this.getDefaultIds("categoryOptionCombos");
+            const [defaultCategoryOptionCombo] = await this.getDefaultIds("categoryOptionCombos");
 
-            const dataValues = _(result)
+            const analyticsValues = _(result)
                 .flatten()
-                .map(({ dataValues }) =>
-                    dataValues?.map(
+                .map(({ dataValues = [] }: AggregatedPackage): DataValue[] =>
+                    dataValues.map(
                         ({
                             dataElement,
                             period,
@@ -137,9 +139,9 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                             comment,
                             attributeOptionCombo,
                             // Special scenario: We allow having dataElement.categoryOptionCombo in indicators
-                            categoryOptionCombo:
-                                _.last(categoryOptionCombo?.split(".")) ??
-                                defaultCategoryOptionCombo[0],
+                            categoryOptionCombo: includeCategories
+                                ? categoryOptionCombo
+                                : defaultCategoryOptionCombo,
                         })
                     )
                 )
@@ -147,7 +149,33 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                 .compact()
                 .value();
 
-            return { dataValues };
+            const zeroValues: DataValue[] =
+                includeAnalyticsZeroValues && !includeCategories
+                    ? _.flatMap(dimensionIds, dataElement =>
+                          _.flatMap(periods, period =>
+                              _.flatMap(orgUnits, orgUnit => ({
+                                  dataElement,
+                                  period,
+                                  orgUnit,
+                                  categoryOptionCombo: defaultCategoryOptionCombo,
+                                  value: "0",
+                                  comment: "[aggregated]",
+                              }))
+                          )
+                      )
+                    : [];
+
+            const extraValues = zeroValues.filter(
+                ({ dataElement, period, orgUnit, categoryOptionCombo }) =>
+                    !_.find(analyticsValues, {
+                        dataElement,
+                        period,
+                        orgUnit,
+                        categoryOptionCombo,
+                    })
+            );
+
+            return { dataValues: [...analyticsValues, ...extraValues] };
         } else {
             throw new Error("Aggregated syncronization requires a valid aggregation type");
         }
