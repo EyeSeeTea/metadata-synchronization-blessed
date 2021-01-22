@@ -37,6 +37,7 @@ import { getFilterData, getOrgUnitSubtree } from "./utils";
 export type MetadataTableFilters =
     | "group"
     | "level"
+    | "program"
     | "orgUnit"
     | "lastUpdated"
     | "onlySelected"
@@ -124,7 +125,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     allowChangingResponsible = false,
     showResponsible = true,
     externalFilterComponents,
-    viewFilters = ["group", "level", "orgUnit", "lastUpdated", "onlySelected"],
+    viewFilters = ["group", "level", "program", "orgUnit", "lastUpdated", "onlySelected"],
     ...rest
 }) => {
     const { compositionRoot, api: defaultApi } = useAppContext();
@@ -163,6 +164,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
     const [groupFilterData, setGroupFilterData] = useState<NamedRef[]>([]);
     const [levelFilterData, setLevelFilterData] = useState<NamedRef[]>([]);
+    const [programFilterData, setProgramFilterData] = useState<NamedRef[]>([]);
 
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [pager, setPager] = useState<Partial<TablePagination>>({});
@@ -196,6 +198,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         updateFilters({
             group: { type: model.getGroupFilterName(), value },
         });
+    };
+
+    const changeProgramFilter = (program: string) => {
+        updateFilters({ program });
     };
 
     const changeLevelFilter = (level: string) => {
@@ -306,6 +312,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         label={i18n.t("{{displayName}} Level", {
                             displayName: model.getModelName(),
                         })}
+                    />
+                </div>
+            )}
+
+            {viewFilters.includes("program") && model.getCollectionName() === "programIndicators" && (
+                <div className={classes.groupFilter}>
+                    <Dropdown
+                        items={programFilterData}
+                        onValueChange={changeProgramFilter}
+                        value={filters.program ?? ""}
+                        label={i18n.t("Program")}
                     />
                 </div>
             )}
@@ -490,6 +507,12 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         }))
                     );
                 }
+            );
+        }
+
+        if (model.getCollectionName() === "programIndicators") {
+            getFilterData("programs", "group", api.apiPath, api).then(({ objects }) =>
+                setProgramFilterData(objects)
             );
         }
     }, [api, model]);

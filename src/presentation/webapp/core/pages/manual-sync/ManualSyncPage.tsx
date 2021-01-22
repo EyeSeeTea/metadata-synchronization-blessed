@@ -23,6 +23,7 @@ import {
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
     IndicatorMappedModel,
+    ProgramIndicatorMappedModel,
 } from "../../../../../models/dhis/mapping";
 import {
     DataElementGroupModel,
@@ -70,7 +71,11 @@ const config: Record<
     },
     events: {
         title: i18n.t("Events Synchronization"),
-        models: [EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel],
+        models: [
+            EventProgramWithDataElementsModel,
+            EventProgramWithIndicatorsModel,
+            ProgramIndicatorMappedModel,
+        ],
         childrenKeys: ["dataElements", "programIndicators"],
     },
     deleted: {
