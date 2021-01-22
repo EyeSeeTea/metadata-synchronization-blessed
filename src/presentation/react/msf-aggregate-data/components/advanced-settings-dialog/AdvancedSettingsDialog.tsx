@@ -48,7 +48,10 @@ export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
     };
 
     const handleSave = () => {
-        if (!objectWithPeriod) return;
+        if (!objectWithPeriod) {
+            onSave({ period: undefined });
+            return;
+        }
 
         const periodValidation = Period.create({
             type: objectWithPeriod.period,

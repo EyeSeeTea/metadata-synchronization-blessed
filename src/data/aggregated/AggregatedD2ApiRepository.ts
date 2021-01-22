@@ -273,24 +273,26 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
     }
 
     public async save(
-        data: object,
-        additionalParams: DataImportParams | undefined
+        data: AggregatedPackage,
+        params: DataImportParams | undefined
     ): Promise<SynchronizationResult> {
         try {
             const response = await this.api
+                // TODO: Use this.api.dataValues.postSet
                 .post<DataValueSetsPostResponse>(
                     "/dataValueSets",
                     {
-                        idScheme: "UID",
-                        dataElementIdScheme: "UID",
-                        orgUnitIdScheme: "UID",
-                        eventIdScheme: "UID",
-                        preheatCache: false,
-                        skipExistingCheck: false,
-                        format: "json",
-                        async: false,
-                        dryRun: false,
-                        ...additionalParams,
+                        idScheme: params?.idScheme ?? "UID",
+                        dataElementIdScheme: params?.dataElementIdScheme ?? "UID",
+                        orgUnitIdScheme: params?.orgUnitIdScheme ?? "UID",
+                        preheatCache: params?.preheatCache ?? false,
+                        skipExistingCheck: params?.skipExistingCheck ?? false,
+                        skipAudit: params?.skipAudit ?? false,
+                        format: params?.format ?? "json",
+                        async: params?.async ?? false,
+                        dryRun: params?.dryRun ?? false,
+                        // TODO: Use importStrategy here
+                        strategy: params?.strategy ?? "NEW_AND_UPDATES",
                     },
                     data
                 )

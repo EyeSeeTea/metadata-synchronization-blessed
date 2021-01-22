@@ -3,6 +3,7 @@ import moment from "moment";
 import { buildPeriodFromParams } from "../../../../domain/aggregated/utils";
 import { Period } from "../../../../domain/common/entities/Period";
 import { PublicInstance } from "../../../../domain/instance/entities/Instance";
+import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../domain/stores/entities/Store";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
@@ -22,7 +23,7 @@ export async function executeAggregateData(
     msfSettings: MSFSettings,
     onProgressChange: (progress: string[]) => void,
     onValidationError: (errors: string[]) => void
-) {
+): Promise<SynchronizationReport[]> {
     let syncProgress: string[] = [];
 
     const addEventToProgress = (event: string) => {
@@ -47,46 +48,49 @@ export async function executeAggregateData(
 
     if (validationErrors.length > 0) {
         onValidationError(validationErrors);
-    } else {
-        addEventToProgress(i18n.t(`Starting Aggregate Data...`));
-
-        if (isGlobalInstance && msfSettings.runAnalytics === "false") {
-            const lastExecution = await getLastAnalyticsExecution(compositionRoot);
-
-            addEventToProgress(
-                i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
-                    lastExecution,
-                    nsSeparator: false,
-                })
-            );
-        }
-        if (msfSettings.deleteDataValuesBeforeSync && !msfSettings.dataElementGroupId) {
-            addEventToProgress(
-                i18n.t(
-                    `Deleting previous data values is not possible because data element group is not defined, please contact with your administrator`
-                )
-            );
-        }
-
-        const runAnalyticsIsRequired =
-            msfSettings.runAnalytics === "by-sync-rule-settings"
-                ? syncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
-                : msfSettings.runAnalytics === "true";
-
-        const rulesWithoutRunAnalylics = syncRules.map(rule =>
-            rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
-        );
-
-        if (runAnalyticsIsRequired) {
-            await runAnalytics(compositionRoot, addEventToProgress, msfSettings.analyticsYears);
-        }
-
-        for (const syncRule of rulesWithoutRunAnalylics) {
-            await executeSyncRule(compositionRoot, syncRule, addEventToProgress, msfSettings);
-        }
-
-        addEventToProgress(i18n.t(`Finished Aggregate Data`));
+        return [];
     }
+
+    addEventToProgress(i18n.t(`Starting Aggregate Data...`));
+
+    if (isGlobalInstance && msfSettings.runAnalytics === "false") {
+        const lastExecution = await getLastAnalyticsExecution(compositionRoot);
+
+        addEventToProgress(
+            i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
+                lastExecution,
+                nsSeparator: false,
+            })
+        );
+    }
+    if (msfSettings.deleteDataValuesBeforeSync && !msfSettings.dataElementGroupId) {
+        addEventToProgress(
+            i18n.t(
+                `Deleting previous data values is not possible because data element group is not defined, please contact with your administrator`
+            )
+        );
+    }
+
+    const runAnalyticsIsRequired =
+        msfSettings.runAnalytics === "by-sync-rule-settings"
+            ? syncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
+            : msfSettings.runAnalytics === "true";
+
+    const rulesWithoutRunAnalylics = syncRules.map(rule =>
+        rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
+    );
+
+    if (runAnalyticsIsRequired) {
+        await runAnalytics(compositionRoot, addEventToProgress, msfSettings.analyticsYears);
+    }
+
+    const reports = await promiseMap(rulesWithoutRunAnalylics, syncRule =>
+        executeSyncRule(compositionRoot, syncRule, addEventToProgress, msfSettings)
+    );
+
+    addEventToProgress(i18n.t(`Finished Aggregate Data`));
+
+    return reports;
 }
 
 export function isGlobalInstance(): boolean {
@@ -148,7 +152,7 @@ async function executeSyncRule(
     rule: SynchronizationRule,
     addEventToProgress: (event: string) => void,
     msfSettings: MSFSettings
-): Promise<void> {
+): Promise<SynchronizationReport> {
     const { name, builder, id: syncRule, type = "metadata", targetInstances } = rule;
 
     addEventToProgress(i18n.t(`Starting Sync Rule {{name}} ...`, { name }));
@@ -185,19 +189,27 @@ async function executeSyncRule(
                 const destination = `${i18n.t("Destination")}: ${result.instance.name}`;
                 addEventToProgress(`${origin} ${originPackage} -> ${destination}`);
 
-                const status = `${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`;
-                const message = result.message ?? "";
-                addEventToProgress(`${status} - ${message}`);
+                addEventToProgress(
+                    _.compact([
+                        `${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`,
+                        result.message,
+                    ]).join(" - ")
+                );
 
                 result.errors?.forEach(error => {
                     addEventToProgress(error.message);
                 });
             });
+
             addEventToProgress(i18n.t(`Finished Sync Rule {{name}}`, { name }));
+
+            return syncReport;
         } else if (done) {
             addEventToProgress(i18n.t(`Finished Sync Rule {{name}} with errors`, { name }));
         }
     }
+
+    return SynchronizationReport.create();
 }
 
 const getTypeName = (reportType: SynchronizationType, syncType: string) => {
@@ -272,17 +284,32 @@ async function getSyncRules(
                 )
                 .toPairs()
                 .map(([date, paths]) => {
+                    const minDate = moment(date);
+
                     // Keep original dates but update org unit paths if is before current date
-                    if (date === "undefined" || moment(date).isSameOrBefore(startDate)) {
-                        return rule.updateDataSyncOrgUnitPaths(paths);
+                    if (date === "undefined" || minDate.isSameOrBefore(startDate)) {
+                        return rule
+                            .updateName(
+                                `${rule.name} (${startDate.format(
+                                    "DD-MM-YYYY"
+                                )} to ${endDate.format("DD-MM-YYYY")})`
+                            )
+                            .updateDataSyncOrgUnitPaths(paths);
                     }
 
                     // Update start date if minimum date is after current one
-                    return rule.updateDataSyncOrgUnitPaths(paths).updateBuilderDataParams({
-                        period: "FIXED",
-                        startDate: new Date(date),
-                        endDate: endDate.toDate(),
-                    });
+                    return rule
+                        .updateName(
+                            `${rule.name} (${minDate.format("DD-MM-YYYY")} to ${endDate.format(
+                                "DD-MM-YYYY"
+                            )})`
+                        )
+                        .updateDataSyncOrgUnitPaths(paths)
+                        .updateBuilderDataParams({
+                            period: "FIXED",
+                            startDate: minDate.toDate(),
+                            endDate: endDate.toDate(),
+                        });
                 })
                 .value();
         })
@@ -321,23 +348,24 @@ const getOriginName = (source: PublicInstance | Store) => {
         return instance.name;
     }
 };
+
+const getPeriodText = (period: Period) => {
+    const formatDate = (date?: Date) => moment(date).format("YYYY-MM-DD");
+
+    return `${availablePeriods[period.type].name} ${
+        period.type === "FIXED"
+            ? `- start: ${formatDate(period.startDate)} - end: ${formatDate(period.endDate)}`
+            : ""
+    }`;
+};
+
 async function deletePreviousDataValues(
     compositionRoot: CompositionRoot,
     targetInstances: string[],
-    newBuilder: SynchronizationBuilder,
+    builder: SynchronizationBuilder,
     msfSettings: MSFSettings,
     addEventToProgress: (event: string) => void
 ) {
-    const getPeriodText = (period: Period) => {
-        const formatDate = (date?: Date) => moment(date).format("YYYY-MM-DD");
-
-        return `${availablePeriods[period.type].name} ${
-            period.type === "FIXED"
-                ? `- start: ${formatDate(period.startDate)} - end: ${formatDate(period.endDate)}`
-                : ""
-        }`;
-    };
-
     for (const instanceId of targetInstances) {
         const instanceResult = await compositionRoot.instances.getById(instanceId);
 
@@ -349,11 +377,11 @@ async function deletePreviousDataValues(
                     })
                 ),
             success: instance => {
-                if (newBuilder.dataParams?.period) {
+                if (builder.dataParams?.period) {
                     const periodResult = Period.create({
-                        type: newBuilder.dataParams.period,
-                        startDate: newBuilder.dataParams.startDate,
-                        endDate: newBuilder.dataParams.endDate,
+                        type: builder.dataParams.period,
+                        startDate: builder.dataParams.startDate,
+                        endDate: builder.dataParams.endDate,
                     });
 
                     periodResult.match({
@@ -370,7 +398,7 @@ async function deletePreviousDataValues(
                                 );
 
                                 compositionRoot.aggregated.delete(
-                                    newBuilder.dataParams?.orgUnitPaths ?? [],
+                                    builder.dataParams?.orgUnitPaths ?? [],
                                     msfSettings.dataElementGroupId,
                                     period,
                                     instance

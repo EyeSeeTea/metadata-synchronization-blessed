@@ -1,10 +1,6 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import {
-    aggregatedTransformations,
-    eventsTransformations,
-} from "../../../data/transformations/PackageTransformations";
 import { D2Program } from "../../../types/d2-api";
 import { debug } from "../../../utils/debug";
 import {
@@ -18,10 +14,8 @@ import { Instance } from "../../instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
-import {
-    GenericSyncUseCase,
-    SynchronizationPayload,
-} from "../../synchronization/usecases/GenericSyncUseCase";
+import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
+import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
 import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
@@ -88,19 +82,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const { dataParams = {} } = this.builder;
 
         const payload = await this.mapPayload(instance, { events });
-
-        if (!instance.apiVersion) {
-            throw new Error(
-                "Necessary api version of receiver instance to apply transformations to package is undefined"
-            );
-        }
-
-        const versionedPayloadPackage = this.getTransformationRepository().mapPackageTo(
-            instance.apiVersion,
-            payload,
-            eventsTransformations
-        );
-        debug("Events package", { events, payload, versionedPayloadPackage });
+        debug("Events package", { events, payload });
 
         const eventsRepository = await this.getEventsRepository(instance);
         const syncResult = await eventsRepository.save(payload, dataParams);
@@ -131,19 +113,11 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             ? await aggregatedSync.mapPayload(instance, await aggregatedSync.buildPayload(instance))
             : { dataValues: [] };
 
-        const filteredPayload = aggregatedSync.filterPayload(mappedPayload, existingPayload);
-
-        const payload = this.getTransformationRepository().mapPackageTo(
-            instance.apiVersion,
-            filteredPayload,
-            aggregatedTransformations
-        );
-
+        const payload = aggregatedSync.filterPayload(mappedPayload, existingPayload);
         debug("Program indicator package", {
             originalPayload: { dataValues },
             mappedPayload,
             existingPayload,
-            filteredPayload,
             payload,
         });
 

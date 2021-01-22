@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-01-21T11:31:14.715Z\n"
-"PO-Revision-Date: 2021-01-21T11:31:14.715Z\n"
+"POT-Creation-Date: 2021-01-22T09:15:45.194Z\n"
+"PO-Revision-Date: 2021-01-22T09:15:45.194Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -1835,6 +1835,9 @@ msgid "Aggregate Data"
 msgstr ""
 
 msgid "Synchronization Progress"
+msgstr ""
+
+msgid "Download payload"
 msgstr ""
 
 msgid "Advanced Settings"
