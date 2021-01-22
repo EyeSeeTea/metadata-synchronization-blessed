@@ -31,8 +31,6 @@ export class DownloadWebRepository implements DownloadRepository {
                 zip.file(`${item.name}.json`, blob);
             });
 
-        console.log(items);
-
         const blob = await zip.generateAsync({ type: "blob" });
         FileSaver.saveAs(blob, name);
     }
