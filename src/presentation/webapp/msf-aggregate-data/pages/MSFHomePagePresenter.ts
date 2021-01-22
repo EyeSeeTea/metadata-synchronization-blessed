@@ -189,9 +189,12 @@ async function executeSyncRule(
                 const destination = `${i18n.t("Destination")}: ${result.instance.name}`;
                 addEventToProgress(`${origin} ${originPackage} -> ${destination}`);
 
-                const status = `${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`;
-                const message = result.message ?? "";
-                addEventToProgress(`${status} - ${message}`);
+                addEventToProgress(
+                    _.compact([
+                        `${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`,
+                        result.message,
+                    ]).join(" - ")
+                );
 
                 result.errors?.forEach(error => {
                     addEventToProgress(error.message);
@@ -281,17 +284,32 @@ async function getSyncRules(
                 )
                 .toPairs()
                 .map(([date, paths]) => {
+                    const minDate = moment(date);
+
                     // Keep original dates but update org unit paths if is before current date
-                    if (date === "undefined" || moment(date).isSameOrBefore(startDate)) {
-                        return rule.updateDataSyncOrgUnitPaths(paths);
+                    if (date === "undefined" || minDate.isSameOrBefore(startDate)) {
+                        return rule
+                            .updateName(
+                                `${rule.name} (${startDate.format("DD-MM-YYYY")} - ${endDate.format(
+                                    "DD-MM-YYYY"
+                                )})`
+                            )
+                            .updateDataSyncOrgUnitPaths(paths);
                     }
 
                     // Update start date if minimum date is after current one
-                    return rule.updateDataSyncOrgUnitPaths(paths).updateBuilderDataParams({
-                        period: "FIXED",
-                        startDate: new Date(date),
-                        endDate: endDate.toDate(),
-                    });
+                    return rule
+                        .updateName(
+                            `${rule.name} (${minDate.format("DD-MM-YYYY")} - ${endDate.format(
+                                "DD-MM-YYYY"
+                            )})`
+                        )
+                        .updateDataSyncOrgUnitPaths(paths)
+                        .updateBuilderDataParams({
+                            period: "FIXED",
+                            startDate: minDate.toDate(),
+                            endDate: endDate.toDate(),
+                        });
                 })
                 .value();
         })
