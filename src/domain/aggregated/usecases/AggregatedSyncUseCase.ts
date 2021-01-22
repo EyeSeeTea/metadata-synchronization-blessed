@@ -13,6 +13,7 @@ import {
     DataElementGroupSet,
     DataSet,
     Indicator,
+    ProgramIndicator,
 } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
@@ -91,6 +92,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
     private buildAnalyticsPayload = async (remoteInstance?: Instance) => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
 
+        // TODO: All these extract metadata methods can be combined if properly typed
         const { dataSets = [] } = await this.extractMetadata<DataSet>(remoteInstance);
         const { dataElementGroups = [] } = await this.extractMetadata<DataElementGroup>(
             remoteInstance
@@ -100,9 +102,12 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         );
         const { dataElements = [] } = await this.extractMetadata<DataElement>(remoteInstance);
         const { indicators = [] } = await this.extractMetadata<Indicator>(remoteInstance);
+        const { programIndicators = [] } = await this.extractMetadata<ProgramIndicator>(
+            remoteInstance
+        );
 
         const dataElementIds = dataElements.map(({ id }) => id);
-        const indicatorIds = indicators.map(({ id }) => id);
+        const indicatorIds = [...indicators, ...programIndicators].map(({ id }) => id);
         const dataSetIds = _.flatten(
             dataSets.map(({ dataSetElements }) =>
                 dataSetElements.map(({ dataElement }) => dataElement.id)
