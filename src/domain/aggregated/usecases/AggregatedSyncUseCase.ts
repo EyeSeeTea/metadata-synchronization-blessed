@@ -323,10 +323,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         return _.flatten(result);
     }
 
-    private filterPayload(
-        payload: AggregatedPackage,
-        filter: AggregatedPackage
-    ): AggregatedPackage {
+    public filterPayload(payload: AggregatedPackage, filter: AggregatedPackage): AggregatedPackage {
         const dataValues = _.differenceBy(
             payload.dataValues ?? [],
             filter.dataValues ?? [],

@@ -1,7 +1,10 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { eventsTransformations } from "../../../data/transformations/PackageTransformations";
+import {
+    aggregatedTransformations,
+    eventsTransformations,
+} from "../../../data/transformations/PackageTransformations";
 import { D2Program } from "../../../types/d2-api";
 import { debug } from "../../../utils/debug";
 import {
@@ -121,8 +124,28 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             this.localInstance,
             this.encryptionKey
         );
-        const payload = await aggregatedSync.mapPayload(instance, { dataValues });
-        debug("Program indicator package", { dataValues, payload });
+
+        const mappedPayload = await aggregatedSync.mapPayload(instance, { dataValues });
+
+        const existingPayload = dataParams.ignoreDuplicateExistingValues
+            ? await aggregatedSync.mapPayload(instance, await aggregatedSync.buildPayload(instance))
+            : { dataValues: [] };
+
+        const filteredPayload = aggregatedSync.filterPayload(mappedPayload, existingPayload);
+
+        const payload = this.getTransformationRepository().mapPackageTo(
+            instance.apiVersion,
+            filteredPayload,
+            aggregatedTransformations
+        );
+
+        debug("Program indicator package", {
+            originalPayload: { dataValues },
+            mappedPayload,
+            existingPayload,
+            filteredPayload,
+            payload,
+        });
 
         const aggregatedRepository = await this.getAggregatedRepository(instance);
         const syncResult = await aggregatedRepository.save(payload, dataParams);
