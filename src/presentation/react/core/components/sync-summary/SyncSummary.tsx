@@ -196,7 +196,7 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
 
     const downloadJSON = async () => {
         loading.show(true, i18n.t("Generating JSON"));
-        await compositionRoot.reports.downloadPayloads(report);
+        await compositionRoot.reports.downloadPayloads([report]);
         loading.reset();
     };
 

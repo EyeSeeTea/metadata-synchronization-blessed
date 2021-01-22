@@ -3,6 +3,7 @@ import moment from "moment";
 import { buildPeriodFromParams } from "../../../../domain/aggregated/utils";
 import { Period } from "../../../../domain/common/entities/Period";
 import { PublicInstance } from "../../../../domain/instance/entities/Instance";
+import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../domain/stores/entities/Store";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
@@ -22,7 +23,7 @@ export async function executeAggregateData(
     msfSettings: MSFSettings,
     onProgressChange: (progress: string[]) => void,
     onValidationError: (errors: string[]) => void
-) {
+): Promise<SynchronizationReport[]> {
     let syncProgress: string[] = [];
 
     const addEventToProgress = (event: string) => {
@@ -47,46 +48,49 @@ export async function executeAggregateData(
 
     if (validationErrors.length > 0) {
         onValidationError(validationErrors);
-    } else {
-        addEventToProgress(i18n.t(`Starting Aggregate Data...`));
-
-        if (isGlobalInstance && msfSettings.runAnalytics === "false") {
-            const lastExecution = await getLastAnalyticsExecution(compositionRoot);
-
-            addEventToProgress(
-                i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
-                    lastExecution,
-                    nsSeparator: false,
-                })
-            );
-        }
-        if (msfSettings.deleteDataValuesBeforeSync && !msfSettings.dataElementGroupId) {
-            addEventToProgress(
-                i18n.t(
-                    `Deleting previous data values is not possible because data element group is not defined, please contact with your administrator`
-                )
-            );
-        }
-
-        const runAnalyticsIsRequired =
-            msfSettings.runAnalytics === "by-sync-rule-settings"
-                ? syncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
-                : msfSettings.runAnalytics === "true";
-
-        const rulesWithoutRunAnalylics = syncRules.map(rule =>
-            rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
-        );
-
-        if (runAnalyticsIsRequired) {
-            await runAnalytics(compositionRoot, addEventToProgress, msfSettings.analyticsYears);
-        }
-
-        for (const syncRule of rulesWithoutRunAnalylics) {
-            await executeSyncRule(compositionRoot, syncRule, addEventToProgress, msfSettings);
-        }
-
-        addEventToProgress(i18n.t(`Finished Aggregate Data`));
+        return [];
     }
+
+    addEventToProgress(i18n.t(`Starting Aggregate Data...`));
+
+    if (isGlobalInstance && msfSettings.runAnalytics === "false") {
+        const lastExecution = await getLastAnalyticsExecution(compositionRoot);
+
+        addEventToProgress(
+            i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
+                lastExecution,
+                nsSeparator: false,
+            })
+        );
+    }
+    if (msfSettings.deleteDataValuesBeforeSync && !msfSettings.dataElementGroupId) {
+        addEventToProgress(
+            i18n.t(
+                `Deleting previous data values is not possible because data element group is not defined, please contact with your administrator`
+            )
+        );
+    }
+
+    const runAnalyticsIsRequired =
+        msfSettings.runAnalytics === "by-sync-rule-settings"
+            ? syncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
+            : msfSettings.runAnalytics === "true";
+
+    const rulesWithoutRunAnalylics = syncRules.map(rule =>
+        rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
+    );
+
+    if (runAnalyticsIsRequired) {
+        await runAnalytics(compositionRoot, addEventToProgress, msfSettings.analyticsYears);
+    }
+
+    const reports = await promiseMap(rulesWithoutRunAnalylics, syncRule =>
+        executeSyncRule(compositionRoot, syncRule, addEventToProgress, msfSettings)
+    );
+
+    addEventToProgress(i18n.t(`Finished Aggregate Data`));
+
+    return reports;
 }
 
 export function isGlobalInstance(): boolean {
@@ -148,7 +152,7 @@ async function executeSyncRule(
     rule: SynchronizationRule,
     addEventToProgress: (event: string) => void,
     msfSettings: MSFSettings
-): Promise<void> {
+): Promise<SynchronizationReport> {
     const { name, builder, id: syncRule, type = "metadata", targetInstances } = rule;
 
     addEventToProgress(i18n.t(`Starting Sync Rule {{name}} ...`, { name }));
@@ -193,11 +197,16 @@ async function executeSyncRule(
                     addEventToProgress(error.message);
                 });
             });
+
             addEventToProgress(i18n.t(`Finished Sync Rule {{name}}`, { name }));
+
+            return syncReport;
         } else if (done) {
             addEventToProgress(i18n.t(`Finished Sync Rule {{name}} with errors`, { name }));
         }
     }
+
+    return SynchronizationReport.create();
 }
 
 const getTypeName = (reportType: SynchronizationType, syncType: string) => {

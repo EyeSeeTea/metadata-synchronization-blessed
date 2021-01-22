@@ -2,6 +2,7 @@ import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@materi
 import { ConfirmationDialog } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import i18n from "../../../../locales";
 import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
@@ -18,15 +19,16 @@ import {
 import { executeAggregateData, isGlobalInstance } from "./MSFHomePagePresenter";
 
 export const MSFHomePage: React.FC = () => {
+    const { api, compositionRoot } = useAppContext();
     const classes = useStyles();
     const history = useHistory();
-    const { api, compositionRoot } = useAppContext();
 
     const [running, setRunning] = useState<boolean>(false);
     const [syncProgress, setSyncProgress] = useState<string[]>([]);
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
     const [msfValidationErrors, setMsfValidationErrors] = useState<string[]>();
+    const [syncReports, setSyncReports] = useState<SynchronizationReport[]>([]);
     const [advancedSettings, setAdvancedSettings] = useState<AdvancedSettings>({
         period: undefined,
     });
@@ -50,7 +52,9 @@ export const MSFHomePage: React.FC = () => {
 
     const handleAggregateData = async (skipCheckInPreviousPeriods?: boolean) => {
         setRunning(true);
-        await executeAggregateData(
+        setSyncReports([]);
+
+        const reports = await executeAggregateData(
             compositionRoot,
             advancedSettings,
             skipCheckInPreviousPeriods
@@ -59,6 +63,8 @@ export const MSFHomePage: React.FC = () => {
             progress => setSyncProgress(progress),
             errors => setMsfValidationErrors(errors)
         );
+
+        setSyncReports(reports);
         setRunning(false);
     };
 
@@ -96,6 +102,10 @@ export const MSFHomePage: React.FC = () => {
         compositionRoot.customData.save(MSFStorageKey, { ...msfSettings, runAnalytics: undefined });
     };
 
+    const handleDownloadPayload = async () => {
+        await compositionRoot.reports.downloadPayloads(syncReports);
+    };
+
     return (
         <React.Fragment>
             <PageHeader title={i18n.t("Aggregate Data For HMIS")} />
@@ -114,14 +124,25 @@ export const MSFHomePage: React.FC = () => {
 
                     <Box display="flex" flexGrow={2} justifyContent="center">
                         <Paper className={classes.log}>
-                            <List>
-                                <Typography variant="h6" gutterBottom>
-                                    {i18n.t("Synchronization Progress")}
-                                </Typography>
+                            <Typography variant="h6" gutterBottom>
+                                {i18n.t("Synchronization Progress")}
+                            </Typography>
+
+                            <List className={classes.list}>
                                 {syncProgress.map((trace, index) => (
                                     <Typography key={index}>{trace}</Typography>
                                 ))}
                             </List>
+
+                            {syncReports.length > 0 && (
+                                <Button
+                                    className={classes.downloadButton}
+                                    onClick={handleDownloadPayload}
+                                    variant="contained"
+                                >
+                                    {i18n.t("Download payload")}
+                                </Button>
+                            )}
                         </Paper>
                     </Box>
 
@@ -227,11 +248,19 @@ const useStyles = makeStyles((theme: Theme) => ({
         margin: theme.spacing(2),
         padding: theme.spacing(4),
         overflow: "auto",
-        minHeight: 300,
-        maxHeight: 300,
+        minHeight: 400,
+        maxHeight: 400,
     },
     actionButton: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
+    },
+    downloadButton: {
+        margin: theme.spacing(2),
+        float: "right",
+    },
+    list: {
+        height: 275,
+        overflow: "auto",
     },
 }));
