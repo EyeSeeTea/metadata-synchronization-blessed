@@ -1,6 +1,6 @@
 import FileSaver from "file-saver";
 import _ from "lodash";
-import moment from "moment";
+import moment, { unitOfTime } from "moment";
 import {
     MetadataMapping,
     MetadataMappingDictionary,
@@ -40,8 +40,8 @@ export async function getMetadata(
 
 export const availablePeriods = buildObject<{
     name: string;
-    start?: [number, string];
-    end?: [number, string];
+    start?: [number, unitOfTime.DurationConstructor];
+    end?: [number, unitOfTime.DurationConstructor];
 }>()({
     ALL: { name: i18n.t("All time") },
     FIXED: { name: i18n.t("Fixed period") },
@@ -49,8 +49,10 @@ export const availablePeriods = buildObject<{
     YESTERDAY: { name: i18n.t("Yesterday"), start: [1, "day"] },
     LAST_7_DAYS: { name: i18n.t("Last 7 days"), start: [7, "day"], end: [0, "day"] },
     LAST_14_DAYS: { name: i18n.t("Last 14 days"), start: [14, "day"], end: [0, "day"] },
-    THIS_WEEK: { name: i18n.t("This week"), start: [0, "isoWeek"] },
-    LAST_WEEK: { name: i18n.t("Last week"), start: [1, "isoWeek"] },
+    LAST_30_DAYS: { name: i18n.t("Last 30 days"), start: [30, "day"], end: [0, "day"] },
+    LAST_90_DAYS: { name: i18n.t("Last 90 days"), start: [90, "day"], end: [0, "day"] },
+    THIS_WEEK: { name: i18n.t("This week"), start: [0, "week"] },
+    LAST_WEEK: { name: i18n.t("Last week"), start: [1, "week"] },
     THIS_MONTH: { name: i18n.t("This month"), start: [0, "month"] },
     LAST_MONTH: { name: i18n.t("Last month"), start: [1, "month"] },
     THIS_QUARTER: { name: i18n.t("This quarter"), start: [0, "quarter"] },

@@ -17,7 +17,7 @@ export interface ListSyncRuleUseCaseParams {
         targetInstanceFilter?: string;
         enabledFilter?: string;
         lastExecutedFilter?: Date | null;
-        type?: SynchronizationType;
+        types?: SynchronizationType[];
         search?: string;
     };
 }
@@ -43,7 +43,7 @@ export class ListSyncRuleUseCase implements UseCase {
             targetInstanceFilter = null,
             enabledFilter = null,
             lastExecutedFilter = null,
-            type = null,
+            types,
             search,
         } = filters;
 
@@ -70,7 +70,7 @@ export class ListSyncRuleUseCase implements UseCase {
 
         const filteredObjects = _(sortedData)
             .filter(rule => {
-                return _.isNull(type) || rule.type === type;
+                return _.isUndefined(types) || types.includes(rule.type);
             })
             .filter(rule => {
                 return globalAdmin || rule.isVisibleToUser(userInfo);

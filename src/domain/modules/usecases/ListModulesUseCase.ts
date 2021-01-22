@@ -17,9 +17,9 @@ export class ListModulesUseCase implements UseCase {
             .configRepository(instance)
             .getStorageClient();
 
-        const userGroups = await this.repositoryFactory
+        const { userGroups } = await this.repositoryFactory
             .instanceRepository(this.localInstance)
-            .getUserGroups();
+            .getUser();
         const { id: userId } = await this.repositoryFactory
             .instanceRepository(this.localInstance)
             .getUser();

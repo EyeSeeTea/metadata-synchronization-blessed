@@ -5,7 +5,7 @@ import * as permissions from "../../utils/permissions";
 import RouteWithSession from "../react/core/components/auth/RouteWithSession";
 import RouteWithSessionAndAuth from "../react/core/components/auth/RouteWithSessionAndAuth";
 import { useAppContext } from "../react/core/contexts/AppContext";
-import HistoryPage from "./core/pages/history/HistoryPage";
+import { HistoryPage } from "./core/pages/history/HistoryPage";
 import HomePage from "./core/pages/home/HomePage";
 import InstanceCreationPage from "./core/pages/instance-creation/InstanceCreationPage";
 import InstanceListPage from "./core/pages/instance-list/InstanceListPage";
@@ -23,6 +23,7 @@ import SyncRulesCreationPage, {
     SyncRulesCreationParams,
 } from "./core/pages/sync-rules-creation/SyncRulesCreationPage";
 import SyncRulesPage from "./core/pages/sync-rules-list/SyncRulesListPage";
+import { MSFHistoryPage } from "./msf-aggregate-data/pages/MSFHistoryPage";
 import { MSFHomePage } from "./msf-aggregate-data/pages/MSFHomePage";
 
 const Root: React.FC = () => {
@@ -117,6 +118,8 @@ const VariantRoutes: React.FC<{ variant: AppVariant }> = ({ variant }) => {
             return (
                 <Switch>
                     <RouteWithSession path="/msf" exact render={() => <MSFHomePage />} />
+
+                    <RouteWithSession path="/msf/history" render={() => <MSFHistoryPage />} />
 
                     <RouteWithSession
                         path={"/dashboard"}

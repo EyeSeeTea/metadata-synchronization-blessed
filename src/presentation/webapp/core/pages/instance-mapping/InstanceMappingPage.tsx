@@ -20,6 +20,7 @@ import {
     GlobalOptionModel,
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
+    ProgramIndicatorMappedModel,
 } from "../../../../../models/dhis/mapping";
 import MappingTable from "../../../../react/core/components/mapping-table/MappingTable";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
@@ -34,7 +35,11 @@ const config = {
     },
     tracker: {
         title: i18n.t("Program (events) mapping"),
-        models: [EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel],
+        models: [
+            EventProgramWithDataElementsModel,
+            EventProgramWithIndicatorsModel,
+            ProgramIndicatorMappedModel,
+        ],
     },
     orgUnit: {
         title: i18n.t("Organisation unit mapping"),

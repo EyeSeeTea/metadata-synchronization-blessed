@@ -23,6 +23,7 @@ import {
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
     IndicatorMappedModel,
+    ProgramIndicatorMappedModel,
 } from "../../../../../models/dhis/mapping";
 import {
     DataElementGroupModel,
@@ -70,7 +71,11 @@ const config: Record<
     },
     events: {
         title: i18n.t("Events Synchronization"),
-        models: [EventProgramWithDataElementsModel, EventProgramWithIndicatorsModel],
+        models: [
+            EventProgramWithDataElementsModel,
+            EventProgramWithIndicatorsModel,
+            ProgramIndicatorMappedModel,
+        ],
         childrenKeys: ["dataElements", "programIndicators"],
     },
     deleted: {
@@ -304,7 +309,7 @@ const ManualSyncPage: React.FC = () => {
             )}
 
             {!!syncReport && (
-                <SyncSummary response={syncReport} onClose={() => setSyncReport(null)} />
+                <SyncSummary report={syncReport} onClose={() => setSyncReport(null)} />
             )}
 
             {!!pullRequestProps && (

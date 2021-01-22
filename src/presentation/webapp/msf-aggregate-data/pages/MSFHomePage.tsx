@@ -1,71 +1,76 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import i18n from "../../../../locales";
 import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
+import { useAppContext } from "../../../react/core/contexts/AppContext";
+import { AdvancedSettingsDialog } from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
+import { MSFSettingsDialog } from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
 import {
     AdvancedSettings,
-    AdvancedSettingsDialog,
-} from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
-import { useAppContext } from "../../../react/core/contexts/AppContext";
-import {
+    defaultMSFSettings,
     MSFSettings,
-    MSFSettingsDialog,
-} from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
+    MSFStorageKey,
+    PersistedMSFSettings,
+} from "./MSFEntities";
 import { executeAggregateData, isGlobalInstance } from "./MSFHomePagePresenter";
 
-const msfStorage = "msf-storage";
-
 export const MSFHomePage: React.FC = () => {
+    const { api, compositionRoot } = useAppContext();
     const classes = useStyles();
     const history = useHistory();
-    const { api, compositionRoot } = useAppContext();
 
+    const messageList = useRef<HTMLUListElement>(null);
+
+    const [running, setRunning] = useState<boolean>(false);
     const [syncProgress, setSyncProgress] = useState<string[]>([]);
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
     const [msfValidationErrors, setMsfValidationErrors] = useState<string[]>();
+    const [syncReports, setSyncReports] = useState<SynchronizationReport[]>([]);
     const [advancedSettings, setAdvancedSettings] = useState<AdvancedSettings>({
         period: undefined,
-        deleteDataValuesBeforeSync: false,
     });
 
-    const [msfSettings, setMsfSettings] = useState<MSFSettings>({
-        runAnalytics: "by-sync-rule-settings",
-    });
     const [globalAdmin, setGlobalAdmin] = useState(false);
+    const [msfSettings, setMsfSettings] = useState<MSFSettings>(defaultMSFSettings);
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
     useEffect(() => {
-        compositionRoot.customData.get(msfStorage).then(data => {
-            const runAnalytics = isGlobalInstance() ? false : "by-sync-rule-settings";
-
-            if (data) {
-                setMsfSettings({ runAnalytics, dataElementGroupId: data.dataElementGroupId });
-            } else {
-                setMsfSettings({ runAnalytics });
-            }
+        compositionRoot.customData.get<PersistedMSFSettings>(MSFStorageKey).then(settings => {
+            setMsfSettings(oldSettings => ({
+                ...oldSettings,
+                ...settings,
+                runAnalytics: isGlobalInstance() ? "false" : "by-sync-rule-settings",
+            }));
         });
     }, [compositionRoot]);
 
-    const handleAggregateData = (skipCheckInPreviousPeriods?: boolean) => {
-        executeAggregateData(
+    const handleAggregateData = async (skipCheckInPreviousPeriods?: boolean) => {
+        setRunning(true);
+        setSyncReports([]);
+
+        const reports = await executeAggregateData(
             compositionRoot,
+            advancedSettings,
             skipCheckInPreviousPeriods
-                ? { ...advancedSettings, checkInPreviousPeriods: false }
-                : advancedSettings,
-            msfSettings,
+                ? { ...msfSettings, checkInPreviousPeriods: false }
+                : msfSettings,
             progress => setSyncProgress(progress),
             errors => setMsfValidationErrors(errors)
         );
+
+        setSyncReports(reports);
+        setRunning(false);
     };
 
-    const handleAdvancedSettings = () => {
+    const handleOpenAdvancedSettings = () => {
         setShowPeriodDialog(true);
     };
 
@@ -77,7 +82,7 @@ export const MSFHomePage: React.FC = () => {
         history.push("/dashboard");
     };
     const handleGoToHistory = () => {
-        history.push("/history/events");
+        history.push("/msf/history");
     };
 
     const handleCloseAdvancedSettings = () => {
@@ -96,10 +101,19 @@ export const MSFHomePage: React.FC = () => {
     const handleSaveMSFSettings = (msfSettings: MSFSettings) => {
         setShowMSFSettingsDialog(false);
         setMsfSettings(msfSettings);
-        compositionRoot.customData.save(msfStorage, {
-            dataElementGroupId: msfSettings.dataElementGroupId,
-        });
+        compositionRoot.customData.save(MSFStorageKey, { ...msfSettings, runAnalytics: undefined });
     };
+
+    const handleDownloadPayload = async () => {
+        await compositionRoot.reports.downloadPayloads(syncReports);
+    };
+
+    useEffect(() => {
+        if (messageList.current === null) return;
+
+        // Follow contents of logs
+        messageList.current.scrollTop = messageList.current.scrollHeight;
+    }, [syncProgress, messageList]);
 
     return (
         <React.Fragment>
@@ -112,20 +126,32 @@ export const MSFHomePage: React.FC = () => {
                         variant="contained"
                         color="primary"
                         className={classes.runButton}
+                        disabled={running}
                     >
                         {i18n.t("Aggregate Data")}
                     </Button>
 
                     <Box display="flex" flexGrow={2} justifyContent="center">
                         <Paper className={classes.log}>
-                            <List>
-                                <Typography variant="h6" gutterBottom>
-                                    {i18n.t("Synchronization Progress")}
-                                </Typography>
+                            <Typography variant="h6" gutterBottom>
+                                {i18n.t("Synchronization Progress")}
+                            </Typography>
+
+                            <List ref={messageList} className={classes.list}>
                                 {syncProgress.map((trace, index) => (
                                     <Typography key={index}>{trace}</Typography>
                                 ))}
                             </List>
+
+                            {syncReports.length > 0 && (
+                                <Button
+                                    className={classes.downloadButton}
+                                    onClick={handleDownloadPayload}
+                                    variant="contained"
+                                >
+                                    {i18n.t("Download payload")}
+                                </Button>
+                            )}
                         </Paper>
                     </Box>
 
@@ -133,7 +159,7 @@ export const MSFHomePage: React.FC = () => {
                         <Box display="flex" flexDirection="row">
                             <Button
                                 className={classes.actionButton}
-                                onClick={() => handleAdvancedSettings()}
+                                onClick={handleOpenAdvancedSettings}
                                 variant="contained"
                             >
                                 {i18n.t("Advanced Settings")}
@@ -141,7 +167,7 @@ export const MSFHomePage: React.FC = () => {
                             {globalAdmin && (
                                 <Button
                                     className={classes.actionButton}
-                                    onClick={() => handleMSFSettings()}
+                                    onClick={handleMSFSettings}
                                     variant="contained"
                                 >
                                     {i18n.t("MSF Settings")}
@@ -152,7 +178,7 @@ export const MSFHomePage: React.FC = () => {
                             {globalAdmin && (
                                 <Button
                                     className={classes.actionButton}
-                                    onClick={() => handleGoToDashboard()}
+                                    onClick={handleGoToDashboard}
                                     variant="contained"
                                 >
                                     {i18n.t("Go To Admin Dashboard")}
@@ -160,7 +186,7 @@ export const MSFHomePage: React.FC = () => {
                             )}
                             <Button
                                 className={classes.actionButton}
-                                onClick={() => handleGoToHistory()}
+                                onClick={handleGoToHistory}
                                 variant="contained"
                             >
                                 {i18n.t("Go to History")}
@@ -181,7 +207,7 @@ export const MSFHomePage: React.FC = () => {
 
             {showMSFSettingsDialog && (
                 <MSFSettingsDialog
-                    msfSettings={msfSettings}
+                    settings={msfSettings}
                     onClose={handleCloseMSFSettings}
                     onSave={handleSaveMSFSettings}
                 />
@@ -231,11 +257,19 @@ const useStyles = makeStyles((theme: Theme) => ({
         margin: theme.spacing(2),
         padding: theme.spacing(4),
         overflow: "auto",
-        minHeight: 300,
-        maxHeight: 300,
+        minHeight: 400,
+        maxHeight: 400,
     },
     actionButton: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
+    },
+    downloadButton: {
+        margin: theme.spacing(2),
+        float: "right",
+    },
+    list: {
+        height: 275,
+        overflow: "auto",
     },
 }));

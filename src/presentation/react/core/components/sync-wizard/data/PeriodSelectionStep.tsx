@@ -45,7 +45,7 @@ const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange
         [updatePeriod, updateStartDate, updateEndDate]
     );
 
-    const objectWithPeriod = useMemo(() => {
+    const objectWithPeriod: ObjectWithPeriod = useMemo(() => {
         return {
             period: syncRule.dataSyncPeriod,
             startDate: syncRule.dataSyncStartDate || undefined,

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2020-12-24T10:46:07.699Z\n"
+"POT-Creation-Date: 2021-01-22T09:15:45.194Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -209,6 +209,71 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
+msgid "Ready"
+msgstr ""
+
+msgid "Running"
+msgstr ""
+
+msgid "Failure"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "Sync Rule"
+msgstr ""
+
+#, fuzzy
+msgid "(package import)"
+msgstr "Paquetes"
+
+msgid "(manual synchronization)"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Timestamp"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Metadata Types"
+msgstr ""
+
+msgid "Edit {{name}}"
+msgstr ""
+
+msgid "View summary"
+msgstr ""
+
+msgid "Deleting History Notifications"
+msgstr ""
+
+msgid "Successfully deleted {{count}} history notifications"
+msgid_plural "Successfully deleted {{count}} history notifications"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Synchronization status"
+msgstr ""
+
+msgid "Delete History Notifications?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{count}} history notifications?"
+msgid_plural "Are you sure you want to delete {{count}} history notifications?"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Ok"
+msgstr ""
+
 msgid "Instances"
 msgstr ""
 
@@ -349,9 +414,6 @@ msgstr ""
 msgid "Related metadata mapping"
 msgstr ""
 
-msgid "Ok"
-msgstr ""
-
 msgid "Related metadata mapping for {{name}} ({{id}})"
 msgstr ""
 
@@ -382,7 +444,13 @@ msgstr ""
 msgid "{{displayName}} Level"
 msgstr ""
 
+msgid "Program"
+msgstr ""
+
 msgid "Only selected items"
+msgstr ""
+
+msgid "Show all entries"
 msgstr ""
 
 msgid "Select with children subtree"
@@ -705,9 +773,6 @@ msgstr ""
 msgid "DHIS2 Version"
 msgstr ""
 
-msgid "Status"
-msgstr ""
-
 msgid "Module"
 msgstr ""
 
@@ -888,10 +953,11 @@ msgstr ""
 msgid "Dry Run"
 msgstr ""
 
-msgid "Run Analytics before sync"
+msgid ""
+"Ignore data with same value on destination (only for program indicators)"
 msgstr ""
 
-msgid "Type"
+msgid "Ignore data with same value on destination"
 msgstr ""
 
 msgid "Imported"
@@ -907,9 +973,6 @@ msgid "Total"
 msgstr ""
 
 msgid "Data element"
-msgstr ""
-
-msgid "Program"
 msgstr ""
 
 msgid "Number of entries"
@@ -936,7 +999,13 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
+msgid "Generating JSON"
+msgstr ""
+
 msgid "Synchronization Results"
+msgstr ""
+
+msgid "Download JSON Payload"
 msgstr ""
 
 msgid "Origin"
@@ -1147,6 +1216,9 @@ msgstr ""
 msgid "Updates"
 msgstr ""
 
+msgid "Run Analytics before sync"
+msgstr ""
+
 msgid "Frequency"
 msgstr ""
 
@@ -1186,6 +1258,12 @@ msgstr ""
 msgid "Aggregation type"
 msgstr ""
 
+msgid "Save empty values as zero (only for program indicators)"
+msgstr ""
+
+msgid "Save empty values as zero (only for indicators)"
+msgstr ""
+
 msgid "Sync all attribute category options"
 msgstr ""
 
@@ -1216,12 +1294,6 @@ msgstr ""
 msgid "Use sync rules periods"
 msgstr ""
 
-msgid "Delete data values before sync"
-msgstr ""
-
-msgid "Check existing data values in previous periods"
-msgstr ""
-
 msgid "True"
 msgstr ""
 
@@ -1234,7 +1306,25 @@ msgstr ""
 msgid "MSF Settings"
 msgstr ""
 
+msgid "Analytics"
+msgstr ""
+
 msgid "Run Analytics"
+msgstr ""
+
+msgid "Number of years to include"
+msgstr ""
+
+msgid "Data values settings"
+msgstr ""
+
+msgid "Delete data values before sync"
+msgstr ""
+
+msgid "Check existing data values in previous periods"
+msgstr ""
+
+msgid "Data element filter"
 msgstr ""
 
 msgid "Data Element Group *"
@@ -1243,6 +1333,12 @@ msgstr ""
 msgid ""
 "* Data Element Group: used to check existing data values in the destination "
 "data elements"
+msgstr ""
+
+msgid "Project minimum dates"
+msgstr ""
+
+msgid "Minimum date"
 msgstr ""
 
 msgid "Metadata Synchronization History"
@@ -1256,62 +1352,6 @@ msgstr ""
 
 msgid "Deleted Synchronization History"
 msgstr ""
-
-msgid "Ready"
-msgstr ""
-
-msgid "Running"
-msgstr ""
-
-msgid "Failure"
-msgstr ""
-
-msgid "Done"
-msgstr ""
-
-msgid "Sync Rule"
-msgstr ""
-
-#, fuzzy
-msgid "(package import)"
-msgstr "Paquetes"
-
-msgid "(manual synchronization)"
-msgstr ""
-
-msgid "Timestamp"
-msgstr ""
-
-msgid "User"
-msgstr ""
-
-msgid "Metadata Types"
-msgstr ""
-
-msgid "Edit {{name}}"
-msgstr ""
-
-msgid "View summary"
-msgstr ""
-
-msgid "Deleting History Notifications"
-msgstr ""
-
-msgid "Successfully deleted {{count}} history notifications"
-msgid_plural "Successfully deleted {{count}} history notifications"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Synchronization status"
-msgstr ""
-
-msgid "Delete History Notifications?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{count}} history notifications?"
-msgid_plural "Are you sure you want to delete {{count}} history notifications?"
-msgstr[0] ""
-msgstr[1] ""
 
 msgid "Aggregated Data Sync"
 msgstr ""
@@ -1793,6 +1833,9 @@ msgid_plural "Are you sure you want to delete {{count}} rules?"
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Synchronization History"
+msgstr ""
+
 msgid "Aggregate Data For HMIS"
 msgstr ""
 
@@ -1800,6 +1843,9 @@ msgid "Aggregate Data"
 msgstr ""
 
 msgid "Synchronization Progress"
+msgstr ""
+
+msgid "Download payload"
 msgstr ""
 
 msgid "Advanced Settings"
@@ -1815,6 +1861,9 @@ msgid "MSF Validation"
 msgstr ""
 
 msgid "Do you want to proceed?"
+msgstr ""
+
+msgid "Retrieving information from the system..."
 msgstr ""
 
 msgid "Starting Aggregate Data..."
@@ -1921,6 +1970,12 @@ msgid "Last 7 days"
 msgstr ""
 
 msgid "Last 14 days"
+msgstr ""
+
+msgid "Last 30 days"
+msgstr ""
+
+msgid "Last 90 days"
 msgstr ""
 
 msgid "This week"
