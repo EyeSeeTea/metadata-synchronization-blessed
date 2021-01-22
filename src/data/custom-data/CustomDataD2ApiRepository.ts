@@ -6,13 +6,13 @@ import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 export class CustomDataD2ApiRepository implements CustomDataRepository {
     constructor(private configRepository: ConfigRepository) {}
 
-    async get(customDataKey: string): Promise<CustomData | undefined> {
+    async get<T extends CustomData>(key: string): Promise<T | undefined> {
         const storageClient = await this.getStorageClient();
-        return await storageClient.getObject<CustomData>(customDataKey);
+        return storageClient.getObject<T>(key);
     }
-    async save(customDataKey: string, data: CustomData): Promise<void> {
+    async save<T extends CustomData>(key: string, data: T): Promise<void> {
         const storageClient = await this.getStorageClient();
-        await storageClient.saveObject(customDataKey, data);
+        await storageClient.saveObject<T>(key, data);
     }
 
     private getStorageClient(): Promise<StorageClient> {

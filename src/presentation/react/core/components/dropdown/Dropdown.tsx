@@ -3,6 +3,7 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import _ from "lodash";
 import React from "react";
 import i18n from "../../../../../locales";
+import { muiTheme } from "../../themes/dhis2.theme";
 
 export interface DropdownOption<T extends string = string> {
     id: T;
@@ -27,6 +28,7 @@ const getTheme = (view: DropdownViewOption) => {
     switch (view) {
         case "filter":
             return createMuiTheme({
+                ...muiTheme,
                 overrides: {
                     MuiFormLabel: {
                         root: {
@@ -54,6 +56,7 @@ const getTheme = (view: DropdownViewOption) => {
             });
         case "inline":
             return createMuiTheme({
+                ...muiTheme,
                 overrides: {
                     MuiFormControl: {
                         root: {

@@ -52,6 +52,7 @@ export interface ListMetadataParams {
     fields?: object;
     group?: { type: string; value: string };
     level?: string;
+    program?: string;
     includeParents?: boolean;
     search?: { field: string; operator: FilterSingleOperatorBase; value: string };
     order?: { field: string; order: "asc" | "desc" };
@@ -62,6 +63,7 @@ export interface ListMetadataParams {
     parents?: string[];
     filterRows?: string[];
     showOnlySelected?: boolean;
+    disableFilterRows?: boolean;
     selectedIds?: string[];
     rootJunction?: "AND" | "OR";
 }

@@ -47,9 +47,10 @@ export class ReportsD2ApiRepository implements ReportsRepository {
             report.toObject()
         );
 
+        // We do not store payload on the data store
         await storageClient.saveObject<SynchronizationResult[]>(
             `${Namespace.HISTORY}-${report.id}`,
-            report.getResults()
+            report.getResults().map(({ payload: _payload, ...rest }) => ({ ...rest }))
         );
     }
 

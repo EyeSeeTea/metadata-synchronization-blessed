@@ -1,7 +1,6 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { eventsTransformations } from "../../../data/transformations/PackageTransformations";
 import { D2Program } from "../../../types/d2-api";
 import { debug } from "../../../utils/debug";
 import {
@@ -15,10 +14,8 @@ import { Instance } from "../../instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
-import {
-    GenericSyncUseCase,
-    SyncronizationPayload,
-} from "../../synchronization/usecases/GenericSyncUseCase";
+import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
+import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
 import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
@@ -69,11 +66,10 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         return { events, dataValues };
     });
 
-    public async postPayload(instance: Instance) {
+    public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
         const { events, dataValues } = await this.buildPayload();
 
         const eventsResponse = await this.postEventsPayload(instance, events);
-
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
         return _.compact([eventsResponse, indicatorsResponse]);
@@ -86,25 +82,13 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const { dataParams = {} } = this.builder;
 
         const payload = await this.mapPayload(instance, { events });
-
-        if (!instance.apiVersion) {
-            throw new Error(
-                "Necessary api version of receiver instance to apply transformations to package is undefined"
-            );
-        }
-
-        const versionedPayloadPackage = this.getTransformationRepository().mapPackageTo(
-            instance.apiVersion,
-            payload,
-            eventsTransformations
-        );
-        debug("Events package", { events, payload, versionedPayloadPackage });
+        debug("Events package", { events, payload });
 
         const eventsRepository = await this.getEventsRepository(instance);
         const syncResult = await eventsRepository.save(payload, dataParams);
         const origin = await this.getOriginInstance();
 
-        return { ...syncResult, origin: origin.toPublicObject() };
+        return { ...syncResult, origin: origin.toPublicObject(), payload };
     }
 
     private async postIndicatorPayload(
@@ -122,14 +106,26 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             this.localInstance,
             this.encryptionKey
         );
-        const payload = await aggregatedSync.mapPayload(instance, { dataValues });
-        debug("Program indicator package", { dataValues, payload });
+
+        const mappedPayload = await aggregatedSync.mapPayload(instance, { dataValues });
+
+        const existingPayload = dataParams.ignoreDuplicateExistingValues
+            ? await aggregatedSync.mapPayload(instance, await aggregatedSync.buildPayload(instance))
+            : { dataValues: [] };
+
+        const payload = aggregatedSync.filterPayload(mappedPayload, existingPayload);
+        debug("Program indicator package", {
+            originalPayload: { dataValues },
+            mappedPayload,
+            existingPayload,
+            payload,
+        });
 
         const aggregatedRepository = await this.getAggregatedRepository(instance);
         const syncResult = await aggregatedRepository.save(payload, dataParams);
         const origin = await this.getOriginInstance();
 
-        return { ...syncResult, origin: origin.toPublicObject() };
+        return { ...syncResult, origin: origin.toPublicObject(), payload };
     }
 
     public async buildDataStats() {
@@ -151,7 +147,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
     public async mapPayload(
         instance: Instance,
         { events: oldEvents }: EventsPackage
-    ): Promise<SyncronizationPayload> {
+    ): Promise<SynchronizationPayload> {
         const metadataRepository = await this.getMetadataRepository();
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
 

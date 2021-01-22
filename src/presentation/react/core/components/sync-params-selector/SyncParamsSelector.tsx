@@ -13,7 +13,7 @@ interface SyncParamsSelectorProps {
 
 const useStyles = makeStyles({
     advancedOptionsTitle: {
-        marginTop: "40px",
+        marginTop: 40,
         fontWeight: 500,
     },
 });
@@ -102,11 +102,11 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
         }
     };
 
-    const changeRunAnalytics = (runAnalytics: boolean) => {
+    const changeIgnoreDuplicateExistingValues = (ignoreDuplicateExistingValues: boolean) => {
         onChange(
             syncRule.updateDataParams({
                 ...dataParams,
-                runAnalytics,
+                ignoreDuplicateExistingValues,
             })
         );
     };
@@ -207,9 +207,15 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
             {(syncRule.type === "events" || syncRule.type === "aggregated") && (
                 <div>
                     <Toggle
-                        label={i18n.t("Run Analytics before sync")}
-                        onValueChange={changeRunAnalytics}
-                        value={dataParams.runAnalytics ?? false}
+                        label={
+                            syncRule.type === "events"
+                                ? i18n.t(
+                                      "Ignore data with same value on destination (only for program indicators)"
+                                  )
+                                : i18n.t("Ignore data with same value on destination")
+                        }
+                        onValueChange={changeIgnoreDuplicateExistingValues}
+                        value={dataParams.ignoreDuplicateExistingValues ?? false}
                     />
                 </div>
             )}

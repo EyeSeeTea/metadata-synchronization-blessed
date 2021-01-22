@@ -14,6 +14,9 @@ export interface DataSynchronizationParams extends DataImportParams {
     enableAggregation?: boolean;
     aggregationType?: DataSyncAggregation;
     runAnalytics?: boolean;
+    includeAnalyticsZeroValues?: boolean;
+    analyticsYears?: number;
+    ignoreDuplicateExistingValues?: boolean;
 }
 
 export type DataSyncPeriod =

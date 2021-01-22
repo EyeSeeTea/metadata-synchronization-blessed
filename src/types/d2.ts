@@ -1,45 +1,3 @@
-export interface ModelDefinition {
-    apiEndpoint: string;
-    attributeProperties: any;
-    displayName: string;
-    identifiableObject: boolean;
-    isMetaData: boolean;
-    isShareable: boolean;
-    javaClass: string;
-    modelProperties: any;
-    modelValidations: any;
-    name: string;
-    plural: string;
-    translatable: boolean;
-
-    list(params?: any): any;
-
-    get(id: string, params?: any): Promise<any>;
-}
-
-export interface D2 {
-    Api: {
-        getApi(): any;
-    };
-    models: {
-        [metadataType: string]: ModelDefinition;
-    };
-    currentUser: {
-        id: string;
-        username: string;
-        name: string;
-        email: string;
-        getUserRoles(): Promise<any>;
-        getUserGroups(): Promise<any>;
-        getOrganisationUnits(): Promise<any>;
-    };
-}
-
-export interface Response {
-    status: boolean;
-    error?: Error;
-}
-
 export interface MetadataImportParams {
     atomicMode?: "ALL" | "NONE";
     flushMode?: "AUTO" | "OBJECT";
@@ -65,4 +23,5 @@ export interface DataImportParams {
     skipAudit?: boolean;
     strategy?: "NEW_AND_UPDATES" | "NEW" | "UPDATES" | "DELETES";
     format?: "json" | "xml" | "csv" | "pdf" | "adx";
+    async?: boolean;
 }

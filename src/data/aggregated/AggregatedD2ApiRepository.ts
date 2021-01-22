@@ -2,6 +2,7 @@ import _ from "lodash";
 import moment from "moment";
 import { Moment } from "moment";
 import { AggregatedPackage } from "../../domain/aggregated/entities/AggregatedPackage";
+import { DataValue } from "../../domain/aggregated/entities/DataValue";
 import { MappedCategoryOption } from "../../domain/aggregated/entities/MappedCategoryOption";
 import { AggregatedRepository } from "../../domain/aggregated/repositories/AggregatedRepository";
 import { DataSyncAggregation, DataSynchronizationParams } from "../../domain/aggregated/types";
@@ -35,7 +36,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             attributeCategoryOptions,
             lastUpdated,
         } = params;
-        const [startDate, endDate] = buildPeriodFromParams(params);
+        const { startDate, endDate } = buildPeriodFromParams(params);
 
         if (dataSet.length === 0 && dataElementGroup.length === 0) return { dataValues: [] };
 
@@ -45,7 +46,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             : undefined;
 
         try {
-            const response = await this.api
+            const { dataValues = [] } = await this.api
                 .get<AggregatedPackage>("/dataValueSets", {
                     dataElementIdScheme: "UID",
                     orgUnitIdScheme: "UID",
@@ -61,7 +62,29 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                 })
                 .getData();
 
-            return response;
+            const [defaultCategoryOptionCombo] = await this.getDefaultIds("categoryOptionCombos");
+
+            return {
+                dataValues: dataValues.map(
+                    ({
+                        dataElement,
+                        period,
+                        orgUnit,
+                        categoryOptionCombo,
+                        attributeOptionCombo,
+                        value,
+                        comment,
+                    }) => ({
+                        dataElement,
+                        period,
+                        orgUnit,
+                        value,
+                        comment,
+                        categoryOptionCombo: categoryOptionCombo ?? defaultCategoryOptionCombo,
+                        attributeOptionCombo: attributeOptionCombo ?? defaultCategoryOptionCombo,
+                    })
+                ),
+            };
         } catch (error) {
             console.error(error);
             return { dataValues: [] };
@@ -84,15 +107,17 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             allAttributeCategoryOptions,
             attributeCategoryOptions,
             aggregationType,
+            includeAnalyticsZeroValues,
         } = dataParams;
-        const [startDate, endDate] = buildPeriodFromParams(dataParams);
+
+        const { startDate, endDate } = buildPeriodFromParams(dataParams);
         const periods = this.buildPeriodsForAggregation(aggregationType, startDate, endDate);
-        const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
+        const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
         const attributeOptionCombo = !allAttributeCategoryOptions
             ? attributeCategoryOptions
             : undefined;
 
-        if (dimensionIds.length === 0 || orgUnit.length === 0) {
+        if (dimensionIds.length === 0 || orgUnits.length === 0) {
             return { dataValues: [] };
         } else if (aggregationType) {
             const result = await promiseMap(_.chunk(periods, 300), period =>
@@ -102,7 +127,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                             dimension: _.compact([
                                 `dx:${ids.join(";")}`,
                                 `pe:${period.join(";")}`,
-                                `ou:${orgUnit.join(";")}`,
+                                `ou:${orgUnits.join(";")}`,
                                 includeCategories ? `co` : undefined,
                                 attributeOptionCombo
                                     ? `ao:${attributeOptionCombo.join(";")}`
@@ -114,24 +139,67 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                 })
             );
 
-            const defaultCategoryOptionCombo = await this.getDefaultIds("categoryOptionCombos");
+            const [defaultCategoryOptionCombo] = await this.getDefaultIds("categoryOptionCombos");
 
-            const dataValues = _(result)
+            const analyticsValues = _(result)
                 .flatten()
-                .map(({ dataValues }) =>
-                    dataValues?.map(dataValue => ({
-                        ...dataValue,
-                        // Special scenario: We allow having dataElement.categoryOptionCombo in indicators
-                        categoryOptionCombo:
-                            _.last(dataValue.categoryOptionCombo?.split(".")) ??
-                            defaultCategoryOptionCombo[0],
-                    }))
+                .map(({ dataValues = [] }: AggregatedPackage): DataValue[] =>
+                    dataValues.map(
+                        ({
+                            dataElement,
+                            period,
+                            orgUnit,
+                            categoryOptionCombo,
+                            attributeOptionCombo,
+                            value,
+                            comment,
+                        }) => ({
+                            dataElement,
+                            period,
+                            orgUnit,
+                            value,
+                            comment,
+                            attributeOptionCombo:
+                                attributeOptionCombo ?? defaultCategoryOptionCombo,
+                            // Special scenario: We allow having dataElement.categoryOptionCombo in indicators
+                            categoryOptionCombo: includeCategories
+                                ? categoryOptionCombo ?? defaultCategoryOptionCombo
+                                : defaultCategoryOptionCombo,
+                        })
+                    )
                 )
                 .flatten()
                 .compact()
                 .value();
 
-            return { dataValues };
+            const zeroValues: DataValue[] =
+                includeAnalyticsZeroValues && !includeCategories
+                    ? _.flatMap(dimensionIds, dataElement =>
+                          _.flatMap(periods, period =>
+                              _.flatMap(orgUnits, orgUnit => ({
+                                  dataElement,
+                                  period,
+                                  orgUnit,
+                                  categoryOptionCombo: defaultCategoryOptionCombo,
+                                  attributeOptionCombo: defaultCategoryOptionCombo,
+                                  value: "0",
+                                  comment: "[aggregated]",
+                              }))
+                          )
+                      )
+                    : [];
+
+            const extraValues = zeroValues.filter(
+                ({ dataElement, period, orgUnit, categoryOptionCombo }) =>
+                    !_.find(analyticsValues, {
+                        dataElement,
+                        period,
+                        orgUnit,
+                        categoryOptionCombo,
+                    })
+            );
+
+            return { dataValues: [...analyticsValues, ...extraValues] };
         } else {
             throw new Error("Aggregated syncronization requires a valid aggregation type");
         }
@@ -205,24 +273,26 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
     }
 
     public async save(
-        data: object,
-        additionalParams: DataImportParams | undefined
+        data: AggregatedPackage,
+        params: DataImportParams | undefined
     ): Promise<SynchronizationResult> {
         try {
             const response = await this.api
+                // TODO: Use this.api.dataValues.postSet
                 .post<DataValueSetsPostResponse>(
                     "/dataValueSets",
                     {
-                        idScheme: "UID",
-                        dataElementIdScheme: "UID",
-                        orgUnitIdScheme: "UID",
-                        eventIdScheme: "UID",
-                        preheatCache: false,
-                        skipExistingCheck: false,
-                        format: "json",
-                        async: false,
-                        dryRun: false,
-                        ...additionalParams,
+                        idScheme: params?.idScheme ?? "UID",
+                        dataElementIdScheme: params?.dataElementIdScheme ?? "UID",
+                        orgUnitIdScheme: params?.orgUnitIdScheme ?? "UID",
+                        preheatCache: params?.preheatCache ?? false,
+                        skipExistingCheck: params?.skipExistingCheck ?? false,
+                        skipAudit: params?.skipAudit ?? false,
+                        format: params?.format ?? "json",
+                        async: params?.async ?? false,
+                        dryRun: params?.dryRun ?? false,
+                        // TODO: Use importStrategy here
+                        strategy: params?.strategy ?? "NEW_AND_UPDATES",
                     },
                     data
                 )

@@ -2,6 +2,7 @@ import _ from "lodash";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
 
 export interface ListSyncReportUseCaseParams {
@@ -9,7 +10,12 @@ export interface ListSyncReportUseCaseParams {
     pageSize?: number;
     page?: number;
     sorting?: { field: keyof SynchronizationReport; order: "asc" | "desc" };
-    filters?: { statusFilter?: string; syncRuleFilter?: string; type?: string; search?: string };
+    filters?: {
+        statusFilter?: string;
+        syncRuleFilter?: string;
+        types?: SynchronizationType[];
+        search?: string;
+    };
 }
 
 export interface ListSyncReportUseCaseResult {
@@ -29,7 +35,7 @@ export class ListSyncReportUseCase implements UseCase {
     }: ListSyncReportUseCaseParams): Promise<ListSyncReportUseCaseResult> {
         const rawData = await this.repositoryFactory.reportsRepository(this.localInstance).list();
 
-        const { statusFilter, syncRuleFilter, type, search } = filters;
+        const { statusFilter, syncRuleFilter, types, search } = filters;
 
         const filteredData = search
             ? _.filter(rawData, item =>
@@ -51,7 +57,9 @@ export class ListSyncReportUseCase implements UseCase {
         const filteredObjects = _(sortedData)
             .filter(e => (statusFilter ? e.status === statusFilter : true))
             .filter(e => (syncRuleFilter ? e.syncRule === syncRuleFilter : true))
-            .filter(({ type: elementType = "metadata" }) => (type ? elementType === type : true))
+            .filter(({ type: elementType = "metadata" }) =>
+                types ? types.includes(elementType) : true
+            )
             .value();
 
         const total = filteredObjects.length;

@@ -33,7 +33,7 @@ import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceB
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
 import { GetLocalInstanceUseCase } from "../domain/instance/usecases/GetLocalInstanceUseCase";
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
-import { GetUserGroupsUseCase } from "../domain/instance/usecases/GetUserGroupsUseCase";
+import { GetCurrentUserUseCase } from "../domain/instance/usecases/GetCurrentUserUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
@@ -77,6 +77,7 @@ import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUse
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
 import { DeleteSyncReportUseCase } from "../domain/reports/usecases/DeleteSyncReportUseCase";
+import { DownloadPayloadUseCase } from "../domain/reports/usecases/DownloadPayloadUseCase";
 import { GetSyncReportUseCase } from "../domain/reports/usecases/GetSyncReportUseCase";
 import { GetSyncResultsUseCase } from "../domain/reports/usecases/GetSyncResultsUseCase";
 import { ListSyncReportUseCase } from "../domain/reports/usecases/ListSyncReportUseCase";
@@ -322,7 +323,7 @@ export class CompositionRoot {
             validate: new ValidateInstanceUseCase(this.repositoryFactory),
             getVersion: new GetInstanceVersionUseCase(this.repositoryFactory, this.localInstance),
             getOrgUnitRoots: new GetRootOrgUnitUseCase(this.repositoryFactory, this.localInstance),
-            getUserGroups: new GetUserGroupsUseCase(this.repositoryFactory, this.localInstance),
+            getCurrentUser: new GetCurrentUserUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -364,6 +365,10 @@ export class CompositionRoot {
             delete: new DeleteSyncReportUseCase(this.repositoryFactory, this.localInstance),
             get: new GetSyncReportUseCase(this.repositoryFactory, this.localInstance),
             getSyncResults: new GetSyncResultsUseCase(this.repositoryFactory, this.localInstance),
+            downloadPayloads: new DownloadPayloadUseCase(
+                this.repositoryFactory,
+                this.localInstance
+            ),
         });
     }
 

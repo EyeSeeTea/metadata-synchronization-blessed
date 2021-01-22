@@ -1,3 +1,4 @@
+import { ObjectWithPeriod } from "../../../presentation/react/core/components/period-selection/PeriodSelection";
 import { DataSyncPeriod } from "../../aggregated/types";
 import { Either } from "./Either";
 import { ModelValidation, validateModel, ValidationError } from "./Validations";
@@ -17,6 +18,14 @@ export class Period {
         this.type = data.type;
         this.startDate = data.startDate;
         this.endDate = data.endDate;
+    }
+
+    public toObject(): ObjectWithPeriod {
+        return {
+            period: this.type,
+            startDate: this.startDate,
+            endDate: this.endDate,
+        };
     }
 
     static create({ type, startDate, endDate }: PeriodData): Either<ValidationError[], Period> {

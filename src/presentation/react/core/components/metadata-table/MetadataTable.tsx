@@ -34,7 +34,14 @@ import Dropdown from "../dropdown/Dropdown";
 import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
 
-export type MetadataTableFilters = "group" | "level" | "orgUnit" | "lastUpdated" | "onlySelected";
+export type MetadataTableFilters =
+    | "group"
+    | "level"
+    | "program"
+    | "orgUnit"
+    | "lastUpdated"
+    | "onlySelected"
+    | "disableFilterRows";
 
 export interface MetadataTableProps
     extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
@@ -118,7 +125,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     allowChangingResponsible = false,
     showResponsible = true,
     externalFilterComponents,
-    viewFilters = ["group", "level", "orgUnit", "lastUpdated", "onlySelected"],
+    viewFilters = ["group", "level", "program", "orgUnit", "lastUpdated", "onlySelected"],
     ...rest
 }) => {
     const { compositionRoot, api: defaultApi } = useAppContext();
@@ -139,6 +146,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         order: initialState.sorting,
         page: initialState.pagination.page,
         pageSize: initialState.pagination.pageSize,
+        disableFilterRows: false,
     });
 
     const updateFilters = useCallback(
@@ -156,6 +164,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [expandOrgUnits, updateExpandOrgUnits] = useState<string[]>();
     const [groupFilterData, setGroupFilterData] = useState<NamedRef[]>([]);
     const [levelFilterData, setLevelFilterData] = useState<NamedRef[]>([]);
+    const [programFilterData, setProgramFilterData] = useState<NamedRef[]>([]);
 
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [pager, setPager] = useState<Partial<TablePagination>>({});
@@ -191,6 +200,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         });
     };
 
+    const changeProgramFilter = (program: string) => {
+        updateFilters({ program });
+    };
+
     const changeLevelFilter = (level: string) => {
         updateFilters({ level, parents: [] });
     };
@@ -198,6 +211,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const changeOnlySelectedFilter = (event: ChangeEvent<HTMLInputElement>) => {
         const showOnlySelected = event.target?.checked;
         updateFilters({ showOnlySelected });
+    };
+
+    const changeFilterRowsFilter = (event: ChangeEvent<HTMLInputElement>) => {
+        const disableFilterRows = event.target?.checked;
+        updateFilters({ disableFilterRows });
     };
 
     const changeParentOrgUnitFilter = useCallback(
@@ -298,6 +316,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 </div>
             )}
 
+            {viewFilters.includes("program") && model.getCollectionName() === "programIndicators" && (
+                <div className={classes.groupFilter}>
+                    <Dropdown
+                        items={programFilterData}
+                        onValueChange={changeProgramFilter}
+                        value={filters.program ?? ""}
+                        label={i18n.t("Program")}
+                    />
+                </div>
+            )}
+
             {viewFilters.includes("onlySelected") && (
                 <div className={classes.onlySelectedFilter}>
                     <FormControlLabel
@@ -309,6 +338,21 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                             />
                         }
                         label={i18n.t("Only selected items")}
+                    />
+                </div>
+            )}
+
+            {viewFilters.includes("disableFilterRows") && (
+                <div className={classes.onlySelectedFilter}>
+                    <FormControlLabel
+                        className={classes.checkbox}
+                        control={
+                            <Checkbox
+                                checked={filters.disableFilterRows}
+                                onChange={changeFilterRowsFilter}
+                            />
+                        }
+                        label={i18n.t("Show all entries")}
                     />
                 </div>
             )}
@@ -463,6 +507,12 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         }))
                     );
                 }
+            );
+        }
+
+        if (model.getCollectionName() === "programIndicators") {
+            getFilterData("programs", "group", api.apiPath, api).then(({ objects }) =>
+                setProgramFilterData(objects)
             );
         }
     }, [api, model]);

@@ -1,18 +1,11 @@
-import { Checkbox, FormControlLabel, makeStyles, Theme } from "@material-ui/core";
-import { ConfirmationDialog, useSnackbar } from "d2-ui-components";
+import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
+import { ConfirmationDialog, DatePicker, useSnackbar } from "d2-ui-components";
+import { Moment } from "moment";
 import React, { useState } from "react";
 import { Period } from "../../../../../domain/common/entities/Period";
 import i18n from "../../../../../locales";
-import PeriodSelection, {
-    ObjectWithPeriod,
-} from "../../../core/components/period-selection/PeriodSelection";
-import { Toggle } from "../../../core/components/toggle/Toggle";
-
-export type AdvancedSettings = {
-    period?: Period;
-    deleteDataValuesBeforeSync?: boolean;
-    checkInPreviousPeriods?: boolean;
-};
+import { AdvancedSettings } from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
+import { ObjectWithPeriod } from "../../../core/components/period-selection/PeriodSelection";
 
 export interface AdvancedSettingsDialogProps {
     title?: string;
@@ -25,52 +18,51 @@ export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
     title,
     onClose,
     onSave,
-    advancedSettings,
+    advancedSettings = {},
 }) => {
     const classes = useStyles();
     const snackbar = useSnackbar();
-    const [deleteDataValuesBeforeSync, setDeleteDataValuesBeforeSync] = useState<boolean>(
-        advancedSettings?.deleteDataValuesBeforeSync || false
-    );
-
-    const [checkInPreviousPeriods, setCheckInPreviousPeriods] = useState<boolean>(
-        advancedSettings?.checkInPreviousPeriods || false
-    );
 
     const [objectWithPeriod, setObjectWithPeriod] = useState<ObjectWithPeriod | undefined>(
-        advancedSettings?.period
-            ? {
-                  period: advancedSettings?.period.type,
-                  startDate: advancedSettings?.period.startDate,
-                  endDate: advancedSettings?.period.endDate,
-              }
-            : undefined
+        advancedSettings.period
     );
 
     const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            setObjectWithPeriod(undefined);
-        } else {
-            setObjectWithPeriod({ period: "ALL" });
-        }
+        setObjectWithPeriod(event.target.checked ? undefined : { period: "FIXED" });
+    };
+
+    const updateStartDate = (startDate: Moment) => {
+        setObjectWithPeriod(period => ({
+            period: "FIXED",
+            startDate: startDate.toDate(),
+            endDate: period?.endDate,
+        }));
+    };
+
+    const updateEndDate = (endDate: Moment) => {
+        setObjectWithPeriod(period => ({
+            period: "FIXED",
+            startDate: period?.startDate,
+            endDate: endDate.toDate(),
+        }));
     };
 
     const handleSave = () => {
-        if (objectWithPeriod) {
-            const periodValidation = Period.create({
-                type: objectWithPeriod.period,
-                startDate: objectWithPeriod.startDate,
-                endDate: objectWithPeriod.endDate,
-            });
-
-            periodValidation.match({
-                error: errors => snackbar.error(errors.map(error => error.description).join("\n")),
-                success: period =>
-                    onSave({ period, deleteDataValuesBeforeSync, checkInPreviousPeriods }),
-            });
-        } else {
-            onSave({ deleteDataValuesBeforeSync, checkInPreviousPeriods });
+        if (!objectWithPeriod) {
+            onSave({ period: undefined });
+            return;
         }
+
+        const periodValidation = Period.create({
+            type: objectWithPeriod.period,
+            startDate: objectWithPeriod.startDate,
+            endDate: objectWithPeriod.endDate,
+        });
+
+        periodValidation.match({
+            error: errors => snackbar.error(errors.map(error => error.description).join("\n")),
+            success: period => onSave({ period: period.toObject() }),
+        });
     };
 
     return (
@@ -95,35 +87,34 @@ export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
             />
 
             {objectWithPeriod && (
-                <div className={classes.period}>
-                    <PeriodSelection
-                        objectWithPeriod={objectWithPeriod}
-                        onChange={setObjectWithPeriod}
-                    />
+                <div className={classes.fixedPeriod}>
+                    <div className={classes.datePicker}>
+                        <DatePicker
+                            label={i18n.t("Start date")}
+                            value={objectWithPeriod.startDate || null}
+                            onChange={updateStartDate}
+                        />
+                    </div>
+                    <div className={classes.datePicker}>
+                        <DatePicker
+                            label={i18n.t("End date")}
+                            value={objectWithPeriod.endDate || null}
+                            onChange={updateEndDate}
+                        />
+                    </div>
                 </div>
             )}
-
-            <div>
-                <Toggle
-                    label={i18n.t("Delete data values before sync")}
-                    onValueChange={setDeleteDataValuesBeforeSync}
-                    value={deleteDataValuesBeforeSync}
-                />
-            </div>
-
-            <div>
-                <Toggle
-                    label={i18n.t("Check existing data values in previous periods")}
-                    onValueChange={setCheckInPreviousPeriods}
-                    value={checkInPreviousPeriods}
-                />
-            </div>
         </ConfirmationDialog>
     );
 };
 
-const useStyles = makeStyles((theme: Theme) => ({
-    period: {
-        margin: theme.spacing(3, 0),
+const useStyles = makeStyles(() => ({
+    fixedPeriod: {
+        marginTop: 5,
+        marginBottom: 20,
+        marginLeft: 10,
+    },
+    datePicker: {
+        marginTop: -10,
     },
 }));

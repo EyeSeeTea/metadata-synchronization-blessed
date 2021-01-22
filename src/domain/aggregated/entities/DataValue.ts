@@ -5,9 +5,9 @@ export interface DataValue {
     categoryOptionCombo?: string;
     attributeOptionCombo?: string;
     value: string;
-    storedBy: string;
-    created: string;
-    lastUpdated: string;
-    followUp: boolean;
     comment?: string;
+    storedBy?: string;
+    created?: string;
+    lastUpdated?: string;
+    followUp?: boolean;
 }

@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Typography } from "@material-ui/core";
 import { useSnackbar } from "d2-ui-components";
 import React, { useMemo } from "react";
 import { DataSyncAggregation } from "../../../../../../domain/aggregated/types";
@@ -18,6 +18,11 @@ const useStyles = makeStyles({
     },
     datePicker: {
         marginTop: -10,
+    },
+    advancedOptionsTitle: {
+        marginTop: 40,
+        marginBottom: 20,
+        fontWeight: 500,
     },
 });
 
@@ -56,6 +61,24 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
         );
     };
 
+    const changeRunAnalytics = (runAnalytics: boolean) => {
+        onChange(
+            syncRule.updateDataParams({
+                ...syncRule.dataParams,
+                runAnalytics,
+            })
+        );
+    };
+
+    const changeAnalyticsZeroValues = (includeAnalyticsZeroValues: boolean) => {
+        onChange(
+            syncRule.updateDataParams({
+                ...syncRule.dataParams,
+                includeAnalyticsZeroValues,
+            })
+        );
+    };
+
     const aggregationItems = useMemo(buildAggregationItems, []);
 
     return (
@@ -67,14 +90,46 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
             />
 
             {syncRule.dataSyncEnableAggregation && (
-                <div className={classes.dropdown}>
-                    <Dropdown
-                        label={i18n.t("Aggregation type")}
-                        items={aggregationItems}
-                        value={syncRule.dataSyncAggregationType ?? ""}
-                        onValueChange={updateAggregationType}
-                    />
-                </div>
+                <React.Fragment>
+                    <div className={classes.dropdown}>
+                        <Dropdown
+                            label={i18n.t("Aggregation type")}
+                            items={aggregationItems}
+                            value={syncRule.dataSyncAggregationType ?? ""}
+                            onValueChange={updateAggregationType}
+                        />
+                    </div>
+
+                    <Typography
+                        className={classes.advancedOptionsTitle}
+                        variant={"subtitle1"}
+                        gutterBottom
+                    >
+                        {i18n.t("Advanced options")}
+                    </Typography>
+
+                    <div>
+                        <Toggle
+                            label={i18n.t("Run Analytics before sync")}
+                            onValueChange={changeRunAnalytics}
+                            value={syncRule.dataParams.runAnalytics ?? false}
+                        />
+                    </div>
+
+                    <div>
+                        <Toggle
+                            label={
+                                syncRule.type === "events"
+                                    ? i18n.t(
+                                          "Save empty values as zero (only for program indicators)"
+                                      )
+                                    : i18n.t("Save empty values as zero (only for indicators)")
+                            }
+                            onValueChange={changeAnalyticsZeroValues}
+                            value={syncRule.dataParams.includeAnalyticsZeroValues ?? false}
+                        />
+                    </div>
+                </React.Fragment>
             )}
         </React.Fragment>
     );
