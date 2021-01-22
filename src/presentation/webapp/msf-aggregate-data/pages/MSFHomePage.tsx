@@ -1,6 +1,6 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import i18n from "../../../../locales";
@@ -22,6 +22,8 @@ export const MSFHomePage: React.FC = () => {
     const { api, compositionRoot } = useAppContext();
     const classes = useStyles();
     const history = useHistory();
+
+    const messageList = useRef<HTMLUListElement>(null);
 
     const [running, setRunning] = useState<boolean>(false);
     const [syncProgress, setSyncProgress] = useState<string[]>([]);
@@ -106,6 +108,13 @@ export const MSFHomePage: React.FC = () => {
         await compositionRoot.reports.downloadPayloads(syncReports);
     };
 
+    useEffect(() => {
+        if (messageList.current === null) return;
+
+        // Follow contents of logs
+        messageList.current.scrollTop = messageList.current.scrollHeight;
+    }, [syncProgress, messageList]);
+
     return (
         <React.Fragment>
             <PageHeader title={i18n.t("Aggregate Data For HMIS")} />
@@ -128,7 +137,7 @@ export const MSFHomePage: React.FC = () => {
                                 {i18n.t("Synchronization Progress")}
                             </Typography>
 
-                            <List className={classes.list}>
+                            <List ref={messageList} className={classes.list}>
                                 {syncProgress.map((trace, index) => (
                                     <Typography key={index}>{trace}</Typography>
                                 ))}
