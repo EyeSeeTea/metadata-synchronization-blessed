@@ -546,7 +546,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .filter(id => !_.find(rows, { id }))
             .value();
 
-        notifyNewSelection(included, excluded);
+        if (!_.isEqual(stateSelection, included)) {
+            notifyNewSelection(included, excluded);
+        }
+
         setStateSelection(included);
         updateFilters({
             order: sorting,
