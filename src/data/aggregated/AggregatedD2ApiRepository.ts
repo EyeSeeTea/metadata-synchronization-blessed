@@ -161,8 +161,8 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                             comment,
                             // Special scenario: For indicators do not send attributeOptionCombo
                             attributeOptionCombo: includeCategories
-                                ? undefined
-                                : attributeOptionCombo ?? defaultCategoryOptionCombo,
+                                ? attributeOptionCombo ?? defaultCategoryOptionCombo
+                                : undefined,
                             // Special scenario: We allow having dataElement.categoryOptionCombo in indicators
                             categoryOptionCombo: includeCategories
                                 ? categoryOptionCombo ?? defaultCategoryOptionCombo
