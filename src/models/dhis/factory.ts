@@ -50,6 +50,7 @@ export const metadataModels = [
     metadataClasses.ReportModel,
     metadataClasses.ReportTableModel,
     metadataClasses.SectionModel,
+    metadataClasses.SqlView,
     metadataClasses.UserModel,
     metadataClasses.UserGroupModel,
     metadataClasses.UserRoleModel,
