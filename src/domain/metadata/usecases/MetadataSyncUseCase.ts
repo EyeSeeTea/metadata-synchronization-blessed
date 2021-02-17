@@ -95,7 +95,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const metadataRepository = await this.getMetadataRepository();
         const filterRulesIds = await metadataRepository.getByFilterRules(filterRules);
         const allMetadataIds = _.union(metadataIds, filterRulesIds);
-        const metadata = await metadataRepository.getMetadataByIds<Ref>(allMetadataIds, "id");
+        const metadata = await metadataRepository.getMetadataByIds<Ref>(allMetadataIds, "id,type"); //type is required to transform visualizations to charts and report tables
 
         const exportResults = await promiseMap(_.keys(metadata), type => {
             const myClass = modelFactory(type);

@@ -98,6 +98,7 @@ import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/Cre
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { GetSystemInfoUseCase } from "../domain/system-info/usecases/GetSystemInfoUseCase";
 import { cache } from "../utils/cache";
+import { GetMetadataByIdsUseCase } from "../domain/metadata/usecases/GetMetadataByIdsUseCase";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -195,6 +196,7 @@ export class CompositionRoot {
         return getExecute({
             list: new ListMetadataUseCase(this.repositoryFactory, this.localInstance),
             listAll: new ListAllMetadataUseCase(this.repositoryFactory, this.localInstance),
+            getByIds: new GetMetadataByIdsUseCase(this.repositoryFactory, this.localInstance),
             import: new ImportMetadataUseCase(this.repositoryFactory, this.localInstance),
         });
     }

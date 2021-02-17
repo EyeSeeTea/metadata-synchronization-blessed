@@ -37,7 +37,7 @@ export type SynchronizationClass =
 
 export abstract class GenericSyncUseCase {
     public abstract readonly type: SynchronizationType;
-    public readonly fields: string = "id,name";
+    public readonly fields: string = "id,name,type"; //type is required to transform visualizations to charts and report tables
     protected readonly api: D2Api;
 
     constructor(
