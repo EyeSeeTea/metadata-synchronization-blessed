@@ -3,12 +3,14 @@ import { D2SchemaProperties } from "d2-api/schemas";
 import { MultiSelector, withSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { MetadataPackage } from "../../../../../../domain/metadata/entities/MetadataEntities";
+import {
+    MetadataEntity,
+    MetadataPackage,
+} from "../../../../../../domain/metadata/entities/MetadataEntities";
 import { includeExcludeRulesFriendlyNames } from "../../../../../../domain/metadata/entities/MetadataFriendlyNames";
 import i18n from "../../../../../../locales";
 import { D2Model } from "../../../../../../models/dhis/default";
 import { modelFactory } from "../../../../../../models/dhis/factory";
-import { getMetadata } from "../../../../../../utils/synchronization";
 import { useAppContext } from "../../../contexts/AppContext";
 import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
@@ -33,24 +35,28 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
     const [modelSelectItems, setModelSelectItems] = useState<DropdownOption[]>([]);
     const [models, setModels] = useState<typeof D2Model[]>([]);
     const [selectedType, setSelectedType] = useState<string>("");
+    const { compositionRoot } = useAppContext();
 
     useEffect(() => {
-        getMetadata(api, syncRule.metadataIds, "id,name").then((metadata: MetadataPackage) => {
-            const models = _.keys(metadata).map((type: string) => {
-                return modelFactory(type);
+        compositionRoot.metadata
+            .getByIds(syncRule.metadataIds, "id,name, type") //type is required to transform visualizations to charts and report tables
+            .then((metadata: MetadataPackage<MetadataEntity>) => {
+                const models = _.keys(metadata).map((type: string) => modelFactory(type));
+
+                const options = models
+                    .map((model: typeof D2Model) => {
+                        const apiModel = api.models[model.getCollectionName()];
+                        return apiModel.schema;
+                    })
+                    .map((schema: D2SchemaProperties) => ({
+                        name: schema.displayName,
+                        id: schema.name,
+                    }));
+
+                setModels(models);
+                setModelSelectItems(options);
             });
-
-            const options = models
-                .map((model: typeof D2Model) => api.models[model.getCollectionName()].schema)
-                .map((schema: D2SchemaProperties) => ({
-                    name: schema.displayName,
-                    id: schema.name,
-                }));
-
-            setModels(models);
-            setModelSelectItems(options);
-        });
-    }, [d2, api, syncRule]);
+    }, [compositionRoot.metadata, api, syncRule]);
 
     const { includeRules = [], excludeRules = [] } =
         syncRule.metadataIncludeExcludeRules[selectedType] || {};

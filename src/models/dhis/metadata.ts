@@ -677,3 +677,10 @@ export class TrackedEntityAttributeModel extends D2Model {
 
     protected static includeRules = ["legendSets", "optionSets", "optionSets.options"];
 }
+
+export class SqlView extends D2Model {
+    protected static metadataType = "sqlView";
+    protected static collectionName = "sqlViews" as const;
+
+    protected static includeRules = ["attributes"];
+}

@@ -6,15 +6,16 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Instance } from "../../../../../../domain/instance/entities/Instance";
 import { filterRuleToString } from "../../../../../../domain/metadata/entities/FilterRule";
+import {
+    MetadataEntities,
+    MetadataEntity,
+    MetadataPackage,
+} from "../../../../../../domain/metadata/entities/MetadataEntities";
 import { includeExcludeRulesFriendlyNames } from "../../../../../../domain/metadata/entities/MetadataFriendlyNames";
 import { cleanOrgUnitPaths } from "../../../../../../domain/synchronization/utils";
 import i18n from "../../../../../../locales";
 import { getValidationMessages } from "../../../../../../utils/old-validations";
-import {
-    availablePeriods,
-    getMetadata,
-    requestJSONDownload,
-} from "../../../../../../utils/synchronization";
+import { availablePeriods } from "../../../../../../utils/synchronization";
 import { useAppContext } from "../../../contexts/AppContext";
 import { buildAggregationItems } from "../data/AggregationStep";
 import { SyncWizardStepProps } from "../Steps";
@@ -53,7 +54,7 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
 
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
-    const [metadata, updateMetadata] = useState<Record<string, any[]>>({});
+    const [metadata, updateMetadata] = useState<MetadataPackage<MetadataEntity>>({});
     const [targetInstances, setTargetInstances] = useState<Instance[]>([]);
     const instanceOptions = buildInstanceOptions(targetInstances);
 
@@ -83,9 +84,17 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
 
     const downloadJSON = async () => {
         loading.show(true, "Generating JSON file");
-        const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
-        const payload = await sync.buildPayload();
-        requestJSONDownload(payload, syncRule);
+        const result = await compositionRoot.rules.downloadPayloads(syncRule.id);
+
+        result.match({
+            success: () => {
+                snackbar.success(i18n.t("Json files downloaded successfull"));
+            },
+            error: errors => {
+                snackbar.error(errors.join("\n"));
+            },
+        });
+
         loading.reset();
     };
 
@@ -96,7 +105,8 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
             ...syncRule.dataSyncAttributeCategoryOptions,
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
-        getMetadata(api, ids, "id,name").then(updateMetadata);
+
+        compositionRoot.metadata.getByIds(ids, "id,name,type").then(updateMetadata); //type is required to transform visualizations to charts and report tables
         compositionRoot.instances.list().then(setTargetInstances);
     }, [api, compositionRoot, syncRule]);
 
@@ -152,9 +162,12 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
                 </LiEntry>
 
                 {_.keys(metadata).map(metadataType => {
-                    const items = metadata[metadataType].filter(
+                    const itemsByType = metadata[metadataType as keyof MetadataEntities] || [];
+
+                    const items = itemsByType.filter(
                         ({ id }) => !syncRule.excludedIds.includes(id)
                     );
+
                     return (
                         items.length > 0 && (
                             <LiEntry
@@ -199,7 +212,11 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
                     >
                         <ul>
                             {syncRule.excludedIds.map(id => {
-                                const element = _(metadata).values().flatten().find({ id });
+                                const values = Object.keys(metadata).map(
+                                    key => metadata[key as keyof MetadataEntities]
+                                );
+
+                                const element = values.flat().find(element => element?.id === id);
 
                                 return (
                                     <LiEntry

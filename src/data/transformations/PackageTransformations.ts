@@ -286,44 +286,54 @@ export const metadataTransformations: Transformation[] = [
             };
         },
         undo: ({ visualizations, ...rest }: any) => {
-            const [charts, reportTables] = _(visualizations)
-                .partition(
-                    (visualization: { type: string }) =>
-                        isKeyOf(visualizationTypeMapping, visualization.type) &&
-                        visualizationTypeMapping[visualization.type].type !== "REPORT_TABLE"
-                )
-                .value();
+            if (visualizations) {
+                const [charts, reportTables] = _(visualizations)
+                    .partition(
+                        (visualization: { type: string }) =>
+                            isKeyOf(visualizationTypeMapping, visualization.type) &&
+                            visualizationTypeMapping[visualization.type].type !== "REPORT_TABLE" //PIVOT_TABLE?
+                    )
+                    .value();
 
-            const newCharts = charts.map((chart: any) => {
+                const newCharts = charts.map((chart: any) => {
+                    return {
+                        series: (chart.columnDimensions || [])[0],
+                        category: (chart.rowDimensions || [])[0],
+                        seriesItems: (chart.optionalAxes || []).map(
+                            ({ dimensionalItem, axis }: any) => ({
+                                series: dimensionalItem,
+                                axis,
+                            })
+                        ),
+                        ...chart,
+                    };
+                });
+
+                const newReportTables = reportTables.map((reportTable: any) => {
+                    return {
+                        ...reportTable,
+                        ...getPeriodDataFromYearlySeries(reportTable),
+                        cumulativeValues: undefined,
+                        cumulative: reportTable.cumulativeValues,
+                        reportingParams: undefined,
+                        reportParams: getOldReportParams(reportTable.reportingParams),
+                    };
+                });
+
                 return {
-                    series: (chart.columnDimensions || [])[0],
-                    category: (chart.rowDimensions || [])[0],
-                    seriesItems: (chart.optionalAxes || []).map(
-                        ({ dimensionalItem, axis }: any) => ({
-                            series: dimensionalItem,
-                            axis,
-                        })
-                    ),
-                    ...chart,
+                    ...rest,
+                    charts: newCharts,
+                    reportTables: newReportTables,
                 };
-            });
-
-            const newReportTables = reportTables.map((reportTable: any) => {
+            } else {
+                // This is neccesary because in 2.34 charts and reports tables may appears in the package
+                // as charts, reportTables keys if the response is for the request against charts, reportTables endpoints
+                // if response is for the request agains visualizations or metadata then the key is visualizations
+                // if visualizations key does not exist then return rest directly
                 return {
-                    ...reportTable,
-                    ...getPeriodDataFromYearlySeries(reportTable),
-                    cumulativeValues: undefined,
-                    cumulative: reportTable.cumulativeValues,
-                    reportingParams: undefined,
-                    reportParams: getOldReportParams(reportTable.reportingParams),
+                    ...rest,
                 };
-            });
-
-            return {
-                ...rest,
-                charts: newCharts,
-                reportTables: newReportTables,
-            };
+            }
         },
     },
     {
