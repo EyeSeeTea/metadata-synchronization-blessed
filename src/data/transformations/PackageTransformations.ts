@@ -17,11 +17,12 @@ export const metadataTransformations: Transformation[] = [
                                 return _.pickBy(
                                     {
                                         geometry: {
-                                            type: geometry?.type ?? _.startCase(featureType),
+                                            type: _.startCase(featureType.toLowerCase()).replace(
+                                                " ",
+                                                ""
+                                            ),
                                             coordinates: JSON.parse(coordinates),
                                         },
-                                        featureType,
-                                        coordinates,
                                         ...rest,
                                     },
                                     _.identity
@@ -32,10 +33,7 @@ export const metadataTransformations: Transformation[] = [
                                 );
                             }
                         }
-                        return _.pickBy(
-                            { geometry, featureType, coordinates, ...rest },
-                            _.identity
-                        );
+                        return _.pickBy({ geometry, ...rest }, _.identity);
                     }
                 ),
                 ...rest,
@@ -49,8 +47,10 @@ export const metadataTransformations: Transformation[] = [
                             try {
                                 return _.pickBy(
                                     {
-                                        geometry: geometry.type.toUpperCase(),
-                                        featureType,
+                                        featureType:
+                                            geometry.type === "MultiPolygon"
+                                                ? "MULTI_POLYGON"
+                                                : geometry.type.toUpperCase(),
                                         coordinates: JSON.stringify(geometry.coordinates).replace(
                                             /"/g,
                                             ""
@@ -65,10 +65,7 @@ export const metadataTransformations: Transformation[] = [
                                 );
                             }
                         }
-                        return _.pickBy(
-                            { geometry, featureType, coordinates, ...rest },
-                            _.identity
-                        );
+                        return _.pickBy({ featureType, coordinates, ...rest }, _.identity);
                     }
                 ),
                 ...rest,
