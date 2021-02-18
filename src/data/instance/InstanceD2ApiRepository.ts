@@ -13,7 +13,11 @@ import { Namespace } from "../storage/Namespaces";
 export class InstanceD2ApiRepository implements InstanceRepository {
     private api: D2Api;
 
-    constructor(private configRepository: ConfigRepository, private instance: Instance, private encryptionKey: string) {
+    constructor(
+        private configRepository: ConfigRepository,
+        private instance: Instance,
+        private encryptionKey: string
+    ) {
         this.api = getD2APiFromInstance(instance);
     }
 

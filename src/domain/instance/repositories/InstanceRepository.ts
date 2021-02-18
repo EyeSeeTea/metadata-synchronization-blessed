@@ -6,11 +6,15 @@ import { InstanceMessage } from "../entities/Message";
 import { User } from "../entities/User";
 
 export interface InstanceRepositoryConstructor {
-    new(configRepository: ConfigRepository, instance: Instance, encryptionKey: string): InstanceRepository;
+    new (
+        configRepository: ConfigRepository,
+        instance: Instance,
+        encryptionKey: string
+    ): InstanceRepository;
 }
 
 export interface InstanceRepository {
-    getById(id: string): Promise<Instance | undefined>
+    getById(id: string): Promise<Instance | undefined>;
     getApi(): D2Api;
     getBaseUrl(): string;
     getUser(): Promise<User>;
