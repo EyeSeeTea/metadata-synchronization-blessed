@@ -239,6 +239,9 @@ async function getSyncRules(
     const { rows } = await compositionRoot.rules.list({ paging: false });
     const allRules = await promiseMap(rows, ({ id }) => compositionRoot.rules.get(id));
 
+    const getProjectMinimumDate = (path: string) =>
+        _.find(projectMinimumDates, (_project, key) => path.includes(key))?.date;
+
     return _(allRules)
         .map(rule => {
             // Remove rules that are not aggregated or events
@@ -268,8 +271,8 @@ async function getSyncRules(
             // Remove org units with minimum date after end date
             return rule.updateDataSyncOrgUnitPaths(
                 rule.dataSyncOrgUnitPaths.filter(path => {
-                    const { date } = projectMinimumDates[path] ?? {};
-                    return !date || moment(date).isSameOrBefore(endDate);
+                    const minDate = getProjectMinimumDate(path);
+                    return !minDate || moment(minDate).isSameOrBefore(endDate);
                 })
             );
         })
@@ -277,11 +280,10 @@ async function getSyncRules(
             const { startDate, endDate } = buildPeriodFromParams(rule.dataParams);
 
             return _(rule.dataSyncOrgUnitPaths)
-                .groupBy(path =>
-                    projectMinimumDates[path]?.date
-                        ? moment(projectMinimumDates[path].date).format("YYYY-MM-DD")
-                        : undefined
-                )
+                .groupBy(path => {
+                    const minDate = getProjectMinimumDate(path);
+                    return minDate ? moment(minDate).format("YYYY-MM-DD") : undefined;
+                })
                 .toPairs()
                 .map(([date, paths]) => {
                     const minDate = moment(date);
