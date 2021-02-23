@@ -488,8 +488,12 @@ export class ProgramModel extends D2Model {
         "trackedEntityTypes",
         "trackedEntityTypes.trackedEntityAttributes",
         "trackedEntityTypes.trackedEntityAttributes.legendSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets.options",
         "trackedEntityAttributes",
         "trackedEntityAttributes.legendSets",
+        "trackedEntityAttributes.optionSets",
+        "trackedEntityAttributes.optionSets.options",
         "programNotificationTemplates",
     ];
 }
