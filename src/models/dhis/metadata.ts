@@ -597,6 +597,20 @@ export class ReportModel extends D2Model {
     protected static collectionName = "reports" as const;
 }
 
+export class RelashionshipType extends D2Model {
+    protected static metadataType = "relationshipType";
+    protected static collectionName = "relationshipTypes" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "trackedEntityTypes",
+        "trackedEntityTypes.trackedEntityAttributes",
+        "trackedEntityTypes.trackedEntityAttributes.legendSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets.options",
+    ];
+}
+
 export class SectionModel extends D2Model {
     protected static metadataType = "section";
     protected static collectionName = "sections" as const;
