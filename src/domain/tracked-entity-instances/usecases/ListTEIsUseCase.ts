@@ -4,11 +4,11 @@ import { TrackedEntityInstance } from "../entities/TrackedEntityInstance";
 import { TEIRepository } from "../repositories/TEIRepository";
 
 export class ListTEIsUseCase implements UseCase {
-    constructor(private trackedEntityInstanceRepository: TEIRepository) { }
+    constructor(private trackedEntityInstanceRepository: TEIRepository) {}
 
     public async execute(
         params: DataSynchronizationParams,
-        programs: string,
+        programs: string
     ): Promise<TrackedEntityInstance[]> {
         return this.trackedEntityInstanceRepository.getTEIs(params, programs);
     }

@@ -14,8 +14,8 @@ export class TEID2ApiRepository implements TEIRepository {
     }
     async getTEIs(
         params: DataSynchronizationParams,
-        program: string): Promise<TrackedEntityInstance[]> {
-
+        program: string
+    ): Promise<TrackedEntityInstance[]> {
         const { orgUnitPaths = [] } = params;
         //const { startDate, endDate } = buildPeriodFromParams(params);
 
@@ -23,12 +23,13 @@ export class TEID2ApiRepository implements TEIRepository {
 
         if (orgUnits.length === 0) return [];
 
-        const result = await this.api.get<TEIsResponse>("/trackedEntityInstances", {
-            program,
-            ou: orgUnits.join(";"),
-            // startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-            // endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
-        })
+        const result = await this.api
+            .get<TEIsResponse>("/trackedEntityInstances", {
+                program,
+                ou: orgUnits.join(";"),
+                // startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
+                // endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+            })
             .getData();
 
         return result.trackedEntityInstances;

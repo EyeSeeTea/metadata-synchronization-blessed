@@ -3,16 +3,13 @@ import { Instance } from "../../instance/entities/Instance";
 import { TrackedEntityInstance } from "../entities/TrackedEntityInstance";
 
 export interface TEIRepositoryConstructor {
-    new(instance: Instance): TEIRepository;
+    new (instance: Instance): TEIRepository;
 }
 
 export interface TEIRepository {
-    getTEIs(
-        params: DataSynchronizationParams,
-        program: string,
-    ): Promise<TrackedEntityInstance[]>;
+    getTEIs(params: DataSynchronizationParams, program: string): Promise<TrackedEntityInstance[]>;
 
-    // save( 
+    // save(
     //     data: TrackedEntityInstance[],
     //     additionalParams: DataImportParams | undefined
     // ): Promise<SynchronizationResult>;

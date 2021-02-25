@@ -12,6 +12,7 @@ import CategoryOptionsSelectionStep from "./data/CategoryOptionsSelectionStep";
 import EventsSelectionStep from "./data/EventsSelectionStep";
 import OrganisationUnitsSelectionStep from "./data/OrganisationUnitsSelectionStep";
 import PeriodSelectionStep from "./data/PeriodSelectionStep";
+import TEIsSelectionStep from "./data/TEIsSelectionStep";
 import MetadataIncludeExcludeStep from "./metadata/MetadataIncludeExcludeStep";
 
 export interface SyncWizardStep extends WizardStep {
@@ -180,6 +181,13 @@ export const eventsSteps: SyncWizardStep[] = [
         component: PeriodSelectionStep,
         validationKeys: ["dataSyncStartDate", "dataSyncEndDate"],
         showOnSyncDialog: true,
+    },
+    {
+        key: "tracked-entity-instances",
+        label: i18n.t("TEIs"),
+        component: TEIsSelectionStep,
+        validationKeys: [""],
+        showOnSyncDialog: false,
     },
     {
         key: "events",

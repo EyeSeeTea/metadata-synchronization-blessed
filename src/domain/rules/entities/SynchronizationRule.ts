@@ -138,8 +138,16 @@ export class SynchronizationRule {
         return this.syncRule.builder?.dataParams?.events ?? [];
     }
 
+    public get dataSyncTeis(): string[] {
+        return this.syncRule.builder?.dataParams?.teis ?? [];
+    }
+
     public get dataSyncAllEvents(): boolean {
         return this.syncRule.builder?.dataParams?.allEvents ?? true;
+    }
+
+    public get excludeTeiRelationships(): boolean {
+        return this.syncRule.builder?.dataParams?.excludeTeiRelationships ?? true;
     }
 
     public get dataSyncEnableAggregation(): boolean | undefined {
@@ -471,8 +479,16 @@ export class SynchronizationRule {
         return this.updateBuilderDataParams({ events });
     }
 
+    public updateDataSyncTEIs(teis?: string[]): SynchronizationRule {
+        return this.updateBuilderDataParams({ teis });
+    }
+
     public updateDataSyncAllEvents(allEvents?: boolean): SynchronizationRule {
         return this.updateBuilderDataParams({ allEvents });
+    }
+
+    public updateExcludeTeiRelationships(excludeTeiRelationships?: boolean): SynchronizationRule {
+        return this.updateBuilderDataParams({ excludeTeiRelationships });
     }
 
     public updateDataSyncEnableAggregation(enableAggregation?: boolean): SynchronizationRule {

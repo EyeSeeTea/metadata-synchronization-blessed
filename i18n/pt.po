@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-02-17T11:40:47.844Z\n"
+"POT-Creation-Date: 2021-02-25T12:13:26.959Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1107,6 +1107,9 @@ msgstr ""
 msgid "Programs"
 msgstr ""
 
+msgid "TEIs"
+msgstr ""
+
 msgid ""
 "If aggregation is enabled, the synchronization will use the Analytics "
 "endpoint and group data by organisation units children and the chosen time "
@@ -1294,6 +1297,9 @@ msgid "Sync all events"
 msgstr ""
 
 msgid "You do not have assigned any organisation unit"
+msgstr ""
+
+msgid "Exclude relationships"
 msgstr ""
 
 msgid "Use sync rules periods"
