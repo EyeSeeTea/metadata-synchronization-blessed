@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-02-10T11:23:21.742Z\n"
-"PO-Revision-Date: 2021-02-10T11:23:21.743Z\n"
+"POT-Creation-Date: 2021-02-18T05:38:13.915Z\n"
+"PO-Revision-Date: 2021-02-18T05:38:13.916Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -96,6 +96,12 @@ msgid "Version is too small (next version is {{validExample}})"
 msgstr ""
 
 msgid "deleted"
+msgstr ""
+
+msgid "An error has ocurred mapping payload for instance {{name}}"
+msgstr ""
+
+msgid "Instance {{id}} not found"
 msgstr ""
 
 msgid "Analytics execution finished on {{name}}"
@@ -1147,6 +1153,9 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
+msgid "Json files downloaded successfull"
+msgstr ""
+
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -1786,6 +1795,9 @@ msgid "Destination instances"
 msgstr ""
 
 msgid "Last executed"
+msgstr ""
+
+msgid "Generating JSON file"
 msgstr ""
 
 msgid "Deleting Sync Rules"

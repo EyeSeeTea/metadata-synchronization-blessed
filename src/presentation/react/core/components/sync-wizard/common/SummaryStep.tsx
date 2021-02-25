@@ -15,7 +15,7 @@ import { includeExcludeRulesFriendlyNames } from "../../../../../../domain/metad
 import { cleanOrgUnitPaths } from "../../../../../../domain/synchronization/utils";
 import i18n from "../../../../../../locales";
 import { getValidationMessages } from "../../../../../../utils/old-validations";
-import { availablePeriods, requestJSONDownload } from "../../../../../../utils/synchronization";
+import { availablePeriods } from "../../../../../../utils/synchronization";
 import { useAppContext } from "../../../contexts/AppContext";
 import { buildAggregationItems } from "../data/AggregationStep";
 import { SyncWizardStepProps } from "../Steps";
@@ -84,9 +84,17 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
 
     const downloadJSON = async () => {
         loading.show(true, "Generating JSON file");
-        const sync = compositionRoot.sync[syncRule.type](syncRule.toBuilder());
-        const payload = await sync.buildPayload();
-        requestJSONDownload(payload, syncRule);
+        const result = await compositionRoot.rules.downloadPayloads(syncRule.id);
+
+        result.match({
+            success: () => {
+                snackbar.success(i18n.t("Json files downloaded successfull"));
+            },
+            error: errors => {
+                snackbar.error(errors.join("\n"));
+            },
+        });
+
         loading.reset();
     };
 

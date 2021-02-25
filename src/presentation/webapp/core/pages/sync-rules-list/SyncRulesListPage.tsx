@@ -37,7 +37,6 @@ import {
     isGlobalAdmin,
     UserInfo,
 } from "../../../../../utils/permissions";
-import { requestJSONDownload } from "../../../../../utils/synchronization";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import {
@@ -196,14 +195,19 @@ const SyncRulesPage: React.FC = () => {
         const id = _.first(ids);
         if (!id) return;
 
-        const rule = await compositionRoot.rules.get(id);
-        if (!rule) return;
+        loading.show(true, i18n.t("Generating JSON file"));
 
-        loading.show(true, "Generating JSON file");
-        const sync = compositionRoot.sync[rule.type](rule.toBuilder());
-        const payload = await sync.buildPayload();
+        const result = await compositionRoot.rules.downloadPayloads(id);
 
-        requestJSONDownload(payload, rule);
+        result.match({
+            success: () => {
+                snackbar.success(i18n.t("Json files downloaded successfull"));
+            },
+            error: errors => {
+                snackbar.error(errors.join("\n"));
+            },
+        });
+
         loading.reset();
     };
 

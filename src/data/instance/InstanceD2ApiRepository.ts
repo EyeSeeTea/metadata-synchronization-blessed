@@ -1,17 +1,43 @@
-import { Instance } from "../../domain/instance/entities/Instance";
+import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
+import { Instance, InstanceData } from "../../domain/instance/entities/Instance";
 import { InstanceMessage } from "../../domain/instance/entities/Message";
 import { User } from "../../domain/instance/entities/User";
 import { InstanceRepository } from "../../domain/instance/repositories/InstanceRepository";
 import { OrganisationUnit } from "../../domain/metadata/entities/MetadataEntities";
+import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { D2Api } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
+import { Namespace } from "../storage/Namespaces";
 
 export class InstanceD2ApiRepository implements InstanceRepository {
     private api: D2Api;
 
-    constructor(instance: Instance) {
+    constructor(
+        private configRepository: ConfigRepository,
+        private instance: Instance,
+        private encryptionKey: string
+    ) {
         this.api = getD2APiFromInstance(instance);
+    }
+
+    async getById(id: string): Promise<Instance | undefined> {
+        const storageClient = await this.getStorageClient();
+
+        const instanceData = await storageClient.getObjectInCollection<InstanceData>(
+            Namespace.INSTANCES,
+            id
+        );
+
+        if (!instanceData) return undefined;
+
+        const instance = Instance.build({
+            ...instanceData,
+            url: instanceData.type === "local" ? this.instance.url : instanceData.url,
+            version: instanceData.type === "local" ? this.instance.version : instanceData.version,
+        }).decryptPassword(this.encryptionKey);
+
+        return instance;
     }
 
     public getApi(): D2Api {
@@ -63,5 +89,9 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     public async sendMessage(message: InstanceMessage): Promise<void> {
         //@ts-ignore https://github.com/EyeSeeTea/d2-api/pull/52
         await this.api.messageConversations.post(message).getData();
+    }
+
+    private getStorageClient(): Promise<StorageClient> {
+        return this.configRepository.getStorageClient();
     }
 }

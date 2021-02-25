@@ -5,10 +5,7 @@ import { Repositories, RepositoryFactory } from "../../common/factories/Reposito
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { User } from "../../instance/entities/User";
-import {
-    InstanceRepository,
-    InstanceRepositoryConstructor,
-} from "../../instance/repositories/InstanceRepository";
+import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
@@ -28,10 +25,7 @@ export class ImportPackageUseCase implements UseCase {
     instanceRepository: InstanceRepository;
 
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {
-        this.instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [this.localInstance, ""]
-        );
+        this.instanceRepository = this.repositoryFactory.instanceRepository(this.localInstance);
     }
 
     public async execute(
