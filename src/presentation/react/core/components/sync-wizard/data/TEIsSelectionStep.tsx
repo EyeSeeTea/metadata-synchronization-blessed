@@ -1,4 +1,4 @@
-import { Typography } from "@material-ui/core";
+import { makeStyles, Typography } from "@material-ui/core";
 import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import i18n from "../../../../../../locales";
@@ -18,6 +18,7 @@ interface TEIObject extends TrackedEntityInstance {
 }
 
 export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
+    const classes = useStyles();
     const { compositionRoot } = useAppContext();
 
     const [memoizedSyncRule] = useState<SynchronizationRule>(syncRule);
@@ -174,24 +175,33 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
 
     return (
         <React.Fragment>
+            <ObjectsTable<TEIObject>
+                rows={rows}
+                loading={rows === undefined}
+                columns={columns}
+                details={details}
+                actions={actions}
+                forceSelectionColumn={true}
+                onChange={handleTableChange}
+                selection={syncRule.dataSyncTeis?.map(id => ({ id })) ?? []}
+                filterComponents={filterComponents}
+            />
+
+            <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
+                {i18n.t("Advanced options")}
+            </Typography>
+
             <Toggle
                 label={i18n.t("Exclude relationships")}
                 value={syncRule.excludeTeiRelationships}
                 onValueChange={excludeTeiRelationships}
             />
-            {!syncRule.dataSyncAllEvents && (
-                <ObjectsTable<TEIObject>
-                    rows={rows}
-                    loading={rows === undefined}
-                    columns={columns}
-                    details={details}
-                    actions={actions}
-                    forceSelectionColumn={true}
-                    onChange={handleTableChange}
-                    selection={syncRule.dataSyncTeis?.map(id => ({ id })) ?? []}
-                    filterComponents={filterComponents}
-                />
-            )}
         </React.Fragment>
     );
 }
+
+const useStyles = makeStyles({
+    advancedOptionsTitle: {
+        fontWeight: 500,
+    },
+});
