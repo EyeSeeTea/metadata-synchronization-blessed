@@ -1,4 +1,5 @@
 import { DataSynchronizationParams } from "../../domain/aggregated/types";
+import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TrackedEntityInstance } from "../../domain/tracked-entity-instances/entities/TrackedEntityInstance";
@@ -16,8 +17,8 @@ export class TEID2ApiRepository implements TEIRepository {
         params: DataSynchronizationParams,
         program: string
     ): Promise<TrackedEntityInstance[]> {
-        const { orgUnitPaths = [] } = params;
-        //const { startDate, endDate } = buildPeriodFromParams(params);
+        const { period, orgUnitPaths = [] } = params;
+        const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
@@ -27,8 +28,12 @@ export class TEID2ApiRepository implements TEIRepository {
             .get<TEIsResponse>("/trackedEntityInstances", {
                 program,
                 ou: orgUnits.join(";"),
-                // startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-                // endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                //Specify fields because without fields enrollment relation is not in response
+                //and if assign fiedls: "*" return events inside enrollments
+                fields:
+                    "trackedEntityInstance, created,orgUnit,createdAtClient,lastUpdated,trackedEntityType,lastUpdatedAtClient,inactive,deleted,featureType,programOwners,enrollments,relationships,attributes",
+                programStartDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
+                programEndDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
             })
             .getData();
 
