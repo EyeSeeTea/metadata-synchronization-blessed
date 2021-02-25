@@ -100,6 +100,8 @@ import { GetSystemInfoUseCase } from "../domain/system-info/usecases/GetSystemIn
 import { cache } from "../utils/cache";
 import { GetMetadataByIdsUseCase } from "../domain/metadata/usecases/GetMetadataByIdsUseCase";
 import { DownloadPayloadFromSyncRuleUseCase } from "../domain/synchronization/usecases/DownloadPayloadFromSyncRuleUseCase";
+import { TEID2ApiRepository } from "../data/tracked-entity-instances/TEID2ApiRepository";
+import { ListTEIsUseCase } from "../domain/tracked-entity-instances/usecases/ListTEIsUseCase";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -120,6 +122,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.StoreRepository, StoreD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MigrationsRepository, MigrationsAppRepository);
+        this.repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
         this.repositoryFactory.bind(
             Repositories.MetadataRepository,
             MetadataJSONRepository,
@@ -407,6 +410,15 @@ export class CompositionRoot {
                 this.localInstance
             ),
             hasPending: new HasPendingMigrationsUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get teis() {
+        const repository = new TEID2ApiRepository(this.localInstance);
+
+        return getExecute({
+            list: new ListTEIsUseCase(repository),
         });
     }
 }
