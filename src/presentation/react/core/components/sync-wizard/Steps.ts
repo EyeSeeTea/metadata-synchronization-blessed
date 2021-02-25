@@ -187,7 +187,7 @@ export const eventsSteps: SyncWizardStep[] = [
         label: i18n.t("TEIs"),
         component: TEIsSelectionStep,
         validationKeys: [""],
-        showOnSyncDialog: false,
+        showOnSyncDialog: true,
     },
     {
         key: "events",
