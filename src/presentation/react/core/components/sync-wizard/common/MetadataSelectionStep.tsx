@@ -10,6 +10,7 @@ import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
+    EventProgramWithProgramStagesModel,
     ProgramIndicatorMappedModel,
 } from "../../../../../../models/dhis/mapping";
 import {
@@ -43,10 +44,11 @@ const config = {
     events: {
         models: [
             EventProgramWithDataElementsModel,
+            EventProgramWithProgramStagesModel,
             EventProgramWithIndicatorsModel,
             ProgramIndicatorMappedModel,
         ],
-        childrenKeys: ["dataElements", "programIndicators"],
+        childrenKeys: ["dataElements", "programIndicators", "stages"],
     },
     deleted: {
         models: [],

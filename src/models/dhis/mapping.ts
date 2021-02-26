@@ -127,6 +127,15 @@ export class ProgramDataElementModel extends DataElementModel {
     protected static modelFilters = { domainType: { neq: "AGGREGATE" } };
 }
 
+export class ProgramProgramStageModel extends ProgramStageModel {
+    protected static metadataType = "programProgramStageModel";
+    protected static mappingType = "programProgramStageModel";
+    //protected static groupFilterName = DataElementModel.groupFilterName;
+    //protected static fields = programStageF;
+
+    protected static modelFilters = { domainType: { neq: "AGGREGATE" } };
+}
+
 export class EventProgramModel extends ProgramModel {
     protected static metadataType = "eventPrograms";
     protected static mappingType = "eventPrograms";
@@ -160,6 +169,32 @@ export class EventProgramWithDataElementsModel extends EventProgramModel {
                             }))
                 ) ?? []
             ),
+        }));
+    };
+}
+
+export class EventProgramWithProgramStagesModel extends EventProgramModel {
+    protected static metadataType = "programWithProgramStages";
+    protected static modelName = i18n.t("Program with Program Stages");
+    protected static childrenKeys = ["stages, dataElements"];
+    protected static fields = programFieldsWithDataElements;
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2ProgramSchema, typeof programFieldsWithDataElements>[]
+    ) => {
+        return objects.map(program => ({
+            ...program,
+            stages: program.programStages.map(programStage => ({
+                ...programStage,
+                model: ProgramProgramStageModel,
+                dataElements: programStage.programStageDataElements
+                    .filter(({ dataElement }) => !!dataElement)
+                    .map(({ dataElement }) => ({
+                        ...dataElement,
+                        id: `${program.id}-${programStage.id}-${dataElement.id}`,
+                        model: ProgramDataElementModel,
+                    })),
+            })),
         }));
     };
 }
