@@ -66,6 +66,7 @@ export interface ListMetadataParams {
     disableFilterRows?: boolean;
     selectedIds?: string[];
     rootJunction?: "AND" | "OR";
+    programType?: "WITHOUT_REGISTRATION" | "WITH_REGISTRATION";
 }
 
 export interface ListMetadataResponse {

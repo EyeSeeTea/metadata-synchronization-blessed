@@ -147,6 +147,7 @@ export class EventProgramWithDataElementsModel extends EventProgramModel {
     protected static modelName = i18n.t("Program with Data Elements");
     protected static childrenKeys = ["dataElements"];
     protected static fields = programFieldsWithDataElements;
+    protected static modelFilters: any = { programType: "WITHOUT_REGISTRATION" };
 
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFieldsWithDataElements>[]
@@ -178,6 +179,7 @@ export class EventProgramWithProgramStagesModel extends EventProgramModel {
     protected static modelName = i18n.t("Program with Program Stages");
     protected static childrenKeys = ["stages, dataElements"];
     protected static fields = programFieldsWithDataElements;
+    protected static modelFilters: any = { programType: "WITH_REGISTRATION" };
 
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFieldsWithDataElements>[]
@@ -204,6 +206,7 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
     protected static modelName = i18n.t("Program with Indicators");
     protected static childrenKeys = ["programIndicators"];
     protected static fields = programFieldsWithIndicators;
+    protected static modelFilters: any = { programType: undefined };
 
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFieldsWithIndicators>[]
