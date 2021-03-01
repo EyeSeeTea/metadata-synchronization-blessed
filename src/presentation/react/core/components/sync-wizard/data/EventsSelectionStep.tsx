@@ -10,6 +10,7 @@ import { useAppContext } from "../../../contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
+import { extractAllPrograms } from "../utils";
 
 interface ProgramEventObject extends ProgramEvent {
     [key: string]: any;
@@ -21,7 +22,7 @@ type CustomProgramStage = {
     programStageDataElements: { dataElement: DataElement }[];
 };
 
-type CustomProgram = Program & {
+export type CustomProgram = Program & {
     programStages?: CustomProgramStage[];
 };
 
@@ -36,9 +37,20 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
 
     useEffect(() => {
         const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
-        sync.extractMetadata<CustomProgram>().then(({ programs = [] }) => {
-            setPrograms(programs);
-        });
+
+        //TODO: We should unify the approach to send fields to use cases (string vs object)
+        extractAllPrograms<CustomProgram>(compositionRoot, sync, {
+            id: true,
+            name: true,
+            programType: true,
+            programStages: {
+                id: true,
+                displayFormName: true,
+                programStageDataElements: {
+                    dataElement: { id: true, displayFormName: true, name: true },
+                },
+            },
+        }).then(setPrograms);
     }, [memoizedSyncRule, compositionRoot]);
 
     useEffect(() => {
@@ -97,7 +109,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                     ) as CustomProgramStage;
 
                     return programObj && stage
-                        ? programObj.programStages.length > 1
+                        ? programObj.programType === "WITH_REGISTRATION"
                             ? `${programObj.name} [${stage.displayFormName}]`
                             : programObj.name
                         : program;

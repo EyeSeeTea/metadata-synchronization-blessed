@@ -67,6 +67,7 @@ export interface ListMetadataParams {
     selectedIds?: string[];
     rootJunction?: "AND" | "OR";
     programType?: "WITHOUT_REGISTRATION" | "WITH_REGISTRATION";
+    childrenPropInList?: { prop: string; values: string[] };
 }
 
 export interface ListMetadataResponse {

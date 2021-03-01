@@ -312,6 +312,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         search,
         disableFilterRows = false,
         programType,
+        childrenPropInList,
     }: Partial<ListMetadataParams>) {
         const filter: Dictionary<FilterValueBase> = {};
 
@@ -319,6 +320,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         if (group) filter[`${group.type}.id`] = { eq: group.value };
         if (level) filter["level"] = { eq: level };
         if (program) filter["program.id"] = { eq: program };
+        if (childrenPropInList) filter[childrenPropInList.prop] = { in: childrenPropInList.values };
 
         if (programType) {
             filter["programType"] = { eq: programType };

@@ -24,7 +24,7 @@ import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
 export class EventsSyncUseCase extends GenericSyncUseCase {
     public readonly type = "events";
     public readonly fields =
-        "id,name,programStages[id,displayFormName,programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
+        "id,name,programType,programStages[id,displayFormName,programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
 
     public buildPayload = memoize(async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;

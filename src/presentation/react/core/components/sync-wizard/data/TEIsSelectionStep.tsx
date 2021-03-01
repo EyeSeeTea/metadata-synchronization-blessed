@@ -11,6 +11,7 @@ import { useAppContext } from "../../../contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import moment from "moment";
+import { extractAllPrograms } from "../utils";
 
 interface TEIObject extends TrackedEntityInstance {
     id: string;
@@ -29,7 +30,7 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
 
     useEffect(() => {
         const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
-        sync.extractMetadata<Program>().then(({ programs = [] }) => setPrograms(programs));
+        extractAllPrograms<Program>(compositionRoot, sync).then(setPrograms);
     }, [memoizedSyncRule, compositionRoot]);
 
     useEffect(() => {
