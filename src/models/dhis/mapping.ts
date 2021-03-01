@@ -79,6 +79,7 @@ export class OrganisationUnitMappedModel extends OrganisationUnitModel {
 
 export class ProgramIndicatorMappedModel extends ProgramIndicatorModel {
     protected static mappingType = "aggregatedDataElements";
+    protected static modelFilters: any = { programType: undefined };
 
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramIndicatorSchema, typeof indicatorFields>[]
@@ -123,6 +124,7 @@ export class ProgramDataElementModel extends DataElementModel {
     protected static mappingType = "programDataElements";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
+    protected static isSelectable = false;
 
     protected static modelFilters = { domainType: { neq: "AGGREGATE" } };
 }
