@@ -637,13 +637,14 @@ export class SynchronizationRule {
                       }
                     : null,
             ]),
-            dataSyncEvents: _.compact([
+            dataSyncEventsOrTeis: _.compact([
                 this.type === "events" &&
                 !this.dataSyncAllEvents &&
-                this.dataSyncEvents.length === 0
+                this.dataSyncEvents.length === 0 &&
+                this.dataSyncTeis.length === 0
                     ? {
                           key: "cannot_be_empty",
-                          namespace: { element: "event" },
+                          namespace: { element: "event or tei" },
                       }
                     : null,
             ]),

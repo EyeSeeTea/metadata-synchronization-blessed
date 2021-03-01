@@ -193,7 +193,7 @@ export const eventsSteps: SyncWizardStep[] = [
         key: "events",
         label: i18n.t("Events"),
         component: EventsSelectionStep,
-        validationKeys: ["dataSyncEvents"],
+        validationKeys: ["dataSyncEventsOrTeis"],
         showOnSyncDialog: true,
     },
     {
