@@ -292,6 +292,15 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
 
                 {syncRule.type === "events" && (
                     <LiEntry
+                        label={i18n.t("TEIs")}
+                        value={i18n.t("{{total}} selected TEIs", {
+                            total: syncRule.dataSyncTeis.length,
+                        })}
+                    />
+                )}
+
+                {syncRule.type === "events" && (
+                    <LiEntry
                         label={i18n.t("Events")}
                         value={
                             syncRule.dataSyncAllEvents
