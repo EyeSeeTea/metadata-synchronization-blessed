@@ -15,8 +15,14 @@ interface ProgramEventObject extends ProgramEvent {
     [key: string]: any;
 }
 
+type CustomProgramStage = {
+    id: string;
+    displayFormName: string;
+    programStageDataElements: { dataElement: DataElement }[];
+};
+
 type CustomProgram = Program & {
-    programStages?: { programStageDataElements: { dataElement: DataElement }[] }[];
+    programStages?: CustomProgramStage[];
 };
 
 export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
@@ -30,7 +36,9 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
 
     useEffect(() => {
         const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
-        sync.extractMetadata<CustomProgram>().then(({ programs = [] }) => setPrograms(programs));
+        sync.extractMetadata<CustomProgram>().then(({ programs = [] }) => {
+            setPrograms(programs);
+        });
     }, [memoizedSyncRule, compositionRoot]);
 
     useEffect(() => {
@@ -41,7 +49,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                     ...memoizedSyncRule.dataParams,
                     allEvents: true,
                 },
-                programs.map(({ id }) => id)
+                programs.map(program => program.programStages.map(({ id }) => id)).flat()
             )
             .then(setObjects)
             .catch(setError);
@@ -79,7 +87,21 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 name: "program" as const,
                 text: i18n.t("Program"),
                 sortable: true,
-                getValue: ({ program }) => _.find(programs, { id: program })?.name ?? program,
+                getValue: ({ program, programStage }) => {
+                    const programObj = programs.find(program =>
+                        program.programStages.some(stage => stage.id === programStage)
+                    );
+
+                    const stage = (programObj?.programStages ?? []).find(
+                        stage => stage.id === programStage
+                    ) as CustomProgramStage;
+
+                    return programObj && stage
+                        ? programObj.programStages.length > 1
+                            ? `${programObj.name} [${stage.displayFormName}]`
+                            : programObj.name
+                        : program;
+                },
             },
             { name: "orgUnitName" as const, text: i18n.t("Organisation unit"), sortable: true },
             { name: "eventDate" as const, text: i18n.t("Event date"), sortable: true },

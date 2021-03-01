@@ -12,7 +12,7 @@ import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
-import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
+import { CategoryOptionCombo, Program } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
@@ -24,7 +24,7 @@ import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
 export class EventsSyncUseCase extends GenericSyncUseCase {
     public readonly type = "events";
     public readonly fields =
-        "id,name,programStages[programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
+        "id,name,programStages[id,displayFormName,programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
 
     public buildPayload = memoize(async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
@@ -32,13 +32,22 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const eventsRepository = await this.getEventsRepository();
         const aggregatedRepository = await this.getAggregatedRepository();
 
-        const { programs = [], programIndicators = [] } = await this.extractMetadata();
+        const {
+            programs = [],
+            programStages = [],
+            programIndicators = [],
+        } = await this.extractMetadata();
+
+        const stageIdsFromPrograms = programs
+            ? (programs as Program[])
+                  .map(program => program.programStages.map(({ id }) => id))
+                  .flat()
+            : [];
+
+        const progamStageIds = [...programStages.map(({ id }) => id), ...stageIdsFromPrograms];
 
         const events = (
-            await eventsRepository.getEvents(
-                dataParams,
-                programs.map(({ id }) => id)
-            )
+            await eventsRepository.getEvents(dataParams, [...new Set(progamStageIds)])
         ).map(event => {
             return dataParams.generateNewUid ? { ...event, event: generateUid() } : event;
         });

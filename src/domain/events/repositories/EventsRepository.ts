@@ -11,7 +11,7 @@ export interface EventsRepositoryConstructor {
 export interface EventsRepository {
     getEvents(
         params: DataSynchronizationParams,
-        programs?: string[],
+        programStageIds?: string[],
         defaults?: string[]
     ): Promise<ProgramEvent[]>;
 
