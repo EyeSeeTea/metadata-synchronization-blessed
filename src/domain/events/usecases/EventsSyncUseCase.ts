@@ -17,6 +17,7 @@ import { SynchronizationResult } from "../../reports/entities/SynchronizationRes
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
+import { TrackedEntityInstance } from "../../tracked-entity-instances/entities/TrackedEntityInstance";
 import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
@@ -24,18 +25,19 @@ import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
 export class EventsSyncUseCase extends GenericSyncUseCase {
     public readonly type = "events";
     public readonly fields =
-        "id,name,programType,programStages[id,displayFormName,programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
+        "id,name,programType,programStages[id,displayFormName,programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name],program";
 
     public buildPayload = memoize(async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
         const { enableAggregation = false } = dataParams;
         const eventsRepository = await this.getEventsRepository();
         const aggregatedRepository = await this.getAggregatedRepository();
+        const teisRepository = await this.getTeisRepository();
 
         const {
             programs = [],
-            programStages = [],
             programIndicators = [],
+            programStages = [],
         } = await this.extractMetadata();
 
         const stageIdsFromPrograms = programs
@@ -51,6 +53,10 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         ).map(event => {
             return dataParams.generateNewUid ? { ...event, event: generateUid() } : event;
         });
+
+        const trackedEntityInstances = dataParams.teis
+            ? await teisRepository.getTEIsById(dataParams, dataParams.teis)
+            : [];
 
         const directIndicators = programIndicators.map(({ id }) => id);
         const indicatorsByProgram = _.flatten(
@@ -72,16 +78,21 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             excludedIds.includes(dataElement)
         );
 
-        return { events, dataValues };
+        return { events, dataValues, trackedEntityInstances };
     });
 
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
-        const { events, dataValues } = await this.buildPayload();
+        const { events, dataValues, trackedEntityInstances } = await this.buildPayload();
+
+        const teisResponse =
+            trackedEntityInstances && trackedEntityInstances.length > 0
+                ? await this.postTEIsPayload(instance, trackedEntityInstances)
+                : undefined;
 
         const eventsResponse = await this.postEventsPayload(instance, events);
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
-        return _.compact([eventsResponse, indicatorsResponse]);
+        return _.compact([eventsResponse, indicatorsResponse, teisResponse]);
     }
 
     private async postEventsPayload(
@@ -95,6 +106,22 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const eventsRepository = await this.getEventsRepository(instance);
         const syncResult = await eventsRepository.save(payload, dataParams);
+        const origin = await this.getOriginInstance();
+
+        return { ...syncResult, origin: origin.toPublicObject(), payload };
+    }
+
+    private async postTEIsPayload(
+        instance: Instance,
+        trackedEntityInstances: TrackedEntityInstance[]
+    ): Promise<SynchronizationResult> {
+        const { dataParams = {} } = this.builder;
+
+        const payload = { trackedEntityInstances }; //await this.mapPayload(instance, { events });
+        debug("TEIS package", { trackedEntityInstances }); //, payload });
+
+        const teisRepository = await this.getTeisRepository(instance);
+        const syncResult = await teisRepository.save(payload, dataParams);
         const origin = await this.getOriginInstance();
 
         return { ...syncResult, origin: origin.toPublicObject(), payload };

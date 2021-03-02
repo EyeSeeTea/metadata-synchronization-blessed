@@ -23,6 +23,10 @@ import { RulesRepositoryConstructor } from "../../rules/repositories/RulesReposi
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
 import {
+    TEIRepository,
+    TEIRepositoryConstructor,
+} from "../../tracked-entity-instances/repositories/TEIRepository";
+import {
     TransformationRepository,
     TransformationRepositoryConstructor,
 } from "../../transformations/repositories/TransformationRepository";
@@ -112,6 +116,11 @@ export class RepositoryFactory {
     @cache()
     public eventsRepository(instance: Instance): EventsRepository {
         return this.get<EventsRepositoryConstructor>(Repositories.EventsRepository, [instance]);
+    }
+
+    @cache()
+    public teisRepository(instance: Instance): TEIRepository {
+        return this.get<TEIRepositoryConstructor>(Repositories.TEIsRepository, [instance]);
     }
 
     @cache()

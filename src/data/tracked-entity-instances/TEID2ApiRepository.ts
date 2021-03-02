@@ -1,16 +1,29 @@
+import _ from "lodash";
 import { DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Instance } from "../../domain/instance/entities/Instance";
+import {
+    SynchronizationResult,
+    SynchronizationStats,
+    SynchronizationStatus,
+} from "../../domain/reports/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
+import { TEIsPackage } from "../../domain/tracked-entity-instances/entities/TEIsPackage";
 import { TrackedEntityInstance } from "../../domain/tracked-entity-instances/entities/TrackedEntityInstance";
 import { TEIRepository } from "../../domain/tracked-entity-instances/repositories/TEIRepository";
+import { DataImportParams } from "../../types/d2";
 import { D2Api } from "../../types/d2-api";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 export class TEID2ApiRepository implements TEIRepository {
     private api: D2Api;
 
-    constructor(instance: Instance) {
+    //Specify fields because without fields enrollment relation is not in response
+    //and if assign fiedls: "*" return events inside enrollments
+    private fields =
+        "trackedEntityInstance, created,orgUnit,createdAtClient,lastUpdated,trackedEntityType,lastUpdatedAtClient,inactive,deleted,featureType,programOwners,enrollments,relationships,attributes";
+
+    constructor(private instance: Instance) {
         this.api = getD2APiFromInstance(instance);
     }
     async getTEIs(
@@ -28,10 +41,7 @@ export class TEID2ApiRepository implements TEIRepository {
             .get<TEIsResponse>("/trackedEntityInstances", {
                 program,
                 ou: orgUnits.join(";"),
-                //Specify fields because without fields enrollment relation is not in response
-                //and if assign fiedls: "*" return events inside enrollments
-                fields:
-                    "trackedEntityInstance, created,orgUnit,createdAtClient,lastUpdated,trackedEntityType,lastUpdatedAtClient,inactive,deleted,featureType,programOwners,enrollments,relationships,attributes",
+                fields: this.fields,
                 programStartDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                 programEndDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
             })
@@ -40,96 +50,116 @@ export class TEID2ApiRepository implements TEIRepository {
         return result.trackedEntityInstances;
     }
 
-    // async save(
-    //     data: TrackedEntityInstance[],
-    //     additionalParams: DataImportParams | undefined
-    // ): Promise<SynchronizationResult> {
-    // try {
-    //     const response = await this.api
-    //         .post<EventsPostResponse>(
-    //             "/events",
-    //             {
-    //                 idScheme: "UID",
-    //                 dataElementIdScheme: "UID",
-    //                 orgUnitIdScheme: "UID",
-    //                 eventIdScheme: "UID",
-    //                 preheatCache: false,
-    //                 skipExistingCheck: false,
-    //                 format: "json",
-    //                 async: false,
-    //                 dryRun: false,
-    //                 ...additionalParams,
-    //             },
-    //             data
-    //         )
-    //         .getData();
+    async getTEIsById(
+        params: DataSynchronizationParams,
+        ids: string[]
+    ): Promise<TrackedEntityInstance[]> {
+        const { orgUnitPaths = [] } = params;
+        const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
-    //     return this.cleanEventsImportResponse(response);
-    // } catch (error) {
-    //     if (error?.response?.data) {
-    //         return this.cleanEventsImportResponse(error.response.data);
-    //     }
+        if (orgUnits.length === 0) return [];
+        if (ids.length === 0) return [];
 
-    //     return {
-    //         status: "NETWORK ERROR",
-    //         instance: this.instance.toPublicObject(),
-    //         date: new Date(),
-    //         type: "events",
-    //     };
-    // }
-    //  }
+        const result = await this.api
+            .get<TEIsResponse>("/trackedEntityInstances", {
+                fields: this.fields,
+                ou: orgUnits.join(";"),
+                trackedEntityInstance: ids.join(";"),
+            })
+            .getData();
 
-    // private cleanEventsImportResponse(importResult: EventsPostResponse): SynchronizationResult {
-    //     const { status, message, response } = importResult;
+        return result.trackedEntityInstances;
+    }
 
-    //     const errors =
-    //         response.importSummaries?.flatMap(
-    //             ({ reference = "", description = "", conflicts }) =>
-    //                 conflicts?.map(({ object, value }) => ({
-    //                     id: reference,
-    //                     message: _([description, object, value]).compact().join(" "),
-    //                 })) ?? [{ id: reference, message: description }]
-    //         ) ?? [];
+    async save(
+        data: TEIsPackage,
+        additionalParams: DataImportParams | undefined
+    ): Promise<SynchronizationResult> {
+        try {
+            const response = await this.api
+                .post<TEIsPostResponse>(
+                    "/trackedEntityInstances",
+                    {
+                        idScheme: "UID",
+                        dataElementIdScheme: "UID",
+                        orgUnitIdScheme: "UID",
+                        format: "json",
+                        dryRun: false,
+                        ...additionalParams,
+                    },
+                    data
+                )
+                .getData();
 
-    //     const stats: SynchronizationStats = _.pick(response, [
-    //         "imported",
-    //         "updated",
-    //         "ignored",
-    //         "deleted",
-    //         "total",
-    //     ]);
+            console.log({ response });
 
-    //     return {
-    //         status,
-    //         message,
-    //         stats,
-    //         instance: this.instance.toPublicObject(),
-    //         errors,
-    //         date: new Date(),
-    //         type: "events",
-    //     };
-    // }
+            return this.cleanTEIsImportResponse(response);
+        } catch (error) {
+            if (error?.response?.data) {
+                return this.cleanTEIsImportResponse(error.response.data);
+            }
+
+            return {
+                status: "NETWORK ERROR",
+                instance: this.instance.toPublicObject(),
+                date: new Date(),
+                type: "events",
+            };
+        }
+    }
+
+    private cleanTEIsImportResponse(importResult: TEIsPostResponse): SynchronizationResult {
+        const { status, message, response } = importResult;
+
+        const errors =
+            response.importSummaries?.flatMap(
+                ({ reference = "", description = "", conflicts }) =>
+                    conflicts?.map(({ object, value }) => ({
+                        id: reference,
+                        message: _([description, object, value]).compact().join(" "),
+                    })) ?? [{ id: reference, message: description }]
+            ) ?? [];
+
+        const stats: SynchronizationStats = _.pick(response, [
+            "imported",
+            "updated",
+            "ignored",
+            "deleted",
+            "total",
+        ]);
+
+        return {
+            status,
+            message,
+            stats,
+            instance: this.instance.toPublicObject(),
+            errors,
+            date: new Date(),
+            type: "trackedEntityInstances",
+        };
+    }
 }
 
-// interface EventsPostResponse {
-//     status: "SUCCESS" | "ERROR";
-//     message?: string;
-//     response: {
-//         imported: number;
-//         updated: number;
-//         deleted: number;
-//         ignored: number;
-//         total: number;
-//         importSummaries?: {
-//             description?: string;
-//             reference: string;
-//             conflicts?: {
-//                 object: string;
-//                 value: string;
-//             }[];
-//         }[];
-//     };
-//}
+interface TEIsPostResponse {
+    status: SynchronizationStatus;
+    message?: string;
+    response: {
+        status: SynchronizationStatus;
+        imported: number;
+        updated: number;
+        deleted: number;
+        ignored: number;
+        total: number;
+        importSummaries?: {
+            description?: string;
+            reference: string;
+            conflicts?: {
+                object: string;
+                value: string;
+            }[];
+        }[];
+    };
+}
 
 interface TEIsResponse {
     trackedEntityInstances: TrackedEntityInstance[];

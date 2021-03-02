@@ -108,6 +108,12 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
+    protected async getTeisRepository(remoteInstance?: Instance) {
+        const defaultInstance = await this.getOriginInstance();
+        return this.repositoryFactory.teisRepository(remoteInstance ?? defaultInstance);
+    }
+
+    @cache()
     protected async getOriginInstance(): Promise<Instance> {
         const { originInstance: originInstanceId } = this.builder;
         const instance = await this.getInstanceById(originInstanceId);

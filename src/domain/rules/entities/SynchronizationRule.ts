@@ -644,7 +644,7 @@ export class SynchronizationRule {
                 this.dataSyncTeis.length === 0
                     ? {
                           key: "cannot_be_empty",
-                          namespace: { element: "event or tei" },
+                          namespace: { element: "event or TEI" },
                       }
                     : null,
             ]),

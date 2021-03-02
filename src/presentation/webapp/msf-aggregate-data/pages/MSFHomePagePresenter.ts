@@ -7,7 +7,7 @@ import { SynchronizationReport } from "../../../../domain/reports/entities/Synch
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../domain/stores/entities/Store";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
-import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
+import { SynchronizationResultType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../locales";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { promiseMap } from "../../../../utils/common";
@@ -212,12 +212,14 @@ async function executeSyncRule(
     return SynchronizationReport.create();
 }
 
-const getTypeName = (reportType: SynchronizationType, syncType: string) => {
+const getTypeName = (reportType: SynchronizationResultType, syncType: string) => {
     switch (reportType) {
         case "aggregated":
             return syncType === "events" ? i18n.t("Program Indicators") : i18n.t("Aggregated");
         case "events":
             return i18n.t("Events");
+        case "trackedEntityInstances":
+            return i18n.t("Tracked Entity Instances");
         case "metadata":
             return i18n.t("Metadata");
         case "deleted":

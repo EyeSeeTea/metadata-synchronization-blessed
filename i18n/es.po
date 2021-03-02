@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-02-26T11:26:13.252Z\n"
+"POT-Creation-Date: 2021-03-02T12:10:22.232Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -113,10 +113,10 @@ msgstr ""
 msgid "Start import in instance {{instance}}"
 msgstr ""
 
-msgid "Program with Data Elements"
+msgid "Event Program with Data Elements"
 msgstr ""
 
-msgid "Program with Program Stages"
+msgid "Tracker Program with Program Stages"
 msgstr ""
 
 msgid "Program with Indicators"
@@ -1005,6 +1005,9 @@ msgstr ""
 msgid "Events"
 msgstr ""
 
+msgid "Tracked Entity Instances"
+msgstr ""
+
 msgid "Unknown"
 msgstr ""
 
@@ -1202,6 +1205,9 @@ msgid "Include rules"
 msgstr ""
 
 msgid "Exclude rules"
+msgstr ""
+
+msgid "{{total}} selected TEIs"
 msgstr ""
 
 msgid "All events"

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-01T16:52:28.332Z\n"
-"PO-Revision-Date: 2021-03-01T16:52:28.332Z\n"
+"POT-Creation-Date: 2021-03-02T12:10:22.232Z\n"
+"PO-Revision-Date: 2021-03-02T12:10:22.232Z\n"
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -113,10 +113,10 @@ msgstr ""
 msgid "Start import in instance {{instance}}"
 msgstr ""
 
-msgid "Program with Data Elements"
+msgid "Event Program with Data Elements"
 msgstr ""
 
-msgid "Program with Program Stages"
+msgid "Tracker Program with Program Stages"
 msgstr ""
 
 msgid "Program with Indicators"
@@ -998,6 +998,9 @@ msgstr ""
 msgid "Events"
 msgstr ""
 
+msgid "Tracked Entity Instances"
+msgstr ""
+
 msgid "Unknown"
 msgstr ""
 
@@ -1195,6 +1198,9 @@ msgid "Include rules"
 msgstr ""
 
 msgid "Exclude rules"
+msgstr ""
+
+msgid "{{total}} selected TEIs"
 msgstr ""
 
 msgid "All events"

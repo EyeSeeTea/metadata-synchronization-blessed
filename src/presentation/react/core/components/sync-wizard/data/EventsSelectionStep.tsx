@@ -38,19 +38,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     useEffect(() => {
         const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
 
-        //TODO: We should unify the approach to send fields to use cases (string vs object)
-        extractAllPrograms<CustomProgram>(compositionRoot, sync, {
-            id: true,
-            name: true,
-            programType: true,
-            programStages: {
-                id: true,
-                displayFormName: true,
-                programStageDataElements: {
-                    dataElement: { id: true, displayFormName: true, name: true },
-                },
-            },
-        }).then(setPrograms);
+        extractAllPrograms<CustomProgram>(compositionRoot, sync).then(setPrograms);
     }, [memoizedSyncRule, compositionRoot]);
 
     useEffect(() => {
