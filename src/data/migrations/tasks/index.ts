@@ -8,6 +8,7 @@ export function getMigrationTasks(): MigrationTasks<MigrationParams> {
         [4, import("./04.history-notifications")],
         [5, import("./05.multiple-stores")],
         [6, import("./06.this-instance")],
+        [7, import("./07.instances-user-password")],
     ];
 }
 
