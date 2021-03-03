@@ -44,6 +44,9 @@ export async function migrate(
         _.omit(ins, ["username", "password"])
     );
 
+    //Delete wrong key from old migrations
+    await storage.remove("instances-");
+
     await promiseMap(oldInstances, async oldInstance => {
         const oldInstanceDetails = await storage.get<InstanceDetailsOld>(
             "instances-" + oldInstance.id
