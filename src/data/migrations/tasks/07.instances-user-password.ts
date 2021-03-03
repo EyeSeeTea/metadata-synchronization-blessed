@@ -1,7 +1,7 @@
-import debug from "debug";
 import _ from "lodash";
 import { MigrationParams } from ".";
 import { Debug } from "../../../domain/migrations/entities/Debug";
+import i18n from "../../../locales";
 import { Maybe } from "../../../types/utils";
 import { promiseMap } from "../../../utils/common";
 import { AppStorage, Migration } from "../client/types";
@@ -36,7 +36,7 @@ interface InstanceDetailsNew {
 
 export async function migrate(
     storage: AppStorage,
-    _debug: Debug,
+    debug: Debug,
     _params: MigrationParams
 ): Promise<void> {
     const oldInstances = (await storage.get<InstanceOld[]>("instances")) ?? [];
@@ -49,23 +49,26 @@ export async function migrate(
             "instances-" + oldInstance.id
         );
 
-        if (!oldInstanceDetails) debug(`Detail key for instance ${oldInstance.id} does not exist`);
-
         const newInstanceDatails: Maybe<InstanceDetailsNew> = {
             metadataMapping: oldInstanceDetails ? oldInstanceDetails.metadataMapping : {},
             username: oldInstance.username,
             password: oldInstance.password,
         };
-        debug(`Create details entry for instance ${oldInstance.id}`);
+
         await storage.save("instances-" + oldInstance.id, newInstanceDatails);
     });
 
-    debug(`Save main instances object`);
     await storage.save("instances", newInstances);
+
+    debug(
+        i18n.t(
+            "Important: In this version exists share settings for instances. It's necessary configure it"
+        )
+    );
 }
 
 const migration: Migration<MigrationParams> = {
-    name: "Move instance username and password to detail",
+    name: "Move username and password to instance details",
     migrate,
 };
 
