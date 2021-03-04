@@ -77,6 +77,10 @@ export class Instance {
         return apiVersion ? Number(apiVersion) : 30;
     }
 
+    public get existsShareSettingsInDataStore(): boolean {
+        return this.apiVersion > 31;
+    }
+
     public toObject(): InstanceData {
         return _.cloneDeep(this.data);
     }

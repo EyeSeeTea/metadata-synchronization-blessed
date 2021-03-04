@@ -65,7 +65,7 @@ export async function migrate(
 
     debug({
         message: i18n.t(
-            "Important: In this version exists share settings for instances. It's necessary configure it"
+            "In this version exists share settings for instances. It's necessary configure it"
         ),
         level: "warning",
     });
