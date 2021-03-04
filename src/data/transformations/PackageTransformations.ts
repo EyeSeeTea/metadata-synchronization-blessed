@@ -14,10 +14,19 @@ export const metadataTransformations: Transformation[] = [
                     ({ featureType, coordinates, geometry, ...rest }: any) => {
                         if (featureType && featureType !== "NONE" && coordinates) {
                             try {
-                                geometry = {
-                                    type: _.startCase(featureType.toLowerCase()),
-                                    coordinates: JSON.parse(coordinates),
-                                };
+                                return _.pickBy(
+                                    {
+                                        geometry: {
+                                            type: _.startCase(featureType.toLowerCase()).replace(
+                                                " ",
+                                                ""
+                                            ),
+                                            coordinates: JSON.parse(coordinates),
+                                        },
+                                        ...rest,
+                                    },
+                                    _.identity
+                                );
                             } catch (error) {
                                 console.log(
                                     "Error during coordinates conversion OU: " + rest["id"]
@@ -36,10 +45,19 @@ export const metadataTransformations: Transformation[] = [
                     ({ geometry, featureType, coordinates, ...rest }: any) => {
                         if (geometry && geometry.type && geometry.coordinates) {
                             try {
-                                featureType = geometry.type.toUpperCase();
-                                coordinates = JSON.stringify(geometry.coordinates).replace(
-                                    /"/g,
-                                    ""
+                                return _.pickBy(
+                                    {
+                                        featureType:
+                                            geometry.type === "MultiPolygon"
+                                                ? "MULTI_POLYGON"
+                                                : geometry.type.toUpperCase(),
+                                        coordinates: JSON.stringify(geometry.coordinates).replace(
+                                            /"/g,
+                                            ""
+                                        ),
+                                        ...rest,
+                                    },
+                                    _.identity
                                 );
                             } catch (error) {
                                 console.log(
