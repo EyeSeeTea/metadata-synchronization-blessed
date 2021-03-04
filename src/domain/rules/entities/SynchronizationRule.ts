@@ -173,7 +173,7 @@ export class SynchronizationRule {
     public get lastExecuted(): Date | undefined {
         return this.syncRule.lastExecuted ? new Date(this.syncRule.lastExecuted) : undefined;
     }
-    
+
     public get created(): Date | undefined {
         return this.syncRule.created ? new Date(this.syncRule.created) : undefined;
     }
