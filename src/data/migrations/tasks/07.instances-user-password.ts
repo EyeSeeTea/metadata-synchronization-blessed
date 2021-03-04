@@ -63,11 +63,12 @@ export async function migrate(
 
     await storage.save("instances", newInstances);
 
-    debug(
-        i18n.t(
+    debug({
+        message: i18n.t(
             "Important: In this version exists share settings for instances. It's necessary configure it"
-        )
-    );
+        ),
+        level: "warning",
+    });
 }
 
 const migration: Migration<MigrationParams> = {

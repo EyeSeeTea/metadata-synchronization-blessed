@@ -55,11 +55,13 @@ export class MigrationsRunner<T> {
         const { config, migrations, debug } = this;
 
         if (_.isEmpty(migrations)) {
-            debug(`No migrations pending to run (current version: ${config.version})`);
+            debug({ message: `No migrations pending to run (current version: ${config.version})` });
             return;
         }
 
-        debug(`Migrate: version ${this.instanceVersion} to version ${this.appVersion}`);
+        debug({
+            message: `Migrate: version ${this.instanceVersion} to version ${this.appVersion}`,
+        });
 
         await this.runMigrations(migrations);
     }
@@ -74,7 +76,9 @@ export class MigrationsRunner<T> {
         });
 
         await promiseMap(migrations, async migration => {
-            debug(`Apply migration ${zeroPad(migration.version, 2)} - ${migration.name}`);
+            debug({
+                message: `Apply migration ${zeroPad(migration.version, 2)} - ${migration.name}`,
+            });
             try {
                 await migration.migrate(storage, debug, migrationParams);
             } catch (error) {
@@ -96,11 +100,11 @@ export class MigrationsRunner<T> {
         try {
             const { storage, debug } = this;
             const backupKeys = await this.getBackupKeys();
-            debug(`Delete backup entries`);
+            debug({ message: `Delete backup entries` });
 
             await promiseMap(backupKeys, backupKey => storage.remove(backupKey));
         } catch (err) {
-            this.debug(`Error deleting backup (non-fatal)`);
+            this.debug({ message: `Error deleting backup (non-fatal)` });
         }
     }
 
@@ -112,7 +116,7 @@ export class MigrationsRunner<T> {
 
     public async backupDataStore() {
         const { storage, storageKey, debug } = this;
-        debug(`Backup data store`);
+        debug({ message: `Backup data store` });
         const allKeys = await this.getStorageKeys();
         const keysToBackup = _(allKeys)
             .reject(key => key.startsWith(this.backupPrefix))
@@ -145,8 +149,8 @@ export class MigrationsRunner<T> {
 
         if (_.isEmpty(keysToRestore)) return config;
 
-        debug(`Error: ${errorMsg}`);
-        debug("Start rollback");
+        debug({ message: `Error: ${errorMsg}` });
+        debug({ message: "Start rollback" });
 
         await promiseMap(keysToRestore, async backupKey => {
             const value = await storage.get(backupKey);
