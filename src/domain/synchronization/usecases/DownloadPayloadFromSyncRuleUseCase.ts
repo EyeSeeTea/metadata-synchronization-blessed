@@ -44,6 +44,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                             .compact()
                             .kebabCase(),
                         content: mappedPayload,
+                        apiVersion: instance.apiVersion,
                     };
                 } catch (error) {
                     return i18n.t(`An error has ocurred mapping payload for instance {{name}}`, {
@@ -61,7 +62,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         if (files.length === 1) {
             this.repositoryFactory
                 .downloadRepository()
-                .downloadFile(files[0].name, files[0].content);
+                .downloadFile(files[0].name, files[0].content, files[0].apiVersion);
         } else if (files.length > 1) {
             await this.repositoryFactory
                 .downloadRepository()
