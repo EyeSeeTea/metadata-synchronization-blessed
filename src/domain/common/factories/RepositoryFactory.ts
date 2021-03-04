@@ -62,7 +62,9 @@ export class RepositoryFactory {
 
     @cache()
     public downloadRepository() {
-        return this.get<DownloadRepositoryConstructor>(Repositories.DownloadRepository, []);
+        return this.get<DownloadRepositoryConstructor>(Repositories.DownloadRepository, [
+            this.transformationRepository(),
+        ]);
     }
 
     @cache()
