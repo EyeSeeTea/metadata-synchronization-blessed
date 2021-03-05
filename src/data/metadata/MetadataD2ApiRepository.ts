@@ -65,13 +65,32 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const requestFields = typeof fields === "object" ? getFieldsAsString(fields) : fields;
         const d2Metadata = await this.getMetadata<D2Model>(ids, requestFields, includeDefaults);
 
-        const metadataPackage = this.transformationRepository.mapPackageFrom(
-            apiVersion,
-            d2Metadata,
-            metadataTransformations
-        );
+        if (apiVersion >= 32 && d2Metadata["dashboards"] && fields === undefined) {
+            //Fix dashboard bug from 2.32
+            //It's necessary request again dashboards retrieving viualizations with type to transforms
+            //type is necessary to transform from visualizations to chart and report table
+            const fixedD2Metadata = await this.getMetadata<D2Model>(
+                ids,
+                ":all,dashboardItems[:all,visualization[id,type]]",
+                includeDefaults
+            );
 
-        return metadataPackage as T;
+            const metadataPackage = this.transformationRepository.mapPackageFrom(
+                apiVersion,
+                fixedD2Metadata,
+                metadataTransformations
+            );
+
+            return metadataPackage as T;
+        } else {
+            const metadataPackage = this.transformationRepository.mapPackageFrom(
+                apiVersion,
+                d2Metadata,
+                metadataTransformations
+            );
+
+            return metadataPackage as T;
+        }
     }
 
     @cache()

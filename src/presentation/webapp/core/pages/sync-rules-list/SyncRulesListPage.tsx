@@ -37,7 +37,6 @@ import {
     isGlobalAdmin,
     UserInfo,
 } from "../../../../../utils/permissions";
-import { requestJSONDownload } from "../../../../../utils/synchronization";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import {
@@ -169,6 +168,29 @@ const SyncRulesPage: React.FC = () => {
             text: i18n.t("Last executed"),
             sortable: true,
         },
+        {
+            name: "created",
+            text: i18n.t("Created"),
+            sortable: true,
+        },
+        {
+            name: "description",
+            text: i18n.t("Description"),
+            sortable: false,
+            hidden: true,
+        },
+        {
+            name: "lastUpdated",
+            text: i18n.t("Last Updated"),
+            sortable: true,
+            hidden: true,
+        },
+        {
+            name: "lastUpdatedBy",
+            text: i18n.t("Last Updated By"),
+            sortable: false,
+            hidden: true,
+        },
     ];
 
     const details: ObjectsTableDetailField<SynchronizationRule>[] = [
@@ -196,14 +218,19 @@ const SyncRulesPage: React.FC = () => {
         const id = _.first(ids);
         if (!id) return;
 
-        const rule = await compositionRoot.rules.get(id);
-        if (!rule) return;
+        loading.show(true, i18n.t("Generating JSON file"));
 
-        loading.show(true, "Generating JSON file");
-        const sync = compositionRoot.sync[rule.type](rule.toBuilder());
-        const payload = await sync.buildPayload();
+        const result = await compositionRoot.rules.downloadPayloads(id);
 
-        requestJSONDownload(payload, rule);
+        result.match({
+            success: () => {
+                snackbar.success(i18n.t("Json files downloaded successfull"));
+            },
+            error: errors => {
+                snackbar.error(errors.join("\n"));
+            },
+        });
+
         loading.reset();
     };
 

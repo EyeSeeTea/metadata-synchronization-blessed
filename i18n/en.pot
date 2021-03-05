@@ -98,6 +98,12 @@ msgstr ""
 msgid "deleted"
 msgstr ""
 
+msgid "An error has ocurred mapping payload for instance {{name}}"
+msgstr ""
+
+msgid "Instance {{id}} not found"
+msgstr ""
+
 msgid "Analytics execution finished on {{name}}"
 msgstr ""
 
@@ -1147,6 +1153,9 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
+msgid "Json files downloaded successfull"
+msgstr ""
+
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -1786,6 +1795,15 @@ msgid "Destination instances"
 msgstr ""
 
 msgid "Last executed"
+msgstr ""
+
+msgid "Last Updated"
+msgstr ""
+
+msgid "Last Updated By"
+msgstr ""
+
+msgid "Generating JSON file"
 msgstr ""
 
 msgid "Deleting Sync Rules"

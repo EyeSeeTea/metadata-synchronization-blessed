@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-01-22T09:15:45.194Z\n"
+"POT-Creation-Date: 2021-03-04T21:46:50.958Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -96,6 +96,12 @@ msgid "Version is too small (next version is {{validExample}})"
 msgstr ""
 
 msgid "deleted"
+msgstr ""
+
+msgid "An error has ocurred mapping payload for instance {{name}}"
+msgstr ""
+
+msgid "Instance {{id}} not found"
 msgstr ""
 
 msgid "Analytics execution finished on {{name}}"
@@ -1154,6 +1160,9 @@ msgstr ""
 msgid "Cron expression must be valid"
 msgstr ""
 
+msgid "Json files downloaded successfull"
+msgstr ""
+
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -1794,6 +1803,15 @@ msgid "Destination instances"
 msgstr ""
 
 msgid "Last executed"
+msgstr ""
+
+msgid "Last Updated"
+msgstr ""
+
+msgid "Last Updated By"
+msgstr ""
+
+msgid "Generating JSON file"
 msgstr ""
 
 msgid "Deleting Sync Rules"
