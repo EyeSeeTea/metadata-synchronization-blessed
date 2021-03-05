@@ -16,23 +16,20 @@ import { availablePeriods } from "../../../../utils/synchronization";
 import { CompositionRoot } from "../../../CompositionRoot";
 import { AdvancedSettings, MSFSettings } from "./MSFEntities";
 
+type LoggerFunction = (event: string, userType?: "user" | "admin") => void;
+
 //TODO: maybe convert to class and presenter to use MVP, MVI or BLoC pattern
 export async function executeAggregateData(
     compositionRoot: CompositionRoot,
     advancedSettings: AdvancedSettings,
     msfSettings: MSFSettings,
-    onProgressChange: (progress: string[]) => void,
-    onValidationError: (errors: string[]) => void
+    onAddProgressMessage: (progress: string) => void,
+    onValidationError: (errors: string[]) => void,
+    isAdmin: boolean
 ): Promise<SynchronizationReport[]> {
-    let syncProgress: string[] = [];
-
-    const addEventToProgress = (event: string) => {
-        const lastEvent = syncProgress[syncProgress.length - 1];
-
-        if (lastEvent !== event) {
-            syncProgress = [...syncProgress, event];
-            onProgressChange(syncProgress);
-        }
+    const addEventToProgress: LoggerFunction = (event, userType = "user") => {
+        if (userType === "admin" && !isAdmin) return;
+        onAddProgressMessage(event);
     };
 
     addEventToProgress(i18n.t(`Retrieving information from the system...`));
@@ -60,14 +57,16 @@ export async function executeAggregateData(
             i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
                 lastExecution,
                 nsSeparator: false,
-            })
+            }),
+            "admin"
         );
     }
     if (msfSettings.deleteDataValuesBeforeSync && !msfSettings.dataElementGroupId) {
         addEventToProgress(
             i18n.t(
                 `Deleting previous data values is not possible because data element group is not defined, please contact with your administrator`
-            )
+            ),
+            "admin"
         );
     }
 
@@ -101,11 +100,11 @@ async function validatePreviousDataValues(
     compositionRoot: CompositionRoot,
     syncRules: SynchronizationRule[],
     msfSettings: MSFSettings,
-    addEventToProgress: (event: string) => void
+    addEventToProgress: LoggerFunction
 ): Promise<string[]> {
     if (!msfSettings.checkInPreviousPeriods) return [];
 
-    addEventToProgress(i18n.t(`Checking data values in previous periods ....`));
+    addEventToProgress(i18n.t(`Checking data values in previous periods ....`), "admin");
 
     const validationsErrors = await promiseMap(syncRules, async rule => {
         const targetInstances = await compositionRoot.instances.list({ ids: rule.targetInstances });
@@ -150,12 +149,12 @@ async function validatePreviousDataValues(
 async function executeSyncRule(
     compositionRoot: CompositionRoot,
     rule: SynchronizationRule,
-    addEventToProgress: (event: string) => void,
+    addEventToProgress: LoggerFunction,
     msfSettings: MSFSettings
 ): Promise<SynchronizationReport> {
     const { name, builder, id: syncRule, type = "metadata", targetInstances } = rule;
 
-    addEventToProgress(i18n.t(`Starting Sync Rule {{name}} ...`, { name }));
+    addEventToProgress(i18n.t(`Starting Sync Rule {{name}} ...`, { name }), "admin");
 
     if (msfSettings.deleteDataValuesBeforeSync && msfSettings.dataElementGroupId) {
         await deletePreviousDataValues(
@@ -170,14 +169,15 @@ async function executeSyncRule(
     const sync = compositionRoot.sync[type]({ ...builder, syncRule });
 
     for await (const { message, syncReport, done } of sync.execute()) {
-        if (message) addEventToProgress(message);
+        if (message) addEventToProgress(message, "admin");
         if (syncReport) await compositionRoot.reports.save(syncReport);
 
         if (done && syncReport) {
-            addEventToProgress(`${i18n.t("Summary of Sync Rule")}:`);
+            addEventToProgress(`${i18n.t("Summary of Sync Rule")}:`, "admin");
             syncReport.getResults().forEach(result => {
                 addEventToProgress(
-                    `${i18n.t("Type")}: ${getTypeName(result.type, syncReport.type)}`
+                    `${i18n.t("Type")}: ${getTypeName(result.type, syncReport.type)}`,
+                    "admin"
                 );
 
                 const origin = result.origin
@@ -187,17 +187,18 @@ async function executeSyncRule(
                     ? `${i18n.t("Origin package")}: ${result.originPackage.name}`
                     : "";
                 const destination = `${i18n.t("Destination")}: ${result.instance.name}`;
-                addEventToProgress(`${origin} ${originPackage} -> ${destination}`);
+                addEventToProgress(`${origin} ${originPackage} -> ${destination}`, "admin");
 
                 addEventToProgress(
                     _.compact([
                         `${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`,
                         result.message,
-                    ]).join(" - ")
+                    ]).join(" - "),
+                    "admin"
                 );
 
                 result.errors?.forEach(error => {
-                    addEventToProgress(error.message);
+                    addEventToProgress(error.message, "admin");
                 });
             });
 
@@ -321,16 +322,16 @@ async function getSyncRules(
 
 async function runAnalytics(
     compositionRoot: CompositionRoot,
-    addEventToProgress: (event: string) => void,
+    addEventToProgress: LoggerFunction,
     lastYears: number
 ) {
     const localInstance = await compositionRoot.instances.getLocal();
 
     for await (const message of executeAnalytics(localInstance, { lastYears })) {
-        addEventToProgress(message);
+        addEventToProgress(message, "admin");
     }
 
-    addEventToProgress(i18n.t("Analytics execution finished on {{name}}", localInstance));
+    addEventToProgress(i18n.t("Analytics execution finished on {{name}}", localInstance), "admin");
 }
 
 async function getLastAnalyticsExecution(compositionRoot: CompositionRoot): Promise<string> {
@@ -366,7 +367,7 @@ async function deletePreviousDataValues(
     targetInstances: string[],
     builder: SynchronizationBuilder,
     msfSettings: MSFSettings,
-    addEventToProgress: (event: string) => void
+    addEventToProgress: LoggerFunction
 ) {
     for (const instanceId of targetInstances) {
         const instanceResult = await compositionRoot.instances.getById(instanceId);
@@ -376,7 +377,8 @@ async function deletePreviousDataValues(
                 addEventToProgress(
                     i18n.t(`Error retrieving instance {{name}} to delete previoud data values`, {
                         name: instanceId,
-                    })
+                    }),
+                    "admin"
                 ),
             success: instance => {
                 if (builder.dataParams?.period) {
@@ -387,7 +389,7 @@ async function deletePreviousDataValues(
                     });
 
                     periodResult.match({
-                        error: () => addEventToProgress(i18n.t(`Error creating period`)),
+                        error: () => addEventToProgress(i18n.t(`Error creating period`), "admin"),
                         success: period => {
                             if (msfSettings.dataElementGroupId) {
                                 const periodText = getPeriodText(period);
@@ -396,7 +398,8 @@ async function deletePreviousDataValues(
                                     i18n.t(
                                         `Deleting previous data values in target instance {{name}} for period {{period}}...`,
                                         { name: instance.name, period: periodText }
-                                    )
+                                    ),
+                                    "admin"
                                 );
 
                                 compositionRoot.aggregated.delete(
@@ -414,7 +417,8 @@ async function deletePreviousDataValues(
                         i18n.t(
                             `Deleting previous data values for period {{period}} is not possible`,
                             { period: periodText }
-                        )
+                        ),
+                        "admin"
                     );
                 }
             },
