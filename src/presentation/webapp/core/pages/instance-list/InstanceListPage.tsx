@@ -166,11 +166,21 @@ const InstanceListPage = () => {
         const instanceResult = await compositionRoot.instances.getById(id);
 
         instanceResult.match({
-            success: instance =>
+            success: instance => {
+                if (!instance.existsShareSettingsInDataStore) {
+                    snackbar.warning(
+                        i18n.t(
+                            `Your current dhis2 version is {{version}} and does not exist share settings for instances. This is a potencial risk!`,
+                            { version: instance.version }
+                        )
+                    );
+                }
+
                 setSharingSettingsObject({
                     object: instance.toObject(),
                     meta: { allowPublicAccess: true, allowExternalAccess: false },
-                }),
+                });
+            },
             error: () => console.error("Instance not found"),
         });
     };
