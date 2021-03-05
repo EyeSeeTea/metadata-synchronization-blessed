@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-05T12:50:16.487Z\n"
-"PO-Revision-Date: 2021-03-05T12:50:16.487Z\n"
+"POT-Creation-Date: 2021-03-05T13:01:40.757Z\n"
+"PO-Revision-Date: 2021-03-05T13:01:40.757Z\n"
 
 msgid ""
 "In this version exists share settings for instances. It's necessary "
@@ -603,6 +603,9 @@ msgstr ""
 msgid "{{n}} package(s) could not be created: {{list}}"
 msgstr ""
 
+msgid "Instance not found"
+msgstr ""
+
 msgid "Instances & Play Stores"
 msgstr ""
 
@@ -1131,9 +1134,6 @@ msgid "with logged user"
 msgstr ""
 
 msgid "Destination"
-msgstr ""
-
-msgid "Instance not found"
 msgstr ""
 
 msgid "Every day"
