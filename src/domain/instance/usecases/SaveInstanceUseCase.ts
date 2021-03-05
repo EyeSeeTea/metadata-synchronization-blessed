@@ -1,32 +1,18 @@
-import { Namespace } from "../../../data/storage/Namespaces";
 import i18n from "../../../locales";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
-import { Instance, InstanceData } from "../entities/Instance";
+import { Instance } from "../entities/Instance";
 
 export class SaveInstanceUseCase implements UseCase {
-    constructor(
-        private repositoryFactory: RepositoryFactory,
-        private localInstance: Instance,
-        private encryptionKey: string
-    ) {}
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(instance: Instance): Promise<ValidationError[]> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+        const instanceRepository = this.repositoryFactory.instanceRepository(this.localInstance);
 
-        // Find for other existing instance with same name
-        const existingInstances = await storageClient.getObject<InstanceData[]>(
-            Namespace.INSTANCES
-        );
+        const instanceByName = await instanceRepository.getByName(instance.name);
 
-        const sameNameInstance = existingInstances?.find(
-            ({ name, id }) => id !== instance.id && name === instance.name
-        );
-
-        if (sameNameInstance) {
+        if (instanceByName && instanceByName.id !== instance.id) {
             return [
                 {
                     property: "name",
@@ -40,13 +26,9 @@ export class SaveInstanceUseCase implements UseCase {
         const modelValidations = instance.validate();
         if (modelValidations.length > 0) return modelValidations;
 
-        const instanceData = {
-            ...instance.encryptPassword(this.encryptionKey).toObject(),
-            url: instance.type === "local" ? "" : instance.url,
-            version: await this.getVersion(instance),
-        };
+        const editedInstance = instance.update({ version: await this.getVersion(instance) });
 
-        await storageClient.saveObjectInCollection(Namespace.INSTANCES, instanceData);
+        await instanceRepository.save(editedInstance);
 
         return [];
     }

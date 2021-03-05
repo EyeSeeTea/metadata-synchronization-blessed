@@ -15,10 +15,12 @@ export interface InstanceRepositoryConstructor {
 
 export interface InstanceRepository {
     getById(id: string): Promise<Instance | undefined>;
+    getByName(name: string): Promise<Instance | undefined>;
     getApi(): D2Api;
     getBaseUrl(): string;
     getUser(): Promise<User>;
     getVersion(): Promise<string>;
     getOrgUnitRoots(): Promise<Pick<OrganisationUnit, "id" | "name" | "displayName" | "path">[]>;
     sendMessage(message: InstanceMessage): Promise<void>;
+    save(instance: Instance): Promise<void>;
 }

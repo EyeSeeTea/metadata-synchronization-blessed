@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { Instance } from "../../domain/instance/entities/Instance";
-import { StorageClient } from "../../domain/storage/repositories/StorageClient";
+import { ObjectSharing, StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { D2Api, DataStore } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
@@ -72,4 +72,47 @@ export class StorageDataStoreClient extends StorageClient {
     public async listKeys(): Promise<string[]> {
         return this.dataStore.getKeys().getData();
     }
+
+    public async getObjectSharing(key: string): Promise<ObjectSharing | undefined> {
+        const metadata = await this.getMetadataByKey(key);
+
+        return _.omit(
+            metadata,
+            "created",
+            "lastUpdated",
+            "lastUpdatedBy",
+            "namespace",
+            "key",
+            "value",
+            "favorite",
+            "id"
+        );
+    }
+
+    public async saveObjectSharing(key: string, object: ObjectSharing): Promise<void> {
+        const metadata = await this.getMetadataByKey(key);
+
+        const result = this.api.post(`/sharing?type=dataStore&id=${metadata.id}`, undefined, {
+            object,
+        }).response;
+
+        console.log({ result });
+    }
+
+    private async getMetadataByKey(key: string) {
+        return await this.api
+            .get<MetadataDataStoreKey>(`/dataStore/${dataStoreNamespace}/${key}/metaData`)
+            .getData();
+    }
+}
+
+interface MetadataDataStoreKey extends ObjectSharing {
+    created: Date;
+    lastUpdated: Date;
+    lastUpdatedBy: { id: string };
+    namespace: string;
+    key: string;
+    value: string;
+    favorite: boolean;
+    id: boolean;
 }

@@ -1,6 +1,6 @@
 import { generateUid } from "d2/uid";
 import { Instance } from "../../domain/instance/entities/Instance";
-import { StorageClient } from "../../domain/storage/repositories/StorageClient";
+import { ObjectSharing, StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { D2Api } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
@@ -72,6 +72,14 @@ export class StorageConstantClient extends StorageClient {
     public async listKeys(): Promise<string[]> {
         const { value = {} } = await this.getConstant<Dictionary<unknown>>();
         return Object.keys(value);
+    }
+
+    public getObjectSharing(_key: string): Promise<ObjectSharing | undefined> {
+        throw new Error("Method not implemented.");
+    }
+
+    public saveObjectSharing(_key: string, _object: ObjectSharing): Promise<void> {
+        throw new Error("Method not implemented.");
     }
 
     private async updateConstant<T extends object>(id: string, value: T): Promise<void> {

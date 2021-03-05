@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-04T08:09:52.342Z\n"
-"PO-Revision-Date: 2021-03-04T08:09:52.342Z\n"
+"POT-Creation-Date: 2021-03-05T08:27:54.165Z\n"
+"PO-Revision-Date: 2021-03-05T08:27:54.165Z\n"
 
 msgid ""
 "In this version exists share settings for instances. It's necessary "
@@ -1546,6 +1546,9 @@ msgid "Username"
 msgstr ""
 
 msgid "Run analytics"
+msgstr ""
+
+msgid "An error has ocurred editing share settings"
 msgstr ""
 
 msgid "Delete Instances?"

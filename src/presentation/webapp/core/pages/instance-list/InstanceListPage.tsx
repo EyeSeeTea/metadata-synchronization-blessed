@@ -5,9 +5,12 @@ import EditIcon from "@material-ui/icons/Edit";
 import SettingsInputAntenaIcon from "@material-ui/icons/SettingsInputAntenna";
 import {
     ConfirmationDialog,
+    MetaObject,
     ObjectsTable,
     ObjectsTableDetailField,
     RowConfig,
+    SearchResult,
+    ShareUpdate,
     TableAction,
     TableColumn,
     TableSelection,
@@ -18,13 +21,14 @@ import {
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Instance } from "../../../../../domain/instance/entities/Instance";
+import { Instance, InstanceData } from "../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../locales";
 import { executeAnalytics } from "../../../../../utils/analytics";
-import { isAppConfigurator } from "../../../../../utils/permissions";
+import { isAppConfigurator, isGlobalAdmin } from "../../../../../utils/permissions";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
+import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
 
 const InstanceListPage = () => {
     const { api, compositionRoot } = useAppContext();
@@ -37,9 +41,12 @@ const InstanceListPage = () => {
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [toDelete, deleteInstances] = useState<string[]>([]);
     const [appConfigurator, setAppConfigurator] = useState(false);
+    const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
+    const [globalAdmin, setGlobalAdmin] = useState(false);
 
     useEffect(() => {
         isAppConfigurator(api).then(setAppConfigurator);
+        isGlobalAdmin(api).then(setGlobalAdmin);
     }, [api]);
 
     useEffect(() => {
@@ -149,6 +156,38 @@ const InstanceListPage = () => {
         updateSelection(selection);
     };
 
+    const openSharingSettings = async (ids: string[]) => {
+        const id = _.first(ids);
+        if (!id) return;
+
+        const instanceResult = await compositionRoot.instances.getById(id);
+
+        instanceResult.match({
+            success: instance =>
+                setSharingSettingsObject({
+                    object: instance.toObject(),
+                    meta: { allowPublicAccess: true, allowExternalAccess: false },
+                }),
+            error: () => console.error("Instance not found"),
+        });
+    };
+
+    const verifyUserHasAccess = (instances: Instance[], condition = false) => {
+        if (globalAdmin) return true;
+
+        //TODO:
+        // for (const rule of rules) {
+        //     if (!!userInfo && !rule.isVisibleToUser(userInfo, "WRITE")) return false;
+        // }
+        console.log(instances);
+
+        return condition;
+    };
+
+    const verifyUserCanEditSharingSettings = (instances: Instance[]) => {
+        return verifyUserHasAccess(instances, appConfigurator);
+    };
+
     const columns: TableColumn<Instance>[] = [
         { name: "name" as const, text: i18n.t("Server name"), sortable: true },
         { name: "url" as const, text: i18n.t("URL endpoint"), sortable: false },
@@ -226,6 +265,14 @@ const InstanceListPage = () => {
             onClick: metadataMapping,
             icon: <DoubleArrowIcon />,
         },
+        {
+            name: "sharingSettings",
+            text: i18n.t("Sharing settings"),
+            multiple: false,
+            isActive: verifyUserCanEditSharingSettings,
+            onClick: openSharingSettings,
+            icon: <Icon>share</Icon>,
+        },
     ];
 
     const rowConfig = React.useCallback(
@@ -235,6 +282,39 @@ const InstanceListPage = () => {
         }),
         []
     );
+
+    //TODO: create a use case for this api call
+    const onSearchRequest = async (key: string) =>
+        api
+            .get<SearchResult>("/sharing/search", { key })
+            .getData();
+
+    const onSharingChanged = async (updatedAttributes: ShareUpdate) => {
+        if (!sharingSettingsObject) return;
+
+        const newSharingSettings = {
+            meta: sharingSettingsObject.meta,
+            object: {
+                ...sharingSettingsObject.object,
+                ...updatedAttributes,
+            },
+        };
+
+        const instance = Instance.build(newSharingSettings.object as InstanceData);
+
+        setSharingSettingsObject(newSharingSettings);
+
+        compositionRoot.instances
+            .save(instance)
+            .then(validationErrors => {
+                if (validationErrors.length > 0) {
+                    snackbar.error(i18n.t("An error has ocurred editing share settings"));
+                }
+            })
+            .catch(_error => {
+                snackbar.error(i18n.t("An error has ocurred editing share settings"));
+            });
+    };
 
     return (
         <TestWrapper>
@@ -262,6 +342,21 @@ const InstanceListPage = () => {
                 selection={selection}
                 onChange={updateTable}
             />
+
+            {!!sharingSettingsObject && (
+                <SharingDialog
+                    isOpen={true}
+                    showOptions={{
+                        title: false,
+                        dataSharing: false,
+                    }}
+                    title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
+                    meta={sharingSettingsObject}
+                    onCancel={() => setSharingSettingsObject(null)}
+                    onChange={onSharingChanged}
+                    onSearch={onSearchRequest}
+                />
+            )}
         </TestWrapper>
     );
 };

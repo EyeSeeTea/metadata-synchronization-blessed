@@ -312,16 +312,8 @@ export class CompositionRoot {
                 this.localInstance,
                 this.encryptionKey
             ),
-            getById: new GetInstanceByIdUseCase(
-                this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
-            ),
-            save: new SaveInstanceUseCase(
-                this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
-            ),
+            getById: new GetInstanceByIdUseCase(this.repositoryFactory, this.localInstance),
+            save: new SaveInstanceUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteInstanceUseCase(this.repositoryFactory, this.localInstance),
             validate: new ValidateInstanceUseCase(this.repositoryFactory),
             getVersion: new GetInstanceVersionUseCase(this.repositoryFactory, this.localInstance),
