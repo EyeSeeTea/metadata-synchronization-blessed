@@ -157,7 +157,7 @@ export class Instance extends ShareableEntity<InstanceData> {
             type,
             id: type === "local" ? "LOCAL" : id,
             created: new Date(),
-            publicAccess: "rw------",
+            publicAccess: "--------",
             lastUpdated: new Date(),
             lastUpdatedBy: {
                 id: "",
