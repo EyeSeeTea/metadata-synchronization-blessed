@@ -19,6 +19,7 @@ import {
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import { UserInfo } from "../../../../../domain/common/entities/UserInfo";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import {
@@ -35,7 +36,6 @@ import {
     isAppConfigurator,
     isAppExecutor,
     isGlobalAdmin,
-    UserInfo,
 } from "../../../../../utils/permissions";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";

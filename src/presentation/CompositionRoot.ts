@@ -307,11 +307,7 @@ export class CompositionRoot {
         return getExecute({
             getApi: new GetInstanceApiUseCase(this.repositoryFactory, this.localInstance),
             getLocal: new GetLocalInstanceUseCase(this.localInstance),
-            list: new ListInstancesUseCase(
-                this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
-            ),
+            list: new ListInstancesUseCase(this.repositoryFactory, this.localInstance),
             getById: new GetInstanceByIdUseCase(this.repositoryFactory, this.localInstance),
             save: new SaveInstanceUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteInstanceUseCase(this.repositoryFactory, this.localInstance),

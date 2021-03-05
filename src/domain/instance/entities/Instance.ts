@@ -3,6 +3,7 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
 import { NamedRef, SharedRef } from "../../common/entities/Ref";
+import { ShareableEntity } from "../../common/entities/ShareableEntity";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
@@ -22,11 +23,9 @@ export interface InstanceData extends SharedRef {
     version?: string;
 }
 
-export class Instance {
-    private data: InstanceData;
-
+export class Instance extends ShareableEntity<InstanceData> {
     private constructor(data: InstanceData) {
-        this.data = data;
+        super(data);
     }
 
     public get type(): InstanceType {

@@ -1,5 +1,6 @@
 import axios from "axios";
 import memoize from "nano-memoize";
+import { UserInfo } from "../domain/common/entities/UserInfo";
 import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
 import { D2Api } from "../types/d2-api";
 
@@ -29,13 +30,7 @@ const AppRoles: {
     },
 };
 
-export interface UserInfo {
-    userGroups: any[];
-    id: string;
-    name: string;
-    username: string;
-}
-
+// TODO: Create a getUserRoleUseCase
 export const getUserInfo = memoize(
     async (api: D2Api): Promise<UserInfo> => {
         const currentUser = await api.currentUser
@@ -43,22 +38,43 @@ export const getUserInfo = memoize(
                 fields: {
                     id: true,
                     name: true,
-                    userCredentials: { username: true },
+                    userCredentials: {
+                        username: true,
+                        userRoles: {
+                            $all: true,
+                        },
+                    },
                     userGroups: true,
                 },
             })
             .getData();
+
+        const isGlobalAdmin = !!currentUser.userCredentials.userRoles.find((role: any) =>
+            role.authorities.find((authority: string) => authority === "ALL")
+        );
 
         return {
             userGroups: currentUser.userGroups,
             id: currentUser.id,
             name: currentUser.name,
             username: currentUser.userCredentials.username,
+            isGlobalAdmin,
+            isAppConfigurator:
+                isGlobalAdmin ||
+                !!currentUser.userCredentials.userRoles.find(
+                    (role: any) => role.name === AppRoles.CONFIGURATION_ACCESS.name
+                ),
+            isAppExecutor:
+                isGlobalAdmin ||
+                !!currentUser.userCredentials.userRoles.find(
+                    (role: any) => role.name === AppRoles.SYNC_RULE_EXECUTION_ACCESS.name
+                ),
         };
     },
     { serializer: (api: D2Api) => api.baseUrl }
 );
 
+//TODO: remove all this methods when all code use getUserInfoUseCase because contains all necessary data about permisions
 const getUserRoles = memoize(
     async (api: D2Api) => {
         const currentUser = await api.currentUser

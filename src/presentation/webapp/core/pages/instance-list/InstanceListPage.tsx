@@ -24,11 +24,12 @@ import { useHistory } from "react-router-dom";
 import { Instance, InstanceData } from "../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../locales";
 import { executeAnalytics } from "../../../../../utils/analytics";
-import { isAppConfigurator, isGlobalAdmin } from "../../../../../utils/permissions";
+import { getUserInfo } from "../../../../../utils/permissions";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
+import { UserInfo } from "../../../../../domain/common/entities/UserInfo";
 
 const InstanceListPage = () => {
     const { api, compositionRoot } = useAppContext();
@@ -36,21 +37,23 @@ const InstanceListPage = () => {
     const snackbar = useSnackbar();
     const loading = useLoading();
 
+    const [loadingRows, setLoadingRows] = useState(true);
     const [rows, setRows] = useState<Instance[]>([]);
     const [search, changeSearch] = useState<string>("");
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [toDelete, deleteInstances] = useState<string[]>([]);
-    const [appConfigurator, setAppConfigurator] = useState(false);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
-    const [globalAdmin, setGlobalAdmin] = useState(false);
+    const [userInfo, setUserInfo] = useState<UserInfo>();
 
     useEffect(() => {
-        isAppConfigurator(api).then(setAppConfigurator);
-        isGlobalAdmin(api).then(setGlobalAdmin);
+        getUserInfo(api).then(setUserInfo);
     }, [api]);
 
     useEffect(() => {
-        compositionRoot.instances.list({ search }).then(setRows);
+        compositionRoot.instances.list({ search }).then(rows => {
+            setRows(rows);
+            setLoadingRows(false);
+        });
     }, [compositionRoot, search, toDelete]);
 
     const createInstance = () => {
@@ -59,7 +62,7 @@ const InstanceListPage = () => {
 
     const editInstance = async (ids: string[]) => {
         const instance = rows.find(row => row.id === ids[0]);
-        if (instance?.type === "dhis" && appConfigurator) {
+        if (instance?.type === "dhis" && userInfo?.isAppConfigurator) {
             history.push(`/instances/edit/${instance.id}`);
         }
     };
@@ -172,20 +175,16 @@ const InstanceListPage = () => {
         });
     };
 
-    const verifyUserHasAccess = (instances: Instance[], condition = false) => {
-        if (globalAdmin) return true;
+    const verifyUserCanEdit = (instances: Instance[]) => {
+        if (!userInfo) return false;
 
-        //TODO:
-        // for (const rule of rules) {
-        //     if (!!userInfo && !rule.isVisibleToUser(userInfo, "WRITE")) return false;
-        // }
-        console.log(instances);
-
-        return condition;
+        return instances[0].hasPermissions("write", userInfo);
     };
 
-    const verifyUserCanEditSharingSettings = (instances: Instance[]) => {
-        return verifyUserHasAccess(instances, appConfigurator);
+    const verifyUserCanRead = (instances: Instance[]) => {
+        if (!userInfo) return false;
+
+        return instances[0].hasPermissions("read", userInfo);
     };
 
     const columns: TableColumn<Instance>[] = [
@@ -221,7 +220,7 @@ const InstanceListPage = () => {
             name: "edit",
             text: i18n.t("Edit"),
             multiple: false,
-            isActive: rows => appConfigurator && _.every(rows, row => row.type !== "local"),
+            isActive: rows => verifyUserCanEdit(rows) && _.every(rows, row => row.type !== "local"),
             primary: true,
             onClick: editInstance,
             icon: <EditIcon />,
@@ -230,7 +229,7 @@ const InstanceListPage = () => {
             name: "replicate",
             text: i18n.t("Replicate"),
             multiple: false,
-            isActive: rows => appConfigurator && _.every(rows, row => row.type !== "local"),
+            isActive: rows => verifyUserCanEdit(rows) && _.every(rows, row => row.type !== "local"),
             onClick: replicateInstance,
             icon: <Icon>content_copy</Icon>,
         },
@@ -238,7 +237,7 @@ const InstanceListPage = () => {
             name: "delete",
             text: i18n.t("Delete"),
             multiple: true,
-            isActive: rows => appConfigurator && _.every(rows, row => row.type !== "local"),
+            isActive: rows => verifyUserCanEdit(rows) && _.every(rows, row => row.type !== "local"),
             onClick: deleteInstances,
             icon: <DeleteIcon />,
         },
@@ -246,7 +245,7 @@ const InstanceListPage = () => {
             name: "testConnection",
             text: i18n.t("Test Connection"),
             multiple: false,
-            isActive: rows => _.every(rows, row => row.type !== "local"),
+            isActive: rows => _.every(rows, row => row.type !== "local") && verifyUserCanRead(rows),
             onClick: testConnection,
             icon: <SettingsInputAntenaIcon />,
         },
@@ -256,12 +255,13 @@ const InstanceListPage = () => {
             multiple: false,
             onClick: runAnalytics,
             icon: <Icon>data_usage</Icon>,
-            isActive: () => process.env.NODE_ENV === "development",
+            isActive: rows => process.env.NODE_ENV === "development" && verifyUserCanEdit(rows),
         },
         {
             name: "mapping",
             text: i18n.t("Metadata mapping"),
             multiple: false,
+            isActive: verifyUserCanEdit,
             onClick: metadataMapping,
             icon: <DoubleArrowIcon />,
         },
@@ -269,7 +269,7 @@ const InstanceListPage = () => {
             name: "sharingSettings",
             text: i18n.t("Sharing settings"),
             multiple: false,
-            isActive: verifyUserCanEditSharingSettings,
+            isActive: verifyUserCanEdit,
             onClick: openSharingSettings,
             icon: <Icon>share</Icon>,
         },
@@ -337,10 +337,13 @@ const InstanceListPage = () => {
                 details={details}
                 actions={actions}
                 rowConfig={rowConfig}
-                onActionButtonClick={appConfigurator ? createInstance : undefined}
+                onActionButtonClick={
+                    userInfo?.isAppConfigurator || false ? createInstance : undefined
+                }
                 onChangeSearch={changeSearch}
                 selection={selection}
                 onChange={updateTable}
+                loading={loadingRows}
             />
 
             {!!sharingSettingsObject && (

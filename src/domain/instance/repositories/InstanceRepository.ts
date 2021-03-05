@@ -13,7 +13,13 @@ export interface InstanceRepositoryConstructor {
     ): InstanceRepository;
 }
 
+export interface InstancesFilter {
+    search?: string;
+    ids?: string[];
+}
+
 export interface InstanceRepository {
+    getAll(filter: InstancesFilter): Promise<Instance[]>;
     getById(id: string): Promise<Instance | undefined>;
     getByName(name: string): Promise<Instance | undefined>;
     getApi(): D2Api;
