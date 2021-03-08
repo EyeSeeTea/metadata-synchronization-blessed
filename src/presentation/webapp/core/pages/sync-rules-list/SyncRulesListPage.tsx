@@ -164,29 +164,6 @@ const SyncRulesPage: React.FC = () => {
             getValue: ({ enabled }) => (enabled ? i18n.t("Enabled") : i18n.t("Disabled")),
         },
         {
-            name: "created",
-            text: i18n.t("Created"),
-            sortable: true,
-        },
-        {
-            name: "description",
-            text: i18n.t("Description"),
-            sortable: false,
-            hidden: true,
-        },
-        {
-            name: "lastUpdated",
-            text: i18n.t("Last Updated"),
-            sortable: true,
-            hidden: true,
-        },
-        {
-            name: "lastUpdatedBy",
-            text: i18n.t("Last Updated By"),
-            sortable: false,
-            hidden: true,
-        },
-        {
             name: "lastExecuted",
             text: i18n.t("Last executed"),
             sortable: true,

@@ -179,18 +179,6 @@ export class SynchronizationRule {
         return this.syncRule.lastExecutedBy?.name || undefined;
     }
 
-    public get created(): Date | undefined {
-        return this.syncRule.created ? new Date(this.syncRule.created) : undefined;
-    }
-
-    public get lastUpdated(): Date | undefined {
-        return this.syncRule.lastUpdated ? new Date(this.syncRule.lastUpdated) : undefined;
-    }
-
-    public get lastUpdatedBy(): string | undefined {
-        return this.syncRule.lastUpdatedBy?.name || undefined;
-    }
-
     public get readableFrequency(): string | undefined {
         const { frequency } = this.syncRule;
         return frequency && isValidCronExpression(frequency)
@@ -421,7 +409,6 @@ export class SynchronizationRule {
     }
 
     public update(partialRule: Partial<SynchronizationRuleData>): SynchronizationRule {
-        console.log(partialRule);
         return SynchronizationRule.build({ ...this.syncRule, ...partialRule });
     }
 
