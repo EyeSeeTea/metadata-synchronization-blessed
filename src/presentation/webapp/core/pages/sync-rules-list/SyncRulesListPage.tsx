@@ -192,23 +192,34 @@ const SyncRulesPage: React.FC = () => {
     ];
 
     const downloadJSON = async (ids: string[]) => {
-        const id = _.first(ids);
-        if (!id) return;
+        try {
+            const id = _.first(ids);
+            if (!id) return;
 
-        loading.show(true, i18n.t("Generating JSON file"));
+            loading.show(true, i18n.t("Generating JSON file"));
 
-        const result = await compositionRoot.rules.downloadPayloads(id);
+            const result = await compositionRoot.rules.downloadPayloads(id);
 
-        result.match({
-            success: () => {
-                snackbar.success(i18n.t("Json files downloaded successfull"));
-            },
-            error: errors => {
-                snackbar.error(errors.join("\n"));
-            },
-        });
+            result.match({
+                success: () => {
+                    snackbar.success(i18n.t("Json files downloaded successfull"));
+                },
+                error: errors => {
+                    snackbar.error(errors.join("\n"));
+                },
+            });
 
-        loading.reset();
+            loading.reset();
+        } catch (error) {
+            loading.reset();
+            if (error.response?.status === 403) {
+                snackbar.error(
+                    i18n.t("You do not have the authority to some target instance of the sync rule")
+                );
+            } else {
+                snackbar.error(i18n.t("An error has ocurred during the download"));
+            }
+        }
     };
 
     const back = () => {
@@ -263,77 +274,88 @@ const SyncRulesPage: React.FC = () => {
 
         const { builder, id: syncRule, type = "metadata" } = rule;
         loading.show(true, i18n.t("Synchronizing {{name}}", rule));
+        try {
+            const result = await compositionRoot.sync.prepare(type, builder);
+            const sync = compositionRoot.sync[type]({ ...builder, syncRule });
 
-        const result = await compositionRoot.sync.prepare(type, builder);
-        const sync = compositionRoot.sync[type]({ ...builder, syncRule });
+            const createPullRequest = async () => {
+                const result = await compositionRoot.instances.getById(builder.originInstance);
 
-        const createPullRequest = async () => {
-            const result = await compositionRoot.instances.getById(builder.originInstance);
+                result.match({
+                    success: instance => {
+                        setPullRequestProps({
+                            instance,
+                            builder,
+                            type,
+                        });
+                    },
+                    error: () => {
+                        snackbar.error(i18n.t("Unable to create pull request"));
+                    },
+                });
+            };
 
-            result.match({
-                success: instance => {
-                    setPullRequestProps({
-                        instance,
-                        builder,
-                        type,
-                    });
+            const synchronize = async () => {
+                for await (const { message, syncReport, done } of sync.execute()) {
+                    if (message) loading.show(true, message);
+                    if (syncReport) await compositionRoot.reports.save(syncReport);
+                    if (done && syncReport) setSyncReport(syncReport);
+                }
+            };
+
+            await result.match({
+                success: async () => {
+                    await synchronize();
                 },
-                error: () => {
-                    snackbar.error(i18n.t("Unable to create pull request"));
+                error: async code => {
+                    switch (code) {
+                        case "PULL_REQUEST":
+                            await createPullRequest();
+                            break;
+                        case "PULL_REQUEST_RESPONSIBLE":
+                            updateDialog({
+                                title: i18n.t("Pull metadata"),
+                                description: i18n.t(
+                                    "You are one of the reponsibles for the selected items.\nDo you want to directly pull the metadata?"
+                                ),
+                                onCancel: () => {
+                                    updateDialog(null);
+                                },
+                                onSave: async () => {
+                                    updateDialog(null);
+                                    await synchronize();
+                                },
+                                onInfoAction: async () => {
+                                    updateDialog(null);
+                                    await createPullRequest();
+                                },
+                                cancelText: i18n.t("Cancel"),
+                                saveText: i18n.t("Proceed"),
+                                infoActionText: i18n.t("Create pull request"),
+                            });
+                            break;
+                        case "INSTANCE_NOT_FOUND":
+                            snackbar.warning(i18n.t("Couldn't connect with instance"));
+                            break;
+                        default:
+                            snackbar.error(i18n.t("Unknown synchronization error"));
+                    }
                 },
             });
-        };
 
-        const synchronize = async () => {
-            for await (const { message, syncReport, done } of sync.execute()) {
-                if (message) loading.show(true, message);
-                if (syncReport) await compositionRoot.reports.save(syncReport);
-                if (done && syncReport) setSyncReport(syncReport);
+            setRefreshKey(Math.random());
+
+            loading.reset();
+        } catch (error) {
+            loading.reset();
+            if (error.response?.status === 403) {
+                snackbar.error(
+                    i18n.t("You do not have the authority to some target instance of the sync rule")
+                );
+            } else {
+                snackbar.error(i18n.t("An error has ocurred during the synchronization"));
             }
-        };
-
-        await result.match({
-            success: async () => {
-                await synchronize();
-            },
-            error: async code => {
-                switch (code) {
-                    case "PULL_REQUEST":
-                        await createPullRequest();
-                        break;
-                    case "PULL_REQUEST_RESPONSIBLE":
-                        updateDialog({
-                            title: i18n.t("Pull metadata"),
-                            description: i18n.t(
-                                "You are one of the reponsibles for the selected items.\nDo you want to directly pull the metadata?"
-                            ),
-                            onCancel: () => {
-                                updateDialog(null);
-                            },
-                            onSave: async () => {
-                                updateDialog(null);
-                                await synchronize();
-                            },
-                            onInfoAction: async () => {
-                                updateDialog(null);
-                                await createPullRequest();
-                            },
-                            cancelText: i18n.t("Cancel"),
-                            saveText: i18n.t("Proceed"),
-                            infoActionText: i18n.t("Create pull request"),
-                        });
-                        break;
-                    case "INSTANCE_NOT_FOUND":
-                        snackbar.warning(i18n.t("Couldn't connect with instance"));
-                        break;
-                    default:
-                        snackbar.error(i18n.t("Unknown synchronization error"));
-                }
-            },
-        });
-
-        setRefreshKey(Math.random());
-        loading.reset();
+        }
     };
 
     const toggleEnable = async (ids: string[]) => {
