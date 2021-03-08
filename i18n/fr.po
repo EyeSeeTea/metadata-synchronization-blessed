@@ -1801,6 +1801,9 @@ msgstr ""
 msgid "Last executed"
 msgstr ""
 
+msgid "Last executed by"
+msgstr ""
+
 msgid "Generating JSON file"
 msgstr ""
 
