@@ -143,22 +143,14 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     }
 
     private async getInstanceDataInColletion(id: string): Promise<InstanceData | undefined> {
-        try {
-            const storageClient = await this.getStorageClient();
+        const storageClient = await this.getStorageClient();
 
-            const instanceData = await storageClient.getObjectInCollection<InstanceData>(
-                Namespace.INSTANCES,
-                id
-            );
+        const instanceData = await storageClient.getObjectInCollection<InstanceData>(
+            Namespace.INSTANCES,
+            id
+        );
 
-            return instanceData;
-        } catch (error) {
-            if (error.response?.status === 403) {
-                return undefined;
-            } else {
-                throw error;
-            }
-        }
+        return instanceData;
     }
 
     private async getObjectSharing(
