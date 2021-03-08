@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-05T13:01:40.757Z\n"
-"PO-Revision-Date: 2021-03-05T13:01:40.757Z\n"
+"POT-Creation-Date: 2021-03-08T08:40:23.937Z\n"
+"PO-Revision-Date: 2021-03-08T08:40:23.937Z\n"
 
 msgid ""
 "In this version exists share settings for instances. It's necessary "
@@ -1166,6 +1166,12 @@ msgstr ""
 msgid "Json files downloaded successfull"
 msgstr ""
 
+msgid "You do not have the authority to some target instance of the sync rule"
+msgstr ""
+
+msgid "An error has ocurred during the download"
+msgstr ""
+
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -1620,6 +1626,9 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
+msgstr ""
+
+msgid "An error has ocurred during the synchronization"
 msgstr ""
 
 msgid "New module"
