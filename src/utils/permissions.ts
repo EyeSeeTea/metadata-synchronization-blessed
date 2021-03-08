@@ -1,8 +1,13 @@
 import axios from "axios";
 import memoize from "nano-memoize";
-import { UserInfo } from "../domain/common/entities/UserInfo";
 import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
 import { D2Api } from "../types/d2-api";
+
+// Applying parallel change
+// Exists a GetCurrentUseCase that we should use for the new code
+//TODO: remove all this code when all code use GetCurrentUseCase because contains all necessary data about permisions
+//  | |
+//  V V
 
 const AppRoles: {
     [key: string]: {
@@ -30,7 +35,19 @@ const AppRoles: {
     },
 };
 
-// TODO: Create a getUserRoleUseCase
+/**
+ * @deprecated The interface should not be used, please use domain user entity
+ */
+export interface UserInfo {
+    userGroups: any[];
+    id: string;
+    name: string;
+    username: string;
+}
+
+/**
+ * @deprecated The function should not be used, please use getCurrentUserUseCase
+ */
 export const getUserInfo = memoize(
     async (api: D2Api): Promise<UserInfo> => {
         const currentUser = await api.currentUser
@@ -38,43 +55,25 @@ export const getUserInfo = memoize(
                 fields: {
                     id: true,
                     name: true,
-                    userCredentials: {
-                        username: true,
-                        userRoles: {
-                            $all: true,
-                        },
-                    },
+                    userCredentials: { username: true },
                     userGroups: true,
                 },
             })
             .getData();
-
-        const isGlobalAdmin = !!currentUser.userCredentials.userRoles.find((role: any) =>
-            role.authorities.find((authority: string) => authority === "ALL")
-        );
 
         return {
             userGroups: currentUser.userGroups,
             id: currentUser.id,
             name: currentUser.name,
             username: currentUser.userCredentials.username,
-            isGlobalAdmin,
-            isAppConfigurator:
-                isGlobalAdmin ||
-                !!currentUser.userCredentials.userRoles.find(
-                    (role: any) => role.name === AppRoles.CONFIGURATION_ACCESS.name
-                ),
-            isAppExecutor:
-                isGlobalAdmin ||
-                !!currentUser.userCredentials.userRoles.find(
-                    (role: any) => role.name === AppRoles.SYNC_RULE_EXECUTION_ACCESS.name
-                ),
         };
     },
     { serializer: (api: D2Api) => api.baseUrl }
 );
 
-//TODO: remove all this methods when all code use getUserInfoUseCase because contains all necessary data about permisions
+/**
+ * @deprecated The function should not be used, please use getCurrentUserUseCase
+ */
 const getUserRoles = memoize(
     async (api: D2Api) => {
         const currentUser = await api.currentUser
@@ -101,6 +100,9 @@ export const shouldShowDeletedObjects = async (api: D2Api) => {
     return !!userRoles.find((role: any) => role.name === name);
 };
 
+/**
+ * @deprecated The function should not be used, please use getCurrentUserUseCase
+ */
 export const isGlobalAdmin = async (api: D2Api) => {
     const userRoles = await getUserRoles(api);
     return !!userRoles.find((role: any) =>
@@ -108,6 +110,9 @@ export const isGlobalAdmin = async (api: D2Api) => {
     );
 };
 
+/**
+ * @deprecated The function should not be used, please use getCurrentUserUseCase
+ */
 export const isAppConfigurator = async (api: D2Api) => {
     const userRoles = await getUserRoles(api);
     const globalAdmin = await isGlobalAdmin(api);
@@ -116,6 +121,9 @@ export const isAppConfigurator = async (api: D2Api) => {
     return globalAdmin || !!userRoles.find((role: any) => role.name === name);
 };
 
+/**
+ * @deprecated The function should not be used, please use getCurrentUserUseCase
+ */
 export const isAppExecutor = async (api: D2Api) => {
     const userRoles = await getUserRoles(api);
     const globalAdmin = await isGlobalAdmin(api);

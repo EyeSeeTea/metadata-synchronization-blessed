@@ -24,12 +24,11 @@ import { useHistory } from "react-router-dom";
 import { Instance, InstanceData } from "../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../locales";
 import { executeAnalytics } from "../../../../../utils/analytics";
-import { getUserInfo } from "../../../../../utils/permissions";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
-import { UserInfo } from "../../../../../domain/common/entities/UserInfo";
+import { User } from "../../../../../domain/user/entities/User";
 
 const InstanceListPage = () => {
     const { api, compositionRoot } = useAppContext();
@@ -43,11 +42,11 @@ const InstanceListPage = () => {
     const [selection, updateSelection] = useState<TableSelection[]>([]);
     const [toDelete, deleteInstances] = useState<string[]>([]);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
-    const [userInfo, setUserInfo] = useState<UserInfo>();
+    const [user, setUser] = useState<User>();
 
     useEffect(() => {
-        getUserInfo(api).then(setUserInfo);
-    }, [api]);
+        compositionRoot.user.current().then(setUser);
+    }, [compositionRoot.user]);
 
     useEffect(() => {
         compositionRoot.instances.list({ search }).then(rows => {
@@ -62,7 +61,7 @@ const InstanceListPage = () => {
 
     const editInstance = async (ids: string[]) => {
         const instance = rows.find(row => row.id === ids[0]);
-        if (instance?.type === "dhis" && userInfo?.isAppConfigurator) {
+        if (instance?.type === "dhis" && user?.isAppConfigurator) {
             history.push(`/instances/edit/${instance.id}`);
         }
     };
@@ -186,15 +185,15 @@ const InstanceListPage = () => {
     };
 
     const verifyUserCanEdit = (instances: Instance[]) => {
-        if (!userInfo) return false;
+        if (!user) return false;
 
-        return instances[0].hasPermissions("write", userInfo);
+        return instances[0].hasPermissions("write", user);
     };
 
     const verifyUserCanRead = (instances: Instance[]) => {
-        if (!userInfo) return false;
+        if (!user) return false;
 
-        return instances[0].hasPermissions("read", userInfo);
+        return instances[0].hasPermissions("read", user);
     };
 
     const columns: TableColumn<Instance>[] = [
@@ -347,9 +346,7 @@ const InstanceListPage = () => {
                 details={details}
                 actions={actions}
                 rowConfig={rowConfig}
-                onActionButtonClick={
-                    userInfo?.isAppConfigurator || false ? createInstance : undefined
-                }
+                onActionButtonClick={user?.isAppConfigurator || false ? createInstance : undefined}
                 onChangeSearch={changeSearch}
                 selection={selection}
                 onChange={updateTable}

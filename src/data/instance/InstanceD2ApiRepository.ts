@@ -3,7 +3,6 @@ import { Either } from "../../domain/common/entities/Either";
 import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { Instance, InstanceData } from "../../domain/instance/entities/Instance";
 import { InstanceMessage } from "../../domain/instance/entities/Message";
-import { User } from "../../domain/instance/entities/User";
 import {
     InstanceRepository,
     InstancesFilter,
@@ -174,23 +173,6 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
     public getApi(): D2Api {
         return this.api;
-    }
-
-    //TODO: this should be in a UserRepository
-    @cache()
-    public async getUser(): Promise<User> {
-        return this.api.currentUser
-            .get({
-                fields: {
-                    id: true,
-                    name: true,
-                    email: true,
-                    userGroups: { id: true, name: true },
-                    organisationUnits: { id: true, name: true },
-                    dataViewOrganisationUnits: { id: true, name: true },
-                },
-            })
-            .getData();
     }
 
     //TODO: this should not be here, callers should getInstanceById or current and get the version

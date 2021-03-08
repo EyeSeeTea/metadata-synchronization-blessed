@@ -21,7 +21,7 @@ import { Module } from "../../../../../domain/modules/entities/Module";
 import { Package } from "../../../../../domain/packages/entities/Package";
 import i18n from "../../../../../locales";
 import { promiseMap } from "../../../../../utils/common";
-import { getUserInfo, isGlobalAdmin } from "../../../../../utils/permissions";
+import { getUserInfo, isGlobalAdmin, UserInfo } from "../../../../../utils/permissions";
 import { ModulePackageListPageProps } from "../../../../webapp/core/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
@@ -33,7 +33,6 @@ import { SharingDialog } from "../sharing-dialog/SharingDialog";
 import { NewPackageDialog } from "./NewPackageDialog";
 import { getValidationsByVersionFeedback } from "./utils";
 import { generateUid } from "d2/uid";
-import { UserInfo } from "../../../../../domain/common/entities/UserInfo";
 
 export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,

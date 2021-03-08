@@ -27,7 +27,7 @@ import { SharedRef } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { FilterRule } from "../../metadata/entities/FilterRule";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
-import { UserInfo } from "../../common/entities/UserInfo";
+import { UserInfo } from "../../../utils/permissions";
 
 export class SynchronizationRule {
     private readonly syncRule: SynchronizationRuleData;
