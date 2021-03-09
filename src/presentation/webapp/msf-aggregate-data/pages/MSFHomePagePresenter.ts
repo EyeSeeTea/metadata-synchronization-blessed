@@ -379,18 +379,7 @@ async function deletePreviousDataValues(
                     "admin"
                 ),
             success: async instance => {
-                const periodType = builder.dataParams?.period;
-
-                if (!periodType) {
-                    addEventToProgress(
-                        i18n.t(
-                            `Deleting previous data values for period {{period}} is not possible`,
-                            { period: getPeriodText({ type: "ALL" }) }
-                        ),
-                        "admin"
-                    );
-                    return;
-                }
+                const periodType = builder.dataParams?.period ?? "ALL";
 
                 addEventToProgress(
                     i18n.t(
