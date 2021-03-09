@@ -1,6 +1,6 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import i18n from "../../../../locales";
@@ -26,7 +26,6 @@ export const MSFHomePage: React.FC = () => {
     const messageList = useRef<HTMLUListElement>(null);
 
     const [running, setRunning] = useState<boolean>(false);
-    const [syncProgress, setSyncProgress] = useState<string[]>([]);
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
     const [msfValidationErrors, setMsfValidationErrors] = useState<string[]>();
@@ -37,6 +36,11 @@ export const MSFHomePage: React.FC = () => {
 
     const [globalAdmin, setGlobalAdmin] = useState(false);
     const [msfSettings, setMsfSettings] = useState<MSFSettings>(defaultMSFSettings);
+
+    const [syncProgress, addEventToProgress] = useReducer(
+        (state: string[], event: string) => [...state, event],
+        []
+    );
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
@@ -62,8 +66,9 @@ export const MSFHomePage: React.FC = () => {
             skipCheckInPreviousPeriods
                 ? { ...msfSettings, checkInPreviousPeriods: false }
                 : msfSettings,
-            progress => setSyncProgress(progress),
-            errors => setMsfValidationErrors(errors)
+            addEventToProgress,
+            errors => setMsfValidationErrors(errors),
+            globalAdmin
         );
 
         setSyncReports(reports);
@@ -227,7 +232,7 @@ export const MSFHomePage: React.FC = () => {
                     cancelText={i18n.t("Cancel")}
                     saveText={i18n.t("Proceed")}
                 >
-                    <Typography>{i18n.t("There are issues with data values:")}</Typography>
+                    <Typography>{i18n.t("Please review the following issues:")}</Typography>
                     <ul>
                         {msfValidationErrors.map((error, index) => {
                             return (

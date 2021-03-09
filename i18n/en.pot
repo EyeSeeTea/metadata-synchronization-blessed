@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-08T10:56:54.894Z\n"
-"PO-Revision-Date: 2021-03-08T10:56:54.894Z\n"
+"POT-Creation-Date: 2021-03-09T10:12:42.825Z\n"
+"PO-Revision-Date: 2021-03-09T10:12:42.825Z\n"
 
 msgid ""
 "In this version exists share settings for instances. It's necessary "
@@ -1341,17 +1341,6 @@ msgstr ""
 msgid "Check existing data values in previous periods"
 msgstr ""
 
-msgid "Data element filter"
-msgstr ""
-
-msgid "Data Element Group *"
-msgstr ""
-
-msgid ""
-"* Data Element Group: used to check existing data values in the destination "
-"data elements"
-msgstr ""
-
 msgid "Project minimum dates"
 msgstr ""
 
@@ -1819,6 +1808,12 @@ msgstr ""
 msgid "Last executed"
 msgstr ""
 
+msgid "Last Updated"
+msgstr ""
+
+msgid "Last Updated By"
+msgstr ""
+
 msgid "Generating JSON file"
 msgstr ""
 
@@ -1898,12 +1893,10 @@ msgstr ""
 msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
 msgstr ""
 
-msgid ""
-"Deleting previous data values is not possible because data element group is "
-"not defined, please contact with your administrator"
+msgid "Finished Aggregate Data with errors"
 msgstr ""
 
-msgid "Finished Aggregate Data"
+msgid "Finished Aggregate Data successfully"
 msgstr ""
 
 msgid "Checking data values in previous periods ...."
@@ -1915,10 +1908,10 @@ msgstr ""
 msgid "Summary of Sync Rule"
 msgstr ""
 
-msgid "Finished Sync Rule {{name}}"
+msgid "Error found: {{message}}"
 msgstr ""
 
-msgid "Finished Sync Rule {{name}} with errors"
+msgid "Finished Sync Rule {{name}}"
 msgstr ""
 
 msgid "never"
@@ -1927,15 +1920,9 @@ msgstr ""
 msgid "Error retrieving instance {{name}} to delete previoud data values"
 msgstr ""
 
-msgid "Error creating period"
-msgstr ""
-
 msgid ""
 "Deleting previous data values in target instance {{name}} for period "
 "{{period}}..."
-msgstr ""
-
-msgid "Deleting previous data values for period {{period}} is not possible"
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"

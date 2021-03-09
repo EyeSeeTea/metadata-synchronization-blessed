@@ -183,7 +183,6 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                                   period,
                                   orgUnit,
                                   categoryOptionCombo: defaultCategoryOptionCombo,
-                                  attributeOptionCombo: defaultCategoryOptionCombo,
                                   value: "0",
                                   comment: "[aggregated]",
                               }))
