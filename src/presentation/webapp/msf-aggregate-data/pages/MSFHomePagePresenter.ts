@@ -3,6 +3,7 @@ import moment from "moment";
 import { DataSyncPeriod } from "../../../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../../../domain/aggregated/utils";
 import { Instance, PublicInstance } from "../../../../domain/instance/entities/Instance";
+import { ProgramIndicator } from "../../../../domain/metadata/entities/MetadataEntities";
 import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../domain/stores/entities/Store";
@@ -110,40 +111,33 @@ async function validatePreviousDataValues(
         const targetInstances = await compositionRoot.instances.list({ ids: rule.targetInstances });
 
         const byInstance = await promiseMap(targetInstances, async instance => {
-            if (!rule.dataParams || !rule.dataParams.period) {
-                return undefined;
-            }
+            if (!rule.dataParams || !rule.dataParams.period) return undefined;
             const { startDate } = buildPeriodFromParams(rule.dataParams);
-            const endDate = startDate.clone().subtract(1, "day");
 
-            const { dataValues = [] } = await compositionRoot.aggregated.list(
-                instance,
+            const programs = await getRulePrograms(compositionRoot, rule, instance);
+
+            const events = await compositionRoot.events.list(
                 {
-                    orgUnitPaths: rule.builder.dataParams?.orgUnitPaths ?? [],
-                    startDate: moment("1970-01-01").toDate(),
-                    endDate: endDate.toDate(),
+                    period: "FIXED",
                     lastUpdated: startDate.toDate(),
+                    endDate: startDate.toDate(),
+                    orgUnitPaths: rule.dataSyncOrgUnitPaths,
+                    allEvents: true,
                 },
-                "" // TODO: Re-do Data element group
+                programs
             );
 
-            if (dataValues.length > 0) {
-                const periodName = availablePeriods[rule.dataParams.period].name;
-
-                return `Sync rule '${rule.name}': there are data values in '${
+            if (events.length > 0) {
+                return `Sync rule '${rule.name}': there are ${events.length} related events in '${
                     instance.name
-                }' for previous period to '${periodName}' and updated after '${startDate.format(
-                    "YYYY-MM-DD"
-                )}'`;
-            } else {
-                return undefined;
+                }' for previous period and updated after '${startDate.format("YYYY-MM-DD")}'`;
             }
         });
 
         return _.compact(byInstance);
     });
 
-    return _(validationsErrors).compact().flatten().value();
+    return _(validationsErrors).flatten().compact().value();
 }
 
 async function executeSyncRule(
@@ -422,4 +416,26 @@ async function getRuleDataElements(
     const payload = await sync.buildPayload();
     const mappedPayload = await sync.mapPayload(instance, payload);
     return _.compact(mappedPayload.dataValues?.map(({ dataElement }) => dataElement));
+}
+
+async function getRulePrograms(
+    compositionRoot: CompositionRoot,
+    rule: SynchronizationRule,
+    instance: Instance
+): Promise<string[]> {
+    const { objects } = await compositionRoot.metadata.list(
+        {
+            type: "programIndicators",
+            fields: { id: true, program: true },
+            filterRows: rule.metadataIds,
+            paging: false,
+        },
+        instance
+    );
+
+    return _(objects as Partial<ProgramIndicator>[])
+        .map(({ program }) => program?.id)
+        .compact()
+        .uniq()
+        .value();
 }
