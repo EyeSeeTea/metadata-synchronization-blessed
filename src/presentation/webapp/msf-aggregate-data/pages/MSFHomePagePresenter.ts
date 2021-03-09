@@ -128,9 +128,9 @@ async function validatePreviousDataValues(
             );
 
             if (events.length > 0) {
-                return `Sync rule '${rule.name}': there are ${events.length} related events in '${
+                return `Sync rule '${rule.name}': we have found ${events.length} related events in '${
                     instance.name
-                }' for previous period and updated after '${startDate.format("YYYY-MM-DD")}'`;
+                }' for a previous period updated after '${startDate.format("DD-MM-YYYY")}'`;
             }
         });
 

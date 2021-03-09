@@ -232,7 +232,7 @@ export const MSFHomePage: React.FC = () => {
                     cancelText={i18n.t("Cancel")}
                     saveText={i18n.t("Proceed")}
                 >
-                    <Typography>{i18n.t("There are issues with data values:")}</Typography>
+                    <Typography>{i18n.t("Please review the following issues:")}</Typography>
                     <ul>
                         {msfValidationErrors.map((error, index) => {
                             return (
