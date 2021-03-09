@@ -81,7 +81,7 @@ export async function executeAggregateData(
 
     const hasErrors = _(reports)
         .flatMap(report => report.getResults())
-        .some(({ status }) => status !== "SUCCESS");
+        .some(({ status }) => !["SUCCESS", "OK"].includes(status));
 
     if (hasErrors) {
         addEventToProgress(i18n.t(`Finished Aggregate Data with errors`));
