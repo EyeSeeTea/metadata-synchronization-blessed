@@ -1,8 +1,8 @@
 import _ from "lodash";
 import moment from "moment";
+import { DataSyncPeriod } from "../../../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../../../domain/aggregated/utils";
-import { Period } from "../../../../domain/common/entities/Period";
-import { PublicInstance } from "../../../../domain/instance/entities/Instance";
+import { Instance, PublicInstance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../domain/stores/entities/Store";
@@ -61,7 +61,7 @@ export async function executeAggregateData(
             "admin"
         );
     }
-    if (msfSettings.deleteDataValuesBeforeSync && !msfSettings.dataElementGroupId) {
+    if (msfSettings.deleteDataValuesBeforeSync) {
         addEventToProgress(
             i18n.t(
                 `Deleting previous data values is not possible because data element group is not defined, please contact with your administrator`
@@ -110,7 +110,7 @@ async function validatePreviousDataValues(
         const targetInstances = await compositionRoot.instances.list({ ids: rule.targetInstances });
 
         const byInstance = await promiseMap(targetInstances, async instance => {
-            if (!rule.dataParams || !rule.dataParams.period || !msfSettings.dataElementGroupId) {
+            if (!rule.dataParams || !rule.dataParams.period) {
                 return undefined;
             }
             const { startDate } = buildPeriodFromParams(rule.dataParams);
@@ -124,7 +124,7 @@ async function validatePreviousDataValues(
                     endDate: endDate.toDate(),
                     lastUpdated: startDate.toDate(),
                 },
-                msfSettings.dataElementGroupId
+                "" // TODO: Re-do Data element group
             );
 
             if (dataValues.length > 0) {
@@ -156,12 +156,11 @@ async function executeSyncRule(
 
     addEventToProgress(i18n.t(`Starting Sync Rule {{name}} ...`, { name }), "admin");
 
-    if (msfSettings.deleteDataValuesBeforeSync && msfSettings.dataElementGroupId) {
+    if (msfSettings.deleteDataValuesBeforeSync) {
         await deletePreviousDataValues(
             compositionRoot,
             targetInstances,
             builder,
-            msfSettings,
             addEventToProgress
         );
     }
@@ -352,7 +351,7 @@ const getOriginName = (source: PublicInstance | Store) => {
     }
 };
 
-const getPeriodText = (period: Period) => {
+const getPeriodText = (period: { type: DataSyncPeriod; startDate?: Date; endDate?: Date }) => {
     const formatDate = (date?: Date) => moment(date).format("YYYY-MM-DD");
 
     return `${availablePeriods[period.type].name} ${
@@ -366,7 +365,6 @@ async function deletePreviousDataValues(
     compositionRoot: CompositionRoot,
     targetInstances: string[],
     builder: SynchronizationBuilder,
-    msfSettings: MSFSettings,
     addEventToProgress: LoggerFunction
 ) {
     for (const instanceId of targetInstances) {
@@ -380,48 +378,59 @@ async function deletePreviousDataValues(
                     }),
                     "admin"
                 ),
-            success: instance => {
-                if (builder.dataParams?.period) {
-                    const periodResult = Period.create({
-                        type: builder.dataParams.period,
-                        startDate: builder.dataParams.startDate,
-                        endDate: builder.dataParams.endDate,
-                    });
+            success: async instance => {
+                const periodType = builder.dataParams?.period;
 
-                    periodResult.match({
-                        error: () => addEventToProgress(i18n.t(`Error creating period`), "admin"),
-                        success: period => {
-                            if (msfSettings.dataElementGroupId) {
-                                const periodText = getPeriodText(period);
-
-                                addEventToProgress(
-                                    i18n.t(
-                                        `Deleting previous data values in target instance {{name}} for period {{period}}...`,
-                                        { name: instance.name, period: periodText }
-                                    ),
-                                    "admin"
-                                );
-
-                                compositionRoot.aggregated.delete(
-                                    builder.dataParams?.orgUnitPaths ?? [],
-                                    msfSettings.dataElementGroupId,
-                                    period,
-                                    instance
-                                );
-                            }
-                        },
-                    });
-                } else {
-                    const periodText = getPeriodText(Period.createDefault());
+                if (!periodType) {
                     addEventToProgress(
                         i18n.t(
                             `Deleting previous data values for period {{period}} is not possible`,
-                            { period: periodText }
+                            { period: getPeriodText({ type: "ALL" }) }
                         ),
                         "admin"
                     );
+                    return;
                 }
+
+                addEventToProgress(
+                    i18n.t(
+                        `Deleting previous data values in target instance {{name}} for period {{period}}...`,
+                        { name: instance.name, period: getPeriodText({ type: periodType }) }
+                    ),
+                    "admin"
+                );
+
+                const dataElements = await getRuleDataElements(compositionRoot, builder, instance);
+
+                const sync = compositionRoot.sync.aggregated({
+                    originInstance: builder.originInstance,
+                    targetInstances: builder.targetInstances,
+                    metadataIds: dataElements,
+                    excludedIds: [],
+                    dataParams: {
+                        period: periodType,
+                        startDate: builder.dataParams?.startDate,
+                        endDate: builder.dataParams?.endDate,
+                        orgUnitPaths: builder.dataParams?.orgUnitPaths,
+                        allAttributeCategoryOptions: true,
+                    },
+                });
+
+                const payload = await sync.buildPayload();
+                const mappedPayload = await sync.mapPayload(instance, payload);
+                await compositionRoot.aggregated.delete(instance, mappedPayload);
             },
         });
     }
+}
+
+async function getRuleDataElements(
+    compositionRoot: CompositionRoot,
+    builder: SynchronizationBuilder,
+    instance: Instance
+): Promise<string[]> {
+    const sync = compositionRoot.sync.aggregated(builder);
+    const payload = await sync.buildPayload();
+    const mappedPayload = await sync.mapPayload(instance, payload);
+    return _.compact(mappedPayload.dataValues?.map(({ dataElement }) => dataElement));
 }
