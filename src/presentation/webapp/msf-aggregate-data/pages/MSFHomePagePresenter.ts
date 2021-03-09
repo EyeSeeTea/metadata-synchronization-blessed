@@ -50,7 +50,7 @@ export async function executeAggregateData(
 
     addEventToProgress(i18n.t(`Starting Aggregate Data...`));
 
-    if (isGlobalInstance && msfSettings.runAnalytics === "false") {
+    if (isGlobalInstance() && msfSettings.runAnalytics === "false") {
         const lastExecution = await getLastAnalyticsExecution(compositionRoot);
 
         addEventToProgress(
@@ -58,14 +58,6 @@ export async function executeAggregateData(
                 lastExecution,
                 nsSeparator: false,
             }),
-            "admin"
-        );
-    }
-    if (msfSettings.deleteDataValuesBeforeSync) {
-        addEventToProgress(
-            i18n.t(
-                `Deleting previous data values is not possible because data element group is not defined, please contact with your administrator`
-            ),
             "admin"
         );
     }
@@ -87,7 +79,15 @@ export async function executeAggregateData(
         executeSyncRule(compositionRoot, syncRule, addEventToProgress, msfSettings)
     );
 
-    addEventToProgress(i18n.t(`Finished Aggregate Data`));
+    const hasErrors = _(reports)
+        .flatMap(report => report.getResults())
+        .some(({ status }) => status !== "SUCCESS");
+
+    if (hasErrors) {
+        addEventToProgress(i18n.t(`Finished Aggregate Data with errors`));
+    } else {
+        addEventToProgress(i18n.t(`Finished Aggregate Data successfully`));
+    }
 
     return reports;
 }
@@ -196,16 +196,16 @@ async function executeSyncRule(
                     "admin"
                 );
 
-                result.errors?.forEach(error => {
-                    addEventToProgress(error.message, "admin");
+                result.errors?.forEach(({ message }) => {
+                    addEventToProgress(
+                        i18n.t("Error found: {{message}}", { nsSeparator: false, message })
+                    );
                 });
             });
 
-            addEventToProgress(i18n.t(`Finished Sync Rule {{name}}`, { name }));
+            addEventToProgress(i18n.t(`Finished Sync Rule {{name}}`, { name }), "admin");
 
             return syncReport;
-        } else if (done) {
-            addEventToProgress(i18n.t(`Finished Sync Rule {{name}} with errors`, { name }));
         }
     }
 
