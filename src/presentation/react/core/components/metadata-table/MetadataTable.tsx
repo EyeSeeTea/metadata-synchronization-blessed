@@ -596,11 +596,13 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
           }
         : undefined;
 
-    const columns: TableColumn<MetadataType>[] = uniqCombine([
-        ...model.getColumns(),
-        ...additionalColumns,
-        { ...responsibleField, sortable: false },
-    ]);
+    const columns: TableColumn<MetadataType>[] = uniqCombine(
+        _.compact([
+            ...model.getColumns(),
+            ...additionalColumns,
+            responsibleField ? { ...responsibleField, sortable: false } : undefined,
+        ])
+    );
 
     const details: ObjectsTableDetailField<MetadataType>[] = uniqCombine([
         ...model.getDetails(),
