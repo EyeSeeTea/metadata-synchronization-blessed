@@ -13,23 +13,33 @@ export class DownloadPayloadUseCase implements UseCase {
 
     public async execute(reports: SynchronizationReport[]): Promise<void> {
         const date = moment().format("YYYYMMDDHHmm");
+        const instanceRepository = this.repositoryFactory.instanceRepository(this.localInstance);
 
         const fetchPayload = async (report: SynchronizationReport) => {
             const syncRule = await this.getSyncRule(report.syncRule);
             const results = report.getResults().filter(({ payload }) => !!payload);
 
-            return results.map(result => ({
-                name: _([
-                    "synchronization",
-                    syncRule?.name,
-                    result?.type,
-                    result?.instance.name,
-                    date,
-                ])
-                    .compact()
-                    .kebabCase(),
-                content: result.payload,
-            }));
+            return await promiseMap(results, async result => {
+                const instance = await instanceRepository.getById(result.instance.id);
+
+                const apiVersion = instance?.apiVersion;
+
+                const downloadItem = {
+                    name: _([
+                        "synchronization",
+                        syncRule?.name,
+                        result?.type,
+                        result?.instance.name,
+                        date,
+                    ])
+                        .compact()
+                        .kebabCase(),
+                    content: result.payload,
+                    apiVersion,
+                };
+
+                return downloadItem;
+            });
         };
 
         const files = _(await promiseMap(reports, fetchPayload))
@@ -40,7 +50,7 @@ export class DownloadPayloadUseCase implements UseCase {
         if (files.length === 1) {
             this.repositoryFactory
                 .downloadRepository()
-                .downloadFile(files[0].name, files[0].content);
+                .downloadFile(files[0].name, files[0].content, files[0].apiVersion);
         } else {
             await this.repositoryFactory
                 .downloadRepository()

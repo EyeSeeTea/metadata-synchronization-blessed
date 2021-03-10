@@ -1,7 +1,6 @@
 import { D2DashboardItem as D2DashboardItem33 } from "d2-api/2.33";
 import _ from "lodash";
 import { Transformation } from "../../domain/transformations/entities/Transformation";
-import { debug } from "../../utils/debug";
 import { isKeyOf, Mapping } from "./__tests__/integration/helpers";
 
 export const metadataTransformations: Transformation[] = [
@@ -14,10 +13,19 @@ export const metadataTransformations: Transformation[] = [
                     ({ featureType, coordinates, geometry, ...rest }: any) => {
                         if (featureType && featureType !== "NONE" && coordinates) {
                             try {
-                                geometry = {
-                                    type: _.startCase(featureType.toLowerCase()),
-                                    coordinates: JSON.parse(coordinates),
-                                };
+                                return _.pickBy(
+                                    {
+                                        geometry: {
+                                            type: _.startCase(featureType.toLowerCase()).replace(
+                                                " ",
+                                                ""
+                                            ),
+                                            coordinates: JSON.parse(coordinates),
+                                        },
+                                        ...rest,
+                                    },
+                                    _.identity
+                                );
                             } catch (error) {
                                 console.log(
                                     "Error during coordinates conversion OU: " + rest["id"]
@@ -36,10 +44,19 @@ export const metadataTransformations: Transformation[] = [
                     ({ geometry, featureType, coordinates, ...rest }: any) => {
                         if (geometry && geometry.type && geometry.coordinates) {
                             try {
-                                featureType = geometry.type.toUpperCase();
-                                coordinates = JSON.stringify(geometry.coordinates).replace(
-                                    /"/g,
-                                    ""
+                                return _.pickBy(
+                                    {
+                                        featureType:
+                                            geometry.type === "MultiPolygon"
+                                                ? "MULTI_POLYGON"
+                                                : geometry.type.toUpperCase(),
+                                        coordinates: JSON.stringify(geometry.coordinates).replace(
+                                            /"/g,
+                                            ""
+                                        ),
+                                        ...rest,
+                                    },
+                                    _.identity
                                 );
                             } catch (error) {
                                 console.log(
@@ -174,22 +191,19 @@ export const metadataTransformations: Transformation[] = [
                             ...dashboard,
                             dashboardItems: dashboardItems?.map((dashboardItem: any) => {
                                 const { type } = dashboardItem as { type: string };
-                                if (type !== "VISUALIZATION" || !dashboardItem.visualization)
+                                if (
+                                    type !== "VISUALIZATION" ||
+                                    !dashboardItem.visualization ||
+                                    !isKeyOf(
+                                        visualizationTypeMapping,
+                                        dashboardItem.visualization.type
+                                    )
+                                ) {
                                     return dashboardItem;
-                                if (!visualizations) {
-                                    debug("No visualization found");
-                                    return null;
                                 }
 
-                                const visualization = visualizations.find(
-                                    (v: { id: string }) => v.id === dashboardItem.visualization.id
-                                ) as { type: string } | undefined;
-                                if (
-                                    !visualization ||
-                                    !isKeyOf(visualizationTypeMapping, visualization.type)
-                                )
-                                    return dashboardItem;
-                                const modelInfo = visualizationTypeMapping[visualization.type];
+                                const modelInfo =
+                                    visualizationTypeMapping[dashboardItem.visualization.type];
 
                                 return {
                                     ..._.omit(dashboardItem, ["visualization"]),

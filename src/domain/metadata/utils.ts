@@ -126,6 +126,8 @@ export function cleanToModelName(api: D2Api, id: string, caller?: string): strin
         return "dataElements";
     } else if (id === "programStageDataElements") {
         return "dataElements";
+    } else if (id === "trackedEntityTypeAttributes") {
+        return "trackedEntityAttributes";
     } else if (id === "attributeValues") {
         return "attributes";
     } else if (id === "commentOptionSet") {

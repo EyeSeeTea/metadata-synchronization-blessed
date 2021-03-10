@@ -119,12 +119,12 @@ describe("API 34", () => {
                             {
                                 id: "item1",
                                 type: "VISUALIZATION",
-                                visualization: { id: "chart1" },
+                                visualization: { id: "chart1", type: "LINE" },
                             },
                             {
                                 id: "item2",
                                 type: "VISUALIZATION",
-                                visualization: { id: "reportTable1" },
+                                visualization: { id: "reportTable1", type: "PIVOT_TABLE" },
                             },
                             {
                                 id: "item3",
@@ -132,16 +132,6 @@ describe("API 34", () => {
                                 map: { id: "map1" },
                             },
                         ],
-                    },
-                ],
-                visualizations: [
-                    {
-                        id: "chart1",
-                        type: "LINE",
-                    },
-                    {
-                        id: "reportTable1",
-                        type: "PIVOT_TABLE",
                     },
                 ],
             };
@@ -164,6 +154,7 @@ describe("API 34", () => {
             expect(chartItem.type).toEqual("CHART");
             expect(chartItem.chart, "to reference the chart").toEqual({
                 id: "chart1",
+                type: "LINE",
             });
             expect(chartItem.visualization, "is no longer set").toBeUndefined();
 
@@ -173,6 +164,7 @@ describe("API 34", () => {
             expect(reportTableItem.type).toEqual("REPORT_TABLE");
             expect(reportTableItem.reportTable, "to reference the report table").toEqual({
                 id: "reportTable1",
+                type: "PIVOT_TABLE",
             });
             expect(reportTableItem.visualization, "is no longer set").toBeUndefined();
 
