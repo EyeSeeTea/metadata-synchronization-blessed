@@ -65,7 +65,7 @@ export async function migrate(
 
     debug({
         message: i18n.t(
-            "In this version exists share settings for instances. It's necessary configure it"
+            "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION TO WORK PROPERLY, YOU WILL HAVE TO SET THE SHARING SETTINGS FOR EACH INSTANCE (Menu 'Instance Settings' > Contextual action 'Sharing settings')"
         ),
         level: "warning",
     });

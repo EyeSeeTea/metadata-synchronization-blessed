@@ -488,8 +488,12 @@ export class ProgramModel extends D2Model {
         "trackedEntityTypes",
         "trackedEntityTypes.trackedEntityAttributes",
         "trackedEntityTypes.trackedEntityAttributes.legendSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets.options",
         "trackedEntityAttributes",
         "trackedEntityAttributes.legendSets",
+        "trackedEntityAttributes.optionSets",
+        "trackedEntityAttributes.optionSets.options",
         "programNotificationTemplates",
     ];
 }
@@ -595,6 +599,20 @@ export class ProgramRuleVariableModel extends D2Model {
 export class ReportModel extends D2Model {
     protected static metadataType = "report";
     protected static collectionName = "reports" as const;
+}
+
+export class RelashionshipType extends D2Model {
+    protected static metadataType = "relationshipType";
+    protected static collectionName = "relationshipTypes" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "trackedEntityTypes",
+        "trackedEntityTypes.trackedEntityAttributes",
+        "trackedEntityTypes.trackedEntityAttributes.legendSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets.options",
+    ];
 }
 
 export class SectionModel extends D2Model {

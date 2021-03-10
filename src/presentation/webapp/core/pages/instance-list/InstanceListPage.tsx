@@ -44,6 +44,7 @@ const InstanceListPage = () => {
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [user, setUser] = useState<User>();
     const [appStorage, setAppStorage] = useState<"dataStore" | "constant">();
+    const [localInstance, setLocalInstance] = useState<Instance>();
 
     useEffect(() => {
         compositionRoot.user.current().then(setUser);
@@ -59,6 +60,10 @@ const InstanceListPage = () => {
     useEffect(() => {
         compositionRoot.config.getStorage().then(storage => setAppStorage(storage));
     }, [compositionRoot]);
+
+    useEffect(() => {
+        compositionRoot.instances.getLocal().then(setLocalInstance);
+    }, [compositionRoot.instances]);
 
     const createInstance = () => {
         history.push("/instances/new");
@@ -166,16 +171,17 @@ const InstanceListPage = () => {
     const openSharingSettings = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
+        if (!localInstance) return;
 
         const instanceResult = await compositionRoot.instances.getById(id);
 
         instanceResult.match({
             success: instance => {
-                if (!instance.existsShareSettingsInDataStore && appStorage === "dataStore") {
+                if (!localInstance.existsShareSettingsInDataStore && appStorage === "dataStore") {
                     snackbar.warning(
                         i18n.t(
-                            `Your current dhis2 version is {{version}} and does not exist share settings for instances. This is a potencial risk!`,
-                            { version: instance.version }
+                            `Your current DHIS2 version is {{version}}. This version does not come with share settings in the data store and, in consequence, there are not sharing settings for each instance. This is a potential risk and we highly recommend you to update your DHIS2 version.`,
+                            { version: localInstance.version }
                         )
                     );
                 }
