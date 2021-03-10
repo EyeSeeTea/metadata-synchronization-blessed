@@ -5,6 +5,7 @@ import {
 } from "../../../presentation/react/core/components/mapping-table/utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { DataSource } from "../../instance/entities/DataSource";
+import { cleanOrgUnitPath } from "../../synchronization/utils";
 import { MappingConfig } from "../entities/MappingConfig";
 import { MetadataMappingDictionary } from "../entities/MetadataMapping";
 import { GenericMappingUseCase } from "./GenericMappingUseCase";
@@ -18,7 +19,8 @@ export class AutoMapUseCase extends GenericMappingUseCase implements UseCase {
         ids: string[],
         isGlobalMapping = false
     ): Promise<AutoMapUseCaseResult> {
-        const metadataResponse = await this.getMetadata(originInstance, ids);
+        const cleanIds = ids.map(id => cleanNestedMappedId(cleanOrgUnitPath(id)));
+        const metadataResponse = await this.getMetadata(originInstance, cleanIds);
         const elements = this.createMetadataArray(metadataResponse);
 
         const tasks: MappingConfig[] = [];

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-09T10:12:42.825Z\n"
-"PO-Revision-Date: 2021-03-09T10:12:42.825Z\n"
+"POT-Creation-Date: 2021-03-10T12:16:53.736Z\n"
+"PO-Revision-Date: 2021-03-10T12:16:53.736Z\n"
 
 msgid ""
 "In this version exists share settings for instances. It's necessary "
@@ -360,6 +360,9 @@ msgid "You need to select all items from the same type"
 msgstr ""
 
 msgid "Preparing auto-mapping for {{total}} elements"
+msgstr ""
+
+msgid "Unable to apply auto-mapping"
 msgstr ""
 
 msgid "Could not find a suitable candidate to apply auto-mapping for {{id}}"

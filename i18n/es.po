@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-03-09T10:12:42.825Z\n"
+"POT-Creation-Date: 2021-03-10T12:16:53.736Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -360,6 +360,9 @@ msgid "You need to select all items from the same type"
 msgstr ""
 
 msgid "Preparing auto-mapping for {{total}} elements"
+msgstr ""
+
+msgid "Unable to apply auto-mapping"
 msgstr ""
 
 msgid "Could not find a suitable candidate to apply auto-mapping for {{id}}"
