@@ -9,6 +9,7 @@ import { SynchronizationRule } from "../../../../domain/rules/entities/Synchroni
 import { Store } from "../../../../domain/stores/entities/Store";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { SynchronizationType } from "../../../../domain/synchronization/entities/SynchronizationType";
+import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
 import i18n from "../../../../locales";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { promiseMap } from "../../../../utils/common";
@@ -26,6 +27,7 @@ export async function executeAggregateData(
     msfSettings: MSFSettings,
     onAddProgressMessage: (progress: string) => void,
     onValidationError: (errors: string[]) => void,
+    onUpdateMsfSettings: (settings: MSFSettings) => Promise<void>,
     isAdmin: boolean
 ): Promise<SynchronizationReport[]> {
     const addEventToProgress: LoggerFunction = (event, userType = "user") => {
@@ -49,7 +51,7 @@ export async function executeAggregateData(
         return [];
     }
 
-    addEventToProgress(i18n.t(`Starting Aggregate Data...`));
+    addEventToProgress(i18n.t(`Synchronizing aggregated data...`));
 
     if (isGlobalInstance() && msfSettings.runAnalytics === "false") {
         const lastExecution = await getLastAnalyticsExecution(compositionRoot);
@@ -85,10 +87,25 @@ export async function executeAggregateData(
         .some(({ status }) => !["SUCCESS", "OK"].includes(status));
 
     if (hasErrors) {
-        addEventToProgress(i18n.t(`Finished Aggregate Data with errors`));
+        addEventToProgress(i18n.t(`Finished aggregated data synchronization with errors`));
     } else {
-        addEventToProgress(i18n.t(`Finished Aggregate Data successfully`));
+        addEventToProgress(i18n.t(`Finished aggregated data synchronization successfully`));
     }
+
+    // Store last executed dates to msf storage
+    const currentExecutions = _(syncRules)
+        .map(rule =>
+            rule.dataSyncOrgUnitPaths.map(orgUnit => [
+                `${rule.id}-${cleanOrgUnitPath(orgUnit)}`,
+                new Date(),
+            ])
+        )
+        .flatten()
+        .fromPairs()
+        .value();
+
+    const lastExecutions = { ...msfSettings.lastExecutions, ...currentExecutions };
+    onUpdateMsfSettings({ ...msfSettings, lastExecutions });
 
     return reports;
 }
@@ -116,18 +133,24 @@ async function validatePreviousDataValues(
 
             const programs = await getRulePrograms(compositionRoot, rule, instance);
 
-            const events = await compositionRoot.events.list(
-                {
-                    period: "FIXED",
-                    lastUpdated: startDate.toDate(),
-                    endDate: startDate.toDate(),
-                    orgUnitPaths: rule.dataSyncOrgUnitPaths,
-                    allEvents: true,
-                },
-                programs
-            );
+            const events = await promiseMap(rule.dataSyncOrgUnitPaths, orgUnit => {
+                const executionKey = `${rule.id}-${cleanOrgUnitPath(orgUnit)}`;
+                const lastExecutionDate = msfSettings.lastExecutions[executionKey];
+                const lastExecution = lastExecutionDate ? moment(lastExecutionDate) : startDate;
 
-            if (events.length > 0) {
+                return compositionRoot.events.list(
+                    {
+                        period: "FIXED",
+                        lastUpdated: lastExecution.toDate(),
+                        endDate: startDate.toDate(),
+                        orgUnitPaths: rule.dataSyncOrgUnitPaths,
+                        allEvents: true,
+                    },
+                    programs
+                );
+            });
+
+            if (_.flatten(events).length > 0) {
                 return `Sync rule '${rule.name}': we have found ${
                     events.length
                 } related events in '${

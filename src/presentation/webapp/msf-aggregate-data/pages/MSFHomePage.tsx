@@ -56,25 +56,6 @@ export const MSFHomePage: React.FC = () => {
         });
     }, [compositionRoot]);
 
-    const handleAggregateData = async (skipCheckInPreviousPeriods?: boolean) => {
-        setRunning(true);
-        setSyncReports([]);
-
-        const reports = await executeAggregateData(
-            compositionRoot,
-            advancedSettings,
-            skipCheckInPreviousPeriods
-                ? { ...msfSettings, checkInPreviousPeriods: false }
-                : msfSettings,
-            addEventToProgress,
-            errors => setMsfValidationErrors(errors),
-            globalAdmin
-        );
-
-        setSyncReports(reports);
-        setRunning(false);
-    };
-
     const handleOpenAdvancedSettings = () => {
         setShowPeriodDialog(true);
     };
@@ -103,10 +84,33 @@ export const MSFHomePage: React.FC = () => {
         setShowMSFSettingsDialog(false);
     };
 
-    const handleSaveMSFSettings = (msfSettings: MSFSettings) => {
+    const handleSaveMSFSettings = async (msfSettings: MSFSettings) => {
         setShowMSFSettingsDialog(false);
         setMsfSettings(msfSettings);
-        compositionRoot.customData.save(MSFStorageKey, { ...msfSettings, runAnalytics: undefined });
+        await compositionRoot.customData.save(MSFStorageKey, {
+            ...msfSettings,
+            runAnalytics: undefined,
+        });
+    };
+
+    const handleAggregateData = async (skipCheckInPreviousPeriods?: boolean) => {
+        setRunning(true);
+        setSyncReports([]);
+
+        const reports = await executeAggregateData(
+            compositionRoot,
+            advancedSettings,
+            skipCheckInPreviousPeriods
+                ? { ...msfSettings, checkInPreviousPeriods: false }
+                : msfSettings,
+            addEventToProgress,
+            errors => setMsfValidationErrors(errors),
+            handleSaveMSFSettings,
+            globalAdmin
+        );
+
+        setSyncReports(reports);
+        setRunning(false);
     };
 
     const handleDownloadPayload = async () => {
