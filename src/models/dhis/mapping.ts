@@ -4,7 +4,6 @@ import {
     D2CategoryOptionSchema,
     D2DataSetSchema,
     D2IndicatorSchema,
-    D2OptionSchema,
     D2ProgramIndicatorSchema,
     D2ProgramSchema,
     SelectedPick,
@@ -29,7 +28,6 @@ import {
     DataSetModel,
     IndicatorModel,
     OptionModel,
-    OptionSetModel,
     OrganisationUnitModel,
     ProgramIndicatorModel,
     ProgramModel,
@@ -235,27 +233,27 @@ export class GlobalCategoryModel extends CategoryModel {
 
 export class GlobalOptionModel extends OptionModel {
     protected static fields = optionFields;
-    protected static childrenKeys = ["options"];
+    //protected static childrenKeys = ["options"];
     protected static mappingType = "options";
     protected static isGlobalMapping = true;
 
-    protected static modelTransform = (
-        objects: SelectedPick<D2OptionSchema, typeof optionFields>[]
-    ) => {
-        const childrenRows = _.groupBy(objects, "optionSet.id");
+    // protected static modelTransform = (
+    //     objects: SelectedPick<D2OptionSchema, typeof optionFields>[]
+    // ) => {
+    //     const childrenRows = _.groupBy(objects, "optionSet.id");
 
-        return _.uniqBy(
-            objects.map(({ optionSet }) => optionSet),
-            "id"
-        ).map(optionSet => ({
-            ...optionSet,
-            model: OptionSetModel,
-            options: childrenRows[optionSet.id].map(option => ({
-                ...option,
-                model: GlobalOptionModel,
-            })),
-        }));
-    };
+    //     return _.uniqBy(
+    //         objects.map(({ optionSet }) => optionSet),
+    //         "id"
+    //     ).map(optionSet => ({
+    //         ...optionSet,
+    //         model: OptionSetModel,
+    //         options: childrenRows[optionSet.id].map(option => ({
+    //             ...option,
+    //             model: GlobalOptionModel,
+    //         })),
+    //     }));
+    // };
 }
 
 export class GlobalDataElementModel extends ProgramDataElementModel {

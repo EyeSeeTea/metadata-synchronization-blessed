@@ -171,8 +171,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                 fields: "id",
             })
             .getData()) as {
-            [key: string]: { id: string }[];
-        };
+                [key: string]: { id: string }[];
+            };
 
         const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
 
@@ -303,6 +303,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         group,
         level,
         program,
+        optionSet,
         includeParents,
         parents,
         showOnlySelected,
@@ -317,6 +318,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         if (group) filter[`${group.type}.id`] = { eq: group.value };
         if (level) filter["level"] = { eq: level };
         if (program) filter["program.id"] = { eq: program };
+        if (optionSet) filter["optionSet.id"] = { eq: optionSet };
         if (includeParents && isNotEmpty(parents)) {
             filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
         }
@@ -623,8 +625,8 @@ function getFilterAsString(filter: FilterBase): string[] {
                         isEmptyFilterValue(value)
                             ? null
                             : op === "in" || op === "!in"
-                            ? `${field}:${op}:[${(value as string[]).join(",")}]`
-                            : `${field}:${op}:${value}`
+                                ? `${field}:${op}:[${(value as string[]).join(",")}]`
+                                : `${field}:${op}:${value}`
                     )
                 )
             )
