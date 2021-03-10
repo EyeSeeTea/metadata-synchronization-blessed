@@ -175,7 +175,7 @@ const InstanceListPage = () => {
                 if (!localInstance.existsShareSettingsInDataStore) {
                     snackbar.warning(
                         i18n.t(
-                            `Your current dhis2 version is {{version}} and does not exist share settings for instances. This is a potencial risk!`,
+                            `Your current DHIS2 version is {{version}}. This version does not come with share settings in the data store and, in consequence, there are not sharing settings for each instance. This is a potential risk and we highly recommend you to update your DHIS2 version.`,
                             { version: localInstance.version }
                         )
                     );
