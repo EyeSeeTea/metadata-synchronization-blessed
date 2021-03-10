@@ -264,11 +264,10 @@ export abstract class GenericSyncUseCase {
                 const currentUser = await this.api.currentUser
                     .get({ fields: { userCredentials: { name: true }, id: true } })
                     .getData();
-                const updatedRule = oldRule.updateLastExecuted(
-                    new Date(),
-                    currentUser.id,
-                    currentUser.userCredentials.name
-                );
+                const updatedRule = oldRule.updateLastExecuted(new Date(), {
+                    id: currentUser.id,
+                    name: currentUser.userCredentials.name,
+                });
                 await this.repositoryFactory.rulesRepository(this.localInstance).save(updatedRule);
             }
         }

@@ -28,7 +28,7 @@ import { SharedRef } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { FilterRule } from "../../metadata/entities/FilterRule";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
-
+import { NamedRef } from "../../common/entities/Ref";
 export class SynchronizationRule {
     private readonly syncRule: SynchronizationRuleData;
 
@@ -175,8 +175,8 @@ export class SynchronizationRule {
         return this.syncRule.lastExecuted ? new Date(this.syncRule.lastExecuted) : undefined;
     }
 
-    public get lastExecutedBy(): string | undefined {
-        return this.syncRule.lastExecutedBy?.name || undefined;
+    public get lastExecutedBy(): NamedRef | undefined {
+        return this.syncRule.lastExecutedBy || undefined;
     }
 
     public get readableFrequency(): string | undefined {
@@ -532,8 +532,8 @@ export class SynchronizationRule {
         return this.update({ frequency });
     }
 
-    public updateLastExecuted(lastExecuted: Date, id: string, name: string): SynchronizationRule {
-        return this.update({ lastExecuted, lastExecutedBy: { id, name } });
+    public updateLastExecuted(lastExecuted: Date, ref: NamedRef): SynchronizationRule {
+        return this.update({ lastExecuted, lastExecutedBy: ref });
     }
 
     public isOnDemand() {
@@ -693,7 +693,7 @@ export interface SynchronizationRuleData extends SharedRef {
     targetInstances: string[];
     enabled: boolean;
     lastExecuted?: Date;
-    lastExecutedBy?: { id: string; name: string };
+    lastExecutedBy?: NamedRef;
     frequency?: string;
     type: SynchronizationType;
 }
