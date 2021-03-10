@@ -5,6 +5,8 @@ import {
     documentColumns,
     documentDetails,
     documentFields,
+    optionColumns,
+    optionFields,
     organisationUnitFields,
     organisationUnitsColumns,
     organisationUnitsDetails,
@@ -379,6 +381,8 @@ export class OptionSetModel extends D2Model {
 export class OptionModel extends D2Model {
     protected static metadataType = "option";
     protected static collectionName = "options" as const;
+    protected static fields = optionFields;
+    protected static columns = optionColumns;
 
     protected static excludeRules = [];
     protected static includeRules = ["attributes", "optionSets", "optionSets.attributes"];

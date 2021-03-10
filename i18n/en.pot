@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-10T11:42:33.065Z\n"
-"PO-Revision-Date: 2021-03-10T11:42:33.065Z\n"
+"POT-Creation-Date: 2021-03-10T12:10:38.601Z\n"
+"PO-Revision-Date: 2021-03-10T12:10:38.601Z\n"
 
 msgid ""
 "In this version exists share settings for instances. It's necessary "
@@ -459,6 +459,9 @@ msgid "{{displayName}} Level"
 msgstr ""
 
 msgid "Program"
+msgstr ""
+
+msgid "Option set"
 msgstr ""
 
 msgid "Only selected items"
