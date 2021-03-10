@@ -43,6 +43,7 @@ const InstanceListPage = () => {
     const [toDelete, deleteInstances] = useState<string[]>([]);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [user, setUser] = useState<User>();
+    const [localInstance, setLocalInstance] = useState<Instance>();
 
     useEffect(() => {
         compositionRoot.user.current().then(setUser);
@@ -54,6 +55,10 @@ const InstanceListPage = () => {
             setLoadingRows(false);
         });
     }, [compositionRoot, search, toDelete]);
+
+    useEffect(() => {
+        compositionRoot.instances.getLocal().then(setLocalInstance);
+    }, [compositionRoot.instances]);
 
     const createInstance = () => {
         history.push("/instances/new");
@@ -161,16 +166,17 @@ const InstanceListPage = () => {
     const openSharingSettings = async (ids: string[]) => {
         const id = _.first(ids);
         if (!id) return;
+        if (!localInstance) return;
 
         const instanceResult = await compositionRoot.instances.getById(id);
 
         instanceResult.match({
             success: instance => {
-                if (!instance.existsShareSettingsInDataStore) {
+                if (!localInstance.existsShareSettingsInDataStore) {
                     snackbar.warning(
                         i18n.t(
                             `Your current dhis2 version is {{version}} and does not exist share settings for instances. This is a potencial risk!`,
-                            { version: instance.version }
+                            { version: localInstance.version }
                         )
                     );
                 }

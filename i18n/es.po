@@ -1827,6 +1827,12 @@ msgstr ""
 msgid "Last executed"
 msgstr ""
 
+msgid "Last Updated"
+msgstr ""
+
+msgid "Last Updated By"
+msgstr ""
+
 msgid "Generating JSON file"
 msgstr ""
 
