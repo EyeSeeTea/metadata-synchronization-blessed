@@ -81,8 +81,8 @@ export class CreatePullRequestUseCase implements UseCase {
 
     private async getOwner(): Promise<NamedRef> {
         const { id, name } = await this.repositoryFactory
-            .instanceRepository(this.localInstance)
-            .getUser();
+            .userRepository(this.localInstance)
+            .getCurrent();
         return { id, name };
     }
 

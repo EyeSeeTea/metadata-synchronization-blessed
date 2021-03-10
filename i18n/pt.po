@@ -1,12 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-03-04T21:46:50.958Z\n"
+"POT-Creation-Date: 2021-03-10T21:20:34.528Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgid ""
+"THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
+"TO WORK PROPERLY, YOU WILL HAVE TO SET THE SHARING SETTINGS FOR EACH "
+"INSTANCE (Menu 'Instance Settings' > Contextual action 'Sharing settings')"
+msgstr ""
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -87,6 +93,13 @@ msgid "You must select a metadata type"
 msgstr ""
 
 msgid "Select at least one date for fixed period on create"
+msgstr ""
+
+msgid ""
+"Your current DHIS2 version is {{version}}. This version does not come with "
+"share settings in the data store and, in consequence, there are not sharing "
+"settings for each instance. This is a potential risk and we highly recommend "
+"you to update your DHIS2 version."
 msgstr ""
 
 msgid "Version is not valid (ie. {{validExample}})"
@@ -592,6 +605,9 @@ msgid "{{n}} package(s) created successfully: {{list}}"
 msgstr ""
 
 msgid "{{n}} package(s) could not be created: {{list}}"
+msgstr ""
+
+msgid "Instance not found"
 msgstr ""
 
 msgid "Instances & Play Stores"
@@ -1126,9 +1142,6 @@ msgstr ""
 msgid "Destination"
 msgstr ""
 
-msgid "Instance not found"
-msgstr ""
-
 msgid "Every day"
 msgstr ""
 
@@ -1157,6 +1170,14 @@ msgid "Cron expression must be valid"
 msgstr ""
 
 msgid "Json files downloaded successfull"
+msgstr ""
+
+msgid ""
+"You do not have the authority to one or multiple target instances of the "
+"sync rule"
+msgstr ""
+
+msgid "An error has ocurred during the download"
 msgstr ""
 
 msgid "Cancel synchronization rule wizard"
@@ -1542,6 +1563,9 @@ msgstr ""
 msgid "Run analytics"
 msgstr ""
 
+msgid "An error has ocurred editing share settings"
+msgstr ""
+
 msgid "Delete Instances?"
 msgstr ""
 
@@ -1611,6 +1635,9 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
+msgstr ""
+
+msgid "An error has ocurred during the synchronization"
 msgstr ""
 
 msgid "New module"

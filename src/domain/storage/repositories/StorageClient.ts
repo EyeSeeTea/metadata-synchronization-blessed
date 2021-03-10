@@ -8,6 +8,25 @@ export interface StorageClientConstructor {
     new (instance: Instance): StorageClient;
 }
 
+export type AccessRule = string;
+
+export interface SharingRule {
+    id: string;
+    access: AccessRule;
+    displayName: string;
+}
+
+export interface ObjectSharing {
+    publicAccess: AccessRule;
+    externalAccess: boolean;
+    user: {
+        id: string;
+        name: string;
+    };
+    userAccesses: SharingRule[];
+    userGroupAccesses: SharingRule[];
+}
+
 export abstract class StorageClient {
     public abstract type: "constant" | "dataStore";
 
@@ -20,6 +39,8 @@ export abstract class StorageClient {
     public abstract clone(): Promise<Dictionary<unknown>>;
     public abstract import(dump: Dictionary<unknown>): Promise<void>;
     public abstract listKeys(): Promise<string[]>;
+    public abstract getObjectSharing(key: string): Promise<ObjectSharing | undefined>;
+    public abstract saveObjectSharing(key: string, object: ObjectSharing): Promise<void>;
 
     public async listObjectsInCollection<T extends Ref>(key: string): Promise<T[]> {
         const collection = await this.getObject<T[]>(key);

@@ -64,9 +64,7 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
     }, [compositionRoot, versions, updateVersions]);
 
     useEffect(() => {
-        compositionRoot.instances
-            .getCurrentUser()
-            .then(({ userGroups }) => setUserGroups(userGroups));
+        compositionRoot.user.current().then(({ userGroups }) => setUserGroups(userGroups));
     }, [compositionRoot]);
 
     const updateModel = useCallback(

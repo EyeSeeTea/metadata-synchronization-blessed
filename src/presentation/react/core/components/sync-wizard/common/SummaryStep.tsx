@@ -83,19 +83,32 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
     };
 
     const downloadJSON = async () => {
-        loading.show(true, "Generating JSON file");
-        const result = await compositionRoot.rules.downloadPayloads(syncRule.id);
+        try {
+            loading.show(true, "Generating JSON file");
+            const result = await compositionRoot.rules.downloadPayloads(syncRule.id);
 
-        result.match({
-            success: () => {
-                snackbar.success(i18n.t("Json files downloaded successfull"));
-            },
-            error: errors => {
-                snackbar.error(errors.join("\n"));
-            },
-        });
+            result.match({
+                success: () => {
+                    snackbar.success(i18n.t("Json files downloaded successfull"));
+                },
+                error: errors => {
+                    snackbar.error(errors.join("\n"));
+                },
+            });
 
-        loading.reset();
+            loading.reset();
+        } catch (error) {
+            loading.reset();
+            if (error.response?.status === 403) {
+                snackbar.error(
+                    i18n.t(
+                        "You do not have the authority to one or multiple target instances of the sync rule"
+                    )
+                );
+            } else {
+                snackbar.error(i18n.t("An error has ocurred during the download"));
+            }
+        }
     };
 
     useEffect(() => {

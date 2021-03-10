@@ -3,6 +3,12 @@ import memoize from "nano-memoize";
 import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
 import { D2Api } from "../types/d2-api";
 
+// Applying parallel change
+// Exists a GetCurrentUseCase that we should use for the new code
+//TODO: remove all this code when all code use GetCurrentUseCase because contains all necessary data about permisions
+//  | |
+//  V V
+
 const AppRoles: {
     [key: string]: {
         name: string;
@@ -29,6 +35,9 @@ const AppRoles: {
     },
 };
 
+/**
+ * @deprecated The interface should not be used, please use domain user entity
+ */
 export interface UserInfo {
     userGroups: any[];
     id: string;
@@ -36,6 +45,9 @@ export interface UserInfo {
     username: string;
 }
 
+/**
+ * @deprecated The function should not be used, please use getCurrentUserUseCase
+ */
 export const getUserInfo = memoize(
     async (api: D2Api): Promise<UserInfo> => {
         const currentUser = await api.currentUser
@@ -59,6 +71,9 @@ export const getUserInfo = memoize(
     { serializer: (api: D2Api) => api.baseUrl }
 );
 
+/**
+ * @deprecated The function should not be used, please use getCurrentUserUseCase
+ */
 const getUserRoles = memoize(
     async (api: D2Api) => {
         const currentUser = await api.currentUser
@@ -85,6 +100,9 @@ export const shouldShowDeletedObjects = async (api: D2Api) => {
     return !!userRoles.find((role: any) => role.name === name);
 };
 
+/**
+ * @deprecated The function should not be used, please use getCurrentUserUseCase
+ */
 export const isGlobalAdmin = async (api: D2Api) => {
     const userRoles = await getUserRoles(api);
     return !!userRoles.find((role: any) =>
@@ -92,6 +110,9 @@ export const isGlobalAdmin = async (api: D2Api) => {
     );
 };
 
+/**
+ * @deprecated The function should not be used, please use getCurrentUserUseCase
+ */
 export const isAppConfigurator = async (api: D2Api) => {
     const userRoles = await getUserRoles(api);
     const globalAdmin = await isGlobalAdmin(api);
@@ -100,6 +121,9 @@ export const isAppConfigurator = async (api: D2Api) => {
     return globalAdmin || !!userRoles.find((role: any) => role.name === name);
 };
 
+/**
+ * @deprecated The function should not be used, please use getCurrentUserUseCase
+ */
 export const isAppExecutor = async (api: D2Api) => {
     const userRoles = await getUserRoles(api);
     const globalAdmin = await isGlobalAdmin(api);
