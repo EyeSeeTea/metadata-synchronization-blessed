@@ -237,7 +237,7 @@ const SyncRulesPage: React.FC = () => {
             loading.reset();
             if (error.response?.status === 403) {
                 snackbar.error(
-                    i18n.t("You do not have the authority to some target instance of the sync rule")
+                    i18n.t("You do not have the authority to one or multiple target instances of the sync rule")
                 );
             } else {
                 snackbar.error(i18n.t("An error has ocurred during the download"));
@@ -373,7 +373,7 @@ const SyncRulesPage: React.FC = () => {
             loading.reset();
             if (error.response?.status === 403) {
                 snackbar.error(
-                    i18n.t("You do not have the authority to some target instance of the sync rule")
+                    i18n.t("You do not have the authority to one or multiple target instances of the sync rule")
                 );
             } else {
                 snackbar.error(i18n.t("An error has ocurred during the synchronization"));
