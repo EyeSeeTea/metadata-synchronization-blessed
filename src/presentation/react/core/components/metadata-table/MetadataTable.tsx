@@ -189,7 +189,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         const model = _.find(models, model => model.getMetadataType() === modelName) ?? models[0];
         updateModel(() => model);
         notifyNewModel(model);
-        updateFilters({ type: model.getCollectionName() });
+
+        //Reset view filters because this filters are not shared between all metadata models
+        //and if this one is not initialized to model changes, it provoke errors with old view filters applied
+        const initialViewFilters = viewFilters.reduce((acc, viewFilter) => {
+            return { ...acc, [viewFilter]: undefined };
+        }, {});
+
+        updateFilters({ ...initialViewFilters, type: model.getCollectionName() });
     };
 
     const changeSearchFilter = (value: string) => {
