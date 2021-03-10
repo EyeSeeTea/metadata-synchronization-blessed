@@ -29,6 +29,7 @@ import { SharingSetting } from "../../common/entities/SharingSetting";
 import { FilterRule } from "../../metadata/entities/FilterRule";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { NamedRef } from "../../common/entities/Ref";
+
 export class SynchronizationRule {
     private readonly syncRule: SynchronizationRuleData;
 
@@ -177,6 +178,18 @@ export class SynchronizationRule {
 
     public get lastExecutedBy(): NamedRef | undefined {
         return this.syncRule.lastExecutedBy || undefined;
+    }
+
+    public get created(): Date | undefined {
+        return this.syncRule.created ? new Date(this.syncRule.created) : undefined;
+    }
+
+    public get lastUpdated(): Date | undefined {
+        return this.syncRule.lastUpdated ? new Date(this.syncRule.lastUpdated) : undefined;
+    }
+
+    public get lastUpdatedBy(): string | undefined {
+        return this.syncRule.lastUpdatedBy ? this.syncRule.lastUpdatedBy.name : undefined;
     }
 
     public get readableFrequency(): string | undefined {
