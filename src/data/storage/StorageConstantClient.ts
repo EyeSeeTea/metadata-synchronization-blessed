@@ -8,7 +8,7 @@ import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 const CONSTANT_NAME = "MDSync Storage";
-const CONSTANT_PREFIX = "MDSYNC_STORAGE_";
+const CONSTANT_PREFIX = "MDSYNC_";
 
 export class StorageConstantClient extends StorageClient {
     public type = "constant" as const;
@@ -87,18 +87,28 @@ export class StorageConstantClient extends StorageClient {
             .value();
     }
 
-    public getObjectSharing(_key: string): Promise<ObjectSharing | undefined> {
-        throw new Error("Method not implemented.");
+    public async getObjectSharing(key: string): Promise<ObjectSharing | undefined> {
+        const {
+            user,
+            userAccesses,
+            userGroupAccesses,
+            publicAccess,
+            externalAccess,
+        } = await this.getConstant(key);
+
+        return { user, userAccesses, userGroupAccesses, publicAccess, externalAccess };
     }
 
-    public saveObjectSharing(_key: string, _object: ObjectSharing): Promise<void> {
-        throw new Error("Method not implemented.");
+    public async saveObjectSharing(key: string, sharing: ObjectSharing): Promise<void> {
+        const { id, value } = await this.getConstant<object>(key);
+        if (value) await this.updateConstant<object>(id, key, value, sharing);
     }
 
     private async updateConstant<T extends object>(
         id: string,
         key: string,
-        value: T
+        value: T,
+        sharing: Partial<ObjectSharing> = {}
     ): Promise<void> {
         await this.api.metadata
             .post({
@@ -109,29 +119,30 @@ export class StorageConstantClient extends StorageClient {
                         name: formatName(key),
                         description: JSON.stringify(value, null, 2),
                         value: 1,
+                        ...sharing,
                     },
                 ],
             })
             .getData();
     }
 
-    private async getConstant<T>(key: string): Promise<{ id: string; code?: string; value?: T }> {
+    private async getConstant<T>(key: string): Promise<Constant & { value?: T }> {
         const { objects: constants } = await this.api.models.constants
             .get({
                 paging: false,
-                fields: { id: true, code: true, name: true, description: true },
+                fields: apiFields,
                 filter: { code: { eq: formatKey(key) } },
             })
             .getData();
 
-        const { id = generateUid(), code, description } = constants[0] ?? {};
+        const { id = generateUid(), description, ...rest } = constants[0] ?? {};
 
         try {
             const value = description ? JSON.parse(description) : undefined;
-            return { id, code, value };
+            return { id, description, ...rest, value };
         } catch (error) {
             console.error(error);
-            return { id, code };
+            return { id, description, ...rest };
         }
     }
 
@@ -139,7 +150,7 @@ export class StorageConstantClient extends StorageClient {
         const { objects } = await this.api.models.constants
             .get({
                 paging: false,
-                fields: { id: true, code: true, name: true, description: true },
+                fields: apiFields,
                 filter: { code: { $like: CONSTANT_PREFIX } },
             })
             .getData();
@@ -156,9 +167,22 @@ function formatName(name: string): string {
     return _.startCase(`${CONSTANT_NAME} - ${name}`);
 }
 
-interface Constant {
+type Constant = ObjectSharing & {
     id: string;
     code: string;
     name: string;
     description: string;
-}
+};
+
+const apiFields = {
+    id: true,
+    code: true,
+    name: true,
+    description: true,
+    user: { id: true, name: true },
+    created: true,
+    userAccesses: { id: true, name: true, displayName: true, access: true },
+    userGroupAccesses: { id: true, name: true, displayName: true, access: true },
+    publicAccess: true,
+    externalAccess: true,
+} as const;
