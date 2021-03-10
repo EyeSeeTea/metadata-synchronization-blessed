@@ -74,37 +74,34 @@ export class StorageDataStoreClient extends StorageClient {
     }
 
     public async getObjectSharing(key: string): Promise<ObjectSharing | undefined> {
-        const metadata = await this.getMetadataByKey(key);
+        const {
+            user,
+            userAccesses,
+            userGroupAccesses,
+            publicAccess,
+            externalAccess,
+        } = await this.getMetadataByKey(key);
 
-        const sharing = _.omit(
-            metadata,
-            "created",
-            "lastUpdated",
-            "lastUpdatedBy",
-            "namespace",
-            "key",
-            "value",
-            "favorite",
-            "id"
-        );
-
-        return { ...sharing, user: { ...sharing.user, name: "" } };
+        return {
+            user: { ...user, name: "" },
+            userAccesses,
+            userGroupAccesses,
+            publicAccess,
+            externalAccess,
+        };
     }
 
     public async saveObjectSharing(key: string, object: ObjectSharing): Promise<void> {
-        const metadata = await this.getMetadataByKey(key);
-
-        await this.api.post(`/sharing?type=dataStore&id=${metadata.id}`, undefined, {
-            object,
-        }).response;
+        const { id } = await this.getMetadataByKey(key);
+        await this.api.post(`/sharing`, { type: "dataStore", id }, { object }).getData();
     }
 
     private async getMetadataByKey(key: string) {
-        const response = await this.api.get<MetadataDataStoreKey>(
-            `/dataStore/${dataStoreNamespace}/${key}/metaData`
-        ).response;
+        const data = await this.api
+            .get<MetadataDataStoreKey>(`/dataStore/${dataStoreNamespace}/${key}/metaData`)
+            .getData();
 
-        return response.data;
+        return data;
     }
 }
 

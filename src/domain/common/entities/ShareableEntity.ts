@@ -16,7 +16,7 @@ export class ShareableEntity<T extends SharedRef> {
         } = this.data;
         const token = permission === "read" ? "r" : "w";
 
-        const isUserOwner = user.id === currentUser.id;
+        const isUserOwner = user?.id === currentUser.id;
         const isPublic = publicAccess.substring(0, 2).includes(token);
 
         const hasUserAccess = !!_(userAccesses)
