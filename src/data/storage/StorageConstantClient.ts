@@ -1,8 +1,9 @@
+import { D2ConstantSchema } from "d2-api/2.33";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { ObjectSharing, StorageClient } from "../../domain/storage/repositories/StorageClient";
-import { D2Api } from "../../types/d2-api";
+import { D2Api, SelectedPick } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
@@ -34,6 +35,22 @@ export class StorageConstantClient extends StorageClient {
     public async saveObject<T extends object>(key: string, keyValue: T): Promise<void> {
         const { id } = await this.getConstant<T>(key);
         await this.updateConstant(id, key, keyValue);
+
+        // Special scenario, clean history entries
+        if (key.startsWith("history")) {
+            const constants = await this.lookupConstants();
+            const sorted = _.orderBy(constants, ["lastUpdated"], ["desc"]);
+            const toDelete = sorted.slice(70);
+
+            if (toDelete.length > 0) {
+                await this.api.metadata
+                    .post(
+                        { constants: toDelete.map(({ id, code, name }) => ({ id, code, name })) },
+                        { importStrategy: "DELETE" }
+                    )
+                    .getData();
+            }
+        }
     }
 
     public async removeObject(key: string): Promise<void> {
@@ -62,6 +79,7 @@ export class StorageConstantClient extends StorageClient {
     public async clone(): Promise<Dictionary<unknown>> {
         const constants = await this.lookupConstants();
 
+        // Remove constant prefix key
         return _(constants)
             .map(({ code, description }) => [
                 code.replace(new RegExp(`^${CONSTANT_PREFIX}`, ""), ""),
@@ -139,10 +157,10 @@ export class StorageConstantClient extends StorageClient {
 
         try {
             const value = description ? JSON.parse(description) : undefined;
-            return { id, description, ...rest, value };
+            return { ...this.formatConstant({ id, description, ...rest }), value };
         } catch (error) {
             console.error(error);
-            return { id, description, ...rest };
+            return this.formatConstant({ id, description, ...rest });
         }
     }
 
@@ -155,16 +173,20 @@ export class StorageConstantClient extends StorageClient {
             })
             .getData();
 
-        return objects;
+        return objects.map(constant => this.formatConstant(constant));
+    }
+
+    private formatConstant(item: SelectedPick<D2ConstantSchema, typeof apiFields>): Constant {
+        return { ...item, lastUpdated: new Date(item.lastUpdated) };
     }
 }
 
 function formatKey(key: string): string {
-    return _.toUpper(_.snakeCase(`${CONSTANT_PREFIX}_${key}`));
+    return `${CONSTANT_PREFIX}${key}`;
 }
 
 function formatName(name: string): string {
-    return _.startCase(`${CONSTANT_NAME} - ${name}`);
+    return `${CONSTANT_NAME} - ${_.upperFirst(name)}`;
 }
 
 type Constant = ObjectSharing & {
@@ -172,6 +194,7 @@ type Constant = ObjectSharing & {
     code: string;
     name: string;
     description: string;
+    lastUpdated: Date;
 };
 
 const apiFields = {
@@ -185,4 +208,5 @@ const apiFields = {
     userGroupAccesses: { id: true, name: true, displayName: true, access: true },
     publicAccess: true,
     externalAccess: true,
+    lastUpdated: true,
 } as const;
