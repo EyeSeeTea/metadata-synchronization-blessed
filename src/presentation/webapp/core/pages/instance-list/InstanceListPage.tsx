@@ -43,6 +43,7 @@ const InstanceListPage = () => {
     const [toDelete, deleteInstances] = useState<string[]>([]);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [user, setUser] = useState<User>();
+    const [appStorage, setAppStorage] = useState<"dataStore" | "constant">();
 
     useEffect(() => {
         compositionRoot.user.current().then(setUser);
@@ -54,6 +55,10 @@ const InstanceListPage = () => {
             setLoadingRows(false);
         });
     }, [compositionRoot, search, toDelete]);
+
+    useEffect(() => {
+        compositionRoot.config.getStorage().then(storage => setAppStorage(storage));
+    }, [compositionRoot]);
 
     const createInstance = () => {
         history.push("/instances/new");
@@ -166,7 +171,7 @@ const InstanceListPage = () => {
 
         instanceResult.match({
             success: instance => {
-                if (!instance.existsShareSettingsInDataStore) {
+                if (!instance.existsShareSettingsInDataStore && appStorage === "dataStore") {
                     snackbar.warning(
                         i18n.t(
                             `Your current dhis2 version is {{version}} and does not exist share settings for instances. This is a potencial risk!`,
