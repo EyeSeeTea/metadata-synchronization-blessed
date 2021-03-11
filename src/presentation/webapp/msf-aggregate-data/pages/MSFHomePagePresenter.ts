@@ -135,15 +135,15 @@ async function validatePreviousDataValues(
 
             const programs = await getRulePrograms(compositionRoot, rule, instance);
 
-            const events = await promiseMap(rule.dataSyncOrgUnitPaths, orgUnit => {
+            const events = await promiseMap(rule.dataSyncOrgUnitPaths, async orgUnit => {
                 const executionKey = `${rule.id}-${cleanOrgUnitPath(orgUnit)}`;
                 const lastExecutionDate = msfSettings.lastExecutions[executionKey];
-                const lastExecution = lastExecutionDate ? moment(lastExecutionDate) : startDate;
+                if (!lastExecutionDate) return [];
 
                 return compositionRoot.events.list(
                     {
                         period: "FIXED",
-                        lastUpdated: lastExecution.toDate(),
+                        lastUpdated: moment(lastExecutionDate).toDate(),
                         endDate: startDate.toDate(),
                         orgUnitPaths: rule.dataSyncOrgUnitPaths,
                         allEvents: true,
