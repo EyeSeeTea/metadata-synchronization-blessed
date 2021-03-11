@@ -1834,6 +1834,9 @@ msgstr ""
 msgid "Last executed"
 msgstr ""
 
+msgid "Last executed by"
+msgstr ""
+
 msgid "Last Updated"
 msgstr ""
 

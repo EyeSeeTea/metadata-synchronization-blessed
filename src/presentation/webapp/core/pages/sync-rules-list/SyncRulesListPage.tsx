@@ -169,6 +169,11 @@ const SyncRulesPage: React.FC = () => {
             sortable: true,
         },
         {
+            name: "lastExecutedBy",
+            text: i18n.t("Last executed by"),
+            sortable: false,
+        },
+        {
             name: "created",
             text: i18n.t("Created"),
             sortable: true,
@@ -207,6 +212,7 @@ const SyncRulesPage: React.FC = () => {
             getValue: ({ enabled }) => (enabled ? i18n.t("Enabled") : i18n.t("Disabled")),
         },
         { name: "lastExecuted", text: i18n.t("Last executed") },
+        { name: "lastExecutedBy", text: i18n.t("Last executed by") },
         {
             name: "targetInstances",
             text: i18n.t("Destination instances"),
