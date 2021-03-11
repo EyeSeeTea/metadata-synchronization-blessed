@@ -177,7 +177,7 @@ export class SynchronizationRule {
     }
 
     public get lastExecutedBy(): string | undefined {
-        return this.syncRule.lastExecutedBy?.name || undefined;
+        return this.syncRule.lastExecutedBy?.name;
     }
 
     public get created(): Date | undefined {
@@ -189,7 +189,7 @@ export class SynchronizationRule {
     }
 
     public get lastUpdatedBy(): string | undefined {
-        return this.syncRule.lastUpdatedBy?.name || undefined;
+        return this.syncRule.lastUpdatedBy?.name;
     }
 
     public get readableFrequency(): string | undefined {
@@ -545,8 +545,8 @@ export class SynchronizationRule {
         return this.update({ frequency });
     }
 
-    public updateLastExecuted(lastExecuted: Date, ref: NamedRef): SynchronizationRule {
-        return this.update({ lastExecuted, lastExecutedBy: ref });
+    public updateLastExecuted(lastExecuted: Date, lastExecutedBy: NamedRef): SynchronizationRule {
+        return this.update({ lastExecuted, lastExecutedBy });
     }
 
     public isOnDemand() {
