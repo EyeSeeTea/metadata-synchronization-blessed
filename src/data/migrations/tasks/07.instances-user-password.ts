@@ -2,8 +2,10 @@ import _ from "lodash";
 import { MigrationParams } from ".";
 import { Debug } from "../../../domain/migrations/entities/Debug";
 import i18n from "../../../locales";
+import { D2Api } from "../../../types/d2-api";
 import { Maybe } from "../../../types/utils";
 import { promiseMap } from "../../../utils/common";
+import { dataStoreNamespace, MetadataDataStoreKey } from "../../storage/StorageDataStoreClient";
 import { AppStorage, Migration } from "../client/types";
 
 interface InstanceOld {
@@ -37,12 +39,13 @@ interface InstanceDetailsNew {
 export async function migrate(
     storage: AppStorage,
     debug: Debug,
-    _params: MigrationParams
+    params: MigrationParams
 ): Promise<void> {
     const oldInstances = (await storage.get<InstanceOld[]>("instances")) ?? [];
     const newInstances: InstanceNew[] = oldInstances.map(ins =>
         _.omit(ins, ["username", "password"])
     );
+    const { d2Api } = params;
 
     //Delete wrong key from old migrations
     await storage.remove("instances-");
@@ -59,6 +62,10 @@ export async function migrate(
         };
 
         await storage.save("instances-" + oldInstance.id, newInstanceDatails);
+
+        if (d2Api) {
+            modifyAccessToInstance(d2Api, `instances-${oldInstance.id}`);
+        }
     });
 
     await storage.save("instances", newInstances);
@@ -75,5 +82,27 @@ const migration: Migration<MigrationParams> = {
     name: "Move username and password to instance details",
     migrate,
 };
+
+async function modifyAccessToInstance(api: D2Api, key: string): Promise<void> {
+    const { id, user } = await getMetadataByKey(api, key);
+
+    const object = {
+        publicAccess: key === "instances-LOCAL" ? "rw------" : "--------",
+        externalAccess: false,
+        user,
+        userAccesses: [],
+        userGroupAccesses: [],
+    };
+
+    await api.post(`/sharing`, { type: "dataStore", id }, { object }).getData();
+}
+
+async function getMetadataByKey(api: D2Api, key: string) {
+    const data = await api
+        .get<MetadataDataStoreKey>(`/dataStore/${dataStoreNamespace}/${key}/metaData`)
+        .getData();
+
+    return data;
+}
 
 export default migration;
