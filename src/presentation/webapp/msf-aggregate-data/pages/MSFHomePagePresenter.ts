@@ -92,20 +92,22 @@ export async function executeAggregateData(
         addEventToProgress(i18n.t(`Finished aggregated data synchronization successfully`));
     }
 
-    // Store last executed dates to msf storage
-    const currentExecutions = _(syncRules)
-        .map(rule =>
-            rule.dataSyncOrgUnitPaths.map(orgUnit => [
-                `${rule.id}-${cleanOrgUnitPath(orgUnit)}`,
-                new Date(),
-            ])
-        )
-        .flatten()
-        .fromPairs()
-        .value();
+    // Store last executed dates to msf storage (only if period is not overriden)
+    if (advancedSettings.period === undefined) {
+        const currentExecutions = _(syncRules)
+            .map(rule =>
+                rule.dataSyncOrgUnitPaths.map(orgUnit => [
+                    `${rule.id}-${cleanOrgUnitPath(orgUnit)}`,
+                    new Date(),
+                ])
+            )
+            .flatten()
+            .fromPairs()
+            .value();
 
-    const lastExecutions = { ...msfSettings.lastExecutions, ...currentExecutions };
-    onUpdateMsfSettings({ ...msfSettings, lastExecutions });
+        const lastExecutions = { ...msfSettings.lastExecutions, ...currentExecutions };
+        onUpdateMsfSettings({ ...msfSettings, lastExecutions });
+    }
 
     return reports;
 }
