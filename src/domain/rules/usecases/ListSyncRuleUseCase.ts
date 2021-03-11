@@ -49,7 +49,7 @@ export class ListSyncRuleUseCase implements UseCase {
 
         const filteredData = search
             ? _.filter(rawData, item =>
-                  _(item)
+                  _(item.toObject())
                       .values()
                       .map(value => (typeof value === "string" ? value : undefined))
                       .compact()
