@@ -176,8 +176,8 @@ export class SynchronizationRule {
         return this.syncRule.lastExecuted ? new Date(this.syncRule.lastExecuted) : undefined;
     }
 
-    public get lastExecutedBy(): NamedRef | undefined {
-        return this.syncRule.lastExecutedBy || undefined;
+    public get lastExecutedBy(): string | undefined {
+        return this.syncRule.lastExecutedBy?.name || undefined;
     }
 
     public get created(): Date | undefined {
@@ -189,7 +189,7 @@ export class SynchronizationRule {
     }
 
     public get lastUpdatedBy(): string | undefined {
-        return this.syncRule.lastUpdatedBy ? this.syncRule.lastUpdatedBy.name : undefined;
+        return this.syncRule.lastUpdatedBy?.name || undefined;
     }
 
     public get readableFrequency(): string | undefined {
