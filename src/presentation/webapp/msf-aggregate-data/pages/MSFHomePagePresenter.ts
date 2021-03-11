@@ -152,8 +152,19 @@ async function validatePreviousDataValues(
                 );
             });
 
-            if (_.flatten(events).length > 0) {
-                return `Sync rule '${rule.name}': we have found ${events.length} related events in '${instance.name}' updated after the last aggregation run that belogn to periods before the start period of the sync rule`;
+            const errorEvents = _.flatten(events).map(
+                ({ id, orgUnitName, orgUnit, eventDate, lastUpdated }) =>
+                    `\n- Event ${id} for org unit ${orgUnitName ?? orgUnit} on date ${moment(
+                        eventDate
+                    ).format("DD-MM-YYYY")} and updated ${moment(lastUpdated).format("DD-MM-YYYY")}`
+            );
+
+            if (errorEvents.length > 0) {
+                return `Sync rule '${rule.name}': we have found ${
+                    errorEvents.length
+                } related events in '${
+                    instance.name
+                }' updated after the last aggregation run that belong to periods before the start period of the sync rule:${errorEvents.join()}`;
             }
         });
 
