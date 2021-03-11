@@ -1,10 +1,14 @@
 import {
+    categoryOptionColumns,
+    categoryOptionFields,
     dataElementGroupFields,
     dataElementGroupSetFields,
     dataSetFields,
     documentColumns,
     documentDetails,
     documentFields,
+    optionColumns,
+    optionFields,
     organisationUnitFields,
     organisationUnitsColumns,
     organisationUnitsDetails,
@@ -52,6 +56,8 @@ export class CategoryComboModel extends D2Model {
 export class CategoryOptionModel extends D2Model {
     protected static metadataType = "categoryOption";
     protected static collectionName = "categoryOptions" as const;
+    protected static fields = categoryOptionFields;
+    protected static columns = categoryOptionColumns;
 
     protected static excludeRules = [
         "categories",
@@ -379,6 +385,8 @@ export class OptionSetModel extends D2Model {
 export class OptionModel extends D2Model {
     protected static metadataType = "option";
     protected static collectionName = "options" as const;
+    protected static fields = optionFields;
+    protected static columns = optionColumns;
 
     protected static excludeRules = [];
     protected static includeRules = ["attributes", "optionSets", "optionSets.attributes"];
@@ -488,8 +496,12 @@ export class ProgramModel extends D2Model {
         "trackedEntityTypes",
         "trackedEntityTypes.trackedEntityAttributes",
         "trackedEntityTypes.trackedEntityAttributes.legendSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets.options",
         "trackedEntityAttributes",
         "trackedEntityAttributes.legendSets",
+        "trackedEntityAttributes.optionSets",
+        "trackedEntityAttributes.optionSets.options",
         "programNotificationTemplates",
     ];
 }
@@ -595,6 +607,20 @@ export class ProgramRuleVariableModel extends D2Model {
 export class ReportModel extends D2Model {
     protected static metadataType = "report";
     protected static collectionName = "reports" as const;
+}
+
+export class RelashionshipType extends D2Model {
+    protected static metadataType = "relationshipType";
+    protected static collectionName = "relationshipTypes" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "trackedEntityTypes",
+        "trackedEntityTypes.trackedEntityAttributes",
+        "trackedEntityTypes.trackedEntityAttributes.legendSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets",
+        "trackedEntityTypes.trackedEntityAttributes.optionSets.options",
+    ];
 }
 
 export class SectionModel extends D2Model {

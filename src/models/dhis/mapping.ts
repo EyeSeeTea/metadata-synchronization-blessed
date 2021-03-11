@@ -4,7 +4,6 @@ import {
     D2CategoryOptionSchema,
     D2DataSetSchema,
     D2IndicatorSchema,
-    D2OptionSchema,
     D2ProgramIndicatorSchema,
     D2ProgramSchema,
     SelectedPick,
@@ -14,7 +13,6 @@ import {
     dataElementFields,
     dataSetFields,
     indicatorFields,
-    optionFields,
     programFieldsWithDataElements,
     programFieldsWithIndicators,
 } from "../../utils/d2";
@@ -29,7 +27,6 @@ import {
     DataSetModel,
     IndicatorModel,
     OptionModel,
-    OptionSetModel,
     OrganisationUnitModel,
     ProgramIndicatorModel,
     ProgramModel,
@@ -187,30 +184,8 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
 }
 
 export class GlobalCategoryOptionModel extends CategoryOptionModel {
-    protected static fields = categoryOptionFields;
-    protected static childrenKeys = ["categoryOptions"];
     protected static mappingType = "categoryOptions";
     protected static isGlobalMapping = true;
-
-    protected static modelTransform = (
-        objects: SelectedPick<D2CategoryOptionSchema, typeof categoryOptionFields>[]
-    ) => {
-        return _(objects)
-            .map(({ categories }) => categories)
-            .flatten()
-            .uniqBy("id")
-            .map(category => ({
-                ...category,
-                model: CategoryModel,
-                categoryOptions: objects
-                    .filter(({ categories }) => _.find(categories, { id: category.id }))
-                    .map(option => ({
-                        ...option,
-                        model: GlobalCategoryOptionModel,
-                    })),
-            }))
-            .value();
-    };
 }
 
 export class GlobalCategoryComboModel extends CategoryComboModel {
@@ -234,28 +209,8 @@ export class GlobalCategoryModel extends CategoryModel {
 }
 
 export class GlobalOptionModel extends OptionModel {
-    protected static fields = optionFields;
-    protected static childrenKeys = ["options"];
     protected static mappingType = "options";
     protected static isGlobalMapping = true;
-
-    protected static modelTransform = (
-        objects: SelectedPick<D2OptionSchema, typeof optionFields>[]
-    ) => {
-        const childrenRows = _.groupBy(objects, "optionSet.id");
-
-        return _.uniqBy(
-            objects.map(({ optionSet }) => optionSet),
-            "id"
-        ).map(optionSet => ({
-            ...optionSet,
-            model: OptionSetModel,
-            options: childrenRows[optionSet.id].map(option => ({
-                ...option,
-                model: GlobalOptionModel,
-            })),
-        }));
-    };
 }
 
 export class GlobalDataElementModel extends ProgramDataElementModel {

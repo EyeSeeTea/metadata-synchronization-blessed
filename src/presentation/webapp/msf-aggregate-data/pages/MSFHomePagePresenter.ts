@@ -399,18 +399,16 @@ async function deletePreviousDataValues(
                 ),
             success: async instance => {
                 const periodType = builder.dataParams?.period ?? "ALL";
+                const period = getPeriodText({
+                    type: periodType,
+                    startDate: builder.dataParams?.startDate,
+                    endDate: builder.dataParams?.endDate,
+                });
 
                 addEventToProgress(
                     i18n.t(
                         `Deleting previous data values in target instance {{name}} for period {{period}}...`,
-                        {
-                            name: instance.name,
-                            period: getPeriodText({
-                                type: periodType,
-                                startDate: builder.dataParams?.startDate,
-                                endDate: builder.dataParams?.endDate,
-                            }),
-                        }
+                        { name: instance.name, period }
                     ),
                     "admin"
                 );
@@ -433,7 +431,22 @@ async function deletePreviousDataValues(
 
                 const payload = await sync.buildPayload();
                 const mappedPayload = await sync.mapPayload(instance, payload);
-                await compositionRoot.aggregated.delete(instance, mappedPayload);
+
+                const filteredDataValues = mappedPayload.dataValues?.filter(
+                    ({ dataElement, categoryOptionCombo = "" }) =>
+                        _(instance.metadataMapping.aggregatedDataElements)
+                            .values()
+                            .filter(({ mappedId }) => mappedId === dataElement)
+                            .flatMap(({ mapping = {} }) => _.values(mapping.categoryOptionCombos))
+                            .map(({ mappedId }) => mappedId)
+                            .compact()
+                            .uniq()
+                            .includes(categoryOptionCombo)
+                );
+
+                await compositionRoot.aggregated.delete(instance, {
+                    dataValues: filteredDataValues,
+                });
             },
         });
     }
@@ -444,10 +457,21 @@ async function getRuleDataElements(
     builder: SynchronizationBuilder,
     instance: Instance
 ): Promise<string[]> {
+    const fakeDataValues = builder.metadataIds.map(dataElement => ({
+        dataElement,
+        orgUnit: "",
+        value: "",
+        period: "",
+    }));
+
     const sync = compositionRoot.sync.aggregated(builder);
-    const payload = await sync.buildPayload();
-    const mappedPayload = await sync.mapPayload(instance, payload);
-    return _.compact(mappedPayload.dataValues?.map(({ dataElement }) => dataElement));
+    const mappedPayload = await sync.mapPayload(instance, { dataValues: fakeDataValues });
+
+    return _(mappedPayload.dataValues)
+        .map(({ dataElement }) => dataElement)
+        .compact()
+        .uniq()
+        .value();
 }
 
 async function getRulePrograms(
