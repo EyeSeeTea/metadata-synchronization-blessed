@@ -465,6 +465,12 @@ msgstr ""
 msgid "Program"
 msgstr ""
 
+msgid "Option set"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
 msgid "Only selected items"
 msgstr ""
 
@@ -1978,6 +1984,9 @@ msgid "Action"
 msgstr ""
 
 msgid "Program Rule"
+msgstr ""
+
+msgid "Categories"
 msgstr ""
 
 msgid "Url"
