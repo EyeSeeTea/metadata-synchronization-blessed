@@ -49,7 +49,9 @@ export class AutoMapUseCase extends GenericMappingUseCase implements UseCase {
                     id: itemId ?? id,
                     name: item?.name ?? "",
                     code: item?.code,
-                    aggregateExportCategoryOptionCombo: item?.aggregateExportCategoryOptionCombo,
+                    aggregateExportCategoryOptionCombo:
+                        _.first(item?.aggregateExportCategoryOptionCombo?.split(".")) ??
+                        item?.aggregateExportCategoryOptionCombo,
                 },
             });
             const { mappedId } = _.first(candidates) ?? {};
