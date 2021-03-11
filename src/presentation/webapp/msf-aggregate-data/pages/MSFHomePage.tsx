@@ -1,5 +1,6 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
+import _ from "lodash";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
@@ -38,7 +39,7 @@ export const MSFHomePage: React.FC = () => {
     const [msfSettings, setMsfSettings] = useState<MSFSettings>(defaultMSFSettings);
 
     const [syncProgress, addEventToProgress] = useReducer(
-        (state: string[], event: string) => [...state, event],
+        (state: string[], event: string) => (_.last(state) !== event ? [...state, event] : state),
         []
     );
 
