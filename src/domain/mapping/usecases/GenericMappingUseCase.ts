@@ -209,7 +209,9 @@ export abstract class GenericMappingUseCase {
         const matches = _.compact([...filteredCandidates, candidateWithExportCoC]);
 
         const candidates = _(matches)
-            .concat(matches.length === 0 ? objects : [])
+            .concat(
+                matches.length === 0 ? objects.filter(({ id }) => filter?.includes(id) ?? true) : []
+            )
             .uniqBy("id")
             .value();
 

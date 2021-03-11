@@ -120,7 +120,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     orgUnit,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
-                    lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
+                    lastUpdated: lastUpdated ? moment(lastUpdated).toISOString() : undefined,
                 })
                 .getData();
         };
@@ -132,18 +132,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                 const paginatedEvents = await promiseMap(
                     _.range(2, pager.pageCount + 1),
                     async page => {
-                        const { events } = await this.api
-                            .get<EventExportResult>("/events", {
-                                pageSize: 250,
-                                totalPages: true,
-                                page,
-                                program,
-                                startDate:
-                                    period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-                                endDate:
-                                    period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
-                            })
-                            .getData();
+                        const { events } = await fetchApi(program, orgUnit, page);
                         return events;
                     }
                 );

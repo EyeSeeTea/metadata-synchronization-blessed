@@ -92,20 +92,22 @@ export async function executeAggregateData(
         addEventToProgress(i18n.t(`Finished aggregated data synchronization successfully`));
     }
 
-    // Store last executed dates to msf storage
-    const currentExecutions = _(syncRules)
-        .map(rule =>
-            rule.dataSyncOrgUnitPaths.map(orgUnit => [
-                `${rule.id}-${cleanOrgUnitPath(orgUnit)}`,
-                new Date(),
-            ])
-        )
-        .flatten()
-        .fromPairs()
-        .value();
+    // Store last executed dates to msf storage (only if period is not overriden)
+    if (advancedSettings.period === undefined) {
+        const currentExecutions = _(syncRules)
+            .map(rule =>
+                rule.dataSyncOrgUnitPaths.map(orgUnit => [
+                    `${rule.id}-${cleanOrgUnitPath(orgUnit)}`,
+                    new Date(),
+                ])
+            )
+            .flatten()
+            .fromPairs()
+            .value();
 
-    const lastExecutions = { ...msfSettings.lastExecutions, ...currentExecutions };
-    onUpdateMsfSettings({ ...msfSettings, lastExecutions });
+        const lastExecutions = { ...msfSettings.lastExecutions, ...currentExecutions };
+        onUpdateMsfSettings({ ...msfSettings, lastExecutions });
+    }
 
     return reports;
 }
@@ -133,29 +135,36 @@ async function validatePreviousDataValues(
 
             const programs = await getRulePrograms(compositionRoot, rule, instance);
 
-            const events = await promiseMap(rule.dataSyncOrgUnitPaths, orgUnit => {
+            const events = await promiseMap(rule.dataSyncOrgUnitPaths, async orgUnit => {
                 const executionKey = `${rule.id}-${cleanOrgUnitPath(orgUnit)}`;
                 const lastExecutionDate = msfSettings.lastExecutions[executionKey];
-                const lastExecution = lastExecutionDate ? moment(lastExecutionDate) : startDate;
+                if (!lastExecutionDate) return [];
 
                 return compositionRoot.events.list(
                     {
                         period: "FIXED",
-                        lastUpdated: lastExecution.toDate(),
+                        lastUpdated: moment(lastExecutionDate).toDate(),
                         endDate: startDate.toDate(),
-                        orgUnitPaths: rule.dataSyncOrgUnitPaths,
+                        orgUnitPaths: [orgUnit],
                         allEvents: true,
                     },
                     programs
                 );
             });
 
-            if (_.flatten(events).length > 0) {
+            const errorEvents = _.flatten(events).map(
+                ({ id, orgUnitName, orgUnit, eventDate, lastUpdated }) =>
+                    `\n- Event ${id} for org unit ${orgUnitName ?? orgUnit} on date ${moment(
+                        eventDate
+                    ).format("DD-MM-YYYY")} and updated ${moment(lastUpdated).format("DD-MM-YYYY")}`
+            );
+
+            if (errorEvents.length > 0) {
                 return `Sync rule '${rule.name}': we have found ${
-                    events.length
+                    errorEvents.length
                 } related events in '${
                     instance.name
-                }' for a previous period updated after '${startDate.format("DD-MM-YYYY")}'`;
+                }' updated after the last aggregation run that belong to periods before the start period of the sync rule:${errorEvents.join()}`;
             }
         });
 
