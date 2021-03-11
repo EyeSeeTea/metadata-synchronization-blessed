@@ -6,7 +6,7 @@ import { Dictionary } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
-const dataStoreNamespace = "metadata-synchronization";
+export const dataStoreNamespace = "metadata-synchronization";
 
 export class StorageDataStoreClient extends StorageClient {
     public type = "dataStore" as const;
@@ -105,7 +105,7 @@ export class StorageDataStoreClient extends StorageClient {
     }
 }
 
-interface MetadataDataStoreKey extends ObjectSharing {
+export interface MetadataDataStoreKey extends ObjectSharing {
     created: Date;
     lastUpdated: Date;
     lastUpdatedBy: { id: string };
