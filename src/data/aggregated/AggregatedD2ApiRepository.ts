@@ -58,7 +58,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                     dataSet,
                     dataElementGroup,
                     orgUnit,
-                    lastUpdated: moment(lastUpdated).format("YYYY-MM-DD"),
+                    lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
                 })
                 .getData();
 
