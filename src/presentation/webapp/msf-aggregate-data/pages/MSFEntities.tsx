@@ -9,6 +9,7 @@ export type MSFSettings = {
     projectMinimumDates: Record<string, NamedDate>;
     deleteDataValuesBeforeSync?: boolean;
     checkInPreviousPeriods?: boolean;
+    lastExecutions: Record<string, Date>;
 };
 
 export type PersistedMSFSettings = Omit<MSFSettings, "runAnalytics">;
@@ -25,4 +26,5 @@ export const defaultMSFSettings: MSFSettings = {
     projectMinimumDates: {},
     deleteDataValuesBeforeSync: false,
     checkInPreviousPeriods: false,
+    lastExecutions: {},
 };
