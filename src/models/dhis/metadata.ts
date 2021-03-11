@@ -1,4 +1,6 @@
 import {
+    categoryOptionColumns,
+    categoryOptionFields,
     dataElementGroupFields,
     dataElementGroupSetFields,
     dataSetFields,
@@ -54,6 +56,8 @@ export class CategoryComboModel extends D2Model {
 export class CategoryOptionModel extends D2Model {
     protected static metadataType = "categoryOption";
     protected static collectionName = "categoryOptions" as const;
+    protected static fields = categoryOptionFields;
+    protected static columns = categoryOptionColumns;
 
     protected static excludeRules = [
         "categories",

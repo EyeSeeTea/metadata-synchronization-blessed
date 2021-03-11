@@ -39,6 +39,7 @@ export type MetadataTableFilters =
     | "level"
     | "program"
     | "optionSet"
+    | "category"
     | "orgUnit"
     | "lastUpdated"
     | "onlySelected"
@@ -131,6 +132,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         "level",
         "program",
         "optionSet",
+        "category",
         "orgUnit",
         "lastUpdated",
         "onlySelected",
@@ -175,6 +177,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [levelFilterData, setLevelFilterData] = useState<NamedRef[]>([]);
     const [programFilterData, setProgramFilterData] = useState<NamedRef[]>([]);
     const [optionSetFilterData, setOptionSetFilterData] = useState<NamedRef[]>([]);
+    const [categoryFilterData, setCategoryFilterData] = useState<NamedRef[]>([]);
 
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [pager, setPager] = useState<Partial<TablePagination>>({});
@@ -223,6 +226,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const changeOptionSetFilter = (optionSet: string) => {
         updateFilters({ optionSet });
+    };
+
+    const changeCategoryFilter = (category: string) => {
+        updateFilters({ category });
     };
 
     const changeLevelFilter = (level: string) => {
@@ -355,6 +362,17 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeOptionSetFilter}
                         value={filters.optionSet ?? ""}
                         label={i18n.t("Option set")}
+                    />
+                </div>
+            )}
+
+            {viewFilters.includes("category") && model.getCollectionName() === "categoryOptions" && (
+                <div className={classes.groupFilter}>
+                    <Dropdown
+                        items={categoryFilterData}
+                        onValueChange={changeCategoryFilter}
+                        value={filters.category ?? ""}
+                        label={i18n.t("Category")}
                     />
                 </div>
             )}
@@ -551,6 +569,12 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         if (model.getCollectionName() === "options") {
             getFilterData("optionSets", "group", api.apiPath, api).then(({ objects }) =>
                 setOptionSetFilterData(objects)
+            );
+        }
+
+        if (model.getCollectionName() === "categoryOptions") {
+            getFilterData("categories", "group", api.apiPath, api).then(({ objects }) =>
+                setCategoryFilterData(objects)
             );
         }
     }, [api, model]);

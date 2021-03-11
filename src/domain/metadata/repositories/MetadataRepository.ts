@@ -14,7 +14,7 @@ import {
 import { MetadataImportParams } from "../types";
 
 export interface MetadataRepositoryConstructor {
-    new(
+    new (
         instance: DataSource,
         transformationRepository: TransformationRepository
     ): MetadataRepository;
@@ -54,6 +54,7 @@ export interface ListMetadataParams {
     level?: string;
     program?: string;
     optionSet?: string;
+    category?: string;
     includeParents?: boolean;
     search?: { field: string; operator: FilterSingleOperatorBase; value: string };
     order?: { field: string; order: "asc" | "desc" };
