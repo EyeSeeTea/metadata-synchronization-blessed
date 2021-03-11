@@ -26,33 +26,39 @@ export class AutoMapUseCase extends GenericMappingUseCase implements UseCase {
         const tasks: MappingConfig[] = [];
         const errors: string[] = [];
 
-        for (const item of elements) {
-            const filter = await this.buildDataElementFilterForProgram(
-                destinationInstance,
-                item.id,
-                mapping
+        for (const id of ids) {
+            const item = elements.find(
+                item => item.id === cleanNestedMappedId(cleanOrgUnitPath(id))
             );
 
             // Special scenario: indicators look-up the id from a property
-            const lookUpItem = item.aggregateExportCategoryOptionCombo
-                ? {
-                      id: _.first(item.aggregateExportCategoryOptionCombo?.split(".")) ?? item.id,
-                      name: "",
-                  }
-                : item;
+            const itemId = item?.aggregateExportCategoryOptionCombo
+                ? _.first(item?.aggregateExportCategoryOptionCombo?.split("."))
+                : item?.id;
+
+            const filter = await this.buildDataElementFilterForProgram(
+                destinationInstance,
+                id,
+                mapping
+            );
 
             const candidates = await this.autoMap({
                 destinationInstance,
-                selectedItem: lookUpItem,
                 filter,
+                selectedItem: {
+                    id: itemId ?? id,
+                    name: item?.name ?? "",
+                    code: item?.code,
+                    aggregateExportCategoryOptionCombo: item?.aggregateExportCategoryOptionCombo,
+                },
             });
             const { mappedId } = _.first(candidates) ?? {};
 
             if (!mappedId) {
-                errors.push(cleanNestedMappedId(item.id));
+                errors.push(cleanNestedMappedId(id));
             } else {
                 tasks.push({
-                    selection: [item.id],
+                    selection: [id],
                     mappingType,
                     global: isGlobalMapping,
                     mappedId,
