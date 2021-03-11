@@ -7,9 +7,16 @@ import { MigrationsRunner } from "./client/MigrationsRunner";
 import { AppStorage } from "./client/types";
 import { getMigrationTasks, MigrationParams } from "./tasks";
 import { promiseMap } from "../../utils/common";
+import { Instance } from "../../domain/instance/entities/Instance";
+import { getD2APiFromInstance } from "../../utils/d2-utils";
+import { D2Api } from "../../types/d2-api";
 
 export class MigrationsAppRepository implements MigrationsRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    private d2Api: D2Api;
+
+    constructor(private configRepository: ConfigRepository, localInstance: Instance) {
+        this.d2Api = getD2APiFromInstance(localInstance);
+    }
 
     public async runMigrations(debug: Debug): Promise<void> {
         const runner = await this.getMigrationsRunner();
@@ -37,7 +44,7 @@ export class MigrationsAppRepository implements MigrationsRepository {
             storage,
             debug: console.debug,
             migrations,
-            migrationParams: {},
+            migrationParams: { d2Api: this.d2Api },
         });
     }
 

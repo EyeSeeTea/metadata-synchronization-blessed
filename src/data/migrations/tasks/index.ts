@@ -1,3 +1,4 @@
+import { D2Api } from "../../../types/d2-api";
 import { MigrationTasks } from "../client/types";
 
 export function getMigrationTasks(): MigrationTasks<MigrationParams> {
@@ -12,4 +13,6 @@ export function getMigrationTasks(): MigrationTasks<MigrationParams> {
     ];
 }
 
-export interface MigrationParams {}
+export interface MigrationParams {
+    d2Api?: D2Api;
+}

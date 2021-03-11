@@ -145,6 +145,7 @@ export class RepositoryFactory {
         const config = this.configRepository(instance);
         return this.get<MigrationsRepositoryConstructor>(Repositories.MigrationsRepository, [
             config,
+            instance,
         ]);
     }
 }
