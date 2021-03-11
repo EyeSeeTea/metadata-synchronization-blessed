@@ -431,7 +431,22 @@ async function deletePreviousDataValues(
 
                 const payload = await sync.buildPayload();
                 const mappedPayload = await sync.mapPayload(instance, payload);
-                await compositionRoot.aggregated.delete(instance, mappedPayload);
+
+                const filteredDataValues = mappedPayload.dataValues?.filter(
+                    ({ dataElement, categoryOptionCombo = "" }) =>
+                        _(instance.metadataMapping.aggregatedDataElements)
+                            .values()
+                            .filter(({ mappedId }) => mappedId === dataElement)
+                            .flatMap(({ mapping = {} }) => _.values(mapping.categoryOptionCombos))
+                            .map(({ mappedId }) => mappedId)
+                            .compact()
+                            .uniq()
+                            .includes(categoryOptionCombo)
+                );
+
+                await compositionRoot.aggregated.delete(instance, {
+                    dataValues: filteredDataValues,
+                });
             },
         });
     }
