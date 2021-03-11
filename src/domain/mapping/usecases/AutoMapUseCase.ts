@@ -74,11 +74,11 @@ export class AutoMapUseCase extends GenericMappingUseCase implements UseCase {
         nestedId: string,
         mapping: MetadataMappingDictionary
     ): Promise<string[] | undefined> {
-        const validIds = await this.getValidMappingIds(destinationInstance, nestedId);
         const originProgramId = nestedId.split("-")[0];
         const { mappedId } = _.get(mapping, ["eventPrograms", originProgramId]) ?? {};
-
         if (!mappedId || mappedId === EXCLUDED_KEY) return undefined;
+
+        const validIds = await this.getValidMappingIds(destinationInstance, mappedId);
         return [...validIds, mappedId];
     }
 }
