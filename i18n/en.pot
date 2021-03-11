@@ -464,6 +464,12 @@ msgstr ""
 msgid "Program"
 msgstr ""
 
+msgid "Option set"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
 msgid "Only selected items"
 msgstr ""
 
@@ -1813,6 +1819,9 @@ msgstr ""
 msgid "Last executed"
 msgstr ""
 
+msgid "Last executed by"
+msgstr ""
+
 msgid "Last Updated"
 msgstr ""
 
@@ -1952,6 +1961,9 @@ msgid "Action"
 msgstr ""
 
 msgid "Program Rule"
+msgstr ""
+
+msgid "Categories"
 msgstr ""
 
 msgid "Url"

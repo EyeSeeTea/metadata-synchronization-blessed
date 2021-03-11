@@ -38,6 +38,8 @@ export type MetadataTableFilters =
     | "group"
     | "level"
     | "program"
+    | "optionSet"
+    | "category"
     | "orgUnit"
     | "lastUpdated"
     | "onlySelected"
@@ -125,7 +127,16 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     allowChangingResponsible = false,
     showResponsible = true,
     externalFilterComponents,
-    viewFilters = ["group", "level", "program", "orgUnit", "lastUpdated", "onlySelected"],
+    viewFilters = [
+        "group",
+        "level",
+        "program",
+        "optionSet",
+        "category",
+        "orgUnit",
+        "lastUpdated",
+        "onlySelected",
+    ],
     ...rest
 }) => {
     const { compositionRoot, api: defaultApi } = useAppContext();
@@ -165,6 +176,8 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [groupFilterData, setGroupFilterData] = useState<NamedRef[]>([]);
     const [levelFilterData, setLevelFilterData] = useState<NamedRef[]>([]);
     const [programFilterData, setProgramFilterData] = useState<NamedRef[]>([]);
+    const [optionSetFilterData, setOptionSetFilterData] = useState<NamedRef[]>([]);
+    const [categoryFilterData, setCategoryFilterData] = useState<NamedRef[]>([]);
 
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [pager, setPager] = useState<Partial<TablePagination>>({});
@@ -179,7 +192,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         const model = _.find(models, model => model.getMetadataType() === modelName) ?? models[0];
         updateModel(() => model);
         notifyNewModel(model);
-        updateFilters({ type: model.getCollectionName() });
+
+        //Reset view filters because this filters are not shared between all metadata models
+        //and if this one is not initialized to model changes, it provoke errors with old view filters applied
+        const initialViewFilters = viewFilters.reduce((acc, viewFilter) => {
+            return { ...acc, [viewFilter]: undefined };
+        }, {});
+
+        updateFilters({ ...initialViewFilters, type: model.getCollectionName() });
     };
 
     const changeSearchFilter = (value: string) => {
@@ -202,6 +222,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const changeProgramFilter = (program: string) => {
         updateFilters({ program });
+    };
+
+    const changeOptionSetFilter = (optionSet: string) => {
+        updateFilters({ optionSet });
+    };
+
+    const changeCategoryFilter = (category: string) => {
+        updateFilters({ category });
     };
 
     const changeLevelFilter = (level: string) => {
@@ -323,6 +351,28 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                         onValueChange={changeProgramFilter}
                         value={filters.program ?? ""}
                         label={i18n.t("Program")}
+                    />
+                </div>
+            )}
+
+            {viewFilters.includes("optionSet") && model.getCollectionName() === "options" && (
+                <div className={classes.groupFilter}>
+                    <Dropdown
+                        items={optionSetFilterData}
+                        onValueChange={changeOptionSetFilter}
+                        value={filters.optionSet ?? ""}
+                        label={i18n.t("Option set")}
+                    />
+                </div>
+            )}
+
+            {viewFilters.includes("category") && model.getCollectionName() === "categoryOptions" && (
+                <div className={classes.groupFilter}>
+                    <Dropdown
+                        items={categoryFilterData}
+                        onValueChange={changeCategoryFilter}
+                        value={filters.category ?? ""}
+                        label={i18n.t("Category")}
                     />
                 </div>
             )}
@@ -513,6 +563,18 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         if (model.getCollectionName() === "programIndicators") {
             getFilterData("programs", "group", api.apiPath, api).then(({ objects }) =>
                 setProgramFilterData(objects)
+            );
+        }
+
+        if (model.getCollectionName() === "options") {
+            getFilterData("optionSets", "group", api.apiPath, api).then(({ objects }) =>
+                setOptionSetFilterData(objects)
+            );
+        }
+
+        if (model.getCollectionName() === "categoryOptions") {
+            getFilterData("categories", "group", api.apiPath, api).then(({ objects }) =>
+                setCategoryFilterData(objects)
             );
         }
     }, [api, model]);
