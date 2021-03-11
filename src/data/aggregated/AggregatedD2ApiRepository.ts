@@ -379,7 +379,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
 
 const aggregations = {
     DAILY: { format: "YYYYMMDD", unit: "days" as const, amount: 1 },
-    WEEKLY: { format: "YYYY[W]W", unit: "weeks" as const, amount: 1 },
+    WEEKLY: { format: "GGGG[W]W", unit: "weeks" as const, amount: 1 },
     MONTHLY: { format: "YYYYMM", unit: "months" as const, amount: 1 },
     QUARTERLY: { format: "YYYY[Q]Q", unit: "quarters" as const, amount: 1 },
     YEARLY: { format: "YYYY", unit: "years" as const, amount: 1 },
