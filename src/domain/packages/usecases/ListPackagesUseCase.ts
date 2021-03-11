@@ -17,11 +17,11 @@ export class ListPackagesUseCase implements UseCase {
             .getStorageClient();
 
         const { userGroups } = await this.repositoryFactory
-            .instanceRepository(this.localInstance)
-            .getUser();
+            .userRepository(this.localInstance)
+            .getCurrent();
         const { id: userId } = await this.repositoryFactory
-            .instanceRepository(this.localInstance)
-            .getUser();
+            .userRepository(this.localInstance)
+            .getCurrent();
 
         const items = await storageClient.listObjectsInCollection<BasePackage>(Namespace.PACKAGES);
 

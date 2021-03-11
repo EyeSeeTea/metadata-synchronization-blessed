@@ -26,6 +26,7 @@ import {
     TransformationRepository,
     TransformationRepositoryConstructor,
 } from "../../transformations/repositories/TransformationRepository";
+import { UserRepositoryConstructor } from "../../user/repositories/UserRepository";
 
 type ClassType = new (...args: any[]) => any;
 
@@ -62,7 +63,9 @@ export class RepositoryFactory {
 
     @cache()
     public downloadRepository() {
-        return this.get<DownloadRepositoryConstructor>(Repositories.DownloadRepository, []);
+        return this.get<DownloadRepositoryConstructor>(Repositories.DownloadRepository, [
+            this.transformationRepository(),
+        ]);
     }
 
     @cache()
@@ -73,10 +76,17 @@ export class RepositoryFactory {
 
     @cache()
     public instanceRepository(instance: Instance) {
+        const config = this.configRepository(instance);
         return this.get<InstanceRepositoryConstructor>(Repositories.InstanceRepository, [
+            config,
             instance,
             this.encryptionKey,
         ]);
+    }
+
+    @cache()
+    public userRepository(instance: Instance) {
+        return this.get<UserRepositoryConstructor>(Repositories.UserRepository, [instance]);
     }
 
     @cache()
@@ -135,6 +145,7 @@ export class RepositoryFactory {
         const config = this.configRepository(instance);
         return this.get<MigrationsRepositoryConstructor>(Repositories.MigrationsRepository, [
             config,
+            instance,
         ]);
     }
 }
@@ -157,4 +168,5 @@ export const Repositories = {
     RulesRepository: "rulesRepository",
     SystemInfoRepository: "systemInfoRepository",
     MigrationsRepository: "migrationsRepository",
+    UserRepository: "userRepository",
 } as const;

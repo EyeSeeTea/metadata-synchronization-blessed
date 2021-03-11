@@ -50,8 +50,8 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
     private async hasPermissions(ids: string[]) {
         const responsibles = await this.getResponsibles(this.localInstance, ids);
         const { id, userGroups } = await this.repositoryFactory
-            .instanceRepository(this.localInstance)
-            .getUser();
+            .userRepository(this.localInstance)
+            .getCurrent();
 
         if (
             !responsibles.users?.find(user => user.id === id) &&

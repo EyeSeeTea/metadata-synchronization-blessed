@@ -4,11 +4,7 @@ import { UseCase } from "../../common/entities/UseCase";
 import { Repositories, RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
-import { User } from "../../instance/entities/User";
-import {
-    InstanceRepository,
-    InstanceRepositoryConstructor,
-} from "../../instance/repositories/InstanceRepository";
+import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
@@ -22,16 +18,17 @@ import { SynchronizationResult } from "../../reports/entities/SynchronizationRes
 import { StorageClient } from "../../storage/repositories/StorageClient";
 
 import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
+import { User } from "../../user/entities/User";
+import { UserRepository } from "../../user/repositories/UserRepository";
 import { BasePackage, Package } from "../entities/Package";
 
 export class ImportPackageUseCase implements UseCase {
     instanceRepository: InstanceRepository;
+    userRepository: UserRepository;
 
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {
-        this.instanceRepository = this.repositoryFactory.get<InstanceRepositoryConstructor>(
-            Repositories.InstanceRepository,
-            [this.localInstance, ""]
-        );
+        this.instanceRepository = this.repositoryFactory.instanceRepository(this.localInstance);
+        this.userRepository = this.repositoryFactory.userRepository(this.localInstance);
     }
 
     public async execute(
@@ -86,7 +83,7 @@ export class ImportPackageUseCase implements UseCase {
         );
 
         if (!existedPackage) {
-            const user = await this.instanceRepository.getUser();
+            const user = await this.userRepository.getCurrent();
             const userRef = { id: user.id, name: user.name };
 
             const instance = this.instanceRepository.getBaseUrl();

@@ -1,16 +1,14 @@
 import { makeStyles, TextField, Theme } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
 import { Dictionary } from "lodash";
-import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useMemo, useState } from "react";
 import i18n from "../../../../../locales";
-import { DataElementGroupModel } from "../../../../../models/dhis/metadata";
 import {
     MSFSettings,
     RunAnalyticsSettings,
 } from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
-import Dropdown, { DropdownOption } from "../../../core/components/dropdown/Dropdown";
+import Dropdown from "../../../core/components/dropdown/Dropdown";
 import { Toggle } from "../../../core/components/toggle/Toggle";
-import { useAppContext } from "../../../core/contexts/AppContext";
 import { NamedDate, OrgUnitDateSelector } from "../org-unit-date-selector/OrgUnitDateSelector";
 
 export interface MSFSettingsDialogProps {
@@ -25,27 +23,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
     settings: defaultSettings,
 }) => {
     const classes = useStyles();
-    const { compositionRoot } = useAppContext();
 
     const [settings, updateSettings] = useState<MSFSettings>(defaultSettings);
-    const [catOptionGroups, setDataElementGroups] = useState<DropdownOption<string>[]>([]);
-
-    useEffect(() => {
-        compositionRoot.metadata
-            .listAll({
-                type: DataElementGroupModel.getCollectionName(),
-                paging: false,
-                order: {
-                    field: "displayName" as const,
-                    order: "asc" as const,
-                },
-            })
-            .then(dataElementGroups =>
-                setDataElementGroups(
-                    dataElementGroups.map(group => ({ id: group.id, name: group.name }))
-                )
-            );
-    }, [compositionRoot.metadata]);
 
     const analyticsSettingItems = useMemo(() => {
         return [
@@ -66,10 +45,6 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
 
     const setRunAnalytics = (runAnalytics: RunAnalyticsSettings) => {
         updateSettings(settings => ({ ...settings, runAnalytics }));
-    };
-
-    const setSelectedDataElementGroup = (dataElementGroupId: string) => {
-        updateSettings(settings => ({ ...settings, dataElementGroupId }));
     };
 
     const setAnalyticsYears = (event: ChangeEvent<HTMLInputElement>) => {
@@ -142,27 +117,6 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
                         onValueChange={setCheckInPreviousPeriods}
                         value={settings.checkInPreviousPeriods ?? false}
                     />
-                </div>
-            </div>
-
-            <div className={classes.section}>
-                <h3 className={classes.title}>{i18n.t("Data element filter")}</h3>
-
-                <div className={classes.selector}>
-                    <Dropdown
-                        label={i18n.t("Data Element Group *")}
-                        items={catOptionGroups}
-                        onValueChange={setSelectedDataElementGroup}
-                        value={settings.dataElementGroupId ?? ""}
-                        hideEmpty
-                    />
-                </div>
-
-                <div className={classes.info}>
-                    {i18n.t(
-                        "* Data Element Group: used to check existing data values in the destination data elements",
-                        { nsSeparator: false }
-                    )}
                 </div>
             </div>
 

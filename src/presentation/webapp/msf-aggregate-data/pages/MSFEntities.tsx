@@ -7,9 +7,9 @@ export type MSFSettings = {
     runAnalytics: RunAnalyticsSettings;
     analyticsYears: number;
     projectMinimumDates: Record<string, NamedDate>;
-    dataElementGroupId?: string;
     deleteDataValuesBeforeSync?: boolean;
     checkInPreviousPeriods?: boolean;
+    lastExecutions: Record<string, Date>;
 };
 
 export type PersistedMSFSettings = Omit<MSFSettings, "runAnalytics">;
@@ -24,7 +24,7 @@ export const defaultMSFSettings: MSFSettings = {
     runAnalytics: "by-sync-rule-settings",
     analyticsYears: 2,
     projectMinimumDates: {},
-    dataElementGroupId: undefined,
     deleteDataValuesBeforeSync: false,
     checkInPreviousPeriods: false,
+    lastExecutions: {},
 };

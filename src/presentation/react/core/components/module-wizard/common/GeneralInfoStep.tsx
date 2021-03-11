@@ -39,9 +39,7 @@ export const GeneralInfoStep = ({ module, onChange, isEdit }: ModuleWizardStepPr
     );
 
     useEffect(() => {
-        compositionRoot.instances
-            .getCurrentUser()
-            .then(({ userGroups }) => setUserGroups(userGroups));
+        compositionRoot.user.current().then(({ userGroups }) => setUserGroups(userGroups));
     }, [compositionRoot]);
 
     return (

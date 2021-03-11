@@ -37,7 +37,7 @@ export type SynchronizationClass =
 
 export abstract class GenericSyncUseCase {
     public abstract readonly type: SynchronizationType;
-    public readonly fields: string = "id,name";
+    public readonly fields: string = "id,name,type"; //type is required to transform visualizations to charts and report tables
     protected readonly api: D2Api;
 
     constructor(
@@ -254,14 +254,20 @@ export abstract class GenericSyncUseCase {
             yield { syncReport };
         }
 
-        // Phase 4: Update sync rule last executed date
+        // Phase 4: Update sync rule last executed date and last executed user name and id
         if (syncRule) {
             const oldRule = await this.repositoryFactory
                 .rulesRepository(this.localInstance)
                 .getById(syncRule);
 
             if (oldRule) {
-                const updatedRule = oldRule.updateLastExecuted(new Date());
+                const currentUser = await this.api.currentUser
+                    .get({ fields: { userCredentials: { name: true }, id: true } })
+                    .getData();
+                const updatedRule = oldRule.updateLastExecuted(new Date(), {
+                    id: currentUser.id,
+                    name: currentUser.userCredentials.name,
+                });
                 await this.repositoryFactory.rulesRepository(this.localInstance).save(updatedRule);
             }
         }

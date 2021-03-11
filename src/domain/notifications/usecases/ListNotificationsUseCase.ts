@@ -15,8 +15,8 @@ export class ListNotificationsUseCase implements UseCase {
 
     public async execute(): Promise<AppNotification[]> {
         const { id, userGroups } = await this.repositoryFactory
-            .instanceRepository(this.localInstance)
-            .getUser();
+            .userRepository(this.localInstance)
+            .getCurrent();
         const notifications = await this.getInstanceNotifications();
 
         const sentPullRequestNotifications = notifications.filter(
