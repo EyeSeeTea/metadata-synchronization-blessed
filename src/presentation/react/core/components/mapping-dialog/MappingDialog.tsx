@@ -86,8 +86,10 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             compositionRoot.mapping.getValidIds(instance, parentMappedId).then(setFilterRows);
         } else if (mappingType === "programDataElements" && elements.length === 1) {
             const programId = _.first(elements[0].split("-")) ?? elements[0];
+            const mappedProgramId = mapping["eventPrograms"][programId]?.mappedId;
+            if (!mappedProgramId) return;
 
-            compositionRoot.mapping.getValidIds(instance, programId).then(validIds => {
+            compositionRoot.mapping.getValidIds(instance, mappedProgramId).then(validIds => {
                 setFilterRows(buildDataElementFilterForProgram(validIds, elements[0], mapping));
             });
         }
