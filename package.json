@@ -147,7 +147,8 @@
         },
         "activities": {
             "dhis": {
-                "href": "*"
+                "href": "*",
+                "namespace": "metadata-synchronization"
             }
         }
     }

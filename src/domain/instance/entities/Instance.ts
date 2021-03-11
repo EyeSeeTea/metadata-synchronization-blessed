@@ -2,13 +2,16 @@ import Cryptr from "cryptr";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
+import { NamedRef, SharedRef } from "../../common/entities/Ref";
+import { ShareableEntity } from "../../common/entities/ShareableEntity";
+import { SharingSetting } from "../../common/entities/SharingSetting";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 
 export type PublicInstance = Omit<InstanceData, "password">;
 export type InstanceType = "local" | "dhis";
 
-export interface InstanceData {
+export interface InstanceData extends SharedRef {
     type: InstanceType;
     id: string;
     name: string;
@@ -20,11 +23,9 @@ export interface InstanceData {
     version?: string;
 }
 
-export class Instance {
-    private data: InstanceData;
-
+export class Instance extends ShareableEntity<InstanceData> {
     private constructor(data: InstanceData) {
-        this.data = data;
+        super(data);
     }
 
     public get type(): InstanceType {
@@ -77,6 +78,38 @@ export class Instance {
         return apiVersion ? Number(apiVersion) : 30;
     }
 
+    public get created(): Date {
+        return this.data.lastUpdated;
+    }
+
+    public get lastUpdated(): Date {
+        return this.data.lastUpdated;
+    }
+
+    public get lastUpdatedBy(): NamedRef {
+        return this.data.lastUpdatedBy;
+    }
+
+    public get user(): NamedRef {
+        return this.data.user;
+    }
+
+    public get publicAccess(): string {
+        return this.data.publicAccess ?? "--------";
+    }
+
+    public get userAccesses(): SharingSetting[] {
+        return this.data.userAccesses ?? [];
+    }
+
+    public get userGroupAccesses(): SharingSetting[] {
+        return this.data.userGroupAccesses ?? [];
+    }
+
+    public get existsShareSettingsInDataStore(): boolean {
+        return this.apiVersion > 31;
+    }
+
     public toObject(): InstanceData {
         return _.cloneDeep(this.data);
     }
@@ -105,9 +138,39 @@ export class Instance {
         });
     }
 
-    public static build(data: PartialBy<InstanceData, "id" | "type">): Instance {
+    public static build(
+        data: PartialBy<
+            InstanceData,
+            | "id"
+            | "type"
+            | "created"
+            | "publicAccess"
+            | "lastUpdated"
+            | "lastUpdatedBy"
+            | "user"
+            | "userAccesses"
+            | "userGroupAccesses"
+        >
+    ): Instance {
         const { type = "dhis", id = generateUid() } = data;
-        return new Instance({ type, id: type === "local" ? "LOCAL" : id, ...data });
+        return new Instance({
+            type,
+            id: type === "local" ? "LOCAL" : id,
+            created: new Date(),
+            publicAccess: "--------",
+            lastUpdated: new Date(),
+            lastUpdatedBy: {
+                id: "",
+                name: "",
+            },
+            user: {
+                id: "",
+                name: "",
+            },
+            userAccesses: [],
+            userGroupAccesses: [],
+            ...data,
+        });
     }
 
     private moduleValidations = (): ModelValidation[] => [

@@ -26,6 +26,7 @@ import {
     TransformationRepository,
     TransformationRepositoryConstructor,
 } from "../../transformations/repositories/TransformationRepository";
+import { UserRepositoryConstructor } from "../../user/repositories/UserRepository";
 
 type ClassType = new (...args: any[]) => any;
 
@@ -81,6 +82,11 @@ export class RepositoryFactory {
             instance,
             this.encryptionKey,
         ]);
+    }
+
+    @cache()
+    public userRepository(instance: Instance) {
+        return this.get<UserRepositoryConstructor>(Repositories.UserRepository, [instance]);
     }
 
     @cache()
@@ -161,4 +167,5 @@ export const Repositories = {
     RulesRepository: "rulesRepository",
     SystemInfoRepository: "systemInfoRepository",
     MigrationsRepository: "migrationsRepository",
+    UserRepository: "userRepository",
 } as const;

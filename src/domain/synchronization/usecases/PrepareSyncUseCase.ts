@@ -63,7 +63,7 @@ export class PrepareSyncUseCase implements UseCase {
     }
 
     private async getCurrentUser() {
-        return this.repositoryFactory.instanceRepository(this.localInstance).getUser();
+        return this.repositoryFactory.userRepository(this.localInstance).getCurrent();
     }
 
     private async getResponsiblesForInstance(

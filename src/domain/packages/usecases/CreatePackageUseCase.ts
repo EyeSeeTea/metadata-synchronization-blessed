@@ -48,8 +48,8 @@ export class CreatePackageUseCase implements UseCase {
 
         if (validations.length === 0) {
             const user = await this.repositoryFactory
-                .instanceRepository(this.localInstance)
-                .getUser();
+                .userRepository(this.localInstance)
+                .getCurrent();
             const newPackage = payload.update({
                 lastUpdated: new Date(),
                 lastUpdatedBy: user,

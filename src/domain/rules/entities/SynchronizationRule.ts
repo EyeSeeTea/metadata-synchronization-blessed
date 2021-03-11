@@ -17,7 +17,6 @@ import {
     extractParentsFromRule,
 } from "../../../utils/metadataIncludeExclude";
 import { OldValidation } from "../../../utils/old-validations";
-import { UserInfo } from "../../../utils/permissions";
 import isValidCronExpression from "../../../utils/validCronExpression";
 import {
     DataSyncAggregation,
@@ -29,6 +28,7 @@ import { SharingSetting } from "../../common/entities/SharingSetting";
 import { FilterRule } from "../../metadata/entities/FilterRule";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { NamedRef } from "../../common/entities/Ref";
+import { UserInfo } from "../../../utils/permissions";
 
 export class SynchronizationRule {
     private readonly syncRule: SynchronizationRuleData;

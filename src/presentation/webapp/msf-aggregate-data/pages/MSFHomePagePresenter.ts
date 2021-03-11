@@ -53,7 +53,7 @@ export async function executeAggregateData(
 
     addEventToProgress(i18n.t(`Starting Aggregate Data...`));
 
-    if (isGlobalInstance && msfSettings.runAnalytics === "false") {
+    if (isGlobalInstance() && msfSettings.runAnalytics === "false") {
         const lastExecution = await getLastAnalyticsExecution(compositionRoot);
 
         addEventToProgress(
@@ -234,7 +234,7 @@ async function getSyncRules(
 ): Promise<SynchronizationRule[]> {
     const { period: overridePeriod } = advancedSettings;
     const { projectMinimumDates } = msfSettings;
-    const { dataViewOrganisationUnits } = await compositionRoot.instances.getCurrentUser();
+    const { dataViewOrganisationUnits } = await compositionRoot.user.current();
 
     const { rows } = await compositionRoot.rules.list({ paging: false });
     const allRules = await promiseMap(rows, ({ id }) => compositionRoot.rules.get(id));
