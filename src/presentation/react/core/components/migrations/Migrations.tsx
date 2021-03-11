@@ -91,7 +91,8 @@ const MigrationsDialog: React.FC<MigrationsRunnerProps> = ({ onFinish }) => {
             title={i18n.t("There are pending migrations")}
             onSave={() => (state.type === "success" ? onFinish() : startMigration())}
             saveText={actionText}
-            onCancel={undefined}
+            onCancel={isDebug ? onFinish : undefined}
+            cancelText={i18n.t("Ignore")}
             disableSave={state.type === "migrating" || !actionText}
             maxWidth="md"
             fullWidth={true}
