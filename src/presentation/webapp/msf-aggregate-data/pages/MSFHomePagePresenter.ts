@@ -145,7 +145,7 @@ async function validatePreviousDataValues(
                         period: "FIXED",
                         lastUpdated: moment(lastExecutionDate).toDate(),
                         endDate: startDate.toDate(),
-                        orgUnitPaths: rule.dataSyncOrgUnitPaths,
+                        orgUnitPaths: [orgUnit],
                         allEvents: true,
                     },
                     programs
