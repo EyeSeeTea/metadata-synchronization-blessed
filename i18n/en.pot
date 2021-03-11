@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-10T23:23:51.217Z\n"
-"PO-Revision-Date: 2021-03-10T23:23:51.217Z\n"
+"POT-Creation-Date: 2021-03-11T12:08:41.375Z\n"
+"PO-Revision-Date: 2021-03-11T12:08:41.375Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -365,6 +365,9 @@ msgstr ""
 msgid "Preparing auto-mapping for {{total}} elements"
 msgstr ""
 
+msgid "Unable to apply auto-mapping"
+msgstr ""
+
 msgid "Could not find a suitable candidate to apply auto-mapping for {{id}}"
 msgstr ""
 
@@ -497,6 +500,9 @@ msgid ""
 msgstr ""
 
 msgid "There are pending migrations"
+msgstr ""
+
+msgid "Ignore"
 msgstr ""
 
 msgid "Migrations finished successfully, you may now continue to the app"

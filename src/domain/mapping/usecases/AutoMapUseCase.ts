@@ -5,6 +5,7 @@ import {
 } from "../../../presentation/react/core/components/mapping-table/utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { DataSource } from "../../instance/entities/DataSource";
+import { cleanOrgUnitPath } from "../../synchronization/utils";
 import { MappingConfig } from "../entities/MappingConfig";
 import { MetadataMappingDictionary } from "../entities/MetadataMapping";
 import { GenericMappingUseCase } from "./GenericMappingUseCase";
@@ -18,39 +19,46 @@ export class AutoMapUseCase extends GenericMappingUseCase implements UseCase {
         ids: string[],
         isGlobalMapping = false
     ): Promise<AutoMapUseCaseResult> {
-        const metadataResponse = await this.getMetadata(originInstance, ids);
+        const cleanIds = ids.map(id => cleanNestedMappedId(cleanOrgUnitPath(id)));
+        const metadataResponse = await this.getMetadata(originInstance, cleanIds);
         const elements = this.createMetadataArray(metadataResponse);
 
         const tasks: MappingConfig[] = [];
         const errors: string[] = [];
 
-        for (const item of elements) {
-            const filter = await this.buildDataElementFilterForProgram(
-                destinationInstance,
-                item.id,
-                mapping
+        for (const id of ids) {
+            const item = elements.find(
+                item => item.id === cleanNestedMappedId(cleanOrgUnitPath(id))
             );
 
             // Special scenario: indicators look-up the id from a property
-            const lookUpItem = item.aggregateExportCategoryOptionCombo
-                ? {
-                      id: _.first(item.aggregateExportCategoryOptionCombo?.split(".")) ?? item.id,
-                      name: "",
-                  }
-                : item;
+            const itemId = item?.aggregateExportCategoryOptionCombo
+                ? _.first(item?.aggregateExportCategoryOptionCombo?.split("."))
+                : item?.id;
+
+            const filter = await this.buildDataElementFilterForProgram(
+                destinationInstance,
+                id,
+                mapping
+            );
 
             const candidates = await this.autoMap({
                 destinationInstance,
-                selectedItem: lookUpItem,
                 filter,
+                selectedItem: {
+                    id: itemId ?? id,
+                    name: item?.name ?? "",
+                    code: item?.code,
+                    aggregateExportCategoryOptionCombo: item?.aggregateExportCategoryOptionCombo,
+                },
             });
             const { mappedId } = _.first(candidates) ?? {};
 
             if (!mappedId) {
-                errors.push(cleanNestedMappedId(item.id));
+                errors.push(cleanNestedMappedId(id));
             } else {
                 tasks.push({
-                    selection: [item.id],
+                    selection: [id],
                     mappingType,
                     global: isGlobalMapping,
                     mappedId,
