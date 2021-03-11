@@ -401,6 +401,29 @@ export const metadataTransformations: Transformation[] = [
             };
         },
     },
+    {
+        name: "fix mapViews duplicate error",
+        apiVersion: 34,
+        apply: ({ maps, mapViews, ...rest }: any) => {
+            if (maps && mapViews) {
+                const newMapViews = mapViews.filter((mapView: any) => {
+                    const existsInSomeMap = maps.some((map: any) =>
+                        map.mapViews.some((mapViewInMap: any) => mapViewInMap.id === mapView.id)
+                    );
+
+                    return !existsInSomeMap;
+                });
+
+                return {
+                    ...rest,
+                    maps,
+                    mapViews: newMapViews.length > 0 ? newMapViews : undefined,
+                };
+            } else {
+                return { ...rest };
+            }
+        },
+    },
 ];
 
 const itemsMapping = {
