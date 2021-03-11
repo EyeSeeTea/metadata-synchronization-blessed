@@ -200,17 +200,19 @@ export abstract class GenericMappingUseCase {
             selectedItem.aggregateExportCategoryOptionCombo,
         ]);
 
-        const matches = _.compact([
+        const filteredCandidates = _.compact([
             candidateWithSameId,
             candidateWithSameCode,
             candidateWithSameName,
-            candidateWithExportCoC,
         ]).filter(({ id }) => filter?.includes(id) ?? true);
 
+        const matches = _.compact([...filteredCandidates, candidateWithExportCoC]);
+
         const candidates = _(matches)
-            .concat(matches.length === 0 ? objects : [])
+            .concat(
+                matches.length === 0 ? objects.filter(({ id }) => filter?.includes(id) ?? true) : []
+            )
             .uniqBy("id")
-            .filter(({ id }) => filter?.includes(id) ?? true)
             .value();
 
         if (candidates.length === 0 && defaultValue) {

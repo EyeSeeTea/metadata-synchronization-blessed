@@ -17,7 +17,6 @@ import {
     extractParentsFromRule,
 } from "../../../utils/metadataIncludeExclude";
 import { OldValidation } from "../../../utils/old-validations";
-import { UserInfo } from "../../../utils/permissions";
 import isValidCronExpression from "../../../utils/validCronExpression";
 import {
     DataSyncAggregation,
@@ -28,6 +27,8 @@ import { SharedRef } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { FilterRule } from "../../metadata/entities/FilterRule";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
+import { NamedRef } from "../../common/entities/Ref";
+import { UserInfo } from "../../../utils/permissions";
 
 export class SynchronizationRule {
     private readonly syncRule: SynchronizationRuleData;
@@ -44,6 +45,7 @@ export class SynchronizationRule {
             "enabled",
             "frequency",
             "lastExecuted",
+            "lastExecutedBy",
             "lastUpdated",
             "lastUpdatedBy",
             "publicAccess",
@@ -174,6 +176,22 @@ export class SynchronizationRule {
         return this.syncRule.lastExecuted ? new Date(this.syncRule.lastExecuted) : undefined;
     }
 
+    public get lastExecutedBy(): string | undefined {
+        return this.syncRule.lastExecutedBy?.name;
+    }
+
+    public get created(): Date | undefined {
+        return this.syncRule.created ? new Date(this.syncRule.created) : undefined;
+    }
+
+    public get lastUpdated(): Date | undefined {
+        return this.syncRule.lastUpdated ? new Date(this.syncRule.lastUpdated) : undefined;
+    }
+
+    public get lastUpdatedBy(): string | undefined {
+        return this.syncRule.lastUpdatedBy?.name;
+    }
+
     public get readableFrequency(): string | undefined {
         const { frequency } = this.syncRule;
         return frequency && isValidCronExpression(frequency)
@@ -228,6 +246,10 @@ export class SynchronizationRule {
             enabled: false,
             lastUpdated: new Date(),
             lastUpdatedBy: {
+                id: "",
+                name: "",
+            },
+            lastExecutedBy: {
                 id: "",
                 name: "",
             },
@@ -523,8 +545,8 @@ export class SynchronizationRule {
         return this.update({ frequency });
     }
 
-    public updateLastExecuted(lastExecuted: Date): SynchronizationRule {
-        return this.update({ lastExecuted });
+    public updateLastExecuted(lastExecuted: Date, lastExecutedBy: NamedRef): SynchronizationRule {
+        return this.update({ lastExecuted, lastExecutedBy });
     }
 
     public isOnDemand() {
@@ -684,6 +706,7 @@ export interface SynchronizationRuleData extends SharedRef {
     targetInstances: string[];
     enabled: boolean;
     lastExecuted?: Date;
+    lastExecutedBy?: NamedRef;
     frequency?: string;
     type: SynchronizationType;
 }

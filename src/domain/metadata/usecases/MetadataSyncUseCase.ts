@@ -95,7 +95,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const metadataRepository = await this.getMetadataRepository();
         const filterRulesIds = await metadataRepository.getByFilterRules(filterRules);
         const allMetadataIds = _.union(metadataIds, filterRulesIds);
-        const metadata = await metadataRepository.getMetadataByIds<Ref>(allMetadataIds, "id");
+        const metadata = await metadataRepository.getMetadataByIds<Ref>(allMetadataIds, "id,type"); //type is required to transform visualizations to charts and report tables
 
         const exportResults = await promiseMap(_.keys(metadata), type => {
             const myClass = modelFactory(type);
@@ -135,9 +135,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             originalPayload
         );
 
-        const payload = syncParams?.enableMapping
-            ? await this.mapPayload(instance, payloadWithDocumentFiles)
-            : payloadWithDocumentFiles;
+        const payload = await this.mapPayload(instance, payloadWithDocumentFiles);
 
         debug("Metadata package", { originalPayload, payload });
 
@@ -156,20 +154,26 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         instance: Instance,
         payload: MetadataPackage
     ): Promise<MetadataPackage> {
-        const metadataRepository = await this.getMetadataRepository();
-        const remoteMetadataRepository = await this.getMetadataRepository(instance);
+        const { syncParams } = this.builder;
 
-        const originCategoryOptionCombos = await metadataRepository.getCategoryOptionCombos();
-        const destinationCategoryOptionCombos = await remoteMetadataRepository.getCategoryOptionCombos();
-        const mapping = await this.getMapping(instance);
+        if (syncParams?.enableMapping) {
+            const metadataRepository = await this.getMetadataRepository();
+            const remoteMetadataRepository = await this.getMetadataRepository(instance);
 
-        const mapper = new MappingMapper(
-            mapping,
-            originCategoryOptionCombos,
-            destinationCategoryOptionCombos
-        );
+            const originCategoryOptionCombos = await metadataRepository.getCategoryOptionCombos();
+            const destinationCategoryOptionCombos = await remoteMetadataRepository.getCategoryOptionCombos();
+            const mapping = await this.getMapping(instance);
 
-        return mapper.applyMapping(payload);
+            const mapper = new MappingMapper(
+                mapping,
+                originCategoryOptionCombos,
+                destinationCategoryOptionCombos
+            );
+
+            return mapper.applyMapping(payload);
+        } else {
+            return payload;
+        }
     }
 
     public async createDocumentFilesInRemote(

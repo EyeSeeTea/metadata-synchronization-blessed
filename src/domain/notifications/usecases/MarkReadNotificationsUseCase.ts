@@ -33,8 +33,8 @@ export class MarkReadNotificationsUseCase implements UseCase {
 
     private async hasPermissions(notification: AppNotification) {
         const { id, userGroups } = await this.repositoryFactory
-            .instanceRepository(this.localInstance)
-            .getUser();
+            .userRepository(this.localInstance)
+            .getCurrent();
 
         if (
             notification.owner.id !== id &&

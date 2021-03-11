@@ -1,9 +1,10 @@
-import { PaginationOptions } from "d2-ui-components";
+import { PaginationOptions, useSnackbar } from "d2-ui-components";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import { Store } from "../../../../../domain/stores/entities/Store";
 import i18n from "../../../../../locales";
+import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import {
     InstanceSelectionConfig,
@@ -43,6 +44,8 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
     const [selectedInstance, setSelectedInstance] = useState<Instance | undefined>();
     const [selectedStore, setSelectedStore] = useState<Store | undefined>();
     const [selection, setSelection] = useState<string[]>([]);
+    const { compositionRoot } = useAppContext();
+    const snackbar = useSnackbar();
 
     const viewSelector = useViewSelector(showSelector, propsViewValue);
 
@@ -58,13 +61,28 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
         (type: InstanceSelectionOption, source?: Instance | Store) => {
             setSelection([]);
             setSelectedStore(type === "store" ? (source as Store) : undefined);
-            setSelectedInstance(type === "remote" ? (source as Instance) : undefined);
+
+            if (type === "remote" && source) {
+                compositionRoot.instances.getById(source.id).then(result =>
+                    result.match({
+                        success: instance => setSelectedInstance(instance),
+                        error: () => {
+                            setSelectedInstance(
+                                type === "remote" ? (source as Instance) : undefined
+                            );
+                            snackbar.error(i18n.t("Instance not found"));
+                        },
+                    })
+                );
+            } else {
+                setSelectedInstance(undefined);
+            }
 
             if (onInstanceChange) {
                 onInstanceChange(source);
             }
         },
-        [onInstanceChange]
+        [onInstanceChange, compositionRoot.instances, snackbar]
     );
 
     const filters = useMemo(

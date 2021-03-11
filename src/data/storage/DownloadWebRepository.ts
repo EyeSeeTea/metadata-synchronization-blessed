@@ -5,10 +5,22 @@ import {
     DownloadItem,
     DownloadRepository,
 } from "../../domain/storage/repositories/DownloadRepository";
+import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
+import { metadataTransformations } from "../transformations/PackageTransformations";
 
 export class DownloadWebRepository implements DownloadRepository {
-    public downloadFile(name: string, payload: unknown): void {
-        const json = JSON.stringify(payload, null, 4);
+    constructor(private transformationRepository: TransformationRepository) {}
+
+    public downloadFile(name: string, payload: unknown, apiVersion?: number): void {
+        const versionedPayloadPackage = apiVersion
+            ? this.transformationRepository.mapPackageTo(
+                  apiVersion,
+                  payload,
+                  metadataTransformations
+              )
+            : payload;
+
+        const json = JSON.stringify(versionedPayloadPackage, null, 4);
         const blob = new Blob([json], { type: "application/json" });
         FileSaver.saveAs(blob, name);
     }
@@ -26,7 +38,15 @@ export class DownloadWebRepository implements DownloadRepository {
             .values()
             .flatten()
             .forEach(item => {
-                const json = JSON.stringify(item.content, null, 4);
+                const versionedPayloadPackage = item.apiVersion
+                    ? this.transformationRepository.mapPackageTo(
+                          item.apiVersion,
+                          item.content,
+                          metadataTransformations
+                      )
+                    : item.content;
+
+                const json = JSON.stringify(versionedPayloadPackage, null, 4);
                 const blob = new Blob([json], { type: "application/json" });
                 zip.file(`${item.name}.json`, blob);
             });

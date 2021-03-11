@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 
 export const buildAggregationItems = () => [
     { id: "DAILY", name: i18n.t("Daily"), format: "YYYYMMDD" },
-    { id: "WEEKLY", name: i18n.t("Weekly"), format: "YYYY[W]W" },
+    { id: "WEEKLY", name: i18n.t("Weekly"), format: "GGGG[W]W" },
     { id: "MONTHLY", name: i18n.t("Monthly"), format: "YYYYMM" },
     { id: "QUARTERLY", name: i18n.t("Quarterly"), format: "YYYY[Q]Q" },
     { id: "YEARLY", name: i18n.t("Yearly"), format: "YYYY" },

@@ -18,15 +18,15 @@ export class SaveModuleUseCase implements UseCase {
 
         if (validations.length === 0) {
             const user = await this.repositoryFactory
-                .instanceRepository(this.localInstance)
-                .getUser();
+                .userRepository(this.localInstance)
+                .getCurrent();
             const newModule = module.update({
                 instance: this.repositoryFactory
                     .instanceRepository(this.localInstance)
                     .getBaseUrl(),
                 lastUpdated: new Date(),
                 lastUpdatedBy: user,
-                user: module.user.id ? module.user : user,
+                user: module.user.id ? module.user : { id: user.id, name: user.name },
                 userGroupAccesses: _.unionBy(
                     module.userGroupAccesses,
                     [

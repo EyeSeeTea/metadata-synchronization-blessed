@@ -1,3 +1,4 @@
+import { D2Api } from "../../../types/d2-api";
 import { MigrationTasks } from "../client/types";
 
 export function getMigrationTasks(): MigrationTasks<MigrationParams> {
@@ -8,7 +9,10 @@ export function getMigrationTasks(): MigrationTasks<MigrationParams> {
         [4, import("./04.history-notifications")],
         [5, import("./05.multiple-stores")],
         [6, import("./06.this-instance")],
+        [7, import("./07.instances-user-password")],
     ];
 }
 
-export interface MigrationParams {}
+export interface MigrationParams {
+    d2Api?: D2Api;
+}

@@ -13,13 +13,23 @@ export async function migrate(
     if (!oldContents) return;
 
     const oldInstances = oldContents.map(({ name, ...rest }) =>
-        Instance.build({
-            ...rest,
-            name:
-                name === "This instance"
-                    ? `Local Instance with user ${rest.username ?? "unknown"}`
-                    : name,
-        }).toObject()
+        _.omit(
+            Instance.build({
+                ...rest,
+                name:
+                    name === "This instance"
+                        ? `Local Instance with user ${rest.username ?? "unknown"}`
+                        : name,
+            }).toObject(),
+            "publicAccess",
+            "userAccesses",
+            "externalAccess",
+            "userGroupAccesses",
+            "user",
+            "created",
+            "lastUpdated",
+            "lastUpdatedBy"
+        )
     );
 
     const localInstance = Instance.build({

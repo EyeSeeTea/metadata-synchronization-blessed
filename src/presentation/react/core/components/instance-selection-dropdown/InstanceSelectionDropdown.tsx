@@ -6,6 +6,7 @@ import { Maybe } from "../../../../../types/utils";
 import Dropdown, { DropdownViewOption } from "../dropdown/Dropdown";
 import { useAppContext } from "../../contexts/AppContext";
 import { Store } from "../../../../../domain/stores/entities/Store";
+import { User } from "../../../../../domain/user/entities/User";
 
 export type InstanceSelectionOption = "local" | "remote" | "store";
 
@@ -36,6 +37,7 @@ export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps>
 
         const [instances, setInstances] = useState<Instance[]>([]);
         const [stores, setStores] = useState<Store[]>([]);
+        const [user, setUser] = useState<User>();
 
         const updateSelectedInstance = useCallback(
             (id: string) => {
@@ -66,12 +68,21 @@ export const InstanceSelectionDropdown: React.FC<InstanceSelectionDropdownProps>
         }, [showInstances, instances, stores]);
 
         useEffect(() => {
-            compositionRoot.instances.list().then(setInstances);
+            compositionRoot.user.current().then(setUser);
+        }, [compositionRoot.user]);
+
+        useEffect(() => {
+            compositionRoot.instances.list().then(instances => {
+                const instancesWithPermisions = user
+                    ? instances.filter(instance => instance.hasPermissions("read", user))
+                    : [];
+                setInstances(instancesWithPermisions);
+            });
 
             if (showInstances.store) {
                 compositionRoot.store.list().then(setStores);
             }
-        }, [compositionRoot, showInstances, refreshKey]);
+        }, [compositionRoot, showInstances, refreshKey, user]);
 
         useEffect(() => {
             // Auto-select first instance

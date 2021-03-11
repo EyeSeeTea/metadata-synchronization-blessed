@@ -237,8 +237,7 @@ export default function MappingTable({
                 .compact()
                 .value();
 
-            const id = elements[0];
-            const firstElement = _.find(rows, ["id", id]);
+            const firstElement = _.find(rows, ["id", elements[0]]);
             const global = firstElement?.model.getIsGlobalMapping();
 
             if (types.length === 0) {
@@ -266,7 +265,9 @@ export default function MappingTable({
 
                 await applyMapping(tasks);
 
-                if (errors.length > 0) {
+                if (tasks.length === 0) {
+                    snackbar.warning(i18n.t("Unable to apply auto-mapping"));
+                } else if (errors.length > 0) {
                     snackbar.error(
                         errors
                             .map(id =>

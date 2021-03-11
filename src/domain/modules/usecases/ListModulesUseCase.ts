@@ -18,11 +18,11 @@ export class ListModulesUseCase implements UseCase {
             .getStorageClient();
 
         const { userGroups } = await this.repositoryFactory
-            .instanceRepository(this.localInstance)
-            .getUser();
+            .userRepository(this.localInstance)
+            .getCurrent();
         const { id: userId } = await this.repositoryFactory
-            .instanceRepository(this.localInstance)
-            .getUser();
+            .userRepository(this.localInstance)
+            .getCurrent();
 
         const data = (
             await storageClient.listObjectsInCollection<BaseModule>(Namespace.MODULES)

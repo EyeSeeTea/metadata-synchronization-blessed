@@ -2,10 +2,22 @@ import _ from "lodash";
 import { Namespace, NamespaceProperties } from "../../../data/storage/Namespaces";
 import { Dictionary } from "../../../types/utils";
 import { Ref } from "../../common/entities/Ref";
+import { SharingSetting } from "../../common/entities/SharingSetting";
 import { Instance } from "../../instance/entities/Instance";
 
 export interface StorageClientConstructor {
     new (instance: Instance): StorageClient;
+}
+
+export interface ObjectSharing {
+    publicAccess: string;
+    externalAccess: boolean;
+    user: {
+        id: string;
+        name: string;
+    };
+    userAccesses: SharingSetting[];
+    userGroupAccesses: SharingSetting[];
 }
 
 export abstract class StorageClient {
@@ -20,6 +32,8 @@ export abstract class StorageClient {
     public abstract clone(): Promise<Dictionary<unknown>>;
     public abstract import(dump: Dictionary<unknown>): Promise<void>;
     public abstract listKeys(): Promise<string[]>;
+    public abstract getObjectSharing(key: string): Promise<ObjectSharing | undefined>;
+    public abstract saveObjectSharing(key: string, object: ObjectSharing): Promise<void>;
 
     public async listObjectsInCollection<T extends Ref>(key: string): Promise<T[]> {
         const collection = await this.getObject<T[]>(key);
