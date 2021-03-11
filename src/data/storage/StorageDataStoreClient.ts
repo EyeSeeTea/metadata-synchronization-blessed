@@ -51,7 +51,7 @@ export class StorageDataStoreClient extends StorageClient {
     }
 
     public async clone(): Promise<Dictionary<unknown>> {
-        const keys = await this.dataStore.getKeys().getData();
+        const keys = await this.listKeys();
 
         const pairs = await promiseMap(keys, async key => {
             const value = await this.getObject(key);

@@ -1,4 +1,5 @@
 import _ from "lodash";
+import moment from "moment";
 import { DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
@@ -56,7 +57,7 @@ export class EventsD2ApiRepository implements EventsRepository {
     ): Promise<ProgramEvent[]> {
         if (programs.length === 0) return [];
 
-        const { period, orgUnitPaths = [] } = params;
+        const { period, orgUnitPaths = [], lastUpdated } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
@@ -70,6 +71,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     program,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                    lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
                 })
                 .getData();
         };
@@ -103,7 +105,7 @@ export class EventsD2ApiRepository implements EventsRepository {
     ): Promise<ProgramEvent[]> {
         if (programs.length === 0) return [];
 
-        const { period, orgUnitPaths = [] } = params;
+        const { period, orgUnitPaths = [], lastUpdated } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
@@ -118,6 +120,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     orgUnit,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                    lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
                 })
                 .getData();
         };

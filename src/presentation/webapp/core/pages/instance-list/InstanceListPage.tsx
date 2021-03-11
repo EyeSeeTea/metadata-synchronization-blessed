@@ -43,6 +43,7 @@ const InstanceListPage = () => {
     const [toDelete, deleteInstances] = useState<string[]>([]);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [user, setUser] = useState<User>();
+    const [appStorage, setAppStorage] = useState<"dataStore" | "constant">();
     const [localInstance, setLocalInstance] = useState<Instance>();
 
     useEffect(() => {
@@ -55,6 +56,10 @@ const InstanceListPage = () => {
             setLoadingRows(false);
         });
     }, [compositionRoot, search, toDelete]);
+
+    useEffect(() => {
+        compositionRoot.config.getStorage().then(storage => setAppStorage(storage));
+    }, [compositionRoot]);
 
     useEffect(() => {
         compositionRoot.instances.getLocal().then(setLocalInstance);
@@ -172,7 +177,7 @@ const InstanceListPage = () => {
 
         instanceResult.match({
             success: instance => {
-                if (!localInstance.existsShareSettingsInDataStore) {
+                if (!localInstance.existsShareSettingsInDataStore && appStorage === "dataStore") {
                     snackbar.warning(
                         i18n.t(
                             `Your current DHIS2 version is {{version}}. This version does not come with share settings in the data store and, in consequence, there are not sharing settings for each instance. This is a potential risk and we highly recommend you to update your DHIS2 version.`,

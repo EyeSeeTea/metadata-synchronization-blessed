@@ -2,29 +2,22 @@ import _ from "lodash";
 import { Namespace, NamespaceProperties } from "../../../data/storage/Namespaces";
 import { Dictionary } from "../../../types/utils";
 import { Ref } from "../../common/entities/Ref";
+import { SharingSetting } from "../../common/entities/SharingSetting";
 import { Instance } from "../../instance/entities/Instance";
 
 export interface StorageClientConstructor {
     new (instance: Instance): StorageClient;
 }
 
-export type AccessRule = string;
-
-export interface SharingRule {
-    id: string;
-    access: AccessRule;
-    displayName: string;
-}
-
 export interface ObjectSharing {
-    publicAccess: AccessRule;
+    publicAccess: string;
     externalAccess: boolean;
     user: {
         id: string;
         name: string;
     };
-    userAccesses: SharingRule[];
-    userGroupAccesses: SharingRule[];
+    userAccesses: SharingSetting[];
+    userGroupAccesses: SharingSetting[];
 }
 
 export abstract class StorageClient {
