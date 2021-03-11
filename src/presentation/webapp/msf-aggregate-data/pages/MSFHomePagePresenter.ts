@@ -153,11 +153,7 @@ async function validatePreviousDataValues(
             });
 
             if (_.flatten(events).length > 0) {
-                return `Sync rule '${rule.name}': we have found ${
-                    events.length
-                } related events in '${
-                    instance.name
-                }' for a previous period updated after '${startDate.format("DD-MM-YYYY")}'`;
+                return `Sync rule '${rule.name}': we have found ${events.length} related events in '${instance.name}' updated after the last aggregation run that belogn to periods before the start period of the sync rule`;
             }
         });
 
