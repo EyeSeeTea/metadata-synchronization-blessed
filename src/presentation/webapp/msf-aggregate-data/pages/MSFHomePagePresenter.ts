@@ -403,7 +403,14 @@ async function deletePreviousDataValues(
                 addEventToProgress(
                     i18n.t(
                         `Deleting previous data values in target instance {{name}} for period {{period}}...`,
-                        { name: instance.name, period: getPeriodText({ type: periodType }) }
+                        {
+                            name: instance.name,
+                            period: getPeriodText({
+                                type: periodType,
+                                startDate: builder.dataParams?.startDate,
+                                endDate: builder.dataParams?.endDate,
+                            }),
+                        }
                     ),
                     "admin"
                 );
