@@ -444,10 +444,21 @@ async function getRuleDataElements(
     builder: SynchronizationBuilder,
     instance: Instance
 ): Promise<string[]> {
+    const fakeDataValues = builder.metadataIds.map(dataElement => ({
+        dataElement,
+        orgUnit: "",
+        value: "",
+        period: "",
+    }));
+
     const sync = compositionRoot.sync.aggregated(builder);
-    const payload = await sync.buildPayload();
-    const mappedPayload = await sync.mapPayload(instance, payload);
-    return _.compact(mappedPayload.dataValues?.map(({ dataElement }) => dataElement));
+    const mappedPayload = await sync.mapPayload(instance, { dataValues: fakeDataValues });
+
+    return _(mappedPayload.dataValues)
+        .map(({ dataElement }) => dataElement)
+        .compact()
+        .uniq()
+        .value();
 }
 
 async function getRulePrograms(
