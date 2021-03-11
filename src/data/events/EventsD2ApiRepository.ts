@@ -120,7 +120,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     orgUnit,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
-                    lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
+                    lastUpdated: lastUpdated ? moment(lastUpdated).toISOString() : undefined,
                 })
                 .getData();
         };
