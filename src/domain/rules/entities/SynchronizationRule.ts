@@ -149,7 +149,7 @@ export class SynchronizationRule {
     }
 
     public get excludeTeiRelationships(): boolean {
-        return this.syncRule.builder?.dataParams?.excludeTeiRelationships ?? true;
+        return this.syncRule.builder?.dataParams?.excludeTeiRelationships ?? false;
     }
 
     public get dataSyncEnableAggregation(): boolean | undefined {

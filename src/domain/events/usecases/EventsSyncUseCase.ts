@@ -116,8 +116,13 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         trackedEntityInstances: TrackedEntityInstance[]
     ): Promise<SynchronizationResult> {
         const { dataParams = {} } = this.builder;
+        const { excludeTeiRelationships = false } = dataParams;
 
-        const payload = { trackedEntityInstances }; //await this.mapPayload(instance, { events });
+        const teis = excludeTeiRelationships
+            ? trackedEntityInstances.map(tei => ({ ...tei, relationships: [] }))
+            : trackedEntityInstances;
+
+        const payload = { trackedEntityInstances: teis }; //await this.mapPayload(instance, { events });
         debug("TEIS package", { trackedEntityInstances }); //, payload });
 
         const teisRepository = await this.getTeisRepository(instance);
