@@ -273,9 +273,11 @@ export const metadataTransformations: Transformation[] = [
                 };
             });
 
+            const newVisualizations = _.compact(_.concat(newCharts, newReportTables));
+
             return {
                 ...rest,
-                visualizations: _.compact(_.concat(newCharts, newReportTables)),
+                visualizations: newVisualizations.length > 0 ? newVisualizations : undefined,
             };
         },
         undo: ({ visualizations, ...rest }: any) => {

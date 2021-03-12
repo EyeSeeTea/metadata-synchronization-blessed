@@ -377,7 +377,8 @@ export class CompositionRoot {
             downloadPayloads: new DownloadPayloadFromSyncRuleUseCase(
                 this,
                 this.repositoryFactory,
-                this.localInstance
+                this.localInstance,
+                this.encryptionKey
             ),
         });
     }
