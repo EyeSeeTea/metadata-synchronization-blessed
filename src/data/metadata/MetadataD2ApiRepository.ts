@@ -304,6 +304,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         group,
         level,
         program,
+        optionSet,
+        category,
         includeParents,
         parents,
         showOnlySelected,
@@ -326,6 +328,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             filter["programType"] = { eq: programType };
         }
 
+        if (optionSet) filter["optionSet.id"] = { eq: optionSet };
+        if (category) filter["categories.id"] = { eq: category };
         if (includeParents && isNotEmpty(parents)) {
             filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
         }

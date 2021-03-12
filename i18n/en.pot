@@ -5,8 +5,14 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-02T12:10:22.232Z\n"
-"PO-Revision-Date: 2021-03-02T12:10:22.232Z\n"
+"POT-Creation-Date: 2021-03-12T06:45:35.379Z\n"
+"PO-Revision-Date: 2021-03-12T06:45:35.379Z\n"
+
+msgid ""
+"THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
+"TO WORK PROPERLY, YOU WILL HAVE TO SET THE SHARING SETTINGS FOR EACH "
+"INSTANCE (Menu 'Instance Settings' > Contextual action 'Sharing settings')"
+msgstr ""
 
 msgid "Field {{field}} cannot be blank"
 msgstr ""
@@ -87,6 +93,13 @@ msgid "You must select a metadata type"
 msgstr ""
 
 msgid "Select at least one date for fixed period on create"
+msgstr ""
+
+msgid ""
+"Your current DHIS2 version is {{version}}. This version does not come with "
+"share settings in the data store and, in consequence, there are not sharing "
+"settings for each instance. This is a potential risk and we highly "
+"recommend you to update your DHIS2 version."
 msgstr ""
 
 msgid "Version is not valid (ie. {{validExample}})"
@@ -355,6 +368,9 @@ msgstr ""
 msgid "Preparing auto-mapping for {{total}} elements"
 msgstr ""
 
+msgid "Unable to apply auto-mapping"
+msgstr ""
+
 msgid "Could not find a suitable candidate to apply auto-mapping for {{id}}"
 msgstr ""
 
@@ -454,6 +470,12 @@ msgstr ""
 msgid "Program"
 msgstr ""
 
+msgid "Option set"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
 msgid "Only selected items"
 msgstr ""
 
@@ -481,6 +503,9 @@ msgid ""
 msgstr ""
 
 msgid "There are pending migrations"
+msgstr ""
+
+msgid "Ignore"
 msgstr ""
 
 msgid "Migrations finished successfully, you may now continue to the app"
@@ -594,6 +619,9 @@ msgid "{{n}} package(s) created successfully: {{list}}"
 msgstr ""
 
 msgid "{{n}} package(s) could not be created: {{list}}"
+msgstr ""
+
+msgid "Instance not found"
 msgstr ""
 
 msgid "Instances & Play Stores"
@@ -1132,9 +1160,6 @@ msgstr ""
 msgid "Destination"
 msgstr ""
 
-msgid "Instance not found"
-msgstr ""
-
 msgid "Every day"
 msgstr ""
 
@@ -1163,6 +1188,14 @@ msgid "Cron expression must be valid"
 msgstr ""
 
 msgid "Json files downloaded successfull"
+msgstr ""
+
+msgid ""
+"You do not have the authority to one or multiple target instances of the "
+"sync rule"
+msgstr ""
+
+msgid "An error has ocurred during the download"
 msgstr ""
 
 msgid "Cancel synchronization rule wizard"
@@ -1341,17 +1374,6 @@ msgid "Delete data values before sync"
 msgstr ""
 
 msgid "Check existing data values in previous periods"
-msgstr ""
-
-msgid "Data element filter"
-msgstr ""
-
-msgid "Data Element Group *"
-msgstr ""
-
-msgid ""
-"* Data Element Group: used to check existing data values in the destination "
-"data elements"
 msgstr ""
 
 msgid "Project minimum dates"
@@ -1556,6 +1578,9 @@ msgstr ""
 msgid "Run analytics"
 msgstr ""
 
+msgid "An error has ocurred editing share settings"
+msgstr ""
+
 msgid "Delete Instances?"
 msgstr ""
 
@@ -1625,6 +1650,9 @@ msgid "Please select at least one element from the table to synchronize"
 msgstr ""
 
 msgid "Unknown error with the request"
+msgstr ""
+
+msgid "An error has ocurred during the synchronization"
 msgstr ""
 
 msgid "New module"
@@ -1815,6 +1843,15 @@ msgstr ""
 msgid "Last executed"
 msgstr ""
 
+msgid "Last executed by"
+msgstr ""
+
+msgid "Last Updated"
+msgstr ""
+
+msgid "Last Updated By"
+msgstr ""
+
 msgid "Generating JSON file"
 msgstr ""
 
@@ -1888,18 +1925,16 @@ msgstr ""
 msgid "Retrieving information from the system..."
 msgstr ""
 
-msgid "Starting Aggregate Data..."
+msgid "Synchronizing aggregated data..."
 msgstr ""
 
 msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
 msgstr ""
 
-msgid ""
-"Deleting previous data values is not possible because data element group is "
-"not defined, please contact with your administrator"
+msgid "Finished aggregated data synchronization with errors"
 msgstr ""
 
-msgid "Finished Aggregate Data"
+msgid "Finished aggregated data synchronization successfully"
 msgstr ""
 
 msgid "Checking data values in previous periods ...."
@@ -1911,10 +1946,10 @@ msgstr ""
 msgid "Summary of Sync Rule"
 msgstr ""
 
-msgid "Finished Sync Rule {{name}}"
+msgid "Error found: {{message}}"
 msgstr ""
 
-msgid "Finished Sync Rule {{name}} with errors"
+msgid "Finished Sync Rule {{name}}"
 msgstr ""
 
 msgid "never"
@@ -1923,15 +1958,9 @@ msgstr ""
 msgid "Error retrieving instance {{name}} to delete previoud data values"
 msgstr ""
 
-msgid "Error creating period"
-msgstr ""
-
 msgid ""
 "Deleting previous data values in target instance {{name}} for period "
 "{{period}}..."
-msgstr ""
-
-msgid "Deleting previous data values for period {{period}} is not possible"
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
@@ -1956,6 +1985,9 @@ msgid "Action"
 msgstr ""
 
 msgid "Program Rule"
+msgstr ""
+
+msgid "Categories"
 msgstr ""
 
 msgid "Url"

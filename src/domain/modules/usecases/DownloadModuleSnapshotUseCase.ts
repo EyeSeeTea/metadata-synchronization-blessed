@@ -11,10 +11,10 @@ export class DownloadModuleSnapshotUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(module: Module, contents: MetadataPackage) {
-        const user = await this.repositoryFactory.instanceRepository(this.localInstance).getUser();
+        const user = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
         const item = Package.build({
             module,
-            lastUpdatedBy: user,
+            lastUpdatedBy: { id: user.id, name: user.name },
             user,
         });
 

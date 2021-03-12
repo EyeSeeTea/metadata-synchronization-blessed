@@ -1,4 +1,5 @@
 import _ from "lodash";
+import moment from "moment";
 import { DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
@@ -56,7 +57,7 @@ export class EventsD2ApiRepository implements EventsRepository {
     ): Promise<ProgramEvent[]> {
         if (programStageIds.length === 0) return [];
 
-        const { period, orgUnitPaths = [] } = params;
+        const { period, orgUnitPaths = [], lastUpdated } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
@@ -70,6 +71,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     orgUnit,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                    lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
                 })
                 .getData();
         };
@@ -103,7 +105,7 @@ export class EventsD2ApiRepository implements EventsRepository {
     ): Promise<ProgramEvent[]> {
         if (programStageIds.length === 0) return [];
 
-        const { period, orgUnitPaths = [] } = params;
+        const { period, orgUnitPaths = [], lastUpdated } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
@@ -118,6 +120,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     orgUnit,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                    lastUpdated: lastUpdated ? moment(lastUpdated).toISOString() : undefined,
                 })
                 .getData();
         };
@@ -129,19 +132,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                 const paginatedEvents = await promiseMap(
                     _.range(2, pager.pageCount + 1),
                     async page => {
-                        const { events } = await this.api
-                            .get<EventExportResult>("/events", {
-                                pageSize: 250,
-                                totalPages: true,
-                                page,
-                                programStage,
-                                orgUnit,
-                                startDate:
-                                    period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-                                endDate:
-                                    period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
-                            })
-                            .getData();
+                        const { events } = await fetchApi(programStage, orgUnit, page);
                         return events;
                     }
                 );

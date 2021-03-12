@@ -33,7 +33,7 @@ import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceB
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
 import { GetLocalInstanceUseCase } from "../domain/instance/usecases/GetLocalInstanceUseCase";
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
-import { GetCurrentUserUseCase } from "../domain/instance/usecases/GetCurrentUserUseCase";
+import { GetCurrentUserUseCase } from "../domain/user/usecases/GetCurrentUserUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
@@ -102,6 +102,7 @@ import { GetMetadataByIdsUseCase } from "../domain/metadata/usecases/GetMetadata
 import { DownloadPayloadFromSyncRuleUseCase } from "../domain/synchronization/usecases/DownloadPayloadFromSyncRuleUseCase";
 import { TEID2ApiRepository } from "../data/tracked-entity-instances/TEID2ApiRepository";
 import { ListTEIsUseCase } from "../domain/tracked-entity-instances/usecases/ListTEIsUseCase";
+import { UserD2ApiRepository } from "../data/user/UserD2ApiRepository";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -123,6 +124,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MigrationsRepository, MigrationsAppRepository);
         this.repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
+        this.repositoryFactory.bind(Repositories.UserRepository, UserD2ApiRepository);
         this.repositoryFactory.bind(
             Repositories.MetadataRepository,
             MetadataJSONRepository,
@@ -310,26 +312,13 @@ export class CompositionRoot {
         return getExecute({
             getApi: new GetInstanceApiUseCase(this.repositoryFactory, this.localInstance),
             getLocal: new GetLocalInstanceUseCase(this.localInstance),
-            list: new ListInstancesUseCase(
-                this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
-            ),
-            getById: new GetInstanceByIdUseCase(
-                this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
-            ),
-            save: new SaveInstanceUseCase(
-                this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
-            ),
+            list: new ListInstancesUseCase(this.repositoryFactory, this.localInstance),
+            getById: new GetInstanceByIdUseCase(this.repositoryFactory, this.localInstance),
+            save: new SaveInstanceUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteInstanceUseCase(this.repositoryFactory, this.localInstance),
             validate: new ValidateInstanceUseCase(this.repositoryFactory),
             getVersion: new GetInstanceVersionUseCase(this.repositoryFactory, this.localInstance),
             getOrgUnitRoots: new GetRootOrgUnitUseCase(this.repositoryFactory, this.localInstance),
-            getCurrentUser: new GetCurrentUserUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -419,6 +408,13 @@ export class CompositionRoot {
 
         return getExecute({
             list: new ListTEIsUseCase(repository),
+        });
+    }
+
+    @cache()
+    public get user() {
+        return getExecute({
+            current: new GetCurrentUserUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }

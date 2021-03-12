@@ -30,6 +30,7 @@ import {
     TransformationRepository,
     TransformationRepositoryConstructor,
 } from "../../transformations/repositories/TransformationRepository";
+import { UserRepositoryConstructor } from "../../user/repositories/UserRepository";
 
 type ClassType = new (...args: any[]) => any;
 
@@ -85,6 +86,11 @@ export class RepositoryFactory {
             instance,
             this.encryptionKey,
         ]);
+    }
+
+    @cache()
+    public userRepository(instance: Instance) {
+        return this.get<UserRepositoryConstructor>(Repositories.UserRepository, [instance]);
     }
 
     @cache()
@@ -148,6 +154,7 @@ export class RepositoryFactory {
         const config = this.configRepository(instance);
         return this.get<MigrationsRepositoryConstructor>(Repositories.MigrationsRepository, [
             config,
+            instance,
         ]);
     }
 }
@@ -171,4 +178,5 @@ export const Repositories = {
     SystemInfoRepository: "systemInfoRepository",
     MigrationsRepository: "migrationsRepository",
     TEIsRepository: "teisRepository",
+    UserRepository: "userRepository",
 } as const;

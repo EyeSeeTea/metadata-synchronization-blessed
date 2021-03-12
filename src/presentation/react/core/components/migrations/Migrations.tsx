@@ -1,5 +1,7 @@
+import { makeStyles, Theme, Typography } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
+import { Log } from "../../../../../domain/migrations/entities/Debug";
 import { MigrationVersions } from "../../../../../domain/migrations/entities/MigrationVersions";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
@@ -29,9 +31,10 @@ interface DialogState {
 
 const MigrationsDialog: React.FC<MigrationsRunnerProps> = ({ onFinish }) => {
     const { compositionRoot } = useAppContext();
+    const classes = useStyles();
 
     const [state, setState] = useState<DialogState>({ type: "initializing" });
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<Log[]>([]);
     const [versions, setVersions] = useState<MigrationVersions>();
 
     useEffect(() => {
@@ -51,7 +54,7 @@ const MigrationsDialog: React.FC<MigrationsRunnerProps> = ({ onFinish }) => {
 
     useEffect(followContents, [messages]);
 
-    const debug = useCallback((message: string) => {
+    const debug = useCallback((message: Log) => {
         setMessages(messages => [...messages, message]);
     }, []);
 
@@ -61,13 +64,13 @@ const MigrationsDialog: React.FC<MigrationsRunnerProps> = ({ onFinish }) => {
             await compositionRoot.migrations.run(debug);
             setState({ type: "success" });
         } catch (err) {
-            debug("---");
-            debug(`Error: ${err.message}`);
-            debug(
-                i18n.t(
+            debug({ message: "---" });
+            debug({ message: `Error: ${err.message}` });
+            debug({
+                message: i18n.t(
                     "There has been an error. You can either retry or contact your administrator if you think there has been an un recoverable error"
-                )
-            );
+                ),
+            });
             setState({ type: "show-info" });
         }
     }, [compositionRoot, debug]);
@@ -88,7 +91,8 @@ const MigrationsDialog: React.FC<MigrationsRunnerProps> = ({ onFinish }) => {
             title={i18n.t("There are pending migrations")}
             onSave={() => (state.type === "success" ? onFinish() : startMigration())}
             saveText={actionText}
-            onCancel={undefined}
+            onCancel={isDebug ? onFinish : undefined}
+            cancelText={i18n.t("Ignore")}
             disableSave={state.type === "migrating" || !actionText}
             maxWidth="md"
             fullWidth={true}
@@ -97,12 +101,18 @@ const MigrationsDialog: React.FC<MigrationsRunnerProps> = ({ onFinish }) => {
                 <p>{getPendingMigrationsText(versions)}</p>
 
                 <p>
-                    {messages.map((msg, idx) => (
-                        <React.Fragment key={idx}>
-                            {msg}
-                            <br />
-                        </React.Fragment>
-                    ))}
+                    {messages.map((msg, idx) => {
+                        switch (msg.level) {
+                            case "warning":
+                                return (
+                                    <Typography key={idx} className={classes.warning}>
+                                        {msg.message}
+                                    </Typography>
+                                );
+                            default:
+                                return <Typography key={idx}>{msg.message}</Typography>;
+                        }
+                    })}
                 </p>
 
                 <p>
@@ -164,3 +174,10 @@ const MigrationsError: React.FC<{ versions: MigrationVersions; onFinish: () => v
 );
 
 export default Migrations;
+
+const useStyles = makeStyles((theme: Theme) => ({
+    warning: {
+        color: theme.palette.warning.main,
+        fontWeight: "bold",
+    },
+}));

@@ -1,6 +1,7 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
 import { ConfirmationDialog } from "d2-ui-components";
-import React, { useEffect, useRef, useState } from "react";
+import _ from "lodash";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import i18n from "../../../../locales";
@@ -26,7 +27,6 @@ export const MSFHomePage: React.FC = () => {
     const messageList = useRef<HTMLUListElement>(null);
 
     const [running, setRunning] = useState<boolean>(false);
-    const [syncProgress, setSyncProgress] = useState<string[]>([]);
     const [showPeriodDialog, setShowPeriodDialog] = useState(false);
     const [showMSFSettingsDialog, setShowMSFSettingsDialog] = useState(false);
     const [msfValidationErrors, setMsfValidationErrors] = useState<string[]>();
@@ -37,6 +37,11 @@ export const MSFHomePage: React.FC = () => {
 
     const [globalAdmin, setGlobalAdmin] = useState(false);
     const [msfSettings, setMsfSettings] = useState<MSFSettings>(defaultMSFSettings);
+
+    const [syncProgress, addEventToProgress] = useReducer(
+        (state: string[], event: string) => (_.last(state) !== event ? [...state, event] : state),
+        []
+    );
 
     useEffect(() => {
         isGlobalAdmin(api).then(setGlobalAdmin);
@@ -51,24 +56,6 @@ export const MSFHomePage: React.FC = () => {
             }));
         });
     }, [compositionRoot]);
-
-    const handleAggregateData = async (skipCheckInPreviousPeriods?: boolean) => {
-        setRunning(true);
-        setSyncReports([]);
-
-        const reports = await executeAggregateData(
-            compositionRoot,
-            advancedSettings,
-            skipCheckInPreviousPeriods
-                ? { ...msfSettings, checkInPreviousPeriods: false }
-                : msfSettings,
-            progress => setSyncProgress(progress),
-            errors => setMsfValidationErrors(errors)
-        );
-
-        setSyncReports(reports);
-        setRunning(false);
-    };
 
     const handleOpenAdvancedSettings = () => {
         setShowPeriodDialog(true);
@@ -98,10 +85,33 @@ export const MSFHomePage: React.FC = () => {
         setShowMSFSettingsDialog(false);
     };
 
-    const handleSaveMSFSettings = (msfSettings: MSFSettings) => {
+    const handleSaveMSFSettings = async (msfSettings: MSFSettings) => {
         setShowMSFSettingsDialog(false);
         setMsfSettings(msfSettings);
-        compositionRoot.customData.save(MSFStorageKey, { ...msfSettings, runAnalytics: undefined });
+        await compositionRoot.customData.save(MSFStorageKey, {
+            ...msfSettings,
+            runAnalytics: undefined,
+        });
+    };
+
+    const handleAggregateData = async (skipCheckInPreviousPeriods?: boolean) => {
+        setRunning(true);
+        setSyncReports([]);
+
+        const reports = await executeAggregateData(
+            compositionRoot,
+            advancedSettings,
+            skipCheckInPreviousPeriods
+                ? { ...msfSettings, checkInPreviousPeriods: false }
+                : msfSettings,
+            addEventToProgress,
+            errors => setMsfValidationErrors(errors),
+            handleSaveMSFSettings,
+            globalAdmin
+        );
+
+        setSyncReports(reports);
+        setRunning(false);
     };
 
     const handleDownloadPayload = async () => {
@@ -227,12 +237,14 @@ export const MSFHomePage: React.FC = () => {
                     cancelText={i18n.t("Cancel")}
                     saveText={i18n.t("Proceed")}
                 >
-                    <Typography>{i18n.t("There are issues with data values:")}</Typography>
+                    <Typography>{i18n.t("Please review the following issues:")}</Typography>
                     <ul>
                         {msfValidationErrors.map((error, index) => {
                             return (
                                 <li key={`err-${index}`}>
-                                    <Typography>{error}</Typography>
+                                    {error.split("\n").map((message, index) => (
+                                        <Typography key={index}>{message}</Typography>
+                                    ))}
                                 </li>
                             );
                         })}
