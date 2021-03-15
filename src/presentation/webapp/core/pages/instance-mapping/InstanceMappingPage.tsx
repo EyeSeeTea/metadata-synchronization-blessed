@@ -11,6 +11,7 @@ import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
+    EventProgramWithProgramStagesModel,
     GlobalCategoryComboModel,
     GlobalCategoryModel,
     GlobalCategoryOptionGroupModel,
@@ -39,6 +40,7 @@ const config = {
         title: i18n.t("Program (events) mapping"),
         models: [
             EventProgramWithDataElementsModel,
+            EventProgramWithProgramStagesModel,
             EventProgramWithIndicatorsModel,
             ProgramIndicatorMappedModel,
             RelationshipTypeMappedModel,

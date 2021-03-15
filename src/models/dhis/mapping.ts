@@ -129,14 +129,19 @@ export class ProgramDataElementModel extends DataElementModel {
 }
 
 export class ProgramProgramStageModel extends ProgramStageModel {
-    protected static metadataType = "programProgramStageModel";
-    protected static mappingType = "programProgramStageModel";
+    protected static metadataType = "programProgramStage";
+    protected static mappingType = "programProgramStage";
 }
 
 export class EventProgramModel extends ProgramModel {
     protected static metadataType = "eventPrograms";
     protected static mappingType = "eventPrograms";
     protected static modelFilters = { programType: "WITHOUT_REGISTRATION" };
+}
+
+export class TrackerProgramModel extends ProgramModel {
+    protected static metadataType = "trackerPrograms";
+    protected static mappingType = "trackerPrograms";
 }
 
 export class EventProgramWithDataElementsModel extends EventProgramModel {
@@ -171,10 +176,10 @@ export class EventProgramWithDataElementsModel extends EventProgramModel {
     };
 }
 
-export class EventProgramWithProgramStagesModel extends EventProgramModel {
+export class EventProgramWithProgramStagesModel extends TrackerProgramModel {
     protected static metadataType = "programWithProgramStages";
     protected static modelName = i18n.t("Tracker Program with Program Stages");
-    protected static childrenKeys = ["stages", " dataElements"];
+    protected static childrenKeys = ["stages", "dataElements"];
     protected static fields = programFieldsWithDataElements;
     protected static modelFilters: any = { programType: "WITH_REGISTRATION" };
 
