@@ -31,6 +31,7 @@ import {
     ProgramIndicatorModel,
     ProgramModel,
     ProgramStageModel,
+    RelationshipTypeModel,
     TrackedEntityAttributeModel,
 } from "./metadata";
 
@@ -222,6 +223,10 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
 
 export class TrackedEntityAttributeMappedModel extends TrackedEntityAttributeModel {
     protected static mappingType = "trackedEntityAttribute";
+}
+
+export class RelationshipTypeMappedModel extends RelationshipTypeModel {
+    protected static mappingType = "relationshipType";
 }
 
 export class GlobalCategoryOptionModel extends CategoryOptionModel {

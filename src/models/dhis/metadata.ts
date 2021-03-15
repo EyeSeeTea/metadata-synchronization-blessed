@@ -609,7 +609,7 @@ export class ReportModel extends D2Model {
     protected static collectionName = "reports" as const;
 }
 
-export class RelashionshipType extends D2Model {
+export class RelationshipTypeModel extends D2Model {
     protected static metadataType = "relationshipType";
     protected static collectionName = "relationshipTypes" as const;
 
