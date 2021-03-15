@@ -1,5 +1,5 @@
 import { SynchronizationPayload } from "../entities/SynchronizationPayload";
 
-export interface PackageMapper {
+export interface PayloadMapper {
     map: (payload: SynchronizationPayload) => Promise<SynchronizationPayload>;
 }

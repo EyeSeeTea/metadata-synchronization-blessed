@@ -1,7 +1,7 @@
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
-import { PackageMapper } from "../../synchronization/mapper/PackageMapper";
+import { PayloadMapper } from "../../synchronization/mapper/PayloadMapper";
 
-export class TEIPackageMapper implements PackageMapper {
+export class TEIsPayloadMapper implements PayloadMapper {
     map(payload: SynchronizationPayload): Promise<SynchronizationPayload> {
         return Promise.resolve(payload);
     }

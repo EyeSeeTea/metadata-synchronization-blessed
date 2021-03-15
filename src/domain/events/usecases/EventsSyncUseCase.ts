@@ -17,7 +17,9 @@ import { SynchronizationResult } from "../../reports/entities/SynchronizationRes
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
+import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
 import { TrackedEntityInstance } from "../../tracked-entity-instances/entities/TrackedEntityInstance";
+import { TEIsPayloadMapper } from "../../tracked-entity-instances/mapper/TEIsPayloadMapper";
 import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
@@ -122,8 +124,11 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             ? trackedEntityInstances.map(tei => ({ ...tei, relationships: [] }))
             : trackedEntityInstances;
 
-        const payload = { trackedEntityInstances: teis }; //await this.mapPayload(instance, { events });
-        debug("TEIS package", { trackedEntityInstances }); //, payload });
+        const payload = (await new TEIsPayloadMapper().map({
+            trackedEntityInstances: teis,
+        })) as TEIsPackage;
+
+        debug("TEIS package", { trackedEntityInstances, payload });
 
         const teisRepository = await this.getTeisRepository(instance);
         const syncResult = await teisRepository.save(payload, dataParams);

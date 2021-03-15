@@ -13,10 +13,10 @@ import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
 import { DownloadItem } from "../../storage/repositories/DownloadRepository";
 import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
-import { TEIPackageMapper } from "../../tracked-entity-instances/mapper/TEIsPackageMapper";
+import { TEIsPayloadMapper } from "../../tracked-entity-instances/mapper/TEIsPayloadMapper";
 import { SynchronizationPayload } from "../entities/SynchronizationPayload";
 import { SynchronizationResultType } from "../entities/SynchronizationType";
-import { PackageMapper } from "../mapper/PackageMapper";
+import { PayloadMapper } from "../mapper/PayloadMapper";
 import { GenericSyncUseCase } from "./GenericSyncUseCase";
 
 type DownloadErrors = string[];
@@ -71,7 +71,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
     private async mapToDownloadItems(
         rule: SynchronizationRule,
         resultType: SynchronizationResultType,
-        createMapper: (instance: Instance) => PackageMapper,
+        createMapper: (instance: Instance) => PayloadMapper,
         payload: SynchronizationPayload
     ) {
         const date = moment().format("YYYYMMDDHHmm");
@@ -128,7 +128,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                 ? await this.mapToDownloadItems(
                       rule,
                       "trackedEntityInstances",
-                      _instance => new TEIPackageMapper(),
+                      _instance => new TEIsPayloadMapper(),
                       { trackedEntityInstances }
                   )
                 : [];
@@ -165,7 +165,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
 
 //TODO: When we have a mapper for every Package type this class should be removed
 // And not use use case to map
-class GenericPackageMapper implements PackageMapper {
+class GenericPackageMapper implements PayloadMapper {
     constructor(private instance: Instance, private sync: GenericSyncUseCase) {}
 
     map(payload: SynchronizationPayload): Promise<SynchronizationPayload> {
