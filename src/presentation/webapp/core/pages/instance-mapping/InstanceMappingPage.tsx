@@ -21,6 +21,7 @@ import {
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
     ProgramIndicatorMappedModel,
+    TrackedEntityAttributeMappedModel,
 } from "../../../../../models/dhis/mapping";
 import MappingTable from "../../../../react/core/components/mapping-table/MappingTable";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
@@ -39,6 +40,7 @@ const config = {
             EventProgramWithDataElementsModel,
             EventProgramWithIndicatorsModel,
             ProgramIndicatorMappedModel,
+            TrackedEntityAttributeMappedModel,
         ],
     },
     orgUnit: {

@@ -191,9 +191,9 @@ describe("Sync metadata", () => {
         local.get("/dataStore/metadata-synchronization/instances-LOCAL", async () => ({}));
         local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
 
-        local.get("/trackedEntityInstances", async () => ({
-            trackedEntityInstances: [],
-        }));
+        // local.get("/trackedEntityInstances", async () => ({
+        //     trackedEntityInstances: [],
+        // }));
 
         const addEventsToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
             schema.db.events.insert(JSON.parse(request.requestBody));

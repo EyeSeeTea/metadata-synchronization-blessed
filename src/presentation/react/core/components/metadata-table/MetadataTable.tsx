@@ -43,7 +43,8 @@ export type MetadataTableFilters =
     | "orgUnit"
     | "lastUpdated"
     | "onlySelected"
-    | "disableFilterRows";
+    | "disableFilterRows"
+    | "programType";
 
 export interface MetadataTableProps
     extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
@@ -136,6 +137,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         "orgUnit",
         "lastUpdated",
         "onlySelected",
+        "programType",
     ],
     ...rest
 }) => {

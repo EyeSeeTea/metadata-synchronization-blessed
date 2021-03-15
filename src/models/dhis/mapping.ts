@@ -31,6 +31,7 @@ import {
     ProgramIndicatorModel,
     ProgramModel,
     ProgramStageModel,
+    TrackedEntityAttributeModel,
 } from "./metadata";
 
 export class CategoryOptionMappedModel extends CategoryOptionModel {
@@ -172,7 +173,7 @@ export class EventProgramWithDataElementsModel extends EventProgramModel {
 export class EventProgramWithProgramStagesModel extends EventProgramModel {
     protected static metadataType = "programWithProgramStages";
     protected static modelName = i18n.t("Tracker Program with Program Stages");
-    protected static childrenKeys = ["stages", "dataElements"];
+    protected static childrenKeys = ["stages", " dataElements"];
     protected static fields = programFieldsWithDataElements;
     protected static modelFilters: any = { programType: "WITH_REGISTRATION" };
 
@@ -217,6 +218,10 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
             ),
         }));
     };
+}
+
+export class TrackedEntityAttributeMappedModel extends TrackedEntityAttributeModel {
+    protected static mappingType = "trackedEntityAttribute";
 }
 
 export class GlobalCategoryOptionModel extends CategoryOptionModel {
