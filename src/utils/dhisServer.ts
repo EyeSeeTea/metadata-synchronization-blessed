@@ -50,6 +50,7 @@ export function startDhis(
                 ],
             }));
             this.get("/attributes", async () => ({ attributes: [] }));
+            this.get("/constants", async () => ({ constants: [] }));
             this.get("/me", async () => ({ userCredentials: { username: "test-user" } }));
             this.get("/me/authorization", async () => []);
             this.get("/userSettings", async () => ({
