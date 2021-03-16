@@ -84,13 +84,20 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
         if (mappingPath) {
             const parentMappedId = mappingPath[2];
             compositionRoot.mapping.getValidIds(instance, parentMappedId).then(setFilterRows);
-        } else if (mappingType === "programDataElements" && elements.length === 1) {
+        } else if (
+            (mappingType === "programDataElements" || mappingType === "trackerProgramStages") &&
+            elements.length === 1
+        ) {
             const programId = _.first(elements[0].split("-")) ?? elements[0];
-            const mappedProgramId = mapping["eventPrograms"][programId]?.mappedId;
+            const mappedProgram =
+                mapping["eventPrograms"][programId] || mapping["trackerPrograms"][programId];
+
+            const mappedProgramId = mappedProgram?.mappedId;
+
             if (!mappedProgramId) return;
 
             compositionRoot.mapping.getValidIds(instance, mappedProgramId).then(validIds => {
-                setFilterRows(buildDataElementFilterForProgram(validIds, elements[0], mapping));
+                setFilterRows(buildFilterForProgram(validIds, mappedProgramId));
             });
         }
     }, [compositionRoot, instance, api, mappingPath, elements, mapping, mappingType]);
@@ -175,14 +182,7 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
     );
 };
 
-const buildDataElementFilterForProgram = (
-    validIds: string[],
-    nestedId: string,
-    mapping: MetadataMappingDictionary
-): string[] | undefined => {
-    const originProgramId = nestedId.split("-")[0];
-    const { mappedId } = _.get(mapping, ["eventPrograms", originProgramId]) ?? {};
-
+const buildFilterForProgram = (validIds: string[], mappedId: string): string[] | undefined => {
     if (!mappedId || mappedId === EXCLUDED_KEY) return undefined;
     return [...validIds, mappedId];
 };

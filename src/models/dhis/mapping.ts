@@ -76,6 +76,10 @@ export class OrganisationUnitMappedModel extends OrganisationUnitModel {
     protected static mappingType = "organisationUnits";
 }
 
+export class ProgramStageMappedModel extends ProgramStageModel {
+    protected static mappingType = "programStages";
+}
+
 export class ProgramIndicatorMappedModel extends ProgramIndicatorModel {
     protected static mappingType = "aggregatedDataElements";
     protected static modelFilters: any = { programType: undefined };
@@ -87,10 +91,6 @@ export class ProgramIndicatorMappedModel extends ProgramIndicatorModel {
             return { ...rest, aggregateExportCategoryOptionCombo };
         });
     };
-}
-
-export class ProgramStageMappedModel extends ProgramStageModel {
-    protected static mappingType = "programStages";
 }
 
 export class AggregatedDataElementModel extends DataElementModel {
@@ -121,6 +121,7 @@ export class DataSetWithDataElementsModel extends DataSetModel {
 export class ProgramDataElementModel extends DataElementModel {
     protected static metadataType = "programDataElements";
     protected static mappingType = "programDataElements";
+    protected static parentMappingType = "eventPrograms";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
     protected static isSelectable = false;
@@ -128,9 +129,14 @@ export class ProgramDataElementModel extends DataElementModel {
     protected static modelFilters = { domainType: { neq: "AGGREGATE" } };
 }
 
-export class ProgramProgramStageModel extends ProgramStageModel {
-    protected static metadataType = "programProgramStage";
-    protected static mappingType = "programProgramStage";
+export class TrackerProgramDataElementModel extends ProgramDataElementModel {
+    protected static parentMappingType = "trackerProgramStages";
+}
+
+export class TrackerProgramStageMappedModel extends ProgramStageModel {
+    protected static metadataType = "trackerProgramStages";
+    protected static mappingType = "trackerProgramStages";
+    protected static parentMappingType = "trackerPrograms";
 }
 
 export class EventProgramModel extends ProgramModel {
@@ -164,6 +170,7 @@ export class EventProgramWithDataElementsModel extends EventProgramModel {
                             .map(({ dataElement }) => ({
                                 ...dataElement,
                                 id: `${program.id}-${programStageId}-${dataElement.id}`,
+                                parentId: `${program.id}`,
                                 model: ProgramDataElementModel,
                                 displayName:
                                     program.programStages.length > 1
@@ -179,9 +186,9 @@ export class EventProgramWithDataElementsModel extends EventProgramModel {
 export class EventProgramWithProgramStagesModel extends TrackerProgramModel {
     protected static metadataType = "programWithProgramStages";
     protected static modelName = i18n.t("Tracker Program with Program Stages");
-    protected static childrenKeys = ["stages", "dataElements"];
     protected static fields = programFieldsWithDataElements;
     protected static modelFilters: any = { programType: "WITH_REGISTRATION" };
+    protected static childrenKeys = ["stages", "dataElements"];
 
     protected static modelTransform = (
         objects: SelectedPick<D2ProgramSchema, typeof programFieldsWithDataElements>[]
@@ -190,13 +197,43 @@ export class EventProgramWithProgramStagesModel extends TrackerProgramModel {
             ...program,
             stages: program.programStages.map(programStage => ({
                 ...programStage,
-                model: ProgramProgramStageModel,
+                model: TrackerProgramStageMappedModel,
                 dataElements: programStage.programStageDataElements
                     .filter(({ dataElement }) => !!dataElement)
                     .map(({ dataElement }) => ({
                         ...dataElement,
                         id: `${program.id}-${programStage.id}-${dataElement.id}`,
-                        model: ProgramDataElementModel,
+                        model: TrackerProgramDataElementModel,
+                    })),
+            })),
+        }));
+    };
+}
+
+export class EventProgramWithProgramStagesMappedModel extends TrackerProgramModel {
+    protected static metadataType = "programWithProgramStages";
+    protected static modelName = i18n.t("Tracker Program with Program Stages");
+    protected static fields = programFieldsWithDataElements;
+    protected static modelFilters: any = { programType: "WITH_REGISTRATION" };
+    protected static childrenKeys = ["programStages", "dataElements"];
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2ProgramSchema, typeof programFieldsWithDataElements>[]
+    ) => {
+        return objects.map(program => ({
+            ...program,
+            programStages: program.programStages.map(programStage => ({
+                ...programStage,
+                id: `${program.id}-${programStage.id}`,
+                parentId: `${program.id}`,
+                model: TrackerProgramStageMappedModel,
+                dataElements: programStage.programStageDataElements
+                    .filter(({ dataElement }) => !!dataElement)
+                    .map(({ dataElement }) => ({
+                        ...dataElement,
+                        id: `${program.id}-${programStage.id}-${dataElement.id}`,
+                        parentId: `${program.id}-${programStage.id}`,
+                        model: TrackerProgramDataElementModel,
                     })),
             })),
         }));
@@ -227,11 +264,11 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
 }
 
 export class TrackedEntityAttributeMappedModel extends TrackedEntityAttributeModel {
-    protected static mappingType = "trackedEntityAttribute";
+    protected static mappingType = "trackedEntityAttributes";
 }
 
 export class RelationshipTypeMappedModel extends RelationshipTypeModel {
-    protected static mappingType = "relationshipType";
+    protected static mappingType = "relationshipTypes";
 }
 
 export class GlobalCategoryOptionModel extends CategoryOptionModel {

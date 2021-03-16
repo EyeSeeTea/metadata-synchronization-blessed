@@ -38,6 +38,7 @@ export abstract class D2Model {
     protected static modelFilters: any = {};
     protected static childrenKeys: string[] | undefined = undefined;
     protected static mappingType: string | undefined;
+    protected static parentMappingType: string | undefined;
     protected static isGlobalMapping = false;
     protected static isSelectable = true;
 
@@ -80,6 +81,10 @@ export abstract class D2Model {
 
     public static getMappingType(): string | undefined {
         return this.mappingType;
+    }
+
+    public static getParentMappingType(): string | undefined {
+        return this.parentMappingType;
     }
 
     public static getIsGlobalMapping(): boolean {

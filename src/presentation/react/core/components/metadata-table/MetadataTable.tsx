@@ -527,6 +527,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .list({ ...filters, selectedIds, filterRows, fields, includeParents }, remoteInstance)
             .then(({ objects, pager }) => {
                 const rows = model.getApiModelTransform()((objects as unknown) as MetadataType[]);
+
                 notifyRowsChange(rows);
 
                 setRows(rows);
