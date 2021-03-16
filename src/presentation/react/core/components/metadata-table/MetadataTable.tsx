@@ -193,6 +193,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const changeModelFilter = (modelName: string) => {
         if (models.length === 0) throw new Error("You need to provide at least one model");
         const model = _.find(models, model => model.getMetadataType() === modelName) ?? models[0];
+        setRows([]);
         updateModel(() => model);
 
         notifyNewModel(model);
