@@ -1,7 +1,9 @@
+import { EventsPostResponse } from "d2-api/api/events";
 import _ from "lodash";
 import moment from "moment";
 import { DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
+import { EventsPackage } from "../../domain/events/entities/EventsPackage";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
 import { EventsRepository } from "../../domain/events/repositories/EventsRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
@@ -11,7 +13,7 @@ import {
 } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { DataImportParams } from "../../types/d2";
-import { D2Api, Pager } from "../../types/d2-api";
+import { D2Api } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
@@ -63,8 +65,8 @@ export class EventsD2ApiRepository implements EventsRepository {
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
         const fetchApi = async (orgUnit: string, page: number) => {
-            return this.api
-                .get<EventExportResult>("/events", {
+            return this.api.events
+                .get({
                     pageSize: 250,
                     totalPages: true,
                     page,
@@ -111,8 +113,8 @@ export class EventsD2ApiRepository implements EventsRepository {
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
         const fetchApi = async (programStage: string, orgUnit: string, page: number) => {
-            return this.api
-                .get<EventExportResult>("/events", {
+            return this.api.events
+                .get({
                     pageSize: 250,
                     totalPages: true,
                     page,
@@ -163,9 +165,8 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         for (const programStage of programStageIds) {
             for (const ids of _.chunk(filter, 300)) {
-                const { events } = await this.api
-                    .get<EventExportResult>("/events", {
-                        paging: false,
+                const { events } = await this.api.events
+                    .getAll({
                         programStage,
                         event: ids.join(";"),
                     })
@@ -182,13 +183,12 @@ export class EventsD2ApiRepository implements EventsRepository {
     }
 
     public async save(
-        data: object,
-        additionalParams: DataImportParams | undefined
+        data: EventsPackage,
+        additionalParams: DataImportParams = {}
     ): Promise<SynchronizationResult> {
         try {
-            const response = await this.api
-                .post<EventsPostResponse>(
-                    "/events",
+            const { response } = await this.api.events
+                .postAsync(
                     {
                         idScheme: "UID",
                         dataElementIdScheme: "UID",
@@ -196,8 +196,6 @@ export class EventsD2ApiRepository implements EventsRepository {
                         eventIdScheme: "UID",
                         preheatCache: false,
                         skipExistingCheck: false,
-                        format: "json",
-                        async: false,
                         dryRun: false,
                         ...additionalParams,
                     },
@@ -205,7 +203,18 @@ export class EventsD2ApiRepository implements EventsRepository {
                 )
                 .getData();
 
-            return this.cleanEventsImportResponse(response);
+            const result = await this.api.system.waitFor(response.jobType, response.id).getData();
+
+            if (!result) {
+                return {
+                    status: "ERROR",
+                    instance: this.instance.toPublicObject(),
+                    date: new Date(),
+                    type: "aggregated",
+                };
+            }
+
+            return this.cleanEventsImportResponse(result);
         } catch (error) {
             if (error?.response?.data) {
                 return this.cleanEventsImportResponse(error.response.data);
@@ -241,7 +250,7 @@ export class EventsD2ApiRepository implements EventsRepository {
         ]);
 
         return {
-            status,
+            status: status === "OK" ? "SUCCESS" : "ERROR",
             message,
             stats,
             instance: this.instance.toPublicObject(),
@@ -250,30 +259,4 @@ export class EventsD2ApiRepository implements EventsRepository {
             type: "events",
         };
     }
-}
-
-interface EventsPostResponse {
-    status: "SUCCESS" | "ERROR";
-    message?: string;
-    response: {
-        imported: number;
-        updated: number;
-        deleted: number;
-        ignored: number;
-        total: number;
-        importSummaries?: {
-            description?: string;
-            reference: string;
-            conflicts?: {
-                object: string;
-                value: string;
-            }[];
-        }[];
-    };
-}
-
-type EventExportType = ProgramEvent & { event: string };
-interface EventExportResult {
-    events: EventExportType[];
-    pager: Pager;
 }

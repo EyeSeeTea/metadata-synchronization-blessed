@@ -1,6 +1,5 @@
 import _ from "lodash";
-import moment from "moment";
-import { Moment } from "moment";
+import moment, { Moment } from "moment";
 import { AggregatedPackage } from "../../domain/aggregated/entities/AggregatedPackage";
 import { DataValue } from "../../domain/aggregated/entities/DataValue";
 import { MappedCategoryOption } from "../../domain/aggregated/entities/MappedCategoryOption";
@@ -46,8 +45,8 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             : undefined;
 
         try {
-            const { dataValues = [] } = await this.api
-                .get<AggregatedPackage>("/dataValueSets", {
+            const { dataValues = [] } = await this.api.dataValues
+                .getSet({
                     dataElementIdScheme: "UID",
                     orgUnitIdScheme: "UID",
                     categoryOptionComboIdScheme: "UID",
@@ -278,10 +277,8 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         params: DataImportParams | undefined
     ): Promise<SynchronizationResult> {
         try {
-            const response = await this.api
-                // TODO: Use this.api.dataValues.postSet
-                .post<DataValueSetsPostResponse>(
-                    "/dataValueSets",
+            const { response } = await this.api.dataValues
+                .postSetAsync(
                     {
                         idScheme: params?.idScheme ?? "UID",
                         dataElementIdScheme: params?.dataElementIdScheme ?? "UID",
@@ -289,17 +286,25 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                         preheatCache: params?.preheatCache ?? false,
                         skipExistingCheck: params?.skipExistingCheck ?? false,
                         skipAudit: params?.skipAudit ?? false,
-                        format: params?.format ?? "json",
-                        async: params?.async ?? false,
                         dryRun: params?.dryRun ?? false,
-                        // TODO: Use importStrategy here
-                        strategy: params?.strategy ?? "NEW_AND_UPDATES",
+                        importStrategy: params?.strategy ?? "CREATE_AND_UPDATE",
                     },
                     data
                 )
                 .getData();
 
-            return this.cleanAggregatedImportResponse(response);
+            const result = await this.api.system.waitFor(response.jobType, response.id).getData();
+
+            if (!result) {
+                return {
+                    status: "ERROR",
+                    instance: this.instance.toPublicObject(),
+                    date: new Date(),
+                    type: "aggregated",
+                };
+            }
+
+            return this.cleanAggregatedImportResponse(result);
         } catch (error) {
             if (error?.response?.data) {
                 return this.cleanAggregatedImportResponse(error.response.data);
