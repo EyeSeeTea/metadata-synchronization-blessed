@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-15T12:58:55.010Z\n"
-"PO-Revision-Date: 2021-03-15T12:58:55.010Z\n"
+"POT-Creation-Date: 2021-03-16T12:42:37.112Z\n"
+"PO-Revision-Date: 2021-03-16T12:42:37.112Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -133,6 +133,12 @@ msgid "Tracker Program with Program Stages"
 msgstr ""
 
 msgid "Program with Indicators"
+msgstr ""
+
+msgid "Tracked Entity Attribute (to TEI)"
+msgstr ""
+
+msgid "Tracked Entity Attribute (to DE)"
 msgstr ""
 
 msgid "Unauthorized - You do not have permission to view this page."

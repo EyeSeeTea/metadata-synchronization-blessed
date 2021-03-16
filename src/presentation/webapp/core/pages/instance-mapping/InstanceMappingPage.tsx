@@ -11,7 +11,7 @@ import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
-    EventProgramWithProgramStagesModel,
+    EventProgramWithProgramStagesMappedModel,
     GlobalCategoryComboModel,
     GlobalCategoryModel,
     GlobalCategoryOptionGroupModel,
@@ -23,7 +23,8 @@ import {
     OrganisationUnitMappedModel,
     ProgramIndicatorMappedModel,
     RelationshipTypeMappedModel,
-    TrackedEntityAttributeMappedModel,
+    TrackedEntityAttributeToDEMappedModel,
+    TrackedEntityAttributeToTEIMappedModel,
 } from "../../../../../models/dhis/mapping";
 import MappingTable from "../../../../react/core/components/mapping-table/MappingTable";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
@@ -40,11 +41,12 @@ const config = {
         title: i18n.t("Program (events) mapping"),
         models: [
             EventProgramWithDataElementsModel,
-            EventProgramWithProgramStagesModel,
+            EventProgramWithProgramStagesMappedModel,
             EventProgramWithIndicatorsModel,
             ProgramIndicatorMappedModel,
             RelationshipTypeMappedModel,
-            TrackedEntityAttributeMappedModel,
+            TrackedEntityAttributeToTEIMappedModel,
+            TrackedEntityAttributeToDEMappedModel,
         ],
     },
     orgUnit: {

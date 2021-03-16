@@ -19,14 +19,13 @@ import {
 import { cleanOrgUnitPath } from "../../../../../domain/synchronization/utils";
 import i18n from "../../../../../locales";
 import { D2Model } from "../../../../../models/dhis/default";
-import { ProgramDataElementModel } from "../../../../../models/dhis/mapping";
 import { DataElementModel, OrganisationUnitModel } from "../../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../../utils/d2";
 import { useAppContext } from "../../contexts/AppContext";
 import MappingDialog, { MappingDialogConfig } from "../mapping-dialog/MappingDialog";
 import MappingWizard, { MappingWizardConfig, prepareSteps } from "../mapping-wizard/MappingWizard";
 import MetadataTable, { MetadataTableProps } from "../metadata-table/MetadataTable";
-import { cleanNestedMappedId, EXCLUDED_KEY, getChildrenRows } from "./utils";
+import { cleanNestedMappedId, EXCLUDED_KEY, getAllChildrenRows, getChildrenRows } from "./utils";
 
 const useStyles = makeStyles({
     iconButton: {
@@ -460,12 +459,13 @@ export default function MappingTable({
     const rowConfig = useCallback(
         (row: MetadataType): RowConfig => {
             const mappingType = row.model.getMappingType();
+            const parentMappingType = row.model.getParentMappingType();
 
             if (!mappingType) {
                 return { selectable: false };
-            } else if (mappingType === ProgramDataElementModel.getMappingType()) {
-                const parentId = _.first(row.id.split("-")) ?? row.id;
-                const parentMapping = _.get(mapping, ["eventPrograms", parentId, "mappedId"]);
+            } else if (parentMappingType) {
+                const parentId = (row.parentId as string) ?? row.id;
+                const parentMapping = _.get(mapping, [parentMappingType, parentId, "mappedId"]);
                 const isParentMapped = !!parentMapping && parentMapping !== EXCLUDED_KEY;
                 const { mappedId } = getMappedItem(row);
 
@@ -797,7 +797,7 @@ export default function MappingTable({
 
     const updateRows = useCallback(
         (rows: MetadataType[]) => {
-            setRows([...rows, ...getChildrenRows(rows, model)]);
+            setRows([...rows, ...getAllChildrenRows(rows, model)]);
         },
         [model]
     );
