@@ -263,8 +263,20 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
     };
 }
 
-export class TrackedEntityAttributeMappedModel extends TrackedEntityAttributeModel {
-    protected static mappingType = "trackedEntityAttributes";
+export class DataElementFromTEIMappedModel extends DataElementModel {
+    protected static metadataType = "trackedEntityAttributesToDE";
+}
+
+export class TrackedEntityAttributeToTEIMappedModel extends TrackedEntityAttributeModel {
+    protected static modelName = i18n.t("Tracked Entity Attribute (to TEI)");
+    protected static metadataType = "trackedEntityAttributesToTEI";
+    protected static mappingType = "trackedEntityAttributesToTEI";
+}
+
+export class TrackedEntityAttributeToDEMappedModel extends TrackedEntityAttributeModel {
+    protected static modelName = i18n.t("Tracked Entity Attribute (to DE)");
+    protected static metadataType = "trackedEntityAttributesToDE";
+    protected static mappingType = "trackedEntityAttributesToDE";
 }
 
 export class RelationshipTypeMappedModel extends RelationshipTypeModel {
