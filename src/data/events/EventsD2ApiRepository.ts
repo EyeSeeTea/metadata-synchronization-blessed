@@ -232,14 +232,18 @@ export class EventsD2ApiRepository implements EventsRepository {
     private cleanEventsImportResponse(importResult: EventsPostResponse): SynchronizationResult {
         const { status, message, response } = importResult;
 
-        const errors =
-            response.importSummaries?.flatMap(
-                ({ reference = "", description = "", conflicts }) =>
-                    conflicts?.map(({ object, value }) => ({
-                        id: reference,
-                        message: _([description, object, value]).compact().join(" "),
-                    })) ?? [{ id: reference, message: description }]
-            ) ?? [];
+        const errors = _(response.importSummaries)
+            .flatMap(element => {
+                if (element.status !== "ERROR") return undefined;
+                return (
+                    element.conflicts?.map(({ object, value }) => ({
+                        id: element.reference ?? "",
+                        message: _([element.description, object, value]).compact().join(" "),
+                    })) ?? [{ id: element.reference ?? "", message: element.description }]
+                );
+            })
+            .compact()
+            .value();
 
         const stats: SynchronizationStats = _.pick(response, [
             "imported",
