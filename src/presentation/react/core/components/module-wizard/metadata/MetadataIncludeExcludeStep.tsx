@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { D2SchemaProperties } from "d2-api/schemas";
+import { D2SchemaProperties } from "@eyeseetea/d2-api/schemas";
 import { MultiSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";

@@ -1,4 +1,4 @@
-import { FilterBase, FilterValueBase } from "d2-api/api/common";
+import { FilterBase, FilterValueBase } from "@eyeseetea/d2-api/api/common";
 import _ from "lodash";
 import moment from "moment";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";

@@ -1,4 +1,4 @@
-import { EventsPostResponse } from "d2-api/api/events";
+import { EventsPostResponse } from "@eyeseetea/d2-api/api/events";
 import _ from "lodash";
 import moment from "moment";
 import { DataSynchronizationParams } from "../../domain/aggregated/types";

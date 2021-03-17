@@ -1,4 +1,4 @@
-import { useD2ApiData } from "d2-api";
+import { useD2ApiData } from "@eyeseetea/d2-api";
 import { MultiSelector } from "d2-ui-components";
 import _ from "lodash";
 import React, { useMemo } from "react";

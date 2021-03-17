@@ -1,4 +1,4 @@
-import { FilterSingleOperatorBase } from "d2-api/api/common";
+import { FilterSingleOperatorBase } from "@eyeseetea/d2-api/api/common";
 import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
 import _ from "lodash";
 import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
