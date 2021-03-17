@@ -7,7 +7,6 @@ import {
     ObjectsTable,
     ObjectsTableDetailField,
     ReferenceObject,
-    SearchResult,
     ShareUpdate,
     TableAction,
     TableColumn,
@@ -515,10 +514,7 @@ const SyncRulesPage: React.FC = () => {
         },
     ];
 
-    const onSearchRequest = async (key: string) =>
-        api
-            .get<SearchResult>("/sharing/search", { key })
-            .getData();
+    const onSearchRequest = (key: string) => api.sharing.search({ key }).getData();
 
     const onSharingChanged = async (updatedAttributes: ShareUpdate) => {
         if (!sharingSettingsObject) return;
