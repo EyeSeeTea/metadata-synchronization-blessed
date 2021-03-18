@@ -10,13 +10,15 @@ import {
     ShareUpdate,
     TableAction,
     TableColumn,
+    TableGlobalAction,
     TableSelection,
     TableState,
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FileRejection } from "react-dropzone";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
@@ -37,6 +39,7 @@ import {
     UserInfo,
 } from "../../../../../utils/permissions";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
+import { Dropzone, DropzoneRef } from "../../../../react/core/components/dropzone/Dropzone";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import {
     PullRequestCreation,
@@ -77,6 +80,7 @@ const SyncRulesPage: React.FC = () => {
     const { title } = config[type];
 
     const [rows, setRows] = useState<SynchronizationRule[]>([]);
+    const fileRef = useRef<DropzoneRef>(null);
 
     const [refreshKey, setRefreshKey] = useState(0);
     const [selection, updateSelection] = useState<TableSelection[]>([]);
@@ -449,6 +453,30 @@ const SyncRulesPage: React.FC = () => {
         return appConfigurator;
     };
 
+    const openImportDialog = useCallback(async () => {
+        fileRef.current?.openDialog();
+    }, [fileRef]);
+
+    const handleFileUpload = useCallback(
+        async (files: File[], rejections: FileRejection[]) => {
+            if (files.length === 0 && rejections.length > 0) {
+                snackbar.error(i18n.t("Couldn't read the file because it's not valid"));
+            } else {
+                loading.show(true, i18n.t("Importing rule(s)"));
+                try {
+                    await compositionRoot.rules.import(files);
+                    snackbar.success(i18n.t("Imported {{n}} rules", { n: 0 }));
+                    setRefreshKey(Math.random());
+                } catch (err) {
+                    snackbar.error((err && err.message) || err.toString());
+                } finally {
+                    loading.reset();
+                }
+            }
+        },
+        [snackbar, compositionRoot, loading]
+    );
+
     const actions: TableAction<SynchronizationRule>[] = [
         {
             name: "details",
@@ -514,6 +542,18 @@ const SyncRulesPage: React.FC = () => {
         },
     ];
 
+    const globalActions: TableGlobalAction[] = useMemo(
+        () => [
+            {
+                name: "import",
+                text: i18n.t("Import sync rules"),
+                icon: <Icon>arrow_upward</Icon>,
+                onClick: openImportDialog,
+            },
+        ],
+        [openImportDialog]
+    );
+
     const onSearchRequest = (key: string) => api.sharing.search({ key }).getData();
 
     const onSharingChanged = async (updatedAttributes: ShareUpdate) => {
@@ -569,18 +609,28 @@ const SyncRulesPage: React.FC = () => {
     return (
         <TestWrapper>
             <PageHeader title={title} onBackClick={back} />
-            <ObjectsTable<SynchronizationRule>
-                rows={rows}
-                columns={columns}
-                details={details}
-                actions={actions}
-                selection={selection}
-                onChange={handleTableChange}
-                onActionButtonClick={appConfigurator ? createRule : undefined}
-                filterComponents={renderCustomFilters}
-                searchBoxLabel={i18n.t("Search by name")}
-                onChangeSearch={setSearchFilter}
-            />
+
+            <Dropzone
+                ref={fileRef}
+                accept={
+                    "application/zip,application/zip-compressed,application/x-zip-compressed,application/json"
+                }
+                onDrop={handleFileUpload}
+            >
+                <ObjectsTable<SynchronizationRule>
+                    rows={rows}
+                    columns={columns}
+                    details={details}
+                    actions={actions}
+                    selection={selection}
+                    onChange={handleTableChange}
+                    onActionButtonClick={appConfigurator ? createRule : undefined}
+                    filterComponents={renderCustomFilters}
+                    searchBoxLabel={i18n.t("Search by name")}
+                    onChangeSearch={setSearchFilter}
+                    globalActions={globalActions}
+                />
+            </Dropzone>
 
             {toDelete.length > 0 && (
                 <ConfirmationDialog
