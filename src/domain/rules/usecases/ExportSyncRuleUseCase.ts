@@ -25,11 +25,9 @@ export class ExportSyncRuleUseCase implements UseCase {
                 .downloadRepository()
                 .downloadFile(exportRules[0].name, exportRules[0].content);
         } else {
-            this.repositoryFactory
+            await this.repositoryFactory
                 .downloadRepository()
                 .downloadZippedFiles(`sync-rules-${date}`, exportRules);
         }
-
-        console.log("export", rules);
     }
 }
