@@ -16,8 +16,8 @@ export class ExportSyncRuleUseCase implements UseCase {
         const date = moment().format("YYYYMMDDHHmm");
 
         const exportRules = _.compact(rules).map(rule => {
-            const name = _.kebabCase(`sync-rule-${rule.name}-${date}.json`);
-            return { name, content: rule.toObject() };
+            const ruleName = _.kebabCase(rule.name);
+            return { name: `sync-rule-${ruleName}-${date}.json`, content: rule.toObject() };
         });
 
         if (exportRules.length === 1) {

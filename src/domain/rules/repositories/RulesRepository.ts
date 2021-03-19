@@ -10,5 +10,5 @@ export interface RulesRepository {
     list(): Promise<SynchronizationRule[]>;
     save(report: SynchronizationRule): Promise<void>;
     delete(id: string): Promise<void>;
-    import(files: File[]): Promise<void>;
+    import(files: File[]): Promise<SynchronizationRule[]>;
 }

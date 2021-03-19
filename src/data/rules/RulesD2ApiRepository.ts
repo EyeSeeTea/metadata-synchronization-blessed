@@ -13,13 +13,13 @@ import { Namespace } from "../storage/Namespaces";
 export class RulesD2ApiRepository implements RulesRepository {
     constructor(private configRepository: ConfigRepository) {}
 
-    public async import(files: File[]): Promise<void> {
+    public async import(files: File[]): Promise<SynchronizationRule[]> {
         // Rules can be either JSON files or zip files with multiple JSON files
         const items = await promiseMap(files, async file => {
             if (file.type === "application/json") {
                 try {
-                    const data = await file.arrayBuffer();
-                    const payload = JSON.parse(data.toString());
+                    const data = await file.text();
+                    const payload = JSON.parse(data);
                     return payload;
                 } catch (error) {
                     return undefined;
@@ -35,14 +35,16 @@ export class RulesD2ApiRepository implements RulesRepository {
             );
         });
 
-        // TODO: Add validation
+        // TODO: Add validation and update owner
         const rules = _(items)
             .compact()
             .flatten()
-            .map(data => SynchronizationRule.build(data))
+            .map(data => SynchronizationRule.build(data).update({ created: new Date() }))
             .value();
 
         await promiseMap(rules, rule => this.save(rule));
+
+        return rules;
     }
 
     public async getById(id: string): Promise<SynchronizationRule | undefined> {

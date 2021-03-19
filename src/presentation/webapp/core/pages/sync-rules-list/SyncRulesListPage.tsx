@@ -256,6 +256,15 @@ const SyncRulesPage: React.FC = () => {
         }
     };
 
+    const exportModule = useCallback(
+        async (ids: string[]) => {
+            loading.show(true, i18n.t("Exporting synchronization rules"));
+            await compositionRoot.rules.export(ids);
+            loading.reset();
+        },
+        [loading, compositionRoot]
+    );
+
     const back = () => {
         history.push("/dashboard");
     };
@@ -464,8 +473,8 @@ const SyncRulesPage: React.FC = () => {
             } else {
                 loading.show(true, i18n.t("Importing rule(s)"));
                 try {
-                    await compositionRoot.rules.import(files);
-                    snackbar.success(i18n.t("Imported {{n}} rules", { n: 0 }));
+                    const rules = await compositionRoot.rules.import(files);
+                    snackbar.success(i18n.t("Imported {{n}} rules", { n: rules.length }));
                     setRefreshKey(Math.random());
                 } catch (err) {
                     snackbar.error((err && err.message) || err.toString());
@@ -511,7 +520,7 @@ const SyncRulesPage: React.FC = () => {
         },
         {
             name: "download",
-            text: i18n.t("Download JSON"),
+            text: i18n.t("Download JSON Payload"),
             multiple: false,
             onClick: downloadJSON,
             icon: <Icon>cloud_download</Icon>,
@@ -523,6 +532,13 @@ const SyncRulesPage: React.FC = () => {
             isActive: verifyUserCanConfigure,
             onClick: replicateRule,
             icon: <Icon>content_copy</Icon>,
+        },
+        {
+            name: "export",
+            text: i18n.t("Export"),
+            multiple: false,
+            onClick: exportModule,
+            icon: <Icon>arrow_downwards</Icon>,
         },
         {
             name: "toggleEnable",
