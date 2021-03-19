@@ -5,7 +5,7 @@ import { Instance } from "../../instance/entities/Instance";
 export class ImportSyncRuleUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(files: File[]): Promise<void> {
-        console.log(files, this.localInstance, this.repositoryFactory);
+    public async execute(files: File[]): Promise<void> {        
+        await this.repositoryFactory.rulesRepository(this.localInstance).import(files);
     }
 }

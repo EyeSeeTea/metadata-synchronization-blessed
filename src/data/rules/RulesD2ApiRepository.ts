@@ -1,3 +1,5 @@
+import JSZip from "jszip";
+import _ from "lodash";
 import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import {
     SynchronizationRule,
@@ -5,10 +7,43 @@ import {
 } from "../../domain/rules/entities/SynchronizationRule";
 import { RulesRepository } from "../../domain/rules/repositories/RulesRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
+import { promiseMap } from "../../utils/common";
 import { Namespace } from "../storage/Namespaces";
 
 export class RulesD2ApiRepository implements RulesRepository {
     constructor(private configRepository: ConfigRepository) {}
+
+    public async import(files: File[]): Promise<void> {
+        // Rules can be either JSON files or zip files with multiple JSON files
+        const items = await promiseMap(files, async file => {
+            if (file.type === "application/json") {
+                try {
+                    const data = await file.arrayBuffer();
+                    const payload = JSON.parse(data.toString());
+                    return payload;
+                } catch (error) {
+                    return undefined;
+                }
+            }
+
+            const zip = new JSZip();
+            const contents = await zip.loadAsync(file);
+            const modulePaths = this.getModulePaths(contents);
+
+            return promiseMap(modulePaths, async modulePath =>
+                this.getJsonFromFile<SynchronizationRuleData>(zip, modulePath)
+            );
+        });
+
+        // TODO: Add validation
+        const rules = _(items)
+            .compact()
+            .flatten()
+            .map(data => SynchronizationRule.build(data))
+            .value();
+
+        await promiseMap(rules, rule => this.save(rule));
+    }
 
     public async getById(id: string): Promise<SynchronizationRule | undefined> {
         const storageClient = await this.getStorageClient();
@@ -38,11 +73,11 @@ export class RulesD2ApiRepository implements RulesRepository {
         return stores.map(data => SynchronizationRule.build(data));
     }
 
-    public async save(report: SynchronizationRule): Promise<void> {
+    public async save(rule: SynchronizationRule): Promise<void> {
         const storageClient = await this.getStorageClient();
         await storageClient.saveObjectInCollection<SynchronizationRuleData>(
             Namespace.RULES,
-            report.toObject()
+            rule.toObject()
         );
     }
 
@@ -53,5 +88,21 @@ export class RulesD2ApiRepository implements RulesRepository {
 
     private getStorageClient(): Promise<StorageClient> {
         return this.configRepository.getStorageClient();
+    }
+
+    private async getJsonFromFile<T>(zip: JSZip, filename: string): Promise<T | undefined> {
+        const obj = zip.file(filename);
+        if (!obj) return;
+        const blob = await obj.async("blob");
+        const text = await blob.text();
+        return JSON.parse(text) as T;
+    }
+
+    private getModulePaths(contents: JSZip) {
+        return _(contents.files)
+            .pickBy((_zip, path) => path.endsWith(".json"))
+            .keys()
+            .compact()
+            .value();
     }
 }
