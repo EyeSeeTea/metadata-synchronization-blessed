@@ -536,7 +536,7 @@ const SyncRulesPage: React.FC = () => {
         {
             name: "export",
             text: i18n.t("Export"),
-            multiple: false,
+            multiple: true,
             onClick: exportModule,
             icon: <Icon>arrow_downwards</Icon>,
         },
