@@ -41,7 +41,28 @@
                     "events": []
                 }
             ],
-            "relationships": [],
+            "relationships": [
+                {
+                    "lastUpdated": "2021-02-25T10:33:25.962",
+                    "created": "2021-02-25T10:33:25.962",
+                    "relationshipName": "Siblings",
+                    "bidirectional": true,
+                    "relationshipType": "myB1p3dl2vX",
+                    "relationship": "NePJbSIUriH",
+                    "from": {
+                        "trackedEntityInstance": {
+                            "trackedEntityInstance": "yS8wPJp8AcN",
+                            "programOwners": []
+                        }
+                    },
+                    "to": {
+                        "trackedEntityInstance": {
+                            "trackedEntityInstance": "k6hMJ43yksj",
+                            "programOwners": []
+                        }
+                    }
+                }
+            ],
             "attributes": [
                 {
                     "lastUpdated": "2021-03-12T07:10:43.173",

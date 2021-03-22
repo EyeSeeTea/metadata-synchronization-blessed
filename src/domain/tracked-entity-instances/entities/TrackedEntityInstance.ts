@@ -1,10 +1,18 @@
 import { Enrollment } from "./Enrollment";
+import { Relationship } from "./Relationship";
 import { TrakedEntityAttribute } from "./TrackedEntityAttribute";
 
 export interface ProgramOwner {
     ownerOrgUnit: string;
     program: string;
     trackedEntityInstance: string;
+}
+
+export interface TEIRef {
+    trackedEntityInstance: {
+        trackedEntityInstance: string;
+        programOwners: ProgramOwner[];
+    };
 }
 
 export interface TrackedEntityInstance {
@@ -20,6 +28,6 @@ export interface TrackedEntityInstance {
     featureType: string;
     programOwners: ProgramOwner[];
     enrollments: Enrollment[];
-    relationships: string[];
+    relationships: Relationship[];
     attributes: TrakedEntityAttribute[];
 }

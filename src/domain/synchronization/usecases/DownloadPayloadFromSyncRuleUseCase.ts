@@ -44,7 +44,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                 : await this.mapToDownloadItems(
                       rule,
                       rule.type,
-                      instance => new GenericPackageMapper(instance, sync),
+                      instance => Promise.resolve(new GenericPackageMapper(instance, sync)),
                       payload
                   );
 
@@ -71,7 +71,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
     private async mapToDownloadItems(
         rule: SynchronizationRule,
         resultType: SynchronizationResultType,
-        createMapper: (instance: Instance) => PayloadMapper,
+        createMapper: (instance: Instance) => Promise<PayloadMapper>,
         payload: SynchronizationPayload
     ) {
         const date = moment().format("YYYYMMDDHHmm");
@@ -84,7 +84,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
 
             if (instance) {
                 try {
-                    const mappedPayload = await createMapper(instance).map(payload);
+                    const mappedPayload = await (await createMapper(instance)).map(payload);
 
                     return {
                         name: _(["synchronization", rule.name, resultType, instance.name, date])
@@ -116,7 +116,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                 ? await this.mapToDownloadItems(
                       rule,
                       "events",
-                      instance => new GenericPackageMapper(instance, sync),
+                      instance => Promise.resolve(new GenericPackageMapper(instance, sync)),
                       { events }
                   )
                 : [];
@@ -128,7 +128,11 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                 ? await this.mapToDownloadItems(
                       rule,
                       "trackedEntityInstances",
-                      _instance => new TEIsPayloadMapper(),
+                      async instance => {
+                          const mapping = await sync.getMapping(instance);
+
+                          return new TEIsPayloadMapper(mapping);
+                      },
                       { trackedEntityInstances }
                   )
                 : [];
@@ -148,7 +152,8 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                 ? await this.mapToDownloadItems(
                       rule,
                       "aggregated",
-                      instance => new GenericPackageMapper(instance, aggregatedSync),
+                      instance =>
+                          Promise.resolve(new GenericPackageMapper(instance, aggregatedSync)),
                       { dataValues }
                   )
                 : [];

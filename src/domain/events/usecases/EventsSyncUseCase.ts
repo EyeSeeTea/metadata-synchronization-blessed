@@ -124,7 +124,9 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             ? trackedEntityInstances.map(tei => ({ ...tei, relationships: [] }))
             : trackedEntityInstances;
 
-        const payload = (await new TEIsPayloadMapper().map({
+        const mapping = await this.getMapping(instance);
+
+        const payload = (await new TEIsPayloadMapper(mapping).map({
             trackedEntityInstances: teis,
         })) as TEIsPackage;
 

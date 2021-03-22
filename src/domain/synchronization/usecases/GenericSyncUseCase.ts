@@ -122,7 +122,7 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected async getMapping(instance: Instance): Promise<MetadataMappingDictionary> {
+    public async getMapping(instance: Instance): Promise<MetadataMappingDictionary> {
         const { originInstance: originInstanceId } = this.builder;
 
         // If sync is LOCAL -> REMOTE, use the destination instance mapping
