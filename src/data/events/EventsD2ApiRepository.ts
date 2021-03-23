@@ -230,9 +230,7 @@ export class EventsD2ApiRepository implements EventsRepository {
     }
 
     private cleanEventsImportResponse(importResult: EventsPostResponse): SynchronizationResult {
-        const { status, message, response } = importResult;
-
-        const errors = _(response.importSummaries)
+        const errors = _(importResult.importSummaries)
             .flatMap(element => {
                 if (element.status !== "ERROR") return undefined;
                 return (
@@ -245,7 +243,7 @@ export class EventsD2ApiRepository implements EventsRepository {
             .compact()
             .value();
 
-        const stats: SynchronizationStats = _.pick(response, [
+        const stats: SynchronizationStats = _.pick(importResult, [
             "imported",
             "updated",
             "ignored",
@@ -254,8 +252,7 @@ export class EventsD2ApiRepository implements EventsRepository {
         ]);
 
         return {
-            status: status === "OK" ? "SUCCESS" : "ERROR",
-            message,
+            status: importResult.status,
             stats,
             instance: this.instance.toPublicObject(),
             errors,
