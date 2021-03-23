@@ -1,3 +1,4 @@
+import { mapOptionValue } from "../../../utils/synchronization";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
 import { PayloadMapper } from "../../synchronization/mapper/PayloadMapper";
@@ -61,9 +62,15 @@ export class TEIsPayloadMapper implements PayloadMapper {
                     const mappedAttributeId =
                         trackedEntityAttributesToTEI[att.attribute]?.mappedId ?? att.attribute;
 
+                    const mappedValue = mapOptionValue(att.value, [
+                        trackedEntityAttributesToTEI[att.attribute]?.mapping ?? {},
+                        this.mapping,
+                    ]);
+
                     return {
                         ...att,
                         attribute: mappedAttributeId,
+                        value: mappedValue,
                     };
                 }),
             };

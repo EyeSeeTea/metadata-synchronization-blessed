@@ -8,12 +8,15 @@ import mappingWithRelationshipTypes from "./data/mapping/mappingWithRelationship
 import mappingWithOrgUnits from "./data/mapping/mappingWithOrgUnits.json";
 import mappingTrackerProgramToTrackerProgram from "./data/mapping/mappingTrackerProgramToTrackerProgram.json";
 import mappingTEAttToTEAtt from "./data/mapping/mappingTEAttToTEAtt.json";
+import mappingTEAttToTEAtt_WithOptions from "./data/mapping/mappingTEAttToTEAtt_WithOptions.json";
+import mappingTEAttToTEAtt_WithGlobalOptions from "./data/mapping/mappingTEAttToTEAtt_WithOptions.json";
 
 import twoRelatedTEIsMapWithRelationship from "./data/expected/twoRelatedTEIsMapWithRelationship.json";
 import singleTEIMapWithRelationship from "./data/expected/singleTEIMapWithRelationship.json";
 import singleTEIMapWithOrgUnit from "./data/expected/singleTEIMapWithOrgUnit.json";
 import singleTEIMapWithProgram from "./data/expected/singleTEIMapWithProgram.json";
 import singleTEIMapWithTEAttToTEAtt from "./data/expected/singleTEIMapWithTEAttToTEAtt.json";
+import singleTEIMapWithTEAttToTEAtt_WithOptions from "./data/expected/singleTEIMapWithTEAttToTEAtt_WithOptions.json";
 
 describe("TEIsPayloadMapper", () => {
     it("should return the same payload if mapping is empty", async () => {
@@ -69,6 +72,24 @@ describe("TEIsPayloadMapper", () => {
         const mappedPayload = await teiMapper.map(payload);
 
         expect(mappedPayload).toEqual(singleTEIMapWithTEAttToTEAtt);
+    });
+    it("should return the payload with mapped TE Attribute if mapping contain TE Attribute to TE Attribute with options", async () => {
+        const teiMapper = new TEIsPayloadMapper(mappingTEAttToTEAtt_WithOptions);
+
+        const payload = singleTEI as TEIsPackage;
+
+        const mappedPayload = await teiMapper.map(payload);
+
+        expect(mappedPayload).toEqual(singleTEIMapWithTEAttToTEAtt_WithOptions);
+    });
+    it("should return the payload with mapped TE Attribute if mapping contain global options", async () => {
+        const teiMapper = new TEIsPayloadMapper(mappingTEAttToTEAtt_WithGlobalOptions);
+
+        const payload = singleTEI as TEIsPackage;
+
+        const mappedPayload = await teiMapper.map(payload);
+
+        expect(mappedPayload).toEqual(singleTEIMapWithTEAttToTEAtt_WithOptions);
     });
 });
 
