@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { OptionModel } from "../../../models/dhis/metadata";
 import {
     cleanNestedMappedId,
     EXCLUDED_KEY,
@@ -99,11 +100,14 @@ export abstract class GenericMappingUseCase {
             this.getCategoryOptionCombos(destinationItem, defaultDestinationCategoryOptionCombo[0])
         );
 
-        const options = await this.autoMapCollection(
-            destinationInstance,
-            this.getOptions(originMetadata),
-            this.getOptions(destinationItem)
-        );
+        const options =
+            originMetadata.model !== OptionModel.getCollectionName()
+                ? await this.autoMapCollection(
+                      destinationInstance,
+                      this.getOptions(originMetadata),
+                      this.getOptions(destinationItem)
+                  )
+                : undefined;
 
         const programStages =
             originMetadata.programType === "WITHOUT_REGISTRATION"
