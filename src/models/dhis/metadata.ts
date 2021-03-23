@@ -17,6 +17,7 @@ import {
     programIndicatorFields,
     programRuleActionsColumns,
     programRuleActionsFields,
+    TrackedEntityAttributesFields,
 } from "../../utils/d2";
 import { D2Model, SearchFilter } from "./default";
 
@@ -698,6 +699,7 @@ export class TrackedEntityTypeModel extends D2Model {
 export class TrackedEntityAttributeModel extends D2Model {
     protected static metadataType = "trackedEntityAttribute";
     protected static collectionName = "trackedEntityAttributes" as const;
+    protected static fields = TrackedEntityAttributesFields;
 
     protected static excludeRules = [];
 

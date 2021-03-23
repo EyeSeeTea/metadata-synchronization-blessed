@@ -225,3 +225,8 @@ export const documentFields = {
     url: include,
     external: include,
 };
+
+export const TrackedEntityAttributesFields = {
+    ...d2BaseModelFields,
+    optionSet: include,
+};
