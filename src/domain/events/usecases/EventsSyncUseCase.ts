@@ -11,7 +11,7 @@ import {
 import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
+import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { CategoryOptionCombo, Program } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
@@ -228,12 +228,19 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[],
         defaultCategoryOptionCombo: string
     ): ProgramEvent {
-        const { organisationUnits = {}, eventPrograms = {} } = globalMapping;
-        const { mappedId: mappedProgram = program, mapping: innerMapping = {} } =
-            eventPrograms[program] ?? {};
-        const { programStages = {} } = innerMapping;
+        const { organisationUnits = {} } = globalMapping;
+
+        const { mappedProgram, programStages, innerMapping } = this.getRelatedProgramMappings(
+            globalMapping,
+            program
+        );
+
+        const mappedProgramStage =
+            this.getProgramStageMapping(program, programStage, programStages).mappedId ??
+            programStage;
+
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
-        const mappedProgramStage = programStages[programStage]?.mappedId ?? programStage;
+
         const mappedCategory = mapCategoryOptionCombo(
             attributeOptionCombo ?? defaultCategoryOptionCombo,
             [innerMapping, globalMapping],
@@ -276,6 +283,47 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             ["orgUnitName", "attributeCategoryOptions"]
         );
     }
+
+    private getRelatedProgramMappings(globalMapping: MetadataMappingDictionary, program: string) {
+        const {
+            eventPrograms = {},
+            trackerPrograms = {},
+            trackerProgramStages = {},
+        } = globalMapping;
+
+        if (eventPrograms[program]) {
+            const { mappedId: mappedProgram = program, mapping: innerMapping = {} } =
+                eventPrograms[program] ?? {};
+
+            const { programStages = {} } = innerMapping;
+
+            return { mappedProgram, innerMapping, programStages };
+        } else if (trackerPrograms[program]) {
+            const { mappedId: mappedProgram = program, mapping: innerMapping = {} } =
+                trackerPrograms[program] ?? {};
+
+            return { mappedProgram, innerMapping, programStages: trackerProgramStages };
+        } else {
+            return {
+                mappedProgram: program,
+                innerMapping: {},
+                programStages: trackerProgramStages,
+            };
+        }
+    }
+
+    private getProgramStageMapping = (
+        program: string,
+        programStage: string,
+        programStages: Record<string, MetadataMapping>
+    ): MetadataMapping => {
+        const complexId = `${program}-${programStage}`;
+        const candidate = programStages[complexId]?.mappedId
+            ? programStages[complexId]
+            : programStages[programStage];
+
+        return candidate ?? {};
+    };
 
     private isDisabledEvent(event: ProgramEvent | ProgramEventDataValue): boolean {
         return !_(event)
