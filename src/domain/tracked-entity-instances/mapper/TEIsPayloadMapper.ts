@@ -16,6 +16,7 @@ export class TEIsPayloadMapper implements PayloadMapper {
                 relationshipTypes = {},
                 organisationUnits = {},
                 trackerPrograms = {},
+                trackedEntityAttributesToTEI = {},
             } = this.mapping;
 
             const mappedOrgUnit = organisationUnits[tei.orgUnit]?.mappedId ?? tei.orgUnit;
@@ -48,12 +49,21 @@ export class TEIsPayloadMapper implements PayloadMapper {
                     };
                 }),
                 relationships: tei.relationships.map(rel => {
-                    const relationshipTypeId =
+                    const mappedRelTypeId =
                         relationshipTypes[rel.relationshipType]?.mappedId ?? rel.relationshipType;
 
                     return {
                         ...rel,
-                        relationshipType: relationshipTypeId,
+                        relationshipType: mappedRelTypeId,
+                    };
+                }),
+                attributes: tei.attributes.map(att => {
+                    const mappedAttributeId =
+                        trackedEntityAttributesToTEI[att.attribute]?.mappedId ?? att.attribute;
+
+                    return {
+                        ...att,
+                        attribute: mappedAttributeId,
                     };
                 }),
             };
