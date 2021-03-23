@@ -274,7 +274,9 @@ export abstract class GenericSyncUseCase {
                     id: currentUser.id,
                     name: currentUser.userCredentials.name,
                 });
-                await this.repositoryFactory.rulesRepository(this.localInstance).save(updatedRule);
+                await this.repositoryFactory
+                    .rulesRepository(this.localInstance)
+                    .save([updatedRule]);
             }
         }
 

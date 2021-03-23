@@ -417,7 +417,7 @@ const SyncRulesPage: React.FC = () => {
                 autoHideDuration: null,
             });
         } else {
-            await compositionRoot.rules.save(syncRule);
+            await compositionRoot.rules.save([syncRule]);
             snackbar.success(i18n.t("Successfully updated sync rule"));
             setRefreshKey(Math.random());
         }
@@ -473,9 +473,32 @@ const SyncRulesPage: React.FC = () => {
             } else {
                 loading.show(true, i18n.t("Importing rule(s)"));
                 try {
-                    const rules = await compositionRoot.rules.import(files);
-                    snackbar.success(i18n.t("Imported {{n}} rules", { n: rules.length }));
-                    setRefreshKey(Math.random());
+                    const rules = await compositionRoot.rules.readFiles(files);
+
+                    updateDialog({
+                        title: i18n.t("Importing {{n}} rules", { n: rules.length }),
+                        description: [
+                            i18n.t("You're about to import the following synchronization rules:"),
+                            ...rules.map(
+                                rule =>
+                                    `- ${rule.name} (${rule.id}): ${
+                                        rows.find(row => row.id === rule.id)
+                                            ? i18n.t("Existing (will be overwritten)")
+                                            : i18n.t("New")
+                                    }`
+                            ),
+                        ].join("\n"),
+                        onSave: async () => {
+                            await compositionRoot.rules.save(rules);
+                            snackbar.success(i18n.t("Imported {{n}} rules", { n: rules.length }));
+                            setRefreshKey(Math.random());
+                            updateDialog(null);
+                        },
+                        onCancel: () => updateDialog(null),
+                        saveText: i18n.t("Import"),
+                        maxWidth: "lg",
+                        fullWidth: true,
+                    });
                 } catch (err) {
                     snackbar.error((err && err.message) || err.toString());
                 } finally {
@@ -483,7 +506,7 @@ const SyncRulesPage: React.FC = () => {
                 }
             }
         },
-        [snackbar, compositionRoot, loading]
+        [snackbar, compositionRoot, loading, rows]
     );
 
     const actions: TableAction<SynchronizationRule>[] = [
@@ -586,7 +609,7 @@ const SyncRulesPage: React.FC = () => {
         const syncRule = SynchronizationRule.build(
             newSharingSettings.object as SynchronizationRuleData
         );
-        await compositionRoot.rules.save(syncRule);
+        await compositionRoot.rules.save([syncRule]);
 
         setSharingSettingsObject(newSharingSettings);
     };

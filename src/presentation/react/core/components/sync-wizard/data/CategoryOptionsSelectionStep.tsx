@@ -50,13 +50,16 @@ const CategoryOptionsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule,
     };
 
     useEffect(() => {
-        api.models.categoryOptionCombos.get({
-            paging: false,
-            fields: { id: true, name: true },
-            filter: {
-                "categoryCombo.dataDimensionType": { eq: "ATTRIBUTE" },
-            },
-        }).getData().then(({ objects }) => setData(objects));
+        api.models.categoryOptionCombos
+            .get({
+                paging: false,
+                fields: { id: true, name: true },
+                filter: {
+                    "categoryCombo.dataDimensionType": { eq: "ATTRIBUTE" },
+                },
+            })
+            .getData()
+            .then(({ objects }) => setData(objects));
     }, [api]);
 
     return (

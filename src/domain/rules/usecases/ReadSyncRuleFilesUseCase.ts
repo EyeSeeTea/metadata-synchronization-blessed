@@ -3,10 +3,10 @@ import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../entities/SynchronizationRule";
 
-export class ImportSyncRuleUseCase implements UseCase {
+export class ReadSyncRuleFilesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(files: File[]): Promise<SynchronizationRule[]> {
-        return this.repositoryFactory.rulesRepository(this.localInstance).import(files);
+        return this.repositoryFactory.rulesRepository(this.localInstance).readFiles(files);
     }
 }

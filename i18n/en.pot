@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-19T07:16:49.513Z\n"
-"PO-Revision-Date: 2021-03-19T07:16:49.513Z\n"
+"POT-Creation-Date: 2021-03-23T09:46:23.479Z\n"
+"PO-Revision-Date: 2021-03-23T09:46:23.479Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1861,6 +1861,9 @@ msgstr ""
 msgid "Generating JSON file"
 msgstr ""
 
+msgid "Exporting synchronization rules"
+msgstr ""
+
 msgid "Deleting Sync Rules"
 msgstr ""
 
@@ -1881,10 +1884,19 @@ msgstr ""
 msgid "Importing rule(s)"
 msgstr ""
 
+msgid "Importing {{n}} rules"
+msgstr ""
+
+msgid "Existing (will be overwritten)"
+msgstr ""
+
 msgid "Imported {{n}} rules"
 msgstr ""
 
 msgid "Execute"
+msgstr ""
+
+msgid "Export"
 msgstr ""
 
 msgid "Toggle scheduling"

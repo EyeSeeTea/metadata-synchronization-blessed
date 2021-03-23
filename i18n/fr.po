@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-03-19T07:16:49.513Z\n"
+"POT-Creation-Date: 2021-03-23T09:46:23.479Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1865,6 +1865,9 @@ msgstr ""
 msgid "Generating JSON file"
 msgstr ""
 
+msgid "Exporting synchronization rules"
+msgstr ""
+
 msgid "Deleting Sync Rules"
 msgstr ""
 
@@ -1885,10 +1888,19 @@ msgstr ""
 msgid "Importing rule(s)"
 msgstr ""
 
+msgid "Importing {{n}} rules"
+msgstr ""
+
+msgid "Existing (will be overwritten)"
+msgstr ""
+
 msgid "Imported {{n}} rules"
 msgstr ""
 
 msgid "Execute"
+msgstr ""
+
+msgid "Export"
 msgstr ""
 
 msgid "Toggle scheduling"

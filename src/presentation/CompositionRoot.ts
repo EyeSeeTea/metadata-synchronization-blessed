@@ -87,8 +87,8 @@ import { SaveSyncReportUseCase } from "../domain/reports/usecases/SaveSyncReport
 import { DeleteSyncRuleUseCase } from "../domain/rules/usecases/DeleteSyncRuleUseCase";
 import { ExportSyncRuleUseCase } from "../domain/rules/usecases/ExportSyncRuleUseCase";
 import { GetSyncRuleUseCase } from "../domain/rules/usecases/GetSyncRuleUseCase";
-import { ImportSyncRuleUseCase } from "../domain/rules/usecases/ImportSyncRuleUseCase";
 import { ListSyncRuleUseCase } from "../domain/rules/usecases/ListSyncRuleUseCase";
+import { ReadSyncRuleFilesUseCase } from "../domain/rules/usecases/ReadSyncRuleFilesUseCase";
 import { SaveSyncRuleUseCase } from "../domain/rules/usecases/SaveSyncRuleUseCase";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { DeleteStoreUseCase } from "../domain/stores/usecases/DeleteStoreUseCase";
@@ -376,7 +376,7 @@ export class CompositionRoot {
             save: new SaveSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             get: new GetSyncRuleUseCase(this.repositoryFactory, this.localInstance),
-            import: new ImportSyncRuleUseCase(this.repositoryFactory, this.localInstance),
+            readFiles: new ReadSyncRuleFilesUseCase(this.repositoryFactory, this.localInstance),
             export: new ExportSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             downloadPayloads: new DownloadPayloadFromSyncRuleUseCase(
                 this,
