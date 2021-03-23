@@ -67,6 +67,7 @@ export const buildModelSteps = (type: string): MappingWizardStepBuilder[] => {
         eventPrograms: [availableSteps.categoryOptions, availableSteps.programStages],
         trackerPrograms: [availableSteps.categoryOptions],
         trackedEntityAttributesToTEI: [availableSteps.options],
+        trackedEntityAttributesToDE: [availableSteps.options],
     };
 
     return modelSteps[type] ?? [];
