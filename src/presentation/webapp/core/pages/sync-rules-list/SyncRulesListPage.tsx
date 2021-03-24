@@ -556,13 +556,6 @@ const SyncRulesPage: React.FC = () => {
             icon: <Icon>settings_input_antenna</Icon>,
         },
         {
-            name: "download",
-            text: i18n.t("Download JSON Payload"),
-            multiple: false,
-            onClick: downloadJSON,
-            icon: <Icon>cloud_download</Icon>,
-        },
-        {
             name: "replicate",
             text: i18n.t("Replicate"),
             multiple: false,
@@ -572,7 +565,7 @@ const SyncRulesPage: React.FC = () => {
         },
         {
             name: "export",
-            text: i18n.t("Export"),
+            text: i18n.t("Export rule"),
             multiple: true,
             onClick: exportModule,
             icon: <Icon>arrow_downwards</Icon>,
@@ -592,6 +585,13 @@ const SyncRulesPage: React.FC = () => {
             isActive: verifyUserCanEditSharingSettings,
             onClick: openSharingSettings,
             icon: <Icon>share</Icon>,
+        },
+        {
+            name: "download",
+            text: i18n.t("Download JSON Payload"),
+            multiple: false,
+            onClick: downloadJSON,
+            icon: <Icon>cloud_download</Icon>,
         },
     ];
 
