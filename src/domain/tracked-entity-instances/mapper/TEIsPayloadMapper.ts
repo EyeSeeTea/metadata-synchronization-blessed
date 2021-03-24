@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { mapOptionValue } from "../../../utils/synchronization";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";

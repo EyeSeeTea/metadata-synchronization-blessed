@@ -2,6 +2,7 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { D2Program } from "../../../types/d2-api";
+import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
 import {
     mapCategoryOptionCombo,
@@ -206,9 +207,10 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         );
 
         const mapping = await this.getMapping(instance);
-        const events = oldEvents
-            .map(dataValue =>
+        const events = (
+            await promiseMap(oldEvents, dataValue =>
                 this.buildMappedDataValue(
+                    instance,
                     dataValue,
                     mapping,
                     originCategoryOptionCombos,
@@ -216,23 +218,26 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
                     defaultCategoryOptionCombos[0]
                 )
             )
-            .filter(this.isDisabledEvent);
+        ).filter(this.isDisabledEvent);
 
         return { events };
     }
 
-    private buildMappedDataValue(
+    private async buildMappedDataValue(
+        instance: Instance,
         { orgUnit, program, programStage, dataValues, attributeOptionCombo, ...rest }: ProgramEvent,
         globalMapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[],
         defaultCategoryOptionCombo: string
-    ): ProgramEvent {
+    ): Promise<ProgramEvent> {
         const { organisationUnits = {} } = globalMapping;
 
-        const { mappedProgram, programStages, innerMapping } = this.getRelatedProgramMappings(
+        const { mappedProgram, programStages, innerMapping } = await this.getRelatedProgramMappings(
+            instance,
             globalMapping,
-            program
+            program,
+            programStage
         );
 
         const mappedProgramStage =
@@ -284,43 +289,80 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         );
     }
 
-    private getRelatedProgramMappings(globalMapping: MetadataMappingDictionary, program: string) {
+    private async getRelatedProgramMappings(
+        instance: Instance,
+        globalMapping: MetadataMappingDictionary,
+        originProgram: string,
+        originProgramStage: string
+    ) {
         const {
             eventPrograms = {},
             trackerPrograms = {},
             trackerProgramStages = {},
         } = globalMapping;
 
-        if (eventPrograms[program]) {
-            const { mappedId: mappedProgram = program, mapping: innerMapping = {} } =
-                eventPrograms[program] ?? {};
+        const complexId = `${originProgram}-${originProgramStage}`;
+
+        if (eventPrograms[originProgram]) {
+            const { mappedId: mappedProgram = originProgram, mapping: innerMapping = {} } =
+                eventPrograms[originProgram] ?? {};
 
             const { programStages = {} } = innerMapping;
 
             return { mappedProgram, innerMapping, programStages };
-        } else if (trackerPrograms[program]) {
-            const { mappedId: mappedProgram = program, mapping: innerMapping = {} } =
-                trackerPrograms[program] ?? {};
+        } else if (trackerPrograms[originProgram]) {
+            const { mappedId: mappedProgram = originProgram, mapping: innerMapping = {} } =
+                trackerPrograms[originProgram] ?? {};
 
             return { mappedProgram, innerMapping, programStages: trackerProgramStages };
+        } else if (trackerProgramStages[complexId]) {
+            const destinationProgramStage = trackerProgramStages[complexId].mappedId;
+
+            const mappedProgram =
+                (await this.getMappedProgramByProgramStage(instance, destinationProgramStage)) ??
+                originProgram;
+
+            return {
+                mappedProgram,
+                innerMapping: {},
+                programStages: trackerProgramStages,
+            };
         } else {
             return {
-                mappedProgram: program,
+                mappedProgram: originProgram,
                 innerMapping: {},
                 programStages: trackerProgramStages,
             };
         }
     }
 
+    private async getMappedProgramByProgramStage(
+        instance: Instance,
+        destinationProgramStage?: string
+    ): Promise<string | undefined> {
+        if (destinationProgramStage && destinationProgramStage !== "DISABLED") {
+            const remoteMetadataRepository = await this.getMetadataRepository(instance);
+
+            const result = await remoteMetadataRepository.getMetadataByIds<{
+                id: string;
+                program: { id: string };
+            }>([destinationProgramStage], "id, program");
+
+            return result.programStages ? result.programStages[0].program.id : undefined;
+        } else {
+            return "DISABLED";
+        }
+    }
+
     private getProgramStageMapping = (
-        program: string,
-        programStage: string,
-        programStages: Record<string, MetadataMapping>
+        originProgram: string,
+        originProgramStage: string,
+        programStagesMapping: Record<string, MetadataMapping>
     ): MetadataMapping => {
-        const complexId = `${program}-${programStage}`;
-        const candidate = programStages[complexId]?.mappedId
-            ? programStages[complexId]
-            : programStages[programStage];
+        const complexId = `${originProgram}-${originProgramStage}`;
+        const candidate = programStagesMapping[complexId]?.mappedId
+            ? programStagesMapping[complexId]
+            : programStagesMapping[originProgramStage];
 
         return candidate ?? {};
     };
