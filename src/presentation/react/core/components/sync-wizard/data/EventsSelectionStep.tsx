@@ -1,5 +1,10 @@
 import { Typography } from "@material-ui/core";
-import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "d2-ui-components";
+import {
+    ObjectsTable,
+    ObjectsTableDetailField,
+    TableColumn,
+    TableState,
+} from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ProgramEvent } from "../../../../../../domain/events/entities/ProgramEvent";

@@ -1,7 +1,7 @@
 import { Typography } from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
 import { makeStyles } from "@material-ui/styles";
-import { ConfirmationDialog, OrgUnitsSelector } from "d2-ui-components";
+import { ConfirmationDialog, OrgUnitsSelector } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { DataSource, isDhisInstance } from "../../../../../domain/instance/entities/DataSource";

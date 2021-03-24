@@ -1,4 +1,4 @@
-import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
+import { ObjectsTableDetailField, TableColumn } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import i18n from "../locales";
 import { D2Model } from "../models/dhis/default";

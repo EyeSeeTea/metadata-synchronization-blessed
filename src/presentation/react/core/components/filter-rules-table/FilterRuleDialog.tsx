@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { ConfirmationDialog, useSnackbar } from "d2-ui-components";
+import { ConfirmationDialog, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
 import {

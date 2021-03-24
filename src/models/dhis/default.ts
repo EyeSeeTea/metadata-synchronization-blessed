@@ -1,5 +1,5 @@
 import { FilterSingleOperatorBase } from "@eyeseetea/d2-api/api/common";
-import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
+import { ObjectsTableDetailField, TableColumn } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
 import { D2Api, D2ApiDefinition, Model } from "../../types/d2-api";
