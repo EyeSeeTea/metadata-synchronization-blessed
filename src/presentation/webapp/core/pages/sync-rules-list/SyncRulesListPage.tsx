@@ -474,12 +474,23 @@ const SyncRulesPage: React.FC = () => {
                 loading.show(true, i18n.t("Importing rule(s)"));
                 try {
                     const rules = await compositionRoot.rules.readFiles(files);
+                    const validRules = rules.filter(rule => rule.type === type);
+                    const invalidRuleCount = rules.length - validRules.length;
 
                     updateDialog({
-                        title: i18n.t("Importing {{n}} rules", { n: rules.length }),
-                        description: [
-                            i18n.t("You're about to import the following synchronization rules:"),
-                            ...rules.map(
+                        title: i18n.t("Importing {{n}} rules", { n: validRules.length }),
+                        description: _.compact([
+                            invalidRuleCount > 0
+                                ? i18n.t("You have uploaded {{n}} rules with a wrong type.")
+                                : undefined,
+                            validRules.length > 0
+                                ? i18n.t(
+                                      "You're about to import the following synchronization rules:"
+                                  )
+                                : i18n.t(
+                                      "All the uploaded rules are invalid and cannot be imported."
+                                  ),
+                            ...validRules.map(
                                 rule =>
                                     `- ${rule.name} (${rule.id}): ${
                                         rows.find(row => row.id === rule.id)
@@ -487,14 +498,17 @@ const SyncRulesPage: React.FC = () => {
                                             : i18n.t("New")
                                     }`
                             ),
-                        ].join("\n"),
+                        ]).join("\n"),
                         onSave: async () => {
-                            await compositionRoot.rules.save(rules);
-                            snackbar.success(i18n.t("Imported {{n}} rules", { n: rules.length }));
+                            await compositionRoot.rules.save(validRules);
+                            snackbar.success(
+                                i18n.t("Imported {{n}} rules", { n: validRules.length })
+                            );
                             setRefreshKey(Math.random());
                             updateDialog(null);
                         },
                         onCancel: () => updateDialog(null),
+                        disableSave: validRules.length === 0,
                         saveText: i18n.t("Import"),
                         maxWidth: "lg",
                         fullWidth: true,
@@ -506,7 +520,7 @@ const SyncRulesPage: React.FC = () => {
                 }
             }
         },
-        [snackbar, compositionRoot, loading, rows]
+        [snackbar, compositionRoot, loading, rows, type]
     );
 
     const actions: TableAction<SynchronizationRule>[] = [

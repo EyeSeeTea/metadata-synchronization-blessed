@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-23T09:46:23.479Z\n"
-"PO-Revision-Date: 2021-03-23T09:46:23.479Z\n"
+"POT-Creation-Date: 2021-03-24T08:14:08.887Z\n"
+"PO-Revision-Date: 2021-03-24T08:14:08.887Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1885,6 +1885,12 @@ msgid "Importing rule(s)"
 msgstr ""
 
 msgid "Importing {{n}} rules"
+msgstr ""
+
+msgid "You have uploaded {{n}} rules with a wrong type."
+msgstr ""
+
+msgid "All the uploaded rules are invalid and cannot be imported."
 msgstr ""
 
 msgid "Existing (will be overwritten)"
