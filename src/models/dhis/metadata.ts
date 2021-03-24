@@ -137,16 +137,28 @@ export class DashboardModel extends D2Model {
 
     protected static excludeRules = [];
     protected static includeRules = [
-        "dashboardItems",
         "charts",
+        "charts.programIndicators",
+        "charts.indicators",
+        "charts.organisationUnitGroupSets",
+        "charts.categoryOptionGroupSets",
+        "charts.categoryOptionGroups",
+        "charts.dataElementGroupSets",
         "eventCharts",
-        "pivotTables",
         "eventReports",
         "maps",
-        "maps.mapViews",
+        "maps.mapViews.legendSets",
+        "maps.mapViews.programIndicators",
+        "maps.mapViews.indicators",
         "reports",
         "reportTables",
         "reportTables.legendSets",
+        "reportTables.programIndicators",
+        "reportTables.indicators",
+        "reportTables.organisationUnitGroupSets",
+        "reportTables.categoryOptionGroupSets",
+        "reportTables.categoryOptionGroups",
+        "reportTables.dataElementGroupSets",
     ];
 }
 

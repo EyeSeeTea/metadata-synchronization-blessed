@@ -126,6 +126,14 @@ export function cleanToModelName(api: D2Api, id: string, caller?: string): strin
         return "dataElements";
     } else if (id === "programStageDataElements") {
         return "dataElements";
+    } else if (id === "dataElementDimensions") {
+        return "dataElements";
+    } else if (id === "organisationUnitGroupSetDimensions") {
+        return "organisationUnitGroupSets";
+    } else if (id === "categoryOptionGroupSetDimensions") {
+        return "categoryOptionGroupSets";
+    } else if (id === "dataElementGroupSetDimensions") {
+        return "dataElementGroupSets";
     } else if (id === "trackedEntityTypeAttributes") {
         return "trackedEntityAttributes";
     } else if (id === "attributeValues") {
