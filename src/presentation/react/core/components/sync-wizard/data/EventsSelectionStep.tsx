@@ -1,10 +1,11 @@
-import { Typography } from "@material-ui/core";
 import {
     ObjectsTable,
     ObjectsTableDetailField,
     TableColumn,
     TableState,
+    useSnackbar,
 } from "@eyeseetea/d2-ui-components";
+import { Typography } from "@material-ui/core";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ProgramEvent } from "../../../../../../domain/events/entities/ProgramEvent";
@@ -33,6 +34,7 @@ export type CustomProgram = Program & {
 
 export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
     const { compositionRoot } = useAppContext();
+    const snackbar = useSnackbar();
 
     const [memoizedSyncRule] = useState<SynchronizationRule>(syncRule);
     const [objects, setObjects] = useState<ProgramEvent[] | undefined>();
@@ -47,18 +49,30 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     }, [memoizedSyncRule, compositionRoot]);
 
     useEffect(() => {
+        console.log("foo", programs);
         if (programs.length === 0) return;
-        compositionRoot.events
-            .list(
-                {
-                    ...memoizedSyncRule.dataParams,
-                    allEvents: true,
+
+        compositionRoot.instances.getById(syncRule.originInstance).then(result => {
+            result.match({
+                error: () => snackbar.error(i18n.t("Invalid origin instance")),
+                success: instance => {
+                    compositionRoot.events
+                        .list(
+                            instance,
+                            {
+                                ...memoizedSyncRule.dataParams,
+                                allEvents: true,
+                            },
+                            programs
+                                .map(program => program.programStages.map(({ id }) => id))
+                                .flat()
+                        )
+                        .then(setObjects)
+                        .catch(setError);
                 },
-                programs.map(program => program.programStages.map(({ id }) => id)).flat()
-            )
-            .then(setObjects)
-            .catch(setError);
-    }, [compositionRoot, memoizedSyncRule, programs]);
+            });
+        });
+    }, [compositionRoot, memoizedSyncRule, programs, snackbar, syncRule.originInstance]);
 
     const handleTableChange = useCallback(
         (tableState: TableState<ProgramEvent>) => {
@@ -207,6 +221,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 value={syncRule.dataSyncAllEvents}
                 onValueChange={updateSyncAll}
             />
+
             {!syncRule.dataSyncAllEvents && (
                 <ObjectsTable<ProgramEventObject>
                     rows={filteredObjects}

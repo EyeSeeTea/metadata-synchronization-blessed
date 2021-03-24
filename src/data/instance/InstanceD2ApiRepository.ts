@@ -53,11 +53,15 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
         const instances = await promiseMap(filteredDataByIds, async data => {
             const sharingResult = await this.getObjectSharing(storageClient, data);
+            const object = await storageClient.getObjectInCollection<InstanceData>(
+                Namespace.INSTANCES,
+                data.id
+            );
 
             return sharingResult.match({
-                success: sharing => this.mapToInstance(data, sharing),
+                success: sharing => this.mapToInstance(object ?? data, sharing),
                 error: () =>
-                    this.mapToInstance(data, {
+                    this.mapToInstance(object ?? data, {
                         publicAccess: "--------",
                         userAccesses: [],
                         userGroupAccesses: [],

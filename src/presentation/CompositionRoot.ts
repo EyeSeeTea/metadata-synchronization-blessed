@@ -335,10 +335,8 @@ export class CompositionRoot {
 
     @cache()
     public get events() {
-        const events = new EventsD2ApiRepository(this.localInstance);
-
         return getExecute({
-            list: new ListEventsUseCase(events),
+            list: new ListEventsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -409,10 +407,8 @@ export class CompositionRoot {
 
     @cache()
     public get teis() {
-        const repository = new TEID2ApiRepository(this.localInstance);
-
         return getExecute({
-            list: new ListTEIsUseCase(repository),
+            list: new ListTEIsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

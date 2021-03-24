@@ -4,6 +4,7 @@ import {
     ObjectsTableDetailField,
     TableColumn,
     TableState,
+    useSnackbar,
 } from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import i18n from "../../../../../../locales";
@@ -26,6 +27,7 @@ interface TEIObject extends TrackedEntityInstance {
 export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
     const classes = useStyles();
     const { compositionRoot } = useAppContext();
+    const snackbar = useSnackbar();
 
     const [memoizedSyncRule] = useState<SynchronizationRule>(syncRule);
     const [rows, setRows] = useState<TEIObject[]>([]);
@@ -46,20 +48,32 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
 
     useEffect(() => {
         if (programFilter) {
-            compositionRoot.teis
-                .list(
-                    {
-                        ...memoizedSyncRule.dataParams,
-                        allEvents: true,
+            compositionRoot.instances.getById(syncRule.originInstance).then(result => {
+                result.match({
+                    error: () => snackbar.error(i18n.t("Invalid origin instance")),
+                    success: instance => {
+                        compositionRoot.teis
+                            .list(
+                                {
+                                    ...memoizedSyncRule.dataParams,
+                                    allEvents: true,
+                                },
+                                programFilter,
+                                instance
+                            )
+                            .then(teis =>
+                                setRows(
+                                    teis.map(tei => ({ ...tei, id: tei.trackedEntityInstance }))
+                                )
+                            )
+                            .catch(setError);
                     },
-                    programFilter
-                )
-                .then(teis => setRows(teis.map(tei => ({ ...tei, id: tei.trackedEntityInstance }))))
-                .catch(setError);
+                });
+            });
         } else {
             setRows([]);
         }
-    }, [compositionRoot, programFilter, memoizedSyncRule]);
+    }, [compositionRoot, programFilter, memoizedSyncRule, syncRule.originInstance, snackbar]);
 
     const handleTableChange = useCallback(
         (tableState: TableState<TEIObject>) => {

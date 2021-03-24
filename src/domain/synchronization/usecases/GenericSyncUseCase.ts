@@ -114,7 +114,7 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected async getOriginInstance(): Promise<Instance> {
+    public async getOriginInstance(): Promise<Instance> {
         const { originInstance: originInstanceId } = this.builder;
         const instance = await this.getInstanceById(originInstanceId);
         if (!instance) throw new Error("Unable to read origin instance");

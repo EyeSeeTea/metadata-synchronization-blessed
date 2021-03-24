@@ -126,6 +126,8 @@ async function validatePreviousDataValues(
 
     addEventToProgress(i18n.t(`Checking data values in previous periods ....`), "admin");
 
+    const localInstance = await compositionRoot.instances.getLocal();
+
     const validationsErrors = await promiseMap(syncRules, async rule => {
         const targetInstances = await compositionRoot.instances.list({ ids: rule.targetInstances });
 
@@ -141,6 +143,7 @@ async function validatePreviousDataValues(
                 if (!lastExecutionDate) return [];
 
                 return compositionRoot.events.list(
+                    localInstance,
                     {
                         period: "FIXED",
                         lastUpdated: moment(lastExecutionDate).toDate(),
