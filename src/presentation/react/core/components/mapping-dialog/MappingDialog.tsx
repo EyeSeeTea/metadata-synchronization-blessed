@@ -89,10 +89,16 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             elements.length === 1
         ) {
             const programId = _.first(elements[0].split("-")) ?? elements[0];
-            const mappedProgram =
-                mapping["eventPrograms"][programId] || mapping["trackerPrograms"][programId];
+            const mappedProgramByEventProgram = mapping["eventPrograms"]
+                ? mapping["eventPrograms"][programId]
+                : undefined;
+            const mappedProgramByTrackerProgram = mapping["trackerPrograms"]
+                ? mapping["trackerPrograms"][programId]
+                : undefined;
 
-            const mappedProgramId = mappedProgram?.mappedId;
+            const mappedProgramId = mappedProgramByEventProgram
+                ? mappedProgramByEventProgram.mappedId
+                : mappedProgramByTrackerProgram?.mappedId;
 
             if (!mappedProgramId) return;
 
