@@ -49,7 +49,6 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     }, [memoizedSyncRule, compositionRoot]);
 
     useEffect(() => {
-        console.log("foo", programs);
         if (programs.length === 0) return;
 
         compositionRoot.instances.getById(syncRule.originInstance).then(result => {
