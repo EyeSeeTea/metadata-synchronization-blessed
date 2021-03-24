@@ -23,6 +23,10 @@ import { RulesRepositoryConstructor } from "../../rules/repositories/RulesReposi
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
 import {
+    TEIRepository,
+    TEIRepositoryConstructor,
+} from "../../tracked-entity-instances/repositories/TEIRepository";
+import {
     TransformationRepository,
     TransformationRepositoryConstructor,
 } from "../../transformations/repositories/TransformationRepository";
@@ -121,6 +125,11 @@ export class RepositoryFactory {
     }
 
     @cache()
+    public teisRepository(instance: Instance): TEIRepository {
+        return this.get<TEIRepositoryConstructor>(Repositories.TEIsRepository, [instance]);
+    }
+
+    @cache()
     public reportsRepository(instance: Instance) {
         const config = this.configRepository(instance);
         return this.get<ReportsRepositoryConstructor>(Repositories.ReportsRepository, [config]);
@@ -168,5 +177,6 @@ export const Repositories = {
     RulesRepository: "rulesRepository",
     SystemInfoRepository: "systemInfoRepository",
     MigrationsRepository: "migrationsRepository",
+    TEIsRepository: "teisRepository",
     UserRepository: "userRepository",
 } as const;

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-11T12:08:41.375Z\n"
-"PO-Revision-Date: 2021-03-11T12:08:41.375Z\n"
+"POT-Creation-Date: 2021-03-15T06:05:12.095Z\n"
+"PO-Revision-Date: 2021-03-15T06:05:12.095Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -126,7 +126,10 @@ msgstr ""
 msgid "Start import in instance {{instance}}"
 msgstr ""
 
-msgid "Program with Data Elements"
+msgid "Event Program with Data Elements"
+msgstr ""
+
+msgid "Tracker Program with Program Stages"
 msgstr ""
 
 msgid "Program with Indicators"
@@ -1023,6 +1026,9 @@ msgstr ""
 msgid "Events"
 msgstr ""
 
+msgid "Tracked Entity Instances"
+msgstr ""
+
 msgid "Unknown"
 msgstr ""
 
@@ -1132,6 +1138,9 @@ msgstr ""
 msgid "Programs"
 msgstr ""
 
+msgid "TEIs"
+msgstr ""
+
 msgid ""
 "If aggregation is enabled, the synchronization will use the Analytics "
 "endpoint and group data by organisation units children and the chosen time "
@@ -1222,6 +1231,9 @@ msgid "Include rules"
 msgstr ""
 
 msgid "Exclude rules"
+msgstr ""
+
+msgid "{{total}} selected TEIs"
 msgstr ""
 
 msgid "All events"
@@ -1323,6 +1335,12 @@ msgid "Sync all events"
 msgstr ""
 
 msgid "You do not have assigned any organisation unit"
+msgstr ""
+
+msgid "Enrollment Date"
+msgstr ""
+
+msgid "Exclude relationships"
 msgstr ""
 
 msgid "Use sync rules periods"

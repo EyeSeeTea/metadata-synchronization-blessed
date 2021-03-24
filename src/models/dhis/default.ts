@@ -39,6 +39,7 @@ export abstract class D2Model {
     protected static childrenKeys: string[] | undefined = undefined;
     protected static mappingType: string | undefined;
     protected static isGlobalMapping = false;
+    protected static isSelectable = true;
 
     public static getApiModel(api: D2Api): InstanceType<typeof Model> {
         const modelCollection = api.models as {
@@ -123,6 +124,10 @@ export abstract class D2Model {
 
     public static getSearchFilter(): SearchFilter {
         return this.searchFilter;
+    }
+
+    public static getIsSelectable(): boolean {
+        return this.isSelectable;
     }
 }
 

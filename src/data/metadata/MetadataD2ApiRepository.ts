@@ -104,6 +104,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             rootJunction,
             ...params
         } = listParams;
+
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
         const options = { type, fields, filter, order, page, pageSize, rootJunction };
@@ -312,6 +313,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         filterRows,
         search,
         disableFilterRows = false,
+        programType,
+        childrenPropInList,
     }: Partial<ListMetadataParams>) {
         const filter: Dictionary<FilterValueBase> = {};
 
@@ -319,6 +322,12 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         if (group) filter[`${group.type}.id`] = { eq: group.value };
         if (level) filter["level"] = { eq: level };
         if (program) filter["program.id"] = { eq: program };
+        if (childrenPropInList) filter[childrenPropInList.prop] = { in: childrenPropInList.values };
+
+        if (programType) {
+            filter["programType"] = { eq: programType };
+        }
+
         if (optionSet) filter["optionSet.id"] = { eq: optionSet };
         if (category) filter["categories.id"] = { eq: category };
         if (includeParents && isNotEmpty(parents)) {

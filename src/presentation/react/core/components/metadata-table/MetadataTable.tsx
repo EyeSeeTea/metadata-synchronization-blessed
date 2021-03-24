@@ -158,6 +158,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         page: initialState.pagination.page,
         pageSize: initialState.pagination.pageSize,
         disableFilterRows: false,
+        ...model.getApiModelFilters(),
     });
 
     const updateFilters = useCallback(
@@ -191,6 +192,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         if (models.length === 0) throw new Error("You need to provide at least one model");
         const model = _.find(models, model => model.getMetadataType() === modelName) ?? models[0];
         updateModel(() => model);
+
         notifyNewModel(model);
 
         //Reset view filters because this filters are not shared between all metadata models
@@ -199,7 +201,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             return { ...acc, [viewFilter]: undefined };
         }, {});
 
-        updateFilters({ ...initialViewFilters, type: model.getCollectionName() });
+        updateFilters({
+            ...initialViewFilters,
+            type: model.getCollectionName(),
+            ...model.getApiModelFilters(),
+        });
     };
 
     const changeSearchFilter = (value: string) => {

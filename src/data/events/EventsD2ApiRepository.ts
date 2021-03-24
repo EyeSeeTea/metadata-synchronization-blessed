@@ -24,17 +24,17 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     public async getEvents(
         params: DataSynchronizationParams,
-        programs: string[] = [],
+        programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
         const { allEvents = false, orgUnitPaths = [] } = params;
 
         if (!allEvents) {
-            return this.getSpecificEvents(params, programs, defaults);
+            return this.getSpecificEvents(params, programStageIds, defaults);
         } else if (allEvents && orgUnitPaths.length < 25) {
-            return this.getEventsByOrgUnit(params, programs, defaults);
+            return this.getEventsByOrgUnit(params, programStageIds, defaults);
         } else {
-            return this.getAllEvents(params, programs, defaults);
+            return this.getAllEvents(params, programStageIds, defaults);
         }
     }
 
@@ -52,23 +52,23 @@ export class EventsD2ApiRepository implements EventsRepository {
      */
     private async getAllEvents(
         params: DataSynchronizationParams,
-        programs: string[] = [],
+        programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        if (programs.length === 0) return [];
+        if (programStageIds.length === 0) return [];
 
         const { period, orgUnitPaths = [], lastUpdated } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
-        const fetchApi = async (program: string, page: number) => {
+        const fetchApi = async (orgUnit: string, page: number) => {
             return this.api
                 .get<EventExportResult>("/events", {
                     pageSize: 250,
                     totalPages: true,
                     page,
-                    program,
+                    orgUnit,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
                     lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
@@ -76,13 +76,13 @@ export class EventsD2ApiRepository implements EventsRepository {
                 .getData();
         };
 
-        const result = await promiseMap(programs, async program => {
-            const { events, pager } = await fetchApi(program, 1);
+        const result = await promiseMap(orgUnits, async orgUnit => {
+            const { events, pager } = await fetchApi(orgUnit, 1);
 
             const paginatedEvents = await promiseMap(
                 _.range(2, pager.pageCount + 1),
                 async page => {
-                    const { events } = await fetchApi(program, page);
+                    const { events } = await fetchApi(orgUnit, page);
                     return events;
                 }
             );
@@ -92,7 +92,7 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         return _(result)
             .flatten()
-            .filter(({ orgUnit }) => orgUnits.includes(orgUnit))
+            .filter(({ programStage }) => programStageIds.includes(programStage))
             .map(object => ({ ...object, id: object.event }))
             .map(object => cleanObjectDefault(object, defaults))
             .value();
@@ -100,23 +100,23 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     private async getEventsByOrgUnit(
         params: DataSynchronizationParams,
-        programs: string[] = [],
+        programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        if (programs.length === 0) return [];
+        if (programStageIds.length === 0) return [];
 
         const { period, orgUnitPaths = [], lastUpdated } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
-        const fetchApi = async (program: string, orgUnit: string, page: number) => {
+        const fetchApi = async (programStage: string, orgUnit: string, page: number) => {
             return this.api
                 .get<EventExportResult>("/events", {
                     pageSize: 250,
                     totalPages: true,
                     page,
-                    program,
+                    programStage,
                     orgUnit,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
@@ -125,14 +125,14 @@ export class EventsD2ApiRepository implements EventsRepository {
                 .getData();
         };
 
-        const result = await promiseMap(programs, async program => {
+        const result = await promiseMap(programStageIds, async programStage => {
             const filteredEvents = await promiseMap(orgUnits, async orgUnit => {
-                const { events, pager } = await fetchApi(program, orgUnit, 1);
+                const { events, pager } = await fetchApi(programStage, orgUnit, 1);
 
                 const paginatedEvents = await promiseMap(
                     _.range(2, pager.pageCount + 1),
                     async page => {
-                        const { events } = await fetchApi(program, orgUnit, page);
+                        const { events } = await fetchApi(programStage, orgUnit, page);
                         return events;
                     }
                 );
@@ -152,21 +152,21 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     private async getSpecificEvents(
         params: DataSynchronizationParams,
-        programs: string[] = [],
+        programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
         const { orgUnitPaths = [], events: filter = [] } = params;
-        if (programs.length === 0 || filter.length === 0) return [];
+        if (programStageIds.length === 0 || filter.length === 0) return [];
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
         const result = [];
 
-        for (const program of programs) {
+        for (const programStage of programStageIds) {
             for (const ids of _.chunk(filter, 300)) {
                 const { events } = await this.api
                     .get<EventExportResult>("/events", {
                         paging: false,
-                        program,
+                        programStage,
                         event: ids.join(";"),
                     })
                     .getData();

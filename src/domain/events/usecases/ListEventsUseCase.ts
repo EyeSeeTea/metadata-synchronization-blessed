@@ -8,9 +8,9 @@ export class ListEventsUseCase implements UseCase {
 
     public async execute(
         params: DataSynchronizationParams,
-        programs: string[] = [],
+        programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        return this.eventsRepository.getEvents(params, programs, defaults);
+        return this.eventsRepository.getEvents(params, programStageIds, defaults);
     }
 }
