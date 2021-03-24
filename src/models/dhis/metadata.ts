@@ -141,9 +141,11 @@ export class DashboardModel extends D2Model {
         "charts.programIndicators",
         "charts.indicators",
         "charts.organisationUnitGroupSets",
+        "charts.organisationUnitGroups",
         "charts.categoryOptionGroupSets",
         "charts.categoryOptionGroups",
         "charts.dataElementGroupSets",
+        "charts.dataElementGroups",
         "eventCharts",
         "eventReports",
         "maps",
@@ -156,9 +158,11 @@ export class DashboardModel extends D2Model {
         "reportTables.programIndicators",
         "reportTables.indicators",
         "reportTables.organisationUnitGroupSets",
+        "reportTables.organisationUnitGroups",
         "reportTables.categoryOptionGroupSets",
         "reportTables.categoryOptionGroups",
         "reportTables.dataElementGroupSets",
+        "reportTables.dataElementGroups",
     ];
 }
 
