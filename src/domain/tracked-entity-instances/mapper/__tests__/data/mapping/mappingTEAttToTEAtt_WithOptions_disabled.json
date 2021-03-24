@@ -1,0 +1,49 @@
+{
+    "options": {
+        "FFuAh3CgxqV": {
+            "code": "Op_Gender_Male",
+            "global": true,
+            "mapping": {},
+            "mappedId": "DISABLED",
+            "conflicts": false,
+            "mappedCode": "DISABLED"
+        }
+    },
+    "trackedEntityAttributesToTEI": {
+        "IW1EGccT7jT": {
+            "code": "ATT_Gender",
+            "global": false,
+            "mapping": {
+                "options": {
+                    "DL8exJ3mxUX": {
+                        "code": "Op_Gender_Unknown",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedCode": "DISABLED"
+                    },
+                    "FFuAh3CgxqV": {
+                        "code": "Op_Gender_Male",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedCode": "DISABLED"
+                    },
+                    "M0BoqSns1KA": {
+                        "code": "Op_Gender_Female",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedCode": "DISABLED"
+                    }
+                }
+            },
+            "mappedId": "rUo8dCMpEuk",
+            "conflicts": false,
+            "mappedName": "Jorge Gender"
+        }
+    }
+}
