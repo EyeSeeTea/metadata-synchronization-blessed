@@ -1,4 +1,4 @@
-import { TrackedEntityInstance } from "./TrackedEntityInstance";
+import { TEIRef } from "./TrackedEntityInstance";
 
 export interface Relationship {
     lastUpdated: string;
@@ -7,6 +7,6 @@ export interface Relationship {
     bidirectional: boolean;
     relationshipType: string;
     relationship: string;
-    from: TrackedEntityInstance;
-    to: TrackedEntityInstance;
+    from: TEIRef;
+    to: TEIRef;
 }

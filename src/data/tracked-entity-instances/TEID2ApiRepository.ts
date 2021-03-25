@@ -86,6 +86,8 @@ export class TEID2ApiRepository implements TEIRepository {
                         format: "json",
                         dryRun: false,
                         ...additionalParams,
+                        strategy: "CREATE_AND_UPDATE",
+                        ignoreEmptyCollection: true,
                     },
                     data
                 )

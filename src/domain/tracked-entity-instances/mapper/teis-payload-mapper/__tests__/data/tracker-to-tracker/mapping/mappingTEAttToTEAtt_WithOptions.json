@@ -1,0 +1,53 @@
+{
+    "options": {
+        "FFuAh3CgxqV": {
+            "code": "Op_Gender_Male",
+            "global": true,
+            "mapping": {},
+            "mappedId": "dT2lBzL8sUm",
+            "conflicts": false,
+            "mappedCode": "Jorge_Male",
+            "mappedName": "Jorge Male"
+        }
+    },
+    "trackedEntityAttributesToTEI": {
+        "IW1EGccT7jT": {
+            "code": "ATT_Gender",
+            "global": false,
+            "mapping": {
+                "options": {
+                    "DL8exJ3mxUX": {
+                        "code": "Op_Gender_Unknown",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "Y7UDUSUW2gJ",
+                        "conflicts": false,
+                        "mappedCode": "Op_Unknow",
+                        "mappedName": "Option Unknow"
+                    },
+                    "FFuAh3CgxqV": {
+                        "code": "Op_Gender_Male",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "dT2lBzL8sUm",
+                        "conflicts": false,
+                        "mappedCode": "Op_Male",
+                        "mappedName": "Option Male"
+                    },
+                    "M0BoqSns1KA": {
+                        "code": "Op_Gender_Female",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "zbKaybLIiGB",
+                        "conflicts": false,
+                        "mappedCode": "Op_Female",
+                        "mappedName": "Option Female"
+                    }
+                }
+            },
+            "mappedId": "rUo8dCMpEuk",
+            "conflicts": false,
+            "mappedName": "Jorge Gender"
+        }
+    }
+}
