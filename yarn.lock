@@ -1541,10 +1541,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.5.tgz#77211291c1900a700b8a78cfafda3160d76949ed"
   integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
 
-"@eyeseetea/d2-api@1.7.1-beta.8":
-  version "1.7.1-beta.8"
-  resolved "https://registry.yarnpkg.com/@eyeseetea/d2-api/-/d2-api-1.7.1-beta.8.tgz#adae97496a044dbd2c14c7b5df0b061f0e06b087"
-  integrity sha512-6QPPUYQIIVcilNdzEOaqb+bx8RsjyC8+ryAg8ZgkLszF6XC3pfKgghqjkBDw7rzoS8n7uIqSwvwCE3h0Yvwtkg==
+"@eyeseetea/d2-api@1.7.1-beta.10":
+  version "1.7.1-beta.10"
+  resolved "https://registry.yarnpkg.com/@eyeseetea/d2-api/-/d2-api-1.7.1-beta.10.tgz#b451b4bcbfb62f825a2b5a794c444dd2f4adfd01"
+  integrity sha512-9yrc3f5AXojQpzbr4ECunbeGuGNX4e1pzxpCWJCS0zQqZxlBSYRL+Yo6c437qcEUOGV4DBB/YKPoO2QHPApf4g==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@dhis2/d2-i18n" "^1.0.5"
