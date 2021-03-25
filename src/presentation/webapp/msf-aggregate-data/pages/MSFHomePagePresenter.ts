@@ -1,6 +1,6 @@
 import _ from "lodash";
 import moment from "moment";
-import { DataSyncPeriod } from "../../../../domain/aggregated/types";
+import { DataSyncAggregation, DataSyncPeriod } from "../../../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../../../domain/aggregated/utils";
 import { Instance, PublicInstance } from "../../../../domain/instance/entities/Instance";
 import { ProgramIndicator } from "../../../../domain/metadata/entities/MetadataEntities";
@@ -424,6 +424,13 @@ async function deletePreviousDataValues(
 
                 const dataElements = await getRuleDataElements(compositionRoot, builder, instance);
 
+                const startDate = builder.dataParams?.startDate
+                    ? getStartDateInPeriod(
+                          builder.dataParams?.startDate,
+                          builder.dataParams.aggregationType
+                      )
+                    : undefined;
+
                 const sync = compositionRoot.sync.aggregated({
                     originInstance: builder.originInstance,
                     targetInstances: builder.targetInstances,
@@ -431,7 +438,7 @@ async function deletePreviousDataValues(
                     excludedIds: [],
                     dataParams: {
                         period: periodType,
-                        startDate: builder.dataParams?.startDate,
+                        startDate,
                         endDate: builder.dataParams?.endDate,
                         orgUnitPaths: builder.dataParams?.orgUnitPaths,
                         allAttributeCategoryOptions: true,
@@ -503,4 +510,19 @@ async function getRulePrograms(
         .compact()
         .uniq()
         .value();
+}
+
+function getStartDateInPeriod(startDate: Date, period?: DataSyncAggregation): Date {
+    if (!period || period === "DAILY") return startDate;
+
+    switch (period) {
+        case "WEEKLY":
+            return moment(startDate).startOf("isoWeek").toDate();
+        case "MONTHLY":
+            return moment(startDate).startOf("month").toDate();
+        case "QUARTERLY":
+            return moment(startDate).startOf("quarter").toDate();
+        case "YEARLY":
+            return moment(startDate).startOf("year").toDate();
+    }
 }
