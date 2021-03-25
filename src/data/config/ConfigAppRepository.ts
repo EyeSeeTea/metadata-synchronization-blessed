@@ -29,8 +29,8 @@ export class ConfigAppRepository implements ConfigRepository {
         const dataStoreClient = new StorageDataStoreClient(this.instance);
         const constantClient = new StorageConstantClient(this.instance);
 
-        const dataStoreConfig = await dataStoreClient.getObject(Namespace.CONFIG);
-        return dataStoreConfig ? dataStoreClient : constantClient;
+        const constantConfig = await constantClient.getObject(Namespace.CONFIG);
+        return constantConfig ? constantClient : dataStoreClient;
     }
 
     public async changeStorageClient(client: "dataStore" | "constant"): Promise<void> {
