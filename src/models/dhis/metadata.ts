@@ -414,11 +414,7 @@ export class MapViewModel extends D2Model {
     protected static collectionName = "mapViews" as const;
 
     protected static excludeRules = [];
-    protected static includeRules = [
-        "legendSets",
-        "programIndicators",
-        "indicators",
-    ];
+    protected static includeRules = ["legendSets", "programIndicators", "indicators"];
 }
 
 export class OptionGroupModel extends D2Model {
