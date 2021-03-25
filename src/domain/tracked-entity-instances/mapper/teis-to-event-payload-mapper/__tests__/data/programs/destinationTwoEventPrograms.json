@@ -1,0 +1,20 @@
+[
+    {
+        "id": "aaQUpMGyBEB",
+        "programType": "WITHOUT_REGISTRATION",
+        "programStages": [
+            {
+                "id": "psAUpMGyBEB"
+            }
+        ]
+    },
+    {
+        "id": "bbQUpMGyBEB",
+        "programType": "WITHOUT_REGISTRATION",
+        "programStages": [
+            {
+                "id": "psBUpMGyBEB"
+            }
+        ]
+    }
+]

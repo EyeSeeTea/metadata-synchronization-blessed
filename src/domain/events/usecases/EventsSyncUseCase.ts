@@ -20,7 +20,7 @@ import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUs
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
 import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
 import { TrackedEntityInstance } from "../../tracked-entity-instances/entities/TrackedEntityInstance";
-import createTEIsPayloadMapper from "../../tracked-entity-instances/mapper/teis-payload-mapper/TEIsPayloadMapperFactory";
+import { createTEIsPayloadMapper } from "../../tracked-entity-instances/mapper/TEIsPayloadMapperFactory";
 import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";

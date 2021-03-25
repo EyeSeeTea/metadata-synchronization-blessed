@@ -1,28 +1,41 @@
 import _ from "lodash";
-import { MetadataMappingDictionary } from "../../../mapping/entities/MetadataMapping";
-import { MetadataRepository } from "../../../metadata/repositories/MetadataRepository";
-import { TrackedEntityInstance } from "../../entities/TrackedEntityInstance";
-import { ProgramRef } from "../Models";
-import { TEIsPayloadMapper } from "./TEIsPayloadMapper";
+import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
+import { MetadataRepository } from "../../metadata/repositories/MetadataRepository";
+import { TrackedEntityInstance } from "../entities/TrackedEntityInstance";
+import { ProgramRef } from "./Models";
+import { TEIsPayloadMapper } from "./teis-payload-mapper/TEIsPayloadMapper";
+import { TEIsToEventPayloadMapper } from "./teis-to-event-payload-mapper/TEIsToEventPayloadMapper";
 
-export default async function createTEIsPayloadMapper(
+export async function createTEIsPayloadMapper(
     metadataRepository: MetadataRepository,
     teis: TrackedEntityInstance[],
     mapping: MetadataMappingDictionary
 ) {
     const destinationMappingPrograms = await getAllPossibleDestinationPrograms(
         metadataRepository,
-        teis,
-        mapping
+        mapping,
+        teis
     );
 
     return new TEIsPayloadMapper(mapping, destinationMappingPrograms);
 }
 
+export async function createTEIsToEventPayloadMapper(
+    metadataRepository: MetadataRepository,
+    mapping: MetadataMappingDictionary
+) {
+    const destinationMappingPrograms = await getAllPossibleDestinationPrograms(
+        metadataRepository,
+        mapping
+    );
+
+    return new TEIsToEventPayloadMapper(mapping, destinationMappingPrograms);
+}
+
 async function getAllPossibleDestinationPrograms(
     metadataRepository: MetadataRepository,
-    teis: TrackedEntityInstance[],
-    mapping: MetadataMappingDictionary
+    mapping: MetadataMappingDictionary,
+    teis: TrackedEntityInstance[] = []
 ): Promise<ProgramRef[]> {
     const trackerProgramsMapping = mapping["trackerPrograms"];
 
@@ -43,7 +56,7 @@ async function getAllPossibleDestinationPrograms(
         const programs = (
             await metadataRepository.getMetadataByIds<ProgramRef>(
                 allPossibleDestinationProgramIds,
-                "id,programType, programTrackedEntityAttributes[trackedEntityAttribute]"
+                "id,programType, programTrackedEntityAttributes[trackedEntityAttribute],programStages[id]"
             )
         ).programs;
 

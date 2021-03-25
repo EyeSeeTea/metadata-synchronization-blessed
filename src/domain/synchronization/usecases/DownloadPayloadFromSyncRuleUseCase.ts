@@ -13,7 +13,7 @@ import { EventsPackage } from "../../events/entities/EventsPackage";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
 import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
-import createTEIsPayloadMapper from "../../tracked-entity-instances/mapper/teis-payload-mapper/TEIsPayloadMapperFactory";
+import { createTEIsPayloadMapper } from "../../tracked-entity-instances/mapper/TEIsPayloadMapperFactory";
 import { SynchronizationPayload } from "../entities/SynchronizationPayload";
 import { SynchronizationResultType } from "../entities/SynchronizationType";
 import { PayloadMapper } from "../mapper/PayloadMapper";
