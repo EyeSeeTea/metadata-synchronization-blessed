@@ -67,9 +67,7 @@ export class RepositoryFactory {
 
     @cache()
     public downloadRepository() {
-        return this.get<DownloadRepositoryConstructor>(Repositories.DownloadRepository, [
-            this.transformationRepository(),
-        ]);
+        return this.get<DownloadRepositoryConstructor>(Repositories.DownloadRepository, []);
     }
 
     @cache()
@@ -138,7 +136,8 @@ export class RepositoryFactory {
     @cache()
     public rulesRepository(instance: Instance) {
         const config = this.configRepository(instance);
-        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [config]);
+        const user = this.userRepository(instance);
+        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [config, user]);
     }
 
     @cache()

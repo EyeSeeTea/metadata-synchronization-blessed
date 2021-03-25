@@ -21,6 +21,7 @@ export class DownloadPackageUseCase implements UseCase {
         const date = moment().format("YYYYMMDDHHmm");
         const name = `package-${ruleName}-${date}.json`;
         const payload = { package: item, ...contents };
+
         this.repositoryFactory.downloadRepository().downloadFile(name, payload);
     }
 

@@ -1,4 +1,4 @@
-import { D2SchemaProperties } from "d2-api/schemas";
+import { D2SchemaProperties } from "@eyeseetea/d2-api/schemas";
 import { isValidUid } from "d2/uid";
 import _ from "lodash";
 import { D2Api } from "../../types/d2-api";

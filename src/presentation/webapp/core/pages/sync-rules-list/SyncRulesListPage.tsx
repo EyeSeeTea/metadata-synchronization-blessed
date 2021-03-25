@@ -7,17 +7,18 @@ import {
     ObjectsTable,
     ObjectsTableDetailField,
     ReferenceObject,
-    SearchResult,
     ShareUpdate,
     TableAction,
     TableColumn,
+    TableGlobalAction,
     TableSelection,
     TableState,
     useLoading,
     useSnackbar,
 } from "d2-ui-components";
 import _ from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FileRejection } from "react-dropzone";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
@@ -38,6 +39,7 @@ import {
     UserInfo,
 } from "../../../../../utils/permissions";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
+import { Dropzone, DropzoneRef } from "../../../../react/core/components/dropzone/Dropzone";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import {
     PullRequestCreation,
@@ -78,6 +80,7 @@ const SyncRulesPage: React.FC = () => {
     const { title } = config[type];
 
     const [rows, setRows] = useState<SynchronizationRule[]>([]);
+    const fileRef = useRef<DropzoneRef>(null);
 
     const [refreshKey, setRefreshKey] = useState(0);
     const [selection, updateSelection] = useState<TableSelection[]>([]);
@@ -253,6 +256,15 @@ const SyncRulesPage: React.FC = () => {
         }
     };
 
+    const exportModule = useCallback(
+        async (ids: string[]) => {
+            loading.show(true, i18n.t("Exporting synchronization rules"));
+            await compositionRoot.rules.export(ids);
+            loading.reset();
+        },
+        [loading, compositionRoot]
+    );
+
     const back = () => {
         history.push("/dashboard");
     };
@@ -405,7 +417,7 @@ const SyncRulesPage: React.FC = () => {
                 autoHideDuration: null,
             });
         } else {
-            await compositionRoot.rules.save(syncRule);
+            await compositionRoot.rules.save([syncRule]);
             snackbar.success(i18n.t("Successfully updated sync rule"));
             setRefreshKey(Math.random());
         }
@@ -450,6 +462,67 @@ const SyncRulesPage: React.FC = () => {
         return appConfigurator;
     };
 
+    const openImportDialog = useCallback(async () => {
+        fileRef.current?.openDialog();
+    }, [fileRef]);
+
+    const handleFileUpload = useCallback(
+        async (files: File[], rejections: FileRejection[]) => {
+            if (files.length === 0 && rejections.length > 0) {
+                snackbar.error(i18n.t("Couldn't read the file because it's not valid"));
+            } else {
+                loading.show(true, i18n.t("Importing rule(s)"));
+                try {
+                    const rules = await compositionRoot.rules.readFiles(files);
+                    const validRules = rules.filter(rule => rule.type === type);
+                    const invalidRuleCount = rules.length - validRules.length;
+
+                    updateDialog({
+                        title: i18n.t("Importing {{n}} rules", { n: validRules.length }),
+                        description: _.compact([
+                            invalidRuleCount > 0
+                                ? i18n.t("You have uploaded {{n}} rules with a wrong type.")
+                                : undefined,
+                            validRules.length > 0
+                                ? i18n.t(
+                                      "You're about to import the following synchronization rules:"
+                                  )
+                                : i18n.t(
+                                      "All the uploaded rules are invalid and cannot be imported."
+                                  ),
+                            ...validRules.map(
+                                rule =>
+                                    `- ${rule.name} (${rule.id}): ${
+                                        rows.find(row => row.id === rule.id)
+                                            ? i18n.t("Existing (will be overwritten)")
+                                            : i18n.t("New")
+                                    }`
+                            ),
+                        ]).join("\n"),
+                        onSave: async () => {
+                            await compositionRoot.rules.save(validRules);
+                            snackbar.success(
+                                i18n.t("Imported {{n}} rules", { n: validRules.length })
+                            );
+                            setRefreshKey(Math.random());
+                            updateDialog(null);
+                        },
+                        onCancel: () => updateDialog(null),
+                        disableSave: validRules.length === 0,
+                        saveText: i18n.t("Import"),
+                        maxWidth: "lg",
+                        fullWidth: true,
+                    });
+                } catch (err) {
+                    snackbar.error((err && err.message) || err.toString());
+                } finally {
+                    loading.reset();
+                }
+            }
+        },
+        [snackbar, compositionRoot, loading, rows, type]
+    );
+
     const actions: TableAction<SynchronizationRule>[] = [
         {
             name: "details",
@@ -483,19 +556,19 @@ const SyncRulesPage: React.FC = () => {
             icon: <Icon>settings_input_antenna</Icon>,
         },
         {
-            name: "download",
-            text: i18n.t("Download JSON"),
-            multiple: false,
-            onClick: downloadJSON,
-            icon: <Icon>cloud_download</Icon>,
-        },
-        {
             name: "replicate",
             text: i18n.t("Replicate"),
             multiple: false,
             isActive: verifyUserCanConfigure,
             onClick: replicateRule,
             icon: <Icon>content_copy</Icon>,
+        },
+        {
+            name: "export",
+            text: i18n.t("Export rule"),
+            multiple: true,
+            onClick: exportModule,
+            icon: <Icon>arrow_downwards</Icon>,
         },
         {
             name: "toggleEnable",
@@ -513,12 +586,28 @@ const SyncRulesPage: React.FC = () => {
             onClick: openSharingSettings,
             icon: <Icon>share</Icon>,
         },
+        {
+            name: "download",
+            text: i18n.t("Download JSON Payload"),
+            multiple: false,
+            onClick: downloadJSON,
+            icon: <Icon>cloud_download</Icon>,
+        },
     ];
 
-    const onSearchRequest = async (key: string) =>
-        api
-            .get<SearchResult>("/sharing/search", { key })
-            .getData();
+    const globalActions: TableGlobalAction[] = useMemo(
+        () => [
+            {
+                name: "import",
+                text: i18n.t("Import sync rules"),
+                icon: <Icon>arrow_upward</Icon>,
+                onClick: openImportDialog,
+            },
+        ],
+        [openImportDialog]
+    );
+
+    const onSearchRequest = (key: string) => api.sharing.search({ key }).getData();
 
     const onSharingChanged = async (updatedAttributes: ShareUpdate) => {
         if (!sharingSettingsObject) return;
@@ -534,7 +623,7 @@ const SyncRulesPage: React.FC = () => {
         const syncRule = SynchronizationRule.build(
             newSharingSettings.object as SynchronizationRuleData
         );
-        await compositionRoot.rules.save(syncRule);
+        await compositionRoot.rules.save([syncRule]);
 
         setSharingSettingsObject(newSharingSettings);
     };
@@ -573,18 +662,28 @@ const SyncRulesPage: React.FC = () => {
     return (
         <TestWrapper>
             <PageHeader title={title} onBackClick={back} />
-            <ObjectsTable<SynchronizationRule>
-                rows={rows}
-                columns={columns}
-                details={details}
-                actions={actions}
-                selection={selection}
-                onChange={handleTableChange}
-                onActionButtonClick={appConfigurator ? createRule : undefined}
-                filterComponents={renderCustomFilters}
-                searchBoxLabel={i18n.t("Search by name")}
-                onChangeSearch={setSearchFilter}
-            />
+
+            <Dropzone
+                ref={fileRef}
+                accept={
+                    "application/zip,application/zip-compressed,application/x-zip-compressed,application/json"
+                }
+                onDrop={handleFileUpload}
+            >
+                <ObjectsTable<SynchronizationRule>
+                    rows={rows}
+                    columns={columns}
+                    details={details}
+                    actions={actions}
+                    selection={selection}
+                    onChange={handleTableChange}
+                    onActionButtonClick={appConfigurator ? createRule : undefined}
+                    filterComponents={renderCustomFilters}
+                    searchBoxLabel={i18n.t("Search by name")}
+                    onChangeSearch={setSearchFilter}
+                    globalActions={globalActions}
+                />
+            </Dropzone>
 
             {toDelete.length > 0 && (
                 <ConfirmationDialog

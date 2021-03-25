@@ -22,6 +22,7 @@ export class DownloadModuleSnapshotUseCase implements UseCase {
         const date = moment().format("YYYYMMDDHHmm");
         const name = `snapshot-${ruleName}-${module.type}-${date}.json`;
         const payload = { package: item, ...contents };
+
         return this.repositoryFactory.downloadRepository().downloadFile(name, payload);
     }
 }

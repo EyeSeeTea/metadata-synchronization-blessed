@@ -16,7 +16,4 @@ export interface ProgramEvent {
     attributeCategoryOptions?: string;
     attributeOptionCombo?: string;
     dataValues: ProgramEventDataValue[];
-    enrollment: string;
-    enrollmentStatus: string;
-    trackedEntityInstance: string;
 }

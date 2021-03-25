@@ -1,4 +1,4 @@
-import { FilterSingleOperatorBase } from "d2-api/api/common";
+import { FilterSingleOperatorBase } from "@eyeseetea/d2-api/api/common";
 import { IdentifiableRef, Ref } from "../../common/entities/Ref";
 import { Id } from "../../common/entities/Schemas";
 import { DataSource } from "../../instance/entities/DataSource";
