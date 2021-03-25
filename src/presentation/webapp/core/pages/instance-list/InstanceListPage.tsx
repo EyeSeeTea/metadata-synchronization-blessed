@@ -9,7 +9,6 @@ import {
     ObjectsTable,
     ObjectsTableDetailField,
     RowConfig,
-    SearchResult,
     ShareUpdate,
     TableAction,
     TableColumn,
@@ -22,13 +21,13 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Instance, InstanceData } from "../../../../../domain/instance/entities/Instance";
+import { User } from "../../../../../domain/user/entities/User";
 import i18n from "../../../../../locales";
 import { executeAnalytics } from "../../../../../utils/analytics";
-import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
-import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
-import { User } from "../../../../../domain/user/entities/User";
+import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
+import { useAppContext } from "../../../../react/core/contexts/AppContext";
 
 const InstanceListPage = () => {
     const { api, compositionRoot } = useAppContext();
@@ -304,10 +303,7 @@ const InstanceListPage = () => {
     );
 
     //TODO: create a use case for this api call
-    const onSearchRequest = async (key: string) =>
-        api
-            .get<SearchResult>("/sharing/search", { key })
-            .getData();
+    const onSearchRequest = (key: string) => api.sharing.search({ key }).getData();
 
     const onSharingChanged = async (updatedAttributes: ShareUpdate) => {
         if (!sharingSettingsObject) return;
@@ -328,10 +324,12 @@ const InstanceListPage = () => {
             .save(instance)
             .then(validationErrors => {
                 if (validationErrors.length > 0) {
+                    console.error(validationErrors);
                     snackbar.error(i18n.t("An error has ocurred editing share settings"));
                 }
             })
-            .catch(_error => {
+            .catch(error => {
+                console.error(error);
                 snackbar.error(i18n.t("An error has ocurred editing share settings"));
             });
     };

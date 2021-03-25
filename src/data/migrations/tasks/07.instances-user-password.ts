@@ -5,7 +5,7 @@ import i18n from "../../../locales";
 import { D2Api } from "../../../types/d2-api";
 import { Maybe } from "../../../types/utils";
 import { promiseMap } from "../../../utils/common";
-import { dataStoreNamespace, MetadataDataStoreKey } from "../../storage/StorageDataStoreClient";
+import { dataStoreNamespace } from "../../storage/StorageDataStoreClient";
 import { AppStorage, Migration } from "../client/types";
 
 interface InstanceOld {
@@ -94,13 +94,12 @@ async function modifyAccessToInstance(api: D2Api, key: string): Promise<void> {
         userGroupAccesses: [],
     };
 
-    await api.post(`/sharing`, { type: "dataStore", id }, { object }).getData();
+    await api.sharing.post({ type: "dataStore", id }, object).getData();
 }
 
 async function getMetadataByKey(api: D2Api, key: string) {
-    const data = await api
-        .get<MetadataDataStoreKey>(`/dataStore/${dataStoreNamespace}/${key}/metaData`)
-        .getData();
+    const data = await api.dataStore(dataStoreNamespace).getMetadata(key).getData();
+    if (!data) throw new Error(`Invalid dataStore key ${key}`);
 
     return data;
 }

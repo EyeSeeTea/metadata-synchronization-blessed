@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import { isCancel } from "d2-api";
+import { isCancel } from "@eyeseetea/d2-api";
 import {
     DatePicker,
     ObjectsTable,
