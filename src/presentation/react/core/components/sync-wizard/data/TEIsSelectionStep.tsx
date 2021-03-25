@@ -35,7 +35,9 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
 
     useEffect(() => {
         const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
-        extractAllPrograms<Program>(compositionRoot, sync).then(setPrograms);
+        extractAllPrograms<Program>(compositionRoot, sync).then(programs => {
+            setPrograms(programs.filter(program => program.programType === "WITH_REGISTRATION"));
+        });
     }, [memoizedSyncRule, compositionRoot]);
 
     useEffect(() => {
