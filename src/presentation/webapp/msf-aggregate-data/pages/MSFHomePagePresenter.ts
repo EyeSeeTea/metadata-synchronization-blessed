@@ -426,7 +426,7 @@ async function deletePreviousDataValues(
 
                 const startDate = builder.dataParams?.startDate
                     ? getStartDateInPeriod(
-                          builder.dataParams?.startDate,
+                          builder.dataParams.startDate,
                           builder.dataParams.aggregationType
                       )
                     : undefined;
