@@ -152,12 +152,18 @@ async function validatePreviousDataValues(
                 );
             });
 
-            const errorEvents = _.flatten(events).map(
-                ({ id, orgUnitName, orgUnit, eventDate, lastUpdated }) =>
-                    `\n- Event ${id} for org unit ${orgUnitName ?? orgUnit} on date ${moment(
-                        eventDate
-                    ).format("DD-MM-YYYY")} and updated ${moment(lastUpdated).format("DD-MM-YYYY")}`
-            );
+            const errorEvents = _(events)
+                .flatten()
+                .uniqBy("id")
+                .map(
+                    ({ id, orgUnitName, orgUnit, eventDate, lastUpdated }) =>
+                        `\n- Event ${id} for org unit ${orgUnitName ?? orgUnit} on date ${moment(
+                            eventDate
+                        ).format("DD-MM-YYYY")} and updated ${moment(lastUpdated).format(
+                            "DD-MM-YYYY"
+                        )}`
+                )
+                .value();
 
             if (errorEvents.length > 0) {
                 return `Sync rule '${rule.name}': we have found ${

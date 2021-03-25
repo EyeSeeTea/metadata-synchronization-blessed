@@ -124,11 +124,35 @@ export class CategoryOptionGroupSetModel extends D2Model {
 export class ChartModel extends D2Model {
     protected static metadataType = "chart";
     protected static collectionName = "charts" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "programIndicators",
+        "indicators",
+        "organisationUnitGroupSets",
+        "organisationUnitGroups",
+        "categoryOptionGroupSets",
+        "categoryOptionGroups",
+        "dataElementGroupSets",
+        "dataElementGroups",
+    ];
 }
 
 export class ReportTableModel extends D2Model {
     protected static metadataType = "reportTable";
     protected static collectionName = "reportTables" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "programIndicators",
+        "indicators",
+        "organisationUnitGroupSets",
+        "organisationUnitGroups",
+        "categoryOptionGroupSets",
+        "categoryOptionGroups",
+        "dataElementGroupSets",
+        "dataElementGroups",
+    ];
 }
 
 export class DashboardModel extends D2Model {
@@ -137,16 +161,32 @@ export class DashboardModel extends D2Model {
 
     protected static excludeRules = [];
     protected static includeRules = [
-        "dashboardItems",
         "charts",
+        "charts.programIndicators",
+        "charts.indicators",
+        "charts.organisationUnitGroupSets",
+        "charts.organisationUnitGroups",
+        "charts.categoryOptionGroupSets",
+        "charts.categoryOptionGroups",
+        "charts.dataElementGroupSets",
+        "charts.dataElementGroups",
         "eventCharts",
-        "pivotTables",
         "eventReports",
         "maps",
-        "maps.mapViews",
+        "maps.mapViews.legendSets",
+        "maps.mapViews.programIndicators",
+        "maps.mapViews.indicators",
         "reports",
         "reportTables",
         "reportTables.legendSets",
+        "reportTables.programIndicators",
+        "reportTables.indicators",
+        "reportTables.organisationUnitGroupSets",
+        "reportTables.organisationUnitGroups",
+        "reportTables.categoryOptionGroupSets",
+        "reportTables.categoryOptionGroups",
+        "reportTables.dataElementGroupSets",
+        "reportTables.dataElementGroups",
     ];
 }
 
@@ -360,11 +400,21 @@ export class LegendSetModel extends D2Model {
 export class MapModel extends D2Model {
     protected static metadataType = "map";
     protected static collectionName = "maps" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = [
+        "mapViews.legendSets",
+        "mapViews.programIndicators",
+        "mapViews.indicators",
+    ];
 }
 
 export class MapViewModel extends D2Model {
     protected static metadataType = "mapView";
     protected static collectionName = "mapViews" as const;
+
+    protected static excludeRules = [];
+    protected static includeRules = ["legendSets", "programIndicators", "indicators"];
 }
 
 export class OptionGroupModel extends D2Model {

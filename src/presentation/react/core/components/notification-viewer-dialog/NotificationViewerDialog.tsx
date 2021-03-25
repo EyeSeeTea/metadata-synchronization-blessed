@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { AppNotification } from "../../../../../domain/notifications/entities/Notification";

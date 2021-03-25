@@ -1,5 +1,5 @@
 import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
-import { ConfirmationDialog, DatePicker, useSnackbar } from "d2-ui-components";
+import { ConfirmationDialog, DatePicker, useSnackbar } from "@eyeseetea/d2-ui-components";
 import { Moment } from "moment";
 import React, { useState } from "react";
 import { Period } from "../../../../../domain/common/entities/Period";

@@ -1,5 +1,5 @@
 import { makeStyles, Typography } from "@material-ui/core";
-import { MultiSelector } from "d2-ui-components";
+import { MultiSelector } from "@eyeseetea/d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../../locales";

@@ -1,5 +1,5 @@
 import { Button, LinearProgress, makeStyles } from "@material-ui/core";
-import { useSnackbar } from "d2-ui-components";
+import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useEffect, useState } from "react";
 import { NamedRef } from "../../../../../../domain/common/entities/Ref";
