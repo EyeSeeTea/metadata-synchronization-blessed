@@ -1,6 +1,6 @@
 import _ from "lodash";
-import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
-import { MetadataRepository } from "../../metadata/repositories/MetadataRepository";
+import { MetadataMappingDictionary } from "../../../mapping/entities/MetadataMapping";
+import { MetadataRepository } from "../../../metadata/repositories/MetadataRepository";
 import { ProgramRef } from "./Models";
 import { TEIsPayloadMapper } from "./TEIsPayloadMapper";
 

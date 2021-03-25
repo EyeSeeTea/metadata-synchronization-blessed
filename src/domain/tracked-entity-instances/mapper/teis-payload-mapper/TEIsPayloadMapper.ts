@@ -1,13 +1,13 @@
-import { mapOptionValue } from "../../../utils/synchronization";
-import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
-import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
-import { PayloadMapper } from "../../synchronization/mapper/PayloadMapper";
-import { cleanOrgUnitPath } from "../../synchronization/utils";
-import { Enrollment } from "../entities/Enrollment";
-import { Relationship } from "../entities/Relationship";
-import { TEIsPackage } from "../entities/TEIsPackage";
-import { TrakedEntityAttribute } from "../entities/TrackedEntityAttribute";
-import { ProgramOwner, TrackedEntityInstance } from "../entities/TrackedEntityInstance";
+import { mapOptionValue } from "../../../../utils/synchronization";
+import { MetadataMappingDictionary } from "../../../mapping/entities/MetadataMapping";
+import { SynchronizationPayload } from "../../../synchronization/entities/SynchronizationPayload";
+import { PayloadMapper } from "../../../synchronization/mapper/PayloadMapper";
+import { cleanOrgUnitPath } from "../../../synchronization/utils";
+import { Enrollment } from "../../entities/Enrollment";
+import { Relationship } from "../../entities/Relationship";
+import { TEIsPackage } from "../../entities/TEIsPackage";
+import { TrakedEntityAttribute } from "../../entities/TrackedEntityAttribute";
+import { ProgramOwner, TrackedEntityInstance } from "../../entities/TrackedEntityInstance";
 import { ProgramRef } from "./Models";
 
 export class TEIsPayloadMapper implements PayloadMapper {

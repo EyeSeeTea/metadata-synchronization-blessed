@@ -1,4 +1,4 @@
-import { TEIsPackage } from "../../entities/TEIsPackage";
+import { TEIsPackage } from "../../../entities/TEIsPackage";
 import { TEIsPayloadMapper } from "../TEIsPayloadMapper";
 import { ProgramRef } from "../models";
 
