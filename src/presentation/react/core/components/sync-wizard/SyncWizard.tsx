@@ -1,4 +1,4 @@
-import { Wizard, WizardStep } from "d2-ui-components";
+import { Wizard, WizardStep } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";

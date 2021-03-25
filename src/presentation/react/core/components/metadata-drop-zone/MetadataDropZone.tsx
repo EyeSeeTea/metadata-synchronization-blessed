@@ -1,4 +1,4 @@
-import { useSnackbar } from "d2-ui-components";
+import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import i18n from "../../../../../locales";

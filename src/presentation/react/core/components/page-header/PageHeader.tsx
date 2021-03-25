@@ -1,7 +1,7 @@
 import { ButtonProps, Icon, IconButton, Tooltip } from "@material-ui/core";
 import { Variant } from "@material-ui/core/styles/createTypography";
 import Typography from "@material-ui/core/Typography";
-import { DialogButton } from "d2-ui-components";
+import { DialogButton } from "@eyeseetea/d2-ui-components";
 import React, { ReactNode } from "react";
 import i18n from "../../../../../locales";
 

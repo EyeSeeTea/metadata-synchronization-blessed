@@ -1,5 +1,5 @@
 import { Button, LinearProgress, makeStyles } from "@material-ui/core";
-import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
+import { ConfirmationDialog, useLoading, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";

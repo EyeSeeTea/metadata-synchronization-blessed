@@ -1,4 +1,4 @@
-import { MultiSelector } from "d2-ui-components";
+import { MultiSelector } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { NamedRef } from "../../../../../../domain/common/entities/Ref";

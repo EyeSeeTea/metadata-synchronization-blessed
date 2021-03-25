@@ -7,7 +7,7 @@ import {
     TableGlobalAction,
     useLoading,
     useSnackbar,
-} from "d2-ui-components";
+} from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
 import { DataSource } from "../../../../../domain/instance/entities/DataSource";

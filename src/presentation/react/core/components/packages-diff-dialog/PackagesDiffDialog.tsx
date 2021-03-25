@@ -1,7 +1,6 @@
+import { ConfirmationDialog, useSnackbar } from "@eyeseetea/d2-ui-components";
 import { LinearProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import { useSnackbar } from "d2-ui-components";
-import { ConfirmationDialog } from "d2-ui-components/confirmation-dialog/ConfirmationDialog";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
