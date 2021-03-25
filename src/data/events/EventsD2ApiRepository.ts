@@ -210,7 +210,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     status: "ERROR",
                     instance: this.instance.toPublicObject(),
                     date: new Date(),
-                    type: "aggregated",
+                    type: "events",
                 };
             }
 

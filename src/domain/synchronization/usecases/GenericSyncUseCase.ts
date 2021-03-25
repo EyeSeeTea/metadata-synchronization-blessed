@@ -233,7 +233,7 @@ export abstract class GenericSyncUseCase {
         yield { syncReport };
         for (const instance of targetInstances) {
             yield {
-                message: i18n.t("Start import in instance {{instance}}", {
+                message: i18n.t("Importing in instance {{instance}}", {
                     instance: instance.name,
                     interpolation: { escapeValue: false },
                 }),
