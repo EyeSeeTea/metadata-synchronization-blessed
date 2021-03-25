@@ -142,6 +142,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
 
                           return await createTEIsPayloadMapper(
                               await this.getMetadataRepository(instance),
+                              trackedEntityInstances,
                               mapping
                           );
                       },

@@ -79,7 +79,6 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     eventCharts: "Event charts",
     eventReports: "Event reports",
     maps: "Maps",
-    "maps.mapViews": "Layers of maps",
     "maps.mapViews.programIndicators": "Program indicators of maps",
     "maps.mapViews.indicators": "Indicators of maps",
     "maps.mapViews.legendSets": "Legend sets of maps",

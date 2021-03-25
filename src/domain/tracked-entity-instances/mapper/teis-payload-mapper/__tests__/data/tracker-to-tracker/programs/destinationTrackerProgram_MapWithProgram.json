@@ -12,11 +12,12 @@
                 "trackedEntityAttribute": {
                     "id": "sKBh0kazOCk"
                 }
+            },
+            {
+                "trackedEntityAttribute": {
+                    "id": "IW1EGccT7jT"
+                }
             }
         ]
-    },
-    {
-        "id": "bbQUpMGyBEB",
-        "programType": "WITHOUT_REGISTRATION"
     }
 ]
