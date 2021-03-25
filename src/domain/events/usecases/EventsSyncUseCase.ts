@@ -20,7 +20,7 @@ import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUs
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
 import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
 import { TrackedEntityInstance } from "../../tracked-entity-instances/entities/TrackedEntityInstance";
-import { TEIsPayloadMapper } from "../../tracked-entity-instances/mapper/TEIsPayloadMapper";
+import createTEIsPayloadMapper from "../../tracked-entity-instances/mapper/TEIsPayloadMapperFactory";
 import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
@@ -127,9 +127,12 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const mapping = await this.getMapping(instance);
 
-        const payload = (await new TEIsPayloadMapper(mapping).map({
-            trackedEntityInstances: teis,
-        })) as TEIsPackage;
+        const mapper = await createTEIsPayloadMapper(
+            await this.getMetadataRepository(instance),
+            mapping
+        );
+
+        const payload = (await mapper.map({ trackedEntityInstances: teis })) as TEIsPackage;
 
         debug("TEIS package", { trackedEntityInstances, payload });
 

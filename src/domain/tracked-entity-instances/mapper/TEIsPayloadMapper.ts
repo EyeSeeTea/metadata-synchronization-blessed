@@ -8,14 +8,23 @@ import { Relationship } from "../entities/Relationship";
 import { TEIsPackage } from "../entities/TEIsPackage";
 import { TrakedEntityAttribute } from "../entities/TrackedEntityAttribute";
 import { ProgramOwner, TrackedEntityInstance } from "../entities/TrackedEntityInstance";
+import { ProgramRef } from "./Models";
 
 export class TEIsPayloadMapper implements PayloadMapper {
-    constructor(private mapping: MetadataMappingDictionary) {}
+    destinationEventProgramsIds: string[];
+    constructor(
+        private mapping: MetadataMappingDictionary,
+        destinationMappedPrograms: ProgramRef[]
+    ) {
+        this.destinationEventProgramsIds = destinationMappedPrograms
+            .filter(program => program.programType === "WITHOUT_REGISTRATION")
+            .map(({ id }) => id);
+    }
 
     map(payload: SynchronizationPayload): Promise<SynchronizationPayload> {
         const teiPackage = payload as TEIsPackage;
 
-        const trackedEntityInstances = teiPackage.trackedEntityInstances
+        const teis = teiPackage.trackedEntityInstances
             .map(tei => {
                 const {
                     relationshipTypes = {},
@@ -44,7 +53,8 @@ export class TEIsPayloadMapper implements PayloadMapper {
                                 program: mappedProgram,
                             };
                         })
-                        .filter(item => !this.isDisabledProgramOwner(item)),
+                        .filter(item => !this.isDisabledProgramOwner(item))
+                        .filter(item => !this.destinationEventProgramsIds.includes(item.program)),
                     enrollments: tei.enrollments
                         .map(enrollment => {
                             const mappedOrgUnit =
@@ -59,7 +69,8 @@ export class TEIsPayloadMapper implements PayloadMapper {
                                 program: mappedProgram,
                             };
                         })
-                        .filter(item => !this.isDisabledEnrollment(item)),
+                        .filter(item => !this.isDisabledEnrollment(item))
+                        .filter(item => !this.destinationEventProgramsIds.includes(item.program)),
                     relationships: tei.relationships
                         .map(rel => {
                             const mappedRelTypeId =
@@ -92,14 +103,57 @@ export class TEIsPayloadMapper implements PayloadMapper {
                         .filter(item => !this.isDisabledTrackedEntityAttribute(item)),
                 };
             })
-            .filter(item => !this.isDisabledTEI(item));
+            .filter(item => !this.isDisabledTEI(item))
+            .filter(item => item.programOwners.length > 0);
 
-        const mappedPayload = this.removeDuplicateRelationShips(trackedEntityInstances);
+        const TeisWithoutDuplicates = this.removeDuplicateRelationShips(teis);
 
-        return Promise.resolve(mappedPayload);
+        const TeisWithoutDisabled = this.removeDisabledItems(TeisWithoutDuplicates);
+
+        const trackedEntityInstances = this.removeMappedEventProgramReferences(TeisWithoutDisabled);
+
+        return Promise.resolve({ trackedEntityInstances });
     }
 
-    private removeDuplicateRelationShips(teis: TrackedEntityInstance[]): TEIsPackage {
+    private removeDisabledItems(teis: TrackedEntityInstance[]): TrackedEntityInstance[] {
+        return teis
+            .map(tei => {
+                return {
+                    ...tei,
+                    programOwners: tei.programOwners.filter(
+                        item => !this.isDisabledProgramOwner(item)
+                    ),
+                    enrollments: tei.enrollments.filter(item => !this.isDisabledEnrollment(item)),
+                    relationships: tei.relationships.filter(
+                        item => !this.isDisabledRelationship(item)
+                    ),
+                    attributes: tei.attributes.filter(
+                        item => !this.isDisabledTrackedEntityAttribute(item)
+                    ),
+                };
+            })
+            .filter(item => !this.isDisabledTEI(item));
+    }
+
+    private removeMappedEventProgramReferences(
+        teis: TrackedEntityInstance[]
+    ): TrackedEntityInstance[] {
+        return teis
+            .map(tei => {
+                return {
+                    ...tei,
+                    programOwners: tei.programOwners.filter(
+                        item => !this.destinationEventProgramsIds.includes(item.program)
+                    ),
+                    enrollments: tei.enrollments.filter(
+                        item => !this.destinationEventProgramsIds.includes(item.program)
+                    ),
+                };
+            })
+            .filter(item => item.programOwners.length > 0);
+    }
+
+    private removeDuplicateRelationShips(teis: TrackedEntityInstance[]): TrackedEntityInstance[] {
         const trackedEntityInstances = teis.reduce(
             (acc: TrackedEntityInstance[], tei: TrackedEntityInstance) => {
                 return [
@@ -121,7 +175,7 @@ export class TEIsPayloadMapper implements PayloadMapper {
             []
         );
 
-        return { trackedEntityInstances };
+        return trackedEntityInstances;
     }
 
     private isDisabledTEI(item: TrackedEntityInstance): boolean {

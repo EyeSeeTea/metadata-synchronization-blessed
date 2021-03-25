@@ -13,7 +13,7 @@ import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
 import { DownloadItem } from "../../storage/repositories/DownloadRepository";
 import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
-import { TEIsPayloadMapper } from "../../tracked-entity-instances/mapper/TEIsPayloadMapper";
+import createTEIsPayloadMapper from "../../tracked-entity-instances/mapper/TEIsPayloadMapperFactory";
 import { SynchronizationPayload } from "../entities/SynchronizationPayload";
 import { SynchronizationResultType } from "../entities/SynchronizationType";
 import { PayloadMapper } from "../mapper/PayloadMapper";
@@ -131,7 +131,10 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                       async instance => {
                           const mapping = await sync.getMapping(instance);
 
-                          return new TEIsPayloadMapper(mapping);
+                          return await createTEIsPayloadMapper(
+                              await this.getMetadataRepository(instance),
+                              mapping
+                          );
                       },
                       { trackedEntityInstances }
                   )
@@ -165,6 +168,10 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         if (!id) return undefined;
 
         return this.repositoryFactory.rulesRepository(this.localInstance).getById(id);
+    }
+
+    protected async getMetadataRepository(remoteInstance: Instance) {
+        return this.repositoryFactory.metadataRepository(remoteInstance);
     }
 }
 
