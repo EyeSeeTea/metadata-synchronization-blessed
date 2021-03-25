@@ -74,7 +74,7 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
             snackbar.error(errors.join("\n"));
         } else {
             const newSyncRule = syncRule.updateName(name);
-            await compositionRoot.rules.save(newSyncRule);
+            await compositionRoot.rules.save([newSyncRule]);
             history.push(`/sync-rules/${syncRule.type}/edit/${newSyncRule.id}`);
             onCancel();
         }

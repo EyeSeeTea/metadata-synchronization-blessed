@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-16T12:42:37.112Z\n"
-"PO-Revision-Date: 2021-03-16T12:42:37.112Z\n"
+"POT-Creation-Date: 2021-03-24T08:18:20.087Z\n"
+"PO-Revision-Date: 2021-03-24T08:18:20.087Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1861,6 +1861,9 @@ msgstr ""
 msgid "Generating JSON file"
 msgstr ""
 
+msgid "Exporting synchronization rules"
+msgstr ""
+
 msgid "Deleting Sync Rules"
 msgstr ""
 
@@ -1875,10 +1878,37 @@ msgstr ""
 msgid "Successfully updated sync rule"
 msgstr ""
 
+msgid "Couldn't read the file because it's not valid"
+msgstr ""
+
+msgid "Importing rule(s)"
+msgstr ""
+
+msgid "Importing {{n}} rules"
+msgstr ""
+
+msgid "You have uploaded {{n}} rules with a wrong type."
+msgstr ""
+
+msgid "All the uploaded rules are invalid and cannot be imported."
+msgstr ""
+
+msgid "Existing (will be overwritten)"
+msgstr ""
+
+msgid "Imported {{n}} rules"
+msgstr ""
+
 msgid "Execute"
 msgstr ""
 
+msgid "Export rule"
+msgstr ""
+
 msgid "Toggle scheduling"
+msgstr ""
+
+msgid "Import sync rules"
 msgstr ""
 
 msgid "Last executed date"

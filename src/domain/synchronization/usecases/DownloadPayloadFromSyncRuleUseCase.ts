@@ -1,5 +1,6 @@
 import _ from "lodash";
 import moment from "moment";
+import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
 import i18n from "../../../locales";
 import { CompositionRoot } from "../../../presentation/CompositionRoot";
 import { promiseMap } from "../../../utils/common";
@@ -11,7 +12,6 @@ import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { EventsPackage } from "../../events/entities/EventsPackage";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
-import { DownloadItem } from "../../storage/repositories/DownloadRepository";
 import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
 import { TEIsPayloadMapper } from "../../tracked-entity-instances/mapper/TEIsPayloadMapper";
 import { SynchronizationPayload } from "../entities/SynchronizationPayload";
@@ -48,13 +48,22 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                       payload
                   );
 
-        const files = mappedData.filter(data => !(typeof data === "string")) as DownloadItem[];
         const errors = mappedData.filter(data => typeof data === "string") as string[];
+        const files = _.compact(
+            mappedData.map(item => {
+                if (typeof item === "string") return undefined;
+                const payload = this.repositoryFactory
+                    .transformationRepository()
+                    .mapPackageTo(item.apiVersion, item.content, metadataTransformations);
+
+                return { name: item.name, content: payload };
+            })
+        );
 
         if (files.length === 1) {
             this.repositoryFactory
                 .downloadRepository()
-                .downloadFile(files[0].name, files[0].content, files[0].apiVersion);
+                .downloadFile(files[0].name, files[0].content);
         } else if (files.length > 1) {
             await this.repositoryFactory
                 .downloadRepository()
