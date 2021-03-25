@@ -1,5 +1,10 @@
 import { makeStyles, Typography } from "@material-ui/core";
-import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "d2-ui-components";
+import {
+    ObjectsTable,
+    ObjectsTableDetailField,
+    TableColumn,
+    TableState,
+} from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import i18n from "../../../../../../locales";
 import { SyncWizardStepProps } from "../Steps";

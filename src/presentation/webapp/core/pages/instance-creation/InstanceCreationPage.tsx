@@ -1,4 +1,4 @@
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";

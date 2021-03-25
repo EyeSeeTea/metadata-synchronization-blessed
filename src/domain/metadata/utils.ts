@@ -74,7 +74,7 @@ export function getAllReferences(
             result = _.deepMerge(result, recursive);
         } else if (isValidUid(value)) {
             const metadataType = _(parents)
-                .map(k => cleanToModelName(api, k, type))
+                .map(parent => cleanToModelName(api, parent, type))
                 .compact()
                 .first();
             if (metadataType) {
@@ -126,6 +126,17 @@ export function cleanToModelName(api: D2Api, id: string, caller?: string): strin
         return "dataElements";
     } else if (id === "programStageDataElements") {
         return "dataElements";
+    } else if (id === "dataElementDimensions") {
+        return "dataElements";
+    } else if (
+        [
+            "organisationUnitGroupSetDimensions",
+            "categoryOptionGroupSetDimensions",
+            "dataElementGroupSetDimensions",
+        ].includes(id)
+    ) {
+        // GroupSet dimensions are not metadata models but include nested types
+        return null;
     } else if (id === "trackedEntityTypeAttributes") {
         return "trackedEntityAttributes";
     } else if (id === "attributeValues") {

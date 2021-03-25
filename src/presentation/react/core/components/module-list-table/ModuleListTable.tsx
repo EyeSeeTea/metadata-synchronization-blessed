@@ -12,7 +12,7 @@ import {
     TableState,
     useLoading,
     useSnackbar,
-} from "d2-ui-components";
+} from "@eyeseetea/d2-ui-components";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";

@@ -1,5 +1,5 @@
 import { DialogContent } from "@material-ui/core";
-import { ConfirmationDialog, Wizard, WizardStep } from "d2-ui-components";
+import { ConfirmationDialog, Wizard, WizardStep } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useState } from "react";
 import { DataSource } from "../../../../../domain/instance/entities/DataSource";

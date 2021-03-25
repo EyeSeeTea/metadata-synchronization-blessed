@@ -11,7 +11,7 @@ import {
     TableState,
     useLoading,
     useSnackbar,
-} from "d2-ui-components";
+} from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import semver from "semver";

@@ -1,5 +1,5 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";

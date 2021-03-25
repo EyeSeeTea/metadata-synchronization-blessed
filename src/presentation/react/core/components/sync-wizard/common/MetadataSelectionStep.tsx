@@ -1,5 +1,5 @@
 import { Icon } from "@material-ui/core";
-import { RowConfig, TableAction, useSnackbar } from "d2-ui-components";
+import { RowConfig, TableAction, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Instance } from "../../../../../../domain/instance/entities/Instance";

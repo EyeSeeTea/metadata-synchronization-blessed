@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
-import { ConfirmationDialog, Sharing, SharingProps } from "d2-ui-components";
+import { ConfirmationDialog, Sharing, SharingProps } from "@eyeseetea/d2-ui-components";
 import React from "react";
 import i18n from "../../../../../locales";
 

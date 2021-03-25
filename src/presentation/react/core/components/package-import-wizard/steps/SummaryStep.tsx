@@ -1,4 +1,4 @@
-import { useSnackbar } from "d2-ui-components";
+import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { ReactNode, useEffect, useState } from "react";
 import { isInstance } from "../../../../../../domain/package-import/entities/PackageSource";
