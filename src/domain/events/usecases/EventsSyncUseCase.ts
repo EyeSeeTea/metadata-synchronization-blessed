@@ -129,6 +129,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const mapper = await createTEIsPayloadMapper(
             await this.getMetadataRepository(instance),
+            teis,
             mapping
         );
 

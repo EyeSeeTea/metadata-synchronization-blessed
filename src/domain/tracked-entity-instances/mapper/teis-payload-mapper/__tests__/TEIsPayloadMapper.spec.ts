@@ -1,6 +1,6 @@
 import { TEIsPackage } from "../../../entities/TEIsPackage";
 import { TEIsPayloadMapper } from "../TEIsPayloadMapper";
-import { ProgramRef } from "../models";
+import { ProgramRef } from "../../Models";
 
 import singleTEI from "./data/tracker-to-tracker/tei/singleTEI.json";
 import twoRelatedTEIs from "./data/tracker-to-tracker/tei/twoRelatedTEIs.json";
@@ -34,7 +34,9 @@ import singleTEIMapWithTEAttToTEAtt_Disabled from "./data/tracker-to-tracker/exp
 import singleTEIMapWithTEAttToTEAtt_WithOptions_Disabled from "./data/tracker-to-tracker/expected/singleTEIMapWithTEAttToTEAtt_WithOption_Disabled.json";
 
 import destinationTrackerProgram from "./data/tracker-to-tracker/programs/destinationTrackerProgram.json";
-
+import destinationTrackerProgram_WithTEAttToTEAtt from "./data/tracker-to-tracker/programs/destinationTrackerProgram_WithTEAttToTEAtt.json";
+import destinationTrackerProgram_WithOptions from "./data/tracker-to-tracker/programs/destinationTrackerProgram_WithOptions.json";
+import destinationTrackerProgram_MapWithProgram from "./data/tracker-to-tracker/programs/destinationTrackerProgram_MapWithProgram.json";
 import teiWithTwoPrograms from "./data/tracker-to-event/tei/teiWithTwoPrograms.json";
 
 import destinationTwoTrackerPrograms from "./data/tracker-to-event/programs/destinationTwoTrackerPrograms.json";
@@ -121,7 +123,7 @@ describe("TEIsPayloadMapper", () => {
         it("should return the payload with mapped program if mapping contain tracker programs", async () => {
             const teiMapper = new TEIsPayloadMapper(
                 mappingTrackerProgramToTrackerProgram,
-                destinationTrackerProgram as ProgramRef[]
+                destinationTrackerProgram_MapWithProgram as ProgramRef[]
             );
 
             const payload = singleTEI as TEIsPackage;
@@ -145,7 +147,7 @@ describe("TEIsPayloadMapper", () => {
         it("should return the payload with mapped TE Attribute if mapping contain TE Attribute to TE Attribute", async () => {
             const teiMapper = new TEIsPayloadMapper(
                 mappingTEAttToTEAtt,
-                destinationTrackerProgram as ProgramRef[]
+                destinationTrackerProgram_WithTEAttToTEAtt as ProgramRef[]
             );
 
             const payload = singleTEI as TEIsPackage;
@@ -169,7 +171,7 @@ describe("TEIsPayloadMapper", () => {
         it("should return the payload with mapped TE Attribute if mapping contain TE Attribute to TE Attribute with options", async () => {
             const teiMapper = new TEIsPayloadMapper(
                 mappingTEAttToTEAtt_WithOptions,
-                destinationTrackerProgram as ProgramRef[]
+                destinationTrackerProgram_WithOptions as ProgramRef[]
             );
 
             const payload = singleTEI as TEIsPackage;
@@ -242,7 +244,7 @@ describe("TEIsPayloadMapper", () => {
 
             expect(mappedPayload).toEqual(teiWithTwoProgramsMapToOneTracker);
         });
-        it("should return any enrollments and programOwners if tracker programs are mapped to event programs", async () => {
+        it("should return remove enrollments, programOwners and attributes if one tracker program is mapped to event program", async () => {
             const teiMapper = new TEIsPayloadMapper(
                 mappingTwoTrackerPrograms,
                 destinationTwoEventPrograms as ProgramRef[]

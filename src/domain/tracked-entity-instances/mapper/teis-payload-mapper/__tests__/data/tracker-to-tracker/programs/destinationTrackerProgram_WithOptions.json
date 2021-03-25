@@ -1,6 +1,6 @@
 [
     {
-        "id": "aaQUpMGyBEB",
+        "id": "ogQUpMGyBEB",
         "programType": "WITH_REGISTRATION",
         "programTrackedEntityAttributes": [
             {
@@ -12,11 +12,12 @@
                 "trackedEntityAttribute": {
                     "id": "sKBh0kazOCk"
                 }
+            },
+            {
+                "trackedEntityAttribute": {
+                    "id": "rUo8dCMpEuk"
+                }
             }
         ]
-    },
-    {
-        "id": "bbQUpMGyBEB",
-        "programType": "WITHOUT_REGISTRATION"
     }
 ]

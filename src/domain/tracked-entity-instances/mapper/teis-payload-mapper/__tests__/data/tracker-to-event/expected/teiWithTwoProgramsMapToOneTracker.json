@@ -62,16 +62,6 @@
                     "valueType": "TEXT",
                     "attribute": "sKBh0kazOCk",
                     "value": "12216"
-                },
-                {
-                    "lastUpdated": "2021-02-04T13:38:53.972",
-                    "storedBy": "pablo.foche",
-                    "code": "ATT_Gender",
-                    "displayName": "Gender",
-                    "created": "2021-02-04T13:38:53.972",
-                    "valueType": "TEXT",
-                    "attribute": "IW1EGccT7jT",
-                    "value": "Op_Gender_Male"
                 }
             ]
         }
