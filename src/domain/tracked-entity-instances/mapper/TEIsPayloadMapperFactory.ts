@@ -1,4 +1,6 @@
+import { generateUid } from "d2/uid";
 import _ from "lodash";
+import moment from "moment";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { MetadataRepository } from "../../metadata/repositories/MetadataRepository";
 import { TrackedEntityInstance } from "../entities/TrackedEntityInstance";
@@ -29,7 +31,12 @@ export async function createTEIsToEventPayloadMapper(
         mapping
     );
 
-    return new TEIsToEventPayloadMapper(mapping, destinationMappingPrograms);
+    return new TEIsToEventPayloadMapper(
+        mapping,
+        destinationMappingPrograms,
+        () => moment().toISOString(),
+        () => generateUid()
+    );
 }
 
 async function getAllPossibleDestinationPrograms(
@@ -56,7 +63,7 @@ async function getAllPossibleDestinationPrograms(
         const programs = (
             await metadataRepository.getMetadataByIds<ProgramRef>(
                 allPossibleDestinationProgramIds,
-                "id,programType, programTrackedEntityAttributes[trackedEntityAttribute],programStages[id]"
+                "id,programType, programTrackedEntityAttributes[trackedEntityAttribute],programStages[id,programStageDataElements[dataElement]]"
             )
         ).programs;
 

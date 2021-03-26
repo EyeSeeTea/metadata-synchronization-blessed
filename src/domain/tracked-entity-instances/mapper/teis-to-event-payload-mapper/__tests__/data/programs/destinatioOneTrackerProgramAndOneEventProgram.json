@@ -20,7 +20,14 @@
         "programType": "WITHOUT_REGISTRATION",
         "programStages": [
             {
-                "id": "psBUpMGyBEB"
+                "id": "psBUpMGyBEB",
+                "programStageDataElements": [
+                    {
+                        "dataElement": {
+                            "id": "IW2EGccT7jT"
+                        }
+                    }
+                ]
             }
         ]
     }
