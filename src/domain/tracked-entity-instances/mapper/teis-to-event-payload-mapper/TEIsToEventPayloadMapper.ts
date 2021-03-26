@@ -97,17 +97,17 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
 
                             return [...acc, event as ProgramEvent];
                         }
-                    }, [])
-                    .filter(event => event.dataValues.length > 0);
+                    }, []);
 
                 return [...acc, ...eventsByEnrollments];
             },
             []
         );
 
-        const eventsWithoutDisabled = this.removeDisabledItems(events);
+        const finalEvents = this.removeDisabledItems(events)
+            .filter(event => event.dataValues.length > 0);
 
-        return Promise.resolve({ events: eventsWithoutDisabled });
+        return Promise.resolve({ events: finalEvents });
     }
 
     private removeDisabledItems(events: ProgramEvent[]): ProgramEvent[] {
@@ -124,11 +124,7 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
     }
 
     private isDisabledEvent(item: ProgramEvent): boolean {
-        return (
-            item.orgUnit === "DISABLED" ||
-            item.program === "DISABLED" ||
-            item.programStage === "DISABLED"
-        );
+        return (item.orgUnit === "DISABLED" || item.program === "DISABLED");
     }
 
     private isDisabledDataValue(item: ProgramEventDataValue): boolean {
