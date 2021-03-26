@@ -737,6 +737,8 @@ export default function MappingTable({
                 onClick: openRelatedMapping,
                 icon: <Icon>assignment</Icon>,
                 isActive: (selected: MetadataType[]) => {
+                    if (selected.length === 0) return false;
+
                     const element = selected[0];
                     const mappingType = element.model.getMappingType();
                     const steps = prepareSteps(mappingType, element);

@@ -20,7 +20,10 @@ import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUs
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
 import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
 import { TrackedEntityInstance } from "../../tracked-entity-instances/entities/TrackedEntityInstance";
-import createTEIsPayloadMapper from "../../tracked-entity-instances/mapper/teis-payload-mapper/TEIsPayloadMapperFactory";
+import {
+    createTEIsPayloadMapper,
+    createTEIsToEventPayloadMapper,
+} from "../../tracked-entity-instances/mapper/TEIsPayloadMapperFactory";
 import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
@@ -92,7 +95,11 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
                 ? await this.postTEIsPayload(instance, trackedEntityInstances)
                 : undefined;
 
-        const eventsResponse = await this.postEventsPayload(instance, events);
+        const eventsResponse = await this.postEventsPayload(
+            instance,
+            events,
+            trackedEntityInstances
+        );
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
         return _.compact([eventsResponse, indicatorsResponse, teisResponse]);
@@ -100,12 +107,24 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
     private async postEventsPayload(
         instance: Instance,
-        events: ProgramEvent[]
+        events: ProgramEvent[],
+        teis: TrackedEntityInstance[]
     ): Promise<SynchronizationResult> {
         const { dataParams = {} } = this.builder;
 
-        const payload = await this.mapPayload(instance, { events });
-        debug("Events package", { events, payload });
+        const mapping = await this.getMapping(instance);
+        const mapper = await createTEIsToEventPayloadMapper(
+            await this.getMetadataRepository(instance),
+            mapping
+        );
+
+        const payloadByTEIs = (await mapper.map({ trackedEntityInstances: teis })) as EventsPackage;
+
+        const payloadByEvents = (await this.mapPayload(instance, { events })) as EventsPackage;
+
+        const payload = { events: [...payloadByTEIs.events, ...payloadByEvents.events] };
+
+        debug("Events package", { events, eventsByTeis: payloadByTEIs.events, payload });
 
         const eventsRepository = await this.getEventsRepository(instance);
         const syncResult = await eventsRepository.save(payload, dataParams);
