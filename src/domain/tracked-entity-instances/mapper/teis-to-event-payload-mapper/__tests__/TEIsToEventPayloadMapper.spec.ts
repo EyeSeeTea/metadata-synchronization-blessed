@@ -14,8 +14,8 @@ import mappingToGenerateEvent_WithGlobalOptions from "./data/mapping/mappingToGe
 import mappingProgram_Disabled from "./data/mapping/mappingProgram_Disabled.json";
 import mappingToGenerateEvent_WithOrgUnit_Disabled from "./data/mapping/mappingToGenerateEvent_WithOrgUnit_Disabled.json";
 import mappingToGenerateEvent_WithDisabledTEAtt from "./data/mapping/mappingToGenerateEvent_WithDisabledTEAtt.json";
-import mappingToGenerateEvent_WithDisabledOption from "./data/mapping/mappingToGenerateEvent_WithDisabledOption.json"
-import mappingToGenerateEvent_WithDisabledGlobalOptions from "./data/mapping/mappingToGenerateEvent_WithDisabledGlobalOptions.json"
+import mappingToGenerateEvent_WithDisabledOption from "./data/mapping/mappingToGenerateEvent_WithDisabledOption.json";
+import mappingToGenerateEvent_WithDisabledGlobalOptions from "./data/mapping/mappingToGenerateEvent_WithDisabledGlobalOptions.json";
 
 import destinationTwoTrackerPrograms from "./data/programs/destinationTwoTrackerPrograms.json";
 import destinationTwoEventPrograms from "./data/programs/destinationTwoEventPrograms.json";

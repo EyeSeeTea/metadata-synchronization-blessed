@@ -16,7 +16,7 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
         private allPosibleDestinationPrograms: ProgramRef[],
         private createDate: () => string,
         private generateUid: () => string
-    ) { }
+    ) {}
 
     map(payload: SynchronizationPayload): Promise<SynchronizationPayload> {
         const teiPackage = payload as TEIsPackage;
@@ -29,8 +29,8 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
 
         const events = teiPackage.trackedEntityInstances.reduce(
             (acc: ProgramEvent[], tei: TrackedEntityInstance) => {
-                const eventsByEnrollments = tei.enrollments
-                    .reduce((acc: ProgramEvent[], enrollment: Enrollment) => {
+                const eventsByEnrollments = tei.enrollments.reduce(
+                    (acc: ProgramEvent[], enrollment: Enrollment) => {
                         const {
                             organisationUnits = {},
                             trackerPrograms = {},
@@ -83,7 +83,8 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
                                             dataElement: mappedDataElement,
                                             value: mapOptionValue(att.value, [
                                                 trackedEntityAttributesToDE[att.attribute]
-                                                    ?.mapping ?? {}, this.mapping
+                                                    ?.mapping ?? {},
+                                                this.mapping,
                                             ]),
                                             storedBy: "",
                                             providedElsewhere: false,
@@ -97,15 +98,18 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
 
                             return [...acc, event as ProgramEvent];
                         }
-                    }, []);
+                    },
+                    []
+                );
 
                 return [...acc, ...eventsByEnrollments];
             },
             []
         );
 
-        const finalEvents = this.removeDisabledItems(events)
-            .filter(event => event.dataValues.length > 0);
+        const finalEvents = this.removeDisabledItems(events).filter(
+            event => event.dataValues.length > 0
+        );
 
         return Promise.resolve({ events: finalEvents });
     }
@@ -124,7 +128,7 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
     }
 
     private isDisabledEvent(item: ProgramEvent): boolean {
-        return (item.orgUnit === "DISABLED" || item.program === "DISABLED");
+        return item.orgUnit === "DISABLED" || item.program === "DISABLED";
     }
 
     private isDisabledDataValue(item: ProgramEventDataValue): boolean {
