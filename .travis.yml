@@ -6,51 +6,17 @@ cache:
     directories:
         - "$HOME/.cache"
 env:
-    - PORT=8081 REACT_APP_DHIS2_BASE_URL=http://localhost:8080 REACT_APP_CYPRESS=true CYPRESS_EXTERNAL_API=http://localhost:8080 CYPRESS_ROOT_URL=http://localhost:8081 FEEDBACK_REPO=EyeSeeTea/feedback-ci
+    - PORT=8081
 before_install:
     - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-    # Install python dependencies
-    - sudo apt-get update
-    - sudo apt-get install docker.io docker-compose python3 python3-setuptools httpie
-    #  Install d2-docker
-    - git clone https://github.com/EyeSeeTea/d2-docker.git
-    - cd d2-docker/
-    - sudo python3 setup.py install
-    - cd ../
-    # Hack to not be prompted in the terminal
-    - sudo apt-get remove golang-docker-credential-helpers
-    # Start docker service
-    - sudo systemctl unmask docker.service
-    - sudo systemctl unmask docker.socket
-    - sudo systemctl start docker.service
-    # Login to docker and start DHIS2 instance
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - d2-docker start eyeseetea/dhis2-data:2.30-datasync-sender -d
 install:
-    - git clone --single-branch --branch gh-pages "https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${FEEDBACK_REPO}" feedback-ci
     - yarn install --frozen-lockfile
-    - yarn cy:verify
     - yarn localize
     - yarn test
     - yarn start &
 script:
-    - yarn wait-on http-get://localhost:8080
     - yarn wait-on http-get://localhost:8081
-    - yarn migrate "http://$CYPRESS_DHIS2_AUTH@localhost:8080"
-    - CYPRESS_E2E=true yarn node cypress/support/runner.js -b chrome
 after_script:
-    - cd feedback-ci/
-    - if [[ $TRAVIS_PULL_REQUEST_BRANCH != "" ]]; then BRANCH="${TRAVIS_PULL_REQUEST_BRANCH}"; else BRANCH="${TRAVIS_BRANCH}"; fi;
-    - GITHUB_PAGES_ROOT=$(http -a ${GITHUB_USERNAME}:${GITHUB_PASSWORD} https://api.github.com/repos/${FEEDBACK_REPO}/pages | jq ".html_url" | tr -d '"')
-    - GITHUB_PAGES_PATH=$(cat ../pages_path)
-    - git add . && git commit -m "Results for $TRAVIS_EVENT_TYPE on $TRAVIS_COMMIT"
-    - git pull origin --no-edit
-    - git push origin gh-pages
-    - EXISTING_COMMENT=$(http -a ${GITHUB_USERNAME}:${GITHUB_PASSWORD} https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments | jq '[.[] | select(.user.login == "EyeSeeTeaBotTest")][0].id')
-    - if [[ $TRAVIS_TEST_RESULT == 0 ]]; then GITHUB_COMMENT_TITLE="Tests ran successfully :tada:"; else GITHUB_COMMENT_TITLE="Tests failed with errors :rotating_light:"; fi;
-    - GITHUB_COMMENT_MESSAGE="<h3>${GITHUB_COMMENT_TITLE}</h3><br />Build commit ${TRAVIS_COMMIT_MESSAGE} with commit id ${TRAVIS_COMMIT} on branch ${BRANCH}<br /><br />Travis log available at <a href="${TRAVIS_BUILD_WEB_URL}" target="_blank">builds/${TRAVIS_BUILD_ID}</a><br /><br />See cypress results at <a href="${GITHUB_PAGES_ROOT}${GITHUB_PAGES_PATH}" target="_blank">feedback-ci/${GITHUB_PAGES_PATH}</a>"
-    - if [[ $TRAVIS_PULL_REQUEST != "false" && $EXISTING_COMMENT == "null" ]]; then http -a ${GITHUB_USERNAME}:${GITHUB_PASSWORD} POST https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments body="${GITHUB_COMMENT_MESSAGE}"; fi;
-    - if [[ $TRAVIS_PULL_REQUEST != "false" && $EXISTING_COMMENT != "null" ]]; then http -a ${GITHUB_USERNAME}:${GITHUB_PASSWORD} PATCH https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/comments/${EXISTING_COMMENT} body="${GITHUB_COMMENT_MESSAGE}"; fi;
     - kill $(jobs -p) || true
 addons:
     apt:

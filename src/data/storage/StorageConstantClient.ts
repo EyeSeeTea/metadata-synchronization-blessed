@@ -39,8 +39,11 @@ export class StorageConstantClient extends StorageClient {
         // Special scenario, clean history entries
         if (key.startsWith("history")) {
             const constants = await this.lookupConstants();
-            const sorted = _.orderBy(constants, ["lastUpdated"], ["desc"]);
-            const toDelete = sorted.slice(70);
+            const toDelete = _(constants)
+                .filter(({ code }) => cleanCode(code).startsWith("history"))
+                .orderBy(["lastUpdated"], ["desc"])
+                .slice(70)
+                .value();
 
             if (toDelete.length > 0) {
                 await this.api.metadata
@@ -68,9 +71,9 @@ export class StorageConstantClient extends StorageClient {
                 })
                 .getData();
 
-            await promiseMap(objects, ({ id }) =>
-                this.api.models.constants.delete({ id }).getData()
-            );
+            await this.api.metadata
+                .post({ constants: objects }, { importStrategy: "DELETE" })
+                .getData();
         } catch (error) {
             console.log(error);
         }
@@ -81,10 +84,7 @@ export class StorageConstantClient extends StorageClient {
 
         // Remove constant prefix key
         return _(constants)
-            .map(({ code, description }) => [
-                code.replace(new RegExp(`^${CONSTANT_PREFIX}`, ""), ""),
-                JSON.parse(description),
-            ])
+            .map(({ code, description }) => [cleanCode(code), JSON.parse(description)])
             .fromPairs()
             .value();
     }
@@ -187,6 +187,10 @@ function formatKey(key: string): string {
 
 function formatName(name: string): string {
     return `${CONSTANT_NAME} - ${_.upperFirst(name)}`;
+}
+
+function cleanCode(code: string): string {
+    return code.replace(new RegExp(`^${CONSTANT_PREFIX}`, ""), "");
 }
 
 type Constant = ObjectSharing & {
