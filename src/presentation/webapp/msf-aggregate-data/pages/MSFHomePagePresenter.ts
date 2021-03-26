@@ -465,8 +465,6 @@ async function deletePreviousDataValues(
                             .includes(categoryOptionCombo)
                 );
 
-                console.log({ payload, mappedPayload, filteredDataValues });
-
                 await compositionRoot.aggregated.delete(instance, {
                     dataValues: filteredDataValues,
                 });
