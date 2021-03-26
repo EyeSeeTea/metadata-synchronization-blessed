@@ -4,13 +4,9 @@ import _ from "lodash";
 import moment from "moment";
 import { D2Model } from "../../../models/dhis/default";
 import {
-    ExcludeIncludeRules,
-    MetadataIncludeExcludeRules,
-    MetadataSynchronizationParams,
-} from "../../../types/synchronization";
-import {
     defaultSynchronizationBuilder,
     SynchronizationBuilder,
+    SynchronizationBuilderModel,
 } from "../../synchronization/entities/SynchronizationBuilder";
 import {
     extractChildrenFromRules,
@@ -18,17 +14,24 @@ import {
 } from "../../../utils/metadataIncludeExclude";
 import { OldValidation } from "../../../utils/old-validations";
 import isValidCronExpression from "../../../utils/validCronExpression";
-import {
-    DataSyncAggregation,
-    DataSynchronizationParams,
-    DataSyncPeriod,
-} from "../../aggregated/types";
-import { SharedRef } from "../../common/entities/Ref";
+import { DataSynchronizationParams } from "../../aggregated/entities/DataSynchronizationParams";
+import { DataSyncAggregation } from "../../aggregated/entities/DataSyncAggregation";
+import { DataSyncPeriod } from "../../aggregated/entities/DataSyncPeriod";
+import { SharedRef, SharedRefModel } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { FilterRule } from "../../metadata/entities/FilterRule";
-import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
+import {
+    SynchronizationType,
+    SynchronizationTypeModel,
+} from "../../synchronization/entities/SynchronizationType";
 import { NamedRef } from "../../common/entities/Ref";
 import { UserInfo } from "../../../utils/permissions";
+import { Schema } from "../../../utils/codec";
+import {
+    ExcludeIncludeRules,
+    MetadataIncludeExcludeRules,
+} from "../../metadata/entities/MetadataExcludeIncludeRules";
+import { MetadataSynchronizationParams } from "../../metadata/entities/MetadataSynchronizationParams";
 
 export class SynchronizationRule {
     private readonly syncRule: SynchronizationRuleData;
@@ -727,3 +730,19 @@ export interface SynchronizationRuleData extends SharedRef {
     frequency?: string;
     type: SynchronizationType;
 }
+
+export const SynchronizationRuleModel = Schema.extend(
+    SharedRefModel,
+    Schema.object({
+        code: Schema.optionalSafe(Schema.string, ""),
+        created: Schema.optionalSafe(Schema.date, () => new Date()),
+        description: Schema.optionalSafe(Schema.string, ""),
+        builder: SynchronizationBuilderModel,
+        targetInstances: Schema.optionalSafe(Schema.array(Schema.string), []),
+        enabled: Schema.optionalSafe(Schema.boolean, false),
+        lastExecuted: Schema.optional(Schema.date),
+        lastExecutedBy: Schema.optional(Schema.string),
+        frequency: Schema.optional(Schema.string),
+        type: SynchronizationTypeModel,
+    })
+);

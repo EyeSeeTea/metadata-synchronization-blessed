@@ -1,4 +1,4 @@
-import { DataSynchronizationParams } from "../../aggregated/types";
+import { DataSynchronizationParams } from "../../aggregated/entities/DataSynchronizationParams";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";

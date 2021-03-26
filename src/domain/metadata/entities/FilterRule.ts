@@ -2,20 +2,44 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import moment from "moment";
 import i18n from "../../../locales";
-import { availablePeriods } from "../../../utils/synchronization";
-import { DataSyncPeriod } from "../../aggregated/types";
-import { ValidationError } from "../../common/entities/Validations";
 import { NonNullableValues } from "../../../types/utils";
+import { GetSchemaType, Schema } from "../../../utils/codec";
+import { availablePeriods } from "../../../utils/synchronization";
+import { DataSyncPeriodModel } from "../../aggregated/entities/DataSyncPeriod";
+import { ValidationError } from "../../common/entities/Validations";
 
-export interface FilterRule {
-    id: string;
-    metadataType: string;
-    created: DateFilter;
-    lastUpdated: DateFilter;
-    stringMatch: StringMatch;
-}
+export const DateFilterModel = Schema.object({
+    period: DataSyncPeriodModel,
+    startDate: Schema.optional(Schema.date),
+    endDate: Schema.optional(Schema.date),
+});
+
+export const FilterWhereModel = Schema.oneOf([
+    Schema.exact("startsWith"),
+    Schema.exact("contains"),
+    Schema.exact("endsWith"),
+]);
+
+export const StringMatchModel = Schema.object({
+    where: Schema.nullable(FilterWhereModel),
+    value: Schema.string,
+});
+
+export const FilterRuleModel = Schema.object({
+    id: Schema.string,
+    metadataType: Schema.string,
+    created: DateFilterModel,
+    lastUpdated: DateFilterModel,
+    stringMatch: StringMatchModel,
+});
+
+export type DateFilter = GetSchemaType<typeof DateFilterModel>;
+export type FilterWhere = GetSchemaType<typeof FilterWhereModel>;
+export type StringMatch = GetSchemaType<typeof StringMatchModel>;
+export type FilterRule = GetSchemaType<typeof FilterRuleModel>;
 
 export type FilterRuleField = keyof FilterRule;
+export type ValidStringMatch = NonNullableValues<StringMatch>;
 
 export const filterRuleFields: FilterRuleField[] = [
     "metadataType",
@@ -23,15 +47,6 @@ export const filterRuleFields: FilterRuleField[] = [
     "lastUpdated",
     "stringMatch",
 ];
-
-export interface StringMatch {
-    where: FilterWhere | null;
-    value: string;
-}
-
-type ValidStringMatch = NonNullableValues<StringMatch>;
-
-export type FilterWhere = "startsWith" | "contains" | "endsWith";
 
 export const filterTypeNames: Record<keyof FilterRule, string> = {
     id: i18n.t("Id"),
@@ -55,12 +70,6 @@ export function getInitialFilterRule(): FilterRule {
         lastUpdated: { period: "ALL" },
         stringMatch: { where: null, value: "" },
     };
-}
-
-export interface DateFilter {
-    period: DataSyncPeriod;
-    startDate?: Date;
-    endDate?: Date;
 }
 
 /* Functions */

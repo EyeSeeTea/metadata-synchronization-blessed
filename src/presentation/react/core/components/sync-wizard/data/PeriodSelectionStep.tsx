@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { DataSyncPeriod } from "../../../../../../domain/aggregated/types";
+import { DataSyncPeriod } from "../../../../../../domain/aggregated/entities/DataSyncPeriod";
 import PeriodSelection, { ObjectWithPeriod } from "../../period-selection/PeriodSelection";
 import { SyncWizardStepProps } from "../Steps";
 

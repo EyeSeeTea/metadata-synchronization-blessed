@@ -1,19 +1,23 @@
-import { DataSynchronizationParams } from "../../aggregated/types";
-import { FilterRule } from "../../metadata/entities/FilterRule";
-import { MetadataSynchronizationParams } from "../../../types/synchronization";
+import { GetSchemaType, Schema } from "../../../utils/codec";
+import { DataSynchronizationParamsModel } from "../../aggregated/entities/DataSynchronizationParams";
+import { FilterRuleModel } from "../../metadata/entities/FilterRule";
+import { MetadataSynchronizationParamsModel } from "../../metadata/entities/MetadataSynchronizationParams";
 
-export interface SynchronizationBuilder {
-    originInstance: string;
-    targetInstances: string[];
-    metadataIds: string[];
-    filterRules?: FilterRule[];
-    excludedIds: string[];
-    metadataTypes?: string[];
-    syncRule?: string;
-    syncParams?: MetadataSynchronizationParams;
-    dataParams?: DataSynchronizationParams;
-}
+export const SynchronizationBuilderModel = Schema.object({
+    originInstance: Schema.string,
+    targetInstances: Schema.optionalSafe(Schema.array(Schema.string), []),
+    metadataIds: Schema.optionalSafe(Schema.array(Schema.string), []),
+    excludedIds: Schema.optionalSafe(Schema.array(Schema.string), []),
+    metadataTypes: Schema.optional(Schema.array(Schema.string)),
+    syncRule: Schema.optional(Schema.string),
+    filterRules: Schema.optional(Schema.array(FilterRuleModel)),
+    syncParams: Schema.optional(MetadataSynchronizationParamsModel),
+    dataParams: Schema.optional(DataSynchronizationParamsModel),
+});
 
+export type SynchronizationBuilder = GetSchemaType<typeof SynchronizationBuilderModel>;
+
+// TODO: When migration to fully defined schemas, this should be removed and use Schema.decode instead
 export const defaultSynchronizationBuilder: SynchronizationBuilder = {
     originInstance: "LOCAL",
     targetInstances: [],
@@ -26,7 +30,7 @@ export const defaultSynchronizationBuilder: SynchronizationBuilder = {
         allAttributeCategoryOptions: true,
         dryRun: false,
         allEvents: true,
-        enableAggregation: undefined,
+        enableAggregation: false,
         aggregationType: undefined,
     },
     syncParams: {
