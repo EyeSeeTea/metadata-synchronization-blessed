@@ -401,7 +401,7 @@ async function deletePreviousDataValues(
         instanceResult.match({
             error: () =>
                 addEventToProgress(
-                    i18n.t(`Error retrieving instance {{name}} to delete previoud data values`, {
+                    i18n.t(`Error retrieving instance {{name}} to delete previous data values`, {
                         name: instanceId,
                     }),
                     "admin"
@@ -464,6 +464,8 @@ async function deletePreviousDataValues(
                             .uniq()
                             .includes(categoryOptionCombo)
                 );
+
+                console.log({ payload, mappedPayload, filteredDataValues });
 
                 await compositionRoot.aggregated.delete(instance, {
                     dataValues: filteredDataValues,
