@@ -16,7 +16,7 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
         private allPosibleDestinationPrograms: ProgramRef[],
         private createDate: () => string,
         private generateUid: () => string
-    ) {}
+    ) { }
 
     map(payload: SynchronizationPayload): Promise<SynchronizationPayload> {
         const teiPackage = payload as TEIsPackage;
@@ -83,7 +83,7 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
                                             dataElement: mappedDataElement,
                                             value: mapOptionValue(att.value, [
                                                 trackedEntityAttributesToDE[att.attribute]
-                                                    ?.mapping ?? {},
+                                                    ?.mapping ?? {}, this.mapping
                                             ]),
                                             storedBy: "",
                                             providedElsewhere: false,
