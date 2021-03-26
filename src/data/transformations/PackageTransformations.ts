@@ -1,4 +1,4 @@
-import { D2DashboardItem as D2DashboardItem33 } from "d2-api/2.33";
+import { D2DashboardItem as D2DashboardItem33 } from "@eyeseetea/d2-api/2.33";
 import _ from "lodash";
 import { Transformation } from "../../domain/transformations/entities/Transformation";
 import { isKeyOf, Mapping } from "./__tests__/integration/helpers";

@@ -1,5 +1,5 @@
 import { Button, LinearProgress, makeStyles } from "@material-ui/core";
-import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
+import { ConfirmationDialog, useLoading, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
@@ -74,7 +74,7 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
             snackbar.error(errors.join("\n"));
         } else {
             const newSyncRule = syncRule.updateName(name);
-            await compositionRoot.rules.save(newSyncRule);
+            await compositionRoot.rules.save([newSyncRule]);
             history.push(`/sync-rules/${syncRule.type}/edit/${newSyncRule.id}`);
             onCancel();
         }

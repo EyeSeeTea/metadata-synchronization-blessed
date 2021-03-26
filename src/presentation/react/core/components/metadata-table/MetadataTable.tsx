@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import { isCancel } from "d2-api";
+import { isCancel } from "@eyeseetea/d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -14,7 +14,7 @@ import {
     TableSelection,
     TableState,
     useSnackbar,
-} from "d2-ui-components";
+} from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
@@ -43,7 +43,8 @@ export type MetadataTableFilters =
     | "orgUnit"
     | "lastUpdated"
     | "onlySelected"
-    | "disableFilterRows";
+    | "disableFilterRows"
+    | "programType";
 
 export interface MetadataTableProps
     extends Omit<ObjectsTableProps<MetadataType>, "rows" | "columns"> {
@@ -136,6 +137,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         "orgUnit",
         "lastUpdated",
         "onlySelected",
+        "programType",
     ],
     ...rest
 }) => {
@@ -191,6 +193,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const changeModelFilter = (modelName: string) => {
         if (models.length === 0) throw new Error("You need to provide at least one model");
         const model = _.find(models, model => model.getMetadataType() === modelName) ?? models[0];
+        setRows([]);
         updateModel(() => model);
 
         notifyNewModel(model);
@@ -525,6 +528,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             .list({ ...filters, selectedIds, filterRows, fields, includeParents }, remoteInstance)
             .then(({ objects, pager }) => {
                 const rows = model.getApiModelTransform()((objects as unknown) as MetadataType[]);
+
                 notifyRowsChange(rows);
 
                 setRows(rows);

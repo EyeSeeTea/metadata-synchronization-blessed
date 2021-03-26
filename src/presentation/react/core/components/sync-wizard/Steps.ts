@@ -1,4 +1,4 @@
-import { WizardStep } from "d2-ui-components";
+import { WizardStep } from "@eyeseetea/d2-ui-components";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../../locales";
 import GeneralInfoStep from "./common/GeneralInfoStep";

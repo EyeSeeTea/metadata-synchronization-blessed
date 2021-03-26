@@ -1,6 +1,6 @@
 import { makeStyles, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import semver from "semver";

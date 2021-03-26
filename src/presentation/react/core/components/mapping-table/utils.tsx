@@ -15,3 +15,19 @@ export const getChildrenRows = (rows: MetadataType[], model: typeof D2Model): Me
         rows.map(row => Object.values(_.pick(row, childrenKeys)) as MetadataType[])
     );
 };
+
+export const getAllChildrenRows = (rows: MetadataType[], model: typeof D2Model): MetadataType[] => {
+    //TODO: realize this action for n levels dinamically
+
+    const childrenKeys = model.getChildrenKeys() ?? [];
+
+    const childrenLevel1 = _.flattenDeep(
+        rows.map(row => Object.values(_.pick(row, childrenKeys)) as MetadataType[])
+    );
+
+    const childrenLevel2 = _.flattenDeep(
+        childrenLevel1.map(row => Object.values(_.pick(row, childrenKeys)) as MetadataType[])
+    );
+
+    return [...childrenLevel1, ...childrenLevel2];
+};

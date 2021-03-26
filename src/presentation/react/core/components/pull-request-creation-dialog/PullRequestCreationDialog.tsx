@@ -1,20 +1,19 @@
 import { makeStyles, TextField } from "@material-ui/core";
 import {
     ConfirmationDialog,
-    SearchResult,
     ShareUpdate,
     Sharing,
     SharingRule,
     useLoading,
     useSnackbar,
-} from "d2-ui-components";
+} from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
+import { SynchronizationBuilder } from "../../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
-import { SynchronizationBuilder } from "../../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { useAppContext } from "../../contexts/AppContext";
 
 export interface PullRequestCreation {
@@ -104,11 +103,8 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
     );
 
     const onSearchRequest = useCallback(
-        async (key: string) =>
-            compositionRoot.instances
-                .getApi(instance)
-                .get<SearchResult>("/sharing/search", { key })
-                .getData(),
+        (key: string) =>
+            compositionRoot.instances.getApi(instance).sharing.search({ key }).getData(),
         [compositionRoot, instance]
     );
 

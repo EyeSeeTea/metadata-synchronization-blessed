@@ -1,4 +1,8 @@
-import { ConfirmationDialog, ConfirmationDialogProps, useLoading } from "d2-ui-components";
+import {
+    ConfirmationDialog,
+    ConfirmationDialogProps,
+    useLoading,
+} from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import i18n from "../../../../../../locales";
 import Dropdown from "../../../../../react/core/components/dropdown/Dropdown";

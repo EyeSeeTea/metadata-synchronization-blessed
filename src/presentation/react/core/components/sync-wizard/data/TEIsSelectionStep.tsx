@@ -1,5 +1,10 @@
 import { makeStyles, Typography } from "@material-ui/core";
-import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "d2-ui-components";
+import {
+    ObjectsTable,
+    ObjectsTableDetailField,
+    TableColumn,
+    TableState,
+} from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import i18n from "../../../../../../locales";
 import { SyncWizardStepProps } from "../Steps";
@@ -30,7 +35,9 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
 
     useEffect(() => {
         const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
-        extractAllPrograms<Program>(compositionRoot, sync).then(setPrograms);
+        extractAllPrograms<Program>(compositionRoot, sync).then(programs => {
+            setPrograms(programs.filter(program => program.programType === "WITH_REGISTRATION"));
+        });
     }, [memoizedSyncRule, compositionRoot]);
 
     useEffect(() => {

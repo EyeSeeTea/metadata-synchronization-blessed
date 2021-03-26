@@ -1,5 +1,5 @@
 import { makeStyles, Theme, Typography } from "@material-ui/core";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { Log } from "../../../../../domain/migrations/entities/Debug";
 import { MigrationVersions } from "../../../../../domain/migrations/entities/MigrationVersions";

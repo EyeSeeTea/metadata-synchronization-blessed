@@ -1,4 +1,4 @@
-import { FilterBase, FilterValueBase } from "d2-api/api/common";
+import { FilterBase, FilterValueBase } from "@eyeseetea/d2-api/api/common";
 import _ from "lodash";
 import moment from "moment";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
@@ -500,8 +500,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         payload: Partial<Record<string, unknown[]>>,
         additionalParams?: MetadataImportParams
     ): Promise<MetadataResponse> {
-        const response = await this.api.metadata
-            .post(payload, {
+        const { response } = await this.api.metadata
+            .postAsync(payload, {
                 importMode: "COMMIT",
                 identifier: "UID",
                 importReportMode: "FULL",
@@ -512,7 +512,10 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             })
             .getData();
 
-        return response;
+        const result = await this.api.system.waitFor(response.jobType, response.id).getData();
+        if (!result) throw new Error("Error saving metadata");
+
+        return result;
     }
 
     private async getMetadata<T>(

@@ -1,5 +1,6 @@
 import _ from "lodash";
 import moment from "moment";
+import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
@@ -24,6 +25,12 @@ export class DownloadPayloadUseCase implements UseCase {
 
                 const apiVersion = instance?.apiVersion;
 
+                const payload = apiVersion
+                    ? this.repositoryFactory
+                          .transformationRepository()
+                          .mapPackageTo(apiVersion, result.payload, metadataTransformations)
+                    : result.payload;
+
                 const downloadItem = {
                     name: _([
                         "synchronization",
@@ -34,8 +41,7 @@ export class DownloadPayloadUseCase implements UseCase {
                     ])
                         .compact()
                         .kebabCase(),
-                    content: result.payload,
-                    apiVersion,
+                    content: payload,
                 };
 
                 return downloadItem;
@@ -50,7 +56,7 @@ export class DownloadPayloadUseCase implements UseCase {
         if (files.length === 1) {
             this.repositoryFactory
                 .downloadRepository()
-                .downloadFile(files[0].name, files[0].content, files[0].apiVersion);
+                .downloadFile(files[0].name, files[0].content);
         } else {
             await this.repositoryFactory
                 .downloadRepository()

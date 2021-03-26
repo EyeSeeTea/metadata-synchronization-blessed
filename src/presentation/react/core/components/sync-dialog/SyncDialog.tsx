@@ -1,5 +1,5 @@
 import DialogContent from "@material-ui/core/DialogContent";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../../locales";
