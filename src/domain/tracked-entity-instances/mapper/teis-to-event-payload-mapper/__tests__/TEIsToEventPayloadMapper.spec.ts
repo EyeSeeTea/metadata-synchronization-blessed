@@ -9,6 +9,7 @@ import teiWithTwoPrograms from "./data/tei/teiWithTwoPrograms.json";
 import mappingPrograms from "./data/mapping/mappingPrograms.json";
 import mappingToGenerateEvent from "./data/mapping/mappingToGenerateEvent.json";
 import mappingToGenerateEvent_WithOrgUnit from "./data/mapping/mappingToGenerateEvent_WithOrgUnit.json";
+import mappingToGenerateEvent_WithOptions from "./data/mapping/mappingToGenerateEvent_WithOptions.json";
 
 import destinationTwoTrackerPrograms from "./data/programs/destinationTwoTrackerPrograms.json";
 import destinationTwoEventPrograms from "./data/programs/destinationTwoEventPrograms.json";
@@ -18,6 +19,7 @@ import emptyEvents from "./data/expected/emptyEvents.json";
 import twoEventsWithAllValues from "./data/expected/twoEventsWithAllValues.json";
 import oneEventWithValues from "./data/expected/oneEventWithValues.json";
 import oneEvent_WithMappedOrgUnit from "./data/expected/oneEvent_WithMappedOrgUnit.json";
+import oneEvent_WithMappedOptions from "./data/expected/oneEvent_WithMappedOptions.json";
 
 describe("TEIsToEventPayloadMapper", () => {
     it("should return empty events if tracker programs are mapped to tracker programs", async () => {
@@ -79,6 +81,18 @@ describe("TEIsToEventPayloadMapper", () => {
         const mappedPayload = (await teiMapper.map(teisPayload)) as EventsPackage;
 
         expect(mappedPayload).toEqual(oneEvent_WithMappedOrgUnit);
+    });
+    it("should return one event with mapped option as value if mapping contains options", async () => {
+        const teiMapper = createTEIsToEventPayloadMapper(
+            mappingToGenerateEvent_WithOptions,
+            destinatioOneTrackerProgramAndOneEventProgram as ProgramRef[]
+        );
+
+        const teisPayload = teiWithTwoPrograms as TEIsPackage;
+
+        const mappedPayload = (await teiMapper.map(teisPayload)) as EventsPackage;
+
+        expect(mappedPayload).toEqual(oneEvent_WithMappedOptions);
     });
 });
 
