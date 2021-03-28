@@ -1,7 +1,7 @@
 {
     "name": "metadata-synchronization",
     "description": "Advanced metadata & data synchronization utility",
-    "version": "2.8.1",
+    "version": "2.9.0",
     "license": "GPL-3.0",
     "author": "EyeSeeTea team",
     "homepage": ".",
@@ -19,7 +19,7 @@
         "@dhis2/ui-core": "4.14.0",
         "@dhis2/ui-widgets": "2.1.0",
         "@eyeseetea/d2-ui-components": "2.6.0",
-        "@eyeseetea/d2-api": "1.7.1-beta.10",
+        "@eyeseetea/d2-api": "1.8.0-beta.1",
         "@material-ui/core": "4.11.0",
         "@material-ui/icons": "4.9.1",
         "@material-ui/lab": "4.0.0-alpha.56",
