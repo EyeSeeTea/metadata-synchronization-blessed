@@ -119,9 +119,20 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
 
-        compositionRoot.metadata.getByIds(ids, "id,name,type").then(updateMetadata); //type is required to transform visualizations to charts and report tables
+        compositionRoot.instances.getById(syncRule.originInstance).then(result => {
+            result.match({
+                error: () => snackbar.error(i18n.t("Invalid origin instance")),
+                success: instance => {
+                    //type is required to transform visualizations to charts and report tables
+                    compositionRoot.metadata
+                        .getByIds(ids, instance, "id,name,type")
+                        .then(updateMetadata);
+                },
+            });
+        });
+
         compositionRoot.instances.list().then(setTargetInstances);
-    }, [api, compositionRoot, syncRule]);
+    }, [compositionRoot, syncRule, snackbar]);
 
     const aggregationItems = useMemo(buildAggregationItems, []);
 
