@@ -1,6 +1,6 @@
 import _ from "lodash";
 import moment from "moment";
-import { DataSyncPeriod } from "../../../../domain/aggregated/types";
+import { DataSyncAggregation, DataSyncPeriod } from "../../../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../../../domain/aggregated/utils";
 import { Instance, PublicInstance } from "../../../../domain/instance/entities/Instance";
 import { ProgramIndicator } from "../../../../domain/metadata/entities/MetadataEntities";
@@ -409,7 +409,7 @@ async function deletePreviousDataValues(
         instanceResult.match({
             error: () =>
                 addEventToProgress(
-                    i18n.t(`Error retrieving instance {{name}} to delete previoud data values`, {
+                    i18n.t(`Error retrieving instance {{name}} to delete previous data values`, {
                         name: instanceId,
                     }),
                     "admin"
@@ -432,15 +432,27 @@ async function deletePreviousDataValues(
 
                 const dataElements = await getRuleDataElements(compositionRoot, builder, instance);
 
+                const { startDate, endDate } = buildPeriodFromParams(
+                    builder.dataParams ?? { period: "ALL" }
+                );
+
                 const sync = compositionRoot.sync.aggregated({
                     originInstance: builder.originInstance,
                     targetInstances: builder.targetInstances,
                     metadataIds: dataElements,
                     excludedIds: [],
                     dataParams: {
-                        period: periodType,
-                        startDate: builder.dataParams?.startDate,
-                        endDate: builder.dataParams?.endDate,
+                        period: "FIXED",
+                        startDate: getLimitDatesOfPeriod(
+                            "start",
+                            startDate.toDate(),
+                            builder.dataParams?.aggregationType
+                        ),
+                        endDate: getLimitDatesOfPeriod(
+                            "end",
+                            endDate.toDate(),
+                            builder.dataParams?.aggregationType
+                        ),
                         orgUnitPaths: builder.dataParams?.orgUnitPaths,
                         allAttributeCategoryOptions: true,
                     },
@@ -511,4 +523,30 @@ async function getRulePrograms(
         .compact()
         .uniq()
         .value();
+}
+
+const aggregationTimeUnits = {
+    DAILY: "day",
+    WEEKLY: "isoWeek",
+    MONTHLY: "month",
+    QUARTERLY: "quarter",
+    YEARLY: "year",
+} as const;
+
+function getLimitDatesOfPeriod(
+    position: "start" | "end",
+    date?: Date,
+    period?: DataSyncAggregation
+): Date | undefined {
+    if (!date || !period) return date;
+    const unit = aggregationTimeUnits[period] ?? "day";
+
+    switch (position) {
+        case "start":
+            return moment(date).startOf(unit).toDate();
+        case "end":
+            return moment(date).endOf(unit).toDate();
+        default:
+            return date;
+    }
 }
