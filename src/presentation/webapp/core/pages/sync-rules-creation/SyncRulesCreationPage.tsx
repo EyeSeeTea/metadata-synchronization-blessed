@@ -1,4 +1,4 @@
-import { ConfirmationDialog, useLoading } from "d2-ui-components";
+import { ConfirmationDialog, useLoading } from "@eyeseetea/d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";

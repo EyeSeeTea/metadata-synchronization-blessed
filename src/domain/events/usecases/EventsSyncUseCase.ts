@@ -12,11 +12,14 @@ import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
-import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
+import { CategoryOptionCombo, Program } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
+import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
+import { TrackedEntityInstance } from "../../tracked-entity-instances/entities/TrackedEntityInstance";
+import { TEIsPayloadMapper } from "../../tracked-entity-instances/mapper/TEIsPayloadMapper";
 import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
@@ -24,24 +27,38 @@ import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
 export class EventsSyncUseCase extends GenericSyncUseCase {
     public readonly type = "events";
     public readonly fields =
-        "id,name,programStages[programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
+        "id,name,programType,programStages[id,displayFormName,programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name],program";
 
     public buildPayload = memoize(async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
         const { enableAggregation = false } = dataParams;
         const eventsRepository = await this.getEventsRepository();
         const aggregatedRepository = await this.getAggregatedRepository();
+        const teisRepository = await this.getTeisRepository();
 
-        const { programs = [], programIndicators = [] } = await this.extractMetadata();
+        const {
+            programs = [],
+            programIndicators = [],
+            programStages = [],
+        } = await this.extractMetadata();
+
+        const stageIdsFromPrograms = programs
+            ? (programs as Program[])
+                  .map(program => program.programStages.map(({ id }) => id))
+                  .flat()
+            : [];
+
+        const progamStageIds = [...programStages.map(({ id }) => id), ...stageIdsFromPrograms];
 
         const events = (
-            await eventsRepository.getEvents(
-                dataParams,
-                programs.map(({ id }) => id)
-            )
+            await eventsRepository.getEvents(dataParams, [...new Set(progamStageIds)])
         ).map(event => {
             return dataParams.generateNewUid ? { ...event, event: generateUid() } : event;
         });
+
+        const trackedEntityInstances = dataParams.teis
+            ? await teisRepository.getTEIsById(dataParams, dataParams.teis)
+            : [];
 
         const directIndicators = programIndicators.map(({ id }) => id);
         const indicatorsByProgram = _.flatten(
@@ -63,16 +80,21 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             excludedIds.includes(dataElement)
         );
 
-        return { events, dataValues };
+        return { events, dataValues, trackedEntityInstances };
     });
 
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
-        const { events, dataValues } = await this.buildPayload();
+        const { events, dataValues, trackedEntityInstances } = await this.buildPayload();
+
+        const teisResponse =
+            trackedEntityInstances && trackedEntityInstances.length > 0
+                ? await this.postTEIsPayload(instance, trackedEntityInstances)
+                : undefined;
 
         const eventsResponse = await this.postEventsPayload(instance, events);
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
-        return _.compact([eventsResponse, indicatorsResponse]);
+        return _.compact([eventsResponse, indicatorsResponse, teisResponse]);
     }
 
     private async postEventsPayload(
@@ -86,6 +108,30 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const eventsRepository = await this.getEventsRepository(instance);
         const syncResult = await eventsRepository.save(payload, dataParams);
+        const origin = await this.getOriginInstance();
+
+        return { ...syncResult, origin: origin.toPublicObject(), payload };
+    }
+
+    private async postTEIsPayload(
+        instance: Instance,
+        trackedEntityInstances: TrackedEntityInstance[]
+    ): Promise<SynchronizationResult> {
+        const { dataParams = {} } = this.builder;
+        const { excludeTeiRelationships = false } = dataParams;
+
+        const teis = excludeTeiRelationships
+            ? trackedEntityInstances.map(tei => ({ ...tei, relationships: [] }))
+            : trackedEntityInstances;
+
+        const payload = (await new TEIsPayloadMapper().map({
+            trackedEntityInstances: teis,
+        })) as TEIsPackage;
+
+        debug("TEIS package", { trackedEntityInstances, payload });
+
+        const teisRepository = await this.getTeisRepository(instance);
+        const syncResult = await teisRepository.save(payload, dataParams);
         const origin = await this.getOriginInstance();
 
         return { ...syncResult, origin: origin.toPublicObject(), payload };

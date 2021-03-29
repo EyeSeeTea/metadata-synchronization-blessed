@@ -1,5 +1,5 @@
-import { FilterSingleOperatorBase } from "d2-api/api/common";
-import { ObjectsTableDetailField, TableColumn } from "d2-ui-components";
+import { FilterSingleOperatorBase } from "@eyeseetea/d2-api/api/common";
+import { ObjectsTableDetailField, TableColumn } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
 import { D2Api, D2ApiDefinition, Model } from "../../types/d2-api";
@@ -38,7 +38,9 @@ export abstract class D2Model {
     protected static modelFilters: any = {};
     protected static childrenKeys: string[] | undefined = undefined;
     protected static mappingType: string | undefined;
+    protected static parentMappingType: string | undefined;
     protected static isGlobalMapping = false;
+    protected static isSelectable = true;
 
     public static getApiModel(api: D2Api): InstanceType<typeof Model> {
         const modelCollection = api.models as {
@@ -79,6 +81,10 @@ export abstract class D2Model {
 
     public static getMappingType(): string | undefined {
         return this.mappingType;
+    }
+
+    public static getParentMappingType(): string | undefined {
+        return this.parentMappingType;
     }
 
     public static getIsGlobalMapping(): boolean {
@@ -123,6 +129,10 @@ export abstract class D2Model {
 
     public static getSearchFilter(): SearchFilter {
         return this.searchFilter;
+    }
+
+    public static getIsSelectable(): boolean {
+        return this.isSelectable;
     }
 }
 

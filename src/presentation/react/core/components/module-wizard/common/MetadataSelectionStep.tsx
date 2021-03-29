@@ -1,4 +1,4 @@
-import { useSnackbar } from "d2-ui-components";
+import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback } from "react";
 import { MetadataModule } from "../../../../../../domain/modules/entities/MetadataModule";

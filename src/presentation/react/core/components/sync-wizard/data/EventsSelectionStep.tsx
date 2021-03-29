@@ -1,5 +1,10 @@
 import { Typography } from "@material-ui/core";
-import { ObjectsTable, ObjectsTableDetailField, TableColumn, TableState } from "d2-ui-components";
+import {
+    ObjectsTable,
+    ObjectsTableDetailField,
+    TableColumn,
+    TableState,
+} from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ProgramEvent } from "../../../../../../domain/events/entities/ProgramEvent";
@@ -10,13 +15,20 @@ import { useAppContext } from "../../../contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
+import { extractAllPrograms } from "../utils";
 
 interface ProgramEventObject extends ProgramEvent {
     [key: string]: any;
 }
 
-type CustomProgram = Program & {
-    programStages?: { programStageDataElements: { dataElement: DataElement }[] }[];
+type CustomProgramStage = {
+    id: string;
+    displayFormName: string;
+    programStageDataElements: { dataElement: DataElement }[];
+};
+
+export type CustomProgram = Program & {
+    programStages?: CustomProgramStage[];
 };
 
 export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
@@ -30,7 +42,8 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
 
     useEffect(() => {
         const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
-        sync.extractMetadata<CustomProgram>().then(({ programs = [] }) => setPrograms(programs));
+
+        extractAllPrograms<CustomProgram>(compositionRoot, sync).then(setPrograms);
     }, [memoizedSyncRule, compositionRoot]);
 
     useEffect(() => {
@@ -41,7 +54,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                     ...memoizedSyncRule.dataParams,
                     allEvents: true,
                 },
-                programs.map(({ id }) => id)
+                programs.map(program => program.programStages.map(({ id }) => id)).flat()
             )
             .then(setObjects)
             .catch(setError);
@@ -79,7 +92,21 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 name: "program" as const,
                 text: i18n.t("Program"),
                 sortable: true,
-                getValue: ({ program }) => _.find(programs, { id: program })?.name ?? program,
+                getValue: ({ program, programStage }) => {
+                    const programObj = programs.find(program =>
+                        program.programStages.some(stage => stage.id === programStage)
+                    );
+
+                    const stage = (programObj?.programStages ?? []).find(
+                        stage => stage.id === programStage
+                    ) as CustomProgramStage;
+
+                    return programObj && stage
+                        ? programObj.programType === "WITH_REGISTRATION"
+                            ? `${programObj.name} [${stage.displayFormName}]`
+                            : programObj.name
+                        : program;
+                },
             },
             { name: "orgUnitName" as const, text: i18n.t("Organisation unit"), sortable: true },
             { name: "eventDate" as const, text: i18n.t("Event date"), sortable: true },

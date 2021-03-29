@@ -1,4 +1,4 @@
-import { SearchResult, ShareUpdate } from "d2-ui-components";
+import { ShareUpdate } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useMemo } from "react";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
@@ -49,10 +49,7 @@ export const ResponsibleDialog: React.FC<ResponsibleDialogProps> = ({
         updateResponsibles(_.uniqBy([newResponsible, ...responsibles], "id"));
     };
 
-    const onSearchRequest = async (key: string) =>
-        api
-            .get<SearchResult>("/sharing/search", { key })
-            .getData();
+    const onSearchRequest = (key: string) => api.sharing.search({ key }).getData();
 
     const sharingObject = useMemo(() => {
         if (!sharingSettingsElement) return undefined;

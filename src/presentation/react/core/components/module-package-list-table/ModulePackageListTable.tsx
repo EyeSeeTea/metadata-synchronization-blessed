@@ -1,4 +1,4 @@
-import { PaginationOptions, useSnackbar } from "d2-ui-components";
+import { PaginationOptions, useSnackbar } from "@eyeseetea/d2-ui-components";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";

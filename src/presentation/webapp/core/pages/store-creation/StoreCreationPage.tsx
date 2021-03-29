@@ -5,7 +5,7 @@ import {
     ConfirmationDialogProps,
     useLoading,
     useSnackbar,
-} from "d2-ui-components";
+} from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Linkify from "react-linkify";
 import { useHistory, useParams } from "react-router-dom";

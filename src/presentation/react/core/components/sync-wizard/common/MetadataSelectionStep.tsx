@@ -1,5 +1,5 @@
 import { Icon } from "@material-ui/core";
-import { TableAction, useSnackbar } from "d2-ui-components";
+import { RowConfig, TableAction, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Instance } from "../../../../../../domain/instance/entities/Instance";
@@ -10,6 +10,7 @@ import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
+    EventProgramWithProgramStagesModel,
     ProgramIndicatorMappedModel,
 } from "../../../../../../models/dhis/mapping";
 import {
@@ -43,10 +44,11 @@ const config = {
     events: {
         models: [
             EventProgramWithDataElementsModel,
+            EventProgramWithProgramStagesModel,
             EventProgramWithIndicatorsModel,
             ProgramIndicatorMappedModel,
         ],
-        childrenKeys: ["dataElements", "programIndicators"],
+        childrenKeys: ["dataElements", "programIndicators", "stages"],
     },
     deleted: {
         models: [],
@@ -134,6 +136,14 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
         [model]
     );
 
+    const rowConfig = React.useCallback(
+        (item: MetadataType): RowConfig => ({
+            disabled: !item.model.getIsSelectable(),
+            selectable: item.model.getIsSelectable(),
+        }),
+        []
+    );
+
     const actions: TableAction<MetadataType>[] = useMemo(
         () =>
             syncRule.type === "events"
@@ -168,6 +178,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
 
     return (
         <MetadataTable
+            rowConfig={rowConfig}
             models={models}
             selectedIds={syncRule.metadataIds}
             excludedIds={syncRule.excludedIds}

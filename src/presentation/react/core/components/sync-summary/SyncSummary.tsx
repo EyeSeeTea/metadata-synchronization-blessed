@@ -13,7 +13,7 @@ import {
     Typography,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { ConfirmationDialog, useLoading } from "d2-ui-components";
+import { ConfirmationDialog, useLoading } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
@@ -25,7 +25,10 @@ import {
     SynchronizationStats,
 } from "../../../../../domain/reports/entities/SynchronizationResult";
 import { Store } from "../../../../../domain/stores/entities/Store";
-import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
+import {
+    SynchronizationResultType,
+    SynchronizationType,
+} from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 
@@ -156,12 +159,14 @@ const buildMessageTable = (messages: ErrorMessage[]) => {
     );
 };
 
-const getTypeName = (reportType: SynchronizationType, syncType: string) => {
+const getTypeName = (reportType: SynchronizationResultType, syncType: string) => {
     switch (reportType) {
         case "aggregated":
             return syncType === "events" ? i18n.t("Program Indicators") : i18n.t("Aggregated");
         case "events":
             return i18n.t("Events");
+        case "trackedEntityInstances":
+            return i18n.t("Tracked Entity Instances");
         case "metadata":
             return i18n.t("Metadata");
         case "deleted":

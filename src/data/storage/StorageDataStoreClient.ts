@@ -93,25 +93,13 @@ export class StorageDataStoreClient extends StorageClient {
 
     public async saveObjectSharing(key: string, object: ObjectSharing): Promise<void> {
         const { id } = await this.getMetadataByKey(key);
-        await this.api.post(`/sharing`, { type: "dataStore", id }, { object }).getData();
+        await this.api.sharing.post({ type: "dataStore", id }, object).getData();
     }
 
     private async getMetadataByKey(key: string) {
-        const data = await this.api
-            .get<MetadataDataStoreKey>(`/dataStore/${dataStoreNamespace}/${key}/metaData`)
-            .getData();
+        const data = await this.dataStore.getMetadata(key).getData();
+        if (!data) throw new Error(`Invalid dataStore key ${key}`);
 
         return data;
     }
-}
-
-export interface MetadataDataStoreKey extends ObjectSharing {
-    created: Date;
-    lastUpdated: Date;
-    lastUpdatedBy: { id: string };
-    namespace: string;
-    key: string;
-    value: string;
-    favorite: boolean;
-    id: boolean;
 }
