@@ -376,13 +376,20 @@ export abstract class GenericMappingUseCase {
     }
 
     protected getProgramStageDataElements(object: CombinedMetadata) {
-        return _.compact(
+        const dataElementsOption1 = _.compact(
             _.flatten(
                 object.programStages?.map(({ programStageDataElements }) =>
                     programStageDataElements?.map(({ dataElement }) => dataElement)
                 )
             )
         );
+
+        // This is used when we request valid items for a tracker program stage
+        const dataElementsOption2 = _.compact(
+            object.programStageDataElements?.map(({ dataElement }) => dataElement)
+        );
+
+        return [...dataElementsOption1, ...dataElementsOption2];
     }
 }
 
@@ -435,6 +442,11 @@ interface CombinedMetadata {
         }[];
     }[];
     aggregateExportCategoryOptionCombo?: string;
+    programStageDataElements?: {
+        dataElement: {
+            id: string;
+        };
+    }[];
 }
 
 const fields = {
@@ -463,4 +475,5 @@ const fields = {
         name: true,
         programStageDataElements: { dataElement: { id: true } },
     },
+    programStageDataElements: { dataElement: { id: true } },
 };
