@@ -1,5 +1,5 @@
 import { Button, LinearProgress, makeStyles } from "@material-ui/core";
-import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
+import { ConfirmationDialog, useLoading, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
@@ -74,7 +74,7 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
             snackbar.error(errors.join("\n"));
         } else {
             const newSyncRule = syncRule.updateName(name);
-            await compositionRoot.rules.save(newSyncRule);
+            await compositionRoot.rules.save([newSyncRule]);
             history.push(`/sync-rules/${syncRule.type}/edit/${newSyncRule.id}`);
             onCancel();
         }
@@ -119,9 +119,20 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
             ...cleanOrgUnitPaths(syncRule.dataSyncOrgUnitPaths),
         ];
 
-        compositionRoot.metadata.getByIds(ids, "id,name,type").then(updateMetadata); //type is required to transform visualizations to charts and report tables
+        compositionRoot.instances.getById(syncRule.originInstance).then(result => {
+            result.match({
+                error: () => snackbar.error(i18n.t("Invalid origin instance")),
+                success: instance => {
+                    //type is required to transform visualizations to charts and report tables
+                    compositionRoot.metadata
+                        .getByIds(ids, instance, "id,name,type")
+                        .then(updateMetadata);
+                },
+            });
+        });
+
         compositionRoot.instances.list().then(setTargetInstances);
-    }, [api, compositionRoot, syncRule]);
+    }, [compositionRoot, syncRule, snackbar]);
 
     const aggregationItems = useMemo(buildAggregationItems, []);
 
@@ -301,6 +312,15 @@ const SaveStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
                             })}
                         </ul>
                     </LiEntry>
+                )}
+
+                {syncRule.type === "events" && (
+                    <LiEntry
+                        label={i18n.t("TEIs")}
+                        value={i18n.t("{{total}} selected TEIs", {
+                            total: syncRule.dataSyncTeis.length,
+                        })}
+                    />
                 )}
 
                 {syncRule.type === "events" && (

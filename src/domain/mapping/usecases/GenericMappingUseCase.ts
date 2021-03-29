@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { OptionModel } from "../../../models/dhis/metadata";
 import {
     cleanNestedMappedId,
     EXCLUDED_KEY,
@@ -65,6 +66,7 @@ export abstract class GenericMappingUseCase {
 
         const metadataResponse = await this.getMetadata(destinationInstance, [mappedId]);
         const destinationMetadata = this.createMetadataDictionary(metadataResponse);
+
         const destinationItem = destinationMetadata[mappedId];
         if (!originMetadata || !destinationItem) return {};
 
@@ -98,17 +100,23 @@ export abstract class GenericMappingUseCase {
             this.getCategoryOptionCombos(destinationItem, defaultDestinationCategoryOptionCombo[0])
         );
 
-        const options = await this.autoMapCollection(
-            destinationInstance,
-            this.getOptions(originMetadata),
-            this.getOptions(destinationItem)
-        );
+        const options =
+            originMetadata.model !== OptionModel.getCollectionName()
+                ? await this.autoMapCollection(
+                      destinationInstance,
+                      this.getOptions(originMetadata),
+                      this.getOptions(destinationItem)
+                  )
+                : undefined;
 
-        const programStages = await this.autoMapProgramStages(
-            destinationInstance,
-            originMetadata,
-            destinationItem
-        );
+        const programStages =
+            originMetadata.programType === "WITHOUT_REGISTRATION"
+                ? await this.autoMapProgramStages(
+                      destinationInstance,
+                      originMetadata,
+                      destinationItem
+                  )
+                : undefined;
 
         const mapping = _.omitBy(
             {
@@ -368,13 +376,20 @@ export abstract class GenericMappingUseCase {
     }
 
     protected getProgramStageDataElements(object: CombinedMetadata) {
-        return _.compact(
+        const dataElementsOption1 = _.compact(
             _.flatten(
                 object.programStages?.map(({ programStageDataElements }) =>
                     programStageDataElements?.map(({ dataElement }) => dataElement)
                 )
             )
         );
+
+        // This is used when we request valid items for a tracker program stage
+        const dataElementsOption2 = _.compact(
+            object.programStageDataElements?.map(({ dataElement }) => dataElement)
+        );
+
+        return [...dataElementsOption1, ...dataElementsOption2];
     }
 }
 
@@ -386,6 +401,7 @@ interface CombinedMetadata {
     code?: string;
     path?: string;
     level?: number;
+    programType?: "WITH_REGISTRATION" | "WITHOUT_REGISTRATION";
     categoryCombo?: {
         id: string;
         name: string;
@@ -426,6 +442,11 @@ interface CombinedMetadata {
         }[];
     }[];
     aggregateExportCategoryOptionCombo?: string;
+    programStageDataElements?: {
+        dataElement: {
+            id: string;
+        };
+    }[];
 }
 
 const fields = {
@@ -434,6 +455,7 @@ const fields = {
     code: true,
     path: true,
     level: true,
+    programType: true,
     categoryCombo: {
         id: true,
         name: true,
@@ -453,4 +475,5 @@ const fields = {
         name: true,
         programStageDataElements: { dataElement: { id: true } },
     },
+    programStageDataElements: { dataElement: { id: true } },
 };

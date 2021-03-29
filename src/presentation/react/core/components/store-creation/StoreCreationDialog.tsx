@@ -14,7 +14,7 @@ import {
     DialogButton,
     useLoading,
     useSnackbar,
-} from "d2-ui-components";
+} from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useMemo, useState } from "react";
 import { GitHubError } from "../../../../../domain/packages/entities/Errors";
 import { Store } from "../../../../../domain/stores/entities/Store";

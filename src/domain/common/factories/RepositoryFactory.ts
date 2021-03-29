@@ -23,6 +23,10 @@ import { RulesRepositoryConstructor } from "../../rules/repositories/RulesReposi
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
 import {
+    TEIRepository,
+    TEIRepositoryConstructor,
+} from "../../tracked-entity-instances/repositories/TEIRepository";
+import {
     TransformationRepository,
     TransformationRepositoryConstructor,
 } from "../../transformations/repositories/TransformationRepository";
@@ -63,9 +67,7 @@ export class RepositoryFactory {
 
     @cache()
     public downloadRepository() {
-        return this.get<DownloadRepositoryConstructor>(Repositories.DownloadRepository, [
-            this.transformationRepository(),
-        ]);
+        return this.get<DownloadRepositoryConstructor>(Repositories.DownloadRepository, []);
     }
 
     @cache()
@@ -121,6 +123,11 @@ export class RepositoryFactory {
     }
 
     @cache()
+    public teisRepository(instance: Instance): TEIRepository {
+        return this.get<TEIRepositoryConstructor>(Repositories.TEIsRepository, [instance]);
+    }
+
+    @cache()
     public reportsRepository(instance: Instance) {
         const config = this.configRepository(instance);
         return this.get<ReportsRepositoryConstructor>(Repositories.ReportsRepository, [config]);
@@ -129,7 +136,8 @@ export class RepositoryFactory {
     @cache()
     public rulesRepository(instance: Instance) {
         const config = this.configRepository(instance);
-        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [config]);
+        const user = this.userRepository(instance);
+        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [config, user]);
     }
 
     @cache()
@@ -168,5 +176,6 @@ export const Repositories = {
     RulesRepository: "rulesRepository",
     SystemInfoRepository: "systemInfoRepository",
     MigrationsRepository: "migrationsRepository",
+    TEIsRepository: "teisRepository",
     UserRepository: "userRepository",
 } as const;

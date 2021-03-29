@@ -1,0 +1,34 @@
+[
+    {
+        "id": "aaQUpMGyBEB",
+        "programType": "WITH_REGISTRATION",
+        "programTrackedEntityAttributes": [
+            {
+                "trackedEntityAttribute": {
+                    "id": "qczNQPF6FWb"
+                }
+            },
+            {
+                "trackedEntityAttribute": {
+                    "id": "sKBh0kazOCk"
+                }
+            }
+        ]
+    },
+    {
+        "id": "bbQUpMGyBEB",
+        "programType": "WITHOUT_REGISTRATION",
+        "programStages": [
+            {
+                "id": "psBUpMGyBEB",
+                "programStageDataElements": [
+                    {
+                        "dataElement": {
+                            "id": "IW2EGccT7jT"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

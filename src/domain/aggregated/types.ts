@@ -9,7 +9,9 @@ export interface DataSynchronizationParams extends DataImportParams {
     endDate?: Date;
     lastUpdated?: Date;
     events?: string[];
+    teis?: string[];
     allEvents?: boolean;
+    excludeTeiRelationships?: boolean;
     generateNewUid?: boolean;
     enableAggregation?: boolean;
     aggregationType?: DataSyncAggregation;

@@ -16,7 +16,6 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
 
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
-        const visitedIds: Set<string> = new Set();
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
             const {
                 type,
@@ -58,23 +57,18 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 // Get all the referenced metadata
                 const references = getAllReferences(this.api, object, schema.name);
                 const includedReferences = cleanReferences(references, includeRules);
-                const promises = includedReferences
-                    .map(type => ({
+                const partialResults = await promiseMap(includedReferences, type =>
+                    recursiveExport({
                         type: type as keyof MetadataEntities,
-                        ids: references[type].filter(id => !visitedIds.has(id)),
+                        ids: references[type],
                         excludeRules: nestedExcludeRules[type],
                         includeRules: nestedIncludeRules[type],
                         includeSharingSettings,
                         removeOrgUnitReferences,
-                    }))
-                    .map(newBuilder => {
-                        newBuilder.ids.forEach(id => {
-                            visitedIds.add(id);
-                        });
-                        return recursiveExport(newBuilder);
-                    });
-                const promisesResult: MetadataPackage[] = await Promise.all(promises);
-                _.deepMerge(result, ...promisesResult);
+                    })
+                );
+
+                _.deepMerge(result, ...partialResults);
             }
 
             // Clean up result from duplicated elements

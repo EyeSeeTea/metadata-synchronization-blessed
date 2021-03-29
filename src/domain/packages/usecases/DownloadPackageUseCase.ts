@@ -19,8 +19,9 @@ export class DownloadPackageUseCase implements UseCase {
         const { contents, ...item } = element;
         const ruleName = _.kebabCase(_.toLower(item.name));
         const date = moment().format("YYYYMMDDHHmm");
-        const name = `package-${ruleName}-${date}.json`;
+        const name = `package-${ruleName}-${date}`;
         const payload = { package: item, ...contents };
+
         this.repositoryFactory.downloadRepository().downloadFile(name, payload);
     }
 

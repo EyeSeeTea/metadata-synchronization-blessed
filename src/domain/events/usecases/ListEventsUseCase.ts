@@ -1,16 +1,20 @@
 import { DataSynchronizationParams } from "../../aggregated/types";
 import { UseCase } from "../../common/entities/UseCase";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { Instance } from "../../instance/entities/Instance";
 import { ProgramEvent } from "../entities/ProgramEvent";
-import { EventsRepository } from "../repositories/EventsRepository";
 
 export class ListEventsUseCase implements UseCase {
-    constructor(private eventsRepository: EventsRepository) {}
+    constructor(private repositoryFactory: RepositoryFactory, protected localInstance: Instance) {}
 
     public async execute(
+        instance: Instance,
         params: DataSynchronizationParams,
-        programs: string[] = [],
+        programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        return this.eventsRepository.getEvents(params, programs, defaults);
+        return this.repositoryFactory
+            .eventsRepository(instance)
+            .getEvents(params, programStageIds, defaults);
     }
 }

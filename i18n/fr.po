@@ -123,13 +123,22 @@ msgstr ""
 msgid "Preparing synchronization"
 msgstr ""
 
-msgid "Start import in instance {{instance}}"
+msgid "Importing in instance {{instance}}"
 msgstr ""
 
-msgid "Program with Data Elements"
+msgid "Event Program with Data Elements"
+msgstr ""
+
+msgid "Tracker Program with Program Stages"
 msgstr ""
 
 msgid "Program with Indicators"
+msgstr ""
+
+msgid "Tracked Entity Attribute (to TEI)"
+msgstr ""
+
+msgid "Tracked Entity Attribute (to DE)"
 msgstr ""
 
 msgid "Unauthorized - You do not have permission to view this page."
@@ -1026,6 +1035,9 @@ msgstr ""
 msgid "Events"
 msgstr ""
 
+msgid "Tracked Entity Instances"
+msgstr ""
+
 msgid "Unknown"
 msgstr ""
 
@@ -1135,6 +1147,9 @@ msgstr ""
 msgid "Programs"
 msgstr ""
 
+msgid "TEIs"
+msgstr ""
+
 msgid ""
 "If aggregation is enabled, the synchronization will use the Analytics "
 "endpoint and group data by organisation units children and the chosen time "
@@ -1192,6 +1207,9 @@ msgstr ""
 msgid "An error has ocurred during the download"
 msgstr ""
 
+msgid "Invalid origin instance"
+msgstr ""
+
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -1225,6 +1243,9 @@ msgid "Include rules"
 msgstr ""
 
 msgid "Exclude rules"
+msgstr ""
+
+msgid "{{total}} selected TEIs"
 msgstr ""
 
 msgid "All events"
@@ -1327,6 +1348,12 @@ msgid "Sync all events"
 msgstr ""
 
 msgid "You do not have assigned any organisation unit"
+msgstr ""
+
+msgid "Enrollment Date"
+msgstr ""
+
+msgid "Exclude relationships"
 msgstr ""
 
 msgid "Use sync rules periods"
@@ -1841,6 +1868,9 @@ msgstr ""
 msgid "Generating JSON file"
 msgstr ""
 
+msgid "Exporting synchronization rules"
+msgstr ""
+
 msgid "Deleting Sync Rules"
 msgstr ""
 
@@ -1855,10 +1885,37 @@ msgstr ""
 msgid "Successfully updated sync rule"
 msgstr ""
 
+msgid "Couldn't read the file because it's not valid"
+msgstr ""
+
+msgid "Importing rule(s)"
+msgstr ""
+
+msgid "Importing {{n}} rules"
+msgstr ""
+
+msgid "You have uploaded {{n}} rules with a wrong type."
+msgstr ""
+
+msgid "All the uploaded rules are invalid and cannot be imported."
+msgstr ""
+
+msgid "Existing (will be overwritten)"
+msgstr ""
+
+msgid "Imported {{n}} rules"
+msgstr ""
+
 msgid "Execute"
 msgstr ""
 
+msgid "Export rule"
+msgstr ""
+
 msgid "Toggle scheduling"
+msgstr ""
+
+msgid "Import sync rules"
 msgstr ""
 
 msgid "Last executed date"

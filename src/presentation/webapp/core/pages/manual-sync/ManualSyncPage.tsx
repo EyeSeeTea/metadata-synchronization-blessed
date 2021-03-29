@@ -4,7 +4,7 @@ import {
     ConfirmationDialogProps,
     useLoading,
     useSnackbar,
-} from "d2-ui-components";
+} from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -22,6 +22,7 @@ import {
     DataSetWithDataElementsModel,
     EventProgramWithDataElementsModel,
     EventProgramWithIndicatorsModel,
+    EventProgramWithProgramStagesModel,
     IndicatorMappedModel,
     ProgramIndicatorMappedModel,
 } from "../../../../../models/dhis/mapping";
@@ -73,10 +74,11 @@ const config: Record<
         title: i18n.t("Events Synchronization"),
         models: [
             EventProgramWithDataElementsModel,
+            EventProgramWithProgramStagesModel,
             EventProgramWithIndicatorsModel,
             ProgramIndicatorMappedModel,
         ],
-        childrenKeys: ["dataElements", "programIndicators"],
+        childrenKeys: ["dataElements", "programIndicators", "stages"],
     },
     deleted: {
         title: i18n.t("Deleted Objects Synchronization"),

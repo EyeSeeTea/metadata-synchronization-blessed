@@ -1,0 +1,20 @@
+{
+    "trackedEntityAttributesToTEI": {
+        "IW1EGccT7jT": {
+            "code": "att_gender_code",
+            "global": false,
+            "mapping": {},
+            "mappedId": "DISABLED",
+            "conflicts": false,
+            "mappedCode": "DISABLED"
+        },
+        "sKBh0kazOCk": {
+            "code": "att_patient_id code",
+            "global": false,
+            "mapping": {},
+            "mappedId": "DISABLED",
+            "conflicts": false,
+            "mappedCode": "DISABLED"
+        }
+    }
+}
