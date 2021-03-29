@@ -140,8 +140,16 @@ export class SynchronizationRule {
         return this.syncRule.builder?.dataParams?.events ?? [];
     }
 
+    public get dataSyncTeis(): string[] {
+        return this.syncRule.builder?.dataParams?.teis ?? [];
+    }
+
     public get dataSyncAllEvents(): boolean {
         return this.syncRule.builder?.dataParams?.allEvents ?? true;
+    }
+
+    public get excludeTeiRelationships(): boolean {
+        return this.syncRule.builder?.dataParams?.excludeTeiRelationships ?? false;
     }
 
     public get dataSyncEnableAggregation(): boolean | undefined {
@@ -493,8 +501,16 @@ export class SynchronizationRule {
         return this.updateBuilderDataParams({ events });
     }
 
+    public updateDataSyncTEIs(teis?: string[]): SynchronizationRule {
+        return this.updateBuilderDataParams({ teis });
+    }
+
     public updateDataSyncAllEvents(allEvents?: boolean): SynchronizationRule {
         return this.updateBuilderDataParams({ allEvents });
+    }
+
+    public updateExcludeTeiRelationships(excludeTeiRelationships?: boolean): SynchronizationRule {
+        return this.updateBuilderDataParams({ excludeTeiRelationships });
     }
 
     public updateDataSyncEnableAggregation(enableAggregation?: boolean): SynchronizationRule {
@@ -643,13 +659,14 @@ export class SynchronizationRule {
                       }
                     : null,
             ]),
-            dataSyncEvents: _.compact([
+            dataSyncEventsOrTeis: _.compact([
                 this.type === "events" &&
                 !this.dataSyncAllEvents &&
-                this.dataSyncEvents.length === 0
+                this.dataSyncEvents.length === 0 &&
+                this.dataSyncTeis.length === 0
                     ? {
                           key: "cannot_be_empty",
-                          namespace: { element: "event" },
+                          namespace: { element: "event or TEI" },
                       }
                     : null,
             ]),

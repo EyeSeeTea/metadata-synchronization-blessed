@@ -1,4 +1,4 @@
-import { FilterSingleOperatorBase } from "d2-api/api/common";
+import { FilterSingleOperatorBase } from "@eyeseetea/d2-api/api/common";
 import { IdentifiableRef, Ref } from "../../common/entities/Ref";
 import { Id } from "../../common/entities/Schemas";
 import { DataSource } from "../../instance/entities/DataSource";
@@ -68,6 +68,8 @@ export interface ListMetadataParams {
     disableFilterRows?: boolean;
     selectedIds?: string[];
     rootJunction?: "AND" | "OR";
+    programType?: "WITHOUT_REGISTRATION" | "WITH_REGISTRATION";
+    childrenPropInList?: { prop: string; values: string[] };
 }
 
 export interface ListMetadataResponse {

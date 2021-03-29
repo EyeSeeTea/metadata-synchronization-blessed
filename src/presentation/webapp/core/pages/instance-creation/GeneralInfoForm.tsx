@@ -1,6 +1,6 @@
 import { Button, Card, CardContent, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import { useSnackbar } from "d2-ui-components";
+import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import _, { Dictionary } from "lodash";
 import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";

@@ -2,6 +2,7 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { D2Program } from "../../../types/d2-api";
+import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
 import {
     mapCategoryOptionCombo,
@@ -11,12 +12,18 @@ import {
 import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
-import { CategoryOptionCombo } from "../../metadata/entities/MetadataEntities";
+import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
+import { CategoryOptionCombo, Program } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary, cleanOrgUnitPath } from "../../synchronization/utils";
+import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
+import { TrackedEntityInstance } from "../../tracked-entity-instances/entities/TrackedEntityInstance";
+import {
+    createTEIsPayloadMapper,
+    createTEIsToEventPayloadMapper,
+} from "../../tracked-entity-instances/mapper/TEIsPayloadMapperFactory";
 import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
@@ -24,24 +31,38 @@ import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
 export class EventsSyncUseCase extends GenericSyncUseCase {
     public readonly type = "events";
     public readonly fields =
-        "id,name,programStages[programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name]";
+        "id,name,programType,programStages[id,displayFormName,programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name],program";
 
     public buildPayload = memoize(async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
         const { enableAggregation = false } = dataParams;
         const eventsRepository = await this.getEventsRepository();
         const aggregatedRepository = await this.getAggregatedRepository();
+        const teisRepository = await this.getTeisRepository();
 
-        const { programs = [], programIndicators = [] } = await this.extractMetadata();
+        const {
+            programs = [],
+            programIndicators = [],
+            programStages = [],
+        } = await this.extractMetadata();
+
+        const stageIdsFromPrograms = programs
+            ? (programs as Program[])
+                  .map(program => program.programStages.map(({ id }) => id))
+                  .flat()
+            : [];
+
+        const progamStageIds = [...programStages.map(({ id }) => id), ...stageIdsFromPrograms];
 
         const events = (
-            await eventsRepository.getEvents(
-                dataParams,
-                programs.map(({ id }) => id)
-            )
+            await eventsRepository.getEvents(dataParams, [...new Set(progamStageIds)])
         ).map(event => {
             return dataParams.generateNewUid ? { ...event, event: generateUid() } : event;
         });
+
+        const trackedEntityInstances = dataParams.teis
+            ? await teisRepository.getTEIsById(dataParams, dataParams.teis)
+            : [];
 
         const directIndicators = programIndicators.map(({ id }) => id);
         const indicatorsByProgram = _.flatten(
@@ -63,29 +84,80 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             excludedIds.includes(dataElement)
         );
 
-        return { events, dataValues };
+        return { events, dataValues, trackedEntityInstances };
     });
 
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
-        const { events, dataValues } = await this.buildPayload();
+        const { events, dataValues, trackedEntityInstances } = await this.buildPayload();
 
-        const eventsResponse = await this.postEventsPayload(instance, events);
+        const teisResponse =
+            trackedEntityInstances && trackedEntityInstances.length > 0
+                ? await this.postTEIsPayload(instance, trackedEntityInstances)
+                : undefined;
+
+        const eventsResponse = await this.postEventsPayload(
+            instance,
+            events,
+            trackedEntityInstances
+        );
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
-        return _.compact([eventsResponse, indicatorsResponse]);
+        return _.compact([eventsResponse, indicatorsResponse, teisResponse]);
     }
 
     private async postEventsPayload(
         instance: Instance,
-        events: ProgramEvent[]
+        events: ProgramEvent[],
+        teis: TrackedEntityInstance[]
     ): Promise<SynchronizationResult> {
         const { dataParams = {} } = this.builder;
 
-        const payload = await this.mapPayload(instance, { events });
-        debug("Events package", { events, payload });
+        const mapping = await this.getMapping(instance);
+        const mapper = await createTEIsToEventPayloadMapper(
+            await this.getMetadataRepository(instance),
+            mapping
+        );
+
+        const payloadByTEIs = (await mapper.map({ trackedEntityInstances: teis })) as EventsPackage;
+
+        const payloadByEvents = (await this.mapPayload(instance, { events })) as EventsPackage;
+
+        const payload = { events: [...payloadByTEIs.events, ...payloadByEvents.events] };
+
+        debug("Events package", { events, eventsByTeis: payloadByTEIs.events, payload });
 
         const eventsRepository = await this.getEventsRepository(instance);
         const syncResult = await eventsRepository.save(payload, dataParams);
+        const origin = await this.getOriginInstance();
+
+        return { ...syncResult, origin: origin.toPublicObject(), payload };
+    }
+
+    private async postTEIsPayload(
+        instance: Instance,
+        trackedEntityInstances: TrackedEntityInstance[]
+    ): Promise<SynchronizationResult> {
+        const { dataParams = {} } = this.builder;
+        const { excludeTeiRelationships = false } = dataParams;
+
+        const teis = excludeTeiRelationships
+            ? trackedEntityInstances.map(tei => ({ ...tei, relationships: [] }))
+            : trackedEntityInstances;
+
+        const mapping = await this.getMapping(instance);
+
+        const mapper = await createTEIsPayloadMapper(
+            await this.getMetadataRepository(instance),
+            teis,
+            mapping
+        );
+
+        const payload = (await mapper.map({ trackedEntityInstances: teis })) as TEIsPackage;
+
+        debug("TEIS package", { trackedEntityInstances, payload });
+
+        const teisRepository = await this.getTeisRepository(instance);
+        const syncResult = await teisRepository.save(payload, dataParams);
         const origin = await this.getOriginInstance();
 
         return { ...syncResult, origin: origin.toPublicObject(), payload };
@@ -158,9 +230,10 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         );
 
         const mapping = await this.getMapping(instance);
-        const events = oldEvents
-            .map(dataValue =>
+        const events = (
+            await promiseMap(oldEvents, dataValue =>
                 this.buildMappedDataValue(
+                    instance,
                     dataValue,
                     mapping,
                     originCategoryOptionCombos,
@@ -168,24 +241,34 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
                     defaultCategoryOptionCombos[0]
                 )
             )
-            .filter(this.isDisabledEvent);
+        ).filter(this.isDisabledEvent);
 
         return { events };
     }
 
-    private buildMappedDataValue(
+    private async buildMappedDataValue(
+        instance: Instance,
         { orgUnit, program, programStage, dataValues, attributeOptionCombo, ...rest }: ProgramEvent,
         globalMapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[],
         defaultCategoryOptionCombo: string
-    ): ProgramEvent {
-        const { organisationUnits = {}, eventPrograms = {} } = globalMapping;
-        const { mappedId: mappedProgram = program, mapping: innerMapping = {} } =
-            eventPrograms[program] ?? {};
-        const { programStages = {} } = innerMapping;
+    ): Promise<ProgramEvent> {
+        const { organisationUnits = {} } = globalMapping;
+
+        const { mappedProgram, programStages, innerMapping } = await this.getRelatedProgramMappings(
+            instance,
+            globalMapping,
+            program,
+            programStage
+        );
+
+        const mappedProgramStage =
+            this.getProgramStageMapping(program, programStage, programStages).mappedId ??
+            programStage;
+
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
-        const mappedProgramStage = programStages[programStage]?.mappedId ?? programStage;
+
         const mappedCategory = mapCategoryOptionCombo(
             attributeOptionCombo ?? defaultCategoryOptionCombo,
             [innerMapping, globalMapping],
@@ -228,6 +311,84 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             ["orgUnitName", "attributeCategoryOptions"]
         );
     }
+
+    private async getRelatedProgramMappings(
+        instance: Instance,
+        globalMapping: MetadataMappingDictionary,
+        originProgram: string,
+        originProgramStage: string
+    ) {
+        const {
+            eventPrograms = {},
+            trackerPrograms = {},
+            trackerProgramStages = {},
+        } = globalMapping;
+
+        const complexId = `${originProgram}-${originProgramStage}`;
+
+        if (eventPrograms[originProgram]) {
+            const { mappedId: mappedProgram = originProgram, mapping: innerMapping = {} } =
+                eventPrograms[originProgram] ?? {};
+
+            const { programStages = {} } = innerMapping;
+
+            return { mappedProgram, innerMapping, programStages };
+        } else if (trackerPrograms[originProgram]) {
+            const { mappedId: mappedProgram = originProgram, mapping: innerMapping = {} } =
+                trackerPrograms[originProgram] ?? {};
+
+            return { mappedProgram, innerMapping, programStages: trackerProgramStages };
+        } else if (trackerProgramStages[complexId]) {
+            const destinationProgramStage = trackerProgramStages[complexId].mappedId;
+
+            const mappedProgram =
+                (await this.getMappedProgramByProgramStage(instance, destinationProgramStage)) ??
+                originProgram;
+
+            return {
+                mappedProgram,
+                innerMapping: {},
+                programStages: trackerProgramStages,
+            };
+        } else {
+            return {
+                mappedProgram: originProgram,
+                innerMapping: {},
+                programStages: trackerProgramStages,
+            };
+        }
+    }
+
+    private async getMappedProgramByProgramStage(
+        instance: Instance,
+        destinationProgramStage?: string
+    ): Promise<string | undefined> {
+        if (destinationProgramStage && destinationProgramStage !== "DISABLED") {
+            const remoteMetadataRepository = await this.getMetadataRepository(instance);
+
+            const result = await remoteMetadataRepository.getMetadataByIds<{
+                id: string;
+                program: { id: string };
+            }>([destinationProgramStage], "id, program");
+
+            return result.programStages ? result.programStages[0].program.id : undefined;
+        } else {
+            return "DISABLED";
+        }
+    }
+
+    private getProgramStageMapping = (
+        originProgram: string,
+        originProgramStage: string,
+        programStagesMapping: Record<string, MetadataMapping>
+    ): MetadataMapping => {
+        const complexId = `${originProgram}-${originProgramStage}`;
+        const candidate = programStagesMapping[complexId]?.mappedId
+            ? programStagesMapping[complexId]
+            : programStagesMapping[originProgramStage];
+
+        return candidate ?? {};
+    };
 
     private isDisabledEvent(event: ProgramEvent | ProgramEventDataValue): boolean {
         return !_(event)

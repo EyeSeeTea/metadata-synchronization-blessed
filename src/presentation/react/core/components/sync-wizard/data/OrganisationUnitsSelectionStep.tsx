@@ -1,9 +1,10 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { OrgUnitsSelector } from "d2-ui-components";
+import { OrgUnitsSelector, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import i18n from "../../../../../../locales";
+import { D2Api } from "../../../../../../types/d2-api";
 import { useAppContext } from "../../../contexts/AppContext";
 import { SyncWizardStepProps } from "../Steps";
 
@@ -15,22 +16,33 @@ const useStyles = makeStyles({
 });
 
 const OrganisationUnitsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
-    const { api, compositionRoot } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const classes = useStyles();
+    const snackbar = useSnackbar();
+
     const [orgUnitRootIds, setOrgUnitRootIds] = useState<string[] | undefined>();
+    const [api, setApi] = useState<D2Api>();
 
     useEffect(() => {
-        compositionRoot.instances
-            .getOrgUnitRoots()
-            .then(roots => roots.map(({ id }) => id))
-            .then(setOrgUnitRootIds);
-    }, [compositionRoot]);
+        compositionRoot.instances.getById(syncRule.originInstance).then(result => {
+            result.match({
+                error: () => snackbar.error(i18n.t("Invalid origin instance")),
+                success: instance => {
+                    setApi(compositionRoot.instances.getApi(instance));
+
+                    compositionRoot.instances
+                        .getOrgUnitRoots(instance)
+                        .then(roots => setOrgUnitRootIds(roots.map(({ id }) => id)));
+                },
+            });
+        });
+    }, [compositionRoot, syncRule.originInstance, snackbar]);
 
     const changeSelection = (orgUnitsPaths: string[]) => {
         onChange(syncRule.updateDataSyncOrgUnitPaths(orgUnitsPaths).updateDataSyncEvents([]));
     };
 
-    if (!orgUnitRootIds) {
+    if (!orgUnitRootIds || !api) {
         return (
             <div className={classes.loading}>
                 <CircularProgress />

@@ -13,7 +13,9 @@ import { RulesD2ApiRepository } from "../data/rules/RulesD2ApiRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
 import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRepository";
+import { TEID2ApiRepository } from "../data/tracked-entity-instances/TEID2ApiRepository";
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
+import { UserD2ApiRepository } from "../data/user/UserD2ApiRepository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { DeleteAggregatedUseCase } from "../domain/aggregated/usecases/DeleteAggregatedUseCase";
 import { ListAggregatedUseCase } from "../domain/aggregated/usecases/ListAggregatedUseCase";
@@ -33,7 +35,6 @@ import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceB
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
 import { GetLocalInstanceUseCase } from "../domain/instance/usecases/GetLocalInstanceUseCase";
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
-import { GetCurrentUserUseCase } from "../domain/user/usecases/GetCurrentUserUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
@@ -44,6 +45,7 @@ import { GetMappingByOwnerUseCase } from "../domain/mapping/usecases/GetMappingB
 import { GetValidMappingIdUseCase } from "../domain/mapping/usecases/GetValidMappingIdUseCase";
 import { SaveMappingUseCase } from "../domain/mapping/usecases/SaveMappingUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
+import { GetMetadataByIdsUseCase } from "../domain/metadata/usecases/GetMetadataByIdsUseCase";
 import { GetResponsiblesUseCase } from "../domain/metadata/usecases/GetResponsiblesUseCase";
 import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
 import { ListAllMetadataUseCase } from "../domain/metadata/usecases/ListAllMetadataUseCase";
@@ -83,8 +85,10 @@ import { GetSyncResultsUseCase } from "../domain/reports/usecases/GetSyncResults
 import { ListSyncReportUseCase } from "../domain/reports/usecases/ListSyncReportUseCase";
 import { SaveSyncReportUseCase } from "../domain/reports/usecases/SaveSyncReportUseCase";
 import { DeleteSyncRuleUseCase } from "../domain/rules/usecases/DeleteSyncRuleUseCase";
+import { ExportSyncRuleUseCase } from "../domain/rules/usecases/ExportSyncRuleUseCase";
 import { GetSyncRuleUseCase } from "../domain/rules/usecases/GetSyncRuleUseCase";
 import { ListSyncRuleUseCase } from "../domain/rules/usecases/ListSyncRuleUseCase";
+import { ReadSyncRuleFilesUseCase } from "../domain/rules/usecases/ReadSyncRuleFilesUseCase";
 import { SaveSyncRuleUseCase } from "../domain/rules/usecases/SaveSyncRuleUseCase";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { DeleteStoreUseCase } from "../domain/stores/usecases/DeleteStoreUseCase";
@@ -95,12 +99,12 @@ import { SetStoreAsDefaultUseCase } from "../domain/stores/usecases/SetStoreAsDe
 import { ValidateStoreUseCase } from "../domain/stores/usecases/ValidateStoreUseCase";
 import { SynchronizationBuilder } from "../domain/synchronization/entities/SynchronizationBuilder";
 import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/CreatePullRequestUseCase";
+import { DownloadPayloadFromSyncRuleUseCase } from "../domain/synchronization/usecases/DownloadPayloadFromSyncRuleUseCase";
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { GetSystemInfoUseCase } from "../domain/system-info/usecases/GetSystemInfoUseCase";
+import { ListTEIsUseCase } from "../domain/tracked-entity-instances/usecases/ListTEIsUseCase";
+import { GetCurrentUserUseCase } from "../domain/user/usecases/GetCurrentUserUseCase";
 import { cache } from "../utils/cache";
-import { GetMetadataByIdsUseCase } from "../domain/metadata/usecases/GetMetadataByIdsUseCase";
-import { DownloadPayloadFromSyncRuleUseCase } from "../domain/synchronization/usecases/DownloadPayloadFromSyncRuleUseCase";
-import { UserD2ApiRepository } from "../data/user/UserD2ApiRepository";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -121,6 +125,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.StoreRepository, StoreD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MigrationsRepository, MigrationsAppRepository);
+        this.repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
         this.repositoryFactory.bind(Repositories.UserRepository, UserD2ApiRepository);
         this.repositoryFactory.bind(
             Repositories.MetadataRepository,
@@ -330,10 +335,8 @@ export class CompositionRoot {
 
     @cache()
     public get events() {
-        const events = new EventsD2ApiRepository(this.localInstance);
-
         return getExecute({
-            list: new ListEventsUseCase(events),
+            list: new ListEventsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -371,10 +374,13 @@ export class CompositionRoot {
             save: new SaveSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             get: new GetSyncRuleUseCase(this.repositoryFactory, this.localInstance),
+            readFiles: new ReadSyncRuleFilesUseCase(this.repositoryFactory, this.localInstance),
+            export: new ExportSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             downloadPayloads: new DownloadPayloadFromSyncRuleUseCase(
                 this,
                 this.repositoryFactory,
-                this.localInstance
+                this.localInstance,
+                this.encryptionKey
             ),
         });
     }
@@ -396,6 +402,13 @@ export class CompositionRoot {
                 this.localInstance
             ),
             hasPending: new HasPendingMigrationsUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get teis() {
+        return getExecute({
+            list: new ListTEIsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

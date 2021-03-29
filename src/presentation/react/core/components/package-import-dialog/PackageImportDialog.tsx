@@ -1,5 +1,5 @@
 import DialogContent from "@material-ui/core/DialogContent";
-import { ConfirmationDialog, useLoading, useSnackbar } from "d2-ui-components";
+import { ConfirmationDialog, useLoading, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Either } from "../../../../../domain/common/entities/Either";

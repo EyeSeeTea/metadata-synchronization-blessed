@@ -56,7 +56,7 @@ interface SynchronizationResultNew {
         version?: string;
     };
     date: Date;
-    type: "metadata" | "aggregated" | "events" | "deleted";
+    type: "metadata" | "aggregated" | "events" | "deleted" | "trackedEntityInstances";
     message?: string;
     stats?: {
         type?: string;

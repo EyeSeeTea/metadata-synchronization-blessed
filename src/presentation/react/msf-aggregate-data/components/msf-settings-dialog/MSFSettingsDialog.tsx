@@ -1,5 +1,5 @@
 import { makeStyles, TextField, Theme } from "@material-ui/core";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import { Dictionary } from "lodash";
 import React, { ChangeEvent, useMemo, useState } from "react";
 import i18n from "../../../../../locales";
