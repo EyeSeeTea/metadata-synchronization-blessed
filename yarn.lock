@@ -1546,10 +1546,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.5.tgz#77211291c1900a700b8a78cfafda3160d76949ed"
   integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
 
-"@eyeseetea/d2-api@1.8.0-beta.1":
-  version "1.8.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@eyeseetea/d2-api/-/d2-api-1.8.0-beta.1.tgz#2a9fffe8a8373aa1dcca0e59d7dc3cf17e111ca8"
-  integrity sha512-0ZK09/cxm1MoLZudGDIDtF2Pj6nnZfiZ2twTA8eHzLrStUrb7+N0oUgFTTkoNjK15jGg0Td8b/lxZpVfopUNhQ==
+"@eyeseetea/d2-api@1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@eyeseetea/d2-api/-/d2-api-1.8.0.tgz#fe450ad6ee77bd9083b9f69ba3e7e5fd0c90a2f5"
+  integrity sha512-UCYw106W1td8keSVZ1XPBjLrxNmsirI6fLkKIBCI69Ao/HZYYoNZ/MaJA6b916N8rTtQVEkW5BRTHqK1trNibQ==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@dhis2/d2-i18n" "^1.0.5"
@@ -1575,10 +1575,10 @@
     react "^16.12.0"
     yargs "^14.0.0"
 
-"@eyeseetea/d2-ui-components@2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@eyeseetea/d2-ui-components/-/d2-ui-components-2.6.0.tgz#fc95d10c8c3d9b5dc6d9e1b95210be7dddc1d5de"
-  integrity sha512-SaLj5R/Ikbg61WVEgxlPZX/MMl23bERTbou3lDkZjhJIUuJ5QKdt4u+8tbq2MUCoMcPP2LstOCCXn+oh1sy7PA==
+"@eyeseetea/d2-ui-components@2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@eyeseetea/d2-ui-components/-/d2-ui-components-2.6.1.tgz#12f73a47d7885d37f7ddd3b5e1a9bc09f34ab13a"
+  integrity sha512-zA+W2LitWuHCAyKb0uqFDwhDGNZzlH52uvxRyMP+DlFCfNUOAj+bdUDryRVqXl1HL2Fsk3sTpmW5i5blwW5R3w==
   dependencies:
     "@date-io/core" "1.3.6"
     "@date-io/moment" "1.0.2"
