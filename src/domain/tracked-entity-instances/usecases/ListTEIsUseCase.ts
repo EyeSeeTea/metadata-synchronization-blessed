@@ -1,15 +1,17 @@
 import { DataSynchronizationParams } from "../../aggregated/types";
 import { UseCase } from "../../common/entities/UseCase";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { Instance } from "../../instance/entities/Instance";
 import { TrackedEntityInstance } from "../entities/TrackedEntityInstance";
-import { TEIRepository } from "../repositories/TEIRepository";
 
 export class ListTEIsUseCase implements UseCase {
-    constructor(private trackedEntityInstanceRepository: TEIRepository) {}
+    constructor(private repositoryFactory: RepositoryFactory, protected localInstance: Instance) {}
 
     public async execute(
         params: DataSynchronizationParams,
-        programs: string
+        programs: string,
+        instance: Instance
     ): Promise<TrackedEntityInstance[]> {
-        return this.trackedEntityInstanceRepository.getTEIs(params, programs);
+        return this.repositoryFactory.teisRepository(instance).getTEIs(params, programs);
     }
 }

@@ -10,7 +10,7 @@ export class DownloadWebRepository implements DownloadRepository {
     public downloadFile(name: string, payload: unknown): void {
         const json = JSON.stringify(payload, null, 4);
         const blob = new Blob([json], { type: "application/json" });
-        FileSaver.saveAs(blob, name);
+        FileSaver.saveAs(blob, `${name}.json`);
     }
 
     public async downloadZippedFiles(name: string, items: DownloadItem[]): Promise<void> {
@@ -32,6 +32,6 @@ export class DownloadWebRepository implements DownloadRepository {
             });
 
         const blob = await zip.generateAsync({ type: "blob" });
-        FileSaver.saveAs(blob, name);
+        FileSaver.saveAs(blob, `${name}.zip`);
     }
 }

@@ -84,21 +84,38 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
         if (mappingPath) {
             const parentMappedId = mappingPath[2];
             compositionRoot.mapping.getValidIds(instance, parentMappedId).then(setFilterRows);
-        } else if (
-            (mappingType === "programDataElements" || mappingType === "trackerProgramStages") &&
-            elements.length === 1
-        ) {
-            const programId = _.first(elements[0].split("-")) ?? elements[0];
+        } else if (mappingType === "programDataElements" && elements.length === 1) {
+            const elementParts = elements[0].split("-");
+
+            const programId = _.first(elementParts) ?? elements[0];
+            const programStage = elementParts.length === 3 ? elementParts[1] : undefined;
+
             const mappedProgramByEventProgram = mapping["eventPrograms"]
                 ? mapping["eventPrograms"][programId]
                 : undefined;
             const mappedProgramByTrackerProgram = mapping["trackerPrograms"]
                 ? mapping["trackerPrograms"][programId]
                 : undefined;
+            const mappedByTrackerProgramStage = mapping["trackerProgramStages"]
+                ? mapping["trackerProgramStages"][`${programId}-${programStage}`]
+                : undefined;
 
-            const mappedProgramId = mappedProgramByEventProgram
-                ? mappedProgramByEventProgram.mappedId
-                : mappedProgramByTrackerProgram?.mappedId;
+            const parentMappedId =
+                mappedByTrackerProgramStage?.mappedId ||
+                mappedProgramByTrackerProgram?.mappedId ||
+                mappedProgramByEventProgram?.mappedId;
+
+            if (!parentMappedId) return;
+
+            compositionRoot.mapping.getValidIds(instance, parentMappedId).then(validIds => {
+                setFilterRows(buildFilterForProgram(validIds, parentMappedId));
+            });
+        } else if (mappingType === "trackerProgramStages" && elements.length === 1) {
+            const programId = _.first(elements[0].split("-")) ?? elements[0];
+
+            const mappedProgramId = mapping["trackerPrograms"]
+                ? mapping["trackerPrograms"][programId]?.mappedId
+                : undefined;
 
             if (!mappedProgramId) return;
 

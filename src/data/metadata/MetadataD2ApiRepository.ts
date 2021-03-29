@@ -357,6 +357,16 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
         try {
             const response = await this.postMetadata(versionedPayloadPackage, additionalParams);
+
+            if (!response) {
+                return {
+                    status: "ERROR",
+                    instance: this.instance.toPublicObject(),
+                    date: new Date(),
+                    type: "metadata",
+                };
+            }
+
             return this.cleanMetadataImportResponse(response, "metadata");
         } catch (error) {
             if (error?.response?.data) {
@@ -390,6 +400,15 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                 ...additionalParams,
                 importStrategy: "DELETE",
             });
+
+            if (!response) {
+                return {
+                    status: "ERROR",
+                    instance: this.instance.toPublicObject(),
+                    date: new Date(),
+                    type: "deleted",
+                };
+            }
 
             return this.cleanMetadataImportResponse(response, "deleted");
         } catch (error) {
@@ -499,7 +518,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     private async postMetadata(
         payload: Partial<Record<string, unknown[]>>,
         additionalParams?: MetadataImportParams
-    ): Promise<MetadataResponse> {
+    ): Promise<MetadataResponse | null> {
         const { response } = await this.api.metadata
             .postAsync(payload, {
                 importMode: "COMMIT",
@@ -513,8 +532,6 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             .getData();
 
         const result = await this.api.system.waitFor(response.jobType, response.id).getData();
-        if (!result) throw new Error("Error saving metadata");
-
         return result;
     }
 

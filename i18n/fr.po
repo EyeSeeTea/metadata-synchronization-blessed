@@ -123,7 +123,7 @@ msgstr ""
 msgid "Preparing synchronization"
 msgstr ""
 
-msgid "Start import in instance {{instance}}"
+msgid "Importing in instance {{instance}}"
 msgstr ""
 
 msgid "Event Program with Data Elements"
@@ -1205,6 +1205,9 @@ msgid ""
 msgstr ""
 
 msgid "An error has ocurred during the download"
+msgstr ""
+
+msgid "Invalid origin instance"
 msgstr ""
 
 msgid "Cancel synchronization rule wizard"

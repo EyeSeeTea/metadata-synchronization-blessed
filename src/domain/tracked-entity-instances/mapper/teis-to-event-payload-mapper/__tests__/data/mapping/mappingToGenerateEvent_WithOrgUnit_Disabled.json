@@ -1,0 +1,97 @@
+{
+    "trackerPrograms": {
+        "ogQUpMGyBEB": {
+            "code": "PRT_NTD_CL_LEISHMAN",
+            "global": false,
+            "mapping": {
+                "categoryCombos": {
+                    "JzvGfLYkX17": {
+                        "mapping": {},
+                        "mappedId": "JzvGfLYkX17",
+                        "conflicts": false,
+                        "mappedName": "default"
+                    }
+                },
+                "categoryOptions": {
+                    "DMyxTSpvKOp-Y7fcspgsU43": {
+                        "code": "default",
+                        "global": false,
+                        "mappedId": "Y7fcspgsU43",
+                        "conflicts": false,
+                        "mappedCode": "default",
+                        "mappedName": "default"
+                    }
+                }
+            },
+            "mappedId": "aaQUpMGyBEB",
+            "conflicts": false,
+            "mappedCode": "PRT_NTD_CL_LEISHMAN DUPLICATED",
+            "mappedName": "Cutaneous leishmaniasis cases - Leishman Tracker  DUPLICATED"
+        },
+        "ohQUpMGyBEB": {
+            "code": "PRT_NTD_CL_LEISHMAN 2",
+            "global": false,
+            "mapping": {
+                "categoryCombos": {
+                    "JzvGfLYkX17": {
+                        "mapping": {},
+                        "mappedId": "JzvGfLYkX17",
+                        "conflicts": false,
+                        "mappedName": "default"
+                    }
+                },
+                "categoryOptions": {
+                    "DMyxTSpvKOp-Y7fcspgsU43": {
+                        "code": "default",
+                        "global": false,
+                        "mappedId": "Y7fcspgsU43",
+                        "conflicts": false,
+                        "mappedCode": "default",
+                        "mappedName": "default"
+                    }
+                }
+            },
+            "mappedId": "bbQUpMGyBEB",
+            "conflicts": false,
+            "mappedCode": "PRT_NTD_CL_LEISHMAN DUPLICATED 2",
+            "mappedName": "Cutaneous leishmaniasis cases - Leishman Tracker DUPLICATED 2"
+        }
+    },
+    "trackedEntityAttributesToDE": {
+        "qczNQPF6FWb": {
+            "code": "att_UniqueIdentifier code",
+            "global": false,
+            "mapping": {},
+            "mappedId": "aaaNQPF6FWb",
+            "conflicts": false,
+            "mappedCode": "de_UniqueIdentifier code"
+        },
+        "sKBh0kazOCk": {
+            "code": "att_patient_id code",
+            "global": false,
+            "mapping": {},
+            "mappedId": "sKBh1kazOCk",
+            "conflicts": false,
+            "mappedCode": "de_patient_id code"
+        },
+        "IW1EGccT7jT": {
+            "code": "att_gender code",
+            "global": false,
+            "mapping": {},
+            "mappedId": "IW2EGccT7jT",
+            "conflicts": false,
+            "mappedCode": "de_gender code",
+            "mappedName": "DE gender code"
+        }
+    },
+    "organisationUnits": {
+        "H8RixfF8ugH": {
+            "code": "BFA",
+            "global": false,
+            "mapping": {},
+            "mappedId": "DISABLED",
+            "conflicts": false,
+            "mappedCode": "DISABLED"
+        }
+    }
+}

@@ -12,8 +12,10 @@ export async function extractAllPrograms<T = Program | CustomProgram>(
     compositionRoot: CompositionRoot,
     eventsSyncUseCase: EventsSyncUseCase
 ): Promise<T[]> {
+    const originInstance = await eventsSyncUseCase.getOriginInstance();
+
     return eventsSyncUseCase
-        .extractMetadata<MetadataEntity>()
+        .extractMetadata<MetadataEntity>(originInstance)
         .then(({ programs = [], programStages = [] }) => {
             const programStageIds = programStages.map(({ id }) => id);
 
@@ -25,7 +27,7 @@ export async function extractAllPrograms<T = Program | CustomProgram>(
 
             if (programsIdsByStage.length > 0) {
                 return compositionRoot.metadata
-                    .getByIds(programsIdsByStage, eventsSyncUseCase.fields)
+                    .getByIds(programsIdsByStage, originInstance, eventsSyncUseCase.fields)
                     .then(({ programs: programsByStages = [] }) => {
                         const newPrograms = programsByStages.map(program => {
                             const programByStage = program as Program;

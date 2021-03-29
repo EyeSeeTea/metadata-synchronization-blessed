@@ -1,0 +1,23 @@
+[
+    {
+        "id": "ogQUpMGyBEB",
+        "programType": "WITH_REGISTRATION",
+        "programTrackedEntityAttributes": [
+            {
+                "trackedEntityAttribute": {
+                    "id": "qczNQPF6FWb"
+                }
+            },
+            {
+                "trackedEntityAttribute": {
+                    "id": "sKBh1kazOCk"
+                }
+            },
+            {
+                "trackedEntityAttribute": {
+                    "id": "IW2EGccT7jT"
+                }
+            }
+        ]
+    }
+]
