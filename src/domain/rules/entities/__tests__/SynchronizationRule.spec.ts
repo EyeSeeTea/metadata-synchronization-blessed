@@ -515,6 +515,61 @@ describe("SyncRule", () => {
             expect(errorFunction).toThrow(Error);
         });
     });
+
+    describe("startDate", () => {
+        it("should has not start date if sync rule has not period", () => {
+            const syncRule = givenASyncRuleWithoutPeriod();
+
+            expect(syncRule.dataSyncStartDate).toEqual(undefined);
+        });
+        it("should has start date as last executed if change the period to since last executed and exist", () => {
+            const syncRule = givenASyncRuleWithoutPeriod();
+
+            const lastExecuted = new Date();
+
+            const editedSyncRule = syncRule
+                .updateLastExecuted(lastExecuted, { id: "", name: "" })
+                .updateDataSyncPeriod("SINCE_LAST_EXECUTED_DATE");
+
+            expect(editedSyncRule.dataSyncStartDate).toEqual(lastExecuted);
+        });
+        it("should has start date as now if change the period to since last executed and does not exist", () => {
+            const syncRule = givenASyncRuleWithoutPeriod();
+
+            const now = new Date();
+
+            const editedSyncRule = syncRule.updateDataSyncPeriod("SINCE_LAST_EXECUTED_DATE");
+
+            expect(editedSyncRule.dataSyncStartDate.getDay()).toEqual(now.getDay());
+            expect(editedSyncRule.dataSyncStartDate.getMonth()).toEqual(now.getMonth());
+            expect(editedSyncRule.dataSyncStartDate.getFullYear()).toEqual(now.getFullYear());
+        });
+        it("should has start date as last executed after build if the period is since last executed and exist last executed", () => {
+            const lastExecuted = new Date();
+
+            const syncRuleData = givenASyncRuleWithoutPeriod()
+                .updateLastExecuted(lastExecuted, { id: "", name: "" })
+                .updateDataSyncPeriod("SINCE_LAST_EXECUTED_DATE")
+                .toObject();
+
+            const syncRule = SynchronizationRule.build(syncRuleData);
+
+            expect(syncRule.dataSyncStartDate).toEqual(lastExecuted);
+        });
+        it("should has start date as now after build if the period is since last executed and  last executed does not exist", () => {
+            const now = new Date();
+
+            const syncRuleData = givenASyncRuleWithoutPeriod()
+                .updateDataSyncPeriod("SINCE_LAST_EXECUTED_DATE")
+                .toObject();
+
+            const syncRule = SynchronizationRule.build(syncRuleData);
+
+            expect(syncRule.dataSyncStartDate.getDay()).toEqual(now.getDay());
+            expect(syncRule.dataSyncStartDate.getMonth()).toEqual(now.getMonth());
+            expect(syncRule.dataSyncStartDate.getFullYear()).toEqual(now.getFullYear());
+        });
+    });
 });
 
 function givenASyncRuleWithMetadataIncludeExcludeRules(
@@ -546,6 +601,10 @@ function givenASyncRuleWithMetadataIncludeExcludeRules(
 }
 
 function givenASyncRuleWithoutMetadataIncludeExcludeRules(): SynchronizationRule {
+    return SynchronizationRule.create("metadata").updateMetadataIds(["id1", "id2"]);
+}
+
+function givenASyncRuleWithoutPeriod(): SynchronizationRule {
     return SynchronizationRule.create("metadata").updateMetadataIds(["id1", "id2"]);
 }
 
